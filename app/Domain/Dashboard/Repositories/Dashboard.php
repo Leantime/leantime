@@ -8,8 +8,6 @@ class Dashboard
 {
     public ?DbCore $db;
 
-    private array $defaultWidgets = [1, 3, 9];
-
     /**
      * __construct - neu db connection
      */

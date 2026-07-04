@@ -113,7 +113,6 @@ class Helper
      * Constructor for the class.
      * Initializes the availableModals property by dispatching the "addHelperModal" event.
      *
-     * @param  \Leantime\Domain\Users\Repositories\Users  $userRepository
      * @return void
      */
     public function __construct(private Setting $settingsRepo)
@@ -136,7 +135,7 @@ class Helper
      * Retrieves the corresponding helper modal for a given route.
      *
      * @param  string  $route  The route for which to retrieve the helper modal.
-     * @return array|string The helper modal associated with the given route. If not found, 'notfound' is returned.
+     * @return array The helper modal associated with the given route. If not found, a 'notfound' template array is returned.
      */
     public function getHelperModalByRoute(string $route): array
     {

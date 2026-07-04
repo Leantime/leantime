@@ -15,14 +15,14 @@
         {!! $tpl->displayInlineNotification() !!}
         <p>{!! __('text.enter_email_address_to_reset') !!}<br /><br /></p>
         <div class="">
-            <input type="text" name="username" id="username" placeholder="{{ __('input.placeholders.enter_email') }}" />
+            <x-global::forms.text-input name="username" id="username" placeholder="{{ __('input.placeholders.enter_email') }}" />
         </div>
         <div class="">
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/" class="forgotPw">{!! __('links.back_to_login') !!}</a>
             </div>
             @dispatchEvent('beforeSubmitButton')
-            <input type="submit" name="resetPassword" value="{{ __('buttons.reset_password') }}" />
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.reset_password')" name="resetPassword" />
         </div>
         @dispatchEvent('beforeFormClose')
     </form>

@@ -29,15 +29,15 @@
         <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}"/>
         <input type="hidden" name="changeItem" value="1"/>
 
-        <input type="text" name="description" class="main-title-input" style="width:99%;" value="{{ $tpl->escape($canvasItem['description']) }}"
-               placeholder="{{ __('input.placeholders.short_name') }}"/><br/>
+        <x-global::forms.text-input name="description" variant="headline" style="width:99%;" value="{{ $tpl->escape($canvasItem['description']) }}"
+               placeholder="{{ __('input.placeholders.short_name') }}" /><br/>
 
         <input type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
 
         <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
 
-        <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton"/>
+        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
         <x-global::forms.button contentRole="secondary" inputType="submit" value="closeModal" id="saveAndClose">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
 
         @if ($id !== '')
@@ -74,7 +74,7 @@
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
                             <div class="col-md-12">
-                                <textarea name="newMilestone"></textarea><br/>
+                                <x-global::forms.textarea name="newMilestone"></x-global::forms.textarea><br/>
                                 <input type="hidden" name="type" value="milestone"/>
                                 <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
                                 <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()"

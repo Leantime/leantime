@@ -3,25 +3,13 @@
 namespace Leantime\Domain\Notifications\Services;
 
 use Illuminate\Support\Facades\Log;
-use Leantime\Core\Db\Db as DbCore;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
 use Leantime\Domain\Setting\Services\Setting;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
  * @api
  */
 class News
 {
-    private DbCore $db;
-
-    private NotificationRepository $notificationsRepo;
-
-    private UserRepository $userRepository;
-
-    private LanguageCore $language;
-
     private Setting $settingService;
 
     /**
@@ -31,16 +19,8 @@ class News
      * @api
      */
     public function __construct(
-        DbCore $db,
-        NotificationRepository $notificationsRepo,
-        UserRepository $userRepository,
-        LanguageCore $language,
         Setting $settingService
     ) {
-        $this->db = $db;
-        $this->notificationsRepo = $notificationsRepo;
-        $this->userRepository = $userRepository;
-        $this->language = $language;
         $this->settingService = $settingService;
     }
 
@@ -59,7 +39,7 @@ class News
             return false;
         }
 
-        $latestGuid = (string) $rss?->channel?->item[0]?->guid;
+        $latestGuid = (string) $rss->channel->item[0]->guid;
         $this->settingService->saveSetting('usersettings.'.$userId.'.lastNewsGuid', strval($latestGuid));
 
         // Todo: check last article the user read
@@ -83,7 +63,7 @@ class News
             return false;
         }
 
-        $latestGuid = (string) $rss?->channel?->item[0]?->guid;
+        $latestGuid = (string) $rss->channel->item[0]->guid;
 
         $lastNewsGuid = $this->settingService->getSetting('usersettings.'.$userId.'.lastNewsGuid');
 

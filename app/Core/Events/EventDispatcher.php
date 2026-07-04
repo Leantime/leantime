@@ -4,7 +4,6 @@ namespace Leantime\Core\Events;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Events\QueuedClosure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +12,8 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\Contracts\LeantimeEvent;
+use Leantime\Core\Events\Contracts\LeantimeFilter;
 use Leantime\Core\Routing\RouteLoader;
 
 /**
@@ -128,6 +129,8 @@ class EventDispatcher implements Dispatcher
     ) {
 
         $this->dispatch_event($event, $payload, '');
+
+        return null;
     }
 
     public static function dispatch_filter(
@@ -158,6 +161,15 @@ class EventDispatcher implements Dispatcher
         string $context = ''
     ): void {
 
+        // Class-based events bypass the string machinery (context building, payload
+        // wrapping) entirely: listeners on the FQCN receive the typed object, listeners
+        // on the declared legacy string names receive today's array payload.
+        if ($event instanceof LeantimeEvent) {
+            self::executeClassEventHandlers($event);
+
+            return;
+        }
+
         // Laravel events can be objects. Let's get those into the right format
         // Event comes out as string, either as class string or regular old string
         // No-op for leantime events
@@ -186,11 +198,147 @@ class EventDispatcher implements Dispatcher
     }
 
     /**
+     * Executes listeners for a class-based event.
+     *
+     * Listeners registered on the event's FQCN run first (priority-sorted) and receive
+     * the bare typed event object. Then, for each declared legacy hook name, listeners
+     * registered on (or wildcard-matching) that string run through the exact same code
+     * path as string events, receiving today's array payload built from the event's
+     * public properties — existing string/wildcard listeners (plugins) keep working
+     * unchanged during the migration window.
+     */
+    private static function executeClassEventHandlers(LeantimeEvent $event): void
+    {
+        $fqcn = get_class($event);
+        $legacyHooks = $event->legacyHooks();
+
+        foreach ([$fqcn, ...$legacyHooks] as $name) {
+            if (! in_array($name, self::$available_hooks['events'])) {
+                self::$available_hooks['events'][] = $name;
+            }
+        }
+
+        $matched = self::findEventListeners($fqcn, self::$eventRegistry);
+        if (count($matched) > 0) {
+            usort($matched, fn ($a, $b) => $a['priority'] <=> $b['priority']);
+
+            try {
+                foreach ($matched as $listener) {
+                    $callable = self::resolveClassHookCallable($listener['listener']);
+                    $callable($event);
+                }
+            } catch (\TypeError $e) {
+                Log::error($e);
+            }
+        }
+
+        if (empty($legacyHooks)) {
+            return;
+        }
+
+        $legacyPayload = get_object_vars($event);
+
+        foreach ($legacyHooks as $legacyName) {
+            $matched = self::findEventListeners($legacyName, self::$eventRegistry);
+            if (count($matched) == 0) {
+                continue;
+            }
+
+            $payload = $legacyPayload;
+            $payload['leantime'] = self::defineParams($legacyPayload, $legacyName);
+            $payload['laravel'] = $payload;
+
+            self::executeHandlers($matched, 'events', $legacyName, $payload);
+        }
+    }
+
+    /**
+     * Dispatches a class-based filter, threading the payload through listeners on the
+     * FQCN first (signature: fn ($payload, LeantimeFilter $filter)), then through each
+     * declared legacy hook name where listeners keep today's
+     * fn ($payload, $availableParams) signature. Returns the final payload.
+     *
+     * Filter listeners are deliberately NOT deduplicated across name groups: threading
+     * order is semantic, and a listener registered on both the FQCN and a legacy name
+     * is a registration error that should surface, not be silently absorbed.
+     */
+    public static function dispatch_class_filter(LeantimeFilter $filter): mixed
+    {
+        $fqcn = get_class($filter);
+        $legacyHooks = $filter->legacyHooks();
+
+        foreach ([$fqcn, ...$legacyHooks] as $name) {
+            if (! in_array($name, self::$available_hooks['filters'])) {
+                self::$available_hooks['filters'][] = $name;
+            }
+        }
+
+        $payload = $filter->payload();
+
+        $matched = self::findEventListeners($fqcn, self::$filterRegistry);
+        if (count($matched) > 0) {
+            usort($matched, fn ($a, $b) => $a['priority'] <=> $b['priority']);
+
+            try {
+                foreach ($matched as $listener) {
+                    $callable = self::resolveClassHookCallable($listener['listener']);
+                    $payload = $callable($payload, $filter);
+                }
+            } catch (\TypeError $e) {
+                Log::error($e);
+            }
+        }
+
+        foreach ($legacyHooks as $legacyName) {
+            $matched = self::findEventListeners($legacyName, self::$filterRegistry);
+            if (count($matched) == 0) {
+                continue;
+            }
+
+            $availableParams = self::defineParams(get_object_vars($filter), $legacyName);
+            $payload = self::executeHandlers($matched, 'filters', $legacyName, $payload, $availableParams);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Resolves a listener registration (closure, callable, "Class", "Class@method",
+     * [Class::class, 'method']) into a callable for class-based hooks. Class listeners
+     * are instantiated through the container so constructor DI works; the method
+     * defaults to handle(), falling back to __invoke().
+     */
+    private static function resolveClassHookCallable(mixed $listener): callable
+    {
+        if (is_string($listener) && ! function_exists($listener)) {
+            [$class, $method] = self::parseClassCallable($listener);
+
+            if (! method_exists($class, $method)) {
+                $method = '__invoke';
+            }
+
+            return [app()->make($class), $method];
+        }
+
+        if (is_array($listener) && isset($listener[0]) && is_string($listener[0])) {
+            [$class, $method] = [$listener[0], $listener[1] ?? 'handle'];
+
+            if (! method_exists($class, $method)) {
+                $method = '__invoke';
+            }
+
+            return [app()->make($class), $method];
+        }
+
+        return $listener;
+    }
+
+    /**
      * Adds the current_route to the event's/filter's available params
      *
      * @throws BindingResolutionException
      */
-    private static function defineParams(mixed $paramAttr, string $eventName): array|object
+    private static function defineParams(mixed $paramAttr, string $eventName): array
     {
         // Cache the current route for the duration of the request since it doesn't change
         static $current_route = null;
@@ -208,37 +356,6 @@ class EventDispatcher implements Dispatcher
         $paramAttr = array_merge($default_params, $paramAttr);
 
         return $paramAttr;
-
-        // Not entirely sure about all of this...
-        //
-
-        // $finalParams = [];
-
-        if (is_array($paramAttr)) {
-            $default_params = array_merge($default_params, $paramAttr);
-
-            return $default_params;
-        }
-
-        if (is_object($paramAttr)) {
-            $default_params['payload'] = $paramAttr;
-
-            return $default_params;
-        }
-
-        return $default_params;
-
-        //
-        //        if (is_object($paramAttr) && get_class($paramAttr) == 'stdClass') {
-        //            $finalParams = (object) array_merge($default_params, (array) $paramAttr);
-        //
-        //            return $finalParams;
-        //        }
-
-        //        $finalParams = $default_params;
-        //        array_push($finalParams, $paramAttr);
-        //
-        //        return $finalParams;
     }
 
     /**
@@ -370,98 +487,6 @@ class EventDispatcher implements Dispatcher
         return $isEvent ? null : $filteredPayload;
     }
 
-    private static function executeLeantimeEvent(array $registry,
-        string $registryType,
-        string $hookName,
-        mixed $payload,
-        array|object $available_params = [])
-    {
-
-        // Won't be a filter, cause it's an event
-
-        // sort matches by priority
-        usort($registry, fn ($a, $b) => match (true) {
-            $a['priority'] > $b['priority'] => 1,
-            $a['priority'] == $b['priority'] => 0,
-            default => -1,
-        });
-
-        foreach ($registry as $index => $listener) {
-            // Leantime events are strings.
-            // the handler can be either ca closure a class string or a callable
-
-        }
-
-    }
-
-    private static function isLaravelEvent($payload): bool
-    {
-        if (isset($payload[0]) && is_object($payload[0])) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static function isHandleableClass($handler): bool
-    {
-
-        // Option Handler is a class and we just need to call the handle string
-        return is_object($handler) && method_exists($handler, 'handle');
-    }
-
-    private static function isHandleableObject($handler): bool
-    {
-
-        // Option $handler is an array
-        if (is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1] ?? 'handle')) {
-            return true;
-        }
-
-        return false;
-
-    }
-
-    private static function handleLaravelEvent($handler, $payload): void
-    {
-
-        if (! is_object($payload) && class_exists($payload)) {
-            $payload = app()->make($payload);
-        }
-
-        if (is_callable($handler)) {
-            $handler($payload);
-        } elseif (self::isHandleableClass($handler)) {
-            $handler->handle($payload);
-        }
-    }
-
-    private static function executeCallable($handler, $payload, $available_params, $index, $isEvent)
-    {
-        // Handle Laravel style events with reflection
-        if ($handler instanceof \Closure) {
-            $reflection = new \ReflectionFunction($handler);
-            $parameters = $reflection->getParameters();
-
-            if (count($parameters) === 1 && is_object($payload)) {
-                $handler($payload);
-
-                return null;
-            }
-        }
-
-        if ($isEvent) {
-            $handler($payload);
-
-            return null;
-        }
-
-        return $handler(
-            $payload,
-            $available_params
-        );
-    }
-
     /**
      * Finds all the event and filter listeners and registers them
      * (should only be executed once at the beginning of the program)
@@ -495,10 +520,9 @@ class EventDispatcher implements Dispatcher
         }
 
         // Call system plugins (defined via config)
-        if (
-            isset(app(Environment::class)->plugins)
-            && $configplugins = explode(',', app(Environment::class)->plugins)
-        ) {
+        if (isset(app(Environment::class)->plugins)) {
+            $configplugins = explode(',', app(Environment::class)->plugins);
+
             // TODO: Do phar plugins get to be system plugins? Right now they dont
             foreach ($configplugins as $plugin) {
                 if (file_exists($pluginEventsPath = APP_ROOT.'/app/Plugins/'.$plugin.'/register.php')) {
@@ -632,17 +656,12 @@ class EventDispatcher implements Dispatcher
     {
 
         if ($events instanceof \Closure) {
-            return collect($this->firstClosureParameterTypes($events))
+            collect($this->firstClosureParameterTypes($events))
                 ->each(function ($event) use ($events) {
                     $this->listen($event, $events);
                 });
-        } elseif ($events instanceof QueuedClosure) {
-            return collect($this->firstClosureParameterTypes($events->closure))
-                ->each(function ($event) use ($events) {
-                    $this->listen($event, $events->resolve());
-                });
-        } elseif ($listener instanceof QueuedClosure) {
-            $listener = $listener->resolve();
+
+            return;
         }
 
         foreach ((array) $events as $event) {
@@ -760,28 +779,6 @@ class EventDispatcher implements Dispatcher
     public static function get_available_hooks(): array
     {
         return self::$available_hooks;
-    }
-
-    /**
-     * Sorts listeners by priority for a given hook and type
-     */
-    private static function sortByPriority(string $type, string $hookName): void
-    {
-        if ($type !== 'filters' && $type !== 'events') {
-            return;
-        }
-
-        $sorter = fn ($a, $b) => match (true) {
-            $a['priority'] > $b['priority'] => 1,
-            $a['priority'] == $b['priority'] => 0,
-            default => -1,
-        };
-
-        if ($type == 'filters') {
-            usort(self::$filterRegistry[$hookName], $sorter);
-        } elseif ($type == 'events') {
-            usort(self::$eventRegistry[$hookName], $sorter);
-        }
     }
 
     public static function getEventRegistry(): array

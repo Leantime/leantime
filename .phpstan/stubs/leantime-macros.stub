@@ -14,6 +14,11 @@
  *   bound to the 'events' container singleton (app/Core/Events/EventsServiceProvider.php).
  *
  * The @method tags merge onto the real classes; native methods are unaffected.
+ *
+ * NOTE: Leantime's CarbonImmutable macros (formatDateForUser, setToDbTimezone, ...) are NOT
+ * stubbed here — stubbing Carbon\CarbonInterface would clobber Carbon's own @method API.
+ * They are resolved by Carbon's official PHPStan MacroExtension instead (vendor extension.neon
+ * included from phpstan.neon), fed by the mixin registration in .phpstan/bootstrap.php.
  */
 
 namespace Illuminate\Support;

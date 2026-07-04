@@ -88,7 +88,7 @@
                             </div>
                             <div class="row" id="newMilestone" style="display:none;">
                                 <div class="col-md-12">
-                                    <textarea name="newMilestone"></textarea><br />
+                                    <x-global::forms.textarea name="newMilestone"></x-global::forms.textarea><br />
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="{{ $id }} " />
                                     <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryArticleSubmitButton').click()" contentRole="primary" />
@@ -157,7 +157,7 @@
             </div>
             <input type="hidden" class="articleIcon" value="{{ $currentArticle->data }}" name="articleIcon"/>
 
-            <input type="text" name="title" class="main-title-input" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%"/>
+            <x-global::forms.text-input variant="headline" name="title" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
 
             <br />
             <input type="text" value="{{ $tpl->escape($currentArticle->tags) }}" name="tags" id="tags" />
@@ -169,7 +169,7 @@
                         <br />
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
-                        <input type="submit" name="saveArticle" value="{{ __('buttons.save') }}" id="primaryArticleSubmitButton"/>
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveArticle" id="primaryArticleSubmitButton" />
                         <x-global::forms.button tag="input" inputType="submit" contentRole="secondary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" :labelText="__('buttons.save_and_close')" />
                     </div>
                     <div class="col-md-2 align-right padding-top-sm">

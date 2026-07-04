@@ -64,9 +64,9 @@
                 <div class="tw-flex-grow">
                     <div hx-trigger="load"
                          hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}"
-                         hx-get="<?=BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?=$ticket['id'] ?>&progressColor={{ trim($ticket['tags'], "#") }}">
+                         hx-get="<?= BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?= $ticket['id'] ?>&progressColor={{ trim($ticket['tags'], "#") }}">
                         <div class="htmx-indicator">
-                                <?= $tpl->__("label.loading_milestone") ?>
+                                <?= $tpl->__('label.loading_milestone') ?>
                         </div>
                     </div>
                 </div>
@@ -96,9 +96,9 @@
                         >
                             <input type="hidden" name="id" value="{{ $ticket['id'] }}"/>
                             <div>
-                                <input type="text" class="main-title-input"
+                                <x-global::forms.text-input variant="headline"
                                        style="font-size:var(--base-font-size); margin-bottom:0px"
-                                       value="{{ $ticket['headline'] }}" name="headline"/>
+                                       value="{{ $ticket['headline'] }}" name="headline" />
                             </div>
                             <div>
                                 <x-global::forms.button inputType="submit" name="edit" contentRole="primary">
@@ -230,9 +230,9 @@
             <input type="hidden" value="{{ format($ticket['dateToFinish'])->date() }}" name="dateToFinish"/>
             <div class="tw-flex tw-flex-row tw-gap-2">
                 <div class="tw-flex-grow">
-                    <input name="headline" type="text" class="main-title-input"
+                    <x-global::forms.text-input name="headline" variant="headline"
                            style="font-size:var(--base-font-size)"
-                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                 </div>
                 <div>
                     <input type="hidden" name="status" value="3"/>
@@ -287,9 +287,9 @@
                     />
                     <div class="tw-flex tw-flex-row tw-gap-2">
                         <div class="tw-flex-grow">
-                            <input name="headline" type="text" class="main-title-input"
+                            <x-global::forms.text-input name="headline" variant="headline"
                                    style="font-size:var(--base-font-size)"
-                                   placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                   placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
                         </div>
                         <div>
                             <input type="hidden" name="status" value="3"/>

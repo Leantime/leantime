@@ -147,7 +147,7 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $dateOfFirstTicket = new DateTime($firstTicket->date);
         $today = new DateTime;
-        $totalprojectDays = $today->diff($dateOfFirstTicket)->format('%a');
+        $totalprojectDays = (int) $today->diff($dateOfFirstTicket)->format('%a');
 
         // Calculate percent
 
@@ -280,7 +280,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function notifyProjectUsers(Notification $notification): void
     {
 
-        // Filter notifications
+        // Filter notifications (dispatch_filter returns mixed; the filter preserves the entity)
+        /** @var Notification $notification */
         $notification = EventCore::dispatch_filter('notificationFilter', $notification);
 
         // Email
@@ -780,6 +781,8 @@ class Projects extends BaseService implements ChecksProjectAccess
         if ($project) {
             return $project['name'];
         }
+
+        return null;
     }
 
     /**
@@ -1047,17 +1050,27 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function getProjectRole($userId, $projectId): string
     {
 
-        $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
+        $projectRole = $this->projectRepository->getUserProjectRelation($userId, $projectId)[0]['projectRole'] ?? '';
 
-        if (is_array($project)) {
-            if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
-                return (string) $project[0]['projectRole'];
-            } else {
-                return '';
-            }
-        } else {
+        if ($projectRole === '') {
             return '';
         }
+
+        // For a numeric role key, only return it when it's a real, non-admin/owner role. The legacy
+        // "0" (written before "inherit" was handled on save) and any other unknown/junk key resolve
+        // to "no explicit role" so callers safely fall back to the user's global role instead of an
+        // unresolvable one that would deny all project access.
+        if (ctype_digit((string) $projectRole)) {
+            $roles = Roles::getRoles();
+            $assignableRoles = array_diff_key($roles, [
+                array_search(Roles::$admin, $roles, true) => null,
+                array_search(Roles::$owner, $roles, true) => null,
+            ]);
+
+            return isset($assignableRoles[(int) $projectRole]) ? (string) (int) $projectRole : '';
+        }
+
+        return (string) $projectRole;
     }
 
     /**
@@ -1862,15 +1875,13 @@ class Projects extends BaseService implements ChecksProjectAccess
         $avatar = $this->avatarcreator->getAvatar($project['name']);
 
         return self::dispatch_filter('afterGettingAvatar', $avatar, ['projectId' => $id]);
-
-        return $avatar;
     }
 
     /**
      * Sets the avatar for a project.
      *
      * @param  mixed  $file  The file containing the avatar.
-     * @param  mixed  $project  The project object.
+     * @param  mixed  $projectId  The id of the project.
      * @return bool Indicates whether the avatar was successfully set.
      *
      * @throws BindingResolutionException

@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Plugins\Services;
 
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
@@ -127,7 +126,7 @@ class Registration
             $completeLanguagePath = $regularPath.$languagePath;
         } else {
             // Language file doesn't exist
-            Cache::store('installation')->set($this->pluginId.'.language.'.$language, false, Carbon::now()->addDays(7));
+            Cache::store('installation')->set($this->pluginId.'.language.'.$language, false, new \DateInterval('P7D'));
 
             return false;
         }
@@ -136,7 +135,7 @@ class Registration
 
         // We're caching the results no matter what, language file is not going to magically appear.
         // So even a false is valid as parse_ini_is too expensive to run every time
-        Cache::store('installation')->set($this->pluginId.'.language.'.$language, $languageArray, Carbon::now()->addDays(7));
+        Cache::store('installation')->set($this->pluginId.'.language.'.$language, $languageArray, new \DateInterval('P7D'));
 
         return $languageArray;
 

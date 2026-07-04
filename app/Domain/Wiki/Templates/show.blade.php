@@ -178,9 +178,9 @@
                                             <div class="dropdown-menu"></div>
                                         </div>
                                         <input type="hidden" id="wikiArticleIcon" class="articleIcon" value="{{ e($currentArticle->data) }}" />
-                                        <input type="text"
+                                        <x-global::forms.text-input
                                                id="wikiTitleEditable"
-                                               class="main-title-input"
+                                               variant="headline"
                                                value="{{ e($currentArticle->title) }}"
                                                data-original="{{ e($currentArticle->title) }}"
                                                placeholder="{{ __('input.placeholders.wiki_title') }}"
@@ -797,7 +797,14 @@ jQuery(document).ready(function() {
             defaultText: 'Add tag...',
             placeholderColor: 'var(--secondary-font-color)',
             onChange: function(elem, elem_tags) {
-                saveField('tags', elem_tags, function() { updateLastSaved(); });
+                // The tagsInput plugin passes only the single tag that changed as elem_tags, and
+                // fires once with `undefined` during its initial import. Saving elem_tags directly
+                // overwrote the column with just the last tag (and the literal "undefined" on load).
+                // Ignore the init call and persist the full delimited value instead.
+                if (typeof elem_tags === 'undefined') {
+                    return;
+                }
+                saveField('tags', jQuery('#wikiTagsInput').val(), function() { updateLastSaved(); });
             }
         });
     }

@@ -4,7 +4,6 @@ namespace Leantime\Domain\Notifications\Services;
 
 use DOMDocument;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
@@ -15,8 +14,6 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  */
 class Notifications
 {
-    private DbCore $db;
-
     private NotificationRepository $notificationsRepo;
 
     private UserRepository $userRepository;
@@ -30,12 +27,10 @@ class Notifications
      * @api
      */
     public function __construct(
-        DbCore $db,
         NotificationRepository $notificationsRepo,
         UserRepository $userRepository,
         LanguageCore $language
     ) {
-        $this->db = $db;
         $this->notificationsRepo = $notificationsRepo;
         $this->userRepository = $userRepository;
         $this->language = $language;
@@ -44,7 +39,7 @@ class Notifications
     /**
      * Not exposed via JSON-RPC: it accepts an arbitrary $userId.
      */
-    public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): false|array
+    public function getAllNotifications($userId, bool $showNewOnly = false, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): false|array
     {
 
         return $this->notificationsRepo->getAllNotifications($userId, $showNewOnly, $limitStart, $limitEnd, $filterOptions);
@@ -77,7 +72,7 @@ class Notifications
         }
 
         $notificationArray = [
-            'notification' => session('notification') ?? '',
+            'notification' => session('notification'),
             'type' => session('notificationType') ?? '',
             'eventId' => session('eventId') ?? '',
         ];
@@ -359,7 +354,7 @@ class Notifications
             return;
         }
 
-        $authorName = htmlentities($author['firstname']) ?? $this->language->__('label.team_mate');
+        $authorName = htmlentities($author['firstname']);
 
         for ($i = 0; $i < $links->count(); $i++) {
             $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');

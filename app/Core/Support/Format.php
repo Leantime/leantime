@@ -207,7 +207,7 @@ class Format
     public function timestamp(): int|bool
     {
         if (empty($this->value) || ! $this->value instanceof CarbonImmutable) {
-            return '';
+            return false;
         }
 
         return $this->value->getTimestamp();
@@ -219,7 +219,7 @@ class Format
     public function jsTimestamp(): int|bool
     {
         if (empty($this->value) || ! $this->value instanceof CarbonImmutable) {
-            return '';
+            return false;
         }
 
         return $this->value->getTimestampMs();
@@ -319,8 +319,6 @@ class Format
     /**
      * Format bytes to human readable format
      *
-     * @param  int  $bytes  The number of bytes
-     * @param  int  $precision  The number of decimal places
      * @return string The formatted size
      */
     public function formatBytes(): string

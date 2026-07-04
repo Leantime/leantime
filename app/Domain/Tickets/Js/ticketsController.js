@@ -241,6 +241,11 @@ leantime.ticketsController = (function () {
         jQuery(document).ready(
             function () {
 
+                // The Gantt constructor fires on_view_change once while building. Persisting that
+                // event would overwrite the user's saved scale with the default, so ignore any
+                // view change until construction is finished; only user-driven changes save.
+                var ganttInitializing = true;
+
                 if (readonly === false) {
                     var gantt_chart = new Gantt(
                         "#gantt",
@@ -255,7 +260,7 @@ leantime.ticketsController = (function () {
                             bar_corner_radius: 10,
                             arrow_curve: 10,
                             padding:20,
-                            view_mode: 'Month',
+                            view_mode: viewMode,
                             date_format: leantime.i18n.__("language.momentJSDate"),
                             language: leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
                             additional_rows: 5,
@@ -318,6 +323,7 @@ leantime.ticketsController = (function () {
                             },
                             on_view_change: function (mode) {
 
+                                if (ganttInitializing) { return; }
                                 leantime.usersRepository.updateUserViewSettings("roadmap", mode);
 
                             },
@@ -335,6 +341,8 @@ leantime.ticketsController = (function () {
                             resizing: false,
                             progress: false,
                             is_draggable: false,
+                            view_modes: ['Day', 'Week', 'Month'],
+                            view_mode: viewMode,
                             custom_popup_html: function (task) {
 
 
@@ -377,6 +385,7 @@ leantime.ticketsController = (function () {
                             },
                             on_view_change: function (mode) {
 
+                                if (ganttInitializing) { return; }
                                 leantime.usersRepository.updateUserViewSettings("roadmap", mode);
 
                             }
@@ -399,7 +408,9 @@ leantime.ticketsController = (function () {
                     }
                 );
 
-                gantt_chart.change_view_mode(viewMode);
+                // Constructor already built the chart at the saved viewMode; construction is done,
+                // so from here on real user-driven view changes are allowed to persist.
+                ganttInitializing = false;
 
             }
         );

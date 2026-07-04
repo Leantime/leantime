@@ -116,7 +116,7 @@ final class DefaultRolePermissions
         $rules = [];
         foreach (self::ROLES as $role) {
             if ($role['level'] <= $level) {
-                foreach (self::GRANTS[$role['name']] ?? [] as $rule) {
+                foreach (self::GRANTS[$role['name']] as $rule) {
                     $rules[] = $rule;
                 }
             }

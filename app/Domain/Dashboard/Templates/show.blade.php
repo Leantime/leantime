@@ -59,7 +59,7 @@
                         href="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}"
                     ><i class="fa fa-link"></i></a>
                     <div class="dropdown-menu padding-md">
-                        <input type="text" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
+                        <x-global::forms.text-input id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
                         <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-global::forms.button>
                     </div>
                 </div>

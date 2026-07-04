@@ -7,13 +7,10 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowAll extends Controller
 {
-    private ProjectService $projectService;
-
     private CommentService $commentService;
 
     private $module;
@@ -28,10 +25,8 @@ class ShowAll extends Controller
      * @throws Exception
      */
     public function init(
-        ProjectService $projectService,
         CommentService $commentService
     ): void {
-        $this->projectService = $projectService;
         $this->commentService = $commentService;
     }
 

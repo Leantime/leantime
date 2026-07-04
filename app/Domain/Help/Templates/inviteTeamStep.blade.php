@@ -5,9 +5,9 @@
             <h1>{{ __('headlines.invite_crew') }}</h1>
             <p>{{ __('text.invite_team') }}</p>
             <br />
-            <input type="email" name="email1" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;"/><br />
-            <input type="email" name="email2" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;"/><br />
-            <input type="email" name="email3" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;"/><br />
+            <x-global::forms.text-input type="email" name="email1" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
+            <x-global::forms.text-input type="email" name="email2" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
+            <x-global::forms.text-input type="email" name="email3" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
             <br />
                   </div>
         <div class="col-md-6">
@@ -19,7 +19,7 @@
     <div class="row">
         <div class="col-md-12 tw-text-right">
             <x-global::forms.button tag="a" link="javascript:void(0);" contentRole="tertiary" onclick="jQuery.nmTop().close();">{{ __('links.skip_for_now') }}</x-global::forms.button>
-            <input type="submit" value="{{ __('buttons.lets_go') }}"/>
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.lets_go')" />
         </div>
     </div>
 

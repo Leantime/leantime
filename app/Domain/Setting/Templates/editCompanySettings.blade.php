@@ -60,7 +60,7 @@
                                             <label>{!! __('label.company_name') !!}</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <input type="text" name="name" id="companyName"  value="{{ $companySettings['name'] }}" class="pull-left"/>
+                                            <x-global::forms.text-input name="name" id="companyName"  value="{{ $companySettings['name'] }}" class="pull-left" />
                                             <small>{!! __('text.company_name_helper') !!}</small>
                                         </div>
                                     </div>
@@ -144,7 +144,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn"/>
+                                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
                                 </form>
                             </div>
                             <div class="col-md-4">

@@ -8,7 +8,6 @@ use Leantime\Core\Events\EventDispatcher;
 
 EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedule.cron', function ($params) {
 
-    /** @var Schedule $scheduler */
     if (get_class($scheduler = $params['schedule']) !== Schedule::class) {
         return;
     }

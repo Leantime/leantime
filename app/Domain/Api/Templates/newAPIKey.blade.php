@@ -13,7 +13,7 @@
 {!! $tpl->displayNotification() !!}
     @if ($apiKeyValues !== false && isset($apiKeyValues['id']))
         <p>Your API Key was successfully created. Please copy the key below. This is your only chance to copy it.</p>
-        <input type="text" id="apiKey" value="lt_{{ $apiKeyValues['user'] }}_{{ $apiKeyValues['passwordClean'] }}" style="width:100%;"/>
+        <x-global::forms.text-input id="apiKey" value="lt_{{ $apiKeyValues['user'] }}_{{ $apiKeyValues['passwordClean'] }}" style="width:100%;" />
         <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('apiKey');">{!! __('links.copy_key') !!}</x-global::forms.button>
     @else
     <form action="{{ BASE_URL }}/api/newApiKey" method="post" class="stdform formModal" >
@@ -26,8 +26,8 @@
                 <h4 class="widgettitle title-light">{!! __('label.basic_information') !!}</h4>
 
                 <label for="firstname">{!! __('label.key_name') !!}</label><div class="clearfix"></div>
-                    <input
-                    type="text" name="firstname" id="firstname"
+                    <x-global::forms.text-input
+                    name="firstname" id="firstname"
                     value="" /><br />
 
 
@@ -69,7 +69,7 @@
                     <div class="clearfix"></div>
 
                 <p class="stdformbutton">
-                    <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button" />
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                 </p>
 
             </div>

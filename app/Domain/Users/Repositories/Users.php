@@ -8,7 +8,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Files\Repositories\Files;
-use SVG\SVG;
 
 class Users
 {
@@ -74,8 +73,6 @@ class Users
 
     /**
      * getUser - get on user from db
-     *
-     * @return mixed
      */
     public function getUserBySha($hash): array|false
     {
@@ -301,13 +298,13 @@ class Users
             'modified' => now(),
         ];
 
-        if (isset($values['password']) && $values['password'] != '') {
+        if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
             $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
 
         return $this->connection->table('zp_user')
             ->where('id', $id)
-            ->update($updateData);
+            ->update($updateData) > 0;
     }
 
     /**
@@ -341,7 +338,7 @@ class Users
             ->update([
                 'clientId' => null,
                 'modified' => now(),
-            ]);
+            ]) > 0;
     }
 
     /**
@@ -358,13 +355,22 @@ class Users
             'modified' => now(),
         ];
 
-        if (isset($values['password']) && $values['password'] != '') {
+        if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
             $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
 
         $this->connection->table('zp_user')
             ->where('id', $id)
             ->update($updateData);
+    }
+
+    /**
+     * isHashedPassword - Detect a value that is already a password hash so callers that pass a
+     * full user row (e.g. the OIDC login sync) don't re-hash the stored hash and lock the user out.
+     */
+    private function isHashedPassword(string $password): bool
+    {
+        return ! empty(password_get_info($password)['algo']);
     }
 
     /**
@@ -391,7 +397,7 @@ class Users
             'modified' => now(),
         ]);
 
-        return $userId !== false ? (string) $userId : false;
+        return (string) $userId;
     }
 
     /**
@@ -411,19 +417,17 @@ class Users
      *
      * @throws BindingResolutionException
      */
-    public function setPicture($fileId, $id): void
+    public function setPicture($fileId, $id): bool
     {
-        $this->connection->table('zp_user')
+        return $this->connection->table('zp_user')
             ->where('id', $id)
             ->update([
                 'profileId' => $fileId,
                 'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
-            ]);
+            ]) > 0;
     }
 
     /**
-     * @return string[]|SVG
-     *
      * @throws BindingResolutionException
      */
     public function getProfilePicture($id): array|false
@@ -459,7 +463,7 @@ class Users
 
         return $this->connection->table('zp_user')
             ->where('id', $id)
-            ->update($updates);
+            ->update($updates) > 0;
     }
 
     /**

@@ -510,6 +510,41 @@ class ProjectsServiceTest extends TestCase
     }
 
     /**
+     * getProjectRole() must resolve "no explicit role" to '' so callers fall back to the global
+     * role. This locks in the fix for the "Inherit" lockout: the legacy 0 role (written when
+     * "inherit" was cast to int), a missing relation, unknown/junk keys, and admin/owner keys all
+     * map to '', while a real assignable key is returned unchanged.
+     *
+     * @dataProvider projectRoleResolutionProvider
+     */
+    public function test_get_project_role_resolves_inherit_and_junk_to_empty(mixed $stored, string $expected): void
+    {
+        $relation = $stored === '__none__' ? [] : [['projectRole' => $stored]];
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjectRelation' => fn () => $relation,
+        ]);
+
+        $service = $this->makeService(projectRepo: $projectRepo);
+
+        $this->assertSame($expected, $service->getProjectRole(1, 5));
+    }
+
+    public static function projectRoleResolutionProvider(): array
+    {
+        return [
+            'legacy int 0 -> inherit' => [0, ''],
+            'legacy string 0 -> inherit' => ['0', ''],
+            'empty string -> inherit' => ['', ''],
+            'no relation row -> inherit' => ['__none__', ''],
+            'unknown numeric key -> inherit' => ['999', ''],
+            'admin key not assignable -> inherit' => ['40', ''],
+            'owner key not assignable -> inherit' => ['50', ''],
+            'valid editor key preserved' => ['20', '20'],
+            'valid readonly key preserved' => ['5', '5'],
+        ];
+    }
+
+    /**
      * Reflection lock: the engine-reachable access methods must carry NO #[RequiresPermission]
      * dispatch attribute (a dispatch gate on them would re-enter the engine), and the mutations/reads
      * must carry the expected gate. Locks the recursion-safe contract in CI.

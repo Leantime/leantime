@@ -21,8 +21,8 @@
                 lt_{{ substr($values['user'], 0, 5) }}***<br /><br />
 
                 <label for="firstname">{!! __('label.key_name') !!}</label><div class="clearfix"></div>
-                    <input
-                    type="text" name="firstname" id="firstname"
+                    <x-global::forms.text-input
+                    name="firstname" id="firstname"
                     value="{{ $values['firstname'] }}" /><br />
 
 
@@ -64,7 +64,7 @@
                     <div class="clearfix"></div>
 
                 <p class="stdformbutton">
-                    <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button" />
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                 </p>
 
             </div>

@@ -280,8 +280,13 @@ class Files
                 true
             );
 
-            // Use FileManager to upload the file
-            $result = $this->fileManager->upload($symfonyFile, $newname, false);
+            // Use FileManager to upload the file.
+            // FIXME(phpstan-l2): the old call passed ($symfonyFile, $newname, false) but
+            // upload() is (UploadedFile $file, $disk = 'default') — so $newname was being used
+            // as the DISK name (would fail disk lookup) and `false` was ignored. upload() now
+            // computes the stored name itself; the $values below still use the caller's own
+            // $newname/$realName/$ext, which may not match the actually-stored file. Review.
+            $result = $this->fileManager->upload($symfonyFile);
 
             if ($result !== false) {
                 $values = [

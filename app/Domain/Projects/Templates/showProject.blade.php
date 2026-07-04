@@ -23,7 +23,7 @@
         <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
             <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" contentRole="default" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}"><i class="fa-regular fa-copy"></i> Copy</x-global::forms.button>
-            <a href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('link.delete_project') }}" class="btn btn-danger-outline delete"><i class="fa fa-trash"></i> Delete</a>
+            <x-global::forms.button tag="a" state="danger" variant="outline" class="delete" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('link.delete_project') }}"><i class="fa fa-trash"></i> Delete</x-global::forms.button>
 
 
         </div>
@@ -92,7 +92,7 @@
                                             @php
                                             if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) {
                                             @endphp
-                                                <input type="text" readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$assignedUser['role']]) }}" />
+                                                <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$assignedUser['role']]) }}" />
                                             @php
                                             } else {
                                             @endphp
@@ -141,7 +141,7 @@
                                                 </div>
                                                 <label for="user-{{ $row['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) !!}</label>
                                                 @if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner)
-                                                    <input type="text" readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$row['role']]) }}" />
+                                                    <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$row['role']]) }}" />
                                                 @else
                                                     @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
                                                     <select name="userProjectRole-{{ $row['id'] }}">
@@ -191,7 +191,7 @@
                     </div>
                 </div>
                     <br/>
-                    <input type="submit" name="saveUsers" id="save" class="button" value="{{ __('buttons.save') }}" class="button" />
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveUsers" id="save" />
 
                 </form>
 
@@ -217,9 +217,9 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
-                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($mattermostWebhookURL) }}"/>
+                            <x-global::forms.text-input name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($mattermostWebhookURL) }}" />
                             <br />
-                            <input type="submit" value="{{ __('buttons.save') }}" name="mattermostSave" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="mattermostSave" />
                         </form>
                     </div>
                 </div>
@@ -236,9 +236,9 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
-                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="{{ e($slackWebhookURL) }}"/>
+                            <x-global::forms.text-input name="slackWebhookURL" id="slackWebhookURL" value="{{ e($slackWebhookURL) }}" />
                             <br />
-                            <input type="submit" value="{{ __('buttons.save') }}" name="slackSave" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="slackSave" />
                         </form>
                     </div>
                 </div>
@@ -256,21 +256,21 @@
 
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
                             <strong>{!! __('label.base_url') !!}</strong><br />
-                            <input type="text" name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $zulipHook['zulipURL'] }}"/>
+                            <x-global::forms.text-input name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $zulipHook['zulipURL'] }}" />
                             <br />
                             <strong>{!! __('label.bot_email') !!}</strong><br />
-                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="{{ $tpl->escape($zulipHook['zulipEmail']) }}"/>
+                            <x-global::forms.text-input name="zulipEmail" id="zulipEmail" placeholder="" value="{{ $tpl->escape($zulipHook['zulipEmail']) }}" />
                             <br />
                             <strong>{!! __('label.botkey') !!}</strong><br />
-                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="{{ $tpl->escape($zulipHook['zulipBotKey']) }}"/>
+                            <x-global::forms.text-input name="zulipBotKey" id="zulipBotKey" placeholder="" value="{{ $tpl->escape($zulipHook['zulipBotKey']) }}" />
                             <br />
                             <strong>{!! __('label.stream') !!}</strong><br />
-                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="{{ $tpl->escape($zulipHook['zulipStream']) }}"/>
+                            <x-global::forms.text-input name="zulipStream" id="zulipStream" placeholder="" value="{{ $tpl->escape($zulipHook['zulipStream']) }}" />
                             <br />
                             <strong>{!! __('label.topic') !!}</strong><br />
-                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="{{ $tpl->escape($zulipHook['zulipTopic']) }}"/>
+                            <x-global::forms.text-input name="zulipTopic" id="zulipTopic" placeholder="" value="{{ $tpl->escape($zulipHook['zulipTopic']) }}" />
                             <br />
-                            <input type="submit" value="{{ __('buttons.save') }}" name="zulipSave" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="zulipSave" />
                         </form>
                     </div>
                 </div>
@@ -292,7 +292,7 @@
                             @php $discordVarName = 'discordWebhookURL'.$i; $discordVarVal = $$discordVarName ?? ''; @endphp
                             <input type="text" name="discordWebhookURL{{ $i }}" id="discordWebhookURL{{ $i }}" placeholder="{{ __('input.placeholders.discord_url') }}" value="{{ e($discordVarVal) }}"/><br/>
                             @endfor
-                            <input type="submit" value="{{ __('buttons.save') }}" name="discordSave"/>
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="discordSave" />
                         </form>
                     </div>
                 </div>

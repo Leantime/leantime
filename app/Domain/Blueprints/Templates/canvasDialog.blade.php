@@ -42,7 +42,7 @@
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
 
         <label>{!! __('label.description') !!}</label>
-        <input type="text" name="description" value="{{ $canvasItem['description'] }}" style="width:100%" /><br />
+        <x-global::forms.text-input name="description" value="{{ $canvasItem['description'] }}" style="width:100%" /><br />
 
         @if(! empty($statusLabels))
             <label>{!! __('label.status') !!}</label>
@@ -63,9 +63,9 @@
         @if($dataLabels[1]['active'])
             <label>{!! __($dataLabels[1]['title']) !!}</label>
             @if(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int')
-                <input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}"/><br />
+                <x-global::forms.text-input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}"/><br />
             @elseif(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string')
-                <input type="text" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%"/><br />
+                <x-global::forms.text-input name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%"/><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
             @endif
@@ -76,9 +76,9 @@
         @if($dataLabels[2]['active'])
             <label>{!! __($dataLabels[2]['title']) !!}</label>
             @if(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int')
-                <input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}"/><br />
+                <x-global::forms.text-input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}"/><br />
             @elseif(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string')
-                <input type="text" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%"/><br />
+                <x-global::forms.text-input name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%"/><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
             @endif
@@ -89,9 +89,9 @@
         @if($dataLabels[3]['active'])
             <label>{!! __($dataLabels[3]['title']) !!}</label>
             @if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int')
-                <input type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/><br />
+                <x-global::forms.text-input type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/><br />
             @elseif(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string')
-                <input type="text" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/><br />
+                <x-global::forms.text-input name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/><br />
             @else
                 <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea><br />
             @endif
@@ -107,7 +107,7 @@
         @endif
 
         @if($login::userIsAtLeast($roles::$editor))
-            <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton"/>
+            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
             <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.blueprintsController.setCloseModal();">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
         @endif
 
@@ -131,7 +131,7 @@
                     </div>
                     <div class="row" id="newMilestone" style="display:none;">
                         <div class="col-md-12">
-                            <input type="text" width="50%" name="newMilestone"><br />
+                            <x-global::forms.text-input width="50%" name="newMilestone" /><br />
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="blueprintscanvasitemid" value="{{ $id }} " />
                             <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />

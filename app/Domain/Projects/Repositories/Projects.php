@@ -13,7 +13,6 @@ use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use SVG\SVG;
 
 class Projects
 {
@@ -379,7 +378,7 @@ class Projects
     }
 
     // This populates the projects show all tab and shows users all the projects that they could access
-    public function getProjectsUserHasAccessTo($userId, string $status = 'all', string $clientId = ''): false|array
+    public function getProjectsUserHasAccessTo($userId, string $status = 'all', int $clientId = 0): false|array
     {
         $query = $this->connection->table('zp_projects as project')
             ->select([
@@ -738,7 +737,7 @@ class Projects
             }
         }
 
-        return is_numeric($projectId) ? (int) $projectId : false;
+        return (int) $projectId;
     }
 
     /**
@@ -789,10 +788,24 @@ class Projects
 
         // Add users to relation
         if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
+            // Roles that may be assigned as a per-project role: every known role key except
+            // admin/owner (they're global-only and never scoped to a single project).
+            $roles = Roles::getRoles();
+            $assignableRoles = array_diff_key($roles, [
+                array_search(Roles::$admin, $roles, true) => null,
+                array_search(Roles::$owner, $roles, true) => null,
+            ]);
+
             foreach ($values['assignedUsers'] as $userId) {
+                $roleValue = (string) ($values['projectRoles']['userProjectRole-'.$userId] ?? '');
+
+                // Only persist a whitelisted, digit-only role key. "inherit", an empty selection,
+                // or any value that isn't a known assignable role leaves the role null, so the user
+                // falls back to their global role instead of being stored with an invalid key
+                // (which would later resolve to "no role" and lock them out of the project).
                 $projectRole = null;
-                if (isset($values['projectRoles']['userProjectRole-'.$userId]) && $values['projectRoles']['userProjectRole-'.$userId] != '40' && $values['projectRoles']['userProjectRole-'.$userId] != '50') {
-                    $projectRole = (int) $values['projectRoles']['userProjectRole-'.$userId];
+                if (ctype_digit($roleValue) && isset($assignableRoles[(int) $roleValue])) {
+                    $projectRole = (int) $roleValue;
                 }
 
                 $this->addProjectRelation($userId, $projectId, $projectRole);
@@ -829,7 +842,7 @@ class Projects
     /**
      * getUserProjectRelation - get all projects related to a user
      *
-     * @param  null  $projectId
+     * @param  int|null  $projectId
      */
     public function getUserProjectRelation($id, $projectId = null): array
     {
@@ -1037,13 +1050,6 @@ class Projects
     }
 
     /**
-     * @return string[]|SVG
-     *
-     * @throws BindingResolutionException
-     */
-    /**
-     * @return array|SVG
-     *
      * @throws BindingResolutionException
      */
     public function getProjectAvatar($id): array|false

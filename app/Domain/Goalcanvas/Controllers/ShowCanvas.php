@@ -127,7 +127,7 @@ class ShowCanvas extends Controller
     {
         $sessionKey = 'current'.strtoupper(static::CANVAS_NAME).'Canvas';
 
-        if (! $allCanvas || count($allCanvas) == 0) {
+        if (! $allCanvas) {
             $values = [
                 'title' => $this->language->__('label.board'),
                 'author' => session('userdata.id'),
@@ -165,7 +165,7 @@ class ShowCanvas extends Controller
             session([$sessionKey => '']);
         }
 
-        if (count($allCanvas) > 0 && session($sessionKey) == '') {
+        if (session($sessionKey) == '') {
             $currentCanvasId = $allCanvas[0]['id'];
             session([$sessionKey => $currentCanvasId]);
         }

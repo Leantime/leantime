@@ -23,12 +23,12 @@
                     <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{!! __('label.profile_information') !!}</h4>
 
-                    <label for="firstname">{!! __('label.firstname') !!}</label> <input
-                        type="text" name="firstname" id="firstname"
+                    <label for="firstname">{!! __('label.firstname') !!}</label> <x-global::forms.text-input
+                        name="firstname" id="firstname"
                         value="{{ $values['firstname'] }}" /><br />
 
-                    <label for="lastname">{!! __('label.lastname') !!}</label> <input
-                        type="text" name="lastname" id="lastname"
+                    <label for="lastname">{!! __('label.lastname') !!}</label> <x-global::forms.text-input
+                        name="lastname" id="lastname"
                         value="{{ $values['lastname'] }}" /><br />
 
 
@@ -77,7 +77,7 @@
                         <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
                             <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"><i class="fa fa-link"></i> {!! __('label.copyinviteLink') !!}</a>
                             <div class="dropdown-menu padding-md noClickProp">
-                                <input type="text" id="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
+                                <x-global::forms.text-input id="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
                                 <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('inviteURL');">{!! __('links.copy_url') !!}</x-global::forms.button>
                             </div>
                             <x-global::forms.button tag="a" link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite=1" contentRole="default" style="margin-left:5px;"><i class="fa fa-envelope"></i> {!! __('buttons.resend_invite') !!}</x-global::forms.button>
@@ -101,28 +101,28 @@
 
                         <h4 class="widgettitle title-light">{!! __('label.contact_information') !!}</h4>
 
-                        <label for="user">{!! __('label.email') !!}</label> <input
-                            type="text" name="user" id="user" value="{{ $values['user'] }}" /><br />
+                        <label for="user">{!! __('label.email') !!}</label> <x-global::forms.text-input
+                            name="user" id="user" value="{{ $values['user'] }}" /><br />
 
-                        <label for="phone">{!! __('label.phone') !!}</label> <input
-                            type="text" name="phone" id="phone"
+                        <label for="phone">{!! __('label.phone') !!}</label> <x-global::forms.text-input
+                            name="phone" id="phone"
                             value="{{ $values['phone'] }}" /><br /><br />
 
 
                         <h4 class="widgettitle title-light">{!! __('label.employee_information') !!}</h4>
-                        <label for="jobTitle">{!! __('label.jobTitle') !!}</label> <input
-                            type="text" name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
+                        <label for="jobTitle">{!! __('label.jobTitle') !!}</label> <x-global::forms.text-input
+                            name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
 
-                        <label for="jobLevel">{!! __('label.jobLevel') !!}</label> <input
-                            type="text" name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" /><br />
+                        <label for="jobLevel">{!! __('label.jobLevel') !!}</label> <x-global::forms.text-input
+                            name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" /><br />
 
-                        <label for="department">{!! __('label.department') !!}</label> <input
-                            type="text" name="department" id="department" value="{{ $values['department'] }}" /><br />
+                        <label for="department">{!! __('label.department') !!}</label> <x-global::forms.text-input
+                            name="department" id="department" value="{{ $values['department'] }}" /><br />
 
 
 
                     <p class="stdformbutton">
-                        <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                     </p>
                     </div>
                 </div>

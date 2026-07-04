@@ -19,7 +19,7 @@ class Updated
      *
      * @param  \Closure(IncomingRequest): Response  $next
      *
-     * @throws BindingResolutionException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
@@ -56,7 +56,7 @@ class Updated
     /**
      * Redirect to update
      *
-     * @throws BindingResolutionException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     private function redirectToUpdate(): Response|false
     {

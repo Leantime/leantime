@@ -465,4 +465,45 @@ class UsersServiceTest extends TestCase
 
         $this->assertSame(7, $seenId, 'self-service must pin to the session user, not the caller-supplied id');
     }
+
+    /**
+     * Regression for #3556: getUser is @api and intentionally ungated, so any
+     * authenticated client can request an arbitrary id. It must never return
+     * credentials — password hash, plaintext 2FA seed, session token, or the
+     * password-reset token/metadata — while keeping the safe profile fields
+     * the view composers rely on.
+     */
+    public function test_get_user_strips_sensitive_fields_from_api_response(): void
+    {
+        $fullRow = [
+            'id' => 5,
+            'firstname' => 'Ada',
+            'lastname' => 'Lovelace',
+            'username' => 'ada@example.com',
+            'role' => '20',
+            'password' => '$2y$10$abcdefghijklmnopqrstuv',
+            'twoFASecret' => 'SECRET2FASEED',
+            'session' => 'sess-token-xyz',
+            'sessiontime' => '1700000000',
+            'pwReset' => 'reset-token',
+            'pwResetExpiration' => '2026-01-01 00:00:00',
+            'pwResetCount' => 2,
+        ];
+
+        $repo = $this->make(UserRepository::class, [
+            'getUser' => fn () => $fullRow,
+        ]);
+
+        $user = $this->makeService($repo)->getUser(5);
+
+        $this->assertIsArray($user);
+        // Safe profile fields survive so composers/avatars keep working.
+        $this->assertSame('Ada', $user['firstname']);
+        $this->assertSame('ada@example.com', $user['username']);
+
+        // Every credential/session/reset field is stripped.
+        foreach (['password', 'twoFASecret', 'session', 'sessiontime', 'pwReset', 'pwResetExpiration', 'pwResetCount'] as $secret) {
+            $this->assertArrayNotHasKey($secret, $user, "getUser must not leak {$secret} over the API");
+        }
+    }
 }

@@ -15,12 +15,12 @@
 
                 <h4 class="widgettitle title-light">{!! __('label.profile_information') !!}</h4>
 
-                    <label for="firstname">{!! __('label.firstname') !!}</label> <input
-                        type="text" name="firstname" id="firstname"
+                    <label for="firstname">{!! __('label.firstname') !!}</label> <x-global::forms.text-input
+                        name="firstname" id="firstname"
                         value="{{ $values['firstname'] }}" /><br />
 
-                    <label for="lastname">{!! __('label.lastname') !!}</label> <input
-                        type="text" name="lastname" id="lastname"
+                    <label for="lastname">{!! __('label.lastname') !!}</label> <x-global::forms.text-input
+                        name="lastname" id="lastname"
                         value="{{ $values['lastname'] }}" /><br />
 
             <label for="role">{!! __('label.role') !!}</label>
@@ -57,28 +57,28 @@
                 <h4 class="widgettitle title-light">{!! __('label.contact_information') !!}</h4>
 
 
-                    <label for="user">{!! __('label.email') !!}</label> <input
-                        type="text" name="user" id="user" value="{{ $values['user'] }}" /><br />
+                    <label for="user">{!! __('label.email') !!}</label> <x-global::forms.text-input
+                        name="user" id="user" value="{{ $values['user'] }}" /><br />
 
-                    <label for="phone">{!! __('label.phone') !!}</label> <input
-                        type="text" name="phone" id="phone"
+                    <label for="phone">{!! __('label.phone') !!}</label> <x-global::forms.text-input
+                        name="phone" id="phone"
                         value="{{ $values['phone'] }}" /><br />
             <br/>
 
             <h4 class="widgettitle title-light">{!! __('label.employee_information') !!}</h4>
-                <label for="jobTitle">{!! __('label.jobTitle') !!}</label> <input
-                    type="text" name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
+                <label for="jobTitle">{!! __('label.jobTitle') !!}</label> <x-global::forms.text-input
+                    name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
 
-                <label for="jobLevel">{!! __('label.jobLevel') !!}</label> <input
-                    type="text" name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" /><br />
+                <label for="jobLevel">{!! __('label.jobLevel') !!}</label> <x-global::forms.text-input
+                    name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" /><br />
 
-                <label for="department">{!! __('label.department') !!}</label> <input
-                    type="text" name="department" id="department" value="{{ $values['department'] }}" /><br />
+                <label for="department">{!! __('label.department') !!}</label> <x-global::forms.text-input
+                    name="department" id="department" value="{{ $values['department'] }}" /><br />
 
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />
-                        <input type="submit" name="save" id="save" value="{{ __('buttons.invite_user') }}" class="button" />
+                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.invite_user')" name="save" id="save" />
                     </p>
 
         </div>

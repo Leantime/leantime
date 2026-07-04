@@ -2,7 +2,6 @@
 
 namespace Unit\app\Domain\Notifications\Services;
 
-use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
 use Leantime\Domain\Notifications\Services\Notifications;
@@ -25,7 +24,6 @@ class NotificationsServiceTest extends TestCase
     private function makeService(): Notifications
     {
         return new Notifications(
-            $this->make(DbCore::class),
             $this->make(NotificationRepository::class),
             $this->make(UserRepository::class),
             $this->make(LanguageCore::class),
@@ -98,7 +96,6 @@ class NotificationsServiceTest extends TestCase
         ]);
 
         $service = new Notifications(
-            $this->make(DbCore::class),
             $repo,
             $this->make(UserRepository::class),
             $this->make(LanguageCore::class),
@@ -122,7 +119,6 @@ class NotificationsServiceTest extends TestCase
         ]);
 
         $service = new Notifications(
-            $this->make(DbCore::class),
             $repo,
             $this->make(UserRepository::class),
             $this->make(LanguageCore::class),
