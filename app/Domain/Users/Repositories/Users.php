@@ -298,7 +298,7 @@ class Users
             'modified' => now(),
         ];
 
-        if (isset($values['password']) && $values['password'] != '') {
+        if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
             $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
 
@@ -355,13 +355,22 @@ class Users
             'modified' => now(),
         ];
 
-        if (isset($values['password']) && $values['password'] != '') {
+        if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
             $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
 
         $this->connection->table('zp_user')
             ->where('id', $id)
             ->update($updateData);
+    }
+
+    /**
+     * isHashedPassword - Detect a value that is already a password hash so callers that pass a
+     * full user row (e.g. the OIDC login sync) don't re-hash the stored hash and lock the user out.
+     */
+    private function isHashedPassword(string $password): bool
+    {
+        return ! empty(password_get_info($password)['algo']);
     }
 
     /**
