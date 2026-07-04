@@ -90,6 +90,7 @@ class Install
         // Pre-release, so no installed DB ran the intermediate versions; fresh installs are
         // covered by SchemaBuilder + setupDB().
         30518,
+        30519,
     ];
 
     /**
@@ -2756,6 +2757,44 @@ class Install
             Log::error('Migration 30518: '.$e->getMessage());
 
             return ['Migration 30518 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30519 — grant the new `plugins.manage` capability to existing installs.
+     *
+     * The plugin-management surface (marketplace/folder install, enable, disable, remove,
+     * discover) is now gated by `plugins.manage`. Fresh installs pick this up through the
+     * built-in seed, but installs already past 30518 have no row for the new key — which would
+     * deny everyone, including admins. Sync the vocabulary and grant the key to admin + owner
+     * only. This is a targeted grant, NOT a full reseed, so any custom role edits/revocations
+     * an operator has made are preserved.
+     */
+    public function update_sql_30519(): bool|array
+    {
+        try {
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+
+            $repo = app(\Leantime\Core\Auth\Permissions\PermissionRepository::class);
+
+            foreach (['admin', 'owner'] as $roleName) {
+                $role = $repo->getRoleByName($roleName);
+
+                if ($role !== null) {
+                    $repo->grant((int) $role['id'], \Leantime\Domain\Plugins\Permissions\PluginsPermissions::MANAGE);
+                }
+            }
+
+            app(\Leantime\Core\Auth\Permissions\PermissionService::class)->flushCache();
+        } catch (\Exception $e) {
+            Log::error('Migration 30519: '.$e->getMessage());
+
+            return ['Migration 30519 failed: '.$e->getMessage()];
         }
 
         return true;
