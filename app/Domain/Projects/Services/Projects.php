@@ -1054,7 +1054,8 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         // An empty value, or the legacy "0" role written before "inherit" was handled on save,
         // means the user has no explicit project role -> callers fall back to the global role.
-        if ($projectRole === '' || $projectRole === null || $projectRole === 0 || $projectRole === '0') {
+        // ($projectRole can't be null here — the ?? '' above already normalises a missing value.)
+        if ($projectRole === '' || $projectRole === 0 || $projectRole === '0') {
             return '';
         }
 
