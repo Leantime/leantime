@@ -4,7 +4,6 @@ namespace Leantime\Domain\Notifications\Services;
 
 use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\OutboundUrlGuard;
@@ -88,7 +87,7 @@ class Messengers
 
             try {
                 if (! OutboundUrlGuard::isAllowedUrl($slackWebhookURL)) {
-                    Log::warning('Blocked Slack webhook to disallowed URL (SSRF guard)', ['url' => $slackWebhookURL]);
+                    Log::warning('Blocked Slack webhook to disallowed URL (SSRF guard)', ['host' => parse_url($slackWebhookURL, PHP_URL_HOST)]);
 
                     return false;
                 }
@@ -100,7 +99,7 @@ class Messengers
                 ]);
 
                 return true;
-            } catch (GuzzleException $e) {
+            } catch (\Throwable $e) {
                 report($e);
 
                 return false;
@@ -135,7 +134,7 @@ class Messengers
 
             try {
                 if (! OutboundUrlGuard::isAllowedUrl($mattermostWebhookURL)) {
-                    Log::warning('Blocked Mattermost webhook to disallowed URL (SSRF guard)', ['url' => $mattermostWebhookURL]);
+                    Log::warning('Blocked Mattermost webhook to disallowed URL (SSRF guard)', ['host' => parse_url($mattermostWebhookURL, PHP_URL_HOST)]);
 
                     return false;
                 }
@@ -191,7 +190,7 @@ class Messengers
 
             try {
                 if (! OutboundUrlGuard::isAllowedUrl($curlUrl)) {
-                    Log::warning('Blocked Zulip webhook to disallowed URL (SSRF guard)', ['url' => $curlUrl]);
+                    Log::warning('Blocked Zulip webhook to disallowed URL (SSRF guard)', ['host' => parse_url($curlUrl, PHP_URL_HOST)]);
 
                     return false;
                 }
@@ -207,7 +206,7 @@ class Messengers
                 ]);
 
                 return true;
-            } catch (GuzzleException $e) {
+            } catch (\Throwable $e) {
                 report($e);
 
                 return false;
@@ -270,7 +269,7 @@ class Messengers
 
                 try {
                     if (! OutboundUrlGuard::isAllowedUrl($discordWebhookURL)) {
-                        Log::warning('Blocked Discord webhook to disallowed URL (SSRF guard)', ['url' => $discordWebhookURL]);
+                        Log::warning('Blocked Discord webhook to disallowed URL (SSRF guard)', ['host' => parse_url($discordWebhookURL, PHP_URL_HOST)]);
 
                         return false;
                     }
@@ -280,7 +279,7 @@ class Messengers
                         'body' => $data_string,
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);
-                } catch (GuzzleException $e) {
+                } catch (\Throwable $e) {
                     report($e);
 
                     return false;

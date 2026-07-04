@@ -761,7 +761,7 @@ class Tickets extends BaseService
                         case 'sprint':
                             // Rendered raw ({!! !!}) in the kanban swimlane header, so escape the
                             // user-controlled sprint name to prevent stored XSS.
-                            $label = htmlspecialchars((string) $ticket['sprintName'], ENT_QUOTES);
+                            $label = htmlspecialchars((string) $ticket['sprintName'], ENT_QUOTES, 'UTF-8');
                             if ($label == '') {
                                 $label = 'Not assigned to a sprint';
                             }
@@ -773,15 +773,15 @@ class Tickets extends BaseService
                         case 'dependingTicketId':
                             if ($ticket['dependingTicketId'] > 0 && ! empty($ticket['parentHeadline'])) {
                                 // Rendered raw in the swimlane header — escape the user headline.
-                                $label = htmlspecialchars((string) $ticket['parentHeadline'], ENT_QUOTES);
-                                $sortId = 'a_'.strtolower($ticket['parentHeadline']);
+                                $label = htmlspecialchars((string) $ticket['parentHeadline'], ENT_QUOTES, 'UTF-8');
+                                $sortId = 'a_'.preg_replace('/[^a-zA-Z0-9_-]/', '_', strtolower((string) $ticket['parentHeadline']));
                             } else {
                                 $label = $this->language->__('label.no_parent_task');
                                 $sortId = 'zzz_no_parent';
                             }
                             break;
                         default:
-                            $label = htmlspecialchars((string) $groupedFieldValue, ENT_QUOTES);
+                            $label = htmlspecialchars((string) $groupedFieldValue, ENT_QUOTES, 'UTF-8');
                             break;
                     }
 

@@ -135,7 +135,7 @@
 
                 echo "{
                             id :'".$mlst->id."',
-                            name :".json_encode($headline).",
+                            name :".json_encode($headline, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP).",
                             start :'".(dtHelper()->isValidDateString($mlst->editFrom) ? $mlst->editFrom : dtHelper()->userNow()->addDays(2)->format('Y-m-d'))."',
                             end :'".(dtHelper()->isValidDateString($mlst->editTo) ? $mlst->editTo : dtHelper()->userNow()->addDays(2)->format('Y-m-d'))."',
                             progress :'".format($mlst->percentDone)->decimal()."',

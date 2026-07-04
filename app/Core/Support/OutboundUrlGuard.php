@@ -102,7 +102,10 @@ final class OutboundUrlGuard
             // so CGNAT/private ranges can't slip through in v6 form.
             $packed = inet_pton($ip);
             if ($packed !== false && strlen($packed) === 16 && str_starts_with($packed, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff")) {
-                return self::isIpv4Allowed(inet_ntop(substr($packed, 12)));
+                $mappedV4 = inet_ntop(substr($packed, 12));
+
+                // Fail closed if the mapped address can't be rendered back to IPv4.
+                return $mappedV4 !== false && self::isIpv4Allowed($mappedV4);
             }
 
             return (bool) filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
