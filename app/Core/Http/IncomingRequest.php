@@ -196,6 +196,20 @@ class IncomingRequest extends \Illuminate\Http\Request
     }
 
     /**
+     * Determines whether the current request targets the MCP server endpoint.
+     *
+     * @return bool Returns true if the request is an MCP request, false otherwise.
+     */
+    public function isMcpRequest(): bool
+    {
+        $requestUri = strtolower($this->getRequestUri());
+
+        return $requestUri === '/mcp'
+            || str_starts_with($requestUri, '/mcp/')
+            || str_starts_with($requestUri, '/mcp?');
+    }
+
+    /**
      * Determines whether the current request is an Htmx request.
      *
      * @return bool Returns true if the request is an Htmx request, false otherwise.

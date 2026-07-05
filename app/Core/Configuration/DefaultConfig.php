@@ -555,4 +555,10 @@ class DefaultConfig
      * @var int rate limit on auth requests
      */
     public int $ratelimitAuth = 20;
+
+    /**
+     * @var int rate limit on MCP endpoint requests (per user+IP per minute). Higher than the API
+     *          limit because agentic LLM clients burst many parallel tool calls per turn.
+     */
+    public int $ratelimitMcp = 300;
 }
