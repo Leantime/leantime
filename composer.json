@@ -103,7 +103,8 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-path-prefixing": "^3.0",
         "php-mcp/server": "dev-main as 3.1.1",
-        "php-mcp/laravel": "3.0.0"
+        "php-mcp/laravel": "3.0.0",
+        "laravel/mcp": "^0.1.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
