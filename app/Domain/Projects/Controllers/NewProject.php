@@ -41,7 +41,18 @@ class NewProject extends Controller
             session(['lastPage' => BASE_URL.'/projects/showAll']);
         }
 
-        $values = $this->projectService->getNewProjectDefaults($_GET['parent'] ?? '');
+        $defaultParent = $_GET['parent'] ?? '';
+        if ($defaultParent === '') {
+            // When creating a project from within a container project (e.g. a program or a
+            // strategy), nest the new project under it by default so it's immediately
+            // associated. The parent picker still lets the user change or clear it.
+            $contextProject = $this->projectService->getProject(session('currentProject'));
+            if (is_array($contextProject) && in_array($contextProject['type'] ?? '', ['program', 'strategy'], true)) {
+                $defaultParent = (string) session('currentProject');
+            }
+        }
+
+        $values = $this->projectService->getNewProjectDefaults($defaultParent);
 
         $this->tpl->assign('menuTypes', $this->projectService->getMenuTypes());
         $this->tpl->assign('project', $values);
@@ -74,6 +85,27 @@ class NewProject extends Controller
             ? $_POST['editorId']
             : [];
 
+        // A project may only be nested under a CONTAINER (a program or a strategy) — never under
+        // another regular project. Resolve a candidate parent from the form field, then the URL
+        // ("Add Project" button), then the current project; but only keep it if that candidate is
+        // actually a program/strategy. Anything else (including a regular project) leaves the new
+        // project un-nested. (The service also validates this, since addProject is JSON-RPC reachable.)
+        $parentCandidate = $_POST['parent'] ?? '';
+        if ($parentCandidate === '' || $parentCandidate === '0') {
+            $parentCandidate = $_GET['parent'] ?? '';
+        }
+        if ($parentCandidate === '' || $parentCandidate === '0') {
+            $parentCandidate = (string) session('currentProject');
+        }
+
+        $parent = '';
+        if ($parentCandidate !== '' && $parentCandidate !== '0') {
+            $parentProject = $this->projectService->getProject((int) $parentCandidate);
+            if (is_array($parentProject) && in_array($parentProject['type'] ?? '', ['program', 'strategy'], true)) {
+                $parent = (string) $parentCandidate;
+            }
+        }
+
         $values = [
             'name' => $_POST['name'] ?? '',
             'details' => $_POST['details'] ?? '',
@@ -85,7 +117,7 @@ class NewProject extends Controller
             'psettings' => $_POST['globalProjectUserAccess'],
             'menuType' => $_POST['menuType'] ?? 'default',
             'type' => $_POST['type'] ?? 'project',
-            'parent' => $_POST['parent'] ?? '',
+            'parent' => $parent,
             'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
             'end' => $_POST['end'] ? format(value: $_POST['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime() : '',
         ];

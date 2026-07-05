@@ -21,15 +21,24 @@
     <x-global::forms.text-input name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" /><br />
 
     <label>{!! __('label.project') !!}</label>
-    <select name="projectId">
-        @foreach ($allAssignedprojects as $project)
-            <option value="{{ $project['id'] }}"
-                @if ((isset($currentSprint) && ($currentSprint->projectId == $project['id'] || $currentProject == $project['id'])) || (! isset($currentSprint) && $currentProject == $project['id']))
-                    selected
-                @endif
-            >{{ $tpl->escape($project['name']) }}</option>
-        @endforeach
-    </select><br />
+    @if (! empty($lockProject))
+        {{-- Program sprint: project is fixed to the owning program and cannot be reassigned. --}}
+        @php $lockedProject = $allAssignedprojects[0] ?? null; @endphp
+        <input type="hidden" name="projectId" value="{{ $lockedProject['id'] ?? $currentProject }}" />
+        <select disabled>
+            <option selected>{{ $tpl->escape($lockedProject['name'] ?? '') }}</option>
+        </select><br />
+    @else
+        <select name="projectId">
+            @foreach ($allAssignedprojects as $project)
+                <option value="{{ $project['id'] }}"
+                    @if ((isset($currentSprint) && ($currentSprint->projectId == $project['id'] || $currentProject == $project['id'])) || (! isset($currentSprint) && $currentProject == $project['id']))
+                        selected
+                    @endif
+                >{{ $tpl->escape($project['name']) }}</option>
+            @endforeach
+        </select><br />
+    @endif
 
     <br /><br />
     <p>{!! __('label.sprint_dates') !!}</p><br/>

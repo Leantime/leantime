@@ -8,6 +8,10 @@
     $allTicketGroups = $allTickets;
     $reopenState = session()->get('quickadd_reopen', null);
     $currentGroupBy = $searchCriteria['groupBy'] ?? 'all';
+    // Program (cross-project) board: columns are semantic status types and tickets are placed
+    // by their computed statusType (resolved from each project) instead of the raw status key.
+    $programBoard = $programBoard ?? false;
+    $placementField = $programBoard ? 'statusType' : 'status';
 @endphp
 
 {!! $tpl->displayNotification() !!}
@@ -58,7 +62,7 @@
         @foreach ($allKanbanColumns as $key => $statusRow)
             <div class="column">
                 <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
-                    @if ($login::userIsAtLeast($roles::$manager))
+                    @if ($login::userIsAtLeast($roles::$manager) && ! $programBoard)
                         <div class="inlineDropDownContainer" style="float:right;">
                             <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
@@ -131,7 +135,7 @@
                                 $hasTickets = false;
                                 if (isset($allTickets)) {
                                     foreach ($allTickets as $ticket) {
-                                        if (isset($ticket['status']) && $ticket['status'] == $key) {
+                                        if (isset($ticket[$placementField]) && $ticket[$placementField] == $key) {
                                             $hasTickets = true;
                                             break;
                                         }
@@ -155,10 +159,12 @@
                                         'swimlaneKey' => $group['value'] ?? $group['id'] ?? null,
                                         'isEmpty' => isset($emptyColumns[$key]),
                                         'currentGroupBy' => $searchCriteria['groupBy'] ?? null,
+                                        'programBoard' => $programBoard,
+                                        'availableProjects' => $availableProjects ?? null,
                                     ])
 
                                     @foreach ($allTickets as $row)
-                                        @if ($row['status'] == $key)
+                                        @if (($row[$placementField] ?? null) == $key)
                                         <div class="ticketBox moveable container priority-border-{{ $row['priority'] }}" id="ticket_{{ $row['id'] }}">
 
                                             <div class="row" >
@@ -360,8 +366,14 @@
         leantime.ticketsController.initPriorityDropdown();
 
 
-        var ticketStatusList = [@foreach ($allTicketStates as $key => $statusRow)'{{ $key }}',@endforeach];
-        leantime.ticketsController.initTicketKanban(ticketStatusList);
+        @if ($programBoard)
+            {{-- Program board: columns are status types; drag persists per-project via the plugin. --}}
+            var ticketStatusList = [@foreach ($allKanbanColumns as $key => $statusRow)'{{ $key }}',@endforeach];
+            leantime.pgmProBoard.initProgramKanban(ticketStatusList);
+        @else
+            var ticketStatusList = [@foreach ($allTicketStates as $key => $statusRow)'{{ $key }}',@endforeach];
+            leantime.ticketsController.initTicketKanban(ticketStatusList);
+        @endif
 
     @else
         leantime.authController.makeInputReadonly(".maincontentinner");

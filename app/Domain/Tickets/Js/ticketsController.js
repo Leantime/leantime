@@ -1117,6 +1117,7 @@ leantime.ticketsController = (function () {
             var types = jQuery("#typeSelect").val();
             var priority = jQuery("#prioritySelect").val();
             var status = jQuery("#statusSelect").val();
+            var projects = jQuery("#projectsSelect").val();
             var sort = jQuery("#sortBySelect").val();
             var groupBy = jQuery("input[name='groupBy']:checked").val();
             var showTasks = jQuery("input[name='showTasks']:checked").val();
@@ -1138,6 +1139,8 @@ leantime.ticketsController = (function () {
                 query = query + "&priority=" + priority;}
             if (status != "" && status != undefined) {
                 query = query + "&status=" + status;}
+            if (projects != "" && projects != undefined) {
+                query = query + "&projects=" + projects;}
             if (sort != "" && sort != undefined) {
                 query = query + "&sort=" + sort;}
             if (groupBy != "" && groupBy != undefined) {
@@ -1162,6 +1165,7 @@ leantime.ticketsController = (function () {
             var types = jQuery("#typeSelect").val();
             var priority = jQuery("#prioritySelect").val();
             var status = jQuery("#statusSelect").val();
+            var projects = jQuery("#projectsSelect").val();
             var sort = jQuery("#sortBySelect").val();
             var groupBy = jQuery("input[name='groupBy']:checked").val();
 
@@ -1182,6 +1186,8 @@ leantime.ticketsController = (function () {
             query = query + "&priority=" + priority;}
         if (status != "" && status != undefined) {
             query = query + "&status=" + status;}
+        if (projects != "" && projects != undefined) {
+            query = query + "&projects=" + projects;}
         if (sort != "" && sort != undefined) {
             query = query + "&sort=" + sort;}
         if (groupBy != "" && groupBy != undefined) {
