@@ -2,12 +2,9 @@
 
 namespace Leantime\Domain\Comments\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Services\Projects;
@@ -16,8 +13,6 @@ use Leantime\Domain\Tickets\Services\Tickets;
 /**
  * Add a new comment to a specific entity.
  */
-#[Name('addComment')]
-#[Description('Adds a new comment to a specific entity. When adding a comment to a project, you can include a status indicator (green, yellow, red) to create a project status update.')]
 class AddCommentTool extends Tool
 {
     public function __construct(
@@ -27,52 +22,54 @@ class AddCommentTool extends Tool
         private Goalcanvas $goalcanvasService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'text' => $schema->string()
-                ->description('Comment text.')
-                ->required(),
-            'module' => $schema->string()
-                ->description('Module type (ticket, project, goal, etc.).')
-                ->required(),
-            'entityId' => $schema->integer()
-                ->description('ID of the entity to add comment to.')
-                ->required(),
-            'status' => $schema->string()
-                ->description('Status indicator for project updates (green, yellow, red). Only used for project comments.'),
-        ];
+        return $schema
+            ->string('text')->description('Comment text.')
+            ->required()
+            ->string('module')->description('Module type (ticket, project, goal, etc.).')
+            ->required()
+            ->integer('entityId')->description('ID of the entity to add comment to.')
+            ->required()
+            ->string('status')->description('Status indicator for project updates (green, yellow, red). Only used for project comments.');
+    }
+
+    public function name(): string
+    {
+        return 'addComment';
+    }
+
+    public function description(): string
+    {
+        return 'Adds a new comment to a specific entity.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $module = $request->string('module');
-        $entityId = $request->integer('entityId');
+        $module = $arguments['module'];
+        $entityId = (int) ($arguments['entityId'] ?? 0);
 
         $entity = $this->getEntity($module, $entityId);
         if (! $entity) {
-            return Response::error("Entity not found: {$module} ID {$entityId}");
+            return ToolResult::error("Entity not found: {$module} ID {$entityId}");
         }
 
         $values = [
-            'text' => $request->string('text'),
+            'text' => $arguments['text'],
             'father' => 0,
-            'status' => $request->string('status', ''),
+            'status' => ($arguments['status'] ?? ''),
         ];
 
         $result = $this->commentsService->addComment($values, $module, $entityId, $entity);
 
         if ($result) {
-            return Response::text("Comment added successfully to {$module} #{$entityId}");
+            return ToolResult::text("Comment added successfully to {$module} #{$entityId}");
         }
 
-        return Response::error('Failed to add comment. Please check the provided information.');
+        return ToolResult::error('Failed to add comment. Please check the provided information.');
     }
 
     /**

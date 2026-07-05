@@ -3,45 +3,44 @@
 namespace Leantime\Domain\Calendar\Tools;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Calendar\Services\Calendar;
 
 /**
  * Add multiple calendar events in a single operation.
  */
-#[Name('bulkAddEvents')]
-#[Description('Adds multiple calendar events in a single operation. All events must be for the same day to prevent scheduling across multiple days. Each event must be at least 15 minutes long. Expects an array of event data where each element contains eventTitle, dateFrom, dateTo, and optional allDay flag.')]
 class BulkAddCalendarEventsTool extends Tool
 {
     public function __construct(
         private Calendar $calendarService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'events' => $schema->array()
-                ->description('Array of event data. Each element should contain eventTitle, dateFrom, dateTo, and optional allDay.')
-                ->required(),
-        ];
+        return $schema
+            ->raw('events', ['type' => 'array', 'description' => 'Array of event data. Each element should contain eventTitle, dateFrom, dateTo, and optional allDay.'])->required();
+    }
+
+    public function name(): string
+    {
+        return 'bulkAddEvents';
+    }
+
+    public function description(): string
+    {
+        return 'Adds multiple calendar events in a single operation.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $events = $request->array('events');
+        $events = ($arguments['events'] ?? []);
         $results = [];
         $successCount = 0;
         $failureCount = 0;
@@ -70,7 +69,7 @@ class BulkAddCalendarEventsTool extends Tool
         }
 
         if (! empty($validationErrors)) {
-            return Response::error("Validation failed:\n- ".implode("\n- ", $validationErrors));
+            return ToolResult::error("Validation failed:\n- ".implode("\n- ", $validationErrors));
         }
 
         foreach ($events as $eventData) {
@@ -109,7 +108,7 @@ class BulkAddCalendarEventsTool extends Tool
             }
         }
 
-        return Response::text(
+        return ToolResult::text(
             "Bulk event creation completed. Success: {$successCount}, Failed: {$failureCount}\n\n".
             Str::toMarkdown($results)
         );

@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Get a single milestone by ID.
  */
-#[Name('getMilestone')]
-#[Description('Gets one individual milestone by milestone ID. If the user is not allowed to see the task, false is returned. All dates are returned in the format YYYY-MM-DD hh:mm:ss in the UTC timezone.')]
 #[IsReadOnly]
 class GetMilestoneTool extends Tool
 {
@@ -25,29 +20,42 @@ class GetMilestoneTool extends Tool
     ) {}
 
     /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     * Get the tool name.
      */
-    public function schema(JsonSchema $schema): array
+    public function name(): string
     {
-        return [
-            'id' => $schema->integer()
-                ->description('ID of the milestone to retrieve.')
-                ->required(),
-        ];
+        return 'getMilestone';
+    }
+
+    /**
+     * Get the tool description.
+     */
+    public function description(): string
+    {
+        return 'Gets one individual milestone by milestone id. If the user is not allowed to see the task, false is returned. All dates are returned in the format YYYY-MM-DD hh:mm:ss in the UTC timezone';
+    }
+
+    /**
+     * Define the tool input schema.
+     */
+    public function schema(ToolInputSchema $schema): ToolInputSchema
+    {
+        return $schema
+            ->integer('id')->description('ID of the milestone to retrieve.')->required();
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $id = $request->integer('id');
+        $id = (int) ($arguments['id'] ?? 0);
         $ticket = $this->ticketsService->getTicket($id);
 
         if (! $ticket) {
-            return Response::error("Milestone with ID {$id} not found.");
+            return ToolResult::error("Milestone with ID {$id} not found.");
         }
 
-        return Response::text(Str::toMarkdown($ticket)."\n");
+        return ToolResult::text(Str::toMarkdown($ticket)."\n");
     }
 }

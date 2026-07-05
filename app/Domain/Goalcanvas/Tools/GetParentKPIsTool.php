@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Goalcanvas\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 /**
  * Get all available parent KPIs (goals) that can be linked to other goals.
  */
-#[Name('getParentKPIs')]
-#[Description('Gets all available parent KPIs (goals) that can be linked to other goals.')]
 #[IsReadOnly]
 class GetParentKPIsTool extends Tool
 {
@@ -24,28 +19,33 @@ class GetParentKPIsTool extends Tool
         private Goalcanvas $goalcanvasService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('Project ID to get parent KPIs for.')
-                ->required(),
-        ];
+        return $schema
+            ->integer('projectId')->description('Project ID to get parent KPIs for.')
+            ->required();
+    }
+
+    public function name(): string
+    {
+        return 'getParentKPIs';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all available parent KPIs that can be linked to other goals.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->integer('projectId');
+        $projectId = (int) ($arguments['projectId'] ?? 0);
         $parentKPIs = $this->goalcanvasService->getParentKPIs($projectId);
 
         if (empty($parentKPIs)) {
-            return Response::text("No parent KPIs found for project ID: {$projectId}");
+            return ToolResult::text("No parent KPIs found for project ID: {$projectId}");
         }
 
         $response = "## Available Parent KPIs for Project ID: {$projectId}\n";
@@ -59,6 +59,6 @@ class GetParentKPIsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

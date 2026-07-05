@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Goalcanvas\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 /**
  * Get all goals associated with a specific milestone.
  */
-#[Name('getGoalsByMilestone')]
-#[Description('Gets all goals associated with a specific milestone.')]
 #[IsReadOnly]
 class GetGoalsByMilestoneTool extends Tool
 {
@@ -24,28 +19,33 @@ class GetGoalsByMilestoneTool extends Tool
         private Goalcanvas $goalcanvasService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'milestoneId' => $schema->integer()
-                ->description('ID of the milestone to get goals for.')
-                ->required(),
-        ];
+        return $schema
+            ->integer('milestoneId')->description('ID of the milestone to get goals for.')
+            ->required();
+    }
+
+    public function name(): string
+    {
+        return 'getGoalsByMilestone';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all goals associated with a specific milestone.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $milestoneId = $request->integer('milestoneId');
+        $milestoneId = (int) ($arguments['milestoneId'] ?? 0);
         $goals = $this->goalcanvasService->getGoalsByMilestone($milestoneId);
 
         if (empty($goals)) {
-            return Response::text("No goals found for milestone ID: {$milestoneId}");
+            return ToolResult::text("No goals found for milestone ID: {$milestoneId}");
         }
 
         $response = "## Goals for Milestone ID: {$milestoneId}\n";
@@ -66,6 +66,6 @@ class GetGoalsByMilestoneTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

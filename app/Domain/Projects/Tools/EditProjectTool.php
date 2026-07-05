@@ -2,20 +2,15 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Modulemanager\Services\Modulemanager;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Updates an existing project with the specified details.
  */
-#[Name('editProject')]
-#[Description('Updates an existing project with the specified details.')]
 class EditProjectTool extends Tool
 {
     public function __construct(
@@ -23,98 +18,95 @@ class EditProjectTool extends Tool
         private Modulemanager $moduleManager,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'id' => $schema->integer()
-                ->description('ID of the project to update.')
-                ->required(),
-            'name' => $schema->string()
-                ->description('Name of the project.'),
-            'details' => $schema->string()
-                ->description('Project description.'),
-            'clientId' => $schema->integer()
-                ->description('ID of the client for this project.'),
-            'start' => $schema->string()
-                ->description('Start date in ISO8601 format.'),
-            'end' => $schema->string()
-                ->description('End date in ISO8601 format.'),
-            'hourBudget' => $schema->integer()
-                ->description('Hour budget for the project.'),
-            'state' => $schema->integer()
-                ->description('Project state (0=open, 1=closed).'),
-            'parent' => $schema->integer()
-                ->description('ID of the parent program or plan (only works if PgmPro plugin is active).'),
-        ];
+        return $schema
+            ->integer('id')->description('ID of the project to update.')
+            ->required()
+            ->string('name')->description('Name of the project.')
+            ->string('details')->description('Project description.')
+            ->integer('clientId')->description('ID of the client for this project.')
+            ->string('start')->description('Start date in ISO8601 format.')
+            ->string('end')->description('End date in ISO8601 format.')
+            ->integer('hourBudget')->description('Hour budget for the project.')
+            ->integer('state')->description('Project state (0=open, 1=closed).')
+            ->integer('parent')->description('ID of the parent program or plan (only works if PgmPro plugin is active).');
+    }
+
+    public function name(): string
+    {
+        return 'editProject';
+    }
+
+    public function description(): string
+    {
+        return 'Updates an existing project with the specified details.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $id = $request->integer('id');
+        $id = (int) ($arguments['id'] ?? 0);
 
         // Get current project to ensure it exists
         $currentProject = $this->projectService->getProject($id);
         if (! $currentProject) {
-            return Response::error('Project not found.');
+            return ToolResult::error('Project not found.');
         }
 
         $values = [];
 
         // Only include parameters that were actually provided
-        $name = $request->get('name');
+        $name = ($arguments['name'] ?? null);
         if ($name !== null) {
             $values['name'] = $name;
         }
 
-        $details = $request->get('details');
+        $details = ($arguments['details'] ?? null);
         if ($details !== null) {
             $values['details'] = $details;
         }
 
-        $clientId = $request->get('clientId');
+        $clientId = ($arguments['clientId'] ?? null);
         if ($clientId !== null) {
             $values['clientId'] = $clientId;
         }
 
-        $start = $request->get('start');
+        $start = ($arguments['start'] ?? null);
         if ($start !== null) {
             $values['start'] = $start;
         }
 
-        $end = $request->get('end');
+        $end = ($arguments['end'] ?? null);
         if ($end !== null) {
             $values['end'] = $end;
         }
 
-        $hourBudget = $request->get('hourBudget');
+        $hourBudget = ($arguments['hourBudget'] ?? null);
         if ($hourBudget !== null) {
             $values['hourBudget'] = $hourBudget;
         }
 
-        $state = $request->get('state');
+        $state = ($arguments['state'] ?? null);
         if ($state !== null) {
             $values['state'] = $state;
         }
 
         // Check if PgmPro plugin is active and parent is specified
-        $parent = $request->get('parent');
+        $parent = ($arguments['parent'] ?? null);
         if ($parent !== null && $this->moduleManager->isModuleAvailable('pgmPro')) {
             $values['parent'] = $parent;
         }
 
         // If no values were provided, return early
         if (empty($values)) {
-            return Response::text('No changes provided for the project.');
+            return ToolResult::text('No changes provided for the project.');
         }
 
         $this->projectService->editProject($values, $id);
 
-        return Response::text('Project updated successfully.');
+        return ToolResult::text('Project updated successfully.');
     }
 }

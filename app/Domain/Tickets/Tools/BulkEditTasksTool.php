@@ -2,20 +2,15 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Update multiple tasks in a single operation.
  */
-#[Name('bulkEditTasks')]
-#[Description('Updates multiple tasks in one operation. Each element must have id and fields to update. Fields: headline, description, projectId, editorId, userId, dateToFinish, status, editFrom, editTo, milestoneId.')]
 class BulkEditTasksTool extends Tool
 {
     public function __construct(
@@ -23,23 +18,36 @@ class BulkEditTasksTool extends Tool
     ) {}
 
     /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     * Get the tool name.
      */
-    public function schema(JsonSchema $schema): array
+    public function name(): string
     {
-        return [
-            'updates' => $schema->array()
-                ->description('Array of update objects. Each must have id and the fields to update.')
-                ->required(),
-        ];
+        return 'bulkEditTasks';
+    }
+
+    /**
+     * Get the tool description.
+     */
+    public function description(): string
+    {
+        return 'Updates multiple tasks in a single operation. Expects an array where each element contains ticketId and the fields to update. Field names that can be updated are: headline, description, projectId, editorId, userId, dateToFinish, status, editFrom, editTo, milestoneId';
+    }
+
+    /**
+     * Define the tool input schema.
+     */
+    public function schema(ToolInputSchema $schema): ToolInputSchema
+    {
+        return $schema
+            ->raw('updates', ['type' => 'array', 'description' => 'Array of update objects. Each must have id and the fields to update.'])->required();
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $updates = $request->array('updates');
+        $updates = ($arguments['updates'] ?? []);
         $results = [];
         $successCount = 0;
         $failureCount = 0;
@@ -64,7 +72,7 @@ class BulkEditTasksTool extends Tool
             }
         }
 
-        return Response::text(
+        return ToolResult::text(
             "Bulk task update completed. Success: {$successCount}, Failed: {$failureCount}\n\n".
             Str::toMarkdown($results)
         );

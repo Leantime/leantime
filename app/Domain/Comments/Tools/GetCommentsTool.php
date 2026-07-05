@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Comments\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 
 /**
  * Get all comments for a specific entity.
  */
-#[Name('getComments')]
-#[Description('Gets all comments for a specific entity (ticket, project, goal, etc.). When comments are attached to a project, they serve as status updates with red/yellow/green indicators.')]
 #[IsReadOnly]
 class GetCommentsTool extends Tool
 {
@@ -24,37 +19,39 @@ class GetCommentsTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'module' => $schema->string()
-                ->description('Module type (ticket, project, goal, etc.).')
-                ->required(),
-            'entityId' => $schema->integer()
-                ->description('ID of the entity to get comments for.')
-                ->required(),
-            'commentOrder' => $schema->integer()
-                ->description('Order of comments (0 = newest first, 1 = oldest first).')
-                ->default(0),
-        ];
+        return $schema
+            ->string('module')->description('Module type (ticket, project, goal, etc.).')
+            ->required()
+            ->integer('entityId')->description('ID of the entity to get comments for.')
+            ->required()
+            ->integer('commentOrder')->description('Order of comments (0 = newest first, 1 = oldest first).');
+    }
+
+    public function name(): string
+    {
+        return 'getComments';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all comments for a specific entity.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $module = $request->string('module');
-        $entityId = $request->integer('entityId');
-        $commentOrder = $request->integer('commentOrder', 0);
+        $module = $arguments['module'];
+        $entityId = (int) ($arguments['entityId'] ?? 0);
+        $commentOrder = (int) ($arguments['commentOrder'] ?? 0);
 
         $comments = $this->commentsService->getComments($module, $entityId, $commentOrder);
 
         if (empty($comments)) {
-            return Response::text("No comments found for {$module} ID: {$entityId}");
+            return ToolResult::text("No comments found for {$module} ID: {$entityId}");
         }
 
         $response = "## Comments for {$module} #{$entityId}\n";
@@ -70,6 +67,6 @@ class GetCommentsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

@@ -2,20 +2,15 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Create multiple tasks in a single operation.
  */
-#[Name('bulkAddTasks')]
-#[Description('Creates multiple tasks in one operation. Each element needs headline and projectId at minimum. Optional: description, editorId, userId, dateToFinish, status, editFrom, editTo, milestone.')]
 class BulkAddTasksTool extends Tool
 {
     public function __construct(
@@ -23,23 +18,36 @@ class BulkAddTasksTool extends Tool
     ) {}
 
     /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     * Get the tool name.
      */
-    public function schema(JsonSchema $schema): array
+    public function name(): string
     {
-        return [
-            'tasks' => $schema->array()
-                ->description('Array of task objects. Each must contain headline and projectId.')
-                ->required(),
-        ];
+        return 'bulkAddTasks';
+    }
+
+    /**
+     * Get the tool description.
+     */
+    public function description(): string
+    {
+        return 'Adds multiple task in a single operation. Expects an array of task data where each element contains the same fields as addTicket. Required fields for each ticket: headline, projectId. Optional fields: description, editorId, userId, dateToFinish, status, sprint, editFrom, editTo, milestone.';
+    }
+
+    /**
+     * Define the tool input schema.
+     */
+    public function schema(ToolInputSchema $schema): ToolInputSchema
+    {
+        return $schema
+            ->raw('tasks', ['type' => 'array', 'description' => 'Array of task objects. Each must contain headline and projectId.'])->required();
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $tasks = $request->array('tasks');
+        $tasks = ($arguments['tasks'] ?? []);
         $results = [];
         $successCount = 0;
         $failureCount = 0;
@@ -76,7 +84,7 @@ class BulkAddTasksTool extends Tool
             }
         }
 
-        return Response::text(
+        return ToolResult::text(
             "Bulk task creation completed. Success: {$successCount}, Failed: {$failureCount}\n\n".
             Str::toMarkdown($results)
         );

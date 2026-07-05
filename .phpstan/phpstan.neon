@@ -13,8 +13,10 @@ parameters:
         - ../app
         - ../.phpstan/Rules
     excludePaths:
-        - ../app/Plugins/*/vendor/*
-        - ../app/Plugins/GoogleCalendar/*
+        - ../app/Plugins/*
+        # MCP tool classes extend Laravel\Mcp\Server\Tool which is not installed
+        # until `composer require laravel/mcp`. Remove this exclusion after install.
+        - ../app/Domain/*/Tools/*
     scanDirectories:
         - ../vendor
         - ../config

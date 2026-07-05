@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Comments\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 
 /**
  * Get all project status updates (comments) for a specific project.
  */
-#[Name('getAllProjectComments')]
-#[Description('Gets all project status updates (comments) for a specific project. These are the red/yellow/green status indicators shown on the dashboard.')]
 #[IsReadOnly]
 class GetAllProjectCommentsTool extends Tool
 {
@@ -24,28 +19,33 @@ class GetAllProjectCommentsTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('Project ID to get status updates for.')
-                ->required(),
-        ];
+        return $schema
+            ->integer('projectId')->description('Project ID to get status updates for.')
+            ->required();
+    }
+
+    public function name(): string
+    {
+        return 'getAllProjectComments';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all project status updates for a specific project.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->integer('projectId');
+        $projectId = (int) ($arguments['projectId'] ?? 0);
         $comments = $this->commentsService->getComments('project', $projectId);
 
         if (empty($comments)) {
-            return Response::text("No status updates found for project ID: {$projectId}");
+            return ToolResult::text("No status updates found for project ID: {$projectId}");
         }
 
         $response = "## Project Status Updates\n";
@@ -67,6 +67,6 @@ class GetAllProjectCommentsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

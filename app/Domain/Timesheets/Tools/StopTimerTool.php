@@ -2,42 +2,42 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
  * Stop a running timer.
  */
-#[Name('stopTimer')]
-#[Description('Stop a running timer and complete any associated timesheet entries.')]
 class StopTimerTool extends Tool
 {
     public function __construct(
         private Timesheets $timesheetsService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'ticketId' => $schema->integer()
-                ->description('Ticket ID to stop the timer for. Omit to stop the active timer.'),
-        ];
+        return $schema
+            ->integer('ticketId')->description('Ticket ID to stop the timer for. Omit to stop the active timer.');
+    }
+
+    public function name(): string
+    {
+        return 'stopTimer';
+    }
+
+    public function description(): string
+    {
+        return 'Stop a running timer.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $ticketId = $request->get('ticketId');
+        $ticketId = ($arguments['ticketId'] ?? null);
 
         if ($ticketId !== null && (int) $ticketId > 0) {
             $this->timesheetsService->punchOut((int) $ticketId);
@@ -45,6 +45,6 @@ class StopTimerTool extends Tool
             $this->timesheetsService->stopActiveTimer();
         }
 
-        return Response::text('Timer stopped successfully.');
+        return ToolResult::text('Timer stopped successfully.');
     }
 }

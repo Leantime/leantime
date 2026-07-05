@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Gets all users assigned to a specific project.
  */
-#[Name('getUsersAssignedToProject')]
-#[Description('Gets all users assigned to a specific project.')]
 #[IsReadOnly]
 class GetUsersAssignedToProjectTool extends Tool
 {
@@ -24,32 +19,36 @@ class GetUsersAssignedToProjectTool extends Tool
         private Projects $projectService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('ID of the project to get users for.')
-                ->required(),
-            'teamOnly' => $schema->boolean()
-                ->description('Whether to only include direct team members.'),
-        ];
+        return $schema
+            ->integer('projectId')->description('ID of the project to get users for.')
+            ->required()
+            ->boolean('teamOnly')->description('Whether to only include direct team members.');
+    }
+
+    public function name(): string
+    {
+        return 'getUsersAssignedToProject';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all users assigned to a specific project.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->integer('projectId');
+        $projectId = (int) ($arguments['projectId'] ?? 0);
         $teamOnly = $request->get('teamOnly', false);
 
         $users = $this->projectService->getUsersAssignedToProject($projectId, $teamOnly ?? false);
 
         if (empty($users)) {
-            return Response::text('No users assigned to this project.');
+            return ToolResult::text('No users assigned to this project.');
         }
 
         $response = "## Users Assigned to Project\n";
@@ -64,6 +63,6 @@ class GetUsersAssignedToProjectTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

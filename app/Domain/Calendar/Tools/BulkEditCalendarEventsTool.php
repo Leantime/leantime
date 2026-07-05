@@ -2,44 +2,43 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Calendar\Services\Calendar;
 
 /**
  * Update multiple calendar events in a single operation.
  */
-#[Name('bulkEditEvents')]
-#[Description('Updates multiple calendar events in a single operation. All events must maintain a minimum duration of 15 minutes and remain on the same day. Expects an array where each element contains id and the fields to update (eventTitle, dateFrom, dateTo, allDay).')]
 class BulkEditCalendarEventsTool extends Tool
 {
     public function __construct(
         private Calendar $calendarService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'updates' => $schema->array()
-                ->description('Array of updates. Each element must have id and the fields to update.')
-                ->required(),
-        ];
+        return $schema
+            ->raw('updates', ['type' => 'array', 'description' => 'Array of updates. Each element must have id and the fields to update.'])->required();
+    }
+
+    public function name(): string
+    {
+        return 'bulkEditEvents';
+    }
+
+    public function description(): string
+    {
+        return 'Updates multiple calendar events in a single operation.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $updates = $request->array('updates');
+        $updates = ($arguments['updates'] ?? []);
         $results = [];
         $successCount = 0;
         $failureCount = 0;
@@ -101,7 +100,7 @@ class BulkEditCalendarEventsTool extends Tool
             }
         }
 
-        return Response::text(
+        return ToolResult::text(
             "Bulk event update completed. Success: {$successCount}, Failed: {$failureCount}\n\n".
             Str::toMarkdown($results)
         );

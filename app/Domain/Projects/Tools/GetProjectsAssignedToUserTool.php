@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Gets all projects assigned to a specific user.
  */
-#[Name('getProjectsAssignedToUser')]
-#[Description('Gets all projects assigned to a specific user. This only includes projects where the user is directly assigned.')]
 #[IsReadOnly]
 class GetProjectsAssignedToUserTool extends Tool
 {
@@ -24,33 +19,35 @@ class GetProjectsAssignedToUserTool extends Tool
         private Projects $projectService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'userId' => $schema->integer()
-                ->description('User ID to get projects for.')
-                ->required(),
-            'projectStatus' => $schema->string()
-                ->description('Filter by project status (open, closed, all).'),
-            'clientId' => $schema->integer()
-                ->description('Filter by client ID.'),
-            'projectTypes' => $schema->string()
-                ->description('Filter by project types (comma-separated: project, program, etc.). Use "all" for all project types.'),
-        ];
+        return $schema
+            ->integer('userId')->description('User ID to get projects for.')
+            ->required()
+            ->string('projectStatus')->description('Filter by project status (open, closed, all).')
+            ->integer('clientId')->description('Filter by client ID.')
+            ->string('projectTypes')->description('Filter by project types (comma-separated: project, program, etc.). Use "all" for all project types.');
+    }
+
+    public function name(): string
+    {
+        return 'getProjectsAssignedToUser';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all projects assigned to a specific user.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $userId = $request->integer('userId');
-        $projectStatus = $request->string('projectStatus', 'open');
-        $clientId = $request->get('clientId');
-        $projectTypes = $request->string('projectTypes', 'all');
+        $userId = (int) ($arguments['userId'] ?? 0);
+        $projectStatus = ($arguments['projectStatus'] ?? 'open');
+        $clientId = ($arguments['clientId'] ?? null);
+        $projectTypes = ($arguments['projectTypes'] ?? 'all');
 
         if ($projectTypes === null) {
             $projectTypes = 'all';
@@ -77,9 +74,9 @@ class GetProjectsAssignedToUserTool extends Tool
         }
 
         if (empty($projects)) {
-            return Response::text('No projects found.');
+            return ToolResult::text('No projects found.');
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

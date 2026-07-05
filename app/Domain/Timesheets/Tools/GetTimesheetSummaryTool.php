@@ -2,20 +2,15 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
  * Get a summary of logged hours grouped by different criteria.
  */
-#[Name('getTimesheetSummary')]
-#[Description('Gets a summary of logged hours for the current user or a project, grouped by different criteria.')]
 #[IsReadOnly]
 class GetTimesheetSummaryTool extends Tool
 {
@@ -23,46 +18,47 @@ class GetTimesheetSummaryTool extends Tool
         private Timesheets $timesheetsService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'dateFrom' => $schema->string()
-                ->description('Start date in ISO8601 format.')
-                ->required(),
-            'dateTo' => $schema->string()
-                ->description('End date in ISO8601 format.')
-                ->required(),
-            'groupBy' => $schema->string()
-                ->enum(['project', 'user', 'day', 'week', 'ticket', 'kind'])
-                ->description('How to group the data (project, user, day, week, ticket, kind).')
-                ->required(),
-            'projectId' => $schema->integer()
-                ->description('Project ID to filter by (optional).'),
-            'userId' => $schema->integer()
-                ->description('User ID to filter by (optional, managers only).'),
-        ];
+        return $schema
+            ->string('dateFrom')->description('Start date in ISO8601 format.')
+            ->required()
+            ->string('dateTo')->description('End date in ISO8601 format.')
+            ->required()
+            ->string('groupBy')
+            ->description('How to group the data (project, user, day, week, ticket, kind).')
+            ->required()
+            ->integer('projectId')->description('Project ID to filter by (optional).')
+            ->integer('userId')->description('User ID to filter by (optional, managers only).');
+    }
+
+    public function name(): string
+    {
+        return 'getTimesheetSummary';
+    }
+
+    public function description(): string
+    {
+        return 'Gets a summary of logged hours grouped by different criteria.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
         $currentUserId = session('userdata.id');
         $userRole = session('userdata.role');
-        $userId = $request->get('userId');
+        $userId = ($arguments['userId'] ?? null);
 
         if ($userId !== null && $userId !== $currentUserId && ! in_array($userRole, ['admin', 'manager'])) {
-            return Response::error("You don't have permission to view other users' timesheet data.");
+            return ToolResult::error("You don't have permission to view other users' timesheet data.");
         }
 
-        $fromDate = dtHelper()->parseUserDateTime($request->string('dateFrom'));
-        $toDate = dtHelper()->parseUserDateTime($request->string('dateTo'));
-        $groupBy = $request->string('groupBy');
-        $projectId = $request->get('projectId');
+        $fromDate = dtHelper()->parseUserDateTime($arguments['dateFrom']);
+        $toDate = dtHelper()->parseUserDateTime($arguments['dateTo']);
+        $groupBy = $arguments['groupBy'];
+        $projectId = ($arguments['projectId'] ?? null);
         $targetUserId = $userId ?? $currentUserId;
 
         $timesheets = $this->timesheetsService->getAll(
@@ -74,7 +70,7 @@ class GetTimesheetSummaryTool extends Tool
         );
 
         if (empty($timesheets)) {
-            return Response::text('No timesheet entries found for the specified criteria.');
+            return ToolResult::text('No timesheet entries found for the specified criteria.');
         }
 
         $response = "## Timesheet Summary\n";
@@ -146,6 +142,6 @@ class GetTimesheetSummaryTool extends Tool
                          ' hours ('.number_format($percentage, 1)."%)\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

@@ -2,22 +2,17 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Gets detailed information about a specific project by its ID.
  */
-#[Name('getProject')]
-#[Description('Gets detailed information about a specific project by its ID and project progress. Will return a red, yellow, green indicator if one is present including the last update message.')]
 #[IsReadOnly]
 class GetProjectTool extends Tool
 {
@@ -26,28 +21,33 @@ class GetProjectTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('ID of the project to retrieve.')
-                ->required(),
-        ];
+        return $schema
+            ->integer('projectId')->description('ID of the project to retrieve.')
+            ->required();
+    }
+
+    public function name(): string
+    {
+        return 'getProject';
+    }
+
+    public function description(): string
+    {
+        return 'Gets detailed information about a specific project by its ID and project progress.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->integer('projectId');
+        $projectId = (int) ($arguments['projectId'] ?? 0);
         $project = $this->projectService->getProject($projectId);
 
         if (! $project) {
-            return Response::error('Project not found.');
+            return ToolResult::error('Project not found.');
         }
 
         $progress = $this->projectService->getProjectProgress($projectId);
@@ -81,6 +81,6 @@ class GetProjectTool extends Tool
         ];
         $response .= Str::toMarkdown($result)."\n";
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

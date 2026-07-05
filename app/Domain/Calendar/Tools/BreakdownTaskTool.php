@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Break down a task into multiple subtasks and schedule them.
  */
-#[Name('breakdownTask')]
-#[Description('Takes a task and breaks it down into multiple subtasks, scheduling them across available time slots. This is useful for large tasks that need multiple work sessions. The subtasks will be created and scheduled automatically based on the available time in the calendar.')]
 class BreakdownTaskTool extends Tool
 {
     public function __construct(
@@ -24,40 +19,41 @@ class BreakdownTaskTool extends Tool
         private Tickets $ticketService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'taskId' => $schema->integer()
-                ->description('ID of the task to break down.')
-                ->required(),
-            'subtasks' => $schema->array()
-                ->description('Array of subtask definitions. Each should have title, description, and duration (in minutes).')
-                ->required(),
-            'startDate' => $schema->string()
-                ->description('Start date to begin scheduling from in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-                ->required(),
-            'endDate' => $schema->string()
-                ->description('End date to finish scheduling by in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).'),
-        ];
+        return $schema
+            ->integer('taskId')->description('ID of the task to break down.')
+            ->required()
+            ->raw('subtasks', ['type' => 'array', 'description' => 'Array of subtask definitions. Each should have title, description, and duration (in minutes).'])->required()
+            ->string('startDate')->description('Start date to begin scheduling from in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+            ->required()
+            ->string('endDate')->description('End date to finish scheduling by in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).');
+    }
+
+    public function name(): string
+    {
+        return 'breakdownTask';
+    }
+
+    public function description(): string
+    {
+        return 'Breaks a task down into subtasks and schedules them.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $taskId = $request->integer('taskId');
-        $subtasks = $request->array('subtasks');
-        $startDate = $request->string('startDate');
-        $endDate = $request->get('endDate');
+        $taskId = (int) ($arguments['taskId'] ?? 0);
+        $subtasks = ($arguments['subtasks'] ?? []);
+        $startDate = $arguments['startDate'];
+        $endDate = ($arguments['endDate'] ?? null);
 
         $task = $this->ticketService->getTicket($taskId);
 
         if (! $task) {
-            return Response::error("Task with ID {$taskId} not found.");
+            return ToolResult::error("Task with ID {$taskId} not found.");
         }
 
         // Create subtasks
@@ -144,7 +140,7 @@ class BreakdownTaskTool extends Tool
 
                 if (! empty($scheduledTasks)) {
                     $dateStr = $currentDate->format('Y-m-d');
-                    $scheduledResults[] = "Scheduled ".count($scheduledTasks)." subtask(s) on {$dateStr}";
+                    $scheduledResults[] = 'Scheduled '.count($scheduledTasks)." subtask(s) on {$dateStr}";
                 }
 
                 $currentDate = $currentDate->addDay();
@@ -152,10 +148,10 @@ class BreakdownTaskTool extends Tool
 
             $schedulingSummary = implode("\n", $scheduledResults);
 
-            return Response::text("Task breakdown and scheduling completed.\n\nSubtask Creation:\n{$createResult}\n\nScheduling:\n{$schedulingSummary}");
+            return ToolResult::text("Task breakdown and scheduling completed.\n\nSubtask Creation:\n{$createResult}\n\nScheduling:\n{$schedulingSummary}");
         }
 
-        return Response::text("Task breakdown initiated.\n\n{$createResult}");
+        return ToolResult::text("Task breakdown initiated.\n\n{$createResult}");
     }
 
     /**

@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Searches for projects by name.
  */
-#[Name('findProject')]
-#[Description('Searches for projects by name.')]
 #[IsReadOnly]
 class FindProjectTool extends Tool
 {
@@ -24,28 +19,33 @@ class FindProjectTool extends Tool
         private Projects $projectService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'term' => $schema->string()
-                ->description('Search term to find in project names.')
-                ->required(),
-        ];
+        return $schema
+            ->string('term')->description('Search term to find in project names.')
+            ->required();
+    }
+
+    public function name(): string
+    {
+        return 'findProject';
+    }
+
+    public function description(): string
+    {
+        return 'Searches for projects by name.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $term = $request->string('term');
+        $term = $arguments['term'];
         $projects = $this->projectService->findProject($term);
 
         if (empty($projects)) {
-            return Response::text("No projects found matching: '$term'.");
+            return ToolResult::text("No projects found matching: '$term'.");
         }
 
         $response = "## Projects Matching: '$term'\n";
@@ -60,6 +60,6 @@ class FindProjectTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

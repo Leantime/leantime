@@ -2,20 +2,15 @@
 
 namespace Leantime\Domain\Comments\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Add a project status update with a red/yellow/green indicator.
  */
-#[Name('addProjectStatusUpdate')]
-#[Description('Adds a new status update to a project with a red/yellow/green indicator. This will be visible on the dashboard.')]
 class AddProjectStatusUpdateTool extends Tool
 {
     public function __construct(
@@ -23,44 +18,47 @@ class AddProjectStatusUpdateTool extends Tool
         private Projects $projectService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('Project ID to add status update to.')
-                ->required(),
-            'text' => $schema->string()
-                ->description('Status update text.')
-                ->required(),
-            'status' => $schema->string()
-                ->enum(['green', 'yellow', 'red'])
-                ->description('Status indicator (green, yellow, red).')
-                ->required(),
-        ];
+        return $schema
+            ->integer('projectId')->description('Project ID to add status update to.')
+            ->required()
+            ->string('text')->description('Status update text.')
+            ->required()
+            ->string('status')
+            ->description('Status indicator (green, yellow, red).')
+            ->required();
+    }
+
+    public function name(): string
+    {
+        return 'addProjectStatusUpdate';
+    }
+
+    public function description(): string
+    {
+        return 'Adds a new status update to a project with a red/yellow/green indicator.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->integer('projectId');
-        $status = $request->string('status');
+        $projectId = (int) ($arguments['projectId'] ?? 0);
+        $status = $arguments['status'];
 
         if (! in_array($status, ['green', 'yellow', 'red'])) {
-            return Response::error("Invalid status value. Must be 'green', 'yellow', or 'red'.");
+            return ToolResult::error("Invalid status value. Must be 'green', 'yellow', or 'red'.");
         }
 
         $project = $this->projectService->getProject($projectId);
         if (! $project) {
-            return Response::error("Project not found: ID {$projectId}");
+            return ToolResult::error("Project not found: ID {$projectId}");
         }
 
         $values = [
-            'text' => $request->string('text'),
+            'text' => $arguments['text'],
             'father' => 0,
             'status' => $status,
         ];
@@ -68,9 +66,9 @@ class AddProjectStatusUpdateTool extends Tool
         $result = $this->commentsService->addComment($values, 'project', $projectId, $project);
 
         if ($result) {
-            return Response::text("Project status update added successfully with status: {$status}");
+            return ToolResult::text("Project status update added successfully with status: {$status}");
         }
 
-        return Response::error('Failed to add status update. Please check the provided information.');
+        return ToolResult::error('Failed to add status update. Please check the provided information.');
     }
 }

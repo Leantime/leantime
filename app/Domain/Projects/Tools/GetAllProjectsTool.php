@@ -2,22 +2,17 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Gets all projects the current user has access to with comprehensive progress information.
  */
-#[Name('getAllProjects')]
-#[Description('Gets all projects the current user has access to with comprehensive progress information. This is the primary tool for project overview and should be used instead of separate getAllProjects + getProjectProgress calls. Includes project details, progress percentages, RAG status, and recent updates in a single efficient operation.')]
 #[IsReadOnly]
 class GetAllProjectsTool extends Tool
 {
@@ -26,23 +21,27 @@ class GetAllProjectsTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'showClosedProjects' => $schema->boolean()
-                ->description('Whether to include closed projects in the results.'),
-            'includeProgressDetails' => $schema->boolean()
-                ->description('Whether to include detailed progress information (RAG status, completion dates, recent comments).'),
-        ];
+        return $schema
+            ->boolean('showClosedProjects')->description('Whether to include closed projects in the results.')
+            ->boolean('includeProgressDetails')->description('Whether to include detailed progress information (RAG status, completion dates, recent comments).');
+    }
+
+    public function name(): string
+    {
+        return 'getAllProjects';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all projects the current user has access to with comprehensive progress information.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
         $showClosedProjects = $request->get('showClosedProjects', false);
         $includeProgressDetails = $request->get('includeProgressDetails', true);
@@ -52,7 +51,7 @@ class GetAllProjectsTool extends Tool
         $response = "## All Projects Overview\n";
 
         if (empty($projects)) {
-            return Response::text('No projects found.');
+            return ToolResult::text('No projects found.');
         }
 
         foreach ($projects as $project) {
@@ -101,7 +100,7 @@ class GetAllProjectsTool extends Tool
             $response .= Str::toMarkdown($result)."\n\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 
     /**

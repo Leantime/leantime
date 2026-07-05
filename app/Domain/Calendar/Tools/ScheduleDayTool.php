@@ -3,20 +3,15 @@
 namespace Leantime\Domain\Calendar\Tools;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Create a structured day plan with appropriate events and breaks.
  */
-#[Name('scheduleDay')]
-#[Description('Creates a structured day plan with appropriate events and breaks. Takes into account existing calendar items and scheduled tasks. Events will be at least 15 minutes long and will be scheduled within working hours. This is ideal for timeboxing a day. Specialist Agent may need the ability to create subtasks to break down larger tasks into multiple working sessions via the createSubtasksForTask tool.')]
 class ScheduleDayTool extends Tool
 {
     public function __construct(
@@ -24,37 +19,37 @@ class ScheduleDayTool extends Tool
         private Tickets $ticketService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'date' => $schema->string()
-                ->description('Date to schedule in user timezone in ISO8601 format (example: 2024-04-30T15:00:00-04:00).')
-                ->required(),
-            'events' => $schema->array()
-                ->description('Array of events to schedule. Each should have title, duration (in minutes), and optional priority (1-20).')
-                ->required(),
-            'workingHoursStart' => $schema->string()
-                ->description('Start of working hours in 24-hour format (HH:MM), if none available use 09:00.'),
-            'workingHoursEnd' => $schema->string()
-                ->description('End of working hours in 24-hour format (HH:MM), if none available use 18:00.'),
-            'taskIds' => $schema->array()
-                ->description('Array of task IDs to schedule instead of creating events. If provided, these tasks will be scheduled rather than creating new events.'),
-        ];
+        return $schema
+            ->string('date')->description('Date to schedule in user timezone in ISO8601 format (example: 2024-04-30T15:00:00-04:00).')
+            ->required()
+            ->raw('events', ['type' => 'array', 'description' => 'Array of events to schedule. Each should have title, duration (in minutes), and optional priority (1-20).'])->required()
+            ->string('workingHoursStart')->description('Start of working hours in 24-hour format (HH:MM), if none available use 09:00.')
+            ->string('workingHoursEnd')->description('End of working hours in 24-hour format (HH:MM), if none available use 18:00.')
+            ->raw('taskIds', ['type' => 'array', 'description' => 'Array of task IDs to schedule instead of creating events. If provided, these tasks will be scheduled rather than creating new events.']);
+    }
+
+    public function name(): string
+    {
+        return 'scheduleDay';
+    }
+
+    public function description(): string
+    {
+        return 'Creates a structured day plan with events and breaks.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $date = $request->string('date');
-        $events = $request->array('events');
-        $workingHoursStart = $request->string('workingHoursStart', '');
-        $workingHoursEnd = $request->string('workingHoursEnd', '');
-        $taskIds = $request->array('taskIds');
+        $date = $arguments['date'];
+        $events = ($arguments['events'] ?? []);
+        $workingHoursStart = ($arguments['workingHoursStart'] ?? '');
+        $workingHoursEnd = ($arguments['workingHoursEnd'] ?? '');
+        $taskIds = ($arguments['taskIds'] ?? []);
 
         $dateObj = dtHelper()->parseUserDateTime($date);
         $dateFrom = $dateObj->startOfDay();
@@ -111,7 +106,7 @@ class ScheduleDayTool extends Tool
                 }
             }
 
-            return Response::text("Day scheduling completed for {$date}.\n\nTask scheduling: Success: {$successCount}, Failed: {$failureCount}");
+            return ToolResult::text("Day scheduling completed for {$date}.\n\nTask scheduling: Success: {$successCount}, Failed: {$failureCount}");
         }
 
         $scheduledEvents = $this->scheduleItemsInSlots($availableSlots, $events);
@@ -138,7 +133,7 @@ class ScheduleDayTool extends Tool
             }
         }
 
-        return Response::text("Day scheduling completed for {$date}.\n\nEvent creation: Success: {$successCount}, Failed: {$failureCount}");
+        return ToolResult::text("Day scheduling completed for {$date}.\n\nEvent creation: Success: {$successCount}, Failed: {$failureCount}");
     }
 
     /**

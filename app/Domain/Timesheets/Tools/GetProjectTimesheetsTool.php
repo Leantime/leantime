@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
  * Get timesheet entries for an entire project.
  */
-#[Name('getProjectTimesheets')]
-#[Description('Gets timesheet entries for an entire project. This is only available to managers or admins.')]
 #[IsReadOnly]
 class GetProjectTimesheetsTool extends Tool
 {
@@ -25,41 +20,43 @@ class GetProjectTimesheetsTool extends Tool
         private Projects $projectsService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('Project ID to get timesheets for.')
-                ->required(),
-            'dateFrom' => $schema->string()
-                ->description('Start date in ISO8601 format.')
-                ->required(),
-            'dateTo' => $schema->string()
-                ->description('End date in ISO8601 format.')
-                ->required(),
-            'userId' => $schema->integer()
-                ->description('Filter by specific user ID (optional).'),
-        ];
+        return $schema
+            ->integer('projectId')->description('Project ID to get timesheets for.')
+            ->required()
+            ->string('dateFrom')->description('Start date in ISO8601 format.')
+            ->required()
+            ->string('dateTo')->description('End date in ISO8601 format.')
+            ->required()
+            ->integer('userId')->description('Filter by specific user ID (optional).');
+    }
+
+    public function name(): string
+    {
+        return 'getProjectTimesheets';
+    }
+
+    public function description(): string
+    {
+        return 'Gets timesheet entries for an entire project.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->integer('projectId');
+        $projectId = (int) ($arguments['projectId'] ?? 0);
 
         $userRole = session('userdata.role');
         if (! in_array($userRole, ['admin', 'manager']) && ! $this->projectsService->isUserProjectManager($projectId, session('userdata.id'))) {
-            return Response::error("You don't have permission to view project-wide timesheet data. Only managers and admins can access this information.");
+            return ToolResult::error("You don't have permission to view project-wide timesheet data. Only managers and admins can access this information.");
         }
 
-        $fromDate = dtHelper()->parseUserDateTime($request->string('dateFrom'));
-        $toDate = dtHelper()->parseUserDateTime($request->string('dateTo'));
-        $userId = $request->get('userId');
+        $fromDate = dtHelper()->parseUserDateTime($arguments['dateFrom']);
+        $toDate = dtHelper()->parseUserDateTime($arguments['dateTo']);
+        $userId = ($arguments['userId'] ?? null);
 
         $timesheets = $this->timesheetsService->getAll(
             dateFrom: $fromDate,
@@ -69,7 +66,7 @@ class GetProjectTimesheetsTool extends Tool
         );
 
         if (empty($timesheets)) {
-            return Response::text('No timesheet entries found for this project in the specified date range.');
+            return ToolResult::text('No timesheet entries found for this project in the specified date range.');
         }
 
         $project = $this->projectsService->getProject($projectId);
@@ -132,6 +129,6 @@ class GetProjectTimesheetsTool extends Tool
             $response .= '- **'.$kindLabel.'**: '.number_format($hours, 2)." hours\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

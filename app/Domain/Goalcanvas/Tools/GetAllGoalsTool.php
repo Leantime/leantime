@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Goalcanvas\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 /**
  * Get all goals for a project.
  */
-#[Name('getAllGoals')]
-#[Description('Gets all goals for a specific project. Goals are used to track OKRs and other measurable objectives.')]
 #[IsReadOnly]
 class GetAllGoalsTool extends Tool
 {
@@ -24,32 +19,36 @@ class GetAllGoalsTool extends Tool
         private Goalcanvas $goalcanvasService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('Project ID to get goals for.')
-                ->required(),
-            'boardId' => $schema->integer()
-                ->description('Specific goal board ID to filter by.'),
-        ];
+        return $schema
+            ->integer('projectId')->description('Project ID to get goals for.')
+            ->required()
+            ->integer('boardId')->description('Specific goal board ID to filter by.');
+    }
+
+    public function name(): string
+    {
+        return 'getAllGoals';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all goals for a specific project.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->integer('projectId');
-        $boardId = $request->get('boardId');
+        $projectId = (int) ($arguments['projectId'] ?? 0);
+        $boardId = ($arguments['boardId'] ?? null);
 
         $goals = $this->goalcanvasService->pollGoals($projectId, $boardId);
 
         if (empty($goals)) {
-            return Response::text("No goals found for project ID: {$projectId}");
+            return ToolResult::text("No goals found for project ID: {$projectId}");
         }
 
         $response = "## Goals\n";
@@ -72,6 +71,6 @@ class GetAllGoalsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

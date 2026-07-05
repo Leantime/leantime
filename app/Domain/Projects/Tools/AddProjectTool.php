@@ -2,20 +2,15 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Modulemanager\Services\Modulemanager;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Creates a new project with the specified details.
  */
-#[Name('addProject')]
-#[Description('Creates a new project with the specified details. If PgmPro plugin is active, can nest projects under a plan or program.')]
 class AddProjectTool extends Tool
 {
     public function __construct(
@@ -23,47 +18,46 @@ class AddProjectTool extends Tool
         private Modulemanager $moduleManager,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'name' => $schema->string()
-                ->description('Name of the project.')
-                ->required(),
-            'clientId' => $schema->integer()
-                ->description('ID of the client for this project.')
-                ->required(),
-            'details' => $schema->string()
-                ->description('Project description.'),
-            'start' => $schema->string()
-                ->description('Start date in ISO 8601 format.'),
-            'end' => $schema->string()
-                ->description('End date in ISO 8601 format.'),
-            'hourBudget' => $schema->integer()
-                ->description('Hour budget for the project.'),
-            'parent' => $schema->integer()
-                ->description('ID of the parent program or plan (only works if PgmPro plugin is active).'),
-        ];
+        return $schema
+            ->string('name')->description('Name of the project.')
+            ->required()
+            ->integer('clientId')->description('ID of the client for this project.')
+            ->required()
+            ->string('details')->description('Project description.')
+            ->string('start')->description('Start date in ISO 8601 format.')
+            ->string('end')->description('End date in ISO 8601 format.')
+            ->integer('hourBudget')->description('Hour budget for the project.')
+            ->integer('parent')->description('ID of the parent program or plan (only works if PgmPro plugin is active).');
+    }
+
+    public function name(): string
+    {
+        return 'addProject';
+    }
+
+    public function description(): string
+    {
+        return 'Creates a new project with the specified details.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
         $values = [
-            'name' => $request->string('name'),
-            'details' => $request->string('details', ''),
-            'clientId' => $request->integer('clientId'),
-            'hourBudget' => $request->get('hourBudget'),
-            'start' => $request->get('start'),
-            'end' => $request->get('end'),
+            'name' => $arguments['name'],
+            'details' => ($arguments['details'] ?? ''),
+            'clientId' => (int) ($arguments['clientId'] ?? 0),
+            'hourBudget' => ($arguments['hourBudget'] ?? null),
+            'start' => ($arguments['start'] ?? null),
+            'end' => ($arguments['end'] ?? null),
         ];
 
         // Check if PgmPro plugin is active and parent is specified
-        $parent = $request->get('parent');
+        $parent = ($arguments['parent'] ?? null);
         if ($parent && $this->moduleManager->isModuleAvailable('pgmPro')) {
             $values['parent'] = $parent;
         }
@@ -71,9 +65,9 @@ class AddProjectTool extends Tool
         $projectId = $this->projectService->addProject($values);
 
         if ($projectId) {
-            return Response::text("Project created successfully with ID: $projectId");
+            return ToolResult::text("Project created successfully with ID: $projectId");
         }
 
-        return Response::error('Failed to create project. Please check the provided information.');
+        return ToolResult::error('Failed to create project. Please check the provided information.');
     }
 }

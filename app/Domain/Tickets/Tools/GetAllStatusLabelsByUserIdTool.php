@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Get status labels across all projects for a user.
  */
-#[Name('getAllStatusLabelsByUserId')]
-#[Description('Get status labels across all projects for a user. Returns human-readable status information grouped by project.')]
 #[IsReadOnly]
 class GetAllStatusLabelsByUserIdTool extends Tool
 {
@@ -25,23 +20,36 @@ class GetAllStatusLabelsByUserIdTool extends Tool
     ) {}
 
     /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     * Get the tool name.
      */
-    public function schema(JsonSchema $schema): array
+    public function name(): string
     {
-        return [
-            'userId' => $schema->integer()
-                ->description('User ID to get status labels for.')
-                ->required(),
-        ];
+        return 'getAllStatusLabelsByUserId';
+    }
+
+    /**
+     * Get the tool description.
+     */
+    public function description(): string
+    {
+        return 'Get the status labels available for a user across multiple projects This can help get the statuses in a human readable format for a given project.';
+    }
+
+    /**
+     * Define the tool input schema.
+     */
+    public function schema(ToolInputSchema $schema): ToolInputSchema
+    {
+        return $schema
+            ->integer('userId')->description('User ID to get status labels for.')->required();
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $userId = $request->integer('userId');
+        $userId = (int) ($arguments['userId'] ?? 0);
         if ($userId === 0) {
             $userId = session('userdata.id');
         }
@@ -63,6 +71,6 @@ class GetAllStatusLabelsByUserIdTool extends Tool
             }
         }
 
-        return Response::text($statusAIString);
+        return ToolResult::text($statusAIString);
     }
 }

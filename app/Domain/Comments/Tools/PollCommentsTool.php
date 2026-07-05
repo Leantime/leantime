@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Comments\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 
 /**
  * Poll for all comments across the account.
  */
-#[Name('pollComments')]
-#[Description('Polls for all comments across the account, optionally filtered by project or module ID.')]
 #[IsReadOnly]
 class PollCommentsTool extends Tool
 {
@@ -24,31 +19,35 @@ class PollCommentsTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('Project ID to filter comments by.'),
-            'moduleId' => $schema->integer()
-                ->description('Module ID to filter comments by.'),
-        ];
+        return $schema
+            ->integer('projectId')->description('Project ID to filter comments by.')
+            ->integer('moduleId')->description('Module ID to filter comments by.');
+    }
+
+    public function name(): string
+    {
+        return 'pollComments';
+    }
+
+    public function description(): string
+    {
+        return 'Polls for all comments across the account.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->get('projectId');
-        $moduleId = $request->get('moduleId');
+        $projectId = ($arguments['projectId'] ?? null);
+        $moduleId = ($arguments['moduleId'] ?? null);
 
         $comments = $this->commentsService->pollComments($projectId, $moduleId);
 
         if (empty($comments)) {
-            return Response::text('No comments found');
+            return ToolResult::text('No comments found');
         }
 
         $response = "## Comments\n";
@@ -75,6 +74,6 @@ class PollCommentsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

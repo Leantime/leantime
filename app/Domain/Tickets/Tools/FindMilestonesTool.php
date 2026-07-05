@@ -2,20 +2,15 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Search for milestones in a project.
  */
-#[Name('findMilestones')]
-#[Description('Gets all milestones from the database given search criteria. All dates are returned in the format YYYY-MM-DD hh:mm:ss in the UTC timezone.')]
 #[IsReadOnly]
 class FindMilestonesTool extends Tool
 {
@@ -24,23 +19,36 @@ class FindMilestonesTool extends Tool
     ) {}
 
     /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     * Get the tool name.
      */
-    public function schema(JsonSchema $schema): array
+    public function name(): string
     {
-        return [
-            'projectId' => $schema->integer()
-                ->description('Project ID of the milestones to retrieve.')
-                ->required(),
-        ];
+        return 'findMilestones';
+    }
+
+    /**
+     * Get the tool description.
+     */
+    public function description(): string
+    {
+        return 'Gets all milestones from the database given search criteria array. All dates are returned in the format YYYY-MM-DD hh:mm:ss in the UTC timezone';
+    }
+
+    /**
+     * Define the tool input schema.
+     */
+    public function schema(ToolInputSchema $schema): ToolInputSchema
+    {
+        return $schema
+            ->integer('projectId')->description('Project ID of the milestones to retrieve.')->required();
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $projectId = $request->integer('projectId');
+        $projectId = (int) ($arguments['projectId'] ?? 0);
         $milestones = $this->ticketsService->getAllMilestones(['currentProject' => $projectId, 'type' => 'milestone']);
 
         $results = "## MILESTONES \n";
@@ -48,7 +56,7 @@ class FindMilestonesTool extends Tool
         if (empty($milestones)) {
             $results .= 'No Milestones found for this project.';
 
-            return Response::text($results);
+            return ToolResult::text($results);
         }
 
         foreach ($milestones as $milestone) {
@@ -60,6 +68,6 @@ class FindMilestonesTool extends Tool
             $results .= 'Progress: '.$progress."% completed\n";
         }
 
-        return Response::text($results);
+        return ToolResult::text($results);
     }
 }

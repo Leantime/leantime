@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Goalcanvas\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 /**
  * Get detailed information about a specific goal.
  */
-#[Name('getGoal')]
-#[Description('Gets detailed information about a specific goal by its ID.')]
 #[IsReadOnly]
 class GetGoalTool extends Tool
 {
@@ -24,28 +19,33 @@ class GetGoalTool extends Tool
         private Goalcanvas $goalcanvasService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'goalId' => $schema->integer()
-                ->description('ID of the goal to retrieve.')
-                ->required(),
-        ];
+        return $schema
+            ->integer('goalId')->description('ID of the goal to retrieve.')
+            ->required();
+    }
+
+    public function name(): string
+    {
+        return 'getGoal';
+    }
+
+    public function description(): string
+    {
+        return 'Gets detailed information about a specific goal by its ID.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $goalId = $request->integer('goalId');
+        $goalId = (int) ($arguments['goalId'] ?? 0);
         $goal = $this->goalcanvasService->getSingleCanvas($goalId);
 
         if (! $goal) {
-            return Response::error("Goal with ID {$goalId} not found.");
+            return ToolResult::error("Goal with ID {$goalId} not found.");
         }
 
         $response = "## Goal Details\n";
@@ -59,6 +59,6 @@ class GetGoalTool extends Tool
         ];
         $response .= Str::toMarkdown($result)."\n";
 
-        return Response::text($response);
+        return ToolResult::text($response);
     }
 }

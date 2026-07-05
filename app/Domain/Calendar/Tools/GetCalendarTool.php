@@ -2,21 +2,16 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Calendar\Support\CalendarEventFormatter;
 
 /**
  * Get all calendar events for the current user.
  */
-#[Name('getCalendar')]
-#[Description('Gets all calendar events for the current user including tasks with due dates and scheduled work times and events from external calendars. Dates come back in UTC.')]
 #[IsReadOnly]
 class GetCalendarTool extends Tool
 {
@@ -24,28 +19,32 @@ class GetCalendarTool extends Tool
         private Calendar $calendarService,
     ) {}
 
-    /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
-     */
-    public function schema(JsonSchema $schema): array
+    public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return [
-            'from' => $schema->string()
-                ->description('Starting date of the date range to look for. In user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-                ->required(),
-            'until' => $schema->string()
-                ->description('End date of the date range to look for. In user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-                ->required(),
-        ];
+        return $schema
+            ->string('from')->description('Starting date of the date range to look for. In user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+            ->required()
+            ->string('until')->description('End date of the date range to look for. In user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+            ->required();
+    }
+
+    public function name(): string
+    {
+        return 'getCalendar';
+    }
+
+    public function description(): string
+    {
+        return 'Gets all calendar events for the current user including tasks with due dates and scheduled work times.';
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $from = $request->string('from');
-        $until = $request->string('until');
+        $from = $arguments['from'];
+        $until = $arguments['until'];
 
         $events = $this->calendarService->getCalendar(session('userdata.id'), $from, $until);
 
@@ -79,6 +78,6 @@ class GetCalendarTool extends Tool
             }
         }
 
-        return Response::text($response ?: 'No calendar events found.');
+        return ToolResult::text($response ?: 'No calendar events found.');
     }
 }

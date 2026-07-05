@@ -2,20 +2,15 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
-use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
-use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\ToolInputSchema;
+use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Schedule multiple tasks by setting editFrom and editTo dates.
  */
-#[Name('bulkScheduleTasks')]
-#[Description('Schedules multiple tasks by setting editFrom/editTo dates. Enables timeboxing multiple tasks efficiently. All tasks must have at least 15 minutes duration.')]
 class BulkScheduleTasksTool extends Tool
 {
     public function __construct(
@@ -23,23 +18,36 @@ class BulkScheduleTasksTool extends Tool
     ) {}
 
     /**
-     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     * Get the tool name.
      */
-    public function schema(JsonSchema $schema): array
+    public function name(): string
     {
-        return [
-            'schedules' => $schema->array()
-                ->description('Array of schedule objects. Each must have taskId, editFrom (ISO8601), and editTo (ISO8601).')
-                ->required(),
-        ];
+        return 'bulkScheduleTasks';
+    }
+
+    /**
+     * Get the tool description.
+     */
+    public function description(): string
+    {
+        return 'Schedules multiple tasks by setting editFrom and editTo dates in a single operation. This allows timeboxing multiple tasks efficiently. All tasks must have at least 15 minutes duration. Expects an array where each element contains taskId, editFrom, and editTo.';
+    }
+
+    /**
+     * Define the tool input schema.
+     */
+    public function schema(ToolInputSchema $schema): ToolInputSchema
+    {
+        return $schema
+            ->raw('schedules', ['type' => 'array', 'description' => 'Array of schedule objects. Each must have taskId, editFrom (ISO8601), and editTo (ISO8601).'])->required();
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(array $arguments): ToolResult
     {
-        $schedules = $request->array('schedules');
+        $schedules = ($arguments['schedules'] ?? []);
         $results = [];
         $successCount = 0;
         $failureCount = 0;
@@ -69,7 +77,7 @@ class BulkScheduleTasksTool extends Tool
         }
 
         if (! empty($validationErrors)) {
-            return Response::error("Validation failed:\n- ".implode("\n- ", $validationErrors));
+            return ToolResult::error("Validation failed:\n- ".implode("\n- ", $validationErrors));
         }
 
         foreach ($schedules as $schedule) {
@@ -88,7 +96,7 @@ class BulkScheduleTasksTool extends Tool
             }
         }
 
-        return Response::text(
+        return ToolResult::text(
             "Bulk task scheduling completed. Success: {$successCount}, Failed: {$failureCount}\n\n".
             Str::toMarkdown($results)
         );
