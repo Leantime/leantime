@@ -42,7 +42,7 @@ class GetGoalTool extends Tool
     public function handle(array $arguments): ToolResult
     {
         $goalId = (int) ($arguments['goalId'] ?? 0);
-        $goal = $this->goalcanvasService->getSingleCanvas($goalId);
+        $goal = $this->goalcanvasService->getGoalItem($goalId);
 
         if (! $goal) {
             return ToolResult::error("Goal with ID {$goalId} not found.");
@@ -53,7 +53,15 @@ class GetGoalTool extends Tool
             'id' => $goal['id'],
             'title' => Str::sanitizeForLLM($goal['title']),
             'description' => Str::sanitizeForLLM($goal['description']),
-            'projectId' => $goal['projectId'],
+            'board' => Str::sanitizeForLLM($goal['boardTitle'] ?? ''),
+            'startValue' => $goal['startValue'],
+            'currentValue' => $goal['currentValue'],
+            'endValue' => $goal['endValue'],
+            'metricType' => $goal['metricType'],
+            'status' => $goal['status'],
+            'startDate' => $goal['startDate'],
+            'endDate' => $goal['endDate'],
+            'milestone' => Str::sanitizeForLLM($goal['milestoneHeadline'] ?? ''),
             'author' => $goal['authorFirstname'].' '.$goal['authorLastname'],
             'created' => $goal['created'],
         ];

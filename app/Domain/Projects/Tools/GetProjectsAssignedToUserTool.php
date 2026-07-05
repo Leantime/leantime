@@ -49,10 +49,6 @@ class GetProjectsAssignedToUserTool extends Tool
         $clientId = ($arguments['clientId'] ?? null);
         $projectTypes = ($arguments['projectTypes'] ?? 'all');
 
-        if ($projectTypes === null) {
-            $projectTypes = 'all';
-        }
-
         if ($userId === 0) {
             $userId = session('userdata.id') ?? '';
         }

@@ -43,9 +43,9 @@ class GetUsersAssignedToProjectTool extends Tool
     public function handle(array $arguments): ToolResult
     {
         $projectId = (int) ($arguments['projectId'] ?? 0);
-        $teamOnly = $request->get('teamOnly', false);
+        $teamOnly = $arguments['teamOnly'] ?? false;
 
-        $users = $this->projectService->getUsersAssignedToProject($projectId, $teamOnly ?? false);
+        $users = $this->projectService->getUsersAssignedToProject($projectId, $teamOnly);
 
         if (empty($users)) {
             return ToolResult::text('No users assigned to this project.');

@@ -50,7 +50,7 @@ class EditCalendarEventTool extends Tool
             'description' => $arguments['eventTitle'],
             'dateFrom' => $arguments['dateFrom'],
             'dateTo' => $arguments['dateTo'],
-            'allDay' => $request->get('allDay', false),
+            'allDay' => $arguments['allDay'] ?? false,
         ]);
 
         if ($result) {

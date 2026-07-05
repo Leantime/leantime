@@ -50,7 +50,8 @@ class GetProjectTimesheetsTool extends Tool
         $projectId = (int) ($arguments['projectId'] ?? 0);
 
         $userRole = session('userdata.role');
-        if (! in_array($userRole, ['admin', 'manager']) && ! $this->projectsService->isUserProjectManager($projectId, session('userdata.id'))) {
+        $projectRole = $this->projectsService->getProjectRole(session('userdata.id'), $projectId);
+        if (! in_array($userRole, ['admin', 'manager', 'owner']) && $projectRole !== 'manager') {
             return ToolResult::error("You don't have permission to view project-wide timesheet data. Only managers and admins can access this information.");
         }
 

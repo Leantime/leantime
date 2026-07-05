@@ -48,22 +48,25 @@ class EditGoalTool extends Tool
      */
     public function handle(array $arguments): ToolResult
     {
-        $values = ['id' => (int) ($arguments['id'] ?? 0)];
+        $id = (int) ($arguments['id'] ?? 0);
 
         $optionalFields = [
             'title', 'description', 'startValue', 'currentValue', 'endValue',
             'startDate', 'endDate', 'milestoneId', 'metricType', 'status',
         ];
 
+        $params = [];
         foreach ($optionalFields as $field) {
-            $value = $request->get($field);
+            $value = $arguments[$field] ?? null;
             if ($value !== null) {
-                $values[$field] = $value;
+                $params[$field] = $value;
             }
         }
 
-        $this->goalcanvasService->editCanvasItem($values);
+        if ($this->goalcanvasService->patchGoalItem($id, $params)) {
+            return ToolResult::text('Goal updated successfully.');
+        }
 
-        return ToolResult::text('Goal updated successfully.');
+        return ToolResult::error('Failed to update goal.');
     }
 }

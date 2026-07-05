@@ -78,6 +78,10 @@ class GetCalendarTool extends Tool
             }
         }
 
-        return ToolResult::text($response ?: 'No calendar events found.');
+        if ($numEvents === 0) {
+            return ToolResult::text('No calendar events found for the specified date range.');
+        }
+
+        return ToolResult::text($response);
     }
 }
