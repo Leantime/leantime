@@ -6,6 +6,7 @@ use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
@@ -49,10 +50,19 @@ class GetProjectTimesheetsTool extends Tool
     {
         $projectId = (int) ($arguments['projectId'] ?? 0);
 
-        $userRole = session('userdata.role');
-        $projectRole = $this->projectsService->getProjectRole(session('userdata.id'), $projectId);
-        if (! in_array($userRole, ['admin', 'manager', 'owner']) && $projectRole !== 'manager') {
-            return ToolResult::error("You don't have permission to view project-wide timesheet data. Only managers and admins can access this information.");
+        $globalRole = session('userdata.role');
+        if (! in_array($globalRole, [Roles::$manager, Roles::$admin, Roles::$owner], true)) {
+            // getProjectRole() returns a stored role key (usually a numeric string like "30");
+            // resolve it to a role name before comparing (same pattern as
+            // Tickets::userIsAtLeastForProject).
+            $projectRoleKey = $this->projectsService->getProjectRole(session('userdata.id'), $projectId);
+            $projectRole = ctype_digit((string) $projectRoleKey)
+                ? Roles::getRoleString((int) $projectRoleKey)
+                : $projectRoleKey;
+
+            if ($projectRole !== Roles::$manager) {
+                return ToolResult::error("You don't have permission to view project-wide timesheet data. Only managers and admins can access this information.");
+            }
         }
 
         $fromDate = dtHelper()->parseUserDateTime($arguments['dateFrom']);
