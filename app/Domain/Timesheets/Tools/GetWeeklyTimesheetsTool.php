@@ -42,17 +42,19 @@ class GetWeeklyTimesheetsTool extends Tool
      */
     public function handle(array $arguments): ToolResult
     {
-        $currentUserId = session('userdata.id');
+        $currentUserId = (int) session('userdata.id');
         $userRole = session('userdata.role');
-        $userId = ($arguments['userId'] ?? null);
 
-        if ($userId !== null && $userId !== $currentUserId && ! in_array($userRole, ['admin', 'manager'])) {
+        // User ID 0 (or omitted) means the current user per server instructions
+        $userId = (int) ($arguments['userId'] ?? 0) ?: $currentUserId;
+
+        if ($userId !== $currentUserId && ! in_array($userRole, ['admin', 'manager', 'owner'])) {
             return ToolResult::error("You don't have permission to view other users' timesheet data.");
         }
 
         $fromDate = dtHelper()->parseUserDateTime($arguments['weekStart'])->startOfWeek();
         $projectId = ($arguments['projectId'] ?? null);
-        $targetUserId = $userId ?? $currentUserId;
+        $targetUserId = $userId;
 
         $timesheetGroups = $this->timesheetsService->getWeeklyTimesheets(
             projectId: $projectId ?? -1,

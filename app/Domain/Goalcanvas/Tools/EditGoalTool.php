@@ -5,6 +5,7 @@ namespace Leantime\Domain\Goalcanvas\Tools;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 /**
@@ -48,22 +49,40 @@ class EditGoalTool extends Tool
      */
     public function handle(array $arguments): ToolResult
     {
-        $values = ['id' => (int) ($arguments['id'] ?? 0)];
+        $id = (int) ($arguments['id'] ?? 0);
+        if ($id <= 0) {
+            return ToolResult::error('A valid goal id is required.');
+        }
 
         $optionalFields = [
             'title', 'description', 'startValue', 'currentValue', 'endValue',
             'startDate', 'endDate', 'milestoneId', 'metricType', 'status',
         ];
 
+        $params = [];
         foreach ($optionalFields as $field) {
-            $value = $request->get($field);
+            $value = $arguments[$field] ?? null;
             if ($value !== null) {
-                $values[$field] = $value;
+                $params[$field] = $value;
             }
         }
 
-        $this->goalcanvasService->editCanvasItem($values);
+        if ($params === []) {
+            return ToolResult::error('Provide at least one field to update.');
+        }
 
-        return ToolResult::text('Goal updated successfully.');
+        try {
+            $updated = $this->goalcanvasService->patchGoalItem($id, $params);
+        } catch (AuthorizationException) {
+            // Unknown, foreign, or unauthorized goal id — one message for all three, so the
+            // response does not leak whether a goal id exists in another project.
+            return ToolResult::error("Goal with ID {$id} not found.");
+        }
+
+        if ($updated) {
+            return ToolResult::text('Goal updated successfully.');
+        }
+
+        return ToolResult::error('Failed to update goal.');
     }
 }

@@ -43,10 +43,10 @@ class GetAllProjectsTool extends Tool
      */
     public function handle(array $arguments): ToolResult
     {
-        $showClosedProjects = $request->get('showClosedProjects', false);
-        $includeProgressDetails = $request->get('includeProgressDetails', true);
+        $showClosedProjects = $arguments['showClosedProjects'] ?? false;
+        $includeProgressDetails = $arguments['includeProgressDetails'] ?? true;
 
-        $projects = $this->projectService->getAll($showClosedProjects ?? false);
+        $projects = $this->projectService->getAll($showClosedProjects);
 
         $response = "## All Projects Overview\n";
 

@@ -85,7 +85,7 @@ class FindTasksTool extends Tool
 
             $tickets = $this->ticketsService->getAll($searchCriteria, $limit);
 
-            if ($tickets && count($tickets) > 0) {
+            if (! empty($tickets)) {
                 $allResults[$projectId] = $tickets;
                 $totalTasks += count($tickets);
             }

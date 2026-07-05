@@ -58,14 +58,16 @@ class ScheduleDayTool extends Tool
         $existingEvents = $this->calendarService->getCalendar(session('userdata.id'), $dateFrom, $dateTo);
         $existingTasks = $this->ticketService->getScheduledTasks($dateFrom, $dateTo, session('userdata.id'));
 
-        if ($workingHoursStart !== '' && ($timeparts = explode(':', $workingHoursStart))) {
-            $workStart = $dateObj->setTime($timeparts[0], $timeparts[1]);
+        if ($workingHoursStart !== '') {
+            $timeparts = explode(':', $workingHoursStart);
+            $workStart = $dateObj->setTime((int) $timeparts[0], (int) ($timeparts[1] ?? 0));
         } else {
             $workStart = $dateObj->setTime(9, 0);
         }
 
-        if ($workingHoursEnd !== '' && ($timeparts = explode(':', $workingHoursEnd))) {
-            $workEnd = $dateObj->setTime($timeparts[0], $timeparts[1]);
+        if ($workingHoursEnd !== '') {
+            $timeparts = explode(':', $workingHoursEnd);
+            $workEnd = $dateObj->setTime((int) $timeparts[0], (int) ($timeparts[1] ?? 0));
         } else {
             $workEnd = $dateObj->setTime(18, 0);
         }

@@ -49,7 +49,7 @@ class GetFullProjectOverviewTool extends Tool
     public function handle(array $arguments): ToolResult
     {
         $projectId = (int) ($arguments['projectId'] ?? 0);
-        $includeTimesheets = $request->get('includeTimesheets', false);
+        $includeTimesheets = $arguments['includeTimesheets'] ?? false;
         $dateFrom = ($arguments['dateFrom'] ?? '');
         $dateTo = ($arguments['dateTo'] ?? '');
 
@@ -91,7 +91,7 @@ class GetFullProjectOverviewTool extends Tool
                 foreach ($comments as $comment) {
                     $status = $this->formatRagStatus($comment['status'] ?? '');
                     $response .= "**{$comment['date']}** - {$status}\n";
-                    $response .= "*{$comment['firstname']} {$comment['lastname']}:* {$comment['comment']}\n\n";
+                    $response .= "*{$comment['firstname']} {$comment['lastname']}:* {$comment['text']}\n\n";
                 }
             }
 
@@ -108,7 +108,11 @@ class GetFullProjectOverviewTool extends Tool
                 }
 
                 try {
-                    $timesheets = app(Timesheets::class)->getProjectTimesheets($projectId, $dateFrom, $dateTo);
+                    $timesheets = app(Timesheets::class)->getAll(
+                        dateFrom: dtHelper()->parseUserDateTime($dateFrom)->startOfDay(),
+                        dateTo: dtHelper()->parseUserDateTime($dateTo)->endOfDay(),
+                        projectId: $projectId
+                    );
 
                     if (empty($timesheets)) {
                         $response .= "*No timesheet entries found for the specified period.*\n\n";

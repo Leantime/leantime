@@ -4,6 +4,7 @@ namespace Leantime\Core\Middleware;
 
 use Closure;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Cache\RateLimiter;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -58,6 +59,16 @@ class AuthCheck
             return $next($request);
         }
 
+        // Throttle credential brute force on token-authenticated endpoints (/api, /mcp). This
+        // must live here rather than in RequestRateLimiter: that middleware runs AFTER AuthCheck,
+        // so a failed-auth 401 short-circuits the pipeline before any request limit is counted.
+        if ($request instanceof ApiRequest && $this->tooManyFailedAuthAttempts($request)) {
+            return new Response(
+                json_encode(['error' => 'Too many failed authentication attempts. Try again later.']),
+                Response::HTTP_TOO_MANY_REQUESTS
+            );
+        }
+
         $loginRedirect = self::dispatch_filter('loginRoute', 'auth.login', ['request' => $request]);
 
         if ($request instanceof ApiRequest) {
@@ -110,7 +121,8 @@ class AuthCheck
         }
 
         if (! $authenticated && ! $response) {
-            if ($request instanceof APIRequest) {
+            if ($request instanceof ApiRequest) {
+                $this->hitFailedAuthLimiter($request);
                 $response = new Response(json_encode(['error' => 'Invalid API Key']), 401);
             } else {
                 $response = $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
@@ -169,7 +181,36 @@ class AuthCheck
             }
         }
 
+        $this->hitFailedAuthLimiter($request);
+
         return new Response(json_encode(['error' => 'Unauthorized']), 401);
+    }
+
+    /**
+     * Whether this client IP has exceeded the failed-authentication budget (shared with the
+     * login attempt limit, LEAN_RATELIMIT_AUTH). Counted per minute.
+     */
+    protected function tooManyFailedAuthAttempts(IncomingRequest $request): bool
+    {
+        $limit = $this->config->ratelimitAuth ?? 20;
+
+        return app(RateLimiter::class)->tooManyAttempts($this->failedAuthKey($request), $limit);
+    }
+
+    /**
+     * Record a failed authentication attempt for this client IP (1-minute decay).
+     */
+    protected function hitFailedAuthLimiter(IncomingRequest $request): void
+    {
+        app(RateLimiter::class)->hit($this->failedAuthKey($request), 60);
+    }
+
+    /**
+     * Rate limiter key for failed token-auth attempts, scoped to the client IP.
+     */
+    protected function failedAuthKey(IncomingRequest $request): string
+    {
+        return 'api-auth-failures:'.$request->getClientIp();
     }
 
     /**
