@@ -103,6 +103,7 @@ class Auth
         return $this->db->table('zp_user')
             ->where('pwReset', $hash)
             ->where('status', 'like', 'a')
+            ->where('pwResetExpiration', '>=', now())
             ->exists();
     }
 
@@ -126,7 +127,8 @@ class Auth
             ->where('username', $username)
             ->update([
                 'pwReset' => $resetLink,
-                'pwResetExpiration' => now(),
+                // Store the EXPIRY moment (not creation): the reset link is valid for 1 hour.
+                'pwResetExpiration' => now()->addHours(1),
                 'pwResetCount' => $this->db->raw('COALESCE('.$this->dbHelper->wrapColumn('pwResetCount').', 0) + 1'),
             ]) >= 0;
     }
@@ -145,6 +147,7 @@ class Auth
 
         $userId = $this->db->table('zp_user')
             ->where('pwReset', $hash)
+            ->where('pwResetExpiration', '>=', now())
             ->value('id');
 
         if (empty($userId)) {
