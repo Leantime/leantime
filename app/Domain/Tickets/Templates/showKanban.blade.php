@@ -44,6 +44,13 @@
 
         <div class="clearfix"></div>
 
+        @if ($programBoard)
+            <p class="tw-text-[var(--secondary-font-color)]" style="margin-bottom:15px;">
+                <i class="fa fa-circle-info"></i>
+                {{ __('text.program_status_rollup') }}
+            </p>
+        @endif
+
         @if (isset($allTicketGroups['all']))
             @php $allTickets = $allTicketGroups['all']['items']; @endphp
         @endif
@@ -170,6 +177,17 @@
                                                     @endif
                                                     <small><i class="fa {{ $todoTypeIcons[strtolower($row['type'])] }}"></i> {!! __('label.'.strtolower($row['type'])) !!}</small>
                                                     <small>#{{ $row['id'] }}</small>
+                                                    @if ($programBoard)
+                                                        {{-- Cross-project board: columns are semantic stages, so surface the task's
+                                                             REAL status label (from its own project) + which project it belongs to. --}}
+                                                        @php $rowProjectStatus = $statusLabelsByProject[$row['projectId']][$row['status']] ?? null; @endphp
+                                                        <div class="tw-mt-xs" style="margin-top:4px;">
+                                                            @if ($rowProjectStatus)
+                                                                <span class="label {{ $rowProjectStatus['class'] ?? 'label-default' }}">{{ $tpl->escape($rowProjectStatus['name']) }}</span>
+                                                            @endif
+                                                            <small class="tw-text-[var(--secondary-font-color)]">{{ $tpl->escape($row['projectName'] ?? '') }}</small>
+                                                        </div>
+                                                    @endif
                                                     <div class="kanbanCardContent">
                                                         <h4><a href="#/tickets/showTicket/{{ $row['id'] }}" data-hx-get="{{ BASE_URL }}/tickets/showTicket/{{ $row['id'] }}" hx-swap="none" preload="mouseover">{{ $row['headline'] }}</a></h4>
 
