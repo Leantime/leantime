@@ -43,8 +43,13 @@ jobs:
         run: echo "version=$(make get-version)" >> $GITHUB_OUTPUT
         id: version
 
+      # COMPOSER_AUTH prevents GitHub API rate-limiting; without it composer silently
+      # falls back to source (git clone) installs, shipping .git dirs and package build/
+      # test artifacts that ballooned release archives (#3330).
       - name: build artifacts
         run: make package
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ github.token }}"}}'
 
       - name: Extract changelog section
         run: |

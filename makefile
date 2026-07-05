@@ -13,7 +13,7 @@ install-deps-dev:
 
 install-deps:
 	npm install
-	composer install --no-dev --optimize-autoloader
+	composer install --no-dev --optimize-autoloader --prefer-dist
 
 build: install-deps clear-cache
 	npx mix --production
@@ -61,6 +61,14 @@ package: clean build
 
 	# Removing unneeded items for release
 	rm -rf $(TARGET_DIR)/public/dist/images/Screenshots
+
+	# Strip vendor bloat (#3330): composer source-fallback installs ship .git dirs
+	# and aws-sdk build/test artifacts that ballooned releases from ~50MB to ~860MB
+	find $(TARGET_DIR)/vendor -type d -name ".git" -prune -exec rm -rf {} +
+	rm -rf $(TARGET_DIR)/vendor/aws/aws-sdk-php/build
+	rm -rf $(TARGET_DIR)/vendor/aws/aws-sdk-php/features
+	rm -rf $(TARGET_DIR)/vendor/aws/aws-sdk-php/tests
+	rm -rf $(TARGET_DIR)/vendor/aws/aws-sdk-php/.changes
 
 	# Removing javascript directories
 	find  $(TARGET_DIR)/app/Domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
