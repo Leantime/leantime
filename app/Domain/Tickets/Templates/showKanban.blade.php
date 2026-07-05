@@ -97,30 +97,23 @@
                 <div class="kanban-swimlane-row" data-expanded="{{ $swimlaneExpanded ? 'true' : 'false' }}" id="swimlane-row-{{ $group['id'] }}">
                     <div class="kanban-swimlane-sentinel" data-swimlane-id="{{ $group['id'] }}" aria-hidden="true"></div>
 
-                    {!! app('blade.compiler')::render(
-                        '<x-global::kanban.swimlane-row-header
-                            :groupBy="$groupBy"
-                            :groupId="$groupId"
-                            :label="$label"
-                            :totalCount="$totalCount"
-                            :statusCounts="$statusCounts"
-                            :statusColumns="$statusColumns"
-                            :expanded="$expanded"
-                            :moreInfo="$moreInfo"
-                            :timeAlert="$timeAlert"
-                        />',
-                        [
-                            'groupBy' => $groupBy,
-                            'groupId' => $group['id'],
-                            'label' => $group['label'],
-                            'totalCount' => $swimlaneBreakdown['totalCount'] ?? count($group['items']),
-                            'statusCounts' => $statusCounts,
-                            'statusColumns' => $allKanbanColumns,
-                            'expanded' => $swimlaneExpanded,
-                            'moreInfo' => $group['more-info'] ?? null,
-                            'timeAlert' => $group['timeAlert'] ?? null,
-                        ]
-                    ) !!}
+                    {{-- Render the component directly. It was previously invoked via
+                         app('blade.compiler')::render('<x-...>', $data), but a <x-component> string
+                         passed to Blade::render from inside an already-compiled view gets its bare
+                         variables ($label, $groupId, …) pre-compiled by the outer pass and they are
+                         not in the inner render scope — throwing "Undefined variable" for ANY
+                         kanban group-by. A plain component tag with inline expressions is correct. --}}
+                    <x-global::kanban.swimlane-row-header
+                        :groupBy="$groupBy"
+                        :groupId="$group['id']"
+                        :label="$group['label']"
+                        :totalCount="$swimlaneBreakdown['totalCount'] ?? count($group['items'])"
+                        :statusCounts="$statusCounts"
+                        :statusColumns="$allKanbanColumns"
+                        :expanded="$swimlaneExpanded"
+                        :moreInfo="$group['more-info'] ?? null"
+                        :timeAlert="$group['timeAlert'] ?? null"
+                    />
 
                     <div class="kanban-swimlane-content{{ !$swimlaneExpanded ? ' collapsed' : '' }}" id="swimlane-content-{{ $group['id'] }}">
             @endif
