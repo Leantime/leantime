@@ -43,7 +43,7 @@ $hasError = $isActive && !empty($reopenState['error']);
         @if (! empty($programBoard) && ! empty($availableProjects))
             {{-- Program board: a new task must belong to exactly one child project. --}}
             <div class="form-group">
-                <select name="quickaddProjectId" class="form-control" required>
+                <select name="quickaddProjectId" class="form-control" required aria-label="{{ __('label.project') }}">
                     <option value="">{{ __('label.project') }}…</option>
                     @foreach ($availableProjects as $quickAddProjectId => $quickAddProjectName)
                         <option value="{{ $quickAddProjectId }}">{{ $tpl->escape($quickAddProjectName) }}</option>

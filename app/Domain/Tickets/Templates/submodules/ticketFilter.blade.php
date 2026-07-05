@@ -238,7 +238,7 @@
         new SlimSelect({
             select: '#projectsSelect',
             settings: {
-                placeholderText: '{{ __('label.project') }}',
+                placeholderText: @js(__('label.project')),
             },
         });
         @endif

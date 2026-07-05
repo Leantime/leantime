@@ -48,7 +48,7 @@
                  project picker, matching the kanban/list add affordance. --}}
             <form action="" method="post" class="tw-mb-m" style="display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap;">
                 <input type="text" name="headline" placeholder="{{ __('input.placeholders.create_task') }}" style="flex:1 1 280px; min-width:240px;" />
-                <select name="quickaddProjectId" class="form-control" required style="width:auto;">
+                <select name="quickaddProjectId" class="form-control" required style="width:auto;" aria-label="{{ __('label.project') }}">
                     <option value="">{{ __('label.project') }}…</option>
                     @foreach ($availableProjects as $quickAddProjectId => $quickAddProjectName)
                         <option value="{{ $quickAddProjectId }}">{{ $tpl->escape($quickAddProjectName) }}</option>

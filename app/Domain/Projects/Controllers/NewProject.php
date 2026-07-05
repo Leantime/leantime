@@ -86,16 +86,18 @@ class NewProject extends Controller
             : [];
 
         // A project may only be nested under a CONTAINER (a program or a strategy) — never under
-        // another regular project. Resolve a candidate parent from the form field, then the URL
-        // ("Add Project" button), then the current project; but only keep it if that candidate is
-        // actually a program/strategy. Anything else (including a regular project) leaves the new
-        // project un-nested. (The service also validates this, since addProject is JSON-RPC reachable.)
-        $parentCandidate = $_POST['parent'] ?? '';
-        if ($parentCandidate === '' || $parentCandidate === '0') {
-            $parentCandidate = $_GET['parent'] ?? '';
-        }
-        if ($parentCandidate === '' || $parentCandidate === '0') {
-            $parentCandidate = (string) session('currentProject');
+        // another regular project. Only keep the parent if the candidate is actually a
+        // program/strategy; anything else (incl. a regular project) leaves it un-nested. (The
+        // service validates this too, since addProject is JSON-RPC reachable.)
+        //
+        // If the parent field was on the form, respect the user's explicit choice — including an
+        // intentional "none" (empty) selection, so they can clear the parent. Only when the field
+        // was NOT submitted do we infer the container from the URL ("Add Project" button) or the
+        // current project.
+        if (isset($_POST['parent'])) {
+            $parentCandidate = $_POST['parent'];
+        } else {
+            $parentCandidate = $_GET['parent'] ?? (string) session('currentProject');
         }
 
         $parent = '';
