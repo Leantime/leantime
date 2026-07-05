@@ -409,4 +409,99 @@ class TimesheetsServiceTest extends TestCase
 
         $this->assertSame(1, $captured['userId'], 'A non-manager must be pinned to their own userId');
     }
+
+    // ---- Weekly grid bucketing across DST (#3310: Monday entry echoed on previous week's Sunday) ----
+
+    /** Switches the datetime helpers to America/New_York for the DST bucketing tests. */
+    private function useNewYorkTimezone(): void
+    {
+        session(['usersettings.timezone' => 'America/New_York']);
+        CarbonImmutable::mixin(new CarbonMacros('America/New_York', 'en-US', 'Y-m-d', 'H:i'));
+    }
+
+    /** A timesheet row as returned by the repository's weekly query. */
+    private function weeklyRow(string $workDate, float $hours = 1.0): array
+    {
+        return [
+            'workDate' => $workDate,
+            'ticketId' => 42,
+            'kind' => 'GENERAL_BILLABLE',
+            'hours' => $hours,
+            'description' => 'work',
+            'clientName' => 'Acme',
+            'name' => 'Project',
+            'headline' => 'Ticket',
+        ];
+    }
+
+    public function test_weekly_grid_buckets_entry_into_its_local_calendar_day(): void
+    {
+        $this->useNewYorkTimezone();
+
+        // Week of Mon 2026-01-05 (EST, UTC-5): anchor is local midnight in UTC.
+        $fromDate = CarbonImmutable::parse('2026-01-05 05:00:00', 'UTC');
+        // Entry logged for Wednesday 2026-01-07 (local midnight EST → 05:00 UTC).
+        $repo = $this->make(TimesheetRepository::class, [
+            'getWeeklyTimesheets' => fn () => [$this->weeklyRow('2026-01-07 05:00:00', 2.5)],
+        ]);
+
+        $groups = $this->makeService(timesheetsRepo: $repo)->getWeeklyTimesheets(-1, $fromDate, 1);
+
+        $this->assertCount(1, $groups);
+        $group = array_values($groups)[0];
+        $this->assertSame(2.5, (float) $group['day3']['hours'], 'Wednesday entry must land in the Wednesday column');
+        $this->assertSame(2.5, (float) $group['rowSum']);
+    }
+
+    public function test_monday_entry_does_not_render_in_previous_weeks_sunday_column(): void
+    {
+        $this->useNewYorkTimezone();
+
+        // US DST 2026 starts Sun 2026-03-08. An entry logged for Monday 2026-03-09
+        // (local midnight EDT) is stored as 04:00 UTC — inside the PREVIOUS week's flat
+        // +168h UTC window anchored at Mon 2026-03-02 05:00 UTC (EST).
+        $previousWeekAnchor = CarbonImmutable::parse('2026-03-02 05:00:00', 'UTC');
+        $repo = $this->make(TimesheetRepository::class, [
+            'getWeeklyTimesheets' => fn () => [$this->weeklyRow('2026-03-09 04:00:00')],
+        ]);
+
+        $groups = $this->makeService(timesheetsRepo: $repo)->getWeeklyTimesheets(-1, $previousWeekAnchor, 1);
+
+        $this->assertSame([], $groups, 'A Monday entry must not appear in the previous week (was rendered on Sunday)');
+    }
+
+    public function test_monday_entry_renders_on_monday_in_its_own_week(): void
+    {
+        $this->useNewYorkTimezone();
+
+        // The same entry viewed in ITS week: anchor Mon 2026-03-09 local midnight EDT = 04:00 UTC.
+        $weekAnchor = CarbonImmutable::parse('2026-03-09 04:00:00', 'UTC');
+        $repo = $this->make(TimesheetRepository::class, [
+            'getWeeklyTimesheets' => fn () => [$this->weeklyRow('2026-03-09 04:00:00')],
+        ]);
+
+        $groups = $this->makeService(timesheetsRepo: $repo)->getWeeklyTimesheets(-1, $weekAnchor, 1);
+
+        $this->assertCount(1, $groups);
+        $group = array_values($groups)[0];
+        $this->assertSame(1.0, (float) $group['day1']['hours'], 'Monday entry must land in the Monday column');
+    }
+
+    public function test_entry_stored_under_previous_dst_offset_still_buckets_to_intended_day(): void
+    {
+        $this->useNewYorkTimezone();
+
+        // Entry logged for Monday 2026-03-09 while the clock was still EST (05:00 UTC),
+        // viewed in the EDT-anchored week (anchor 04:00 UTC). Locally that's Mon 01:00 —
+        // rounding to the nearest midnight keeps it on Monday.
+        $weekAnchor = CarbonImmutable::parse('2026-03-09 04:00:00', 'UTC');
+        $repo = $this->make(TimesheetRepository::class, [
+            'getWeeklyTimesheets' => fn () => [$this->weeklyRow('2026-03-09 05:00:00')],
+        ]);
+
+        $groups = $this->makeService(timesheetsRepo: $repo)->getWeeklyTimesheets(-1, $weekAnchor, 1);
+
+        $group = array_values($groups)[0];
+        $this->assertSame(1.0, (float) $group['day1']['hours'], 'Offset-drifted Monday entry must stay in the Monday column');
+    }
 }

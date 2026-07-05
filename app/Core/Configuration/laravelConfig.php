@@ -243,9 +243,15 @@ return [
                 'facility' => env('LOG_SYSLOG_FACILITY', LOG_USER),
                 'replace_placeholders' => true,
             ],
-            'deprecations' => [
+            // Deprecation notices are development signal — in production they only grew an
+            // unrotated deprecations.log (#3589). Discard them unless debugging or explicitly
+            // enabled via LEAN_LOG_DEPRECATIONS.
+            'deprecations' => env('LEAN_LOG_DEPRECATIONS', env('LEAN_DEBUG', 0)) ? [
                 'driver' => 'single',
                 'path' => storage_path('logs/deprecations.log'),
+            ] : [
+                'driver' => 'monolog',
+                'handler' => \Monolog\Handler\NullHandler::class,
             ],
             'sentry' => [
                 'driver' => 'sentry',

@@ -608,4 +608,61 @@ class ProjectsServiceTest extends TestCase
 
         $this->assertSame(1, $capturedUserId, 'a non-admin must not be able to read another user\'s project assignments');
     }
+
+    // ---- Project hierarchy safety (#3540: cyclic parents hung every page via the project selector) ----
+
+    public function test_find_my_children_builds_nested_hierarchy(): void
+    {
+        $projects = [
+            ['id' => 1, 'parent' => 0, 'name' => 'Program'],
+            ['id' => 2, 'parent' => 1, 'name' => 'Project'],
+            ['id' => 3, 'parent' => 2, 'name' => 'Subproject'],
+            ['id' => 4, 'parent' => 0, 'name' => 'Standalone'],
+        ];
+
+        $hierarchy = $this->makeService()->findMyChildren(0, $projects);
+
+        $this->assertCount(2, $hierarchy);
+        $this->assertSame(2, $hierarchy[0]['children'][0]['id']);
+        $this->assertSame(3, $hierarchy[0]['children'][0]['children'][0]['id']);
+        $this->assertArrayNotHasKey('children', $hierarchy[1]);
+    }
+
+    public function test_find_my_children_does_not_recurse_on_self_referential_parent(): void
+    {
+        $projects = [
+            ['id' => 1, 'parent' => 0, 'name' => 'Root'],
+            ['id' => 2, 'parent' => 2, 'name' => 'Self-parented'],
+        ];
+
+        $hierarchy = $this->makeService()->findMyChildren(0, $projects);
+
+        $this->assertCount(1, $hierarchy, 'must terminate instead of recursing on a self-parented project');
+        $this->assertSame(1, $hierarchy[0]['id']);
+    }
+
+    public function test_clean_parent_relationship_reroots_self_parent_and_cycles(): void
+    {
+        $projects = [
+            ['id' => 1, 'parent' => 1, 'name' => 'Self-parented'],
+            ['id' => 2, 'parent' => 3, 'name' => 'Cycle A'],
+            ['id' => 3, 'parent' => 2, 'name' => 'Cycle B'],
+            ['id' => 4, 'parent' => 99, 'name' => 'Orphan'],
+            ['id' => 5, 'parent' => 1, 'name' => 'Valid child'],
+        ];
+
+        $service = $this->makeService();
+        $clean = $service->cleanParentRelationship($projects);
+        $byId = array_column($clean, null, 'id');
+
+        $this->assertSame(0, $byId[1]['parent'], 'self-parent must be re-rooted');
+        $this->assertSame(0, $byId[2]['parent'], 'cycle members must be re-rooted');
+        $this->assertSame(0, $byId[3]['parent'], 'cycle members must be re-rooted');
+        $this->assertSame(0, $byId[4]['parent'], 'orphans must be re-rooted');
+        $this->assertSame(1, $byId[5]['parent'], 'valid parent links must be preserved');
+
+        // The full pipeline must terminate and surface every project.
+        $hierarchy = $service->findMyChildren(0, $clean);
+        $this->assertCount(4, $hierarchy);
+    }
 }
