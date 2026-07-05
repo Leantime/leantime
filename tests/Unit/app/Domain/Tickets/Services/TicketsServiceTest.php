@@ -499,4 +499,49 @@ class TicketsServiceTest extends TestCase
         $this->assertEquals(5, $result['group1']['items'][0]['collaboratorCount']);
         $this->assertEquals(3, $result['group1']['items'][0]['collaboratorOverflow']);
     }
+
+    /**
+     * getAllMilestones() accepts a projects-only criteria array (program/cross-project boards):
+     * it must query the repository and must not warn on the absent 'currentProject' key.
+     */
+    public function test_get_all_milestones_scopes_by_projects_without_current_project()
+    {
+        $captured = null;
+        $service = $this->buildServiceWithTicketRepository($this->make(TicketRepository::class, [
+            'getAllMilestones' => function ($searchCriteria, $sortBy) use (&$captured) {
+                $captured = $searchCriteria;
+
+                return [];
+            },
+        ]));
+
+        // Projects-only criteria — no 'currentProject' key at all (the program board shape).
+        $result = $service->getAllMilestones(['type' => 'milestone', 'projects' => '5,7']);
+
+        $this->assertIsArray($result);
+        $this->assertNotNull($captured, 'repository getAllMilestones should be queried for a projects-only scope');
+        $this->assertSame('5,7', $captured['projects']);
+        $this->assertArrayNotHasKey('currentProject', $captured);
+    }
+
+    /**
+     * getAllMilestones() returns an empty array and does NOT query the repository when the
+     * criteria are not project-scoped (neither a currentProject id nor a projects set).
+     */
+    public function test_get_all_milestones_unscoped_returns_empty_and_skips_repository()
+    {
+        $called = false;
+        $service = $this->buildServiceWithTicketRepository($this->make(TicketRepository::class, [
+            'getAllMilestones' => function () use (&$called) {
+                $called = true;
+
+                return [];
+            },
+        ]));
+
+        $result = $service->getAllMilestones(['type' => 'milestone']);
+
+        $this->assertSame([], $result);
+        $this->assertFalse($called, 'repository should not be queried when criteria are not project-scoped');
+    }
 }
