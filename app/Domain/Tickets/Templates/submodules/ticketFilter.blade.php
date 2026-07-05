@@ -3,16 +3,26 @@
 
     $currentRoute = Frontcontroller::getCurrentRoute();
     $currentUrlPath = BASE_URL . '/' . str_replace('.', '/', $currentRoute);
+    // Program boards render this partial under a /pgmPro/* route and can pass an explicit
+    // self-redirect target. Default to the current route for normal per-project views.
+    $searchFormUrl = $searchFormUrl ?? $currentUrlPath;
     $groupBy = $groupByOptions;
     $sortBy = $sortOptions;
     $statusLabels = $allTicketStates;
     $taskToggle = $enableTaskTypeToggle ?? false;
+    // Multi-project (program) context: show the project filter + the "project" group-by.
+    $showProjectFilter = isset($availableProjects);
+    // Kanban shows status as columns, so the status group-by is suppressed. Program kanban
+    // templates set $isKanbanView; per-project views derive it from the route.
+    $isKanbanView = $isKanbanView ?? ($currentRoute === 'tickets.showKanban');
 @endphp
 
 <form action="" method="get" id="ticketSearch">
 
     <input type="hidden" value="1" name="search"/>
-    <input type="hidden" value="{{ session('currentProject') }}" name="projectId" id="projectIdInput"/>
+    @unless ($showProjectFilter)
+        <input type="hidden" value="{{ session('currentProject') }}" name="projectId" id="projectIdInput"/>
+    @endunless
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
         {{-- Kept as a raw <a> (not forms.button): this button is whitespace-sensitive — the
@@ -31,7 +41,11 @@
             </button>
             <ul class="dropdown-menu">
                 @foreach ($groupBy as $input)
-                    @if ($input['field'] === 'status' && $currentRoute === 'tickets.showKanban')
+                    @if ($input['field'] === 'status' && $isKanbanView)
+                        @continue
+                    @endif
+                    {{-- "Group by project" only makes sense on a multi-project (program) board. --}}
+                    @if ($input['field'] === 'projectId' && ! $showProjectFilter)
                         @continue
                     @endif
                     <li>
@@ -42,7 +56,7 @@
                                 @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
                                 value="{{ $input['field'] }}"
                                 id="{{ $input['id'] }}"
-                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')"
+                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $searchFormUrl }}')"
                             />
                             <label for="{{ $input['id'] }}">{!! __("label.{$input['label']}") !!}</label>
                         </span>
@@ -56,6 +70,22 @@
             <div class="row-fluid">
 
                 @dispatchEvent('filters.beforeFirstBarField')
+
+                @if ($showProjectFilter)
+                    <div class="">
+                        <label class="inline">{!! __('label.project') !!}</label>
+                        <div class="form-group">
+                            <select data-placeholder="{{ __('label.project') }}" title="{{ __('label.project') }}" name="projects" multiple="multiple" class="project-select" id="projectsSelect">
+                                <option value="" data-placeholder="true">{!! __('label.project') !!}</option>
+                                @foreach ($availableProjects as $projectFilterId => $projectFilterName)
+                                    <option value="{{ $projectFilterId }}"
+                                        @if (isset($searchCriteria['projects']) && in_array((string) $projectFilterId, explode(',', (string) $searchCriteria['projects']), true)) selected='selected' @endif
+                                    >{{ $tpl->escape($projectFilterName) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                @endif
 
                 <div class="">
                     <label class="inline">{!! __('label.user') !!}</label>
@@ -204,8 +234,16 @@
                 placeholderText: 'All Statuses',
             },
         });
+        @if ($showProjectFilter)
+        new SlimSelect({
+            select: '#projectsSelect',
+            settings: {
+                placeholderText: @js(__('label.project')),
+            },
+        });
+        @endif
 
-        leantime.ticketsController.initTicketSearchSubmit('{{ $currentUrlPath }}');
+        leantime.ticketsController.initTicketSearchSubmit('{{ $searchFormUrl }}');
 
     })
 </script>

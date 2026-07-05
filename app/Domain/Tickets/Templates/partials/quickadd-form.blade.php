@@ -40,6 +40,18 @@ $hasError = $isActive && !empty($reopenState['error']);
         <input type="hidden" name="sprint" value="{{ session('currentSprint') ?? '' }}" />
         <input type="hidden" name="stay_open" value="0" data-stay-open-input />
 
+        @if (! empty($programBoard) && ! empty($availableProjects))
+            {{-- Program board: a new task must belong to exactly one child project. --}}
+            <div class="form-group">
+                <select name="quickaddProjectId" class="form-control" required aria-label="{{ __('label.project') }}">
+                    <option value="">{{ __('label.project') }}…</option>
+                    @foreach ($availableProjects as $quickAddProjectId => $quickAddProjectName)
+                        <option value="{{ $quickAddProjectId }}">{{ $tpl->escape($quickAddProjectName) }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
+
         <div class="form-group">
             <label for="headline-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}" class="sr-only">Task name</label>
             <input type="text"

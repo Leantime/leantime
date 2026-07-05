@@ -1475,6 +1475,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      *                         - dollarBudget: int (optional) The dollar budget for the project (defaults to 0).
      *                         - psettings: string (optional) The project settings (defaults to 'restricted').
      *                         - type: string (fixed value 'project') The type of the project.
+     *                         - parent: int (optional) Id of a container project (program/strategy) to nest
+     *                         the new project under. Ignored unless it references a program or strategy.
      *                         - start: string|null The start date of the project in user format or null.
      *                         - end: string|null The end date of the project in user format or null.
      * @return int|false The ID of the added project, or false if the project could not be added.
@@ -1485,6 +1487,17 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function addProject(array $values): int|false
     {
 
+        // A project may only be nested under a CONTAINER project (a program or a strategy),
+        // never under another regular project. Validated here (not just in the controller)
+        // because this method is also reachable via JSON-RPC.
+        $parent = null;
+        if (! empty($values['parent'])) {
+            $parentProject = $this->projectRepository->getProject((int) $values['parent']);
+            if (is_array($parentProject) && in_array($parentProject['type'] ?? '', ['program', 'strategy'], true)) {
+                $parent = (int) $values['parent'];
+            }
+        }
+
         $values = [
             'name' => $values['name'],
             'details' => $values['details'] ?? '',
@@ -1494,6 +1507,7 @@ class Projects extends BaseService implements ChecksProjectAccess
             'dollarBudget' => $values['dollarBudget'] ?? 0,
             'psettings' => $values['psettings'] ?? 'restricted',
             'type' => 'project',
+            'parent' => $parent,
             'start' => $values['start'] ?? null,
             'end' => $values['end'] ?? null,
         ];

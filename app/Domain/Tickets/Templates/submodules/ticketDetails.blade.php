@@ -249,7 +249,7 @@
                                     @foreach ($sprints as $sprintRow)
                                         <option value="{{ $sprintRow->id }}"
                                             @if ($ticket->sprint == $sprintRow->id) selected='selected' @endif
-                                        >{{ $sprintRow->name }}</option>
+                                        >{{ $sprintRow->name }}@if (! empty($sprintRow->isInherited)) — {{ __('label.program_sprint') }} @endif</option>
                                     @endforeach
                                 @endif
                             </select>

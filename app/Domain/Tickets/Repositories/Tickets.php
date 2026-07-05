@@ -244,6 +244,52 @@ class Tickets
     }
 
     /**
+     * Resolve the set of project ids a search applies to. A multi-project `projects`
+     * criterion (program cross-project views) wins over the single `currentProject`.
+     *
+     * @return int[]
+     */
+    private function resolveScopedProjectIds(array $searchCriteria): array
+    {
+        if (isset($searchCriteria['projects']) && $searchCriteria['projects'] != '') {
+            return array_values(array_filter(
+                array_map('intval', explode(',', (string) $searchCriteria['projects'])),
+                static fn ($id) => $id > 0
+            ));
+        }
+
+        if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
+            return [(int) $searchCriteria['currentProject']];
+        }
+
+        return [];
+    }
+
+    /**
+     * Union the status keys matching a semantic type ("done" / "not_done") across every
+     * project in scope. Keys are deduped so a cross-project board can filter correctly
+     * even when projects define different custom status label sets.
+     *
+     * @param  int[]  $projectIds
+     * @return int[]
+     */
+    private function collectStatusKeysByType(array $projectIds, string $filter): array
+    {
+        $statusKeys = [];
+
+        foreach ($projectIds as $projectId) {
+            foreach ($this->getStateLabels($projectId) as $key => $status) {
+                $isDone = ($status['statusType'] ?? '') === 'DONE';
+                if (($filter === 'done' && $isDone) || ($filter === 'not_done' && ! $isDone)) {
+                    $statusKeys[$key] = true;
+                }
+            }
+        }
+
+        return array_keys($statusKeys);
+    }
+
+    /**
      * getAll - get all Tickets, depending on userrole
      *
      * @throws BindingResolutionException
@@ -476,7 +522,20 @@ class Tickets
             $query->where('zp_tickets.type', '<>', $searchCriteria['excludeType']);
         }
 
-        if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
+        // A multi-project filter (program cross-project views) takes precedence over the
+        // single currentProject filter. In program context currentProject is the program
+        // id, which owns no tickets, so we must not AND the two together.
+        $scopedProjectIds = $this->resolveScopedProjectIds($searchCriteria);
+        if (isset($searchCriteria['projects']) && $searchCriteria['projects'] != '') {
+            if ($scopedProjectIds !== []) {
+                $query->whereIn('zp_tickets.projectId', $scopedProjectIds);
+            } else {
+                // A projects filter was requested but resolved to no valid ids — match nothing
+                // rather than silently dropping the project scope (which would leak every
+                // accessible ticket across all projects).
+                $query->whereRaw('1 = 0');
+            }
+        } elseif (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
             $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
         }
 
@@ -524,30 +583,14 @@ class Tickets
             $statusArray = explode(',', $searchCriteria['status']);
 
             if (array_search('not_done', $statusArray) !== false) {
-                if ($searchCriteria['currentProject'] != '') {
-                    $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
-                    $statusList = [];
-                    foreach ($statusLabels as $key => $status) {
-                        if ($status['statusType'] !== 'DONE') {
-                            $statusList[] = $key;
-                        }
-                    }
-                    if (! empty($statusList)) {
-                        $query->whereIn('zp_tickets.status', $statusList);
-                    }
+                $statusList = $this->collectStatusKeysByType($scopedProjectIds, 'not_done');
+                if (! empty($statusList)) {
+                    $query->whereIn('zp_tickets.status', $statusList);
                 }
             } elseif (array_search('done', $statusArray) !== false) {
-                if ($searchCriteria['currentProject'] != '') {
-                    $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
-                    $statusList = [];
-                    foreach ($statusLabels as $key => $status) {
-                        if ($status['statusType'] === 'DONE') {
-                            $statusList[] = $key;
-                        }
-                    }
-                    if (! empty($statusList)) {
-                        $query->whereIn('zp_tickets.status', $statusList);
-                    }
+                $statusList = $this->collectStatusKeysByType($scopedProjectIds, 'done');
+                if (! empty($statusList)) {
+                    $query->whereIn('zp_tickets.status', $statusList);
                 }
             } else {
                 $statuses = array_map('intval', explode(',', $searchCriteria['status']));
@@ -1163,8 +1206,17 @@ class Tickets
         // name has always implied this filter; making it explicit.
         $query->where('zp_tickets.type', '=', 'milestone');
 
-        // Apply search criteria filters
-        if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
+        // Apply search criteria filters. A multi-project filter takes precedence over the
+        // single currentProject filter (see getAllBySearchCriteria for rationale).
+        $scopedProjectIds = $this->resolveScopedProjectIds($searchCriteria);
+        if (isset($searchCriteria['projects']) && $searchCriteria['projects'] != '') {
+            if ($scopedProjectIds !== []) {
+                $query->whereIn('zp_tickets.projectId', $scopedProjectIds);
+            } else {
+                // A projects filter was requested but resolved to no valid ids — match nothing.
+                $query->whereRaw('1 = 0');
+            }
+        } elseif (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
             $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
         }
 
@@ -1217,30 +1269,14 @@ class Tickets
             $statusArray = explode(',', $searchCriteria['status']);
 
             if (array_search('not_done', $statusArray) !== false) {
-                if ($searchCriteria['currentProject'] != '') {
-                    $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
-                    $statusList = [];
-                    foreach ($statusLabels as $key => $status) {
-                        if ($status['statusType'] !== 'DONE') {
-                            $statusList[] = $key;
-                        }
-                    }
-                    if (! empty($statusList)) {
-                        $query->whereIn('zp_tickets.status', $statusList);
-                    }
+                $statusList = $this->collectStatusKeysByType($scopedProjectIds, 'not_done');
+                if (! empty($statusList)) {
+                    $query->whereIn('zp_tickets.status', $statusList);
                 }
             } elseif (array_search('done', $statusArray) !== false) {
-                if ($searchCriteria['currentProject'] != '') {
-                    $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
-                    $statusList = [];
-                    foreach ($statusLabels as $key => $status) {
-                        if ($status['statusType'] === 'DONE') {
-                            $statusList[] = $key;
-                        }
-                    }
-                    if (! empty($statusList)) {
-                        $query->whereIn('zp_tickets.status', $statusList);
-                    }
+                $statusList = $this->collectStatusKeysByType($scopedProjectIds, 'done');
+                if (! empty($statusList)) {
+                    $query->whereIn('zp_tickets.status', $statusList);
                 }
             } else {
                 $statuses = array_map('intval', explode(',', $searchCriteria['status']));
