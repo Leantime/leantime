@@ -8,25 +8,6 @@
                 <div class="form-group">
                     <x-global::forms.text-input value="{{ $ticket->headline }}" name="headline" variant="headline" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="{{ __('input.placeholders.enter_title_of_todo') }}" />
                 </div>
-                <!-- Status -->
-                <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]">{!! __('label.todo_status') !!}</label>
-                    <div class="">
-                        <select
-                            id="status-select"
-                            class=""
-                            name="status"
-                            data-placeholder="{{ isset($ticket->status) ? $statusLabels[$ticket->status]['name'] ?? '' : '' }}"
-                        >
-                            @foreach ($statusLabels as $key => $label)
-                                <option value="{{ $key }}"
-                                    @if ($ticket->status == $key) selected='selected' @endif
-                                >{{ $label['name'] }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
                 <!-- Priority -->
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]">{!! __('label.priority') !!}</label>
@@ -218,6 +199,25 @@
                                 >{{ $tpl->escape($project['name']) }}</option>
                             @endforeach
                         </select>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label class="control-label">{!! __('label.todo_status') !!}</label>
+                        <div class="">
+                            <select
+                                id="status-select"
+                                class="span11"
+                                name="status"
+                                data-placeholder="{{ isset($ticket->status) ? $statusLabels[$ticket->status]['name'] ?? '' : '' }}"
+                            >
+                                @foreach ($statusLabels as $key => $label)
+                                    <option value="{{ $key }}"
+                                        @if ($ticket->status == $key) selected='selected' @endif
+                                    >{{ $label['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Milestones -->
