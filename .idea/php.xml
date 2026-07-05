@@ -378,6 +378,7 @@
       <path value="$PROJECT_DIR$/vendor/dealerdirect/phpcodesniffer-composer-installer" />
       <path value="$PROJECT_DIR$/vendor/phpcsstandards/phpcsutils" />
       <path value="$PROJECT_DIR$/vendor/phpcsstandards/phpcsextra" />
+      <path value="$PROJECT_DIR$/vendor/laravel/mcp" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
