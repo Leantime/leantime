@@ -154,7 +154,13 @@ class UpdateLeantime extends Command
         // Clear Cache + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Clearing Cache');
 
-        exec('rm -rf "'.APP_ROOT.'/bootstrap/cache/*.php"');
+        // Deliberately NOT a shell glob: inside the double quotes the shell never expanded
+        // `*.php`, so this delete silently did nothing for years. A stale
+        // bootstrap/cache/packages.php then survives updates and Laravel trusts it as-is —
+        // any provider added to composer.json since (e.g. laravel/mcp) never loads.
+        foreach (glob(APP_ROOT.'/bootstrap/cache/*.php') ?: [] as $cachedFile) {
+            unlink($cachedFile);
+        }
         exec('rm -rf "'.APP_ROOT.'/storage/framework/composerPaths.php"');
         exec('rm -rf "'.APP_ROOT.'/storage/framework/viewPaths.php"');
 
