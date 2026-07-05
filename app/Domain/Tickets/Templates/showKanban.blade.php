@@ -369,7 +369,11 @@
         @if ($programBoard)
             {{-- Program board: columns are status types; drag persists per-project via the plugin. --}}
             var ticketStatusList = [@foreach ($allKanbanColumns as $key => $statusRow)'{{ $key }}',@endforeach];
-            leantime.pgmProBoard.initProgramKanban(ticketStatusList);
+            if (leantime.pgmProBoard && typeof leantime.pgmProBoard.initProgramKanban === 'function') {
+                leantime.pgmProBoard.initProgramKanban(ticketStatusList);
+            } else {
+                console.warn('PgmPro board JS is not loaded; program kanban drag-and-drop is disabled.');
+            }
         @else
             var ticketStatusList = [@foreach ($allTicketStates as $key => $statusRow)'{{ $key }}',@endforeach];
             leantime.ticketsController.initTicketKanban(ticketStatusList);

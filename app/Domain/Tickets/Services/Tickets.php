@@ -3888,12 +3888,20 @@ class Tickets extends BaseService
         // Aggregate assignable users + milestones across the child projects (deduped).
         $users = [];
         $milestones = [];
-        foreach ($childIds as $pid) {
-            foreach ($this->projectService->getUsersAssignedToProject($pid) as $user) {
-                $users[$user['id']] = $user;
-            }
-            foreach ($this->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $pid]) as $milestone) {
+        if ($childIds !== []) {
+            // Milestones: a single query across all child projects via the multi-project filter,
+            // rather than one (heavy, joined) query per project.
+            foreach ($this->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'projects' => implode(',', $childIds)]) as $milestone) {
                 $milestones[$milestone->id] = $milestone;
+            }
+
+            // Users: one light indexed lookup per child project (bounded by child count). No bulk
+            // variant exists, and a correct one must replicate each project's psettings/client
+            // access rules, so we keep the per-project call and dedupe by id.
+            foreach ($childIds as $pid) {
+                foreach ($this->projectService->getUsersAssignedToProject($pid) as $user) {
+                    $users[$user['id']] = $user;
+                }
             }
         }
         $users = array_values($users);
@@ -3978,7 +3986,9 @@ class Tickets extends BaseService
                 $projectId = (int) ($ticket['projectId'] ?? 0);
                 $statusKey = $ticket['status'] ?? null;
                 $labels = $statusLabelsByProject[$projectId] ?? [];
-                $type = $labels[$statusKey]['statusType'] ?? 'NEW';
+                // A ticket can carry a status key no longer defined in its project; isset() keeps
+                // the nested lookup warning-free and falls back to NEW.
+                $type = isset($labels[$statusKey]['statusType']) ? $labels[$statusKey]['statusType'] : 'NEW';
                 $groupedTickets[$groupKey]['items'][$index]['statusType'] = strtolower($type);
             }
         }

@@ -52,8 +52,9 @@
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     {{-- Inherited (program-owned) sprints are managed at the program level, never edited
-                         or deleted from a child project. The service IDOR-fences this server-side too. --}}
-                    @if ($login::userIsAtLeast($roles::$editor) && empty($sprint->isInherited))
+                         or deleted from a child project. The service IDOR-fences this server-side too.
+                         $sprint can be false (stale/deleted currentSprint), so guard the object access. --}}
+                    @if ($login::userIsAtLeast($roles::$editor) && (! is_object($sprint) || empty($sprint->isInherited)))
                         <li><a href="#/sprints/editSprint/{{ $currentSprint }}">{!! __('link.edit_sprint') !!}</a></li>
                         <li><a href="#/sprints/delSprint/{{ $currentSprint }}" class="delete">{!! __('links.delete_sprint') !!}</a></li>
                     @endif
