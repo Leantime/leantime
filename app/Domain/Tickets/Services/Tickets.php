@@ -1511,7 +1511,13 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllMilestones($searchCriteria, string $sortBy = 'standard'): array|false
     {
-        if (is_array($searchCriteria) && $searchCriteria['currentProject'] > 0) {
+        // Proceed when scoped to a single project (currentProject) OR to a set of projects
+        // (the multi-project `projects` filter used by program boards). The currentProject
+        // access is null-coalesced so a projects-only criteria array doesn't warn.
+        $isScoped = is_array($searchCriteria)
+            && ((($searchCriteria['currentProject'] ?? 0) > 0) || ! empty($searchCriteria['projects']));
+
+        if ($isScoped) {
             $items = $this->ticketRepository->getAllMilestones($searchCriteria, $sortBy);
 
             return $this->sortItemsHierarchically($items);
