@@ -44,6 +44,13 @@
 
         <div class="clearfix"></div>
 
+        @if ($programBoard)
+            <p class="tw-text-[var(--secondary-font-color)]" style="margin-bottom:15px;">
+                <i class="fa fa-circle-info" aria-hidden="true"></i>
+                {{ __('text.program_status_rollup') }}
+            </p>
+        @endif
+
         @if (isset($allTicketGroups['all']))
             @php $allTickets = $allTicketGroups['all']['items']; @endphp
         @endif
@@ -97,30 +104,23 @@
                 <div class="kanban-swimlane-row" data-expanded="{{ $swimlaneExpanded ? 'true' : 'false' }}" id="swimlane-row-{{ $group['id'] }}">
                     <div class="kanban-swimlane-sentinel" data-swimlane-id="{{ $group['id'] }}" aria-hidden="true"></div>
 
-                    {!! app('blade.compiler')::render(
-                        '<x-global::kanban.swimlane-row-header
-                            :groupBy="$groupBy"
-                            :groupId="$groupId"
-                            :label="$label"
-                            :totalCount="$totalCount"
-                            :statusCounts="$statusCounts"
-                            :statusColumns="$statusColumns"
-                            :expanded="$expanded"
-                            :moreInfo="$moreInfo"
-                            :timeAlert="$timeAlert"
-                        />',
-                        [
-                            'groupBy' => $groupBy,
-                            'groupId' => $group['id'],
-                            'label' => $group['label'],
-                            'totalCount' => $swimlaneBreakdown['totalCount'] ?? count($group['items']),
-                            'statusCounts' => $statusCounts,
-                            'statusColumns' => $allKanbanColumns,
-                            'expanded' => $swimlaneExpanded,
-                            'moreInfo' => $group['more-info'] ?? null,
-                            'timeAlert' => $group['timeAlert'] ?? null,
-                        ]
-                    ) !!}
+                    {{-- Render the component directly. It was previously invoked via
+                         app('blade.compiler')::render('<x-...>', $data), but a <x-component> string
+                         passed to Blade::render from inside an already-compiled view gets its bare
+                         variables ($label, $groupId, …) pre-compiled by the outer pass and they are
+                         not in the inner render scope — throwing "Undefined variable" for ANY
+                         kanban group-by. A plain component tag with inline expressions is correct. --}}
+                    <x-global::kanban.swimlane-row-header
+                        :groupBy="$groupBy"
+                        :groupId="$group['id']"
+                        :label="$group['label']"
+                        :totalCount="$swimlaneBreakdown['totalCount'] ?? count($group['items'])"
+                        :statusCounts="$statusCounts"
+                        :statusColumns="$allKanbanColumns"
+                        :expanded="$swimlaneExpanded"
+                        :moreInfo="$group['more-info'] ?? null"
+                        :timeAlert="$group['timeAlert'] ?? null"
+                    />
 
                     <div class="kanban-swimlane-content{{ !$swimlaneExpanded ? ' collapsed' : '' }}" id="swimlane-content-{{ $group['id'] }}">
             @endif
@@ -177,6 +177,30 @@
                                                     @endif
                                                     <small><i class="fa {{ $todoTypeIcons[strtolower($row['type'])] }}"></i> {!! __('label.'.strtolower($row['type'])) !!}</small>
                                                     <small>#{{ $row['id'] }}</small>
+                                                    @if ($programBoard)
+                                                        {{-- Cross-project board: columns are semantic stages, so give each card a
+                                                             dropdown of its OWN project's real statuses (e.g. "Blocked") to set the
+                                                             detailed status directly. patchTicket writes a key valid in that project,
+                                                             so it stays orphan-safe. Also show which project the task belongs to. --}}
+                                                        @php $rowProjectStatuses = $statusLabelsByProject[$row['projectId']] ?? []; @endphp
+                                                        @php $rowProjectStatus = $rowProjectStatuses[$row['status']] ?? null; @endphp
+                                                        <div style="margin-top:4px;">
+                                                            <div class="dropdown ticketDropdown statusDropdown colorized show" style="display:inline-block;">
+                                                                <a class="dropdown-toggle status {{ $rowProjectStatus['class'] ?? 'label-default' }} f-left" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text">{{ $tpl->escape($rowProjectStatus['name'] ?? __('label.new')) }}</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                </a>
+                                                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
+                                                                    <li class="nav-header border">{!! __('dropdown.choose_status') !!}</li>
+                                                                    @php
+                                                                    foreach ($rowProjectStatuses as $statusKey => $statusOption) {
+                                                                        echo "<li class='dropdown-item'><a href='javascript:void(0);' class='".$statusOption['class']."' data-label='".$tpl->escape($statusOption['name'])."' data-value='".$row['id'].'_'.$statusKey.'_'.$statusOption['class']."' id='ticketStatusChange".$row['id'].$statusKey."'>".$tpl->escape($statusOption['name']).'</a></li>';
+                                                                    }
+                                                                    @endphp
+                                                                </ul>
+                                                            </div>
+                                                            <small class="tw-text-[var(--secondary-font-color)]">{{ $tpl->escape($row['projectName'] ?? '') }}</small>
+                                                        </div>
+                                                    @endif
                                                     <div class="kanbanCardContent">
                                                         <h4><a href="#/tickets/showTicket/{{ $row['id'] }}" data-hx-get="{{ BASE_URL }}/tickets/showTicket/{{ $row['id'] }}" hx-swap="none" preload="mouseover">{{ $row['headline'] }}</a></h4>
 
@@ -364,6 +388,11 @@
         leantime.ticketsController.initDueDateTimePickers();
         leantime.ticketsController.initEffortDropdown();
         leantime.ticketsController.initPriorityDropdown();
+
+        @if ($programBoard)
+            {{-- Per-card status dropdown (program board only): set the exact project status. --}}
+            leantime.ticketsController.initStatusDropdown();
+        @endif
 
 
         @if ($programBoard)

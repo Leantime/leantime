@@ -1502,17 +1502,25 @@ class Tickets extends BaseService
     /**
      * Retrieves all milestones based on the provided search criteria and sort option.
      *
-     * @param  array  $searchCriteria  An array containing search parameters. Must include 'currentProject' with a valid project ID.
+     * @param  array  $searchCriteria  Search parameters. Must be scoped to a project — either a single
+     *                                 'currentProject' id (> 0) or a non-empty comma-separated 'projects'
+     *                                 set (used by program/cross-project boards).
      * @param  string  $sortBy  The sorting option for the milestones. Defaults to 'standard'.
-     * @return array|false Returns an array of milestones sorted hierarchically, or false if the search criteria are invalid.
+     * @return array Milestones sorted hierarchically; an empty array when the criteria are not project-scoped.
      *
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
-    public function getAllMilestones($searchCriteria, string $sortBy = 'standard'): array|false
+    public function getAllMilestones($searchCriteria, string $sortBy = 'standard'): array
     {
-        if (is_array($searchCriteria) && $searchCriteria['currentProject'] > 0) {
-            $items = $this->ticketRepository->getAllMilestones($searchCriteria, $sortBy);
+        // Proceed when scoped to a single project (currentProject) OR to a set of projects
+        // (the multi-project `projects` filter used by program boards). The currentProject
+        // access is null-coalesced so a projects-only criteria array doesn't warn.
+        $isScoped = is_array($searchCriteria)
+            && ((($searchCriteria['currentProject'] ?? 0) > 0) || ! empty($searchCriteria['projects']));
+
+        if ($isScoped) {
+            $items = $this->ticketRepository->getAllMilestones($searchCriteria, $sortBy) ?: [];
 
             return $this->sortItemsHierarchically($items);
         }
