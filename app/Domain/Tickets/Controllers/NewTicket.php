@@ -83,7 +83,7 @@ class NewTicket extends Controller
         $this->tpl->assign('remainingHours', 0);
 
         $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
-        $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
+        $this->tpl->assign('users', $this->projectService->getUsersWithAccessToProject((int) session('currentProject')));
 
         $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'));
         $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
@@ -135,7 +135,7 @@ class NewTicket extends Controller
                 $this->tpl->assign('remainingHours', 0);
 
                 $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
-                $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
+                $this->tpl->assign('users', $this->projectService->getUsersWithAccessToProject((int) session('currentProject')));
 
                 $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'));
                 $this->tpl->assign('allAssignedprojects', $allAssignedprojects);

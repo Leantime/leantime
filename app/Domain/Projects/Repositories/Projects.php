@@ -247,6 +247,76 @@ class Projects
     }
 
     /**
+     * Gets all users that can access a project, honoring the project's access level.
+     *
+     * Directly assigned users are always included. On top of that the project's
+     * psettings widen the set: 'all' adds every active user, 'clients' adds the
+     * active users of the project's client. This mirrors isUserAssignedToProject(),
+     * which grants those users access — they must therefore also be offered in
+     * assignee dropdowns (#3331).
+     *
+     * @param  int  $id  The ID of the project.
+     * @param  bool  $includeApiUsers  Whether to include API service-account users.
+     * @return array The users with access to the project.
+     */
+    public function getUsersWithAccessToProject($id, $includeApiUsers = false): array
+    {
+        $project = $this->getProject($id);
+        if ($project === false) {
+            return [];
+        }
+
+        $query = $this->connection->table('zp_user')
+            ->select([
+                'zp_user.id',
+                'zp_user.firstname',
+                'zp_user.lastname',
+                'zp_user.username',
+                'zp_user.notifications',
+                'zp_user.profileId',
+                'zp_user.jobTitle',
+                'zp_user.source',
+                'zp_user.status',
+                'zp_user.modified',
+                'zp_user.role',
+                'zp_relationuserproject.projectRole',
+            ])
+            ->distinct()
+            ->leftJoin('zp_relationuserproject', function ($join) use ($id) {
+                $join->on('zp_user.id', '=', 'zp_relationuserproject.userId')
+                    ->where('zp_relationuserproject.projectId', '=', $id);
+            })
+            ->where(function ($q) use ($project) {
+                $q->whereNotNull('zp_relationuserproject.userId');
+
+                if (($project['psettings'] ?? '') == 'all') {
+                    $q->orWhere('zp_user.status', 'a');
+                } elseif (($project['psettings'] ?? '') == 'clients') {
+                    $q->orWhere(function ($q2) use ($project) {
+                        $q2->where('zp_user.status', 'a')
+                            ->where('zp_user.clientId', $project['clientId']);
+                    });
+                }
+            });
+
+        if ($includeApiUsers === false) {
+            $query->where(function ($q) {
+                $q->whereNull('zp_user.source')
+                    ->orWhere('zp_user.source', '<>', 'api');
+            });
+        }
+
+        $results = $query->orderBy('zp_user.lastname')->get();
+
+        return $results->map(function ($item) {
+            $arr = (array) $item;
+            $arr['firstname'] = $arr['firstname'] ?? $arr['username'];
+
+            return $arr;
+        })->toArray();
+    }
+
+    /**
      * Retrieves the relationship of users assigned to a specific project.
      *
      * @param  int  $id  The ID of the project.

@@ -1486,6 +1486,35 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
+     * Gets all users that can access a project, honoring the project's access level
+     * (psettings): directly assigned users plus — depending on the setting — all
+     * active users ('all') or the client's active users ('clients').
+     *
+     * Use this for assignee/user pickers; use getUsersAssignedToProject() when only
+     * the directly assigned team is wanted (e.g. notifications).
+     *
+     * @param  int  $projectId  The ID of the project.
+     * @return array The users with access to the project.
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
+    public function getUsersWithAccessToProject(int $projectId): array
+    {
+        $users = $this->projectRepository->getUsersWithAccessToProject($projectId);
+
+        foreach ($users as $key => $user) {
+            if (dtHelper()->isValidDateString($user['modified'])) {
+                $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
+            } else {
+                $users[$key]['modified'] = null;
+            }
+        }
+
+        return $users;
+    }
+
+    /**
      * Checks if a user is assigned to a particular project.
      *
      * @param  int  $userId  The ID of the user being checked.

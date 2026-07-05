@@ -131,7 +131,7 @@ class ShowTicket extends Controller
         $this->tpl->assign('remainingHours', $this->timesheetService->getRemainingHours($ticket));
 
         $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
-        $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($ticket->projectId));
+        $this->tpl->assign('users', $this->projectService->getUsersWithAccessToProject((int) $ticket->projectId));
 
         $projectData = $this->projectService->getProject($ticket->projectId);
         $this->tpl->assign('projectData', $projectData);

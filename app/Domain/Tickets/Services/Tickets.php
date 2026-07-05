@@ -3771,7 +3771,7 @@ class Tickets extends BaseService
         $sprints = $this->sprintService->getAllSprints(session('currentProject'));
         $futureSprints = $this->sprintService->getAllFutureSprints((int) session('currentProject'));
 
-        $users = $this->projectService->getUsersAssignedToProject(session('currentProject'));
+        $users = $this->projectService->getUsersWithAccessToProject((int) session('currentProject'));
 
         $milestones = $this->getAllMilestones([
             'sprint' => '',
@@ -3895,11 +3895,11 @@ class Tickets extends BaseService
                 $milestones[$milestone->id] = $milestone;
             }
 
-            // Users: one light indexed lookup per child project (bounded by child count). No bulk
-            // variant exists, and a correct one must replicate each project's psettings/client
-            // access rules, so we keep the per-project call and dedupe by id.
+            // Users: one light indexed lookup per child project (bounded by child count).
+            // getUsersWithAccessToProject applies each project's psettings/client access
+            // rules, so we keep the per-project call and dedupe by id.
             foreach ($childIds as $pid) {
-                foreach ($this->projectService->getUsersAssignedToProject($pid) as $user) {
+                foreach ($this->projectService->getUsersWithAccessToProject((int) $pid) as $user) {
                     $users[$user['id']] = $user;
                 }
             }
