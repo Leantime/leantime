@@ -602,6 +602,11 @@ class Timesheets extends BaseService
             userId: $userId
         );
 
+        // The week's day columns follow the user's LOCAL calendar days. Flat UTC +Nd math
+        // drifts an hour across a DST transition, which put Monday entries into the previous
+        // week's Sunday column (#3310).
+        $weekStartLocal = CarbonImmutable::instance($fromDate)->setToUserTimezone()->startOfDay();
+
         // Timesheets are grouped by ticketId + type
         $timesheetGroups = [];
         foreach ($allTimesheets as $timesheet) {
@@ -624,8 +629,6 @@ class Timesheets extends BaseService
 
             $groupKey = $timesheet['ticketId'].'-'.$timesheet['kind'].'-'.$timezonedTime;
             if (! isset($timesheetGroups[$groupKey])) {
-                // Build an array of 7 days for the weekly timesheet. Include the start date of the current users
-                // timezone in UTC. That way we can compare the dates coming from the db
                 $timesheetGroups[$groupKey] = [
                     'kind' => $timesheet['kind'],
                     'clientName' => $timesheet['clientName'],
@@ -633,98 +636,51 @@ class Timesheets extends BaseService
                     'headline' => $timesheet['headline'],
                     'ticketId' => $timesheet['ticketId'],
                     'hasTimesheetOffset' => $workdateOffsetStart !== 0,
-                    'day1' => [
-                        'start' => $fromDate,
-                        'end' => $fromDate->addHours(23)->addMinutes(59),
-                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
-
-                        'hours' => 0,
-                        'description' => '',
-                    ],
-                    'day2' => [
-                        'start' => $fromDate->addDays(1),
-                        'end' => $fromDate->addDays(1)->addHours(23)->addMinutes(59),
-                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(1)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
-                        'hours' => 0,
-                        'description' => '',
-                    ],
-                    'day3' => [
-                        'start' => $fromDate->addDays(2),
-                        'end' => $fromDate->addDays(2)->addHours(23)->addMinutes(59),
-                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(2)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
-                        'hours' => 0,
-                        'description' => '',
-                    ],
-                    'day4' => [
-                        'start' => $fromDate->addDays(3),
-                        'end' => $fromDate->addDays(3)->addHours(23)->addMinutes(59),
-                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(3)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
-                        'hours' => 0,
-                        'description' => '',
-                    ],
-                    'day5' => [
-                        'start' => $fromDate->addDays(4),
-                        'end' => $fromDate->addDays(4)->addHours(23)->addMinutes(59),
-                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(4)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
-                        'hours' => 0,
-                        'description' => '',
-                    ],
-                    'day6' => [
-                        'start' => $fromDate->addDays(5),
-                        'end' => $fromDate->addDays(5)->addHours(23)->addMinutes(59),
-                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(5)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
-                        'hours' => 0,
-                        'description' => '',
-                    ],
-                    'day7' => [
-                        'start' => $fromDate->addDays(6),
-                        'end' => $fromDate->addDays(6)->addHours(23)->addMinutes(59),
-                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(6)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
-                        'hours' => 0,
-                        'description' => '',
-                    ],
                     'rowSum' => 0,
                 ];
+
+                // Build the 7 day columns from the user's local calendar days and convert the
+                // boundaries back to UTC. addDays() in the local timezone keeps each column
+                // anchored at local midnight even when the week contains a DST transition.
+                for ($i = 1; $i < 8; $i++) {
+                    $dayStartLocal = $weekStartLocal->addDays($i - 1);
+                    $timesheetGroups[$groupKey]['day'.$i] = [
+                        'start' => $dayStartLocal->setToDbTimezone(),
+                        'end' => $dayStartLocal->addDay()->setToDbTimezone(),
+                        'localDay' => $dayStartLocal->toDateString(),
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $dayStartLocal->setToDbTimezone()->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
+                        'hours' => 0,
+                        'description' => '',
+                    ];
+                }
             }
 
-            // Check if timesheet entry falls within the day range of the weekly grouped timesheets that we are trying
-            // to pull up.
-            //
-            // Why would that be different you might ask?
-            //
-            // If a user adds time entries and then changes timezones (even just 1 hour) the values in the db
-            // will be different since it is based on start of the day 00:00:00 in the current users timezone and then
-            // stored as UTC timezone shoifted value in the db.
-            // If the value is not exact but falls within the time period we're adding a new row
+            // The stored workDate is the user's local midnight converted to UTC — but possibly
+            // under a different UTC offset than today (entry logged before a DST switch, or the
+            // user changed timezones). Converted to the current user timezone such an entry sits
+            // shortly before or after midnight; rounding to the nearest midnight recovers the
+            // calendar day the user actually logged, so a Monday entry can never render in the
+            // previous week's Sunday column (#3310).
+            $entryLocalTime = $currentWorkDate->setToUserTimezone();
+            $intendedDay = $entryLocalTime->hour >= 12
+                ? $entryLocalTime->addDay()->toDateString()
+                : $entryLocalTime->toDateString();
+
             for ($i = 1; $i < 8; $i++) {
-
-                $start = $timesheetGroups[$groupKey]['day'.$i]['start'];
-                $end = $timesheetGroups[$groupKey]['day'.$i]['end'];
-
-                if ($currentWorkDate->gte($start) && $currentWorkDate->lt($end)) {
+                if ($intendedDay === $timesheetGroups[$groupKey]['day'.$i]['localDay']) {
                     $timesheetGroups[$groupKey]['day'.$i]['hours'] += $timesheet['hours'];
                     $timesheetGroups[$groupKey]['day'.$i]['actualWorkDate'] = $currentWorkDate;
                     $timesheetGroups[$groupKey]['day'.$i]['description'] = $timesheet['description'];
+                    $timesheetGroups[$groupKey]['rowSum'] += $timesheet['hours'];
 
-                    // No need to check further, we found what we came for
                     break;
                 }
             }
-
-            /*for ($i = 1; $i < 8; $i++) {
-                if ($timesheetGroups[$groupKey]["day" . $i]['actualWorkDate'] == $currentWorkDate) {
-                    $timesheetGroups[$groupKey]["day" . $i]['hours'] += $timesheet['hours'];
-                    $timesheetGroups[$groupKey]["day" . $i]['description'] = $timesheet['description'];
-                    // No need to check further, we found what we came for
-                    break;
-                }
-            }*/
-
-            // Add to rowsum
-            $timesheetGroups[$groupKey]['rowSum'] += $timesheet['hours'];
         }
 
-        return $timesheetGroups;
+        // The repository over-fetches by 12h on both sides of the week; drop groups whose
+        // entries all belong to an adjacent week so they don't render as empty rows.
+        return array_filter($timesheetGroups, fn (array $group) => $group['rowSum'] > 0);
     }
 
     /**

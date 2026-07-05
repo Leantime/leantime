@@ -280,7 +280,13 @@ class Timesheets extends Repository
             $fromDate = $fromDate->copy()->setTimezone('UTC');
         }
 
-        $endDate = $fromDate->copy()->addDays(7);
+        // Entries are stored as the user's local midnight converted to UTC, so rows logged
+        // under a different UTC offset (DST) can sit up to an hour outside a flat +7d window —
+        // they'd show up in the adjacent week's grid instead (#3310). Widen the window by 12h
+        // on both sides; the service buckets by local calendar day, so over-fetched rows that
+        // don't belong to this week simply don't render.
+        $startDate = $fromDate->copy()->subHours(12);
+        $endDate = $fromDate->copy()->addDays(7)->addHours(12);
 
         $query = $this->db->table('zp_timesheets')
             ->select(
@@ -309,7 +315,7 @@ class Timesheets extends Repository
             ->leftJoin('zp_tickets', 'zp_tickets.id', '=', 'zp_timesheets.ticketId')
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
             ->leftJoin('zp_clients', 'zp_clients.id', '=', 'zp_projects.clientId')
-            ->where('zp_timesheets.workDate', '>=', $fromDate->format('Y-m-d H:i:s'))
+            ->where('zp_timesheets.workDate', '>=', $startDate->format('Y-m-d H:i:s'))
             ->where('zp_timesheets.workDate', '<', $endDate->format('Y-m-d H:i:s'))
             ->where('zp_timesheets.userId', $userId)
             ->where('hours', '>', 0);
