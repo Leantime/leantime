@@ -1,3 +1,25 @@
+# Version: 3.9.7
+
+## Highlights
+
+### Cross-Project Program Views
+Task views can now span multiple projects as programs, with sprints inherited across the program board so you can plan and track work at a higher level. (#3587)
+
+## New Features
+- **Personal Access Tokens** - Completed the move of personal access token management into core with a dedicated token controller and language keys (#3597)
+- **MCP Domain Tools** - Reorganized MCP tool classes into their respective domain modules (#3581)
+
+## Bug Fixes
+- **Program Board** - Fixed milestones, kanban rendering, and status rollup clarity on the program board (#3592)
+- **MCP Runtime** - Repaired runtime bugs in domain tools uncovered during live end-to-end testing (#3586)
+- **System Update** - System updates now properly clear cached bootstrap manifests.
+- **General Fixes** - Resolved a batch of recently reported bugs (#3540, #3331, #3310, #3589, #3330, #3546, #3593)
+
+## Improvements
+- **API Rate Limit** - Raised the default API rate limit from 10 to 120 requests per minute (#3591)
+
+---
+
 # Version: 3.9.6
 
 ## Security
