@@ -121,7 +121,7 @@ class AuthCheck
         }
 
         if (! $authenticated && ! $response) {
-            if ($request instanceof APIRequest) {
+            if ($request instanceof ApiRequest) {
                 $this->hitFailedAuthLimiter($request);
                 $response = new Response(json_encode(['error' => 'Invalid API Key']), 401);
             } else {

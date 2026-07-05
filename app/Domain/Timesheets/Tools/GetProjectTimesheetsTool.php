@@ -61,7 +61,7 @@ class GetProjectTimesheetsTool extends Tool
                 : $projectRoleKey;
 
             if ($projectRole !== Roles::$manager) {
-                return ToolResult::error("You don't have permission to view project-wide timesheet data. Only managers and admins can access this information.");
+                return ToolResult::error("You don't have permission to view project-wide timesheet data. This requires a manager role or above, or a manager role in this project.");
             }
         }
 
