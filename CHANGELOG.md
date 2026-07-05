@@ -1,3 +1,28 @@
+# Version: 3.9.6
+
+## Security
+- **Security Hardening** - Addressed authorization, SSRF, reset-token, LDAP, and stored-XSS vulnerabilities (#3584)
+- **Plugin Management** - Plugin management now requires the proper permission and install input is validated more strictly (#3583)
+- **Avatar Rendering** - User IDs are now encoded in avatar image sources to prevent DOM-based XSS (#3582)
+- **API Responses** - Credentials are now stripped from getUser API responses (#3556, #3576)
+
+## New Features
+- **Content Templates** - Introduced a generic content templates domain (#3493)
+- **My Day Schedule API** - Added a getMyDaySchedule API endpoint that respects work hours and timezone (#3579)
+- **Personal Access Tokens** - Added shared AI/MCP support classes and personal access token management (#3560)
+- **Domain Events** - Added class-based domain events and filters with a legacy-string plugin bridge (#3503)
+
+## Bug Fixes
+- **Project Roles** - Fixed user role inheritance when adding a user to a project (#3580)
+- **Kanban View** - Fixed a rendering error caused by an undefined variable in the kanban view (#3554)
+- **General Fixes** - Resolved a batch of recently reported bugs (#3555, #3575, #3571, #3568, #3569, #3570, #3577, #3535, #3539, #3536, #3542, #3547)
+
+## Improvements
+- **API Routing** - Internal API calls now use canonical domain routes (#3557)
+- **Form Components** - Migrated buttons, text inputs, and textareas to reusable form component primitives (#3564, #3563, #3562, #3558, #3531)
+
+---
+
 # Version: 3.9.5
 
 ## New Features
