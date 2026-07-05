@@ -288,7 +288,7 @@ Resolution order: Domain Controllers > Domain Hxcontrollers > Plugin Controllers
 6. `InitialHeaders` - Security headers (CSP, X-Frame-Options) -- filterable by plugins
 7. `AuthCheck` - Authentication (web guards + API guards, 2FA check, public route bypass)
 8. `AuthenticateSession` - Password hash validation, Leantime user session data
-9. `RequestRateLimiter` - Rate limits: login 20/min, API 100/min, general 10000/min
+9. `RequestRateLimiter` - Rate limits (per user+IP): login 20/min, API 120/min, MCP 300/min, general 2000/min — overridable via `LEAN_RATELIMIT_*`
 10. `HandleCors` - CORS handling
 11. `ValidatePostSize` - POST size validation
 12. `TrimStrings` - Whitespace trimming (except passwords)

@@ -547,9 +547,11 @@ class DefaultConfig
     public int $ratelimitGeneral = 2000;
 
     /**
-     * @var int rate limit on api requests
+     * @var int rate limit on API requests (per user+IP per minute). 120 = 2 req/s sustained —
+     *          enough for mobile-app sync bursts and integration polling while still catching
+     *          runaway scripts; in line with comparable tools (GitHub ~83/min, Jira ~100/min).
      */
-    public int $ratelimitApi = 10;
+    public int $ratelimitApi = 120;
 
     /**
      * @var int rate limit on auth requests
