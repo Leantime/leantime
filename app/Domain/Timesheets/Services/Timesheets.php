@@ -644,11 +644,16 @@ class Timesheets extends BaseService
                 // anchored at local midnight even when the week contains a DST transition.
                 for ($i = 1; $i < 8; $i++) {
                     $dayStartLocal = $weekStartLocal->addDays($i - 1);
+                    $dayStartUtc = $dayStartLocal->setToDbTimezone();
                     $timesheetGroups[$groupKey]['day'.$i] = [
-                        'start' => $dayStartLocal->setToDbTimezone(),
+                        'start' => $dayStartUtc,
                         'end' => $dayStartLocal->addDay()->setToDbTimezone(),
                         'localDay' => $dayStartLocal->toDateString(),
-                        'actualWorkDate' => $workdateOffsetStart === 0 ? $dayStartLocal->setToDbTimezone()->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
+                        // Empty cells seed the workDate a new entry would get: that day's exact
+                        // local midnight (in UTC). Not derived from the first entry's time-of-day,
+                        // which would drift by the DST hour across a transition and store the new
+                        // entry an hour off local midnight (it feeds upsertTime via the form key).
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $dayStartUtc : '',
                         'hours' => 0,
                         'description' => '',
                     ];
