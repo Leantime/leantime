@@ -34,7 +34,9 @@
 
                 <div class="clear"></div>
 
-                @if(!empty($project['children']) && count($project['children']) >0)
+                {{-- Depth cap: the hierarchy is cycle-guarded server-side, but a runaway
+                     tree (e.g. mutated by a plugin filter) must never recurse unbounded --}}
+                @if(!empty($project['children']) && count($project['children']) >0 && $level < 20)
                     @include('menu::partials.projectGroup', ['projects' => $project['children'], 'parent' => $project['id'], 'level'=> $level+1, 'prefx' => $prefix, "currentProject"=>$currentProject])
                 @endif
             </li>
