@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace PhpMcp\Laravel;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 class McpServiceProvider extends ServiceProvider
@@ -50,8 +51,20 @@ class McpServiceProvider extends ServiceProvider
         foreach (['packages.php', 'services.php'] as $file) {
             $path = $this->app->bootstrapPath('cache/'.$file);
 
-            if (is_file($path)) {
-                @unlink($path);
+            if (! is_file($path)) {
+                continue;
+            }
+
+            if (! @unlink($path)) {
+                // The app still boots (this provider is a harmless no-op), but a
+                // non-writable bootstrap/cache means the stale manifest -- and this
+                // shim -- persist on every request, so surface it for operators.
+                // Logging must never break boot, hence the guard.
+                try {
+                    Log::warning("Leantime: could not delete stale package manifest {$path}; check bootstrap/cache permissions.");
+                } catch (\Throwable) {
+                    // no-op
+                }
             }
         }
     }
