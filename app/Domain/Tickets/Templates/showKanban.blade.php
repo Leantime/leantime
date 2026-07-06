@@ -177,30 +177,6 @@
                                                     @endif
                                                     <small><i class="fa {{ $todoTypeIcons[strtolower($row['type'])] }}"></i> {!! __('label.'.strtolower($row['type'])) !!}</small>
                                                     <small>#{{ $row['id'] }}</small>
-                                                    @if ($programBoard)
-                                                        {{-- Cross-project board: columns are semantic stages, so give each card a
-                                                             dropdown of its OWN project's real statuses (e.g. "Blocked") to set the
-                                                             detailed status directly. patchTicket writes a key valid in that project,
-                                                             so it stays orphan-safe. Also show which project the task belongs to. --}}
-                                                        @php $rowProjectStatuses = $statusLabelsByProject[$row['projectId']] ?? []; @endphp
-                                                        @php $rowProjectStatus = $rowProjectStatuses[$row['status']] ?? null; @endphp
-                                                        <div style="margin-top:4px;">
-                                                            <div class="dropdown ticketDropdown statusDropdown colorized show" style="display:inline-block;">
-                                                                <a class="dropdown-toggle status {{ $rowProjectStatus['class'] ?? 'label-default' }} f-left" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                    <span class="text">{{ $tpl->escape($rowProjectStatus['name'] ?? __('label.new')) }}</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                </a>
-                                                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
-                                                                    <li class="nav-header border">{!! __('dropdown.choose_status') !!}</li>
-                                                                    @php
-                                                                    foreach ($rowProjectStatuses as $statusKey => $statusOption) {
-                                                                        echo "<li class='dropdown-item'><a href='javascript:void(0);' class='".$statusOption['class']."' data-label='".$tpl->escape($statusOption['name'])."' data-value='".$row['id'].'_'.$statusKey.'_'.$statusOption['class']."' id='ticketStatusChange".$row['id'].$statusKey."'>".$tpl->escape($statusOption['name']).'</a></li>';
-                                                                    }
-                                                                    @endphp
-                                                                </ul>
-                                                            </div>
-                                                            <small class="tw-text-[var(--secondary-font-color)]">{{ $tpl->escape($row['projectName'] ?? '') }}</small>
-                                                        </div>
-                                                    @endif
                                                     <div class="kanbanCardContent">
                                                         <h4><a href="#/tickets/showTicket/{{ $row['id'] }}" data-hx-get="{{ BASE_URL }}/tickets/showTicket/{{ $row['id'] }}" hx-swap="none" preload="mouseover">{{ $row['headline'] }}</a></h4>
 
@@ -325,6 +301,31 @@
 
                                             </div>
                                             <div class="clearfix"></div>
+
+                                            @if ($programBoard)
+                                                {{-- Cross-project board: columns are semantic stages, so give each card a
+                                                     dropdown of its OWN project's real statuses (e.g. "Blocked") to set the
+                                                     detailed status directly. patchTicket writes a key valid in that project,
+                                                     so it stays orphan-safe. Also show which project the task belongs to. --}}
+                                                @php $rowProjectStatuses = $statusLabelsByProject[$row['projectId']] ?? []; @endphp
+                                                @php $rowProjectStatus = $rowProjectStatuses[$row['status']] ?? null; @endphp
+                                                <div style="margin-top:4px;">
+                                                    <div class="dropdown ticketDropdown statusDropdown colorized show" style="display:inline-block;">
+                                                        <a class="dropdown-toggle status {{ $rowProjectStatus['class'] ?? 'label-default' }} f-left" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <span class="text">{{ $tpl->escape($rowProjectStatus['name'] ?? __('label.new')) }}</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                        </a>
+                                                        <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
+                                                            <li class="nav-header border">{!! __('dropdown.choose_status') !!}</li>
+                                                            @php
+                                                            foreach ($rowProjectStatuses as $statusKey => $statusOption) {
+                                                                echo "<li class='dropdown-item'><a href='javascript:void(0);' class='".$statusOption['class']."' data-label='".$tpl->escape($statusOption['name'])."' data-value='".$row['id'].'_'.$statusKey.'_'.$statusOption['class']."' id='ticketStatusChange".$row['id'].$statusKey."'>".$tpl->escape($statusOption['name']).'</a></li>';
+                                                            }
+                                                            @endphp
+                                                        </ul>
+                                                    </div>
+                                                    <small class="tw-text-[var(--secondary-font-color)]">{{ $tpl->escape($row['projectName'] ?? '') }}</small>
+                                                </div>
+                                            @endif
 
                                             @if ($row['commentCount'] > 0 || $row['subtaskCount'] > 0 || $row['tags'] != '')
                                             <div class="row">
