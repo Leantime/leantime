@@ -65,8 +65,8 @@ class RedisServiceProvider extends ServiceProvider
                 // RedisStore::flush() issues FLUSHDB — destroyed every session and logged every
                 // user out (e.g. whenever `cache:clear` ran against production). Redis Cluster
                 // does not support SELECT, so isolation only applies to non-cluster setups.
-$cacheDb = (int) ($cacheConfig['database'] ?? 0);
-$sessionsConfig['database'] = (int) env('LEAN_REDIS_SESSION_DB', $cacheDb === 0 ? 1 : 0);
+                $cacheDb = (int) ($cacheConfig['database'] ?? 0);
+                $sessionsConfig['database'] = (int) env('LEAN_REDIS_SESSION_DB', $cacheDb === 0 ? 1 : 0);
 
                 $app['config']->set('redis.cache', $cacheConfig);
                 $app['config']->set('redis.installation', $installationConfig);

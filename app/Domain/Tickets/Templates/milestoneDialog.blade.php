@@ -108,6 +108,11 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
 
+        @if (isset($_GET['closeModal']))
+            jQuery.nmTop().close();
+            return;
+        @endif
+
         leantime.ticketsController.initSimpleColorPicker();
         leantime.ticketsController.initMilestoneDates();
 
