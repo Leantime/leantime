@@ -60,6 +60,13 @@ class RedisServiceProvider extends ServiceProvider
                     'parameters' => ['timeout' => 1.0],
                 ]);
             } else {
+                // Sessions live in their OWN redis database. Cache and sessions previously
+                // shared db 0 (differing only by key prefix), so ANY cache flush — Laravel's
+                // RedisStore::flush() issues FLUSHDB — destroyed every session and logged every
+                // user out (e.g. whenever `cache:clear` ran against production). Redis Cluster
+                // does not support SELECT, so isolation only applies to non-cluster setups.
+                $sessionsConfig['database'] = env('LEAN_REDIS_SESSION_DB', 1);
+
                 $app['config']->set('redis.cache', $cacheConfig);
                 $app['config']->set('redis.installation', $installationConfig);
                 $app['config']->set('redis.sessions', $sessionsConfig);
