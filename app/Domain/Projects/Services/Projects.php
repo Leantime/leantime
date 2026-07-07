@@ -924,7 +924,11 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $cleanList = [];
         foreach ($projects as $project) {
-            if (! isset($parentIds[$project['parent']]) || $this->parentChainLoops($project['id'], $parentIds)) {
+            // Use array_key_exists, not isset: a top-level strategy/program has parent = NULL,
+            // and isset() reports false for a NULL value. isset() would therefore treat every
+            // child of a top-level parent as "parent missing" and re-root it to 0, dropping it
+            // out of its strategy group in the Projects dropdown (#3617).
+            if (! array_key_exists($project['parent'], $parentIds) || $this->parentChainLoops($project['id'], $parentIds)) {
                 $project['parent'] = 0;
             }
             $cleanList[] = $project;
@@ -1121,7 +1125,12 @@ class Projects extends BaseService implements ChecksProjectAccess
             return isset($assignableRoles[(int) $projectRole]) ? (string) (int) $projectRole : '';
         }
 
-        return (string) $projectRole;
+        // Legacy, non-numeric values ("inherit"/"inherited" and old role names written before
+        // roles became numeric keys) are not resolvable to a role key. Treat them as "no explicit
+        // role" so callers fall back to the user's global role instead of denying all access.
+        // Without this, RoleResolver casts them to (int) 0, Roles::getRoleString(0) returns false,
+        // and a genuine project member gets a 403 (#3618).
+        return '';
     }
 
     /**

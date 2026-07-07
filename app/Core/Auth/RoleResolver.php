@@ -73,7 +73,16 @@ class RoleResolver
         $projectRole = $this->projectAccess->getProjectRole((int) session('userdata.id'), $projectId);
 
         // No explicit project role -> inherit the global role.
-        return $projectRole === '' ? $globalRole : Roles::getRoleString((int) $projectRole);
+        if ($projectRole === '') {
+            return $globalRole;
+        }
+
+        // Fall back to the global role rather than propagating false when the stored project role
+        // can't be resolved to a valid role string. Denying a genuine member (false -> 403) is worse
+        // than granting their inherited global role (#3618).
+        $resolvedRole = Roles::getRoleString((int) $projectRole);
+
+        return $resolvedRole === false ? $globalRole : $resolvedRole;
     }
 
     /**
