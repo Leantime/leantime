@@ -77,10 +77,13 @@ class RoleResolver
             return $globalRole;
         }
 
-        // Fall back to the global role rather than propagating false when the stored project role
-        // can't be resolved to a valid role string. Denying a genuine member (false -> 403) is worse
-        // than granting their inherited global role (#3618).
-        $resolvedRole = Roles::getRoleString((int) $projectRole);
+        // getProjectRole() returns either a numeric role key or, for legacy rows, a role name.
+        // Resolve a numeric key to its role string; accept an already-valid role name as-is. Anything
+        // that still can't be resolved falls back to the global role rather than denying a genuine
+        // member (false -> 403 is worse than granting their inherited global role) (#3618).
+        $resolvedRole = ctype_digit((string) $projectRole)
+            ? Roles::getRoleString((int) $projectRole)
+            : (in_array($projectRole, $roles, true) ? $projectRole : false);
 
         return $resolvedRole === false ? $globalRole : $resolvedRole;
     }

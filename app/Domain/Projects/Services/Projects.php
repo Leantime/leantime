@@ -1125,12 +1125,17 @@ class Projects extends BaseService implements ChecksProjectAccess
             return isset($assignableRoles[(int) $projectRole]) ? (string) (int) $projectRole : '';
         }
 
-        // Legacy, non-numeric values ("inherit"/"inherited" and old role names written before
-        // roles became numeric keys) are not resolvable to a role key. Treat them as "no explicit
-        // role" so callers fall back to the user's global role instead of denying all access.
-        // Without this, RoleResolver casts them to (int) 0, Roles::getRoleString(0) returns false,
-        // and a genuine project member gets a 403 (#3618).
-        return '';
+        // "inherit"/"inherited" are legacy sentinels (the pre-numeric "Inherit" access level) that
+        // mean "no explicit role" -> normalize to '' so callers fall back to the user's global role.
+        // Without this, RoleResolver casts the string to (int) 0, Roles::getRoleString(0) returns
+        // false, and a genuine project member gets a 403 (#3618). Any other stored value (a numeric
+        // key handled above, or a legacy role name) is returned unchanged so real per-project roles
+        // are preserved.
+        if (in_array(strtolower((string) $projectRole), ['inherit', 'inherited'], true)) {
+            return '';
+        }
+
+        return (string) $projectRole;
     }
 
     /**
