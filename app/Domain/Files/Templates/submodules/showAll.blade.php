@@ -1,6 +1,5 @@
 @php
     $module = \Leantime\Core\Controller\Frontcontroller::getModuleName('');
-    $action = \Leantime\Core\Controller\Frontcontroller::getActionName('');
     $maxSize = \Leantime\Core\Files\FileManager::getMaximumFileUploadSize();
     $moduleId = $_GET['id'] ?? '';
 @endphp

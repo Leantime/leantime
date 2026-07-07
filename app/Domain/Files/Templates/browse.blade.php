@@ -2,9 +2,6 @@
 @section('content')
 
 @php
-    use Leantime\Core\Controller\Frontcontroller;
-    $module = 'project';
-    $action = Frontcontroller::getActionName('');
     $maxSize = \Leantime\Core\Files\FileManager::getMaximumFileUploadSize();
     $moduleId = session('currentProject');
 @endphp
