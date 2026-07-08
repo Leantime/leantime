@@ -1,3 +1,22 @@
+# Version: 3.9.8
+
+## Bug Fixes
+- **Milestones** - Fixed reports showing 0% completion and the timeline "Show Tasks" view displaying nothing (#3624, #3625, #3628)
+- **Milestone Modal** - Resolved focus loss, restored save-and-close, and fixed a 500 error when saving goals (#3605)
+- **To-Dos** - Kept To-Dos from closed projects browsable once the project is reopened (#3626, #3627)
+- **Post-3.9.7 Regressions** - Fixed a file browser out-of-memory issue, strategy grouping, and 403 errors for legacy roles (#3621)
+- **MCP Endpoint** - The /mcp endpoint now accepts Leantime API keys, and a shim for the removed php-mcp provider lets in-place upgrades boot (#3601, #3602, #3607)
+- **Program Board** - Moved the card status dropdown below the field row (#3599)
+
+## Improvements
+- **Sessions** - Isolated sessions into their own Redis database to avoid clashes with other cached data (#3604)
+
+## Dependency Updates
+- Bumped the McpServer submodule to include the bulkAddTasks fix (#3620, #3622)
+- Synced composer.lock content hash with composer.json (#3603)
+
+---
+
 # Version: 3.9.7
 
 ## Highlights
