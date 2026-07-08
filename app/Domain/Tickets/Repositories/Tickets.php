@@ -502,11 +502,6 @@ class Tickets
                             ->where('zp_projects.clientId', $clientId);
                     })
                     ->orWhere('requestor.role', '>=', 40);
-            })
-            // Exclude tickets from closed projects
-            ->where(function ($q) {
-                $q->where('zp_projects.state', '<>', -1)
-                    ->orWhereNull('zp_projects.state');
             });
 
         // Apply search criteria filters
@@ -537,6 +532,15 @@ class Tickets
             }
         } elseif (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
             $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
+        } else {
+            // No explicit project scope (My Work / cross-project aggregation): hide tickets from
+            // closed projects to reduce clutter. When the user has explicitly scoped to a project
+            // or program above, that scope wins and its tickets show regardless of closed state, so
+            // a closed project stays fully browsable when opened directly (#3626).
+            $query->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
+            });
         }
 
         if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
@@ -1181,10 +1185,6 @@ class Tickets
             ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
                 $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
             })
-            ->where(function ($q) {
-                $q->where('zp_projects.state', '<>', -1)
-                    ->orWhereNull('zp_projects.state');
-            })
             ->where(function ($q) use ($userId, $clientId) {
                 $q->whereIn('zp_tickets.projectId', function ($subquery) use ($userId) {
                     $subquery->select('projectId')
@@ -1218,6 +1218,14 @@ class Tickets
             }
         } elseif (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
             $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
+        } else {
+            // No explicit project scope: hide milestones from closed projects to reduce clutter in
+            // cross-project views. An explicitly-opened project/program (above) shows its milestones
+            // regardless of closed state, matching getAllBySearchCriteria (#3626).
+            $query->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
+            });
         }
 
         if (isset($searchCriteria['clients']) && $searchCriteria['clients'] != 0 && $searchCriteria['clients'] != '') {
