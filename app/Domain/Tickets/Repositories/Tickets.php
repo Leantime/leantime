@@ -1199,12 +1199,14 @@ class Tickets
                     ->orWhere('requestor.role', '>=', 40);
             });
 
-        // Restrict to milestone-type rows. Without this, getAllMilestones
-        // returned ALL ticket rows (tasks, subtasks, etc.) for the project
-        // and the consumer (e.g., the mobile milestone picker, web
-        // timeline view) saw tasks listed as "milestones." The function
-        // name has always implied this filter; making it explicit.
-        $query->where('zp_tickets.type', '=', 'milestone');
+        // Restrict to milestone-type rows only when the caller didn't specify a type at all (e.g. the
+        // mobile milestone picker), so it doesn't get tasks/subtasks listed as milestones. Any caller
+        // that passes an explicit type — a single type, a comma-separated list, or '' from the Roadmap
+        // "Show Tasks" toggle (via normalizeRoadmapParams) — is handled by the whereIn type filter
+        // further below, so a milestone's child tasks come back and nest under it when requested (#3625).
+        if (! isset($searchCriteria['type'])) {
+            $query->where('zp_tickets.type', '=', 'milestone');
+        }
 
         // Apply search criteria filters. A multi-project filter takes precedence over the
         // single currentProject filter (see getAllBySearchCriteria for rationale).
