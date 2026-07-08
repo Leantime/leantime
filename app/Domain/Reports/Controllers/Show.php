@@ -79,8 +79,11 @@ class Show extends Controller
 
         $this->tpl->assign('states', $this->ticketService->getStatusLabels());
 
-        // Milestones
+        // Milestones. getAllMilestones no longer computes percentDone in the query, so backfill each
+        // milestone's completion the same way the Roadmap/timeline does — otherwise the report shows
+        // every milestone at 0% (#3624).
         $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $currentProject]);
+        $allProjectMilestones = $this->ticketService->getBulkMilestoneProgress($allProjectMilestones);
         $this->tpl->assign('milestones', $allProjectMilestones);
 
         return $this->tpl->display('reports.show');
