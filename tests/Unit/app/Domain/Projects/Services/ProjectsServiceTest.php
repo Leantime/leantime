@@ -541,6 +541,10 @@ class ProjectsServiceTest extends TestCase
             'owner key not assignable -> inherit' => ['50', ''],
             'valid editor key preserved' => ['20', '20'],
             'valid readonly key preserved' => ['5', '5'],
+            'legacy inherit sentinel -> inherit' => ['inherit', ''],
+            'legacy inherited sentinel -> inherit' => ['inherited', ''],
+            'legacy uppercase Inherit sentinel -> inherit' => ['Inherit', ''],
+            'legacy role name preserved' => ['editor', 'editor'],
         ];
     }
 
@@ -664,5 +668,31 @@ class ProjectsServiceTest extends TestCase
         // The full pipeline must terminate and surface every project.
         $hierarchy = $service->findMyChildren(0, $clean);
         $this->assertCount(4, $hierarchy);
+    }
+
+    /**
+     * Regression for #3617: a child whose parent is a top-level strategy/program (parent = NULL)
+     * must stay nested. isset() reports false for a NULL parent value, which previously re-rooted
+     * every such child to 0 and dropped it out of its strategy group in the Projects dropdown.
+     */
+    public function test_clean_parent_relationship_keeps_children_of_top_level_parents(): void
+    {
+        $projects = [
+            ['id' => 1, 'parent' => null, 'name' => 'Strategy'],   // top-level container
+            ['id' => 2, 'parent' => 1, 'name' => 'Project under strategy'],
+            ['id' => 3, 'parent' => 1, 'name' => 'Plan under strategy'],
+        ];
+
+        $service = $this->makeService();
+        $byId = array_column($service->cleanParentRelationship($projects), null, 'id');
+
+        $this->assertSame(1, $byId[2]['parent'], 'child of a NULL-parent strategy must stay nested');
+        $this->assertSame(1, $byId[3]['parent'], 'plan of a NULL-parent strategy must stay nested');
+
+        // And the child must actually appear under the strategy in the assembled hierarchy.
+        $hierarchy = $service->findMyChildren(0, array_values($byId));
+        $this->assertCount(1, $hierarchy, 'only the top-level strategy sits at the root');
+        $this->assertSame(1, $hierarchy[0]['id']);
+        $this->assertCount(2, $hierarchy[0]['children'], 'project and plan nest under the strategy');
     }
 }
