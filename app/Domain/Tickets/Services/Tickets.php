@@ -2062,6 +2062,7 @@ class Tickets extends BaseService
             'dependingTicketId' => '',
             'milestoneid' => $params['dependentMilestone'] ?? '',
             'acceptanceCriteria' => '',
+            'outcomeImpact' => $params['outcomeImpact'] ?? '',
             'tags' => $params['tags'] ?? '',
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
@@ -2137,6 +2138,7 @@ class Tickets extends BaseService
             'hourRemaining' => $values['hourRemaining'] ?? '',
             'priority' => $values['priority'] ?? '',
             'acceptanceCriteria' => $values['acceptanceCriteria'] ?? '',
+            'outcomeImpact' => $values['outcomeImpact'] ?? '',
             'editFrom' => $values['editFrom'] ?? '',
             'timeFrom' => $values['timeFrom'] ?? '',
             'editTo' => $values['editTo'] ?? '',
@@ -2270,6 +2272,7 @@ class Tickets extends BaseService
             'hourRemaining' => $values['hourRemaining'] ?? '',
             'priority' => $values['priority'] ?? '',
             'acceptanceCriteria' => $values['acceptanceCriteria'] ?? '',
+            'outcomeImpact' => $values['outcomeImpact'] ?? '',
             'editFrom' => $values['editFrom'] ?? '',
             'timeFrom' => $values['timeFrom'] ?? '',
             'editTo' => $values['editTo'] ?? '',
@@ -2836,6 +2839,11 @@ class Tickets extends BaseService
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
         ];
+
+        // Callers without the field (e.g. inline kanban edits) must not wipe a saved outcome.
+        if (array_key_exists('outcomeImpact', $params)) {
+            $values['outcomeImpact'] = $params['outcomeImpact'];
+        }
 
         $values = $this->prepareTicketDates($values);
 
