@@ -494,6 +494,8 @@ class Goalcanvas extends Blueprints
             'tags' => $values['tags'] ?? '',
         ]);
 
+        $this->recordGoalValueHistory((int) $id, $values['currentValue'] ?? null);
+
         return (string) $id;
     }
 
@@ -669,5 +671,144 @@ class Goalcanvas extends Blueprints
             ->get();
 
         return array_map(fn ($item) => (array) $item, $results->toArray());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Goal boards additionally record the initial metric value so KPI trends start at creation.
+     */
+    public function addCanvasItem(array $values): false|string
+    {
+        $id = parent::addCanvasItem($values);
+
+        if ($id !== false && ($values['box'] ?? '') === 'goal') {
+            $this->recordGoalValueHistory((int) $id, $values['currentValue'] ?? null);
+        }
+
+        return $id;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Goal boards additionally record metric value changes to zp_goal_history.
+     */
+    public function editCanvasItem(array $values): void
+    {
+        $itemId = (int) ($values['itemId'] ?? $values['id'] ?? 0);
+        $previousValue = $this->getCurrentGoalValue($itemId);
+
+        parent::editCanvasItem($values);
+
+        if ($previousValue !== null && array_key_exists('currentValue', $values) && (float) $values['currentValue'] !== (float) $previousValue) {
+            $this->recordGoalValueHistory($itemId, $values['currentValue']);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Goal boards additionally record metric value changes to zp_goal_history.
+     */
+    public function patchCanvasItem(int $id, array $params): bool
+    {
+        $previousValue = array_key_exists('currentValue', $params) ? $this->getCurrentGoalValue($id) : null;
+
+        $result = parent::patchCanvasItem($id, $params);
+
+        if ($result && $previousValue !== null && (float) $params['currentValue'] !== (float) $previousValue) {
+            $this->recordGoalValueHistory($id, $params['currentValue']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Daily safety net behind the write-path hooks: records a history row for every goal whose
+     * current value differs from its latest recorded value (covers writes that bypassed this
+     * repository). Returns the number of rows written.
+     */
+    public function snapshotGoalValues(): int
+    {
+        $goals = $this->dbConnection->table('zp_canvas_items')
+            ->select(['zp_canvas_items.id', 'zp_canvas_items.currentValue'])
+            ->join('zp_canvas', 'zp_canvas_items.canvasId', '=', 'zp_canvas.id')
+            ->where('zp_canvas.type', '=', static::CANVAS_NAME.'canvas')
+            ->where('zp_canvas_items.box', '=', 'goal')
+            ->get();
+
+        $latestValues = [];
+        $latestDates = $this->dbConnection->table('zp_goal_history')
+            ->selectRaw('itemId, MAX(dateRecorded) as maxDate')
+            ->groupBy('itemId');
+        $latestRows = $this->dbConnection->table('zp_goal_history')
+            ->select(['zp_goal_history.itemId', 'zp_goal_history.value'])
+            ->joinSub($latestDates, 'latest', function ($join) {
+                $join->on('zp_goal_history.itemId', '=', 'latest.itemId')
+                    ->on('zp_goal_history.dateRecorded', '=', 'latest.maxDate');
+            })
+            ->get();
+        foreach ($latestRows as $row) {
+            $latestValues[(int) $row->itemId] = (float) $row->value;
+        }
+
+        $inserts = [];
+        $now = now();
+        foreach ($goals as $goal) {
+            $currentValue = (float) $goal->currentValue;
+            if (! array_key_exists((int) $goal->id, $latestValues) || $latestValues[(int) $goal->id] !== $currentValue) {
+                $inserts[] = [
+                    'itemId' => (int) $goal->id,
+                    'value' => $currentValue,
+                    'userId' => null,
+                    'dateRecorded' => $now,
+                ];
+            }
+        }
+
+        if ($inserts !== []) {
+            $this->dbConnection->table('zp_goal_history')->insert($inserts);
+        }
+
+        return count($inserts);
+    }
+
+    /**
+     * The stored metric value of a goal item, or null when the item isn't a goal (or is unknown).
+     */
+    private function getCurrentGoalValue(int $itemId): ?float
+    {
+        if ($itemId === 0) {
+            return null;
+        }
+
+        $item = $this->dbConnection->table('zp_canvas_items')
+            ->select(['currentValue', 'box'])
+            ->where('id', $itemId)
+            ->first();
+
+        if ($item === null || $item->box !== 'goal') {
+            return null;
+        }
+
+        return (float) $item->currentValue;
+    }
+
+    /**
+     * Appends a zp_goal_history row so metric changes stay chartable over time.
+     */
+    private function recordGoalValueHistory(int $itemId, mixed $value): void
+    {
+        if ($itemId === 0 || $value === null || $value === '' || ! is_numeric($value)) {
+            return;
+        }
+
+        $this->dbConnection->table('zp_goal_history')->insert([
+            'itemId' => $itemId,
+            'value' => (float) $value,
+            'userId' => session()->exists('userdata') ? (int) session('userdata.id') : null,
+            'dateRecorded' => now(),
+        ]);
     }
 }
