@@ -15,13 +15,13 @@
 @endphp
 
 @if ($hasAttentionItems)
-    <div class="reportSection reportNeedsAttention tw-mb-6 tw-rounded-lg tw-p-4" style="border: 1px solid var(--red); background: color-mix(in srgb, var(--red) 5%, transparent);">
-        <h5 class="subtitle tw-mb-3"><i class="fa fa-triangle-exclamation" style="color: var(--red);"></i> {{ __('subtitles.needs_attention') }}</h5>
+    <div class="reportNeedsAttention">
+        <h5 class="subtitle"><i class="fa fa-triangle-exclamation" style="color: var(--red);"></i> {{ __('subtitles.needs_attention') }}</h5>
 
-        <ul class="tw-list-none tw-p-0 tw-m-0 tw-flex tw-flex-col tw-gap-1.5">
+        <ul class="tw-list-none tw-p-0 tw-m-0">
             @foreach ($needsAttention['statusAlerts'] as $project)
                 <li>
-                    <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--{{ $project->latestStatus === 'red' ? 'red' : 'yellow' }});"></span>
+                    <span class="statusDot" style="background:var(--{{ $project->latestStatus === 'red' ? 'red' : 'yellow' }});"></span>
                     <strong>{{ $tpl->escape($project->name) }}</strong>
                     {{ __('text.attention_reported_status') }}
                     @if (!empty($project->latestStatusText))
@@ -33,8 +33,8 @@
             @foreach ($needsAttention['overdueMilestones'] as $milestone)
                 <li>
                     <i class="fa fa-fw fa-clock" style="color: var(--red);"></i>
-                    @if ($showProjects)<span class="tw-opacity-70">{{ $tpl->escape($milestone->projectName) }} · </span>@endif
                     <strong>{{ $tpl->escape($milestone->headline) }}</strong>
+                    @if ($showProjects)<span class="tw-opacity-60">({{ $tpl->escape($milestone->projectName) }})</span>@endif
                     {{ __('text.attention_overdue_since') }} {{ $milestone->dueDate?->formatDateForUser() }}
                 </li>
             @endforeach
@@ -44,7 +44,7 @@
                     <i class="fa fa-fw fa-bullseye" style="color: var(--yellow);"></i>
                     <strong>{{ $tpl->escape($goal->title) }}</strong>
                     {{ $goal->status === 'status_miss' ? __('text.attention_goal_missed') : __('text.attention_goal_at_risk') }}
-                    <span class="tw-opacity-70">({{ format($goal->currentValue)->decimal() }} / {{ format($goal->endValue)->decimal() }} {{ $tpl->escape($goal->metricType ?? '') }})</span>
+                    <span class="tw-opacity-60">({{ \Illuminate\Support\Number::format((float) $goal->currentValue, maxPrecision: 1) }} of {{ \Illuminate\Support\Number::format((float) $goal->endValue, maxPrecision: 1) }} {{ $tpl->escape($goal->metricType ?? '') }})</span>
                 </li>
             @endforeach
 

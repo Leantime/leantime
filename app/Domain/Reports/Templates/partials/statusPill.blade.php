@@ -19,16 +19,16 @@
 @endphp
 
 @if (!empty($status) && isset($pillColors[$status]))
-    <span class="reportStatusPill tw-inline-flex tw-items-center tw-gap-1.5 tw-text-sm tw-whitespace-nowrap">
-        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:{{ $pillColors[$status] }};"></span>
+    <span class="reportStatusPill tw-text-sm">
+        <span class="statusDot" style="background:{{ $pillColors[$status] }};"></span>
         {{ $pillLabels[$status] }}
         @if (!empty($date))
             <span class="tw-opacity-60">· {{ $date->formatDateForUser() }}</span>
         @endif
     </span>
 @else
-    <span class="reportStatusPill tw-inline-flex tw-items-center tw-gap-1.5 tw-text-sm tw-opacity-60 tw-whitespace-nowrap">
-        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--grey);"></span>
+    <span class="reportStatusPill tw-text-sm tw-opacity-60">
+        <span class="statusDot" style="background:var(--grey);"></span>
         {{ __('label.status_no_update') }}
     </span>
 @endif
