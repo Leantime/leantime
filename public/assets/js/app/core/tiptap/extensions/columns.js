@@ -343,14 +343,19 @@ var ColumnLayout = Node.create({
     },
 
     addKeyboardShortcuts: function() {
+        // Arrow functions so `this` resolves to the extension context. Tiptap
+        // invokes shortcut handlers bare (`() => method({ editor })`), so a
+        // regular `function () {}` here would run with `this === undefined` and
+        // throw on `this.editor`, aborting the keydown before the core keymap
+        // (joinBackward etc.) could run.
         return {
-            'Mod-Alt-2': function() {
+            'Mod-Alt-2': () => {
                 return this.editor.commands.setColumns(2);
             },
-            'Mod-Alt-3': function() {
+            'Mod-Alt-3': () => {
                 return this.editor.commands.setColumns(3);
             },
-            'Backspace': function() {
+            'Backspace': () => {
                 var editor = this.editor;
                 var state = editor.state;
                 var selection = state.selection;
