@@ -73,7 +73,19 @@ class RoleResolver
         $projectRole = $this->projectAccess->getProjectRole((int) session('userdata.id'), $projectId);
 
         // No explicit project role -> inherit the global role.
-        return $projectRole === '' ? $globalRole : Roles::getRoleString((int) $projectRole);
+        if ($projectRole === '') {
+            return $globalRole;
+        }
+
+        // getProjectRole() returns either a numeric role key or, for legacy rows, a role name.
+        // Resolve a numeric key to its role string; accept an already-valid role name as-is. Anything
+        // that still can't be resolved falls back to the global role rather than denying a genuine
+        // member (false -> 403 is worse than granting their inherited global role) (#3618).
+        $resolvedRole = ctype_digit((string) $projectRole)
+            ? Roles::getRoleString((int) $projectRole)
+            : (in_array($projectRole, $roles, true) ? $projectRole : false);
+
+        return $resolvedRole === false ? $globalRole : $resolvedRole;
     }
 
     /**

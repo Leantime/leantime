@@ -502,11 +502,6 @@ class Tickets
                             ->where('zp_projects.clientId', $clientId);
                     })
                     ->orWhere('requestor.role', '>=', 40);
-            })
-            // Exclude tickets from closed projects
-            ->where(function ($q) {
-                $q->where('zp_projects.state', '<>', -1)
-                    ->orWhereNull('zp_projects.state');
             });
 
         // Apply search criteria filters
@@ -537,6 +532,15 @@ class Tickets
             }
         } elseif (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
             $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
+        } else {
+            // No explicit project scope (My Work / cross-project aggregation): hide tickets from
+            // closed projects to reduce clutter. When the user has explicitly scoped to a project
+            // or program above, that scope wins and its tickets show regardless of closed state, so
+            // a closed project stays fully browsable when opened directly (#3626).
+            $query->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
+            });
         }
 
         if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
@@ -1181,10 +1185,6 @@ class Tickets
             ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
                 $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
             })
-            ->where(function ($q) {
-                $q->where('zp_projects.state', '<>', -1)
-                    ->orWhereNull('zp_projects.state');
-            })
             ->where(function ($q) use ($userId, $clientId) {
                 $q->whereIn('zp_tickets.projectId', function ($subquery) use ($userId) {
                     $subquery->select('projectId')
@@ -1199,12 +1199,14 @@ class Tickets
                     ->orWhere('requestor.role', '>=', 40);
             });
 
-        // Restrict to milestone-type rows. Without this, getAllMilestones
-        // returned ALL ticket rows (tasks, subtasks, etc.) for the project
-        // and the consumer (e.g., the mobile milestone picker, web
-        // timeline view) saw tasks listed as "milestones." The function
-        // name has always implied this filter; making it explicit.
-        $query->where('zp_tickets.type', '=', 'milestone');
+        // Restrict to milestone-type rows only when the caller didn't specify a type at all (e.g. the
+        // mobile milestone picker), so it doesn't get tasks/subtasks listed as milestones. Any caller
+        // that passes an explicit type — a single type, a comma-separated list, or '' from the Roadmap
+        // "Show Tasks" toggle (via normalizeRoadmapParams) — is handled by the whereIn type filter
+        // further below, so a milestone's child tasks come back and nest under it when requested (#3625).
+        if (! isset($searchCriteria['type'])) {
+            $query->where('zp_tickets.type', '=', 'milestone');
+        }
 
         // Apply search criteria filters. A multi-project filter takes precedence over the
         // single currentProject filter (see getAllBySearchCriteria for rationale).
@@ -1218,6 +1220,14 @@ class Tickets
             }
         } elseif (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
             $query->where('zp_tickets.projectId', $searchCriteria['currentProject']);
+        } else {
+            // No explicit project scope: hide milestones from closed projects to reduce clutter in
+            // cross-project views. An explicitly-opened project/program (above) shows its milestones
+            // regardless of closed state, matching getAllBySearchCriteria (#3626).
+            $query->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
+            });
         }
 
         if (isset($searchCriteria['clients']) && $searchCriteria['clients'] != 0 && $searchCriteria['clients'] != '') {

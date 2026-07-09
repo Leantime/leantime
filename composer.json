@@ -134,6 +134,9 @@
                 "app/"
             ]
         },
+        "classmap": [
+            "app/Core/Shims/"
+        ],
         "files": [
             "app/helpers.php"
         ]

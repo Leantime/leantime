@@ -89,7 +89,7 @@ class AuthCheck
 
     protected function authenticate($request, array $guards, $loginRedirect, $next)
     {
-        if ($request->isApiOrCronRequest()) {
+        if ($request->isApiOrCronRequest() || $request->isMcpRequest()) {
             return $this->authenticateApi($request, $guards);
         }
 

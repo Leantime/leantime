@@ -1,5 +1,11 @@
 leantime.modals = (function () {
 
+    // The URL of the modal currently open. Used to make the hashchange->openModal
+    // path idempotent: a repeated hashchange pointing at the already-open modal
+    // must NOT rebuild it. Rebuilding re-fetches and re-inserts the whole
+    // .nyroModalCont, destroying any field the user is typing into (focus loss).
+    var currentModalUrl = null;
+
     var setCustomModalCallback = function(callback) {
         if(typeof callback === 'function') {
             window.globalModalCallback = callback;
@@ -55,6 +61,7 @@ leantime.modals = (function () {
                     }, 100);
                 },
                 beforeClose: function () {
+                    currentModalUrl = null;
                     try{
                         history.pushState("", document.title, window.location.pathname + window.location.search);
 
@@ -97,6 +104,16 @@ leantime.modals = (function () {
 
         var urlParts = url.split("/");
         if(urlParts.length>2 && urlParts[1] !== "tab") {
+            var targetUrl = baseUrl+""+url;
+
+            // Idempotency guard: if the modal for this exact URL is already open, a
+            // repeated hashchange must NOT rebuild it — rebuilding destroys the DOM
+            // (and any input the user is typing into), stealing focus.
+            if (targetUrl === currentModalUrl && jQuery.nmTop()) {
+                return;
+            }
+            currentModalUrl = targetUrl;
+
             // Guard against nyroModal losing its jQuery registration between opens.
             // This can happen when the modal close/reinit cycle runs before the
             // document-ready wrapper in jquery.nyroModal.custom.js has re-fired.
@@ -104,14 +121,14 @@ leantime.modals = (function () {
                 console.warn('[Modal] jQuery.nmManual not available, retrying...');
                 setTimeout(function() {
                     if (typeof jQuery.nmManual === 'function') {
-                        jQuery.nmManual(baseUrl+""+url, modalOptions);
+                        jQuery.nmManual(targetUrl, modalOptions);
                     } else {
                         console.error('[Modal] jQuery.nmManual unavailable after retry — nyroModal may not be loaded.');
                     }
                 }, 100);
                 return;
             }
-            jQuery.nmManual(baseUrl+""+url, modalOptions);
+            jQuery.nmManual(targetUrl, modalOptions);
         }
     }
 

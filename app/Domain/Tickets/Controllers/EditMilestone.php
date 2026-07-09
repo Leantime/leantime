@@ -102,9 +102,11 @@ class EditMilestone extends Controller
             if (isset($params['headline']) === true) {
                 if ($this->ticketService->updateMilestoneFromDialog($params)) {
                     $this->tpl->setNotification($this->language->__('notification.milestone_edited_successfully'), 'success');
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
+
+                    return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id'].'?closeModal=1');
                 }
+
+                $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
 
                 return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
             }
@@ -117,7 +119,7 @@ class EditMilestone extends Controller
         if (is_numeric($result)) {
             $this->tpl->setNotification($this->language->__('notification.milestone_created_successfully'), 'success');
 
-            return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$result);
+            return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$result.'?closeModal=1');
         }
 
         $this->tpl->setNotification($this->language->__('notification.saving_milestone_error'), 'error');
