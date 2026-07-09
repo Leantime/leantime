@@ -2407,6 +2407,59 @@ class Tickets extends BaseService
     /**
      * @api
      *
+     * Returns the user's tasks that were marked DONE on a specific date
+     * (default today), each annotated with `dateClosed` (the completion
+     * timestamp). Powers the mobile "Done today" reflection — an accurate,
+     * complete mirror of what actually got finished, including unplanned work.
+     *
+     * "Closed on date" means the ticket is currently DONE *and* its status
+     * was changed to that DONE status on the given date (per zp_tickethistory).
+     * So a task finished on an earlier day is excluded, and a task reopened
+     * then re-completed the same day is included once. Built on the general
+     * getStatusChangeEvents primitive, so throughput/burndown and strategy
+     * reporting can reuse the same query.
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
+    public function getMyClosedTicketsForDate(?int $userId = null, ?string $date = null): array
+    {
+        $date = $date ?: date('Y-m-d');
+
+        // Candidates: the user's currently-DONE tickets (statusType resolved).
+        $doneTickets = $this->getAllDoneUserTickets($userId);
+        if (empty($doneTickets)) {
+            return [];
+        }
+
+        $byId = [];
+        foreach ($doneTickets as $ticket) {
+            $byId[$ticket['id']] = $ticket;
+        }
+
+        $events = $this->ticketRepository->getStatusChangeEvents(array_keys($byId), $date, $date);
+
+        $closed = [];
+        foreach ($events as $event) {
+            $ticketId = (int) $event['ticketId'];
+            $ticket = $byId[$ticketId] ?? null;
+            if ($ticket === null || isset($closed[$ticketId])) {
+                continue;
+            }
+
+            // Only count changes INTO the ticket's current (DONE) status — it
+            // was actually marked done that day, not merely touched. Events are
+            // newest-first, so the first match keeps the latest completion time.
+            if ((string) $event['changeValue'] === (string) $ticket['status']) {
+                $ticket['dateClosed'] = $event['dateModified'];
+                $closed[$ticketId] = $ticket;
+            }
+        }
+
+        return array_values($closed);
+    }
+
+    /**
+     * @api
+     *
      * Companion to markTicketDone for un-completing. Resolves the
      * project's first NEW-statusType status and patches to it. Used by
      * mobile's "Done" filter — tap the checked checkbox to bring a task

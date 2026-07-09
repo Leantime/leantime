@@ -1844,6 +1844,47 @@ class Tickets
     }
 
     /**
+     * Status-change history events for a set of tickets within a date range.
+     *
+     * A general reporting primitive. Every time a ticket's status changes,
+     * addTicketChange() writes a zp_tickethistory row (changeType 'status',
+     * changeValue = the new status id, dateModified = timestamp). This returns
+     * those rows for the given tickets over [fromDate, toDate], newest first.
+     *
+     * Deliberately status-config-agnostic: callers resolve changeValue against
+     * their project's status labels to decide which changes count as "to DONE",
+     * "to in progress", etc. That keeps this one query reusable across mobile's
+     * "done today" reflection, throughput/burndown reporting, and strategy-level
+     * progress rollups.
+     *
+     * @param  int[]  $ticketIds
+     * @param  string  $fromDate  inclusive, 'Y-m-d'
+     * @param  string  $toDate  inclusive, 'Y-m-d'
+     * @return array<int, array{ticketId:int, changeValue:string, dateModified:string}>
+     */
+    public function getStatusChangeEvents(array $ticketIds, string $fromDate, string $toDate): array
+    {
+        if (empty($ticketIds)) {
+            return [];
+        }
+
+        $rows = $this->connection->table('zp_tickethistory')
+            ->select('ticketId', 'changeValue', 'dateModified')
+            ->where('changeType', 'status')
+            ->whereIn('ticketId', $ticketIds)
+            ->whereBetween('dateModified', [$fromDate.' 00:00:00', $toDate.' 23:59:59'])
+            ->orderBy('dateModified', 'desc')
+            ->get();
+
+        $events = [];
+        foreach ($rows as $row) {
+            $events[] = (array) $row;
+        }
+
+        return $events;
+    }
+
+    /**
      * Get all tasks (and optionally subtasks) that belong to a milestone
     /**
      * Get all tasks (and optionally subtasks) that belong to a milestone
