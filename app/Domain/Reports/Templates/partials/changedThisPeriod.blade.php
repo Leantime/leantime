@@ -11,21 +11,21 @@
 @endphp
 
 @if (!empty($slippage['pushedOut']) || !empty($slippage['addedMidPeriod']))
-    <div class="reportSlippage tw-my-4 tw-rounded-lg tw-p-3 tw-text-sm" style="border: 1px dashed var(--main-border-color, var(--grey)); ">
+    <div class="reportSlippage">
         <strong class="tw-block tw-mb-1"><i class="fa fa-fw fa-arrows-left-right tw-opacity-60"></i> {{ __('subtitles.changed_this_period') }}</strong>
 
         @foreach ($slippage['pushedOut'] as $milestone)
             <div>
-                @if ($showProjects)<span class="tw-opacity-70">{{ $tpl->escape($milestone->projectName) }} · </span>@endif
                 <strong>{{ $tpl->escape($milestone->headline) }}</strong>
+                @if ($showProjects)<span class="tw-opacity-70">({{ $tpl->escape($milestone->projectName) }})</span>@endif
                 {{ sprintf(__('text.slippage_moved_out'), $milestone->dueDateMoves, $milestone->dueDate?->formatDateForUser() ?? '—') }}
             </div>
         @endforeach
 
         @foreach ($slippage['addedMidPeriod'] as $milestone)
             <div>
-                @if ($showProjects)<span class="tw-opacity-70">{{ $tpl->escape($milestone->projectName) }} · </span>@endif
                 <strong>{{ $tpl->escape($milestone->headline) }}</strong>
+                @if ($showProjects)<span class="tw-opacity-70">({{ $tpl->escape($milestone->projectName) }})</span>@endif
                 {{ __('text.slippage_added_mid_period') }}
             </div>
         @endforeach
