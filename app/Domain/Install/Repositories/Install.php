@@ -92,6 +92,7 @@ class Install
         30518,
         30519,
         30520,
+        30521,
     ];
 
     /**
@@ -2838,6 +2839,35 @@ class Install
             Log::error('Migration 30520: '.$e->getMessage());
 
             return ['Migration 30520 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Mobile SSO bridge: short-lived, single-use codes exchanged for a bearer
+     * token by the mobile app (see Domain/Oidc/Repositories/OidcMobileCode and
+     * docs/backend-mobile-auth-bridge-plan.md). Only a sha256 hash of each code
+     * is stored; rows are swept on expiry.
+     */
+    public function update_sql_30521(): bool|array
+    {
+        try {
+            if (! Schema::hasTable('zp_oidc_mobile_codes')) {
+                Schema::create('zp_oidc_mobile_codes', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('code', 64);
+                    $table->integer('tokenable_id');
+                    $table->timestamp('expires_at')->nullable();
+                    $table->timestamp('created_at')->nullable();
+                    $table->index('code', 'idx_oidc_mobile_code');
+                    $table->index('expires_at', 'idx_oidc_mobile_expires');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30521: '.$e->getMessage());
+
+            return ['Migration 30521 failed: '.$e->getMessage()];
         }
 
         return true;

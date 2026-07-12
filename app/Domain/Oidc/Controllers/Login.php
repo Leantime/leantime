@@ -31,10 +31,17 @@ class Login extends Controller
     public function get(array $params): Response
     {
         try {
-            $loginUrl = $this->oidc->buildLoginUrl();
+            // Mobile-brokered SSO: the app passes ?mobile=1&redirect_uri=<app scheme>
+            // so the callback mints a token + one-time code and redirects back to
+            // the app instead of establishing a web session. The service validates
+            // the redirect scheme; a non-mobile web login passes neither.
+            $mobile = ! empty($params['mobile']);
+            $redirectUri = is_string($params['redirect_uri'] ?? null) ? $params['redirect_uri'] : '';
+
+            $loginUrl = $this->oidc->buildLoginUrl($mobile, $redirectUri);
 
             if ($loginUrl) {
-                return Frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
+                return Frontcontroller::redirect($loginUrl, 302);
             }
         } catch (\Throwable $e) {
             Log::error($e);
