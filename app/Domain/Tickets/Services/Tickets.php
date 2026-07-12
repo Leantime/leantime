@@ -562,6 +562,13 @@ class Tickets extends BaseService
 
             foreach ($tickets as $ticket) {
 
+                // Skip tickets that belong to archived projects (state === -1).
+                // "My open tickets" shouldn't surface work from projects that
+                // are no longer active — they were padding the mobile task list.
+                if ((int) ($ticket['projectState'] ?? 0) === -1) {
+                    continue;
+                }
+
                 if ($ticket['type'] !== 'milestone') {
                     if (! isset($projectStatusLabels[$ticket['projectId']])) {
                         $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);

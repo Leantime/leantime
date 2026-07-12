@@ -738,6 +738,10 @@ class Tickets
                 'milestones.headline as milestoneHeadline',
                 'zp_projects.name as projectName',
                 'zp_projects.details as projectDescription',
+                // Lets callers drop tickets that belong to archived projects
+                // (state === -1) without a second query. getAllOpenUserTickets
+                // uses it; other callers just get a harmless extra column.
+                'zp_projects.state as projectState',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
