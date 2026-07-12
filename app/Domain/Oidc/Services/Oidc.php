@@ -123,7 +123,7 @@ class Oidc
      * @throws GuzzleException
      * @throws \Exception
      */
-    public function buildLoginUrl(bool $mobile = false, string $mobileRedirect = ''): string|false
+    public function buildLoginUrl(bool $mobile = false, string $mobileRedirect = '', string $codeChallenge = ''): string|false
     {
 
         if ($this->getAuthUrl()) {
@@ -138,9 +138,13 @@ class Oidc
             // flags ride the session across the provider round-trip, same as
             // oidc.state. See docs/backend-mobile-auth-bridge-plan.md.
             if ($mobile && $this->isAllowedMobileRedirect($mobileRedirect)) {
-                session(['oidc.mobile' => true, 'oidc.mobileRedirect' => $mobileRedirect]);
+                session([
+                    'oidc.mobile' => true,
+                    'oidc.mobileRedirect' => $mobileRedirect,
+                    'oidc.mobileChallenge' => $codeChallenge,
+                ]);
             } else {
-                session()->forget(['oidc.mobile', 'oidc.mobileRedirect']);
+                session()->forget(['oidc.mobile', 'oidc.mobileRedirect', 'oidc.mobileChallenge']);
             }
 
             return $this->getAuthUrl().'?'.http_build_query([
@@ -215,6 +219,7 @@ class Oidc
         // rebuild the session below — so the brokered redirect survives it.
         $isMobile = (bool) session('oidc.mobile');
         $mobileRedirect = (string) session('oidc.mobileRedirect');
+        $mobileChallenge = (string) session('oidc.mobileChallenge');
 
         $userName = $this->readMultilayerKey($userInfo, $this->fieldEmail);
 
@@ -283,10 +288,10 @@ class Oidc
         // the app-scheme redirect. The app exchanges it for a bearer token at
         // /oidc/mobile/exchange. The token itself never travels in the URL.
         if ($isMobile && $this->isAllowedMobileRedirect($mobileRedirect)) {
-            session()->forget(['oidc.mobile', 'oidc.mobileRedirect']);
+            session()->forget(['oidc.mobile', 'oidc.mobileRedirect', 'oidc.mobileChallenge']);
 
-            $code = app(\Leantime\Domain\Oidc\Repositories\OidcMobileCode::class)
-                ->createCode((int) $user['id']);
+            $code = app(\Leantime\Domain\Oidc\Services\OidcMobileCode::class)
+                ->createCode((int) $user['id'], $mobileChallenge !== '' ? $mobileChallenge : null);
 
             $separator = str_contains($mobileRedirect, '?') ? '&' : '?';
 

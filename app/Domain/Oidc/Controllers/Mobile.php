@@ -4,7 +4,7 @@ namespace Leantime\Domain\Oidc\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
-use Leantime\Domain\Oidc\Repositories\OidcMobileCode;
+use Leantime\Domain\Oidc\Services\OidcMobileCode;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,21 +43,33 @@ class Mobile extends Controller
      */
     public function exchange(array $params): Response
     {
-        $code = $this->readCode($params);
+        // $params is the framework's merged request params (GET + form body); the
+        // app POSTs code + code_verifier form-encoded, so no manual body parsing.
+        $code = $this->stringParam($params, 'code');
         if ($code === '') {
             return new JsonResponse(['error' => 'missing_code'], 400);
         }
 
-        $userId = $this->codes->consumeCode($code);
-        if ($userId === null) {
+        $data = $this->codes->consumeCode($code);
+        if ($data === null) {
             // Unknown, expired, or already-used code — all indistinguishable to
             // the caller on purpose.
             return new JsonResponse(['error' => 'invalid_code'], 401);
         }
 
-        // The code came from a completed OIDC auth, so minting for this user is
-        // authorized. Use the repository directly (the AccessToken service gates
-        // on an active session, which this cookieless request doesn't have).
+        // PKCE: the code was bound to a code_challenge at login. Require the
+        // matching verifier so a code intercepted from the app-scheme redirect
+        // is useless without the secret the app kept and never put in a URL.
+        $verifier = $this->stringParam($params, 'code_verifier');
+        if (! $this->pkceMatches($data['challenge'] ?? null, $verifier)) {
+            return new JsonResponse(['error' => 'invalid_verifier'], 401);
+        }
+
+        // The code came from a completed OIDC auth (+ verified PKCE), so minting
+        // for this user is authorized. Use the repository directly (the
+        // AccessToken service gates on an active session, which this cookieless
+        // request doesn't have).
+        $userId = (int) $data['userId'];
         $token = $this->tokens->createToken($userId, 'mobile-sso');
 
         $user = $this->userRepo->getUser($userId);
@@ -68,25 +80,25 @@ class Mobile extends Controller
         ]);
     }
 
-    /**
-     * Read the code from the JSON body (mobile sends application/json). Falls
-     * back to merged request params for form-encoded callers.
-     */
-    private function readCode(array $params): string
+    private function stringParam(array $params, string $key): string
     {
-        if (! empty($params['code']) && is_string($params['code'])) {
-            return $params['code'];
+        return isset($params[$key]) && is_string($params[$key]) ? trim($params[$key]) : '';
+    }
+
+    /**
+     * PKCE S256 check: base64url(sha256(verifier)) must equal the stored
+     * challenge. Every mobile login sends a challenge, so a code with no bound
+     * challenge — or a missing/mismatched verifier — is rejected.
+     */
+    private function pkceMatches(?string $challenge, string $verifier): bool
+    {
+        if (empty($challenge) || $verifier === '') {
+            return false;
         }
 
-        $raw = file_get_contents('php://input');
-        if ($raw) {
-            $decoded = json_decode($raw, true);
-            if (is_array($decoded) && ! empty($decoded['code']) && is_string($decoded['code'])) {
-                return $decoded['code'];
-            }
-        }
+        $computed = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
 
-        return '';
+        return hash_equals($challenge, $computed);
     }
 
     /**
