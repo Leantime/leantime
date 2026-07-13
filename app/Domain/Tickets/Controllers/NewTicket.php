@@ -120,7 +120,6 @@ class NewTicket extends Controller
                 $ticket->userLastname = session('userdata.name');
 
                 $this->tpl->assign('ticket', $ticket);
-                $this->tpl->assign('ticketParents', $this->ticketService->getAllPossibleParents($ticket));
                 $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                 $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
                 $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
