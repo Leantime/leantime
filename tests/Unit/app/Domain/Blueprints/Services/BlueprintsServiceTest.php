@@ -507,4 +507,61 @@ class BlueprintsServiceTest extends TestCase
         $this->expectException(AuthorizationException::class);
         $service->import('/tmp/does-not-matter.xml', 'swot', 55, 1);
     }
+
+    public function test_create_board_applies_start_content_against_the_slug_not_the_db_type(): void
+    {
+        // Regression test for Phase 4: createBoard() is called with the DATABASE
+        // type ("swotcanvas") but both the Blueprints TemplateRegistry and the
+        // ContentTemplateRegistry key by the SLUG ("swot"). The original code
+        // called TemplateRegistry::get($canvasType), which required a slug and
+        // silently returned null for the db-type form — making applyStartContent
+        // a no-op. This test locks in the fix: getByDatabaseType() bridges, and
+        // the resolved slug flows to the ContentTemplates lookups.
+        $blueprint = new CanvasTemplate([
+            'slug' => 'swot',
+            'startContent' => 'starter-swot',
+        ]);
+        $registry = new class($blueprint) extends TemplateRegistry
+        {
+            public function __construct(private CanvasTemplate $bp) {}
+
+            public function get(string $slug): ?CanvasTemplate
+            {
+                // Bug reproduction: original code called this with 'swotcanvas'.
+                // The real registry only knows 'swot' — so it returned null and
+                // applyStartContent bailed. Test-side we mirror that behavior.
+                return $slug === 'swot' ? $this->bp : null;
+            }
+
+            public function getByDatabaseType(string $dbType): ?CanvasTemplate
+            {
+                return $this->get(str_replace('canvas', '', $dbType));
+            }
+        };
+
+        $seenSlugs = [];
+        $contentTemplates = new class($seenSlugs) extends \Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry
+        {
+            public function __construct(public array &$seenSlugs) {}
+
+            public function get(string $appliesTo, string $key): ?\Leantime\Domain\ContentTemplates\Models\ContentTemplate
+            {
+                $this->seenSlugs[] = $appliesTo;
+
+                return null; // null lookup exits applyStartContent early, but the assertion is on WHAT slug reached us.
+            }
+        };
+
+        $repo = $this->make(BlueprintsRepository::class, [
+            'addCanvas' => fn () => '77',
+        ]);
+
+        $language = $this->make(LanguageCore::class, ['__' => fn (string $index) => 'T:'.$index]);
+        $service = new BlueprintsService($repo, $registry, $language, $contentTemplates);
+        $service->setPermissionService($this->allowingPermissions());
+
+        $service->createBoard(['projectId' => 5, 'title' => 't'], 'swotcanvas');
+
+        $this->assertSame(['swot'], $seenSlugs, 'ContentTemplates must be consulted with the SLUG, not the DB type');
+    }
 }
