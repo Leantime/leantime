@@ -13,8 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Mobile SSO bridge — the code→token exchange.
  *
  * POST /oidc/mobile/exchange. Public (no session/cookie): the validated,
- * single-use one-time code IS the authorization. See
- * docs/backend-mobile-auth-bridge-plan.md and OidcMobileCode.
+ * single-use one-time code IS the authorization. See OidcMobileCode.
  *
  * This route must be allow-listed in AuthCheck::$publicActions as 'oidc.mobile'.
  */
@@ -66,17 +65,22 @@ class Mobile extends Controller
         }
 
         // The code came from a completed OIDC auth (+ verified PKCE), so minting
-        // for this user is authorized. Use the repository directly (the
-        // AccessToken service gates on an active session, which this cookieless
-        // request doesn't have).
+        // for this user is authorized. Confirm the user still exists FIRST — if
+        // they were deleted between callback and exchange, minting would leave an
+        // orphaned token row. Use the repository directly (the AccessToken
+        // service gates on an active session, which this cookieless request
+        // doesn't have).
         $userId = (int) $data['userId'];
-        $token = $this->tokens->createToken($userId, 'mobile-sso');
-
         $user = $this->userRepo->getUser($userId);
+        if (! is_array($user) || empty($user)) {
+            return new JsonResponse(['error' => 'invalid_user'], 401);
+        }
+
+        $token = $this->tokens->createToken($userId, 'mobile-sso');
 
         return new JsonResponse([
             'token' => $token['token'],
-            'user' => $this->safeUser(is_array($user) ? $user : [], $userId),
+            'user' => $this->safeUser($user, $userId),
         ]);
     }
 

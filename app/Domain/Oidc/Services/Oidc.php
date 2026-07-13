@@ -136,7 +136,7 @@ class Oidc
             // code instead of a web session. Only a whitelisted app scheme is
             // honored; anything else falls through to the normal web flow. The
             // flags ride the session across the provider round-trip, same as
-            // oidc.state. See docs/backend-mobile-auth-bridge-plan.md.
+            // oidc.state.
             if ($mobile && $this->isAllowedMobileRedirect($mobileRedirect)) {
                 session([
                     'oidc.mobile' => true,
