@@ -215,6 +215,20 @@ class Timesheets extends Repository
                         if ($requesterRole === 'admin' || $requesterRole === 'manager') {
                             $q3->whereRaw('1=1');
                         }
+                    })
+                    ->orWhere(function ($q4) use ($userId) {
+                        // General-work time (virtual ticketId -1 → no matching
+                        // ticket/project after the left joins) has no project to
+                        // gate on, so it fails every project-access branch above
+                        // and silently disappears from this read — e.g. mobile's
+                        // Time tab (which can only call pollForNewTimesheets over
+                        // JSON-RPC) shows 0h even on a day with real general
+                        // hours. Always let a user see their OWN no-project
+                        // entries. Non-managers are AND-scoped to their userId
+                        // just below; managers already match via 1=1, so this
+                        // only rescues the regular-user case.
+                        $q4->whereNull('zp_tickets.projectId')
+                            ->where('zp_timesheets.userId', $userId);
                     });
             });
 
