@@ -412,6 +412,7 @@ class Tickets
                 't2.profileId as editorProfileId',
                 'milestone.headline as milestoneHeadline',
                 'parent.headline as parentHeadline',
+                'zp_tickets.modified',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
             ->selectRaw('CASE WHEN ('.$this->dbHelper->wrapColumn('milestone.tags').' IS NULL OR '.$this->dbHelper->wrapColumn('milestone.tags')." = '') THEN 'var(--grey)' ELSE ".$this->dbHelper->wrapColumn('milestone.tags').' END AS '.$this->dbHelper->wrapColumn('milestoneColor'))
@@ -969,6 +970,7 @@ class Tickets
                 't3.firstname as editorFirstname',
                 't3.lastname as editorLastname',
                 'parent.headline as parentHeadline',
+                'zp_tickets.modified',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
@@ -1825,7 +1827,12 @@ class Tickets
                 isset($values[$dbTable]) === true &&
                 isset($oldValues[$dbTable]) === true &&
                 ($oldValues[$dbTable] != $values[$dbTable]) &&
-                ($values[$dbTable] != '')
+                // Skip genuine "cleared to empty" writes, but STRICTLY — a loose
+                // `!= ''` also drops valid falsy values, most importantly
+                // status 0 (Done). That silently kept ticket-closures out of
+                // zp_tickethistory, so burndown/throughput and the mobile
+                // Progress "closed on date" reflection never saw them.
+                ($values[$dbTable] !== '' && $values[$dbTable] !== null)
             ) {
                 $historyRows[] = [
                     'userId' => $userId,
