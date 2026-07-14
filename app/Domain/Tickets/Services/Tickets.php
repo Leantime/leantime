@@ -2442,8 +2442,12 @@ class Tickets extends BaseService
      * Same "closed" definition as the single-date form: the ticket is currently
      * DONE and its status was changed to that DONE status within the range. A
      * ticket completed more than once in the range is included once, keyed to
-     * its latest completion (events are newest-first). Defaults to today when
-     * either bound is omitted.
+     * its latest completion (events are newest-first).
+     *
+     * Bounds: an omitted $from or $to defaults to today; the range is then
+     * normalized so the earlier date is the lower bound (a reversed range is
+     * swapped rather than returning nothing). So passing only one bound yields
+     * the span between that date and today, in date order.
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyClosedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
