@@ -544,4 +544,79 @@ class TicketsServiceTest extends TestCase
         $this->assertSame([], $result);
         $this->assertFalse($called, 'repository should not be queried when criteria are not project-scoped');
     }
+
+    /**
+     * Builds a service with a specific ticket repository AND project service —
+     * the two deps getMyCommentedTicketsForRange exercises.
+     */
+    private function buildServiceWithTicketRepoAndProjectService(
+        TicketRepository $ticketRepository,
+        ProjectService $projectService
+    ): TicketsService {
+        return new TicketsService(
+            language: $this->make(LanguageCore::class),
+            ticketRepository: $ticketRepository,
+            timesheetsRepo: $this->make(TimesheetRepository::class),
+            settingsRepo: $this->make(SettingRepository::class),
+            projectService: $projectService,
+            timesheetService: $this->make(TimesheetService::class),
+            sprintService: $this->make(SprintService::class),
+            ticketHistoryRepo: $this->make(TicketHistory::class),
+            goalcanvasService: $this->make(Goalcanvas::class),
+            dateTimeHelper: $this->make(DateTimeHelper::class),
+            commentService: $this->make(CommentService::class),
+            clientService: $this->make(ClientService::class)
+        );
+    }
+
+    /**
+     * Supported = tickets you commented on within accessible projects, minus
+     * the ones you're the editor of. Editor-owned tickets are dropped; tickets
+     * outside the project-scoped fetch never appear.
+     */
+    public function test_commented_tickets_range_excludes_owned_and_scopes_by_projects(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn () => [10, 20, 30],
+            // Project-scoped fetch only returns 10 + 20 (30 is outside access).
+            'getTicketsByIdsWithinProjects' => fn () => [
+                ['id' => 10, 'headline' => 'A', 'editorId' => '99', 'projectId' => 5, 'projectName' => 'P'],
+                ['id' => 20, 'headline' => 'B', 'editorId' => '1', 'projectId' => 5, 'projectName' => 'P'],
+            ],
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn () => [['id' => 5], ['id' => 7]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $result = $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07');
+
+        // 20 is the user's own (editorId === 1) → excluded; 30 wasn't returned
+        // by the project-scoped fetch → absent. Only 10 remains.
+        $this->assertCount(1, $result);
+        $this->assertEquals(10, $result[0]['id']);
+    }
+
+    /**
+     * No accessible projects → empty, without ever fetching tickets.
+     */
+    public function test_commented_tickets_range_empty_without_project_access(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn () => [10],
+            'getTicketsByIdsWithinProjects' => fn () => [['id' => 10, 'editorId' => '99']],
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn () => false,
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $this->assertSame([], $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07'));
+    }
 }
