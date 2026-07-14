@@ -12,11 +12,11 @@ use Leantime\Core\Resources\Models\ResourceSummary;
  *
  * Core does not implement this — a plugin (currently PgmPro) registers itself as
  * *the* provider via {@see \Leantime\Core\Resources\Services\ResourcesRegistry}.
- * Consumers ({@see \Leantime\Domain\Reports\Services\ReportEngine} and any UI that
- * wants a Resources section) go through the registry and get null when no
- * provider is registered — the caller's graceful-degradation branch.
+ * Consumers (the stakeholder report's Resources section and any UI that wants
+ * a Resources block) go through the registry and get null when no provider is
+ * registered — the caller's graceful-degradation branch.
  *
- * The two methods mirror how the ReportEngine calls the rest of the report:
+ * The two methods mirror how a report calls the rest of its data providers:
  *   - by explicit project id set (project read-out, plan read-out)
  *   - by program root (used when a caller has a program id and wants the
  *     canonical program-scoped roll-up including provider-specific caching)

@@ -16,7 +16,9 @@ use Unit\TestCase;
  * Behaviors under test:
  *   - null on read when no provider is registered (honest "not installed")
  *   - a registered provider is returned by resolve()
- *   - re-registering the SAME provider class is idempotent
+ *   - re-registering the SAME provider class REPLACES the stored instance
+ *     (last write wins; safe because two instances of the same class are
+ *     functionally interchangeable — deliberately NOT idempotent)
  *   - a DIFFERENT provider class trying to register is refused (first wins)
  */
 class ResourcesRegistryTest extends TestCase
@@ -40,7 +42,7 @@ class ResourcesRegistryTest extends TestCase
         $this->assertTrue($registry->hasProvider());
     }
 
-    public function test_reregistering_same_provider_class_is_idempotent(): void
+    public function test_reregistering_same_provider_class_replaces_instance(): void
     {
         $registry = new ResourcesRegistry;
         $first = $this->makeGateway();
@@ -51,7 +53,8 @@ class ResourcesRegistryTest extends TestCase
 
         // Second registration replaces first because it's the same class.
         // (No warning is emitted — this is the "plugin re-registered on
-        // hot-reload" case, not a conflict.)
+        // hot-reload" case, not a conflict.) NOT idempotent in the strict
+        // sense: state changes to point at the newer instance.
         $this->assertSame($second, $registry->resolve());
     }
 
