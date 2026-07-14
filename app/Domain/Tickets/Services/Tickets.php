@@ -2460,6 +2460,70 @@ class Tickets extends BaseService
     /**
      * @api
      *
+     * Tickets the user COMMENTED on within [$from, $to] that they do NOT own
+     * (they're not the assignee/editor) — i.e. work they supported by weighing
+     * in on someone else's arc. Powers the mobile Progress "Supported" section
+     * (presence counts as much as production).
+     *
+     * Access safety: the commented-ticket ids are intersected with the user's
+     * access-scoped ticket set (simpleTicketQuery applies the project-access +
+     * collaborator clause), so a comment can never surface a ticket the user
+     * can no longer see. Ownership filter drops tickets where the user IS the
+     * editor — those are "your work," not support. Defaults either bound to
+     * today.
+     *
+     * @return array<int, array<string, mixed>> ticket rows (id, headline,
+     *                                          projectName, …), same shape as the other user-ticket queries.
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
+    public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
+    {
+        $userId = $userId ?? (int) session('userdata.id');
+        if ($userId === 0) {
+            return [];
+        }
+        $from = $from ?: date('Y-m-d');
+        $to = $to ?: date('Y-m-d');
+        if ($from > $to) {
+            [$from, $to] = [$to, $from];
+        }
+
+        $commentedIds = $this->ticketRepository->getTicketIdsCommentedByUser($userId, $from, $to);
+        if (empty($commentedIds)) {
+            return [];
+        }
+
+        // Access-scoped universe — never returns a ticket outside the user's
+        // project access, so intersecting against it makes the comment lookup
+        // safe regardless of what was commented on historically.
+        $accessible = $this->ticketRepository->simpleTicketQuery($userId, null);
+        if (! is_array($accessible) || empty($accessible)) {
+            return [];
+        }
+        $byId = [];
+        foreach ($accessible as $ticket) {
+            $byId[(int) $ticket['id']] = $ticket;
+        }
+
+        $commentedLookup = array_flip($commentedIds);
+        $out = [];
+        foreach ($byId as $id => $ticket) {
+            if (! isset($commentedLookup[$id])) {
+                continue;
+            }
+            // "Supported", not "yours": drop tickets you're the editor of.
+            if ((string) ($ticket['editorId'] ?? '') === (string) $userId) {
+                continue;
+            }
+            $out[] = $ticket;
+        }
+
+        return array_values($out);
+    }
+
+    /**
+     * @api
+     *
      * Companion to markTicketDone for un-completing. Resolves the
      * project's first NEW-statusType status and patches to it. Used by
      * mobile's "Done" filter — tap the checked checkbox to bring a task
