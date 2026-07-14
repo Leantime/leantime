@@ -55,13 +55,15 @@ class OidcMobileCode
     }
 
     /**
-     * Validate + consume a code. Returns ['userId' => int, 'challenge' => ?string]
-     * or null if the code is unknown/expired. Single-use: Cache::pull
-     * reads-and-deletes, so a replayed code fails.
+     * Non-destructive read of a code's payload. Callers verify PKCE against
+     * the returned challenge FIRST, then call consumeCode() to burn the code.
+     * This prevents a scheme-hijacker from DoSing legit logins by submitting
+     * an intercepted code with a bad verifier (which would delete the code
+     * before the real client's exchange arrived).
      */
-    public function consumeCode(string $rawCode): ?array
+    public function peekCode(string $rawCode): ?array
     {
-        $data = Cache::pull($this->key($rawCode));
+        $data = Cache::get($this->key($rawCode));
 
         if (! is_array($data) || ! isset($data['userId'])) {
             return null;
@@ -71,6 +73,16 @@ class OidcMobileCode
             'userId' => (int) $data['userId'],
             'challenge' => $data['challenge'] ?? null,
         ];
+    }
+
+    /**
+     * Burn the code. Cache::forget is idempotent, so an already-consumed
+     * code is a silent no-op — callers should peekCode() first for the
+     * "invalid code" check.
+     */
+    public function consumeCode(string $rawCode): void
+    {
+        Cache::forget($this->key($rawCode));
     }
 
     private function key(string $rawCode): string

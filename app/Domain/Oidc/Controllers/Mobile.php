@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Oidc\Controllers;
 
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
 use Leantime\Domain\Oidc\Services\OidcMobileCode;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -25,23 +26,36 @@ class Mobile extends Controller
 
     private UserRepository $userRepo;
 
+    private IncomingRequest $request;
+
     public function init(
         OidcMobileCode $codes,
         AccessTokenRepository $tokens,
-        UserRepository $userRepo
+        UserRepository $userRepo,
+        IncomingRequest $request
     ): void {
         $this->codes = $codes;
         $this->tokens = $tokens;
         $this->userRepo = $userRepo;
+        $this->request = $request;
     }
 
     /**
      * Exchange a one-time code for a bearer token.
      *
      * Reached at /oidc/mobile/exchange (segment[2] "exchange" → this method).
+     * POST only — GET is refused so secrets can't be exchanged from a query
+     * string (URLs land in access logs; POST bodies don't).
      */
     public function exchange(array $params): Response
     {
+        // Frontcontroller resolves methods by URL segment regardless of verb;
+        // enforce POST here so `?code=...&code_verifier=...` on a GET is
+        // rejected before we touch the code store.
+        if ($this->request->getMethod() !== 'POST') {
+            return new JsonResponse(['error' => 'method_not_allowed'], 405, ['Allow' => 'POST']);
+        }
+
         // $params is the framework's merged request params (GET + form body); the
         // app POSTs code + code_verifier form-encoded, so no manual body parsing.
         $code = $this->stringParam($params, 'code');
@@ -49,7 +63,10 @@ class Mobile extends Controller
             return new JsonResponse(['error' => 'missing_code'], 400);
         }
 
-        $data = $this->codes->consumeCode($code);
+        // Peek (non-destructive) so a bad verifier from a scheme-hijacker
+        // can't burn the code before the legitimate app's exchange arrives.
+        // The code is only consumed after PKCE + user validation succeed.
+        $data = $this->codes->peekCode($code);
         if ($data === null) {
             // Unknown, expired, or already-used code — all indistinguishable to
             // the caller on purpose.
@@ -76,6 +93,8 @@ class Mobile extends Controller
             return new JsonResponse(['error' => 'invalid_user'], 401);
         }
 
+        // All checks passed — burn the code (single-use) and mint the token.
+        $this->codes->consumeCode($code);
         $token = $this->tokens->createToken($userId, 'mobile-sso');
 
         return new JsonResponse([

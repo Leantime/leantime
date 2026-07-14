@@ -308,6 +308,16 @@ class Oidc
      */
     private function isAllowedMobileRedirect(string $redirect): bool
     {
+        // Also reject whitespace/control chars — the redirect ultimately
+        // lands in a Location header, where Symfony rejects control chars
+        // (500) and header-injection payloads embed CR/LF.
+        if ($redirect !== trim($redirect)) {
+            return false;
+        }
+        if (preg_match('/[\p{C}\s]/u', $redirect) === 1) {
+            return false;
+        }
+
         return str_starts_with($redirect, 'leantime://');
     }
 
