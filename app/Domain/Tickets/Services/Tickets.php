@@ -2465,15 +2465,20 @@ class Tickets extends BaseService
      * in on someone else's arc. Powers the mobile Progress "Supported" section
      * (presence counts as much as production).
      *
-     * Access safety: the commented-ticket ids are intersected with the user's
-     * access-scoped ticket set (simpleTicketQuery applies the project-access +
-     * collaborator clause), so a comment can never surface a ticket the user
-     * can no longer see. Ownership filter drops tickets where the user IS the
-     * editor — those are "your work," not support. Defaults either bound to
-     * today.
+     * Access safety: commented ticket ids are constrained to the PROJECTS the
+     * user can access (getProjectsUserHasAccessTo) — NOT to tickets they edit
+     * or collaborate on. Commenting on a ticket rarely makes you its editor or
+     * a collaborator, so scoping by those (as an earlier version did via
+     * simpleTicketQuery) silently dropped most supported work — it collapsed to
+     * "commented AND collaborator" and could return empty even when comments
+     * exist. Project access is the correct, still-safe boundary: a historical
+     * comment can't surface a ticket in a project the user no longer sees. The
+     * ownership filter then drops tickets the user is the editor of — those are
+     * "your work," not support. Defaults either bound to today.
      *
-     * @return array<int, array<string, mixed>> ticket rows (id, headline,
-     *                                          projectName, …), same shape as the other user-ticket queries.
+     * @return array<int, array<string, mixed>> raw ticket rows (id, headline,
+     *                                          projectName, editorId, status, …). NOTE: these do NOT carry the resolved
+     *                                          statusLabel/statusClass/statusType that getAll*UserTickets attach.
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
@@ -2493,25 +2498,26 @@ class Tickets extends BaseService
             return [];
         }
 
-        // Access-scoped universe — never returns a ticket outside the user's
-        // project access, so intersecting against it makes the comment lookup
-        // safe regardless of what was commented on historically.
-        $accessible = $this->ticketRepository->simpleTicketQuery($userId, null);
-        if (! is_array($accessible) || empty($accessible)) {
+        // Scope to the projects the user can see — the correct access boundary
+        // for "tickets I commented on" (you comment on others' work without
+        // being its editor/collaborator, so filtering by those would drop it).
+        $projects = $this->projectService->getProjectsUserHasAccessTo($userId);
+        if (! is_array($projects) || empty($projects)) {
             return [];
         }
-        $byId = [];
-        foreach ($accessible as $ticket) {
-            $byId[(int) $ticket['id']] = $ticket;
+        $projectIds = array_values(array_filter(array_map(
+            fn ($p) => (int) ($p['id'] ?? 0),
+            $projects
+        )));
+        if (empty($projectIds)) {
+            return [];
         }
 
-        $commentedLookup = array_flip($commentedIds);
+        $tickets = $this->ticketRepository->getTicketsByIdsWithinProjects($commentedIds, $projectIds);
+
+        // "Supported", not "yours": drop tickets the user is the editor of.
         $out = [];
-        foreach ($byId as $id => $ticket) {
-            if (! isset($commentedLookup[$id])) {
-                continue;
-            }
-            // "Supported", not "yours": drop tickets you're the editor of.
+        foreach ($tickets as $ticket) {
             if ((string) ($ticket['editorId'] ?? '') === (string) $userId) {
                 continue;
             }

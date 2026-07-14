@@ -1886,22 +1886,53 @@ class Tickets
 
     /**
      * Distinct ticket ids the given user COMMENTED on within [from, to]
-     * (inclusive, 'Y-m-d'). Access-agnostic on its own — callers must
-     * intersect the result with an access-scoped ticket set (e.g.
-     * simpleTicketQuery) before returning anything, so this never widens
-     * visibility. Used by getMyCommentedTicketsForRange for Progress "Supported".
+     * (inclusive, 'Y-m-d'). Access-agnostic on its own — callers must constrain
+     * the result to an access-scoped set (e.g. the user's accessible projects)
+     * before returning anything, so this never widens visibility. Used by
+     * getMyCommentedTicketsForRange for Progress "Supported".
      */
     public function getTicketIdsCommentedByUser(int $userId, string $fromDate, string $toDate): array
     {
-        $rows = $this->connection->table('zp_comment')
-            ->select('moduleId')
-            ->distinct()
+        return $this->connection->table('zp_comment')
             ->where('module', 'ticket')
             ->where('userId', $userId)
             ->whereBetween('date', [$fromDate.' 00:00:00', $toDate.' 23:59:59'])
+            ->distinct()
+            ->pluck('moduleId')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
+     * Ticket rows for the given ids, constrained to the given projects (the
+     * caller's access boundary). One row per ticket with the fields mobile
+     * user-ticket consumers expect (id, headline, projectId, projectName,
+     * editorId, userId, status, dateToFinish). Returns raw rows — no resolved
+     * statusLabel/statusClass. Used by getMyCommentedTicketsForRange.
+     */
+    public function getTicketsByIdsWithinProjects(array $ticketIds, array $projectIds): array
+    {
+        if (empty($ticketIds) || empty($projectIds)) {
+            return [];
+        }
+
+        $rows = $this->connection->table('zp_tickets')
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->select(
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.projectId',
+                'zp_tickets.editorId',
+                'zp_tickets.userId',
+                'zp_tickets.status',
+                'zp_tickets.dateToFinish',
+                'zp_projects.name as projectName',
+            )
+            ->whereIn('zp_tickets.id', $ticketIds)
+            ->whereIn('zp_tickets.projectId', $projectIds)
             ->get();
 
-        return array_values(array_unique(array_map(fn ($row) => (int) $row->moduleId, $rows->all())));
+        return array_map(fn ($row) => (array) $row, $rows->all());
     }
 
     /**
