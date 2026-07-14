@@ -28,9 +28,11 @@ class ResourcesRegistry
     private ?string $registeredBy = null;
 
     /**
-     * Called by the providing plugin's register.php on boot. Idempotent per
-     * caller (re-registering the same class is a no-op), noisy across
-     * different classes so double-installs don't silently fight.
+     * Called by the providing plugin's register.php on boot. Same-class
+     * re-registration replaces the stored instance (last write wins; safe
+     * because two instances of the same gateway are interchangeable).
+     * Cross-class registration is refused and logged so double-installs
+     * don't silently fight.
      *
      * @param  ResourcesGateway  $gateway  The plugin's implementation.
      */

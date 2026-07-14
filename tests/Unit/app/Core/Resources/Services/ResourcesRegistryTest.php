@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Unit\app\Core\Resources\Services;
 
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Resources\Contracts\ResourcesGateway;
 use Leantime\Core\Resources\Models\ResourceSummary;
 use Leantime\Core\Resources\Services\ResourcesRegistry;
@@ -56,6 +57,8 @@ class ResourcesRegistryTest extends TestCase
 
     public function test_different_provider_class_registration_is_refused(): void
     {
+        Log::spy();
+
         $registry = new ResourcesRegistry;
         $first = $this->makeGateway();
         $second = $this->makeOtherGateway();
@@ -67,6 +70,13 @@ class ResourcesRegistryTest extends TestCase
             $first,
             $registry->resolve(),
             'First registration must win when a different class tries to register',
+        );
+
+        // Logging the refused registration is part of the contract — a silent
+        // refusal would let double-installs go unnoticed.
+        Log::shouldHaveReceived('warning')->once()->withArgs(
+            fn (string $message): bool => str_contains($message, 'ResourcesRegistry')
+                && str_contains($message, 'already registered')
         );
     }
 

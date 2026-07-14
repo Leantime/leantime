@@ -108,6 +108,24 @@ class ResourceSummaryTest extends TestCase
         $this->assertFalse($onlyPeople->isEmpty());
     }
 
+    public function test_is_empty_false_when_only_dependencies_present(): void
+    {
+        // A partnership-heavy program can have zero people and zero budget
+        // authored but still be non-empty; the section must render.
+        $onlyDeps = new ResourceSummary(
+            projectIds: [1],
+            people: [],
+            budget: [],
+            dependencies: [$this->makeDependency()],
+            totalCapacity: 0.0,
+            totalAllocated: 0.0,
+            totalBudgeted: 0.0,
+            totalSpent: 0.0,
+        );
+
+        $this->assertFalse($onlyDeps->isEmpty());
+    }
+
     /**
      * @param  array<int, float>  $allocations
      */
@@ -122,7 +140,7 @@ class ResourceSummaryTest extends TestCase
         );
     }
 
-    private function makeBudget(float $budgeted, ?float $spent): BudgetLine
+    private function makeBudget(float $budgeted, float $spent): BudgetLine
     {
         return new BudgetLine(
             itemId: 1,
