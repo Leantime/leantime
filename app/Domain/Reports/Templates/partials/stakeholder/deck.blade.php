@@ -196,15 +196,24 @@
 .rd-kcell .kl{font-size:12.5px;color:var(--rd-text-2);margin-top:5px;display:flex;align-items:center;gap:6px;}
 .rd-kcell.risk .kv{color:var(--rd-danger);}
 
-/* KPI drill-down — hover the whole cell to show the list of items behind the
+/* KPI drill-down — hover the whole cell to see the list of items behind the
    count (which milestones completed, which goals off-track, etc.). Compact
-   popover; won't render if the count is zero. */
-.rd-kcell{position:relative;}
-.rd-kcell.has-detail{cursor:default;}
-.rd-kcell.has-detail::after{content:"";position:absolute;top:6px;right:8px;width:5px;height:5px;border-radius:50%;background:var(--rd-text-4);opacity:.5;}
+   popover; won't render if the count is zero.
+   Affordance: cursor:pointer + subtle hover treatment + a visible "see list"
+   chevron at the top-right so the interactivity is discoverable, not a
+   guess-the-dot. */
+.rd-kcell{position:relative;transition:background .12s,box-shadow .12s;}
+.rd-kcell.has-detail{cursor:pointer;}
+.rd-kcell.has-detail:hover{background:#fff;box-shadow:var(--rd-sh-sm);}
+.rd-kcell.has-detail .see-list{position:absolute;top:8px;right:10px;display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;opacity:.7;transition:opacity .12s,color .12s;pointer-events:none;}
+.rd-kcell.has-detail .see-list i{font-size:9px;}
+.rd-kcell.has-detail:hover .see-list{opacity:1;color:var(--rd-accent);}
 .rd-kcell .kdrill{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);padding:8px;z-index:20;opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .12s,transform .12s,visibility .12s;font-size:11.5px;line-height:1.4;text-align:left;letter-spacing:0;}
-.rd-kcell.has-detail:hover .kdrill,
-.rd-kcell.has-detail:focus-within .kdrill{opacity:1;visibility:visible;transform:translateY(0);}
+.rd-kcell.has-detail.open .kdrill{opacity:1;visibility:visible;transform:translateY(0);}
+.rd-kcell.has-detail.open{background:#fff;box-shadow:var(--rd-sh-sm);}
+.rd-kcell.has-detail.open .see-list{opacity:1;color:var(--rd-accent);}
+.rd-kcell.has-detail.open .see-list i{transform:rotate(180deg);}
+.rd-kcell.has-detail .see-list i{transition:transform .18s;}
 .rd-kcell .kdrill .kd-hd{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--rd-text-3);padding:2px 6px 6px;}
 .rd-kcell .kdrill ul{list-style:none;margin:0;padding:0;}
 .rd-kcell .kdrill li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 6px;border-radius:4px;color:var(--rd-text-1);font-weight:400;}
@@ -462,5 +471,21 @@
             dateFormat: window.leantime.dateHelper.getFormatFromSettings('dateformat', 'jquery')
         });
     }
+
+    // KPI drill toggle — click a cell with .has-detail to open its drill list.
+    // Click elsewhere closes it. Only one open at a time.
+    document.addEventListener('click', function (e) {
+        var cell = e.target.closest('.rd-kcell.has-detail');
+        // Clicked inside the open drill? Let the click through (don't close).
+        if (e.target.closest('.rd-kcell.has-detail .kdrill')) return;
+
+        // Close every other open drill first (single-open behavior).
+        document.querySelectorAll('.rd-kcell.has-detail.open').forEach(function (c) {
+            if (c !== cell) c.classList.remove('open');
+        });
+
+        // Toggle the clicked cell (if any).
+        if (cell) cell.classList.toggle('open');
+    });
 })();
 </script>

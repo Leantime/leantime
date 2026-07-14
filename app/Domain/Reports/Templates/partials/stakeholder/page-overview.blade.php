@@ -205,22 +205,54 @@
     $completedMoreCount = max(0, count($report['milestones']['completed'] ?? []) - 5);
     $overdueItems = array_slice($report['needsAttention']['overdueMilestones'] ?? [], 0, 5);
     $overdueMoreCount = max(0, count($report['needsAttention']['overdueMilestones'] ?? []) - 5);
-    $goalsAtRiskItems = array_slice($report['needsAttention']['goalsAtRisk'] ?? [], 0, 5);
-    $goalsAtRiskMoreCount = max(0, count($report['needsAttention']['goalsAtRisk'] ?? []) - 5);
+
+    // Denominator counts for KPI context — a raw "3 overdue" doesn't say
+    // "out of how many". Total milestones = completed + inFlight + overdue +
+    // upcoming; open = the not-yet-done subset (inFlight + overdue + upcoming).
+    $inFlightCount = (int) ($stats['inFlight'] ?? 0);
+    $upcomingCount = (int) ($stats['upcoming'] ?? 0);
+    $openMsCount = $inFlightCount + $overdueCount + $upcomingCount;
+    $totalMsCount = $completedCount + $openMsCount;
+    // Drill on "Goals on track" lists the ON-TRACK goals (the number the cell
+    // represents). At-risk goals surface in the Needs Attention block.
+    $onTrackAll = array_filter(($goalsGroup['goals'] ?? []), fn ($g) => ((array) $g)['status'] === 'status_ontrack' || (is_object($g) && ($g->status ?? '') === 'status_ontrack'));
+    $onTrackAll = array_values($onTrackAll);
+    $onTrackItems = array_slice($onTrackAll, 0, 5);
+    $onTrackMoreCount = max(0, count($onTrackAll) - 5);
+
+    // Hours drill = per-project effort breakdown, sorted desc. Project names
+    // come from $report['summaries'] (keyed by projectId with .name field).
+    $effortByProj = $report['effort']['byProject'] ?? [];
+    arsort($effortByProj);
+    $projNames = [];
+    foreach (($report['summaries'] ?? []) as $s) {
+        $s = (object) $s;
+        $projNames[(int) ($s->id ?? 0)] = (string) ($s->name ?? '');
+    }
+    $hoursItems = [];
+    foreach ($effortByProj as $pid => $h) {
+        if ($h <= 0) continue;
+        $hoursItems[] = ['name' => $projNames[(int) $pid] ?? ('#'.$pid), 'hours' => (float) $h];
+    }
+    $hoursMoreCount = max(0, count($hoursItems) - 5);
+    $hoursItems = array_slice($hoursItems, 0, 5);
     $fmtDate = fn ($v) => is_object($v) ? $v->setToUserTimezone()->format('M j') : ($v ? date('M j', strtotime((string) $v)) : '');
 @endphp
 <div class="rd-kpi">
     {{-- Completed --}}
     <div class="rd-kcell @if ($completedCount > 0) has-detail @endif" tabindex="{{ $completedCount > 0 ? 0 : -1 }}">
+        @if ($completedCount > 0)
+            <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
+        @endif
         <div class="kv">
-            {{ $completedCount }}
+            {{ $completedCount }}@if ($totalMsCount > 0)<small>/{{ $totalMsCount }}</small>@endif
             @if ($completedDelta > 0)
                 <span class="up" title="{{ sprintf(__('stakeholder.kpi.delta_vs_prior'), $completedDelta) }}"><i class="fa fa-arrow-up"></i> +{{ $completedDelta }}</span>
             @elseif ($completedDelta < 0)
                 <span class="down" title="{{ sprintf(__('stakeholder.kpi.delta_vs_prior'), $completedDelta) }}"><i class="fa fa-arrow-down"></i> {{ $completedDelta }}</span>
             @endif
         </div>
-        <div class="kl">{{ __('stakeholder.kpi.completed_this_period') }}</div>
+        <div class="kl">{{ $totalMsCount > 0 ? __('stakeholder.kpi.milestones_completed') : __('stakeholder.kpi.completed_this_period') }}</div>
         @if ($completedCount > 0)
             <div class="kdrill">
                 <div class="kd-hd">{{ __('stakeholder.kpi.drill.completed') }}</div>
@@ -240,24 +272,27 @@
         @endif
     </div>
 
-    {{-- Goals on track — drill lists the AT-RISK ones (that's the actionable slice) --}}
-    <div class="rd-kcell @if (count($goalsAtRiskItems) > 0) has-detail @endif" tabindex="{{ count($goalsAtRiskItems) > 0 ? 0 : -1 }}">
+    {{-- Goals on track — drill lists the ON-TRACK goals (what the count is) --}}
+    <div class="rd-kcell @if (count($onTrackItems) > 0) has-detail @endif" tabindex="{{ count($onTrackItems) > 0 ? 0 : -1 }}">
+        @if (count($onTrackItems) > 0)
+            <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
+        @endif
         <div class="kv">{{ $goalsOnTrack }}<small>/{{ $goalsTotal }}</small></div>
         <div class="kl">{{ __('stakeholder.kpi.goals_on_track_lc') }}</div>
-        @if (count($goalsAtRiskItems) > 0)
+        @if (count($onTrackItems) > 0)
             <div class="kdrill">
-                <div class="kd-hd">{{ __('stakeholder.kpi.drill.goals_at_risk') }}</div>
+                <div class="kd-hd">{{ __('stakeholder.kpi.drill.on_track') }}</div>
                 <ul>
-                    @foreach ($goalsAtRiskItems as $g)
-                        @php $g = (object) $g; $isMiss = (string) ($g->status ?? '') === 'status_miss'; @endphp
+                    @foreach ($onTrackItems as $g)
+                        @php $g = (object) $g; @endphp
                         <li>
                             <span class="nm" title="{{ $g->title ?? '' }}">{{ $g->title ?? $g->description ?? __('stakeholder.goals.untitled') }}</span>
-                            <span class="mt">{{ round((float) ($g->goalProgress ?? 0)) }}% · {{ $isMiss ? __('stakeholder.goals.miss') : __('stakeholder.goals.atrisk') }}</span>
+                            <span class="mt">{{ round((float) ($g->goalProgress ?? 0)) }}%</span>
                         </li>
                     @endforeach
                 </ul>
-                @if ($goalsAtRiskMoreCount > 0)
-                    <div class="kd-more">{{ sprintf(__('stakeholder.kpi.drill.more'), $goalsAtRiskMoreCount) }}</div>
+                @if ($onTrackMoreCount > 0)
+                    <div class="kd-more">{{ sprintf(__('stakeholder.kpi.drill.more'), $onTrackMoreCount) }}</div>
                 @endif
             </div>
         @endif
@@ -265,8 +300,11 @@
 
     {{-- Overdue milestones --}}
     <div class="rd-kcell @if ($overdueCount > 0) risk @endif @if ($overdueCount > 0) has-detail @endif" tabindex="{{ $overdueCount > 0 ? 0 : -1 }}">
-        <div class="kv">{{ $overdueCount }}</div>
-        <div class="kl">{{ __('stakeholder.kpi.milestones_overdue') }}</div>
+        @if ($overdueCount > 0)
+            <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
+        @endif
+        <div class="kv">{{ $overdueCount }}@if ($openMsCount > 0)<small>/{{ $openMsCount }}</small>@endif</div>
+        <div class="kl">{{ $openMsCount > 0 ? __('stakeholder.kpi.overdue_of_open') : __('stakeholder.kpi.milestones_overdue') }}</div>
         @if ($overdueCount > 0)
             <div class="kdrill">
                 <div class="kd-hd">{{ __('stakeholder.kpi.drill.overdue') }}</div>
@@ -286,10 +324,29 @@
         @endif
     </div>
 
-    {{-- Hours logged — no drill (would need per-user or per-project breakdown; scope later) --}}
-    <div class="rd-kcell">
+    {{-- Hours logged — drill lists per-project breakdown, largest first --}}
+    <div class="rd-kcell @if (count($hoursItems) > 0) has-detail @endif" tabindex="{{ count($hoursItems) > 0 ? 0 : -1 }}">
+        @if (count($hoursItems) > 0)
+            <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
+        @endif
         <div class="kv">{{ number_format($hoursLogged, $hoursLogged >= 100 ? 0 : 1) }}<small>h</small></div>
         <div class="kl">{{ __('stakeholder.kpi.hours_this_period') }}</div>
+        @if (count($hoursItems) > 0)
+            <div class="kdrill">
+                <div class="kd-hd">{{ __('stakeholder.kpi.drill.hours') }}</div>
+                <ul>
+                    @foreach ($hoursItems as $h)
+                        <li>
+                            <span class="nm" title="{{ $h['name'] }}">{{ $h['name'] }}</span>
+                            <span class="mt">{{ number_format($h['hours'], $h['hours'] >= 100 ? 0 : 1) }}h</span>
+                        </li>
+                    @endforeach
+                </ul>
+                @if ($hoursMoreCount > 0)
+                    <div class="kd-more">{{ sprintf(__('stakeholder.kpi.drill.more'), $hoursMoreCount) }}</div>
+                @endif
+            </div>
+        @endif
     </div>
 </div>
 
