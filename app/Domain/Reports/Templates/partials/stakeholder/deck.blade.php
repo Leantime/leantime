@@ -46,8 +46,8 @@
     $hasLM          = $logicModel !== null;
 
     // Semantic period label — the "why this period" chip in the header sub-line.
-    // Board audiences care WHY the report is showing Q2 (because it's last closed)
-    // more than the raw date range, which repeats below.
+    // Board audiences care WHY the report is showing this range (because it's
+    // last closed) more than the raw dates, which appear separately in the picker.
     $periodMeaning = match ($period->preset) {
         ReportPeriod::PRESET_LAST_QUARTER => __('stakeholder.period.last_closed'),
         ReportPeriod::PRESET_THIS_QUARTER => __('stakeholder.period.in_progress'),
@@ -56,8 +56,18 @@
         default                           => '',
     };
 
-    // Compact quarter label ("Q3 2026") — for the picker button and header chip.
-    $qLabel = 'Q'.(int) ceil((int) $period->from->setToUserTimezone()->format('n') / 3).' '.$period->from->setToUserTimezone()->format('Y');
+    // Preset name for the picker button — matches what the user selects in the
+    // dropdown ("Last quarter" / "This quarter" / "Next quarter"). Deliberately
+    // NOT "Q2 2026" — Leantime doesn't let companies define fiscal quarters, so
+    // a calendar Q# label would be a lie for anyone whose fiscal year isn't
+    // calendar-aligned. The literal date range is shown next to it.
+    $presetName = match ($period->preset) {
+        ReportPeriod::PRESET_LAST_QUARTER => __('label.period_last_quarter'),
+        ReportPeriod::PRESET_THIS_QUARTER => __('label.period_this_quarter'),
+        ReportPeriod::PRESET_NEXT_QUARTER => __('label.period_next_quarter'),
+        ReportPeriod::PRESET_CUSTOM       => __('label.period_custom'),
+        default                           => __('label.period_this_quarter'),
+    };
 
     // Reload URL bases for the period picker preset links.
     $reportUrl = BASE_URL.'/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report';
@@ -167,16 +177,26 @@
 .rd-page{flex:0 0 100%;padding:24px 26px;min-width:100%;width:100%;}
 .rd-page:not(.on){visibility:hidden;height:0;padding-top:0;padding-bottom:0;}
 
-/* Page-1 KPI band — 4 equal cells, honest big numbers. */
-.rd-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px;}
-.rd-kcell{padding:14px 16px;border-radius:var(--rd-r-xs);background:var(--rd-bg);}
-.rd-kcell .l{font-size:11.5px;color:var(--rd-text-2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
-.rd-kcell .v{font-size:26px;font-weight:600;letter-spacing:-.5px;line-height:1;color:var(--rd-text-1);}
-.rd-kcell .v small{font-size:14px;color:var(--rd-text-3);font-weight:400;margin-left:2px;}
-.rd-kcell .d{font-size:11.5px;color:var(--rd-text-3);margin-top:5px;}
-.rd-kcell .d.up{color:var(--rd-ok);}
-.rd-kcell .d.down{color:var(--rd-danger);}
-.rd-kcell.danger .v{color:var(--rd-danger);}
+/* Page-1 KPI band — value-first, delta inline, lowercase label beneath.
+   Matches the mockup: big number reads first, the "what" is a quiet caption. */
+.rd-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px;}
+.rd-kcell{padding:13px 16px;border-radius:var(--rd-r-xs);background:var(--rd-bg);}
+/* KV row: center-align vertically so the delta pill and the /X subscript
+   both sit at the number's optical center instead of dropping to its baseline
+   (which made them look "small next to" the big number). */
+.rd-kcell .kv{font-size:28px;font-weight:600;letter-spacing:-.6px;line-height:1;display:flex;align-items:center;gap:10px;color:var(--rd-text-1);}
+.rd-kcell .kv small{font-size:15px;color:var(--rd-text-3);font-weight:500;align-self:flex-end;margin-bottom:2px;margin-left:-2px;letter-spacing:.5px;}
+/* Delta pills — the "vs prior" signal needs to READ, not hide. Green pill for
+   gains, red pill for losses. Bigger + backed + weighted so it's not lost next
+   to the big number. */
+.rd-kcell .kv .up,
+.rd-kcell .kv .down{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;line-height:1;letter-spacing:.2px;}
+.rd-kcell .kv .up{color:#1a7d52;background:#dcf1e6;}
+.rd-kcell .kv .down{color:#a11a44;background:#fbe0e8;}
+.rd-kcell .kv .up i,
+.rd-kcell .kv .down i{font-size:9px;}
+.rd-kcell .kl{font-size:12.5px;color:var(--rd-text-2);margin-top:5px;}
+.rd-kcell.risk .kv{color:var(--rd-danger);}
 
 /* Section container inside a page. */
 .rd-section{margin-top:20px;}
@@ -185,6 +205,34 @@
 .rd-section .hd .t{font-size:14px;font-weight:600;color:var(--rd-text-1);}
 .rd-section .hd .sub{font-size:12px;color:var(--rd-text-3);}
 .rd-empty{padding:22px;text-align:center;color:var(--rd-text-3);font-size:13px;background:var(--rd-bg);border-radius:var(--rd-r-xs);}
+
+/* Stage colors — five Logic Model stages, matching the canvas board. Used
+   across Page 1 (ToC narrative colored spans), Page 2 (5-stage board), and
+   Page 3 (coverage matrix rows tied to stages). */
+.rd-scope{
+    --rd-s1:#4A85B5; --rd-s1-bg:#e5eef6;
+    --rd-s2:#3E937A; --rd-s2-bg:#e2efe9;
+    --rd-s3:#C09035; --rd-s3-bg:#f6ecd7;
+    --rd-s4:#8E6AAD; --rd-s4-bg:#eee5f4;
+    --rd-s5:#2D7D5E; --rd-s5-bg:#dbeae1;
+}
+
+/* Task-card standard (from the canvas board): title left, status pill +
+   owner avatar top-right, assumption line beneath, optional read-out
+   fold below. Used on Page 2 for the 5-stage LM cards. */
+.rd-cardx{border-radius:var(--rd-r-xs);padding:9px 10px;background:#fff;border:1px solid var(--rd-line-soft);border-left:3px solid var(--rd-text-4);min-width:0;}
+.rd-cx-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.rd-cx-t{font-size:13px;font-weight:600;line-height:1.3;display:flex;align-items:baseline;gap:6px;min-width:0;color:var(--rd-text-1);}
+.rd-cx-t .cd{width:7px;height:7px;border-radius:50%;flex:none;position:relative;top:-1px;}
+.rd-cx-corner{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.rd-pill{font-size:9px;font-weight:600;color:#fff;padding:2px 7px;border-radius:20px;letter-spacing:.2px;white-space:nowrap;text-transform:none;}
+.rd-pill-ok{background:#5a9e2f;} .rd-pill-wip{background:#2f78b5;} .rd-pill-draft{background:#9aa4ab;} .rd-pill-flag{background:#BB1B25;}
+.rd-avatar{width:18px;height:18px;border-radius:50%;background:#5aa889;color:#fff;font-size:8px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none;text-decoration:none;}
+.rd-cx-hyp{font-size:10.5px;color:var(--rd-text-3);line-height:1.4;margin-top:5px;font-style:italic;}
+.rd-cx-hyp .hl{font-style:normal;font-weight:600;color:var(--rd-text-2);}
+.rd-cx-status{font-size:11.5px;color:var(--rd-text-3);margin-top:7px;display:inline-flex;align-items:center;gap:5px;}
+.rd-cx-status .sd{width:7px;height:7px;border-radius:50%;}
+.rd-cx-empty{border:1px dashed var(--rd-line);border-radius:var(--rd-r-xs);padding:10px 11px;font-size:11.5px;color:var(--rd-text-3);text-align:center;}
 
 /* Placeholder for pages not yet built. Removed as each page lands. */
 .rd-placeholder{padding:38px 24px;text-align:center;color:var(--rd-text-3);font-size:13px;line-height:1.5;background:repeating-linear-gradient(135deg,#fafbfb,#fafbfb 8px,#f4f6f7 8px,#f4f6f7 16px);border-radius:var(--rd-r-xs);}
@@ -211,7 +259,6 @@
             <div class="h">{{ $tpl->escape($subject) }}</div>
             <div class="prov">
                 {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
-                · {{ $qLabel }}
                 @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif
                 · {{ __('stakeholder.header.updated') }} {{ $updatedAt }}
             </div>
@@ -229,7 +276,7 @@
         <div class="rd-picker" id="rdPicker">
             <button type="button" class="rd-picker-btn" onclick="rdTogglePicker(event)">
                 <i class="fa fa-calendar"></i>
-                <span class="rd-picker-q">{{ $qLabel }}</span>
+                <span class="rd-picker-q">{{ $presetName }}</span>
                 <span class="rd-picker-range">· {{ $period->from->setToUserTimezone()->format('M j') }} – {{ $period->to->setToUserTimezone()->format('M j, Y') }}</span>
                 <i class="fa fa-caret-down"></i>
             </button>
@@ -287,75 +334,26 @@
 
                 {{-- ═══ Page 1 — Overview ═════════════════════════════ --}}
                 <div class="rd-page on">
-                    <div class="rd-kpi">
-                        <div class="rd-kcell">
-                            <div class="l">{{ __('stakeholder.kpi.completed') }}</div>
-                            <div class="v">{{ $completedCount }}</div>
-                            @if ($completedDelta !== 0)
-                                <div class="d {{ $completedDelta > 0 ? 'up' : 'down' }}">
-                                    {{ $completedDelta > 0 ? '▲ +' : '▼ ' }}{{ $completedDelta }} {{ __('stakeholder.kpi.vs_prior') }}
-                                </div>
-                            @else
-                                <div class="d">{{ __('stakeholder.kpi.same_as_prior') }}</div>
-                            @endif
-                        </div>
-                        <div class="rd-kcell">
-                            <div class="l">{{ __('stakeholder.kpi.goals_on_track') }}</div>
-                            <div class="v">{{ $goalsOnTrack }}<small>/{{ $goalsTotal }}</small></div>
-                            <div class="d">{{ __('stakeholder.kpi.strategic_goals') }}</div>
-                        </div>
-                        <div class="rd-kcell @if ($overdueCount > 0) danger @endif">
-                            <div class="l">{{ __('stakeholder.kpi.overdue') }}</div>
-                            <div class="v">{{ $overdueCount }}</div>
-                            <div class="d">{{ __('stakeholder.kpi.milestones') }}</div>
-                        </div>
-                        <div class="rd-kcell">
-                            <div class="l">{{ __('stakeholder.kpi.hours_logged') }}</div>
-                            <div class="v">{{ number_format($hoursLogged, $hoursLogged >= 100 ? 0 : 1) }}<small>h</small></div>
-                            <div class="d">{{ __('stakeholder.kpi.this_period') }}</div>
-                        </div>
-                    </div>
-
-                    <div class="rd-placeholder">
-                        <div class="coming">{{ __('stakeholder.next_phase') }}</div>
-                        <div class="h">{{ __('stakeholder.overview.coming_title') }}</div>
-                        {{ __('stakeholder.overview.coming_hint') }}
-                    </div>
+                    @include('reports::partials.stakeholder.page-overview', compact(
+                        'completedCount', 'completedDelta', 'goalsOnTrack', 'goalsTotal',
+                        'overdueCount', 'hoursLogged', 'needsAttn', 'logicModel', 'hasLM',
+                        'goalsGroup', 'report'
+                    ))
                 </div>
 
                 {{-- ═══ Page 2 — Logic Model read-out ═════════════════ --}}
                 <div class="rd-page">
-                    @if (! $hasLM)
-                        <div class="rd-empty">{{ __('stakeholder.lm.no_canvas') }}</div>
-                    @else
-                        <div class="rd-placeholder">
-                            <div class="coming">{{ __('stakeholder.next_phase') }}</div>
-                            <div class="h">{{ __('stakeholder.lm.coming_title') }}</div>
-                            {{ __('stakeholder.lm.coming_hint') }}
-                        </div>
-                    @endif
+                    @include('reports::partials.stakeholder.page-lm', compact('logicModel', 'hasLM'))
                 </div>
 
                 {{-- ═══ Page 3 — Resources & Coverage ═════════════════ --}}
                 <div class="rd-page">
-                    <div class="rd-placeholder">
-                        <div class="coming">{{ __('stakeholder.p3_status') }}</div>
-                        <div class="h">{{ __('stakeholder.rc.coming_title') }}</div>
-                        {{ __('stakeholder.rc.coming_hint') }}
-                    </div>
+                    @include('reports::partials.stakeholder.page-resources', compact('logicModel', 'hasLM'))
                 </div>
 
                 {{-- ═══ Page 4 — Programs & Narrative ═════════════════ --}}
                 <div class="rd-page">
-                    @if (count($programRows) === 0 && $scope === 'strategy')
-                        <div class="rd-empty">{{ __('stakeholder.programs.none') }}</div>
-                    @else
-                        <div class="rd-placeholder">
-                            <div class="coming">{{ __('stakeholder.next_phase') }}</div>
-                            <div class="h">{{ __('stakeholder.programs.coming_title') }}</div>
-                            {{ __('stakeholder.programs.coming_hint') }}
-                        </div>
-                    @endif
+                    @include('reports::partials.stakeholder.page-programs', compact('scope', 'programRows', 'programUpdates'))
                 </div>
 
             </div>
