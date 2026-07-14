@@ -29,6 +29,8 @@
 --}}
 
 @php
+    use Leantime\Domain\Reports\Models\ReportPeriod;
+
     $verdictDotColor = match ($verdict) {
         'ontrack' => '#3E937A',
         'atrisk'  => '#C09035',
@@ -42,6 +44,23 @@
     $hoursLogged    = (float) ($stats['hoursLogged'] ?? 0);
     $completedDelta = (int) ($deltas['completedDelta'] ?? 0);
     $hasLM          = $logicModel !== null;
+
+    // Semantic period label — the "why this period" chip in the header sub-line.
+    // Board audiences care WHY the report is showing Q2 (because it's last closed)
+    // more than the raw date range, which repeats below.
+    $periodMeaning = match ($period->preset) {
+        ReportPeriod::PRESET_LAST_QUARTER => __('stakeholder.period.last_closed'),
+        ReportPeriod::PRESET_THIS_QUARTER => __('stakeholder.period.in_progress'),
+        ReportPeriod::PRESET_NEXT_QUARTER => __('stakeholder.period.upcoming'),
+        ReportPeriod::PRESET_CUSTOM       => __('stakeholder.period.custom'),
+        default                           => '',
+    };
+
+    // Compact quarter label ("Q3 2026") — for the picker button and header chip.
+    $qLabel = 'Q'.(int) ceil((int) $period->from->setToUserTimezone()->format('n') / 3).' '.$period->from->setToUserTimezone()->format('Y');
+
+    // Reload URL bases for the period picker preset links.
+    $reportUrl = BASE_URL.'/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report';
 @endphp
 
 <style>
@@ -91,6 +110,39 @@
    header for now. */
 .rd-globalbar{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap;}
 .rd-globalbar .fill{flex:1;}
+
+/* Compact period picker — one button showing current period; click opens a
+   dropdown with the 3 quarter presets + a custom-range mini-form. Replaces the
+   inline pill row; the design (§3 + board mockup p1) calls for a stated period
+   with a single affordance to change it, not four always-visible options. */
+.rd-picker{position:relative;}
+.rd-picker-btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13px;color:var(--rd-text-1);background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:22px;padding:7px 14px;cursor:pointer;box-shadow:var(--rd-sh-sm);}
+.rd-picker-btn:hover{border-color:var(--rd-text-4);}
+.rd-picker-btn .rd-picker-q{font-weight:600;}
+.rd-picker-btn .rd-picker-range{color:var(--rd-text-3);font-size:12px;}
+.rd-picker-btn i{font-size:11px;color:var(--rd-text-3);}
+/* Picker dropdown — sized defensively against the app's global anchor/input
+   styles that would otherwise inflate everything (Bootstrap 2.x menus, form
+   inputs, etc.). Fixed width + explicit font-size on every text element. */
+.rd-picker-menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);width:280px;padding:4px;z-index:100;font-size:12px;line-height:1.3;}
+.rd-picker-menu[hidden]{display:none;}
+.rd-picker-menu *{box-sizing:border-box;}
+
+.rd-picker-opt{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--rd-text-1);gap:10px;font-size:12px;line-height:1.3;}
+.rd-picker-opt:hover{background:var(--rd-bg);color:var(--rd-text-1);text-decoration:none;}
+.rd-picker-opt.on{background:rgba(0,71,102,.06);color:var(--rd-accent);}
+.rd-picker-opt .l{font-size:12.5px;font-weight:500;color:inherit;}
+.rd-picker-opt.on .l{font-weight:600;}
+.rd-picker-opt .d{font-size:10.5px;color:var(--rd-text-3);font-weight:400;}
+
+.rd-picker-sep{height:1px;background:var(--rd-line-soft);margin:4px 4px;}
+.rd-picker-custom{padding:6px 10px 8px;margin:0;}
+.rd-picker-cl{display:block;font-size:9.5px;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;margin:0 0 5px;font-weight:600;}
+.rd-picker-crow{display:flex;align-items:center;gap:5px;}
+.rd-picker-cinput{flex:1;min-width:0;width:auto;font:inherit;font-size:11.5px;line-height:1.2;padding:5px 7px;height:26px;border:1px solid var(--rd-line);border-radius:5px;background:var(--rd-panel);color:var(--rd-text-1);margin:0;box-shadow:none;}
+.rd-picker-cinput:focus{outline:none;border-color:var(--rd-accent);}
+.rd-picker-cdash{color:var(--rd-text-3);font-size:11px;flex:none;}
+.rd-picker-capply{font:inherit;font-size:11px;font-weight:500;color:#fff;background:var(--rd-accent);border:none;border-radius:5px;padding:5px 9px;height:26px;cursor:pointer;flex:none;}
 
 /* Tab bar — sits ON the page background (matches the To-Dos Kanban·Table·List
    pattern). Not on a panel. */
@@ -159,7 +211,8 @@
             <div class="h">{{ $tpl->escape($subject) }}</div>
             <div class="prov">
                 {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
-                · {{ $period->label() }}
+                · {{ $qLabel }}
+                @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif
                 · {{ __('stakeholder.header.updated') }} {{ $updatedAt }}
             </div>
         </div>
@@ -169,14 +222,50 @@
         </div>
     </div>
 
-    {{-- ── Global controls (period picker, room for future controls) ── --}}
+    {{-- ── Global controls: compact period picker (single button → dropdown) ── --}}
     <div class="rd-globalbar hideOnPrint">
         <span class="fill"></span>
-        <x-global::periodpicker
-            :period="$period"
-            :url="BASE_URL.'/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report'"
-            :hxUrl="BASE_URL.'/hx/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report/get'"
-            target=".rd-deck-track" />
+
+        <div class="rd-picker" id="rdPicker">
+            <button type="button" class="rd-picker-btn" onclick="rdTogglePicker(event)">
+                <i class="fa fa-calendar"></i>
+                <span class="rd-picker-q">{{ $qLabel }}</span>
+                <span class="rd-picker-range">· {{ $period->from->setToUserTimezone()->format('M j') }} – {{ $period->to->setToUserTimezone()->format('M j, Y') }}</span>
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="rd-picker-menu" id="rdPickerMenu" hidden>
+                <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_LAST_QUARTER }}"
+                   class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_LAST_QUARTER) on @endif">
+                    <span class="l">{{ __('label.period_last_quarter') }}</span>
+                    <span class="d">{{ __('stakeholder.period.default_hint') }}</span>
+                </a>
+                <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_THIS_QUARTER }}"
+                   class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_THIS_QUARTER) on @endif">
+                    <span class="l">{{ __('label.period_this_quarter') }}</span>
+                    <span class="d">{{ __('stakeholder.period.in_progress_hint') }}</span>
+                </a>
+                <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_NEXT_QUARTER }}"
+                   class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_NEXT_QUARTER) on @endif">
+                    <span class="l">{{ __('label.period_next_quarter') }}</span>
+                    <span class="d">{{ __('stakeholder.period.upcoming_hint') }}</span>
+                </a>
+                <div class="rd-picker-sep"></div>
+                <form method="GET" action="{{ $reportUrl }}" class="rd-picker-custom">
+                    <input type="hidden" name="preset" value="{{ ReportPeriod::PRESET_CUSTOM }}">
+                    <label class="rd-picker-cl">{{ __('label.period_custom') }}</label>
+                    <div class="rd-picker-crow">
+                        <input type="text" name="from" class="rd-picker-cinput periodPickerDate"
+                               placeholder="{{ __('label.period_from') }}"
+                               value="{{ $period->preset === ReportPeriod::PRESET_CUSTOM ? $period->from->setToUserTimezone()->formatDateForUser() : '' }}">
+                        <span class="rd-picker-cdash">–</span>
+                        <input type="text" name="to" class="rd-picker-cinput periodPickerDate"
+                               placeholder="{{ __('label.period_to') }}"
+                               value="{{ $period->preset === ReportPeriod::PRESET_CUSTOM ? $period->to->setToUserTimezone()->formatDateForUser() : '' }}">
+                        <button type="submit" class="rd-picker-capply">{{ __('label.period_apply') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     {{-- ── Tab bar (screen-only, expanded in print) ─────────────────── --}}
@@ -339,5 +428,27 @@
 
     // Initial state.
     window.rdGo(0);
+
+    // Compact period-picker dropdown: toggle open, dismiss on outside click.
+    window.rdTogglePicker = function (e) {
+        if (e) e.stopPropagation();
+        var menu = document.getElementById('rdPickerMenu');
+        if (!menu) return;
+        menu.toggleAttribute('hidden');
+    };
+    document.addEventListener('click', function (e) {
+        var picker = document.getElementById('rdPicker');
+        if (!picker || picker.contains(e.target)) return;
+        var menu = document.getElementById('rdPickerMenu');
+        if (menu && !menu.hasAttribute('hidden')) menu.setAttribute('hidden', '');
+    });
+
+    // Wire the datepicker to the two custom-range inputs (same helper Marcel's
+    // periodpicker uses). Only if jQuery + the helper are present.
+    if (typeof jQuery !== 'undefined' && jQuery.fn.datepicker && window.leantime?.dateHelper) {
+        jQuery('.rd-picker-cinput').datepicker({
+            dateFormat: window.leantime.dateHelper.getFormatFromSettings('dateformat', 'jquery')
+        });
+    }
 })();
 </script>
