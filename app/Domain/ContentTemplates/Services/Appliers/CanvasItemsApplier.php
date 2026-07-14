@@ -67,12 +67,15 @@ class CanvasItemsApplier implements Applier
 
         $sortBase = $this->nextSortIndex($targetId);
         $created = 0;
+        // One timestamp for the whole apply — all items from the same template
+        // application should share created/modified so recent-activity sorts
+        // don't rank them arbitrarily against each other.
+        $now = now();
 
         foreach ($items as $offset => $item) {
             if (! is_array($item) || empty($item['box'])) {
                 continue;
             }
-            $now = now();
             $db->table('zp_canvas_items')->insert([
                 'canvasId' => $targetId,
                 'box' => (string) $item['box'],
