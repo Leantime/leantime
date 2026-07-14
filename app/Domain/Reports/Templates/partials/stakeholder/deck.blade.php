@@ -241,16 +241,23 @@
     --rd-s5:#2D7D5E; --rd-s5-bg:#dbeae1;
 }
 
-/* Task-card standard (from the canvas board): title left, status pill +
+/* Task-card standard (from the canvas board): title left, status icon +
    owner avatar top-right, assumption line beneath, optional read-out
-   fold below. Used on Page 2 for the 5-stage LM cards. */
-.rd-cardx{border-radius:var(--rd-r-xs);padding:9px 10px;background:#fff;border:1px solid var(--rd-line-soft);border-left:3px solid var(--rd-text-4);min-width:0;}
-.rd-cx-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.rd-cx-t{font-size:13px;font-weight:600;line-height:1.3;display:flex;align-items:baseline;gap:6px;min-width:0;color:var(--rd-text-1);}
-.rd-cx-t .cd{width:7px;height:7px;border-radius:50%;flex:none;position:relative;top:-1px;}
-.rd-cx-corner{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.rd-pill{font-size:9px;font-weight:600;color:#fff;padding:2px 7px;border-radius:20px;letter-spacing:.2px;white-space:nowrap;text-transform:none;}
-.rd-pill-ok{background:#5a9e2f;} .rd-pill-wip{background:#2f78b5;} .rd-pill-draft{background:#9aa4ab;} .rd-pill-flag{background:#BB1B25;}
+   fold below. Used on Page 2 for the 5-stage LM cards. Tight padding —
+   5 columns share the deck width so cards can't afford bulk. */
+.rd-cardx{border-radius:var(--rd-r-xs);padding:8px 10px;background:#fff;border:1px solid var(--rd-line-soft);border-left:3px solid var(--rd-text-4);min-width:0;}
+.rd-cx-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;}
+.rd-cx-t{font-size:12.5px;font-weight:600;line-height:1.3;min-width:0;color:var(--rd-text-1);flex:1;}
+.rd-cx-t .cd{display:none;}   /* colored border already carries stage identity */
+.rd-cx-corner{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+/* Icon-only status pill — compact, hover for full label. Colored circle
+   maps to the LM canvas status icons (fa-circle-check / -exclamation / etc). */
+.rd-pill-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--rd-bg);flex:none;cursor:help;}
+.rd-pill-icon i{font-size:14px;line-height:1;}
+.rd-pill-ok i{color:#3E937A;}
+.rd-pill-wip i{color:#4A85B5;}
+.rd-pill-draft i{color:#9aa4ab;}
+.rd-pill-flag i{color:var(--rd-danger);}
 .rd-avatar{width:18px;height:18px;border-radius:50%;background:#5aa889;color:#fff;font-size:8px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none;text-decoration:none;}
 .rd-cx-hyp{font-size:10.5px;color:var(--rd-text-3);line-height:1.4;margin-top:5px;font-style:italic;}
 .rd-cx-hyp .hl{font-style:normal;font-weight:600;color:var(--rd-text-2);}
@@ -371,7 +378,7 @@
 
                 {{-- ═══ Page 3 — Resources & Coverage ═════════════════ --}}
                 <div class="rd-page">
-                    @include('reports::partials.stakeholder.page-resources', compact('logicModel', 'hasLM'))
+                    @include('reports::partials.stakeholder.page-resources', compact('logicModel', 'hasLM', 'resourceSummary', 'report', 'scope', 'capacityAnalysis', 'programMeta', 'programChildMap', 'capacityByProgram'))
                 </div>
 
                 {{-- ═══ Page 4 — Programs & Narrative ═════════════════ --}}
