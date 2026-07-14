@@ -161,7 +161,7 @@
                 <div>
                     <b>{{ __('stakeholder.rc.off_strategy_label') }}:</b>
                     {{ sprintf(__('stakeholder.rc.off_strategy_hint'), count($unaligned)) }}
-                    <em>{{ implode(', ', array_map(fn ($n) => $tpl->escape($n), $unalignedNames)) }}@if ($more > 0) +{{ $more }} more @endif</em>
+                    <em>{{ implode(', ', array_map(fn ($n) => $n, $unalignedNames)) }}@if ($more > 0) +{{ $more }} more @endif</em>
                 </div>
             </div>
         @endif

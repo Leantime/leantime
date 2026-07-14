@@ -106,7 +106,7 @@
 
 /* Persistent header — sits above the deck. Left: subject + provenance. Right:
    status verdict (stated verdict with provenance line, NOT a tappable pill). */
-.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:start;padding:18px 22px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:14px;}
+.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:start;padding:14px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
 .rd-hdr .st{min-width:0;}
 .rd-hdr .st .h{font-size:20px;font-weight:600;line-height:1.2;color:var(--rd-text-1);}
 .rd-hdr .st .prov{font-size:12px;color:var(--rd-text-3);margin-top:4px;}
@@ -115,11 +115,9 @@
 .rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}
 .rd-hdr .verdict .src{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-weight:400;}
 
-/* Global controls — sit above the tab bar. Period picker on the right; view
-   toggle (Board ↔ Report) implied by the "back to board" button in the page
-   header for now. */
-.rd-globalbar{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap;}
-.rd-globalbar .fill{flex:1;}
+/* Tab-bar right cluster — period picker + prev/next arrows sit here to keep
+   the tab row self-contained instead of a separate "globalbar" row above. */
+.rd-tab-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}
 
 /* Compact period picker — one button showing current period; click opens a
    dropdown with the 3 quarter presets + a custom-range mini-form. Replaces the
@@ -163,7 +161,7 @@
 .rd-tab i{font-size:12px;}
 .rd-tab .ct{font-size:11px;color:var(--rd-text-4);background:var(--rd-line-soft);border-radius:10px;padding:1px 7px;margin-left:2px;}
 .rd-tab.on .ct{color:var(--rd-accent);background:rgba(0,71,102,.1);}
-.rd-arrows{margin-left:auto;display:flex;gap:4px;}
+.rd-arrows{display:flex;gap:4px;}
 .rd-arrow{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-text-2);}
 .rd-arrow:hover{color:var(--rd-text-1);border-color:var(--rd-text-4);}
 .rd-arrow[disabled]{opacity:.4;cursor:not-allowed;}
@@ -195,8 +193,25 @@
 .rd-kcell .kv .down{color:#a11a44;background:#fbe0e8;}
 .rd-kcell .kv .up i,
 .rd-kcell .kv .down i{font-size:9px;}
-.rd-kcell .kl{font-size:12.5px;color:var(--rd-text-2);margin-top:5px;}
+.rd-kcell .kl{font-size:12.5px;color:var(--rd-text-2);margin-top:5px;display:flex;align-items:center;gap:6px;}
 .rd-kcell.risk .kv{color:var(--rd-danger);}
+
+/* KPI drill-down — hover the whole cell to show the list of items behind the
+   count (which milestones completed, which goals off-track, etc.). Compact
+   popover; won't render if the count is zero. */
+.rd-kcell{position:relative;}
+.rd-kcell.has-detail{cursor:default;}
+.rd-kcell.has-detail::after{content:"";position:absolute;top:6px;right:8px;width:5px;height:5px;border-radius:50%;background:var(--rd-text-4);opacity:.5;}
+.rd-kcell .kdrill{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);padding:8px;z-index:20;opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .12s,transform .12s,visibility .12s;font-size:11.5px;line-height:1.4;text-align:left;letter-spacing:0;}
+.rd-kcell.has-detail:hover .kdrill,
+.rd-kcell.has-detail:focus-within .kdrill{opacity:1;visibility:visible;transform:translateY(0);}
+.rd-kcell .kdrill .kd-hd{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--rd-text-3);padding:2px 6px 6px;}
+.rd-kcell .kdrill ul{list-style:none;margin:0;padding:0;}
+.rd-kcell .kdrill li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 6px;border-radius:4px;color:var(--rd-text-1);font-weight:400;}
+.rd-kcell .kdrill li:hover{background:var(--rd-bg);}
+.rd-kcell .kdrill li .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;}
+.rd-kcell .kdrill li .mt{color:var(--rd-text-3);font-size:10.5px;flex:none;}
+.rd-kcell .kdrill .kd-more{font-size:10.5px;color:var(--rd-text-3);font-style:italic;padding:4px 6px 2px;}
 
 /* Section container inside a page. */
 .rd-section{margin-top:20px;}
@@ -241,7 +256,7 @@
 
 /* Print (§7) — expand all pages, hide screen affordances. */
 @media print {
-    .rd-globalbar, .rd-tabs, .rd-arrows, .hideOnPrint { display: none !important; }
+    .rd-tabs, .rd-arrows, .rd-tab-right, .hideOnPrint { display: none !important; }
     .rd-deck { box-shadow: none; }
     .rd-deck-viewport { overflow: visible !important; }
     .rd-deck-track { transform: none !important; display: block !important; }
@@ -256,7 +271,7 @@
     {{-- ── Persistent header ────────────────────────────────────────── --}}
     <div class="rd-hdr">
         <div class="st">
-            <div class="h">{{ $tpl->escape($subject) }}</div>
+            <div class="h">{{ $subject }}</div>
             <div class="prov">
                 {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
                 @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif
@@ -269,61 +284,60 @@
         </div>
     </div>
 
-    {{-- ── Global controls: compact period picker (single button → dropdown) ── --}}
-    <div class="rd-globalbar hideOnPrint">
-        <span class="fill"></span>
-
-        <div class="rd-picker" id="rdPicker">
-            <button type="button" class="rd-picker-btn" onclick="rdTogglePicker(event)">
-                <i class="fa fa-calendar"></i>
-                <span class="rd-picker-q">{{ $presetName }}</span>
-                <span class="rd-picker-range">· {{ $period->from->setToUserTimezone()->format('M j') }} – {{ $period->to->setToUserTimezone()->format('M j, Y') }}</span>
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="rd-picker-menu" id="rdPickerMenu" hidden>
-                <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_LAST_QUARTER }}"
-                   class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_LAST_QUARTER) on @endif">
-                    <span class="l">{{ __('label.period_last_quarter') }}</span>
-                    <span class="d">{{ __('stakeholder.period.default_hint') }}</span>
-                </a>
-                <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_THIS_QUARTER }}"
-                   class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_THIS_QUARTER) on @endif">
-                    <span class="l">{{ __('label.period_this_quarter') }}</span>
-                    <span class="d">{{ __('stakeholder.period.in_progress_hint') }}</span>
-                </a>
-                <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_NEXT_QUARTER }}"
-                   class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_NEXT_QUARTER) on @endif">
-                    <span class="l">{{ __('label.period_next_quarter') }}</span>
-                    <span class="d">{{ __('stakeholder.period.upcoming_hint') }}</span>
-                </a>
-                <div class="rd-picker-sep"></div>
-                <form method="GET" action="{{ $reportUrl }}" class="rd-picker-custom">
-                    <input type="hidden" name="preset" value="{{ ReportPeriod::PRESET_CUSTOM }}">
-                    <label class="rd-picker-cl">{{ __('label.period_custom') }}</label>
-                    <div class="rd-picker-crow">
-                        <input type="text" name="from" class="rd-picker-cinput periodPickerDate"
-                               placeholder="{{ __('label.period_from') }}"
-                               value="{{ $period->preset === ReportPeriod::PRESET_CUSTOM ? $period->from->setToUserTimezone()->formatDateForUser() : '' }}">
-                        <span class="rd-picker-cdash">–</span>
-                        <input type="text" name="to" class="rd-picker-cinput periodPickerDate"
-                               placeholder="{{ __('label.period_to') }}"
-                               value="{{ $period->preset === ReportPeriod::PRESET_CUSTOM ? $period->to->setToUserTimezone()->formatDateForUser() : '' }}">
-                        <button type="submit" class="rd-picker-capply">{{ __('label.period_apply') }}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    {{-- ── Tab bar (screen-only, expanded in print) ─────────────────── --}}
+    {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
+         space; picker sits with the view-mode controls it belongs with) ── --}}
     <div class="rd-tabs hideOnPrint">
         <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
         <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
         <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
         <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-sitemap"></i> {{ __('stakeholder.tab.programs') }} @if (count($programRows) > 0) <span class="ct">{{ count($programRows) }}</span> @endif</button>
-        <div class="rd-arrows">
-            <button type="button" class="rd-arrow" id="rdPrev" onclick="rdGo(rdActive - 1)" aria-label="{{ __('stakeholder.nav.prev') }}"><i class="fa fa-chevron-left"></i></button>
-            <button type="button" class="rd-arrow" id="rdNext" onclick="rdGo(rdActive + 1)" aria-label="{{ __('stakeholder.nav.next') }}"><i class="fa fa-chevron-right"></i></button>
+
+        <div class="rd-tab-right">
+            <div class="rd-picker" id="rdPicker">
+                <button type="button" class="rd-picker-btn" onclick="rdTogglePicker(event)">
+                    <i class="fa fa-calendar"></i>
+                    <span class="rd-picker-q">{{ $presetName }}</span>
+                    <span class="rd-picker-range">· {{ $period->from->setToUserTimezone()->format('M j') }} – {{ $period->to->setToUserTimezone()->format('M j, Y') }}</span>
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="rd-picker-menu" id="rdPickerMenu" hidden>
+                    <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_LAST_QUARTER }}"
+                       class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_LAST_QUARTER) on @endif">
+                        <span class="l">{{ __('label.period_last_quarter') }}</span>
+                        <span class="d">{{ __('stakeholder.period.default_hint') }}</span>
+                    </a>
+                    <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_THIS_QUARTER }}"
+                       class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_THIS_QUARTER) on @endif">
+                        <span class="l">{{ __('label.period_this_quarter') }}</span>
+                        <span class="d">{{ __('stakeholder.period.in_progress_hint') }}</span>
+                    </a>
+                    <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_NEXT_QUARTER }}"
+                       class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_NEXT_QUARTER) on @endif">
+                        <span class="l">{{ __('label.period_next_quarter') }}</span>
+                        <span class="d">{{ __('stakeholder.period.upcoming_hint') }}</span>
+                    </a>
+                    <div class="rd-picker-sep"></div>
+                    <form method="GET" action="{{ $reportUrl }}" class="rd-picker-custom">
+                        <input type="hidden" name="preset" value="{{ ReportPeriod::PRESET_CUSTOM }}">
+                        <label class="rd-picker-cl">{{ __('label.period_custom') }}</label>
+                        <div class="rd-picker-crow">
+                            <input type="text" name="from" class="rd-picker-cinput periodPickerDate"
+                                   placeholder="{{ __('label.period_from') }}"
+                                   value="{{ $period->preset === ReportPeriod::PRESET_CUSTOM ? $period->from->setToUserTimezone()->formatDateForUser() : '' }}">
+                            <span class="rd-picker-cdash">–</span>
+                            <input type="text" name="to" class="rd-picker-cinput periodPickerDate"
+                                   placeholder="{{ __('label.period_to') }}"
+                                   value="{{ $period->preset === ReportPeriod::PRESET_CUSTOM ? $period->to->setToUserTimezone()->formatDateForUser() : '' }}">
+                            <button type="submit" class="rd-picker-capply">{{ __('label.period_apply') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="rd-arrows">
+                <button type="button" class="rd-arrow" id="rdPrev" onclick="rdGo(rdActive - 1)" aria-label="{{ __('stakeholder.nav.prev') }}"><i class="fa fa-chevron-left"></i></button>
+                <button type="button" class="rd-arrow" id="rdNext" onclick="rdGo(rdActive + 1)" aria-label="{{ __('stakeholder.nav.next') }}"><i class="fa fa-chevron-right"></i></button>
+            </div>
         </div>
     </div>
 

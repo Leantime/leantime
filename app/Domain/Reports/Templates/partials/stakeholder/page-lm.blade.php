@@ -97,7 +97,7 @@
             <div class="p2-col s{{ $stageNum }} @if ($isHeart) heart @endif" data-s="{{ $stageNum }}">
                 <div class="p2-col-hd">
                     @if ($showBadge)
-                        <div class="p2-conn {{ $badge['health_status'] ?? 'ok' }}" title="{{ $tpl->escape($badge['connector_label'] ?? '') }}: {{ $tpl->escape($badge['assumption_text'] ?? '') }}">
+                        <div class="p2-conn {{ $badge['health_status'] ?? 'ok' }}" title="{{ $badge['connector_label'] ?? '' }}: {{ $badge['assumption_text'] ?? '' }}">
                             @if (($badge['health_status'] ?? '') === 'ok')
                                 <i class="fa fa-check"></i>
                             @else
@@ -125,16 +125,16 @@
                             @endphp
                             <div class="rd-cardx">
                                 <div class="rd-cx-top">
-                                    <div class="rd-cx-t">{{ $title !== '' ? $tpl->escape($title) : __('stakeholder.lm.untitled') }}</div>
+                                    <div class="rd-cx-t">{{ $title !== '' ? $title : __('stakeholder.lm.untitled') }}</div>
                                     <div class="rd-cx-corner">
                                         <span class="rd-pill {{ $pill['cls'] }}">{{ $pill['lb'] }}</span>
-                                        <span class="rd-avatar" title="{{ $tpl->escape(trim(($item['firstname'] ?? '').' '.($item['lastname'] ?? ''))) }}">{{ $initials($item) }}</span>
+                                        <span class="rd-avatar" title="{{ trim(($item['firstname'] ?? ''.' '.($item['lastname'] ?? ''))) }}">{{ $initials($item) }}</span>
                                     </div>
                                 </div>
                                 @if ($assumption !== '')
                                     <div class="rd-cx-hyp">
                                         @if ($stageKey === 'outcomes') <span class="hl">{{ __('stakeholder.lm.assumption') }}:</span> @endif
-                                        {{ $tpl->escape($assumption) }}
+                                        {{ $assumption }}
                                     </div>
                                 @endif
                             </div>

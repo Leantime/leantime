@@ -57,7 +57,7 @@
                 @endphp
                 <div class="p4-prog">
                     <span class="pd" style="background:{{ $dotColor }}"></span>
-                    <span class="pn">{{ $tpl->escape($row['name'] ?? '') }}</span>
+                    <span class="pn">{{ $row['name'] ?? '' }}</span>
                     <span class="pm">{{ $statusLabel }} · {{ sprintf(__('stakeholder.programs.done_count'), $completedCt) }}</span>
                 </div>
             @endforeach
@@ -100,9 +100,9 @@
                 @endphp
                 <div class="p4-exec">
                     @if (! empty($u->_projectName))
-                        <b>{{ $tpl->escape($u->_projectName) }}</b> —
+                        <b>{{ $u->_projectName }}</b> —
                     @endif
-                    {{ $tpl->escape($text) }}
+                    {{ $text }}
                     @if ($date !== '') <span class="ed">{{ $date }}</span> @endif
                 </div>
             @endforeach

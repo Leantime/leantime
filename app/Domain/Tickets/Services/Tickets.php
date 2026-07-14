@@ -2421,11 +2421,42 @@ class Tickets extends BaseService
      * then re-completed the same day is included once. Built on the general
      * getStatusChangeEvents primitive, so throughput/burndown and strategy
      * reporting can reuse the same query.
+     *
+     * Thin wrapper over {@see getMyClosedTicketsForRange} with from == to.
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyClosedTicketsForDate(?int $userId = null, ?string $date = null): array
     {
         $date = $date ?: date('Y-m-d');
+
+        return $this->getMyClosedTicketsForRange($userId, $date, $date);
+    }
+
+    /**
+     * @api
+     *
+     * Range form of {@see getMyClosedTicketsForDate}: the user's tasks marked
+     * DONE anywhere within [$from, $to] (inclusive, dates 'Y-m-d'), each
+     * annotated with `dateClosed` (the completion timestamp). Powers the mobile
+     * Progress "Closed this week / this month" sections — completed arcs are
+     * keyed on close-date within the period, independent of how recently the
+     * project was otherwise touched, so finished work never disappears.
+     *
+     * Same "closed" definition as the single-date form: the ticket is currently
+     * DONE and its status was changed to that DONE status within the range. A
+     * ticket completed more than once in the range is included once, keyed to
+     * its latest completion (events are newest-first). Defaults to today when
+     * either bound is omitted.
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
+    public function getMyClosedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
+    {
+        $from = $from ?: date('Y-m-d');
+        $to = $to ?: date('Y-m-d');
+        // Tolerate a reversed range rather than returning nothing.
+        if ($from > $to) {
+            [$from, $to] = [$to, $from];
+        }
 
         // Candidates: the user's currently-DONE tickets (statusType resolved).
         $doneTickets = $this->getAllDoneUserTickets($userId);
@@ -2438,7 +2469,7 @@ class Tickets extends BaseService
             $byId[$ticket['id']] = $ticket;
         }
 
-        $events = $this->ticketRepository->getStatusChangeEvents(array_keys($byId), $date, $date);
+        $events = $this->ticketRepository->getStatusChangeEvents(array_keys($byId), $from, $to);
 
         $closed = [];
         foreach ($events as $event) {
@@ -2449,8 +2480,8 @@ class Tickets extends BaseService
             }
 
             // Only count changes INTO the ticket's current (DONE) status — it
-            // was actually marked done that day, not merely touched. Events are
-            // newest-first, so the first match keeps the latest completion time.
+            // was actually marked done in the range, not merely touched. Events
+            // are newest-first, so the first match keeps the latest completion.
             if ((string) $event['changeValue'] === (string) $ticket['status']) {
                 $ticket['dateClosed'] = $event['dateModified'];
                 $closed[$ticketId] = $ticket;
@@ -2458,6 +2489,70 @@ class Tickets extends BaseService
         }
 
         return array_values($closed);
+    }
+
+    /**
+     * @api
+     *
+     * Tickets the user COMMENTED on within [$from, $to] that they do NOT own
+     * (they're not the assignee/editor) — i.e. work they supported by weighing
+     * in on someone else's arc. Powers the mobile Progress "Supported" section
+     * (presence counts as much as production).
+     *
+     * Access safety: the commented-ticket ids are intersected with the user's
+     * access-scoped ticket set (simpleTicketQuery applies the project-access +
+     * collaborator clause), so a comment can never surface a ticket the user
+     * can no longer see. Ownership filter drops tickets where the user IS the
+     * editor — those are "your work," not support. Defaults either bound to
+     * today.
+     *
+     * @return array<int, array<string, mixed>> ticket rows (id, headline,
+     *                                          projectName, …), same shape as the other user-ticket queries.
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
+    public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
+    {
+        $userId = $userId ?? (int) session('userdata.id');
+        if ($userId === 0) {
+            return [];
+        }
+        $from = $from ?: date('Y-m-d');
+        $to = $to ?: date('Y-m-d');
+        if ($from > $to) {
+            [$from, $to] = [$to, $from];
+        }
+
+        $commentedIds = $this->ticketRepository->getTicketIdsCommentedByUser($userId, $from, $to);
+        if (empty($commentedIds)) {
+            return [];
+        }
+
+        // Access-scoped universe — never returns a ticket outside the user's
+        // project access, so intersecting against it makes the comment lookup
+        // safe regardless of what was commented on historically.
+        $accessible = $this->ticketRepository->simpleTicketQuery($userId, null);
+        if (! is_array($accessible) || empty($accessible)) {
+            return [];
+        }
+        $byId = [];
+        foreach ($accessible as $ticket) {
+            $byId[(int) $ticket['id']] = $ticket;
+        }
+
+        $commentedLookup = array_flip($commentedIds);
+        $out = [];
+        foreach ($byId as $id => $ticket) {
+            if (! isset($commentedLookup[$id])) {
+                continue;
+            }
+            // "Supported", not "yours": drop tickets you're the editor of.
+            if ((string) ($ticket['editorId'] ?? '') === (string) $userId) {
+                continue;
+            }
+            $out[] = $ticket;
+        }
+
+        return array_values($out);
     }
 
     /**

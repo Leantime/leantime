@@ -1901,6 +1901,26 @@ class Tickets
     }
 
     /**
+     * Distinct ticket ids the given user COMMENTED on within [from, to]
+     * (inclusive, 'Y-m-d'). Access-agnostic on its own — callers must
+     * intersect the result with an access-scoped ticket set (e.g.
+     * simpleTicketQuery) before returning anything, so this never widens
+     * visibility. Used by getMyCommentedTicketsForRange for Progress "Supported".
+     */
+    public function getTicketIdsCommentedByUser(int $userId, string $fromDate, string $toDate): array
+    {
+        $rows = $this->connection->table('zp_comment')
+            ->select('moduleId')
+            ->distinct()
+            ->where('module', 'ticket')
+            ->where('userId', $userId)
+            ->whereBetween('date', [$fromDate.' 00:00:00', $toDate.' 23:59:59'])
+            ->get();
+
+        return array_values(array_unique(array_map(fn ($row) => (int) $row->moduleId, $rows->all())));
+    }
+
+    /**
      * Get all tasks (and optionally subtasks) that belong to a milestone
     /**
      * Get all tasks (and optionally subtasks) that belong to a milestone
