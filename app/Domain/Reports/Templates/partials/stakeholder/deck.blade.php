@@ -368,7 +368,8 @@
                     @include('reports::partials.stakeholder.page-overview', compact(
                         'completedCount', 'completedDelta', 'goalsOnTrack', 'goalsTotal',
                         'overdueCount', 'hoursLogged', 'needsAttn', 'logicModel', 'hasLM',
-                        'goalsGroup', 'report'
+                        'goalsGroup', 'report', 'strategyUpdates', 'programUpdates',
+                        'programRows'
                     ))
                 </div>
 

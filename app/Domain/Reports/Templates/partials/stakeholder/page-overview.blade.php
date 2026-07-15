@@ -505,6 +505,87 @@
     </div>
 </div>
 
+{{-- ── Status narrative — authored, verbatim, per-program ──────────
+     The one place on this page where a human says WHY and what they're
+     doing about it. Everything else is computed. Renders portfolio note
+     first (strategy scope) or the program's own note (program scope),
+     then per-program notes newest-first, cap 4 total. Silent when zero
+     notes exist — never apologizes. --}}
+@php
+    // Assemble a normalized note list with a "portfolio" flag so the
+    // portfolio note leads and per-program notes follow.
+    $narrativeNotes = [];
+    foreach (($strategyUpdates ?? []) as $note) {
+        $narrativeNotes[] = [
+            'label'     => __('stakeholder.overview.narrative_portfolio'),
+            'text'      => trim(strip_tags((string) ($note->text ?? ''))),
+            'date'      => (string) ($note->date ?? ''),
+            'portfolio' => true,
+            'sortKey'   => (string) ($note->date ?? ''),
+        ];
+    }
+    // programUpdates is keyed by projectId => array of updates. Take the
+    // newest update per program (already newest-first from the repo).
+    $programNameById = [];
+    foreach (($programRows ?? []) as $pr) {
+        $pid = (int) (is_array($pr) ? ($pr['id'] ?? 0) : ($pr->id ?? 0));
+        $nm  = (string) (is_array($pr) ? ($pr['name'] ?? '') : ($pr->name ?? ''));
+        if ($pid > 0) $programNameById[$pid] = $nm;
+    }
+    foreach (($programUpdates ?? []) as $projectId => $notes) {
+        $projectId = (int) $projectId;
+        $notesArr = is_array($notes) ? $notes : [];
+        if (empty($notesArr)) continue;
+        $newest = $notesArr[0]; // repo returns newest first
+        $narrativeNotes[] = [
+            'label'     => $programNameById[$projectId] ?? __('stakeholder.overview.narrative_program_fallback'),
+            'text'      => trim(strip_tags((string) ($newest->text ?? ''))),
+            'date'      => (string) ($newest->date ?? ''),
+            'portfolio' => false,
+            'sortKey'   => (string) ($newest->date ?? ''),
+        ];
+    }
+    // Portfolio always first, then per-program by date desc, cap at 4.
+    usort($narrativeNotes, function ($a, $b) {
+        if ($a['portfolio'] !== $b['portfolio']) return $a['portfolio'] ? -1 : 1;
+        return strcmp($b['sortKey'], $a['sortKey']);
+    });
+    $narrativeNotes = array_values(array_filter($narrativeNotes, fn ($n) => $n['text'] !== ''));
+    $narrativeNotes = array_slice($narrativeNotes, 0, 4);
+
+    $fmtNoteDate = function (string $iso) {
+        if ($iso === '') return '';
+        try { return (new \DateTimeImmutable(substr($iso, 0, 19)))->format('M j'); }
+        catch (\Exception $e) { return ''; }
+    };
+@endphp
+
+@if (count($narrativeNotes) > 0)
+    <style>
+    .rd-scope .p1-narrative{margin:14px 0;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:14px 18px;}
+    .rd-scope .p1-narrative .lb{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+    .rd-scope .p1-narrative .lb i{font-size:11px;}
+    .rd-scope .p1-narrative .nn{display:flex;flex-direction:column;gap:10px;}
+    .rd-scope .p1-narrative .nr{font-size:13.5px;line-height:1.55;color:var(--rd-text-2);}
+    .rd-scope .p1-narrative .nr.portfolio{padding-bottom:10px;border-bottom:1px solid var(--rd-line-soft);}
+    .rd-scope .p1-narrative .nr b{color:var(--rd-text-1);font-weight:600;}
+    .rd-scope .p1-narrative .nr .dt{font-size:11.5px;color:var(--rd-text-4);margin-left:8px;font-style:italic;}
+    </style>
+    <div class="p1-narrative">
+        <div class="lb"><i class="fa fa-message"></i> {{ __('stakeholder.overview.narrative_label') }}</div>
+        <div class="nn">
+            @foreach ($narrativeNotes as $n)
+                <div class="nr @if ($n['portfolio']) portfolio @endif">
+                    <b>{{ $n['label'] }}</b> — {{ $n['text'] }}
+                    @if (($d = $fmtNoteDate($n['date'])) !== '')
+                        <span class="dt">{{ $d }}</span>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
+
 {{-- ── Theory of Change narrative (stage-colored) ────────────────── --}}
 @if ($hasLM && ! empty($logicModel['narrative']['hasItems']))
     @php $stageTexts = $logicModel['narrative']['stageTexts'] ?? []; @endphp
