@@ -42,8 +42,6 @@
 .rd-scope .p4-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
 .rd-scope .p4-hd .t{font-size:17px;font-weight:600;color:var(--rd-text-1);letter-spacing:-.2px;}
 .rd-scope .p4-hd .s{font-size:12.5px;color:var(--rd-text-3);margin-top:2px;}
-.rd-scope .p4-hd .exp{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--rd-accent);background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:20px;padding:7px 14px;cursor:pointer;flex:none;}
-.rd-scope .p4-hd .exp:hover{background:var(--rd-bg);}
 
 /* Lens toggle */
 .rd-scope .p4-lens{display:flex;gap:0;margin-bottom:16px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:100px;padding:3px;width:fit-content;}
@@ -352,9 +350,6 @@
                 <div class="t">{{ __('stakeholder.ij.header_title') }}</div>
                 <div class="s">{{ __('stakeholder.ij.header_sub') }}</div>
             </div>
-            <button type="button" class="exp" data-tippy-content="{{ __('stakeholder.ij.export_hint') }}">
-                <i class="fa fa-file-arrow-down"></i> {{ __('stakeholder.ij.export_btn') }}
-            </button>
         </div>
 
         {{-- Lens toggle — shows only when >=2 lenses exist for the reader --}}
