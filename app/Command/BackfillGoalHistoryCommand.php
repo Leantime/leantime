@@ -140,6 +140,46 @@ class BackfillGoalHistoryCommand extends Command
             return Command::SUCCESS;
         }
 
+        // Reject itemIds that aren't actually goals BEFORE writing. The
+        // history table has no FK to zp_canvas_items so nothing else would
+        // catch a CSV pointing at a non-goal id (or an id that doesn't
+        // exist). Silent inserts against phantom ids would just be dead
+        // rows nobody ever reads.
+        try {
+            $repo = app()->make(GoalcanvasRepo::class);
+            $csvItemIds = array_map(static fn ($r) => (int) $r['itemId'], $rows);
+            $validItemIds = array_flip($repo->filterGoalItemIds($csvItemIds));
+        } catch (\Throwable $e) {
+            $io->error($e->getMessage());
+
+            return Command::FAILURE;
+        }
+
+        $rejected = [];
+        $rows = array_values(array_filter($rows, static function ($row) use ($validItemIds, &$rejected): bool {
+            if (! isset($validItemIds[(int) $row['itemId']])) {
+                $rejected[(int) $row['itemId']] = true;
+
+                return false;
+            }
+
+            return true;
+        }));
+
+        if ($rejected !== []) {
+            $io->warning(sprintf(
+                '%d row(s) skipped — itemId not found or not a goal: %s',
+                count($rejected),
+                implode(', ', array_keys($rejected))
+            ));
+        }
+
+        if ($rows === []) {
+            $io->error('No valid rows remain after filtering; nothing written.');
+
+            return Command::INVALID;
+        }
+
         if ($dryRun) {
             $io->success(sprintf('Dry run: %d row(s) would be inserted.', count($rows)));
 
@@ -147,7 +187,6 @@ class BackfillGoalHistoryCommand extends Command
         }
 
         try {
-            $repo = app()->make(GoalcanvasRepo::class);
             $written = $repo->insertGoalHistoryRows($rows);
         } catch (\Throwable $e) {
             $io->error($e->getMessage());
@@ -155,7 +194,11 @@ class BackfillGoalHistoryCommand extends Command
             return Command::FAILURE;
         }
 
+        // Backfill is NOT idempotent per-day the way the nightly job is —
+        // re-running with the same CSV duplicates rows. Loud in the success
+        // message so re-runs don't quietly double the data.
         $io->success(sprintf('Imported %d row(s) into zp_goal_history.', $written));
+        $io->note('Re-running this command with the same CSV will duplicate rows. This command is one-shot; the nightly reports:goalValueSnapshot job handles ongoing captures.');
 
         return Command::SUCCESS;
     }
