@@ -942,62 +942,104 @@
 @endif
 
 {{-- ── Resource gaps & risks ────────────────────────────────────────
-     Observations that aren't per-project capacity math: over-allocated PEOPLE
-     (across all projects), idle capacity, budget-vs-authorized imbalances,
-     tentative dependencies. Capacity vs demand above handles project-level
-     scheduled hours; this handles everything else. --}}
+     Observations that aren't per-project capacity math: budget-vs-authorized
+     imbalances, and (at program scope only) per-person over-allocation and
+     idle capacity. Individual hours are the wrong altitude for a strategy
+     report — a portfolio audience reads at program/project scope; per-person
+     analysis belongs on the program report where a manager can act on it.
+     Capacity vs demand above already covers program-level tightness. --}}
 @if ($resourceSummary !== null)
     @php
         $gaps = [];
+        $isProgramScope = ($scope ?? '') === 'program';
 
-        // Capacity gaps — individual over-allocation. A person's planned weekly
-        // hours across every project they touch exceeding their stated capacity.
-        $overPeople = [];
-        foreach ($resourceSummary->people as $p) {
-            if ($p->capacity > 0 && $p->totalAllocated() > $p->capacity) {
-                $overPeople[] = [
-                    'name' => $p->displayName,
-                    'over' => round($p->totalAllocated() - $p->capacity, 1),
-                    'planned' => round($p->totalAllocated(), 1),
-                    'capacity' => round($p->capacity, 1),
+        // Capacity vs. demand tightness — at STRATEGY scope, escalate the
+        // per-program tight/critical verdicts from CapacityAnalyzer into a
+        // gap row. That's the honest program-level altitude a portfolio
+        // reader acts on — matches what the Capacity block above says, so
+        // the two sections no longer read as contradictions. Prefers the
+        // rollup ($capacityByProgram) so we surface program lines, not per-
+        // leaf-project ones.
+        if (! $isProgramScope) {
+            $tightSource = ! empty($capacityByProgram) ? $capacityByProgram : ($capacityAnalysis ?? []);
+            foreach ((array) $tightSource as $capRow) {
+                $verdict = (string) ($capRow['verdict'] ?? '');
+                if (! in_array($verdict, ['tight', 'critical'], true)) continue;
+
+                $gap = (float) ($capRow['gap'] ?? 0);
+                if ($gap <= 0) continue;
+
+                $sev = $verdict === 'critical' ? 'red' : 'yellow';
+                $gaps[] = [
+                    'sev' => $sev,
+                    'icon' => 'fa-scale-unbalanced',
+                    'headline' => sprintf(
+                        __('stakeholder.rc.gap.program_tight'),
+                        e((string) ($capRow['name'] ?? '')),
+                        round($gap)
+                    ),
+                    'detail' => sprintf(
+                        __('stakeholder.rc.gap.program_tight_detail'),
+                        round((float) ($capRow['budgetedHours'] ?? 0)),
+                        round((float) ($capRow['availableHours'] ?? 0))
+                    ),
                 ];
             }
         }
-        if (count($overPeople) === 1) {
-            $g = $overPeople[0];
-            $gaps[] = [
-                'sev' => 'red', 'icon' => 'fa-user-clock',
-                'headline' => sprintf(__('stakeholder.rc.gap.over_alloc_one'), e($g['name']), $g['over']),
-                'detail' => sprintf(__('stakeholder.rc.gap.over_alloc_one_detail'), $g['planned'], $g['capacity']),
-            ];
-        } elseif (count($overPeople) > 1) {
-            $totalOver = array_sum(array_column($overPeople, 'over'));
-            $names = array_slice(array_column($overPeople, 'name'), 0, 3);
-            $moreN = max(0, count($overPeople) - 3);
-            $namesStr = implode(', ', array_map('e', $names)) . ($moreN > 0 ? sprintf(__('stakeholder.rc.gap.and_more'), $moreN) : '');
-            $gaps[] = [
-                'sev' => 'red', 'icon' => 'fa-user-clock',
-                'headline' => sprintf(__('stakeholder.rc.gap.over_alloc_many'), count($overPeople), round($totalOver, 1)),
-                'detail' => $namesStr,
-            ];
-        }
 
-        // Idle capacity — people with capacity but essentially no allocation.
-        $idlePeople = [];
-        foreach ($resourceSummary->people as $p) {
-            if ($p->capacity > 0 && $p->totalAllocated() / $p->capacity < 0.2) {
-                $idlePeople[] = $p->displayName;
+        // Per-person over-allocation & idle capacity — PROGRAM SCOPE ONLY.
+        // On the strategy report these are wrong altitude: individual hour
+        // math is what a program manager needs, not what a portfolio reader
+        // needs. Duplicating them at strategy scope also reads as noise next
+        // to the program-level tightness read above.
+        if ($isProgramScope) {
+            $overPeople = [];
+            foreach ($resourceSummary->people as $p) {
+                if ($p->capacity > 0 && $p->totalAllocated() > $p->capacity) {
+                    $overPeople[] = [
+                        'name' => $p->displayName,
+                        'over' => round($p->totalAllocated() - $p->capacity, 1),
+                        'planned' => round($p->totalAllocated(), 1),
+                        'capacity' => round($p->capacity, 1),
+                    ];
+                }
             }
-        }
-        if (count($idlePeople) > 0) {
-            $names = array_slice($idlePeople, 0, 3);
-            $moreN = max(0, count($idlePeople) - 3);
-            $namesStr = implode(', ', array_map('e', $names)) . ($moreN > 0 ? sprintf(__('stakeholder.rc.gap.and_more'), $moreN) : '');
-            $gaps[] = [
-                'sev' => 'blue', 'icon' => 'fa-user-slash',
-                'headline' => sprintf(__('stakeholder.rc.gap.idle_capacity'), count($idlePeople)),
-                'detail' => $namesStr,
-            ];
+            if (count($overPeople) === 1) {
+                $g = $overPeople[0];
+                $gaps[] = [
+                    'sev' => 'red', 'icon' => 'fa-user-clock',
+                    'headline' => sprintf(__('stakeholder.rc.gap.over_alloc_one'), e($g['name']), $g['over']),
+                    'detail' => sprintf(__('stakeholder.rc.gap.over_alloc_one_detail'), $g['planned'], $g['capacity']),
+                ];
+            } elseif (count($overPeople) > 1) {
+                $totalOver = array_sum(array_column($overPeople, 'over'));
+                $names = array_slice(array_column($overPeople, 'name'), 0, 3);
+                $moreN = max(0, count($overPeople) - 3);
+                $namesStr = implode(', ', array_map('e', $names)) . ($moreN > 0 ? sprintf(__('stakeholder.rc.gap.and_more'), $moreN) : '');
+                $gaps[] = [
+                    'sev' => 'red', 'icon' => 'fa-user-clock',
+                    'headline' => sprintf(__('stakeholder.rc.gap.over_alloc_many'), count($overPeople), round($totalOver, 1)),
+                    'detail' => $namesStr,
+                ];
+            }
+
+            // Idle capacity — people with capacity but essentially no allocation.
+            $idlePeople = [];
+            foreach ($resourceSummary->people as $p) {
+                if ($p->capacity > 0 && $p->totalAllocated() / $p->capacity < 0.2) {
+                    $idlePeople[] = $p->displayName;
+                }
+            }
+            if (count($idlePeople) > 0) {
+                $names = array_slice($idlePeople, 0, 3);
+                $moreN = max(0, count($idlePeople) - 3);
+                $namesStr = implode(', ', array_map('e', $names)) . ($moreN > 0 ? sprintf(__('stakeholder.rc.gap.and_more'), $moreN) : '');
+                $gaps[] = [
+                    'sev' => 'blue', 'icon' => 'fa-user-slash',
+                    'headline' => sprintf(__('stakeholder.rc.gap.idle_capacity'), count($idlePeople)),
+                    'detail' => $namesStr,
+                ];
+            }
         }
 
         // Budget: over-budget and burn-risk per project. Reuses the same per-project
@@ -1092,7 +1134,7 @@
                     <div class="sev"><i class="fa fa-check"></i></div>
                     <div class="body">
                         <div class="headline">{{ __('stakeholder.rc.gap.none_headline') }}</div>
-                        <div class="detail">{{ __('stakeholder.rc.gap.none_detail') }}</div>
+                        <div class="detail">{{ $isProgramScope ? __('stakeholder.rc.gap.none_detail_program') : __('stakeholder.rc.gap.none_detail_strategy') }}</div>
                     </div>
                 </div>
             @else
