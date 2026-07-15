@@ -32,10 +32,11 @@
     use Leantime\Domain\Reports\Models\ReportPeriod;
 
     $verdictDotColor = match ($verdict) {
-        'ontrack' => '#3E937A',
-        'atrisk'  => '#C09035',
-        'off'     => '#C2295B',
-        default   => '#9CA3AF',
+        'ontrack'    => '#3E937A',
+        'inprogress' => '#3F72B0',
+        'atrisk'     => '#C09035',
+        'off'        => '#C2295B',
+        default      => '#9CA3AF',
     };
     $completedCount = (int) ($stats['completed'] ?? 0);
     $overdueCount   = (int) ($stats['overdue'] ?? 0);
@@ -405,7 +406,12 @@
     window.rdActive = 0;
     window.rdCount = 4;
 
-    window.rdGo = function (idx) {
+    // Per-user last-viewed page persists in localStorage so a refresh (and
+    // returning to the report) lands you back where you were, not on the
+    // Overview every time.
+    var LS_PAGE = 'lt.stakeholderReport.activePage';
+
+    window.rdGo = function (idx, opts) {
         if (idx < 0 || idx >= window.rdCount) return;
         window.rdActive = idx;
 
@@ -427,6 +433,12 @@
         var next = document.getElementById('rdNext');
         if (prev) prev.toggleAttribute('disabled', idx === 0);
         if (next) next.toggleAttribute('disabled', idx === window.rdCount - 1);
+
+        // Persist unless the caller says otherwise (used on initial restore
+        // so we don't rewrite the value with the very value we just read).
+        if (!opts || opts.persist !== false) {
+            try { localStorage.setItem(LS_PAGE, String(idx)); } catch (e) {}
+        }
     };
 
     // Arrow keys — only when focus isn't in a text input.
@@ -454,8 +466,13 @@
         }, { passive: true });
     }
 
-    // Initial state.
-    window.rdGo(0);
+    // Initial state — restore the last-viewed page if persisted, else Overview.
+    var initialPage = 0;
+    try {
+        var saved = parseInt(localStorage.getItem(LS_PAGE) || '', 10);
+        if (!isNaN(saved) && saved >= 0 && saved < window.rdCount) initialPage = saved;
+    } catch (e) {}
+    window.rdGo(initialPage, { persist: false });
 
     // Compact period-picker dropdown: toggle open, dismiss on outside click.
     window.rdTogglePicker = function (e) {
