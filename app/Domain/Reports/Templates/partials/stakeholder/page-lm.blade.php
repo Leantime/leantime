@@ -797,6 +797,79 @@
         </div>
     @endif
 
+    {{-- ── Also this period — real completed work with NO LM link.
+         Item-grain drift (unalignedColumns names program-grain drift; this
+         is one level finer). Each row is a completion that touched real
+         numbers but maps to nothing in the model — a link-me-to-an-outcome
+         invitation, not a scold. Silent when nothing is unlinked. --}}
+    @php
+        $completedThisPeriod = (array) ($report['milestones']['completed'] ?? []);
+        // Build the set of milestone IDs any LM item links to.
+        $linkedMilestoneIds = [];
+        foreach ($projectLinks as $itemLinks) {
+            foreach ($itemLinks as $link) {
+                if (($link['linked_entity_type'] ?? '') === 'milestone') {
+                    $linkedMilestoneIds[(int) $link['linked_entity_id']] = true;
+                }
+            }
+        }
+        // "Something real to show" per the spec — a metric, a count, OR
+        // a completion. A completed milestone IS a completion, so a
+        // headline is sufficient; task stats are optional decoration.
+        // Filter out anything with no headline (a bare row is noise).
+        $alsoThisPeriod = [];
+        foreach ($completedThisPeriod as $ms) {
+            $mid = (int) ($ms->id ?? 0);
+            if ($mid === 0 || isset($linkedMilestoneIds[$mid])) continue;
+            $headline = trim((string) ($ms->headline ?? ''));
+            if ($headline === '') continue;
+            $taskStats = (array) ($ms->taskStats ?? []);
+            $doneCount = (int) ($taskStats['done'] ?? 0);
+            $totalCount = (int) ($taskStats['total'] ?? 0);
+            $metric = $totalCount > 0
+                ? sprintf(__('stakeholder.lm.also_metric_tasks'), $doneCount, $totalCount)
+                : '';
+            $alsoThisPeriod[] = [
+                'id'        => $mid,
+                'headline'  => $headline,
+                'metric'    => $metric,
+                'projectId' => (int) ($ms->projectId ?? 0),
+                'canvasId'  => (int) ($logicModel['canvasId'] ?? 0),
+            ];
+        }
+        $alsoCount = count($alsoThisPeriod);
+        $alsoShown = array_slice($alsoThisPeriod, 0, 3);
+        $alsoMore  = max(0, $alsoCount - 3);
+    @endphp
+
+    @if ($alsoCount > 0)
+        <style>
+        .rd-scope .p2-also{margin-top:14px;padding:10px 14px;background:var(--rd-bg);border-radius:var(--rd-r-xs);border:1px solid var(--rd-line);}
+        .rd-scope .p2-also .lb{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+        .rd-scope .p2-also .lb i{font-size:11px;}
+        .rd-scope .p2-also .row{font-size:12.5px;line-height:1.55;color:var(--rd-text-2);padding:3px 0;}
+        .rd-scope .p2-also .row b{color:var(--rd-text-1);font-weight:600;}
+        .rd-scope .p2-also .row .metric{color:var(--rd-text-3);}
+        .rd-scope .p2-also .row .cta{color:var(--rd-accent);font-weight:600;text-decoration:none;margin-left:6px;}
+        .rd-scope .p2-also .row .cta:hover{text-decoration:underline;}
+        .rd-scope .p2-also .more{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-style:italic;}
+        </style>
+        <div class="p2-also">
+            <div class="lb"><i class="fa fa-code-branch"></i> {{ __('stakeholder.lm.also_label') }}</div>
+            @foreach ($alsoShown as $row)
+                <div class="row">
+                    <b>{{ $row['headline'] }}</b>@if ($row['metric'] !== '') · <span class="metric">{{ $row['metric'] }}</span>@endif
+                    @if ($row['canvasId'] > 0)
+                        <a class="cta" href="{{ BASE_URL }}/logicmodelcanvas/showCanvas/{{ $row['canvasId'] }}?linkMilestone={{ $row['id'] }}">{{ __('stakeholder.lm.also_link_cta') }}</a>
+                    @endif
+                </div>
+            @endforeach
+            @if ($alsoMore > 0)
+                <div class="more">{{ sprintf(__('stakeholder.lm.also_more'), $alsoMore) }}</div>
+            @endif
+        </div>
+    @endif
+
     {{-- Off-strategy drift (strategy scope) --}}
     @if (($scope ?? '') === 'strategy' && count($unaligned) > 0)
         @php
