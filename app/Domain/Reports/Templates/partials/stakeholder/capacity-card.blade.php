@@ -17,9 +17,15 @@
 
 @if ($showFull)
     @php
+        // Balance bar geometry — carry the same reading the text states.
+        //   Fill 0 → available in the "supply" (green) segment.
+        //   Then a distinct "deficit" segment from available → needed, in
+        //   the verdict color. Marker sits AT the available position so a
+        //   reader instantly sees "we have this much, we need this much".
         $barMax = max($c['availableHours'], $c['referenceDemand'], 1);
-        $demandWidth = min(100, ($c['referenceDemand'] / $barMax) * 100);
         $availableMark = min(100, ($c['availableHours'] / $barMax) * 100);
+        $demandWidth = min(100, ($c['referenceDemand'] / $barMax) * 100);
+        $deficitWidth = max(0, $demandWidth - $availableMark);
         $gapHrs = abs($c['gap']);
         $gapPct = $c['availableHours'] > 0 ? abs($c['gap'] / $c['availableHours']) * 100 : 0;
         $isShort = $c['gap'] > 0;
@@ -109,7 +115,14 @@
                         <span class="unit-h" data-hours="{{ round($c['availableHours']) }}">{{ round($c['availableHours']) }}h</span> {{ __('stakeholder.rc.cap.supply') }}
                         <div class="p3-cap-bar">
                             <div class="track {{ $c['verdict'] }}">
-                                <div class="demand" style="width:{{ $demandWidth }}%;"></div>
+                                {{-- Supply segment: green fill 0 → available. --}}
+                                <div class="supply" style="width:{{ $availableMark }}%;"></div>
+                                {{-- Deficit segment: verdict-color band from
+                                     available → needed, showing the shortfall. --}}
+                                @if ($isShort && $deficitWidth > 0)
+                                    <div class="deficit" style="left:{{ $availableMark }}%;width:{{ $deficitWidth }}%;"
+                                        data-tippy-content="{{ sprintf(__('stakeholder.rc.cap.deficit_tooltip'), round($gapHrs)) }}"></div>
+                                @endif
                                 <div class="marker" style="left:{{ $availableMark }}%;">
                                     <span class="marker-label">{{ __('stakeholder.rc.cap.marker_label') }}</span>
                                 </div>

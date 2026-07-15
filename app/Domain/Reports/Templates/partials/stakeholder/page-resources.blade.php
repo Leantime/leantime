@@ -160,12 +160,14 @@
 
 .rd-scope .p3-cap-bar{margin-top:8px;}
 .rd-scope .p3-cap-bar .track{position:relative;height:14px;background:#eef1f3;border-radius:7px;overflow:hidden;}
-.rd-scope .p3-cap-bar .track .demand{position:absolute;top:0;left:0;bottom:0;background:linear-gradient(90deg, var(--rd-accent) 0%, var(--rd-accent) 100%);opacity:.9;}
-.rd-scope .p3-cap-bar .track.critical .demand{background:var(--rd-danger);}
-.rd-scope .p3-cap-bar .track.tight .demand{background:var(--rd-warn);}
-.rd-scope .p3-cap-bar .track.balanced .demand,
-.rd-scope .p3-cap-bar .track.buffer .demand{background:var(--rd-ok);}
-.rd-scope .p3-cap-bar .track .marker{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rd-text-1);}
+/* Supply segment — 0 → available. Always green ("we've got this much"). */
+.rd-scope .p3-cap-bar .track .supply{position:absolute;top:0;left:0;bottom:0;background:var(--rd-ok);opacity:.9;}
+/* Deficit segment — available → needed. Colored by verdict so the shortfall
+   reads at the same visual weight as the verdict pill above. */
+.rd-scope .p3-cap-bar .track .deficit{position:absolute;top:0;bottom:0;background:var(--rd-danger);opacity:.85;}
+.rd-scope .p3-cap-bar .track.tight .deficit{background:var(--rd-warn);}
+.rd-scope .p3-cap-bar .track.critical .deficit{background:var(--rd-danger);}
+.rd-scope .p3-cap-bar .track .marker{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rd-text-1);z-index:2;}
 .rd-scope .p3-cap-bar .track .marker::after{content:'';position:absolute;top:-2px;left:-3px;width:8px;height:8px;background:var(--rd-text-1);border-radius:50%;}
 .rd-scope .p3-cap-bar .legend{display:flex;justify-content:space-between;font-size:11.5px;color:var(--rd-text-3);margin-top:6px;}
 
