@@ -48,6 +48,18 @@ class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
                 $patch['impact'] = $params['impact'];
             }
 
+            // Authored-meaning fields. Both are stage-gated in the UI
+            // (Impact only shows starting_picture; Outputs/Outcomes only
+            // show why_this_matters) — the hidden inputs preserve any
+            // pre-existing value so a stage change doesn't silently
+            // erase authored text.
+            if (array_key_exists('why_this_matters', $params)) {
+                $patch['why_this_matters'] = (string) $params['why_this_matters'];
+            }
+            if (array_key_exists('starting_picture', $params)) {
+                $patch['starting_picture'] = (string) $params['starting_picture'];
+            }
+
             if ($patch !== []) {
                 app()->make(BlueprintsService::class)
                     ->patchCanvasItem((int) $params['itemId'], $patch, static::CANVAS_NAME.'canvas');

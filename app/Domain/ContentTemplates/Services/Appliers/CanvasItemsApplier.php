@@ -19,15 +19,18 @@ use Leantime\Domain\ContentTemplates\Models\ContentTemplate;
  * Expected payload shape:
  *
  *     items:
- *       - box: "lm_inputs"        # required, canvas-type box key
- *         title: "..."            # populates description (the bold line)
- *         description: "..."      # populates conclusion (the supporting prose)
- *         status: "status_draft"  # optional, defaults to ''
- *         sortindex: 10           # optional, auto-assigned by insertion order if absent
+ *       - box: "lm_inputs"           # required, canvas-type box key
+ *         title: "..."               # populates description (the bold line)
+ *         description: "..."         # populates conclusion (the supporting prose)
+ *         status: "status_draft"     # optional, defaults to ''
+ *         sortindex: 10              # optional, auto-assigned by insertion order if absent
+ *         why_this_matters: "..."    # optional, Outcome/Impact items only (authored meaning)
+ *         starting_picture: "..."    # optional, Impact items only (the world today)
  *
  * The unusual title→description / description→conclusion mapping matches the
  * Canvas item display convention: description is rendered as the bold card
- * title, conclusion as the lighter supporting text.
+ * title, conclusion as the lighter supporting text. Meaning fields pass
+ * through with their DB column names — no remapping.
  */
 class CanvasItemsApplier implements Applier
 {
@@ -72,7 +75,7 @@ class CanvasItemsApplier implements Applier
             if (! is_array($item) || empty($item['box'])) {
                 continue;
             }
-            $db->table('zp_canvas_items')->insert([
+            $row = [
                 'canvasId' => $targetId,
                 'box' => (string) $item['box'],
                 'description' => (string) ($item['title'] ?? ''),
@@ -81,7 +84,16 @@ class CanvasItemsApplier implements Applier
                 'author' => $userId,
                 'created' => now(),
                 'sortindex' => (int) ($item['sortindex'] ?? ($sortBase + $offset * 10)),
-            ]);
+            ];
+            // Authored-meaning fields pass through if present in the template.
+            // YAML keys match DB column names — no remapping like title→description.
+            if (array_key_exists('why_this_matters', $item)) {
+                $row['why_this_matters'] = (string) $item['why_this_matters'];
+            }
+            if (array_key_exists('starting_picture', $item)) {
+                $row['starting_picture'] = (string) $item['starting_picture'];
+            }
+            $db->table('zp_canvas_items')->insert($row);
             $created++;
         }
 

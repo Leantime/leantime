@@ -307,7 +307,7 @@
         <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
         <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
         <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
-        <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-sitemap"></i> {{ __('stakeholder.tab.programs') }} @if (count($programRows) > 0) <span class="ct">{{ count($programRows) }}</span> @endif</button>
+        <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
 
         <div class="rd-tab-right">
             <div class="rd-picker" id="rdPicker">
@@ -382,9 +382,9 @@
                     @include('reports::partials.stakeholder.page-resources', compact('logicModel', 'hasLM', 'resourceSummary', 'report', 'scope', 'capacityAnalysis', 'programMeta', 'programChildMap', 'capacityByProgram'))
                 </div>
 
-                {{-- ═══ Page 4 — Programs & Narrative ═════════════════ --}}
+                {{-- ═══ Page 4 — Impact Journey ═══════════════════════ --}}
                 <div class="rd-page">
-                    @include('reports::partials.stakeholder.page-programs', compact('scope', 'programRows', 'programUpdates'))
+                    @include('reports::partials.stakeholder.page-impact-journey', compact('scope', 'logicModel', 'hasLM'))
                 </div>
 
             </div>
