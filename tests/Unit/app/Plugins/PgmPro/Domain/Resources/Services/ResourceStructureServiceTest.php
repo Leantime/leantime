@@ -209,6 +209,50 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(5, $addCalls[0]['data']['userId']);
     }
 
+    public function test_getForProjects_hydrates_a_dependency_with_none_of_the_optional_fields(): void
+    {
+        // Back-compat guarantee for pre-existing dependency canvas items —
+        // owner/dueDate/notes/lastModified were added later. An item authored
+        // before those existed must hydrate cleanly (no undefined-index
+        // warning, all four optional slots null) so Page 3 renders the empty
+        // state instead of crashing or flashing blank cells.
+        $svc = $this->makeService(
+            canvasIds: [100],
+            items: [
+                100 => [
+                    'dependency' => [
+                        [
+                            'id' => 42,
+                            'description' => 'Community Health Fair Partner',
+                            'status' => 'active',
+                            'parsedData' => [
+                                'partnerName' => 'City Health Dept',
+                                'type' => 'partnership',
+                                'confirmed' => true,
+                                // owner, dueDate, notes intentionally absent.
+                            ],
+                            // 'modified' intentionally absent too — pre-hydrated rows
+                            // that predate lastModified capture.
+                        ],
+                    ],
+                ],
+            ],
+        );
+
+        $summary = $svc->getForProjects([7]);
+
+        $this->assertCount(1, $summary->dependencies);
+        $dep = $summary->dependencies[0];
+        $this->assertSame(42, $dep->itemId);
+        $this->assertSame('City Health Dept', $dep->partnerName);
+        $this->assertSame('partnership', $dep->type);
+        $this->assertTrue($dep->confirmed);
+        $this->assertNull($dep->owner);
+        $this->assertNull($dep->dueDate);
+        $this->assertNull($dep->notes);
+        $this->assertNull($dep->lastModified);
+    }
+
     public function test_seedBudgetFromChildProjects_is_idempotent_by_projectId(): void
     {
         // Same skip-when-present contract, keyed on projectId. A child with
