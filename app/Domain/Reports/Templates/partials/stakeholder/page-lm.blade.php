@@ -850,18 +850,18 @@
         .rd-scope .p2-also .row{font-size:12.5px;line-height:1.55;color:var(--rd-text-2);padding:3px 0;}
         .rd-scope .p2-also .row b{color:var(--rd-text-1);font-weight:600;}
         .rd-scope .p2-also .row .metric{color:var(--rd-text-3);}
-        .rd-scope .p2-also .row .cta{color:var(--rd-accent);font-weight:600;text-decoration:none;margin-left:6px;}
-        .rd-scope .p2-also .row .cta:hover{text-decoration:underline;}
         .rd-scope .p2-also .more{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-style:italic;}
         </style>
         <div class="p2-also">
             <div class="lb"><i class="fa fa-code-branch"></i> {{ __('stakeholder.lm.also_label') }}</div>
             @foreach ($alsoShown as $row)
+                {{-- Plain drift note: a milestone that closed this period but
+                     doesn't map to a Logic Model outcome. No CTA — the app
+                     doesn't currently have a one-click "link a milestone to
+                     an outcome" flow, and a dead link on the honesty page is
+                     worse than no link. When the flow lands, wire it here. --}}
                 <div class="row">
                     <b>{{ $row['headline'] }}</b>@if ($row['metric'] !== '') · <span class="metric">{{ $row['metric'] }}</span>@endif
-                    @if ($row['canvasId'] > 0)
-                        <a class="cta" href="{{ BASE_URL }}/logicmodelcanvas/showCanvas/{{ $row['canvasId'] }}?linkMilestone={{ $row['id'] }}">{{ __('stakeholder.lm.also_link_cta') }}</a>
-                    @endif
                 </div>
             @endforeach
             @if ($alsoMore > 0)

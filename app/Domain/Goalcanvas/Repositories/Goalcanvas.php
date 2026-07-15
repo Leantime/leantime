@@ -775,6 +775,88 @@ class Goalcanvas extends Blueprints
     }
 
     /**
+     * The recorded value of a goal at a point in time — the last snapshot on
+     * or before {@see $asOf}. Returns null when the goal has no history at or
+     * before that date.
+     *
+     * Periods are a query, never stored: a period's value is whatever the
+     * last snapshot on or before its end date says. Missing days don't matter
+     * because the last known value carries — the write path is intentionally
+     * sparse (only fires when the value changes) and this read is what makes
+     * that sparseness invisible to callers.
+     *
+     * @api
+     */
+    public function getGoalValueAt(int $itemId, \DateTimeInterface $asOf): ?float
+    {
+        if ($itemId <= 0) {
+            return null;
+        }
+
+        $row = $this->dbConnection->table('zp_goal_history')
+            ->select('value')
+            ->where('itemId', $itemId)
+            ->where('dateRecorded', '<=', $asOf->format('Y-m-d H:i:s'))
+            ->orderByDesc('dateRecorded')
+            ->orderByDesc('id')
+            ->first();
+
+        return $row === null ? null : (float) $row->value;
+    }
+
+    /**
+     * The recorded values of a set of goals at a series of dates. Returned as
+     * `[goalId => [YYYY-MM-DD_HH:MM:SS => ?float]]`, one entry per requested
+     * `(goalId, date)` pair. Null carries "no snapshot on or before that
+     * date" through unchanged — callers decide how to render an unmeasured
+     * period-end (Page 4 "How far we've come" draws it as a ghost bar).
+     *
+     * @param  int[]                     $itemIds  Goal (canvas item) ids.
+     * @param  array<\DateTimeInterface> $dates    Period-end (or arbitrary) dates.
+     * @return array<int, array<string, ?float>>
+     *
+     * @api
+     */
+    public function getGoalValuesAtSeries(array $itemIds, array $dates): array
+    {
+        $itemIds = array_values(array_unique(array_map('intval', $itemIds)));
+        $itemIds = array_filter($itemIds, static fn (int $id): bool => $id > 0);
+        if ($itemIds === [] || $dates === []) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($itemIds as $id) {
+            $out[$id] = [];
+            foreach ($dates as $d) {
+                $out[$id][$d->format('Y-m-d H:i:s')] = $this->getGoalValueAt($id, $d);
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Bulk-insert history rows from an already-parsed set of tuples. Used by
+     * the CSV backfill command; rows are indistinguishable from ones written
+     * by {@see recordGoalValueHistory} or {@see snapshotGoalValues} — same
+     * table, same columns.
+     *
+     * @param  array<int, array{itemId: int, value: float, dateRecorded: string, userId?: ?int}>  $rows
+     * @return int  Rows written.
+     */
+    public function insertGoalHistoryRows(array $rows): int
+    {
+        if ($rows === []) {
+            return 0;
+        }
+
+        $this->dbConnection->table('zp_goal_history')->insert($rows);
+
+        return count($rows);
+    }
+
+    /**
      * The stored metric value of a goal item, or null when the item isn't a goal (or is unknown).
      */
     private function getCurrentGoalValue(int $itemId): ?float

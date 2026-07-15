@@ -128,6 +128,48 @@
 .rd-scope .p4-empty{background:var(--rd-panel);border:1px dashed var(--rd-line);border-radius:var(--rd-r-sm);padding:26px 22px;text-align:center;color:var(--rd-text-3);}
 .rd-scope .p4-empty .lb{font-size:12.5px;color:var(--rd-text-2);margin-bottom:4px;font-weight:600;}
 .rd-scope .p4-empty .s{font-size:12px;color:var(--rd-text-3);}
+
+/* ────────────────────────────────────────────────────────────────────────
+   Vision lens — three beats. NOT a table. NOT waiting for data. This is
+   the shareable, screenshot-for-a-funder view: the world today (authored),
+   the measurable arc as one prose statement (assembled from authored
+   labels), the world when we've delivered (authored). No tracks, no
+   status column, no bars — the Vision is complete on day one, by design.
+   ──────────────────────────────────────────────────────────────────────── */
+.rd-scope .p4-vision{margin-bottom:14px;}
+.rd-scope .p4-vision .beat{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:24px 28px;margin-bottom:14px;}
+.rd-scope .p4-vision .beat.today{border-left:3px solid #9A6A11;}
+.rd-scope .p4-vision .beat.arc{border-left:3px solid var(--rd-accent);background:var(--rd-bg);}
+.rd-scope .p4-vision .beat.delivered{border-left:3px solid var(--rd-ok);}
+.rd-scope .p4-vision .beat .lb{font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.rd-scope .p4-vision .beat.today .lb{color:#9A6A11;}
+.rd-scope .p4-vision .beat.arc .lb{color:var(--rd-accent);}
+.rd-scope .p4-vision .beat.delivered .lb{color:var(--rd-ok);}
+.rd-scope .p4-vision .beat.today .txt,
+.rd-scope .p4-vision .beat.delivered .txt{font-size:19px;font-weight:600;color:var(--rd-text-1);line-height:1.45;letter-spacing:-.2px;}
+.rd-scope .p4-vision .beat.arc .statement{font-size:16px;font-weight:500;color:var(--rd-text-1);line-height:1.65;letter-spacing:-.05px;}
+.rd-scope .p4-vision .beat.delivered .meaning{font-size:14px;color:var(--rd-text-2);margin-top:12px;line-height:1.55;}
+.rd-scope .p4-vision .beat .empty{font-size:13.5px;color:var(--rd-text-3);font-style:italic;}
+.rd-scope .p4-vision .beat .empty .nudge{color:var(--rd-accent);font-style:normal;font-weight:600;margin-left:4px;}
+
+/* Block-level lens visibility — the beats show on Vision only, the tracks
+   block shows on Progress/Impact only. Per-element [data-lens] rules
+   still apply INSIDE each block (verdicts, tense hints). */
+.rd-scope .p4-wrap[data-active-lens="vision"]   [data-lens-block="tracks"]{display:none;}
+.rd-scope .p4-wrap[data-active-lens="progress"] [data-lens-block="vision"]{display:none;}
+.rd-scope .p4-wrap[data-active-lens="impact"]   [data-lens-block="vision"]{display:none;}
+
+/* Arrival — when the reader flips Vision → Progress/Impact, the arc
+   statement recedes (block swap is instant) and the metric rows stagger in.
+   `.arriving` is added by JS immediately after the block swap; the row is
+   already opacity:1 in its resting state so SSR-rendered non-Vision pages
+   (returning readers) never see a flash. */
+.rd-scope .p4-metric.arriving{opacity:0;transform:translateY(6px);}
+.rd-scope .p4-metric.arrived{opacity:1;transform:none;transition:opacity 260ms ease, transform 260ms ease;}
+@media (prefers-reduced-motion: reduce) {
+    .rd-scope .p4-metric.arriving,
+    .rd-scope .p4-metric.arrived {opacity:1;transform:none;transition:none;}
+}
 </style>
 
 @if (! $hasLM)
@@ -263,6 +305,43 @@
             $differentTitle   = trim((string) ($impArr['description'] ?? ''));
             $differentMeaning = trim((string) ($impArr['why_this_matters'] ?? ''));
         }
+
+        // ── Arc statement (Vision beat 2). The ONE place a light
+        // concatenation is correct: assembled from authored labels, capped
+        // at 3 producing + 2 achieving, two sentences maximum. Never the
+        // §8 rule-1 canvas dump. Nothing generated — every word is a label
+        // a human wrote on the canvas.
+        $capProducing = array_slice($outMetrics, 0, 3);
+        $capAchieving = array_slice($ocMetrics, 0, 2);
+        $producingLabels = array_values(array_filter(array_map(
+            static fn ($m) => trim((string) $m['label']),
+            $capProducing
+        )));
+        $achievingLabels = array_values(array_filter(array_map(
+            static fn ($m) => trim((string) $m['label']),
+            $capAchieving
+        )));
+
+        $producingSentence = $producingLabels === []
+            ? ''
+            : implode('. ', $producingLabels).'.';
+
+        $achievingSentence = '';
+        if (count($achievingLabels) === 1) {
+            $achievingSentence = sprintf(__('stakeholder.ij.beat_arc_leading_to'), $achievingLabels[0]).'.';
+        } elseif (count($achievingLabels) >= 2) {
+            // Natural join: "X and Y" for two, "X, Y, and Z" for three (only
+            // if the cap is ever raised).
+            if (count($achievingLabels) === 2) {
+                $joined = $achievingLabels[0].' '.__('stakeholder.ij.beat_arc_and').' '.$achievingLabels[1];
+            } else {
+                $joined = implode(', ', array_slice($achievingLabels, 0, -1))
+                    .', '.__('stakeholder.ij.beat_arc_and').' '.end($achievingLabels);
+            }
+            $achievingSentence = sprintf(__('stakeholder.ij.beat_arc_leading_to'), $joined).'.';
+        }
+
+        $arcStatement = trim($producingSentence.' '.$achievingSentence);
     @endphp
 
     <div class="p4-wrap" data-active-lens="{{ $defaultLens }}" data-p4-lens-wrap>
@@ -292,6 +371,57 @@
                 </button>
             </div>
         @endif
+
+        {{-- ── VISION lens: three beats. Complete on day one, by design.
+             Beat 1 (world today) and beat 3 (world delivered) carry the
+             same authored text as the STARTED/DIFFERENT bookends below
+             — the block-level lens toggle means only one shows at a
+             time, so there is no duplication for the reader. --}}
+        <div class="p4-vision" data-lens-block="vision">
+            <div class="beat today">
+                <div class="lb"><i class="fa fa-flag"></i> {{ __('stakeholder.ij.beat_today_lb') }}</div>
+                @if ($startedText !== '')
+                    <div class="txt">{{ $startedText }}</div>
+                @else
+                    <div class="empty">
+                        {{ __('stakeholder.ij.bookend_started_empty') }}
+                        <span class="nudge">{{ __('stakeholder.ij.bookend_started_nudge') }}</span>
+                    </div>
+                @endif
+            </div>
+
+            <div class="beat arc">
+                <div class="lb"><i class="fa fa-arrow-trend-up"></i> {{ __('stakeholder.ij.beat_arc_lb') }}</div>
+                @if ($arcStatement !== '')
+                    <div class="statement">{{ $arcStatement }}</div>
+                @else
+                    <div class="empty">
+                        {{ __('stakeholder.ij.beat_arc_empty') }}
+                        <span class="nudge">{{ __('stakeholder.ij.beat_arc_empty_nudge') }}</span>
+                    </div>
+                @endif
+            </div>
+
+            <div class="beat delivered">
+                <div class="lb"><i class="fa fa-bullseye"></i> {{ __('stakeholder.ij.beat_delivered_lb') }}</div>
+                @if ($differentTitle !== '')
+                    <div class="txt">{{ $differentTitle }}</div>
+                    @if ($differentMeaning !== '')
+                        <div class="meaning">{{ $differentMeaning }}</div>
+                    @endif
+                @else
+                    <div class="empty">
+                        {{ __('stakeholder.ij.bookend_different_empty') }}
+                        <span class="nudge">{{ __('stakeholder.ij.bookend_different_nudge') }}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- ── PROGRESS + IMPACT: the same bookends flanking the arc with
+             live tracks. Hidden entirely on the Vision lens by the
+             block-level toggle above. --}}
+        <div data-lens-block="tracks">
 
         {{-- STARTED bookend — authored problem text or honest empty state.
              NO narrative dump. NO generated summary. --}}
@@ -474,6 +604,8 @@
             @endif
         </div>
 
+        </div>{{-- /[data-lens-block=tracks] --}}
+
     </div>
 
     <script>
@@ -504,7 +636,24 @@
         }
 
         function switchLens (lens) {
+            var wasVision = wrap.getAttribute('data-active-lens') === 'vision';
             wrap.setAttribute('data-active-lens', lens);
+
+            // Arrival — when leaving Vision for Progress/Impact, the tracks
+            // don't just appear (that would be a jump); they stagger in.
+            // Rows start hidden (.arriving), then .arrived is added on a
+            // stagger so the CSS transition plays. Reduced-motion → instant.
+            if (wasVision && lens !== 'vision' && ! reducedMotion) {
+                var rows = wrap.querySelectorAll('[data-lens-block="tracks"] .p4-metric');
+                rows.forEach(function (row) { row.classList.remove('arrived'); row.classList.add('arriving'); });
+                rows.forEach(function (row, i) {
+                    setTimeout(function () {
+                        row.classList.remove('arriving');
+                        row.classList.add('arrived');
+                    }, i * 80);
+                });
+            }
+
             var bars = wrap.querySelectorAll('[data-p4-bar]');
             bars.forEach(function (viz, i) {
                 // Stagger by 80ms so the morph reads as a sequence, not a jump.
