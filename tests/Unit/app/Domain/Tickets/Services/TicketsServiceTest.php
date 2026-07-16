@@ -557,11 +557,11 @@ class TicketsServiceTest extends TestCase
         $capturedTo = null;
 
         $ticketRepository = $this->make(TicketRepository::class, [
-            'simpleTicketQuery' => fn () => [
+            'simpleTicketQuery' => fn (...$args) => [
                 ['id' => 10, 'type' => 'task', 'projectId' => 5, 'status' => 0],
                 ['id' => 20, 'type' => 'task', 'projectId' => 5, 'status' => 0],
             ],
-            'getStateLabels' => fn () => [
+            'getStateLabels' => fn (...$args) => [
                 0 => ['statusType' => 'DONE', 'name' => 'Done', 'class' => ''],
                 3 => ['statusType' => 'INPROGRESS', 'name' => 'In Progress', 'class' => ''],
             ],

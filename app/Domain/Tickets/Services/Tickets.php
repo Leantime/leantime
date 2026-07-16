@@ -2448,12 +2448,27 @@ class Tickets extends BaseService
      * normalized so the earlier date is the lower bound (a reversed range is
      * swapped rather than returning nothing). So passing only one bound yields
      * the span between that date and today, in date order.
+     *
+     * A non-admin may only read their OWN closures: a caller-supplied $userId
+     * for someone else is forced back to the session user (IDOR guard).
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyClosedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
     {
-        $from = $from ?: date('Y-m-d');
-        $to = $to ?: date('Y-m-d');
+        $sessionUser = (int) session('userdata.id');
+        $userId = $userId ?: $sessionUser;
+        // IDOR guard: reading another user's closures requires admin.
+        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
+        if ($userId === 0) {
+            return [];
+        }
+
+        // Resolve "today" once so a run across midnight can't disagree on bounds.
+        $today = date('Y-m-d');
+        $from = $from ?: $today;
+        $to = $to ?: $today;
         // Tolerate a reversed range rather than returning nothing.
         if ($from > $to) {
             [$from, $to] = [$to, $from];
