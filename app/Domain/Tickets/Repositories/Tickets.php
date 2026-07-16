@@ -879,6 +879,7 @@ class Tickets
                 'zp_tickets.storypoints',
                 'zp_tickets.hourRemaining',
                 'zp_tickets.acceptanceCriteria',
+                'zp_tickets.outcomeImpact',
                 'zp_tickets.userId',
                 'zp_tickets.editorId',
                 'zp_tickets.planHours',
@@ -951,6 +952,7 @@ class Tickets
                 'zp_tickets.storypoints',
                 'zp_tickets.hourRemaining',
                 'zp_tickets.acceptanceCriteria',
+                'zp_tickets.outcomeImpact',
                 'zp_tickets.userId',
                 'zp_tickets.editorId',
                 'zp_tickets.planHours',
@@ -1025,6 +1027,7 @@ class Tickets
                 'zp_tickets.sprint',
                 'zp_tickets.storypoints',
                 'zp_tickets.acceptanceCriteria',
+                'zp_tickets.outcomeImpact',
                 'zp_tickets.userId',
                 'zp_tickets.editorId',
                 'zp_tickets.tags',
@@ -1073,6 +1076,7 @@ class Tickets
                 'zp_tickets.sprint',
                 'zp_tickets.storypoints',
                 'zp_tickets.acceptanceCriteria',
+                'zp_tickets.outcomeImpact',
                 'zp_tickets.userId',
                 'zp_tickets.editorId',
                 'zp_tickets.tags',
@@ -1152,6 +1156,7 @@ class Tickets
                 'zp_tickets.storypoints',
                 'zp_tickets.hourRemaining',
                 'zp_tickets.acceptanceCriteria',
+                'zp_tickets.outcomeImpact',
                 'zp_tickets.userId',
                 'zp_tickets.editorId',
                 'zp_tickets.planHours',
@@ -1428,6 +1433,7 @@ class Tickets
                 'zp_tickets.storypoints',
                 'zp_tickets.hourRemaining',
                 'zp_tickets.acceptanceCriteria',
+                'zp_tickets.outcomeImpact',
                 'zp_tickets.userId',
                 'zp_tickets.editorId',
                 'zp_tickets.planHours',
@@ -1618,6 +1624,7 @@ class Tickets
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'acceptanceCriteria' => $values['acceptanceCriteria'],
+            'outcomeImpact' => $values['outcomeImpact'] ?? null,
             'editFrom' => $values['editFrom'],
             'editTo' => $values['editTo'],
             'editorId' => $values['editorId'],
@@ -1664,6 +1671,7 @@ class Tickets
         'editFrom' => true,
         'editTo' => true,
         'acceptanceCriteria' => true,
+        'outcomeImpact' => true,
         'dependingTicketId' => true,
         'milestoneid' => true,
         'sortIndex' => true,
@@ -1717,30 +1725,38 @@ class Tickets
     {
         $this->addTicketChange(session('userdata.id'), $id, $values);
 
+        $updates = [
+            'headline' => $values['headline'],
+            'type' => $values['type'],
+            'description' => $values['description'],
+            'projectId' => $values['projectId'],
+            'status' => $values['status'],
+            'date' => $values['date'],
+            'dateToFinish' => $values['dateToFinish'],
+            'sprint' => $values['sprint'],
+            'storypoints' => $values['storypoints'],
+            'priority' => $values['priority'],
+            'hourRemaining' => $values['hourRemaining'],
+            'planHours' => $values['planHours'],
+            'tags' => $values['tags'],
+            'editorId' => $values['editorId'],
+            'editFrom' => $values['editFrom'],
+            'editTo' => $values['editTo'],
+            'acceptanceCriteria' => $values['acceptanceCriteria'],
+            'dependingTicketId' => $values['dependingTicketId'],
+            'milestoneid' => $values['milestoneid'],
+            'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
+        ];
+
+        // Only touch the outcome narrative when the caller sends it — callers that rebuild the
+        // full value array (e.g. quickUpdateMilestone) must not wipe a saved outcome.
+        if (array_key_exists('outcomeImpact', $values)) {
+            $updates['outcomeImpact'] = $values['outcomeImpact'];
+        }
+
         $result = $this->connection->table('zp_tickets')
             ->where('id', $id)
-            ->update([
-                'headline' => $values['headline'],
-                'type' => $values['type'],
-                'description' => $values['description'],
-                'projectId' => $values['projectId'],
-                'status' => $values['status'],
-                'date' => $values['date'],
-                'dateToFinish' => $values['dateToFinish'],
-                'sprint' => $values['sprint'],
-                'storypoints' => $values['storypoints'],
-                'priority' => $values['priority'],
-                'hourRemaining' => $values['hourRemaining'],
-                'planHours' => $values['planHours'],
-                'tags' => $values['tags'],
-                'editorId' => $values['editorId'],
-                'editFrom' => $values['editFrom'],
-                'editTo' => $values['editTo'],
-                'acceptanceCriteria' => $values['acceptanceCriteria'],
-                'dependingTicketId' => $values['dependingTicketId'],
-                'milestoneid' => $values['milestoneid'],
-                'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
-            ]);
+            ->update($updates);
 
         $this->removeCollaborators($id);
 
@@ -1882,6 +1898,26 @@ class Tickets
         }
 
         return $events;
+    }
+
+    /**
+     * Distinct ticket ids the given user COMMENTED on within [from, to]
+     * (inclusive, 'Y-m-d'). Access-agnostic on its own — callers must
+     * intersect the result with an access-scoped ticket set (e.g.
+     * simpleTicketQuery) before returning anything, so this never widens
+     * visibility. Used by getMyCommentedTicketsForRange for Progress "Supported".
+     */
+    public function getTicketIdsCommentedByUser(int $userId, string $fromDate, string $toDate): array
+    {
+        $rows = $this->connection->table('zp_comment')
+            ->select('moduleId')
+            ->distinct()
+            ->where('module', 'ticket')
+            ->where('userId', $userId)
+            ->whereBetween('date', [$fromDate.' 00:00:00', $toDate.' 23:59:59'])
+            ->get();
+
+        return array_values(array_unique(array_map(fn ($row) => (int) $row->moduleId, $rows->all())));
     }
 
     /**

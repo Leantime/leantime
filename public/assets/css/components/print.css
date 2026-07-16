@@ -100,3 +100,60 @@
         overflow: visible !important;
     }
 }
+
+/*
+ * Report screens (project / plan / strategy): keep board-packet output clean.
+ */
+@media print {
+
+    .periodPicker .btn-group,
+    .periodPicker .periodPickerCustom,
+    .hideOnPrint {
+        display: none !important;
+    }
+
+    .reportMilestone,
+    .reportStatusUpdate,
+    .reportGoalTable tr,
+    .reportNeedsAttention,
+    .reportSlippage,
+    .programMatrixTable tr {
+        page-break-inside: avoid;
+    }
+
+    /* Expand drill-down task lists so the packet is complete on paper. */
+    .reportKeyTasks {
+        display: block;
+    }
+
+    .reportKeyTasks[open] summary,
+    .reportKeyTasks summary {
+        list-style: none;
+    }
+
+    .reportKeyTasks > ul {
+        display: block !important;
+    }
+
+    /* Status colors must survive printer color handling. */
+    .reportStatusPill span,
+    .reportStatusNarrative .reportStatusUpdate,
+    .reportNeedsAttention {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    /* Milestone links read as text in the packet. */
+    .hideLinkOnPrint {
+        color: inherit !important;
+        text-decoration: none !important;
+    }
+}
+
+@media print {
+    /* Chromium hides closed <details> content via content-visibility. */
+    .reportKeyTasks::details-content {
+        content-visibility: visible !important;
+        display: block !important;
+    }
+}

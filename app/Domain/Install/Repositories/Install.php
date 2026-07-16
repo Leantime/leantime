@@ -92,6 +92,7 @@ class Install
         30518,
         30519,
         30520,
+        30521,
     ];
 
     /**
@@ -604,12 +605,23 @@ class Install
                     PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+                CREATE TABLE `zp_goal_history` (
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `itemId` int(11) NOT NULL,
+                    `value` double DEFAULT NULL,
+                    `userId` int(11) DEFAULT NULL,
+                    `dateRecorded` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `idx_goal_history_item_date` (`itemId`,`dateRecorded`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
                 CREATE TABLE `zp_tickets` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `projectId` int(11) DEFAULT NULL,
                     `headline` varchar(255) DEFAULT NULL,
                     `description` text,
                     `acceptanceCriteria` text,
+                    `outcomeImpact` text,
                     `date` datetime DEFAULT NULL,
                     `dateToFinish` datetime DEFAULT NULL,
                     `priority` varchar(60) DEFAULT NULL,
@@ -2838,6 +2850,81 @@ class Install
             Log::error('Migration 30520: '.$e->getMessage());
 
             return ['Migration 30520 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30521 — reporting groundwork (#reporting-screens):
+     *   - zp_tickets.outcomeImpact TEXT NULL: retrospective outcome & impact narrative on
+     *     milestones ("what did completing this produce"), captured inline on the report
+     *     screens and rolled up into plan/strategy board reports. Distinct from `description`,
+     *     which is forward-looking.
+     *   - zp_goal_history: append-only record of goal currentValue changes. Goal values were
+     *     previously overwritten in place, making KPI trend reporting impossible; rows are
+     *     written on every value change plus a daily snapshot, so trends become chartable
+     *     once history accumulates.
+     */
+    public function update_sql_30521(): bool|array
+    {
+        try {
+            if (Schema::hasTable('zp_tickets') && ! Schema::hasColumn('zp_tickets', 'outcomeImpact')) {
+                Schema::table('zp_tickets', function (Blueprint $table) {
+                    $table->text('outcomeImpact')->nullable()->after('acceptanceCriteria');
+                });
+            }
+
+            if (! Schema::hasTable('zp_goal_history')) {
+                Schema::create('zp_goal_history', function (Blueprint $table) {
+                    $table->increments('id');
+                    $table->integer('itemId');
+                    $table->double('value')->nullable();
+                    $table->integer('userId')->nullable();
+                    $table->dateTime('dateRecorded')->nullable();
+
+                    $table->index(['itemId', 'dateRecorded'], 'idx_goal_history_item_date');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30521: '.$e->getMessage());
+
+            return ['Migration 30521 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30522: adds two authored-meaning fields to canvas items.
+     *
+     *   why_this_matters — the human change (Outcome and Impact items).
+     *   starting_picture — the world today, before the work (Impact only).
+     *
+     * Both nullable, both additive. `conclusion` is untouched — going forward
+     * it narrows to "as measured by" methodology only. The report's Impact
+     * Journey page (Page 4) reads `why_this_matters` as the meaning lead
+     * where present, falling back to today's rendering when absent.
+     */
+    public function update_sql_30522(): bool|array
+    {
+        try {
+            if (Schema::hasTable('zp_canvas_items')) {
+                if (! Schema::hasColumn('zp_canvas_items', 'why_this_matters')) {
+                    Schema::table('zp_canvas_items', function (Blueprint $table) {
+                        $table->text('why_this_matters')->nullable()->after('conclusion');
+                    });
+                }
+                if (! Schema::hasColumn('zp_canvas_items', 'starting_picture')) {
+                    Schema::table('zp_canvas_items', function (Blueprint $table) {
+                        $table->text('starting_picture')->nullable()->after('why_this_matters');
+                    });
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30522: '.$e->getMessage());
+
+            return ['Migration 30522 failed: '.$e->getMessage()];
         }
 
         return true;

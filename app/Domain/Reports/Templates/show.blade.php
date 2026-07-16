@@ -19,6 +19,11 @@
 
         {!! $tpl->displayNotification() !!}
 
+        <ul class="tabs-list tw-mb-4" style="display:inline-flex; gap: 4px;">
+            <li><a href="{{ BASE_URL }}/reports/project">{{ __('label.status_report_tab') }}</a></li>
+            <li class="active"><a href="{{ BASE_URL }}/reports/show">{{ __('label.delivery_metrics_tab') }}</a></li>
+        </ul>
+
         <div class="row">
             <div class="col-lg-8">
 
