@@ -298,6 +298,20 @@ class Users
             'modified' => now(),
         ];
 
+        // Capacity attributes (v3.5.23) — only overwrite when explicitly
+        // present so an admin form that omits the fields (or a legacy
+        // caller) doesn't null out a value already set.
+        if (array_key_exists('weekly_hours', $values)) {
+            $updateData['weekly_hours'] = $values['weekly_hours'] === '' || $values['weekly_hours'] === null
+                ? null
+                : (int) $values['weekly_hours'];
+        }
+        if (array_key_exists('employment_type', $values)) {
+            $updateData['employment_type'] = $values['employment_type'] === '' || $values['employment_type'] === null
+                ? null
+                : (string) $values['employment_type'];
+        }
+
         if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
             $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
@@ -394,6 +408,8 @@ class Users
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
+            'weekly_hours' => isset($values['weekly_hours']) && $values['weekly_hours'] !== '' ? (int) $values['weekly_hours'] : null,
+            'employment_type' => ! empty($values['employment_type']) ? (string) $values['employment_type'] : null,
             'modified' => now(),
         ]);
 

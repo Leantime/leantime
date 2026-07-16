@@ -192,6 +192,8 @@ class EditUser extends Controller
             'jobTitle' => $row['jobTitle'],
             'jobLevel' => $row['jobLevel'],
             'department' => $row['department'],
+            'weekly_hours' => $row['weekly_hours'] ?? null,
+            'employment_type' => $row['employment_type'] ?? null,
         ];
     }
 
@@ -216,6 +218,12 @@ class EditUser extends Controller
             'jobTitle' => $_POST['jobTitle'] ?? $row['jobTitle'],
             'jobLevel' => $_POST['jobLevel'] ?? $row['jobLevel'],
             'department' => $_POST['department'] ?? $row['department'],
+            // Capacity fields — only pass when actually posted so the
+            // repo's array_key_exists guard preserves existing values on
+            // a form submit that omits them (non-admin path today, but
+            // also future partial-update callers).
+            ...(array_key_exists('weekly_hours', $_POST) ? ['weekly_hours' => $_POST['weekly_hours']] : []),
+            ...(array_key_exists('employment_type', $_POST) ? ['employment_type' => $_POST['employment_type']] : []),
         ];
     }
 
