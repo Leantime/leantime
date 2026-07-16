@@ -2461,7 +2461,7 @@ class Tickets extends BaseService
      * @api
      *
      * Tickets the user COMMENTED on within [$from, $to] that they do NOT own
-     * (they're not the assignee/editor) — i.e. work they supported by weighing
+     * (they're not the ticket's editor) — i.e. work they supported by weighing
      * in on someone else's arc. Powers the mobile Progress "Supported" section
      * (presence counts as much as production).
      *
@@ -2476,6 +2476,10 @@ class Tickets extends BaseService
      * ownership filter then drops tickets the user is the editor of — those are
      * "your work," not support. Defaults either bound to today.
      *
+     * A non-admin may only read their OWN commented tickets: a caller-supplied
+     * $userId for someone else is forced back to the session user (IDOR guard,
+     * matching Projects::getProjectsUserHasAccessTo()).
+     *
      * @return array<int, array<string, mixed>> raw ticket rows (id, headline,
      *                                          projectName, editorId, status, …). NOTE: these do NOT carry the resolved
      *                                          statusLabel/statusClass/statusType that getAll*UserTickets attach.
@@ -2483,12 +2487,19 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
     {
-        $userId = $userId ?? (int) session('userdata.id');
+        $sessionUser = (int) session('userdata.id');
+        $userId = $userId ?: $sessionUser;
+        // IDOR guard: reading someone else's comment activity requires admin.
+        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
         if ($userId === 0) {
             return [];
         }
-        $from = $from ?: date('Y-m-d');
-        $to = $to ?: date('Y-m-d');
+        // Resolve "today" once so a run across midnight can't disagree on bounds.
+        $today = date('Y-m-d');
+        $from = $from ?: $today;
+        $to = $to ?: $today;
         if ($from > $to) {
             [$from, $to] = [$to, $from];
         }

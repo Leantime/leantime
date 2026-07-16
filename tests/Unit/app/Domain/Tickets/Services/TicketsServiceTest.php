@@ -579,15 +579,15 @@ class TicketsServiceTest extends TestCase
         session(['userdata' => ['id' => 1]]);
 
         $ticketRepository = $this->make(TicketRepository::class, [
-            'getTicketIdsCommentedByUser' => fn () => [10, 20, 30],
+            'getTicketIdsCommentedByUser' => fn (...$args) => [10, 20, 30],
             // Project-scoped fetch only returns 10 + 20 (30 is outside access).
-            'getTicketsByIdsWithinProjects' => fn () => [
+            'getTicketsByIdsWithinProjects' => fn (...$args) => [
                 ['id' => 10, 'headline' => 'A', 'editorId' => '99', 'projectId' => 5, 'projectName' => 'P'],
                 ['id' => 20, 'headline' => 'B', 'editorId' => '1', 'projectId' => 5, 'projectName' => 'P'],
             ],
         ]);
         $projectService = $this->make(ProjectService::class, [
-            'getProjectsUserHasAccessTo' => fn () => [['id' => 5], ['id' => 7]],
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5], ['id' => 7]],
         ]);
 
         $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
@@ -608,11 +608,11 @@ class TicketsServiceTest extends TestCase
         session(['userdata' => ['id' => 1]]);
 
         $ticketRepository = $this->make(TicketRepository::class, [
-            'getTicketIdsCommentedByUser' => fn () => [10],
-            'getTicketsByIdsWithinProjects' => fn () => [['id' => 10, 'editorId' => '99']],
+            'getTicketIdsCommentedByUser' => fn (...$args) => [10],
+            'getTicketsByIdsWithinProjects' => fn (...$args) => [['id' => 10, 'editorId' => '99']],
         ]);
         $projectService = $this->make(ProjectService::class, [
-            'getProjectsUserHasAccessTo' => fn () => false,
+            'getProjectsUserHasAccessTo' => fn (...$args) => false,
         ]);
 
         $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);

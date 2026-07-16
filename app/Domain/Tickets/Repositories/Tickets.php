@@ -1930,6 +1930,9 @@ class Tickets
             )
             ->whereIn('zp_tickets.id', $ticketIds)
             ->whereIn('zp_tickets.projectId', $projectIds)
+            // Stable, deterministic order (DB default order is unspecified).
+            ->orderBy('zp_tickets.dateToFinish')
+            ->orderBy('zp_tickets.id')
             ->get();
 
         return array_map(fn ($row) => (array) $row, $rows->all());
