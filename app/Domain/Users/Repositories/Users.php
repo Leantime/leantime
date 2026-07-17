@@ -8,6 +8,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Files\Repositories\Files;
+use Leantime\Domain\Users\Contracts\EmploymentType;
 
 class Users
 {
@@ -300,16 +301,16 @@ class Users
 
         // Capacity attributes (v3.5.23) — only overwrite when explicitly
         // present so an admin form that omits the fields (or a legacy
-        // caller) doesn't null out a value already set.
+        // caller) doesn't null out a value already set. Validation runs
+        // at this boundary so every caller (form controller, service,
+        // JSON-RPC) gets the same guarantees: unrecognised employment
+        // types normalise to NULL; weekly_hours outside a sane range
+        // normalises to NULL.
         if (array_key_exists('weekly_hours', $values)) {
-            $updateData['weekly_hours'] = $values['weekly_hours'] === '' || $values['weekly_hours'] === null
-                ? null
-                : (int) $values['weekly_hours'];
+            $updateData['weekly_hours'] = $this->normalizeWeeklyHours($values['weekly_hours']);
         }
         if (array_key_exists('employment_type', $values)) {
-            $updateData['employment_type'] = $values['employment_type'] === '' || $values['employment_type'] === null
-                ? null
-                : (string) $values['employment_type'];
+            $updateData['employment_type'] = $this->normalizeEmploymentType($values['employment_type']);
         }
 
         if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
@@ -408,8 +409,8 @@ class Users
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
-            'weekly_hours' => isset($values['weekly_hours']) && $values['weekly_hours'] !== '' ? (int) $values['weekly_hours'] : null,
-            'employment_type' => ! empty($values['employment_type']) ? (string) $values['employment_type'] : null,
+            'weekly_hours' => $this->normalizeWeeklyHours($values['weekly_hours'] ?? null),
+            'employment_type' => $this->normalizeEmploymentType($values['employment_type'] ?? null),
             'modified' => now(),
         ]);
 
@@ -564,5 +565,44 @@ class Users
         }
 
         return $current;
+    }
+
+    /**
+     * Normalise a POSTed weekly_hours value into the persisted shape.
+     * Accepts int-ish strings; rejects anything outside 0..168 (168 =
+     * hours in a week, the largest value that has physical meaning).
+     * Anything that fails validation becomes NULL — treated by the
+     * capacity math as "not configured" rather than saving garbage.
+     */
+    private function normalizeWeeklyHours(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if (! is_numeric($value)) {
+            return null;
+        }
+        $hours = (int) $value;
+        if ($hours < 0 || $hours > 168) {
+            return null;
+        }
+
+        return $hours;
+    }
+
+    /**
+     * Normalise a POSTed employment_type into one of the four enum
+     * cases or NULL. Any string that isn't a recognised case is
+     * silently normalised to NULL so a crafted POST can't persist
+     * garbage that later EmploymentType::from() would throw on.
+     */
+    private function normalizeEmploymentType(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        $case = EmploymentType::tryFrom((string) $value);
+
+        return $case?->value;
     }
 }

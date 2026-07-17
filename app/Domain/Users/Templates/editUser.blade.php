@@ -138,6 +138,7 @@
                                 id="weekly_hours"
                                 type="number"
                                 min="0"
+                                max="168"
                                 :value="$values['weekly_hours'] ?? ''"
                                 placeholder="{{ __('label.weekly_hours_placeholder') }}" /><br />
                             <span class="hint">{!! __('label.weekly_hours_hint') !!}</span><br /><br />
