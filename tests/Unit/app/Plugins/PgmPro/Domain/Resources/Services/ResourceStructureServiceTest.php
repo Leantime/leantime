@@ -389,4 +389,198 @@ class ResourceStructureServiceTest extends TestCase
 
         return $programs;
     }
+
+    // ─── updateBudgetItem — regression + new-field coverage ─────────
+    //
+    // The service used to save only `name` and `budgeted` via isset()
+    // guards; `spent` was accepted by the controller but silently
+    // dropped by the service (Marcel's flagged bug). The new version
+    // uses array_key_exists so `0` and `''` are honored, and adds
+    // `spent` + `projectId` as first-class fields for budget→project
+    // reassignment.
+
+    public function test_updateBudgetItem_returns_false_when_item_is_not_a_budget_row(): void
+    {
+        // Cross-box refusal — passing an itemId whose box='people' must
+        // not mutate it through the budget path. Guards against a
+        // caller mixing up ids across sections.
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getItem')->willReturn(['id' => 1, 'box' => 'people', 'parsedData' => []]);
+        $repo->expects($this->never())->method('updateItem');
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+        $this->assertFalse($svc->updateBudgetItem(1, ['spent' => 100]));
+    }
+
+    public function test_updateBudgetItem_returns_false_when_item_does_not_exist(): void
+    {
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getItem')->willReturn(null);
+        $repo->expects($this->never())->method('updateItem');
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+        $this->assertFalse($svc->updateBudgetItem(999, ['spent' => 100]));
+    }
+
+    public function test_updateBudgetItem_persists_spent(): void
+    {
+        // The exact regression: `spent` used to be dropped. Assert
+        // it lands in the persisted `data` JSON.
+        $captured = null;
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getItem')->willReturn([
+            'id' => 1,
+            'box' => 'budget',
+            'parsedData' => ['budgeted' => 500.0, 'spent' => 100.0, 'projectId' => 7],
+        ]);
+        $repo->method('updateItem')->willReturnCallback(function ($id, $fields) use (&$captured) {
+            $captured = $fields;
+
+            return true;
+        });
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+        $svc->updateBudgetItem(1, ['spent' => 250]);
+
+        $this->assertSame(250.0, $captured['data']['spent']);
+        $this->assertSame(500.0, $captured['data']['budgeted'], 'Budgeted preserved by partial update');
+        $this->assertSame(7, $captured['data']['projectId'], 'projectId preserved by partial update');
+    }
+
+    public function test_updateBudgetItem_persists_projectId(): void
+    {
+        // Budget→project reassignment lands via the same call. 0 is
+        // the sentinel for "unassigned"; must persist as 0, not treated
+        // as "missing" and dropped.
+        $captured = null;
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getItem')->willReturn(['id' => 1, 'box' => 'budget', 'parsedData' => ['projectId' => 7]]);
+        $repo->method('updateItem')->willReturnCallback(function ($id, $fields) use (&$captured) {
+            $captured = $fields;
+
+            return true;
+        });
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+        $svc->updateBudgetItem(1, ['projectId' => 0]);
+
+        $this->assertSame(0, $captured['data']['projectId'], 'projectId=0 (unassigned) persists');
+    }
+
+    public function test_updateBudgetItem_partial_update_omits_unmentioned_fields(): void
+    {
+        // array_key_exists partial-update contract — if the caller only
+        // sends `spent`, budgeted and projectId must be preserved from
+        // the existing parsedData, not overwritten with defaults.
+        $captured = null;
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getItem')->willReturn([
+            'id' => 1,
+            'box' => 'budget',
+            'parsedData' => ['budgeted' => 500.0, 'spent' => 100.0, 'projectId' => 7],
+        ]);
+        $repo->method('updateItem')->willReturnCallback(function ($id, $fields) use (&$captured) {
+            $captured = $fields;
+
+            return true;
+        });
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+        $svc->updateBudgetItem(1, ['spent' => 200]);
+
+        $this->assertSame(200.0, $captured['data']['spent']);
+        $this->assertSame(500.0, $captured['data']['budgeted']);
+        $this->assertSame(7, $captured['data']['projectId']);
+        $this->assertArrayNotHasKey('description', $captured, 'name not in payload → description not touched');
+    }
+
+    public function test_updateBudgetItem_zero_spent_persists(): void
+    {
+        // The isset()→array_key_exists() fix specifically. Under the
+        // old isset guard, `spent: 0` was falsy-adjacent and got dropped.
+        $captured = null;
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getItem')->willReturn([
+            'id' => 1,
+            'box' => 'budget',
+            'parsedData' => ['spent' => 500.0],
+        ]);
+        $repo->method('updateItem')->willReturnCallback(function ($id, $fields) use (&$captured) {
+            $captured = $fields;
+
+            return true;
+        });
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+        $svc->updateBudgetItem(1, ['spent' => 0]);
+
+        $this->assertSame(0.0, $captured['data']['spent'], 'spent=0 persists (was dropped under old isset guard)');
+    }
+
+    public function test_updateBudgetItem_name_goes_to_description_column(): void
+    {
+        // Budget line's display name lives in the description column
+        // (canvas item shape) — service must map name → description.
+        $captured = null;
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getItem')->willReturn(['id' => 1, 'box' => 'budget', 'parsedData' => []]);
+        $repo->method('updateItem')->willReturnCallback(function ($id, $fields) use (&$captured) {
+            $captured = $fields;
+
+            return true;
+        });
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+        $svc->updateBudgetItem(1, ['name' => 'Q1 media buy']);
+
+        $this->assertSame('Q1 media buy', $captured['description']);
+    }
+
+    // ─── Program-id resolvers (authorization helpers) ─────────────────
+
+    public function test_getProgramIdForCanvas_passes_through_to_repo(): void
+    {
+        // Pass-through by design — the auth trait wants the resolver on
+        // the service surface (so it can be injected/stubbed) rather
+        // than reaching into the repo. This asserts the delegation.
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getProgramIdForCanvas')->with(100)->willReturn(42);
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+
+        $this->assertSame(42, $svc->getProgramIdForCanvas(100));
+    }
+
+    public function test_getProgramIdForCanvas_returns_null_when_repo_returns_null(): void
+    {
+        // The null path is the entire security guarantee — a POST'd
+        // canvasId that doesn't map to a resource canvas must NOT
+        // resolve to some other program.
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getProgramIdForCanvas')->willReturn(null);
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+
+        $this->assertNull($svc->getProgramIdForCanvas(999));
+    }
+
+    public function test_getProgramIdForItem_passes_through_to_repo(): void
+    {
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getProgramIdForItem')->with(500)->willReturn(42);
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+
+        $this->assertSame(42, $svc->getProgramIdForItem(500));
+    }
+
+    public function test_getProgramIdForItem_returns_null_when_repo_returns_null(): void
+    {
+        $repo = $this->createMock(ResourceStructureRepository::class);
+        $repo->method('getProgramIdForItem')->willReturn(null);
+
+        $svc = new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms());
+
+        $this->assertNull($svc->getProgramIdForItem(999));
+    }
 }
