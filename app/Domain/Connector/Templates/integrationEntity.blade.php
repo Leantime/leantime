@@ -39,6 +39,7 @@
             The arrow indicates that we will synchronize from one location to the other.<br /><br />
 
             <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">
+                @csrf
 
                 <div class="row">
                     <div class="col-md-3"></div>

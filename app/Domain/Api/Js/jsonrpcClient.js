@@ -4,8 +4,8 @@ var leantime = leantime || {};
  * Shared JSON-RPC 2.0 client.
  *
  * Calls a service method exposed via the '/api/jsonrpc' endpoint, addressed as
- * leantime.rpc.{Module}.{Service}.{method}. The endpoint is CSRF-exempt and
- * authenticates via the session cookie, so we only send X-Requested-With.
+ * leantime.rpc.{Module}.{Service}.{method}. Authenticates via the session cookie
+ * and sends the CSRF token as X-CSRF-TOKEN header (read from meta tag).
  *
  * Only service methods annotated with @api are callable (the endpoint enforces this).
  *
@@ -26,6 +26,9 @@ leantime.jsonrpc = (function () {
         params = params || {};
         options = options || {};
 
+        // Get CSRF token from meta tag (added by header.blade.php)
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
         const response = await fetch(leantime.appUrl + '/api/jsonrpc', {
             method: 'POST',
             credentials: 'include',
@@ -33,6 +36,7 @@ leantime.jsonrpc = (function () {
             headers: {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrfToken,
             },
             body: JSON.stringify({
                 jsonrpc: '2.0',

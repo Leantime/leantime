@@ -39,6 +39,7 @@
                 <p class="mb-2">Match the fields from your source to the corresponding fields in Leantime</p><br />
 
                 <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=parse{{ $urlAppend }}">
+                    @csrf
                     <table class="table table-bordered">
                         <thead>
                         <tr>
