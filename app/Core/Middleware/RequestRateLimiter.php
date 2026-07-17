@@ -57,8 +57,15 @@ class RequestRateLimiter
 
         $route = $request->getCurrentRoute();
 
-        // Only check rate limits for login page, api calls, and the MCP endpoint
-        if ($route != 'auth.login' && ! $request->isApiOrCronRequest() && ! $request->isMcpRequest()) {
+        // Abuse-sensitive POSTs: self-serve workspace signup and user invites. These send
+        // email and provision resources, so they get a tight per-IP budget (invite-spam abuse).
+        // Lowercased match: the Frontcontroller resolves controller classes case-insensitively,
+        // so /users/newuser reaches the same controller as /users/newUser.
+        $isSignupPost = in_array(strtolower($route), ['accounts.register', 'accounts.newteam', 'users.newuser'], true)
+            && $request->isMethod('POST');
+
+        // Only check rate limits for login page, signup/invite posts, api calls, and the MCP endpoint
+        if ($route != 'auth.login' && ! $isSignupPost && ! $request->isApiOrCronRequest() && ! $request->isMcpRequest()) {
             return $next($request);
         }
 
@@ -67,12 +74,14 @@ class RequestRateLimiter
         $rateLimitApi = $this->config->ratelimitApi ?? 100;
         $rateLimitAuth = $this->config->ratelimitAuth ?? 20;
         $rateLimitMcp = $this->config->ratelimitMcp ?? 300;
+        $rateLimitSignup = $this->config->ratelimitSignup ?? 5;
 
         if (config('app.debug')) {
             $rateLimitGeneral = 999999999;
             $rateLimitApi = 999999999;
             $rateLimitAuth = 999999999;
             $rateLimitMcp = 999999999;
+            $rateLimitSignup = 999999999;
         }
 
         // Key
@@ -98,6 +107,11 @@ class RequestRateLimiter
         // many parallel tool calls per conversation turn, which the API limit would choke on.
         if ($request->isMcpRequest()) {
             $limit = $rateLimitMcp;
+        }
+
+        if ($isSignupPost) {
+            $limit = $rateLimitSignup;
+            $key = $key.':signup';
         }
 
         if ($route == 'auth.login') {

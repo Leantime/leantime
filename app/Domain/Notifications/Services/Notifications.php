@@ -6,6 +6,7 @@ use DOMDocument;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Core\Support\NameSanitizer;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -354,7 +355,7 @@ class Notifications
             return;
         }
 
-        $authorName = htmlentities($author['firstname']);
+        $authorName = htmlentities(NameSanitizer::clean($author['firstname'] ?? ''));
 
         for ($i = 0; $i < $links->count(); $i++) {
             $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');
@@ -396,7 +397,7 @@ class Notifications
 
                     $taggedUserObject = $this->userRepository->getUser($taggedUser);
                     if (isset($taggedUserObject['username'])) {
-                        $mailer->sendMail([$taggedUserObject['username']], $authorName);
+                        $mailer->sendMail([$taggedUserObject['username']], 'Leantime');
                     }
                 }
             }
