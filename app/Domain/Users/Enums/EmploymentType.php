@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Leantime\Domain\Users\Contracts;
+namespace Leantime\Domain\Users\Enums;
 
 /**
  * Employment type for a user. Drives how weekly_hours is interpreted

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Unit\app\Domain\Users\Contracts;
+namespace Unit\app\Domain\Users\Enums;
 
-use Leantime\Domain\Users\Contracts\EmploymentType;
+use Leantime\Domain\Users\Enums\EmploymentType;
 use Unit\TestCase;
 
 /**

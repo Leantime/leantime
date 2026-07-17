@@ -146,7 +146,7 @@
                             <label for="employment_type">{!! __('label.employment_type') !!}</label>
                             <select name="employment_type" id="employment_type">
                                 <option value="">{!! __('label.employment_type.unset') !!}</option>
-                                @foreach (\Leantime\Domain\Users\Contracts\EmploymentType::cases() as $type)
+                                @foreach (\Leantime\Domain\Users\Enums\EmploymentType::cases() as $type)
                                     <option value="{{ $type->value }}"
                                         @if (($values['employment_type'] ?? '') === $type->value) selected="selected" @endif>
                                         {!! __($type->langKey()) !!}

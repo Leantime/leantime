@@ -8,7 +8,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Files\Repositories\Files;
-use Leantime\Domain\Users\Contracts\EmploymentType;
+use Leantime\Domain\Users\Enums\EmploymentType;
 
 class Users
 {

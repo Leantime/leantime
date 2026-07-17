@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Unit\app\Domain\Users\Repositories;
 
-use Leantime\Domain\Users\Contracts\EmploymentType;
+use Leantime\Domain\Users\Enums\EmploymentType;
 use Leantime\Domain\Users\Repositories\Users as UsersRepository;
 use Unit\TestCase;
 
