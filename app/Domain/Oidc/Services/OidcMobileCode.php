@@ -76,13 +76,16 @@ class OidcMobileCode
     }
 
     /**
-     * Burn the code. Cache::forget is idempotent, so an already-consumed
-     * code is a silent no-op — callers should peekCode() first for the
-     * "invalid code" check.
+     * Atomically burn the code and report whether THIS caller consumed it.
+     *
+     * Cache::pull is a single read-and-delete, so of two concurrent exchanges
+     * that both peekCode()'d the same code, exactly one gets true here — the
+     * other gets false and must not mint (closes the peek→consume double-mint
+     * race). Also returns false for an already-consumed or unknown code.
      */
-    public function consumeCode(string $rawCode): void
+    public function consumeCode(string $rawCode): bool
     {
-        Cache::forget($this->key($rawCode));
+        return Cache::pull($this->key($rawCode)) !== null;
     }
 
     private function key(string $rawCode): string
