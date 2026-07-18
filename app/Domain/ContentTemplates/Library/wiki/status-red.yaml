@@ -11,4 +11,4 @@ sector: "t:templates.elements"
 wiki:
   articles:
     - title: "Red Status"
-      content: '<span class="label label-danger">Red</span>'
+      content: '<p><mark data-color="#E74C3C" style="background-color: #E74C3C; color: #ffffff; padding: 0 6px; border-radius: 3px;">Red</mark></p>'
