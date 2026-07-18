@@ -535,14 +535,27 @@ class BlueprintsServiceTest extends TestCase
 
             public function getByDatabaseType(string $dbType): ?CanvasTemplate
             {
-                return $this->get(str_replace('canvas', '', $dbType));
+                // Mirror the shipped str_ends_with/substr strip so this stub and
+                // the production slug-resolution can't drift (per review CR).
+                $suffix = 'canvas';
+                $slug = str_ends_with($dbType, $suffix) && strlen($dbType) > strlen($suffix)
+                    ? substr($dbType, 0, -strlen($suffix))
+                    : $dbType;
+
+                return $this->get($slug);
             }
         };
 
-        $seenSlugs = [];
-        $contentTemplates = new class($seenSlugs) extends \Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry
+        $contentTemplates = new class extends \Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry
         {
-            public function __construct(public array &$seenSlugs) {}
+            /** @var string[] */
+            public array $seenSlugs = [];
+
+            // Override the parent constructor (the stub needs no deps) and record
+            // the slugs get() is consulted with, so the test asserts on them
+            // afterward. Avoids a by-reference property — PHP ^8.2 can't promote
+            // by reference, and a typed-property reference is brittle.
+            public function __construct() {}
 
             public function get(string $appliesTo, string $key): ?\Leantime\Domain\ContentTemplates\Models\ContentTemplate
             {
@@ -562,6 +575,6 @@ class BlueprintsServiceTest extends TestCase
 
         $service->createBoard(['projectId' => 5, 'title' => 't'], 'swotcanvas');
 
-        $this->assertSame(['swot'], $seenSlugs, 'ContentTemplates must be consulted with the SLUG, not the DB type');
+        $this->assertSame(['swot'], $contentTemplates->seenSlugs, 'ContentTemplates must be consulted with the SLUG, not the DB type');
     }
 }

@@ -65,11 +65,13 @@ class TemplateRegistry
      */
     public function getByDatabaseType(string $dbType): ?CanvasTemplate
     {
-        // Strip the trailing "canvas" suffix only — a naive str_replace would
-        // corrupt any type whose name embeds the word (e.g., "canvassing") or
-        // return an empty slug for the bare "canvas" type.
-        $slug = str_ends_with($dbType, 'canvas')
-            ? substr($dbType, 0, -6)
+        // Strip a trailing "canvas" suffix only — a naive str_replace would
+        // corrupt any type whose name embeds the word (e.g., "canvassing").
+        // Require something *before* the suffix so the bare "canvas" type
+        // resolves to itself, not an empty slug; -strlen() avoids a brittle -6.
+        $suffix = 'canvas';
+        $slug = str_ends_with($dbType, $suffix) && strlen($dbType) > strlen($suffix)
+            ? substr($dbType, 0, -strlen($suffix))
             : $dbType;
 
         return $this->get($slug);
