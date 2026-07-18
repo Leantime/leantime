@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Oidc\Controllers;
 
+use Illuminate\Support\Facades\RateLimiter;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
@@ -20,6 +21,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Mobile extends Controller
 {
+    /** Per-IP cap on exchange attempts per minute — throttles code/verifier guessing. */
+    private const MAX_ATTEMPTS_PER_MINUTE = 10;
+
+    /** Mobile SSO bearer lifetime. Deliberately NOT non-expiring; a lost device's
+     *  token self-expires, and it can be revoked early via AccessTokenRepository::deleteToken. */
+    private const TOKEN_TTL_DAYS = 30;
+
     private OidcMobileCode $codes;
 
     private AccessTokenRepository $tokens;
@@ -56,9 +64,23 @@ class Mobile extends Controller
             return new JsonResponse(['error' => 'method_not_allowed'], 405, ['Allow' => 'POST']);
         }
 
-        // $params is the framework's merged request params (GET + form body); the
-        // app POSTs code + code_verifier form-encoded, so no manual body parsing.
-        $code = $this->stringParam($params, 'code');
+        // Per-IP throttle: this endpoint is public (allow-listed in AuthCheck) and
+        // returns distinct 400/401 codes, so an unauthenticated caller could probe
+        // codes/verifiers. Even with <=60s single-use codes, cap the attempt rate.
+        $throttleKey = 'oidc.mobile.exchange:'.$this->request->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_ATTEMPTS_PER_MINUTE)) {
+            return new JsonResponse(
+                ['error' => 'too_many_requests'],
+                429,
+                ['Retry-After' => (string) RateLimiter::availableIn($throttleKey)]
+            );
+        }
+        RateLimiter::hit($throttleKey, 60);
+
+        // Secrets are read from the POST BODY only (->post()), never the query
+        // string — URLs land in access logs, request bodies don't. A ?code=... in
+        // the URL is ignored; $params (the merged bag) is intentionally not used.
+        $code = $this->bodyParam('code');
         if ($code === '') {
             return new JsonResponse(['error' => 'missing_code'], 400);
         }
@@ -76,7 +98,7 @@ class Mobile extends Controller
         // PKCE: the code was bound to a code_challenge at login. Require the
         // matching verifier so a code intercepted from the app-scheme redirect
         // is useless without the secret the app kept and never put in a URL.
-        $verifier = $this->stringParam($params, 'code_verifier');
+        $verifier = $this->bodyParam('code_verifier');
         if (! $this->pkceMatches($data['challenge'] ?? null, $verifier)) {
             return new JsonResponse(['error' => 'invalid_verifier'], 401);
         }
@@ -93,9 +115,23 @@ class Mobile extends Controller
             return new JsonResponse(['error' => 'invalid_user'], 401);
         }
 
-        // All checks passed — burn the code (single-use) and mint the token.
-        $this->codes->consumeCode($code);
-        $token = $this->tokens->createToken($userId, 'mobile-sso');
+        // All checks passed — atomically burn the code. consumeCode() returns
+        // false if a concurrent exchange already consumed it, so only the winner
+        // of that race mints (no double-mint from one single-use code).
+        if (! $this->codes->consumeCode($code)) {
+            return new JsonResponse(['error' => 'invalid_code'], 401);
+        }
+
+        // Mint a 'mobile-sso' bearer with an explicit TTL (see TOKEN_TTL_DAYS) so
+        // it isn't valid forever. Scope stays ['*'] — the mobile app is a full
+        // API client, same as the password-login token — but the TTL plus
+        // AccessTokenRepository::deleteToken give expiry and revocation.
+        $token = $this->tokens->createToken(
+            $userId,
+            'mobile-sso',
+            ['*'],
+            now()->addDays(self::TOKEN_TTL_DAYS)
+        );
 
         return new JsonResponse([
             'token' => $token['token'],
@@ -103,9 +139,15 @@ class Mobile extends Controller
         ]);
     }
 
-    private function stringParam(array $params, string $key): string
+    /**
+     * Read a request value from the POST body ONLY (never the query string), so
+     * the one-time code + verifier can't be supplied via a logged URL.
+     */
+    private function bodyParam(string $key): string
     {
-        return isset($params[$key]) && is_string($params[$key]) ? trim($params[$key]) : '';
+        $value = $this->request->post($key);
+
+        return is_string($value) ? trim($value) : '';
     }
 
     /**

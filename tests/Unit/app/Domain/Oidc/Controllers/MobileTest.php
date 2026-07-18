@@ -46,14 +46,26 @@ class MobileTest extends \Unit\TestCase
         $this->app->instance(OidcMobileCode::class, $this->codes);
         $this->app->instance(AccessTokenRepository::class, $this->tokens);
         $this->app->instance(UserRepository::class, $this->userRepo);
+
+        // Back the RateLimiter facade with a fresh in-memory store so throttle
+        // state is deterministic and isolated per test.
+        \Illuminate\Support\Facades\Facade::setFacadeApplication($this->app);
+        $this->app->instance(
+            \Illuminate\Cache\RateLimiter::class,
+            new \Illuminate\Cache\RateLimiter(
+                new \Illuminate\Cache\Repository(new \Illuminate\Cache\ArrayStore)
+            )
+        );
     }
 
-    private function makeController(string $method = 'POST'): Mobile
+    private function makeController(string $method = 'POST', array $body = []): Mobile
     {
         // IncomingRequest inherits getMethod() from Symfony's Request, where it
         // reads from the request's internal server bag. Building a real instance
         // is simpler and more accurate than mocking through the inheritance chain.
-        $request = IncomingRequest::create('/oidc/mobile/exchange', $method);
+        // $body populates the POST (request) bag — what the controller reads via
+        // ->post(); a query string on the URL is deliberately NOT read.
+        $request = IncomingRequest::create('/oidc/mobile/exchange', $method, $body);
         $this->app->instance(IncomingRequest::class, $request);
 
         return new Mobile($request, $this->createMock(Template::class), $this->createMock(Language::class));
@@ -69,8 +81,8 @@ class MobileTest extends \Unit\TestCase
         // Peek must never be called — the request is rejected before the code store is touched.
         $this->codes->expects($this->never())->method('peekCode');
 
-        $controller = $this->makeController('GET');
-        $response = $controller->exchange(['code' => 'x', 'code_verifier' => 'y']);
+        $controller = $this->makeController('GET', ['code' => 'x', 'code_verifier' => 'y']);
+        $response = $controller->exchange([]);
 
         $this->assertSame(405, $response->getStatusCode());
         $this->assertSame('POST', $response->headers->get('Allow'));
@@ -94,8 +106,8 @@ class MobileTest extends \Unit\TestCase
         // Nothing to consume for an unknown code — but assert it explicitly.
         $this->codes->expects($this->never())->method('consumeCode');
 
-        $controller = $this->makeController();
-        $response = $controller->exchange(['code' => 'bad', 'code_verifier' => 'v']);
+        $controller = $this->makeController('POST', ['code' => 'bad', 'code_verifier' => 'v']);
+        $response = $controller->exchange([]);
 
         $this->assertSame(401, $response->getStatusCode());
         $this->assertSame('invalid_code', $this->bodyOf($response)['error']);
@@ -113,8 +125,8 @@ class MobileTest extends \Unit\TestCase
         $this->codes->expects($this->never())->method('consumeCode');
         $this->tokens->expects($this->never())->method('createToken');
 
-        $controller = $this->makeController();
-        $response = $controller->exchange(['code' => 'good', 'code_verifier' => 'wrong-verifier']);
+        $controller = $this->makeController('POST', ['code' => 'good', 'code_verifier' => 'wrong-verifier']);
+        $response = $controller->exchange([]);
 
         $this->assertSame(401, $response->getStatusCode());
         $this->assertSame('invalid_verifier', $this->bodyOf($response)['error']);
@@ -131,8 +143,8 @@ class MobileTest extends \Unit\TestCase
         $this->codes->expects($this->never())->method('consumeCode');
         $this->tokens->expects($this->never())->method('createToken');
 
-        $controller = $this->makeController();
-        $response = $controller->exchange(['code' => 'good', 'code_verifier' => $verifier]);
+        $controller = $this->makeController('POST', ['code' => 'good', 'code_verifier' => $verifier]);
+        $response = $controller->exchange([]);
 
         $this->assertSame(401, $response->getStatusCode());
         $this->assertSame('invalid_user', $this->bodyOf($response)['error']);
@@ -148,17 +160,77 @@ class MobileTest extends \Unit\TestCase
             'id' => 7, 'firstname' => 'A', 'lastname' => 'B', 'username' => 'a@b',
             'password' => 'SHOULD_NOT_APPEAR', 'twoFAEnabled' => 1,
         ]);
-        // Code consumed exactly once, AFTER all validation.
-        $this->codes->expects($this->once())->method('consumeCode')->with('good');
-        $this->tokens->method('createToken')->willReturn(['token' => 'the-token']);
+        // Code consumed exactly once, AFTER all validation; returns true (this
+        // caller won the single-use race), so minting proceeds.
+        $this->codes->expects($this->once())->method('consumeCode')->with('good')->willReturn(true);
+        // Minted with full scope AND an explicit expiry (not non-expiring).
+        $this->tokens->expects($this->once())->method('createToken')
+            ->with(7, 'mobile-sso', ['*'], $this->isInstanceOf(\DateTimeInterface::class))
+            ->willReturn(['token' => 'the-token']);
 
-        $controller = $this->makeController();
-        $response = $controller->exchange(['code' => 'good', 'code_verifier' => $verifier]);
+        $controller = $this->makeController('POST', ['code' => 'good', 'code_verifier' => $verifier]);
+        $response = $controller->exchange([]);
 
         $this->assertSame(200, $response->getStatusCode());
         $body = $this->bodyOf($response);
         $this->assertSame('the-token', $body['token']);
         // Only safe identity fields — never password / 2FA state.
         $this->assertSame(['id', 'firstname', 'lastname', 'username'], array_keys($body['user']));
+    }
+
+    public function test_secrets_in_query_string_are_ignored(): void
+    {
+        // The code + verifier must come from the POST body, never the URL query
+        // (URLs land in access logs). A ?code=... is not read, so this is a
+        // missing_code — and the code store is never touched.
+        $this->codes->expects($this->never())->method('peekCode');
+
+        $request = IncomingRequest::create('/oidc/mobile/exchange?code=fromquery&code_verifier=v', 'POST');
+        $this->app->instance(IncomingRequest::class, $request);
+        $controller = new Mobile($request, $this->createMock(Template::class), $this->createMock(Language::class));
+        $response = $controller->exchange([]);
+
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('missing_code', $this->bodyOf($response)['error']);
+    }
+
+    public function test_exchange_is_rate_limited_per_ip(): void
+    {
+        // Once the per-IP cap is hit, further attempts are refused with 429
+        // BEFORE the code store is consulted — throttling code/verifier probing.
+        $this->codes->expects($this->never())->method('peekCode');
+
+        for ($i = 0; $i < 10; $i++) {
+            \Illuminate\Support\Facades\RateLimiter::hit('oidc.mobile.exchange:127.0.0.1', 60);
+        }
+
+        $controller = $this->makeController('POST', ['code' => 'x', 'code_verifier' => 'y']);
+        $response = $controller->exchange([]);
+
+        $this->assertSame(429, $response->getStatusCode());
+        $this->assertSame('too_many_requests', $this->bodyOf($response)['error']);
+        $this->assertNotNull($response->headers->get('Retry-After'));
+    }
+
+    public function test_lost_consume_race_does_not_mint(): void
+    {
+        // Two concurrent exchanges both peek the same valid code; the one whose
+        // atomic consumeCode() returns false (the other burned it first) must
+        // NOT mint a second token from a single-use code.
+        $verifier = 'testverifier';
+        $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
+
+        $this->codes->method('peekCode')->willReturn(['userId' => 7, 'challenge' => $challenge]);
+        $this->userRepo->method('getUser')->with(7)->willReturn([
+            'id' => 7, 'firstname' => 'A', 'lastname' => 'B', 'username' => 'a@b',
+        ]);
+        $this->codes->method('consumeCode')->with('good')->willReturn(false);
+        $this->tokens->expects($this->never())->method('createToken');
+
+        $controller = $this->makeController('POST', ['code' => 'good', 'code_verifier' => $verifier]);
+        $response = $controller->exchange([]);
+
+        $this->assertSame(401, $response->getStatusCode());
+        $this->assertSame('invalid_code', $this->bodyOf($response)['error']);
     }
 }
