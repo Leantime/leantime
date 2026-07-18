@@ -17,8 +17,9 @@ use Illuminate\Support\Str;
  *
  * Cache, not the DB: these live for at most 60s and are consumed once, so a TTL
  * cache entry is the natural fit (and self-expiring — no sweep needed). The code
- * is hashed into the cache key so the raw code is never stored. Cache::pull
- * reads-and-deletes, so a replayed code can't be exchanged twice.
+ * is hashed into the cache key so the raw code is never stored. consumeCode()
+ * guards its read-and-delete with a cache lock, so a replayed or concurrently
+ * exchanged code can't be exchanged twice.
  *
  * PKCE: each code is bound to the app-supplied `code_challenge`. The exchange
  * requires the matching verifier, so a code intercepted from the app-scheme
@@ -35,6 +36,8 @@ class OidcMobileCode
     private const KEY_PREFIX = 'oidc.mobile.code.';
 
     private const TTL_SECONDS = 60;
+
+    private const LOCK_SECONDS = 5;
 
     /**
      * Mint a code bound to a user id + the PKCE code_challenge. Returns the RAW
@@ -76,16 +79,44 @@ class OidcMobileCode
     }
 
     /**
-     * Atomically burn the code and report whether THIS caller consumed it.
+     * Burn the code once and report whether THIS caller consumed it.
      *
-     * Cache::pull is a single read-and-delete, so of two concurrent exchanges
-     * that both peekCode()'d the same code, exactly one gets true here — the
-     * other gets false and must not mint (closes the peek→consume double-mint
-     * race). Also returns false for an already-consumed or unknown code.
+     * Cache::pull is get()+forget() — NOT a single atomic op on any driver — so a
+     * bare pull could let two concurrent exchanges both read a valid code before
+     * either deletes it, and both mint. We guard the read-and-delete with a
+     * non-blocking cache lock keyed on the code: only the lock holder performs the
+     * get()+forget() and can return true, so at most one exchange mints from a
+     * single-use code. A caller that can't take the lock (a concurrent consume is
+     * in flight) gets false and must not mint; so does an already-consumed or
+     * unknown code.
      */
     public function consumeCode(string $rawCode): bool
     {
-        return Cache::pull($this->key($rawCode)) !== null;
+        $key = $this->key($rawCode);
+
+        try {
+            $lock = Cache::lock($key.'.lock', self::LOCK_SECONDS);
+        } catch (\Throwable) {
+            // Store doesn't support atomic locks — fall back to a plain
+            // read-and-delete. All default Leantime cache stores DO support
+            // locks; this is belt-and-suspenders for an exotic configuration.
+            return Cache::pull($key) !== null;
+        }
+
+        // Non-blocking: the loser of a concurrent consume gets false immediately
+        // instead of waiting, and its exchange is rejected.
+        if (! $lock->get()) {
+            return false;
+        }
+
+        try {
+            $existed = Cache::get($key) !== null;
+            Cache::forget($key);
+
+            return $existed;
+        } finally {
+            $lock->release();
+        }
     }
 
     private function key(string $rawCode): string
