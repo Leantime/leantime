@@ -56,10 +56,12 @@
                                 style="width:105px" />
                         </div>
                         <div class="col-md-3">
+                            @php $currentValueIsComputed = $canvasItem['setting'] == 'linkAndReport'; @endphp
                             <label>{{ __('label.current_value') }}</label>
                             <x-global::forms.text-input type="number" step="0.01" name="currentValue" id="currentValueField"
                                 value="{{ $canvasItem['currentValue'] }}"
-                                @if ($canvasItem['setting'] == 'linkAndReport') readonly data-tippy-content="Current value calculated from child goals" @endif
+                                :readonly="$currentValueIsComputed"
+                                :data-tippy-content="$currentValueIsComputed ? __('text.current_value_calculated_from_children') : null"
                                 style="width:105px" />
                         </div>
                         <div class="col-md-3">
