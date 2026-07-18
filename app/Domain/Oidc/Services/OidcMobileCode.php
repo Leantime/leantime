@@ -2,7 +2,9 @@
 
 namespace Leantime\Domain\Oidc\Services;
 
+use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -94,14 +96,18 @@ class OidcMobileCode
     {
         $key = $this->key($rawCode);
 
-        try {
-            $lock = Cache::lock($key.'.lock', self::LOCK_SECONDS);
-        } catch (\Throwable) {
-            // Store doesn't support atomic locks — fall back to a plain
-            // read-and-delete. All default Leantime cache stores DO support
-            // locks; this is belt-and-suspenders for an exotic configuration.
-            return Cache::pull($key) !== null;
+        // Fail CLOSED: without atomic locks we cannot guarantee single-use, so
+        // refuse rather than fall back to a racy non-atomic consume (which would
+        // reintroduce the double-mint window this method exists to prevent). All
+        // default Leantime stores implement LockProvider; a store here that
+        // doesn't is a misconfiguration worth surfacing loudly, not degrading to.
+        if (! Cache::getStore() instanceof LockProvider) {
+            Log::error('OidcMobileCode: cache store does not support atomic locks; refusing mobile SSO code consume. Configure a lock-capable cache store (file/redis/memcached/database).');
+
+            return false;
         }
+
+        $lock = Cache::lock($key.'.lock', self::LOCK_SECONDS);
 
         // Non-blocking: the loser of a concurrent consume gets false immediately
         // instead of waiting, and its exchange is rejected.
