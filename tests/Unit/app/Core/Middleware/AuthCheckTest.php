@@ -87,4 +87,22 @@ class AuthCheckTest extends \Unit\TestCase
         $this->assertFalse($called, 'must not rebuild an already-established session');
         $this->assertSame(7, session('userdata.id'), 'existing userdata must be left untouched');
     }
+
+    /**
+     * The mobile SSO exchange (/oidc/mobile/exchange) arrives with no session
+     * cookie — the validated one-time code + PKCE verifier are the authorization —
+     * so it must be allow-listed as public. Guards that allow-list from regressing.
+     */
+    public function test_oidc_mobile_exchange_is_a_public_route(): void
+    {
+        $authCheck = $this->make(AuthCheck::class);
+
+        $this->assertTrue(
+            $authCheck->isPublicController('oidc.mobile.exchange'),
+            'the mobile exchange endpoint must be public (no session at exchange time)'
+        );
+
+        // Negative control: an oidc sub-route that is NOT allow-listed stays private.
+        $this->assertFalse($authCheck->isPublicController('oidc.settings.save'));
+    }
 }

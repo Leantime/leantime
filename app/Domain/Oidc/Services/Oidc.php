@@ -123,13 +123,29 @@ class Oidc
      * @throws GuzzleException
      * @throws \Exception
      */
-    public function buildLoginUrl(): string|false
+    public function buildLoginUrl(bool $mobile = false, string $mobileRedirect = '', string $codeChallenge = ''): string|false
     {
 
         if ($this->getAuthUrl()) {
 
             $state = $this->generateState();
             session(['oidc.state' => $state]);
+
+            // Mobile-brokered SSO: remember that this flow began in the app + where
+            // to hand the result back, so the callback mints a token + one-time
+            // code instead of a web session. Only a whitelisted app scheme is
+            // honored; anything else falls through to the normal web flow. The
+            // flags ride the session across the provider round-trip, same as
+            // oidc.state.
+            if ($mobile && $this->isAllowedMobileRedirect($mobileRedirect)) {
+                session([
+                    'oidc.mobile' => true,
+                    'oidc.mobileRedirect' => $mobileRedirect,
+                    'oidc.mobileChallenge' => $codeChallenge,
+                ]);
+            } else {
+                session()->forget(['oidc.mobile', 'oidc.mobileRedirect', 'oidc.mobileChallenge']);
+            }
 
             return $this->getAuthUrl().'?'.http_build_query([
                 'client_id' => $this->clientId,
@@ -199,6 +215,11 @@ class Oidc
 
     private function login(array $userInfo): Response
     {
+        // Capture the mobile-origin flags up front — before setUserSession may
+        // rebuild the session below — so the brokered redirect survives it.
+        $isMobile = (bool) session('oidc.mobile');
+        $mobileRedirect = (string) session('oidc.mobileRedirect');
+        $mobileChallenge = (string) session('oidc.mobileChallenge');
 
         $userName = $this->readMultilayerKey($userInfo, $this->fieldEmail);
 
@@ -262,7 +283,42 @@ class Oidc
 
         $this->authService->setUserSession($user, false);
 
+        // Mobile-brokered SSO: instead of landing on the web dashboard, mint a
+        // single-use one-time code bound to this user and hand it to the app via
+        // the app-scheme redirect. The app exchanges it for a bearer token at
+        // /oidc/mobile/exchange. The token itself never travels in the URL.
+        if ($isMobile && $this->isAllowedMobileRedirect($mobileRedirect)) {
+            session()->forget(['oidc.mobile', 'oidc.mobileRedirect', 'oidc.mobileChallenge']);
+
+            $code = app(\Leantime\Domain\Oidc\Services\OidcMobileCode::class)
+                ->createCode((int) $user['id'], $mobileChallenge !== '' ? $mobileChallenge : null);
+
+            $separator = str_contains($mobileRedirect, '?') ? '&' : '?';
+
+            return Frontcontroller::redirect($mobileRedirect.$separator.'code='.urlencode($code), 302);
+        }
+
         return Frontcontroller::redirect(BASE_URL.'/dashboard/home');
+    }
+
+    /**
+     * Only app-scheme redirects are honored for mobile brokering — never an
+     * arbitrary http(s) URL, which would let a crafted login link redirect the
+     * one-time code to an attacker.
+     */
+    private function isAllowedMobileRedirect(string $redirect): bool
+    {
+        // Also reject whitespace/control chars — the redirect ultimately
+        // lands in a Location header, where Symfony rejects control chars
+        // (500) and header-injection payloads embed CR/LF.
+        if ($redirect !== trim($redirect)) {
+            return false;
+        }
+        if (preg_match('/[\p{C}\s]/u', $redirect) === 1) {
+            return false;
+        }
+
+        return str_starts_with($redirect, 'leantime://');
     }
 
     private function getUserRole(array $userInfo, array $user = []): string
