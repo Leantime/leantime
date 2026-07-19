@@ -1915,9 +1915,14 @@ class Tickets
             ->where('module', 'ticket')
             ->where('userId', $userId)
             ->whereBetween('date', [$fromDate.' 00:00:00', $toDate.' 23:59:59'])
+            // moduleId is nullable in the schema; skip NULLs at the query level so
+            // (int) NULL doesn't inject a bogus id 0 into the downstream whereIn().
+            ->whereNotNull('moduleId')
             ->distinct()
             ->pluck('moduleId')
             ->map(fn ($id) => (int) $id)
+            ->filter() // belt-and-suspenders: drop any 0 (e.g. an empty-string id)
+            ->values()
             ->all();
     }
 
