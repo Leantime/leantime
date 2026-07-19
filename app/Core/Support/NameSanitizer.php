@@ -52,6 +52,8 @@ class NameSanitizer
         $name = preg_replace('/\s+/u', ' ', $name) ?? '';
         $name = trim($name);
 
-        return mb_substr($name, 0, self::MAX_LENGTH);
+        // Explicit UTF-8 so the length cap is deterministic regardless of the
+        // PHP internal-encoding setting (multi-script names count by codepoint).
+        return mb_substr($name, 0, self::MAX_LENGTH, 'UTF-8');
     }
 }

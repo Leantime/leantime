@@ -414,11 +414,16 @@ class Users extends BaseService
             $inviterDisplay .= ' ('.$inviterEmail.')';
         }
 
+        // Every interpolated value is HTML-escaped with a fixed UTF-8 encoding (ENT_SUBSTITUTE
+        // replaces invalid byte sequences rather than emitting an empty string). The link sits
+        // inside a single-quoted href, so ENT_QUOTES is required even though it is system-built.
+        $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
         $message = sprintf(
             $this->language->__('email_notifications.user_invite_message'),
-            htmlspecialchars($inviterDisplay, ENT_QUOTES),
-            $actual_link,
-            $user
+            $escape($inviterDisplay),
+            $escape($actual_link),
+            $escape($user)
         );
 
         $mailer->setHtml($message);
@@ -432,8 +437,17 @@ class Users extends BaseService
      * Checks and consumes the invite-email rate limit for the authenticated inviter.
      *
      * Caps invites per inviting user per hour and per installation per day so a single
-     * account cannot use invite emails as a spam channel. Unauthenticated flows (public
-     * signup) are not counted here — they are throttled per-IP at the request level.
+     * account cannot use invite emails as a spam channel. This is the entry-point-agnostic
+     * backstop: it covers the web form, JSON-RPC (leantime.rpc.*.inviteNewUser) and resend
+     * alike, because it runs in the service layer. The per-IP throttle in RequestRateLimiter
+     * is an additional layer for the unauthenticated/web signup form only.
+     *
+     * The counter records invite *attempts*, not successful sends: the token is consumed
+     * before the DB insert, so a subsequent insert failure still counts. This is deliberate —
+     * it fails safe (over-counts, never under-counts) and keeps the check side-effect-cheap.
+     *
+     * Not logged per attempt: a blocked attacker could otherwise amplify the block into log
+     * spam. Enforcement is the RateLimiter itself; aggregate abuse monitoring belongs elsewhere.
      *
      * @return bool True when the limit is exhausted and no invite may be sent.
      */
@@ -454,8 +468,6 @@ class Users extends BaseService
 
         if (RateLimiter::tooManyAttempts($userKey, $userLimit)
             || RateLimiter::tooManyAttempts($tenantKey, $tenantLimit)) {
-            Log::warning('Invite rate limit reached: '.$userKey);
-
             return true;
         }
 
@@ -1395,8 +1407,9 @@ class Users extends BaseService
      * sends the invitation email.
      *
      * Returns a status code the controller maps to a notification:
-     *   - 'sent'      invitation sent
-     *   - 'too_soon'  another invite was sent within the rate-limit window
+     *   - 'sent'             invitation sent
+     *   - 'too_soon'         another invite was sent within the 240s resend cooldown
+     *   - 'too_many_invites' the hourly/daily invite cap was reached
      *
      * @param  int  $id  The id of the user to re-invite.
      * @param  array<string, mixed>  $row  The current stored user row.
@@ -1414,7 +1427,7 @@ class Users extends BaseService
         }
 
         if ($this->invitesRateLimited()) {
-            return 'too_soon';
+            return 'too_many_invites';
         }
 
         session(['lastInvite.'.$id => time()]);

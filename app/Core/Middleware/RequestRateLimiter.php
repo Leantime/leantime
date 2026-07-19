@@ -55,17 +55,23 @@ class RequestRateLimiter
             return $next($request);
         }
 
-        $route = $request->getCurrentRoute();
+        // Normalize once: the Frontcontroller resolves controller classes case-insensitively, so
+        // /Users/NewUser and /auth/Login reach the same controllers as their lowercase forms. Match
+        // on the lowercased route so a mixed-case path can't slip past the login or signup limiter.
+        $route = strtolower($request->getCurrentRoute());
 
-        // Abuse-sensitive POSTs: self-serve workspace signup and user invites. These send
-        // email and provision resources, so they get a tight per-IP budget (invite-spam abuse).
-        // Lowercased match: the Frontcontroller resolves controller classes case-insensitively,
-        // so /users/newuser reaches the same controller as /users/newUser.
-        $isSignupPost = in_array(strtolower($route), ['accounts.register', 'accounts.newteam', 'users.newuser'], true)
+        $isLoginRoute = $route === 'auth.login';
+
+        // Abuse-sensitive POSTs: self-serve workspace signup and user invites. These send email and
+        // provision resources, so the web form gets a tight per-IP budget (invite-spam abuse). The
+        // JSON-RPC invite path (an ApiRequest) is NOT caught here — it is an API request throttled at
+        // the API budget, and its real backstop is the per-user/per-tenant cap in
+        // Users::invitesRateLimited(), which is entry-point-agnostic.
+        $isSignupPost = in_array($route, ['accounts.register', 'accounts.newteam', 'users.newuser'], true)
             && $request->isMethod('POST');
 
         // Only check rate limits for login page, signup/invite posts, api calls, and the MCP endpoint
-        if ($route != 'auth.login' && ! $isSignupPost && ! $request->isApiOrCronRequest() && ! $request->isMcpRequest()) {
+        if (! $isLoginRoute && ! $isSignupPost && ! $request->isApiOrCronRequest() && ! $request->isMcpRequest()) {
             return $next($request);
         }
 
@@ -111,10 +117,12 @@ class RequestRateLimiter
 
         if ($isSignupPost) {
             $limit = $rateLimitSignup;
-            $key = $key.':signup';
+            // Strictly per-IP: the signup form is unauthenticated (no session user id), and pinning
+            // to IP alone stops one host from cycling sessions to widen its budget.
+            $key = 'ratelimit-'.($request->getClientIp()).':signup';
         }
 
-        if ($route == 'auth.login') {
+        if ($isLoginRoute) {
             $limit = $rateLimitAuth;
             $key = $key.':loginAttempts';
 

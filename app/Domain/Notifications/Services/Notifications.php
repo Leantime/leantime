@@ -355,7 +355,7 @@ class Notifications
             return;
         }
 
-        $authorName = htmlentities(NameSanitizer::clean($author['firstname'] ?? ''));
+        $authorName = htmlspecialchars(NameSanitizer::clean($author['firstname'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         for ($i = 0; $i < $links->count(); $i++) {
             $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');
