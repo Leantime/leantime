@@ -709,7 +709,7 @@ class Tickets
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
-    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = [], bool $excludeClosedProjects = false): array|false
+    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = [], bool $excludeClosedProjects = false, array $ticketIds = []): array|false
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
         $clientId = session('userdata.clientId') ?? '-1';
@@ -781,6 +781,12 @@ class Tickets
 
         if (count($types) > 0) {
             $query->whereIn('zp_tickets.type', $types);
+        }
+
+        // Restrict to a known id set (e.g. commented tickets) at the SQL level so
+        // callers never have to load the full access-scoped universe to intersect.
+        if ($ticketIds !== []) {
+            $query->whereIn('zp_tickets.id', array_map('intval', $ticketIds));
         }
 
         // Closed projects (state === -1) are inactive. Callers wanting a "my

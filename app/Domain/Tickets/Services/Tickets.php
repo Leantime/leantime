@@ -2547,8 +2547,9 @@ class Tickets extends BaseService
         if ($userId === 0) {
             return [];
         }
-        $from = $from ?: date('Y-m-d');
-        $to = $to ?: date('Y-m-d');
+        // "Today" in the user's calendar, not the server's.
+        $from = $from ?: dtHelper()->userNow()->format('Y-m-d');
+        $to = $to ?: dtHelper()->userNow()->format('Y-m-d');
         if ($from > $to) {
             [$from, $to] = [$to, $from];
         }
@@ -2558,27 +2559,19 @@ class Tickets extends BaseService
             return [];
         }
 
-        // Access-scoped universe — never returns a ticket outside the user's
-        // project access, so intersecting against it makes the comment lookup
-        // safe regardless of what was commented on historically. The user id
-        // must NOT be passed here: it would narrow the set to editor/collaborator
-        // tickets, and "supported" tickets are by definition neither (commenting
-        // doesn't create a collaborator relationship).
-        $accessible = $this->ticketRepository->simpleTicketQuery(null, null);
+        // Access-scoped fetch of ONLY the commented ids — the project-access predicate
+        // applies in SQL, so a comment can never surface a ticket the user can no longer
+        // see, and the full ticket universe is never loaded. The user id must NOT be
+        // passed here: it would narrow the set to editor/collaborator tickets, and
+        // "supported" tickets are by definition neither (commenting doesn't create a
+        // collaborator relationship).
+        $accessible = $this->ticketRepository->simpleTicketQuery(null, null, [], false, $commentedIds);
         if (! is_array($accessible) || empty($accessible)) {
             return [];
         }
-        $byId = [];
-        foreach ($accessible as $ticket) {
-            $byId[(int) $ticket['id']] = $ticket;
-        }
 
-        $commentedLookup = array_flip($commentedIds);
         $out = [];
-        foreach ($byId as $id => $ticket) {
-            if (! isset($commentedLookup[$id])) {
-                continue;
-            }
+        foreach ($accessible as $ticket) {
             // "Supported", not "yours": drop tickets you're the editor of.
             if ((string) ($ticket['editorId'] ?? '') === (string) $userId) {
                 continue;

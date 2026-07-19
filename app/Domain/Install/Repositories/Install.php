@@ -431,6 +431,8 @@ class Install
                     `assumptions` text,
                     `data` MEDIUMTEXT,
                     `conclusion` text,
+                    `why_this_matters` text,
+                    `starting_picture` text,
                     `box` varchar(255) DEFAULT NULL,
                     `author` int(11) DEFAULT NULL,
                     `created` datetime DEFAULT NULL,

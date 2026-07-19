@@ -39,7 +39,18 @@ use Unit\TestCase;
  */
 class ResourceStructureServiceTest extends TestCase
 {
-    public function test_getForProjects_returns_empty_summary_when_projectIds_is_empty(): void
+    protected function setUp(): void
+    {
+        // The OSS CI checkout has an empty app/Plugins (private submodule) — the classes
+        // under test only exist when the plugins are present. Skip, don't error.
+        if (! class_exists(ResourceStructureService::class)) {
+            $this->markTestSkipped('PgmPro plugin is not present in this checkout.');
+        }
+
+        parent::setUp();
+    }
+
+    public function test_get_for_projects_returns_empty_summary_when_project_ids_is_empty(): void
     {
         $svc = $this->makeService(canvasIds: [1], items: []);
         $summary = $svc->getForProjects([]);
@@ -48,7 +59,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertTrue($summary->isEmpty());
     }
 
-    public function test_getForProjects_returns_empty_summary_when_no_resource_canvas(): void
+    public function test_get_for_projects_returns_empty_summary_when_no_resource_canvas(): void
     {
         $svc = $this->makeService(canvasIds: [], items: []);
         $summary = $svc->getForProjects([1, 2]);
@@ -58,7 +69,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(0.0, $summary->totalCapacity);
     }
 
-    public function test_getForProjects_excludes_stub_people_from_totals(): void
+    public function test_get_for_projects_excludes_stub_people_from_totals(): void
     {
         // Active person: capacity 40, allocated 30. Stub person: default 40.
         // The report and the tab must agree — the tab excludes stubs from
@@ -93,7 +104,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(30.0, $summary->totalAllocated);
     }
 
-    public function test_getForProjects_excludes_stub_budget_lines_from_array_and_totals(): void
+    public function test_get_for_projects_excludes_stub_budget_lines_from_array_and_totals(): void
     {
         $svc = $this->makeService(
             canvasIds: [100],
@@ -124,7 +135,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(2000.0, $summary->totalSpent);
     }
 
-    public function test_getForProjects_aggregates_across_multiple_canvases(): void
+    public function test_get_for_projects_aggregates_across_multiple_canvases(): void
     {
         // A strategy with two programs, each with its own resource canvas.
         // The gateway must sum across both.
@@ -153,7 +164,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(35.0, $summary->totalAllocated);
     }
 
-    public function test_seedPeopleFromChildProjects_is_idempotent_by_userId(): void
+    public function test_seed_people_from_child_projects_is_idempotent_by_user_id(): void
     {
         // Two child projects; user 5 assigned to both, user 7 to one.
         // First run: 2 people added (5 and 7). Second run: 0 added, 2 skipped
@@ -209,7 +220,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(5, $addCalls[0]['data']['userId']);
     }
 
-    public function test_getForProjects_hydrates_a_dependency_with_none_of_the_optional_fields(): void
+    public function test_get_for_projects_hydrates_a_dependency_with_none_of_the_optional_fields(): void
     {
         // Back-compat guarantee for pre-existing dependency canvas items —
         // owner/dueDate/notes/lastModified were added later. An item authored
@@ -253,7 +264,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertNull($dep->lastModified);
     }
 
-    public function test_seedBudgetFromChildProjects_is_idempotent_by_projectId(): void
+    public function test_seed_budget_from_child_projects_is_idempotent_by_project_id(): void
     {
         // Same skip-when-present contract, keyed on projectId. A child with
         // dollarBudget=0 is skipped entirely (no line to seed).
@@ -311,7 +322,7 @@ class ResourceStructureServiceTest extends TestCase
             itemsByBoxProvider: fn (int $canvasId, string $box) => $items[$canvasId][$box] ?? [],
         );
 
-        return new class ($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms(), $canvasIds) extends ResourceStructureService
+        return new class($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms(), $canvasIds) extends ResourceStructureService
         {
             /** @param int[] $canvasIds */
             public function __construct(

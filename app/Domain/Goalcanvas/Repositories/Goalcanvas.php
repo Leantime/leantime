@@ -701,7 +701,12 @@ class Goalcanvas extends Blueprints
 
         parent::editCanvasItem($values);
 
-        if ($previousValue !== null && array_key_exists('currentValue', $values) && (float) $values['currentValue'] !== (float) $previousValue) {
+        if (
+            $previousValue !== false
+            && array_key_exists('currentValue', $values)
+            && is_numeric($values['currentValue'])
+            && ($previousValue === null || (float) $values['currentValue'] !== $previousValue)
+        ) {
             $this->recordGoalValueHistory($itemId, $values['currentValue']);
         }
     }
@@ -713,11 +718,16 @@ class Goalcanvas extends Blueprints
      */
     public function patchCanvasItem(int $id, array $params): bool
     {
-        $previousValue = array_key_exists('currentValue', $params) ? $this->getCurrentGoalValue($id) : null;
+        $previousValue = array_key_exists('currentValue', $params) ? $this->getCurrentGoalValue($id) : false;
 
         $result = parent::patchCanvasItem($id, $params);
 
-        if ($result && $previousValue !== null && (float) $params['currentValue'] !== (float) $previousValue) {
+        if (
+            $result
+            && $previousValue !== false
+            && is_numeric($params['currentValue'])
+            && ($previousValue === null || (float) $params['currentValue'] !== $previousValue)
+        ) {
             $this->recordGoalValueHistory($id, $params['currentValue']);
         }
 
@@ -754,7 +764,8 @@ class Goalcanvas extends Blueprints
         }
 
         $inserts = [];
-        $now = now();
+        // History reads normalize to UTC — write explicit UTC, not the app timezone.
+        $now = dtHelper()->dbNow()->formatDateTimeForDb();
         foreach ($goals as $goal) {
             // Goals without a numeric value have no trend point to record — casting NULL
             // to 0.0 would fabricate history (mirrors recordGoalValueHistory's guard).
@@ -961,10 +972,15 @@ class Goalcanvas extends Blueprints
     /**
      * The stored metric value of a goal item, or null when the item isn't a goal (or is unknown).
      */
-    private function getCurrentGoalValue(int $itemId): ?float
+    /**
+     * The stored metric value of a goal item, three-state: false when the item isn't a
+     * goal (or is unknown) — record nothing; null when the goal has no numeric value yet —
+     * a first value (including an explicit 0) must record; otherwise the float value.
+     */
+    private function getCurrentGoalValue(int $itemId): float|null|false
     {
         if ($itemId === 0) {
-            return null;
+            return false;
         }
 
         $item = $this->dbConnection->table('zp_canvas_items')
@@ -973,6 +989,10 @@ class Goalcanvas extends Blueprints
             ->first();
 
         if ($item === null || $item->box !== 'goal') {
+            return false;
+        }
+
+        if ($item->currentValue === null || $item->currentValue === '' || ! is_numeric($item->currentValue)) {
             return null;
         }
 
@@ -992,7 +1012,8 @@ class Goalcanvas extends Blueprints
             'itemId' => $itemId,
             'value' => (float) $value,
             'userId' => session()->exists('userdata') ? (int) session('userdata.id') : null,
-            'dateRecorded' => now(),
+            // History reads normalize to UTC — write explicit UTC, not the app timezone.
+            'dateRecorded' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ]);
     }
 }

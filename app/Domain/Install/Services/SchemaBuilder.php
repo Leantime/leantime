@@ -197,6 +197,8 @@ class SchemaBuilder
             $table->text('assumptions')->nullable();
             $table->text('data')->nullable();
             $table->text('conclusion')->nullable();
+            $table->text('why_this_matters')->nullable();
+            $table->text('starting_picture')->nullable();
             $table->string('box', 255)->nullable();
             $table->integer('author')->nullable();
             $table->dateTime('created')->nullable();
