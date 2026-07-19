@@ -462,9 +462,10 @@ class Users extends BaseService
         $userLimit = (int) ($config->ratelimitInvitesUser ?? 10);
         $tenantLimit = (int) ($config->ratelimitInvitesTenant ?? 30);
 
-        $host = parse_url(BASE_URL, PHP_URL_HOST) ?: 'default';
-        $userKey = 'invites:'.$host.':user:'.$inviterId;
-        $tenantKey = 'invites:'.$host.':tenant';
+        // BASE_URL is defined for every web/console entry (LoadConfig / SetRequestForConsole) and
+        // namespaces the counters per install/tenant so keys never collide across workspaces.
+        $userKey = 'invites:'.BASE_URL.':user:'.$inviterId;
+        $tenantKey = 'invites:'.BASE_URL.':tenant';
 
         if (RateLimiter::tooManyAttempts($userKey, $userLimit)
             || RateLimiter::tooManyAttempts($tenantKey, $tenantLimit)) {

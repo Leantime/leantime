@@ -89,11 +89,11 @@ class InviteRateLimitTest extends TestCase
      */
     private function limiterKeys(): array
     {
-        $host = (defined('BASE_URL') ? parse_url(BASE_URL, PHP_URL_HOST) : null) ?: 'default';
+        $scope = defined('BASE_URL') ? BASE_URL : 'default';
 
         return [
-            'invites:'.$host.':user:'.self::INVITER_ID,
-            'invites:'.$host.':tenant',
+            'invites:'.$scope.':user:'.self::INVITER_ID,
+            'invites:'.$scope.':tenant',
         ];
     }
 }
