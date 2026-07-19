@@ -105,4 +105,14 @@ class AuthCheckTest extends \Unit\TestCase
         // Negative control: an oidc sub-route that is NOT allow-listed stays private.
         $this->assertFalse($authCheck->isPublicController('oidc.settings.save'));
     }
+
+    public function test_status_discovery_is_a_public_route(): void
+    {
+        $authCheck = $this->make(AuthCheck::class);
+
+        // The mobile app hits /status unauthenticated at connect time to discover
+        // login methods, so the route must be public.
+        $this->assertTrue($authCheck->isPublicController('status.index'));
+        $this->assertTrue($authCheck->isPublicController('status'));
+    }
 }
