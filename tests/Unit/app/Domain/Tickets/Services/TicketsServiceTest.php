@@ -591,4 +591,28 @@ class TicketsServiceTest extends TestCase
         $this->assertEquals(10, $result[0]['id']);
         $this->assertEquals('2026-07-10 10:00:00', $result[0]['dateClosed']);
     }
+
+    public function test_closed_tickets_range_forces_session_user_for_non_admin(): void
+    {
+        // Non-admin session user (no admin role granted).
+        session(['userdata' => ['id' => 1]]);
+        $capturedUserId = 'unset';
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => function (...$args) use (&$capturedUserId) {
+                $capturedUserId = $args[0] ?? null;
+
+                return []; // no done tickets — the asserted-on value is the userId
+            },
+            'getStateLabels' => fn (...$args) => [],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+
+        // Caller supplies SOMEONE ELSE's id — the IDOR guard must force it back
+        // to the session user before any query runs.
+        $service->getMyClosedTicketsForRange(999, '2026-07-01', '2026-07-10');
+
+        $this->assertSame(1, $capturedUserId, 'a non-admin must not read another user\'s closures — userId is forced to the session user');
+    }
 }
