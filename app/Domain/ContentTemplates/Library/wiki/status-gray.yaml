@@ -11,4 +11,4 @@ sector: "t:templates.elements"
 wiki:
   articles:
     - title: "Gray Status"
-      content: '<span class="label label-default">Gray</span>'
+      content: '<p><mark data-color="#95A5A6" style="background-color: #95A5A6; color: #ffffff; padding: 0 6px; border-radius: 3px;">Gray</mark></p>'

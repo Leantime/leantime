@@ -412,6 +412,7 @@ class Tickets
                 't2.profileId as editorProfileId',
                 'milestone.headline as milestoneHeadline',
                 'parent.headline as parentHeadline',
+                'zp_tickets.modified',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
             ->selectRaw('CASE WHEN ('.$this->dbHelper->wrapColumn('milestone.tags').' IS NULL OR '.$this->dbHelper->wrapColumn('milestone.tags')." = '') THEN 'var(--grey)' ELSE ".$this->dbHelper->wrapColumn('milestone.tags').' END AS '.$this->dbHelper->wrapColumn('milestoneColor'))
@@ -708,7 +709,7 @@ class Tickets
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
-    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = []): array|false
+    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = [], bool $excludeClosedProjects = false): array|false
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
         $clientId = session('userdata.clientId') ?? '-1';
@@ -780,6 +781,17 @@ class Tickets
 
         if (count($types) > 0) {
             $query->whereIn('zp_tickets.type', $types);
+        }
+
+        // Closed projects (state === -1) are inactive. Callers wanting a "my
+        // active work" view drop their tickets at the SQL level so closed-
+        // project rows are never fetched or returned — matches the existing
+        // `state <> -1 OR state IS NULL` pattern used elsewhere in this repo.
+        if ($excludeClosedProjects) {
+            $query->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
+            });
         }
 
         $results = $query->orderByDesc('zp_tickets.dateToFinish')
@@ -969,6 +981,7 @@ class Tickets
                 't3.firstname as editorFirstname',
                 't3.lastname as editorLastname',
                 'parent.headline as parentHeadline',
+                'zp_tickets.modified',
             ])
             ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
             ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
@@ -1825,7 +1838,12 @@ class Tickets
                 isset($values[$dbTable]) === true &&
                 isset($oldValues[$dbTable]) === true &&
                 ($oldValues[$dbTable] != $values[$dbTable]) &&
-                ($values[$dbTable] != '')
+                // Skip genuine "cleared to empty" writes, but STRICTLY — a loose
+                // `!= ''` also drops valid falsy values, most importantly
+                // status 0 (Done). That silently kept ticket-closures out of
+                // zp_tickethistory, so burndown/throughput and the mobile
+                // Progress "closed on date" reflection never saw them.
+                ($values[$dbTable] !== '' && $values[$dbTable] !== null)
             ) {
                 $historyRows[] = [
                     'userId' => $userId,

@@ -11,4 +11,4 @@ sector: "t:templates.elements"
 wiki:
   articles:
     - title: "Yellow Status"
-      content: '<span class="label label-warning">Yellow</span>'
+      content: '<p><mark data-color="#F1C40F" style="background-color: #F1C40F; color: #1a1a1a; padding: 0 6px; border-radius: 3px;">Yellow</mark></p>'
