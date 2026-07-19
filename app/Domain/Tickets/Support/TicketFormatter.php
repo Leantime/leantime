@@ -98,7 +98,11 @@ class TicketFormatter extends AbstractEntityFormatter
             'tags' => $this->sanitizeValue($this->ticket->tags),
             'dependingTicketId' => $this->ticket->dependingTicketId,
             'parentHeadline' => $this->sanitizeValue($this->ticket->parentHeadline),
-            'lastUpdated' => $this->formatDate($this->ticket->date),
+            // "Last updated" must reflect the last modification, not creation.
+            // It was reading ->date (the create timestamp), so every ticket
+            // reported its creation date as "last updated". Fall back to date
+            // only when modified is absent (legacy rows / partial selects).
+            'lastUpdated' => $this->formatDate($this->ticket->modified ?: $this->ticket->date),
             'bookedHours' => $this->sanitizeValue($this->ticket->bookedHours),
             'hourRemaining' => $this->sanitizeValue($this->ticket->hourRemaining),
             'percentDone' => $this->sanitizeValue($this->ticket->percentDone),
