@@ -84,14 +84,14 @@ class OidcMobileCode
      * Burn the code once and report whether THIS caller consumed it.
      *
      * The read-and-delete is guarded by a non-blocking cache lock keyed on the
-     * code: of two concurrent exchanges that both peekCode()'d it, only the lock
-     * holder performs the get()+forget() and can return true — so at most one
-     * exchange mints from a single-use code. A caller that can't take the lock (a
-     * concurrent consume is in flight) gets false and must not mint; so does an
-     * already-consumed or unknown code.
+     * code: of two concurrent exchanges that both called peekCode() on it, only
+     * the lock holder performs the get()+forget() and can return true — so at
+     * most one exchange mints from a single-use code. A caller that can't take
+     * the lock (a concurrent consume is in flight) gets false and must not mint;
+     * so does an already-consumed or unknown code.
      *
-     * (A bare Cache::pull is NOT used precisely because it is get()+forget(), not
-     * a single atomic op on any driver — two callers could both read the code
+     * (A bare Cache::pull() is NOT used precisely because it is get()+forget(),
+     * not a single atomic op on any driver — two callers could both read the code
      * before either deletes it, and both mint. The lock closes that window.)
      */
     public function consumeCode(string $rawCode): bool
