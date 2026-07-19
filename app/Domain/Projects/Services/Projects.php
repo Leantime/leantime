@@ -1207,7 +1207,11 @@ class Projects extends BaseService implements ChecksProjectAccess
             return false;
         }
 
-        $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: 'all');
+        // projectStatus 'open' excludes archived projects (state === -1) at the
+        // query level — "projects I'm actively working in" shouldn't surface
+        // archived ones. Without it this defaulted to 'all' and returned
+        // archived projects too (they were padding the mobile project picker).
+        $projects = $this->projectRepository->getUserProjects(userId: $userId, projectStatus: 'open', accessStatus: 'all');
         if (! $projects) {
             return false;
         }
