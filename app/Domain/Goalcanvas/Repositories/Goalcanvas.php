@@ -775,6 +775,184 @@ class Goalcanvas extends Blueprints
     }
 
     /**
+     * The recorded value of a goal at a point in time — the last snapshot on
+     * or before {@see $asOf}. Returns null when the goal has no history at or
+     * before that date.
+     *
+     * Periods are a query, never stored: a period's value is whatever the
+     * last snapshot on or before its end date says. Missing days don't matter
+     * because the last known value carries — the write path is intentionally
+     * sparse (only fires when the value changes) and this read is what makes
+     * that sparseness invisible to callers.
+     *
+     * `$asOf` is normalized to UTC before comparison because `zp_goal_history`
+     * rows are always written in UTC (per the CLAUDE.md db-time convention);
+     * callers can pass a user-tz DateTime without silently drifting by hours.
+     */
+    public function getGoalValueAt(int $itemId, \DateTimeInterface $asOf): ?float
+    {
+        if ($itemId <= 0) {
+            return null;
+        }
+
+        $asOfUtc = (new \DateTimeImmutable('@'.$asOf->getTimestamp()))
+            ->setTimezone(new \DateTimeZone('UTC'));
+
+        $row = $this->dbConnection->table('zp_goal_history')
+            ->select('value')
+            ->where('itemId', $itemId)
+            ->where('dateRecorded', '<=', $asOfUtc->format('Y-m-d H:i:s'))
+            ->orderByDesc('dateRecorded')
+            ->orderByDesc('id')
+            ->first();
+
+        return $row === null ? null : (float) $row->value;
+    }
+
+    /**
+     * The recorded values of a set of goals at a series of dates. Returned as
+     * `[goalId => [YYYY-MM-DD_HH:MM:SS => ?float]]`, one entry per requested
+     * `(goalId, date)` pair. Null carries "no snapshot on or before that
+     * date" through unchanged — callers decide how to render an unmeasured
+     * period-end (Page 4 "How far we've come" draws it as a ghost bar).
+     *
+     * One SELECT per goal (not per goal×date). We fetch every snapshot up to
+     * the latest requested date once and bucket in PHP — a 20-goal × 12-date
+     * arc goes from 240 round-trips to 20. The date keys in the returned
+     * array are formatted in UTC to match the read semantic.
+     *
+     * @param  int[]                     $itemIds  Goal (canvas item) ids.
+     * @param  array<\DateTimeInterface> $dates    Period-end (or arbitrary) dates.
+     * @return array<int, array<string, ?float>>
+     */
+    public function getGoalValuesAtSeries(array $itemIds, array $dates): array
+    {
+        $itemIds = array_values(array_unique(array_map('intval', $itemIds)));
+        $itemIds = array_values(array_filter($itemIds, static fn (int $id): bool => $id > 0));
+        if ($itemIds === [] || $dates === []) {
+            return [];
+        }
+
+        // Normalize dates to UTC and sort ascending — we walk snapshots
+        // forward per goal and advance the requested-date cursor in lockstep.
+        $utcTz = new \DateTimeZone('UTC');
+        $normalizedDates = array_map(
+            static fn (\DateTimeInterface $d) => (new \DateTimeImmutable('@'.$d->getTimestamp()))->setTimezone($utcTz),
+            $dates
+        );
+        usort($normalizedDates, static fn ($a, $b) => $a <=> $b);
+        $dateKeys = array_map(static fn ($d) => $d->format('Y-m-d H:i:s'), $normalizedDates);
+        $latestDate = end($normalizedDates)->format('Y-m-d H:i:s');
+
+        // Prime output with nulls in the original (sorted) key order.
+        $out = [];
+        foreach ($itemIds as $id) {
+            $out[$id] = array_fill_keys($dateKeys, null);
+        }
+
+        // One SELECT per goal, capped at the latest requested date. Rows come
+        // back date-ASC so we can carry-forward the last value through gap
+        // dates in a single pass.
+        foreach ($itemIds as $id) {
+            $rows = $this->dbConnection->table('zp_goal_history')
+                ->select(['value', 'dateRecorded', 'id'])
+                ->where('itemId', $id)
+                ->where('dateRecorded', '<=', $latestDate)
+                ->orderBy('dateRecorded')
+                ->orderBy('id')
+                ->get();
+
+            $cursor = 0;
+            $lastValue = null;
+            foreach ($rows as $row) {
+                $rowDate = (string) $row->dateRecorded;
+                // Advance any date-keys we've now passed, stamping the value
+                // that was current on-or-before each one.
+                while ($cursor < count($dateKeys) && $rowDate > $dateKeys[$cursor]) {
+                    $out[$id][$dateKeys[$cursor]] = $lastValue;
+                    $cursor++;
+                }
+                $lastValue = (float) $row->value;
+            }
+            // Any remaining date-keys are at or after every snapshot — stamp
+            // the last-known value for each.
+            while ($cursor < count($dateKeys)) {
+                $out[$id][$dateKeys[$cursor]] = $lastValue;
+                $cursor++;
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Bulk-insert history rows from an already-parsed set of tuples. Used by
+     * the CSV backfill command; rows are indistinguishable from ones written
+     * by {@see recordGoalValueHistory} or {@see snapshotGoalValues} — same
+     * table, same columns.
+     *
+     * NOT `@api`. This is a mass-write repository method with no permission
+     * check by design — callers (the CSV backfill CLI command) are trusted
+     * shell-level admin actions. Do NOT expose over JSON-RPC or any user-
+     * reachable surface without a service wrapper that enforces authz.
+     *
+     * Chunks to 500 rows per INSERT to stay under `max_allowed_packet` on
+     * default MySQL configs, and wraps the whole run in a transaction so a
+     * mid-import failure rolls back cleanly.
+     *
+     * @param  array<int, array{itemId: int, value: float, dateRecorded: string, userId?: ?int}>  $rows
+     * @return int  Rows written.
+     */
+    public function insertGoalHistoryRows(array $rows): int
+    {
+        if ($rows === []) {
+            return 0;
+        }
+
+        $written = 0;
+        $this->dbConnection->transaction(function () use ($rows, &$written): void {
+            foreach (array_chunk($rows, 500) as $chunk) {
+                $this->dbConnection->table('zp_goal_history')->insert($chunk);
+                $written += count($chunk);
+            }
+        });
+
+        return $written;
+    }
+
+    /**
+     * Given a set of `zp_canvas_items.id` values, return the subset that are
+     * actually goals (i.e. `box='goal'` on a goal-type canvas). Used by the
+     * CSV backfill command to reject rows targeting non-goal item ids before
+     * writing to `zp_goal_history` — an integrity check on write, since the
+     * history table has no foreign key to enforce this.
+     *
+     * @param  int[]  $itemIds
+     * @return int[]  Sorted, de-duplicated valid goal item ids.
+     */
+    public function filterGoalItemIds(array $itemIds): array
+    {
+        $itemIds = array_values(array_unique(array_map('intval', $itemIds)));
+        $itemIds = array_values(array_filter($itemIds, static fn (int $id): bool => $id > 0));
+        if ($itemIds === []) {
+            return [];
+        }
+
+        $rows = $this->dbConnection->table('zp_canvas_items')
+            ->select('zp_canvas_items.id')
+            ->join('zp_canvas', 'zp_canvas_items.canvasId', '=', 'zp_canvas.id')
+            ->where('zp_canvas.type', '=', static::CANVAS_NAME.'canvas')
+            ->where('zp_canvas_items.box', '=', 'goal')
+            ->whereIn('zp_canvas_items.id', $itemIds)
+            ->get();
+
+        $valid = array_map(static fn ($r) => (int) $r->id, $rows->all());
+        sort($valid);
+
+        return $valid;
+    }
+
+    /**
      * The stored metric value of a goal item, or null when the item isn't a goal (or is unknown).
      */
     private function getCurrentGoalValue(int $itemId): ?float

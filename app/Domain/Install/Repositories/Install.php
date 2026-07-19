@@ -93,6 +93,7 @@ class Install
         30519,
         30520,
         30521,
+        30522,
     ];
 
     /**
@@ -2890,6 +2891,41 @@ class Install
             Log::error('Migration 30521: '.$e->getMessage());
 
             return ['Migration 30521 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30522: adds two authored-meaning fields to canvas items.
+     *
+     *   why_this_matters — the human change (Outcome and Impact items).
+     *   starting_picture — the world today, before the work (Impact only).
+     *
+     * Both nullable, both additive. `conclusion` is untouched — going forward
+     * it narrows to "as measured by" methodology only. The report's Impact
+     * Journey page (Page 4) reads `why_this_matters` as the meaning lead
+     * where present, falling back to today's rendering when absent.
+     */
+    public function update_sql_30522(): bool|array
+    {
+        try {
+            if (Schema::hasTable('zp_canvas_items')) {
+                if (! Schema::hasColumn('zp_canvas_items', 'why_this_matters')) {
+                    Schema::table('zp_canvas_items', function (Blueprint $table) {
+                        $table->text('why_this_matters')->nullable()->after('conclusion');
+                    });
+                }
+                if (! Schema::hasColumn('zp_canvas_items', 'starting_picture')) {
+                    Schema::table('zp_canvas_items', function (Blueprint $table) {
+                        $table->text('starting_picture')->nullable()->after('why_this_matters');
+                    });
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30522: '.$e->getMessage());
+
+            return ['Migration 30522 failed: '.$e->getMessage()];
         }
 
         return true;
