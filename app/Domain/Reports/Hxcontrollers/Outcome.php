@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Leantime\Domain\Reports\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
-use Leantime\Domain\Reports\Models\ReportPeriod;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 /**
@@ -38,7 +37,6 @@ class Outcome extends HtmxController
 
         $this->tpl->assign('milestone', $milestone);
         $this->tpl->assign('canEdit', true);
-        $this->tpl->assign('period', ReportPeriod::fromRequest($_POST));
         $this->tpl->setNotification($this->language->__('notifications.outcome_saved'), 'success');
     }
 }

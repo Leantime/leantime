@@ -515,13 +515,20 @@
     // Assemble a normalized note list with a "portfolio" flag so the
     // portfolio note leads and per-program notes follow.
     $narrativeNotes = [];
-    foreach (($strategyUpdates ?? []) as $note) {
+    // strategyUpdates is keyed by projectId => array of updates (same shape as
+    // programUpdates below) — take the newest note of the report subject itself.
+    foreach (($strategyUpdates ?? []) as $notes) {
+        $notesArr = is_array($notes) ? $notes : [$notes];
+        if (empty($notesArr)) {
+            continue;
+        }
+        $newest = $notesArr[0]; // repo returns newest first
         $narrativeNotes[] = [
             'label'     => __('stakeholder.overview.narrative_portfolio'),
-            'text'      => trim(strip_tags((string) ($note->text ?? ''))),
-            'date'      => (string) ($note->date ?? ''),
+            'text'      => trim(strip_tags((string) ($newest->text ?? ''))),
+            'date'      => (string) ($newest->date ?? ''),
             'portfolio' => true,
-            'sortKey'   => (string) ($note->date ?? ''),
+            'sortKey'   => (string) ($newest->date ?? ''),
         ];
     }
     // programUpdates is keyed by projectId => array of updates. Take the

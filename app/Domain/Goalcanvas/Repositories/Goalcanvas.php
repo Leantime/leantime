@@ -756,6 +756,12 @@ class Goalcanvas extends Blueprints
         $inserts = [];
         $now = now();
         foreach ($goals as $goal) {
+            // Goals without a numeric value have no trend point to record — casting NULL
+            // to 0.0 would fabricate history (mirrors recordGoalValueHistory's guard).
+            if ($goal->currentValue === null || $goal->currentValue === '' || ! is_numeric($goal->currentValue)) {
+                continue;
+            }
+
             $currentValue = (float) $goal->currentValue;
             if (! array_key_exists((int) $goal->id, $latestValues) || $latestValues[(int) $goal->id] !== $currentValue) {
                 $inserts[] = [
@@ -821,8 +827,8 @@ class Goalcanvas extends Blueprints
      * arc goes from 240 round-trips to 20. The date keys in the returned
      * array are formatted in UTC to match the read semantic.
      *
-     * @param  int[]                     $itemIds  Goal (canvas item) ids.
-     * @param  array<\DateTimeInterface> $dates    Period-end (or arbitrary) dates.
+     * @param  int[]  $itemIds  Goal (canvas item) ids.
+     * @param  array<\DateTimeInterface>  $dates  Period-end (or arbitrary) dates.
      * @return array<int, array<string, ?float>>
      */
     public function getGoalValuesAtSeries(array $itemIds, array $dates): array
@@ -901,7 +907,7 @@ class Goalcanvas extends Blueprints
      * mid-import failure rolls back cleanly.
      *
      * @param  array<int, array{itemId: int, value: float, dateRecorded: string, userId?: ?int}>  $rows
-     * @return int  Rows written.
+     * @return int Rows written.
      */
     public function insertGoalHistoryRows(array $rows): int
     {
@@ -928,7 +934,7 @@ class Goalcanvas extends Blueprints
      * history table has no foreign key to enforce this.
      *
      * @param  int[]  $itemIds
-     * @return int[]  Sorted, de-duplicated valid goal item ids.
+     * @return int[] Sorted, de-duplicated valid goal item ids.
      */
     public function filterGoalItemIds(array $itemIds): array
     {

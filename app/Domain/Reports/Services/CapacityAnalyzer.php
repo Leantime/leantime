@@ -140,8 +140,8 @@ final class CapacityAnalyzer
             // higher of the two (conservative — surface risk, don't hide it).
             $referenceDemand = match ($trustSignal) {
                 'budgeted' => $budgetedHours,
-                'effort'   => $effortHours,
-                default    => max($budgetedHours, $effortHours),
+                'effort' => $effortHours,
+                default => max($budgetedHours, $effortHours),
             };
 
             $gap = $referenceDemand - $availableHours;
@@ -161,28 +161,28 @@ final class CapacityAnalyzer
             }
 
             $out[$pid] = [
-                'projectId'            => $pid,
-                'name'                 => $projectNames[$pid] ?? ('#'.$pid),
-                'openTicketCount'      => $openCount,
-                'coverage'             => $coverage,
-                'budgetedHours'        => $budgetedHours,
-                'ticketsWithBudget'    => $ticketsWithBudget,
-                'effortPoints'         => $effortPoints,
-                'ticketsWithEffort'    => $ticketsWithEffort,
-                'effortHours'          => $effortHours,
-                'hoursPerPoint'        => $hoursPerPoint,
-                'divergence'           => $divergence,
-                'trustSignal'          => $trustSignal,
-                'peopleCount'          => $peopleCount,
+                'projectId' => $pid,
+                'name' => $projectNames[$pid] ?? ('#'.$pid),
+                'openTicketCount' => $openCount,
+                'coverage' => $coverage,
+                'budgetedHours' => $budgetedHours,
+                'ticketsWithBudget' => $ticketsWithBudget,
+                'effortPoints' => $effortPoints,
+                'ticketsWithEffort' => $ticketsWithEffort,
+                'effortHours' => $effortHours,
+                'hoursPerPoint' => $hoursPerPoint,
+                'divergence' => $divergence,
+                'trustSignal' => $trustSignal,
+                'peopleCount' => $peopleCount,
                 'weeklyHoursToProject' => $weeklyHoursToProject,
-                'weeksInWindow'        => $weeksInPeriod,
-                'availableHours'       => $availableHours,
-                'referenceDemand'      => $referenceDemand,
-                'gapVsBudgeted'        => $budgetedHours - $availableHours,
-                'gapVsEffort'          => $effortHours - $availableHours,
-                'gap'                  => $gap,
-                'verdict'              => $verdict,
-                'recommendations'      => $recommendations,
+                'weeksInWindow' => $weeksInPeriod,
+                'availableHours' => $availableHours,
+                'referenceDemand' => $referenceDemand,
+                'gapVsBudgeted' => $budgetedHours - $availableHours,
+                'gapVsEffort' => $effortHours - $availableHours,
+                'gap' => $gap,
+                'verdict' => $verdict,
+                'recommendations' => $recommendations,
             ];
         }
 
@@ -197,9 +197,9 @@ final class CapacityAnalyzer
      * one child was critical".
      *
      * @param  array<int, array<string, mixed>>  $projectRows  Output of analyzeProjects()
-     * @param  array<int, int[]>  $programChildMap             programId => [childProjectIds]
+     * @param  array<int, int[]>  $programChildMap  programId => [childProjectIds]
      * @param  array<int, array{id:int, name:string}>  $programMeta
-     * @return array<int, array<string, mixed>>  One row per program with an added 'children' key
+     * @return array<int, array<string, mixed>> One row per program with an added 'children' key
      */
     public function aggregateByProgram(
         array $projectRows,
@@ -228,11 +228,11 @@ final class CapacityAnalyzer
             $budgetedHours = 0.0;
             $effortPoints = 0.0;
             foreach ($children as $c) {
-                $openTicketCount   += (int) $c['openTicketCount'];
+                $openTicketCount += (int) $c['openTicketCount'];
                 $ticketsWithBudget += (int) $c['ticketsWithBudget'];
                 $ticketsWithEffort += (int) $c['ticketsWithEffort'];
-                $budgetedHours     += (float) $c['budgetedHours'];
-                $effortPoints      += (float) $c['effortPoints'];
+                $budgetedHours += (float) $c['budgetedHours'];
+                $effortPoints += (float) $c['effortPoints'];
             }
             $effortHours = $effortPoints * $hoursPerPoint;
             $coverage = $openTicketCount > 0 ? $ticketsWithBudget / $openTicketCount : 0.0;
@@ -263,8 +263,8 @@ final class CapacityAnalyzer
 
             $referenceDemand = match ($trustSignal) {
                 'budgeted' => $budgetedHours,
-                'effort'   => $effortHours,
-                default    => max($budgetedHours, $effortHours),
+                'effort' => $effortHours,
+                default => max($budgetedHours, $effortHours),
             };
             $gap = $referenceDemand - $availableHours;
             $verdict = $this->verdict($gap, $availableHours, $referenceDemand);
@@ -278,31 +278,31 @@ final class CapacityAnalyzer
             usort($children, fn ($a, $b) => ($verdictRank[$a['verdict']] ?? 9) <=> ($verdictRank[$b['verdict']] ?? 9));
 
             $out[$progId] = [
-                'projectId'            => $progId,
-                'name'                 => $progInfo['name'],
-                'isProgram'            => true,
-                'childCount'           => count($children),
-                'children'             => $children,
-                'openTicketCount'      => $openTicketCount,
-                'coverage'             => $coverage,
-                'budgetedHours'        => $budgetedHours,
-                'ticketsWithBudget'    => $ticketsWithBudget,
-                'effortPoints'         => $effortPoints,
-                'ticketsWithEffort'    => $ticketsWithEffort,
-                'effortHours'          => $effortHours,
-                'hoursPerPoint'        => $hoursPerPoint,
-                'divergence'           => $divergence,
-                'trustSignal'          => $trustSignal,
-                'peopleCount'          => $peopleCount,
+                'projectId' => $progId,
+                'name' => $progInfo['name'],
+                'isProgram' => true,
+                'childCount' => count($children),
+                'children' => $children,
+                'openTicketCount' => $openTicketCount,
+                'coverage' => $coverage,
+                'budgetedHours' => $budgetedHours,
+                'ticketsWithBudget' => $ticketsWithBudget,
+                'effortPoints' => $effortPoints,
+                'ticketsWithEffort' => $ticketsWithEffort,
+                'effortHours' => $effortHours,
+                'hoursPerPoint' => $hoursPerPoint,
+                'divergence' => $divergence,
+                'trustSignal' => $trustSignal,
+                'peopleCount' => $peopleCount,
                 'weeklyHoursToProject' => $weeklyHoursToProgram,
-                'weeksInWindow'        => $weeksInPeriod,
-                'availableHours'       => $availableHours,
-                'referenceDemand'      => $referenceDemand,
-                'gapVsBudgeted'        => $budgetedHours - $availableHours,
-                'gapVsEffort'          => $effortHours - $availableHours,
-                'gap'                  => $gap,
-                'verdict'              => $verdict,
-                'recommendations'      => $recommendations,
+                'weeksInWindow' => $weeksInPeriod,
+                'availableHours' => $availableHours,
+                'referenceDemand' => $referenceDemand,
+                'gapVsBudgeted' => $budgetedHours - $availableHours,
+                'gapVsEffort' => $effortHours - $availableHours,
+                'gap' => $gap,
+                'verdict' => $verdict,
+                'recommendations' => $recommendations,
             ];
         }
 
@@ -311,7 +311,7 @@ final class CapacityAnalyzer
 
     /**
      * @param  array<int, array<string, mixed>>  $tickets
-     * @return array{0: float, 1: int}  [totalHours, ticketsWithNonZeroPlanHours]
+     * @return array{0: float, 1: int} [totalHours, ticketsWithNonZeroPlanHours]
      */
     private function sumBudgetedHours(array $tickets): array
     {
@@ -330,7 +330,7 @@ final class CapacityAnalyzer
 
     /**
      * @param  array<int, array<string, mixed>>  $tickets
-     * @return array{0: float, 1: int}  [totalPoints, ticketsWithNonZeroPoints]
+     * @return array{0: float, 1: int} [totalPoints, ticketsWithNonZeroPoints]
      */
     private function sumEffort(array $tickets): array
     {
@@ -420,9 +420,9 @@ final class CapacityAnalyzer
 
         return [
             'extendWeeks' => (int) ceil($gapHours / max(1.0, $weeklyHoursToProject)),
-            'addPeople'   => (int) ceil($gapHours / max(1.0, $weeksInWindow * $avgWeeklyPerPerson)),
-            'cutHours'    => $gapHours,
-            'cutPoints'   => $hoursPerPoint > 0 ? $gapHours / $hoursPerPoint : 0.0,
+            'addPeople' => (int) ceil($gapHours / max(1.0, $weeksInWindow * $avgWeeklyPerPerson)),
+            'cutHours' => $gapHours,
+            'cutPoints' => $hoursPerPoint > 0 ? $gapHours / $hoursPerPoint : 0.0,
         ];
     }
 }

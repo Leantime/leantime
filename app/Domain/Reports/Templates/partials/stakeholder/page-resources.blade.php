@@ -980,7 +980,10 @@
                     ),
                     'detail' => sprintf(
                         __('stakeholder.rc.gap.program_tight_detail'),
-                        round((float) ($capRow['budgetedHours'] ?? 0)),
+                        // referenceDemand is what the gap/verdict were computed from (it
+                        // switches to effort hours when planHours coverage is low) — the
+                        // detail must cite the same demand number as the headline.
+                        round((float) ($capRow['referenceDemand'] ?? ($capRow['budgetedHours'] ?? 0))),
                         round((float) ($capRow['availableHours'] ?? 0))
                     ),
                 ];

@@ -87,7 +87,9 @@ class ReportEngine extends BaseService
             'needsAttention' => $needsAttention,
             'stats' => [
                 'completed' => $completedCount,
-                'inFlight' => count($milestoneReport['inProgress']),
+                // "In flight" = everything actively being worked, overdue included — matches
+                // the report screens' In-flight sections, which merge both buckets.
+                'inFlight' => count($milestoneReport['inProgress']) + count($milestoneReport['overdue']),
                 'overdue' => count($milestoneReport['overdue']),
                 'upcoming' => count($milestoneReport['upcoming']),
                 'goalsOnTrack' => $goalReport['counts']['ontrack'],
@@ -146,6 +148,7 @@ class ReportEngine extends BaseService
             $milestoneId = (int) $milestone->id;
             $milestone->startDate = $this->parseDbDateOrNull($milestone->editFrom);
             $milestone->dueDate = $this->parseDbDateOrNull($milestone->editTo);
+            $milestone->tags = $this->sanitizeCssColor((string) $milestone->tags);
             $milestone->taskStats = $this->buildTaskStats(
                 $tasksByMilestone[$milestoneId] ?? [],
                 $doneStatusesByProject[(int) $milestone->projectId] ?? []
@@ -670,6 +673,25 @@ class ReportEngine extends BaseService
         $userDate = $date->setToUserTimezone();
 
         return 'Q'.$userDate->quarter.' '.$userDate->year;
+    }
+
+    /**
+     * Restricts a milestone color (the repurposed tags column) to safe CSS color forms —
+     * hex, var(--token) or a bare color keyword. The templates inject it into inline
+     * styles, so arbitrary text must not pass through.
+     */
+    private function sanitizeCssColor(string $color): string
+    {
+        $color = trim($color);
+
+        if (preg_match('/^#[0-9a-fA-F]{3,8}$/', $color) === 1
+            || preg_match('/^var\(--[a-zA-Z0-9-]+\)$/', $color) === 1
+            || preg_match('/^[a-zA-Z]+$/', $color) === 1
+        ) {
+            return $color;
+        }
+
+        return 'var(--grey)';
     }
 
     /**

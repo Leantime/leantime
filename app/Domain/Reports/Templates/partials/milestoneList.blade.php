@@ -57,7 +57,7 @@
                 </div>
 
                 @if ($mode === 'completed')
-                    @include('reports::partials.outcome', ['milestone' => $milestone, 'canEdit' => $allowOutcomeEdit, 'period' => $period])
+                    @include('reports::partials.outcome', ['milestone' => $milestone, 'canEdit' => $allowOutcomeEdit])
 
                     @if ($showTasks && !empty($milestone->keyTasks))
                         <details class="reportKeyTasks">

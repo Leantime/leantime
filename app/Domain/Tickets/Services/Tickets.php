@@ -2257,6 +2257,12 @@ class Tickets extends BaseService
             $values['headline'] = $currentTicket->headline;
         }
 
+        // Only touch the outcome narrative when the caller sends it — most edit forms don't
+        // carry the field, and defaulting it to '' would wipe a saved milestone outcome
+        // (the repository skips the column when the key is absent).
+        $hasOutcomeImpact = array_key_exists('outcomeImpact', $values);
+        $outcomeImpact = $values['outcomeImpact'] ?? null;
+
         $values = [
             'id' => $values['id'],
             'headline' => $values['headline'] ?? '',
@@ -2275,7 +2281,6 @@ class Tickets extends BaseService
             'hourRemaining' => $values['hourRemaining'] ?? '',
             'priority' => $values['priority'] ?? '',
             'acceptanceCriteria' => $values['acceptanceCriteria'] ?? '',
-            'outcomeImpact' => $values['outcomeImpact'] ?? '',
             'editFrom' => $values['editFrom'] ?? '',
             'timeFrom' => $values['timeFrom'] ?? '',
             'editTo' => $values['editTo'] ?? '',
@@ -2284,6 +2289,10 @@ class Tickets extends BaseService
             'milestoneid' => $values['milestoneid'] ?? '',
             'collaborators' => $values['collaborators'] ?? [],
         ];
+
+        if ($hasOutcomeImpact) {
+            $values['outcomeImpact'] = $outcomeImpact;
+        }
 
         if ($values['projectId'] === null || $values['projectId'] === '' || $values['projectId'] === false) {
             return ['msg' => 'project id is not set', 'type' => 'error'];
@@ -2551,8 +2560,11 @@ class Tickets extends BaseService
 
         // Access-scoped universe — never returns a ticket outside the user's
         // project access, so intersecting against it makes the comment lookup
-        // safe regardless of what was commented on historically.
-        $accessible = $this->ticketRepository->simpleTicketQuery($userId, null);
+        // safe regardless of what was commented on historically. The user id
+        // must NOT be passed here: it would narrow the set to editor/collaborator
+        // tickets, and "supported" tickets are by definition neither (commenting
+        // doesn't create a collaborator relationship).
+        $accessible = $this->ticketRepository->simpleTicketQuery(null, null);
         if (! is_array($accessible) || empty($accessible)) {
             return [];
         }

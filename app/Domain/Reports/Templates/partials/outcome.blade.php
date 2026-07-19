@@ -6,7 +6,6 @@
     Expects:
     $milestone: object - id, outcomeImpact
     $canEdit:   bool - show the inline add/edit affordance
-    $period:    \Leantime\Domain\Reports\Models\ReportPeriod - carried through the save round-trip
 --}}
 <div class="milestoneOutcome" id="milestoneOutcome-{{ $milestone->id }}">
 
