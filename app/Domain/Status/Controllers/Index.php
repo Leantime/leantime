@@ -30,12 +30,22 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Index extends Controller
 {
+    /**
+     * Keys that must NEVER appear in the unauthenticated response, even if a
+     * publicStatus filter (or a future edit) adds them — a recon-risk inventory.
+     * Stripped after the filter runs, as defense in depth.
+     */
+    private const SENSITIVE_KEYS = ['plugins', 'pluginVersions', 'installedPlugins', 'dbVersion', 'db_version'];
+
     private Environment $config;
 
     private AppSettings $appSettings;
 
     private IncomingRequest $request;
 
+    /**
+     * init - inject config, app settings, and the incoming request.
+     */
     public function init(Environment $config, AppSettings $appSettings, IncomingRequest $request): void
     {
         $this->config = $config;
@@ -43,6 +53,12 @@ class Index extends Controller
         $this->request = $request;
     }
 
+    /**
+     * Return the public discovery payload: enabled auth methods, the OIDC login
+     * URL (when enabled), instance name, core version, and min app version — the
+     * safe unauthenticated tier only. Never plugin inventory / versions / db
+     * version (see the class-level security note).
+     */
     public function get(array $params): Response
     {
         $oidcEnabled = (bool) $this->config->oidcEnable;
@@ -78,6 +94,14 @@ class Index extends Controller
         // core knowing about them. Filter handlers MUST preserve the public-safe
         // contract — never add secrets, plugin inventory, or versions here.
         $payload = self::dispatchFilter('publicStatus', $payload, ['request' => $this->request]);
+
+        // Defense in depth: this endpoint is unauthenticated, so strip any
+        // known-sensitive keys a misbehaving filter (or a future edit) might have
+        // added. The recon-risk inventory must NEVER reach an unauthenticated
+        // caller, even if a plugin gets the contract wrong.
+        foreach (self::SENSITIVE_KEYS as $sensitive) {
+            unset($payload[$sensitive]);
+        }
 
         return new JsonResponse($payload);
     }
