@@ -1953,6 +1953,10 @@ class Tickets
             )
             ->whereIn('zp_tickets.id', $ticketIds)
             ->whereIn('zp_tickets.projectId', $projectIds)
+            // "Supported" is a task surface — exclude milestones the same way the
+            // other mobile user-ticket queries do, so a comment on a milestone
+            // doesn't surface a milestone row here.
+            ->where('zp_tickets.type', '<>', 'milestone')
             // Stable, deterministic order (DB default order is unspecified).
             ->orderBy('zp_tickets.dateToFinish')
             ->orderBy('zp_tickets.id')
