@@ -42,6 +42,7 @@ class SchemaBuilder
         $this->createRelationUserProjectTable();
         $this->createTicketHistoryTable();
         $this->createTicketsTable();
+        $this->createGoalHistoryTable();
         $this->createTimesheetsTable();
         $this->createUserTable();
         $this->createSprintsTable();
@@ -450,6 +451,22 @@ class SchemaBuilder
     }
 
     /**
+     * Create zp_goal_history table (append-only record of goal metric values over time).
+     */
+    private function createGoalHistoryTable(): void
+    {
+        Schema::create('zp_goal_history', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('itemId');
+            $table->double('value')->nullable();
+            $table->integer('userId')->nullable();
+            $table->dateTime('dateRecorded')->nullable();
+
+            $table->index(['itemId', 'dateRecorded'], 'idx_goal_history_item_date');
+        });
+    }
+
+    /**
      * Create zp_tickets table.
      */
     private function createTicketsTable(): void
@@ -460,6 +477,7 @@ class SchemaBuilder
             $table->string('headline', 255)->nullable();
             $table->text('description')->nullable();
             $table->text('acceptanceCriteria')->nullable();
+            $table->text('outcomeImpact')->nullable();
             $table->dateTime('date')->nullable();
             $table->dateTime('dateToFinish')->nullable();
             $table->string('priority', 60)->nullable();

@@ -325,6 +325,28 @@ class TicketsServiceTest extends TestCase
         );
     }
 
+    public function test_get_all_open_user_tickets_excludes_closed_projects_at_query_level(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'admin']]);
+
+        // Closed-project (state === -1) exclusion lives in the SQL layer now, so
+        // the service's contract is simply: ask simpleTicketQuery to exclude
+        // them. Capture the flag it passes.
+        $captured = null;
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => function ($userId, $projectId, $types = [], $excludeClosedProjects = false) use (&$captured) {
+                $captured = $excludeClosedProjects;
+
+                return [];
+            },
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+        $service->getAllOpenUserTickets(1);
+
+        $this->assertTrue($captured, 'getAllOpenUserTickets must exclude closed-project tickets at the query level');
+    }
+
     // ---------------------------------------------------------------------
     // JSON-RPC authorization gates (RPC has no controller-level role gate, so
     // the @api entry methods must self-authorize).
@@ -543,5 +565,76 @@ class TicketsServiceTest extends TestCase
 
         $this->assertSame([], $result);
         $this->assertFalse($called, 'repository should not be queried when criteria are not project-scoped');
+    }
+
+    /**
+     * getMyClosedTicketsForRange: a reversed range is normalized (earlier date
+     * first), only status changes INTO the ticket's current DONE status count,
+     * and a ticket completed more than once keeps its latest completion.
+     */
+    public function test_closed_tickets_range_normalizes_swapped_range_and_keeps_latest_completion(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+        $capturedFrom = null;
+        $capturedTo = null;
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => fn (...$args) => [
+                ['id' => 10, 'type' => 'task', 'projectId' => 5, 'status' => 0],
+                ['id' => 20, 'type' => 'task', 'projectId' => 5, 'status' => 0],
+            ],
+            'getStateLabels' => fn (...$args) => [
+                0 => ['statusType' => 'DONE', 'name' => 'Done', 'class' => ''],
+                3 => ['statusType' => 'INPROGRESS', 'name' => 'In Progress', 'class' => ''],
+            ],
+            'getStatusChangeEvents' => function ($ids, $from, $to) use (&$capturedFrom, &$capturedTo) {
+                $capturedFrom = $from;
+                $capturedTo = $to;
+
+                return [
+                    ['ticketId' => 10, 'changeValue' => 0, 'dateModified' => '2026-07-10 10:00:00'],
+                    ['ticketId' => 10, 'changeValue' => 0, 'dateModified' => '2026-07-09 09:00:00'],
+                    ['ticketId' => 20, 'changeValue' => 3, 'dateModified' => '2026-07-10 10:00:00'],
+                ];
+            },
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+
+        // Reversed range on purpose.
+        $result = $service->getMyClosedTicketsForRange(1, '2026-07-12', '2026-07-05');
+
+        $this->assertEquals('2026-07-05', $capturedFrom, 'range should be normalized earliest-first');
+        $this->assertEquals('2026-07-12', $capturedTo);
+
+        // 20's only event was a change to a non-DONE status → excluded. 10 kept
+        // to its latest completion (newest event wins).
+        $this->assertCount(1, $result);
+        $this->assertEquals(10, $result[0]['id']);
+        $this->assertEquals('2026-07-10 10:00:00', $result[0]['dateClosed']);
+    }
+
+    public function test_closed_tickets_range_forces_session_user_for_non_admin(): void
+    {
+        // Non-admin session user (no admin role granted).
+        session(['userdata' => ['id' => 1]]);
+        $capturedUserId = 'unset';
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => function (...$args) use (&$capturedUserId) {
+                $capturedUserId = $args[0] ?? null;
+
+                return []; // no done tickets — the asserted-on value is the userId
+            },
+            'getStateLabels' => fn (...$args) => [],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+
+        // Caller supplies SOMEONE ELSE's id — the IDOR guard must force it back
+        // to the session user before any query runs.
+        $service->getMyClosedTicketsForRange(999, '2026-07-01', '2026-07-10');
+
+        $this->assertSame(1, $capturedUserId, 'a non-admin must not read another user\'s closures — userId is forced to the session user');
     }
 }

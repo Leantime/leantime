@@ -70,6 +70,10 @@ class CanvasItemsApplier implements Applier
 
         $sortBase = $this->nextSortIndex($targetId);
         $created = 0;
+        // One timestamp for the whole apply — all items from the same template
+        // application should share created/modified so recent-activity sorts
+        // don't rank them arbitrarily against each other.
+        $now = now();
 
         foreach ($items as $offset => $item) {
             if (! is_array($item) || empty($item['box'])) {
@@ -82,7 +86,13 @@ class CanvasItemsApplier implements Applier
                 'conclusion' => (string) ($item['description'] ?? ''),
                 'status' => (string) ($item['status'] ?? ''),
                 'author' => $userId,
-                'created' => now(),
+                'created' => $now,
+                // MAX(zp_canvas_items.modified) is the source of truth for a
+                // board's "last updated" timestamp (see BlueprintsRepository's
+                // COALESCE(MAX(modified), created) sort). MAX() ignores nulls,
+                // so leaving modified null makes templated boards appear stale
+                // in recent-activity lists even though items were just added.
+                'modified' => $now,
                 'sortindex' => (int) ($item['sortindex'] ?? ($sortBase + $offset * 10)),
             ];
             // Authored-meaning fields pass through if present in the template.

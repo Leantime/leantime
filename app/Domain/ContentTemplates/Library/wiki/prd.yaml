@@ -46,7 +46,7 @@ wiki:
         <h2>{{ t:templates.problem }}</h2>
         <p>{{ t:templates.prd.problem_description }}</p>
 
-        <h2>Goals (What are we working towards?</h2>
+        <h2>Goals (What are we working towards?)</h2>
         <p>1. Goal</p>
         <p>2. Goal</p>
         <p>3. Goal</p>

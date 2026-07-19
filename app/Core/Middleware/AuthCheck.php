@@ -36,6 +36,7 @@ class AuthCheck
         'calendar.ical',
         'oidc.login',
         'oidc.callback',
+        'oidc.mobile',
         'cron.run',
         'auth.callback',
         'auth.redirect',

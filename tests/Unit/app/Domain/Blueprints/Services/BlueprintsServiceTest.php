@@ -507,4 +507,74 @@ class BlueprintsServiceTest extends TestCase
         $this->expectException(AuthorizationException::class);
         $service->import('/tmp/does-not-matter.xml', 'swot', 55, 1);
     }
+
+    public function test_create_board_applies_start_content_against_the_slug_not_the_db_type(): void
+    {
+        // Regression test for Phase 4: createBoard() is called with the DATABASE
+        // type ("swotcanvas") but both the Blueprints TemplateRegistry and the
+        // ContentTemplateRegistry key by the SLUG ("swot"). The original code
+        // called TemplateRegistry::get($canvasType), which required a slug and
+        // silently returned null for the db-type form — making applyStartContent
+        // a no-op. This test locks in the fix: getByDatabaseType() bridges, and
+        // the resolved slug flows to the ContentTemplates lookups.
+        $blueprint = new CanvasTemplate([
+            'slug' => 'swot',
+            'startContent' => 'starter-swot',
+        ]);
+        $registry = new class($blueprint) extends TemplateRegistry
+        {
+            public function __construct(private CanvasTemplate $bp) {}
+
+            public function get(string $slug): ?CanvasTemplate
+            {
+                // Bug reproduction: original code called this with 'swotcanvas'.
+                // The real registry only knows 'swot' — so it returned null and
+                // applyStartContent bailed. Test-side we mirror that behavior.
+                return $slug === 'swot' ? $this->bp : null;
+            }
+
+            public function getByDatabaseType(string $dbType): ?CanvasTemplate
+            {
+                // Mirror the shipped str_ends_with/substr strip so this stub and
+                // the production slug-resolution can't drift (per review CR).
+                $suffix = 'canvas';
+                $slug = str_ends_with($dbType, $suffix) && strlen($dbType) > strlen($suffix)
+                    ? substr($dbType, 0, -strlen($suffix))
+                    : $dbType;
+
+                return $this->get($slug);
+            }
+        };
+
+        $contentTemplates = new class extends \Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry
+        {
+            /** @var string[] */
+            public array $seenSlugs = [];
+
+            // Override the parent constructor (the stub needs no deps) and record
+            // the slugs get() is consulted with, so the test asserts on them
+            // afterward. Avoids a by-reference property — PHP ^8.2 can't promote
+            // by reference, and a typed-property reference is brittle.
+            public function __construct() {}
+
+            public function get(string $appliesTo, string $key): ?\Leantime\Domain\ContentTemplates\Models\ContentTemplate
+            {
+                $this->seenSlugs[] = $appliesTo;
+
+                return null; // null lookup exits applyStartContent early, but the assertion is on WHAT slug reached us.
+            }
+        };
+
+        $repo = $this->make(BlueprintsRepository::class, [
+            'addCanvas' => fn () => '77',
+        ]);
+
+        $language = $this->make(LanguageCore::class, ['__' => fn (string $index) => 'T:'.$index]);
+        $service = new BlueprintsService($repo, $registry, $language, $contentTemplates);
+        $service->setPermissionService($this->allowingPermissions());
+
+        $service->createBoard(['projectId' => 5, 'title' => 't'], 'swotcanvas');
+
+        $this->assertSame(['swot'], $contentTemplates->seenSlugs, 'ContentTemplates must be consulted with the SLUG, not the DB type');
+    }
 }

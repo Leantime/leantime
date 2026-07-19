@@ -244,23 +244,31 @@ class Blueprints extends BaseService
      */
     private function applyStartContent(int $canvasId, string $canvasType): void
     {
-        $blueprint = $this->templateRegistry->get($canvasType);
+        // createBoard() is invoked with the DATABASE type (e.g. "swotcanvas",
+        // "logicmodelcanvas"), but both registries key by the SLUG form
+        // ("swot", "logicmodel"). Use getByDatabaseType() to bridge, then
+        // pass the resolved slug to the ContentTemplates lookups so both
+        // sides agree on the identifier. Prior to this the initial registry
+        // read silently returned null and the whole feature was a no-op.
+        $blueprint = $this->templateRegistry->getByDatabaseType($canvasType);
         if ($blueprint === null || $blueprint->startContent === null) {
             return;
         }
 
-        $contentTpl = $this->contentTemplates->get($canvasType, $blueprint->startContent);
+        $slug = $blueprint->slug;
+
+        $contentTpl = $this->contentTemplates->get($slug, $blueprint->startContent);
         if ($contentTpl === null) {
             Log::debug(sprintf(
                 'Blueprints::createBoard: blueprint "%s" references startContent "%s" but the template was not found.',
-                $canvasType,
+                $slug,
                 $blueprint->startContent
             ));
 
             return;
         }
 
-        $applier = $this->contentTemplates->applierFor($canvasType);
+        $applier = $this->contentTemplates->applierFor($slug);
         if ($applier === null) {
             return;
         }
