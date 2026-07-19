@@ -108,8 +108,12 @@ class BackfillGoalHistoryCommand extends Command
 
                 continue;
             }
-            $ts = strtotime($rawDate);
-            if ($ts === false) {
+            // zp_goal_history rows are stored in UTC (the period reads in the Goalcanvas
+            // repository normalize to UTC) — parse offset-less inputs AS UTC and normalize
+            // offset-carrying inputs TO UTC, never the server timezone.
+            try {
+                $dateRecorded = (new \Carbon\CarbonImmutable($rawDate, 'UTC'))->setTimezone('UTC');
+            } catch (\Exception $e) {
                 $errors[] = "line {$lineNo}: unparseable dateRecorded '{$rawDate}'";
 
                 continue;
@@ -119,7 +123,7 @@ class BackfillGoalHistoryCommand extends Command
                 'itemId' => $itemId,
                 'value' => (float) $rawValue,
                 'userId' => ($idxUser !== false && isset($record[$idxUser]) && $record[$idxUser] !== '') ? (int) $record[$idxUser] : null,
-                'dateRecorded' => date('Y-m-d H:i:s', $ts),
+                'dateRecorded' => $dateRecorded->format('Y-m-d H:i:s'),
             ];
         }
         fclose($handle);

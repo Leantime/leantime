@@ -105,8 +105,11 @@ final class CapacityAnalyzer
                 $rawTickets,
             );
 
-            // Filter to open tickets only — DONE work doesn't need capacity.
-            $openTickets = array_values(array_filter($tickets, fn ($t) => ! $this->isDone($t)));
+            // Filter to open tickets only — DONE work doesn't need capacity. DONE is
+            // resolved per project from the status labels (custom statuses can mark
+            // any id as done), not from the default 0/-1 convention.
+            $doneStatuses = $this->doneStatusesForProject($pid);
+            $openTickets = array_values(array_filter($tickets, fn ($t) => ! $this->isDone($t, $doneStatuses)));
 
             [$budgetedHours, $ticketsWithBudget] = $this->sumBudgetedHours($openTickets);
             [$effortPoints, $ticketsWithEffort] = $this->sumEffort($openTickets);
@@ -347,12 +350,30 @@ final class CapacityAnalyzer
         return [$sum, $withEffort];
     }
 
-    private function isDone(array $t): bool
+    /**
+     * @param  int[]  $doneStatuses  Status ids whose statusType is DONE in the ticket's project
+     */
+    private function isDone(array $t, array $doneStatuses): bool
     {
-        // Numeric statuses vary per project; treat -1 and 0 as closed/archived by convention.
-        $status = (int) ($t['status'] ?? 0);
+        return in_array((int) ($t['status'] ?? 0), $doneStatuses, true);
+    }
 
-        return $status <= 0;
+    /**
+     * DONE-type status ids for a project from its (cached) status label settings —
+     * covers custom statuses with positive ids, plus the default 0/-1 pair.
+     *
+     * @return int[]
+     */
+    private function doneStatusesForProject(int $projectId): array
+    {
+        $doneStatuses = [];
+        foreach ($this->ticketsRepo->getStateLabels($projectId) as $statusId => $label) {
+            if (($label['statusType'] ?? '') === 'DONE') {
+                $doneStatuses[] = (int) $statusId;
+            }
+        }
+
+        return $doneStatuses;
     }
 
     private function weeksBetween(\DateTimeInterface $from, \DateTimeInterface $to): int
