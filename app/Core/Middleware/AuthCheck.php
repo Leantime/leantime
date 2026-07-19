@@ -37,6 +37,8 @@ class AuthCheck
         'oidc.login',
         'oidc.callback',
         'oidc.mobile',
+        'status',
+        'status.index',
         'cron.run',
         'auth.callback',
         'auth.redirect',
