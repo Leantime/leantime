@@ -325,6 +325,28 @@ class TicketsServiceTest extends TestCase
         );
     }
 
+    public function test_get_all_open_user_tickets_excludes_closed_projects_at_query_level(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'admin']]);
+
+        // Closed-project (state === -1) exclusion lives in the SQL layer now, so
+        // the service's contract is simply: ask simpleTicketQuery to exclude
+        // them. Capture the flag it passes.
+        $captured = null;
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => function ($userId, $projectId, $types = [], $excludeClosedProjects = false) use (&$captured) {
+                $captured = $excludeClosedProjects;
+
+                return [];
+            },
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+        $service->getAllOpenUserTickets(1);
+
+        $this->assertTrue($captured, 'getAllOpenUserTickets must exclude closed-project tickets at the query level');
+    }
+
     // ---------------------------------------------------------------------
     // JSON-RPC authorization gates (RPC has no controller-level role gate, so
     // the @api entry methods must self-authorize).

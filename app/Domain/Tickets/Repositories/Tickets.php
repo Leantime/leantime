@@ -708,7 +708,7 @@ class Tickets
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
-    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = []): array|false
+    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = [], bool $excludeClosedProjects = false): array|false
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
         $clientId = session('userdata.clientId') ?? '-1';
@@ -780,6 +780,17 @@ class Tickets
 
         if (count($types) > 0) {
             $query->whereIn('zp_tickets.type', $types);
+        }
+
+        // Closed projects (state === -1) are inactive. Callers wanting a "my
+        // active work" view drop their tickets at the SQL level so closed-
+        // project rows are never fetched or returned — matches the existing
+        // `state <> -1 OR state IS NULL` pattern used elsewhere in this repo.
+        if ($excludeClosedProjects) {
+            $query->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
+            });
         }
 
         $results = $query->orderByDesc('zp_tickets.dateToFinish')

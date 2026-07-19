@@ -552,7 +552,10 @@ class Tickets extends BaseService
     public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array
     {
 
-        $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+        // Exclude closed projects (state === -1) at the SQL level — "My open
+        // tickets" shouldn't surface work from projects that are no longer
+        // active (they were padding the mobile task list).
+        $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project, excludeClosedProjects: true);
 
         $ticketArray = [];
 
