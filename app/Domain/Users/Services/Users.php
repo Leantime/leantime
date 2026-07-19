@@ -1454,11 +1454,12 @@ class Users extends BaseService
      * reconciliation.
      *
      * Returns a status code the controller maps to a notification:
-     *   - 'success'          user invited
-     *   - 'enter_email'      email was empty
-     *   - 'no_valid_email'   email is not a valid address
-     *   - 'user_exists'      email already belongs to another account
-     *   - 'too_many_invites' invite could not be created (rate limit reached or db failure)
+     *   - 'success'        user invited
+     *   - 'enter_email'    email was empty
+     *   - 'no_valid_email' email is not a valid address
+     *   - 'user_exists'    email already belongs to another account
+     *   - 'invite_failed'  invite could not be created (rate limit reached OR db failure — the
+     *                      two are indistinguishable here, so the mapped message stays generic)
      *
      * @param  array<string, mixed>  $post  Raw request input.
      * @param  int|string|null  $sessionClientId  The session user's client id (used for managers).
@@ -1502,7 +1503,7 @@ class Users extends BaseService
         $userId = $this->createUserInvite($values);
 
         if ($userId === false) {
-            return 'too_many_invites';
+            return 'invite_failed';
         }
 
         $projects = $post['projects'] ?? null;

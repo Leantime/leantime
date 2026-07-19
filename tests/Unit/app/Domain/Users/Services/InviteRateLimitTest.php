@@ -23,14 +23,34 @@ use Unit\TestCase;
  */
 class InviteRateLimitTest extends TestCase
 {
+    private const INVITER_ID = 4242;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // The array cache store persists within a single test run, so clear the keys this test
+        // touches to keep it independent of ordering and of any prior limiter state.
+        foreach ($this->limiterKeys() as $key) {
+            RateLimiter::clear($key);
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        foreach ($this->limiterKeys() as $key) {
+            RateLimiter::clear($key);
+        }
+
+        parent::tearDown();
+    }
+
     public function test_create_user_invite_returns_false_and_skips_db_when_user_cap_exceeded(): void
     {
-        $inviterId = 4242;
-        session(['userdata' => ['id' => $inviterId, 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
+        session(['userdata' => ['id' => self::INVITER_ID, 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
 
         // Exhaust the per-user hourly cap (default 10) on the exact key the service computes.
-        $host = parse_url(BASE_URL, PHP_URL_HOST) ?: 'default';
-        $userKey = 'invites:'.$host.':user:'.$inviterId;
+        [$userKey] = $this->limiterKeys();
         for ($i = 0; $i < 10; $i++) {
             RateLimiter::hit($userKey, 3600);
         }
@@ -60,5 +80,20 @@ class InviteRateLimitTest extends TestCase
         ]);
 
         $this->assertFalse($result, 'createUserInvite must return false once the invite cap is exceeded');
+    }
+
+    /**
+     * The user + tenant limiter keys, computed exactly as Users::invitesRateLimited() does.
+     *
+     * @return array{0: string, 1: string}
+     */
+    private function limiterKeys(): array
+    {
+        $host = (defined('BASE_URL') ? parse_url(BASE_URL, PHP_URL_HOST) : null) ?: 'default';
+
+        return [
+            'invites:'.$host.':user:'.self::INVITER_ID,
+            'invites:'.$host.':tenant',
+        ];
     }
 }
