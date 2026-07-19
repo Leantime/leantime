@@ -41,6 +41,25 @@ use Unit\TestCase;
  *   AUTHORIZATION — with a mock configuration that makes the guard
  *   pass, the method reaches its service call. Confirms the guard
  *   isn't blocking the happy path either.
+ *
+ * DELIBERATELY OUT OF SCOPE — the real DI/HTMX-dispatch wiring. Because
+ * we skip HtmxController::__construct and inject services directly, a
+ * test here would still pass even if the *real* constructor path
+ * broke (init() DI resolution, event dispatch bootstrapping, etc). The
+ * guarantee this file offers is "the action-method body invokes the
+ * guard," not "the DI-instantiated controller can even be constructed."
+ * Backlog item to keep open: one HTTP-level 403 test that boots the
+ * full request stack and asserts an unauthorized POST returns 403 end-
+ * to-end — that's the DI-shape guarantee this file cannot offer.
+ *
+ * ORDER-SENSITIVE ASSERTIONS on attachProject: the two-gate refusal
+ * tests don't just check "an exception was thrown" — they check that
+ * both gates were invoked with the right ids by tracking every
+ * getProject($id) call. This means a bug that swapped the check
+ * order (e.g. canAttachProject before canEditProgram) would flip the
+ * observed call sequence and fail the assertion, even though "throws
+ * AccessDeniedHttpException" would still be true in isolation. See
+ * the projectService fixture's `probedIds` counter.
  */
 class ResourceItemAuthTest extends TestCase
 {
@@ -225,35 +244,63 @@ class ResourceItemAuthTest extends TestCase
 
     // ─── attachProject (canEditProgram + canAttachProject) ────────────
 
-    public function test_attachProject_refuses_unauthorized_program(): void
+    public function test_attachProject_refuses_unauthorized_program_and_short_circuits(): void
     {
-        // The Marcel-flagged IDOR: attacker POSTs a foreign programId
-        // + a project they own. Must refuse.
-        $ctrl = $this->makeController(
-            project: false,  // getProject returns false → not a real program
-        );
+        // The Marcel-flagged IDOR: attacker POSTs a foreign programId +
+        // a project they own. canEditProgram runs FIRST and refuses at
+        // the program lookup — canAttachProject must never be reached
+        // (avoid leaking project-existence info via a side-channel like
+        // response-timing or downstream logging). Asserted by checking
+        // that only programId=999999 was probed, projectId=7 was not.
+        $ctrl = $this->makeController(project: false);
         session(['userdata' => ['id' => 5, 'role' => 'admin']]);
         $_POST = ['programId' => '999999', 'projectId' => '7'];
 
-        $this->expectException(AccessDeniedHttpException::class);
-        $ctrl->attachProject();
+        try {
+            $ctrl->attachProject();
+            $this->fail('expected AccessDeniedHttpException');
+        } catch (AccessDeniedHttpException) {
+            // OK.
+        }
+
+        $this->assertSame(
+            [999999],
+            $ctrl->projectService->probedIds,
+            'canEditProgram must run first and refuse before canAttachProject touches projectId'
+        );
     }
 
-    public function test_attachProject_refuses_unauthorized_project(): void
+    public function test_attachProject_refuses_unauthorized_project_and_verifies_order(): void
     {
         // Inverse Marcel case: attacker owns the program but POSTs a
         // foreign projectId to yank someone else's project under it.
-        // canAttachProject must refuse regardless of program access.
+        // Both gates must fire — canEditProgram(42) passes, then
+        // canAttachProject(999) refuses. Asserted by checking the
+        // call sequence: programId probed FIRST, projectId SECOND.
+        // If someone reordered the two gates, canAttachProject would
+        // run first, only 999 would be probed, and this assertion
+        // would fail — even though the exception itself would still
+        // be thrown in isolation.
         $ctrl = $this->makeControllerDual(
             program: ['id' => 42, 'type' => 'program'],
-            project: false,  // second lookup returns false
-            assigned: true,  // user owns the program
+            project: false,
+            assigned: true,
         );
         session(['userdata' => ['id' => 5, 'role' => 'editor']]);
         $_POST = ['programId' => '42', 'projectId' => '999'];
 
-        $this->expectException(AccessDeniedHttpException::class);
-        $ctrl->attachProject();
+        try {
+            $ctrl->attachProject();
+            $this->fail('expected AccessDeniedHttpException');
+        } catch (AccessDeniedHttpException) {
+            // OK.
+        }
+
+        $this->assertSame(
+            [42, 999],
+            $ctrl->projectService->probedIds,
+            'canEditProgram(42) must run BEFORE canAttachProject(999) — order pins that both gates fired against the right ids'
+        );
     }
 
     // ─── createProject (canEditProgram) ───────────────────────────────
@@ -301,6 +348,9 @@ class ResourceItemAuthTest extends TestCase
     ): object {
         $projectService = new class ($program, $project, $assigned) extends Projects
         {
+            /** @var int[] Every getProject id in call order — order-sensitive tests read this. */
+            public array $probedIds = [];
+
             public function __construct(
                 private array|false $programResult,
                 private array|false $projectResult,
@@ -311,6 +361,8 @@ class ResourceItemAuthTest extends TestCase
 
             public function getProject(int $id): bool|array
             {
+                $this->probedIds[] = $id;
+
                 // Program lookup returns programResult; anything else
                 // returns projectResult. Program id is always 42 in the
                 // tests that use this fixture.
@@ -332,6 +384,9 @@ class ResourceItemAuthTest extends TestCase
     {
         return new class ($project, $assigned) extends Projects
         {
+            /** @var int[] Every getProject id in call order — order-sensitive tests read this. */
+            public array $probedIds = [];
+
             public function __construct(
                 private array|null|false $projectResult,
                 private bool $assignedResult,
@@ -341,6 +396,8 @@ class ResourceItemAuthTest extends TestCase
 
             public function getProject(int $id): bool|array
             {
+                $this->probedIds[] = $id;
+
                 return $this->projectResult === null ? false : $this->projectResult;
             }
 
