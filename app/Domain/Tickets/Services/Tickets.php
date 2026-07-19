@@ -2533,9 +2533,11 @@ class Tickets extends BaseService
      * $userId for someone else is forced back to the session user (IDOR guard,
      * matching Projects::getProjectsUserHasAccessTo()).
      *
-     * @return array<int, array<string, mixed>> raw ticket rows (id, headline,
-     *                                          projectName, editorId, status, …). NOTE: these do NOT carry the resolved
-     *                                          statusLabel/statusClass/statusType that getAll*UserTickets attach.
+     * @return array<int, array<string, mixed>> Raw ticket rows (id, headline,
+     *                                          projectName, editorId, status, …).
+     *
+     * Note: these rows do NOT carry the resolved statusLabel / statusClass /
+     * statusType that the getAll*UserTickets methods attach.
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
