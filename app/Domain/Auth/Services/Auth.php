@@ -486,7 +486,7 @@ class Auth implements Authenticatable
         $redirectUrl = BASE_URL.'/dashboard/home';
 
         if ($redirect !== null && trim($redirect) !== '' && trim($redirect) !== '/') {
-            $url = urldecode($redirect);
+            $url = rawurldecode($redirect);
 
             // Strip the application base URL when present so that same-origin
             // absolute URLs (e.g. https://my-leantime.com/dashboard/home) are
@@ -500,8 +500,6 @@ class Auth implements Authenticatable
             // Relative paths and same-origin URLs stripped above pass through.
             if (filter_var($url, FILTER_VALIDATE_URL) === false) {
                 $redirectUrl = BASE_URL.'/'.ltrim($url, '/');
-            } elseif (in_array($url, ['/auth/logout'], true)) {
-                $redirectUrl = BASE_URL.$url;
             }
         }
 
