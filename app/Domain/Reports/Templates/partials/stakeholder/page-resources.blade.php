@@ -82,6 +82,13 @@
 .rd-scope .p3-bd-cell .num{font-size:18px;font-weight:600;color:var(--rd-text-1);line-height:1.1;}
 .rd-scope .p3-bd-cell .num small{font-size:12.5px;color:var(--rd-text-3);font-weight:500;margin-left:3px;}
 .rd-scope .p3-bd-cell .sublabel{font-size:12px;color:var(--rd-text-3);margin-top:2px;}
+/* Capacity gap pill — logged vs planned. The intervention signal. */
+.rd-scope .p3-capgap{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;border-radius:20px;padding:2px 8px;margin-top:4px;white-space:nowrap;}
+.rd-scope .p3-capgap i{font-size:10px;}
+.rd-scope .p3-capgap.over{background:var(--rd-danger-bg);color:var(--rd-danger);}
+.rd-scope .p3-capgap.under{background:var(--rd-warn-bg);color:var(--rd-warn-tx);}
+.rd-scope .p3-capgap.on{background:rgba(62,147,122,.12);color:var(--rd-ok);}
+.rd-scope .p3-capgap.nolog{background:var(--rd-line-soft);color:var(--rd-text-3);}
 .rd-scope .p3-bd-cell .minibar{height:8px;background:#eef1f3;border-radius:4px;overflow:hidden;margin-top:6px;}
 .rd-scope .p3-bd-cell .minibar > i{display:block;height:100%;border-radius:4px;background:var(--rd-s1);}
 .rd-scope .p3-bd-cell .minibar.spend > i{background:var(--rd-ok);}
@@ -509,11 +516,41 @@
                     if ($touched) $peopleSet[$person->itemId] = 1;
                 }
 
+                $actual = 0.0;
                 foreach ($childIds as $cid) {
                     $r = $perProject[$cid] ?? null;
-                    if ($r === null) continue;
-                    $budgeted += $r['budgeted'];
-                    $spent    += $r['spent'];
+                    if ($r !== null) {
+                        $budgeted += $r['budgeted'];
+                        $spent    += $r['spent'];
+                    }
+                    // Actual logged hours for the report period (gateway was
+                    // handed the period window), summed over the program's
+                    // child projects.
+                    $actual += (float) ($resourceSummary->actualsByProject[(int) $cid] ?? 0.0);
+                }
+
+                // Capacity gap: planned = allocated/wk × weeks in period;
+                // actual = logged. The gap % is the signal ("this program is
+                // burning capacity faster than planned → intervene"). Rate ×
+                // weeks and the ratio are equivalent, so the % is robust even
+                // though "planned total" is an estimate; only shown when there
+                // IS a plan to compare against.
+                $plannedPeriod = $hrs * ($weeksInPeriod ?? 1);
+                if ($plannedPeriod <= 0) {
+                    // No plan to compare against — show nothing.
+                    $capGapPct = null;
+                    $capGapState = 'none';
+                } elseif (round($actual) <= 0) {
+                    // Planned, but nothing meaningful logged. Anything that
+                    // rounds to 0h is "nothing logged" — a bare "-100% vs plan"
+                    // over a value we'd DISPLAY as "0h logged" is misleading
+                    // (a stray 0.2h is not a -100% variance story).
+                    $capGapPct = null;
+                    $capGapState = 'nolog';
+                } else {
+                    // over 10% either way is worth a flag; within 10% is "on plan".
+                    $capGapPct = (int) round((($actual - $plannedPeriod) / $plannedPeriod) * 100);
+                    $capGapState = $capGapPct > 10 ? 'over' : ($capGapPct < -10 ? 'under' : 'on');
                 }
 
                 $children = array_values(array_filter(
@@ -531,6 +568,9 @@
                     'name'        => $progInfo['name'],
                     'peopleCount' => count($peopleSet),
                     'hrs'         => $hrs,
+                    'actual'      => $actual,
+                    'capGapPct'   => $capGapPct,
+                    'capGapState' => $capGapState,
                     'budgeted'    => $budgeted,
                     'spent'       => $spent,
                     'hasBudget'   => $budgeted > 0,
@@ -628,6 +668,24 @@
                             <div class="p3-bd-cell" data-label="{{ __('stakeholder.rc.bd_col_hours') }}">
                                 @if ($prog['hrs'] > 0)
                                     <div class="num"><span data-hours="{{ round($prog['hrs']) }}">{{ round($prog['hrs']) }}h</span><small>/wk</small></div>
+                                    {{-- Capacity gap: logged vs planned over the period. The
+                                         signal, not the raw hours — "is this program burning
+                                         capacity faster than planned → intervene". --}}
+                                    @if ($prog['capGapState'] === 'nolog')
+                                        <div class="p3-capgap nolog"
+                                             title="{{ sprintf(__('stakeholder.rc.cap_gap_nolog_tip'), round($prog['hrs'] * ($weeksInPeriod ?? 1))) }}">
+                                            {{ __('stakeholder.rc.cap_gap_nolog') }}
+                                        </div>
+                                    @elseif ($prog['capGapPct'] !== null)
+                                        <div class="p3-capgap {{ $prog['capGapState'] }}"
+                                             title="{{ sprintf(__('stakeholder.rc.cap_gap_tip'), round($prog['actual']), round($prog['hrs'] * ($weeksInPeriod ?? 1))) }}">
+                                            @if ($prog['capGapState'] === 'on')
+                                                <i class="fa fa-circle-check" aria-hidden="true"></i> {{ __('stakeholder.rc.cap_gap_on') }}
+                                            @else
+                                                {{ sprintf(__('stakeholder.rc.cap_gap_delta'), $prog['capGapPct']) }}
+                                            @endif
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="zero">{{ __('stakeholder.rc.bd_none') }}</div>
                                 @endif

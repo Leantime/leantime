@@ -87,12 +87,12 @@ class ResourcesRegistryTest extends TestCase
     {
         return new class implements ResourcesGateway
         {
-            public function getForProjects(array $projectIds): ResourceSummary
+            public function getForProjects(array $projectIds, ?string $actualsFrom = null, ?string $actualsTo = null): ResourceSummary
             {
                 return ResourceSummary::empty($projectIds);
             }
 
-            public function getForProgram(int $programId): ResourceSummary
+            public function getForProgram(int $programId, ?string $actualsFrom = null, ?string $actualsTo = null): ResourceSummary
             {
                 return ResourceSummary::empty([$programId]);
             }
@@ -103,12 +103,12 @@ class ResourcesRegistryTest extends TestCase
     {
         return new class implements ResourcesGateway
         {
-            public function getForProjects(array $projectIds): ResourceSummary
+            public function getForProjects(array $projectIds, ?string $actualsFrom = null, ?string $actualsTo = null): ResourceSummary
             {
                 return ResourceSummary::empty($projectIds);
             }
 
-            public function getForProgram(int $programId): ResourceSummary
+            public function getForProgram(int $programId, ?string $actualsFrom = null, ?string $actualsTo = null): ResourceSummary
             {
                 return ResourceSummary::empty([$programId]);
             }

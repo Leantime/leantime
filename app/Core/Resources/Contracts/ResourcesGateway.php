@@ -32,15 +32,24 @@ interface ResourcesGateway
      * @param  array<int>  $projectIds  Projects to aggregate over. May include
      *                                  the program row itself and its children,
      *                                  or a hand-picked subset for a report.
+     * @param  string|null  $actualsFrom  Start of the window for actual logged
+     *                                    hours (Y-m-d, DB timezone). When null,
+     *                                    the provider's default window applies
+     *                                    (current week). Dates are primitives on
+     *                                    purpose — core must not depend on the
+     *                                    reports domain's ReportPeriod.
+     * @param  string|null  $actualsTo  End of the actuals window (Y-m-d).
      * @return ResourceSummary Empty summary if none of the projects have
      *                         resources authored.
      */
-    public function getForProjects(array $projectIds): ResourceSummary;
+    public function getForProjects(array $projectIds, ?string $actualsFrom = null, ?string $actualsTo = null): ResourceSummary;
 
     /**
      * Aggregate resources for a program and its child projects.
      *
      * @param  int  $programId  A `zp_projects.id` where `type='program'`.
+     * @param  string|null  $actualsFrom  See getForProjects().
+     * @param  string|null  $actualsTo  See getForProjects().
      */
-    public function getForProgram(int $programId): ResourceSummary;
+    public function getForProgram(int $programId, ?string $actualsFrom = null, ?string $actualsTo = null): ResourceSummary;
 }
