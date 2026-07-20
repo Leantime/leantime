@@ -488,12 +488,20 @@ class Auth implements Authenticatable
         if ($redirect !== null && trim($redirect) !== '' && trim($redirect) !== '/') {
             $url = urldecode($redirect);
 
-            // Check for open redirects, don't allow redirects to external sites.
-            if (
-                filter_var($url, FILTER_VALIDATE_URL) === false &&
-                ! in_array($url, ['/auth/logout'])
-            ) {
-                $redirectUrl = BASE_URL.'/'.$url;
+            // Strip the application base URL when present so that same-origin
+            // absolute URLs (e.g. https://my-leantime.com/dashboard/home) are
+            // treated the same as their relative counterparts. The login form
+            // may submit a full absolute URL in the redirectUrl field.
+            if (str_starts_with($url, BASE_URL)) {
+                $url = substr($url, strlen(BASE_URL));
+            }
+
+            // Reject external absolute URLs — open redirect guard.
+            // Relative paths and same-origin URLs stripped above pass through.
+            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+                $redirectUrl = BASE_URL.'/'.ltrim($url, '/');
+            } elseif (in_array($url, ['/auth/logout'], true)) {
+                $redirectUrl = BASE_URL.$url;
             }
         }
 
