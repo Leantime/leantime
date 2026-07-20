@@ -297,14 +297,6 @@ class ResourceStructureServiceTest extends TestCase
     // ─── Test doubles ────────────────────────────────────────────────
 
     /**
-     * Testable subclass of the SUT that overrides `findResourceCanvasIds()`
-     * with a canned list, so the test doesn't need to mock a Db query chain.
-     * `getItemsByBox()` returns items keyed by `[canvasId][box]`.
-     *
-     * @param  int[]  $canvasIds
-     * @param  array<int, array<string, array<int, array<string, mixed>>>>  $items
-     */
-    /**
      * getProgramTeamMembers defines who a non-manager may name in the Add
      * Person picker, so its exact membership is a security boundary, not a
      * convenience. Over-returning here would leak users the caller has no
@@ -378,22 +370,100 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame([4, 9], array_keys($linked));
     }
 
-    private function makeService(array $canvasIds, array $items): ResourceStructureService
+    /**
+     * The report and the Resource Allocation tab must not disagree about
+     * the same person. The tab applies a capacity truth priority — a linked
+     * user's profile weekly_hours beats the canvas-stored value — and the
+     * gateway that feeds reports has to apply it identically. Before this,
+     * someone stored at 40 with a 20h profile read 20h on the tab and 40h
+     * on the report, including in the report's headline utilization tile.
+     */
+    public function test_get_for_projects_prefers_profile_weekly_hours_over_stored_capacity(): void
+    {
+        $svc = $this->makeService(
+            canvasIds: [1],
+            items: [1 => ['people' => [[
+                'id' => 10, 'description' => 'Ada', 'status' => 'active',
+                'parsedData' => ['userId' => 7, 'capacity' => 40, 'allocations' => []],
+            ]]]],
+            userCapacity: [7 => ['weekly_hours' => 20, 'employment_type' => 'part_time']],
+        );
+
+        $summary = $svc->getForProjects([5]);
+
+        $this->assertSame(20.0, $summary->people[0]->capacity);
+        $this->assertSame(20.0, $summary->totalCapacity);
+    }
+
+    /**
+     * The override only applies when the profile actually carries a value.
+     * A null weekly_hours (or a pre-migration install, where the batch
+     * loader returns an empty map) must fall back to the stored capacity
+     * rather than collapsing everyone to zero.
+     */
+    public function test_get_for_projects_falls_back_to_stored_capacity_without_a_profile_value(): void
+    {
+        $items = [1 => ['people' => [[
+            'id' => 10, 'description' => 'Ada', 'status' => 'active',
+            'parsedData' => ['userId' => 7, 'capacity' => 32, 'allocations' => []],
+        ]]]];
+
+        $nullHours = $this->makeService(canvasIds: [1], items: $items,
+            userCapacity: [7 => ['weekly_hours' => null, 'employment_type' => null]]);
+        $this->assertSame(32.0, $nullHours->getForProjects([5])->people[0]->capacity);
+
+        // Pre-migration install: loader swallows the missing column and
+        // returns nothing at all.
+        $noColumns = $this->makeService(canvasIds: [1], items: $items, userCapacity: []);
+        $this->assertSame(32.0, $noColumns->getForProjects([5])->people[0]->capacity);
+    }
+
+    /**
+     * An unlinked person (userId 0) has no profile to consult, so the
+     * stored value stands.
+     */
+    public function test_get_for_projects_uses_stored_capacity_for_unlinked_people(): void
+    {
+        $svc = $this->makeService(
+            canvasIds: [1],
+            items: [1 => ['people' => [[
+                'id' => 10, 'description' => 'Placeholder', 'status' => 'active',
+                'parsedData' => ['userId' => 0, 'capacity' => 15, 'allocations' => []],
+            ]]]],
+            userCapacity: [7 => ['weekly_hours' => 20, 'employment_type' => null]],
+        );
+
+        $this->assertSame(15.0, $svc->getForProjects([5])->people[0]->capacity);
+    }
+
+    /**
+     * Testable subclass of the SUT that overrides `findResourceCanvasIds()`
+     * with a canned list, so the test doesn't need to mock a Db query chain.
+     * `getItemsByBox()` returns items keyed by `[canvasId][box]`.
+     *
+     * @param  int[]  $canvasIds
+     * @param  array<int, array<string, array<int, array<string, mixed>>>>  $items
+     */
+    private function makeService(array $canvasIds, array $items, array $userCapacity = []): ResourceStructureService
     {
         $repo = $this->makeRepo(
             canvasId: 0,
             itemsByBoxProvider: fn (int $canvasId, string $box) => $items[$canvasId][$box] ?? [],
         );
 
-        return new class($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms(), $canvasIds) extends ResourceStructureService
+        return new class($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms(), $canvasIds, $userCapacity) extends ResourceStructureService
         {
-            /** @param int[] $canvasIds */
+            /**
+             * @param  int[]  $canvasIds
+             * @param  array<int, array{weekly_hours: int|null, employment_type: string|null}>  $userCapacity
+             */
             public function __construct(
                 ResourceStructureRepository $repo,
                 Db $dbCore,
                 ProjectService $projectService,
                 Programs $programService,
                 private array $canvasIds,
+                private array $userCapacity,
             ) {
                 parent::__construct($repo, $dbCore, $projectService, $programService);
             }
@@ -401,6 +471,14 @@ class ResourceStructureServiceTest extends TestCase
             protected function findResourceCanvasIds(array $projectIds): array
             {
                 return $this->canvasIds;
+            }
+
+            // Stubbed rather than mocked: the real loader queries zp_user
+            // and swallows a missing-column PDOException, so a mocked Db
+            // would silently exercise only the empty-map path.
+            protected function fetchUserCapacityAttributes(array $userIds): array
+            {
+                return $this->userCapacity;
             }
         };
     }
