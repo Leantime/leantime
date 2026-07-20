@@ -88,6 +88,7 @@
 .rd-scope .p3-capgap.over{background:var(--rd-danger-bg);color:var(--rd-danger);}
 .rd-scope .p3-capgap.under{background:var(--rd-warn-bg);color:var(--rd-warn-tx);}
 .rd-scope .p3-capgap.on{background:rgba(62,147,122,.12);color:var(--rd-ok);}
+.rd-scope .p3-capgap.nolog{background:var(--rd-line-soft);color:var(--rd-text-3);}
 .rd-scope .p3-bd-cell .minibar{height:8px;background:#eef1f3;border-radius:4px;overflow:hidden;margin-top:6px;}
 .rd-scope .p3-bd-cell .minibar > i{display:block;height:100%;border-radius:4px;background:var(--rd-s1);}
 .rd-scope .p3-bd-cell .minibar.spend > i{background:var(--rd-ok);}
@@ -535,10 +536,22 @@
                 // though "planned total" is an estimate; only shown when there
                 // IS a plan to compare against.
                 $plannedPeriod = $hrs * ($weeksInPeriod ?? 1);
-                $capGapPct = $plannedPeriod > 0 ? (int) round((($actual - $plannedPeriod) / $plannedPeriod) * 100) : null;
-                // over 10% either way is worth a flag; within 10% reads "on plan".
-                $capGapState = $capGapPct === null ? 'none'
-                    : ($capGapPct > 10 ? 'over' : ($capGapPct < -10 ? 'under' : 'on'));
+                if ($plannedPeriod <= 0) {
+                    // No plan to compare against — show nothing.
+                    $capGapPct = null;
+                    $capGapState = 'none';
+                } elseif (round($actual) <= 0) {
+                    // Planned, but nothing meaningful logged. Anything that
+                    // rounds to 0h is "nothing logged" — a bare "-100% vs plan"
+                    // over a value we'd DISPLAY as "0h logged" is misleading
+                    // (a stray 0.2h is not a -100% variance story).
+                    $capGapPct = null;
+                    $capGapState = 'nolog';
+                } else {
+                    // over 10% either way is worth a flag; within 10% is "on plan".
+                    $capGapPct = (int) round((($actual - $plannedPeriod) / $plannedPeriod) * 100);
+                    $capGapState = $capGapPct > 10 ? 'over' : ($capGapPct < -10 ? 'under' : 'on');
+                }
 
                 $children = array_values(array_filter(
                     array_map(fn ($cid) => $perProject[$cid] ?? null, $childIds),
@@ -658,7 +671,12 @@
                                     {{-- Capacity gap: logged vs planned over the period. The
                                          signal, not the raw hours — "is this program burning
                                          capacity faster than planned → intervene". --}}
-                                    @if ($prog['capGapPct'] !== null)
+                                    @if ($prog['capGapState'] === 'nolog')
+                                        <div class="p3-capgap nolog"
+                                             title="{{ sprintf(__('stakeholder.rc.cap_gap_nolog_tip'), round($prog['hrs'] * ($weeksInPeriod ?? 1))) }}">
+                                            {{ __('stakeholder.rc.cap_gap_nolog') }}
+                                        </div>
+                                    @elseif ($prog['capGapPct'] !== null)
                                         <div class="p3-capgap {{ $prog['capGapState'] }}"
                                              title="{{ sprintf(__('stakeholder.rc.cap_gap_tip'), round($prog['actual']), round($prog['hrs'] * ($weeksInPeriod ?? 1))) }}">
                                             @if ($prog['capGapState'] === 'on')
