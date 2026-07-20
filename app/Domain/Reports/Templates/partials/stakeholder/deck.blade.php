@@ -309,6 +309,13 @@
     .rd-page { min-width: 0 !important; width: 100% !important; padding: 12px 0 24px; border-top: 1px solid var(--rd-line-soft); page-break-inside: avoid; }
     .rd-page:first-child { border-top: 0; padding-top: 0; }
     .rd-page:not(.on) { visibility: visible !important; height: auto !important; padding-top: 12px !important; padding-bottom: 24px !important; }
+    /* Force-expand everything collapsible — grant updates get printed, so no
+       content may hide behind a collapsed <details>, the default-collapsed
+       Theory-of-Change, or an inactive Impact-Journey lens. */
+    .rd-scope .p1-toc.collapsed .tx { max-height: none !important; opacity: 1 !important; margin-top: 6px !important; padding: revert !important; pointer-events: auto !important; }
+    .rd-scope details:not([open]) > :not(summary) { display: block !important; }
+    .rd-scope .p2-brk summary i, .rd-scope .p3-bd-program summary i, .rd-scope .p3-cap-program summary i, .rd-scope .p1-toc .toc-toggle { display: none !important; }
+    .rd-scope .p4-wrap [data-lens], .rd-scope .p4-wrap [data-lens-block] { display: block !important; }
 }
 </style>
 
