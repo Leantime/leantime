@@ -136,11 +136,29 @@
 
 /* Persistent header — sits above the deck. Left: subject + provenance. Right:
    status verdict (stated verdict with provenance line, NOT a tappable pill). */
-.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:start;padding:14px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
+.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px 18px;align-items:start;padding:16px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
 .rd-hdr .st{min-width:0;}
-.rd-hdr .st .h{font-size:20px;font-weight:600;line-height:1.2;color:var(--rd-text-1);}
+/* Breadcrumb: small gray line at the top of the left column. The verdict + ⋮
+   top-align with it (align-items:start on the grid), sitting level with it. */
+.rd-crumb{display:flex;align-items:center;gap:6px;min-width:0;margin-bottom:2px;font-size:12.5px;}
+.rd-crumb > a{color:var(--rd-text-3);text-decoration:none;font-weight:500;}
+.rd-crumb > a:hover{color:var(--rd-accent);text-decoration:underline;}
+.rd-crumb .sep{color:var(--rd-text-4);}
+.rd-crumb .rd-crumb-cur{color:var(--rd-text-3);}
+/* Title = <h1> + switcher, at the left edge (aligns with breadcrumb + meta). */
+.rd-hdr .st .h{margin:0 0 0 -6px;font-size:22px;font-weight:600;line-height:1.15;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;cursor:pointer;border-radius:8px;padding:1px 6px;transition:background .12s;}
+.rd-hdr .st .h:hover{background:rgba(0,71,102,.05);}
+.rd-h-caret{font-size:14px;color:var(--rd-text-4);}
 .rd-hdr .st .prov{font-size:12px;color:var(--rd-text-3);margin-top:4px;}
-.rd-hdr .verdict{text-align:right;min-width:0;}
+.rd-hdr .verdict{text-align:right;min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+/* ⋮ is its own column; top-aligned with the verdict label ("In progress"). */
+.rd-hdr .rd-actions{line-height:1;display:flex;align-items:flex-start;}
+/* Neutralize global nav/btn margins + padding on the dropdown wrapper AND the
+   toggle, so the ⋮ is a compact icon sitting exactly on the "In progress" row
+   (the wrapper otherwise inherits a top margin that drops it ~20px). */
+.rd-hdr .rd-actions .dropdown{margin:0 !important;padding:0 !important;line-height:1 !important;display:inline-flex !important;}
+.rd-hdr .rd-actions .dropdown-toggle.btn{padding:0 4px !important;margin:0 !important;height:auto !important;line-height:1.4 !important;min-width:0 !important;border:none !important;background:transparent !important;color:var(--rd-text-4) !important;font-size:16px !important;box-shadow:none !important;}
+.rd-hdr .rd-actions .dropdown-toggle.btn:hover{color:var(--rd-text-2) !important;background:rgba(0,0,0,.04) !important;border-radius:6px;}
 .rd-hdr .verdict .v{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--rd-text-1);}
 .rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}
 .rd-hdr .verdict .src{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-weight:400;}
@@ -328,17 +346,42 @@
     {{-- ── Persistent header ────────────────────────────────────────── --}}
     <div class="rd-hdr">
         <div class="st">
-            <div class="h">{{ $subject }}</div>
+            {{-- Breadcrumb on its own line at the top of the left column, so the
+                 verdict + ⋮ (right, top-aligned) sit level with the breadcrumb
+                 line — filling the top-right instead of dropping to the title. --}}
+            <nav class="rd-crumb" aria-label="{{ __('stakeholder.header.breadcrumb') }}">
+                <a href="{{ BASE_URL }}/{{ $scope === 'strategy' ? 'strategyPro' : 'pgmPro' }}/dashboard">{{ $scope === 'strategy' ? __('projectType.strategy') : __('projectType.program') }}</a>
+                <span class="sep" aria-hidden="true">›</span>
+                <span class="rd-crumb-cur">{{ $subject }}</span>
+            </nav>
+            {{-- Title is the <h1> + subject switcher, at the left edge. --}}
+            <h1 class="h">{{ $subject }} <i class="fa fa-caret-down rd-h-caret" aria-hidden="true"></i></h1>
             <div class="prov">
+                {{-- Period intentionally omitted here — the picker on the tab
+                     band states it ("Last quarter · Apr 1 – Jun 30"). --}}
                 {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
-                @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif
                 · {{ __('stakeholder.header.updated') }} {{ $updatedAt }}
             </div>
         </div>
+        {{-- Verdict block (2 lines) sits to the LEFT of the ⋮, which is pinned
+             to the card's top-right corner as its own column — so the metrics
+             sub-line never runs under the menu. Both header sides read as a
+             clean label + sub-line block. --}}
         <div class="verdict">
             <div class="v"><span class="dot" style="background:{{ $verdictDotColor }}"></span>{{ $verdictLabel }}</div>
             <div class="src">{{ $verdictSource }}</div>
         </div>
+        @if (! empty($projectId ?? null))
+            {{-- ⋮ moved out of the collapsed pageheader; only rendered when the
+                 caller passes projectId (program report keeps its own). --}}
+            <div class="rd-actions">
+                @include('reports::partials.stakeholder.actionsMenu', [
+                    'scope' => $scope,
+                    'projectId' => $projectId,
+                    'verdictOverride' => $verdictOverride ?? null,
+                ])
+            </div>
+        @endif
     </div>
 
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
