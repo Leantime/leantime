@@ -147,6 +147,10 @@
 .rd-scope .p2-drift{padding:10px 14px;background:#FBF3E4;border-radius:var(--rd-r-xs);color:#9A6A11;font-size:12.5px;line-height:1.5;display:flex;gap:9px;align-items:flex-start;}
 .rd-scope .p2-drift i{color:#b8860b;font-size:11px;margin-top:2px;flex:none;}
 .rd-scope .p2-drift b{color:var(--rd-text-1);font-weight:600;}
+.rd-scope .p2-gap{padding:10px 14px;background:var(--rd-danger-bg);border-radius:var(--rd-r-xs);color:var(--rd-danger);font-size:12.5px;line-height:1.5;display:flex;gap:9px;align-items:flex-start;margin-bottom:8px;}
+.rd-scope .p2-gap i{font-size:11px;margin-top:2px;flex:none;}
+.rd-scope .p2-gap b{color:var(--rd-text-1);font-weight:600;}
+.rd-scope .p2-gap em{color:var(--rd-text-2);font-style:normal;font-weight:600;}
 </style>
 
 @if (! $hasLM)
@@ -156,6 +160,7 @@
         $stages = $logicModel['coverageMatrix']['stages'] ?? [];
         $columns = $logicModel['coverageMatrix']['columns'] ?? [];
         $unaligned = $logicModel['coverageMatrix']['unalignedColumns'] ?? [];
+        $covCells = $logicModel['coverageMatrix']['cells'] ?? [];
         $healthBadges = $logicModel['healthBadges'] ?? [];
         $projectLinks = $logicModel['projectLinks'] ?? [];
         $linkedGoals = $logicModel['linkedGoals'] ?? [];
@@ -874,6 +879,42 @@
                 <div class="more">{{ sprintf(__('stakeholder.lm.also_more'), $alsoMore) }}</div>
             @endif
         </div>
+    @endif
+
+    {{-- Coverage gap (strategy scope): a "result" outcome/output/impact item
+         that no program is working toward. The actionable hole — a funder
+         reads it as "nobody is delivering this intended result". Derived from
+         the same coverage matrix as drift: an item with no covering cell. --}}
+    @if (($scope ?? '') === 'strategy')
+        @php
+            $resultStages = ['outputs', 'outcomes', 'impact'];
+            $coverageGaps = [];
+            foreach ($stages as $stageKey => $stage) {
+                if (! in_array($stageKey, $resultStages, true)) {
+                    continue;
+                }
+                foreach (($stage['items'] ?? []) as $covItem) {
+                    $covArr = (array) $covItem;
+                    $covId = (int) ($covArr['id'] ?? 0);
+                    $covLabel = trim((string) ($covArr['description'] ?? ''));
+                    if ($covId > 0 && $covLabel !== '' && empty($covCells[$covId])) {
+                        $coverageGaps[] = $covLabel;
+                    }
+                }
+            }
+            $gapNames = array_slice($coverageGaps, 0, 5);
+            $moreGaps = max(0, count($coverageGaps) - 5);
+        @endphp
+        @if (count($coverageGaps) > 0)
+            <div class="p2-gap">
+                <i class="fa fa-circle-exclamation"></i>
+                <div>
+                    <b>{{ __('stakeholder.lm.gap_label') }}:</b>
+                    {{ sprintf(__('stakeholder.lm.gap_hint'), count($coverageGaps)) }}
+                    <em>{{ implode(', ', $gapNames) }}@if ($moreGaps > 0) +{{ $moreGaps }} @endif</em>
+                </div>
+            </div>
+        @endif
     @endif
 
     {{-- Off-strategy drift (strategy scope) --}}
