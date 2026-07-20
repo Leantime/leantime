@@ -182,14 +182,17 @@
 .rd-picker-cdash{color:var(--rd-text-3);font-size:11px;flex:none;}
 .rd-picker-capply{font:inherit;font-size:11px;font-weight:500;color:#fff;background:var(--rd-accent);border:none;border-radius:5px;padding:5px 9px;height:26px;cursor:pointer;flex:none;}
 
-/* Tab bar — sits ON the page background (matches the To-Dos Kanban·Table·List
-   pattern). Not on a panel. */
-.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:var(--rd-text-3);padding:6px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:6px;transition:color .15s,background .15s;}
-.rd-tab:hover{color:var(--rd-text-1);background:rgba(0,0,0,.03);}
-.rd-tab.on{color:var(--rd-accent);font-weight:600;background:rgba(0,71,102,.06);}
-.rd-tab i{font-size:12px;}
-.rd-tab .ct{font-size:11px;color:var(--rd-text-4);background:var(--rd-line-soft);border-radius:10px;padding:1px 7px;margin-left:2px;}
+/* Tab bar — a connected glass-pill group on a teal band, matching the
+   Resource Allocation chrome so the two surfaces read as one product.
+   The whole bar is hidden in print, so grant printouts stay clean white. */
+.rd-tabs{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:12px 16px;background:linear-gradient(135deg,var(--accent1,#00506b),var(--accent2,#003c50));border-radius:var(--rd-r-sm);}
+.rd-tabgroup{display:inline-flex;flex-wrap:wrap;gap:2px;padding:4px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.2);border-radius:100px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.rd-tab{background:transparent;border:none;font:inherit;font-size:13px;font-weight:500;color:rgba(255,255,255,0.9);padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border-radius:100px;white-space:nowrap;transition:all .14s ease;}
+.rd-tab:hover:not(.on){color:#fff;background:rgba(255,255,255,0.14);}
+.rd-tab.on{color:var(--rd-accent);background:#fff;font-weight:600;box-shadow:0 2px 6px rgba(20,40,50,.12);}
+.rd-tab i{font-size:12px;opacity:.9;}
+.rd-tab.on i{color:var(--rd-accent);opacity:1;}
+.rd-tab .ct{font-size:11px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.18);border-radius:10px;padding:1px 7px;margin-left:2px;}
 .rd-tab.on .ct{color:var(--rd-accent);background:rgba(0,71,102,.1);}
 .rd-arrows{display:flex;gap:4px;}
 .rd-arrow{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-text-2);}
@@ -341,10 +344,12 @@
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
          space; picker sits with the view-mode controls it belongs with) ── --}}
     <div class="rd-tabs hideOnPrint">
-        <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
-        <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
-        <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
-        <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+        <div class="rd-tabgroup" role="tablist" aria-label="{{ __('stakeholder.tab.overview') }}">
+            <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
+            <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
+            <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
+            <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+        </div>
 
         <div class="rd-tab-right">
             <div class="rd-picker" id="rdPicker">
