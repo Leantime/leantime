@@ -441,19 +441,30 @@ body {
     /*background:var(--header-bg-color);*/
 }
 
+/* Pageheader is a glass card matching the content card below it, floating on
+   the app's gradient background (which lives on .rightpanel, untouched). The
+   old design used a 150px invisible cushion + a -95px content overlap to make
+   the header float transparently on the gradient; that's replaced by a proper
+   boxed header. Applied globally so every page's header is consistent. */
 .pageheader {
-    padding: 0px 15px;
-    padding-bottom:150px;
-    height:60px;
-    line-height:60px;
+    padding: 14px 20px;
+    height: auto;
+    line-height: 1.3;
     position: relative;
+    background: var(--glass-background);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
+    border-radius: var(--box-radius);
+    box-shadow: var(--large-shadow);
+    margin-bottom: 10px;
 }
 
 .maincontent {
     float: left;
     width: 100%;
     padding: 10px 15px;
-    margin-top:-95px;
+    margin-top: 0;
     position:relative;
     z-index:5;
 }

@@ -116,12 +116,14 @@ a .label.feature-label:after {
 
 .pagetitle h1 {
     font-size: var(--font-size-xl);
-    color: var(--main-titles-color);
-    line-height:60px;
+    /* Dark text now that the header is a white/glass card (was white on the
+       gradient). --primary-font-color adapts in dark mode. */
+    color: var(--primary-font-color);
+    line-height: 1.2;
 }
 
 .pagetitle h1 a {
-    color: var(--main-titles-color);
+    color: var(--primary-font-color);
     text-decoration:underline;
 }
 
