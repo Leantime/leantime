@@ -39,7 +39,7 @@ use Unit\TestCase;
  */
 class ResourceStructureServiceTest extends TestCase
 {
-    public function test_getForProjects_returns_empty_summary_when_projectIds_is_empty(): void
+    public function test_get_for_projects_returns_empty_summary_when_project_ids_is_empty(): void
     {
         $svc = $this->makeService(canvasIds: [1], items: []);
         $summary = $svc->getForProjects([]);
@@ -48,7 +48,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertTrue($summary->isEmpty());
     }
 
-    public function test_getForProjects_returns_empty_summary_when_no_resource_canvas(): void
+    public function test_get_for_projects_returns_empty_summary_when_no_resource_canvas(): void
     {
         $svc = $this->makeService(canvasIds: [], items: []);
         $summary = $svc->getForProjects([1, 2]);
@@ -58,7 +58,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(0.0, $summary->totalCapacity);
     }
 
-    public function test_getForProjects_excludes_stub_people_from_totals(): void
+    public function test_get_for_projects_excludes_stub_people_from_totals(): void
     {
         // Active person: capacity 40, allocated 30. Stub person: default 40.
         // The report and the tab must agree — the tab excludes stubs from
@@ -93,7 +93,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(30.0, $summary->totalAllocated);
     }
 
-    public function test_getForProjects_excludes_stub_budget_lines_from_array_and_totals(): void
+    public function test_get_for_projects_excludes_stub_budget_lines_from_array_and_totals(): void
     {
         $svc = $this->makeService(
             canvasIds: [100],
@@ -124,7 +124,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(2000.0, $summary->totalSpent);
     }
 
-    public function test_getForProjects_aggregates_across_multiple_canvases(): void
+    public function test_get_for_projects_aggregates_across_multiple_canvases(): void
     {
         // A strategy with two programs, each with its own resource canvas.
         // The gateway must sum across both.
@@ -153,7 +153,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(35.0, $summary->totalAllocated);
     }
 
-    public function test_seedPeopleFromChildProjects_is_idempotent_by_userId(): void
+    public function test_seed_people_from_child_projects_is_idempotent_by_user_id(): void
     {
         // Two child projects; user 5 assigned to both, user 7 to one.
         // First run: 2 people added (5 and 7). Second run: 0 added, 2 skipped
@@ -209,7 +209,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(5, $addCalls[0]['data']['userId']);
     }
 
-    public function test_getForProjects_hydrates_a_dependency_with_none_of_the_optional_fields(): void
+    public function test_get_for_projects_hydrates_a_dependency_with_none_of_the_optional_fields(): void
     {
         // Back-compat guarantee for pre-existing dependency canvas items —
         // owner/dueDate/notes/lastModified were added later. An item authored
@@ -253,7 +253,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertNull($dep->lastModified);
     }
 
-    public function test_seedBudgetFromChildProjects_is_idempotent_by_projectId(): void
+    public function test_seed_budget_from_child_projects_is_idempotent_by_project_id(): void
     {
         // Same skip-when-present contract, keyed on projectId. A child with
         // dollarBudget=0 is skipped entirely (no line to seed).
@@ -297,6 +297,146 @@ class ResourceStructureServiceTest extends TestCase
     // ─── Test doubles ────────────────────────────────────────────────
 
     /**
+     * getProgramTeamMembers defines who a non-manager may name in the Add
+     * Person picker, so its exact membership is a security boundary, not a
+     * convenience. Over-returning here would leak users the caller has no
+     * business seeing.
+     */
+    public function test_get_program_team_members_returns_deduplicated_union_of_child_project_users(): void
+    {
+        $programs = $this->makePrograms(childProjects: [
+            ['id' => 7], ['id' => 8], ['id' => 9],
+        ]);
+        $projects = $this->makeProjects(usersByProject: [
+            7 => [['id' => 1, 'firstname' => 'Ada'], ['id' => 2, 'firstname' => 'Bo']],
+            // Ada again on another project — one row, not two.
+            8 => [['id' => 1, 'firstname' => 'Ada']],
+            // 9 has nobody; a project with no team must not break the walk.
+        ]);
+
+        $members = (new ResourceStructureService($this->makeRepo(), $this->makeDb(), $projects, $programs))
+            ->getProgramTeamMembers(2);
+
+        $this->assertSame([1, 2], array_map(fn ($m) => (int) $m['id'], $members));
+    }
+
+    /**
+     * A program with no child projects must yield nobody — never a fallback
+     * to "all users", which would hand every editor the whole directory.
+     */
+    public function test_get_program_team_members_is_empty_for_a_program_with_no_children(): void
+    {
+        $members = (new ResourceStructureService(
+            $this->makeRepo(), $this->makeDb(), $this->makeProjects(), $this->makePrograms()
+        ))->getProgramTeamMembers(2);
+
+        $this->assertSame([], $members);
+    }
+
+    /**
+     * Rows with no usable id are dropped rather than emitted as id 0 —
+     * a 0 would collide with the stub convention used by person rows.
+     */
+    public function test_get_program_team_members_skips_rows_without_a_real_id(): void
+    {
+        $programs = $this->makePrograms(childProjects: [['id' => 7]]);
+        $projects = $this->makeProjects(usersByProject: [
+            7 => [['id' => 0, 'firstname' => 'Ghost'], [], ['id' => 5, 'firstname' => 'Real']],
+        ]);
+
+        $members = (new ResourceStructureService($this->makeRepo(), $this->makeDb(), $projects, $programs))
+            ->getProgramTeamMembers(2);
+
+        $this->assertSame([5], array_map(fn ($m) => (int) $m['id'], $members));
+    }
+
+    /**
+     * getLinkedUserIds backs both the picker's "already on this plan" label
+     * and the add path's idempotence check. Stub rows carry userId 0 and
+     * must not register as linked.
+     */
+    public function test_get_linked_user_ids_maps_real_users_and_ignores_stubs(): void
+    {
+        $repo = $this->makeRepo(itemsByBoxProvider: fn (int $canvasId, string $box) => $box === 'people' ? [
+            ['parsedData' => ['userId' => 4]],
+            ['parsedData' => ['userId' => 0]],
+            ['parsedData' => []],
+            ['parsedData' => ['userId' => 9]],
+        ] : []);
+
+        $linked = (new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms()))
+            ->getLinkedUserIds(485);
+
+        $this->assertSame([4, 9], array_keys($linked));
+    }
+
+    /**
+     * The report and the Resource Allocation tab must not disagree about
+     * the same person. The tab applies a capacity truth priority — a linked
+     * user's profile weekly_hours beats the canvas-stored value — and the
+     * gateway that feeds reports has to apply it identically. Before this,
+     * someone stored at 40 with a 20h profile read 20h on the tab and 40h
+     * on the report, including in the report's headline utilization tile.
+     */
+    public function test_get_for_projects_prefers_profile_weekly_hours_over_stored_capacity(): void
+    {
+        $svc = $this->makeService(
+            canvasIds: [1],
+            items: [1 => ['people' => [[
+                'id' => 10, 'description' => 'Ada', 'status' => 'active',
+                'parsedData' => ['userId' => 7, 'capacity' => 40, 'allocations' => []],
+            ]]]],
+            userCapacity: [7 => ['weekly_hours' => 20, 'employment_type' => 'part_time']],
+        );
+
+        $summary = $svc->getForProjects([5]);
+
+        $this->assertSame(20.0, $summary->people[0]->capacity);
+        $this->assertSame(20.0, $summary->totalCapacity);
+    }
+
+    /**
+     * The override only applies when the profile actually carries a value.
+     * A null weekly_hours (or a pre-migration install, where the batch
+     * loader returns an empty map) must fall back to the stored capacity
+     * rather than collapsing everyone to zero.
+     */
+    public function test_get_for_projects_falls_back_to_stored_capacity_without_a_profile_value(): void
+    {
+        $items = [1 => ['people' => [[
+            'id' => 10, 'description' => 'Ada', 'status' => 'active',
+            'parsedData' => ['userId' => 7, 'capacity' => 32, 'allocations' => []],
+        ]]]];
+
+        $nullHours = $this->makeService(canvasIds: [1], items: $items,
+            userCapacity: [7 => ['weekly_hours' => null, 'employment_type' => null]]);
+        $this->assertSame(32.0, $nullHours->getForProjects([5])->people[0]->capacity);
+
+        // Pre-migration install: loader swallows the missing column and
+        // returns nothing at all.
+        $noColumns = $this->makeService(canvasIds: [1], items: $items, userCapacity: []);
+        $this->assertSame(32.0, $noColumns->getForProjects([5])->people[0]->capacity);
+    }
+
+    /**
+     * An unlinked person (userId 0) has no profile to consult, so the
+     * stored value stands.
+     */
+    public function test_get_for_projects_uses_stored_capacity_for_unlinked_people(): void
+    {
+        $svc = $this->makeService(
+            canvasIds: [1],
+            items: [1 => ['people' => [[
+                'id' => 10, 'description' => 'Placeholder', 'status' => 'active',
+                'parsedData' => ['userId' => 0, 'capacity' => 15, 'allocations' => []],
+            ]]]],
+            userCapacity: [7 => ['weekly_hours' => 20, 'employment_type' => null]],
+        );
+
+        $this->assertSame(15.0, $svc->getForProjects([5])->people[0]->capacity);
+    }
+
+    /**
      * Testable subclass of the SUT that overrides `findResourceCanvasIds()`
      * with a canned list, so the test doesn't need to mock a Db query chain.
      * `getItemsByBox()` returns items keyed by `[canvasId][box]`.
@@ -304,22 +444,26 @@ class ResourceStructureServiceTest extends TestCase
      * @param  int[]  $canvasIds
      * @param  array<int, array<string, array<int, array<string, mixed>>>>  $items
      */
-    private function makeService(array $canvasIds, array $items): ResourceStructureService
+    private function makeService(array $canvasIds, array $items, array $userCapacity = []): ResourceStructureService
     {
         $repo = $this->makeRepo(
             canvasId: 0,
             itemsByBoxProvider: fn (int $canvasId, string $box) => $items[$canvasId][$box] ?? [],
         );
 
-        return new class ($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms(), $canvasIds) extends ResourceStructureService
+        return new class($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms(), $canvasIds, $userCapacity) extends ResourceStructureService
         {
-            /** @param int[] $canvasIds */
+            /**
+             * @param  int[]  $canvasIds
+             * @param  array<int, array{weekly_hours: int|null, employment_type: string|null}>  $userCapacity
+             */
             public function __construct(
                 ResourceStructureRepository $repo,
                 Db $dbCore,
                 ProjectService $projectService,
                 Programs $programService,
                 private array $canvasIds,
+                private array $userCapacity,
             ) {
                 parent::__construct($repo, $dbCore, $projectService, $programService);
             }
@@ -327,6 +471,14 @@ class ResourceStructureServiceTest extends TestCase
             protected function findResourceCanvasIds(array $projectIds): array
             {
                 return $this->canvasIds;
+            }
+
+            // Stubbed rather than mocked: the real loader queries zp_user
+            // and swallows a missing-column PDOException, so a mocked Db
+            // would silently exercise only the empty-map path.
+            protected function fetchUserCapacityAttributes(array $userIds): array
+            {
+                return $this->userCapacity;
             }
         };
     }
