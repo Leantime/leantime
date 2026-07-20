@@ -133,6 +133,12 @@
 /* Risk — the ONE fragile link */
 .rd-scope .p2-risk{background:#FBEAEF;border:1px solid #f2d3dd;border-radius:var(--rd-r-sm);padding:14px 18px;display:flex;gap:12px;margin-bottom:14px;}
 .rd-scope .p2-risk i.ri{color:var(--rd-danger);margin-top:2px;font-size:14px;flex:none;}
+/* Dark overrides — light status tints → translucent over the dark panel. */
+.rd-scope.rd-dark .p2-vbadge.ok,.rd-scope.rd-dark .p2-brk-progrow .pstat.ok{background:rgba(87,181,152,.16);}
+.rd-scope.rd-dark .p2-vbadge.wip,.rd-scope.rd-dark .p2-brk-progrow .pstat.wip{background:rgba(63,114,176,.22);color:#8fb4e0;}
+.rd-scope.rd-dark .p2-vbadge.risk,.rd-scope.rd-dark .p2-brk-progrow .pstat.risk{background:transparent;}
+.rd-scope.rd-dark .p2-impact{background:rgba(87,181,152,.10);border-color:rgba(87,181,152,.25);}
+.rd-scope.rd-dark .p2-risk{background:var(--rd-danger-bg);border-color:rgba(228,101,137,.30);}
 .rd-scope .p2-risk .rb{font-size:13.5px;line-height:1.55;color:var(--rd-text-2);}
 .rd-scope .p2-risk .rb .rl{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-danger);display:block;margin-bottom:3px;}
 .rd-scope .p2-risk .rb b{color:var(--rd-text-1);font-weight:600;}
@@ -141,6 +147,10 @@
 .rd-scope .p2-drift{padding:10px 14px;background:#FBF3E4;border-radius:var(--rd-r-xs);color:#9A6A11;font-size:12.5px;line-height:1.5;display:flex;gap:9px;align-items:flex-start;}
 .rd-scope .p2-drift i{color:#b8860b;font-size:11px;margin-top:2px;flex:none;}
 .rd-scope .p2-drift b{color:var(--rd-text-1);font-weight:600;}
+.rd-scope .p2-gap{padding:10px 14px;background:var(--rd-danger-bg);border-radius:var(--rd-r-xs);color:var(--rd-danger);font-size:12.5px;line-height:1.5;display:flex;gap:9px;align-items:flex-start;margin-bottom:8px;}
+.rd-scope .p2-gap i{font-size:11px;margin-top:2px;flex:none;}
+.rd-scope .p2-gap b{color:var(--rd-text-1);font-weight:600;}
+.rd-scope .p2-gap em{color:var(--rd-text-2);font-style:normal;font-weight:600;}
 </style>
 
 @if (! $hasLM)
@@ -150,6 +160,7 @@
         $stages = $logicModel['coverageMatrix']['stages'] ?? [];
         $columns = $logicModel['coverageMatrix']['columns'] ?? [];
         $unaligned = $logicModel['coverageMatrix']['unalignedColumns'] ?? [];
+        $covCells = $logicModel['coverageMatrix']['cells'] ?? [];
         $healthBadges = $logicModel['healthBadges'] ?? [];
         $projectLinks = $logicModel['projectLinks'] ?? [];
         $linkedGoals = $logicModel['linkedGoals'] ?? [];
@@ -868,6 +879,42 @@
                 <div class="more">{{ sprintf(__('stakeholder.lm.also_more'), $alsoMore) }}</div>
             @endif
         </div>
+    @endif
+
+    {{-- Coverage gap (strategy scope): a "result" outcome/output/impact item
+         that no program is working toward. The actionable hole — a funder
+         reads it as "nobody is delivering this intended result". Derived from
+         the same coverage matrix as drift: an item with no covering cell. --}}
+    @if (($scope ?? '') === 'strategy')
+        @php
+            $resultStages = ['outputs', 'outcomes', 'impact'];
+            $coverageGaps = [];
+            foreach ($stages as $stageKey => $stage) {
+                if (! in_array($stageKey, $resultStages, true)) {
+                    continue;
+                }
+                foreach (($stage['items'] ?? []) as $covItem) {
+                    $covArr = (array) $covItem;
+                    $covId = (int) ($covArr['id'] ?? 0);
+                    $covLabel = trim((string) ($covArr['description'] ?? ''));
+                    if ($covId > 0 && $covLabel !== '' && empty($covCells[$covId])) {
+                        $coverageGaps[] = $covLabel;
+                    }
+                }
+            }
+            $gapNames = array_slice($coverageGaps, 0, 5);
+            $moreGaps = max(0, count($coverageGaps) - 5);
+        @endphp
+        @if (count($coverageGaps) > 0)
+            <div class="p2-gap">
+                <i class="fa fa-circle-exclamation"></i>
+                <div>
+                    <b>{{ __('stakeholder.lm.gap_label') }}:</b>
+                    {{ sprintf(__('stakeholder.lm.gap_hint'), count($coverageGaps)) }}
+                    <em>{{ implode(', ', $gapNames) }}@if ($moreGaps > 0) +{{ $moreGaps }} @endif</em>
+                </div>
+            </div>
+        @endif
     @endif
 
     {{-- Off-strategy drift (strategy scope) --}}
