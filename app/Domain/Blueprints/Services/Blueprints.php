@@ -379,6 +379,73 @@ class Blueprints extends BaseService
     }
 
     /**
+     * Validate that an import file path is safe to read.
+     *
+     * Rejects URL wrappers (SSRF), restricts reads to a fixed allow-list of
+     * local directories, and requires a known extension.  The allow-list
+     * covers the three places Leantime sources blueprint import files from:
+     * the upload temp directory, the userfiles storage, and the shipped
+     * fixture directory under the Blueprints domain.
+     *
+     * @param  string  $filename  Raw filename passed to {@see import()}
+     * @return bool  True when the resolved path is within an allowed
+     *               directory and has an allowed extension
+     */
+    private function isImportPathAllowed(string $filename): bool
+    {
+        $allowedDirs = [
+            sys_get_temp_dir(),
+            storage_path('userfiles'),
+            APP_ROOT . '/app/Domain/Blueprints/imports',
+        ];
+
+        $resolvedPath = realpath($filename);
+
+        if ($resolvedPath === false) {
+            Log::error('Blueprints import: file not found or path does not exist', [
+                'filename' => $filename,
+            ]);
+
+            return false;
+        }
+
+        // Validate file extension — only XML (uploaded via the UI) and JSON
+        // (shipped fixture files under the imports directory) are permitted.
+        $ext = strtolower(pathinfo($resolvedPath, PATHINFO_EXTENSION));
+        if (! in_array($ext, ['xml', 'json'], true)) {
+            Log::error('Blueprints import: disallowed file extension', [
+                'filename' => $filename,
+                'resolvedPath' => $resolvedPath,
+                'extension' => $ext,
+            ]);
+
+            return false;
+        }
+
+        // Anchor each allowed directory with a trailing separator so
+        // str_starts_with doesn't match sibling-prefix paths (e.g.
+        // /tmp-evil/x must NOT match against allowed /tmp).
+        foreach ($allowedDirs as $allowedDir) {
+            $resolvedAllowed = realpath($allowedDir);
+
+            if ($resolvedAllowed === false) {
+                continue;
+            }
+
+            if (str_starts_with($resolvedPath, $resolvedAllowed . DIRECTORY_SEPARATOR)) {
+                return true;
+            }
+        }
+
+        Log::error('Blueprints import: path traversal or SSRF attempt blocked', [
+            'filename' => $filename,
+            'resolvedPath' => $resolvedPath,
+        ]);
+
+        return false;
+    }
+
+    /**
      * Import a canvas board from an XML file.
      *
      * Parses the XML, validates its structure, then creates a new canvas board
@@ -412,38 +479,15 @@ class Blueprints extends BaseService
         $dom = new DOMDocument('1.0', 'UTF-8');
         $users = app()->make(UserRepository::class);
 
-        // Validate the file path to prevent SSRF and Local File Inclusion.
-        // Reject URL wrappers (http://, ftp://, etc.) and restrict reads to
-        // allowed local directories only.
-        $allowedDirs = [
-            realpath(sys_get_temp_dir()),
-            realpath(storage_path('userfiles')),
-        ];
+        // Validate the file path and extension to prevent SSRF and Local File
+        // Inclusion. Reject URL wrappers (http://, ftp://, etc.), restrict
+        // reads to allowed local directories, and require a known import
+        // extension.
+        if (! $this->isImportPathAllowed($filename)) {
+            return false;
+        }
 
         $resolvedPath = realpath($filename);
-
-        if ($resolvedPath === false) {
-            Log::error('Blueprints import: file not found or path does not exist', ['filename' => $filename]);
-
-            return false;
-        }
-
-        $pathAllowed = false;
-        foreach ($allowedDirs as $allowedDir) {
-            if ($allowedDir !== false && str_starts_with($resolvedPath, $allowedDir)) {
-                $pathAllowed = true;
-                break;
-            }
-        }
-
-        if (! $pathAllowed) {
-            Log::error('Blueprints import: path traversal or SSRF attempt blocked', [
-                'filename' => $filename,
-                'resolvedPath' => $resolvedPath,
-            ]);
-
-            return false;
-        }
 
         $canvasData = file_get_contents($resolvedPath);
         if ($canvasData === false) {
