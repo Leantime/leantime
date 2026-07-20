@@ -178,6 +178,10 @@
    still applies (both classes are on the element), and the popover stretches
    across the trigger instead of anchoring to bottom. */
 .rd-scope .p1-theory .detail-info .pop{position:absolute;top:auto;bottom:calc(100% + 6px);left:0;background:var(--rd-text-1);color:#fff;font-size:12.5px;font-weight:400;padding:10px 12px;border-radius:6px;line-height:1.5;box-shadow:var(--rd-sh-lg);opacity:0;visibility:hidden;transform:translateY(3px);transition:opacity .12s,transform .12s,visibility .12s;z-index:10;text-align:left;pointer-events:none;width:280px;font-style:normal;letter-spacing:0;}
+/* These tooltips use var(--rd-text-1) as their fill — which INVERTS to a
+   light bg in dark mode, hiding the white text. Pin a fixed dark fill. */
+.rd-scope.rd-dark .p1-theory .conn .tip,
+.rd-scope.rd-dark .p1-theory .detail-info .pop{background:#0d0e0f;color:#e8eaec;}
 .rd-scope .p1-theory .detail-info:hover .pop,
 .rd-scope .p1-theory .detail-info:focus-within .pop{opacity:1;visibility:visible;transform:translateY(0);}
 .rd-scope .p1-theory .detail-info .pop .h{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:rgba(255,255,255,.7);display:block;margin-bottom:6px;}
@@ -409,7 +413,7 @@
             </div>
             <h3>{{ $peak->headline ?? '' }}</h3>
             @if ($peakBody !== '')
-                <p>{{ mb_strlen($peakBody > 260 ? mb_substr($peakBody, 0, 257).'…' : $peakBody) }}</p>
+                <p>{{ mb_strlen($peakBody) > 260 ? mb_substr($peakBody, 0, 257).'…' : $peakBody }}</p>
             @endif
             <div class="hf">
                 @if (! empty($peak->projectName))

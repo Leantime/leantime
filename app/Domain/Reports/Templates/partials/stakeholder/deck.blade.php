@@ -103,6 +103,35 @@
     --rd-sh-lg:0 20px 56px rgba(20,40,50,.16);
     color:var(--rd-text-1);
 }
+/* Dark mode — server-stamped .rd-dark (mirrors the RA tab's .ra-dark).
+   Overriding the token layer adapts everything that reads var(--rd-*);
+   the few hardcoded literals in the page partials carry their own
+   .rd-dark overrides alongside their light rules. */
+.rd-scope.rd-dark {
+    --rd-accent:#7fc1e0;
+    --rd-text-1:#e8eaec;
+    --rd-text-2:#b6bec4;
+    --rd-text-3:#97a1a8;
+    --rd-text-4:#6a747c;
+    --rd-line:#3a3f44;
+    --rd-line-soft:#313539;
+    --rd-bg:#1c1e20;
+    --rd-panel:#26282a;
+    --rd-ok:#57b598;
+    --rd-warn:#d9a441;
+    --rd-warn-bg:rgba(217,164,65,.14);
+    --rd-warn-tx:#d9a441;
+    --rd-danger:#e46589;
+    --rd-danger-bg:rgba(228,101,137,.16);
+    --rd-sh-sm:0 1px 3px rgba(0,0,0,.4);
+    --rd-sh-lg:0 20px 56px rgba(0,0,0,.5);
+}
+/* Dark overrides for deck literals that bypass the token layer. */
+.rd-scope.rd-dark .rd-kcell.has-detail:hover,
+.rd-scope.rd-dark .rd-kcell.has-detail.open,
+.rd-scope.rd-dark .rd-cardx{background:var(--rd-panel);}
+.rd-scope.rd-dark .rd-kcell .kv .up{color:#57b598;background:rgba(87,181,152,.16);}
+.rd-scope.rd-dark .rd-kcell .kv .down{color:#e46589;background:rgba(228,101,137,.16);}
 .rd-scope *{min-width:0;}
 
 /* Persistent header — sits above the deck. Left: subject + provenance. Right:
@@ -283,7 +312,8 @@
 }
 </style>
 
-<div class="rd-scope">
+@php $rdDark = app()->make(\Leantime\Core\UI\Theme::class)->getColorMode() === 'dark'; @endphp
+<div class="rd-scope @if ($rdDark) rd-dark @endif">
 
     {{-- ── Persistent header ────────────────────────────────────────── --}}
     <div class="rd-hdr">

@@ -133,6 +133,12 @@
 /* Risk — the ONE fragile link */
 .rd-scope .p2-risk{background:#FBEAEF;border:1px solid #f2d3dd;border-radius:var(--rd-r-sm);padding:14px 18px;display:flex;gap:12px;margin-bottom:14px;}
 .rd-scope .p2-risk i.ri{color:var(--rd-danger);margin-top:2px;font-size:14px;flex:none;}
+/* Dark overrides — light status tints → translucent over the dark panel. */
+.rd-scope.rd-dark .p2-vbadge.ok,.rd-scope.rd-dark .p2-brk-progrow .pstat.ok{background:rgba(87,181,152,.16);}
+.rd-scope.rd-dark .p2-vbadge.wip,.rd-scope.rd-dark .p2-brk-progrow .pstat.wip{background:rgba(63,114,176,.22);color:#8fb4e0;}
+.rd-scope.rd-dark .p2-vbadge.risk,.rd-scope.rd-dark .p2-brk-progrow .pstat.risk{background:transparent;}
+.rd-scope.rd-dark .p2-impact{background:rgba(87,181,152,.10);border-color:rgba(87,181,152,.25);}
+.rd-scope.rd-dark .p2-risk{background:var(--rd-danger-bg);border-color:rgba(228,101,137,.30);}
 .rd-scope .p2-risk .rb{font-size:13.5px;line-height:1.55;color:var(--rd-text-2);}
 .rd-scope .p2-risk .rb .rl{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-danger);display:block;margin-bottom:3px;}
 .rd-scope .p2-risk .rb b{color:var(--rd-text-1);font-weight:600;}
