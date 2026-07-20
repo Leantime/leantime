@@ -634,20 +634,23 @@ class BlueprintsServiceTest extends TestCase
     public function test_import_accepts_xml_file_in_allowed_temp_dir(): void
     {
         // A .xml file placed in sys_get_temp_dir() (the normal upload flow)
-        // must pass path validation and proceed to XML parsing. We use a
-        // minimal valid canvas XML so that the import doesn't fail on the
-        // structural checks that come after path validation.
-        $service = $this->securedService(
-            $this->make(BlueprintsRepository::class),
-            $this->allowingPermissions()
-        );
+        // must pass path validation and successfully import via the repo.
+        // The repository is stubbed so the import completes and returns a
+        // known canvas id, proving that path validation did NOT block it.
+        $expectedId = 42;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'existCanvas' => fn () => false,
+            'addCanvas' => fn () => $expectedId,
+            'addCanvasItem' => fn () => 1,
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
 
         $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
-<canvas key="swot">
+<canvas key="lean">
     <title>Security Test Canvas</title>
     <content>
-        <element key="swot_strengths">
+        <element key="lean_hypothesis">
             <item>
                 <author firstname="A" lastname="B"/>
                 <description>Test item</description>
@@ -667,20 +670,14 @@ XML;
         $tempFile = tempnam(sys_get_temp_dir(), 'leantime.') . '.xml';
         file_put_contents($tempFile, $xml);
 
-        // We don't care about the final return value (could be false if the
-        // repo rejects the save, or int on success) — the key assertion is
-        // that we got PAST the path-validation gate (no early false from
-        // isImportPathAllowed). If the code reaches the repo we're good.
-        // The repo stub returns null/false from existCanvas by default, so
-        // we can tell the difference: path rejection returns false BEFORE
-        // touching the repo.
         try {
             $result = $service->import($tempFile, 'lean', 55, 1);
-            // Path validation passed — the result depends on the repo stub's
-            // behaviour, which is outside the scope of this test. The fact
-            // that no false was returned for path/extension reasons is what
-            // matters.
-            $this->assertTrue(true, 'XML file in allowed dir passed path validation');
+            // Path validation passed and repo returned the expected canvas id.
+            $this->assertSame(
+                $expectedId,
+                $result,
+                'XML file in allowed dir must pass path validation and be imported'
+            );
         } finally {
             if (file_exists($tempFile)) {
                 unlink($tempFile);
