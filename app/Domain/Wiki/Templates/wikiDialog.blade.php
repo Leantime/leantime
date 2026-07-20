@@ -18,6 +18,7 @@
 @endphp
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/wiki/wikiModal/{{ $id }}">
+@csrf
 
     <label>{!! __('label.wiki_title') !!}</label>
     <x-global::forms.text-input name="title" id="wikiTitle" value="{{ $tpl->escape($currentWiki->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" /><br />

@@ -5,6 +5,7 @@
 
 
 <form action="{{ BASE_URL }}/calendar/editExternal/{{ $values['id'] }}" method="post" class="formModal">
+@csrf
 
     <input type="hidden" name="save" value="1" />
     <label for="name">{{ $tpl->__('label.calendar_name') }}:</label>

@@ -11,6 +11,7 @@
 {!! $tpl->displayNotification() !!}
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/calendar/export">
+@csrf
 
     @dispatchEvent('afterFormOpen')
 

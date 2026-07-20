@@ -21,6 +21,7 @@
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}"
       id="commentForm">
+@csrf
     <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
        style="display:none;" id="mainToggler"><span
                 class="fa fa-plus-square"></span> {!! __('links.add_new_comment') !!}

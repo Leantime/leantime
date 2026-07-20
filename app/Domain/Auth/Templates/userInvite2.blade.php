@@ -10,6 +10,7 @@
 <div class="regcontent">
 
     <form id="resetPassword" action="" method="post">
+    @csrf
         <input type="hidden" name="step" value="2" />
 
         {{  $tpl->displayInlineNotification() }}

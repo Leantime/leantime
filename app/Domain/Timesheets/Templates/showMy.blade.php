@@ -192,6 +192,7 @@ jQuery(document).ready(function(){
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
+        @csrf
             <div class="btn-group viewDropDown pull-right">
                 <button class="btn dropdown-toggle" data-toggle="dropdown">
                     {!! __('links.week_view') !!} {!! __('links.view') !!}

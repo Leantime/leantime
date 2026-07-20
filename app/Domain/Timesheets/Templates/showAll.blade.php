@@ -104,6 +104,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
         <form action="{{ BASE_URL }}/timesheets/showAll" method="post" id="form" name="form">
+        @csrf
 
             <div class="pull-right">
                 <div id="tableButtons" style="display:inline-block"></div>

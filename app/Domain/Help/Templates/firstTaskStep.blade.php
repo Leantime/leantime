@@ -1,5 +1,6 @@
 <div style="max-width:700px;">
     <form class="onboardingModal" method="post" id="firstTaskOnboarding" action="{{ BASE_URL }}/help/firstLogin?step={{ $nextStep }}">
+    @csrf
         <input type="hidden" name="currentStep" value="{{ $currentStep }}" />
         <div class="row">
             <div class="col-md-8">

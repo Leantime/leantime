@@ -19,6 +19,7 @@
         {!! $tpl->displayNotification() !!}
 
         <form action="" method="post" class="stdform">
+        @csrf
 
             <div class="widget">
             <h4 class="widgettitle">{!! __('OVERVIEW') !!}</h4>

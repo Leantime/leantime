@@ -5,6 +5,7 @@
 
 <form class="formModal" method="post"
     action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock['id']) ? $bigRock['id'] : '' }}">
+@csrf
 
     <br />
     <label>{{ __('label.goal_description') }}</label>

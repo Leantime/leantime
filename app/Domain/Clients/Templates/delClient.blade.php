@@ -22,6 +22,7 @@
         <div class="widgetcontent">
 
             <form method="post">
+            @csrf
 
                 @dispatchEvent('afterFormOpen')
 

@@ -11,6 +11,7 @@
     <?php $tpl->dispatchTplEvent('afterRegcontentOpen'); ?>
 
     <form id="resetPassword" action="" method="post">
+    @csrf
         <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
         <?php echo $tpl->displayInlineNotification(); ?>

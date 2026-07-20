@@ -3,6 +3,7 @@
 {!! $tpl->displayNotification() !!}
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}">
+@csrf
 
     <label>{!! __('label.newProjectName') !!}</label>
     <x-global::forms.text-input name="projectName" value="{!! __('label.copy_of') !!} {{ $project['name'] }}" /><br />

@@ -9,6 +9,7 @@
 <h4 class="widgettitle title-light">{!! __('subtitles.delete') !!}</h4>
 
 <form method="post" class="formModal" action="{{ BASE_URL }}/calendar/delEvent/{{ $id }}">
+@csrf
     @dispatchEvent('afterFormOpen')
     <p>{!! __('text.confirm_event_deletion') !!}</p><br />
     @dispatchEvent('beforeSubmitButton')

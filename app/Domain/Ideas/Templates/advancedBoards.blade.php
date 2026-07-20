@@ -230,6 +230,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <form action="" method="post">
+                    @csrf
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             <h4 class="modal-title">{!! __('headlines.start_new_idea_board') !!}</h4>
@@ -255,6 +256,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <form action="" method="post">
+                    @csrf
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>

@@ -27,6 +27,7 @@
                             <img src="{{ $qrData }}" style="border-radius: var(--box-radius);"/><br />
                             Secret: <p>{{ $secret }}</p><br/>
                             <form action="" method="post" class='stdform'>
+                            @csrf
                                 <h5>2. {!! __('text.twoFA_verify_code') !!}</h5>
                                 <p>
                                     <span>{!! __('label.twoFACode_short') !!}:</span>
@@ -41,6 +42,7 @@
                             </form>
                         @else
                             <form action="" method="post" class='stdform'>
+                            @csrf
                                 <h5>{!! __('text.twoFA_already_enabled') !!}</h5>
                                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                                 <p class='stdformbutton'>

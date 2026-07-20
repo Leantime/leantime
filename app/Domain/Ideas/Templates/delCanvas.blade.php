@@ -15,6 +15,7 @@
         <h4 class="widget widgettitle">{!! __('subtitles.delete') !!}</h4>
         <div class="widgetcontent">
             <form method="post" action="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->escape($_GET['id']) }}">
+            @csrf
                 <p>{!! __('text.are_you_sure_delete_idea_board') !!}</p>
                 <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />
                 <x-global::forms.button tag="a" contentRole="tertiary" link="{{ BASE_URL }}/ideas/showBoards">{!! __('buttons.back') !!}</x-global::forms.button>

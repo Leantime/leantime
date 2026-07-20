@@ -44,6 +44,7 @@
 
             <div id="team">
                 <form method="post" action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#team">
+                @csrf
                     <input type="hidden" name="saveUsers" value="1" />
 
 
@@ -217,6 +218,7 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
+                        @csrf
                             <x-global::forms.text-input name="mattermostWebhookURL" id="mattermostWebhookURL" value="{{ e($mattermostWebhookURL) }}" />
                             <br />
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="mattermostSave" />
@@ -236,6 +238,7 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
+                        @csrf
                             <x-global::forms.text-input name="slackWebhookURL" id="slackWebhookURL" value="{{ e($slackWebhookURL) }}" />
                             <br />
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="slackSave" />
@@ -255,6 +258,7 @@
                     <div class="col-md-4">
 
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
+                        @csrf
                             <strong>{!! __('label.base_url') !!}</strong><br />
                             <x-global::forms.text-input name="zulipURL" id="zulipURL" placeholder="{{ __('input.placeholders.zulip_url') }}" value="{{ $zulipHook['zulipURL'] }}" />
                             <br />
@@ -288,6 +292,7 @@
                     <div class="col-md-4">
                         <strong>{!! __('label.webhook_url') !!}</strong><br/>
                         <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
+                        @csrf
                             @for ($i = 1; $i <= 3; $i++)
                             @php $discordVarName = 'discordWebhookURL'.$i; $discordVarVal = $$discordVarName ?? ''; @endphp
                             <input type="text" name="discordWebhookURL{{ $i }}" id="discordWebhookURL{{ $i }}" placeholder="{{ __('input.placeholders.discord_url') }}" value="{{ e($discordVarVal) }}"/><br/>
@@ -301,6 +306,7 @@
 
             <div id="todosettings">
                 <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#todosettings" method="post">
+                @csrf
                     <ul class="sortableTicketList" id="todoStatusList">
                         @foreach ($todoStatus as $key => $ticketStatus)
                             <li>

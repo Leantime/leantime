@@ -11,6 +11,7 @@
 <div class="regcontent">
     @dispatchEvent('afterRegcontentOpen')
     <form id="resetPassword" action="" method="post">
+    @csrf
         @dispatchEvent('afterFormOpen')
         {!! $tpl->displayInlineNotification() !!}
         <p>{!! __('text.enter_email_address_to_reset') !!}<br /><br /></p>

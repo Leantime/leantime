@@ -17,6 +17,7 @@
         <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('apiKey');">{!! __('links.copy_key') !!}</x-global::forms.button>
     @else
     <form action="{{ BASE_URL }}/api/newApiKey" method="post" class="stdform formModal" >
+    @csrf
 
         <input type="hidden" name="save" value="1" />
 

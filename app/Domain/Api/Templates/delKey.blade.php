@@ -18,6 +18,7 @@
         <h5 class="subtitle">{!! __('subtitles.delete_key') !!}</h5>
 
             <form method="post">
+            @csrf
                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
                 <p>{!! __('text.confirm_key_deletion') !!}</p><br />
                 <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />

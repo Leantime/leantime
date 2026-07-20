@@ -6,6 +6,7 @@
 <div class="pageheader">
     @dispatchEvent('afterPageHeaderOpen')
     <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
+    @csrf
         <x-global::forms.text-input name="term" placeholder="To search type and hit enter..." />
     </form>
 

@@ -43,6 +43,7 @@
             <div class="col-md-3">
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
+                    @csrf
                         <x-global::forms.text-input name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;" />
                         @if (isset($availableProjects))
                             {{-- Program (cross-project) board: a task must belong to one child project. --}}
