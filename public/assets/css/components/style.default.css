@@ -649,19 +649,20 @@ body.loginpage {
     height:30px;
     font-size:16px;
     padding: 0px;
-    color: var(--main-titles-color);
+    /* Dark on the white/glass header card (was white on the gradient). */
+    color: var(--primary-font-color);
     border-width: 2px;
     border-style: solid;
-    border-color:var(--main-titles-color);
+    border-color: var(--primary-font-color);
     display: inline-block;
     -moz-border-radius: 30px;
     -webkit-border-radius: 30px;
     border-radius: 30px;
     float: left;
     text-align: center;
-    margin-right:5px;
+    margin-right:10px;
     line-height:26px;
-    margin-top:15px;
+    margin-top:0;
 }
 
 
