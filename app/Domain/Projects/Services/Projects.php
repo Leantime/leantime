@@ -2341,6 +2341,54 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
+     * Adds a single user to a project, leaving their other project
+     * relations untouched.
+     *
+     * Exists because {@see self::editUserProjectRelations()} is a full
+     * REPLACE — it deletes any relation not present in the array it is
+     * given. Callers that only want to add one membership had to read the
+     * user's current projects, append, and write the whole set back; if
+     * that read returned an incomplete list for any reason, the write
+     * silently deleted every other assignment the user had. This method
+     * removes the need for that read-modify-write entirely.
+     *
+     * Idempotent: an existing membership is left alone and reported as
+     * false rather than inserted twice. The check matters because
+     * `zp_relationuserproject` has no unique index on
+     * (userId, projectId) — a blind insert would produce duplicate rows
+     * and show the person twice on the project team.
+     *
+     * Permission is deliberately identical to editUserProjectRelations
+     * (global projects.edit, i.e. manager+). Assigning users to projects
+     * is a company-scoped action; gating this per-project instead would
+     * let a project-scoped editor grant access to a project, which is
+     * more power than they have today.
+     *
+     * @param  int  $userId  The user to add.
+     * @param  int  $projectId  The project to add them to.
+     * @param  string  $projectRole  Optional per-project role.
+     * @return bool True when a relation was created, false when the user
+     *              was already a member (or the ids were invalid).
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
+    public function addUserToProject(int $userId, int $projectId, string $projectRole = ''): bool
+    {
+        if ($userId <= 0 || $projectId <= 0) {
+            return false;
+        }
+
+        if ($this->projectRepository->isUserAssignedToProject($userId, $projectId)) {
+            return false;
+        }
+
+        $this->projectRepository->addProjectRelation($userId, $projectId, $projectRole);
+
+        return true;
+    }
+
+    /**
      * Removes all project relations for a given user.
      *
      * @param  int  $userId  The user ID

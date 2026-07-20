@@ -574,7 +574,7 @@ class ProjectsServiceTest extends TestCase
         }
 
         // Mutations: global manager+.
-        foreach (['addProject' => 'projects.create', 'duplicateProject' => 'projects.create', 'editProject' => 'projects.edit', 'patch' => 'projects.edit', 'patchProject' => 'projects.edit', 'updateProjectUsers' => 'projects.edit', 'saveSlackWebhook' => 'projects.edit', 'deleteProject' => 'projects.delete'] as $m => $perm) {
+        foreach (['addProject' => 'projects.create', 'duplicateProject' => 'projects.create', 'editProject' => 'projects.edit', 'patch' => 'projects.edit', 'patchProject' => 'projects.edit', 'updateProjectUsers' => 'projects.edit', 'saveSlackWebhook' => 'projects.edit', 'deleteProject' => 'projects.delete', 'editUserProjectRelations' => 'projects.edit', 'addUserToProject' => 'projects.edit'] as $m => $perm) {
             $g = $gate($m);
             $this->assertNotNull($g, "$m must be gated");
             $this->assertSame($perm, $g['permission'], $m);
@@ -694,5 +694,75 @@ class ProjectsServiceTest extends TestCase
         $this->assertCount(1, $hierarchy, 'only the top-level strategy sits at the root');
         $this->assertSame(1, $hierarchy[0]['id']);
         $this->assertCount(2, $hierarchy[0]['children'], 'project and plan nest under the strategy');
+    }
+
+    /**
+     * addUserToProject() must be ADDITIVE. The sibling
+     * editUserProjectRelations() is a full replace that deletes any
+     * relation not in the array it is handed, so the whole point of this
+     * method is that it never touches a user's other memberships.
+     */
+    public function test_add_user_to_project_inserts_when_not_a_member(): void
+    {
+        $added = [];
+        $repo = $this->makeEmpty(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => false,
+            'addProjectRelation' => function ($userId, $projectId, $role) use (&$added) {
+                $added[] = [$userId, $projectId, $role];
+            },
+            'editUserProjectRelations' => fn () => throw new \LogicException(
+                'addUserToProject must never call the destructive full-replace method'
+            ),
+        ]);
+
+        $result = $this->makeService($repo)->addUserToProject(7, 42, 'contributor');
+
+        $this->assertTrue($result, 'a new membership reports true');
+        $this->assertSame([[7, 42, 'contributor']], $added);
+    }
+
+    /**
+     * Idempotence guard. zp_relationuserproject has no unique index on
+     * (userId, projectId), so a blind insert would duplicate the row and
+     * show the person twice on the project team.
+     */
+    public function test_add_user_to_project_is_idempotent_for_existing_member(): void
+    {
+        $addCalls = 0;
+        $repo = $this->makeEmpty(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'addProjectRelation' => function () use (&$addCalls) {
+                $addCalls++;
+            },
+        ]);
+
+        $result = $this->makeService($repo)->addUserToProject(7, 42);
+
+        $this->assertFalse($result, 'an existing membership reports false');
+        $this->assertSame(0, $addCalls, 'must not insert a duplicate relation row');
+    }
+
+    /**
+     * Invalid ids must fail before touching persistence — a 0 userId
+     * reaching addProjectRelation would create an orphan relation row.
+     */
+    public function test_add_user_to_project_rejects_invalid_ids(): void
+    {
+        $touched = 0;
+        $repo = $this->makeEmpty(ProjectRepository::class, [
+            'isUserAssignedToProject' => function () use (&$touched) {
+                $touched++;
+
+                return false;
+            },
+            'addProjectRelation' => function () use (&$touched) {
+                $touched++;
+            },
+        ]);
+        $service = $this->makeService($repo);
+
+        $this->assertFalse($service->addUserToProject(0, 42));
+        $this->assertFalse($service->addUserToProject(7, 0));
+        $this->assertSame(0, $touched, 'invalid ids must not reach the repository');
     }
 }
