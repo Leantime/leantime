@@ -100,7 +100,7 @@
                     @else
                         <span class="primary"><span class="unit-h" data-hours="{{ round($c['availableHours']) }}">{{ round($c['availableHours']) }}h</span> {{ __('stakeholder.rc.cap.available_in_period') }}</span>
                         <span class="muted">
-                            ({{ $c['peopleCount'] }} {{ __('stakeholder.rc.cap.people') }} × <span class="unit-h" data-hours="{{ round($c['weeklyHoursToProject'] / max(1, $c['peopleCount']), 1) }}">{{ round($c['weeklyHoursToProject'] / max(1, $c['peopleCount']), 1) }}h</span>/wk × {{ $c['weeksInWindow'] }} {{ __('stakeholder.rc.cap.weeks') }})
+                            ({{ $c['peopleCount'] }} {{ __($c['peopleCount'] === 1 ? 'stakeholder.rc.cap.person' : 'stakeholder.rc.cap.people') }} × <span class="unit-h" data-hours="{{ round($c['weeklyHoursToProject'] / max(1, $c['peopleCount']), 1) }}">{{ round($c['weeklyHoursToProject'] / max(1, $c['peopleCount']), 1) }}h</span>/wk × {{ $c['weeksInWindow'] }} {{ __((int) $c['weeksInWindow'] === 1 ? 'stakeholder.rc.cap.week' : 'stakeholder.rc.cap.weeks') }})
                         </span>
                     @endif
                 </div>
