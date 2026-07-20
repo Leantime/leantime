@@ -134,7 +134,16 @@ class Projects extends BaseService implements ChecksProjectAccess
     #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectProgress($projectId): array
     {
-        $returnValue = ['percent' => 0, 'estimatedCompletionDate' => 'We need more data to determine that.', 'plannedCompletionDate' => ''];
+        // Same shape as the computed return below — including
+        // `estimatedCompletionState`. Without it the no-data early return
+        // let templates fall back to the default 'ready' state and render
+        // as though an estimate existed. Copy is i18n'd to match.
+        $returnValue = [
+            'percent' => 0,
+            'estimatedCompletionDate' => $this->language->__('label.complete_more_todos'),
+            'estimatedCompletionState' => 'needs_more_data',
+            'plannedCompletionDate' => '',
+        ];
 
         $averageStorySize = $this->ticketRepository->getAverageTodoSize($projectId);
 
