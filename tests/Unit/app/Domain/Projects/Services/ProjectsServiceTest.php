@@ -706,7 +706,7 @@ class ProjectsServiceTest extends TestCase
     {
         $added = [];
         $repo = $this->makeEmpty(ProjectRepository::class, [
-            'isUserAssignedToProject' => fn () => false,
+            'isUserMemberOfProject' => fn () => false,
             'addProjectRelation' => function ($userId, $projectId, $role) use (&$added) {
                 $added[] = [$userId, $projectId, $role];
             },
@@ -722,6 +722,31 @@ class ProjectsServiceTest extends TestCase
     }
 
     /**
+     * Membership is not access. isUserAssignedToProject() returns true for
+     * every admin and owner whether or not a relation row exists, so using
+     * it as the idempotence check would make this method a permanent
+     * no-op for exactly those users: an admin could never be put on a
+     * project team, and the caller would be told "already a member" about
+     * someone who is not on the team at all.
+     */
+    public function test_add_user_to_project_adds_admin_who_has_access_but_no_membership(): void
+    {
+        $added = [];
+        $repo = $this->makeEmpty(ProjectRepository::class, [
+            // An admin: reaches every project...
+            'isUserAssignedToProject' => fn () => true,
+            // ...but holds no relation row for this one.
+            'isUserMemberOfProject' => fn () => false,
+            'addProjectRelation' => function ($userId, $projectId, $role) use (&$added) {
+                $added[] = [$userId, $projectId, $role];
+            },
+        ]);
+
+        $this->assertTrue($this->makeService($repo)->addUserToProject(7, 42));
+        $this->assertSame([[7, 42, '']], $added, 'access must not be mistaken for membership');
+    }
+
+    /**
      * Idempotence guard. zp_relationuserproject has no unique index on
      * (userId, projectId), so a blind insert would duplicate the row and
      * show the person twice on the project team.
@@ -730,7 +755,7 @@ class ProjectsServiceTest extends TestCase
     {
         $addCalls = 0;
         $repo = $this->makeEmpty(ProjectRepository::class, [
-            'isUserAssignedToProject' => fn () => true,
+            'isUserMemberOfProject' => fn () => true,
             'addProjectRelation' => function () use (&$addCalls) {
                 $addCalls++;
             },
@@ -750,7 +775,7 @@ class ProjectsServiceTest extends TestCase
     {
         $touched = 0;
         $repo = $this->makeEmpty(ProjectRepository::class, [
-            'isUserAssignedToProject' => function () use (&$touched) {
+            'isUserMemberOfProject' => function () use (&$touched) {
                 $touched++;
 
                 return false;

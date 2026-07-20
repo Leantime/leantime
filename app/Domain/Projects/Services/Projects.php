@@ -2379,7 +2379,15 @@ class Projects extends BaseService implements ChecksProjectAccess
             return false;
         }
 
-        if ($this->projectRepository->isUserAssignedToProject($userId, $projectId)) {
+        // isUserMemberOfProject, NOT isUserAssignedToProject: the latter
+        // answers "can this user reach the project", which is true for
+        // every admin and owner regardless of any relation row. Using it
+        // here would make the method a silent no-op for exactly those
+        // users — an admin could never be added to a project team, and
+        // callers would get false ("already a member") for someone who
+        // isn't on the team at all. Membership is what we're writing, so
+        // membership is what we check.
+        if ($this->projectRepository->isUserMemberOfProject($userId, $projectId)) {
             return false;
         }
 
