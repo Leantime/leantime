@@ -39,7 +39,7 @@ use Unit\TestCase;
  */
 class ResourceStructureServiceTest extends TestCase
 {
-    public function test_getForProjects_returns_empty_summary_when_projectIds_is_empty(): void
+    public function test_get_for_projects_returns_empty_summary_when_project_ids_is_empty(): void
     {
         $svc = $this->makeService(canvasIds: [1], items: []);
         $summary = $svc->getForProjects([]);
@@ -48,7 +48,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertTrue($summary->isEmpty());
     }
 
-    public function test_getForProjects_returns_empty_summary_when_no_resource_canvas(): void
+    public function test_get_for_projects_returns_empty_summary_when_no_resource_canvas(): void
     {
         $svc = $this->makeService(canvasIds: [], items: []);
         $summary = $svc->getForProjects([1, 2]);
@@ -58,7 +58,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(0.0, $summary->totalCapacity);
     }
 
-    public function test_getForProjects_excludes_stub_people_from_totals(): void
+    public function test_get_for_projects_excludes_stub_people_from_totals(): void
     {
         // Active person: capacity 40, allocated 30. Stub person: default 40.
         // The report and the tab must agree — the tab excludes stubs from
@@ -93,7 +93,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(30.0, $summary->totalAllocated);
     }
 
-    public function test_getForProjects_excludes_stub_budget_lines_from_array_and_totals(): void
+    public function test_get_for_projects_excludes_stub_budget_lines_from_array_and_totals(): void
     {
         $svc = $this->makeService(
             canvasIds: [100],
@@ -124,7 +124,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(2000.0, $summary->totalSpent);
     }
 
-    public function test_getForProjects_aggregates_across_multiple_canvases(): void
+    public function test_get_for_projects_aggregates_across_multiple_canvases(): void
     {
         // A strategy with two programs, each with its own resource canvas.
         // The gateway must sum across both.
@@ -153,7 +153,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(35.0, $summary->totalAllocated);
     }
 
-    public function test_seedPeopleFromChildProjects_is_idempotent_by_userId(): void
+    public function test_seed_people_from_child_projects_is_idempotent_by_user_id(): void
     {
         // Two child projects; user 5 assigned to both, user 7 to one.
         // First run: 2 people added (5 and 7). Second run: 0 added, 2 skipped
@@ -209,7 +209,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertSame(5, $addCalls[0]['data']['userId']);
     }
 
-    public function test_getForProjects_hydrates_a_dependency_with_none_of_the_optional_fields(): void
+    public function test_get_for_projects_hydrates_a_dependency_with_none_of_the_optional_fields(): void
     {
         // Back-compat guarantee for pre-existing dependency canvas items —
         // owner/dueDate/notes/lastModified were added later. An item authored
@@ -253,7 +253,7 @@ class ResourceStructureServiceTest extends TestCase
         $this->assertNull($dep->lastModified);
     }
 
-    public function test_seedBudgetFromChildProjects_is_idempotent_by_projectId(): void
+    public function test_seed_budget_from_child_projects_is_idempotent_by_project_id(): void
     {
         // Same skip-when-present contract, keyed on projectId. A child with
         // dollarBudget=0 is skipped entirely (no line to seed).
@@ -304,6 +304,80 @@ class ResourceStructureServiceTest extends TestCase
      * @param  int[]  $canvasIds
      * @param  array<int, array<string, array<int, array<string, mixed>>>>  $items
      */
+    /**
+     * getProgramTeamMembers defines who a non-manager may name in the Add
+     * Person picker, so its exact membership is a security boundary, not a
+     * convenience. Over-returning here would leak users the caller has no
+     * business seeing.
+     */
+    public function test_get_program_team_members_returns_deduplicated_union_of_child_project_users(): void
+    {
+        $programs = $this->makePrograms(childProjects: [
+            ['id' => 7], ['id' => 8], ['id' => 9],
+        ]);
+        $projects = $this->makeProjects(usersByProject: [
+            7 => [['id' => 1, 'firstname' => 'Ada'], ['id' => 2, 'firstname' => 'Bo']],
+            // Ada again on another project — one row, not two.
+            8 => [['id' => 1, 'firstname' => 'Ada']],
+            // 9 has nobody; a project with no team must not break the walk.
+        ]);
+
+        $members = (new ResourceStructureService($this->makeRepo(), $this->makeDb(), $projects, $programs))
+            ->getProgramTeamMembers(2);
+
+        $this->assertSame([1, 2], array_map(fn ($m) => (int) $m['id'], $members));
+    }
+
+    /**
+     * A program with no child projects must yield nobody — never a fallback
+     * to "all users", which would hand every editor the whole directory.
+     */
+    public function test_get_program_team_members_is_empty_for_a_program_with_no_children(): void
+    {
+        $members = (new ResourceStructureService(
+            $this->makeRepo(), $this->makeDb(), $this->makeProjects(), $this->makePrograms()
+        ))->getProgramTeamMembers(2);
+
+        $this->assertSame([], $members);
+    }
+
+    /**
+     * Rows with no usable id are dropped rather than emitted as id 0 —
+     * a 0 would collide with the stub convention used by person rows.
+     */
+    public function test_get_program_team_members_skips_rows_without_a_real_id(): void
+    {
+        $programs = $this->makePrograms(childProjects: [['id' => 7]]);
+        $projects = $this->makeProjects(usersByProject: [
+            7 => [['id' => 0, 'firstname' => 'Ghost'], [], ['id' => 5, 'firstname' => 'Real']],
+        ]);
+
+        $members = (new ResourceStructureService($this->makeRepo(), $this->makeDb(), $projects, $programs))
+            ->getProgramTeamMembers(2);
+
+        $this->assertSame([5], array_map(fn ($m) => (int) $m['id'], $members));
+    }
+
+    /**
+     * getLinkedUserIds backs both the picker's "already on this plan" label
+     * and the add path's idempotence check. Stub rows carry userId 0 and
+     * must not register as linked.
+     */
+    public function test_get_linked_user_ids_maps_real_users_and_ignores_stubs(): void
+    {
+        $repo = $this->makeRepo(itemsByBoxProvider: fn (int $canvasId, string $box) => $box === 'people' ? [
+            ['parsedData' => ['userId' => 4]],
+            ['parsedData' => ['userId' => 0]],
+            ['parsedData' => []],
+            ['parsedData' => ['userId' => 9]],
+        ] : []);
+
+        $linked = (new ResourceStructureService($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms()))
+            ->getLinkedUserIds(485);
+
+        $this->assertSame([4, 9], array_keys($linked));
+    }
+
     private function makeService(array $canvasIds, array $items): ResourceStructureService
     {
         $repo = $this->makeRepo(
@@ -311,7 +385,7 @@ class ResourceStructureServiceTest extends TestCase
             itemsByBoxProvider: fn (int $canvasId, string $box) => $items[$canvasId][$box] ?? [],
         );
 
-        return new class ($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms(), $canvasIds) extends ResourceStructureService
+        return new class($repo, $this->makeDb(), $this->makeProjects(), $this->makePrograms(), $canvasIds) extends ResourceStructureService
         {
             /** @param int[] $canvasIds */
             public function __construct(
