@@ -569,10 +569,21 @@ class Users
 
     /**
      * Normalise a POSTed weekly_hours value into the persisted shape.
-     * Accepts int-ish strings; rejects anything outside 0..168 (168 =
+     * Accepts numeric input; rejects anything outside 0..168 (168 =
      * hours in a week, the largest value that has physical meaning).
      * Anything that fails validation becomes NULL — treated by the
      * capacity math as "not configured" rather than saving garbage.
+     *
+     * Fractional input is ROUNDED, not truncated. The column is an int
+     * and the edit-user field is a step-1 number input, so fractions
+     * only reach here from the API — where a plain (int) cast silently
+     * turned 37.5 into 37. Rounding keeps the value closest to intent;
+     * rejecting it outright would be worse, since NULL removes the
+     * person from capacity math entirely.
+     *
+     * NOTE: the int column cannot represent genuinely fractional
+     * contracts (37.5 h/wk is common part-time). Storing minutes, or
+     * widening the column, is the real fix if that case matters.
      */
     private function normalizeWeeklyHours(mixed $value): ?int
     {
@@ -582,7 +593,7 @@ class Users
         if (! is_numeric($value)) {
             return null;
         }
-        $hours = (int) $value;
+        $hours = (int) round((float) $value);
         if ($hours < 0 || $hours > 168) {
             return null;
         }
