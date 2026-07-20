@@ -2513,6 +2513,89 @@ class Tickets extends BaseService
     /**
      * @api
      *
+     * Tickets the user COMMENTED on within [$from, $to] that they do NOT own
+     * (they're not the ticket's editor) — i.e. work they supported by weighing
+     * in on someone else's arc. Powers the mobile Progress "Supported" section
+     * (presence counts as much as production).
+     *
+     * Access safety: commented ticket ids are constrained to the PROJECTS the
+     * user can access (getProjectsUserHasAccessTo) — NOT to tickets they edit
+     * or collaborate on. Commenting on a ticket rarely makes you its editor or
+     * a collaborator, so scoping by those (as an earlier version did via
+     * simpleTicketQuery) silently dropped most supported work — it collapsed to
+     * "commented AND collaborator" and could return empty even when comments
+     * exist. Project access is the correct, still-safe boundary: a historical
+     * comment can't surface a ticket in a project the user no longer sees. The
+     * ownership filter then drops tickets the user is the editor of — those are
+     * "your work," not support. Defaults either bound to today.
+     *
+     * A non-admin may only read their OWN commented tickets: a caller-supplied
+     * $userId for someone else is forced back to the session user (IDOR guard,
+     * matching Projects::getProjectsUserHasAccessTo()).
+     *
+     * @return array<int, array<string, mixed>> Raw ticket rows (id, headline,
+     *                                          projectName, editorId, status, …).
+     *
+     * Note: these rows do NOT carry the resolved statusLabel / statusClass /
+     * statusType that the getAll*UserTickets methods attach.
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
+    public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
+    {
+        $sessionUser = (int) session('userdata.id');
+        $userId = $userId ?: $sessionUser;
+        // IDOR guard: reading someone else's comment activity requires admin.
+        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
+        if ($userId === 0) {
+            return [];
+        }
+        // Resolve "today" once so a run across midnight can't disagree on bounds.
+        $today = date('Y-m-d');
+        $from = $from ?: $today;
+        $to = $to ?: $today;
+        if ($from > $to) {
+            [$from, $to] = [$to, $from];
+        }
+
+        $commentedIds = $this->ticketRepository->getTicketIdsCommentedByUser($userId, $from, $to);
+        if (empty($commentedIds)) {
+            return [];
+        }
+
+        // Scope to the projects the user can see — the correct access boundary
+        // for "tickets I commented on" (you comment on others' work without
+        // being its editor/collaborator, so filtering by those would drop it).
+        $projects = $this->projectService->getProjectsUserHasAccessTo($userId);
+        if (! is_array($projects) || empty($projects)) {
+            return [];
+        }
+        $projectIds = array_values(array_filter(array_map(
+            fn ($p) => (int) ($p['id'] ?? 0),
+            $projects
+        )));
+        if (empty($projectIds)) {
+            return [];
+        }
+
+        $tickets = $this->ticketRepository->getTicketsByIdsWithinProjects($commentedIds, $projectIds);
+
+        // "Supported", not "yours": drop tickets the user is the editor of.
+        $out = [];
+        foreach ($tickets as $ticket) {
+            if ((string) ($ticket['editorId'] ?? '') === (string) $userId) {
+                continue;
+            }
+            $out[] = $ticket;
+        }
+
+        return array_values($out);
+    }
+
+    /**
+     * @api
+     *
      * Companion to markTicketDone for un-completing. Resolves the
      * project's first NEW-statusType status and patches to it. Used by
      * mobile's "Done" filter — tap the checked checkbox to bring a task

@@ -637,4 +637,155 @@ class TicketsServiceTest extends TestCase
 
         $this->assertSame(1, $capturedUserId, 'a non-admin must not read another user\'s closures — userId is forced to the session user');
     }
+
+    /**
+     * Builds a service with a specific ticket repository AND project service —
+     * the two deps getMyCommentedTicketsForRange exercises.
+     */
+    private function buildServiceWithTicketRepoAndProjectService(
+        TicketRepository $ticketRepository,
+        ProjectService $projectService
+    ): TicketsService {
+        return new TicketsService(
+            language: $this->make(LanguageCore::class),
+            ticketRepository: $ticketRepository,
+            timesheetsRepo: $this->make(TimesheetRepository::class),
+            settingsRepo: $this->make(SettingRepository::class),
+            projectService: $projectService,
+            timesheetService: $this->make(TimesheetService::class),
+            sprintService: $this->make(SprintService::class),
+            ticketHistoryRepo: $this->make(TicketHistory::class),
+            goalcanvasService: $this->make(Goalcanvas::class),
+            dateTimeHelper: $this->make(DateTimeHelper::class),
+            commentService: $this->make(CommentService::class),
+            clientService: $this->make(ClientService::class)
+        );
+    }
+
+    /**
+     * Supported = tickets you commented on within accessible projects, minus
+     * the ones you're the editor of. Editor-owned tickets are dropped; tickets
+     * outside the project-scoped fetch never appear.
+     */
+    public function test_commented_tickets_range_excludes_owned_and_scopes_by_projects(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn (...$args) => [10, 20, 30],
+            // Project-scoped fetch only returns 10 + 20 (30 is outside access).
+            'getTicketsByIdsWithinProjects' => fn (...$args) => [
+                ['id' => 10, 'headline' => 'A', 'editorId' => '99', 'projectId' => 5, 'projectName' => 'P'],
+                ['id' => 20, 'headline' => 'B', 'editorId' => '1', 'projectId' => 5, 'projectName' => 'P'],
+            ],
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5], ['id' => 7]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $result = $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07');
+
+        // 20 is the user's own (editorId === 1) → excluded; 30 wasn't returned
+        // by the project-scoped fetch → absent. Only 10 remains.
+        $this->assertCount(1, $result);
+        $this->assertEquals(10, $result[0]['id']);
+    }
+
+    /**
+     * No accessible projects → empty, without ever fetching tickets.
+     */
+    public function test_commented_tickets_range_empty_without_project_access(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn (...$args) => [10],
+            'getTicketsByIdsWithinProjects' => fn (...$args) => [['id' => 10, 'editorId' => '99']],
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => false,
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $this->assertSame([], $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07'));
+    }
+
+    public function test_commented_tickets_range_forces_session_user_for_non_admin(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+        $capturedUserId = 'unset';
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => function (...$args) use (&$capturedUserId) {
+                $capturedUserId = $args[0] ?? null;
+
+                return [];
+            },
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        // Non-admin supplies someone else's id — forced back to the session user.
+        $service->getMyCommentedTicketsForRange(999, '2026-07-01', '2026-07-07');
+
+        $this->assertSame(1, $capturedUserId, 'a non-admin must not read another user\'s comment activity — userId forced to session user');
+    }
+
+    public function test_commented_tickets_range_normalizes_reversed_range(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+        $capturedFrom = null;
+        $capturedTo = null;
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => function (...$args) use (&$capturedFrom, &$capturedTo) {
+                $capturedFrom = $args[1] ?? null;
+                $capturedTo = $args[2] ?? null;
+
+                return [];
+            },
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        // Reversed on purpose — must be swapped earliest-first before the query.
+        $service->getMyCommentedTicketsForRange(1, '2026-07-12', '2026-07-05');
+
+        $this->assertSame('2026-07-05', $capturedFrom, 'range normalized earliest-first');
+        $this->assertSame('2026-07-12', $capturedTo);
+    }
+
+    public function test_commented_tickets_range_short_circuits_when_no_comments(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+        $fetchCalled = false;
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn (...$args) => [], // nothing commented
+            'getTicketsByIdsWithinProjects' => function (...$args) use (&$fetchCalled) {
+                $fetchCalled = true;
+
+                return [];
+            },
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $result = $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07');
+
+        $this->assertSame([], $result);
+        $this->assertFalse($fetchCalled, 'an empty commented set must short-circuit before the ticket fetch');
+    }
 }
