@@ -25,11 +25,11 @@ use Unit\TestCase;
  * to bootstrap the HTMX dispatcher.
  *
  * Setup:
- *   - ResourceItem is instantiated via newInstanceWithoutConstructor
- *     to skip the base HtmxController constructor (which requires DI +
- *     event dispatch bootstrapping).
- *   - Services are stubbed via anonymous subclasses so we can steer
- *     the ownership check per test without touching the DB.
+ *   - ResourceItem is subclassed anonymously with a __construct that
+ *     skips the base HtmxController bootstrapping (which requires DI +
+ *     event dispatch) and assigns the collaborators directly.
+ *   - Services are stubbed/mocked and passed into that subclass so we
+ *     can steer the ownership check per test without touching the DB.
  *   - $_POST is mutated per test to feed each endpoint the ids it
  *     expects; cleared in tearDown so tests don't leak state.
  *
@@ -319,9 +319,9 @@ class ResourceItemAuthTest extends TestCase
 
     /**
      * Build a ResourceItem with services stubbed to the passed shape.
-     * The controller is instantiated without its base constructor so
-     * we don't have to bootstrap the HTMX request stack; services are
-     * injected via reflection.
+     * The controller comes from an anonymous subclass whose constructor
+     * skips the base HTMX request-stack bootstrapping and assigns the
+     * stubs directly (see injectServices).
      */
     private function makeController(
         array|null|false $project = false,
@@ -469,9 +469,10 @@ class ResourceItemAuthTest extends TestCase
 
     /**
      * Bypass the base HtmxController constructor (which requires the
-     * app container + event dispatch) and inject the services + a
-     * fresh Response via reflection. Anonymous subclass exposes the
-     * mocked services so tests can assert on their call counters.
+     * app container + event dispatch) using an anonymous subclass whose
+     * own constructor assigns the services, a stub Template and a fresh
+     * Response directly. The subclass re-declares the service properties
+     * publicly so tests can assert on their call counters.
      */
     private function injectServices(
         ResourceStructureService $resourceService,
