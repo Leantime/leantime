@@ -153,14 +153,20 @@
 .rd-picker-cdash{color:var(--rd-text-3);font-size:11px;flex:none;}
 .rd-picker-capply{font:inherit;font-size:11px;font-weight:500;color:#fff;background:var(--rd-accent);border:none;border-radius:5px;padding:5px 9px;height:26px;cursor:pointer;flex:none;}
 
-/* Tab bar — sits ON the page background (matches the To-Dos Kanban·Table·List
-   pattern). Not on a panel. */
-.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:var(--rd-text-3);padding:6px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:6px;transition:color .15s,background .15s;}
-.rd-tab:hover{color:var(--rd-text-1);background:rgba(0,0,0,.03);}
-.rd-tab.on{color:var(--rd-accent);font-weight:600;background:rgba(0,71,102,.06);}
-.rd-tab i{font-size:12px;}
-.rd-tab .ct{font-size:11px;color:var(--rd-text-4);background:var(--rd-line-soft);border-radius:10px;padding:1px 7px;margin-left:2px;}
+/* Tab bar — individual pills sharing the Resource Allocation tab
+   geometry (100px radius, same padding/typography) so deck navigation
+   reads as one family across the app. This strip sits on a LIGHT
+   surface, so colors are the light-surface variant: inactive =
+   outlined quiet pill, active = white with accent border + accent
+   text. */
+.rd-tabs{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.rd-tab{font-family:inherit;font-size:13px;font-weight:500;color:var(--rd-text-2);padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid var(--rd-line);background:transparent;border-radius:100px;transition:all .14s ease;letter-spacing:.1px;}
+.rd-tab:hover:not(.on){color:var(--rd-text-1);background:var(--rd-line-soft);border-color:var(--rd-text-4);}
+.rd-tab:focus-visible{outline:2px solid var(--rd-accent);outline-offset:2px;}
+.rd-tab.on{color:var(--rd-accent);background:#fff;border:1.5px solid var(--rd-accent);font-weight:600;box-shadow:0 2px 6px rgba(20,40,50,.08);}
+.rd-tab i{font-size:12px;opacity:.75;}
+.rd-tab.on i{color:var(--rd-accent);opacity:1;}
+.rd-tab .ct{font-size:11px;font-weight:600;color:var(--rd-text-3);background:var(--rd-line-soft);border-radius:100px;padding:1px 8px;margin-left:2px;line-height:1.5;}
 .rd-tab.on .ct{color:var(--rd-accent);background:rgba(0,71,102,.1);}
 .rd-arrows{display:flex;gap:4px;}
 .rd-arrow{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-text-2);}
