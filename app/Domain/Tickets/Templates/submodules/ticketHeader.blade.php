@@ -62,37 +62,27 @@
             </span>
         @endif
 
-        <h1>
-            {!! __('headlines.todos') !!}
-            //
-            <span class="dropdown dropdownWrapper">
-                <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                    @if ($sprint !== false)
-                        {{ $sprint->name }}
-                    @else
-                        {!! __('label.select_sprint') !!}
-                    @endif
-                    <i class="fa fa-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {!! __('links.create_sprint_no_icon') !!}</a></li>
-                    <li class='nav-header border'></li>
-                    <li>
-                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.all_todos') !!}</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.backlog') !!}</a>
-                    </li>
-                    @foreach ($sprints as $sprintRow)
-                        <li>
-                            <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ $tpl->escape($sprintRow->name) }}@if (! empty($sprintRow->isInherited)) <span class="label label-info">{{ __('label.program_sprint') }}</span>@endif<br /><small>{!! sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) !!}</small></a>
-                        </li>
-                    @endforeach
-                </ul>
-            </span>
-
-        </h1>
+        {{-- Migrated to the shared subject switcher (was a hand-rolled
+             header-title-dropdown). The sprint menu items stay here — they're
+             domain-specific — but the "To-Dos // <current> ▾" chrome is now the
+             component. Zero visual change. --}}
+        <x-global::subjectSwitcher
+            :parent="__('headlines.todos')"
+            :current="$sprint !== false ? $sprint->name : __('label.select_sprint')">
+            <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {!! __('links.create_sprint_no_icon') !!}</a></li>
+            <li class='nav-header border'></li>
+            <li>
+                <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.all_todos') !!}</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.backlog') !!}</a>
+            </li>
+            @foreach ($sprints as $sprintRow)
+                <li>
+                    <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ $tpl->escape($sprintRow->name) }}@if (! empty($sprintRow->isInherited)) <span class="label label-info">{{ __('label.program_sprint') }}</span>@endif<br /><small>{!! sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) !!}</small></a>
+                </li>
+            @endforeach
+        </x-global::subjectSwitcher>
         <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
     </div>
     @dispatchEvent('beforePageHeaderClose')
