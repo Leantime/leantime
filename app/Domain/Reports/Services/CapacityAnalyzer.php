@@ -140,8 +140,8 @@ final class CapacityAnalyzer
             // higher of the two (conservative — surface risk, don't hide it).
             $referenceDemand = match ($trustSignal) {
                 'budgeted' => $budgetedHours,
-                'effort'   => $effortHours,
-                default    => max($budgetedHours, $effortHours),
+                'effort' => $effortHours,
+                default => max($budgetedHours, $effortHours),
             };
 
             $gap = $referenceDemand - $availableHours;
@@ -161,28 +161,28 @@ final class CapacityAnalyzer
             }
 
             $out[$pid] = [
-                'projectId'            => $pid,
-                'name'                 => $projectNames[$pid] ?? ('#'.$pid),
-                'openTicketCount'      => $openCount,
-                'coverage'             => $coverage,
-                'budgetedHours'        => $budgetedHours,
-                'ticketsWithBudget'    => $ticketsWithBudget,
-                'effortPoints'         => $effortPoints,
-                'ticketsWithEffort'    => $ticketsWithEffort,
-                'effortHours'          => $effortHours,
-                'hoursPerPoint'        => $hoursPerPoint,
-                'divergence'           => $divergence,
-                'trustSignal'          => $trustSignal,
-                'peopleCount'          => $peopleCount,
+                'projectId' => $pid,
+                'name' => $projectNames[$pid] ?? ('#'.$pid),
+                'openTicketCount' => $openCount,
+                'coverage' => $coverage,
+                'budgetedHours' => $budgetedHours,
+                'ticketsWithBudget' => $ticketsWithBudget,
+                'effortPoints' => $effortPoints,
+                'ticketsWithEffort' => $ticketsWithEffort,
+                'effortHours' => $effortHours,
+                'hoursPerPoint' => $hoursPerPoint,
+                'divergence' => $divergence,
+                'trustSignal' => $trustSignal,
+                'peopleCount' => $peopleCount,
                 'weeklyHoursToProject' => $weeklyHoursToProject,
-                'weeksInWindow'        => $weeksInPeriod,
-                'availableHours'       => $availableHours,
-                'referenceDemand'      => $referenceDemand,
-                'gapVsBudgeted'        => $budgetedHours - $availableHours,
-                'gapVsEffort'          => $effortHours - $availableHours,
-                'gap'                  => $gap,
-                'verdict'              => $verdict,
-                'recommendations'      => $recommendations,
+                'weeksInWindow' => $weeksInPeriod,
+                'availableHours' => $availableHours,
+                'referenceDemand' => $referenceDemand,
+                'gapVsBudgeted' => $budgetedHours - $availableHours,
+                'gapVsEffort' => $effortHours - $availableHours,
+                'gap' => $gap,
+                'verdict' => $verdict,
+                'recommendations' => $recommendations,
             ];
         }
 
@@ -197,9 +197,9 @@ final class CapacityAnalyzer
      * one child was critical".
      *
      * @param  array<int, array<string, mixed>>  $projectRows  Output of analyzeProjects()
-     * @param  array<int, int[]>  $programChildMap             programId => [childProjectIds]
+     * @param  array<int, int[]>  $programChildMap  programId => [childProjectIds]
      * @param  array<int, array{id:int, name:string}>  $programMeta
-     * @return array<int, array<string, mixed>>  One row per program with an added 'children' key
+     * @return array<int, array<string, mixed>> One row per program with an added 'children' key
      */
     public function aggregateByProgram(
         array $projectRows,
@@ -228,11 +228,11 @@ final class CapacityAnalyzer
             $budgetedHours = 0.0;
             $effortPoints = 0.0;
             foreach ($children as $c) {
-                $openTicketCount   += (int) $c['openTicketCount'];
+                $openTicketCount += (int) $c['openTicketCount'];
                 $ticketsWithBudget += (int) $c['ticketsWithBudget'];
                 $ticketsWithEffort += (int) $c['ticketsWithEffort'];
-                $budgetedHours     += (float) $c['budgetedHours'];
-                $effortPoints      += (float) $c['effortPoints'];
+                $budgetedHours += (float) $c['budgetedHours'];
+                $effortPoints += (float) $c['effortPoints'];
             }
             $effortHours = $effortPoints * $hoursPerPoint;
             $coverage = $openTicketCount > 0 ? $ticketsWithBudget / $openTicketCount : 0.0;
@@ -242,29 +242,56 @@ final class CapacityAnalyzer
             $trustSignal = $this->trustSignal($coverage, $divergence, $budgetedHours, $effortHours);
 
             // Capacity aggregation: unique people across the program (a person
-            // on two child projects still counts once), sum weekly hours.
+            // on two child projects still counts once).
+            //
+            // Supply is each person's CAPACITY, not the hours already
+            // allocated here. Allocation answers "what have we committed",
+            // capacity answers "what could we actually do" — and only the
+            // second one can say whether there is room. Summing allocations
+            // made the two halves of the report disagree: the headline tile
+            // reads allocated/capacity while this block read demand against
+            // allocated, so a program with real headroom and nothing booked
+            // yet reported no_capacity.
+            //
+            // A person's capacity is not dedicated to this program, so
+            // commitments to projects OUTSIDE it are deducted. Only projects
+            // inside this ResourceSummary are visible, so for a strategy
+            // report that means siblings within the same strategy; work on
+            // other strategies is not visible here and this therefore reads
+            // as an upper bound.
+            $childIdSet = array_flip(array_map('intval', $childIds));
             $peopleSet = [];
-            $weeklyHoursToProgram = 0.0;
+            $weeklyCapacityToProgram = 0.0;
             foreach ($resources->people as $person) {
                 $touched = false;
-                foreach ($childIds as $cid) {
-                    $h = (float) ($person->allocations[$cid] ?? 0.0);
-                    if ($h > 0) {
+                $committedElsewhere = 0.0;
+                foreach ($person->allocations as $allocPid => $allocHrs) {
+                    $allocHrs = (float) $allocHrs;
+                    if ($allocHrs <= 0) {
+                        continue;
+                    }
+                    if (isset($childIdSet[(int) $allocPid])) {
                         $touched = true;
-                        $weeklyHoursToProgram += $h;
+                    } else {
+                        $committedElsewhere += $allocHrs;
                     }
                 }
+
                 if ($touched) {
                     $peopleSet[$person->itemId] = 1;
+                    $weeklyCapacityToProgram += max(0.0, $person->capacity - $committedElsewhere);
                 }
             }
             $peopleCount = count($peopleSet);
-            $availableHours = $weeklyHoursToProgram * $weeksInPeriod;
+            $availableHours = $weeklyCapacityToProgram * $weeksInPeriod;
+            // recommend() reasons in weekly hours; keep its input consistent
+            // with the supply figure the verdict was derived from.
+            $weeklyHoursToProgram = $weeklyCapacityToProgram;
 
             $referenceDemand = match ($trustSignal) {
                 'budgeted' => $budgetedHours,
-                'effort'   => $effortHours,
-                default    => max($budgetedHours, $effortHours),
+                'effort' => $effortHours,
+                default => max($budgetedHours, $effortHours),
             };
             $gap = $referenceDemand - $availableHours;
             $verdict = $this->verdict($gap, $availableHours, $referenceDemand);
@@ -278,31 +305,31 @@ final class CapacityAnalyzer
             usort($children, fn ($a, $b) => ($verdictRank[$a['verdict']] ?? 9) <=> ($verdictRank[$b['verdict']] ?? 9));
 
             $out[$progId] = [
-                'projectId'            => $progId,
-                'name'                 => $progInfo['name'],
-                'isProgram'            => true,
-                'childCount'           => count($children),
-                'children'             => $children,
-                'openTicketCount'      => $openTicketCount,
-                'coverage'             => $coverage,
-                'budgetedHours'        => $budgetedHours,
-                'ticketsWithBudget'    => $ticketsWithBudget,
-                'effortPoints'         => $effortPoints,
-                'ticketsWithEffort'    => $ticketsWithEffort,
-                'effortHours'          => $effortHours,
-                'hoursPerPoint'        => $hoursPerPoint,
-                'divergence'           => $divergence,
-                'trustSignal'          => $trustSignal,
-                'peopleCount'          => $peopleCount,
+                'projectId' => $progId,
+                'name' => $progInfo['name'],
+                'isProgram' => true,
+                'childCount' => count($children),
+                'children' => $children,
+                'openTicketCount' => $openTicketCount,
+                'coverage' => $coverage,
+                'budgetedHours' => $budgetedHours,
+                'ticketsWithBudget' => $ticketsWithBudget,
+                'effortPoints' => $effortPoints,
+                'ticketsWithEffort' => $ticketsWithEffort,
+                'effortHours' => $effortHours,
+                'hoursPerPoint' => $hoursPerPoint,
+                'divergence' => $divergence,
+                'trustSignal' => $trustSignal,
+                'peopleCount' => $peopleCount,
                 'weeklyHoursToProject' => $weeklyHoursToProgram,
-                'weeksInWindow'        => $weeksInPeriod,
-                'availableHours'       => $availableHours,
-                'referenceDemand'      => $referenceDemand,
-                'gapVsBudgeted'        => $budgetedHours - $availableHours,
-                'gapVsEffort'          => $effortHours - $availableHours,
-                'gap'                  => $gap,
-                'verdict'              => $verdict,
-                'recommendations'      => $recommendations,
+                'weeksInWindow' => $weeksInPeriod,
+                'availableHours' => $availableHours,
+                'referenceDemand' => $referenceDemand,
+                'gapVsBudgeted' => $budgetedHours - $availableHours,
+                'gapVsEffort' => $effortHours - $availableHours,
+                'gap' => $gap,
+                'verdict' => $verdict,
+                'recommendations' => $recommendations,
             ];
         }
 
@@ -311,7 +338,7 @@ final class CapacityAnalyzer
 
     /**
      * @param  array<int, array<string, mixed>>  $tickets
-     * @return array{0: float, 1: int}  [totalHours, ticketsWithNonZeroPlanHours]
+     * @return array{0: float, 1: int} [totalHours, ticketsWithNonZeroPlanHours]
      */
     private function sumBudgetedHours(array $tickets): array
     {
@@ -330,7 +357,7 @@ final class CapacityAnalyzer
 
     /**
      * @param  array<int, array<string, mixed>>  $tickets
-     * @return array{0: float, 1: int}  [totalPoints, ticketsWithNonZeroPoints]
+     * @return array{0: float, 1: int} [totalPoints, ticketsWithNonZeroPoints]
      */
     private function sumEffort(array $tickets): array
     {
@@ -420,9 +447,9 @@ final class CapacityAnalyzer
 
         return [
             'extendWeeks' => (int) ceil($gapHours / max(1.0, $weeklyHoursToProject)),
-            'addPeople'   => (int) ceil($gapHours / max(1.0, $weeksInWindow * $avgWeeklyPerPerson)),
-            'cutHours'    => $gapHours,
-            'cutPoints'   => $hoursPerPoint > 0 ? $gapHours / $hoursPerPoint : 0.0,
+            'addPeople' => (int) ceil($gapHours / max(1.0, $weeksInWindow * $avgWeeklyPerPerson)),
+            'cutHours' => $gapHours,
+            'cutPoints' => $hoursPerPoint > 0 ? $gapHours / $hoursPerPoint : 0.0,
         ];
     }
 }
