@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Unit\app\Domain\Users;
 
-use Leantime\Core\Auth\Permissions\Permission;
 use Leantime\Core\Auth\Permissions\DefaultRolePermissions;
+use Leantime\Core\Auth\Permissions\Permission;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Domain\Users\Controllers\EditUser;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
-use Leantime\Domain\Users\Repositories\Users as UsersRepository;
 use Leantime\Domain\Users\Services\Users as UsersService;
 use ReflectionMethod;
 use Unit\TestCase;
@@ -63,7 +62,7 @@ class EditUserAuthorizationTest extends TestCase
         );
     }
 
-    public function test_service_editUser_requires_users_edit_permission_globally(): void
+    public function test_service_edit_user_requires_users_edit_permission_globally(): void
     {
         // Service-layer surface — any caller (JSON-RPC, plugins,
         // service-to-service) also passes through PermissionEnforcer
@@ -75,7 +74,7 @@ class EditUserAuthorizationTest extends TestCase
         );
     }
 
-    public function test_service_updateUser_requires_users_edit_permission_globally(): void
+    public function test_service_update_user_requires_users_edit_permission_globally(): void
     {
         // updateUser is the JSON-RPC entry point — wraps editUser +
         // project reconciliation. Its attribute is what secures the

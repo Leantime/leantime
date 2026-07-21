@@ -48,7 +48,7 @@ class EmploymentTypeTest extends TestCase
         $this->assertSame('none', EmploymentType::Volunteer->overCapTone());
     }
 
-    public function test_tryFrom_rejects_arbitrary_strings(): void
+    public function test_try_from_rejects_arbitrary_strings(): void
     {
         // This is the exact surface the write path relies on. If tryFrom
         // ever starts coercing garbage into a case, the repo guard opens
@@ -59,7 +59,7 @@ class EmploymentTypeTest extends TestCase
         $this->assertNull(EmploymentType::tryFrom('full-time'));
     }
 
-    public function test_tryFrom_accepts_the_four_canonical_values(): void
+    public function test_try_from_accepts_the_four_canonical_values(): void
     {
         $this->assertSame(EmploymentType::FTE, EmploymentType::tryFrom('fte'));
         $this->assertSame(EmploymentType::PartTime, EmploymentType::tryFrom('pt'));
@@ -67,7 +67,7 @@ class EmploymentTypeTest extends TestCase
         $this->assertSame(EmploymentType::Volunteer, EmploymentType::tryFrom('volunteer'));
     }
 
-    public function test_every_case_has_a_label_and_langKey(): void
+    public function test_every_case_has_a_label_and_lang_key(): void
     {
         foreach (EmploymentType::cases() as $type) {
             $this->assertNotSame('', $type->label(), sprintf('%s has empty label', $type->name));
