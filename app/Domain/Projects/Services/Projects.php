@@ -134,7 +134,16 @@ class Projects extends BaseService implements ChecksProjectAccess
     #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectProgress($projectId): array
     {
-        $returnValue = ['percent' => 0, 'estimatedCompletionDate' => 'We need more data to determine that.', 'plannedCompletionDate' => ''];
+        // Same shape as the computed return below — including
+        // `estimatedCompletionState`. Without it the no-data early return
+        // let templates fall back to the default 'ready' state and render
+        // as though an estimate existed. Copy is i18n'd to match.
+        $returnValue = [
+            'percent' => 0,
+            'estimatedCompletionDate' => $this->language->__('label.complete_more_todos'),
+            'estimatedCompletionState' => 'needs_more_data',
+            'plannedCompletionDate' => '',
+        ];
 
         $averageStorySize = $this->ticketRepository->getAverageTodoSize($projectId);
 
@@ -200,11 +209,23 @@ class Projects extends BaseService implements ChecksProjectAccess
             $completionDate = $today->format($this->language->__('language.dateformat'));
         }
 
-        $returnValue = ['percent' => $finalPercent, 'estimatedCompletionDate' => $completionDate, 'plannedCompletionDate' => ''];
+        // Return shape carries a plain-text status and a machine-readable
+        // state — templates branch on the state to render the appropriate
+        // CTA (e.g. a "showAll" link) instead of embedding presentation
+        // HTML in the string. Non-template callers (MCP tools, JSON-RPC)
+        // just read the plain text as-is.
+        $returnValue = [
+            'percent' => $finalPercent,
+            'estimatedCompletionDate' => $completionDate,
+            'estimatedCompletionState' => 'ready',
+            'plannedCompletionDate' => '',
+        ];
         if ($numberOfClosedTickets < 10) {
-            $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
+            $returnValue['estimatedCompletionState'] = 'needs_more_data';
+            $returnValue['estimatedCompletionDate'] = $this->language->__('label.complete_more_todos');
         } elseif ($finalPercent == 100) {
-            $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
+            $returnValue['estimatedCompletionState'] = 'complete';
+            $returnValue['estimatedCompletionDate'] = $this->language->__('label.project_complete_onto_next');
         }
 
         return $returnValue;
