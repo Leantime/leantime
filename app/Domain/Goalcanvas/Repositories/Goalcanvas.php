@@ -970,9 +970,6 @@ class Goalcanvas extends Blueprints
     }
 
     /**
-     * The stored metric value of a goal item, or null when the item isn't a goal (or is unknown).
-     */
-    /**
      * The stored metric value of a goal item, three-state: false when the item isn't a
      * goal (or is unknown) — record nothing; null when the goal has no numeric value yet —
      * a first value (including an explicit 0) must record; otherwise the float value.

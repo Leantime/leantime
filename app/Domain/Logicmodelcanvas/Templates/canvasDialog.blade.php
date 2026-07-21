@@ -146,6 +146,12 @@
                     (function () {
                         var btns = document.querySelectorAll('.lm-suggest-why');
                         btns.forEach(function (btn) {
+                            // The dialog can be re-injected within a session — guard against
+                            // stacking a second listener on an already-bound button.
+                            if (btn.dataset.lmWhyBound) {
+                                return;
+                            }
+                            btn.dataset.lmWhyBound = '1';
                             btn.addEventListener('click', function () {
                                 var title = (btn.getAttribute('data-source-title') || '').trim();
                                 var body  = (btn.getAttribute('data-source-body')  || '').trim();

@@ -32,11 +32,12 @@
                 {{ $presetLabel }}
             </a>
         @endforeach
-        <a href="javascript:void(0)"
-           onclick="jQuery(this).closest('.periodPicker').find('.periodPickerCustom').toggle(); return false;"
-           class="btn btn-sm btn-secondary @if ($isCustom) active @endif">
+        <button type="button"
+                onclick="jQuery(this).closest('.periodPicker').find('.periodPickerCustom').toggle();"
+                aria-expanded="{{ $isCustom ? 'true' : 'false' }}"
+                class="btn btn-sm btn-secondary @if ($isCustom) active @endif">
             {{ __('label.period_custom') }}
-        </a>
+        </button>
     </div>
 
     <form method="GET" action="{{ $url }}" class="periodPickerCustom tw-items-center tw-gap-1" style="display: {{ $isCustom ? 'flex' : 'none' }};">

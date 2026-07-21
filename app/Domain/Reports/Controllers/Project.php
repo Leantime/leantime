@@ -41,7 +41,8 @@ class Project extends Controller
     {
         // Drill-down links from plan/strategy rollups target a specific project; switch the
         // session project when the user has access (mirrors EditMilestone's behavior).
-        $requestedProjectId = (int) ($params['projectId'] ?? 0);
+        // `id` is the Frontcontroller's path-segment param, so /reports/project/123 works too.
+        $requestedProjectId = (int) ($params['projectId'] ?? $params['id'] ?? 0);
         if (
             $requestedProjectId > 0
             && $requestedProjectId !== (int) session('currentProject')
