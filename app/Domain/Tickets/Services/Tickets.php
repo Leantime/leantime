@@ -2480,8 +2480,9 @@ class Tickets extends BaseService
             return [];
         }
 
-        // Resolve "today" once so a run across midnight can't disagree on bounds.
-        $today = date('Y-m-d');
+        // Resolve "today" once (in the USER's calendar, not the server's) so a run
+        // across midnight can't disagree on bounds.
+        $today = dtHelper()->userNow()->format('Y-m-d');
         $from = $from ?: $today;
         $to = $to ?: $today;
         // Tolerate a reversed range rather than returning nothing.
@@ -2526,30 +2527,48 @@ class Tickets extends BaseService
      * @api
      *
      * Tickets the user COMMENTED on within [$from, $to] that they do NOT own
-     * (they're not the assignee/editor) — i.e. work they supported by weighing
+     * (they're not the ticket's editor) — i.e. work they supported by weighing
      * in on someone else's arc. Powers the mobile Progress "Supported" section
      * (presence counts as much as production).
      *
-     * Access safety: the commented-ticket ids are intersected with the user's
-     * access-scoped ticket set (simpleTicketQuery applies the project-access +
-     * collaborator clause), so a comment can never surface a ticket the user
-     * can no longer see. Ownership filter drops tickets where the user IS the
-     * editor — those are "your work," not support. Defaults either bound to
-     * today.
+     * Access safety: commented ticket ids are constrained to the PROJECTS the
+     * user can access (getProjectsUserHasAccessTo) — NOT to tickets they edit
+     * or collaborate on. Commenting on a ticket rarely makes you its editor or
+     * a collaborator, so scoping by those (as an earlier version did via
+     * simpleTicketQuery) silently dropped most supported work — it collapsed to
+     * "commented AND collaborator" and could return empty even when comments
+     * exist. Project access is the correct, still-safe boundary: a historical
+     * comment can't surface a ticket in a project the user no longer sees. The
+     * ownership filter then drops tickets the user is the editor of — those are
+     * "your work," not support. Defaults either bound to today.
      *
-     * @return array<int, array<string, mixed>> ticket rows (id, headline,
-     *                                          projectName, …), same shape as the other user-ticket queries.
+     * A non-admin may only read their OWN commented tickets: a caller-supplied
+     * $userId for someone else is forced back to the session user (IDOR guard,
+     * matching Projects::getProjectsUserHasAccessTo()).
+     *
+     * @return array<int, array<string, mixed>> Raw ticket rows (id, headline,
+     *                                          projectName, editorId, status, …).
+     *
+     * Note: these rows do NOT carry the resolved statusLabel / statusClass /
+     * statusType that the getAll*UserTickets methods attach.
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
     {
-        $userId = $userId ?? (int) session('userdata.id');
+        $sessionUser = (int) session('userdata.id');
+        $userId = $userId ?: $sessionUser;
+        // IDOR guard: reading someone else's comment activity requires admin.
+        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
         if ($userId === 0) {
             return [];
         }
-        // "Today" in the user's calendar, not the server's.
-        $from = $from ?: dtHelper()->userNow()->format('Y-m-d');
-        $to = $to ?: dtHelper()->userNow()->format('Y-m-d');
+        // Resolve "today" once (in the USER's calendar, not the server's) so a run
+        // across midnight can't disagree on bounds.
+        $today = dtHelper()->userNow()->format('Y-m-d');
+        $from = $from ?: $today;
+        $to = $to ?: $today;
         if ($from > $to) {
             [$from, $to] = [$to, $from];
         }
@@ -2559,20 +2578,26 @@ class Tickets extends BaseService
             return [];
         }
 
-        // Access-scoped fetch of ONLY the commented ids — the project-access predicate
-        // applies in SQL, so a comment can never surface a ticket the user can no longer
-        // see, and the full ticket universe is never loaded. The user id must NOT be
-        // passed here: it would narrow the set to editor/collaborator tickets, and
-        // "supported" tickets are by definition neither (commenting doesn't create a
-        // collaborator relationship).
-        $accessible = $this->ticketRepository->simpleTicketQuery(null, null, [], false, $commentedIds);
-        if (! is_array($accessible) || empty($accessible)) {
+        // Scope to the projects the user can see — the correct access boundary
+        // for "tickets I commented on" (you comment on others' work without
+        // being its editor/collaborator, so filtering by those would drop it).
+        $projects = $this->projectService->getProjectsUserHasAccessTo($userId);
+        if (! is_array($projects) || empty($projects)) {
+            return [];
+        }
+        $projectIds = array_values(array_filter(array_map(
+            fn ($p) => (int) ($p['id'] ?? 0),
+            $projects
+        )));
+        if (empty($projectIds)) {
             return [];
         }
 
+        $tickets = $this->ticketRepository->getTicketsByIdsWithinProjects($commentedIds, $projectIds);
+
+        // "Supported", not "yours": drop tickets the user is the editor of.
         $out = [];
-        foreach ($accessible as $ticket) {
-            // "Supported", not "yours": drop tickets you're the editor of.
+        foreach ($tickets as $ticket) {
             if ((string) ($ticket['editorId'] ?? '') === (string) $userId) {
                 continue;
             }

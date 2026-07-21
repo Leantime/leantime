@@ -709,7 +709,7 @@ class Tickets
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
 
-    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = [], bool $excludeClosedProjects = false, array $ticketIds = []): array|false
+    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = [], bool $excludeClosedProjects = false): array|false
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
         $clientId = session('userdata.clientId') ?? '-1';
@@ -781,12 +781,6 @@ class Tickets
 
         if (count($types) > 0) {
             $query->whereIn('zp_tickets.type', $types);
-        }
-
-        // Restrict to a known id set (e.g. commented tickets) at the SQL level so
-        // callers never have to load the full access-scoped universe to intersect.
-        if ($ticketIds !== []) {
-            $query->whereIn('zp_tickets.id', array_map('intval', $ticketIds));
         }
 
         // Closed projects (state === -1) are inactive. Callers wanting a "my
@@ -1926,22 +1920,65 @@ class Tickets
 
     /**
      * Distinct ticket ids the given user COMMENTED on within [from, to]
-     * (inclusive, 'Y-m-d'). Access-agnostic on its own — callers must
-     * intersect the result with an access-scoped ticket set (e.g.
-     * simpleTicketQuery) before returning anything, so this never widens
-     * visibility. Used by getMyCommentedTicketsForRange for Progress "Supported".
+     * (inclusive, 'Y-m-d'). Access-agnostic on its own — callers must constrain
+     * the result to an access-scoped set (e.g. the user's accessible projects)
+     * before returning anything, so this never widens visibility. Used by
+     * getMyCommentedTicketsForRange for Progress "Supported".
      */
     public function getTicketIdsCommentedByUser(int $userId, string $fromDate, string $toDate): array
     {
-        $rows = $this->connection->table('zp_comment')
-            ->select('moduleId')
-            ->distinct()
+        return $this->connection->table('zp_comment')
             ->where('module', 'ticket')
             ->where('userId', $userId)
             ->whereBetween('date', [$fromDate.' 00:00:00', $toDate.' 23:59:59'])
+            // moduleId is nullable in the schema; skip NULLs at the query level so
+            // (int) NULL doesn't inject a bogus id 0 into the downstream whereIn().
+            ->whereNotNull('moduleId')
+            ->distinct()
+            ->pluck('moduleId')
+            ->map(fn ($id) => (int) $id)
+            ->filter() // belt-and-suspenders: drop any 0 (e.g. an empty-string id)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Ticket rows for the given ids, constrained to the given projects (the
+     * caller's access boundary). One row per ticket with the fields mobile
+     * user-ticket consumers expect (id, headline, projectId, projectName,
+     * editorId, userId, status, dateToFinish). Returns raw rows — no resolved
+     * statusLabel/statusClass. Used by getMyCommentedTicketsForRange.
+     */
+    public function getTicketsByIdsWithinProjects(array $ticketIds, array $projectIds): array
+    {
+        if (empty($ticketIds) || empty($projectIds)) {
+            return [];
+        }
+
+        $rows = $this->connection->table('zp_tickets')
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->select(
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.projectId',
+                'zp_tickets.editorId',
+                'zp_tickets.userId',
+                'zp_tickets.status',
+                'zp_tickets.dateToFinish',
+                'zp_projects.name as projectName',
+            )
+            ->whereIn('zp_tickets.id', $ticketIds)
+            ->whereIn('zp_tickets.projectId', $projectIds)
+            // "Supported" is a task surface — exclude milestones the same way the
+            // other mobile user-ticket queries do, so a comment on a milestone
+            // doesn't surface a milestone row here.
+            ->where('zp_tickets.type', '<>', 'milestone')
+            // Stable, deterministic order (DB default order is unspecified).
+            ->orderBy('zp_tickets.dateToFinish')
+            ->orderBy('zp_tickets.id')
             ->get();
 
-        return array_values(array_unique(array_map(fn ($row) => (int) $row->moduleId, $rows->all())));
+        return array_map(fn ($row) => (array) $row, $rows->all());
     }
 
     /**
