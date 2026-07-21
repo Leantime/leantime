@@ -89,7 +89,7 @@
     --rd-text-4:#aab4bb;
     --rd-line:#e3e8ea;
     --rd-line-soft:#eef1f3;
-    --rd-bg:#fafbfb;
+    --rd-bg:#fff;
     --rd-panel:#fff;
     --rd-ok:#3E937A;
     --rd-warn:#C09035;
@@ -155,12 +155,15 @@
 
 /* Tab bar — sits ON the page background (matches the To-Dos Kanban·Table·List
    pattern). Not on a panel. */
-.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:var(--rd-text-3);padding:6px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:6px;transition:color .15s,background .15s;}
-.rd-tab:hover{color:var(--rd-text-1);background:rgba(0,0,0,.03);}
-.rd-tab.on{color:var(--rd-accent);font-weight:600;background:rgba(0,71,102,.06);}
+/* Nav bar: horizontal tabs sit on their own gradient strip ABOVE the white
+   content card (the nav lives on the app gradient, the content in the card).
+   Reads as navigation tabs, not a button group. Active tab = white pill. */
+.rd-tabs{display:flex;align-items:center;gap:4px;margin-bottom:10px;background:linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:14px;box-shadow:var(--large-shadow);padding:7px 10px;}
+.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.82);padding:8px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:9px;transition:color .15s,background .15s;}
+.rd-tab:hover{color:#fff;background:rgba(255,255,255,.14);}
+.rd-tab.on{color:var(--rd-accent);font-weight:600;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);}
 .rd-tab i{font-size:12px;}
-.rd-tab .ct{font-size:11px;color:var(--rd-text-4);background:var(--rd-line-soft);border-radius:10px;padding:1px 7px;margin-left:2px;}
+.rd-tab .ct{font-size:11px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.18);border-radius:10px;padding:1px 7px;margin-left:2px;}
 .rd-tab.on .ct{color:var(--rd-accent);background:rgba(0,71,102,.1);}
 .rd-arrows{display:flex;gap:4px;}
 .rd-arrow{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-text-2);}
@@ -170,7 +173,11 @@
 /* Deck — one panel that sizes to the active page (no dead space on short pages).
    Pages are stacked in a horizontal track; we translate the track and only the
    active page's content contributes to height. */
-.rd-deck{background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);overflow:hidden;position:relative;}
+/* The deck sits INSIDE the app's .maincontentinner white card, so it must NOT be
+   a second floating card — no own shadow (that drop-shadow drew a visible seam
+   under the tab strip, reading as "two whites / box in a box"). Flat, same white,
+   one cohesive surface. */
+.rd-deck{background:var(--rd-panel);overflow:hidden;position:relative;}
 .rd-deck-viewport{overflow:hidden;position:relative;}
 .rd-deck-track{display:flex;align-items:flex-start;transition:transform .28s cubic-bezier(.4,.15,.25,1);}
 .rd-page{flex:0 0 100%;padding:24px 26px;min-width:100%;width:100%;}
@@ -286,20 +293,9 @@
 <div class="rd-scope">
 
     {{-- ── Persistent header ────────────────────────────────────────── --}}
-    <div class="rd-hdr">
-        <div class="st">
-            <div class="h">{{ $subject }}</div>
-            <div class="prov">
-                {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
-                @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif
-                · {{ __('stakeholder.header.updated') }} {{ $updatedAt }}
-            </div>
-        </div>
-        <div class="verdict">
-            <div class="v"><span class="dot" style="background:{{ $verdictDotColor }}"></span>{{ $verdictLabel }}</div>
-            <div class="src">{{ $verdictSource }}</div>
-        </div>
-    </div>
+    {{-- Header card removed: the subject switcher, meta sub-line, status verdict
+         and actions all now live in the shared pageheader (see report.blade.php),
+         so this second card was redundant. The deck starts straight at the tabs. --}}
 
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
          space; picker sits with the view-mode controls it belongs with) ── --}}
@@ -359,6 +355,10 @@
     </div>
 
     {{-- ── Deck ─────────────────────────────────────────────────────── --}}
+    {{-- The white content card wraps ONLY the deck; the tab bar above sits on
+         the app gradient (nav lives on the gradient, content lives in the card).
+         The plugin's report.blade.php no longer adds an outer .maincontentinner. --}}
+    <div class="maincontentinner">
     <div class="rd-deck">
         <div class="rd-deck-viewport">
             <div class="rd-deck-track" id="rdTrack">
@@ -391,6 +391,7 @@
             </div>
         </div>
     </div>
+    </div>{{-- /.maincontentinner --}}
 
 </div>
 
