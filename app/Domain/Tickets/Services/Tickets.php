@@ -2065,6 +2065,7 @@ class Tickets extends BaseService
             'dependingTicketId' => '',
             'milestoneid' => $params['dependentMilestone'] ?? '',
             'acceptanceCriteria' => '',
+            'outcomeImpact' => $params['outcomeImpact'] ?? '',
             'tags' => $params['tags'] ?? '',
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
@@ -2140,6 +2141,7 @@ class Tickets extends BaseService
             'hourRemaining' => $values['hourRemaining'] ?? '',
             'priority' => $values['priority'] ?? '',
             'acceptanceCriteria' => $values['acceptanceCriteria'] ?? '',
+            'outcomeImpact' => $values['outcomeImpact'] ?? '',
             'editFrom' => $values['editFrom'] ?? '',
             'timeFrom' => $values['timeFrom'] ?? '',
             'editTo' => $values['editTo'] ?? '',
@@ -2255,6 +2257,12 @@ class Tickets extends BaseService
             $values['headline'] = $currentTicket->headline;
         }
 
+        // Only touch the outcome narrative when the caller sends it — most edit forms don't
+        // carry the field, and defaulting it to '' would wipe a saved milestone outcome
+        // (the repository skips the column when the key is absent).
+        $hasOutcomeImpact = array_key_exists('outcomeImpact', $values);
+        $outcomeImpact = $values['outcomeImpact'] ?? null;
+
         $values = [
             'id' => $values['id'],
             'headline' => $values['headline'] ?? '',
@@ -2281,6 +2289,10 @@ class Tickets extends BaseService
             'milestoneid' => $values['milestoneid'] ?? '',
             'collaborators' => $values['collaborators'] ?? [],
         ];
+
+        if ($hasOutcomeImpact) {
+            $values['outcomeImpact'] = $outcomeImpact;
+        }
 
         if ($values['projectId'] === null || $values['projectId'] === '' || $values['projectId'] === false) {
             return ['msg' => 'project id is not set', 'type' => 'error'];
@@ -2468,8 +2480,9 @@ class Tickets extends BaseService
             return [];
         }
 
-        // Resolve "today" once so a run across midnight can't disagree on bounds.
-        $today = date('Y-m-d');
+        // Resolve "today" once (in the USER's calendar, not the server's) so a run
+        // across midnight can't disagree on bounds.
+        $today = dtHelper()->userNow()->format('Y-m-d');
         $from = $from ?: $today;
         $to = $to ?: $today;
         // Tolerate a reversed range rather than returning nothing.
@@ -2551,8 +2564,9 @@ class Tickets extends BaseService
         if ($userId === 0) {
             return [];
         }
-        // Resolve "today" once so a run across midnight can't disagree on bounds.
-        $today = date('Y-m-d');
+        // Resolve "today" once (in the USER's calendar, not the server's) so a run
+        // across midnight can't disagree on bounds.
+        $today = dtHelper()->userNow()->format('Y-m-d');
         $from = $from ?: $today;
         $to = $to ?: $today;
         if ($from > $to) {
@@ -2972,6 +2986,11 @@ class Tickets extends BaseService
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
         ];
+
+        // Callers without the field (e.g. inline kanban edits) must not wipe a saved outcome.
+        if (array_key_exists('outcomeImpact', $params)) {
+            $values['outcomeImpact'] = $params['outcomeImpact'];
+        }
 
         $values = $this->prepareTicketDates($values);
 
