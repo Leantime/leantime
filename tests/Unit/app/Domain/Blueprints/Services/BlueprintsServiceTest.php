@@ -560,7 +560,7 @@ class BlueprintsServiceTest extends TestCase
             $this->allowingPermissions()
         );
 
-        $traversal = sys_get_temp_dir() . '/../../../etc/passwd';
+        $traversal = sys_get_temp_dir().'/../../../etc/passwd';
 
         $this->assertFalse(
             $service->import($traversal, 'lean', 55, 1),
@@ -579,11 +579,11 @@ class BlueprintsServiceTest extends TestCase
         );
 
         // Create a directory whose name is a prefix of the real temp dir.
-        $siblingDir = sys_get_temp_dir() . '-evil';
+        $siblingDir = sys_get_temp_dir().'-evil';
         if (! is_dir($siblingDir)) {
             mkdir($siblingDir, 0700, true);
         }
-        $siblingFile = $siblingDir . '/blueprint.json';
+        $siblingFile = $siblingDir.'/blueprint.json';
         file_put_contents($siblingFile, '{}');
 
         try {
@@ -606,10 +606,10 @@ class BlueprintsServiceTest extends TestCase
             $this->allowingPermissions()
         );
 
-        $phpFile = sys_get_temp_dir() . '/leantime_import_test.php';
+        $phpFile = sys_get_temp_dir().'/leantime_import_test.php';
         file_put_contents($phpFile, '<?php echo "pwned";');
 
-        $txtFile = sys_get_temp_dir() . '/leantime_import_test.txt';
+        $txtFile = sys_get_temp_dir().'/leantime_import_test.txt';
         file_put_contents($txtFile, 'not xml');
 
         try {
@@ -667,7 +667,7 @@ class BlueprintsServiceTest extends TestCase
 </canvas>
 XML;
 
-        $tempFile = tempnam(sys_get_temp_dir(), 'leantime.') . '.xml';
+        $tempFile = tempnam(sys_get_temp_dir(), 'leantime.').'.xml';
         file_put_contents($tempFile, $xml);
 
         try {

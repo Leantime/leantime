@@ -391,15 +391,15 @@ class Blueprints extends BaseService
      * and the shipped fixture directory under the Blueprints domain.
      *
      * @param  string  $resolvedPath  Already-resolved absolute path (from realpath)
-     * @return bool  True when the path is within an allowed directory
-     *               and has an allowed extension
+     * @return bool True when the path is within an allowed directory
+     *              and has an allowed extension
      */
     private function isImportPathAllowed(string $resolvedPath): bool
     {
         $allowedDirs = [
             sys_get_temp_dir(),
             storage_path('userfiles'),
-            APP_ROOT . '/app/Domain/Blueprints/imports',
+            APP_ROOT.'/app/Domain/Blueprints/imports',
         ];
 
         // Validate file extension — only XML (uploaded via the UI) and JSON
@@ -424,7 +424,7 @@ class Blueprints extends BaseService
                 continue;
             }
 
-            if (str_starts_with($resolvedPath, $resolvedAllowed . DIRECTORY_SEPARATOR)) {
+            if (str_starts_with($resolvedPath, $resolvedAllowed.DIRECTORY_SEPARATOR)) {
                 return true;
             }
         }
