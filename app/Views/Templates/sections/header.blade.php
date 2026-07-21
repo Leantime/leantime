@@ -81,7 +81,26 @@
 @dispatchEvent('afterScriptsAndStyles')
 
 <!-- Replace main theme colors -->
+@php
+    // The nav bar sets white controls on the accent gradient. A light accent is
+    // a mid-tone that fails WCAG AA for white text; detect that per-theme and
+    // enable a dark scrim only then, so dark-accent themes stay fully vivid.
+    $navNeedsScrim = false;
+    foreach ($accents as $accentColor) {
+        if (! is_string($accentColor) || ! preg_match('/^#?([0-9a-fA-F]{6})$/', $accentColor, $accentHex)) {
+            continue;
+        }
+        [$ar, $ag, $ab] = sscanf($accentHex[1], '%02x%02x%02x');
+        $linChannel = static fn ($v) => ($v /= 255) <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
+        $accentLum = 0.2126 * $linChannel($ar) + 0.7152 * $linChannel($ag) + 0.0722 * $linChannel($ab);
+        if (1.05 / ($accentLum + 0.05) < 4.5) { // white-on-accent below AA
+            $navNeedsScrim = true;
+            break;
+        }
+    }
+@endphp
 <style id="colorSchemeSetter">
+    :root { --nav-scrim: {{ $navNeedsScrim ? '0.22' : '0' }}; }
     @foreach ($accents as $accent)
         @if($accent !== false)
             :root {

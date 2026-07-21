@@ -1236,7 +1236,13 @@ a.barmenu:hover {
     /* Above the kanban column headers (also sticky at z-index 9, and later in
        the DOM) so the Filter panel / Group By menu open on top of them. */
     z-index: 11;
-    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    /* Accent gradient + a CONDITIONAL dark scrim. --nav-scrim is set per theme
+       in the header (0 for dark accents that already pass contrast → fully
+       vivid; 0.22 for light accents where white controls would fail WCAG AA →
+       darkened just enough to clear 4.5:1). */
+    background:
+        linear-gradient(rgba(0, 0, 0, var(--nav-scrim, 0)), rgba(0, 0, 0, var(--nav-scrim, 0))),
+        linear-gradient(90deg, var(--accent1), var(--accent2));
     border: none;
     border-radius: 14px;
     /* No drop shadow: it made the bar read as a separate floating element from
@@ -1300,30 +1306,42 @@ a.barmenu:hover {
     height: auto;
     align-self: center;
 }
-/* Filter, Group By = plain muted-white text controls (no pill). */
+/* Filter, Group By = plain white text controls (no pill). Full white (not
+   0.85) so they clear WCAG AA on the scrimmed bright end of the gradient. */
 .maincontentinner.tabs .tabs-actions .btn-link {
     color: #fff;
-    opacity: 0.85;
+    opacity: 1;
     background: transparent;
+}
+/* Visible keyboard focus for every nav control (tabs + actions) — a white ring
+   reads on the gradient. */
+.maincontentinner.tabs > ul li a:focus-visible,
+.maincontentinner.tabs .tabs-actions .btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+.maincontentinner.tabs > ul li.active a:focus-visible {
+    outline-color: #004666;
 }
 .maincontentinner.tabs .tabs-actions .btn-link:hover {
     opacity: 1;
     color: #fff;
     background: rgba(255, 255, 255, 0.14);
 }
-/* New = the standard Leantime primary button (solid accent), so it reads as a
-   familiar action distinct from both the tabs and the light text controls. */
+/* New = a filled dark chip: reads as a pressable action, distinct from both the
+   white/framed tabs and the light text organizers (Filter / Group By). No
+   divider — the chip alone carries the "action" meaning, keeping the bar's
+   negative space. */
 .maincontentinner.tabs .tabs-actions .btn-primary {
-    background: var(--main-action-bg);
-    color: var(--main-action-color);
+    background: rgba(0, 40, 60, 0.6);
+    color: #fff;
     font-weight: 600;
     box-shadow: none;
     border: none;
 }
 .maincontentinner.tabs .tabs-actions .btn-primary:hover {
-    background: var(--main-action-bg);
-    color: var(--main-action-color);
-    opacity: 0.92;
+    background: rgba(0, 40, 60, 0.75);
+    color: #fff;
 }
 
 
