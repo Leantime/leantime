@@ -37,6 +37,14 @@
     'switchStyle' => 'legacy',
 ])
 
+@once
+    <style>
+        /* Breadcrumb parent — subtle gray, no underline (was a heavy link). */
+        .pagetitle .subjectSwitcher-parent{color:var(--primary-font-color);opacity:.55;text-decoration:none;font-weight:500;}
+        .pagetitle .subjectSwitcher-parent:hover{opacity:.9;text-decoration:underline;}
+        .pagetitle .subjectSwitcher-sep{color:var(--primary-font-color);opacity:.35;margin:0 2px;}
+    </style>
+@endonce
 <h1 @class(['subjectSwitcher', 'subjectSwitcher--pill' => $switchStyle === 'pill'])>
     @if (! empty($parent))
         @if (! empty($parentHref))
@@ -56,3 +64,8 @@
         </ul>
     </span>
 </h1>
+@isset($subline)
+    {{-- Optional light meta/metrics line under the title (e.g. "Strategy report ·
+         updated Jul 20", or on Tasks "24 tickets · last updated 5m ago"). --}}
+    <div class="subjectSwitcher-subline">{{ $subline }}</div>
+@endisset
