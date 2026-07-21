@@ -546,8 +546,8 @@ class BlueprintsServiceTest extends TestCase
         );
 
         $this->assertFalse(
-            $service->import('/etc/passwd', 'lean', 55, 1),
-            'Absolute path to a system file must be rejected'
+            $service->import(__FILE__, 'lean', 55, 1),
+            'Absolute path to a non-import file must be rejected'
         );
     }
 
@@ -599,7 +599,7 @@ class BlueprintsServiceTest extends TestCase
 
     public function test_import_rejects_disallowed_file_extensions(): void
     {
-        // Only .xml and .json are permitted. Other extensions must be
+        // Only .xml is permitted. Other extensions must be
         // rejected even when the file sits in an allowed directory.
         $service = $this->securedService(
             $this->make(BlueprintsRepository::class),
