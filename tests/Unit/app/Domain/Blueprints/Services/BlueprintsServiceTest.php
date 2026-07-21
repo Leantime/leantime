@@ -647,10 +647,10 @@ class BlueprintsServiceTest extends TestCase
 
         $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
-<canvas key="lean">
+<canvas key="leancanvas">
     <title>Security Test Canvas</title>
     <content>
-        <element key="lean_hypothesis">
+        <element key="leancanvas_hypothesis">
             <item>
                 <author firstname="A" lastname="B"/>
                 <description>Test item</description>
