@@ -538,17 +538,26 @@ class BlueprintsServiceTest extends TestCase
 
     public function test_import_rejects_lfi_absolute_path_to_system_file(): void
     {
-        // /etc/passwd exists on Linux and resolves via realpath(), but it
-        // lives outside every allowed directory.
+        // Create an .xml file in a directory that is NOT in the allowed list.
+        // /var/tmp is outside sys_temp_dir, userfiles, and Blueprints/imports.
         $service = $this->securedService(
             $this->make(BlueprintsRepository::class),
             $this->allowingPermissions()
         );
 
-        $this->assertFalse(
-            $service->import(__FILE__, 'lean', 55, 1),
-            'Absolute path to a non-import file must be rejected'
-        );
+        $outOfBounds = '/var/tmp/leantime_lfi_test_' . uniqid('', true) . '.xml';
+        file_put_contents($outOfBounds, '<canvas key="leancanvas"><title>LFI Test</title></canvas>');
+
+        try {
+            $this->assertFalse(
+                $service->import($outOfBounds, 'lean', 55, 1),
+                'Absolute path to an .xml file outside allowed directories must be rejected'
+            );
+        } finally {
+            if (file_exists($outOfBounds)) {
+                unlink($outOfBounds);
+            }
+        }
     }
 
     public function test_import_rejects_dot_dot_path_traversal(): void
