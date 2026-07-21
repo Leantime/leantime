@@ -447,17 +447,38 @@ body {
    the header float transparently on the gradient; that's replaced by a proper
    boxed header. Applied globally so every page's header is consistent. */
 .pageheader {
-    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
     height: auto;
     line-height: 1.3;
     position: relative;
+    /* Match the content card exactly (same bg, NO backdrop blur) so the header
+       and content read as one cohesive surface, not mismatched cards. */
     background: var(--glass-background);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
     border: var(--glass-border);
     border-radius: var(--box-radius);
     box-shadow: var(--large-shadow);
-    margin-bottom: 10px;
+    /* Horizontal margin matches .maincontent's 15px padding so the header card
+       lines up with the content card below it (was full-width → stuck out
+       wider, which read as a box-inside-a-box). No bottom margin: the gap to the
+       next block comes solely from .maincontent's 10px padding-top, so the
+       vertical rhythm (top-nav→header, header→nav/content) is an even 10px
+       everywhere (was 8px margin + 10px padding = an uneven 18px). */
+    margin: 0 15px 0 15px;
+}
+
+.pageheader .pagetitle {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Header content must be able to shrink so it never forces the card wider than
+   the viewport (flex children need min-width:0 to shrink below content size). */
+.pageheader .pagetitle > * {
+    min-width: 0;
 }
 
 .maincontent {
