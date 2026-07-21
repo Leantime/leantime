@@ -158,10 +158,15 @@
 /* Nav bar: horizontal tabs sit on their own gradient strip ABOVE the white
    content card (the nav lives on the app gradient, the content in the card).
    Reads as navigation tabs, not a button group. Active tab = white pill. */
-.rd-tabs{display:flex;align-items:center;gap:4px;margin-bottom:10px;background:linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:14px;box-shadow:var(--large-shadow);padding:7px 10px;}
-.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.82);padding:8px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:9px;transition:color .15s,background .15s;}
-.rd-tab:hover{color:#fff;background:rgba(255,255,255,.14);}
-.rd-tab.on{color:var(--rd-accent);font-weight:600;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);}
+/* Nav bar: accent gradient + conditional dark scrim (--nav-scrim, set per-theme
+   in the header for light accents that fail contrast), NO shadow — so it reads
+   connected to the content, mirroring the global .tabs nav. */
+.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(rgba(0,0,0,var(--nav-scrim,0)),rgba(0,0,0,var(--nav-scrim,0))),linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:14px;box-shadow:none;padding:7px 10px;}
+/* Framed segmented tab group — one outlined container grouping the tabs. */
+.rd-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
+.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);padding:8px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:9px;transition:color .15s,background .15s;}
+.rd-tab:hover{color:#fff;background:rgba(255,255,255,.16);}
+.rd-tab.on{color:var(--rd-accent);font-weight:600;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);}
 .rd-tab i{font-size:12px;}
 .rd-tab .ct{font-size:11px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.18);border-radius:10px;padding:1px 7px;margin-left:2px;}
 .rd-tab.on .ct{color:var(--rd-accent);background:rgba(0,71,102,.1);}
@@ -300,10 +305,15 @@
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
          space; picker sits with the view-mode controls it belongs with) ── --}}
     <div class="rd-tabs hideOnPrint">
-        <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
-        <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
-        <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
-        <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+        {{-- Framed segmented tab group (mirrors the global .tabs nav): the tabs
+             sit in one outlined container so they read as a connected control,
+             the active one a white segment inside it. --}}
+        <div class="rd-tab-group">
+            <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
+            <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
+            <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
+            <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+        </div>
 
         <div class="rd-tab-right">
             <div class="rd-picker" id="rdPicker">
