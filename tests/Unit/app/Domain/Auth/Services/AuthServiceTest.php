@@ -98,7 +98,7 @@ class AuthServiceTest extends TestCase
     {
         $service = $this->makeService();
 
-        // URL-encoded same-origin absolute URL — urldecode is called first,
+        // URL-encoded same-origin absolute URL — rawurldecode is called first,
         // then BASE_URL is stripped.
         $this->assertSame(
             BASE_URL.'/tickets/showAll',
@@ -116,6 +116,31 @@ class AuthServiceTest extends TestCase
         $this->assertSame(
             BASE_URL.'/dashboard/home',
             $service->resolveSafeRedirect('https://evil.example.com/'.BASE_URL.'/dashboard/home')
+        );
+    }
+
+    public function test_resolve_safe_redirect_rejects_protocol_relative_url(): void
+    {
+        $service = $this->makeService();
+
+        // Protocol-relative URL (//attacker.com) — FILTER_VALIDATE_URL
+        // treats these as valid URLs, so they are correctly rejected
+        // and the default dashboard redirect is returned.
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect('//attacker.com')
+        );
+    }
+
+    public function test_resolve_safe_redirect_rejects_backslash_protocol_trick(): void
+    {
+        $service = $this->makeService();
+
+        // Backslash variant (\/\/attacker.com) — some parsers treat
+        // this as a protocol-relative URL. Verify it is rejected.
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect('\/\/attacker.com')
         );
     }
 
