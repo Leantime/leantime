@@ -1226,28 +1226,124 @@ a.barmenu:hover {
    inactive = muted white. Uses --accent1/--accent2 so it adapts to theme +
    dark mode; active-pill text uses --primary-color (theme token, not a hex). */
 .maincontentinner.tabs {
+    display: flex;
+    align-items: center;
     height: auto;
     margin-bottom: 10px;
     padding: 7px 10px;
     position: sticky;
     top: 55px;
-    z-index: 9;
+    /* Above the kanban column headers (also sticky at z-index 9, and later in
+       the DOM) so the Filter panel / Group By menu open on top of them. */
+    z-index: 11;
     background: linear-gradient(90deg, var(--accent1), var(--accent2));
     border: none;
     border-radius: 14px;
-    box-shadow: var(--large-shadow);
+    /* No drop shadow: it made the bar read as a separate floating element from
+       the content below (Marcel). Flat keeps the nav + content feeling as one. */
+    box-shadow: none;
 }
 
-
-.maincontentinner.tabs ul {
-    margin: 0;
-    padding: 0;
+/* Board actions (New / Filter / Group By) cluster on the right of the nav bar.
+   Styled to MATCH the tabs (same padding / radius / height / gap) so the whole
+   bar reads as one connected system, not tabs + a different button set. */
+.maincontentinner.tabs .tabs-actions {
+    margin-left: auto;
     display: flex;
     align-items: center;
     gap: 4px;
 }
+.maincontentinner.tabs .tabs-actions form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+.maincontentinner.tabs .tabs-actions .filterWrapper {
+    margin-bottom: 0 !important;
+    display: inline-flex;
+    align-items: center;
+}
+/* The actions sit at the right edge of the viewport, so their panels/menus must
+   open LEFTWARD (right-anchored) or they fall off screen. */
+.maincontentinner.tabs .tabs-actions .filterBar,
+.maincontentinner.tabs .tabs-actions .dropdown-menu {
+    left: auto !important;
+    right: 0;
+}
+.maincontentinner.tabs .tabs-actions .btn-group {
+    float: none;
+    margin: 0 !important;
+    display: inline-flex;
+    align-items: center;
+}
+/* Actions are SECONDARY to the nav tabs — smaller and visually distinct so a
+   New/Filter/Group-By action never reads as (or competes with) a nav tab. */
+.maincontentinner.tabs .tabs-actions .btn {
+    padding: 6px 11px;
+    border-radius: 8px !important; /* out-rank the global pill radius on .btn */
+    line-height: 1.2;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+/* The Filter/Group-By count badge must not be taller than the text line. */
+.maincontentinner.tabs .tabs-actions .btn .badge {
+    line-height: 1;
+    padding: 3px 6px;
+    font-size: 10px;
+    height: auto;
+    align-self: center;
+}
+/* Filter, Group By = plain muted-white text controls (no pill). */
+.maincontentinner.tabs .tabs-actions .btn-link {
+    color: #fff;
+    opacity: 0.85;
+    background: transparent;
+}
+.maincontentinner.tabs .tabs-actions .btn-link:hover {
+    opacity: 1;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+}
+/* New = the standard Leantime primary button (solid accent), so it reads as a
+   familiar action distinct from both the tabs and the light text controls. */
+.maincontentinner.tabs .tabs-actions .btn-primary {
+    background: var(--main-action-bg);
+    color: var(--main-action-color);
+    font-weight: 600;
+    box-shadow: none;
+    border: none;
+}
+.maincontentinner.tabs .tabs-actions .btn-primary:hover {
+    background: var(--main-action-bg);
+    color: var(--main-action-color);
+    opacity: 0.92;
+}
 
-.maincontentinner.tabs ul li {
+
+.maincontentinner.tabs > ul {
+    margin: 0;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+    /* Frame grouping the tabs into ONE connected segmented control: a subtle
+       inset track + soft outline over the gradient, so Kanban/Table/List read
+       as a single unit (per the report reference), with the active tab as a
+       white segment inside it. */
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 11px;
+}
+
+.maincontentinner.tabs > ul li {
     display: inline-flex;
     float: none;
     padding: 0;
@@ -1257,13 +1353,13 @@ a.barmenu:hover {
     border-radius: 0;
 }
 
-.maincontentinner.tabs ul li.active {
+.maincontentinner.tabs > ul li.active {
     box-shadow: none;
     border-radius: 0;
     background: none;
 }
 
-.maincontentinner.tabs ul li a {
+.maincontentinner.tabs > ul li a {
     font-weight: 500;
     padding: 8px 15px;
     border-radius: 9px;
@@ -1274,22 +1370,22 @@ a.barmenu:hover {
     color: rgba(255, 255, 255, 0.85);
 }
 
-.maincontentinner.tabs ul li.active a {
-    /* Fixed dark text (matches the report's active tab): the pill is always
-       white, so this must read in every theme — a light user accent via
-       --primary-color would be illegible here. */
+.maincontentinner.tabs > ul li.active a {
+    /* The selected segment is a plain white pill inside the frame (no keyline —
+       that read as a harsh outline). Fixed dark text: the pill is always white,
+       so a light user accent via --primary-color would be illegible. */
     color: #004666;
     background: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
     font-weight: 600;
 }
 
-.maincontentinner.tabs ul li a:hover {
+.maincontentinner.tabs > ul li a:hover {
     background: rgba(255, 255, 255, 0.16);
     color: #fff;
 }
 
-.maincontentinner.tabs ul li.active a:hover {
+.maincontentinner.tabs > ul li.active a:hover {
     background: #fff;
     color: #004666;
 }

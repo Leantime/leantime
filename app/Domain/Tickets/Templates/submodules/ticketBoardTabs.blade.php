@@ -38,4 +38,17 @@
             </a>
         </li>
     </ul>
+
+    {{-- Board actions (New / Filter / Group By) live on the right of the nav bar
+         — like the report's period picker — so the bar is balanced and the board
+         needs no separate toolbar row below it. Guarded on $searchCriteria so the
+         partial stays safe if the nav is ever reused without the board context. --}}
+    @isset($searchCriteria)
+        <div class="tabs-actions">
+            @dispatchEvent('filters.afterLefthandSectionOpen')
+            @include('tickets::submodules.ticketNewBtn')
+            @include('tickets::submodules.ticketFilter')
+            @dispatchEvent('filters.beforeLefthandSectionClose')
+        </div>
+    @endisset
 </div>

@@ -41,6 +41,51 @@
     <div class="pagetitle">
         <h5>{{ session('currentProjectClient') ?? '' . ' // ' . session('currentProjectName') ?? '' }}</h5>
 
+        {{-- Migrated to the shared subject switcher (was a hand-rolled
+             header-title-dropdown). The sprint menu items stay here — they're
+             domain-specific — but the "To-Dos // <current> ▾" chrome is now the
+             component. Zero visual change. --}}
+        <x-global::subjectSwitcher
+            :parent="__('headlines.todos')"
+            :current="$sprint !== false ? $sprint->name : __('label.select_sprint')">
+            <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {!! __('links.create_sprint_no_icon') !!}</a></li>
+            <li class='nav-header border'></li>
+            <li>
+                <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.all_todos') !!}</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.backlog') !!}</a>
+            </li>
+            @foreach ($sprints as $sprintRow)
+                <li>
+                    <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ $tpl->escape($sprintRow->name) }}@if (! empty($sprintRow->isInherited)) <span class="label label-info">{{ __('label.program_sprint') }}</span>@endif<br /><small>{!! sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) !!}</small></a>
+                </li>
+            @endforeach
+        </x-global::subjectSwitcher>
+        <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
+    </div>
+
+    {{-- Right cluster on the breadcrumb bar: board stats + (for a real sprint
+         view only) the sprint edit/delete ⋮ menu. --}}
+    <div class="pageheader-right">
+        @isset($boardSummary)
+            @php
+                // Board metrics as a one-line meta string; segments join with a
+                // single " · " so it reads cleanly no matter which are present.
+                $summaryParts = [sprintf(__('label.board_task_count'), $boardSummary->total)];
+                if ($boardSummary->unassigned > 0) {
+                    $summaryParts[] = sprintf(__('label.board_unassigned'), $boardSummary->unassigned);
+                }
+                if ($boardSummary->dueThisWeek > 0) {
+                    $summaryParts[] = sprintf(__('label.board_due_this_week'), $boardSummary->dueThisWeek);
+                }
+                if ($boardSummary->lastUpdated !== null) {
+                    $summaryParts[] = sprintf(__('label.board_updated'), $boardSummary->lastUpdated->setToUserTimezone()->diffForHumans());
+                }
+            @endphp
+            <div class="pageheader-meta">{{ implode(' · ', $summaryParts) }}</div>
+        @endisset
+
         @if (
             ($currentSprint !== false)
                 && ($currentSprint !== null)
@@ -61,47 +106,6 @@
                 </ul>
             </span>
         @endif
-
-        {{-- Migrated to the shared subject switcher (was a hand-rolled
-             header-title-dropdown). The sprint menu items stay here — they're
-             domain-specific — but the "To-Dos // <current> ▾" chrome is now the
-             component. Zero visual change. --}}
-        <x-global::subjectSwitcher
-            :parent="__('headlines.todos')"
-            :current="$sprint !== false ? $sprint->name : __('label.select_sprint')">
-            @isset($boardSummary)
-                @php
-                    // Build the segments and join with a single " · " so the line
-                    // reads cleanly no matter which optional metrics are present
-                    // (matches the report header's sub-line separators).
-                    $summaryParts = [sprintf(__('label.board_task_count'), $boardSummary->total)];
-                    if ($boardSummary->unassigned > 0) {
-                        $summaryParts[] = sprintf(__('label.board_unassigned'), $boardSummary->unassigned);
-                    }
-                    if ($boardSummary->dueThisWeek > 0) {
-                        $summaryParts[] = sprintf(__('label.board_due_this_week'), $boardSummary->dueThisWeek);
-                    }
-                    if ($boardSummary->lastUpdated !== null) {
-                        $summaryParts[] = sprintf(__('label.board_updated'), $boardSummary->lastUpdated->setToUserTimezone()->diffForHumans());
-                    }
-                @endphp
-                <x-slot:subline>{{ implode(' · ', $summaryParts) }}</x-slot:subline>
-            @endisset
-            <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {!! __('links.create_sprint_no_icon') !!}</a></li>
-            <li class='nav-header border'></li>
-            <li>
-                <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.all_todos') !!}</a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.backlog') !!}</a>
-            </li>
-            @foreach ($sprints as $sprintRow)
-                <li>
-                    <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ $tpl->escape($sprintRow->name) }}@if (! empty($sprintRow->isInherited)) <span class="label label-info">{{ __('label.program_sprint') }}</span>@endif<br /><small>{!! sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) !!}</small></a>
-                </li>
-            @endforeach
-        </x-global::subjectSwitcher>
-        <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
     </div>
     @dispatchEvent('beforePageHeaderClose')
 </div><!--pageheader-->
