@@ -70,7 +70,22 @@
             :parent="__('headlines.todos')"
             :current="$sprint !== false ? $sprint->name : __('label.select_sprint')">
             @isset($boardSummary)
-                <x-slot:subline>{{ sprintf(__('label.board_task_count'), $boardSummary->total) }}@if ($boardSummary->unassigned > 0) · {{ sprintf(__('label.board_unassigned'), $boardSummary->unassigned) }}@endif @if ($boardSummary->dueThisWeek > 0) · {{ sprintf(__('label.board_due_this_week'), $boardSummary->dueThisWeek) }}@endif @if ($boardSummary->lastUpdated !== null) · {{ sprintf(__('label.board_updated'), $boardSummary->lastUpdated->setToUserTimezone()->diffForHumans()) }}@endif</x-slot:subline>
+                @php
+                    // Build the segments and join with a single " · " so the line
+                    // reads cleanly no matter which optional metrics are present
+                    // (matches the report header's sub-line separators).
+                    $summaryParts = [sprintf(__('label.board_task_count'), $boardSummary->total)];
+                    if ($boardSummary->unassigned > 0) {
+                        $summaryParts[] = sprintf(__('label.board_unassigned'), $boardSummary->unassigned);
+                    }
+                    if ($boardSummary->dueThisWeek > 0) {
+                        $summaryParts[] = sprintf(__('label.board_due_this_week'), $boardSummary->dueThisWeek);
+                    }
+                    if ($boardSummary->lastUpdated !== null) {
+                        $summaryParts[] = sprintf(__('label.board_updated'), $boardSummary->lastUpdated->setToUserTimezone()->diffForHumans());
+                    }
+                @endphp
+                <x-slot:subline>{{ implode(' · ', $summaryParts) }}</x-slot:subline>
             @endisset
             <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {!! __('links.create_sprint_no_icon') !!}</a></li>
             <li class='nav-header border'></li>
