@@ -667,7 +667,9 @@ class BlueprintsServiceTest extends TestCase
 </canvas>
 XML;
 
-        $tempFile = tempnam(sys_get_temp_dir(), 'leantime.').'.xml';
+        $tmpBase = tempnam(sys_get_temp_dir(), 'leantime.');
+        $tempFile = $tmpBase . '.xml';
+        rename($tmpBase, $tempFile);
         file_put_contents($tempFile, $xml);
 
         try {
