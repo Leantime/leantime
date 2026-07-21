@@ -139,6 +139,62 @@ class TicketsServiceTest extends TestCase
     }
 
     /**
+     * getBoardSummary should count total/unassigned/due-this-week and surface the
+     * most recent modified date, working off the grouped ticket set as-is.
+     */
+    public function test_get_board_summary_computes_counts_and_last_updated()
+    {
+        // Build due dates on the same user-tz basis the service compares against.
+        $now = dtHelper()->userNow();
+
+        $mk = function (mixed $editorId, ?string $due, ?string $modified) {
+            $ticket = new \stdClass;
+            $ticket->editorId = $editorId;
+            $ticket->dateToFinish = $due;
+            $ticket->modified = $modified;
+
+            return $ticket;
+        };
+
+        $grouped = [
+            'all' => [
+                'label' => 'all',
+                'items' => [
+                    // assigned, due today (this week), older change
+                    $mk(5, $now->format('Y-m-d H:i:s'), '2026-07-01 10:00:00'),
+                    // unassigned (empty editor), due 2 months ago (not this week), newest change
+                    $mk('', $now->subMonths(2)->format('Y-m-d H:i:s'), '2026-07-15 09:00:00'),
+                    // unassigned (zero editor), no due date set
+                    $mk(0, '0000-00-00 00:00:00', '2026-06-01 08:00:00'),
+                    // assigned, due 2 months out (beyond this week), no modified stamp
+                    $mk(7, $now->addMonths(2)->format('Y-m-d H:i:s'), null),
+                ],
+            ],
+        ];
+
+        $summary = $this->ticketsService->getBoardSummary($grouped);
+
+        $this->assertSame(4, $summary->total);
+        $this->assertSame(2, $summary->unassigned);
+        $this->assertSame(1, $summary->dueThisWeek);
+        $this->assertNotNull($summary->lastUpdated);
+        $this->assertSame('2026-07-15 09:00:00', $summary->lastUpdated->format('Y-m-d H:i:s'));
+    }
+
+    /**
+     * An empty board yields zeroed counts and a null last-updated.
+     */
+    public function test_get_board_summary_handles_empty_board()
+    {
+        $summary = $this->ticketsService->getBoardSummary(['all' => ['items' => []]]);
+
+        $this->assertSame(0, $summary->total);
+        $this->assertSame(0, $summary->unassigned);
+        $this->assertSame(0, $summary->dueThisWeek);
+        $this->assertNull($summary->lastUpdated);
+    }
+
+    /**
      * Test that timeToFinish is unset when dateToFinish parsing fails
      */
     public function test_prepare_ticket_dates_removes_time_to_finish_on_parse_error()

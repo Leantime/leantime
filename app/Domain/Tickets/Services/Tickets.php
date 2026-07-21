@@ -35,6 +35,7 @@ use Leantime\Domain\Tickets\Events\TicketDeleted;
 use Leantime\Domain\Tickets\Events\TicketListFilter;
 use Leantime\Domain\Tickets\Events\TicketUpdated;
 use Leantime\Domain\Tickets\Events\TodoWidgetTasksFilter;
+use Leantime\Domain\Tickets\Models\BoardSummary;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\TicketHistory;
@@ -3968,6 +3969,58 @@ class Tickets extends BaseService
     /**
      * @throws BindingResolutionException
      */
+    /**
+     * Compute at-a-glance board metrics (total, unassigned, due-this-week, last
+     * updated) from an already-fetched grouped ticket set. Working off the rows
+     * the board just rendered means the counts reflect the current filters and
+     * cost no extra query.
+     *
+     * @param  array  $groupedTickets  Grouped tickets as returned by getAllGrouped()
+     *                                 (each group holds its rows under 'items').
+     *
+     * @api
+     */
+    public function getBoardSummary(array $groupedTickets): BoardSummary
+    {
+        $summary = new BoardSummary;
+
+        // "This week" = today through the end of the current week, compared as
+        // calendar dates in the user's timezone (Y-m-d string compare is
+        // chronological) so a date-only due date lands in the intended week.
+        $userNow = dtHelper()->userNow();
+        $weekStartDate = $userNow->format('Y-m-d');
+        $weekEndDate = $userNow->endOfWeek()->format('Y-m-d');
+
+        foreach ($groupedTickets as $group) {
+            foreach ($group['items'] ?? [] as $ticket) {
+                $summary->total++;
+
+                $editorId = is_object($ticket) ? ($ticket->editorId ?? null) : ($ticket['editorId'] ?? null);
+                if (empty($editorId)) {
+                    $summary->unassigned++;
+                }
+
+                $due = is_object($ticket) ? ($ticket->dateToFinish ?? null) : ($ticket['dateToFinish'] ?? null);
+                if (! empty($due) && ! str_starts_with((string) $due, '0000-00-00')) {
+                    $dueDate = dtHelper()->parseDbDateTime((string) $due)->setToUserTimezone()->format('Y-m-d');
+                    if ($dueDate >= $weekStartDate && $dueDate <= $weekEndDate) {
+                        $summary->dueThisWeek++;
+                    }
+                }
+
+                $modified = is_object($ticket) ? ($ticket->modified ?? null) : ($ticket['modified'] ?? null);
+                if (! empty($modified) && ! str_starts_with((string) $modified, '0000-00-00')) {
+                    $modifiedDate = dtHelper()->parseDbDateTime((string) $modified);
+                    if ($summary->lastUpdated === null || $modifiedDate->greaterThan($summary->lastUpdated)) {
+                        $summary->lastUpdated = $modifiedDate;
+                    }
+                }
+            }
+        }
+
+        return $summary;
+    }
+
     public function getTicketTemplateAssignments($params): array
     {
 
@@ -4019,6 +4072,7 @@ class Tickets extends BaseService
             'currentSprint' => session('currentSprint'),
             'searchCriteria' => $searchCriteria,
             'allTickets' => $allTickets,
+            'boardSummary' => $this->getBoardSummary($allTickets),
             'allTicketStates' => $allTicketStates,
             'efforts' => $efforts,
             'priorities' => $priorities,
