@@ -650,7 +650,7 @@ class BlueprintsServiceTest extends TestCase
 <canvas key="leancanvas">
     <title>Security Test Canvas</title>
     <content>
-        <element key="leancanvas_hypothesis">
+        <element key="problem">
             <item>
                 <author firstname="A" lastname="B"/>
                 <description>Test item</description>
