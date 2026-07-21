@@ -398,7 +398,7 @@ class Blueprints extends BaseService
     {
         $allowedDirs = [
             sys_get_temp_dir(),
-            storage_path('userfiles'),
+            base_path('userfiles'),
             APP_ROOT.'/app/Domain/Blueprints/imports',
         ];
 
