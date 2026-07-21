@@ -1250,6 +1250,14 @@ a.barmenu:hover {
     box-shadow: none;
 }
 
+/* Pages with no actions (timeline, plugin tabs) would otherwise show a wide
+   empty gradient bar. Hug the bar to its tab group so it reads as a compact
+   nav, not a mostly-empty band. (Boards with .tabs-actions stay full-width so
+   the actions can sit at the right.) */
+.maincontentinner.tabs:not(:has(.tabs-actions)) {
+    width: fit-content;
+}
+
 /* Board actions (New / Filter / Group By) cluster on the right of the nav bar.
    Styled to MATCH the tabs (same padding / radius / height / gap) so the whole
    bar reads as one connected system, not tabs + a different button set. */
