@@ -23,7 +23,12 @@
             @include('reports::partials.statusPill', ['status' => $summary->latestStatus, 'date' => $summary->latestStatusDate])
             <span>
                 <strong>{{ round($summary->progress['percent'] ?? 0) }}%</strong> {{ __('label.report_complete') }}
-                @if (!empty($summary->progress['estimatedCompletionDate']) && $summary->progress['estimatedCompletionDate'] !== false)
+                @php $completionState = $summary->progress['estimatedCompletionState'] ?? 'ready'; @endphp
+                @if ($completionState === 'needs_more_data')
+                    · <a href="{{ BASE_URL }}/tickets/showAll" class="btn btn-primary"><i class="fa fa-thumb-tack"></i> {{ __('label.complete_more_todos') }}</a>
+                @elseif ($completionState === 'complete')
+                    · <a href="{{ BASE_URL }}/projects/showAll" class="btn btn-primary"><i class="fa fa-suitcase"></i> {{ __('label.project_complete_onto_next') }}</a>
+                @elseif (!empty($summary->progress['estimatedCompletionDate']) && $summary->progress['estimatedCompletionDate'] !== false)
                     · {{ __('label.estimated_completion') }} {{ $summary->progress['estimatedCompletionDate'] }}
                 @endif
             </span>
