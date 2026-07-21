@@ -379,6 +379,64 @@ class Blueprints extends BaseService
     }
 
     /**
+     * Validate that a resolved import file path is safe to read.
+     *
+     * Rejects files outside a fixed allow-list of local directories and
+     * requires a known extension. The caller must resolve the path via
+     * {@see realpath()} first — this avoids a TOCTOU window between
+     * resolution and validation.
+     *
+     * The allow-list covers the three places Leantime sources blueprint
+     * import files from: the upload temp directory, the userfiles storage,
+     * and the shipped fixture directory under the Blueprints domain.
+     *
+     * @param  string  $resolvedPath  Already-resolved absolute path (from realpath)
+     * @return bool True when the path is within an allowed directory
+     *              and has an allowed extension
+     */
+    private function isImportPathAllowed(string $resolvedPath): bool
+    {
+        $allowedDirs = [
+            sys_get_temp_dir(),
+            storage_path('userfiles'),
+            APP_ROOT.'/app/Domain/Blueprints/imports',
+        ];
+
+        // Validate file extension — only XML (uploaded via the UI) and JSON
+        // (shipped fixture files under the imports directory) are permitted.
+        $ext = strtolower(pathinfo($resolvedPath, PATHINFO_EXTENSION));
+        if (! in_array($ext, ['xml', 'json'], true)) {
+            Log::warning('Blueprints import: disallowed file extension', [
+                'resolvedPath' => $resolvedPath,
+                'extension' => $ext,
+            ]);
+
+            return false;
+        }
+
+        // Anchor each allowed directory with a trailing separator so
+        // str_starts_with doesn't match sibling-prefix paths (e.g.
+        // /tmp-evil/x must NOT match against allowed /tmp).
+        foreach ($allowedDirs as $allowedDir) {
+            $resolvedAllowed = realpath($allowedDir);
+
+            if ($resolvedAllowed === false) {
+                continue;
+            }
+
+            if (str_starts_with($resolvedPath, $resolvedAllowed.DIRECTORY_SEPARATOR)) {
+                return true;
+            }
+        }
+
+        Log::warning('Blueprints import: path traversal or SSRF attempt blocked', [
+            'resolvedPath' => $resolvedPath,
+        ]);
+
+        return false;
+    }
+
+    /**
      * Import a canvas board from an XML file.
      *
      * Parses the XML, validates its structure, then creates a new canvas board
@@ -412,7 +470,24 @@ class Blueprints extends BaseService
         $dom = new DOMDocument('1.0', 'UTF-8');
         $users = app()->make(UserRepository::class);
 
-        $canvasData = file_get_contents($filename);
+        // Validate the file path and extension to prevent SSRF and Local File
+        // Inclusion. Reject URL wrappers (http://, ftp://, etc.), restrict
+        // reads to allowed local directories, and require a known import
+        // extension.
+        $resolvedPath = realpath($filename);
+        if ($resolvedPath === false) {
+            Log::warning('Blueprints import: file not found or path does not exist', [
+                'filename' => $filename,
+            ]);
+
+            return false;
+        }
+
+        if (! $this->isImportPathAllowed($resolvedPath)) {
+            return false;
+        }
+
+        $canvasData = file_get_contents($resolvedPath);
         if ($canvasData === false) {
             return false;
         }

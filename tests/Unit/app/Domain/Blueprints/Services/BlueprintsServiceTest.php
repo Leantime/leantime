@@ -38,7 +38,7 @@ class BlueprintsServiceTest extends TestCase
     public function test_translated_boxes_run_titles_through_language(): void
     {
         $template = new CanvasTemplate([
-            'slug' => 'swot',
+            'slug' => 'lean',
             'boxes' => ['swot_strengths' => ['icon' => 'fa-x', 'title' => 'box.swot.strengths']],
         ]);
 
@@ -505,7 +505,184 @@ class BlueprintsServiceTest extends TestCase
         $service = $this->securedService($repo, $this->denyingPermissions());
 
         $this->expectException(AuthorizationException::class);
-        $service->import('/tmp/does-not-matter.xml', 'swot', 55, 1);
+        $service->import('/tmp/does-not-matter.xml', 'lean', 55, 1);
+    }
+
+    // ---------------------------------------------------------------------
+    // import() path-validation regression tests (SSRF / LFI / CWE-918).
+    // ---------------------------------------------------------------------
+
+    public function test_import_rejects_ssrf_url_wrappers(): void
+    {
+        // URL wrappers such as http://, ftp:// resolve to false via realpath(),
+        // but even if/when a stream wrapper could produce a realpath, the
+        // allow-list check catches it. This test also guards the more
+        // subtle case of file:///etc/passwd which some PHP builds resolve.
+        $service = $this->securedService(
+            $this->make(BlueprintsRepository::class),
+            $this->allowingPermissions()
+        );
+
+        // SSRF: HTTP URL — realpath() returns false, caught as "file not found".
+        $this->assertFalse(
+            $service->import('http://169.254.169.254/latest/meta-data/', 'lean', 55, 1),
+            'HTTP URL must be rejected'
+        );
+
+        // SSRF: FTP URL.
+        $this->assertFalse(
+            $service->import('ftp://evil.com/blueprint.xml', 'lean', 55, 1),
+            'FTP URL must be rejected'
+        );
+    }
+
+    public function test_import_rejects_lfi_absolute_path_to_system_file(): void
+    {
+        // /etc/passwd exists on Linux and resolves via realpath(), but it
+        // lives outside every allowed directory.
+        $service = $this->securedService(
+            $this->make(BlueprintsRepository::class),
+            $this->allowingPermissions()
+        );
+
+        $this->assertFalse(
+            $service->import(__FILE__, 'lean', 55, 1),
+            'Absolute path to a non-import file must be rejected'
+        );
+    }
+
+    public function test_import_rejects_dot_dot_path_traversal(): void
+    {
+        // Construct a path that starts inside the temp directory but
+        // traverses out and back into /etc/passwd.
+        $service = $this->securedService(
+            $this->make(BlueprintsRepository::class),
+            $this->allowingPermissions()
+        );
+
+        $traversal = sys_get_temp_dir().'/../../../etc/passwd';
+
+        $this->assertFalse(
+            $service->import($traversal, 'lean', 55, 1),
+            'Path traversal (../) must be rejected'
+        );
+    }
+
+    public function test_import_rejects_sibling_prefix_bypass(): void
+    {
+        // str_starts_with without separator anchoring would allow
+        // /tmp-evil/blueprint.xml to match against allowed /tmp.
+        // The fix appends DIRECTORY_SEPARATOR to each allowed dir.
+        $service = $this->securedService(
+            $this->make(BlueprintsRepository::class),
+            $this->allowingPermissions()
+        );
+
+        // Create a directory whose name is a prefix of the real temp dir.
+        $siblingDir = sys_get_temp_dir().'-evil';
+        if (! is_dir($siblingDir)) {
+            mkdir($siblingDir, 0700, true);
+        }
+        $siblingFile = $siblingDir.'/blueprint.json';
+        file_put_contents($siblingFile, '{}');
+
+        try {
+            $this->assertFalse(
+                $service->import($siblingFile, 'lean', 55, 1),
+                'Sibling-prefix path (e.g. /tmp-evil/…) must NOT match allowed /tmp'
+            );
+        } finally {
+            unlink($siblingFile);
+            rmdir($siblingDir);
+        }
+    }
+
+    public function test_import_rejects_disallowed_file_extensions(): void
+    {
+        // Only .xml is permitted. Other extensions must be
+        // rejected even when the file sits in an allowed directory.
+        $service = $this->securedService(
+            $this->make(BlueprintsRepository::class),
+            $this->allowingPermissions()
+        );
+
+        $phpFile = sys_get_temp_dir().'/leantime_import_test.php';
+        file_put_contents($phpFile, '<?php echo "pwned";');
+
+        $txtFile = sys_get_temp_dir().'/leantime_import_test.txt';
+        file_put_contents($txtFile, 'not xml');
+
+        try {
+            $this->assertFalse(
+                $service->import($phpFile, 'lean', 55, 1),
+                '.php extension must be rejected in an allowed directory'
+            );
+            $this->assertFalse(
+                $service->import($txtFile, 'lean', 55, 1),
+                '.txt extension must be rejected in an allowed directory'
+            );
+        } finally {
+            if (file_exists($phpFile)) {
+                unlink($phpFile);
+            }
+            if (file_exists($txtFile)) {
+                unlink($txtFile);
+            }
+        }
+    }
+
+    public function test_import_accepts_xml_file_in_allowed_temp_dir(): void
+    {
+        // A .xml file placed in sys_get_temp_dir() (the normal upload flow)
+        // must pass path validation and successfully import via the repo.
+        // The repository is stubbed so the import completes and returns a
+        // known canvas id, proving that path validation did NOT block it.
+        $expectedId = 42;
+        $repo = $this->make(BlueprintsRepository::class, [
+            'existCanvas' => fn () => false,
+            'addCanvas' => fn () => $expectedId,
+            'addCanvasItem' => fn () => 1,
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        $xml = <<<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<canvas key="leancanvas">
+    <title>Security Test Canvas</title>
+    <content>
+        <element key="problem">
+            <item>
+                <author firstname="A" lastname="B"/>
+                <description>Test item</description>
+                <status>status_draft</status>
+                <relates>relates_none</relates>
+                <assumptions>none</assumptions>
+                <priority>low</priority>
+                <progress>0</progress>
+                <duedate></duedate>
+                <tags></tags>
+            </item>
+        </element>
+    </content>
+</canvas>
+XML;
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'leantime.').'.xml';
+        file_put_contents($tempFile, $xml);
+
+        try {
+            $result = $service->import($tempFile, 'lean', 55, 1);
+            // Path validation passed and repo returned the expected canvas id.
+            $this->assertSame(
+                $expectedId,
+                $result,
+                'XML file in allowed dir must pass path validation and be imported'
+            );
+        } finally {
+            if (file_exists($tempFile)) {
+                unlink($tempFile);
+            }
+        }
     }
 
     public function test_create_board_applies_start_content_against_the_slug_not_the_db_type(): void
