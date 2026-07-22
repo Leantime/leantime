@@ -29,6 +29,17 @@ final class ResourceSummary
      * @param  float  $totalAllocated  Sum of allocations across people.
      * @param  float  $totalBudgeted  Sum of `budget[].budgeted`.
      * @param  float  $totalSpent  Sum of `budget[].spent`.
+     * @param  float  $totalActual  Hours actually logged (timesheets) across
+     *                              the project set in the CURRENT WEEK of the
+     *                              requesting user's timezone. Weekly window
+     *                              by design: capacity/allocated are weekly
+     *                              rates (h/wk), so the comparable actual is
+     *                              this week's logged hours. Period-scoped
+     *                              actuals (e.g. a report quarter) come from
+     *                              the report engine's own timesheet reads —
+     *                              not this summary.
+     * @param  array<int, float>  $actualsByProject  projectId => hours logged
+     *                                               this week. Same window as $totalActual.
      */
     public function __construct(
         public readonly array $projectIds,
@@ -39,7 +50,21 @@ final class ResourceSummary
         public readonly float $totalAllocated,
         public readonly float $totalBudgeted,
         public readonly float $totalSpent,
+        public readonly float $totalActual = 0.0,
+        public readonly array $actualsByProject = [],
     ) {}
+
+    /**
+     * Plan-vs-actual drift for the current week: negative = under plan
+     * (fewer hours logged than allocated), positive = over. Zero when
+     * nothing is allocated AND nothing is logged — callers should treat
+     * that case as "nothing to compare", not "on plan" (see the Resource
+     * Allocation tab's Gap-column semantics).
+     */
+    public function actualDrift(): float
+    {
+        return $this->totalActual - $this->totalAllocated;
+    }
 
     /**
      * Empty summary — no resources authored across the given project set.
