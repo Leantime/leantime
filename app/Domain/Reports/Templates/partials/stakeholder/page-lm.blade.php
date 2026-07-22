@@ -162,25 +162,27 @@
 
 @if (! $lmHasContent)
     <style>
-    .rd-scope .p2-lm-empty{max-width:560px;margin:24px auto;text-align:center;padding:38px 28px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);}
-    .rd-scope .p2-lm-empty .ic{width:54px;height:54px;border-radius:15px;background:linear-gradient(135deg,var(--rd-s3,#3F72B0),var(--rd-s4,#3E937A));display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;}
-    .rd-scope .p2-lm-empty .ic i{color:#fff;font-size:23px;}
-    .rd-scope .p2-lm-empty .t{font-size:18px;font-weight:600;color:var(--rd-text-1);margin-bottom:9px;}
-    .rd-scope .p2-lm-empty .b{font-size:13.5px;line-height:1.6;color:var(--rd-text-3);margin:0 auto 22px;max-width:440px;}
-    .rd-scope .p2-lm-empty .cta{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:#fff;background:var(--rd-accent);border-radius:24px;padding:11px 22px;text-decoration:none;box-shadow:var(--rd-sh-sm);transition:filter .15s;}
-    .rd-scope .p2-lm-empty .cta:hover{filter:brightness(1.09);text-decoration:none;color:#fff;}
+    /* Empty-state colors are set for WCAG AA on white (the --rd-text-3/-4
+       tokens are ~3:1 and fail as body copy), so the invitation stays legible. */
+    .rd-scope .p2-lm-empty{max-width:600px;margin:44px auto;text-align:center;padding:52px 40px 48px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:18px;box-shadow:0 3px 14px rgba(20,40,50,.05);}
+    .rd-scope .p2-lm-empty .ic{width:62px;height:62px;border-radius:18px;background:linear-gradient(135deg,var(--rd-s3,#3F72B0),var(--rd-s4,#3E937A));display:inline-flex;align-items:center;justify-content:center;margin-bottom:22px;box-shadow:0 8px 20px rgba(62,147,122,.24);}
+    .rd-scope .p2-lm-empty .ic i{color:#fff;font-size:26px;}
+    .rd-scope .p2-lm-empty h2.t{font-size:22px;font-weight:600;color:var(--rd-text-1);margin:0 0 12px;letter-spacing:-.2px;line-height:1.25;}
+    .rd-scope .p2-lm-empty .b{font-size:14.5px;line-height:1.65;color:#54636b;margin:0 auto 28px;max-width:462px;}
+    .rd-scope .p2-lm-empty .cta{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#fff;background:var(--rd-accent);border-radius:26px;padding:13px 27px;text-decoration:none;box-shadow:0 5px 16px rgba(0,71,102,.24);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;}
+    .rd-scope .p2-lm-empty .cta:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 7px 20px rgba(0,71,102,.28);text-decoration:none;color:#fff;}
     .rd-scope .p2-lm-empty .cta:focus-visible{outline:2px solid var(--rd-accent);outline-offset:3px;}
     .rd-scope .p2-lm-empty .cta i{font-size:13px;}
-    .rd-scope .p2-lm-empty .hint{font-size:12px;color:var(--rd-text-4);margin-top:14px;line-height:1.5;max-width:400px;margin-left:auto;margin-right:auto;}
+    .rd-scope .p2-lm-empty .hint{font-size:12.5px;color:#69767d;margin-top:18px;line-height:1.55;max-width:420px;margin-left:auto;margin-right:auto;}
     </style>
     <div class="p2-wrap">
         <div class="p2-lm-empty">
-            <span class="ic"><i class="fa fa-diagram-project"></i></span>
-            <div class="t">{{ __('stakeholder.lm.empty_title') }}</div>
+            <span class="ic"><i class="fa fa-diagram-project" aria-hidden="true"></i></span>
+            <h2 class="t">{{ __('stakeholder.lm.empty_title') }}</h2>
             <div class="b">{{ __('stakeholder.lm.empty_body') }}</div>
             @if (($scope ?? '') === 'strategy')
                 <a href="{{ BASE_URL }}/logicmodelcanvas/showCanvas" class="cta">
-                    <i class="fa fa-wand-magic-sparkles"></i> {{ __('stakeholder.lm.empty_cta') }}
+                    <i class="fa fa-wand-magic-sparkles" aria-hidden="true"></i> {{ __('stakeholder.lm.empty_cta') }}
                 </a>
                 <div class="hint">{{ __('stakeholder.lm.empty_hint') }}</div>
             @endif
