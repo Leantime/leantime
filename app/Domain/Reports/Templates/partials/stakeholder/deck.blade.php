@@ -3,7 +3,6 @@
 
     Reused by both StrategyPro (strategy scope) and PgmPro (program scope).
     Data passed in via @include vars; this partial owns:
-      - persistent header (subject, period, updated, status verdict)
       - global controls (period picker, print)
       - deck navigation (4 tabs + swipe + arrow keys + arrow buttons)
       - the 4 page containers (Overview / Logic Model / Resources & Coverage / Programs)
@@ -105,17 +104,6 @@
 }
 .rd-scope *{min-width:0;}
 
-/* Persistent header — sits above the deck. Left: subject + provenance. Right:
-   status verdict (stated verdict with provenance line, NOT a tappable pill). */
-.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:start;padding:14px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
-.rd-hdr .st{min-width:0;}
-.rd-hdr .st .h{font-size:20px;font-weight:600;line-height:1.2;color:var(--rd-text-1);}
-.rd-hdr .st .prov{font-size:12px;color:var(--rd-text-3);margin-top:4px;}
-.rd-hdr .verdict{text-align:right;min-width:0;}
-.rd-hdr .verdict .v{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--rd-text-1);}
-.rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}
-.rd-hdr .verdict .src{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-weight:400;}
-
 /* Tab-bar right cluster — period picker + prev/next arrows sit here to keep
    the tab row self-contained instead of a separate "globalbar" row above. */
 .rd-tab-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}
@@ -161,12 +149,16 @@
 /* Nav bar: accent gradient + conditional dark scrim (--nav-scrim, set per-theme
    in the header for light accents that fail contrast), NO shadow — so it reads
    connected to the content, mirroring the global .tabs nav. */
-.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(rgba(0,0,0,var(--nav-scrim,0)),rgba(0,0,0,var(--nav-scrim,0))),linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:14px;box-shadow:none;padding:7px 10px;}
+.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(rgba(0,0,0,var(--nav-scrim,0)),rgba(0,0,0,var(--nav-scrim,0))),linear-gradient(90deg,var(--accent1,hsla(199,100%,20%,1)),var(--accent2,hsla(168,100%,33%,1)));border-radius:14px;box-shadow:none;padding:7px 10px;}
 /* Framed segmented tab group — one outlined container grouping the tabs. */
 .rd-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
 .rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);padding:8px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:9px;transition:color .15s,background .15s;}
 .rd-tab:hover{color:#fff;background:rgba(255,255,255,.16);}
 .rd-tab.on{color:var(--rd-accent);font-weight:600;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);}
+/* Keyboard focus indicator — white ring on the gradient (inactive tabs),
+   accent ring on the active white chip so it stays visible. */
+.rd-tab:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+.rd-tab.on:focus-visible{outline-color:var(--rd-accent);}
 .rd-tab i{font-size:12px;}
 .rd-tab .ct{font-size:11px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.18);border-radius:10px;padding:1px 7px;margin-left:2px;}
 .rd-tab.on .ct{color:var(--rd-accent);background:rgba(0,71,102,.1);}
