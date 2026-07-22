@@ -2379,6 +2379,19 @@ class Projects extends BaseService implements ChecksProjectAccess
             return false;
         }
 
+        // Fail closed on ids that don't resolve to a real row. isUserMemberOfProject()
+        // returns false for a missing user or project, so without this guard
+        // addProjectRelation() would blindly write an orphan relation row —
+        // corrupting zp_relationuserproject and breaking downstream listeners that
+        // assume both ids resolve.
+        if (empty($this->userRepo->getUser($userId)) || empty($this->projectRepository->getProject($projectId))) {
+            return false;
+        }
+
+        // Idempotence is a check-then-insert. zp_relationuserproject has no unique
+        // index on (userId, projectId), so two concurrent adds could both pass this
+        // check and each insert. That's bounded (a duplicate membership row, not
+        // corruption); a unique index is the real fix and is left as a follow-up.
         // isUserMemberOfProject, NOT isUserAssignedToProject: the latter
         // answers "can this user reach the project", which is true for
         // every admin and owner regardless of any relation row. Using it

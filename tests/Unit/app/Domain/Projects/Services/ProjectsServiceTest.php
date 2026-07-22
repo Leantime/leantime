@@ -706,6 +706,7 @@ class ProjectsServiceTest extends TestCase
     {
         $added = [];
         $repo = $this->makeEmpty(ProjectRepository::class, [
+            'getProject' => fn () => ['id' => 42],
             'isUserMemberOfProject' => fn () => false,
             'addProjectRelation' => function ($userId, $projectId, $role) use (&$added) {
                 $added[] = [$userId, $projectId, $role];
@@ -715,7 +716,7 @@ class ProjectsServiceTest extends TestCase
             ),
         ]);
 
-        $result = $this->makeService($repo)->addUserToProject(7, 42, 'contributor');
+        $result = $this->makeService($repo, userRepo: $this->validUserRepo())->addUserToProject(7, 42, 'contributor');
 
         $this->assertTrue($result, 'a new membership reports true');
         $this->assertSame([[7, 42, 'contributor']], $added);
@@ -733,6 +734,7 @@ class ProjectsServiceTest extends TestCase
     {
         $added = [];
         $repo = $this->makeEmpty(ProjectRepository::class, [
+            'getProject' => fn () => ['id' => 42],
             // An admin: reaches every project...
             'isUserAssignedToProject' => fn () => true,
             // ...but holds no relation row for this one.
@@ -742,7 +744,7 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $this->assertTrue($this->makeService($repo)->addUserToProject(7, 42));
+        $this->assertTrue($this->makeService($repo, userRepo: $this->validUserRepo())->addUserToProject(7, 42));
         $this->assertSame([[7, 42, '']], $added, 'access must not be mistaken for membership');
     }
 
@@ -755,13 +757,14 @@ class ProjectsServiceTest extends TestCase
     {
         $addCalls = 0;
         $repo = $this->makeEmpty(ProjectRepository::class, [
+            'getProject' => fn () => ['id' => 42],
             'isUserMemberOfProject' => fn () => true,
             'addProjectRelation' => function () use (&$addCalls) {
                 $addCalls++;
             },
         ]);
 
-        $result = $this->makeService($repo)->addUserToProject(7, 42);
+        $result = $this->makeService($repo, userRepo: $this->validUserRepo())->addUserToProject(7, 42);
 
         $this->assertFalse($result, 'an existing membership reports false');
         $this->assertSame(0, $addCalls, 'must not insert a duplicate relation row');
@@ -789,5 +792,44 @@ class ProjectsServiceTest extends TestCase
         $this->assertFalse($service->addUserToProject(0, 42));
         $this->assertFalse($service->addUserToProject(7, 0));
         $this->assertSame(0, $touched, 'invalid ids must not reach the repository');
+    }
+
+    /**
+     * Non-zero ids that don't resolve to real rows must also fail closed —
+     * isUserMemberOfProject() returns false for a missing user/project, so
+     * without the existence guard addProjectRelation() would write an orphan
+     * relation row for a user or project that isn't there.
+     */
+    public function test_add_user_to_project_rejects_nonexistent_user_or_project(): void
+    {
+        $added = 0;
+        $mkRepo = fn (bool $projectExists) => $this->makeEmpty(ProjectRepository::class, [
+            'getProject' => fn () => $projectExists ? ['id' => 42] : false,
+            'isUserMemberOfProject' => fn () => false,
+            'addProjectRelation' => function () use (&$added) {
+                $added++;
+            },
+        ]);
+        $missingUser = $this->makeEmpty(UserRepository::class, ['getUser' => fn () => false]);
+
+        // User missing (project resolves fine).
+        $this->assertFalse(
+            $this->makeService($mkRepo(true), userRepo: $missingUser)->addUserToProject(999, 42)
+        );
+        // Project missing (user resolves fine).
+        $this->assertFalse(
+            $this->makeService($mkRepo(false), userRepo: $this->validUserRepo())->addUserToProject(7, 999)
+        );
+
+        $this->assertSame(0, $added, 'a non-existent user or project must never reach addProjectRelation');
+    }
+
+    /**
+     * A UserRepository stub whose getUser() resolves to a real row, for the
+     * addUserToProject() tests that need the existence guard to pass.
+     */
+    private function validUserRepo(): UserRepository
+    {
+        return $this->makeEmpty(UserRepository::class, ['getUser' => fn () => ['id' => 7]]);
     }
 }
