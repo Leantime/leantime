@@ -195,6 +195,41 @@ class TicketsServiceTest extends TestCase
     }
 
     /**
+     * Sentinel date strings (0000-00-00 and 1969-12-31 — both rejected by
+     * parseDbDateTime) must be skipped, not blow up the whole board summary.
+     * Regression: the guard originally only filtered 0000-00-00, so a
+     * 1969-12-31 stamp threw InvalidDateException and broke the header.
+     */
+    public function test_get_board_summary_skips_sentinel_dates_without_throwing()
+    {
+        $mk = function (?string $due, ?string $modified) {
+            $ticket = new \stdClass;
+            $ticket->editorId = 5;
+            $ticket->dateToFinish = $due;
+            $ticket->modified = $modified;
+
+            return $ticket;
+        };
+
+        $grouped = [
+            'all' => [
+                'items' => [
+                    $mk('1969-12-31 00:00:00', '1969-12-31 00:00:00'),
+                    $mk('0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+                    $mk(null, null),
+                ],
+            ],
+        ];
+
+        $summary = $this->ticketsService->getBoardSummary($grouped);
+
+        $this->assertSame(3, $summary->total);
+        // No valid due dates → none counted this week; no valid modified → null.
+        $this->assertSame(0, $summary->dueThisWeek);
+        $this->assertNull($summary->lastUpdated);
+    }
+
+    /**
      * Test that timeToFinish is unset when dateToFinish parsing fails
      */
     public function test_prepare_ticket_dates_removes_time_to_finish_on_parse_error()

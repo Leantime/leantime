@@ -17,8 +17,8 @@
     zero-visual-change swap.
 
     Props:
-      parent      string|null  Parent crumb label (e.g. "To-Dos"). May contain
-                               markup (rendered raw) since callers pass __().
+      parent      string|null  Parent crumb label (e.g. "To-Dos"). Escaped on
+                               output — pass plain text (callers pass __()).
       parentHref  string|null  Optional link for the parent crumb.
       current     string       The current subject name (escaped — user data safe).
       separator   string       House-style divider. Default "›" (breadcrumb chevron).
@@ -48,11 +48,11 @@
 <h1 @class(['subjectSwitcher', 'subjectSwitcher--pill' => $switchStyle === 'pill'])>
     @if (! empty($parent))
         @if (! empty($parentHref))
-            <a href="{{ $parentHref }}" class="subjectSwitcher-parent">{!! $parent !!}</a>
+            <a href="{{ $parentHref }}" class="subjectSwitcher-parent">{{ $parent }}</a>
         @else
-            {!! $parent !!}
+            {{ $parent }}
         @endif
-        <span class="subjectSwitcher-sep" aria-hidden="true">{!! $separator !!}</span>
+        <span class="subjectSwitcher-sep" aria-hidden="true">{{ $separator }}</span>
     @endif
     <span class="dropdown dropdownWrapper">
         <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

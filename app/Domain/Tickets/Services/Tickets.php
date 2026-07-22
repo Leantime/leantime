@@ -3967,9 +3967,6 @@ class Tickets extends BaseService
     }
 
     /**
-     * @throws BindingResolutionException
-     */
-    /**
      * Compute at-a-glance board metrics (total, unassigned, due-this-week, last
      * updated) from an already-fetched grouped ticket set. Working off the rows
      * the board just rendered means the counts reflect the current filters and
@@ -4001,7 +3998,10 @@ class Tickets extends BaseService
                 }
 
                 $due = is_object($ticket) ? ($ticket->dateToFinish ?? null) : ($ticket['dateToFinish'] ?? null);
-                if (! empty($due) && ! str_starts_with((string) $due, '0000-00-00')) {
+                // isValidDateString() is exactly what parseDbDateTime() guards on
+                // (rejects empty, 0000-00-00, and the 1969-12-31 sentinel), so this
+                // can never throw on a sentinel/invalid value.
+                if (dtHelper()->isValidDateString($due !== null ? (string) $due : null)) {
                     $dueDate = dtHelper()->parseDbDateTime((string) $due)->setToUserTimezone()->format('Y-m-d');
                     if ($dueDate >= $weekStartDate && $dueDate <= $weekEndDate) {
                         $summary->dueThisWeek++;
@@ -4009,7 +4009,7 @@ class Tickets extends BaseService
                 }
 
                 $modified = is_object($ticket) ? ($ticket->modified ?? null) : ($ticket['modified'] ?? null);
-                if (! empty($modified) && ! str_starts_with((string) $modified, '0000-00-00')) {
+                if (dtHelper()->isValidDateString($modified !== null ? (string) $modified : null)) {
                     $modifiedDate = dtHelper()->parseDbDateTime((string) $modified);
                     if ($summary->lastUpdated === null || $modifiedDate->greaterThan($summary->lastUpdated)) {
                         $summary->lastUpdated = $modifiedDate;
