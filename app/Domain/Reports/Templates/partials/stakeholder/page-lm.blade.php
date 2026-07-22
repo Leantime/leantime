@@ -171,14 +171,17 @@
         }
         $lmProjectCount += (int) ($lmRow['projectCount'] ?? 0);
     }
+    // Bold the counts so the totals read as totals. Every piece is server-side
+    // (ints + translated nouns, both e()-escaped), so the {!! !!} render below
+    // carries no user input.
     $lmFoundParts = [];
     if ($lmProgramCount > 0) {
-        $lmFoundParts[] = $lmProgramCount.' '.__($lmProgramCount === 1 ? 'stakeholder.lm.found_program' : 'stakeholder.lm.found_programs');
+        $lmFoundParts[] = '<b>'.$lmProgramCount.'</b> '.e(__($lmProgramCount === 1 ? 'stakeholder.lm.found_program' : 'stakeholder.lm.found_programs'));
     }
     if ($lmProjectCount > 0) {
-        $lmFoundParts[] = $lmProjectCount.' '.__($lmProjectCount === 1 ? 'stakeholder.lm.found_project' : 'stakeholder.lm.found_projects');
+        $lmFoundParts[] = '<b>'.$lmProjectCount.'</b> '.e(__($lmProjectCount === 1 ? 'stakeholder.lm.found_project' : 'stakeholder.lm.found_projects'));
     }
-    $lmFoundStr = implode(' · ', $lmFoundParts);
+    $lmFoundStr = implode('<span class="sep">·</span>', $lmFoundParts);
 @endphp
 
 @if (! $lmHasContent)
@@ -187,8 +190,10 @@
        tokens are ~3:1 and fail as body copy), so the invitation stays legible. */
     .rd-scope .p2-lm-emptyzone{background:linear-gradient(180deg,#f3f9f7 0%,#fafcfb 62%);border-radius:24px;padding:12px;margin:36px auto;max-width:672px;}
     .rd-scope .p2-lm-empty{margin:0 auto;text-align:center;padding:52px 40px 48px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:18px;box-shadow:0 3px 14px rgba(20,40,50,.05);}
-    .rd-scope .p2-lm-empty .found{display:flex;width:fit-content;align-items:center;gap:8px;font-size:12.5px;color:#356f5b;background:#eef7f2;border:1px solid #d8ece2;border-radius:20px;padding:7px 15px;margin:0 auto 24px;}
-    .rd-scope .p2-lm-empty .found i{color:#3E937A;font-size:12px;}
+    .rd-scope .p2-lm-empty .found{display:flex;width:fit-content;max-width:100%;align-items:center;gap:10px;font-size:13px;line-height:1.4;color:#356f5b;background:#eef7f2;border:1px solid #d8ece2;border-radius:22px;padding:10px 20px;margin:0 auto 26px;}
+    .rd-scope .p2-lm-empty .found i{color:#3E937A;font-size:12px;flex:none;}
+    .rd-scope .p2-lm-empty .found b{color:#2c5f4d;font-weight:700;}
+    .rd-scope .p2-lm-empty .found .sep{color:#9ec7b6;margin:0 9px;font-weight:400;}
     .rd-scope .p2-lm-empty .ic{width:62px;height:62px;border-radius:18px;background:linear-gradient(135deg,var(--rd-s3,#3F72B0),var(--rd-s4,#3E937A));display:inline-flex;align-items:center;justify-content:center;margin-bottom:22px;box-shadow:0 8px 20px rgba(62,147,122,.24);}
     .rd-scope .p2-lm-empty .ic i{color:#fff;font-size:26px;}
     .rd-scope .p2-lm-empty h2.t{font-size:22px;font-weight:600;color:var(--rd-text-1);margin:0 0 12px;letter-spacing:-.2px;line-height:1.25;}
@@ -209,7 +214,7 @@
                     @if ($lmFoundStr !== '')
                         <div class="found">
                             <i class="fa fa-circle-check" aria-hidden="true"></i>
-                            <span>{{ sprintf(__('stakeholder.lm.empty_found'), $lmFoundStr) }}</span>
+                            <span>{!! sprintf(e(__('stakeholder.lm.empty_found')), $lmFoundStr) !!}</span>
                         </div>
                     @endif
                     <a href="{{ BASE_URL }}/logicmodelcanvas/showCanvas" class="cta">
