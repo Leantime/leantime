@@ -144,7 +144,31 @@
 </style>
 
 @if (! $hasLM)
-    <div class="p2-wrap"><div class="rd-empty">{{ __('stakeholder.lm.no_canvas') }}</div></div>
+    <style>
+    .rd-scope .p2-lm-empty{max-width:560px;margin:24px auto;text-align:center;padding:38px 28px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);}
+    .rd-scope .p2-lm-empty .ic{width:54px;height:54px;border-radius:15px;background:linear-gradient(135deg,var(--rd-s3,#3F72B0),var(--rd-s4,#3E937A));display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;}
+    .rd-scope .p2-lm-empty .ic i{color:#fff;font-size:23px;}
+    .rd-scope .p2-lm-empty .t{font-size:18px;font-weight:600;color:var(--rd-text-1);margin-bottom:9px;}
+    .rd-scope .p2-lm-empty .b{font-size:13.5px;line-height:1.6;color:var(--rd-text-3);margin:0 auto 22px;max-width:440px;}
+    .rd-scope .p2-lm-empty .cta{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:#fff;background:var(--rd-accent);border-radius:24px;padding:11px 22px;text-decoration:none;box-shadow:var(--rd-sh-sm);transition:filter .15s;}
+    .rd-scope .p2-lm-empty .cta:hover{filter:brightness(1.09);text-decoration:none;color:#fff;}
+    .rd-scope .p2-lm-empty .cta:focus-visible{outline:2px solid var(--rd-accent);outline-offset:3px;}
+    .rd-scope .p2-lm-empty .cta i{font-size:13px;}
+    .rd-scope .p2-lm-empty .hint{font-size:12px;color:var(--rd-text-4);margin-top:14px;line-height:1.5;max-width:400px;margin-left:auto;margin-right:auto;}
+    </style>
+    <div class="p2-wrap">
+        <div class="p2-lm-empty">
+            <span class="ic"><i class="fa fa-diagram-project"></i></span>
+            <div class="t">{{ __('stakeholder.lm.empty_title') }}</div>
+            <div class="b">{{ __('stakeholder.lm.empty_body') }}</div>
+            @if (($scope ?? '') === 'strategy')
+                <a href="{{ BASE_URL }}/logicmodelcanvas/showCanvas" class="cta">
+                    <i class="fa fa-wand-magic-sparkles"></i> {{ __('stakeholder.lm.empty_cta') }}
+                </a>
+                <div class="hint">{{ __('stakeholder.lm.empty_hint') }}</div>
+            @endif
+        </div>
+    </div>
 @else
     @php
         $stages = $logicModel['coverageMatrix']['stages'] ?? [];
