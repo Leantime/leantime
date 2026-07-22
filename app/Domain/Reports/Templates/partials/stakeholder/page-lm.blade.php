@@ -143,7 +143,24 @@
 .rd-scope .p2-drift b{color:var(--rd-text-1);font-weight:600;}
 </style>
 
-@if (! $hasLM)
+@php
+    // Empty-state trigger is keyed on ITEM COUNT, not just board existence.
+    // A blank Logic Model board (0 items) makes $hasLM true but leaves the
+    // read-out hollow; the reverse flow itself creates a board on start, so
+    // gating only on board-existence would strand users in an empty skeleton.
+    // Treat "no board" and "board with no items" identically — both land on
+    // the populate-from-your-work empty-state below.
+    $lmStages = $hasLM ? ($logicModel['coverageMatrix']['stages'] ?? []) : [];
+    $lmHasContent = false;
+    foreach ($lmStages as $lmStage) {
+        if (count($lmStage['items'] ?? []) > 0) {
+            $lmHasContent = true;
+            break;
+        }
+    }
+@endphp
+
+@if (! $lmHasContent)
     <style>
     .rd-scope .p2-lm-empty{max-width:560px;margin:24px auto;text-align:center;padding:38px 28px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);}
     .rd-scope .p2-lm-empty .ic{width:54px;height:54px;border-radius:15px;background:linear-gradient(135deg,var(--rd-s3,#3F72B0),var(--rd-s4,#3E937A));display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;}
