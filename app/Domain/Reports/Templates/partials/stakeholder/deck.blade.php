@@ -375,7 +375,7 @@
 
                 {{-- ═══ Page 2 — Logic Model read-out ═════════════════ --}}
                 <div class="rd-page">
-                    @include('reports::partials.stakeholder.page-lm', compact('logicModel', 'hasLM', 'report'))
+                    @include('reports::partials.stakeholder.page-lm', compact('logicModel', 'hasLM', 'report', 'programRows'))
                 </div>
 
                 {{-- ═══ Page 3 — Resources & Coverage ═════════════════ --}}
