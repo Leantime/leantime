@@ -39,7 +39,7 @@ final class ResourceSummary
      *                              the report engine's own timesheet reads —
      *                              not this summary.
      * @param  array<int, float>  $actualsByProject  projectId => hours logged
-     *                              this week. Same window as $totalActual.
+     *                                               this week. Same window as $totalActual.
      */
     public function __construct(
         public readonly array $projectIds,
