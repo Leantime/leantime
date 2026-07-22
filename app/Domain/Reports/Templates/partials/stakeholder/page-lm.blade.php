@@ -193,7 +193,7 @@
     .rd-scope .p2-lm-empty .found{display:flex;width:fit-content;max-width:100%;align-items:center;gap:10px;font-size:13px;line-height:1.4;color:#356f5b;background:#eef7f2;border:1px solid #d8ece2;border-radius:22px;padding:10px 20px;margin:0 auto 26px;}
     .rd-scope .p2-lm-empty .found i{color:#3E937A;font-size:12px;flex:none;}
     .rd-scope .p2-lm-empty .found b{color:#2c5f4d;font-weight:700;}
-    .rd-scope .p2-lm-empty .found .sep{color:#9ec7b6;margin:0 9px;font-weight:400;}
+    .rd-scope .p2-lm-empty .found .sep{color:#9ec7b6;margin:0 5px;font-weight:400;}
     .rd-scope .p2-lm-empty .ic{width:62px;height:62px;border-radius:18px;background:linear-gradient(135deg,var(--rd-s3,#3F72B0),var(--rd-s4,#3E937A));display:inline-flex;align-items:center;justify-content:center;margin-bottom:22px;box-shadow:0 8px 20px rgba(62,147,122,.24);}
     .rd-scope .p2-lm-empty .ic i{color:#fff;font-size:26px;}
     .rd-scope .p2-lm-empty h2.t{font-size:22px;font-weight:600;color:var(--rd-text-1);margin:0 0 12px;letter-spacing:-.2px;line-height:1.25;}
