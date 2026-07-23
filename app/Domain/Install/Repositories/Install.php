@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Install\Services\SchemaBuilder;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -2971,6 +2972,118 @@ class Install
             Log::error('Migration 30523: '.$e->getMessage());
 
             return ['Migration 30523 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30524 — database update for v3.5.24.
+     *
+     * Backfills the legacy single goal→milestone link (the varchar
+     * `zp_canvas_items.milestoneId` column, `box='goal'`) into many-to-many
+     * edges on the core `zp_entity_relationship` graph, so a goal can be
+     * tracked by any number of milestones. Each edge:
+     *   entityA = goal canvas item (GoalItem), entityB = milestone (Ticket),
+     *   relationship = 'tracked_by'.
+     *
+     * The `milestoneId` column is intentionally KEPT here — readers are cut
+     * over incrementally and a later migration drops it once nothing reads it.
+     *
+     * Written with the query builder (not raw REGEXP/CAST) so it is portable
+     * across MySQL/Postgres/MSSQL, and idempotent: junk values (empty, '0',
+     * non-numeric, deleted-milestone) are skipped and already-migrated pairs
+     * are not duplicated on re-run.
+     */
+    public function update_sql_30524(): bool|array
+    {
+        try {
+            if (! Schema::hasTable('zp_canvas_items') || ! Schema::hasTable('zp_entity_relationship')) {
+                return true;
+            }
+
+            $goals = \Illuminate\Support\Facades\DB::table('zp_canvas_items')
+                ->where('box', 'goal')
+                ->whereNotNull('milestoneId')
+                ->where('milestoneId', '<>', '')
+                ->where('milestoneId', '<>', '0')
+                ->select('id', 'milestoneId', 'author')
+                ->get();
+
+            if ($goals->isEmpty()) {
+                return true;
+            }
+
+            // Numeric-only candidate (goal, milestone) pairs.
+            $pairs = [];
+            $milestoneIds = [];
+            foreach ($goals as $g) {
+                $raw = (string) $g->milestoneId;
+                if (! ctype_digit($raw)) {
+                    continue;
+                }
+                $mid = (int) $raw;
+                if ($mid <= 0) {
+                    continue;
+                }
+                $pairs[] = ['goalId' => (int) $g->id, 'milestoneId' => $mid, 'author' => (int) ($g->author ?? 0)];
+                $milestoneIds[$mid] = true;
+            }
+
+            if ($pairs === []) {
+                return true;
+            }
+
+            // Pre-fetch existing milestones (drop edges to deleted tickets)
+            // and existing tracked_by edges (dedup) — O(1) lookups, no N+1.
+            $liveTickets = array_flip(array_map(
+                'intval',
+                \Illuminate\Support\Facades\DB::table('zp_tickets')
+                    ->whereIn('id', array_keys($milestoneIds))
+                    ->pluck('id')
+                    ->all()
+            ));
+
+            $existingEdges = [];
+            foreach (
+                \Illuminate\Support\Facades\DB::table('zp_entity_relationship')
+                    ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+                    ->where('entityAType', 'GoalItem')
+                    ->where('entityBType', 'Ticket')
+                    ->select('entityA', 'entityB')
+                    ->get() as $e
+            ) {
+                $existingEdges[(int) $e->entityA.':'.(int) $e->entityB] = true;
+            }
+
+            $now = date('Y-m-d H:i:s');
+            $rows = [];
+            foreach ($pairs as $p) {
+                if (! isset($liveTickets[$p['milestoneId']])) {
+                    continue;
+                }
+                if (isset($existingEdges[$p['goalId'].':'.$p['milestoneId']])) {
+                    continue;
+                }
+                $rows[] = [
+                    'entityA' => $p['goalId'],
+                    'entityAType' => 'GoalItem',
+                    'entityB' => $p['milestoneId'],
+                    'entityBType' => 'Ticket',
+                    'relationship' => EntityRelationshipEnum::TrackedBy->value,
+                    'createdOn' => $now,
+                    'createdBy' => $p['author'],
+                    'meta' => json_encode(['source' => 'milestoneId_migration']),
+                ];
+            }
+
+            foreach (array_chunk($rows, 200) as $chunk) {
+                \Illuminate\Support\Facades\DB::table('zp_entity_relationship')->insert($chunk);
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30524: '.$e->getMessage());
+
+            return ['Migration 30524 failed: '.$e->getMessage()];
         }
 
         return true;

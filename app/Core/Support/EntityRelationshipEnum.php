@@ -23,4 +23,12 @@ enum EntityRelationshipEnum: string
      * Represents a "maps to" relationship (cross-structure element mapping).
      */
     case MapsTo = 'maps_to';
+
+    /**
+     * Represents a "tracked by" relationship: a goal is tracked/measured by a
+     * milestone. Direction convention: entityA = goal (GoalItem),
+     * entityB = milestone (Ticket). Replaces the legacy single
+     * zp_canvas_items.milestoneId column so a goal can hold many milestones.
+     */
+    case TrackedBy = 'tracked_by';
 }
