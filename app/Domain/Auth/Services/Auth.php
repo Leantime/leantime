@@ -486,20 +486,37 @@ class Auth implements Authenticatable
         $redirectUrl = BASE_URL.'/dashboard/home';
 
         if ($redirect !== null && trim($redirect) !== '' && trim($redirect) !== '/') {
-            $url = rawurldecode($redirect);
+            // Normalize backslash-based protocol tricks (e.g. \/\/attacker.com)
+            // to forward slashes before any checks.
+            $url = str_replace('\\', '/', rawurldecode($redirect));
 
             // Strip the application base URL when present so that same-origin
             // absolute URLs (e.g. https://my-leantime.com/dashboard/home) are
-            // treated the same as their relative counterparts. The login form
-            // may submit a full absolute URL in the redirectUrl field.
+            // treated the same as their relative counterparts.
             if (str_starts_with($url, BASE_URL)) {
                 $url = substr($url, strlen(BASE_URL));
             }
 
-            // Reject external absolute URLs — open redirect guard.
-            // Relative paths and same-origin URLs stripped above pass through.
-            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-                $redirectUrl = BASE_URL.'/'.ltrim($url, '/');
+            // Guard: protocol-relative URL (//attacker.com) — explicitly reject.
+            // FILTER_VALIDATE_URL treats these as valid without a scheme, but
+            // browsers resolve them to the current scheme, making them an open
+            // redirect vector.
+            if (str_starts_with($url, '//')) {
+                return $redirectUrl;
+            }
+
+            // Guard: external absolute URL — reject.
+            // filter_var returns the URL (truthy) for well-formed absolute URLs
+            // with a scheme; relative paths return false.
+            if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
+                return $redirectUrl;
+            }
+
+            // At this point $url is a relative path. Guard against an empty
+            // path that could result from stripping a BASE_URL-only input.
+            $url = ltrim($url, '/');
+            if ($url !== '') {
+                $redirectUrl = BASE_URL.'/'.$url;
             }
         }
 
