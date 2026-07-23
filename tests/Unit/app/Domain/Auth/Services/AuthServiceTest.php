@@ -70,6 +70,80 @@ class AuthServiceTest extends TestCase
         );
     }
 
+    public function test_resolve_safe_redirect_allows_same_origin_absolute_url(): void
+    {
+        $service = $this->makeService();
+
+        // Same-origin absolute URL — must be treated the same as a relative
+        // path by stripping the BASE_URL prefix. This is the exact scenario
+        // the maintainer flagged: the login form often submits a full
+        // absolute URL in the redirectUrl hidden field.
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect(BASE_URL.'/dashboard/home')
+        );
+    }
+
+    public function test_resolve_safe_redirect_allows_same_origin_absolute_url_with_deep_path(): void
+    {
+        $service = $this->makeService();
+
+        $this->assertSame(
+            BASE_URL.'/tickets/showAll',
+            $service->resolveSafeRedirect(BASE_URL.'/tickets/showAll')
+        );
+    }
+
+    public function test_resolve_safe_redirect_allows_url_encoded_same_origin_absolute_url(): void
+    {
+        $service = $this->makeService();
+
+        // URL-encoded same-origin absolute URL — rawurldecode is called first,
+        // then BASE_URL is stripped.
+        $this->assertSame(
+            BASE_URL.'/tickets/showAll',
+            $service->resolveSafeRedirect(urlencode(BASE_URL.'/tickets/showAll'))
+        );
+    }
+
+    public function test_resolve_safe_redirect_rejects_external_url_disguised_with_base_url_prefix(): void
+    {
+        $service = $this->makeService();
+
+        // An external URL whose path happens to start with the same characters
+        // as BASE_URL — str_starts_with won't match because the scheme+host
+        // differ. This gets rejected as external.
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect('https://evil.example.com/'.BASE_URL.'/dashboard/home')
+        );
+    }
+
+    public function test_resolve_safe_redirect_rejects_protocol_relative_url(): void
+    {
+        $service = $this->makeService();
+
+        // Protocol-relative URL (//attacker.com) — FILTER_VALIDATE_URL
+        // treats these as valid URLs, so they are correctly rejected
+        // and the default dashboard redirect is returned.
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect('//attacker.com')
+        );
+    }
+
+    public function test_resolve_safe_redirect_rejects_backslash_protocol_trick(): void
+    {
+        $service = $this->makeService();
+
+        // Backslash variant (\/\/attacker.com) — some parsers treat
+        // this as a protocol-relative URL. Verify it is rejected.
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect('\/\/attacker.com')
+        );
+    }
+
     public function test_check_password_strength_rejects_weak_and_accepts_strong(): void
     {
         $service = $this->makeService();
