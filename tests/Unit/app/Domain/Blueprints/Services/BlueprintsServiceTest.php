@@ -537,6 +537,14 @@ class BlueprintsServiceTest extends TestCase
             $service->import('ftp://evil.com/blueprint.xml', 'lean', 55, 1),
             'FTP URL must be rejected'
         );
+
+        // LFI: file:// wrapper. Some PHP builds (especially older ones)
+        // resolve file:///etc/passwd via realpath() and would read it
+        // without the allow-list guard.
+        $this->assertFalse(
+            $service->import('file:///etc/passwd', 'lean', 55, 1),
+            'file:// URL must be rejected'
+        );
     }
 
     public function test_import_rejects_lfi_absolute_path_to_system_file(): void
