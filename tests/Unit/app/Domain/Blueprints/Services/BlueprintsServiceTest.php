@@ -612,18 +612,20 @@ class BlueprintsServiceTest extends TestCase
 
     public function test_import_rejects_sibling_prefix_bypass(): void
     {
-        // str_starts_with without separator anchoring would allow
-        // /tmp-evil/blueprint.xml to match against allowed /tmp.
-        // The fix appends DIRECTORY_SEPARATOR to each allowed dir.
+        // str_starts_with without DIRECTORY_SEPARATOR anchoring would
+        // allow imports-evil/x to match against allowed …/imports.
+        // Create a sibling of the Blueprints imports directory (under
+        // the project root, guaranteed writable) to test the anchor.
         $service = $this->securedService(
             $this->make(BlueprintsRepository::class),
             $this->allowingPermissions()
         );
 
-        // Create a directory whose name is a prefix of the real temp dir.
-        // Use a unique suffix to avoid collisions with leftover dirs from
-        // crashed runs or concurrent test processes.
-        $siblingDir = sys_get_temp_dir().'-evil-'.uniqid('', true);
+        $allowedDir = APP_ROOT.'/app/Domain/Blueprints/imports';
+        if (! is_dir($allowedDir)) {
+            mkdir($allowedDir, 0700, true);
+        }
+        $siblingDir = APP_ROOT.'/app/Domain/Blueprints/imports-sibling-'.uniqid('', true);
         if (! is_dir($siblingDir)) {
             mkdir($siblingDir, 0700, true);
         }
