@@ -143,8 +143,88 @@
 .rd-scope .p2-drift b{color:var(--rd-text-1);font-weight:600;}
 </style>
 
-@if (! $hasLM)
-    <div class="p2-wrap"><div class="rd-empty">{{ __('stakeholder.lm.no_canvas') }}</div></div>
+@php
+    // Empty-state trigger is keyed on ITEM COUNT, not just board existence.
+    // A blank Logic Model board (0 items) makes $hasLM true but leaves the
+    // read-out hollow; the reverse flow itself creates a board on start, so
+    // gating only on board-existence would strand users in an empty skeleton.
+    // Treat "no board" and "board with no items" identically — both land on
+    // the populate-from-your-work empty-state below.
+    $lmStages = $hasLM ? ($logicModel['coverageMatrix']['stages'] ?? []) : [];
+    $lmHasContent = false;
+    foreach ($lmStages as $lmStage) {
+        if (count($lmStage['items'] ?? []) > 0) {
+            $lmHasContent = true;
+            break;
+        }
+    }
+
+    // Existing linked work in this strategy, for the empty-state's "we found
+    // your work" line. programRows carry type + projectCount; program rows
+    // count as programs, and projectCount sums to total leaf projects (direct
+    // + under programs). Empty at program scope, so the line self-hides there.
+    $lmProgramCount = 0;
+    $lmProjectCount = 0;
+    foreach ($programRows ?? [] as $lmRow) {
+        if (($lmRow['type'] ?? '') === 'program') {
+            $lmProgramCount++;
+        }
+        $lmProjectCount += (int) ($lmRow['projectCount'] ?? 0);
+    }
+    // Bold the counts so the totals read as totals. Every piece is server-side
+    // (ints + translated nouns, both e()-escaped), so the {!! !!} render below
+    // carries no user input.
+    $lmFoundParts = [];
+    if ($lmProgramCount > 0) {
+        $lmFoundParts[] = '<b>'.$lmProgramCount.'</b> '.e(__($lmProgramCount === 1 ? 'stakeholder.lm.found_program' : 'stakeholder.lm.found_programs'));
+    }
+    if ($lmProjectCount > 0) {
+        $lmFoundParts[] = '<b>'.$lmProjectCount.'</b> '.e(__($lmProjectCount === 1 ? 'stakeholder.lm.found_project' : 'stakeholder.lm.found_projects'));
+    }
+    $lmFoundStr = implode('<span class="sep">·</span>', $lmFoundParts);
+@endphp
+
+@if (! $lmHasContent)
+    <style>
+    /* Empty-state colors are set for WCAG AA on white (the --rd-text-3/-4
+       tokens are ~3:1 and fail as body copy), so the invitation stays legible. */
+    .rd-scope .p2-lm-emptyzone{background:linear-gradient(180deg,#f3f9f7 0%,#fafcfb 62%);border-radius:24px;padding:12px;margin:36px auto;max-width:672px;}
+    .rd-scope .p2-lm-empty{margin:0 auto;text-align:center;padding:52px 40px 48px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:18px;box-shadow:0 3px 14px rgba(20,40,50,.05);}
+    .rd-scope .p2-lm-empty .found{display:flex;width:fit-content;max-width:100%;align-items:center;gap:10px;font-size:13px;line-height:1.4;color:#356f5b;background:#eef7f2;border:1px solid #d8ece2;border-radius:22px;padding:10px 20px;margin:0 auto 26px;}
+    .rd-scope .p2-lm-empty .found i{color:#3E937A;font-size:12px;flex:none;}
+    .rd-scope .p2-lm-empty .found b{color:#2c5f4d;font-weight:700;}
+    .rd-scope .p2-lm-empty .found .sep{color:#9ec7b6;margin:0 5px;font-weight:400;}
+    .rd-scope .p2-lm-empty .ic{width:62px;height:62px;border-radius:18px;background:linear-gradient(135deg,var(--rd-s3,#3F72B0),var(--rd-s4,#3E937A));display:inline-flex;align-items:center;justify-content:center;margin-bottom:22px;box-shadow:0 8px 20px rgba(62,147,122,.24);}
+    .rd-scope .p2-lm-empty .ic i{color:#fff;font-size:26px;}
+    .rd-scope .p2-lm-empty h2.t{font-size:22px;font-weight:600;color:var(--rd-text-1);margin:0 0 12px;letter-spacing:-.2px;line-height:1.25;}
+    .rd-scope .p2-lm-empty .b{font-size:14.5px;line-height:1.65;color:#54636b;margin:0 auto 28px;max-width:462px;}
+    .rd-scope .p2-lm-empty .cta{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#fff;background:var(--rd-accent);border-radius:26px;padding:13px 27px;text-decoration:none;box-shadow:0 5px 16px rgba(0,71,102,.24);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;}
+    .rd-scope .p2-lm-empty .cta:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 7px 20px rgba(0,71,102,.28);text-decoration:none;color:#fff;}
+    .rd-scope .p2-lm-empty .cta:focus-visible{outline:2px solid var(--rd-accent);outline-offset:3px;}
+    .rd-scope .p2-lm-empty .cta i{font-size:13px;}
+    .rd-scope .p2-lm-empty .hint{font-size:12.5px;color:#69767d;margin-top:18px;line-height:1.55;max-width:420px;margin-left:auto;margin-right:auto;}
+    </style>
+    <div class="p2-wrap">
+        <div class="p2-lm-emptyzone">
+            <div class="p2-lm-empty">
+                <span class="ic"><i class="fa fa-diagram-project" aria-hidden="true"></i></span>
+                <h2 class="t">{{ __('stakeholder.lm.empty_title') }}</h2>
+                <div class="b">{{ __('stakeholder.lm.empty_body') }}</div>
+                @if (($scope ?? '') === 'strategy')
+                    @if ($lmFoundStr !== '')
+                        <div class="found">
+                            <i class="fa fa-circle-check" aria-hidden="true"></i>
+                            <span>{!! sprintf(e(__('stakeholder.lm.empty_found')), $lmFoundStr) !!}</span>
+                        </div>
+                    @endif
+                    <a href="{{ BASE_URL }}/logicmodelcanvas/showCanvas" class="cta">
+                        <i class="fa fa-wand-magic-sparkles" aria-hidden="true"></i> {{ __('stakeholder.lm.empty_cta') }}
+                    </a>
+                    <div class="hint">{{ __('stakeholder.lm.empty_hint') }}</div>
+                @endif
+            </div>
+        </div>
+    </div>
 @else
     @php
         $stages = $logicModel['coverageMatrix']['stages'] ?? [];
