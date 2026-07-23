@@ -143,12 +143,11 @@
 
 /* Tab bar — sits ON the page background (matches the To-Dos Kanban·Table·List
    pattern). Not on a panel. */
-/* Nav bar: horizontal tabs sit on their own gradient strip ABOVE the white
-   content card (the nav lives on the app gradient, the content in the card).
-   Reads as navigation tabs, not a button group. Active tab = white pill. */
-/* Nav bar: accent gradient + conditional dark scrim (--nav-scrim, set per-theme
-   in the header for light accents that fail contrast), NO shadow — so it reads
-   connected to the content, mirroring the global .tabs nav. */
+/* Nav bar: horizontal tabs on their own accent-gradient strip above the white
+   content card — reads as navigation, not a button group. Conditional dark
+   scrim (--nav-scrim, set per-theme in the header for light accents that fail
+   contrast); NO shadow, so it reads connected to the content, mirroring the
+   global .tabs nav. Active tab = white pill. */
 .rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(rgba(0,0,0,var(--nav-scrim,0)),rgba(0,0,0,var(--nav-scrim,0))),linear-gradient(90deg,var(--accent1,hsla(199,100%,20%,1)),var(--accent2,hsla(168,100%,33%,1)));border-radius:14px;box-shadow:none;padding:7px 10px;}
 /* Framed segmented tab group — one outlined container grouping the tabs. */
 .rd-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
