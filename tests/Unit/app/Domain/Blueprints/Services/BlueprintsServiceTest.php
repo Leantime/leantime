@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Blueprints\Services;
 
+use Codeception\Test\Feature\Stub;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
@@ -9,6 +10,8 @@ use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
+use Leantime\Domain\ContentTemplates\Models\ContentTemplate;
+use Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry;
 use Unit\TestCase;
 
 /**
@@ -17,7 +20,7 @@ use Unit\TestCase;
  */
 class BlueprintsServiceTest extends TestCase
 {
-    use \Codeception\Test\Feature\Stub;
+    use Stub;
 
     /**
      * Build the service with a language stub that prefixes keys with "T:" so we
@@ -31,7 +34,7 @@ class BlueprintsServiceTest extends TestCase
             $repo ?? $this->make(BlueprintsRepository::class),
             $registry ?? new TemplateRegistry,
             $language,
-            new \Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry,
+            new ContentTemplateRegistry,
         );
     }
 
@@ -545,7 +548,7 @@ class BlueprintsServiceTest extends TestCase
             $this->allowingPermissions()
         );
 
-        $outOfBounds = '/var/tmp/leantime_lfi_test_' . uniqid('', true) . '.xml';
+        $outOfBounds = '/var/tmp/leantime_lfi_test_'.uniqid('', true).'.xml';
         file_put_contents($outOfBounds, '<canvas key="leancanvas"><title>LFI Test</title></canvas>');
 
         try {
@@ -677,7 +680,7 @@ class BlueprintsServiceTest extends TestCase
 XML;
 
         $tmpBase = tempnam(sys_get_temp_dir(), 'leantime.');
-        $tempFile = $tmpBase . '.xml';
+        $tempFile = $tmpBase.'.xml';
         rename($tmpBase, $tempFile);
         file_put_contents($tempFile, $xml);
 
@@ -734,7 +737,7 @@ XML;
             }
         };
 
-        $contentTemplates = new class extends \Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry
+        $contentTemplates = new class extends ContentTemplateRegistry
         {
             /** @var string[] */
             public array $seenSlugs = [];
@@ -745,7 +748,7 @@ XML;
             // by reference, and a typed-property reference is brittle.
             public function __construct() {}
 
-            public function get(string $appliesTo, string $key): ?\Leantime\Domain\ContentTemplates\Models\ContentTemplate
+            public function get(string $appliesTo, string $key): ?ContentTemplate
             {
                 $this->seenSlugs[] = $appliesTo;
 
