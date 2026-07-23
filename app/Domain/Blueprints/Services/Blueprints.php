@@ -383,8 +383,10 @@ class Blueprints extends BaseService
      *
      * Rejects files outside a fixed allow-list of local directories and
      * requires a known extension. The caller must resolve the path via
-     * {@see realpath()} first — this avoids a TOCTOU window between
-     * resolution and validation.
+     * {@see realpath()} first — realpath canonicalizes the path (resolves
+     * symlinks, relative segments, and `..` traversal) so the allow-list
+     * check operates on the true absolute path rather than the
+     * user-supplied string.
      *
      * The allow-list covers the three places Leantime sources blueprint
      * import files from: the upload temp directory, the userfiles storage,
@@ -409,10 +411,11 @@ class Blueprints extends BaseService
             APP_ROOT.'/app/Domain/Blueprints/imports',
         ];
 
-        // Validate file extension — only XML (uploaded via the UI) and JSON
-        // (shipped fixture files under the imports directory) are permitted.
+        // Validate file extension — only XML is permitted because import()
+        // parses via DOMDocument::loadXML(). Shipped fixture files under the
+        // imports/ directory are .xml as well.
         $ext = strtolower(pathinfo($resolvedPath, PATHINFO_EXTENSION));
-        if (! in_array($ext, ['xml', 'json'], true)) {
+        if ($ext !== 'xml') {
             Log::warning('Blueprints import: disallowed file extension', [
                 'resolvedPath' => $resolvedPath,
                 'extension' => $ext,

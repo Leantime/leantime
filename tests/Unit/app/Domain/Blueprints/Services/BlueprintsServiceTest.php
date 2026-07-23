@@ -539,13 +539,15 @@ class BlueprintsServiceTest extends TestCase
     public function test_import_rejects_lfi_absolute_path_to_system_file(): void
     {
         // Create an .xml file in a directory that is NOT in the allowed list.
-        // /var/tmp is outside sys_temp_dir, userfiles, and Blueprints/imports.
+        // base_path('storage') is reliably outside sys_temp_dir, userfiles, and
+        // Blueprints/imports — unlike /var/tmp which can equal sys_get_temp_dir()
+        // on some systems.
         $service = $this->securedService(
             $this->make(BlueprintsRepository::class),
             $this->allowingPermissions()
         );
 
-        $outOfBounds = '/var/tmp/leantime_lfi_test_' . uniqid('', true) . '.xml';
+        $outOfBounds = base_path('storage/leantime_lfi_test_' . uniqid('', true) . '.xml');
         file_put_contents($outOfBounds, '<canvas key="leancanvas"><title>LFI Test</title></canvas>');
 
         try {
@@ -592,8 +594,8 @@ class BlueprintsServiceTest extends TestCase
         if (! is_dir($siblingDir)) {
             mkdir($siblingDir, 0700, true);
         }
-        $siblingFile = $siblingDir.'/blueprint.json';
-        file_put_contents($siblingFile, '{}');
+        $siblingFile = $siblingDir.'/blueprint.xml';
+        file_put_contents($siblingFile, '<canvas key="leancanvas"><title>Test</title></canvas>');
 
         try {
             $this->assertFalse(
