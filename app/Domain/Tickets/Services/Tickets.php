@@ -3988,6 +3988,22 @@ class Tickets extends BaseService
         $weekStartDate = $userNow->format('Y-m-d');
         $weekEndDate = $userNow->endOfWeek()->format('Y-m-d');
 
+        // Parse a DB date to CarbonImmutable, or null if it's unusable.
+        // isValidDateString() cheaply filters the common sentinels (empty,
+        // 0000-00-00, 1969-12-31); the try/catch then catches a genuinely
+        // malformed-but-non-sentinel value so one bad row can't throw and blank
+        // the whole board header.
+        $safeParse = static function (mixed $value): ?CarbonImmutable {
+            if (! dtHelper()->isValidDateString($value !== null ? (string) $value : null)) {
+                return null;
+            }
+            try {
+                return dtHelper()->parseDbDateTime((string) $value);
+            } catch (\Exception $e) {
+                return null;
+            }
+        };
+
         foreach ($groupedTickets as $group) {
             foreach ($group['items'] ?? [] as $ticket) {
                 $summary->total++;
@@ -3998,21 +4014,19 @@ class Tickets extends BaseService
                 }
 
                 $due = is_object($ticket) ? ($ticket->dateToFinish ?? null) : ($ticket['dateToFinish'] ?? null);
-                // isValidDateString() is exactly what parseDbDateTime() guards on
-                // (rejects empty, 0000-00-00, and the 1969-12-31 sentinel), so this
-                // can never throw on a sentinel/invalid value.
-                if (dtHelper()->isValidDateString($due !== null ? (string) $due : null)) {
-                    $dueDate = dtHelper()->parseDbDateTime((string) $due)->setToUserTimezone()->format('Y-m-d');
+                $dueDt = $safeParse($due);
+                if ($dueDt !== null) {
+                    $dueDate = $dueDt->setToUserTimezone()->format('Y-m-d');
                     if ($dueDate >= $weekStartDate && $dueDate <= $weekEndDate) {
                         $summary->dueThisWeek++;
                     }
                 }
 
                 $modified = is_object($ticket) ? ($ticket->modified ?? null) : ($ticket['modified'] ?? null);
-                if (dtHelper()->isValidDateString($modified !== null ? (string) $modified : null)) {
-                    $modifiedDate = dtHelper()->parseDbDateTime((string) $modified);
-                    if ($summary->lastUpdated === null || $modifiedDate->greaterThan($summary->lastUpdated)) {
-                        $summary->lastUpdated = $modifiedDate;
+                $modifiedDt = $safeParse($modified);
+                if ($modifiedDt !== null) {
+                    if ($summary->lastUpdated === null || $modifiedDt->greaterThan($summary->lastUpdated)) {
+                        $summary->lastUpdated = $modifiedDt;
                     }
                 }
             }

@@ -216,6 +216,9 @@ class TicketsServiceTest extends TestCase
                 'items' => [
                     $mk('1969-12-31 00:00:00', '1969-12-31 00:00:00'),
                     $mk('0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+                    // Malformed but NON-sentinel — passes isValidDateString yet
+                    // parseDbDateTime throws. The try/catch must swallow it.
+                    $mk('not a date', 'garbage-value'),
                     $mk(null, null),
                 ],
             ],
@@ -223,7 +226,7 @@ class TicketsServiceTest extends TestCase
 
         $summary = $this->ticketsService->getBoardSummary($grouped);
 
-        $this->assertSame(3, $summary->total);
+        $this->assertSame(4, $summary->total);
         // No valid due dates → none counted this week; no valid modified → null.
         $this->assertSame(0, $summary->dueThisWeek);
         $this->assertNull($summary->lastUpdated);
