@@ -441,19 +441,92 @@ body {
     /*background:var(--header-bg-color);*/
 }
 
+/* Pageheader is a glass card matching the content card below it, floating on
+   the app's gradient background (which lives on .rightpanel, untouched). The
+   old design used a 150px invisible cushion + a -95px content overlap to make
+   the header float transparently on the gradient; that's replaced by a proper
+   boxed header. Applied globally so every page's header is consistent. */
 .pageheader {
-    padding: 0px 15px;
-    padding-bottom:150px;
-    height:60px;
-    line-height:60px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 18px;
+    height: auto;
+    line-height: 1.3;
     position: relative;
+    /* Above the nav bar (z-index 11) so the breadcrumb + sprint ⋮ dropdowns,
+       which open downward into the nav bar's area, render on top of it. */
+    z-index: 12;
+    /* Match the content card exactly (same bg, NO backdrop blur) so the header
+       and content read as one cohesive surface, not mismatched cards. */
+    background: var(--glass-background);
+    border: var(--glass-border);
+    border-radius: var(--box-radius);
+    box-shadow: var(--large-shadow);
+    /* Horizontal margin matches .maincontent's 15px padding so the header card
+       lines up with the content card below it (was full-width → stuck out
+       wider, which read as a box-inside-a-box). No bottom margin: the gap to the
+       next block comes solely from .maincontent's 10px padding-top, so the
+       vertical rhythm (top-nav→header, header→nav/content) is an even 10px
+       everywhere (was 8px margin + 10px padding = an uneven 18px). */
+    margin: 0 15px 0 15px;
+}
+
+.pageheader .pagetitle {
+    flex: 1 1 auto;
+    min-width: 0;
+    /* Must be visible, not hidden — the breadcrumb switcher's dropdown menu
+       lives inside here and overflow:hidden would clip it shut. */
+    overflow: visible;
+}
+
+/* Header content must be able to shrink so it never forces the card wider than
+   the viewport (flex children need min-width:0 to shrink below content size). */
+.pageheader .pagetitle > * {
+    min-width: 0;
+}
+
+/* Right cluster on the header: secondary metadata (board stats, "updated …")
+   plus optional actions (the sprint ⋮ menu), on ONE line with the title — so
+   the header stays compact instead of adding a sub-line row. Shared by Tasks +
+   the report header. */
+.pageheader-right {
+    flex: 0 0 auto;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 16px;
+}
+.pageheader-meta {
+    font-size: var(--font-size-s);
+    color: var(--primary-font-color);
+    opacity: .6;
+    white-space: nowrap;
+}
+/* Sprint edit/delete ⋮ menu — a subtle icon button inline in the right cluster
+   (only rendered for a real sprint view). */
+.pageheader-right .headerEditDropdown {
+    padding: 0;
+    line-height: 1;
+}
+.pageheader-right .headerEditDropdown > .btn-transparent {
+    color: var(--primary-font-color);
+    opacity: .5;
+    border: none;
+    background: transparent;
+    padding: 4px 8px;
+    box-shadow: none;
+}
+.pageheader-right .headerEditDropdown > .btn-transparent:hover {
+    opacity: .9;
 }
 
 .maincontent {
     float: left;
     width: 100%;
     padding: 10px 15px;
-    margin-top:-95px;
+    margin-top: 0;
     position:relative;
     z-index:5;
 }

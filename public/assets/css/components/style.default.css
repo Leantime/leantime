@@ -649,19 +649,23 @@ body.loginpage {
     height:30px;
     font-size:16px;
     padding: 0px;
-    color: var(--main-titles-color);
+    /* Dark on the white/glass header card (was white on the gradient). */
+    color: var(--primary-font-color);
     border-width: 2px;
     border-style: solid;
-    border-color:var(--main-titles-color);
-    display: inline-block;
+    border-color: var(--primary-font-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     -moz-border-radius: 30px;
     -webkit-border-radius: 30px;
     border-radius: 30px;
-    float: left;
+    /* Inline flex item beside the title (pageheader is now a flex row). */
+    float: none;
+    flex: none;
     text-align: center;
-    margin-right:5px;
-    line-height:26px;
-    margin-top:15px;
+    line-height: 1;
+    margin: 0;
 }
 
 
