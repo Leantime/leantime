@@ -12,6 +12,7 @@ use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
 use Leantime\Domain\ContentTemplates\Models\ContentTemplate;
 use Leantime\Domain\ContentTemplates\Services\ContentTemplateRegistry;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Unit\TestCase;
 
 /**
@@ -674,6 +675,13 @@ class BlueprintsServiceTest extends TestCase
             'addCanvasItem' => fn () => 1,
         ]);
         $service = $this->securedService($repo, $this->allowingPermissions());
+
+        // import() resolves UserRepository via app()->make(). Unit tests
+        // disable the database, so bind a stub that never touches it.
+        $usersStub = $this->make(UserRepository::class, [
+            'getUserIdByName' => fn () => 1,
+        ]);
+        app()->instance(UserRepository::class, $usersStub);
 
         $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>

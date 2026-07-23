@@ -515,7 +515,10 @@ class Auth implements Authenticatable
             // At this point $url is a relative path. Guard against an empty
             // path that could result from stripping a BASE_URL-only input.
             $url = ltrim($url, '/');
-            if ($url !== '') {
+
+            // Block redirect to logout — allowing a POST-login redirect to
+            // /auth/logout would create a forced-logout loop.
+            if ($url !== '' && $url !== 'auth/logout') {
                 $redirectUrl = BASE_URL.'/'.$url;
             }
         }
