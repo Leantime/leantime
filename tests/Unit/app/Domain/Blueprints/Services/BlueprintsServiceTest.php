@@ -41,7 +41,7 @@ class BlueprintsServiceTest extends TestCase
     public function test_translated_boxes_run_titles_through_language(): void
     {
         $template = new CanvasTemplate([
-            'slug' => 'lean',
+            'slug' => 'swot',
             'boxes' => ['swot_strengths' => ['icon' => 'fa-x', 'title' => 'box.swot.strengths']],
         ]);
 
@@ -508,7 +508,7 @@ class BlueprintsServiceTest extends TestCase
         $service = $this->securedService($repo, $this->denyingPermissions());
 
         $this->expectException(AuthorizationException::class);
-        $service->import('/tmp/does-not-matter.xml', 'lean', 55, 1);
+        $service->import('/tmp/does-not-matter.xml', 'swot', 55, 1);
     }
 
     // ---------------------------------------------------------------------
@@ -600,7 +600,9 @@ class BlueprintsServiceTest extends TestCase
         );
 
         // Create a directory whose name is a prefix of the real temp dir.
-        $siblingDir = sys_get_temp_dir().'-evil';
+        // Use a unique suffix to avoid collisions with leftover dirs from
+        // crashed runs or concurrent test processes.
+        $siblingDir = sys_get_temp_dir().'-evil-'.uniqid('', true);
         if (! is_dir($siblingDir)) {
             mkdir($siblingDir, 0700, true);
         }
@@ -627,10 +629,17 @@ class BlueprintsServiceTest extends TestCase
             $this->allowingPermissions()
         );
 
-        $phpFile = sys_get_temp_dir().'/leantime_import_test.php';
+        // Use tempnam() + rename to get unique filenames — fixed names
+        // in the shared temp dir can collide with crashed-run leftovers
+        // or concurrent test processes.
+        $phpBase = tempnam(sys_get_temp_dir(), 'leantime.');
+        $phpFile = $phpBase.'.php';
+        rename($phpBase, $phpFile);
         file_put_contents($phpFile, '<?php echo "pwned";');
 
-        $txtFile = sys_get_temp_dir().'/leantime_import_test.txt';
+        $txtBase = tempnam(sys_get_temp_dir(), 'leantime.');
+        $txtFile = $txtBase.'.txt';
+        rename($txtBase, $txtFile);
         file_put_contents($txtFile, 'not xml');
 
         try {
