@@ -388,9 +388,15 @@ class Blueprints extends BaseService
      * check operates on the true absolute path rather than the
      * user-supplied string.
      *
-     * The allow-list covers the three places Leantime sources blueprint
-     * import files from: the upload temp directory, the userfiles storage,
-     * and the shipped fixture directory under the Blueprints domain.
+     * The allow-list covers two directories:
+     *  - the PHP upload temp directory (UI file-upload flow), and
+     *  - the shipped fixture directory under the Blueprints domain.
+     *
+     * base_path('userfiles') is intentionally EXCLUDED: the global userfiles
+     * storage is managed by the Files domain with per-file authorization.
+     * Allowing import() to read arbitrary .xml files from userfiles would
+     * bypass that authorization — a caller with CREATE on any project could
+     * ingest files they should not have access to.
      *
      * .xml files landing in sys_get_temp_dir() are accepted by design: this is
      * the normal UI upload flow (PHP stores uploaded files in the temp dir) and
@@ -407,7 +413,6 @@ class Blueprints extends BaseService
     {
         $allowedDirs = [
             sys_get_temp_dir(),
-            base_path('userfiles'),
             APP_ROOT.'/app/Domain/Blueprints/imports',
         ];
 
