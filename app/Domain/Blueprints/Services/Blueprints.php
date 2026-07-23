@@ -390,6 +390,13 @@ class Blueprints extends BaseService
      * import files from: the upload temp directory, the userfiles storage,
      * and the shipped fixture directory under the Blueprints domain.
      *
+     * .xml files landing in sys_get_temp_dir() are accepted by design: this is
+     * the normal UI upload flow (PHP stores uploaded files in the temp dir) and
+     * the allow-list is the gate. Any local process that can drop an .xml into
+     * the temp dir is already trusted — the temp dir is writable by the web
+     * server user by definition, so writing there does not represent an
+     * additional privilege escalation.
+     *
      * @param  string  $resolvedPath  Already-resolved absolute path (from realpath)
      * @return bool True when the path is within an allowed directory
      *              and has an allowed extension
