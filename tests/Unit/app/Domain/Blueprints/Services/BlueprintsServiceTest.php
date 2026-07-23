@@ -668,6 +668,8 @@ class BlueprintsServiceTest extends TestCase
                 <description>Test item</description>
                 <status>status_draft</status>
                 <relates>relates_none</relates>
+                <data>none</data>
+                <conclusion>none</conclusion>
                 <assumptions>none</assumptions>
                 <priority>low</priority>
                 <progress>0</progress>
