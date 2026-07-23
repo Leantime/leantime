@@ -575,19 +575,39 @@ class BlueprintsServiceTest extends TestCase
 
     public function test_import_rejects_dot_dot_path_traversal(): void
     {
-        // Construct a path that starts inside the temp directory but
-        // traverses out and back into /etc/passwd.
+        // Create a real .xml file outside the allow-list (in storage/),
+        // then reach it via a path that starts in sys_get_temp_dir() and
+        // traverses up to the filesystem root with ../ before descending
+        // into the project. realpath() must resolve the ../ segments and
+        // the allow-list must reject the canonicalized path — this proves
+        // both canonicalization AND allow-list work, not just extension
+        // validation.
         $service = $this->securedService(
             $this->make(BlueprintsRepository::class),
             $this->allowingPermissions()
         );
 
-        $traversal = sys_get_temp_dir().'/../../../etc/passwd';
+        $outOfBounds = base_path('storage/traversal_target_'.uniqid('', true).'.xml');
+        file_put_contents($outOfBounds, '<canvas key="leancanvas"><title>Traversal Test</title></canvas>');
 
-        $this->assertFalse(
-            $service->import($traversal, 'lean', 55, 1),
-            'Path traversal (../) must be rejected'
-        );
+        // Walk from temp dir up to root (depth + 1 levels), then down
+        // into the project storage directory.
+        $upLevels = substr_count(sys_get_temp_dir(), DIRECTORY_SEPARATOR) + 1;
+        $fromRoot = ltrim($outOfBounds, DIRECTORY_SEPARATOR);
+        $traversal = sys_get_temp_dir().DIRECTORY_SEPARATOR
+            .str_repeat('..'.DIRECTORY_SEPARATOR, $upLevels + 1)
+            .$fromRoot;
+
+        try {
+            $this->assertFalse(
+                $service->import($traversal, 'lean', 55, 1),
+                'Path traversal (../) to a valid .xml outside allowed dirs must be rejected'
+            );
+        } finally {
+            if (file_exists($outOfBounds)) {
+                unlink($outOfBounds);
+            }
+        }
     }
 
     public function test_import_rejects_sibling_prefix_bypass(): void
