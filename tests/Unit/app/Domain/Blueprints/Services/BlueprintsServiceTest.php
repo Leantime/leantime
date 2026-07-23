@@ -41,7 +41,7 @@ class BlueprintsServiceTest extends TestCase
     public function test_translated_boxes_run_titles_through_language(): void
     {
         $template = new CanvasTemplate([
-            'slug' => 'lean',
+            'slug' => 'swot',
             'boxes' => ['swot_strengths' => ['icon' => 'fa-x', 'title' => 'box.swot.strengths']],
         ]);
 
@@ -508,7 +508,7 @@ class BlueprintsServiceTest extends TestCase
         $service = $this->securedService($repo, $this->denyingPermissions());
 
         $this->expectException(AuthorizationException::class);
-        $service->import('/tmp/does-not-matter.xml', 'lean', 55, 1);
+        $service->import('/tmp/does-not-matter.xml', 'swot', 55, 1);
     }
 
     // ---------------------------------------------------------------------
@@ -537,18 +537,27 @@ class BlueprintsServiceTest extends TestCase
             $service->import('ftp://evil.com/blueprint.xml', 'lean', 55, 1),
             'FTP URL must be rejected'
         );
+
+        // LFI: file:// wrapper. Some PHP builds resolve file:///etc/passwd
+        // via realpath() and would read it without the allow-list guard.
+        $this->assertFalse(
+            $service->import('file:///etc/passwd', 'lean', 55, 1),
+            'file:// URL must be rejected'
+        );
     }
 
     public function test_import_rejects_lfi_absolute_path_to_system_file(): void
     {
         // Create an .xml file in a directory that is NOT in the allowed list.
-        // /var/tmp is outside sys_temp_dir, userfiles, and Blueprints/imports.
+        // base_path('storage') is reliably outside sys_temp_dir, userfiles, and
+        // Blueprints/imports — unlike /var/tmp which can equal sys_get_temp_dir()
+        // on some systems.
         $service = $this->securedService(
             $this->make(BlueprintsRepository::class),
             $this->allowingPermissions()
         );
 
-        $outOfBounds = '/var/tmp/leantime_lfi_test_'.uniqid('', true).'.xml';
+        $outOfBounds = base_path('storage/leantime_lfi_test_'.uniqid('', true).'.xml');
         file_put_contents($outOfBounds, '<canvas key="leancanvas"><title>LFI Test</title></canvas>');
 
         try {
@@ -591,12 +600,14 @@ class BlueprintsServiceTest extends TestCase
         );
 
         // Create a directory whose name is a prefix of the real temp dir.
-        $siblingDir = sys_get_temp_dir().'-evil';
+        // Use a unique suffix to avoid collisions with leftover dirs from
+        // crashed runs or concurrent test processes.
+        $siblingDir = sys_get_temp_dir().'-evil-'.uniqid('', true);
         if (! is_dir($siblingDir)) {
             mkdir($siblingDir, 0700, true);
         }
-        $siblingFile = $siblingDir.'/blueprint.json';
-        file_put_contents($siblingFile, '{}');
+        $siblingFile = $siblingDir.'/blueprint.xml';
+        file_put_contents($siblingFile, '<canvas key="leancanvas"><title>Test</title></canvas>');
 
         try {
             $this->assertFalse(
@@ -618,10 +629,17 @@ class BlueprintsServiceTest extends TestCase
             $this->allowingPermissions()
         );
 
-        $phpFile = sys_get_temp_dir().'/leantime_import_test.php';
+        // Use tempnam() + rename to get unique filenames — fixed names
+        // in the shared temp dir can collide with crashed-run leftovers
+        // or concurrent test processes.
+        $phpBase = tempnam(sys_get_temp_dir(), 'leantime.');
+        $phpFile = $phpBase.'.php';
+        rename($phpBase, $phpFile);
         file_put_contents($phpFile, '<?php echo "pwned";');
 
-        $txtFile = sys_get_temp_dir().'/leantime_import_test.txt';
+        $txtBase = tempnam(sys_get_temp_dir(), 'leantime.');
+        $txtFile = $txtBase.'.txt';
+        rename($txtBase, $txtFile);
         file_put_contents($txtFile, 'not xml');
 
         try {
