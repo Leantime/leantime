@@ -502,6 +502,17 @@ class Blueprints extends BaseService
             return false;
         }
 
+        // Guard against non-regular files (FIFO, device, socket) in
+        // world-writable /tmp — a named pipe named *.xml would hang the
+        // request if read without this check.
+        if (! is_file($resolvedPath) || ! is_readable($resolvedPath)) {
+            Log::warning('Blueprints import: path is not a readable regular file', [
+                'resolvedPath' => $resolvedPath,
+            ]);
+
+            return false;
+        }
+
         $canvasData = file_get_contents($resolvedPath);
         if ($canvasData === false) {
             return false;
