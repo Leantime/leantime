@@ -82,7 +82,7 @@ class EditCanvasItem extends Controller
             // Delete milestone relationship — an EDIT, authorized by the service against the
             // item's project (a view-only user is denied here).
             if (isset($params['removeMilestone'])) {
-                $this->goalService->patchGoalItem((int) $params['id'], ['milestoneId' => '']);
+                $this->goalService->removeMilestoneFromGoal((int) $params['id'], (int) $params['removeMilestone']);
                 $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
                 $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
             }
@@ -122,6 +122,16 @@ class EditCanvasItem extends Controller
 
         $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
         $this->tpl->assign('milestones', $allProjectMilestones);
+
+        // Linked-milestone chips + status summary for the goal editor (edge model).
+        if (($canvasItem['id'] ?? '') !== '') {
+            $goalMilestones = $this->goalService->getGoalMilestones((int) $canvasItem['id']);
+            $this->tpl->assign('goalMilestones', $goalMilestones['milestones']);
+            $this->tpl->assign('milestoneSummary', $goalMilestones['summary']);
+        } else {
+            $this->tpl->assign('goalMilestones', []);
+            $this->tpl->assign('milestoneSummary', ['total' => 0, 'done' => 0, 'inProgress' => 0, 'notStarted' => 0]);
+        }
 
         $this->tpl->assign('currentCanvas', $canvasItem['canvasId']);
         $this->tpl->assign('canvasItem', $canvasItem);
@@ -212,27 +222,33 @@ class EditCanvasItem extends Controller
                         'setting' => $params['setting'] ?? '',
                         'metricType' => $params['metricType'] ?? '',
                         'assignedTo' => $params['assignedTo'] ?? '',
-                        'milestoneId' => $params['milestoneId'] ?? '',
+                        // milestoneId intentionally omitted — milestone links are
+                        // now edges, managed by add/removeMilestoneToGoal, so a
+                        // goal save must not reconcile them down to one value.
                     ];
 
+                    // Resolves the item's real project from itemId and authorizes EDIT there.
+                    $this->goalService->updateGoalItem($canvasItem);
+
+                    // Append a milestone link (new or existing) — leaves the
+                    // goal's other linked milestones intact.
+                    $milestoneToLink = 0;
                     if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                         $params['headline'] = $params['newMilestone'];
                         $params['tags'] = '#ccc';
                         $params['editFrom'] = dtHelper()->userNow()->formatDateForUser();
                         $params['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
                         $params['dependentMilestone'] = '';
-                        $id = $this->ticketService->quickAddMilestone($params);
-
-                        if ($id !== false) {
-                            $canvasItem['milestoneId'] = $id;
+                        $newId = $this->ticketService->quickAddMilestone($params);
+                        if ($newId !== false) {
+                            $milestoneToLink = (int) $newId;
                         }
+                    } elseif (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
+                        $milestoneToLink = (int) $params['existingMilestone'];
                     }
-                    if (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
-                        $canvasItem['milestoneId'] = $params['existingMilestone'];
+                    if ($milestoneToLink > 0) {
+                        $this->goalService->addMilestoneToGoal((int) $params['itemId'], $milestoneToLink);
                     }
-
-                    // Resolves the item's real project from itemId and authorizes EDIT there.
-                    $this->goalService->updateGoalItem($canvasItem);
 
                     $comments = $this->commentsRepo->getComments('goalcanvasitem', $params['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(

@@ -22,7 +22,6 @@
             <input type="hidden" value="{{ $currentCanvas }}" name="canvasId">
             <input type="hidden" value="{{ $canvasItem['box'] }}" name="box" id="box">
             <input type="hidden" value="{{ $id }}" name="itemId" id="itemId">
-            <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] ?? '' }}">
             <input type="hidden" name="changeItem" value="1">
 
             <div class="row">
@@ -117,57 +116,67 @@
 
                     @if ($id !== '')
                         <br /><br />
-                        <h4 class="widgettitle title-light"><span class="fa fa-link"></span> {{ __("headlines.linked_milestone") }} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i></h4>
+                        <h4 class="widgettitle title-light"><span class="fa fa-flag-checkered"></span> {{ __("headlines.milestones") }} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i></h4>
 
-                        @if ($canvasItem['milestoneId'] == '')
-                            <center>
-                                <h4>{{ __("headlines.no_milestone_link") }}</h4>
-                                <div class="row" id="milestoneSelectors">
-                                    @if ($login::userIsAtLeast($roles::$editor))
-                                        <div class="col-md-12">
-                                            <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');">{{ __("links.create_link_milestone") }}</a>
-                                            @if (count($milestones) > 0)
-                                                | <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');">{{ __("links.link_existing_milestone") }}</a>
-                                            @endif
-                                        </div>
+                        {{-- Status summary. TODO(refine): move the summary labels to language keys. --}}
+                        @if (($milestoneSummary['total'] ?? 0) > 0)
+                            <div style="font-size:12px;opacity:.75;margin-bottom:10px;">
+                                <strong>{{ $milestoneSummary['total'] }}</strong> milestones
+                                @if ($milestoneSummary['inProgress'] > 0)&middot; {{ $milestoneSummary['inProgress'] }} in progress @endif
+                                @if ($milestoneSummary['notStarted'] > 0)&middot; {{ $milestoneSummary['notStarted'] }} not started @endif
+                                @if ($milestoneSummary['done'] > 0)&middot; {{ $milestoneSummary['done'] }} done @endif
+                            </div>
+                        @endif
+
+                        {{-- Linked-milestone chips, sorted in-progress -> not-started -> done. The fill is the milestone's OWN color growing with its progress (deliberately not a status color). --}}
+                        @if (count($goalMilestones) > 0)
+                            <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;">
+                                @foreach ($goalMilestones as $ms)
+                                    <div style="position:relative;flex:0 0 auto;min-width:150px;max-width:220px;height:42px;border-radius:9px;border:1px solid var(--tertiary-color,#e4e7ec);background:var(--secondary-background,#f2f4f7);overflow:hidden;display:flex;align-items:center;padding:0 10px;">
+                                        <span style="position:absolute;left:0;top:0;bottom:0;width:{{ (int) $ms['percentDone'] }}%;background:{{ $ms['color'] }};opacity:.18;border-right:2px solid {{ $ms['color'] }};"></span>
+                                        <span style="position:relative;z-index:1;flex:1;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $ms['headline'] }}</span>
+                                        <span style="position:relative;z-index:1;font-size:11px;font-weight:600;opacity:.7;margin-left:6px;">{{ (int) $ms['percentDone'] }}%</span>
+                                        @if ($login::userIsAtLeast($roles::$editor))
+                                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $ms['id'] }}" class="goalCanvasModal delete formModal" style="position:relative;z-index:1;margin-left:8px;opacity:.5;" title="{{ __("links.remove") }}"><i class="fa fa-close"></i></a>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
+                        {{-- Add a milestone (new or existing) — appends; leaves the goal's other links intact. --}}
+                        @if ($login::userIsAtLeast($roles::$editor))
+                            <div class="row" id="milestoneSelectors">
+                                <div class="col-md-12">
+                                    <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');"><i class="fa fa-plus"></i> {{ __("links.create_link_milestone") }}</a>
+                                    @if (count($milestones) > 0)
+                                        | <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');">{{ __("links.link_existing_milestone") }}</a>
                                     @endif
                                 </div>
-                                <div class="row" id="newMilestone" style="display:none;">
-                                    <div class="col-md-12">
-                                        <x-global::forms.text-input width="50%" name="newMilestone" /><br />
-                                        <input type="hidden" name="type" value="milestone" />
-                                        <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
-                                    </div>
-                                </div>
-
-                                <div class="row" id="existingMilestone" style="display:none;">
-                                    <div class="col-md-12">
-                                        <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
-                                            <option value=""></option>
-                                            @foreach ($milestones as $milestoneRow)
-                                                <option value="{{ $milestoneRow->id }}" {{ isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) ? 'selected' : '' }}>
-                                                    {{ $milestoneRow->headline }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <input type="hidden" name="type" value="milestone" />
-                                        <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                                        <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
-                                    </div>
-                                </div>
-                            </center>
-                        @else
-                            <div hx-trigger="load"
-                                 hx-indicator=".htmx-indicator"
-                                 hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $canvasItem['milestoneId'] }}">
-                                <div class="htmx-indicator">
-                                    {{ __("label.loading_milestone") }}
+                            </div>
+                            <div class="row" id="newMilestone" style="display:none;">
+                                <div class="col-md-12">
+                                    <x-global::forms.text-input width="50%" name="newMilestone" /><br />
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                                 </div>
                             </div>
-                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="goalCanvasModal delete formModal" state="danger" variant="outline"><i class="fa fa-close"></i> {{ __("links.remove") }}</x-global::forms.button>
+                            <div class="row" id="existingMilestone" style="display:none;">
+                                <div class="col-md-12">
+                                    <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
+                                        <option value=""></option>
+                                        @foreach ($milestones as $milestoneRow)
+                                            <option value="{{ $milestoneRow->id }}">{{ $milestoneRow->headline }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
+                                </div>
+                            </div>
                         @endif
                     @endif
                 </div>
