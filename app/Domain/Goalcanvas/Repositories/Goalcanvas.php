@@ -435,6 +435,23 @@ class Goalcanvas extends Blueprints
     }
 
     /**
+     * Remove every goal link pointing at a milestone — the milestone-deletion
+     * cascade. Mirror of removeAllGoalMilestoneLinks, keyed on the milestone
+     * (entityB) side.
+     *
+     * @api
+     */
+    public function removeMilestoneFromAllGoals(int $milestoneId): bool
+    {
+        return $this->dbConnection->table('zp_entity_relationship')
+            ->where('entityAType', 'GoalItem')
+            ->where('entityB', $milestoneId)
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->delete() > 0;
+    }
+
+    /**
      * Milestone ids this goal is tracked by.
      *
      * @return array<int, int>

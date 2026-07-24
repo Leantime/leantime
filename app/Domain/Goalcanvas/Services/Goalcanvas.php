@@ -293,6 +293,18 @@ class Goalcanvas extends BaseService
         return $this->goalRepository->removeGoalMilestoneLink($goalId, $milestoneId);
     }
 
+    /**
+     * Cascade: drop every goal's link to a milestone that is being deleted.
+     * Called from the (already-authorized) milestone-delete path, so it is a
+     * passthrough with no additional gate.
+     *
+     * @api
+     */
+    public function detachMilestoneFromGoals(int $milestoneId): bool
+    {
+        return $this->goalRepository->removeMilestoneFromAllGoals($milestoneId);
+    }
+
     // ---------------------------------------------------------------------------------------
     // Secured by-id board/item CRUD chokepoint (controllers call these instead of the repo).
     // ---------------------------------------------------------------------------------------
