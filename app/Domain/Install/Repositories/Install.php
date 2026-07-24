@@ -98,6 +98,7 @@ class Install
         30522,
         30523,
         30524,
+        30525,
     ];
 
     /**
@@ -3096,5 +3097,20 @@ class Install
         }
 
         return true;
+    }
+
+    /**
+     * update_sql_30525 — database update for v3.5.25.
+     *
+     * Top-up backfill for the goal↔milestone edge migration. `update_sql_30524`
+     * ran when the edge model shipped, but goal↔milestone assignments made
+     * after that point and before dual-write went live were written to the
+     * legacy `milestoneId` column only. Re-running the (idempotent) 30524
+     * backfill captures those stragglers as `tracked_by` edges; goals already
+     * migrated are skipped.
+     */
+    public function update_sql_30525(): bool|array
+    {
+        return $this->update_sql_30524();
     }
 }

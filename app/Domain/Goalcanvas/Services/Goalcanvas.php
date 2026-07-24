@@ -351,7 +351,13 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
 
-        return $this->goalRepository->createGoal($values);
+        $newId = $this->goalRepository->createGoal($values);
+
+        if ($newId !== false && array_key_exists('milestoneId', $values)) {
+            $this->syncGoalMilestoneEdges((int) $newId, $values['milestoneId'], (int) session('userdata.id'));
+        }
+
+        return $newId;
     }
 
     /**
@@ -371,7 +377,13 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
 
-        return $this->goalRepository->addCanvasItem($values);
+        $newId = $this->goalRepository->addCanvasItem($values);
+
+        if ($newId !== false && array_key_exists('milestoneId', $values)) {
+            $this->syncGoalMilestoneEdges((int) $newId, $values['milestoneId'], (int) session('userdata.id'));
+        }
+
+        return $newId;
     }
 
     /**
@@ -392,6 +404,38 @@ class Goalcanvas extends BaseService
         $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
 
         $this->goalRepository->editCanvasItem($values);
+
+        if (array_key_exists('milestoneId', $values)) {
+            $this->syncGoalMilestoneEdges($itemId, $values['milestoneId'], (int) session('userdata.id'));
+        }
+    }
+
+    /**
+     * Reconcile a goal's tracked_by milestone edges with a single milestoneId
+     * write (the transitional single-select semantics — replace the goal's
+     * links with the one value; an empty value clears them). Set-based so an
+     * unchanged save doesn't churn edges. PR 3 widens this to accept an array.
+     */
+    private function syncGoalMilestoneEdges(int $goalId, mixed $milestoneIdValue, int $userId): void
+    {
+        if ($goalId <= 0) {
+            return;
+        }
+
+        $desired = [];
+        $milestoneId = (int) $milestoneIdValue;
+        if ($milestoneId > 0) {
+            $desired[] = $milestoneId;
+        }
+
+        $current = $this->goalRepository->getMilestoneIdsForGoal($goalId);
+
+        foreach (array_diff($current, $desired) as $remove) {
+            $this->goalRepository->removeGoalMilestoneLink($goalId, (int) $remove);
+        }
+        foreach (array_diff($desired, $current) as $add) {
+            $this->goalRepository->addGoalMilestoneLink($goalId, (int) $add, $userId);
+        }
     }
 
     /**
@@ -410,7 +454,13 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
 
-        return $this->goalRepository->patchCanvasItem($id, $params);
+        $result = $this->goalRepository->patchCanvasItem($id, $params);
+
+        if (array_key_exists('milestoneId', $params)) {
+            $this->syncGoalMilestoneEdges($id, $params['milestoneId'], (int) session('userdata.id'));
+        }
+
+        return $result;
     }
 
     /**
@@ -427,6 +477,7 @@ class Goalcanvas extends BaseService
         $this->authorize(GoalcanvasPermissions::DELETE, $projectId);
 
         $this->goalRepository->delCanvasItem($id);
+        $this->goalRepository->removeAllGoalMilestoneLinks($id);
     }
 
     /**
