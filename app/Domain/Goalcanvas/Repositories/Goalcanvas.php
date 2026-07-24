@@ -10,6 +10,7 @@ use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Blueprints\Repositories\Blueprints;
 use Leantime\Domain\Tickets\Repositories\Tickets;
 
@@ -344,6 +345,121 @@ class Goalcanvas extends Blueprints
             ->get();
 
         return array_map(fn ($item) => (array) $item, $results->toArray());
+    }
+
+    // ─── Goal↔milestone edges (tracked_by on zp_entity_relationship) ──────
+    //
+    // Many-to-many replacement for the legacy single milestoneId column.
+    // Mirrors the collaborator relationship pattern (Tickets::addCollaborators
+    // / getCollaborators / removeCollaborators). Direction convention:
+    // entityA = goal (GoalItem), entityB = milestone (Ticket).
+
+    /**
+     * Link a milestone to a goal (idempotent — skips an existing edge).
+     *
+     * @api
+     */
+    public function addGoalMilestoneLink(int $goalId, int $milestoneId, int $userId): bool
+    {
+        if ($goalId <= 0 || $milestoneId <= 0) {
+            return false;
+        }
+
+        $exists = $this->dbConnection->table('zp_entity_relationship')
+            ->where('entityA', $goalId)
+            ->where('entityAType', 'GoalItem')
+            ->where('entityB', $milestoneId)
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->exists();
+
+        if ($exists) {
+            return true;
+        }
+
+        $this->dbConnection->table('zp_entity_relationship')->insert([
+            'entityA' => $goalId,
+            'entityAType' => 'GoalItem',
+            'entityB' => $milestoneId,
+            'entityBType' => 'Ticket',
+            'relationship' => EntityRelationshipEnum::TrackedBy->value,
+            'createdOn' => now(),
+            'createdBy' => $userId,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Remove a single goal↔milestone link.
+     *
+     * @api
+     */
+    public function removeGoalMilestoneLink(int $goalId, int $milestoneId): bool
+    {
+        return $this->dbConnection->table('zp_entity_relationship')
+            ->where('entityA', $goalId)
+            ->where('entityAType', 'GoalItem')
+            ->where('entityB', $milestoneId)
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->delete() > 0;
+    }
+
+    /**
+     * Remove every milestone link from a goal (goal delete / full reset).
+     */
+    public function removeAllGoalMilestoneLinks(int $goalId): bool
+    {
+        return $this->dbConnection->table('zp_entity_relationship')
+            ->where('entityA', $goalId)
+            ->where('entityAType', 'GoalItem')
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->delete() > 0;
+    }
+
+    /**
+     * Milestone ids this goal is tracked by.
+     *
+     * @return array<int, int>
+     *
+     * @api
+     */
+    public function getMilestoneIdsForGoal(int $goalId): array
+    {
+        return $this->dbConnection->table('zp_entity_relationship')
+            ->where('entityA', $goalId)
+            ->where('entityAType', 'GoalItem')
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->pluck('entityB')
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Goal ids tracked_by the given milestone — the edge-based replacement for
+     * the old `WHERE milestoneId = ?` reverse lookup.
+     *
+     * @return array<int, int>
+     *
+     * @api
+     */
+    public function getGoalIdsForMilestone(int $milestoneId): array
+    {
+        return $this->dbConnection->table('zp_entity_relationship')
+            ->where('entityAType', 'GoalItem')
+            ->where('entityB', $milestoneId)
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->pluck('entityA')
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
     }
 
     /**
