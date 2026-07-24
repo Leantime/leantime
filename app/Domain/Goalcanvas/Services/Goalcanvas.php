@@ -7,6 +7,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
 /**
  * Goalcanvas (Goals / OKRs) service.
@@ -29,15 +30,18 @@ class Goalcanvas extends BaseService
 
     private GoalcanvaRepository $goalRepository;
 
+    private ProjectService $projectService;
+
     public array $reportingSettings = [
         'linkonly',
         'linkAndReport',
         'nolink',
     ];
 
-    public function __construct(GoalcanvaRepository $goalRepository)
+    public function __construct(GoalcanvaRepository $goalRepository, ProjectService $projectService)
     {
         $this->goalRepository = $goalRepository;
+        $this->projectService = $projectService;
     }
 
     /**
@@ -61,7 +65,7 @@ class Goalcanvas extends BaseService
             // so the board/dashboard render the edge model, not the legacy column.
             $milestonesByGoal = $this->goalRepository->getMilestonesForGoals(
                 array_map(static fn ($g) => (int) $g['id'], $goals)
-            );
+            ) ?: [];
             foreach ($goals as &$goal) {
                 $goal['milestones'] = $milestonesByGoal[(int) $goal['id']] ?? [];
                 $progressValue = 0;
@@ -401,7 +405,7 @@ class Goalcanvas extends BaseService
             'done' => $done,
             'inProgress' => $inProgress,
             'notStarted' => $notStarted,
-            'percentComplete' => $total > 0 ? (int) round($progressSum / $total) : 0,
+            'percentComplete' => (int) round($progressSum / $total),
             'startDate' => $start,
             'endDate' => $end,
             'currentMilestoneId' => $current,
@@ -432,8 +436,7 @@ class Goalcanvas extends BaseService
      */
     private function accessibleProjectIds(): array
     {
-        $projects = app()->make(\Leantime\Domain\Projects\Services\Projects::class)
-            ->getProjectsUserHasAccessTo();
+        $projects = $this->projectService->getProjectsUserHasAccessTo();
 
         if (! is_array($projects)) {
             return [];

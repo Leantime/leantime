@@ -501,7 +501,7 @@ class Goalcanvas extends Blueprints
      * deleted or non-milestone ticket are dropped.
      *
      * @param  array<int, int>  $goalIds
-     * @return array<int, array<int, array{id: int, headline: string, color: string, editTo: mixed, status: int, statusType: string, percentDone: int}>>
+     * @return array<int, array<int, array{id: int, headline: string, color: string, projectId: int, editFrom: mixed, editTo: mixed, status: int, statusType: string, percentDone: int}>>
      *
      * @api
      */
