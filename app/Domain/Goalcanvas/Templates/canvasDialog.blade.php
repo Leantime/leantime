@@ -116,7 +116,7 @@
 
                     @if ($id !== '')
                         <br /><br />
-                        <h4 class="widgettitle title-light"><span class="fa fa-flag-checkered"></span> {{ __("headlines.milestones") }} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i></h4>
+                        <h4 class="widgettitle title-light"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }} <i class="fa fa-question-circle-o helperTooltip" aria-hidden="true" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i></h4>
 
                         {{-- Status summary. TODO(refine): move the summary labels to language keys. --}}
                         @if (($milestoneSummary['total'] ?? 0) > 0)
@@ -137,7 +137,7 @@
                                         <span style="position:relative;z-index:1;flex:1;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $ms['headline'] }}</span>
                                         <span style="position:relative;z-index:1;font-size:11px;font-weight:600;opacity:.7;margin-left:6px;">{{ (int) $ms['percentDone'] }}%</span>
                                         @if ($login::userIsAtLeast($roles::$editor))
-                                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $ms['id'] }}" class="goalCanvasModal delete formModal" style="position:relative;z-index:1;margin-left:8px;opacity:.5;" title="{{ __("links.remove") }}"><i class="fa fa-close"></i></a>
+                                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}?removeMilestone={{ $ms['id'] }}" class="goalCanvasModal delete formModal" style="position:relative;z-index:1;margin-left:8px;opacity:.6;" aria-label="{{ __("links.remove") }}: {{ $ms['headline'] }}" title="{{ __("links.remove") }}"><i class="fa fa-close" aria-hidden="true"></i></a>
                                         @endif
                                     </div>
                                 @endforeach
