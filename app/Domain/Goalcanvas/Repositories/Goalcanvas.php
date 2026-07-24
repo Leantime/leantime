@@ -302,6 +302,14 @@ class Goalcanvas extends Blueprints
      */
     public function getGoalsByMilestone(int $milestoneId): false|array
     {
+        // Reverse lookup via the tracked_by edge graph — replaces the legacy
+        // `WHERE milestoneId = ?` column filter, and now returns a goal linked
+        // to this milestone by ANY of its (possibly many) edges.
+        $goalIds = $this->getGoalIdsForMilestone($milestoneId);
+        if ($goalIds === []) {
+            return [];
+        }
+
         $results = $this->dbConnection->table('zp_canvas_items')
             ->select(
                 'id',
@@ -341,7 +349,7 @@ class Goalcanvas extends Blueprints
                 'tags'
             )
             ->where('box', 'goal')
-            ->where('milestoneId', (string) $milestoneId)
+            ->whereIn('id', $goalIds)
             ->get();
 
         return array_map(fn ($item) => (array) $item, $results->toArray());
