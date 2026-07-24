@@ -249,20 +249,15 @@ class ReportEngine
                 'zp_canvas_items.currentValue',
                 'zp_canvas_items.endValue',
                 'zp_canvas_items.setting',
-                'zp_canvas_items.milestoneId',
                 'zp_canvas_items.kpi',
                 'zp_canvas_items.startDate',
                 'zp_canvas_items.endDate',
                 'zp_canvas_items.canvasId',
                 'zp_canvas.projectId',
                 'zp_canvas.title as boardTitle',
-                'milestone.headline as milestoneHeadline',
             ])
             ->join('zp_canvas', 'zp_canvas_items.canvasId', '=', 'zp_canvas.id')
             ->leftJoin('zp_projects', 'zp_canvas.projectId', '=', 'zp_projects.id')
-            ->leftJoin('zp_tickets as milestone', function ($join) {
-                $join->on('zp_canvas_items.milestoneId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('milestone.id'), 'text')));
-            })
             ->where('zp_canvas.type', '=', 'goalcanvas')
             ->where('zp_canvas_items.box', '=', 'goal')
             ->whereIn('zp_canvas.projectId', $projectIds)

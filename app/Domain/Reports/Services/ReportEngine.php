@@ -237,6 +237,12 @@ class ReportEngine extends BaseService
 
             $goal->goalProgress = $this->calculateGoalProgress($goal);
 
+            // Milestone name(s) from the tracked_by edge graph — replaces the
+            // removed stale milestoneId-column join, so the report reflects a
+            // goal's many milestones. Refine: batch instead of per-goal.
+            $goalMilestones = $this->goalService->getGoalMilestones((int) $goal->id)['milestones'] ?? [];
+            $goal->milestoneHeadline = implode(', ', array_map(static fn ($m) => (string) $m['headline'], $goalMilestones));
+
             $statusKey = str_replace('status_', '', (string) $goal->status);
             if (array_key_exists($statusKey, $counts)) {
                 $counts[$statusKey]++;
