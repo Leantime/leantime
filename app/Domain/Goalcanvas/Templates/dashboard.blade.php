@@ -272,14 +272,7 @@ foreach ($allCanvas as $canvasRow) {
                                                     </div>
                                                 </div>
 
-                                                @if ($row['milestoneHeadline'] != '')
-                                                    <br/>
-                                                    <div hx-trigger="load" hx-indicator=".htmx-indicator" hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}">
-                                                        <div class="htmx-indicator">
-                                                            {{ __("label.loading_milestone") }}
-                                                        </div>
-                                                    </div>
-                                                @endif
+                                                @include('goalcanvas.partials.milestoneChips', ['milestones' => $row['milestones'] ?? []])
                                             </div>
                                         </div>
                                     @endif

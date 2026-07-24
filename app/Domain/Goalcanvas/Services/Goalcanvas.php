@@ -57,7 +57,13 @@ class Goalcanvas extends BaseService
         $goals = $this->goalRepository->getCanvasItemsById($id);
 
         if ($goals) {
+            // Attach each goal's tracked_by milestone chips (one batched read),
+            // so the board/dashboard render the edge model, not the legacy column.
+            $milestonesByGoal = $this->goalRepository->getMilestonesForGoals(
+                array_map(static fn ($g) => (int) $g['id'], $goals)
+            );
             foreach ($goals as &$goal) {
+                $goal['milestones'] = $milestonesByGoal[(int) $goal['id']] ?? [];
                 $progressValue = 0;
                 $goal['goalProgress'] = 0;
                 $total = $goal['endValue'] - $goal['startValue'];
