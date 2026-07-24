@@ -411,10 +411,12 @@ class Goalcanvas extends BaseService
     }
 
     /**
-     * Reconcile a goal's tracked_by milestone edges with a single milestoneId
-     * write (the transitional single-select semantics — replace the goal's
-     * links with the one value; an empty value clears them). Set-based so an
-     * unchanged save doesn't churn edges. PR 3 widens this to accept an array.
+     * Reconcile a goal's tracked_by milestone edges against the desired set.
+     * Accepts a single milestone id (scalar — the transitional single-select
+     * write) OR an array (multi-select). Set-based, so an unchanged save
+     * doesn't churn edges and an empty value/array clears all links.
+     *
+     * @param  mixed  $milestoneIdValue  int|string|array<int|string> milestone id(s), or '' to clear
      */
     private function syncGoalMilestoneEdges(int $goalId, mixed $milestoneIdValue, int $userId): void
     {
@@ -423,10 +425,13 @@ class Goalcanvas extends BaseService
         }
 
         $desired = [];
-        $milestoneId = (int) $milestoneIdValue;
-        if ($milestoneId > 0) {
-            $desired[] = $milestoneId;
+        foreach (is_array($milestoneIdValue) ? $milestoneIdValue : [$milestoneIdValue] as $value) {
+            $milestoneId = (int) $value;
+            if ($milestoneId > 0) {
+                $desired[] = $milestoneId;
+            }
         }
+        $desired = array_values(array_unique($desired));
 
         $current = $this->goalRepository->getMilestoneIdsForGoal($goalId);
 
