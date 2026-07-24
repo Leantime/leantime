@@ -213,6 +213,62 @@ class Goalcanvas extends BaseService
         return $goals;
     }
 
+    /**
+     * The milestone chips for a goal — each linked milestone with name, color,
+     * due date, and progress. Authorized for VIEW against the goal's project.
+     *
+     * @return array<int, array{id: int, headline: string, color: string, editTo: mixed, percentDone: int}>
+     *
+     * @api
+     */
+    public function getGoalMilestones(int $goalId): array
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return [];
+        }
+
+        return $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? [];
+    }
+
+    /**
+     * Link one milestone to a goal (append — leaves existing links intact).
+     * Authorized for EDIT against the goal's project.
+     *
+     * @throws AuthorizationException When the goal is unknown/foreign or EDIT is denied.
+     *
+     * @api
+     */
+    public function addMilestoneToGoal(int $goalId, int $milestoneId): bool
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        return $this->goalRepository->addGoalMilestoneLink($goalId, $milestoneId, (int) session('userdata.id'));
+    }
+
+    /**
+     * Unlink one milestone from a goal (leaves the goal's other links intact).
+     * Authorized for EDIT against the goal's project.
+     *
+     * @throws AuthorizationException When the goal is unknown/foreign or EDIT is denied.
+     *
+     * @api
+     */
+    public function removeMilestoneFromGoal(int $goalId, int $milestoneId): bool
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        return $this->goalRepository->removeGoalMilestoneLink($goalId, $milestoneId);
+    }
+
     // ---------------------------------------------------------------------------------------
     // Secured by-id board/item CRUD chokepoint (controllers call these instead of the repo).
     // ---------------------------------------------------------------------------------------
