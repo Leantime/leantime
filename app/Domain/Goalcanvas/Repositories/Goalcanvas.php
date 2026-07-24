@@ -536,13 +536,14 @@ class Goalcanvas extends Blueprints
             $this->dbConnection->table('zp_tickets')
                 ->whereIn('id', $milestoneIds)
                 ->where('type', 'milestone')
-                ->select('id', 'headline', 'tags', 'editTo', 'status', 'projectId')
+                ->select('id', 'headline', 'tags', 'editFrom', 'editTo', 'status', 'projectId')
                 ->get() as $m
         ) {
             $details[(int) $m->id] = [
                 'id' => (int) $m->id,
                 'headline' => (string) $m->headline,
                 'color' => ($m->tags === null || $m->tags === '') ? 'var(--grey)' : (string) $m->tags,
+                'editFrom' => $m->editFrom,
                 'editTo' => $m->editTo,
                 'status' => (int) $m->status,
                 'projectId' => (int) $m->projectId,
@@ -578,6 +579,8 @@ class Goalcanvas extends Blueprints
                     'id' => $d['id'],
                     'headline' => $d['headline'],
                     'color' => $d['color'],
+                    'projectId' => $d['projectId'],
+                    'editFrom' => $d['editFrom'],
                     'editTo' => $d['editTo'],
                     'status' => $d['status'],
                     'statusType' => $statusTypeByProject[$d['projectId']][$d['status']] ?? 'NEW',
