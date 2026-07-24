@@ -514,11 +514,12 @@ class Goalcanvas extends Blueprints
         $milestoneIds = array_values(array_unique(array_merge(...array_values($goalToMilestones))));
 
         $details = [];
+        $projectIds = [];
         foreach (
             $this->dbConnection->table('zp_tickets')
                 ->whereIn('id', $milestoneIds)
                 ->where('type', 'milestone')
-                ->select('id', 'headline', 'tags', 'editTo')
+                ->select('id', 'headline', 'tags', 'editTo', 'status', 'projectId')
                 ->get() as $m
         ) {
             $details[(int) $m->id] = [
@@ -526,18 +527,61 @@ class Goalcanvas extends Blueprints
                 'headline' => (string) $m->headline,
                 'color' => ($m->tags === null || $m->tags === '') ? 'var(--grey)' : (string) $m->tags,
                 'editTo' => $m->editTo,
+                'status' => (int) $m->status,
+                'projectId' => (int) $m->projectId,
             ];
+            $projectIds[(int) $m->projectId] = true;
+        }
+
+        // Resolve each milestone's statusType (NEW/INPROGRESS/DONE) from its
+        // project's status labels — cached per project (usually just one).
+        $statusTypeByProject = [];
+        foreach (array_keys($projectIds) as $pid) {
+            $map = [];
+            foreach ($this->ticketRepository->getStateLabels($pid) as $sid => $label) {
+                $map[(int) $sid] = (string) ($label['statusType'] ?? 'NEW');
+            }
+            $statusTypeByProject[$pid] = $map;
         }
 
         $progress = $this->getMilestoneProgressForIds(array_keys($details));
 
+        // Chip order: in-progress -> not-started -> done, then due date asc.
+        $rank = ['INPROGRESS' => 0, 'NEW' => 1, 'DONE' => 2];
+
         $result = [];
         foreach ($goalToMilestones as $goalId => $mids) {
+            $chips = [];
             foreach ($mids as $mid) {
                 if (! isset($details[$mid])) {
                     continue;
                 }
-                $result[$goalId][] = $details[$mid] + ['percentDone' => $progress[$mid] ?? 0];
+                $d = $details[$mid];
+                $chips[] = [
+                    'id' => $d['id'],
+                    'headline' => $d['headline'],
+                    'color' => $d['color'],
+                    'editTo' => $d['editTo'],
+                    'status' => $d['status'],
+                    'statusType' => $statusTypeByProject[$d['projectId']][$d['status']] ?? 'NEW',
+                    'percentDone' => $progress[$mid] ?? 0,
+                ];
+            }
+
+            usort($chips, function ($a, $b) use ($rank) {
+                $ra = $rank[$a['statusType']] ?? 1;
+                $rb = $rank[$b['statusType']] ?? 1;
+                if ($ra !== $rb) {
+                    return $ra <=> $rb;
+                }
+                $da = ($a['editTo'] === null || $a['editTo'] === '') ? '9999-12-31' : (string) $a['editTo'];
+                $db = ($b['editTo'] === null || $b['editTo'] === '') ? '9999-12-31' : (string) $b['editTo'];
+
+                return strcmp($da, $db);
+            });
+
+            if ($chips !== []) {
+                $result[$goalId] = $chips;
             }
         }
 

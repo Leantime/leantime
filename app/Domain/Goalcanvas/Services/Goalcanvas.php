@@ -214,21 +214,39 @@ class Goalcanvas extends BaseService
     }
 
     /**
-     * The milestone chips for a goal — each linked milestone with name, color,
-     * due date, and progress. Authorized for VIEW against the goal's project.
+     * The milestone chips for a goal + a status summary, authorized for VIEW
+     * against the goal's project. Chips arrive already sorted (in-progress →
+     * not-started → done, then due date). The summary drives the one-line
+     * roll-up above the chips.
      *
-     * @return array<int, array{id: int, headline: string, color: string, editTo: mixed, percentDone: int}>
+     * @return array{milestones: array<int, array<string, mixed>>, summary: array{total: int, done: int, inProgress: int, notStarted: int}}
      *
      * @api
      */
     public function getGoalMilestones(int $goalId): array
     {
+        $empty = ['total' => 0, 'done' => 0, 'inProgress' => 0, 'notStarted' => 0];
+
         $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
         if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
-            return [];
+            return ['milestones' => [], 'summary' => $empty];
         }
 
-        return $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? [];
+        $milestones = $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? [];
+
+        $summary = ['total' => count($milestones)] + $empty;
+        foreach ($milestones as $m) {
+            $type = $m['statusType'] ?? 'NEW';
+            if ($type === 'DONE') {
+                $summary['done']++;
+            } elseif ($type === 'INPROGRESS') {
+                $summary['inProgress']++;
+            } else {
+                $summary['notStarted']++;
+            }
+        }
+
+        return ['milestones' => $milestones, 'summary' => $summary];
     }
 
     /**
