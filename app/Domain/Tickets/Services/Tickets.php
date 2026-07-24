@@ -3733,6 +3733,9 @@ class Tickets extends BaseService
         $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
         $this->ticketRepository->delMilestone($id);
+        // Drop this milestone's tracked_by links from any goals. (Refine: move
+        // to a MilestoneDeleted listener per the event-driven pattern.)
+        $this->goalcanvasService->detachMilestoneFromGoals((int) $id);
         MilestoneDeleted::dispatch(milestoneId: (int) $id, legacyHook: __FUNCTION__);
 
         return true;

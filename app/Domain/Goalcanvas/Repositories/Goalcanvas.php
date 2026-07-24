@@ -80,6 +80,12 @@ class Goalcanvas extends Blueprints
     protected LanguageCore $canvasLanguage;
 
     /**
+     * Ticket repository — the base keeps its own private copy, so we retain
+     * one here for goal-milestone progress reads.
+     */
+    protected Tickets $ticketRepository;
+
+    /**
      * @param  DbCore  $db  Database connection
      * @param  LanguageCore  $language  Language service
      * @param  Tickets  $ticketRepo  Ticket repository
@@ -90,6 +96,7 @@ class Goalcanvas extends Blueprints
         parent::__construct($db, $ticketRepo, $dbHelper);
         $this->dbConnection = $db->getConnection();
         $this->canvasLanguage = $language;
+        $this->ticketRepository = $ticketRepo;
     }
 
     /**
@@ -428,6 +435,23 @@ class Goalcanvas extends Blueprints
     }
 
     /**
+     * Remove every goal link pointing at a milestone — the milestone-deletion
+     * cascade. Mirror of removeAllGoalMilestoneLinks, keyed on the milestone
+     * (entityB) side.
+     *
+     * @api
+     */
+    public function removeMilestoneFromAllGoals(int $milestoneId): bool
+    {
+        return $this->dbConnection->table('zp_entity_relationship')
+            ->where('entityAType', 'GoalItem')
+            ->where('entityB', $milestoneId)
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->delete() > 0;
+    }
+
+    /**
      * Milestone ids this goal is tracked by.
      *
      * @return array<int, int>
@@ -468,6 +492,162 @@ class Goalcanvas extends Blueprints
             ->unique()
             ->values()
             ->all();
+    }
+
+    /**
+     * The milestone chips for a set of goals — each goal's tracked_by
+     * milestones with name, color, due date, and progress fill. Three queries
+     * total (edges, milestone details, progress), no N+1. Edges pointing at a
+     * deleted or non-milestone ticket are dropped.
+     *
+     * @param  array<int, int>  $goalIds
+     * @return array<int, array<int, array{id: int, headline: string, color: string, editTo: mixed, percentDone: int}>>
+     *
+     * @api
+     */
+    public function getMilestonesForGoals(array $goalIds): array
+    {
+        $goalIds = array_values(array_unique(array_filter(array_map('intval', $goalIds))));
+        if ($goalIds === []) {
+            return [];
+        }
+
+        $edges = $this->dbConnection->table('zp_entity_relationship')
+            ->whereIn('entityA', $goalIds)
+            ->where('entityAType', 'GoalItem')
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->select('entityA', 'entityB')
+            ->get();
+
+        if ($edges->isEmpty()) {
+            return [];
+        }
+
+        $goalToMilestones = [];
+        foreach ($edges as $e) {
+            $goalToMilestones[(int) $e->entityA][] = (int) $e->entityB;
+        }
+        $milestoneIds = array_values(array_unique(array_merge(...array_values($goalToMilestones))));
+
+        $details = [];
+        $projectIds = [];
+        foreach (
+            $this->dbConnection->table('zp_tickets')
+                ->whereIn('id', $milestoneIds)
+                ->where('type', 'milestone')
+                ->select('id', 'headline', 'tags', 'editTo', 'status', 'projectId')
+                ->get() as $m
+        ) {
+            $details[(int) $m->id] = [
+                'id' => (int) $m->id,
+                'headline' => (string) $m->headline,
+                'color' => ($m->tags === null || $m->tags === '') ? 'var(--grey)' : (string) $m->tags,
+                'editTo' => $m->editTo,
+                'status' => (int) $m->status,
+                'projectId' => (int) $m->projectId,
+            ];
+            $projectIds[(int) $m->projectId] = true;
+        }
+
+        // Resolve each milestone's statusType (NEW/INPROGRESS/DONE) from its
+        // project's status labels — cached per project (usually just one).
+        $statusTypeByProject = [];
+        foreach (array_keys($projectIds) as $pid) {
+            $map = [];
+            foreach ($this->ticketRepository->getStateLabels($pid) as $sid => $label) {
+                $map[(int) $sid] = (string) ($label['statusType'] ?? 'NEW');
+            }
+            $statusTypeByProject[$pid] = $map;
+        }
+
+        $progress = $this->getMilestoneProgressForIds(array_keys($details));
+
+        // Chip order: in-progress -> not-started -> done, then due date asc.
+        $rank = ['INPROGRESS' => 0, 'NEW' => 1, 'DONE' => 2];
+
+        $result = [];
+        foreach ($goalToMilestones as $goalId => $mids) {
+            $chips = [];
+            foreach ($mids as $mid) {
+                if (! isset($details[$mid])) {
+                    continue;
+                }
+                $d = $details[$mid];
+                $chips[] = [
+                    'id' => $d['id'],
+                    'headline' => $d['headline'],
+                    'color' => $d['color'],
+                    'editTo' => $d['editTo'],
+                    'status' => $d['status'],
+                    'statusType' => $statusTypeByProject[$d['projectId']][$d['status']] ?? 'NEW',
+                    'percentDone' => $progress[$mid] ?? 0,
+                ];
+            }
+
+            usort($chips, function ($a, $b) use ($rank) {
+                $ra = $rank[$a['statusType']] ?? 1;
+                $rb = $rank[$b['statusType']] ?? 1;
+                if ($ra !== $rb) {
+                    return $ra <=> $rb;
+                }
+                $da = ($a['editTo'] === null || $a['editTo'] === '') ? '9999-12-31' : (string) $a['editTo'];
+                $db = ($b['editTo'] === null || $b['editTo'] === '') ? '9999-12-31' : (string) $b['editTo'];
+
+                return strcmp($da, $db);
+            });
+
+            if ($chips !== []) {
+                $result[$goalId] = $chips;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Per-milestone progress — the same storypoint-weighted "done" ratio the
+     * single-milestone goal card used, batched across many milestone ids
+     * (GROUP BY) so a goal shows N progress fills without N queries. Milestones
+     * with no child tickets resolve to 0.
+     *
+     * @param  array<int, int>  $milestoneIds
+     * @return array<int, int> milestoneId => percent (0-100)
+     */
+    public function getMilestoneProgressForIds(array $milestoneIds): array
+    {
+        $milestoneIds = array_values(array_unique(array_filter(array_map('intval', $milestoneIds))));
+        if ($milestoneIds === []) {
+            return [];
+        }
+
+        $statusGroups = $this->ticketRepository->getStatusListGroupedByType(session('currentProject'));
+        $sp = $this->dbHelper->wrapColumn('storypoints');
+        $st = $this->dbHelper->wrapColumn('status');
+        $id = $this->dbHelper->wrapColumn('id');
+
+        $rows = $this->dbConnection->table('zp_tickets')
+            ->select('milestoneid')
+            ->selectRaw('ROUND(
+                CASE WHEN COUNT('.$id.') > 0 THEN (
+                    SUM(CASE WHEN '.$st.' '.$statusGroups['DONE'].' THEN CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END ELSE 0 END) /
+                    SUM(CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END)
+                ) * 100 ELSE 0 END
+            ) AS '.$this->dbHelper->wrapColumn('percentDone'))
+            ->whereIn('milestoneid', $milestoneIds)
+            ->where('type', '<>', 'milestone')
+            ->groupBy('milestoneid')
+            ->get();
+
+        $progress = [];
+        foreach ($rows as $r) {
+            $progress[(int) $r->milestoneid] = (int) $r->percentDone;
+        }
+        foreach ($milestoneIds as $mid) {
+            $progress[$mid] ??= 0;
+        }
+
+        return $progress;
     }
 
     /**

@@ -57,7 +57,13 @@ class Goalcanvas extends BaseService
         $goals = $this->goalRepository->getCanvasItemsById($id);
 
         if ($goals) {
+            // Attach each goal's tracked_by milestone chips (one batched read),
+            // so the board/dashboard render the edge model, not the legacy column.
+            $milestonesByGoal = $this->goalRepository->getMilestonesForGoals(
+                array_map(static fn ($g) => (int) $g['id'], $goals)
+            );
             foreach ($goals as &$goal) {
+                $goal['milestones'] = $milestonesByGoal[(int) $goal['id']] ?? [];
                 $progressValue = 0;
                 $goal['goalProgress'] = 0;
                 $total = $goal['endValue'] - $goal['startValue'];
@@ -211,6 +217,92 @@ class Goalcanvas extends BaseService
         $goals = $this->goalRepository->getGoalsByMilestone($milestoneId);
 
         return $goals;
+    }
+
+    /**
+     * The milestone chips for a goal + a status summary, authorized for VIEW
+     * against the goal's project. Chips arrive already sorted (in-progress →
+     * not-started → done, then due date). The summary drives the one-line
+     * roll-up above the chips.
+     *
+     * @return array{milestones: array<int, array<string, mixed>>, summary: array{total: int, done: int, inProgress: int, notStarted: int}}
+     *
+     * @api
+     */
+    public function getGoalMilestones(int $goalId): array
+    {
+        $empty = ['total' => 0, 'done' => 0, 'inProgress' => 0, 'notStarted' => 0];
+
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return ['milestones' => [], 'summary' => $empty];
+        }
+
+        $milestones = $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? [];
+
+        $summary = ['total' => count($milestones)] + $empty;
+        foreach ($milestones as $m) {
+            $type = $m['statusType'] ?? 'NEW';
+            if ($type === 'DONE') {
+                $summary['done']++;
+            } elseif ($type === 'INPROGRESS') {
+                $summary['inProgress']++;
+            } else {
+                $summary['notStarted']++;
+            }
+        }
+
+        return ['milestones' => $milestones, 'summary' => $summary];
+    }
+
+    /**
+     * Link one milestone to a goal (append — leaves existing links intact).
+     * Authorized for EDIT against the goal's project.
+     *
+     * @throws AuthorizationException When the goal is unknown/foreign or EDIT is denied.
+     *
+     * @api
+     */
+    public function addMilestoneToGoal(int $goalId, int $milestoneId): bool
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        return $this->goalRepository->addGoalMilestoneLink($goalId, $milestoneId, (int) session('userdata.id'));
+    }
+
+    /**
+     * Unlink one milestone from a goal (leaves the goal's other links intact).
+     * Authorized for EDIT against the goal's project.
+     *
+     * @throws AuthorizationException When the goal is unknown/foreign or EDIT is denied.
+     *
+     * @api
+     */
+    public function removeMilestoneFromGoal(int $goalId, int $milestoneId): bool
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        return $this->goalRepository->removeGoalMilestoneLink($goalId, $milestoneId);
+    }
+
+    /**
+     * Cascade: drop every goal's link to a milestone that is being deleted.
+     * Called from the (already-authorized) milestone-delete path, so it is a
+     * passthrough with no additional gate.
+     *
+     * @api
+     */
+    public function detachMilestoneFromGoals(int $milestoneId): bool
+    {
+        return $this->goalRepository->removeMilestoneFromAllGoals($milestoneId);
     }
 
     // ---------------------------------------------------------------------------------------
@@ -411,10 +503,12 @@ class Goalcanvas extends BaseService
     }
 
     /**
-     * Reconcile a goal's tracked_by milestone edges with a single milestoneId
-     * write (the transitional single-select semantics — replace the goal's
-     * links with the one value; an empty value clears them). Set-based so an
-     * unchanged save doesn't churn edges. PR 3 widens this to accept an array.
+     * Reconcile a goal's tracked_by milestone edges against the desired set.
+     * Accepts a single milestone id (scalar — the transitional single-select
+     * write) OR an array (multi-select). Set-based, so an unchanged save
+     * doesn't churn edges and an empty value/array clears all links.
+     *
+     * @param  mixed  $milestoneIdValue  int|string|array<int|string> milestone id(s), or '' to clear
      */
     private function syncGoalMilestoneEdges(int $goalId, mixed $milestoneIdValue, int $userId): void
     {
@@ -423,10 +517,13 @@ class Goalcanvas extends BaseService
         }
 
         $desired = [];
-        $milestoneId = (int) $milestoneIdValue;
-        if ($milestoneId > 0) {
-            $desired[] = $milestoneId;
+        foreach (is_array($milestoneIdValue) ? $milestoneIdValue : [$milestoneIdValue] as $value) {
+            $milestoneId = (int) $value;
+            if ($milestoneId > 0) {
+                $desired[] = $milestoneId;
+            }
         }
+        $desired = array_values(array_unique($desired));
 
         $current = $this->goalRepository->getMilestoneIdsForGoal($goalId);
 
