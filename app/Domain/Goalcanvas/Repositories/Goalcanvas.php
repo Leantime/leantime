@@ -80,6 +80,12 @@ class Goalcanvas extends Blueprints
     protected LanguageCore $canvasLanguage;
 
     /**
+     * Ticket repository — the base keeps its own private copy, so we retain
+     * one here for goal-milestone progress reads.
+     */
+    protected Tickets $ticketRepository;
+
+    /**
      * @param  DbCore  $db  Database connection
      * @param  LanguageCore  $language  Language service
      * @param  Tickets  $ticketRepo  Ticket repository
@@ -90,6 +96,7 @@ class Goalcanvas extends Blueprints
         parent::__construct($db, $ticketRepo, $dbHelper);
         $this->dbConnection = $db->getConnection();
         $this->canvasLanguage = $language;
+        $this->ticketRepository = $ticketRepo;
     }
 
     /**
@@ -468,6 +475,118 @@ class Goalcanvas extends Blueprints
             ->unique()
             ->values()
             ->all();
+    }
+
+    /**
+     * The milestone chips for a set of goals — each goal's tracked_by
+     * milestones with name, color, due date, and progress fill. Three queries
+     * total (edges, milestone details, progress), no N+1. Edges pointing at a
+     * deleted or non-milestone ticket are dropped.
+     *
+     * @param  array<int, int>  $goalIds
+     * @return array<int, array<int, array{id: int, headline: string, color: string, editTo: mixed, percentDone: int}>>
+     *
+     * @api
+     */
+    public function getMilestonesForGoals(array $goalIds): array
+    {
+        $goalIds = array_values(array_unique(array_filter(array_map('intval', $goalIds))));
+        if ($goalIds === []) {
+            return [];
+        }
+
+        $edges = $this->dbConnection->table('zp_entity_relationship')
+            ->whereIn('entityA', $goalIds)
+            ->where('entityAType', 'GoalItem')
+            ->where('entityBType', 'Ticket')
+            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+            ->select('entityA', 'entityB')
+            ->get();
+
+        if ($edges->isEmpty()) {
+            return [];
+        }
+
+        $goalToMilestones = [];
+        foreach ($edges as $e) {
+            $goalToMilestones[(int) $e->entityA][] = (int) $e->entityB;
+        }
+        $milestoneIds = array_values(array_unique(array_merge(...array_values($goalToMilestones))));
+
+        $details = [];
+        foreach (
+            $this->dbConnection->table('zp_tickets')
+                ->whereIn('id', $milestoneIds)
+                ->where('type', 'milestone')
+                ->select('id', 'headline', 'tags', 'editTo')
+                ->get() as $m
+        ) {
+            $details[(int) $m->id] = [
+                'id' => (int) $m->id,
+                'headline' => (string) $m->headline,
+                'color' => ($m->tags === null || $m->tags === '') ? 'var(--grey)' : (string) $m->tags,
+                'editTo' => $m->editTo,
+            ];
+        }
+
+        $progress = $this->getMilestoneProgressForIds(array_keys($details));
+
+        $result = [];
+        foreach ($goalToMilestones as $goalId => $mids) {
+            foreach ($mids as $mid) {
+                if (! isset($details[$mid])) {
+                    continue;
+                }
+                $result[$goalId][] = $details[$mid] + ['percentDone' => $progress[$mid] ?? 0];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Per-milestone progress — the same storypoint-weighted "done" ratio the
+     * single-milestone goal card used, batched across many milestone ids
+     * (GROUP BY) so a goal shows N progress fills without N queries. Milestones
+     * with no child tickets resolve to 0.
+     *
+     * @param  array<int, int>  $milestoneIds
+     * @return array<int, int> milestoneId => percent (0-100)
+     */
+    public function getMilestoneProgressForIds(array $milestoneIds): array
+    {
+        $milestoneIds = array_values(array_unique(array_filter(array_map('intval', $milestoneIds))));
+        if ($milestoneIds === []) {
+            return [];
+        }
+
+        $statusGroups = $this->ticketRepository->getStatusListGroupedByType(session('currentProject'));
+        $sp = $this->dbHelper->wrapColumn('storypoints');
+        $st = $this->dbHelper->wrapColumn('status');
+        $id = $this->dbHelper->wrapColumn('id');
+
+        $rows = $this->dbConnection->table('zp_tickets')
+            ->select('milestoneid')
+            ->selectRaw('ROUND(
+                CASE WHEN COUNT('.$id.') > 0 THEN (
+                    SUM(CASE WHEN '.$st.' '.$statusGroups['DONE'].' THEN CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END ELSE 0 END) /
+                    SUM(CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END)
+                ) * 100 ELSE 0 END
+            ) AS '.$this->dbHelper->wrapColumn('percentDone'))
+            ->whereIn('milestoneid', $milestoneIds)
+            ->where('type', '<>', 'milestone')
+            ->groupBy('milestoneid')
+            ->get();
+
+        $progress = [];
+        foreach ($rows as $r) {
+            $progress[(int) $r->milestoneid] = (int) $r->percentDone;
+        }
+        foreach ($milestoneIds as $mid) {
+            $progress[$mid] ??= 0;
+        }
+
+        return $progress;
     }
 
     /**
