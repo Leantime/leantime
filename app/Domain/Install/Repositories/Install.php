@@ -7,6 +7,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -96,6 +97,7 @@ class Install
         30521,
         30522,
         30523,
+        30524,
     ];
 
     /**
@@ -2998,88 +3000,95 @@ class Install
     public function update_sql_30524(): bool|array
     {
         try {
-            if (! Schema::hasTable('zp_canvas_items') || ! Schema::hasTable('zp_entity_relationship')) {
+            if (! Schema::hasTable('zp_canvas_items')
+                || ! Schema::hasTable('zp_entity_relationship')
+                || ! Schema::hasTable('zp_tickets')) {
                 return true;
             }
 
-            $goals = \Illuminate\Support\Facades\DB::table('zp_canvas_items')
+            $now = date('Y-m-d H:i:s');
+
+            // Chunk the goal rows so a very large zp_canvas_items never loads
+            // into memory at once. Each chunk resolves its own live-milestone
+            // and existing-edge sets, scoped to the chunk's ids (no full-table
+            // scan), then batch-inserts.
+            DB::table('zp_canvas_items')
                 ->where('box', 'goal')
                 ->whereNotNull('milestoneId')
                 ->where('milestoneId', '<>', '')
                 ->where('milestoneId', '<>', '0')
-                ->select('id', 'milestoneId', 'author')
-                ->get();
+                ->orderBy('id')
+                ->chunkById(500, function ($goals) use ($now): void {
+                    // Numeric-only (goal, milestone) pairs. milestoneId is a
+                    // varchar, so trim before the digit check.
+                    $pairs = [];
+                    $milestoneIds = [];
+                    foreach ($goals as $g) {
+                        $raw = trim((string) $g->milestoneId);
+                        if (! ctype_digit($raw)) {
+                            continue;
+                        }
+                        $mid = (int) $raw;
+                        if ($mid <= 0) {
+                            continue;
+                        }
+                        $pairs[] = ['goalId' => (int) $g->id, 'milestoneId' => $mid, 'author' => $g->author];
+                        $milestoneIds[$mid] = true;
+                    }
 
-            if ($goals->isEmpty()) {
-                return true;
-            }
+                    if ($pairs === []) {
+                        return;
+                    }
 
-            // Numeric-only candidate (goal, milestone) pairs.
-            $pairs = [];
-            $milestoneIds = [];
-            foreach ($goals as $g) {
-                $raw = (string) $g->milestoneId;
-                if (! ctype_digit($raw)) {
-                    continue;
-                }
-                $mid = (int) $raw;
-                if ($mid <= 0) {
-                    continue;
-                }
-                $pairs[] = ['goalId' => (int) $g->id, 'milestoneId' => $mid, 'author' => (int) ($g->author ?? 0)];
-                $milestoneIds[$mid] = true;
-            }
+                    $goalIds = array_values(array_unique(array_map(static fn ($p) => $p['goalId'], $pairs)));
 
-            if ($pairs === []) {
-                return true;
-            }
+                    // Drop edges to deleted milestones + dedup existing edges,
+                    // both scoped to this chunk's ids — O(1) lookups, no N+1.
+                    $liveTickets = array_flip(array_map(
+                        'intval',
+                        DB::table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->pluck('id')->all()
+                    ));
 
-            // Pre-fetch existing milestones (drop edges to deleted tickets)
-            // and existing tracked_by edges (dedup) — O(1) lookups, no N+1.
-            $liveTickets = array_flip(array_map(
-                'intval',
-                \Illuminate\Support\Facades\DB::table('zp_tickets')
-                    ->whereIn('id', array_keys($milestoneIds))
-                    ->pluck('id')
-                    ->all()
-            ));
+                    $existingEdges = [];
+                    foreach (
+                        DB::table('zp_entity_relationship')
+                            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+                            ->where('entityAType', 'GoalItem')
+                            ->where('entityBType', 'Ticket')
+                            ->whereIn('entityA', $goalIds)
+                            ->select('entityA', 'entityB')
+                            ->get() as $e
+                    ) {
+                        $existingEdges[(int) $e->entityA.':'.(int) $e->entityB] = true;
+                    }
 
-            $existingEdges = [];
-            foreach (
-                \Illuminate\Support\Facades\DB::table('zp_entity_relationship')
-                    ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
-                    ->where('entityAType', 'GoalItem')
-                    ->where('entityBType', 'Ticket')
-                    ->select('entityA', 'entityB')
-                    ->get() as $e
-            ) {
-                $existingEdges[(int) $e->entityA.':'.(int) $e->entityB] = true;
-            }
+                    $rows = [];
+                    foreach ($pairs as $p) {
+                        if (! isset($liveTickets[$p['milestoneId']])) {
+                            continue;
+                        }
+                        if (isset($existingEdges[$p['goalId'].':'.$p['milestoneId']])) {
+                            continue;
+                        }
+                        // Unknown author stays NULL ("unknown"), not 0 — 0 would
+                        // read as a real user id in downstream joins/filters.
+                        $author = (int) ($p['author'] ?? 0);
+                        $rows[] = [
+                            'entityA' => $p['goalId'],
+                            'entityAType' => 'GoalItem',
+                            'entityB' => $p['milestoneId'],
+                            'entityBType' => 'Ticket',
+                            'relationship' => EntityRelationshipEnum::TrackedBy->value,
+                            'createdOn' => $now,
+                            'createdBy' => $author > 0 ? $author : null,
+                            'meta' => json_encode(['source' => 'milestoneId_migration']),
+                        ];
+                    }
 
-            $now = date('Y-m-d H:i:s');
-            $rows = [];
-            foreach ($pairs as $p) {
-                if (! isset($liveTickets[$p['milestoneId']])) {
-                    continue;
-                }
-                if (isset($existingEdges[$p['goalId'].':'.$p['milestoneId']])) {
-                    continue;
-                }
-                $rows[] = [
-                    'entityA' => $p['goalId'],
-                    'entityAType' => 'GoalItem',
-                    'entityB' => $p['milestoneId'],
-                    'entityBType' => 'Ticket',
-                    'relationship' => EntityRelationshipEnum::TrackedBy->value,
-                    'createdOn' => $now,
-                    'createdBy' => $p['author'],
-                    'meta' => json_encode(['source' => 'milestoneId_migration']),
-                ];
-            }
-
-            foreach (array_chunk($rows, 200) as $chunk) {
-                \Illuminate\Support\Facades\DB::table('zp_entity_relationship')->insert($chunk);
-            }
+                    foreach (array_chunk($rows, 200) as $insertChunk) {
+                        DB::table('zp_entity_relationship')->insert($insertChunk);
+                    }
+                });
         } catch (\Exception $e) {
             Log::error('Migration 30524: '.$e->getMessage());
 
