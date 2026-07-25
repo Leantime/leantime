@@ -30,13 +30,6 @@
 @php
     use Leantime\Domain\Reports\Models\ReportPeriod;
 
-    $verdictDotColor = match ($verdict) {
-        'ontrack'    => '#3E937A',
-        'inprogress' => '#3F72B0',
-        'atrisk'     => '#C09035',
-        'off'        => '#C2295B',
-        default      => '#9CA3AF',
-    };
     $completedCount = (int) ($stats['completed'] ?? 0);
     $overdueCount   = (int) ($stats['overdue'] ?? 0);
     $goalsOnTrack   = (int) ($stats['goalsOnTrack'] ?? 0);
@@ -88,7 +81,10 @@
     --rd-text-4:#aab4bb;
     --rd-line:#e3e8ea;
     --rd-line-soft:#eef1f3;
-    --rd-bg:#fff;
+    /* Subtle off-white for inset fills (KPI cells, picker/drill hover, empty
+       states) so they stay distinguishable from the white --rd-panel card;
+       a flat #fff here made those affordances invisible on the panel. */
+    --rd-bg:#f4f7f8;
     --rd-panel:#fff;
     --rd-ok:#3E937A;
     --rd-warn:#C09035;
@@ -141,8 +137,6 @@
 .rd-picker-cdash{color:var(--rd-text-3);font-size:11px;flex:none;}
 .rd-picker-capply{font:inherit;font-size:11px;font-weight:500;color:#fff;background:var(--rd-accent);border:none;border-radius:5px;padding:5px 9px;height:26px;cursor:pointer;flex:none;}
 
-/* Tab bar — sits ON the page background (matches the To-Dos Kanban·Table·List
-   pattern). Not on a panel. */
 /* Nav bar: horizontal tabs on their own accent-gradient strip above the white
    content card — reads as navigation, not a button group. Conditional dark
    scrim (--nav-scrim, set per-theme in the header for light accents that fail
@@ -288,10 +282,10 @@
 
 <div class="rd-scope">
 
-    {{-- ── Persistent header ────────────────────────────────────────── --}}
     {{-- Header card removed: the subject switcher, meta sub-line, status verdict
-         and actions all now live in the shared pageheader (see report.blade.php),
-         so this second card was redundant. The deck starts straight at the tabs. --}}
+         and actions now live in the shared pageheader that the report page
+         renders above this partial, so this second card was redundant. The
+         deck starts straight at the tabs. --}}
 
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
          space; picker sits with the view-mode controls it belongs with) ── --}}
@@ -358,7 +352,8 @@
     {{-- ── Deck ─────────────────────────────────────────────────────── --}}
     {{-- The white content card wraps ONLY the deck; the tab bar above sits on
          the app gradient (nav lives on the gradient, content lives in the card).
-         The plugin's report.blade.php no longer adds an outer .maincontentinner. --}}
+         The report page that renders this partial no longer adds an outer
+         .maincontentinner. --}}
     <div class="maincontentinner">
     <div class="rd-deck">
         <div class="rd-deck-viewport">
