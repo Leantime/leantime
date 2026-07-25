@@ -575,35 +575,57 @@ class BlueprintsServiceTest extends TestCase
 
     public function test_import_rejects_dot_dot_path_traversal(): void
     {
-        // Construct a path that starts inside the temp directory but
-        // traverses out and back into /etc/passwd.
+        // Create a real .xml file outside the allow-list (in storage/),
+        // then reach it via a path that starts in sys_get_temp_dir() and
+        // traverses up to the filesystem root with ../ before descending
+        // into the project. realpath() must resolve the ../ segments and
+        // the allow-list must reject the canonicalized path — this proves
+        // both canonicalization AND allow-list work, not just extension
+        // validation.
         $service = $this->securedService(
             $this->make(BlueprintsRepository::class),
             $this->allowingPermissions()
         );
 
-        $traversal = sys_get_temp_dir().'/../../../etc/passwd';
+        $outOfBounds = base_path('storage/traversal_target_'.uniqid('', true).'.xml');
+        file_put_contents($outOfBounds, '<canvas key="leancanvas"><title>Traversal Test</title></canvas>');
 
-        $this->assertFalse(
-            $service->import($traversal, 'lean', 55, 1),
-            'Path traversal (../) must be rejected'
-        );
+        // Walk from temp dir up to root (depth + 1 levels), then down
+        // into the project storage directory.
+        $upLevels = substr_count(sys_get_temp_dir(), DIRECTORY_SEPARATOR) + 1;
+        $fromRoot = ltrim($outOfBounds, DIRECTORY_SEPARATOR);
+        $traversal = sys_get_temp_dir().DIRECTORY_SEPARATOR
+            .str_repeat('..'.DIRECTORY_SEPARATOR, $upLevels + 1)
+            .$fromRoot;
+
+        try {
+            $this->assertFalse(
+                $service->import($traversal, 'lean', 55, 1),
+                'Path traversal (../) to a valid .xml outside allowed dirs must be rejected'
+            );
+        } finally {
+            if (file_exists($outOfBounds)) {
+                unlink($outOfBounds);
+            }
+        }
     }
 
     public function test_import_rejects_sibling_prefix_bypass(): void
     {
-        // str_starts_with without separator anchoring would allow
-        // /tmp-evil/blueprint.xml to match against allowed /tmp.
-        // The fix appends DIRECTORY_SEPARATOR to each allowed dir.
+        // str_starts_with without DIRECTORY_SEPARATOR anchoring would
+        // allow imports-evil/x to match against allowed …/imports.
+        // Create a sibling of the Blueprints imports directory (under
+        // the project root, guaranteed writable) to test the anchor.
         $service = $this->securedService(
             $this->make(BlueprintsRepository::class),
             $this->allowingPermissions()
         );
 
-        // Create a directory whose name is a prefix of the real temp dir.
-        // Use a unique suffix to avoid collisions with leftover dirs from
-        // crashed runs or concurrent test processes.
-        $siblingDir = sys_get_temp_dir().'-evil-'.uniqid('', true);
+        $allowedDir = APP_ROOT.'/app/Domain/Blueprints/imports';
+        if (! is_dir($allowedDir)) {
+            mkdir($allowedDir, 0700, true);
+        }
+        $siblingDir = APP_ROOT.'/app/Domain/Blueprints/imports-sibling-'.uniqid('', true);
         if (! is_dir($siblingDir)) {
             mkdir($siblingDir, 0700, true);
         }

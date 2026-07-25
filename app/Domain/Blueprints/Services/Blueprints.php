@@ -398,12 +398,13 @@ class Blueprints extends BaseService
      * bypass that authorization — a caller with CREATE on any project could
      * ingest files they should not have access to.
      *
-     * .xml files landing in sys_get_temp_dir() are accepted by design: this is
-     * the normal UI upload flow (PHP stores uploaded files in the temp dir) and
-     * the allow-list is the gate. Any local process that can drop an .xml into
-     * the temp dir is already trusted — the temp dir is writable by the web
-     * server user by definition, so writing there does not represent an
-     * additional privilege escalation.
+     * .xml files in sys_get_temp_dir() are accepted by design: this is how PHP
+     * delivers uploaded files to the application (upload_tmp_dir / sys_temp_dir).
+     * On Unix systems the temp directory is typically world-writable with the
+     * sticky bit; the allow-list check is the gate, and we accept the residual
+     * risk that another local user could place a malicious .xml there — that
+     * attacker already has local code execution as the web server user, so
+     * crafting a temp file does not represent an additional escalation.
      *
      * @param  string  $resolvedPath  Already-resolved absolute path (from realpath)
      * @return bool True when the path is within an allowed directory
@@ -518,9 +519,14 @@ class Blueprints extends BaseService
             return false;
         }
 
+        // Defend against XXE-based SSRF: LIBXML_NONET disables network access
+        // during parsing. PHP 8.0+ disables external entity loading by default;
+        // this flag provides defense-in-depth for older or misconfigured builds.
+        $oldInternalErrors = libxml_use_internal_errors(true);
         $oldErrorReporting = error_reporting(error_reporting() & ~E_WARNING);
-        $status = $dom->loadXML($canvasData);
+        $status = $dom->loadXML($canvasData, LIBXML_NONET);
         error_reporting($oldErrorReporting);
+        libxml_use_internal_errors($oldInternalErrors);
         if ($status === false) {
             return false;
         }
