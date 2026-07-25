@@ -691,10 +691,12 @@ class BlueprintsServiceTest extends TestCase
         // The repository is stubbed so the import completes and returns a
         // known canvas id, proving that path validation did NOT block it.
         $expectedId = 42;
+        // addCanvas()/addCanvasItem() are declared `false|string` (insertGetId), so the
+        // stubs must return strings — import() casts the id to int on the way out.
         $repo = $this->make(BlueprintsRepository::class, [
             'existCanvas' => fn () => false,
-            'addCanvas' => fn () => $expectedId,
-            'addCanvasItem' => fn () => 1,
+            'addCanvas' => fn () => (string) $expectedId,
+            'addCanvasItem' => fn () => '1',
         ]);
         $service = $this->securedService($repo, $this->allowingPermissions());
 
@@ -705,6 +707,9 @@ class BlueprintsServiceTest extends TestCase
         ]);
         app()->instance(UserRepository::class, $usersStub);
 
+        // Mirrors what BlueprintsExport::buildXml() actually emits — in particular
+        // status/relates carry their value in a `key` attribute, which is what
+        // import() reads. Element text there is silently dropped.
         $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <canvas key="leancanvas">
@@ -712,17 +717,13 @@ class BlueprintsServiceTest extends TestCase
     <content>
         <element key="problem">
             <item>
-                <author firstname="A" lastname="B"/>
+                <author id="1" firstname="A" lastname="B"/>
                 <description>Test item</description>
-                <status>status_draft</status>
-                <relates>relates_none</relates>
+                <status key="status_draft" />
+                <relates key="relates_none" />
+                <assumptions>none</assumptions>
                 <data>none</data>
                 <conclusion>none</conclusion>
-                <assumptions>none</assumptions>
-                <priority>low</priority>
-                <progress>0</progress>
-                <duedate></duedate>
-                <tags></tags>
             </item>
         </element>
     </content>
