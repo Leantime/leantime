@@ -146,6 +146,10 @@
                     (function () {
                         var btns = document.querySelectorAll('.lm-suggest-why');
                         btns.forEach(function (btn) {
+                            // Guard against duplicate listeners when the dialog
+                            // (and this script) re-renders on repeated opens.
+                            if (btn.dataset.suggestBound) return;
+                            btn.dataset.suggestBound = '1';
                             btn.addEventListener('click', function () {
                                 var title = (btn.getAttribute('data-source-title') || '').trim();
                                 var body  = (btn.getAttribute('data-source-body')  || '').trim();

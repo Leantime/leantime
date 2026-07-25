@@ -160,9 +160,11 @@ class BackfillGoalHistoryCommand extends Command
         }
 
         $rejected = [];
-        $rows = array_values(array_filter($rows, static function ($row) use ($validItemIds, &$rejected): bool {
+        $rejectedRows = 0;
+        $rows = array_values(array_filter($rows, static function ($row) use ($validItemIds, &$rejected, &$rejectedRows): bool {
             if (! isset($validItemIds[(int) $row['itemId']])) {
                 $rejected[(int) $row['itemId']] = true;
+                $rejectedRows++;
 
                 return false;
             }
@@ -171,8 +173,12 @@ class BackfillGoalHistoryCommand extends Command
         }));
 
         if ($rejected !== []) {
+            // Count actual CSV rows skipped, not distinct itemIds — several rows
+            // can share one bad itemId, which $rejected (keyed by itemId to
+            // dedupe the listed ids) would otherwise collapse and under-report.
             $io->warning(sprintf(
-                '%d row(s) skipped — itemId not found or not a goal: %s',
+                '%d row(s) skipped across %d itemId(s) — itemId not found or not a goal: %s',
+                $rejectedRows,
                 count($rejected),
                 implode(', ', array_keys($rejected))
             ));
