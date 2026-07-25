@@ -17,11 +17,12 @@
     zero-visual-change swap.
 
     Props:
-      parent      string|null  Parent crumb label (e.g. "To-Dos"). May contain
-                               markup (rendered raw) since callers pass __().
+      parent      string|null  Parent crumb label (e.g. "To-Dos"). Escaped by
+                               default; pass an HtmlString/Htmlable if a caller
+                               genuinely needs markup.
       parentHref  string|null  Optional link for the parent crumb.
       current     string       The current subject name (escaped — user data safe).
-      separator   string       House-style divider. Default "//".
+      separator   string       House-style divider (escaped). Default "//".
       switchStyle 'legacy'|'pill'  Visual variant. 'legacy' = the established
                                underlined-caret look. 'pill' is reserved for the
                                modern treatment (styled in a follow-up); the prop
@@ -40,11 +41,11 @@
 <h1 @class(['subjectSwitcher', 'subjectSwitcher--pill' => $switchStyle === 'pill'])>
     @if (! empty($parent))
         @if (! empty($parentHref))
-            <a href="{{ $parentHref }}" class="subjectSwitcher-parent">{!! $parent !!}</a>
+            <a href="{{ $parentHref }}" class="subjectSwitcher-parent">{{ $parent }}</a>
         @else
-            {!! $parent !!}
+            <span class="subjectSwitcher-parent">{{ $parent }}</span>
         @endif
-        <span class="subjectSwitcher-sep" aria-hidden="true">{!! $separator !!}</span>
+        <span class="subjectSwitcher-sep" aria-hidden="true">{{ $separator }}</span>
     @endif
     <span class="dropdown dropdownWrapper">
         <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
