@@ -121,10 +121,10 @@
                         {{-- Status summary. TODO(refine): move the summary labels to language keys. --}}
                         @if (($milestoneSummary['total'] ?? 0) > 0)
                             <div style="font-size:12px;opacity:.75;margin-bottom:10px;">
-                                <strong>{{ $milestoneSummary['total'] }}</strong> milestones
-                                @if ($milestoneSummary['inProgress'] > 0)&middot; {{ $milestoneSummary['inProgress'] }} in progress @endif
-                                @if ($milestoneSummary['notStarted'] > 0)&middot; {{ $milestoneSummary['notStarted'] }} not started @endif
-                                @if ($milestoneSummary['done'] > 0)&middot; {{ $milestoneSummary['done'] }} done @endif
+                                <strong>{{ $milestoneSummary['total'] }}</strong> {{ __("goalcanvas.summary_milestones") }}
+                                @if ($milestoneSummary['inProgress'] > 0)&middot; {{ $milestoneSummary['inProgress'] }} {{ __("goalcanvas.summary_in_progress") }} @endif
+                                @if ($milestoneSummary['notStarted'] > 0)&middot; {{ $milestoneSummary['notStarted'] }} {{ __("goalcanvas.summary_not_started") }} @endif
+                                @if ($milestoneSummary['done'] > 0)&middot; {{ $milestoneSummary['done'] }} {{ __("goalcanvas.summary_done") }} @endif
                             </div>
                         @endif
 

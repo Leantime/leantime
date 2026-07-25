@@ -242,7 +242,7 @@ class Goalcanvas extends BaseService
 
         $summary = ['total' => count($milestones)] + $empty;
         foreach ($milestones as $m) {
-            $type = $m['statusType'] ?? 'NEW';
+            $type = $m['statusType'];
             if ($type === 'DONE') {
                 $summary['done']++;
             } elseif ($type === 'INPROGRESS') {
@@ -295,10 +295,9 @@ class Goalcanvas extends BaseService
 
     /**
      * Cascade: drop every goal's link to a milestone that is being deleted.
-     * Called from the (already-authorized) milestone-delete path, so it is a
-     * passthrough with no additional gate.
-     *
-     * @api
+     * Called from the (already-authorized) milestone-delete path. Intentionally
+     * NOT @api — it skips authorization by design, so it must never be reachable
+     * as an unauthenticated JSON-RPC method.
      */
     public function detachMilestoneFromGoals(int $milestoneId): bool
     {

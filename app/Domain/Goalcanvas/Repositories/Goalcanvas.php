@@ -501,7 +501,7 @@ class Goalcanvas extends Blueprints
      * deleted or non-milestone ticket are dropped.
      *
      * @param  array<int, int>  $goalIds
-     * @return array<int, array<int, array{id: int, headline: string, color: string, editTo: mixed, percentDone: int}>>
+     * @return array<int, array<int, array{id: int, headline: string, color: string, editTo: mixed, status: int, statusType: string, percentDone: int}>>
      *
      * @api
      */
@@ -621,28 +621,45 @@ class Goalcanvas extends Blueprints
             return [];
         }
 
-        $statusGroups = $this->ticketRepository->getStatusListGroupedByType(session('currentProject'));
+        // A milestone's child tickets live in the milestone's OWN project,
+        // whose status labels define "done" — so resolve the DONE set per
+        // project, not from session('currentProject') (which is absent or a
+        // different project for JSON-RPC / mobile / cross-project reads).
+        $projectByMilestone = $this->dbConnection->table('zp_tickets')
+            ->whereIn('id', $milestoneIds)
+            ->pluck('projectId', 'id');
+
+        $milestonesByProject = [];
+        foreach ($projectByMilestone as $mid => $pid) {
+            $milestonesByProject[(int) $pid][] = (int) $mid;
+        }
+
         $sp = $this->dbHelper->wrapColumn('storypoints');
         $st = $this->dbHelper->wrapColumn('status');
         $id = $this->dbHelper->wrapColumn('id');
 
-        $rows = $this->dbConnection->table('zp_tickets')
-            ->select('milestoneid')
-            ->selectRaw('ROUND(
-                CASE WHEN COUNT('.$id.') > 0 THEN (
-                    SUM(CASE WHEN '.$st.' '.$statusGroups['DONE'].' THEN CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END ELSE 0 END) /
-                    SUM(CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END)
-                ) * 100 ELSE 0 END
-            ) AS '.$this->dbHelper->wrapColumn('percentDone'))
-            ->whereIn('milestoneid', $milestoneIds)
-            ->where('type', '<>', 'milestone')
-            ->groupBy('milestoneid')
-            ->get();
-
         $progress = [];
-        foreach ($rows as $r) {
-            $progress[(int) $r->milestoneid] = (int) $r->percentDone;
+        foreach ($milestonesByProject as $projectId => $projectMilestoneIds) {
+            $statusGroups = $this->ticketRepository->getStatusListGroupedByType($projectId);
+
+            $rows = $this->dbConnection->table('zp_tickets')
+                ->select('milestoneid')
+                ->selectRaw('ROUND(
+                    CASE WHEN COUNT('.$id.') > 0 THEN (
+                        SUM(CASE WHEN '.$st.' '.$statusGroups['DONE'].' THEN CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END ELSE 0 END) /
+                        SUM(CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END)
+                    ) * 100 ELSE 0 END
+                ) AS '.$this->dbHelper->wrapColumn('percentDone'))
+                ->whereIn('milestoneid', $projectMilestoneIds)
+                ->where('type', '<>', 'milestone')
+                ->groupBy('milestoneid')
+                ->get();
+
+            foreach ($rows as $r) {
+                $progress[(int) $r->milestoneid] = (int) $r->percentDone;
+            }
         }
+
         foreach ($milestoneIds as $mid) {
             $progress[$mid] ??= 0;
         }
