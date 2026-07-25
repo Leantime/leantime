@@ -2543,13 +2543,22 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
     {
-        $userId = $userId ?? (int) session('userdata.id');
+        $sessionUser = (int) session('userdata.id');
+        $userId = $userId ?: $sessionUser;
+        // IDOR guard (mirrors getMyClosedTicketsForRange): reading another
+        // user's commented tickets requires admin — otherwise fall back to the
+        // requestor, so this @api method can't leak another user's activity.
+        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
         if ($userId === 0) {
             return [];
         }
-        // "Today" in the user's calendar, not the server's.
-        $from = $from ?: dtHelper()->userNow()->format('Y-m-d');
-        $to = $to ?: dtHelper()->userNow()->format('Y-m-d');
+        // "Today" in the user's calendar, not the server's — resolved once so a
+        // run across midnight can't disagree on the default bounds.
+        $today = dtHelper()->userNow()->format('Y-m-d');
+        $from = $from ?: $today;
+        $to = $to ?: $today;
         if ($from > $to) {
             [$from, $to] = [$to, $from];
         }

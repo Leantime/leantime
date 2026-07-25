@@ -306,10 +306,16 @@ class ReportEngine extends BaseService
 
         $now = CarbonImmutable::now('UTC');
 
+        // getProjectProgress returns localized, user-setting-dependent strings
+        // (translated messages/links + the user's date format), so the cache
+        // must be scoped by language + date format — otherwise one user's
+        // language/date format would surface to others for up to 10 minutes.
+        $localeKey = md5((string) session('usersettings.language').'|'.(string) session('usersettings.date_format'));
+
         foreach ($meta as $projectId => $project) {
             $project->descriptionExcerpt = $this->excerpt((string) ($project->details ?? ''));
             $project->progress = Cache::remember(
-                'reportengine.progress.'.$projectId,
+                'reportengine.progress.'.$projectId.'.'.$localeKey,
                 600,
                 fn () => $this->projectService->getProjectProgress($projectId)
             );
