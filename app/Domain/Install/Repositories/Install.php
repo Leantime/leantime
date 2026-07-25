@@ -3006,13 +3006,17 @@ class Install
                 return true;
             }
 
-            $now = date('Y-m-d H:i:s');
+            // UTC — DB datetimes are stored in UTC; date() would use the
+            // server timezone and write a skewed createdOn.
+            $now = gmdate('Y-m-d H:i:s');
 
             // Chunk the goal rows so a very large zp_canvas_items never loads
             // into memory at once. Each chunk resolves its own live-milestone
             // and existing-edge sets, scoped to the chunk's ids (no full-table
-            // scan), then batch-inserts.
-            DB::table('zp_canvas_items')
+            // scan), then batch-inserts. Uses the installer's selected
+            // $this->connection (not the global DB facade), which may point at
+            // a temp/target install connection.
+            $this->connection->table('zp_canvas_items')
                 ->where('box', 'goal')
                 ->whereNotNull('milestoneId')
                 ->where('milestoneId', '<>', '')
@@ -3046,12 +3050,12 @@ class Install
                     // both scoped to this chunk's ids — O(1) lookups, no N+1.
                     $liveTickets = array_flip(array_map(
                         'intval',
-                        DB::table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->pluck('id')->all()
+                        $this->connection->table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->pluck('id')->all()
                     ));
 
                     $existingEdges = [];
                     foreach (
-                        DB::table('zp_entity_relationship')
+                        $this->connection->table('zp_entity_relationship')
                             ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
                             ->where('entityAType', 'GoalItem')
                             ->where('entityBType', 'Ticket')
@@ -3086,11 +3090,12 @@ class Install
                     }
 
                     foreach (array_chunk($rows, 200) as $insertChunk) {
-                        DB::table('zp_entity_relationship')->insert($insertChunk);
+                        $this->connection->table('zp_entity_relationship')->insert($insertChunk);
                     }
                 });
         } catch (\Exception $e) {
-            Log::error('Migration 30524: '.$e->getMessage());
+            Log::error('Migration 30524 failed: '.$e->getMessage());
+            Log::error($e);
 
             return ['Migration 30524 failed: '.$e->getMessage()];
         }
