@@ -3006,7 +3006,8 @@ class Install
             $schema = $this->connection->getSchemaBuilder();
             if (! $schema->hasTable('zp_canvas_items')
                 || ! $schema->hasTable('zp_entity_relationship')
-                || ! $schema->hasTable('zp_tickets')) {
+                || ! $schema->hasTable('zp_tickets')
+                || ! $schema->hasColumn('zp_canvas_items', 'milestoneId')) {
                 return true;
             }
 
@@ -3025,6 +3026,9 @@ class Install
                 ->whereNotNull('milestoneId')
                 ->where('milestoneId', '<>', '')
                 ->where('milestoneId', '<>', '0')
+                // Only the columns this migration reads — never the heavy
+                // description/data text columns. id is required for chunkById.
+                ->select('id', 'milestoneId', 'author')
                 ->orderBy('id')
                 ->chunkById(500, function ($goals) use ($now): void {
                     // Numeric-only (goal, milestone) pairs. milestoneId is a
