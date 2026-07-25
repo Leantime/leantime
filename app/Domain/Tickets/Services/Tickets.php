@@ -3975,7 +3975,9 @@ class Tickets extends BaseService
      * @param  array  $groupedTickets  Grouped tickets as returned by getAllGrouped()
      *                                 (each group holds its rows under 'items').
      *
-     * @api
+     * @internal Board-header helper only; deliberately NOT @api, so it is not
+     *           reachable via JSON-RPC (which would let a caller submit an
+     *           arbitrarily large groupedTickets payload).
      */
     public function getBoardSummary(array $groupedTickets): BoardSummary
     {

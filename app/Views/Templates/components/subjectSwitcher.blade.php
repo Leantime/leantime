@@ -50,7 +50,7 @@
         @if (! empty($parentHref))
             <a href="{{ $parentHref }}" class="subjectSwitcher-parent">{{ $parent }}</a>
         @else
-            {{ $parent }}
+            <span class="subjectSwitcher-parent">{{ $parent }}</span>
         @endif
         <span class="subjectSwitcher-sep" aria-hidden="true">{{ $separator }}</span>
     @endif
