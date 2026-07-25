@@ -631,12 +631,14 @@ body.loginpage {
 
 .pageheader .padding-top {
     padding-top:0px;
-    line-height:60px;
+    /* Header is now an auto-height card; inherit its 1.3 line-height instead of
+       the old fixed 60px that pinned the title to the removed 60px header. */
+    line-height:normal;
 }
 
 .pageheader .headerCTA {
     float:right;
-    line-height:60px;
+    line-height:normal;
     color:var(--main-action-color);
 }
 

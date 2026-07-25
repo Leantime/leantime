@@ -437,7 +437,7 @@ body {
     z-index: 15;
     width: 100%;
     box-shadow: var(--large-shadow);
-    backdrop-filter: var(--glass-blur)
+    backdrop-filter: var(--glass-blur);
     /*background:var(--header-bg-color);*/
 }
 
@@ -457,7 +457,10 @@ body {
     border: var(--glass-border);
     border-radius: var(--box-radius);
     box-shadow: var(--large-shadow);
-    margin-bottom: 10px;
+    /* Inset the header card horizontally to match .maincontent's 15px side
+       padding, so it lines up with the content card below (both are siblings
+       inside .primaryContent, which has no horizontal padding of its own). */
+    margin: 0 15px 10px;
 }
 
 .maincontent {

@@ -120,6 +120,9 @@ a .label.feature-label:after {
        gradient). --primary-font-color adapts in dark mode. */
     color: var(--primary-font-color);
     line-height: 1.2;
+    /* Reset the Bootstrap default h1 margin (0.67em 0); the auto-height header
+       card owns the vertical rhythm via its own padding. */
+    margin: 0;
 }
 
 .pagetitle h1 a {
@@ -131,6 +134,9 @@ a .label.feature-label:after {
     text-transform: uppercase;
     font-size: var(--font-size-xs);
     color: var(--secondary-font-color);
+    /* Reset the Bootstrap default heading margin so the subtitle sits tight
+       under the title inside the auto-height header card. */
+    margin: 0;
 }
 
 .maincontentinner .subtitle,
