@@ -452,7 +452,7 @@ class GoalcanvasServiceTest extends TestCase
         // linking it to a goal must NOT unlink it from any other goal.
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasItemProjectId' => fn () => 9,
-            'addGoalMilestoneLink' => Expected::once(fn () => true),
+            'addGoalMilestoneLink' => Expected::once(fn ($goalId, $milestoneId, $userId = null) => true),
             'removeMilestoneFromAllGoals' => Expected::never(),
         ]);
 
