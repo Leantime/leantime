@@ -693,8 +693,10 @@ class BlueprintsServiceTest extends TestCase
         $expectedId = 42;
         $repo = $this->make(BlueprintsRepository::class, [
             'existCanvas' => fn () => false,
-            'addCanvas' => fn () => $expectedId,
-            'addCanvasItem' => fn () => 1,
+            // addCanvas() / addCanvasItem() are typed false|string; import() casts
+            // the canvas id to int.
+            'addCanvas' => fn () => (string) $expectedId,
+            'addCanvasItem' => fn () => '1',
         ]);
         $service = $this->securedService($repo, $this->allowingPermissions());
 
@@ -714,8 +716,8 @@ class BlueprintsServiceTest extends TestCase
             <item>
                 <author firstname="A" lastname="B"/>
                 <description>Test item</description>
-                <status>status_draft</status>
-                <relates>relates_none</relates>
+                <status key="status_draft">status_draft</status>
+                <relates key="relates_none">relates_none</relates>
                 <data>none</data>
                 <conclusion>none</conclusion>
                 <assumptions>none</assumptions>
