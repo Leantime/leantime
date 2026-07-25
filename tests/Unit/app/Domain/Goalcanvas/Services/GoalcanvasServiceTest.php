@@ -327,4 +327,128 @@ class GoalcanvasServiceTest extends TestCase
         }
         $this->assertSame(0, $copied);
     }
+
+    // ---------------------------------------------------------------------
+    // Dual-write: syncing tracked_by edges from a single milestoneId write.
+    // ---------------------------------------------------------------------
+
+    /**
+     * Build a repo whose edge writers record into $added / $removed (passed by
+     * reference), so a test can assert exactly which links were created/removed.
+     *
+     * @param  array<int, int>  $currentEdges  Milestone ids the goal is already linked to
+     * @param  array<string, callable>  $extraStubs  Extra repo method stubs (the write path)
+     * @param  array<int, array{0:int,1:int}>  $added  Receives [goalId, milestoneId] per add
+     * @param  array<int, int>  $removed  Receives milestoneId per remove
+     */
+    private function edgeRepo(array $currentEdges, array $extraStubs, array &$added, array &$removed): GoalcanvaRepository
+    {
+        return $this->make(GoalcanvaRepository::class, array_merge([
+            'getCanvasProjectId' => fn () => 9,
+            'getCanvasItemProjectId' => fn () => 9,
+            'getMilestoneIdsForGoal' => fn () => $currentEdges,
+            'addGoalMilestoneLink' => function ($goalId, $milestoneId, $userId = null) use (&$added) {
+                $added[] = [(int) $goalId, (int) $milestoneId];
+
+                return true;
+            },
+            'removeGoalMilestoneLink' => function ($goalId, $milestoneId) use (&$removed) {
+                $removed[] = (int) $milestoneId;
+
+                return true;
+            },
+        ], $extraStubs));
+    }
+
+    public function test_create_goal_links_milestone_edge_when_milestone_id_present(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['createGoal' => fn () => '50'], $added, $removed);
+
+        $this->service($repo)->createGoal(['canvasId' => 9, 'milestoneId' => 42]);
+
+        $this->assertSame([[50, 42]], $added, 'The new goal is linked to the given milestone');
+        $this->assertSame([], $removed);
+    }
+
+    public function test_update_goal_item_links_milestone_edge_when_milestone_id_present(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['editCanvasItem' => fn () => null], $added, $removed);
+
+        $this->service($repo)->updateGoalItem(['itemId' => 7, 'milestoneId' => 42]);
+
+        $this->assertSame([[7, 42]], $added);
+        $this->assertSame([], $removed);
+    }
+
+    public function test_patch_goal_item_links_milestone_edge_when_milestone_id_present(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['patchCanvasItem' => fn () => true], $added, $removed);
+
+        $this->service($repo)->patchGoalItem(7, ['milestoneId' => 42]);
+
+        $this->assertSame([[7, 42]], $added);
+        $this->assertSame([], $removed);
+    }
+
+    public function test_empty_milestone_id_clears_existing_edges_without_adding(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([11], ['editCanvasItem' => fn () => null], $added, $removed);
+
+        $this->service($repo)->updateGoalItem(['itemId' => 7, 'milestoneId' => '']);
+
+        $this->assertSame([], $added, 'An empty milestoneId adds nothing');
+        $this->assertSame([11], $removed, 'It unlinks the existing edge');
+    }
+
+    public function test_zero_milestone_id_clears_existing_edges_without_adding(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([11], ['patchCanvasItem' => fn () => true], $added, $removed);
+
+        $this->service($repo)->patchGoalItem(7, ['milestoneId' => '0']);
+
+        $this->assertSame([], $added, 'A "0" milestoneId adds nothing');
+        $this->assertSame([11], $removed, 'It unlinks the existing edge');
+    }
+
+    public function test_unchanged_milestone_id_does_not_churn_edges(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([42], ['editCanvasItem' => fn () => null], $added, $removed);
+
+        $this->service($repo)->updateGoalItem(['itemId' => 7, 'milestoneId' => 42]);
+
+        $this->assertSame([], $added, 'Re-saving the same milestone neither adds');
+        $this->assertSame([], $removed, 'nor removes an edge');
+    }
+
+    public function test_missing_milestone_id_key_leaves_edges_untouched(): void
+    {
+        // No milestoneId key at all (e.g. a description-only edit) must not
+        // touch edges — the sync only runs when the key is present.
+        $synced = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'editCanvasItem' => fn () => null,
+            'getMilestoneIdsForGoal' => function () use (&$synced) {
+                $synced++;
+
+                return [];
+            },
+        ]);
+
+        $this->service($repo)->updateGoalItem(['itemId' => 7, 'description' => 'x']);
+
+        $this->assertSame(0, $synced, 'Edge sync must not run when milestoneId is absent');
+    }
 }
