@@ -13,9 +13,12 @@ use Leantime\Core\Events\Contracts\LeantimeEvent;
  * The event is deliberately generic: consumers that only care about a specific
  * canvas (e.g. the strategy Logic Model, which propagates edits down to the
  * work it generated) resolve the item's canvas and filter themselves.
- * `changedFields` is best-effort — precise for patches (the patched keys),
- * over-inclusive for full updates — so listeners should still no-op when the
- * field they mirror is unchanged.
+ * `changedFields` is best-effort and never authoritative: for patches it is
+ * the set of allow-listed keys that were written (which can include a key set
+ * to the value it already held), and for full updates it is over-inclusive
+ * (every mirrored column). Either way it says "possibly touched", not
+ * "definitely changed", so listeners must still no-op when the field they
+ * mirror is actually unchanged.
  */
 final class CanvasItemUpdated implements LeantimeEvent
 {
@@ -23,7 +26,8 @@ final class CanvasItemUpdated implements LeantimeEvent
 
     /**
      * @param  int  $canvasItemId  The updated canvas item id.
-     * @param  array<int, string>  $changedFields  Best-effort names of the fields written.
+     * @param  array<int, string>  $changedFields  Best-effort names of the fields possibly
+     *                                              written (see class doc); not authoritative.
      * @param  string|null  $legacyHook  TEMPORARY (migration window): the emitting method name —
      *                                   pass __FUNCTION__ — used to rebuild the historical string
      *                                   name for legacy string-based listeners.
