@@ -38,17 +38,6 @@
     $completedDelta = (int) ($deltas['completedDelta'] ?? 0);
     $hasLM          = $logicModel !== null;
 
-    // Semantic period label — the "why this period" chip in the header sub-line.
-    // Board audiences care WHY the report is showing this range (because it's
-    // last closed) more than the raw dates, which appear separately in the picker.
-    $periodMeaning = match ($period->preset) {
-        ReportPeriod::PRESET_LAST_QUARTER => __('stakeholder.period.last_closed'),
-        ReportPeriod::PRESET_THIS_QUARTER => __('stakeholder.period.in_progress'),
-        ReportPeriod::PRESET_NEXT_QUARTER => __('stakeholder.period.upcoming'),
-        ReportPeriod::PRESET_CUSTOM       => __('stakeholder.period.custom'),
-        default                           => '',
-    };
-
     // Preset name for the picker button — matches what the user selects in the
     // dropdown ("Last quarter" / "This quarter" / "Next quarter"). Deliberately
     // NOT "Q2 2026" — Leantime doesn't let companies define fiscal quarters, so
