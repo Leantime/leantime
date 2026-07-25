@@ -170,9 +170,26 @@ class Blueprints extends BaseService
 
         CanvasItemUpdated::dispatch(
             canvasItemId: $itemId,
-            changedFields: array_map('strval', array_keys($values)),
+            changedFields: $this->fieldNames($values),
             legacyHook: __FUNCTION__,
         );
+    }
+
+    /**
+     * Extract the canvas-item field names from a controller payload for the
+     * CanvasItemUpdated event, dropping the transport/identifier keys (id,
+     * itemId, canvasId, changeItem, routing params) that ride along in the
+     * payload but are not columns — so `changedFields` reads as field names,
+     * not request plumbing.
+     *
+     * @param  array<string, mixed>  $payload
+     * @return array<int, string>
+     */
+    private function fieldNames(array $payload): array
+    {
+        $transportKeys = ['id', 'itemId', 'canvasId', 'changeItem', 'action', 'module'];
+
+        return array_values(array_diff(array_map('strval', array_keys($payload)), $transportKeys));
     }
 
     /**
@@ -199,7 +216,7 @@ class Blueprints extends BaseService
         if ($patched) {
             CanvasItemUpdated::dispatch(
                 canvasItemId: $id,
-                changedFields: array_map('strval', array_keys($params)),
+                changedFields: $this->fieldNames($params),
                 legacyHook: __FUNCTION__,
             );
         }
