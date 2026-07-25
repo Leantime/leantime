@@ -48,9 +48,9 @@
         <span class="subjectSwitcher-sep" aria-hidden="true">{{ $separator }}</span>
     @endif
     <span class="dropdown dropdownWrapper">
-        <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a href="javascript:void(0)" role="button" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {{ $current }}
-            <i class="fa fa-caret-down"></i>
+            <i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
         <ul class="dropdown-menu">
             {{ $slot }}
