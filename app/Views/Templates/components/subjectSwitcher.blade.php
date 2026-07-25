@@ -22,10 +22,6 @@
       parentHref  string|null  Optional link for the parent crumb.
       current     string       The current subject name (escaped — user data safe).
       separator   string       House-style divider. Default "›" (breadcrumb chevron).
-      switchStyle 'legacy'|'pill'  Visual variant. 'legacy' = the established
-                               underlined-caret look. 'pill' is reserved for the
-                               modern treatment (styled in a follow-up); the prop
-                               exists now so it's a one-line flip later.
 
     Slot: the <li> dropdown-menu items.
 --}}
@@ -34,7 +30,6 @@
     'parentHref' => null,
     'current' => '',
     'separator' => '›',
-    'switchStyle' => 'legacy',
 ])
 
 @once
@@ -45,7 +40,7 @@
         .pagetitle .subjectSwitcher-sep{color:var(--primary-font-color);opacity:.35;margin:0 2px;}
     </style>
 @endonce
-<h1 @class(['subjectSwitcher', 'subjectSwitcher--pill' => $switchStyle === 'pill'])>
+<h1 class="subjectSwitcher">
     @if (! empty($parent))
         @if (! empty($parentHref))
             <a href="{{ $parentHref }}" class="subjectSwitcher-parent">{{ $parent }}</a>

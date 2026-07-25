@@ -39,7 +39,13 @@
         <span class="fa fa-fw fa-thumb-tack"></span>
     </div>
     <div class="pagetitle">
-        <h5>{{ session('currentProjectClient') ?? '' . ' // ' . session('currentProjectName') ?? '' }}</h5>
+        {{-- Build "Client // Project" only from the parts that exist, so a
+             missing client/project never leaves a stray " // ". (`.` binds
+             tighter than `??`, so the old inline expression mis-grouped.) --}}
+        @php
+            $headerParts = array_filter([session('currentProjectClient'), session('currentProjectName')]);
+        @endphp
+        <h5>{{ implode(' // ', $headerParts) }}</h5>
 
         {{-- Migrated to the shared subject switcher (was a hand-rolled
              header-title-dropdown). The sprint menu items stay here — they're
