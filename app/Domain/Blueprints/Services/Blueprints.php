@@ -484,7 +484,6 @@ class Blueprints extends BaseService
         }
 
         $dom = new DOMDocument('1.0', 'UTF-8');
-        $users = app()->make(UserRepository::class);
 
         // Validate the file path and extension to prevent SSRF and Local File
         // Inclusion. Reject URL wrappers (http://, ftp://, etc.), restrict
@@ -553,6 +552,11 @@ class Blueprints extends BaseService
         }
 
         $elementNodeList = $dataNodeList->item(0)->getElementsByTagName('element');
+
+        // Resolved here rather than at the top of the method: it is only needed to map
+        // item authors below, so a rejected path or malformed document never pays for
+        // building a database-backed repository.
+        $users = app()->make(UserRepository::class);
 
         foreach ($elementNodeList as $elementNode) {
             if (! $elementNode->hasAttribute('key')) {
