@@ -2999,9 +2999,14 @@ class Install
     public function update_sql_30524(): bool|array
     {
         try {
-            if (! Schema::hasTable('zp_canvas_items')
-                || ! Schema::hasTable('zp_entity_relationship')
-                || ! Schema::hasTable('zp_tickets')) {
+            // Guard on the installer's own connection (not the global Schema
+            // facade, which checks the default connection) so the existence
+            // check matches the connection the migration queries actually run
+            // against (may be a temp/target install connection).
+            $schema = $this->connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_entity_relationship')
+                || ! $schema->hasTable('zp_tickets')) {
                 return true;
             }
 
