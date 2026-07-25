@@ -11,6 +11,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Blueprints\Events\CanvasItemUpdated;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
@@ -166,6 +167,12 @@ class Blueprints extends BaseService
         $this->authorize(BlueprintsPermissions::EDIT, $projectId);
 
         $this->blueprintsRepo->editCanvasItem($values);
+
+        CanvasItemUpdated::dispatch(
+            canvasItemId: $itemId,
+            changedFields: array_map('strval', array_keys($values)),
+            legacyHook: __FUNCTION__,
+        );
     }
 
     /**
@@ -187,7 +194,17 @@ class Blueprints extends BaseService
         }
         $this->authorize(BlueprintsPermissions::EDIT, $projectId);
 
-        return $this->blueprintsRepo->patchCanvasItem($id, $params);
+        $patched = $this->blueprintsRepo->patchCanvasItem($id, $params);
+
+        if ($patched) {
+            CanvasItemUpdated::dispatch(
+                canvasItemId: $id,
+                changedFields: array_map('strval', array_keys($params)),
+                legacyHook: __FUNCTION__,
+            );
+        }
+
+        return $patched;
     }
 
     /**
