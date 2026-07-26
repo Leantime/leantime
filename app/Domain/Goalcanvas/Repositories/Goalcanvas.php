@@ -392,6 +392,24 @@ class Goalcanvas extends Blueprints
             return false;
         }
 
+        // Fail closed: only link a real milestone that lives in the SAME project
+        // as the goal. Resolve the goal's project via its canvas, and the
+        // target's project + type. Rejecting a forged/foreign or non-milestone
+        // id here (the shared write chokepoint for every caller) stops a link
+        // from surfacing another project's milestone headline on the goal chips.
+        $goalProjectId = $this->dbConnection->table('zp_canvas_items as ci')
+            ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+            ->where('ci.id', $goalId)
+            ->value('cb.projectId');
+        $milestone = $this->dbConnection->table('zp_tickets')
+            ->where('id', $milestoneId)
+            ->where('type', 'milestone')
+            ->first(['projectId']);
+        if ($goalProjectId === null || $milestone === null
+            || (int) $milestone->projectId !== (int) $goalProjectId) {
+            return false;
+        }
+
         return $this->dbConnection->transaction(function () use ($goalId, $milestoneId, $userId): bool {
             $exists = $this->dbConnection->table('zp_entity_relationship')
                 ->where('entityA', $goalId)
