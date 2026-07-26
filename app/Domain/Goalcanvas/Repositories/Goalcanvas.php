@@ -566,7 +566,7 @@ class Goalcanvas extends Blueprints
             $details[(int) $m->id] = [
                 'id' => (int) $m->id,
                 'headline' => (string) $m->headline,
-                'color' => ($m->tags === null || $m->tags === '') ? 'var(--grey)' : (string) $m->tags,
+                'color' => $this->safeChipColor($m->tags),
                 'editFrom' => $m->editFrom,
                 'editTo' => $m->editTo,
                 'status' => (int) $m->status,
@@ -633,6 +633,26 @@ class Goalcanvas extends Blueprints
         }
 
         return $result;
+    }
+
+    /**
+     * Normalize a milestone's `tags` color to a value safe to interpolate into
+     * an inline `style` attribute. `tags` is user-controlled, so only a hex
+     * color (#rgb / #rrggbb) or a CSS custom-property reference (var(--x)) is
+     * allowed through; anything else falls back to the neutral grey token.
+     */
+    private function safeChipColor(?string $tag): string
+    {
+        $tag = trim((string) $tag);
+
+        if (
+            preg_match('/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $tag) === 1
+            || preg_match('/^var\(--[A-Za-z0-9_-]+\)$/', $tag) === 1
+        ) {
+            return $tag;
+        }
+
+        return 'var(--grey)';
     }
 
     /**
