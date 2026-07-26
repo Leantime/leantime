@@ -144,8 +144,15 @@ class TicketsServiceTest extends TestCase
      */
     public function test_get_board_summary_computes_counts_and_last_updated()
     {
-        // Build due dates on the same user-tz basis the service compares against.
-        $now = dtHelper()->userNow();
+        // getBoardSummary parses dateToFinish via parseDbDateTime() (DB tz) and
+        // converts to the user tz before the "this week" compare, so the stored
+        // strings must be DB-tz. Derive them from userNow()->setToDbTimezone()
+        // so they round-trip user→db→user and "due today" stays stable even if
+        // this test's user timezone is later moved off UTC.
+        $nowUser = dtHelper()->userNow();
+        $dueToday = $nowUser->setToDbTimezone()->format('Y-m-d H:i:s');
+        $dueTwoMonthsAgo = $nowUser->subMonths(2)->setToDbTimezone()->format('Y-m-d H:i:s');
+        $dueTwoMonthsOut = $nowUser->addMonths(2)->setToDbTimezone()->format('Y-m-d H:i:s');
 
         $mk = function (mixed $editorId, ?string $due, ?string $modified) {
             $ticket = new \stdClass;
@@ -161,13 +168,13 @@ class TicketsServiceTest extends TestCase
                 'label' => 'all',
                 'items' => [
                     // assigned, due today (this week), older change
-                    $mk(5, $now->format('Y-m-d H:i:s'), '2026-07-01 10:00:00'),
+                    $mk(5, $dueToday, '2026-07-01 10:00:00'),
                     // unassigned (empty editor), due 2 months ago (not this week), newest change
-                    $mk('', $now->subMonths(2)->format('Y-m-d H:i:s'), '2026-07-15 09:00:00'),
+                    $mk('', $dueTwoMonthsAgo, '2026-07-15 09:00:00'),
                     // unassigned (zero editor), no due date set
                     $mk(0, '0000-00-00 00:00:00', '2026-06-01 08:00:00'),
                     // assigned, due 2 months out (beyond this week), no modified stamp
-                    $mk(7, $now->addMonths(2)->format('Y-m-d H:i:s'), null),
+                    $mk(7, $dueTwoMonthsOut, null),
                 ],
             ],
         ];
