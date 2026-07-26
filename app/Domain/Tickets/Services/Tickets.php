@@ -2528,7 +2528,8 @@ class Tickets extends BaseService
      * @api
      *
      * Tickets the user COMMENTED on within [$from, $to] that they do NOT own
-     * (they're not the assignee/editor) — i.e. work they supported by weighing
+     * (they're not the assignee — i.e. the ticket's editorId) — i.e. work they
+     * supported by weighing
      * in on someone else's arc. Powers the mobile Progress "Supported" section
      * (presence counts as much as production).
      *
