@@ -1938,10 +1938,16 @@ class Tickets
             ->distinct()
             ->where('module', 'ticket')
             ->where('userId', $userId)
+            ->whereNotNull('moduleId')
             ->whereBetween('date', [$fromDate.' 00:00:00', $toDate.' 23:59:59'])
             ->get();
 
-        return array_values(array_unique(array_map(fn ($row) => (int) $row->moduleId, $rows->all())));
+        // moduleId is nullable; filter out any 0 (from a stray NULL/empty) so a
+        // bogus ticket id never leaks into downstream whereIn() filters.
+        return array_values(array_filter(
+            array_unique(array_map(fn ($row) => (int) $row->moduleId, $rows->all())),
+            fn ($id) => $id > 0
+        ));
     }
 
     /**

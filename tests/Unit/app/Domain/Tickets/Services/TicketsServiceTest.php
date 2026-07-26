@@ -674,7 +674,7 @@ class TicketsServiceTest extends TestCase
         $ticketRepository = $this->make(TicketRepository::class, [
             'getTicketIdsCommentedByUser' => fn (...$args) => [10, 20, 30],
             // Project-scoped fetch only returns 10 + 20 (30 is outside access).
-            'getTicketsByIdsWithinProjects' => fn (...$args) => [
+            'simpleTicketQuery' => fn (...$args) => [
                 ['id' => 10, 'headline' => 'A', 'editorId' => '99', 'projectId' => 5, 'projectName' => 'P'],
                 ['id' => 20, 'headline' => 'B', 'editorId' => '1', 'projectId' => 5, 'projectName' => 'P'],
             ],
@@ -702,7 +702,10 @@ class TicketsServiceTest extends TestCase
 
         $ticketRepository = $this->make(TicketRepository::class, [
             'getTicketIdsCommentedByUser' => fn (...$args) => [10],
-            'getTicketsByIdsWithinProjects' => fn (...$args) => [['id' => 10, 'editorId' => '99']],
+            // simpleTicketQuery applies the project-access clause in SQL, so a
+            // user with no access gets no rows back — the commented id is
+            // filtered out at the source.
+            'simpleTicketQuery' => fn (...$args) => [],
         ]);
         $projectService = $this->make(ProjectService::class, [
             'getProjectsUserHasAccessTo' => fn (...$args) => false,
@@ -771,7 +774,7 @@ class TicketsServiceTest extends TestCase
 
         $ticketRepository = $this->make(TicketRepository::class, [
             'getTicketIdsCommentedByUser' => fn (...$args) => [], // nothing commented
-            'getTicketsByIdsWithinProjects' => function (...$args) use (&$fetchCalled) {
+            'simpleTicketQuery' => function (...$args) use (&$fetchCalled) {
                 $fetchCalled = true;
 
                 return [];

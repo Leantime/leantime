@@ -2480,8 +2480,10 @@ class Tickets extends BaseService
             return [];
         }
 
-        // Resolve "today" once so a run across midnight can't disagree on bounds.
-        $today = date('Y-m-d');
+        // Resolve "today" once (in the user's timezone, matching
+        // getMyCommentedTicketsForRange) so a run across midnight can't disagree
+        // on bounds and the default range doesn't shift for non-server-TZ users.
+        $today = dtHelper()->userNow()->format('Y-m-d');
         $from = $from ?: $today;
         $to = $to ?: $today;
         // Tolerate a reversed range rather than returning nothing.

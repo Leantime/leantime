@@ -344,7 +344,10 @@
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
          space; picker sits with the view-mode controls it belongs with) ── --}}
     <div class="rd-tabs hideOnPrint">
-        <div class="rd-tabgroup" role="tablist" aria-label="{{ __('stakeholder.tab.overview') }}">
+        {{-- Plain button group, not an ARIA tablist: these are click-to-switch
+             buttons (no roving tabindex / arrow-key tab model), so claiming
+             role="tablist" would misrepresent the interaction to assistive tech. --}}
+        <div class="rd-tabgroup">
             <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
             <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
             <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>

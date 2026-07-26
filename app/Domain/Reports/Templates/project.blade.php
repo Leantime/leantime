@@ -13,9 +13,9 @@
                 <h1>{!! __('headlines.status_report') !!}</h1>
             </div>
             <div class="col-lg-4" style="text-align: right;">
-                <x-global::forms.button tag="a" link="javascript:window.print();" class="btn-secondary hideOnPrint">
+                <button type="button" onclick="window.print()" class="btn btn-secondary hideOnPrint">
                     <i class="fa fa-print"></i> {{ __('label.print_report') }}
-                </x-global::forms.button>
+                </button>
             </div>
         </div>
     </x-global::pageheader>
