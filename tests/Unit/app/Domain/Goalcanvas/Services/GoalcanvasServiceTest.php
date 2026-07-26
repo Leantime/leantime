@@ -411,6 +411,19 @@ class GoalcanvasServiceTest extends TestCase
         $this->assertSame([], $removed);
     }
 
+    public function test_patch_goal_item_ignores_non_numeric_milestone_id(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['patchCanvasItem' => fn () => true], $added, $removed);
+
+        // '42abc' must not cast to milestone edge 42.
+        $this->service($repo)->patchGoalItem(7, ['milestoneId' => '42abc']);
+
+        $this->assertSame([], $added, 'a non-numeric milestoneId creates no edge');
+        $this->assertSame([], $removed);
+    }
+
     public function test_delete_goal_item_removes_all_edges_on_successful_delete(): void
     {
         $deleted = 0;

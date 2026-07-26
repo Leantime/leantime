@@ -423,8 +423,11 @@ class Goalcanvas extends BaseService
         }
 
         $desired = [];
-        $milestoneId = (int) $milestoneIdValue;
-        if ($milestoneId > 0) {
+        // Only a strictly-numeric value becomes a desired edge. A stray string
+        // like '42abc' would otherwise cast to 42 and create an edge that
+        // drifts from the persisted milestoneId column.
+        $milestoneId = filter_var($milestoneIdValue, FILTER_VALIDATE_INT);
+        if ($milestoneId !== false && $milestoneId > 0) {
             $desired[] = $milestoneId;
         }
 

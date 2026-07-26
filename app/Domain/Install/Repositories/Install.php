@@ -3111,6 +3111,14 @@ class Install
      */
     public function update_sql_30525(): bool|array
     {
-        return $this->update_sql_30524();
+        $result = $this->update_sql_30524();
+
+        // Re-label a delegated failure so upgrade logs/output point at the step
+        // that actually ran (30525), not the 30524 delegate.
+        if (is_array($result)) {
+            return ['Migration 30525 failed (delegated to 30524): '.implode('; ', array_map('strval', $result))];
+        }
+
+        return $result;
     }
 }
