@@ -3091,7 +3091,7 @@ class Install
                     }
                 });
         } catch (\Exception $e) {
-            Log::error('Migration 30524: '.$e->getMessage());
+            Log::error('Migration 30524 failed', ['exception' => $e]);
 
             return ['Migration 30524 failed: '.$e->getMessage()];
         }

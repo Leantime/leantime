@@ -118,7 +118,7 @@
                         <br /><br />
                         <h4 class="widgettitle title-light"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }} <i class="fa fa-question-circle-o helperTooltip" aria-hidden="true" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i></h4>
 
-                        {{-- Status summary. TODO(refine): move the summary labels to language keys. --}}
+                        {{-- Status summary (labels via goalcanvas.summary_* language keys). --}}
                         @if (($milestoneSummary['total'] ?? 0) > 0)
                             <div style="font-size:12px;opacity:.75;margin-bottom:10px;">
                                 <strong>{{ $milestoneSummary['total'] }}</strong> {{ __("goalcanvas.summary_milestones") }}

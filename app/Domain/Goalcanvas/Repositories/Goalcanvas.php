@@ -524,11 +524,26 @@ class Goalcanvas extends Blueprints
             return [];
         }
 
+        // Build per-goal milestone id lists, de-duplicated per goal: a race on
+        // addGoalMilestoneLink's check-then-insert could leave a duplicate edge,
+        // so dedup here to guarantee it never renders as a duplicate chip.
+        // Collect the global id set with a nested loop rather than
+        // array_merge(...array_values(...)) unpacking, which has a practical
+        // argument limit and an extra allocation on large goal sets.
         $goalToMilestones = [];
+        $milestoneIdSet = [];
         foreach ($edges as $e) {
-            $goalToMilestones[(int) $e->entityA][] = (int) $e->entityB;
+            $goalId = (int) $e->entityA;
+            $milestoneId = (int) $e->entityB;
+            if (! isset($goalToMilestones[$goalId])) {
+                $goalToMilestones[$goalId] = [];
+            }
+            if (! in_array($milestoneId, $goalToMilestones[$goalId], true)) {
+                $goalToMilestones[$goalId][] = $milestoneId;
+            }
+            $milestoneIdSet[$milestoneId] = true;
         }
-        $milestoneIds = array_values(array_unique(array_merge(...array_values($goalToMilestones))));
+        $milestoneIds = array_keys($milestoneIdSet);
 
         $details = [];
         $projectIds = [];
@@ -542,7 +557,7 @@ class Goalcanvas extends Blueprints
             $details[(int) $m->id] = [
                 'id' => (int) $m->id,
                 'headline' => (string) $m->headline,
-                'color' => ($m->tags === null || $m->tags === '') ? 'var(--grey)' : (string) $m->tags,
+                'color' => $this->safeChipColor($m->tags),
                 'editTo' => $m->editTo,
                 'status' => (int) $m->status,
                 'projectId' => (int) $m->projectId,
@@ -614,6 +629,26 @@ class Goalcanvas extends Blueprints
      * @param  array<int, int>  $milestoneIds
      * @return array<int, int> milestoneId => percent (0-100)
      */
+    /**
+     * Normalize a milestone's `tags` color to a value safe to interpolate into
+     * an inline `style` attribute. `tags` is user-controlled, so only a hex
+     * color (#rgb / #rrggbb) or a CSS custom-property reference (var(--x)) is
+     * allowed through; anything else falls back to the neutral grey token.
+     */
+    private function safeChipColor(?string $tag): string
+    {
+        $tag = trim((string) $tag);
+
+        if (
+            preg_match('/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $tag) === 1
+            || preg_match('/^var\(--[A-Za-z0-9_-]+\)$/', $tag) === 1
+        ) {
+            return $tag;
+        }
+
+        return 'var(--grey)';
+    }
+
     public function getMilestoneProgressForIds(array $milestoneIds): array
     {
         $milestoneIds = array_values(array_unique(array_filter(array_map('intval', $milestoneIds))));
