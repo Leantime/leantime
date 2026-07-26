@@ -152,10 +152,16 @@
 /* Deck — one panel that sizes to the active page (no dead space on short pages).
    Pages are stacked in a horizontal track; we translate the track and only the
    active page's content contributes to height. */
-/* The deck sits INSIDE the app's .maincontentinner white card, so it must NOT be
-   a second floating card — no own shadow (that drop-shadow drew a visible seam
-   under the tab strip, reading as "two whites / box in a box"). Flat, same white,
-   one cohesive surface. */
+/* Deck-scoped card wrapper. Replaces the global .maincontentinner class so the
+   deck doesn't inherit broad descendant rules (tables.css .maincontentinner
+   table, .subtitle, …) that would restyle deck internals and break the scoped
+   .rd-* contract. Copies just the card chrome, using --rd-panel so it stays
+   dark-mode aware via the .rd-dark token overrides. */
+.rd-scope .rd-card{background:var(--rd-panel);border-radius:var(--box-radius);padding:14px;margin-bottom:10px;box-shadow:var(--large-shadow);border:var(--glass-border);position:relative;}
+/* The deck sits INSIDE the .rd-card white card, so it must NOT be a second
+   floating card — no own shadow (that drop-shadow drew a visible seam under the
+   tab strip, reading as "two whites / box in a box"). Flat, same white, one
+   cohesive surface. */
 .rd-deck{background:var(--rd-panel);overflow:hidden;position:relative;}
 .rd-deck-viewport{overflow:hidden;position:relative;}
 .rd-deck-track{display:flex;align-items:flex-start;transition:transform .28s cubic-bezier(.4,.15,.25,1);}
@@ -339,11 +345,12 @@
     </div>
 
     {{-- ── Deck ─────────────────────────────────────────────────────── --}}
-    {{-- The white content card wraps ONLY the deck; the tab bar above sits on
-         the app gradient (nav lives on the gradient, content lives in the card).
-         The report page that renders this partial no longer adds an outer
-         .maincontentinner. --}}
-    <div class="maincontentinner">
+    {{-- The white content card (.rd-card, a deck-scoped wrapper — NOT the global
+         .maincontentinner, so global table/subtitle rules don't bleed in) wraps
+         ONLY the deck; the tab bar above sits on the app gradient (nav lives on
+         the gradient, content lives in the card). The report page that renders
+         this partial no longer adds an outer card. --}}
+    <div class="rd-card">
     <div class="rd-deck">
         <div class="rd-deck-viewport">
             <div class="rd-deck-track" id="rdTrack">
@@ -376,7 +383,7 @@
             </div>
         </div>
     </div>
-    </div>{{-- /.maincontentinner --}}
+    </div>{{-- /.rd-card --}}
 
 </div>
 
