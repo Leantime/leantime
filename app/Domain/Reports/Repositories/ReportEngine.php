@@ -212,6 +212,7 @@ class ReportEngine
 
         $rows = $this->connection->table('zp_comment')
             ->select([
+                'zp_comment.id',
                 'zp_comment.moduleId as projectId',
                 'zp_comment.text',
                 'zp_comment.date',
@@ -228,9 +229,15 @@ class ReportEngine
             ->get()
             ->all();
 
+        // MAX(date) can tie (two updates at the same timestamp), so the join
+        // returns several rows for a project. Break the tie deterministically on
+        // the highest comment id rather than letting foreach order decide.
         $byProject = [];
         foreach ($rows as $row) {
-            $byProject[(int) $row->projectId] = $row;
+            $projectId = (int) $row->projectId;
+            if (! isset($byProject[$projectId]) || (int) $row->id > (int) $byProject[$projectId]->id) {
+                $byProject[$projectId] = $row;
+            }
         }
 
         return $byProject;

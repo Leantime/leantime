@@ -32,8 +32,13 @@
                 {{ $presetLabel }}
             </a>
         @endforeach
-        <a href="javascript:void(0)"
+        {{-- Real link so the custom-range form is reachable without JS: the
+             href reloads with preset=custom (server sets $isCustom → form shows).
+             With JS, onclick toggles the form inline and returns false to
+             suppress the navigation. --}}
+        <a href="{{ $url }}?preset=custom"
            onclick="jQuery(this).closest('.periodPicker').find('.periodPickerCustom').toggle(); return false;"
+           aria-expanded="{{ $isCustom ? 'true' : 'false' }}"
            class="btn btn-sm btn-secondary @if ($isCustom) active @endif">
             {{ __('label.period_custom') }}
         </a>
