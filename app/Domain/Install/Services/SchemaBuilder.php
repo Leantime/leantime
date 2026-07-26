@@ -578,6 +578,8 @@ class SchemaBuilder
             $table->string('sessiontime', 50)->nullable();
             $table->integer('wage')->nullable();
             $table->integer('hours')->nullable();
+            $table->integer('weekly_hours')->nullable();
+            $table->string('employment_type', 20)->nullable();
             $table->text('description')->nullable();
             $table->integer('clientId')->nullable();
             $table->integer('notifications')->nullable();

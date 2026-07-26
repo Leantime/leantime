@@ -8,6 +8,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Files\Repositories\Files;
+use Leantime\Domain\Users\Enums\EmploymentType;
 
 class Users
 {
@@ -298,6 +299,20 @@ class Users
             'modified' => now(),
         ];
 
+        // Capacity attributes (v3.5.23) — only overwrite when explicitly
+        // present so an admin form that omits the fields (or a legacy
+        // caller) doesn't null out a value already set. Validation runs
+        // at this boundary so every caller (form controller, service,
+        // JSON-RPC) gets the same guarantees: unrecognised employment
+        // types normalise to NULL; weekly_hours outside a sane range
+        // normalises to NULL.
+        if (array_key_exists('weekly_hours', $values)) {
+            $updateData['weekly_hours'] = $this->normalizeWeeklyHours($values['weekly_hours']);
+        }
+        if (array_key_exists('employment_type', $values)) {
+            $updateData['employment_type'] = $this->normalizeEmploymentType($values['employment_type']);
+        }
+
         if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
             $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
@@ -394,6 +409,8 @@ class Users
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
+            'weekly_hours' => $this->normalizeWeeklyHours($values['weekly_hours'] ?? null),
+            'employment_type' => $this->normalizeEmploymentType($values['employment_type'] ?? null),
             'modified' => now(),
         ]);
 
@@ -548,5 +565,55 @@ class Users
         }
 
         return $current;
+    }
+
+    /**
+     * Normalise a POSTed weekly_hours value into the persisted shape.
+     * Accepts numeric input; rejects anything outside 0..168 (168 =
+     * hours in a week, the largest value that has physical meaning).
+     * Anything that fails validation becomes NULL — treated by the
+     * capacity math as "not configured" rather than saving garbage.
+     *
+     * Fractional input is ROUNDED, not truncated. The column is an int
+     * and the edit-user field is a step-1 number input, so fractions
+     * only reach here from the API — where a plain (int) cast silently
+     * turned 37.5 into 37. Rounding keeps the value closest to intent;
+     * rejecting it outright would be worse, since NULL removes the
+     * person from capacity math entirely.
+     *
+     * NOTE: the int column cannot represent genuinely fractional
+     * contracts (37.5 h/wk is common part-time). Storing minutes, or
+     * widening the column, is the real fix if that case matters.
+     */
+    private function normalizeWeeklyHours(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if (! is_numeric($value)) {
+            return null;
+        }
+        $hours = (int) round((float) $value);
+        if ($hours < 0 || $hours > 168) {
+            return null;
+        }
+
+        return $hours;
+    }
+
+    /**
+     * Normalise a POSTed employment_type into one of the four enum
+     * cases or NULL. Any string that isn't a recognised case is
+     * silently normalised to NULL so a crafted POST can't persist
+     * garbage that later EmploymentType::from() would throw on.
+     */
+    private function normalizeEmploymentType(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        $case = EmploymentType::tryFrom((string) $value);
+
+        return $case?->value;
     }
 }

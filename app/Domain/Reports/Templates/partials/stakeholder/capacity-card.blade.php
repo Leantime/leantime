@@ -29,6 +29,16 @@
         $gapHrs = abs($c['gap']);
         $gapPct = $c['availableHours'] > 0 ? abs($c['gap'] / $c['availableHours']) * 100 : 0;
         $isShort = $c['gap'] > 0;
+
+        // Run-rate framing. Supply is a current weekly rate; projecting it over
+        // a (past) period to a total is the fiction we avoid. Demand is a real
+        // total of estimated work — expressed here as the weekly rate needed to
+        // clear it within the period. The gap % (verdict) is unchanged: rate
+        // ratios equal total ratios, so the bar geometry above still holds.
+        $weeks = max(1, (int) $c['weeksInWindow']);
+        $supplyPerWk = $c['weeklyHoursToProject'];
+        $demandPerWk = $c['referenceDemand'] / $weeks;
+        $gapPerWk = $gapHrs / $weeks;
     @endphp
     <div class="p3-cap {{ $c['verdict'] }}">
         <div class="p3-cap-hd">
@@ -55,9 +65,9 @@
             @if ($c['referenceDemand'] > 0 && $c['availableHours'] > 0)
                 <div class="headline-num {{ $c['verdict'] }}">
                     @if ($isShort)
-                        <span class="unit-h" data-hours="{{ round($gapHrs) }}">{{ round($gapHrs) }}h</span> {{ sprintf(__('stakeholder.rc.cap.short_suffix'), (int) $gapPct) }}
+                        <span class="unit-h" data-hours="{{ round($gapPerWk) }}">{{ round($gapPerWk) }}h</span>/wk {{ sprintf(__('stakeholder.rc.cap.short_suffix'), (int) $gapPct) }}
                     @else
-                        <span class="unit-h" data-hours="{{ round($gapHrs) }}">{{ round($gapHrs) }}h</span> {{ __('stakeholder.rc.cap.buffer_suffix') }}
+                        <span class="unit-h" data-hours="{{ round($gapPerWk) }}">{{ round($gapPerWk) }}h</span>/wk {{ __('stakeholder.rc.cap.buffer_suffix') }}
                     @endif
                 </div>
             @endif
@@ -98,9 +108,9 @@
                     @if ($c['peopleCount'] === 0)
                         <span class="muted">{{ __('stakeholder.rc.cap.no_people') }}</span>
                     @else
-                        <span class="primary"><span class="unit-h" data-hours="{{ round($c['availableHours']) }}">{{ round($c['availableHours']) }}h</span> {{ __('stakeholder.rc.cap.available_in_period') }}</span>
+                        <span class="primary"><span class="unit-h" data-hours="{{ round($supplyPerWk) }}">{{ round($supplyPerWk) }}h</span>/wk {{ __('stakeholder.rc.cap.supply') }}</span>
                         <span class="muted">
-                            ({{ $c['peopleCount'] }} {{ __('stakeholder.rc.cap.people') }} × <span class="unit-h" data-hours="{{ round($c['weeklyHoursToProject'] / max(1, $c['peopleCount']), 1) }}">{{ round($c['weeklyHoursToProject'] / max(1, $c['peopleCount']), 1) }}h</span>/wk × {{ $c['weeksInWindow'] }} {{ __('stakeholder.rc.cap.weeks') }})
+                            ({{ $c['peopleCount'] }} {{ __($c['peopleCount'] === 1 ? 'stakeholder.rc.cap.person' : 'stakeholder.rc.cap.people') }} × <span class="unit-h" data-hours="{{ round($supplyPerWk / max(1, $c['peopleCount']), 1) }}">{{ round($supplyPerWk / max(1, $c['peopleCount']), 1) }}h</span>/wk)
                         </span>
                     @endif
                 </div>
@@ -110,9 +120,9 @@
                 <div class="p3-cap-row">
                     <div class="lbl">{{ __('stakeholder.rc.cap.balance') }}</div>
                     <div class="val">
-                        <span class="unit-h" data-hours="{{ round($c['referenceDemand']) }}">{{ round($c['referenceDemand']) }}h</span> {{ __('stakeholder.rc.cap.demand') }}
+                        <span class="unit-h" data-hours="{{ round($demandPerWk) }}">{{ round($demandPerWk) }}h</span>/wk {{ __('stakeholder.rc.cap.demand') }}
                         <span class="divider">·</span>
-                        <span class="unit-h" data-hours="{{ round($c['availableHours']) }}">{{ round($c['availableHours']) }}h</span> {{ __('stakeholder.rc.cap.supply') }}
+                        <span class="unit-h" data-hours="{{ round($supplyPerWk) }}">{{ round($supplyPerWk) }}h</span>/wk {{ __('stakeholder.rc.cap.supply') }}
                         <div class="p3-cap-bar">
                             <div class="track {{ $c['verdict'] }}">
                                 {{-- Supply segment: green fill 0 → available. --}}
@@ -121,7 +131,7 @@
                                      available → needed, showing the shortfall. --}}
                                 @if ($isShort && $deficitWidth > 0)
                                     <div class="deficit" style="left:{{ $availableMark }}%;width:{{ $deficitWidth }}%;"
-                                        data-tippy-content="{{ sprintf(__('stakeholder.rc.cap.deficit_tooltip'), round($gapHrs)) }}"></div>
+                                        data-tippy-content="{{ sprintf(__("stakeholder.rc.cap.deficit_tooltip"), round($gapPerWk)) }}"></div>
                                 @endif
                                 <div class="marker" style="left:{{ $availableMark }}%;">
                                     <span class="marker-label">{{ __('stakeholder.rc.cap.marker_label') }}</span>

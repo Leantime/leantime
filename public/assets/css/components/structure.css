@@ -437,7 +437,7 @@ body {
     z-index: 15;
     width: 100%;
     box-shadow: var(--large-shadow);
-    backdrop-filter: var(--glass-blur)
+    backdrop-filter: var(--glass-blur);
     /*background:var(--header-bg-color);*/
 }
 

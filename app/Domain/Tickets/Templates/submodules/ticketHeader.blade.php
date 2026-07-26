@@ -53,7 +53,7 @@
              component. Zero visual change. --}}
         <x-global::subjectSwitcher
             :parent="__('headlines.todos')"
-            :current="$sprint !== false ? $sprint->name : __('label.select_sprint')">
+            :current="$sprint !== false ? $sprint->name : __('dropdown.choose_sprint')">
             <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {!! __('links.create_sprint_no_icon') !!}</a></li>
             <li class='nav-header border'></li>
             <li>

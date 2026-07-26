@@ -245,24 +245,51 @@ final class CapacityAnalyzer
             $trustSignal = $this->trustSignal($coverage, $divergence, $budgetedHours, $effortHours);
 
             // Capacity aggregation: unique people across the program (a person
-            // on two child projects still counts once), sum weekly hours.
+            // on two child projects still counts once).
+            //
+            // Supply is each person's CAPACITY, not the hours already
+            // allocated here. Allocation answers "what have we committed",
+            // capacity answers "what could we actually do" — and only the
+            // second one can say whether there is room. Summing allocations
+            // made the two halves of the report disagree: the headline tile
+            // reads allocated/capacity while this block read demand against
+            // allocated, so a program with real headroom and nothing booked
+            // yet reported no_capacity.
+            //
+            // A person's capacity is not dedicated to this program, so
+            // commitments to projects OUTSIDE it are deducted. Only projects
+            // inside this ResourceSummary are visible, so for a strategy
+            // report that means siblings within the same strategy; work on
+            // other strategies is not visible here and this therefore reads
+            // as an upper bound.
+            $childIdSet = array_flip(array_map('intval', $childIds));
             $peopleSet = [];
-            $weeklyHoursToProgram = 0.0;
+            $weeklyCapacityToProgram = 0.0;
             foreach ($resources->people as $person) {
                 $touched = false;
-                foreach ($childIds as $cid) {
-                    $h = (float) ($person->allocations[$cid] ?? 0.0);
-                    if ($h > 0) {
+                $committedElsewhere = 0.0;
+                foreach ($person->allocations as $allocPid => $allocHrs) {
+                    $allocHrs = (float) $allocHrs;
+                    if ($allocHrs <= 0) {
+                        continue;
+                    }
+                    if (isset($childIdSet[(int) $allocPid])) {
                         $touched = true;
-                        $weeklyHoursToProgram += $h;
+                    } else {
+                        $committedElsewhere += $allocHrs;
                     }
                 }
+
                 if ($touched) {
                     $peopleSet[$person->itemId] = 1;
+                    $weeklyCapacityToProgram += max(0.0, $person->capacity - $committedElsewhere);
                 }
             }
             $peopleCount = count($peopleSet);
-            $availableHours = $weeklyHoursToProgram * $weeksInPeriod;
+            $availableHours = $weeklyCapacityToProgram * $weeksInPeriod;
+            // recommend() reasons in weekly hours; keep its input consistent
+            // with the supply figure the verdict was derived from.
+            $weeklyHoursToProgram = $weeklyCapacityToProgram;
 
             $referenceDemand = match ($trustSignal) {
                 'budgeted' => $budgetedHours,

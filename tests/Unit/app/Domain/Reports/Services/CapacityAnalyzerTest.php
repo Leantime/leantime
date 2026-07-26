@@ -195,4 +195,156 @@ class CapacityAnalyzerTest extends TestCase
 
         $this->assertSame([], $rows);
     }
+
+    // ─── Program rollup: supply is capacity, not booked hours ────────
+    //
+    // aggregateByProgram measures how much a program COULD do (capacity),
+    // not how much is already booked against it. This keeps the rollup
+    // consistent with the report's headline utilization tile, which reads
+    // allocated/capacity — before this, a program with real headroom and
+    // little booked reported no_capacity and could escalate as a false gap
+    // on the strategy report. verdict()/trustSignal() themselves are
+    // covered above; these pin the supply figure feeding them.
+
+    public function test_program_supply_uses_capacity_not_allocated_hours(): void
+    {
+        // 40h capacity, only 5h booked against the program → supply is 40.
+        $row = $this->rollup(
+            [$this->personCap(1, capacity: 40.0, allocations: [7 => 5.0])],
+            childIds: [7],
+        );
+
+        $this->assertEqualsWithDelta(40.0, $row['availableHours'], 0.001);
+        $this->assertSame(1, $row['peopleCount']);
+    }
+
+    public function test_program_supply_counts_a_person_on_two_child_projects_once(): void
+    {
+        $row = $this->rollup(
+            [$this->personCap(1, capacity: 40.0, allocations: [7 => 5.0, 8 => 5.0])],
+            childIds: [7, 8],
+        );
+
+        $this->assertEqualsWithDelta(40.0, $row['availableHours'], 0.001);
+        $this->assertSame(1, $row['peopleCount']);
+    }
+
+    public function test_program_supply_deducts_commitments_outside_the_program(): void
+    {
+        // 40h capacity, 10h here, 15h on a project outside this program →
+        // 25h is what this program could still claim.
+        $row = $this->rollup(
+            [$this->personCap(1, capacity: 40.0, allocations: [7 => 10.0, 99 => 15.0])],
+            childIds: [7],
+        );
+
+        $this->assertEqualsWithDelta(25.0, $row['availableHours'], 0.001);
+    }
+
+    public function test_outside_commitments_never_push_a_person_below_zero(): void
+    {
+        // Person 1 is over-committed elsewhere beyond their capacity: they
+        // bring nothing here, but must not subtract from person 2.
+        $row = $this->rollup(
+            [
+                $this->personCap(1, capacity: 40.0, allocations: [7 => 1.0, 99 => 100.0]),
+                $this->personCap(2, capacity: 20.0, allocations: [7 => 5.0]),
+            ],
+            childIds: [7],
+        );
+
+        $this->assertEqualsWithDelta(20.0, $row['availableHours'], 0.001, 'clamped at 0, not -60');
+    }
+
+    public function test_people_not_allocated_to_the_program_contribute_nothing(): void
+    {
+        $row = $this->rollup(
+            [$this->personCap(1, capacity: 40.0, allocations: [99 => 10.0])],
+            childIds: [7],
+        );
+
+        $this->assertEqualsWithDelta(0.0, $row['availableHours'], 0.001);
+        $this->assertSame(0, $row['peopleCount']);
+    }
+
+    /**
+     * The regression this change exists for: a program with real headroom
+     * and little booked used to read no_capacity because supply was measured
+     * as hours-already-allocated. With capacity as supply it reads as buffer
+     * — there IS room. (supply 40 vs demand 10 → ratio -0.75 → buffer.)
+     */
+    public function test_program_with_headroom_and_light_booking_reads_as_buffer(): void
+    {
+        $row = $this->rollup(
+            [$this->personCap(1, capacity: 40.0, allocations: [7 => 0.5])],
+            childIds: [7],
+            budgetedHours: 10.0,
+        );
+
+        $this->assertNotSame('no_capacity', $row['verdict']);
+        $this->assertSame('buffer', $row['verdict']);
+    }
+
+    /**
+     * Work planned with nobody assigned stays no_capacity, distinct from
+     * critical: it is an authoring gap ("assign people"), not a capacity
+     * crisis, and painting it red trains readers to ignore red.
+     */
+    public function test_program_with_no_people_is_no_capacity_not_critical(): void
+    {
+        $row = $this->rollup([], childIds: [7], budgetedHours: 400.0);
+
+        $this->assertSame('no_capacity', $row['verdict']);
+    }
+
+    private function personCap(int $itemId, float $capacity, array $allocations): PersonAllocation
+    {
+        return new PersonAllocation(
+            itemId: $itemId,
+            userId: $itemId,
+            displayName: 'Person '.$itemId,
+            capacity: $capacity,
+            allocations: $allocations,
+        );
+    }
+
+    /**
+     * Runs aggregateByProgram for one program over the given children,
+     * feeding pre-built project rows so the ticket/demand side is fixed and
+     * the assertions are about the capacity side. Demand sits on the first
+     * child so totals are predictable regardless of child count.
+     *
+     * @param  array<int, PersonAllocation>  $people
+     * @param  int[]  $childIds
+     * @return array<string, mixed>
+     */
+    private function rollup(array $people, array $childIds, float $budgetedHours = 50.0): array
+    {
+        $projectRows = [];
+        foreach ($childIds as $cid) {
+            $isFirst = $cid === $childIds[0];
+            $projectRows[$cid] = [
+                'projectId' => $cid,
+                'name' => 'Child '.$cid,
+                'openTicketCount' => $isFirst ? 10 : 0,
+                'ticketsWithBudget' => $isFirst ? 10 : 0,
+                'ticketsWithEffort' => 0,
+                'budgetedHours' => $isFirst ? $budgetedHours : 0.0,
+                'effortPoints' => 0.0,
+                'verdict' => 'balanced', // aggregateByProgram sorts children by verdict rank
+            ];
+        }
+
+        $resources = new ResourceSummary([7, 8], $people, [], [], 0.0, 0.0, 0.0, 0.0);
+
+        $rows = $this->analyzer->aggregateByProgram(
+            $projectRows,
+            [2 => $childIds],
+            [2 => ['id' => 2, 'name' => 'Program 2']],
+            $resources,
+            $this->oneWeekPeriod(),
+        );
+
+        return $rows[2];
+    }
 }
