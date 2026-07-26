@@ -37,7 +37,7 @@
              With JS, onclick toggles the form inline and returns false to
              suppress the navigation. --}}
         <a href="{{ $url }}?preset=custom"
-           onclick="jQuery(this).closest('.periodPicker').find('.periodPickerCustom').toggle(); return false;"
+           onclick="var f=jQuery(this).closest('.periodPicker').find('.periodPickerCustom'); f.toggle(); this.setAttribute('aria-expanded', f.is(':visible') ? 'true' : 'false'); return false;"
            aria-expanded="{{ $isCustom ? 'true' : 'false' }}"
            class="btn btn-sm btn-secondary @if ($isCustom) active @endif">
             {{ __('label.period_custom') }}
