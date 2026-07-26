@@ -127,21 +127,31 @@ class ReportEngine
             return [];
         }
 
-        return $this->connection->table('zp_tickets')
+        // Join the milestone row (itself a ticket) and enforce that the task
+        // lives in the SAME project as its milestone. Filtering on milestoneid
+        // alone would pull tasks from other projects if the data ever holds a
+        // cross-project milestone reference, leaking unrelated headlines into a
+        // report for an authorized milestone.
+        return $this->connection->table('zp_tickets as t')
+            ->join('zp_tickets as m', function ($join): void {
+                $join->on('t.milestoneid', '=', 'm.id')
+                    ->where('m.type', '=', 'milestone');
+            })
+            ->whereColumn('t.projectId', '=', 'm.projectId')
             ->select([
-                'id',
-                'headline',
-                'status',
-                'projectId',
-                'milestoneid',
-                'storypoints',
-                'priority',
-                'editTo',
-                'dateToFinish',
+                't.id',
+                't.headline',
+                't.status',
+                't.projectId',
+                't.milestoneid',
+                't.storypoints',
+                't.priority',
+                't.editTo',
+                't.dateToFinish',
             ])
-            ->whereIn('milestoneid', $milestoneIds)
-            ->where('type', '<>', 'milestone')
-            ->orderBy('milestoneid')
+            ->whereIn('t.milestoneid', $milestoneIds)
+            ->where('t.type', '<>', 'milestone')
+            ->orderBy('t.milestoneid')
             ->get()
             ->all();
     }

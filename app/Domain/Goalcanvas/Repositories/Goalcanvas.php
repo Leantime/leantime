@@ -748,19 +748,30 @@ class Goalcanvas extends Blueprints
             ->where('zp_canvas_items.box', '=', 'goal')
             ->get();
 
+        // Resolve each goal's latest recorded value deterministically. A join
+        // on MAX(dateRecorded) returns multiple rows when an item has several
+        // history rows sharing the same dateRecorded (possible via CSV backfill
+        // or rapid edits), making the "latest" arbitrary and potentially
+        // skipping a needed insert. Instead, read the rows ordered by
+        // (itemId, dateRecorded desc, id desc) and keep the first seen per item
+        // — a stable tie-break on id. Scoped to the goals we're snapshotting so
+        // the whole history table is never loaded.
         $latestValues = [];
-        $latestDates = $this->dbConnection->table('zp_goal_history')
-            ->selectRaw('itemId, MAX(dateRecorded) as maxDate')
-            ->groupBy('itemId');
-        $latestRows = $this->dbConnection->table('zp_goal_history')
-            ->select(['zp_goal_history.itemId', 'zp_goal_history.value'])
-            ->joinSub($latestDates, 'latest', function ($join) {
-                $join->on('zp_goal_history.itemId', '=', 'latest.itemId')
-                    ->on('zp_goal_history.dateRecorded', '=', 'latest.maxDate');
-            })
-            ->get();
-        foreach ($latestRows as $row) {
-            $latestValues[(int) $row->itemId] = (float) $row->value;
+        $goalIds = $goals->pluck('id')->map(static fn ($id) => (int) $id)->all();
+        if ($goalIds !== []) {
+            $historyRows = $this->dbConnection->table('zp_goal_history')
+                ->select(['itemId', 'value'])
+                ->whereIn('itemId', $goalIds)
+                ->orderBy('itemId')
+                ->orderByDesc('dateRecorded')
+                ->orderByDesc('id')
+                ->get();
+            foreach ($historyRows as $row) {
+                $itemId = (int) $row->itemId;
+                if (! array_key_exists($itemId, $latestValues)) {
+                    $latestValues[$itemId] = (float) $row->value;
+                }
+            }
         }
 
         $inserts = [];
