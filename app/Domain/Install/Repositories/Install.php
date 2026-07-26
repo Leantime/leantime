@@ -3047,7 +3047,10 @@ class Install
                     // both scoped to this chunk's ids — O(1) lookups, no N+1.
                     $liveTickets = array_flip(array_map(
                         'intval',
-                        DB::table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->pluck('id')->all()
+                        DB::table('zp_tickets')
+                            ->whereIn('id', array_keys($milestoneIds))
+                            ->where('type', 'milestone')
+                            ->pluck('id')->all()
                     ));
 
                     $existingEdges = [];

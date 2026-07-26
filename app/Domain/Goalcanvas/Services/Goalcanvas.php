@@ -311,8 +311,8 @@ class Goalcanvas extends BaseService
     /**
      * A goal's milestones (edge model) for the mobile Progress feature —
      * authorized for VIEW against the goal's project, and each milestone is
-     * further filtered to the caller's accessible projects (a goal may link
-     * milestones across projects; never leak an inaccessible one). Returns []
+     * further filtered to the caller's accessible projects as defense-in-depth
+     * (goal→milestone links are same-project only, so normally a no-op). Returns []
      * for a missing/foreign/unauthorized goal. Dates are returned as stored
      * (UTC). A milestone may appear under several goals — this is many-to-many.
      *
@@ -413,8 +413,10 @@ class Goalcanvas extends BaseService
     }
 
     /**
-     * Keep only milestones in projects the caller can access (strip, don't
-     * gate) — a goal can link milestones across projects.
+     * Defensive strip: keep only milestones in projects the caller can access.
+     * Goal→milestone links are same-project only (addGoalMilestoneLink fails
+     * closed on a foreign milestone), so in normal data this is a no-op — it
+     * only guards against any legacy cross-project rows.
      *
      * @param  array<int, array<string, mixed>>  $milestones
      * @return array<int, array<string, mixed>>
@@ -442,7 +444,10 @@ class Goalcanvas extends BaseService
             return [];
         }
 
-        return array_map(static fn ($p) => (int) ($p['id'] ?? 0), $projects);
+        return array_values(array_filter(
+            array_map(static fn ($p) => (int) ($p['id'] ?? 0), $projects),
+            static fn ($id) => $id > 0
+        ));
     }
 
     /**
