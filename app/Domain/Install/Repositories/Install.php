@@ -3007,7 +3007,9 @@ class Install
                 return true;
             }
 
-            $now = date('Y-m-d H:i:s');
+            // UTC — DB datetimes are stored in UTC; date() would use the server
+            // timezone and write a skewed createdOn.
+            $now = gmdate('Y-m-d H:i:s');
 
             // Chunk the goal rows so a very large zp_canvas_items never loads
             // into memory at once. Each chunk resolves its own live-milestone

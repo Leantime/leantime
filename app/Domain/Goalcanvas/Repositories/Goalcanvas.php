@@ -310,7 +310,10 @@ class Goalcanvas extends Blueprints
         $goalIds = $this->getGoalIdsForMilestone($milestoneId);
         $columnLinked = $this->dbConnection->table('zp_canvas_items')
             ->where('box', 'goal')
-            ->where('milestoneId', $milestoneId)
+            // milestoneId is a varchar column — compare as a string so the
+            // predicate is portable (a varchar = int comparison errors on
+            // PostgreSQL).
+            ->where('milestoneId', (string) $milestoneId)
             ->pluck('id')
             ->map(static fn ($id) => (int) $id)
             ->all();
