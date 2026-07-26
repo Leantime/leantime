@@ -25,11 +25,13 @@ enum EntityRelationshipEnum: string
     case MapsTo = 'maps_to';
 
     /**
-     * Represents a "tracked by" relationship: a goal is tracked/measured by a
-     * milestone. Direction convention: entityA = goal (GoalItem),
-     * entityB = milestone (Ticket). The edge-based successor to the legacy
-     * single zp_canvas_items.milestoneId column (which is retained during the
-     * transition) so a goal can hold many milestones.
+     * Associates a goal with a milestone for informational display only — the
+     * milestone(s) are rendered as a list on the goal; they do NOT drive goal
+     * progress (progress stays metric-defined from the goal's own values).
+     * Direction convention: entityA = goal (GoalItem), entityB = milestone
+     * (Ticket). The edge-based successor to the legacy single
+     * zp_canvas_items.milestoneId column (retained during the transition) so a
+     * goal can hold many milestones.
      */
     case TrackedBy = 'tracked_by';
 }
