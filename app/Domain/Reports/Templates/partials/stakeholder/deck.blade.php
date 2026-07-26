@@ -155,8 +155,8 @@
 /* Deck-scoped card wrapper. Replaces the global .maincontentinner class so the
    deck doesn't inherit broad descendant rules (tables.css .maincontentinner
    table, .subtitle, …) that would restyle deck internals and break the scoped
-   .rd-* contract. Copies just the card chrome, using --rd-panel so it stays
-   dark-mode aware via the .rd-dark token overrides. */
+   .rd-* contract. Copies just the card chrome, driven by --rd-panel so it
+   tracks whatever that token resolves to. */
 .rd-scope .rd-card{background:var(--rd-panel);border-radius:var(--box-radius);padding:14px;margin-bottom:10px;box-shadow:var(--large-shadow);border:var(--glass-border);position:relative;}
 /* The deck sits INSIDE the .rd-card white card, so it must NOT be a second
    floating card — no own shadow (that drop-shadow drew a visible seam under the
