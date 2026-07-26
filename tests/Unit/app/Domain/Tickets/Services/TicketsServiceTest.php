@@ -722,7 +722,9 @@ class TicketsServiceTest extends TestCase
     }
 
     /**
-     * No accessible projects → empty, without ever fetching tickets.
+     * No accessible projects → empty. The access-scoped fetch (simpleTicketQuery)
+     * still runs, but its SQL project-access clause returns no rows, so the
+     * commented id is filtered out at the source and nothing surfaces.
      */
     public function test_commented_tickets_range_empty_without_project_access(): void
     {
