@@ -372,6 +372,18 @@ class GoalcanvasServiceTest extends TestCase
         $this->assertSame([], $removed);
     }
 
+    public function test_create_goal_item_links_milestone_edge_when_milestone_id_present(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['addCanvasItem' => fn () => '50'], $added, $removed);
+
+        $this->service($repo)->createGoalItem(['canvasId' => 9, 'box' => 'goal', 'milestoneId' => 42]);
+
+        $this->assertSame([[50, 42]], $added, 'A new goal item is linked to the given milestone');
+        $this->assertSame([], $removed);
+    }
+
     public function test_update_goal_item_links_milestone_edge_when_milestone_id_present(): void
     {
         $added = [];
