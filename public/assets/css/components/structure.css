@@ -449,6 +449,10 @@ body {
 .pageheader {
     display: flex;
     align-items: center;
+    /* Allow the right cluster (meta/summary + actions) to wrap below the title
+       on narrow viewports instead of forcing horizontal overflow — mobile.css
+       only adjusts padding/min-height, not the flex behavior. */
+    flex-wrap: wrap;
     gap: 12px;
     padding: 8px 18px;
     height: auto;
