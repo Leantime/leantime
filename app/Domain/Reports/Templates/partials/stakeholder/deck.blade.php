@@ -125,6 +125,13 @@
     --rd-danger-bg:rgba(228,101,137,.16);
     --rd-sh-sm:0 1px 3px rgba(0,0,0,.4);
     --rd-sh-lg:0 20px 56px rgba(0,0,0,.5);
+    /* Stage tints as low-alpha overlays so they read as dark surfaces on the
+       panel instead of the light pastels used in light mode. */
+    --rd-s1-bg:rgba(74,133,181,.16);
+    --rd-s2-bg:rgba(62,147,122,.16);
+    --rd-s3-bg:rgba(192,144,53,.16);
+    --rd-s4-bg:rgba(142,106,173,.16);
+    --rd-s5-bg:rgba(45,125,94,.16);
 }
 /* Dark overrides for deck literals that bypass the token layer. */
 .rd-scope.rd-dark .rd-kcell.has-detail:hover,

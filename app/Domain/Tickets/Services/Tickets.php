@@ -2541,8 +2541,11 @@ class Tickets extends BaseService
      * editor — those are "your work," not support. Defaults either bound to
      * today.
      *
-     * @return array<int, array<string, mixed>> ticket rows (id, headline,
-     *                                          projectName, …), same shape as the other user-ticket queries.
+     * @return array<int, array<string, mixed>> raw ticket rows (id, headline,
+     *                                          projectName, type, editorId, …) straight from
+     *                                          simpleTicketQuery. Unlike getAllOpenUserTickets these are NOT
+     *                                          enriched — no resolved statusLabel/statusClass/statusType — so
+     *                                          consumers needing those must resolve them separately.
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array

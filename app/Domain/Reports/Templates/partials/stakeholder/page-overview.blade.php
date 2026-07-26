@@ -35,6 +35,11 @@
 .rd-scope .p1-hero .hm{font-size:11.5px;color:var(--rd-text-3);}
 .rd-scope .p1-hero.empty{background:none;border-style:dashed;color:var(--rd-text-3);font-size:12.5px;text-align:center;padding:20px 16px;}
 .rd-scope .p1-hero.empty .h{font-size:13.5px;font-weight:600;color:var(--rd-text-2);margin-bottom:4px;}
+/* Dark: the hero gradient and border are hardcoded light literals (var(--rd-s5-bg) → #fff,
+   #d3e4dc). Land the fade on the panel instead of white, dark the border, and keep the
+   goal badge legible now that --rd-s3-bg is a dark overlay. */
+.rd-scope.rd-dark .p1-hero{border-color:var(--rd-line);background:linear-gradient(180deg,var(--rd-s5-bg) 0%,var(--rd-panel) 80px);}
+.rd-scope.rd-dark .p1-hero .badge-goal{color:var(--rd-warn);}
 
 .rd-scope .p1-needs{background:var(--rd-danger-bg);border-radius:var(--rd-r-sm);border-left:4px solid var(--rd-danger);padding:14px 16px;}
 .rd-scope .p1-needs.calm{background:var(--rd-bg);border-left-color:var(--rd-ok);}
