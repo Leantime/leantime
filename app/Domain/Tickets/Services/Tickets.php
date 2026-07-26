@@ -3983,10 +3983,15 @@ class Tickets extends BaseService
     {
         $summary = new BoardSummary;
 
+        // Resolve the datetime helper once — it's used per ticket (twice) below,
+        // and dtHelper() resolves through the container, so caching it avoids
+        // avoidable overhead on large boards.
+        $dt = dtHelper();
+
         // "This week" = today through the end of the current week, compared as
         // calendar dates in the user's timezone (Y-m-d string compare is
         // chronological) so a date-only due date lands in the intended week.
-        $userNow = dtHelper()->userNow();
+        $userNow = $dt->userNow();
         $weekStartDate = $userNow->format('Y-m-d');
         $weekEndDate = $userNow->endOfWeek()->format('Y-m-d');
 
@@ -3995,12 +4000,12 @@ class Tickets extends BaseService
         // 0000-00-00, 1969-12-31); the try/catch then catches a genuinely
         // malformed-but-non-sentinel value so one bad row can't throw and blank
         // the whole board header.
-        $safeParse = static function (mixed $value): ?CarbonImmutable {
-            if (! dtHelper()->isValidDateString($value !== null ? (string) $value : null)) {
+        $safeParse = static function (mixed $value) use ($dt): ?CarbonImmutable {
+            if (! $dt->isValidDateString($value !== null ? (string) $value : null)) {
                 return null;
             }
             try {
-                return dtHelper()->parseDbDateTime((string) $value);
+                return $dt->parseDbDateTime((string) $value);
             } catch (\Exception $e) {
                 return null;
             }

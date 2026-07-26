@@ -87,8 +87,16 @@
     // enable a dark scrim only then, so dark-accent themes stay fully vivid.
     $navNeedsScrim = false;
     foreach ($accents as $accentColor) {
-        if (! is_string($accentColor) || ! preg_match('/^#?([0-9a-fA-F]{6})$/', $accentColor, $accentHex)) {
+        // No usable accent value here — nothing to reason about, skip.
+        if ($accentColor === false || $accentColor === null || $accentColor === '') {
             continue;
+        }
+        // A real accent we can't parse as 6-digit hex (e.g. rgb()/hsl()/named
+        // colors): we can't measure its luminance, so fail closed and enable the
+        // scrim to protect white nav-text contrast rather than assuming it's safe.
+        if (! is_string($accentColor) || ! preg_match('/^#?([0-9a-fA-F]{6})$/', $accentColor, $accentHex)) {
+            $navNeedsScrim = true;
+            break;
         }
         [$ar, $ag, $ab] = sscanf($accentHex[1], '%02x%02x%02x');
         $linChannel = static fn ($v) => ($v /= 255) <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;

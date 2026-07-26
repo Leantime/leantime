@@ -43,7 +43,10 @@
              missing client/project never leaves a stray " // ". (`.` binds
              tighter than `??`, so the old inline expression mis-grouped.) --}}
         @php
-            $headerParts = array_filter([session('currentProjectClient'), session('currentProjectName')]);
+            $headerParts = array_filter(
+                [session('currentProjectClient'), session('currentProjectName')],
+                fn ($part) => $part !== null && $part !== ''
+            );
         @endphp
         <h5>{{ implode(' // ', $headerParts) }}</h5>
 
