@@ -46,6 +46,8 @@ class Tickets
 
     public ?string $acceptanceCriteria = '';
 
+    public ?string $outcomeImpact = '';
+
     public mixed $tags = null;
 
     public mixed $url = null;
@@ -120,6 +122,7 @@ class Tickets
             $this->planHours = $values['planHours'] ?? '';
             $this->sprint = $values['sprint'] ?? '';
             $this->acceptanceCriteria = $values['acceptanceCriteria'] ?? '';
+            $this->outcomeImpact = $values['outcomeImpact'] ?? '';
             $this->tags = $values['tags'] ?? '';
             $this->editFrom = $values['editFrom'] ?? '';
             $this->editTo = $values['editTo'] ?? '';

@@ -1,0 +1,242 @@
+/*
+ * Report screens (project / plan / strategy).
+ * Quiet, packet-like: card surfaces, muted labels, tabular numbers. The only loud
+ * elements are the status dots and the needs-attention accent border.
+ */
+
+/* ── stat tiles ─────────────────────────────────────────────────────── */
+
+.reportStatTiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.reportStatTile {
+    background: var(--card-bg, var(--secondary-background));
+    border: 1px solid var(--card-border, var(--main-border-color));
+    border-radius: var(--card-radius, var(--box-radius));
+    padding: 14px 16px;
+}
+
+.reportStatTile .tileLabel {
+    display: block;
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+    margin-bottom: 4px;
+}
+
+.reportStatTile .tileValue {
+    display: block;
+    font-size: var(--font-size-xxxl);
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--primary-font-color);
+}
+
+.reportStatTile .tileValue.tileValueDanger {
+    color: var(--red);
+}
+
+.reportStatTile .tileDelta {
+    display: block;
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+    margin-top: 4px;
+}
+
+.reportStatTile .tileDelta.deltaGood { color: var(--green); }
+.reportStatTile .tileDelta.deltaBad { color: var(--red); }
+
+/* ── sections ───────────────────────────────────────────────────────── */
+
+.reportSection {
+    margin-bottom: 32px;
+}
+
+.reportSection h5.subtitle {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+.reportSection h5.subtitle .sectionCount {
+    font-size: var(--font-size-s);
+    font-weight: normal;
+    color: var(--secondary-font-color);
+}
+
+/* ── needs attention ────────────────────────────────────────────────── */
+
+.reportNeedsAttention {
+    background: var(--card-bg, var(--secondary-background));
+    border: 1px solid var(--card-border, var(--main-border-color));
+    border-left: 3px solid var(--red);
+    border-radius: var(--card-radius, var(--box-radius));
+    padding: 14px 16px;
+    margin-bottom: 24px;
+}
+
+.reportNeedsAttention h5.subtitle {
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 8px;
+}
+
+.reportNeedsAttention ul li {
+    padding: 3px 0;
+    font-size: var(--font-size-m);
+}
+
+/* ── milestone list ─────────────────────────────────────────────────── */
+
+.reportMilestoneList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.reportMilestoneList .reportMilestone {
+    background: var(--card-bg, var(--secondary-background));
+    border: 1px solid var(--card-border, var(--main-border-color));
+    border-radius: var(--card-radius, var(--box-radius));
+    padding: 10px 14px;
+    margin: 0 0 8px 0;
+}
+
+.reportMilestone .milestoneTitleRow {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.reportMilestone .milestoneProject {
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+}
+
+.reportMilestone .milestoneMeta {
+    margin-left: auto;
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.reportMilestone .milestoneOutcome .outcomeText {
+    margin-top: 4px;
+    font-size: var(--font-size-m);
+}
+
+.reportMilestone .reportKeyTasks summary {
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+.reportMilestone .progress {
+    height: 6px;
+    margin: 0;
+    flex: 1;
+}
+
+/* ── tables ─────────────────────────────────────────────────────────── */
+
+.reportTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reportTable thead th {
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    color: var(--secondary-font-color);
+    text-align: left;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--main-border-color);
+    white-space: nowrap;
+}
+
+.reportTable tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--main-border-color);
+    vertical-align: top;
+    font-size: var(--font-size-m);
+}
+
+.reportTable tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.reportTable th.numCol,
+.reportTable td.numCol {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.reportTable td .cellNote {
+    display: block;
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+    margin-top: 2px;
+}
+
+.reportTable .table-group-row td {
+    font-weight: 600;
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-s);
+    padding-top: 14px;
+    border-bottom: 0;
+}
+
+/* ── narrative & slippage ───────────────────────────────────────────── */
+
+.reportStatusUpdate {
+    padding: 6px 0 6px 12px;
+}
+
+.reportSlippage {
+    border: 1px dashed var(--main-border-color);
+    border-radius: var(--card-radius, var(--box-radius));
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: var(--font-size-s);
+    color: var(--secondary-font-color);
+}
+
+.reportSlippage strong {
+    color: var(--primary-font-color);
+}
+
+/* ── period picker & header band ────────────────────────────────────── */
+
+.reportHeaderBand {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    font-size: var(--font-size-m);
+}
+
+.reportStatusPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.statusDot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+}

@@ -87,6 +87,10 @@
     <label>{!! __('label.planned_end_date') !!}</label>
     <input type="text" name="editTo" autocomplete="off" value="{{ format($currentMilestone->editTo)->date() }}"  placeholder="{{ __('language.dateformat') }}" id="milestoneEditTo" /><br />
 
+    <label>{!! __('label.outcome_impact') !!}</label>
+    <textarea name="outcomeImpact" rows="3" class="tw-w-full"
+              placeholder="{{ __('input.placeholders.outcome_impact') }}">{{ $currentMilestone->outcomeImpact }}</textarea><br />
+
     <div class="row">
         <div class="col-md-6">
             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" />

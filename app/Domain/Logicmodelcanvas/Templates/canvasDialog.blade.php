@@ -8,6 +8,7 @@
         'id' => '', 'box' => '', 'description' => '', 'conclusion' => '', 'assumptions' => '',
         'data' => '', 'status' => '', 'relates' => '', 'impact' => '', 'milestoneId' => '',
         'author' => '', 'authorFirstname' => '', 'authorLastname' => '',
+        'why_this_matters' => '', 'starting_picture' => '',
     ], is_array($canvasItem) ? $canvasItem : []);
 
     $canvasTypes = $tpl->get('canvasTypes');
@@ -84,6 +85,88 @@
                     <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
                 @else
                     <input type="hidden" name="{{ $dataLabels[2]['field'] }}" value="" />
+                @endif
+
+                {{-- Authored-meaning fields.
+                     `why_this_matters` — Outcome and Impact items (skipped on
+                     Inputs/Activities/Outputs — those are context, not meaning).
+                     `starting_picture` — Impact only.
+                     Labels ARE the prompt; placeholders teach by example.
+                     Impact renders NO suggest control — the friction is the
+                     feature. Outputs/Outcomes get a suggest button (Step 3). --}}
+                @php
+                    $isImpact  = $boxKey === 'lm_impact';
+                    $isOutcome = $boxKey === 'lm_outcomes';
+                    $isOutput  = $boxKey === 'lm_outputs';
+                    $showWhy   = $isImpact || $isOutcome || $isOutput;
+                    $showStart = $isImpact;
+                @endphp
+
+                @if ($showWhy)
+                    <label for="whyThisMatters" style="display:block;margin-top:8px;">{{ $tpl->__('logicmodel.field.why_this_matters') }}</label>
+                    <textarea id="whyThisMatters" style="width:100%" rows="3" name="why_this_matters"
+                        maxlength="500"
+                        placeholder="{{ $tpl->__('logicmodel.field.why_this_matters.placeholder') }}"
+                        class="modalTextArea">{{ $canvasItem['why_this_matters'] }}</textarea>
+                    @if (! $isImpact)
+                        {{-- Suggest affordance for Outputs/Outcomes only. Impact
+                             deliberately has none — no draft, no pre-fill. --}}
+                        <div style="margin-top:4px;font-size:12px;color:var(--rd-text-3,#7a8790);">
+                            <button type="button"
+                                    class="lm-suggest-why"
+                                    data-source-title="{{ $tpl->escape($canvasItem['description'] ?? '') }}"
+                                    data-source-body="{{ $tpl->escape($canvasItem['conclusion'] ?? '') }}"
+                                    style="background:none;border:0;padding:0;color:var(--main-titles-color,#004666);cursor:pointer;font-size:12px;font-weight:600;">
+                                <i class="fa fa-lightbulb"></i> {{ $tpl->__('logicmodel.field.why_this_matters.suggest') }}
+                            </button>
+                        </div>
+                    @endif
+                    <br />
+                @else
+                    <input type="hidden" name="why_this_matters" value="{{ $tpl->escape($canvasItem['why_this_matters'] ?? '') }}" />
+                @endif
+
+                @if ($showStart)
+                    <label for="startingPicture" style="display:block;margin-top:8px;">{{ $tpl->__('logicmodel.field.starting_picture') }}</label>
+                    <textarea id="startingPicture" style="width:100%" rows="3" name="starting_picture"
+                        maxlength="500"
+                        placeholder="{{ $tpl->__('logicmodel.field.starting_picture.placeholder') }}"
+                        class="modalTextArea">{{ $canvasItem['starting_picture'] }}</textarea>
+                    <br />
+                @else
+                    <input type="hidden" name="starting_picture" value="{{ $tpl->escape($canvasItem['starting_picture'] ?? '') }}" />
+                @endif
+
+                {{-- Suggest handler — pure client-side draft that copies from
+                     the item's title + body. Never runs on Impact (no button
+                     rendered). LLM-backed suggestions can slot in behind the
+                     same UI later; the seed source stays authored text. --}}
+                @if ($showWhy && ! $isImpact)
+                    <script>
+                    (function () {
+                        var btns = document.querySelectorAll('.lm-suggest-why');
+                        btns.forEach(function (btn) {
+                            // The dialog can be re-injected within a session — guard against
+                            // stacking a second listener on an already-bound button.
+                            if (btn.dataset.lmWhyBound) {
+                                return;
+                            }
+                            btn.dataset.lmWhyBound = '1';
+                            btn.addEventListener('click', function () {
+                                var title = (btn.getAttribute('data-source-title') || '').trim();
+                                var body  = (btn.getAttribute('data-source-body')  || '').trim();
+                                // Silence beats generic: skip if we don't have real source text.
+                                if (title.length < 4 && body.length < 12) return;
+                                var draft = body.length >= 20 ? body : title;
+                                var ta = document.getElementById('whyThisMatters');
+                                if (ta && ! ta.value.trim()) {
+                                    ta.value = draft;
+                                    ta.focus();
+                                }
+                            });
+                        });
+                    })();
+                    </script>
                 @endif
 
                 {{-- Comments section moved outside the form to avoid nested forms --}}

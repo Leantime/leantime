@@ -23,6 +23,7 @@ class Blueprints extends Repository
         'startDate', 'endDate', 'setting', 'metricType', 'startValue',
         'currentValue', 'endValue', 'impact', 'effort', 'probability',
         'action', 'assignedTo', 'parent', 'tags', 'sortindex',
+        'why_this_matters', 'starting_picture',
     ];
 
     protected ConnectionInterface $connection;
@@ -302,6 +303,8 @@ class Blueprints extends Repository
                 'zp_canvas_items.probability',
                 'zp_canvas_items.action',
                 'zp_canvas_items.assignedTo',
+                'zp_canvas_items.why_this_matters',
+                'zp_canvas_items.starting_picture',
                 't1.firstname as authorFirstname',
                 't1.lastname as authorLastname',
                 't1.profileId as authorProfileId',

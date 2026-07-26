@@ -36,4 +36,14 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
     $scheduler->call(function () use ($reportService) {
         $reportService->cronDailyIngestion();
     })->name('reports:dailyIngestion')->daily();
+
+    // Safety net behind the goal-repository write hooks: records value changes that bypassed
+    // the repository so KPI trend history stays complete.
+    $scheduler->call(function () {
+        try {
+            app()->make(\Leantime\Domain\Goalcanvas\Repositories\Goalcanvas::class)->snapshotGoalValues();
+        } catch (\Throwable $e) {
+            Log::error($e);
+        }
+    })->name('reports:goalValueSnapshot')->daily();
 });
