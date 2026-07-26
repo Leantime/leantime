@@ -380,29 +380,53 @@ class Goalcanvas extends Blueprints
             return false;
         }
 
-        $exists = $this->dbConnection->table('zp_entity_relationship')
-            ->where('entityA', $goalId)
-            ->where('entityAType', 'GoalItem')
-            ->where('entityB', $milestoneId)
-            ->where('entityBType', 'Ticket')
-            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
-            ->exists();
-
-        if ($exists) {
-            return true;
+        // Fail closed: only link a real milestone that lives in the SAME project
+        // as the goal (resolve the goal's project via its canvas, and the
+        // target's project + type). Rejecting a forged/foreign or non-milestone
+        // id here — the shared write chokepoint — stops a link from surfacing
+        // another project's milestone headline on the goal chips.
+        $goalProjectId = $this->dbConnection->table('zp_canvas_items as ci')
+            ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+            ->where('ci.id', $goalId)
+            ->value('cb.projectId');
+        $milestone = $this->dbConnection->table('zp_tickets')
+            ->where('id', $milestoneId)
+            ->where('type', 'milestone')
+            ->first(['projectId']);
+        if ($goalProjectId === null || $milestone === null
+            || (int) $milestone->projectId !== (int) $goalProjectId) {
+            return false;
         }
 
-        $this->dbConnection->table('zp_entity_relationship')->insert([
-            'entityA' => $goalId,
-            'entityAType' => 'GoalItem',
-            'entityB' => $milestoneId,
-            'entityBType' => 'Ticket',
-            'relationship' => EntityRelationshipEnum::TrackedBy->value,
-            'createdOn' => now(),
-            'createdBy' => $userId,
-        ]);
+        // Check-then-insert inside a transaction with a locking read so
+        // concurrent link requests for the same pair can't both insert.
+        return $this->dbConnection->transaction(function () use ($goalId, $milestoneId, $userId): bool {
+            $exists = $this->dbConnection->table('zp_entity_relationship')
+                ->where('entityA', $goalId)
+                ->where('entityAType', 'GoalItem')
+                ->where('entityB', $milestoneId)
+                ->where('entityBType', 'Ticket')
+                ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+                ->lockForUpdate()
+                ->exists();
 
-        return true;
+            if ($exists) {
+                return true;
+            }
+
+            $this->dbConnection->table('zp_entity_relationship')->insert([
+                'entityA' => $goalId,
+                'entityAType' => 'GoalItem',
+                'entityB' => $milestoneId,
+                'entityBType' => 'Ticket',
+                'relationship' => EntityRelationshipEnum::TrackedBy->value,
+                'createdOn' => now(),
+                // 0/unknown stored as NULL so it's never read back as a real user id.
+                'createdBy' => $userId > 0 ? $userId : null,
+            ]);
+
+            return true;
+        });
     }
 
     /**
@@ -491,6 +515,31 @@ class Goalcanvas extends Blueprints
             ->map(fn ($id) => (int) $id)
             ->unique()
             ->values()
+            ->all();
+    }
+
+    /**
+     * Batch resolver: project id for many canvas items of the given type in ONE
+     * query, so callers authorizing a set of items don't run a query per id.
+     * Returns [itemId => projectId]; ids that don't resolve (missing / wrong
+     * canvas type) are absent.
+     *
+     * @param  int[]  $itemIds
+     * @return array<int, int>
+     */
+    public function getCanvasItemProjectIds(array $itemIds, string $canvasType): array
+    {
+        $itemIds = array_values(array_unique(array_filter(array_map('intval', $itemIds))));
+        if ($itemIds === []) {
+            return [];
+        }
+
+        return $this->dbConnection->table('zp_canvas_items as ci')
+            ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+            ->whereIn('ci.id', $itemIds)
+            ->where('cb.type', $canvasType)
+            ->pluck('cb.projectId', 'ci.id')
+            ->map(static fn ($projectId) => (int) $projectId)
             ->all();
     }
 
@@ -621,15 +670,6 @@ class Goalcanvas extends Blueprints
     }
 
     /**
-     * Per-milestone progress — the same storypoint-weighted "done" ratio the
-     * single-milestone goal card used, batched across many milestone ids
-     * (GROUP BY) so a goal shows N progress fills without N queries. Milestones
-     * with no child tickets resolve to 0.
-     *
-     * @param  array<int, int>  $milestoneIds
-     * @return array<int, int> milestoneId => percent (0-100)
-     */
-    /**
      * Normalize a milestone's `tags` color to a value safe to interpolate into
      * an inline `style` attribute. `tags` is user-controlled, so only a hex
      * color (#rgb / #rrggbb) or a CSS custom-property reference (var(--x)) is
@@ -649,6 +689,15 @@ class Goalcanvas extends Blueprints
         return 'var(--grey)';
     }
 
+    /**
+     * Per-milestone progress — the same storypoint-weighted "done" ratio the
+     * single-milestone goal card used, batched across many milestone ids
+     * (GROUP BY) so a goal shows N progress fills without N queries. Milestones
+     * with no child tickets resolve to 0.
+     *
+     * @param  array<int, int>  $milestoneIds
+     * @return array<int, int> milestoneId => percent (0-100)
+     */
     public function getMilestoneProgressForIds(array $milestoneIds): array
     {
         $milestoneIds = array_values(array_unique(array_filter(array_map('intval', $milestoneIds))));

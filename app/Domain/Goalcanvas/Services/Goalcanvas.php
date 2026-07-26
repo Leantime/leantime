@@ -269,14 +269,22 @@ class Goalcanvas extends BaseService
      */
     public function getMilestonesForGoals(array $goalIds): array
     {
+        // Resolve every goal's project in ONE query (not a query per goal), then
+        // authorize per DISTINCT project with a cached VIEW check — so the
+        // auth phase stays O(1) queries regardless of goal-set size.
+        $projectByGoal = $this->goalRepository->getCanvasItemProjectIds($goalIds, self::CANVAS_TYPE);
+        if ($projectByGoal === []) {
+            return [];
+        }
+
+        $accessByProject = [];
         $authorized = [];
-        foreach (array_unique(array_map('intval', $goalIds)) as $goalId) {
-            if ($goalId <= 0) {
-                continue;
+        foreach ($projectByGoal as $goalId => $projectId) {
+            if (! array_key_exists($projectId, $accessByProject)) {
+                $accessByProject[$projectId] = $this->can(GoalcanvasPermissions::VIEW, $projectId);
             }
-            $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
-            if ($projectId !== null && $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
-                $authorized[] = $goalId;
+            if ($accessByProject[$projectId]) {
+                $authorized[] = (int) $goalId;
             }
         }
 

@@ -79,14 +79,6 @@ class EditCanvasItem extends Controller
                 }
             }
 
-            // Delete milestone relationship — an EDIT, authorized by the service against the
-            // item's project (a view-only user is denied here).
-            if (isset($params['removeMilestone'])) {
-                $this->goalService->removeMilestoneFromGoal((int) $params['id'], (int) $params['removeMilestone']);
-                $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
-                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
-            }
-
             $comments = $this->commentsRepo->getComments('goalcanvasitem', $canvasItem['id']);
             $this->tpl->assign(
                 'numComments',
@@ -149,6 +141,17 @@ class EditCanvasItem extends Controller
     #[RequiresPermission(GoalcanvasPermissions::EDIT, entityScoped: true)]
     public function post($params): Response
     {
+
+        // Detach a milestone edge. State-changing, so it goes through POST (not a
+        // GET link) with a CSRF token — the chip's remove control is an hx-post.
+        // Authorized by the service (EDIT against the item's real project; a
+        // view-only user is denied). Returns an empty 200 so the caller's
+        // hx-swap="delete" removes just that chip.
+        if (isset($params['removeMilestone']) && isset($params['id'])) {
+            $this->goalService->removeMilestoneFromGoal((int) $params['id'], (int) $params['removeMilestone']);
+
+            return $this->tpl->emptyResponse();
+        }
 
         if (isset($params['comment']) && isset($params['id'])) {
             $itemId = (int) $params['id'];
