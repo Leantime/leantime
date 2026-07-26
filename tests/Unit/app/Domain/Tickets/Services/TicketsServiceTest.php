@@ -694,6 +694,34 @@ class TicketsServiceTest extends TestCase
     }
 
     /**
+     * A comment on a milestone must not surface in "Supported" — milestones
+     * aren't work the user supported, matching the other user-ticket surfaces.
+     */
+    public function test_commented_tickets_range_excludes_milestones(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn (...$args) => [10, 40],
+            'simpleTicketQuery' => fn (...$args) => [
+                ['id' => 10, 'headline' => 'A', 'type' => 'task', 'editorId' => '99', 'projectId' => 5, 'projectName' => 'P'],
+                ['id' => 40, 'headline' => 'M', 'type' => 'milestone', 'editorId' => '99', 'projectId' => 5, 'projectName' => 'P'],
+            ],
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $result = $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07');
+
+        // 40 is a milestone → excluded; only the task (10) remains.
+        $this->assertCount(1, $result);
+        $this->assertEquals(10, $result[0]['id']);
+    }
+
+    /**
      * No accessible projects → empty, without ever fetching tickets.
      */
     public function test_commented_tickets_range_empty_without_project_access(): void

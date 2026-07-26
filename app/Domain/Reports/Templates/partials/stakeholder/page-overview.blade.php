@@ -23,7 +23,7 @@
 .rd-scope .p1-hero .slabel{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-s5);}
 .rd-scope .p1-hero .rec{font-size:11px;font-weight:500;color:var(--rd-text-3);display:flex;align-items:center;gap:6px;}
 .rd-scope .p1-hero .rec i{font-size:11px;color:var(--rd-ok);}
-.rd-scope .p1-hero .rec .rec-change{color:var(--rd-accent);text-decoration:none;font-weight:600;}
+.rd-scope .p1-hero .rec .rec-change{color:var(--rd-accent);text-decoration:none;font-weight:600;background:none;border:0;padding:0;font:inherit;cursor:pointer;}
 .rd-scope .p1-hero .rec .rec-change:hover{text-decoration:underline;}
 .rd-scope .p1-hero .rec-note{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--rd-text-3);font-style:italic;}
 .rd-scope .p1-hero .rec-note i{font-size:10px;color:var(--rd-text-4);}
@@ -409,7 +409,7 @@
         <div class="p1-hero">
             <div class="eye">
                 <span class="slabel">{{ __('stakeholder.overview.peak_label') }}</span>
-                <span class="rec"><i class="fa fa-wand-magic-sparkles"></i> {{ __('stakeholder.overview.peak_recommended') }} · <a href="javascript:void(0)" class="rec-change" title="{{ __('stakeholder.overview.peak_override_tip') }}">{{ __('stakeholder.overview.peak_change') }}</a></span>
+                <span class="rec"><i class="fa fa-wand-magic-sparkles"></i> {{ __('stakeholder.overview.peak_recommended') }} · <button type="button" class="rec-change" title="{{ __('stakeholder.overview.peak_override_tip') }}">{{ __('stakeholder.overview.peak_change') }}</button></span>
             </div>
             <h3>{{ $peak->headline ?? '' }}</h3>
             @if ($peakBody !== '')

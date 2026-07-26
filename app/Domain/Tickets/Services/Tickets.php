@@ -2533,9 +2533,10 @@ class Tickets extends BaseService
      * (presence counts as much as production).
      *
      * Access safety: the commented-ticket ids are intersected with the user's
-     * access-scoped ticket set (simpleTicketQuery applies the project-access +
-     * collaborator clause), so a comment can never surface a ticket the user
-     * can no longer see. Ownership filter drops tickets where the user IS the
+     * access-scoped ticket set (simpleTicketQuery applies the project-access
+     * clause; the collaborator/editor filter is deliberately skipped by passing
+     * a null userId — see the call site below), so a comment can never surface a
+     * ticket the user can no longer see. Ownership filter drops tickets where the user IS the
      * editor — those are "your work," not support. Defaults either bound to
      * today.
      *
@@ -2583,6 +2584,12 @@ class Tickets extends BaseService
 
         $out = [];
         foreach ($accessible as $ticket) {
+            // Milestones aren't "supported work" — exclude them the way the
+            // other user-ticket surfaces (e.g. getAllOpenUserTickets) do, so a
+            // comment on a milestone doesn't surface in the "Supported" list.
+            if (strtolower((string) ($ticket['type'] ?? '')) === 'milestone') {
+                continue;
+            }
             // "Supported", not "yours": drop tickets you're the editor of.
             if ((string) ($ticket['editorId'] ?? '') === (string) $userId) {
                 continue;
