@@ -3001,9 +3001,15 @@ class Install
     public function update_sql_30524(): bool|array
     {
         try {
-            if (! Schema::hasTable('zp_canvas_items')
-                || ! Schema::hasTable('zp_entity_relationship')
-                || ! Schema::hasTable('zp_tickets')) {
+            // Guard on the installer's own connection (not the global Schema
+            // facade, which checks the default connection) so the existence
+            // check matches the connection the migration queries run against
+            // (may be a temp/target install connection).
+            $schema = $this->connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_entity_relationship')
+                || ! $schema->hasTable('zp_tickets')
+                || ! $schema->hasColumn('zp_canvas_items', 'milestoneId')) {
                 return true;
             }
 
@@ -3015,7 +3021,7 @@ class Install
             // into memory at once. Each chunk resolves its own live-milestone
             // and existing-edge sets, scoped to the chunk's ids (no full-table
             // scan), then batch-inserts.
-            DB::table('zp_canvas_items')
+            $this->connection->table('zp_canvas_items')
                 ->where('box', 'goal')
                 ->whereNotNull('milestoneId')
                 ->where('milestoneId', '<>', '')
@@ -3049,12 +3055,12 @@ class Install
                     // both scoped to this chunk's ids — O(1) lookups, no N+1.
                     $liveTickets = array_flip(array_map(
                         'intval',
-                        DB::table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->pluck('id')->all()
+                        $this->connection->table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->where('type', 'milestone')->pluck('id')->all()
                     ));
 
                     $existingEdges = [];
                     foreach (
-                        DB::table('zp_entity_relationship')
+                        $this->connection->table('zp_entity_relationship')
                             ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
                             ->where('entityAType', 'GoalItem')
                             ->where('entityBType', 'Ticket')
@@ -3089,7 +3095,7 @@ class Install
                     }
 
                     foreach (array_chunk($rows, 200) as $insertChunk) {
-                        DB::table('zp_entity_relationship')->insert($insertChunk);
+                        $this->connection->table('zp_entity_relationship')->insert($insertChunk);
                     }
                 });
         } catch (\Exception $e) {

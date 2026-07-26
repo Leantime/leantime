@@ -403,6 +403,8 @@ class Goalcanvas extends Blueprints
         $goalProjectId = $this->dbConnection->table('zp_canvas_items as ci')
             ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
             ->where('ci.id', $goalId)
+            ->where('ci.box', 'goal')
+            ->where('cb.type', 'goalcanvas')
             ->value('cb.projectId');
         $milestone = $this->dbConnection->table('zp_tickets')
             ->where('id', $milestoneId)
