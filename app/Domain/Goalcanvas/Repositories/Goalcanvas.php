@@ -380,29 +380,53 @@ class Goalcanvas extends Blueprints
             return false;
         }
 
-        $exists = $this->dbConnection->table('zp_entity_relationship')
-            ->where('entityA', $goalId)
-            ->where('entityAType', 'GoalItem')
-            ->where('entityB', $milestoneId)
-            ->where('entityBType', 'Ticket')
-            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
-            ->exists();
-
-        if ($exists) {
-            return true;
+        // Fail closed: only link a real milestone that lives in the SAME project
+        // as the goal (resolve the goal's project via its canvas, and the
+        // target's project + type). Rejecting a forged/foreign or non-milestone
+        // id here — the shared write chokepoint — stops a link from surfacing
+        // another project's milestone headline on the goal chips.
+        $goalProjectId = $this->dbConnection->table('zp_canvas_items as ci')
+            ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+            ->where('ci.id', $goalId)
+            ->value('cb.projectId');
+        $milestone = $this->dbConnection->table('zp_tickets')
+            ->where('id', $milestoneId)
+            ->where('type', 'milestone')
+            ->first(['projectId']);
+        if ($goalProjectId === null || $milestone === null
+            || (int) $milestone->projectId !== (int) $goalProjectId) {
+            return false;
         }
 
-        $this->dbConnection->table('zp_entity_relationship')->insert([
-            'entityA' => $goalId,
-            'entityAType' => 'GoalItem',
-            'entityB' => $milestoneId,
-            'entityBType' => 'Ticket',
-            'relationship' => EntityRelationshipEnum::TrackedBy->value,
-            'createdOn' => now(),
-            'createdBy' => $userId,
-        ]);
+        // Check-then-insert inside a transaction with a locking read so
+        // concurrent link requests for the same pair can't both insert.
+        return $this->dbConnection->transaction(function () use ($goalId, $milestoneId, $userId): bool {
+            $exists = $this->dbConnection->table('zp_entity_relationship')
+                ->where('entityA', $goalId)
+                ->where('entityAType', 'GoalItem')
+                ->where('entityB', $milestoneId)
+                ->where('entityBType', 'Ticket')
+                ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+                ->lockForUpdate()
+                ->exists();
 
-        return true;
+            if ($exists) {
+                return true;
+            }
+
+            $this->dbConnection->table('zp_entity_relationship')->insert([
+                'entityA' => $goalId,
+                'entityAType' => 'GoalItem',
+                'entityB' => $milestoneId,
+                'entityBType' => 'Ticket',
+                'relationship' => EntityRelationshipEnum::TrackedBy->value,
+                'createdOn' => now(),
+                // 0/unknown stored as NULL so it's never read back as a real user id.
+                'createdBy' => $userId > 0 ? $userId : null,
+            ]);
+
+            return true;
+        });
     }
 
     /**
