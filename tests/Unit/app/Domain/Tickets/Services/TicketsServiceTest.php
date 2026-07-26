@@ -99,6 +99,9 @@ class TicketsServiceTest extends TestCase
 
     protected function _after()
     {
+        // Clear any frozen Carbon "now" so a test that freezes it (e.g. the
+        // board-summary due-this-week test) can't leak into later tests.
+        CarbonImmutable::setTestNow();
         $this->ticketsService = null;
     }
 
@@ -144,6 +147,12 @@ class TicketsServiceTest extends TestCase
      */
     public function test_get_board_summary_computes_counts_and_last_updated()
     {
+        // Freeze "now" to a fixed instant (noon, well clear of a midnight/week
+        // boundary) so $dueToday and getBoardSummary's weekStart/weekEnd are
+        // computed from the same clock — otherwise a run straddling midnight
+        // could make the due-this-week assertion flaky. Cleared in _after().
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-07-15 12:00:00', 'UTC'));
+
         // getBoardSummary parses dateToFinish via parseDbDateTime() (DB tz) and
         // converts to the user tz before the "this week" compare, so the stored
         // strings must be DB-tz. Derive them from userNow()->setToDbTimezone()
