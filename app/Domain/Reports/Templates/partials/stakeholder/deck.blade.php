@@ -291,19 +291,19 @@
              sit in one outlined container so they read as a connected control,
              the active one a white segment inside it. --}}
         <div class="rd-tab-group">
-            <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
-            <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
-            <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
-            <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+            <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high" aria-hidden="true"></i> {{ __('stakeholder.tab.overview') }}</button>
+            <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project" aria-hidden="true"></i> {{ __('stakeholder.tab.logic_model') }}</button>
+            <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows" aria-hidden="true"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
+            <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass" aria-hidden="true"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
         </div>
 
         <div class="rd-tab-right">
             <div class="rd-picker" id="rdPicker">
                 <button type="button" class="rd-picker-btn" onclick="rdTogglePicker(event)">
-                    <i class="fa fa-calendar"></i>
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
                     <span class="rd-picker-q">{{ $presetName }}</span>
                     <span class="rd-picker-range">· {{ $period->from->setToUserTimezone()->format('M j') }} – {{ $period->to->setToUserTimezone()->format('M j, Y') }}</span>
-                    <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-caret-down" aria-hidden="true"></i>
                 </button>
                 <div class="rd-picker-menu" id="rdPickerMenu" hidden>
                     <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_LAST_QUARTER }}"
@@ -340,8 +340,8 @@
             </div>
 
             <div class="rd-arrows">
-                <button type="button" class="rd-arrow" id="rdPrev" onclick="rdGo(rdActive - 1)" aria-label="{{ __('stakeholder.nav.prev') }}"><i class="fa fa-chevron-left"></i></button>
-                <button type="button" class="rd-arrow" id="rdNext" onclick="rdGo(rdActive + 1)" aria-label="{{ __('stakeholder.nav.next') }}"><i class="fa fa-chevron-right"></i></button>
+                <button type="button" class="rd-arrow" id="rdPrev" onclick="rdGo(rdActive - 1)" aria-label="{{ __('stakeholder.nav.prev') }}"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                <button type="button" class="rd-arrow" id="rdNext" onclick="rdGo(rdActive + 1)" aria-label="{{ __('stakeholder.nav.next') }}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
             </div>
         </div>
     </div>
