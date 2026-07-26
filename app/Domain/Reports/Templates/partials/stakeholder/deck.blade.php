@@ -266,6 +266,8 @@
 /* Print (§7) — expand all pages, hide screen affordances. */
 @media print {
     .rd-tabs, .rd-arrows, .rd-tab-right, .hideOnPrint { display: none !important; }
+    /* Shadow lives on the .rd-card wrapper now — flatten it (and the deck) for print. */
+    .rd-card { box-shadow: none; border: none; }
     .rd-deck { box-shadow: none; }
     .rd-deck-viewport { overflow: visible !important; }
     .rd-deck-track { transform: none !important; display: block !important; }
