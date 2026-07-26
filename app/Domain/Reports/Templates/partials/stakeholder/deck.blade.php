@@ -30,6 +30,28 @@
 @php
     use Leantime\Domain\Reports\Models\ReportPeriod;
 
+    // Default every var this shell reads or forwards to sub-partials. Strategy
+    // and program callers pass different subsets (e.g. strategy has
+    // programRows/strategyUpdates, program has resourceSummary/capacityAnalysis),
+    // so without these guards compact() below would emit "undefined variable"
+    // warnings for whichever ones the current scope omits. $stats/$deltas/
+    // $logicModel are defaulted here too since they're read before any guard.
+    $report            = $report            ?? [];
+    $stats             = $stats             ?? [];
+    $deltas            = $deltas            ?? [];
+    $needsAttn         = $needsAttn         ?? [];
+    $logicModel        = $logicModel        ?? null;
+    $goalsGroup        = $goalsGroup        ?? ['goals' => [], 'byProject' => [], 'counts' => []];
+    $scope             = $scope             ?? 'strategy';
+    $strategyUpdates   = $strategyUpdates   ?? [];
+    $programUpdates    = $programUpdates    ?? [];
+    $programRows       = $programRows       ?? [];
+    $resourceSummary   = $resourceSummary   ?? null;
+    $capacityAnalysis  = $capacityAnalysis  ?? null;
+    $programMeta       = $programMeta       ?? [];
+    $programChildMap   = $programChildMap   ?? [];
+    $capacityByProgram = $capacityByProgram ?? [];
+
     $completedCount = (int) ($stats['completed'] ?? 0);
     $overdueCount   = (int) ($stats['overdue'] ?? 0);
     $goalsOnTrack   = (int) ($stats['goalsOnTrack'] ?? 0);
