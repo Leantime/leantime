@@ -36,7 +36,7 @@ class Project extends Controller
      *
      * @param  array<string, mixed>  $params
      */
-    #[RequiresPermission(ReportsPermissions::VIEW)]
+    #[RequiresPermission(ReportsPermissions::VIEW, projectIdParam: 'projectId')]
     public function get(array $params): \Symfony\Component\HttpFoundation\Response
     {
         // Drill-down links from plan/strategy rollups target a specific project; switch the

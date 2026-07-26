@@ -198,7 +198,7 @@ class ReportEngine
      * @param  int[]  $projectIds
      * @return array<int, object> Keyed by projectId
      */
-    public function getLatestStatusUpdateForProjects(array $projectIds): array
+    public function getLatestStatusUpdateForProjects(array $projectIds, int $userId, int $clientId): array
     {
         if ($projectIds === []) {
             return [];
@@ -210,7 +210,11 @@ class ReportEngine
             ->whereIn('moduleId', $projectIds)
             ->groupBy('moduleId');
 
-        $rows = $this->connection->table('zp_comment')
+        // Apply the same project-access predicate as the other repo methods
+        // rather than trusting the caller to pre-filter — this method returns
+        // free-text status updates, so guarding here keeps a future caller from
+        // accidentally leaking updates from projects the requestor can't see.
+        $rowsQuery = $this->connection->table('zp_comment')
             ->select([
                 'zp_comment.id',
                 'zp_comment.moduleId as projectId',
@@ -225,9 +229,12 @@ class ReportEngine
                     ->on('zp_comment.date', '=', 'latest.maxDate');
             })
             ->leftJoin('zp_user', 'zp_comment.userId', '=', 'zp_user.id')
-            ->where('zp_comment.module', '=', 'project')
-            ->get()
-            ->all();
+            ->leftJoin('zp_projects', 'zp_comment.moduleId', '=', 'zp_projects.id')
+            ->where('zp_comment.module', '=', 'project');
+
+        $this->applyAccessPredicate($rowsQuery, $userId, $clientId);
+
+        $rows = $rowsQuery->get()->all();
 
         // MAX(date) can tie (two updates at the same timestamp), so the join
         // returns several rows for a project. Break the tie deterministically on

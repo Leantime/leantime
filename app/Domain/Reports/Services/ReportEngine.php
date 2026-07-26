@@ -302,7 +302,7 @@ class ReportEngine extends BaseService
         [$userId, $clientId] = $this->requestContext();
 
         $meta = $this->reportEngineRepository->getProjectsMeta($projectIds, $userId, $clientId);
-        $latestUpdates = $this->reportEngineRepository->getLatestStatusUpdateForProjects(array_keys($meta));
+        $latestUpdates = $this->reportEngineRepository->getLatestStatusUpdateForProjects(array_keys($meta), $userId, $clientId);
 
         $now = CarbonImmutable::now('UTC');
 
