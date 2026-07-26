@@ -322,6 +322,31 @@ class Goalcanvas extends Blueprints
             return [];
         }
 
+        // Scope to the milestone's OWN project. Goal↔milestone links are
+        // same-project, but the legacy milestoneId column (and the 30524
+        // backfill) can carry stale cross-project ids — filter the candidate
+        // goals to goalcanvas boards in the milestone's project so a foreign
+        // goal can never leak into this reverse lookup.
+        $milestoneProjectId = $this->dbConnection->table('zp_tickets')
+            ->where('id', $milestoneId)
+            ->where('type', 'milestone')
+            ->value('projectId');
+        if ($milestoneProjectId === null) {
+            return [];
+        }
+        $goalIds = $this->dbConnection->table('zp_canvas_items as ci')
+            ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+            ->whereIn('ci.id', $goalIds)
+            ->where('ci.box', 'goal')
+            ->where('cb.type', 'goalcanvas')
+            ->where('cb.projectId', (int) $milestoneProjectId)
+            ->pluck('ci.id')
+            ->map(static fn ($id) => (int) $id)
+            ->all();
+        if ($goalIds === []) {
+            return [];
+        }
+
         $results = $this->dbConnection->table('zp_canvas_items')
             ->select(
                 'id',
