@@ -396,6 +396,43 @@ class GoalcanvasServiceTest extends TestCase
         $this->assertSame([], $removed);
     }
 
+    public function test_patch_goal_item_skips_edge_sync_when_patch_fails(): void
+    {
+        $added = [];
+        $removed = [];
+        // patchCanvasItem returns false → the milestoneId edge sync must NOT run,
+        // else the tracked_by edges would drift from the (unchanged) column.
+        $repo = $this->edgeRepo([], ['patchCanvasItem' => fn () => false], $added, $removed);
+
+        $result = $this->service($repo)->patchGoalItem(7, ['milestoneId' => 42]);
+
+        $this->assertFalse($result);
+        $this->assertSame([], $added, 'no edge added when the underlying patch failed');
+        $this->assertSame([], $removed);
+    }
+
+    public function test_delete_goal_item_removes_all_edges_on_successful_delete(): void
+    {
+        $deleted = 0;
+        $cleared = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'delCanvasItem' => function () use (&$deleted) {
+                $deleted++;
+            },
+            'removeAllGoalMilestoneLinks' => function ($goalId) use (&$cleared) {
+                $cleared = (int) $goalId;
+
+                return true;
+            },
+        ]);
+
+        $this->service($repo)->deleteGoalItem(5);
+
+        $this->assertSame(1, $deleted);
+        $this->assertSame(5, $cleared, 'deleting a goal item clears its tracked_by edges');
+    }
+
     public function test_empty_milestone_id_clears_existing_edges_without_adding(): void
     {
         $added = [];

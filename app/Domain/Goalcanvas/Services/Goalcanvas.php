@@ -456,7 +456,10 @@ class Goalcanvas extends BaseService
 
         $result = $this->goalRepository->patchCanvasItem($id, $params);
 
-        if (array_key_exists('milestoneId', $params)) {
+        // Only mirror the milestoneId change into the tracked_by edges when the
+        // column patch actually persisted — otherwise the edges would drift from
+        // the milestoneId column and break the dual-write invariant.
+        if ($result && array_key_exists('milestoneId', $params)) {
             $this->syncGoalMilestoneEdges($id, $params['milestoneId'], (int) session('userdata.id'));
         }
 
