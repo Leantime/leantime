@@ -618,8 +618,11 @@ class Goalcanvas extends Blueprints
                 if ($ra !== $rb) {
                     return $ra <=> $rb;
                 }
-                $da = ($a['editTo'] === null || $a['editTo'] === '') ? '9999-12-31' : (string) $a['editTo'];
-                $db = ($b['editTo'] === null || $b['editTo'] === '') ? '9999-12-31' : (string) $b['editTo'];
+                // Treat missing AND the zero-date sentinel ('0000-00-00 …') as
+                // "no due date" so those chips sort last, not first.
+                $noDue = static fn ($v): bool => $v === null || $v === '' || str_starts_with((string) $v, '0000-00-00');
+                $da = $noDue($a['editTo']) ? '9999-12-31' : (string) $a['editTo'];
+                $db = $noDue($b['editTo']) ? '9999-12-31' : (string) $b['editTo'];
 
                 return strcmp($da, $db);
             });

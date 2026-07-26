@@ -63,8 +63,9 @@ class GoalcanvasServiceTest extends TestCase
     private function goalRepoWithMilestones(array $milestones, int $projectId = 9): GoalcanvaRepository
     {
         return $this->make(GoalcanvaRepository::class, [
-            'getCanvasItemProjectId' => fn () => $projectId,
-            'getMilestonesForGoals' => fn () => [7 => $milestones],
+            'getCanvasItemProjectId' => fn (...$args) => $projectId,
+            'getCanvasItemProjectIds' => fn (...$args) => [7 => (int) $projectId],
+            'getMilestonesForGoals' => fn (...$args) => [7 => $milestones],
         ]);
     }
 

@@ -386,7 +386,7 @@
                                         </div>
                                     </div>
 
-                                    @include('goalcanvas.partials.milestoneChips', ['milestones' => $row['milestones'] ?? []])
+                                    @include('goalcanvas::partials.milestoneChips', ['milestones' => $row['milestones'] ?? []])
                                 </div>
                             </div>
                         @endif
