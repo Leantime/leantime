@@ -305,23 +305,30 @@ class ReportEngine
      * @param  int[]  $projectIds
      * @return array<int, object> Rows with projectId, milestoneId, loggedHours
      */
-    public function getHoursLoggedForProjects(array $projectIds, string $fromDb, string $toDb): array
+    public function getHoursLoggedForProjects(array $projectIds, string $fromDb, string $toDb, int $userId, int $clientId): array
     {
         if ($projectIds === []) {
             return [];
         }
 
-        return $this->connection->table('zp_timesheets')
+        // Access-guard at the repo layer like the sibling methods (join
+        // zp_projects + applyAccessPredicate), rather than trusting the caller
+        // to pre-filter — so a future caller can't accidentally total effort
+        // for projects the requestor can't access.
+        $query = $this->connection->table('zp_timesheets')
             ->selectRaw('zp_tickets.projectId AS '.$this->dbHelper->wrapColumn('projectId'))
             ->selectRaw('COALESCE(zp_tickets.milestoneid, 0) AS '.$this->dbHelper->wrapColumn('milestoneId'))
             ->selectRaw('SUM(zp_timesheets.hours) AS '.$this->dbHelper->wrapColumn('loggedHours'))
             ->join('zp_tickets', 'zp_timesheets.ticketId', '=', 'zp_tickets.id')
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
             ->whereIn('zp_tickets.projectId', $projectIds)
             ->whereBetween('zp_timesheets.workDate', [$fromDb, $toDb])
             ->groupBy('zp_tickets.projectId')
-            ->groupByRaw('COALESCE(zp_tickets.milestoneid, 0)')
-            ->get()
-            ->all();
+            ->groupByRaw('COALESCE(zp_tickets.milestoneid, 0)');
+
+        $this->applyAccessPredicate($query, $userId, $clientId);
+
+        return $query->get()->all();
     }
 
     /**

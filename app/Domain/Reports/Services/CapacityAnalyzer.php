@@ -99,11 +99,9 @@ final class CapacityAnalyzer
             $rawTickets = $this->ticketsRepo->getAllByProjectId($pid) ?: [];
 
             // Normalize — the repo hydrates rows into Tickets model objects; we
-            // want plain array rows for uniform key access downstream.
-            $tickets = array_map(
-                fn ($t) => is_object($t) ? (array) $t : (array) $t,
-                $rawTickets,
-            );
+            // want plain array rows for uniform key access downstream. (array)
+            // covers both: it's a no-op on arrays and casts objects to arrays.
+            $tickets = array_map(fn ($t) => (array) $t, $rawTickets);
 
             // Filter to open tickets only — DONE work doesn't need capacity. DONE is
             // resolved per project from the status labels (custom statuses can mark

@@ -342,11 +342,14 @@ class ReportEngine extends BaseService
     public function getEffortForProjects(array $projectIds, ReportPeriod $period): array
     {
         $projectIds = $this->filterAuthorizedProjects($projectIds);
+        [$userId, $clientId] = $this->requestContext();
 
         $rows = $this->reportEngineRepository->getHoursLoggedForProjects(
             $projectIds,
             $period->fromDbString(),
-            $period->toDbString()
+            $period->toDbString(),
+            $userId,
+            $clientId
         );
 
         $total = 0.0;
