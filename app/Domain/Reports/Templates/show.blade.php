@@ -60,8 +60,12 @@
                                     <div class="boxedHighlight">
                                         <span class="headline">{!! __('label.open_todos') !!}</span>
                                         <span class="value">
+                                            {{-- Open To-Dos is a COUNT of tickets (SUM of CASE WHEN
+                                                 status = X THEN 1 in the repo), so it's inherently
+                                                 an integer. ->decimal() rendered "1" as "1.00" —
+                                                 read as a broken chart value in the audit. --}}
                                             @if ($fullReportLatest !== false)
-                                                {{ format(($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']))->decimal() }}
+                                                {{ (int) ($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']) }}
                                             @else
                                                 {{ 0 }}
                                             @endif
@@ -72,11 +76,16 @@
 
                             </div>
 
-                            @if ($allSprints !== false)
+                            {{-- Hide the whole Sprint Burndown section when the project has
+                                 no sprints. Previously the outer guard was just `!== false`, so an
+                                 empty array (project without sprints) rendered the title + toggle
+                                 buttons + empty canvas with no chart underneath — read as broken
+                                 in the audit. --}}
+                            @if ($allSprints !== false && count($allSprints) > 0)
                                 <h5 class="subtitle">{!! __('subtitles.sprint_burndown') !!}</h5>
                                 <br />
                                 <span class="pull-left">
-                                @if ($allSprints !== false && count($allSprints) > 0)
+                                @if (true)
                                     <select data-placeholder="{{ __('input.placeholders.filter_by_sprint') }}" title="{{ __('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
 
                                         <option value="" >{!! __('input.placeholders.filter_by_sprint') !!}</option>

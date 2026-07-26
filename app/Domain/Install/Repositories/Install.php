@@ -94,6 +94,7 @@ class Install
         30520,
         30521,
         30522,
+        30523,
     ];
 
     /**
@@ -710,6 +711,8 @@ class Install
                     `sessiontime` varchar(50) DEFAULT NULL,
                     `wage` int(11) DEFAULT NULL,
                     `hours` int(11) DEFAULT NULL,
+                    `weekly_hours` int(11) DEFAULT NULL,
+                    `employment_type` varchar(20) DEFAULT NULL,
                     `description` text,
                     `clientId` int(11) DEFAULT NULL,
                     `notifications` int(2) DEFAULT NULL,
@@ -2928,6 +2931,46 @@ class Install
             Log::error('Migration 30522: '.$e->getMessage());
 
             return ['Migration 30522 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30523 — database update for v3.5.23.
+     *
+     * Adds user-level capacity attributes so downstream resource-planning
+     * surfaces (starting with PgmPro's Resource Allocation tab) can
+     * distinguish an FTE's target from a PT's ceiling, a contractor's
+     * billable cap, and a volunteer's best-effort throughput.
+     *
+     * Both columns are nullable with no default and no backfill —
+     * per product decision: teach users to configure this explicitly
+     * rather than assume everyone is 40h/FTE. Downstream code treats
+     * NULL as "not configured" and prompts admins to set it before
+     * capacity warnings can fire.
+     */
+    public function update_sql_30523(): bool|array
+    {
+        try {
+            if (! Schema::hasTable('zp_user')) {
+                return true;
+            }
+
+            if (! Schema::hasColumn('zp_user', 'weekly_hours')) {
+                Schema::table('zp_user', function (Blueprint $table) {
+                    $table->integer('weekly_hours')->nullable()->after('hours');
+                });
+            }
+            if (! Schema::hasColumn('zp_user', 'employment_type')) {
+                Schema::table('zp_user', function (Blueprint $table) {
+                    $table->string('employment_type', 20)->nullable()->after('weekly_hours');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30523: '.$e->getMessage());
+
+            return ['Migration 30523 failed: '.$e->getMessage()];
         }
 
         return true;
