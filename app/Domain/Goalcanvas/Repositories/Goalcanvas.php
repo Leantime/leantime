@@ -330,6 +330,7 @@ class Goalcanvas extends Blueprints
         $milestoneProjectId = $this->dbConnection->table('zp_tickets')
             ->where('id', $milestoneId)
             ->where('type', 'milestone')
+            ->where('status', '<>', -1)   // ignore soft-deleted milestones
             ->value('projectId');
         if ($milestoneProjectId === null) {
             return [];
