@@ -409,6 +409,7 @@ class Goalcanvas extends Blueprints
         $milestone = $this->dbConnection->table('zp_tickets')
             ->where('id', $milestoneId)
             ->where('type', 'milestone')
+            ->where('status', '<>', -1)   // exclude deleted (Leantime's soft-delete sentinel)
             ->first(['projectId']);
         if ($goalProjectId === null || $milestone === null
             || (int) $milestone->projectId !== (int) $goalProjectId) {
