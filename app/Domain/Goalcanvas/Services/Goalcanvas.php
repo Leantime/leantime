@@ -415,6 +415,12 @@ class Goalcanvas extends BaseService
      * write (the transitional single-select semantics — replace the goal's
      * links with the one value; an empty value clears them). Set-based so an
      * unchanged save doesn't churn edges. PR 3 widens this to accept an array.
+     *
+     * @param  int  $goalId  The goal (canvas item) whose edges are reconciled.
+     * @param  mixed  $milestoneIdValue  The desired milestone id from the write
+     *                                   (string/int/empty); non-scalar or
+     *                                   non-numeric values clear the edge.
+     * @param  int  $userId  Author recorded on any created edge.
      */
     private function syncGoalMilestoneEdges(int $goalId, mixed $milestoneIdValue, int $userId): void
     {
@@ -423,10 +429,13 @@ class Goalcanvas extends BaseService
         }
 
         $desired = [];
-        // Only a strictly-numeric value becomes a desired edge. A stray string
-        // like '42abc' would otherwise cast to 42 and create an edge that
-        // drifts from the persisted milestoneId column.
-        $milestoneId = filter_var($milestoneIdValue, FILTER_VALIDATE_INT);
+        // Only a strictly-numeric SCALAR value becomes a desired edge. A stray
+        // string like '42abc' would cast to 42; a non-scalar (e.g. an array from
+        // milestoneId[]=42 param pollution) would make filter_var() warn — guard
+        // both so the edge just stays cleared rather than drifting or erroring.
+        $milestoneId = is_scalar($milestoneIdValue)
+            ? filter_var($milestoneIdValue, FILTER_VALIDATE_INT)
+            : false;
         if ($milestoneId !== false && $milestoneId > 0) {
             $desired[] = $milestoneId;
         }
