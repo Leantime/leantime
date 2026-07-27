@@ -112,7 +112,11 @@ class EditCanvasItem extends Controller
         $this->tpl->assign('canvasId', $canvasItem['canvasId']);
         $this->tpl->assign('comments', $comments);
 
-        $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
+        // Scope the milestone options to the GOAL's real project (goal↔milestone
+        // is same-project), not the session project — the dialog can be opened
+        // for a goal outside the current project. New goals fall back to session.
+        $goalProjectId = $canvasItem['projectId'] ?? session('currentProject');
+        $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $goalProjectId]);
         $this->tpl->assign('milestones', $allProjectMilestones);
 
         // Linked-milestone chips + status summary for the goal editor (edge model).
@@ -237,6 +241,12 @@ class EditCanvasItem extends Controller
                     // goal's other linked milestones intact.
                     $milestoneToLink = 0;
                     if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
+                        // Create the milestone in the GOAL's real project (goal↔milestone
+                        // is same-project), not the session project — otherwise a
+                        // cross-project dialog would create it in the wrong project and
+                        // the same-project link guard would then reject it.
+                        $goalItem = $this->goalService->getGoalItem((int) $params['itemId']);
+                        $params['projectId'] = ($goalItem['projectId'] ?? null) ?: session('currentProject');
                         $params['headline'] = $params['newMilestone'];
                         $params['tags'] = '#ccc';
                         $params['editFrom'] = dtHelper()->userNow()->formatDateForUser();

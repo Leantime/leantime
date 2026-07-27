@@ -362,7 +362,15 @@ class Goalcanvas extends BaseService
             return false;
         }
 
-        return $this->goalRepository->getSingleCanvasItem($id);
+        $item = $this->goalRepository->getSingleCanvasItem($id);
+        if (is_array($item)) {
+            // Surface the item's REAL (authorized) project so callers scope
+            // project-dependent UI to the goal's project, not the session's —
+            // the dialog can be opened for a goal outside the current project.
+            $item['projectId'] = $projectId;
+        }
+
+        return $item;
     }
 
     /**
