@@ -541,6 +541,31 @@ class Goalcanvas extends Blueprints
     }
 
     /**
+     * Batch resolver: project id for many canvas items of the given type in ONE
+     * query, so callers authorizing a set of items don't run a query per id.
+     * Returns [itemId => projectId]; ids that don't resolve (missing / wrong
+     * canvas type) are absent.
+     *
+     * @param  int[]  $itemIds
+     * @return array<int, int>
+     */
+    public function getCanvasItemProjectIds(array $itemIds, string $canvasType): array
+    {
+        $itemIds = array_values(array_unique(array_filter(array_map('intval', $itemIds))));
+        if ($itemIds === []) {
+            return [];
+        }
+
+        return $this->dbConnection->table('zp_canvas_items as ci')
+            ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+            ->whereIn('ci.id', $itemIds)
+            ->where('cb.type', $canvasType)
+            ->pluck('cb.projectId', 'ci.id')
+            ->map(static fn ($projectId) => (int) $projectId)
+            ->all();
+    }
+
+    /**
      * The milestone chips for a set of goals — each goal's tracked_by
      * milestones with name, color, due date, and progress fill. Three queries
      * total (edges, milestone details, progress), no N+1. Edges pointing at a

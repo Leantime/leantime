@@ -260,6 +260,47 @@ class Goalcanvas extends BaseService
     }
 
     /**
+     * Batch sibling of getGoalMilestones(): hydrate milestone chips for many
+     * goals in one pass so callers with a goal set (e.g. the reports engine)
+     * avoid an N+1. Each goal is authorized for VIEW against its real project;
+     * goals the caller can't see are omitted. Returns [goalId => milestones[]].
+     *
+     * @param  int[]  $goalIds
+     * @return array<int, array<int, array<string, mixed>>>
+     *
+     * @api
+     */
+    public function getMilestonesForGoals(array $goalIds): array
+    {
+        // Resolve every goal's project in ONE query (not a query per goal), then
+        // authorize per DISTINCT project with a cached VIEW check — so the
+        // auth phase stays O(1) queries regardless of goal-set size.
+        $projectByGoal = $this->goalRepository->getCanvasItemProjectIds($goalIds, self::CANVAS_TYPE);
+        if ($projectByGoal === []) {
+            return [];
+        }
+
+        $accessByProject = [];
+        $authorized = [];
+        foreach ($projectByGoal as $goalId => $projectId) {
+            if (! array_key_exists($projectId, $accessByProject)) {
+                $accessByProject[$projectId] = $this->can(GoalcanvasPermissions::VIEW, $projectId);
+            }
+            if ($accessByProject[$projectId]) {
+                $authorized[] = (int) $goalId;
+            }
+        }
+
+        if ($authorized === []) {
+            return [];
+        }
+
+        // Single hydration pass for the whole authorized set (the expensive part
+        // — status labels + progress — is batched inside the repository).
+        return $this->goalRepository->getMilestonesForGoals($authorized);
+    }
+
+    /**
      * Link one milestone to a goal (append — leaves existing links intact).
      * Authorized for EDIT against the goal's project.
      *
