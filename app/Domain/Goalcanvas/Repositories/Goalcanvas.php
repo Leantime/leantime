@@ -754,8 +754,8 @@ class Goalcanvas extends Blueprints
                 ->select('milestoneid')
                 ->selectRaw('ROUND(
                     CASE WHEN COUNT('.$id.') > 0 THEN (
-                        SUM(CASE WHEN '.$st.' '.$statusGroups['DONE'].' THEN CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END ELSE 0 END) /
-                        SUM(CASE WHEN '.$sp.' = 0 THEN 3 ELSE '.$sp.' END)
+                        SUM(CASE WHEN '.$st.' '.$statusGroups['DONE'].' THEN CASE WHEN COALESCE('.$sp.', 0) = 0 THEN 3 ELSE '.$sp.' END ELSE 0 END) /
+                        SUM(CASE WHEN COALESCE('.$sp.', 0) = 0 THEN 3 ELSE '.$sp.' END)
                     ) * 100 ELSE 0 END
                 ) AS '.$this->dbHelper->wrapColumn('percentDone'))
                 ->whereIn('milestoneid', $projectMilestoneIds)
