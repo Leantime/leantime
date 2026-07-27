@@ -47,22 +47,22 @@
 
 /* Three-card resource summary — larger, roomier, higher contrast. */
 .rd-scope .p3-res-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
-.rd-scope .p3-rcard{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:20px 22px;background:var(--rd-panel);min-width:0;display:flex;flex-direction:column;}
-.rd-scope .p3-rcard .rhead{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-.rd-scope .p3-rcard .rhead .ricn{width:36px;height:36px;border-radius:10px;background:rgba(0,71,102,.08);color:var(--rd-accent);display:grid;place-items:center;font-size:15px;flex:none;}
-.rd-scope .p3-rcard .rhead .rlbl{font-size:13.5px;font-weight:600;color:var(--rd-text-2);letter-spacing:.1px;}
-.rd-scope .p3-rcard .rv{font-size:34px;font-weight:600;letter-spacing:-.5px;line-height:1.05;color:var(--rd-text-1);}
-.rd-scope .p3-rcard .rv small{font-size:15px;color:var(--rd-text-3);font-weight:500;margin-left:4px;letter-spacing:0;}
-.rd-scope .p3-rcard .rsub{font-size:13.5px;color:var(--rd-text-2);margin-top:8px;line-height:1.5;}
+.rd-scope .p3-rcard{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:14px 18px;background:var(--rd-panel);min-width:0;display:flex;flex-direction:column;}
+.rd-scope .p3-rcard .rhead{display:flex;align-items:center;gap:7px;margin-bottom:9px;}
+.rd-scope .p3-rcard .rhead .ricn{width:18px;height:18px;background:transparent;color:var(--rd-accent);display:grid;place-items:center;font-size:13px;flex:none;}
+.rd-scope .p3-rcard .rhead .rlbl{font-size:11px;font-weight:700;color:var(--rd-text-3);letter-spacing:.6px;text-transform:uppercase;}
+.rd-scope .p3-rcard .rv{font-size:26px;font-weight:600;letter-spacing:-.4px;line-height:1.05;color:var(--rd-text-1);}
+.rd-scope .p3-rcard .rv small{font-size:13px;color:var(--rd-text-3);font-weight:500;margin-left:4px;letter-spacing:0;}
+.rd-scope .p3-rcard .rsub{font-size:12.5px;color:var(--rd-text-2);margin-top:6px;line-height:1.45;}
 .rd-scope .p3-rcard .rsub .risk{color:var(--rd-danger);font-weight:600;}
 .rd-scope .p3-rcard .rsub .muted{color:var(--rd-text-3);}
-.rd-scope .p3-rcard .bar{height:12px;background:#eef1f3;border-radius:6px;margin-top:12px;overflow:hidden;}
-.rd-scope .p3-rcard .bar > i{display:block;height:100%;border-radius:6px;}
+.rd-scope .p3-rcard .bar{height:5px;background:#eef1f3;border-radius:3px;margin-top:9px;overflow:hidden;}
+.rd-scope .p3-rcard .bar > i{display:block;height:100%;border-radius:3px;}
 .rd-scope .p3-rcard .bar.ok > i{background:var(--rd-s1);}
 .rd-scope .p3-rcard .bar.spend > i{background:var(--rd-ok);}
 .rd-scope .p3-rcard .bar.spend.at-risk > i{background:var(--rd-warn);}
 .rd-scope .p3-rcard .bar.spend.over > i{background:var(--rd-danger);}
-.rd-scope .p3-rcard .rtail{font-size:13px;color:var(--rd-text-3);margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 12px;}
+.rd-scope .p3-rcard .rtail{font-size:12px;color:var(--rd-text-3);margin-top:7px;display:flex;flex-wrap:wrap;gap:4px 12px;}
 .rd-scope .p3-rcard .rtail .rp{display:inline-flex;align-items:center;gap:6px;}
 .rd-scope .p3-rcard .rtail .dd{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block;}
 .rd-scope .p3-rcard .rtail .dd.ok{background:var(--rd-ok);}
@@ -360,11 +360,9 @@
                 @if ($resourceSummary->totalCapacity > 0)
                     <div class="rsub">
                         <strong>{{ (int) $capacityPct }}%</strong> {{ __('stakeholder.rc.res_capacity_used') }}
+                        <span class="muted">· {{ round($resourceSummary->totalAllocated) }} / {{ round($resourceSummary->totalCapacity) }}h {{ __('stakeholder.rc.res_hours_weekly') }}</span>
                     </div>
                     <div class="bar ok"><i style="width:{{ min(100, (int) $capacityPct) }}%;"></i></div>
-                    <div class="rtail">
-                        <span class="rp">{{ round($resourceSummary->totalAllocated) }} / {{ round($resourceSummary->totalCapacity) }}h {{ __('stakeholder.rc.res_hours_weekly') }}</span>
-                    </div>
                 @else
                     <div class="rsub muted">{{ __('stakeholder.rc.res_no_capacity') }}</div>
                 @endif
