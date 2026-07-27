@@ -503,12 +503,22 @@ class Goalcanvas extends Blueprints
      */
     public function removeAllGoalMilestoneLinks(int $goalId): bool
     {
-        return $this->dbConnection->table('zp_entity_relationship')
+        $deleted = $this->dbConnection->table('zp_entity_relationship')
             ->where('entityA', $goalId)
             ->where('entityAType', 'GoalItem')
             ->where('entityBType', 'Ticket')
             ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
             ->delete() > 0;
+
+        // All of the goal's links are gone, so clear the legacy milestoneId
+        // column too — otherwise the column-union in getGoalsByMilestone() would
+        // re-surface this goal after a full reset (edges gone but column stale).
+        $this->dbConnection->table('zp_canvas_items')
+            ->where('id', $goalId)
+            ->where('box', 'goal')
+            ->update(['milestoneId' => '']);
+
+        return $deleted;
     }
 
     /**
