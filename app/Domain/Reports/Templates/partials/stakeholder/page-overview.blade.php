@@ -35,6 +35,11 @@
 .rd-scope .p1-hero .hm{font-size:11.5px;color:var(--rd-text-3);}
 .rd-scope .p1-hero.empty{background:none;border-style:dashed;color:var(--rd-text-3);font-size:12.5px;text-align:center;padding:20px 16px;}
 .rd-scope .p1-hero.empty .h{font-size:13.5px;font-weight:600;color:var(--rd-text-2);margin-bottom:4px;}
+.rd-scope .p1-hero.empty .p1-hero-cta{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:12.5px;font-weight:600;color:var(--rd-accent);text-decoration:none;background:rgba(0,71,102,.06);border-radius:20px;padding:7px 16px;transition:background .12s;}
+.rd-scope .p1-hero.empty .p1-hero-cta:hover{background:rgba(0,71,102,.12);text-decoration:none;color:var(--rd-accent);}
+.rd-scope .p1-hero.empty .p1-hero-cta i{font-size:11px;}
+.rd-scope.rd-dark .p1-hero.empty .p1-hero-cta{background:rgba(127,193,224,.12);}
+.rd-scope.rd-dark .p1-hero.empty .p1-hero-cta:hover{background:rgba(127,193,224,.2);}
 /* Dark: the hero gradient and border are hardcoded light literals (var(--rd-s5-bg) → #fff,
    #d3e4dc). Land the fade on the panel instead of white, dark the border, and keep the
    goal badge legible now that --rd-s3-bg is a dark overlay. */
@@ -406,15 +411,18 @@
          milestones; owner override is a future write path. --}}
     @if ($peak === null)
         <div class="p1-hero empty">
-            <div class="eye"><span class="slabel">{{ __('stakeholder.overview.peak_label') }}</span><span class="rec"><i class="fa fa-wand-magic-sparkles"></i> {{ __('stakeholder.overview.peak_coming') }}</span></div>
+            <div class="eye"><span class="slabel">{{ __('stakeholder.overview.peak_label') }}</span></div>
             <div class="h">{{ __('stakeholder.overview.peak_none_title') }}</div>
             <div>{{ __('stakeholder.overview.peak_none_hint') }}</div>
+            <a href="{{ BASE_URL }}/logicmodelcanvas/showCanvas" class="p1-hero-cta">
+                <i class="fa fa-wand-magic-sparkles" aria-hidden="true"></i> {{ __('stakeholder.overview.peak_none_cta') }}
+            </a>
         </div>
     @else
         <div class="p1-hero">
             <div class="eye">
                 <span class="slabel">{{ __('stakeholder.overview.peak_label') }}</span>
-                <span class="rec"><i class="fa fa-wand-magic-sparkles"></i> {{ __('stakeholder.overview.peak_recommended') }} · <button type="button" class="rec-change" title="{{ __('stakeholder.overview.peak_override_tip') }}">{{ __('stakeholder.overview.peak_change') }}</button></span>
+                <span class="rec"><i class="fa fa-wand-magic-sparkles"></i> {{ __('stakeholder.overview.peak_recommended') }}</span>
             </div>
             <h3>{{ $peak->headline ?? '' }}</h3>
             @if ($peakBody !== '')
