@@ -330,6 +330,28 @@ class Projects
         return $this->getUsersAssignedToProject($id, $includeApiUsers);
     }
 
+    /**
+     * The shared "user can reach this project" predicate used by both
+     * getUserProjects('all') and getProjectsUserHasAccessTo(): the user is a
+     * member, the project is public (psettings='all'), or the user is an
+     * admin/owner (role >= 40, resolved via the requestingUser join each caller
+     * already applies). The client-shared case differs between callers
+     * (own-client column vs a passed client id), so each passes its own
+     * $clientClause. Centralising this stops the two access paths from drifting
+     * — the drift that previously left the sidebar empty while the switcher worked.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $q  The where-group builder.
+     * @param  int  $userId  The user whose access is being evaluated.
+     * @param  callable  $clientClause  Applies the caller-specific psettings='clients' match.
+     */
+    private function accessibleProjectPredicate($q, int $userId, callable $clientClause): void
+    {
+        $q->where('relation.userId', $userId)
+            ->orWhere('project.psettings', 'all')
+            ->orWhere($clientClause)
+            ->orWhere('requestingUser.role', '>=', 40);
+    }
+
     public function getUserProjects(int $userId, string $projectStatus = 'all', ?int $clientId = null, string $accessStatus = 'assigned', string $projectTypes = 'all'): false|array
     {
         $query = $this->connection->table('zp_projects as project')
@@ -374,13 +396,11 @@ class Projects
         // All Projects this user has access to
         if ($accessStatus == 'all') {
             $query->where(function ($q) use ($userId) {
-                $q->where('relation.userId', $userId)
-                    ->orWhere(function ($q2) {
-                        $q2->where('project.psettings', 'clients')
-                            ->whereColumn('project.clientId', 'requestingUser.clientId');
-                    })
-                    ->orWhere('project.psettings', 'all')
-                    ->orWhere('requestingUser.role', '>=', 40);
+                // Client-shared case here matches the requesting user's own client.
+                $this->accessibleProjectPredicate($q, $userId, function ($q2) {
+                    $q2->where('project.psettings', 'clients')
+                        ->whereColumn('project.clientId', 'requestingUser.clientId');
+                });
             });
         } elseif ($accessStatus == 'clients') {
             $query->where(function ($q) use ($userId) {
@@ -480,17 +500,11 @@ class Projects
                 $join->on('requestingUser.id', '=', $this->connection->raw((int) $userId));
             })
             ->where(function ($q) use ($userId, $clientId) {
-                $q->where('relation.userId', $userId)
-                    ->orWhere('project.psettings', 'all')
-                    ->orWhere(function ($q2) use ($clientId) {
-                        $q2->where('project.psettings', 'clients')
-                            ->where('project.clientId', $clientId);
-                    })
-                    // Admins/owners (role >= 40) have access to all projects,
-                    // even ones they are not a member of and that are not public.
-                    // Without this, an admin/owner with no memberships resolves to
-                    // zero accessible projects — which empties the project menu.
-                    ->orWhere('requestingUser.role', '>=', 40);
+                // Client-shared case here matches a passed client id.
+                $this->accessibleProjectPredicate($q, $userId, function ($q2) use ($clientId) {
+                    $q2->where('project.psettings', 'clients')
+                        ->where('project.clientId', $clientId);
+                });
             })
             ->where(function ($q) {
                 $q->where('project.active', '>', -1)
