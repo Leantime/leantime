@@ -474,13 +474,23 @@ class Projects
                     ->where('favorite.reaction', 'favorite')
                     ->where('favorite.userId', $userId);
             })
+            // Join the requesting user so their role can grant blanket access
+            // (admins/owners see every project), mirroring getUserProjects().
+            ->leftJoin('zp_user as requestingUser', function ($join) use ($userId) {
+                $join->on('requestingUser.id', '=', $this->connection->raw((int) $userId));
+            })
             ->where(function ($q) use ($userId, $clientId) {
                 $q->where('relation.userId', $userId)
                     ->orWhere('project.psettings', 'all')
                     ->orWhere(function ($q2) use ($clientId) {
                         $q2->where('project.psettings', 'clients')
                             ->where('project.clientId', $clientId);
-                    });
+                    })
+                    // Admins/owners (role >= 40) have access to all projects,
+                    // even ones they are not a member of and that are not public.
+                    // Without this, an admin/owner with no memberships resolves to
+                    // zero accessible projects — which empties the project menu.
+                    ->orWhere('requestingUser.role', '>=', 40);
             })
             ->where(function ($q) {
                 $q->where('project.active', '>', -1)
