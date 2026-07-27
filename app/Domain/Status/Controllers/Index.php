@@ -6,6 +6,7 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Domain\Plugins\Services\Plugins;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,14 +44,18 @@ class Index extends Controller
 
     private IncomingRequest $request;
 
+    private Plugins $plugins;
+
     /**
-     * init - inject config, app settings, and the incoming request.
+     * init - inject config, app settings, the incoming request, and the plugin
+     * service (used to gate mobile-auth advertising on AdvancedAuth).
      */
-    public function init(Environment $config, AppSettings $appSettings, IncomingRequest $request): void
+    public function init(Environment $config, AppSettings $appSettings, IncomingRequest $request, Plugins $plugins): void
     {
         $this->config = $config;
         $this->appSettings = $appSettings;
         $this->request = $request;
+        $this->plugins = $plugins;
     }
 
     /**
@@ -64,17 +69,25 @@ class Index extends Controller
         $oidcEnabled = (bool) $this->config->oidcEnable;
         $ldapEnabled = $this->config->useLdap === true && extension_loaded('ldap');
 
+        // Mobile auth is an AdvancedAuth capability — the mobile connection points
+        // (getToken, and the OIDC mint bridge) require the plugin. Only advertise
+        // mobile OIDC when AdvancedAuth is installed, so a core-only instance never
+        // offers a login the mint endpoint (Oidc\Controllers\Mobile) would refuse.
+        // NOTE: Cloud is assumed to ship AdvancedAuth, so this predicate covers it;
+        // confirm before release.
+        $mobileGate = $this->plugins->isEnabled('AdvancedAuth');
+
         // password is always available; ldap/oidc only when configured.
         $authMethods = ['password'];
         if ($ldapEnabled) {
             $authMethods[] = 'ldap';
         }
-        if ($oidcEnabled) {
+        if ($oidcEnabled && $mobileGate) {
             $authMethods[] = 'oidc';
         }
 
         $payload = [
-            'mobileAuthEnabled' => true,
+            'mobileAuthEnabled' => $mobileGate,
             'instanceName' => (string) ($this->config->sitename ?: 'Leantime'),
             'version' => $this->appSettings->appVersion,
             'minAppVersion' => null,
@@ -82,10 +95,11 @@ class Index extends Controller
             'ssoProviders' => [],
         ];
 
-        if ($oidcEnabled) {
-            // Generic-OIDC login initiation URL (core). The app opens this in the
-            // system auth browser; the mobile branch is triggered by its own query
-            // params (see Oidc\Controllers\Login).
+        if ($oidcEnabled && $mobileGate) {
+            // Generic-OIDC login initiation URL — advertised for mobile only when
+            // AdvancedAuth is installed. The app opens this in the system auth
+            // browser; the mobile branch is triggered by its own query params
+            // (see Oidc\Controllers\Login).
             $payload['oidcLoginUrl'] = $this->request->getSchemeAndHttpHost().'/oidc/login';
         }
 

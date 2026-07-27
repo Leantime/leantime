@@ -7,20 +7,24 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
+use Leantime\Domain\Plugins\Services\Plugins;
 use Symfony\Component\HttpFoundation\Response;
 
 class Login extends Controller
 {
     private OidcService $oidc;
 
+    private Plugins $plugins;
+
     /**
      * Initializes dependencies.
      *
      * @throws GuzzleException
      */
-    public function init(OidcService $oidc): void
+    public function init(OidcService $oidc, Plugins $plugins): void
     {
         $this->oidc = $oidc;
+        $this->plugins = $plugins;
     }
 
     /**
@@ -39,6 +43,13 @@ class Login extends Controller
             $mobile = ! empty($params['mobile']);
             $redirectUri = is_string($params['redirect_uri'] ?? null) ? $params['redirect_uri'] : '';
             $codeChallenge = is_string($params['code_challenge'] ?? null) ? $params['code_challenge'] : '';
+
+            // The mobile-brokered branch is an AdvancedAuth capability. Without the
+            // plugin, ignore the mobile params and fall back to normal web login —
+            // the mint endpoint refuses too, so no mobile session can be brokered.
+            if ($mobile && ! $this->plugins->isEnabled('AdvancedAuth')) {
+                return Frontcontroller::redirect(BASE_URL.'/auth/login');
+            }
 
             // Mobile flow requires a PKCE challenge — otherwise the callback
             // would mint a code whose exchange can never succeed (pkceMatches
