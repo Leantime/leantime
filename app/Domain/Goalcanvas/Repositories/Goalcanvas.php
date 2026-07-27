@@ -495,13 +495,16 @@ class Goalcanvas extends Blueprints
         // still points at the milestone we just unlinked, clear it. Otherwise
         // the column-union in getGoalsByMilestone() would re-surface this goal
         // after an explicit unlink (edge removed but column stale).
-        $this->dbConnection->table('zp_canvas_items')
+        $columnCleared = $this->dbConnection->table('zp_canvas_items')
             ->where('id', $goalId)
             ->where('box', 'goal')
             ->where('milestoneId', (string) $milestoneId)
-            ->update(['milestoneId' => '']);
+            ->update(['milestoneId' => '']) > 0;
 
-        return $deleted;
+        // Report success if EITHER representation was pointing at this
+        // milestone — a stale legacy column with no edge is still a real
+        // unlink, so returning false there would mislead callers.
+        return $deleted || $columnCleared;
     }
 
     /**
@@ -519,12 +522,14 @@ class Goalcanvas extends Blueprints
         // All of the goal's links are gone, so clear the legacy milestoneId
         // column too — otherwise the column-union in getGoalsByMilestone() would
         // re-surface this goal after a full reset (edges gone but column stale).
-        $this->dbConnection->table('zp_canvas_items')
+        $columnCleared = $this->dbConnection->table('zp_canvas_items')
             ->where('id', $goalId)
             ->where('box', 'goal')
-            ->update(['milestoneId' => '']);
+            ->update(['milestoneId' => '']) > 0;
 
-        return $deleted;
+        // Report success if EITHER representation held a link — a stale legacy
+        // column with no edge is still a real reset to clear.
+        return $deleted || $columnCleared;
     }
 
     /**
