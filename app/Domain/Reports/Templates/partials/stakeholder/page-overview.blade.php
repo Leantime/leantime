@@ -576,7 +576,6 @@
     };
 @endphp
 
-@if (count($narrativeNotes) > 0)
     <style>
     .rd-scope .p1-narrative{margin:14px 0;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:14px 18px;}
     .rd-scope .p1-narrative .lb{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
@@ -586,21 +585,26 @@
     .rd-scope .p1-narrative .nr.portfolio{padding-bottom:10px;border-bottom:1px solid var(--rd-line-soft);}
     .rd-scope .p1-narrative .nr b{color:var(--rd-text-1);font-weight:600;}
     .rd-scope .p1-narrative .nr .dt{font-size:11.5px;color:var(--rd-text-4);margin-left:8px;font-style:italic;}
+    /* Empty-state nudge — the section stays visible with no updates so the team
+       knows it exists and is prompted to keep status current. */
+    .rd-scope .p1-narrative .nempty{font-size:13px;line-height:1.55;color:var(--rd-text-3);}
+    .rd-scope .p1-narrative .nempty b{color:var(--rd-text-2);font-weight:600;}
     </style>
     <div class="p1-narrative">
         <div class="lb"><i class="fa fa-message"></i> {{ __('stakeholder.overview.narrative_label') }}</div>
         <div class="nn">
-            @foreach ($narrativeNotes as $n)
+            @forelse ($narrativeNotes as $n)
                 <div class="nr @if ($n['portfolio']) portfolio @endif">
                     <b>{{ $n['label'] }}</b> — {{ $n['text'] }}
                     @if (($d = $fmtNoteDate($n['date'])) !== '')
                         <span class="dt">{{ $d }}</span>
                     @endif
                 </div>
-            @endforeach
+            @empty
+                <div class="nempty">{{ __('stakeholder.overview.narrative_empty') }}</div>
+            @endforelse
         </div>
     </div>
-@endif
 
 {{-- ── Theory of Change narrative (stage-colored) ────────────────── --}}
 @if ($hasLM && ! empty($logicModel['narrative']['hasItems']))
