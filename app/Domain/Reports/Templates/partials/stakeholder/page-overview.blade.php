@@ -228,8 +228,14 @@
     $openMsCount = $inFlightCount + $overdueCount + $upcomingCount;
     $totalMsCount = $completedCount + $openMsCount;
     // Drill on "Goals on track" lists the ON-TRACK goals (the number the cell
-    // represents). At-risk goals surface in the Needs Attention block.
-    $onTrackAll = array_filter(($goalsGroup['goals'] ?? []), fn ($g) => ((array) $g)['status'] === 'status_ontrack' || (is_object($g) && ($g->status ?? '') === 'status_ontrack'));
+    // represents). The count ($goalsOnTrack) comes from $stats, which the engine
+    // derives from the FULL report ($report['goals']) across the strategy AND its
+    // programs — so the drill list must read the same set, not $goalsGroup (which
+    // is scoped to the strategy's own goals only and is empty when goals live on
+    // programs, leaving a "9 on track" cell with an empty list). At-risk goals
+    // surface in the Needs Attention block.
+    $allGoalsForDrill = $report['goals']['goals'] ?? ($goalsGroup['goals'] ?? []);
+    $onTrackAll = array_filter($allGoalsForDrill, fn ($g) => ((array) $g)['status'] === 'status_ontrack' || (is_object($g) && ($g->status ?? '') === 'status_ontrack'));
     $onTrackAll = array_values($onTrackAll);
     $onTrackItems = array_slice($onTrackAll, 0, 5);
     $onTrackMoreCount = max(0, count($onTrackAll) - 5);

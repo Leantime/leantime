@@ -844,8 +844,12 @@
                 if ($days === 0) return __('stakeholder.rc.dep.today');
                 if ($days === 1) return __('stakeholder.rc.dep.yesterday');
                 if ($days < 7)   return sprintf(__('stakeholder.rc.dep.days_ago'), $days);
-                if ($days < 30)  return sprintf(__('stakeholder.rc.dep.weeks_ago'), (int) round($days / 7));
-                return sprintf(__('stakeholder.rc.dep.months_ago'), (int) round($days / 30));
+                if ($days < 30) {
+                    $weeks = (int) round($days / 7);
+                    return sprintf(__($weeks === 1 ? 'stakeholder.rc.dep.week_ago' : 'stakeholder.rc.dep.weeks_ago'), $weeks);
+                }
+                $months = (int) round($days / 30);
+                return sprintf(__($months === 1 ? 'stakeholder.rc.dep.month_ago' : 'stakeholder.rc.dep.months_ago'), $months);
             } catch (\Exception $e) { return null; }
         };
     @endphp
