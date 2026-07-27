@@ -62,7 +62,9 @@
 .rd-scope .p4-bookend .meaning{font-size:13.5px;color:var(--rd-text-2);margin-top:8px;line-height:1.55;}
 .rd-scope .p4-bookend .tense-hint{font-size:11.5px;color:var(--rd-text-3);margin-top:10px;font-style:italic;display:block;}
 .rd-scope .p4-bookend .empty{font-size:13px;color:var(--rd-text-3);font-style:italic;}
-.rd-scope .p4-bookend .empty .nudge{color:var(--rd-accent);font-style:normal;font-weight:600;margin-left:4px;}
+.rd-scope .p4-bookend .empty .nudge{color:var(--rd-text-2);font-style:normal;font-weight:400;margin-left:4px;}
+.rd-scope .p4-bookend .empty .nudge a{color:var(--rd-accent);font-weight:600;text-decoration:none;}
+.rd-scope .p4-bookend .empty .nudge a:hover{text-decoration:underline;}
 
 /* Metrics — the arc */
 .rd-scope .p4-arc{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:18px 22px;margin-bottom:14px;}
@@ -147,7 +149,9 @@
 .rd-scope .p4-vision .beat.arc .statement{font-size:16px;font-weight:500;color:var(--rd-text-1);line-height:1.65;letter-spacing:-.05px;}
 .rd-scope .p4-vision .beat.delivered .meaning{font-size:14px;color:var(--rd-text-2);margin-top:12px;line-height:1.55;}
 .rd-scope .p4-vision .beat .empty{font-size:13.5px;color:var(--rd-text-3);font-style:italic;}
-.rd-scope .p4-vision .beat .empty .nudge{color:var(--rd-accent);font-style:normal;font-weight:600;margin-left:4px;}
+.rd-scope .p4-vision .beat .empty .nudge{color:var(--rd-text-2);font-style:normal;font-weight:400;margin-left:4px;}
+.rd-scope .p4-vision .beat .empty .nudge a{color:var(--rd-accent);font-weight:600;text-decoration:none;}
+.rd-scope .p4-vision .beat .empty .nudge a:hover{text-decoration:underline;}
 
 /* Block-level lens visibility — the beats show on Vision only, the tracks
    block shows on Progress/Impact only. Per-element [data-lens] rules
@@ -339,6 +343,10 @@
         }
 
         $arcStatement = trim($producingSentence.' '.$achievingSentence);
+
+        // Only the "Logic Model canvas" phrase links out — the surrounding nudge
+        // sentence stays plain text. Built once, injected via sprintf %s below.
+        $lmCanvasLink = '<a href="'.BASE_URL.'/logicmodelcanvas/showCanvas">'.e(__('stakeholder.ij.nudge_link')).'</a>';
     @endphp
 
     <div class="p4-wrap" data-active-lens="{{ $defaultLens }}" data-p4-lens-wrap>
@@ -379,7 +387,7 @@
                 @else
                     <div class="empty">
                         {{ __('stakeholder.ij.bookend_started_empty') }}
-                        <span class="nudge">{{ __('stakeholder.ij.bookend_started_nudge') }}</span>
+                        <span class="nudge">{!! sprintf(e(__('stakeholder.ij.bookend_started_nudge')), $lmCanvasLink) !!}</span>
                     </div>
                 @endif
             </div>
@@ -391,7 +399,7 @@
                 @else
                     <div class="empty">
                         {{ __('stakeholder.ij.beat_arc_empty') }}
-                        <span class="nudge">{{ __('stakeholder.ij.beat_arc_empty_nudge') }}</span>
+                        <span class="nudge">{!! sprintf(e(__('stakeholder.ij.beat_arc_empty_nudge')), $lmCanvasLink) !!}</span>
                     </div>
                 @endif
             </div>
@@ -406,7 +414,7 @@
                 @else
                     <div class="empty">
                         {{ __('stakeholder.ij.bookend_different_empty') }}
-                        <span class="nudge">{{ __('stakeholder.ij.bookend_different_nudge') }}</span>
+                        <span class="nudge">{!! sprintf(e(__('stakeholder.ij.bookend_different_nudge')), $lmCanvasLink) !!}</span>
                     </div>
                 @endif
             </div>
@@ -426,7 +434,7 @@
             @else
                 <div class="empty">
                     {{ __('stakeholder.ij.bookend_started_empty') }}
-                    <span class="nudge">{{ __('stakeholder.ij.bookend_started_nudge') }}</span>
+                    <span class="nudge">{!! sprintf(e(__('stakeholder.ij.bookend_started_nudge')), $lmCanvasLink) !!}</span>
                 </div>
             @endif
         </div>
@@ -597,7 +605,7 @@
             @else
                 <div class="empty">
                     {{ __('stakeholder.ij.bookend_different_empty') }}
-                    <span class="nudge">{{ __('stakeholder.ij.bookend_different_nudge') }}</span>
+                    <span class="nudge">{!! sprintf(e(__('stakeholder.ij.bookend_different_nudge')), $lmCanvasLink) !!}</span>
                 </div>
             @endif
         </div>
