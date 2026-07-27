@@ -72,9 +72,9 @@
 /* Per-project breakdown — the "where's it going?" answer. Grid table so the
    columns line up regardless of name length. Row hover lifts a bit for scan. */
 .rd-scope .p3-bd{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);overflow:hidden;background:var(--rd-panel);}
-.rd-scope .p3-bd-row{display:grid;grid-template-columns:2fr 1.2fr 1.6fr 1.4fr;gap:14px;padding:14px 18px;align-items:center;}
+.rd-scope .p3-bd-row{display:grid;grid-template-columns:2fr 1.2fr 1.6fr 1.4fr;gap:14px;padding:11px 18px;align-items:center;}
 .rd-scope .p3-bd-row + .p3-bd-row{border-top:1px solid var(--rd-line-soft);}
-.rd-scope .p3-bd-row.head{background:var(--rd-bg);border-bottom:1px solid var(--rd-line);padding:12px 18px;}
+.rd-scope .p3-bd-row.head{background:var(--rd-bg);border-bottom:1px solid var(--rd-line);padding:9px 18px;}
 .rd-scope .p3-bd-row.head .p3-bd-cell{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);}
 .rd-scope .p3-bd-cell{min-width:0;font-size:14px;color:var(--rd-text-1);}
 .rd-scope .p3-bd-cell .name{font-weight:600;color:var(--rd-text-1);line-height:1.3;word-wrap:break-word;}
@@ -82,8 +82,8 @@
 .rd-scope .p3-bd-cell .num{font-size:18px;font-weight:600;color:var(--rd-text-1);line-height:1.1;}
 .rd-scope .p3-bd-cell .num small{font-size:12.5px;color:var(--rd-text-3);font-weight:500;margin-left:3px;}
 .rd-scope .p3-bd-cell .sublabel{font-size:12px;color:var(--rd-text-3);margin-top:2px;}
-.rd-scope .p3-bd-cell .minibar{height:8px;background:#eef1f3;border-radius:4px;overflow:hidden;margin-top:6px;}
-.rd-scope .p3-bd-cell .minibar > i{display:block;height:100%;border-radius:4px;background:var(--rd-s1);}
+.rd-scope .p3-bd-cell .minibar{height:5px;background:#eef1f3;border-radius:3px;overflow:hidden;margin-top:6px;}
+.rd-scope .p3-bd-cell .minibar > i{display:block;height:100%;border-radius:3px;background:var(--rd-s1);}
 .rd-scope .p3-bd-cell .minibar.spend > i{background:var(--rd-ok);}
 .rd-scope .p3-bd-cell .minibar.spend.at-risk > i{background:var(--rd-warn);}
 .rd-scope .p3-bd-cell .minibar.spend.over > i{background:var(--rd-danger);}
@@ -95,7 +95,7 @@
    Uses native <details>/<summary> for a11y — keyboard-accessible, no JS. */
 .rd-scope .p3-bd-program{display:block;}
 .rd-scope .p3-bd-program + .p3-bd-program{border-top:1px solid var(--rd-line);}
-.rd-scope .p3-bd-program summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:2fr 1.2fr 1.6fr 1.4fr;gap:14px;padding:14px 18px;align-items:center;transition:background .1s ease;}
+.rd-scope .p3-bd-program summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:2fr 1.2fr 1.6fr 1.4fr;gap:14px;padding:11px 18px;align-items:center;transition:background .1s ease;}
 .rd-scope .p3-bd-program summary::-webkit-details-marker{display:none;}
 .rd-scope .p3-bd-program summary:hover{background:var(--rd-bg);}
 .rd-scope .p3-bd-program summary .name-cell{display:flex;align-items:flex-start;gap:10px;}
@@ -104,7 +104,7 @@
 .rd-scope .p3-bd-program[open] > summary{background:var(--rd-bg);border-bottom:1px solid var(--rd-line-soft);}
 .rd-scope .p3-bd-program summary .name{font-weight:600;color:var(--rd-text-1);line-height:1.3;}
 .rd-scope .p3-bd-program summary .type{font-size:11.5px;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
-.rd-scope .p3-bd-row.child-row{background:var(--rd-bg);padding:12px 18px 12px 32px;}
+.rd-scope .p3-bd-row.child-row{background:var(--rd-bg);padding:9px 18px 9px 32px;}
 .rd-scope .p3-bd-row.child-row + .child-row{border-top:1px solid var(--rd-line-soft);}
 .rd-scope .p3-bd-row.child-row .name-cell{display:flex;align-items:flex-start;gap:10px;}
 .rd-scope .p3-bd-row.child-row .child-indent{color:var(--rd-text-4);font-size:14px;flex:none;padding-top:1px;}
@@ -123,7 +123,7 @@
 .rd-scope .p3-cap.balanced{border-color:var(--rd-line);}
 .rd-scope .p3-cap.buffer{border-color:rgba(46,164,79,.3);}
 
-.rd-scope .p3-cap-hd{display:flex;align-items:center;gap:14px;padding:16px 20px 12px;border-bottom:1px solid var(--rd-line-soft);}
+.rd-scope .p3-cap-hd{display:flex;align-items:center;gap:14px;padding:12px 20px 10px;border-bottom:1px solid var(--rd-line-soft);}
 .rd-scope .p3-cap-hd .verdict{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:100px;font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;flex:none;}
 .rd-scope .p3-cap-hd .verdict.critical{background:rgba(220,60,60,.10);color:var(--rd-danger);}
 .rd-scope .p3-cap-hd .verdict.tight{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
@@ -146,7 +146,7 @@
 .rd-scope .p3-cap-hd .trust.warn{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
 .rd-scope .p3-cap-hd .trust i{font-size:10px;}
 
-.rd-scope .p3-cap-body{padding:14px 20px 18px;}
+.rd-scope .p3-cap-body{padding:12px 20px 14px;}
 .rd-scope .p3-cap-row{display:grid;grid-template-columns:90px 1fr;gap:14px;padding:10px 0;align-items:baseline;}
 .rd-scope .p3-cap-row + .p3-cap-row{border-top:1px dashed var(--rd-line-soft);}
 .rd-scope .p3-cap-row .lbl{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);padding-top:2px;}
@@ -159,7 +159,7 @@
 .rd-scope .p3-cap-row .val .note.good{color:var(--rd-ok);font-style:normal;font-weight:500;}
 
 .rd-scope .p3-cap-bar{margin-top:8px;}
-.rd-scope .p3-cap-bar .track{position:relative;height:14px;background:#eef1f3;border-radius:7px;overflow:hidden;}
+.rd-scope .p3-cap-bar .track{position:relative;height:10px;background:#eef1f3;border-radius:5px;overflow:hidden;}
 /* Supply segment — 0 → available. Always green ("we've got this much"). */
 .rd-scope .p3-cap-bar .track .supply{position:absolute;top:0;left:0;bottom:0;background:var(--rd-ok);opacity:.9;}
 /* Deficit segment — available → needed. Colored by verdict so the shortfall
@@ -221,9 +221,9 @@
    owner + decision date + notes. Cards laid out in a 2-column grid on wide
    viewports, single column on narrow. Tentative deps get a warmer border
    for scanability; the top "urgent" callout surfaces the soonest decision. */
-.rd-scope .p3-dep-urgent{display:flex;gap:14px;align-items:center;padding:14px 18px;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);margin-bottom:14px;background:var(--rd-panel);}
+.rd-scope .p3-dep-urgent{display:flex;gap:12px;align-items:center;padding:12px 16px;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);margin-bottom:14px;background:var(--rd-panel);}
 .rd-scope .p3-dep-urgent.soon{background:var(--rd-warn-bg);border-color:rgba(245,166,35,.35);}
-.rd-scope .p3-dep-urgent .ic{width:36px;height:36px;border-radius:10px;background:rgba(245,166,35,.15);color:var(--rd-warn-tx);display:grid;place-items:center;font-size:15px;flex:none;}
+.rd-scope .p3-dep-urgent .ic{width:30px;height:30px;border-radius:8px;background:rgba(245,166,35,.15);color:var(--rd-warn-tx);display:grid;place-items:center;font-size:13px;flex:none;}
 .rd-scope .p3-dep-urgent .body{flex:1;min-width:0;}
 .rd-scope .p3-dep-urgent .hd{font-size:14.5px;color:var(--rd-text-1);line-height:1.4;}
 .rd-scope .p3-dep-urgent .hd strong{color:var(--rd-text-1);font-weight:700;}
@@ -231,7 +231,7 @@
 .rd-scope .p3-dep-urgent .meta strong{color:var(--rd-text-2);font-weight:600;}
 
 .rd-scope .p3-dep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
-.rd-scope .p3-dep{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:16px 18px;display:flex;flex-direction:column;gap:10px;}
+.rd-scope .p3-dep{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:13px 16px;display:flex;flex-direction:column;gap:8px;}
 .rd-scope .p3-dep.tentative{border-color:rgba(245,166,35,.28);}
 .rd-scope .p3-dep.confirmed{border-color:rgba(46,164,79,.22);}
 .rd-scope .p3-dep-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;}
@@ -239,7 +239,7 @@
 .rd-scope .p3-dep.tentative .p3-dep-hd .status{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
 .rd-scope .p3-dep.confirmed .p3-dep-hd .status{background:rgba(46,164,79,.11);color:var(--rd-ok);}
 .rd-scope .p3-dep-hd .type-badge{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--rd-bg);color:var(--rd-text-3);flex:none;}
-.rd-scope .p3-dep-name{font-size:15.5px;font-weight:600;color:var(--rd-text-1);line-height:1.35;}
+.rd-scope .p3-dep-name{font-size:14.5px;font-weight:600;color:var(--rd-text-1);line-height:1.35;}
 .rd-scope .p3-dep-meta{display:flex;flex-direction:column;gap:5px;font-size:13px;}
 .rd-scope .p3-dep-meta .row{display:flex;gap:8px;align-items:baseline;}
 .rd-scope .p3-dep-meta .row .lbl{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-text-3);min-width:82px;flex:none;padding-top:2px;}
@@ -257,8 +257,8 @@
 /* Resource gaps & risks — remaining observations that aren't project-level
    capacity math (over-allocated people, idle capacity, tentative dependencies). */
 .rd-scope .p3-gaps{display:flex;flex-direction:column;gap:10px;}
-.rd-scope .p3-gap{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:15px 18px;display:flex;align-items:flex-start;gap:14px;}
-.rd-scope .p3-gap .sev{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:15px;flex:none;}
+.rd-scope .p3-gap{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:12px 16px;display:flex;align-items:flex-start;gap:12px;}
+.rd-scope .p3-gap .sev{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex:none;}
 .rd-scope .p3-gap.red .sev{background:rgba(220,60,60,.10);color:var(--rd-danger);}
 .rd-scope .p3-gap.yellow .sev{background:rgba(245,166,35,.12);color:var(--rd-warn-tx);}
 .rd-scope .p3-gap.blue .sev{background:rgba(0,71,102,.10);color:var(--rd-accent);}
