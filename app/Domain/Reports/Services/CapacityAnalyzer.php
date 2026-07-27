@@ -85,6 +85,10 @@ final class CapacityAnalyzer
         $out = [];
         $weeksInPeriod = $this->weeksBetween($period->from, $period->to);
 
+        // Resolve the set of projects we'll actually analyze first (respecting
+        // the reportable-only skip below), then pull every project's tickets in
+        // ONE query instead of one round-trip per project.
+        $idsToAnalyze = [];
         foreach ($projectIds as $pid) {
             $pid = (int) $pid;
 
@@ -96,14 +100,17 @@ final class CapacityAnalyzer
                 continue;
             }
 
-            $rawTickets = $this->ticketsRepo->getAllByProjectId($pid) ?: [];
+            $idsToAnalyze[] = $pid;
+        }
+
+        $ticketsByProject = $this->ticketsRepo->getAllByProjectIds($idsToAnalyze);
+
+        foreach ($idsToAnalyze as $pid) {
+            $rawTickets = $ticketsByProject[$pid] ?? [];
 
             // Normalize — the repo hydrates rows into Tickets model objects; we
             // want plain array rows for uniform key access downstream.
-            $tickets = array_map(
-                fn ($t) => is_object($t) ? (array) $t : (array) $t,
-                $rawTickets,
-            );
+            $tickets = array_map(static fn ($t) => (array) $t, $rawTickets);
 
             // Filter to open tickets only — DONE work doesn't need capacity. DONE is
             // resolved per project from the status labels (custom statuses can mark
