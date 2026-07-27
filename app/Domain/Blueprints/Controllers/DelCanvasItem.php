@@ -54,6 +54,7 @@ class DelCanvasItem
         }
 
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
+        $this->tpl->assign('id', $id);
 
         return $this->tpl->displayPartial('blueprints.delCanvasItem');
     }
@@ -87,6 +88,7 @@ class DelCanvasItem
         }
 
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
+        $this->tpl->assign('id', $id);
 
         return $this->tpl->displayPartial('blueprints.delCanvasItem');
     }
