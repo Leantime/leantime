@@ -477,7 +477,12 @@ class Goalcanvas extends Blueprints
     }
 
     /**
-     * Remove a single goal↔milestone link.
+     * Remove a single goal↔milestone link: delete the tracked_by edge and clear
+     * the legacy milestoneId column if it still points at this milestone.
+     *
+     * @param  int  $goalId  Goal canvas-item id (entityA of the edge).
+     * @param  int  $milestoneId  Milestone ticket id (entityB of the edge).
+     * @return bool True if an edge row was deleted OR the legacy column was cleared.
      *
      * @api
      */
@@ -508,7 +513,11 @@ class Goalcanvas extends Blueprints
     }
 
     /**
-     * Remove every milestone link from a goal (goal delete / full reset).
+     * Remove every milestone link from a goal (goal delete / full reset): delete
+     * all tracked_by edges for the goal and clear its legacy milestoneId column.
+     *
+     * @param  int  $goalId  Goal canvas-item id (entityA of the edges).
+     * @return bool True if any edge row was deleted OR the legacy column was cleared.
      */
     public function removeAllGoalMilestoneLinks(int $goalId): bool
     {

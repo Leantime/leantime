@@ -379,7 +379,12 @@ class Goalcanvas extends BaseService
 
         $newId = $this->goalRepository->addCanvasItem($values);
 
-        if ($newId !== false && array_key_exists('milestoneId', $values)) {
+        // Only reconcile edges when a real milestone id is supplied. A brand-new
+        // item has no edges to clear, so an empty milestoneId — controllers post
+        // '' for every box via a hidden input — would just cost a wasted lookup.
+        // The update/patch paths still process empty values there, where clearing
+        // an existing link is a meaningful edit.
+        if ($newId !== false && filter_var($values['milestoneId'] ?? null, FILTER_VALIDATE_INT) > 0) {
             $this->syncGoalMilestoneEdges((int) $newId, $values['milestoneId'], (int) session('userdata.id'));
         }
 

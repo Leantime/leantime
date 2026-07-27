@@ -3067,7 +3067,7 @@ class Install
                             ->select('entityA', 'entityB')
                             ->get() as $e
                     ) {
-                        $existingEdges[(int) $e->entityA.':'.(int) $e->entityB] = true;
+                        $existingEdges[sprintf('%d:%d', (int) $e->entityA, (int) $e->entityB)] = true;
                     }
 
                     $rows = [];
