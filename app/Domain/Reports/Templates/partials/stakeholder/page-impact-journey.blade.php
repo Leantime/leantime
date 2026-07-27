@@ -114,7 +114,6 @@
 .rd-scope .p4-verdict .sd{width:7px;height:7px;border-radius:50%;background:currentColor;}
 .rd-scope .p4-verdict.willbe{color:var(--rd-text-3);}
 .rd-scope .p4-verdict.trending{color:#3F72B0;}
-.rd-scope .p4-verdict.short{color:#9A6A11;}
 .rd-scope .p4-verdict.hit{color:var(--rd-ok);}
 .rd-scope .p4-verdict.captured{color:var(--rd-text-3);font-style:italic;font-weight:500;}
 
@@ -454,7 +453,6 @@
                                 foreach ($m['snapshots'] as $s) $peak = max($peak, (float) $s['value']);
                                 $barH = fn ($v) => max(4, min(50, (int) round(($v / $peak) * 50)));
                                 $labelHasTarget = $labelContainsTarget($m['label'], $m['target'], $m['unit']);
-                                $short = $m['target'] > 0 ? $m['target'] - $m['current'] : 0;
                             @endphp
                             <div class="p4-metric">
                                 <div class="mn">
@@ -536,7 +534,12 @@
                                      units — "N% of the way" reads truthfully for counts and
                                      percents alike, and stays consistent down the column
                                      regardless of metric type. --}}
-                                <span class="p4-verdict @if ($hitTarget) hit @elseif ($n === 0) captured @elseif ($m['target'] > 0 && ($short / max($m['target'], 1)) > 0.25) short @else trending @endif" data-lens="progress">
+                                {{-- One progress color for every in-progress row: the text is
+                                     uniformly "N% of the way", and the percentage itself conveys
+                                     how far along. A silent amber↔blue flip at a hidden 75%
+                                     threshold made identically-worded rows look different for no
+                                     visible reason, so the dot stays consistent down the column. --}}
+                                <span class="p4-verdict @if ($hitTarget) hit @elseif ($n === 0) captured @else trending @endif" data-lens="progress">
                                     <span class="sd"></span>
                                     @if ($n === 0)
                                         {{ __('stakeholder.ij.v_no_snapshots_yet') }}
