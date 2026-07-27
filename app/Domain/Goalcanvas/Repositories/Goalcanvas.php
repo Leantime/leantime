@@ -302,6 +302,12 @@ class Goalcanvas extends Blueprints
      */
     public function getGoalsByMilestone(int $milestoneId): false|array
     {
+        // No valid milestone → no goals; bail before any lookup so a 0/negative
+        // id can't match empty/blank legacy milestoneId values.
+        if ($milestoneId <= 0) {
+            return [];
+        }
+
         // Reverse lookup via the tracked_by edge graph, now returning a goal
         // linked to this milestone by ANY of its (possibly many) edges. Also
         // union in goals still linked only via the legacy milestoneId column —
