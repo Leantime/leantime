@@ -436,13 +436,25 @@ class Goalcanvas extends Blueprints
      */
     public function removeGoalMilestoneLink(int $goalId, int $milestoneId): bool
     {
-        return $this->dbConnection->table('zp_entity_relationship')
+        $deleted = $this->dbConnection->table('zp_entity_relationship')
             ->where('entityA', $goalId)
             ->where('entityAType', 'GoalItem')
             ->where('entityB', $milestoneId)
             ->where('entityBType', 'Ticket')
             ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
             ->delete() > 0;
+
+        // Keep the legacy milestoneId column consistent with the edges: if it
+        // still points at the milestone we just unlinked, clear it. Otherwise
+        // the column-union in getGoalsByMilestone() would re-surface this goal
+        // after an explicit unlink (edge removed but column stale).
+        $this->dbConnection->table('zp_canvas_items')
+            ->where('id', $goalId)
+            ->where('box', 'goal')
+            ->where('milestoneId', (string) $milestoneId)
+            ->update(['milestoneId' => '']);
+
+        return $deleted;
     }
 
     /**
@@ -467,12 +479,22 @@ class Goalcanvas extends Blueprints
      */
     public function removeMilestoneFromAllGoals(int $milestoneId): bool
     {
-        return $this->dbConnection->table('zp_entity_relationship')
+        $deleted = $this->dbConnection->table('zp_entity_relationship')
             ->where('entityAType', 'GoalItem')
             ->where('entityB', $milestoneId)
             ->where('entityBType', 'Ticket')
             ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
             ->delete() > 0;
+
+        // Clear the legacy milestoneId column on any goal still pointing at the
+        // now-detached/deleted milestone, so it doesn't linger and re-surface
+        // via the column-union in getGoalsByMilestone().
+        $this->dbConnection->table('zp_canvas_items')
+            ->where('box', 'goal')
+            ->where('milestoneId', (string) $milestoneId)
+            ->update(['milestoneId' => '']);
+
+        return $deleted;
     }
 
     /**
