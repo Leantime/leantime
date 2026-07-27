@@ -167,6 +167,14 @@
 .rd-scope .p2-lm-empty .cta:focus-visible{outline:2px solid var(--rd-accent);outline-offset:3px;}
 .rd-scope .p2-lm-empty .cta i{font-size:13px;}
 .rd-scope .p2-lm-empty .hint{font-size:12.5px;color:#69767d;margin-top:18px;line-height:1.55;max-width:420px;margin-left:auto;margin-right:auto;}
+/* Dark overrides for the empty-state literals that bypass the token layer. */
+.rd-scope.rd-dark .p2-lm-emptyzone{background:linear-gradient(180deg,rgba(87,181,152,.06) 0%,var(--rd-panel) 62%);}
+.rd-scope.rd-dark .p2-lm-empty{box-shadow:0 3px 14px rgba(0,0,0,.4);}
+.rd-scope.rd-dark .p2-lm-empty .found{color:#8fd3ba;background:rgba(87,181,152,.12);border-color:rgba(87,181,152,.28);}
+.rd-scope.rd-dark .p2-lm-empty .found b{color:#b7e6d3;}
+.rd-scope.rd-dark .p2-lm-empty .found .sep{color:rgba(143,211,186,.5);}
+.rd-scope.rd-dark .p2-lm-empty .b{color:var(--rd-text-2);}
+.rd-scope.rd-dark .p2-lm-empty .hint{color:var(--rd-text-3);}
 </style>
 
 @php

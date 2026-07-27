@@ -156,6 +156,8 @@
 .rd-hdr .st .h{margin:0 0 0 -6px;font-size:22px;font-weight:600;line-height:1.15;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;cursor:pointer;border-radius:8px;padding:1px 6px;transition:background .12s;}
 .rd-hdr .st .h:hover{background:rgba(0,71,102,.05);}
 .rd-h-caret{font-size:14px;color:var(--rd-text-4);}
+/* Visually-hidden but screen-reader-available heading (switcher case). */
+.rd-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 /* Subject switcher: the dropdown wrapper aligns the toggle box, title text,
    breadcrumb, and menu on one left edge; the menu drops straight under the
    title + caret. */
@@ -351,7 +353,12 @@
 }
 </style>
 
-@php $rdDark = app()->make(\Leantime\Core\UI\Theme::class)->getColorMode() === 'dark'; @endphp
+@php
+    // Prefer a $rdDark boolean passed by the caller/composer; fall back to the
+    // Theme service only when it isn't supplied, so the view isn't required to
+    // do a container lookup.
+    $rdDark = $rdDark ?? (app()->make(\Leantime\Core\UI\Theme::class)->getColorMode() === 'dark');
+@endphp
 <div class="rd-scope @if ($rdDark) rd-dark @endif">
 
     {{-- ── Persistent document header (doc-shell) ───────────────────────
@@ -369,7 +376,10 @@
             </nav>
             @if (count($switchableSubjects ?? []) > 1)
                 {{-- Subject switcher: Bootstrap dropdown; items reload the report
-                     with the chosen subject (?switchTo) so you stay in the report. --}}
+                     with the chosen subject (?switchTo) so you stay in the report.
+                     The visible title is an interactive <a>, so also emit a real
+                     (visually-hidden) <h1> to keep a proper document heading. --}}
+                <h1 class="rd-visually-hidden">{{ $subject }}</h1>
                 <span class="dropdown dropdownWrapper">
                     <a href="javascript:void(0)" class="h dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $subject }} <i class="fa fa-caret-down rd-h-caret" aria-hidden="true"></i></a>
                     <ul class="dropdown-menu">
