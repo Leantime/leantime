@@ -32,10 +32,11 @@
 .rd-scope .p3-unit-toggle .p3-unit-btn.is-active{background:var(--rd-accent);color:#fff;}
 .rd-scope .p3-unit-toggle .p3-unit-btn:hover:not(.is-active){color:var(--rd-text-1);}
 
-.rd-scope .p3-sec{margin-bottom:28px;}
-.rd-scope .p3-sec-hd{margin-bottom:14px;}
-.rd-scope .p3-sec-hd .l{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-accent);display:block;margin-bottom:3px;}
-.rd-scope .p3-sec-hd .s{font-size:13.5px;color:var(--rd-text-3);}
+.rd-scope .p3-sec{margin-bottom:40px;}
+.rd-scope .p3-sec-hd{margin-bottom:16px;padding:0 0 11px 14px;border-bottom:1px solid var(--rd-line);position:relative;}
+.rd-scope .p3-sec-hd::before{content:'';position:absolute;left:0;top:2px;width:4px;height:calc(100% - 13px);min-height:26px;background:var(--rd-accent);border-radius:2px;}
+.rd-scope .p3-sec-hd .l{font-size:13.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-accent);display:block;margin-bottom:4px;}
+.rd-scope .p3-sec-hd .s{font-size:13px;color:var(--rd-text-2);}
 
 /* Placeholder strip (only when no ResourcesGateway is registered). */
 .rd-scope .p3-res-strip{border:1px dashed var(--rd-line);border-radius:var(--rd-r-sm);padding:20px 22px;background:var(--rd-bg);display:flex;align-items:center;gap:16px;}
