@@ -445,9 +445,9 @@ class Goalcanvas extends Blueprints
             ->delete() > 0;
 
         // Keep the legacy milestoneId column consistent with the edges: if it
-        // still points at the milestone we just unlinked, clear it. Otherwise
-        // the column-union in getGoalsByMilestone() would re-surface this goal
-        // after an explicit unlink (edge removed but column stale).
+        // still points at the milestone we just unlinked, clear it, so a stale
+        // column value can't make the goal look still-linked to a milestone
+        // whose edge is gone.
         $this->dbConnection->table('zp_canvas_items')
             ->where('id', $goalId)
             ->where('box', 'goal')
@@ -487,8 +487,8 @@ class Goalcanvas extends Blueprints
             ->delete() > 0;
 
         // Clear the legacy milestoneId column on any goal still pointing at the
-        // now-detached/deleted milestone, so it doesn't linger and re-surface
-        // via the column-union in getGoalsByMilestone().
+        // now-detached/deleted milestone, so a stale value can't make a goal
+        // look still-linked to a milestone whose edge is gone.
         $this->dbConnection->table('zp_canvas_items')
             ->where('box', 'goal')
             ->where('milestoneId', (string) $milestoneId)
