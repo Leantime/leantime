@@ -152,8 +152,8 @@
    set for WCAG AA on white (the --rd-text-3/-4 tokens are ~3:1 and fail as
    body copy), so the invitation stays legible. Scoped under .p2-lm-empty so
    these rules stay inert until the empty-state markup is present. */
-.rd-scope .p2-lm-emptyzone{background:linear-gradient(180deg,#f3f9f7 0%,#fafcfb 62%);border-radius:24px;padding:12px;margin:36px auto;max-width:672px;}
-.rd-scope .p2-lm-empty{margin:0 auto;text-align:center;padding:52px 40px 48px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:18px;box-shadow:0 3px 14px rgba(20,40,50,.05);}
+.rd-scope .p2-lm-emptyzone{margin:24px auto 8px;max-width:640px;}
+.rd-scope .p2-lm-empty{margin:0 auto;text-align:center;padding:16px 24px 8px;}
 .rd-scope .p2-lm-empty .found{display:flex;width:fit-content;max-width:100%;align-items:center;gap:10px;font-size:13px;line-height:1.4;color:#356f5b;background:#eef7f2;border:1px solid #d8ece2;border-radius:22px;padding:10px 20px;margin:0 auto 26px;}
 .rd-scope .p2-lm-empty .found i{color:#3E937A;font-size:12px;flex:none;}
 .rd-scope .p2-lm-empty .found b{color:#2c5f4d;font-weight:700;}
@@ -168,8 +168,6 @@
 .rd-scope .p2-lm-empty .cta i{font-size:13px;}
 .rd-scope .p2-lm-empty .hint{font-size:12.5px;color:#69767d;margin-top:18px;line-height:1.55;max-width:420px;margin-left:auto;margin-right:auto;}
 /* Dark overrides for the empty-state literals that bypass the token layer. */
-.rd-scope.rd-dark .p2-lm-emptyzone{background:linear-gradient(180deg,rgba(87,181,152,.06) 0%,var(--rd-panel) 62%);}
-.rd-scope.rd-dark .p2-lm-empty{box-shadow:0 3px 14px rgba(0,0,0,.4);}
 .rd-scope.rd-dark .p2-lm-empty .found{color:#8fd3ba;background:rgba(87,181,152,.12);border-color:rgba(87,181,152,.28);}
 .rd-scope.rd-dark .p2-lm-empty .found b{color:#b7e6d3;}
 .rd-scope.rd-dark .p2-lm-empty .found .sep{color:rgba(143,211,186,.5);}
