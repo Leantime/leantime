@@ -296,8 +296,13 @@ class Goalcanvas extends BaseService
         }
 
         // Single hydration pass for the whole authorized set (the expensive part
-        // — status labels + progress — is batched inside the repository).
-        return $this->goalRepository->getMilestonesForGoals($authorized);
+        // — status labels + progress — is batched inside the repository). Fill
+        // an empty entry for every authorized goal so an @api caller gets a
+        // predictable key set, not just the goals that happen to have chips.
+        return array_replace(
+            array_fill_keys($authorized, []),
+            $this->goalRepository->getMilestonesForGoals($authorized)
+        );
     }
 
     /**
