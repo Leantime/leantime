@@ -27,7 +27,7 @@
 --}}
 
 <style>
-.rd-scope .p2-wrap{max-width:900px;margin:0 auto;}
+.rd-scope .p2-wrap{margin:0 auto;}
 .rd-scope .p2-wrap *{min-width:0;}
 .rd-scope .p2-subhead{font-size:12.5px;color:var(--rd-text-3);margin:0 0 14px 2px;line-height:1.5;}
 
