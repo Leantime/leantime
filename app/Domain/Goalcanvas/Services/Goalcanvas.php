@@ -384,8 +384,12 @@ class Goalcanvas extends BaseService
         // '' for every box via a hidden input — would just cost a wasted lookup.
         // The update/patch paths still process empty values there, where clearing
         // an existing link is a meaningful edit.
-        if ($newId !== false && filter_var($values['milestoneId'] ?? null, FILTER_VALIDATE_INT) > 0) {
-            $this->syncGoalMilestoneEdges((int) $newId, $values['milestoneId'], (int) session('userdata.id'));
+        $milestoneIdValue = $values['milestoneId'] ?? null;
+        if ($newId !== false
+            && is_scalar($milestoneIdValue)
+            && filter_var($milestoneIdValue, FILTER_VALIDATE_INT) > 0
+        ) {
+            $this->syncGoalMilestoneEdges((int) $newId, $milestoneIdValue, (int) session('userdata.id'));
         }
 
         return $newId;

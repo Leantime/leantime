@@ -347,7 +347,9 @@ class GoalcanvasServiceTest extends TestCase
             'getCanvasProjectId' => fn () => 9,
             'getCanvasItemProjectId' => fn () => 9,
             'getMilestoneIdsForGoal' => fn () => $currentEdges,
-            'addGoalMilestoneLink' => function ($goalId, $milestoneId, $userId = null) use (&$added) {
+            'addGoalMilestoneLink' => function ($goalId, $milestoneId, $userId) use (&$added) {
+                // $userId is required (no default) so the tests fail loudly if
+                // production ever stops passing the author argument.
                 $added[] = [(int) $goalId, (int) $milestoneId];
 
                 return true;
