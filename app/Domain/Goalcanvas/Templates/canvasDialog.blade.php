@@ -130,7 +130,17 @@
 
                         {{-- Linked-milestone chips, sorted in-progress -> not-started -> done. The fill is the milestone's OWN color growing with its progress (deliberately not a status color). --}}
                         @if (count($goalMilestones) > 0)
-                            <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;">
+                            {{-- Horizontal scroller (milestones scroll across, by design). A
+                                 visible thin scrollbar + snap makes "there's more, scroll" read
+                                 clearly instead of the chips looking clipped at the edge. --}}
+                            <style>
+                                .goalMsRow{scrollbar-width:thin;scrollbar-color:var(--main-border-color,#e4e7ec) transparent;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);}
+                                .goalMsRow::-webkit-scrollbar{height:7px;}
+                                .goalMsRow::-webkit-scrollbar-thumb{background:var(--main-border-color,#e4e7ec);border-radius:10px;}
+                                .goalMsRow::-webkit-scrollbar-track{background:transparent;}
+                                .goalMsRow > .goalMsChip{scroll-snap-align:start;}
+                            </style>
+                            <div class="goalMsRow" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;">
                                 @foreach ($goalMilestones as $ms)
                                     <div class="goalMsChip" style="position:relative;flex:0 0 auto;min-width:150px;max-width:220px;height:42px;border-radius:9px;border:1px solid var(--main-border-color,#e4e7ec);background:var(--secondary-background,#f2f4f7);overflow:hidden;display:flex;align-items:center;padding:0 10px;">
                                         <span style="position:absolute;left:0;top:0;bottom:0;width:{{ (int) $ms['percentDone'] }}%;background:{{ $ms['color'] }};opacity:.18;border-right:2px solid {{ $ms['color'] }};"></span>
