@@ -260,7 +260,9 @@ class Goalcanvas extends BaseService
      * goals in a single pass, so callers with a goal set (e.g. the reports
      * engine) avoid an N+1. Each goal is authorized for VIEW against its real
      * project; goals the caller can't see are silently omitted. Returns a map
-     * keyed by goal id — goals with no milestones (or no access) are absent.
+     * keyed by goal id: every AUTHORIZED goal is present, mapping to an empty
+     * array when it has no milestones — so callers get a predictable key set.
+     * Only unauthorized/invisible goals are absent.
      *
      * @param  int[]  $goalIds
      * @return array<int, array<int, array<string, mixed>>>
@@ -572,8 +574,11 @@ class Goalcanvas extends BaseService
 
         $desired = [];
         foreach (is_array($milestoneIdValue) ? $milestoneIdValue : [$milestoneIdValue] as $value) {
-            $milestoneId = (int) $value;
-            if ($milestoneId > 0) {
+            // Strict int validation — (int) would coerce '42abc' to 42 and could
+            // silently link the wrong milestone if a malformed value reaches this
+            // path (e.g. via JSON-RPC). Non-scalar / non-int values are dropped.
+            $milestoneId = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
+            if ($milestoneId !== false && $milestoneId > 0) {
                 $desired[] = $milestoneId;
             }
         }

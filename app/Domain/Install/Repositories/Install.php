@@ -101,6 +101,14 @@ class Install
     ];
 
     /**
+     * Guards the goal↔milestone backfill (30524) from running twice in a single
+     * update pass: on installs upgrading from <=30523 both 30524 and 30525 fire,
+     * and 30525 delegates to 30524. Set when the backfill runs so 30525 can skip
+     * a redundant second scan.
+     */
+    private bool $goalMilestoneEdgesBackfilled = false;
+
+    /**
      * config object, passed into constructor
      */
     private Environment|string $config;
@@ -2999,6 +3007,8 @@ class Install
      */
     public function update_sql_30524(): bool|array
     {
+        $this->goalMilestoneEdgesBackfilled = true;
+
         try {
             // Guard on the installer's own connection (not the global Schema
             // facade, which checks the default connection) so the existence
@@ -3117,6 +3127,15 @@ class Install
      */
     public function update_sql_30525(): bool|array
     {
+        // 30524 runs immediately before this in the same pass for installs
+        // coming from <=30523, and its backfill is idempotent — re-running it
+        // here would repeat the full scan for nothing. Only do the work when
+        // 30524 did NOT run this pass (installs that recorded 30524 in a prior
+        // release and may have accrued stragglers since).
+        if ($this->goalMilestoneEdgesBackfilled) {
+            return true;
+        }
+
         return $this->update_sql_30524();
     }
 }
