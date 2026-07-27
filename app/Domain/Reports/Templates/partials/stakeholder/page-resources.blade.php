@@ -45,6 +45,8 @@
 .rd-scope .p3-res-strip .cnt .h{font-size:15px;font-weight:600;color:var(--rd-text-1);margin-bottom:3px;}
 .rd-scope .p3-res-strip .cnt .d{font-size:13.5px;color:var(--rd-text-3);line-height:1.5;}
 .rd-scope .p3-res-strip .tag{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-accent);background:rgba(0,71,102,.08);border-radius:10px;padding:4px 10px;flex:none;}
+.rd-scope .p3-res-strip .p3-res-cta{flex:none;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#fff;background:var(--rd-accent);border-radius:100px;padding:9px 17px;text-decoration:none;white-space:nowrap;transition:opacity .12s ease;}
+.rd-scope .p3-res-strip .p3-res-cta:hover{opacity:.9;color:#fff;}
 
 /* Three-card resource summary — larger, roomier, higher contrast. */
 .rd-scope .p3-res-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
@@ -284,16 +286,40 @@
 }
 </style>
 
-{{-- Hours / Days unit toggle. The server always renders hours (source of
-     truth); JS swaps any element with `data-hours` to a days display (÷ 8)
-     when the toggle is set. Preference stored in localStorage. --}}
-<div class="p3-unit-toggle" data-lt-unit-toggle>
-    <span class="p3-unit-lbl">{{ __('stakeholder.rc.unit.show') }}</span>
-    <div class="p3-unit-pill">
-        <button type="button" class="p3-unit-btn is-active" data-unit="hours">{{ __('stakeholder.rc.unit.hours') }}</button>
-        <button type="button" class="p3-unit-btn" data-unit="days">{{ __('stakeholder.rc.unit.days') }}</button>
+@php
+    // Does this strategy/program actually have authored resource data?
+    // $resourceSummary is non-null whenever the provider (PgmPro) is installed —
+    // even with nothing authored — so a null check alone leaves a wall of empty
+    // "—" cards. Detect "installed but empty" here to drive the onboarding empty
+    // state and suppress the noisy empty sections below. (For a strategy the
+    // strategy's own board is always empty by design; data rolls up from its
+    // programs — so this is true whenever ANY program in scope has authored it.)
+    $hasResourceData = false;
+    if ($resourceSummary !== null) {
+        $rsActivePeople = 0;
+        foreach ($resourceSummary->people as $p) {
+            $anyAlloc = false;
+            foreach ($p->allocations as $hrs) { if ((float) $hrs > 0) { $anyAlloc = true; break; } }
+            if ($anyAlloc || $p->capacity > 0) { $rsActivePeople++; }
+        }
+        $hasResourceData = $rsActivePeople > 0
+            || (float) $resourceSummary->totalBudgeted > 0
+            || count($resourceSummary->dependencies) > 0;
+    }
+@endphp
+
+@if ($hasResourceData)
+    {{-- Hours / Days unit toggle. The server always renders hours (source of
+         truth); JS swaps any element with `data-hours` to a days display (÷ 8)
+         when the toggle is set. Preference stored in localStorage. --}}
+    <div class="p3-unit-toggle" data-lt-unit-toggle>
+        <span class="p3-unit-lbl">{{ __('stakeholder.rc.unit.show') }}</span>
+        <div class="p3-unit-pill">
+            <button type="button" class="p3-unit-btn is-active" data-unit="hours">{{ __('stakeholder.rc.unit.hours') }}</button>
+            <button type="button" class="p3-unit-btn" data-unit="days">{{ __('stakeholder.rc.unit.days') }}</button>
+        </div>
     </div>
-</div>
+@endif
 
 {{-- ── Resources summary from ResourcesGateway ────────────────────── --}}
 <div class="p3-sec">
@@ -310,6 +336,43 @@
                 <div class="h">{{ __('stakeholder.rc.no_provider_title') }}</div>
                 <div class="d">{{ __('stakeholder.rc.no_provider_hint') }}</div>
             </div>
+        </div>
+    @elseif (! $hasResourceData)
+        {{-- Provider installed, nothing authored yet. Resource data always comes
+             from the program(s) — a strategy's own board stays empty by design —
+             so guide the reader to the next real action rather than showing a
+             wall of empty cards and sections. Three cases:
+               • program report            → set up that program's allocation
+               • strategy with no programs → create a program first
+               • strategy with programs    → open one and add resources --}}
+        @php
+            $programCount = count($programMeta ?? []);
+            if (($scope ?? '') === 'program') {
+                $emptyTitle    = __('stakeholder.rc.empty_title');
+                $emptyHint     = __('stakeholder.rc.empty_hint_program');
+                $emptyCtaHref  = BASE_URL.'/pgmPro/resourceAllocation';
+                $emptyCtaLabel = __('stakeholder.rc.empty_cta');
+            } elseif ($programCount === 0) {
+                $emptyTitle    = __('stakeholder.rc.empty_noprog_title');
+                $emptyHint     = __('stakeholder.rc.empty_hint_noprog');
+                $emptyCtaHref  = (int) ($projectId ?? 0) > 0 ? BASE_URL.'/projects/newProject?parent='.(int) $projectId : null;
+                $emptyCtaLabel = __('stakeholder.rc.empty_cta_create_program');
+            } else {
+                $emptyTitle    = __('stakeholder.rc.empty_title');
+                $emptyHint     = __('stakeholder.rc.empty_hint_strategy');
+                $emptyCtaHref  = null;
+                $emptyCtaLabel = null;
+            }
+        @endphp
+        <div class="p3-res-strip">
+            <div class="icn"><i class="fa fa-people-arrows"></i></div>
+            <div class="cnt">
+                <div class="h">{{ $emptyTitle }}</div>
+                <div class="d">{{ $emptyHint }}</div>
+            </div>
+            @if ($emptyCtaHref !== null)
+                <a href="{{ $emptyCtaHref }}" class="p3-res-cta">{{ $emptyCtaLabel }} <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+            @endif
         </div>
     @else
         @php
@@ -415,7 +478,7 @@
      first drill-down question: which program is hot, which is idle.
      Skipped when there are 0-1 projects (aggregate is the same as the
      breakdown, no point). --}}
-@if ($resourceSummary !== null && count($resourceSummary->projectIds) > 1)
+@if ($resourceSummary !== null && $hasResourceData && count($resourceSummary->projectIds) > 1)
     @php
         // Build per-project name lookup from ReportEngine summaries.
         $projectNames = [];
@@ -732,7 +795,7 @@
      capacity (people × weeks × allocation). Shows the sensitivity, not just a
      flag. When the plan doesn't fit, lists the three rebalance levers with
      specific numbers. --}}
-@if (! empty($capacityAnalysis))
+@if (! empty($capacityAnalysis) && $hasResourceData)
     @php
         // Verdict ordering — worst first so board can scan top-down.
         $verdictRank = ['critical' => 0, 'tight' => 1, 'balanced' => 2, 'buffer' => 3, 'no_capacity' => 4, 'no_work' => 5];
@@ -951,7 +1014,7 @@
      report — a portfolio audience reads at program/project scope; per-person
      analysis belongs on the program report where a manager can act on it.
      Capacity vs demand above already covers program-level tightness. --}}
-@if ($resourceSummary !== null)
+@if ($resourceSummary !== null && $hasResourceData)
     @php
         $gaps = [];
         $isProgramScope = ($scope ?? '') === 'program';

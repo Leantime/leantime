@@ -502,7 +502,7 @@
 
                 {{-- ═══ Page 3 — Resources & Coverage ═════════════════ --}}
                 <div class="rd-page">
-                    @include('reports::partials.stakeholder.page-resources', compact('logicModel', 'hasLM', 'resourceSummary', 'report', 'scope', 'capacityAnalysis', 'programMeta', 'programChildMap', 'capacityByProgram'))
+                    @include('reports::partials.stakeholder.page-resources', compact('logicModel', 'hasLM', 'resourceSummary', 'report', 'scope', 'capacityAnalysis', 'programMeta', 'programChildMap', 'capacityByProgram', 'projectId'))
                 </div>
 
                 {{-- ═══ Page 4 — Impact Journey ═══════════════════════ --}}
