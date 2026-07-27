@@ -107,11 +107,34 @@
 
 /* Persistent header — sits above the deck. Left: subject + provenance. Right:
    status verdict (stated verdict with provenance line, NOT a tappable pill). */
-.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:start;padding:14px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
+.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px 18px;align-items:start;padding:16px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
 .rd-hdr .st{min-width:0;}
-.rd-hdr .st .h{font-size:20px;font-weight:600;line-height:1.2;color:var(--rd-text-1);}
+/* Breadcrumb: small gray line at the top of the left column. The verdict + ⋮
+   top-align with it (align-items:start on the grid), sitting level with it. */
+.rd-crumb{display:flex;align-items:center;gap:6px;min-width:0;margin-bottom:2px;font-size:12.5px;}
+.rd-crumb > a{color:var(--rd-text-3);text-decoration:none;font-weight:500;}
+.rd-crumb > a:hover{color:var(--rd-accent);text-decoration:underline;}
+.rd-crumb .sep{color:var(--rd-text-4);}
+.rd-crumb .rd-crumb-cur{color:var(--rd-text-3);}
+/* Title = <h1> + switcher, at the left edge (aligns with breadcrumb + meta). */
+.rd-hdr .st .h{margin:0 0 0 -6px;font-size:22px;font-weight:600;line-height:1.15;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;cursor:pointer;border-radius:8px;padding:1px 6px;transition:background .12s;}
+.rd-hdr .st .h:hover{background:rgba(0,71,102,.05);}
+.rd-h-caret{font-size:14px;color:var(--rd-text-4);}
+/* Subject switcher: the dropdown wrapper aligns the toggle box, title text,
+   breadcrumb, and menu on one left edge; the menu drops straight under the
+   title + caret. */
+.rd-hdr .st .dropdown{position:relative;display:inline-flex;align-items:center;}
+.rd-hdr .st .dropdown > .h{margin:0;padding-left:0;}
+.rd-hdr .st .dropdown-menu{left:0;margin-top:6px;min-width:230px;}
+.rd-hdr .dropdown-menu .rd-switch-mark{font-size:8px;margin-right:8px;color:var(--rd-text-4);vertical-align:middle;}
+.rd-hdr .dropdown-menu li a .fa-circle-dot{color:var(--rd-accent);}
 .rd-hdr .st .prov{font-size:12px;color:var(--rd-text-3);margin-top:4px;}
-.rd-hdr .verdict{text-align:right;min-width:0;}
+.rd-hdr .verdict{text-align:right;min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+/* ⋮ is its own column; top-aligned with the verdict label ("In progress"). */
+.rd-hdr .rd-actions{line-height:1;display:flex;align-items:flex-start;}
+.rd-hdr .rd-actions .dropdown{margin:0 !important;padding:0 !important;line-height:1 !important;display:inline-flex !important;}
+.rd-hdr .rd-actions .dropdown-toggle.btn{padding:0 4px !important;margin:0 !important;height:auto !important;line-height:1.4 !important;min-width:0 !important;border:none !important;background:transparent !important;color:var(--rd-text-4) !important;font-size:16px !important;box-shadow:none !important;}
+.rd-hdr .rd-actions .dropdown-toggle.btn:hover{color:var(--rd-text-2) !important;background:rgba(0,0,0,.04) !important;border-radius:6px;}
 .rd-hdr .verdict .v{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--rd-text-1);}
 .rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}
 .rd-hdr .verdict .src{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-weight:400;}
@@ -155,12 +178,21 @@
 
 /* Tab bar — sits ON the page background (matches the To-Dos Kanban·Table·List
    pattern). Not on a panel. */
-.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:var(--rd-text-3);padding:6px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:6px;transition:color .15s,background .15s;}
-.rd-tab:hover{color:var(--rd-text-1);background:rgba(0,0,0,.03);}
-.rd-tab.on{color:var(--rd-accent);font-weight:600;background:rgba(0,71,102,.06);}
+/* Nav bar: horizontal tabs on their own accent-gradient strip above the white
+   content card — reads as navigation, not a button group. Conditional dark
+   scrim (--nav-scrim) for light accents that fail contrast; NO shadow so it
+   reads connected to the content. Active tab = white pill. */
+.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(rgba(0,0,0,var(--nav-scrim,0)),rgba(0,0,0,var(--nav-scrim,0))),linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:14px;box-shadow:none;padding:7px 10px;}
+/* Framed segmented tab group — one outlined container grouping the tabs. */
+.rd-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
+.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);padding:8px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:9px;transition:color .15s,background .15s;}
+.rd-tab:hover{color:#fff;background:rgba(255,255,255,.16);}
+.rd-tab.on{color:var(--rd-accent);font-weight:600;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);}
+/* Keyboard focus: white ring on the gradient, accent ring on the white chip. */
+.rd-tab:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+.rd-tab.on:focus-visible{outline-color:var(--rd-accent);}
 .rd-tab i{font-size:12px;}
-.rd-tab .ct{font-size:11px;color:var(--rd-text-4);background:var(--rd-line-soft);border-radius:10px;padding:1px 7px;margin-left:2px;}
+.rd-tab .ct{font-size:11px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.18);border-radius:10px;padding:1px 7px;margin-left:2px;}
 .rd-tab.on .ct{color:var(--rd-accent);background:rgba(0,71,102,.1);}
 .rd-arrows{display:flex;gap:4px;}
 .rd-arrow{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-text-2);}
@@ -285,10 +317,39 @@
 
 <div class="rd-scope">
 
-    {{-- ── Persistent header ────────────────────────────────────────── --}}
+    {{-- ── Persistent document header (doc-shell) ───────────────────────
+         breadcrumb + subject switcher + status verdict + actions live in the
+         card; the plugin collapses the shared teal pageheader (body.report-doc)
+         so the report reads as one document. Switcher + actions degrade safely
+         when the caller doesn't pass switchableSubjects / projectId. --}}
+    @php $rdSwitchBase = BASE_URL.'/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report'; @endphp
     <div class="rd-hdr">
         <div class="st">
-            <div class="h">{{ $subject }}</div>
+            <nav class="rd-crumb" aria-label="{{ __('stakeholder.header.breadcrumb') }}">
+                <a href="{{ BASE_URL }}/{{ $scope === 'strategy' ? 'strategyPro' : 'pgmPro' }}/dashboard">{{ $scope === 'strategy' ? __('projectType.strategy') : __('projectType.program') }}</a>
+                <span class="sep" aria-hidden="true">›</span>
+                <span class="rd-crumb-cur">{{ $subject }}</span>
+            </nav>
+            @if (count($switchableSubjects ?? []) > 1)
+                {{-- Subject switcher: Bootstrap dropdown; items reload the report
+                     with the chosen subject (?switchTo) so you stay in the report. --}}
+                <span class="dropdown dropdownWrapper">
+                    <a href="javascript:void(0)" class="h dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $subject }} <i class="fa fa-caret-down rd-h-caret" aria-hidden="true"></i></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">{{ $scope === 'strategy' ? __('stakeholder.header.switch_strategy') : __('stakeholder.header.switch_program') }}</li>
+                        @foreach ($switchableSubjects as $rdSubj)
+                            <li>
+                                <a href="{{ $rdSwitchBase }}?switchTo={{ (int) $rdSubj['id'] }}">
+                                    <i class="fa {{ (int) $rdSubj['id'] === (int) ($projectId ?? 0) ? 'fa-circle-dot' : 'fa-circle' }} rd-switch-mark" aria-hidden="true"></i>
+                                    {{ $rdSubj['name'] }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </span>
+            @else
+                <h1 class="h" style="cursor:default;">{{ $subject }}</h1>
+            @endif
             <div class="prov">
                 {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
                 @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif
@@ -299,15 +360,29 @@
             <div class="v"><span class="dot" style="background:{{ $verdictDotColor }}"></span>{{ $verdictLabel }}</div>
             <div class="src">{{ $verdictSource }}</div>
         </div>
+        @if (! empty($projectId ?? null))
+            <div class="rd-actions">
+                @include('reports::partials.stakeholder.actionsMenu', [
+                    'scope' => $scope,
+                    'projectId' => $projectId,
+                    'verdictOverride' => $verdictOverride ?? null,
+                ])
+            </div>
+        @endif
     </div>
 
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
          space; picker sits with the view-mode controls it belongs with) ── --}}
     <div class="rd-tabs hideOnPrint">
-        <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
-        <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
-        <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
-        <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+        {{-- Framed segmented tab group (mirrors the global .tabs nav): the tabs
+             sit in one outlined container so they read as a connected control,
+             the active one a white segment inside it. --}}
+        <div class="rd-tab-group">
+            <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
+            <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
+            <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
+            <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+        </div>
 
         <div class="rd-tab-right">
             <div class="rd-picker" id="rdPicker">
