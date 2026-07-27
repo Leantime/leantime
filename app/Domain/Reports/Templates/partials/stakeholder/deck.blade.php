@@ -374,9 +374,15 @@
                 <span class="sep" aria-hidden="true">›</span>
                 <span class="rd-crumb-cur">{{ $subject }}</span>
             </nav>
-            @if (count($switchableSubjects ?? []) > 1)
+            @if ($scope !== 'strategy' && count($switchableSubjects ?? []) > 1)
                 {{-- Subject switcher: Bootstrap dropdown; items reload the report
                      with the chosen subject (?switchTo) so you stay in the report.
+                     Deliberately NOT shown for strategy scope: a strategy is a
+                     self-contained top-level root (Strategy → Programs → Projects),
+                     never a sibling in a set of strategies — so its report doesn't
+                     offer switching between strategies. Change strategy the normal
+                     way, via the project selector. The switcher remains available
+                     for program reports (switching between sibling programs).
                      The visible title is an interactive <a>, so also emit a real
                      (visually-hidden) <h1> to keep a proper document heading. --}}
                 <h1 class="rd-visually-hidden">{{ $subject }}</h1>
