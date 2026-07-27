@@ -596,10 +596,20 @@ class Goalcanvas extends Blueprints
         }
 
         $goalToMilestones = [];
+        $milestoneIdSet = [];
         foreach ($edges as $e) {
-            $goalToMilestones[(int) $e->entityA][] = (int) $e->entityB;
+            $goalId = (int) $e->entityA;
+            $milestoneId = (int) $e->entityB;
+            // Associative set per goal → O(1) dedup and no array_merge(...) arg
+            // unpacking (which has a practical limit + extra allocation on large
+            // sets); a raced duplicate edge can't render as a duplicate chip.
+            $goalToMilestones[$goalId][$milestoneId] = true;
+            $milestoneIdSet[$milestoneId] = true;
         }
-        $milestoneIds = array_values(array_unique(array_merge(...array_values($goalToMilestones))));
+        foreach ($goalToMilestones as $goalId => $set) {
+            $goalToMilestones[$goalId] = array_keys($set);
+        }
+        $milestoneIds = array_keys($milestoneIdSet);
 
         $details = [];
         $projectIds = [];
