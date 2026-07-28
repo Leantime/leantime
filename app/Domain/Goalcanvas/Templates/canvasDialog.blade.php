@@ -108,7 +108,7 @@
             <input type="hidden" name="changeItem" value="1">
 
             {{-- ── Tabs ── --}}
-            <div class="gv-tabs" role="tablist" aria-label="{{ __('headlines.goals') }}">
+            <div class="gv-tabs" role="tablist" aria-label="{{ __('goalcanvas.tabs_label') }}">
                 <div class="gv-tab-group">
                     <button type="button" class="gv-tab" role="tab" id="gvTab-goal" aria-controls="gvPanel-goal" aria-selected="false" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('goalcanvas.tab_goal') }}</button>
                     <button type="button" class="gv-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
