@@ -132,7 +132,7 @@ class ProjectsAccessTest extends TestCase
     private function repoWithCapturingQuery(object $builder): ProjectRepository
     {
         $connection = $this->make(MySqlConnection::class, [
-            'table' => fn () => $builder,
+            'table' => fn ($table = null) => $builder,
             'raw' => fn ($value) => $value,
         ]);
 
