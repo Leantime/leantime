@@ -37,7 +37,7 @@
         .gv-unit{font-size:11px;font-weight:700;color:var(--gv-acc);opacity:.85;}
 
         /* tab bar — report deck style (gradient bar + translucent group + white active pill) */
-        .gv-tabs{display:flex;width:fit-content;max-width:100%;align-items:center;margin:0 0 22px;background:linear-gradient(90deg,var(--gv-acc),var(--gv-acc2));border-radius:14px;padding:7px 9px;}
+        .gv-tabs{display:flex;align-items:center;margin:0 0 22px;background:linear-gradient(90deg,var(--gv-acc),var(--gv-acc2));border-radius:14px;padding:7px 12px;}
         .gv-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
         .gv-tab{background:none;border:none;font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);padding:8px 15px;cursor:pointer;border-radius:9px;display:inline-flex;align-items:center;gap:7px;transition:color .15s,background .15s;}
         .gv-tab i,.gv-tab span[class*="fa"]{font-size:12px;}
