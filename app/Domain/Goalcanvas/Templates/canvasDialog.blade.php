@@ -111,18 +111,18 @@
             @endif
 
             {{-- ── Tabs ── --}}
-            <div class="gv-tabs" role="tablist">
+            <div class="gv-tabs" role="tablist" aria-label="{{ __('headlines.goals') }}">
                 <div class="gv-tab-group">
-                    <button type="button" class="gv-tab" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('Goal') }}</button>
-                    <button type="button" class="gv-tab" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('Progress') }}</button>
+                    <button type="button" class="gv-tab" role="tab" id="gvTab-goal" aria-controls="gvPanel-goal" aria-selected="false" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('goalcanvas.tab_goal') }}</button>
+                    <button type="button" class="gv-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
                     @if ($id !== '')
-                        <button type="button" class="gv-tab" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
+                        <button type="button" class="gv-tab" role="tab" id="gvTab-milestones" aria-controls="gvPanel-milestones" aria-selected="false" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
                     @endif
                 </div>
             </div>
 
             {{-- ── Tab: Goal (name, status, dates, more, discussion) ── --}}
-            <div class="gv-panel" data-panel="goal">
+            <div class="gv-panel" data-panel="goal" role="tabpanel" id="gvPanel-goal" aria-labelledby="gvTab-goal" tabindex="0">
                 <div class="gv-row">
                     <label class="gv-eyebrow">{{ __('goalcanvas.name_goal') }}</label>
                     <x-global::forms.text-input name="title" value="{{ $canvasItem['title'] }}" placeholder="{{ __('goalcanvas.name_goal') }}" style="width:100%" />
@@ -170,7 +170,7 @@
             </div>
 
             {{-- ── Tab: Progress (metric + bar + values) ── --}}
-            <div class="gv-panel" data-panel="progress">
+            <div class="gv-panel" data-panel="progress" role="tabpanel" id="gvPanel-progress" aria-labelledby="gvTab-progress" tabindex="0">
                 <div id="measureGoalContainer" class="gv-row">
                     <label class="gv-field-lbl">{{ __('goalcanvas.metric_label') }}</label>
                     <x-global::forms.text-input name="description" value="{{ $canvasItem['description'] }}" style="width:100%" />
@@ -217,10 +217,10 @@
 
             {{-- ── Tab: Milestones ── --}}
             @if ($id !== '')
-                <div class="gv-panel" data-panel="milestones">
+                <div class="gv-panel" data-panel="milestones" role="tabpanel" id="gvPanel-milestones" aria-labelledby="gvTab-milestones" tabindex="0">
                     <div class="gv-ms-head">
                         @if (($milestoneSummary['total'] ?? 0) > 0)
-                            <span class="gv-ms-summary"><b>{{ $milestoneSummary['total'] }}</b> {{ __("goalcanvas.summary_milestones") }}
+                            <span class="gv-ms-summary"><b>{{ $milestoneSummary['total'] }}</b> {{ $milestoneSummary['total'] == 1 ? __("goalcanvas.summary_milestone_one") : __("goalcanvas.summary_milestones") }}
                                 @if ($milestoneSummary['inProgress'] > 0)&middot; {{ $milestoneSummary['inProgress'] }} {{ __("goalcanvas.summary_in_progress") }} @endif
                                 @if ($milestoneSummary['notStarted'] > 0)&middot; {{ $milestoneSummary['notStarted'] }} {{ __("goalcanvas.summary_not_started") }} @endif
                                 @if ($milestoneSummary['done'] > 0)&middot; {{ $milestoneSummary['done'] }} {{ __("goalcanvas.summary_done") }} @endif
@@ -354,11 +354,27 @@
                 function show(name) {
                     var found = false;
                     panels.forEach(function (p) { var m = p.getAttribute('data-panel') === name; p.style.display = m ? '' : 'none'; if (m) found = true; });
-                    tabs.forEach(function (t) { t.classList.toggle('is-active', t.getAttribute('data-tab') === name); });
+                    tabs.forEach(function (t) {
+                        var active = t.getAttribute('data-tab') === name;
+                        t.classList.toggle('is-active', active);
+                        t.setAttribute('aria-selected', active ? 'true' : 'false');
+                        t.tabIndex = active ? 0 : -1;
+                    });
                     if (found) { try { localStorage.setItem('gvActiveTab', name); } catch (e) {} }
                     return found;
                 }
-                tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.getAttribute('data-tab')); }); });
+                tabs.forEach(function (t, i) {
+                    t.addEventListener('click', function () { show(t.getAttribute('data-tab')); });
+                    // Roving-tabindex arrow-key navigation (WAI-ARIA tabs pattern).
+                    t.addEventListener('keydown', function (e) {
+                        var next = null;
+                        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { next = tabs[(i + 1) % tabs.length]; }
+                        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { next = tabs[(i - 1 + tabs.length) % tabs.length]; }
+                        else if (e.key === 'Home') { next = tabs[0]; }
+                        else if (e.key === 'End') { next = tabs[tabs.length - 1]; }
+                        if (next) { e.preventDefault(); show(next.getAttribute('data-tab')); next.focus(); }
+                    });
+                });
                 var saved = null; try { saved = localStorage.getItem('gvActiveTab'); } catch (e) {}
                 if (!saved || !show(saved)) { show(tabs[0].getAttribute('data-tab')); }
             })();

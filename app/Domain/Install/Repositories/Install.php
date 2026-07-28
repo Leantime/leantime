@@ -3013,7 +3013,12 @@ class Install
             // Guard on the installer's own connection (not the global Schema
             // facade, which checks the default connection) so the existence
             // check matches the connection the migration queries run against.
-            $schema = $this->connection->getSchemaBuilder();
+            // DatabaseManager always resolves a concrete Connection here; the
+            // property is typed to the interface, which doesn't declare the
+            // schema-builder accessor, so narrow it for static analysis.
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
             if (! $schema->hasTable('zp_canvas_items')
                 || ! $schema->hasTable('zp_entity_relationship')
                 || ! $schema->hasTable('zp_tickets')

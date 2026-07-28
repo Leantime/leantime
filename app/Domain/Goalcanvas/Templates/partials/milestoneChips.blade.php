@@ -7,14 +7,18 @@
     also opening the goal card behind it.
 --}}
 @if (! empty($milestones))
-    <style>
-        .goalMsBoardRow{scrollbar-width:thin;scrollbar-color:#9aa7ad transparent;}
-        .goalMsBoardRow::-webkit-scrollbar{height:8px;}
-        .goalMsBoardRow::-webkit-scrollbar-thumb{background:#9aa7ad;border-radius:10px;border:2px solid transparent;background-clip:padding-box;}
-        .goalMsBoardRow::-webkit-scrollbar-track{background:transparent;}
-        .goalMsBoardChip{text-decoration:none;color:inherit;cursor:pointer;transition:border-color .12s;}
-        .goalMsBoardChip:hover{border-color:var(--primary-color,#004666)!important;}
-    </style>
+    {{-- This partial is included once per goal card; emit the shared chip CSS
+         only on the first include so a board of N cards doesn't ship N copies. --}}
+    @once
+        <style>
+            .goalMsBoardRow{scrollbar-width:thin;scrollbar-color:#9aa7ad transparent;}
+            .goalMsBoardRow::-webkit-scrollbar{height:8px;}
+            .goalMsBoardRow::-webkit-scrollbar-thumb{background:#9aa7ad;border-radius:10px;border:2px solid transparent;background-clip:padding-box;}
+            .goalMsBoardRow::-webkit-scrollbar-track{background:transparent;}
+            .goalMsBoardChip{text-decoration:none;color:inherit;cursor:pointer;transition:border-color .12s;}
+            .goalMsBoardChip:hover{border-color:var(--primary-color,#004666)!important;}
+        </style>
+    @endonce
     <div class="goalMsBoardRow" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-top:6px;">
         @foreach ($milestones as $ms)
             <a href="#/tickets/editMilestone/{{ (int) $ms['id'] }}" onclick="event.stopPropagation();" class="goalMsBoardChip" title="{{ __('links.edit_milestone') }}: {{ $ms['headline'] }}"

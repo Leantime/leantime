@@ -392,6 +392,7 @@ class Goalcanvas extends Blueprints
         $milestone = $this->dbConnection->table('zp_tickets')
             ->where('id', $milestoneId)
             ->where('type', 'milestone')
+            ->where('status', '<>', -1)
             ->first(['projectId']);
         if ($goalProjectId === null || $milestone === null
             || (int) $milestone->projectId !== (int) $goalProjectId) {
@@ -567,9 +568,11 @@ class Goalcanvas extends Blueprints
 
     /**
      * The milestone chips for a set of goals — each goal's tracked_by
-     * milestones with name, color, due date, and progress fill. Three queries
-     * total (edges, milestone details, progress), no N+1. Edges pointing at a
-     * deleted or non-milestone ticket are dropped.
+     * milestones with name, color, due date, and progress fill. A bounded,
+     * N+1-free set of reads regardless of milestone count: edges, milestone
+     * details, progress, plus one status-label read per distinct project
+     * (usually one). Edges pointing at a deleted or non-milestone ticket are
+     * dropped.
      *
      * @param  array<int, int>  $goalIds
      * @return array<int, array<int, array{id: int, headline: string, color: string, editTo: mixed, status: int, statusType: string, percentDone: int}>>
@@ -624,6 +627,7 @@ class Goalcanvas extends Blueprints
             $this->dbConnection->table('zp_tickets')
                 ->whereIn('id', $milestoneIds)
                 ->where('type', 'milestone')
+                ->where('status', '<>', -1)
                 ->select('id', 'headline', 'tags', 'editTo', 'status', 'projectId')
                 ->get() as $m
         ) {
