@@ -5,7 +5,7 @@
 
         // Metric preview (mirrors the goal-view mock) — rendered from the SAVED
         // values; re-renders on save. Bar only shows when a goal target exists.
-        $mType  = $canvasItem['metricType'] ?? 'number';
+        $mType  = $canvasItem['metricType'] ?: 'number';  // new goals default to # (number), the no-math option
         $mStart = (float) ($canvasItem['startValue'] ?? 0);
         $mCur   = (float) ($canvasItem['currentValue'] ?? 0);
         $mGoal  = (float) ($canvasItem['endValue'] ?? 0);
@@ -128,6 +128,14 @@
 
                         <div class="gv-values">
                             <div>
+                                <label class="gv-field-lbl">{{ __('label.type') }}</label>
+                                <select name="metricType">
+                                    <option value="number" @if ($mType == 'number') selected @endif>{{ __('goalcanvas.type_number') }}</option>
+                                    <option value="percent" @if ($mType == 'percent') selected @endif>{{ __('goalcanvas.type_percent') }}</option>
+                                    <option value="currency" @if ($mType == 'currency') selected @endif>{{ __('goalcanvas.type_currency') }}</option>
+                                </select>
+                            </div>
+                            <div>
                                 <label class="gv-field-lbl">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
                                 <x-global::forms.text-input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}" style="width:100%" />
                             </div>
@@ -143,14 +151,6 @@
                             <div>
                                 <label class="gv-field-lbl">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></label>
                                 <x-global::forms.text-input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}" style="width:100%" />
-                            </div>
-                            <div>
-                                <label class="gv-field-lbl">{{ __('label.type') }}</label>
-                                <select name="metricType">
-                                    <option value="number" @if ($mType == 'number') selected @endif>{{ __('label.number') }}</option>
-                                    <option value="percent" @if ($mType == 'percent') selected @endif>{{ __('label.percent') }}</option>
-                                    <option value="currency" @if ($mType == 'currency') selected @endif>{{ __('language.currency') }}</option>
-                                </select>
                             </div>
                         </div>
 
