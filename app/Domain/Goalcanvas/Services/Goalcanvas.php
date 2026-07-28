@@ -351,7 +351,13 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
 
-        return $this->goalRepository->createGoal($values);
+        $newId = $this->goalRepository->createGoal($values);
+
+        if ($newId !== false && array_key_exists('milestoneId', $values)) {
+            $this->syncGoalMilestoneEdges((int) $newId, $values['milestoneId'], (int) session('userdata.id'));
+        }
+
+        return $newId;
     }
 
     /**
@@ -371,7 +377,22 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
 
-        return $this->goalRepository->addCanvasItem($values);
+        $newId = $this->goalRepository->addCanvasItem($values);
+
+        // Only reconcile edges when a real milestone id is supplied. A brand-new
+        // item has no edges to clear, so an empty milestoneId — controllers post
+        // '' for every box via a hidden input — would just cost a wasted lookup.
+        // The update/patch paths still process empty values there, where clearing
+        // an existing link is a meaningful edit.
+        $milestoneIdValue = $values['milestoneId'] ?? null;
+        if ($newId !== false
+            && is_scalar($milestoneIdValue)
+            && filter_var($milestoneIdValue, FILTER_VALIDATE_INT) > 0
+        ) {
+            $this->syncGoalMilestoneEdges((int) $newId, $milestoneIdValue, (int) session('userdata.id'));
+        }
+
+        return $newId;
     }
 
     /**
@@ -392,6 +413,50 @@ class Goalcanvas extends BaseService
         $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
 
         $this->goalRepository->editCanvasItem($values);
+
+        if (array_key_exists('milestoneId', $values)) {
+            $this->syncGoalMilestoneEdges($itemId, $values['milestoneId'], (int) session('userdata.id'));
+        }
+    }
+
+    /**
+     * Reconcile a goal's tracked_by milestone edges with a single milestoneId
+     * write (the transitional single-select semantics — replace the goal's
+     * links with the one value; an empty value clears them). Set-based so an
+     * unchanged save doesn't churn edges. PR 3 widens this to accept an array.
+     *
+     * @param  int  $goalId  The goal (canvas item) whose edges are reconciled.
+     * @param  mixed  $milestoneIdValue  The desired milestone id from the write
+     *                                   (string/int/empty); non-scalar or
+     *                                   non-numeric values clear the edge.
+     * @param  int  $userId  Author recorded on any created edge.
+     */
+    private function syncGoalMilestoneEdges(int $goalId, mixed $milestoneIdValue, int $userId): void
+    {
+        if ($goalId <= 0) {
+            return;
+        }
+
+        $desired = [];
+        // Only a strictly-numeric SCALAR value becomes a desired edge. A stray
+        // string like '42abc' would cast to 42; a non-scalar (e.g. an array from
+        // milestoneId[]=42 param pollution) would make filter_var() warn — guard
+        // both so the edge just stays cleared rather than drifting or erroring.
+        $milestoneId = is_scalar($milestoneIdValue)
+            ? filter_var($milestoneIdValue, FILTER_VALIDATE_INT)
+            : false;
+        if ($milestoneId !== false && $milestoneId > 0) {
+            $desired[] = $milestoneId;
+        }
+
+        $current = $this->goalRepository->getMilestoneIdsForGoal($goalId);
+
+        foreach (array_diff($current, $desired) as $remove) {
+            $this->goalRepository->removeGoalMilestoneLink($goalId, (int) $remove);
+        }
+        foreach (array_diff($desired, $current) as $add) {
+            $this->goalRepository->addGoalMilestoneLink($goalId, (int) $add, $userId);
+        }
     }
 
     /**
@@ -410,7 +475,16 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
 
-        return $this->goalRepository->patchCanvasItem($id, $params);
+        $result = $this->goalRepository->patchCanvasItem($id, $params);
+
+        // Only mirror the milestoneId change into the tracked_by edges when the
+        // column patch actually persisted — otherwise the edges would drift from
+        // the milestoneId column and break the dual-write invariant.
+        if ($result && array_key_exists('milestoneId', $params)) {
+            $this->syncGoalMilestoneEdges($id, $params['milestoneId'], (int) session('userdata.id'));
+        }
+
+        return $result;
     }
 
     /**
@@ -427,6 +501,7 @@ class Goalcanvas extends BaseService
         $this->authorize(GoalcanvasPermissions::DELETE, $projectId);
 
         $this->goalRepository->delCanvasItem($id);
+        $this->goalRepository->removeAllGoalMilestoneLinks($id);
     }
 
     /**
