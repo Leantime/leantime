@@ -385,9 +385,14 @@ class Goalcanvas extends Blueprints
         // target's project + type). Rejecting a forged/foreign or non-milestone
         // id here — the shared write chokepoint — stops a link from surfacing
         // another project's milestone headline on the goal chips.
+        // Constrain to an actual goal item on a goalcanvas board so a non-goal
+        // canvas item id in the same project can't be written as a GoalItem
+        // edge (data-integrity: entityAType is recorded as 'GoalItem').
         $goalProjectId = $this->dbConnection->table('zp_canvas_items as ci')
             ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
             ->where('ci.id', $goalId)
+            ->where('ci.box', 'goal')
+            ->where('cb.type', 'goalcanvas')
             ->value('cb.projectId');
         $milestone = $this->dbConnection->table('zp_tickets')
             ->where('id', $milestoneId)

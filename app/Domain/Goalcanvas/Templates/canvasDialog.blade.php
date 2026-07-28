@@ -106,9 +106,6 @@
             <input type="hidden" value="{{ $canvasItem['box'] }}" name="box" id="box">
             <input type="hidden" value="{{ $id }}" name="itemId" id="itemId">
             <input type="hidden" name="changeItem" value="1">
-            @if ($id !== '')
-                <input type="hidden" name="comment" value="1" />
-            @endif
 
             {{-- ── Tabs ── --}}
             <div class="gv-tabs" role="tablist" aria-label="{{ __('headlines.goals') }}">
@@ -353,7 +350,7 @@
                 if (!tabs.length) return;
                 function show(name) {
                     var found = false;
-                    panels.forEach(function (p) { var m = p.getAttribute('data-panel') === name; p.style.display = m ? '' : 'none'; if (m) found = true; });
+                    panels.forEach(function (p) { var m = p.getAttribute('data-panel') === name; p.hidden = !m; p.style.display = m ? '' : 'none'; if (m) found = true; });
                     tabs.forEach(function (t) {
                         var active = t.getAttribute('data-tab') === name;
                         t.classList.toggle('is-active', active);
