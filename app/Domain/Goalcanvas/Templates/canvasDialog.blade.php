@@ -79,8 +79,18 @@
         .gv-values .gv-field-lbl{font-size:11px;}
         .gv-reports{margin-top:14px;}
 
+        /* more-options collapsible */
+        .gv-details{margin-top:22px;border-top:1px solid var(--gv-line-soft);padding-top:14px;}
+        .gv-details > summary{font-size:12px;font-weight:600;color:var(--gv-ink2);cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:7px;user-select:none;}
+        .gv-details > summary::-webkit-details-marker{display:none;}
+        .gv-details > summary::before{content:"\203A";display:inline-block;transition:transform .15s;color:var(--gv-acc);font-weight:700;font-size:15px;}
+        .gv-details[open] > summary::before{transform:rotate(90deg);}
+        .gv-details > summary:hover{color:var(--gv-acc);}
+        .gv-details-body{margin-top:14px;max-width:420px;}
+
         /* actions + discussion span the full width below the grid */
         .gv-foot{margin-top:26px;}
+        details.gv-foot{margin-top:22px;}
         .gv-actions{display:flex;align-items:center;gap:10px;padding-top:18px;border-top:1px solid var(--gv-line-soft);}
         .gv-actions .gv-delete{margin-left:auto;}
 
@@ -109,7 +119,6 @@
                     <div class="gv-section">
                         <h4 class="gv-sec-title"><i class="fa-solid fa-ranking-star"></i> {{ __('Metrics') }}</h4>
 
-                        @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                         <div id="measureGoalContainer">
                             <label class="gv-field-lbl">{{ __('goalcanvas.metric_label') }}</label>
                             <x-global::forms.text-input name="description" value="{{ $canvasItem['description'] }}" style="width:100%" />
@@ -119,10 +128,9 @@
                             <div class="gv-metric-bar" aria-hidden="true">
                                 <div class="gv-mb-top">
                                     <span class="gv-mb-now">{{ $fmtM($mCur) }}</span>
-                                    <span class="gv-mb-of">{{ __('label.goal_value') }} <b>{{ $fmtM($mGoal) }}</b></span>
+                                    <span class="gv-mb-of">{{ __('goalcanvas.of_goal') }} <b>{{ $fmtM($mGoal) }}</b></span>
                                 </div>
                                 <div class="gv-track"><div class="gv-fill" style="width:{{ $mPct }}%"></div></div>
-                                <div class="gv-scale"><span>{{ __('label.starting_value') }} <b>{{ $fmtM($mStart) }}</b></span><span>{{ __('label.goal_value') }} <b>{{ $fmtM($mGoal) }}</b></span></div>
                             </div>
                         @endif
 
@@ -154,14 +162,6 @@
                             </div>
                         </div>
 
-                        @if (!empty($relatesLabels))
-                            <div class="gv-reports">
-                                <label class="gv-field-lbl">{{ __('label.relates') }}</label>
-                                <select name="relates" id="relatesCanvas"></select>
-                            </div>
-                        @else
-                            <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
-                        @endif
                     </div>
 
                     {{-- ── Milestones (full main width) ── --}}
@@ -282,6 +282,22 @@
                 </aside>
 
             </div>
+
+            {{-- ── More options (advanced / rarely used: rollup, relations) ── --}}
+            <details class="gv-details gv-foot">
+                <summary>{{ __('goalcanvas.more_options') }}</summary>
+                <div class="gv-details-body">
+                    @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
+                    @if (!empty($relatesLabels))
+                        <div class="gv-reports">
+                            <label class="gv-field-lbl">{{ __('label.relates') }}</label>
+                            <select name="relates" id="relatesCanvas"></select>
+                        </div>
+                    @else
+                        <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
+                    @endif
+                </div>
+            </details>
 
             {{-- ── Actions ── --}}
             @if ($login::userIsAtLeast($roles::$editor))
