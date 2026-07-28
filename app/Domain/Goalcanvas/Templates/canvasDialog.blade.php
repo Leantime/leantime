@@ -36,13 +36,14 @@
         .gv-field-lbl{font-size:11.5px;color:var(--gv-ink2);margin:0 0 6px;}
         .gv-unit{font-size:11px;font-weight:700;color:var(--gv-acc);opacity:.85;}
 
-        /* tab bar */
-        .gv-tabs{display:flex;gap:2px;border-bottom:1px solid var(--gv-line);margin:0 0 22px;}
-        .gv-tab{background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--gv-ink2);padding:9px 15px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;display:inline-flex;align-items:center;gap:7px;transition:color .12s,border-color .12s;}
-        .gv-tab i{font-size:12px;opacity:.8;}
-        .gv-tab:hover{color:var(--gv-ink);}
-        .gv-tab.is-active{color:var(--gv-acc);border-bottom-color:var(--gv-acc);}
-        .gv-tab.is-active i{opacity:1;}
+        /* tab bar — report deck style (gradient bar + translucent group + white active pill) */
+        .gv-tabs{display:flex;width:fit-content;max-width:100%;align-items:center;margin:0 0 22px;background:linear-gradient(90deg,var(--gv-acc),var(--gv-acc2));border-radius:14px;padding:7px 9px;}
+        .gv-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
+        .gv-tab{background:none;border:none;font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);padding:8px 15px;cursor:pointer;border-radius:9px;display:inline-flex;align-items:center;gap:7px;transition:color .15s,background .15s;}
+        .gv-tab i,.gv-tab span[class*="fa"]{font-size:12px;}
+        .gv-tab:hover{color:#fff;background:rgba(255,255,255,.16);}
+        .gv-tab.is-active{color:var(--gv-acc);font-weight:600;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);}
+        .gv-tab:focus-visible{outline:2px solid #fff;outline-offset:2px;}
         .gv-panel{min-height:210px;}
         .gv-row{margin-bottom:20px;}
 
@@ -111,11 +112,13 @@
 
             {{-- ── Tabs ── --}}
             <div class="gv-tabs" role="tablist">
-                <button type="button" class="gv-tab" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('Goal') }}</button>
-                <button type="button" class="gv-tab" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('Progress') }}</button>
-                @if ($id !== '')
-                    <button type="button" class="gv-tab" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
-                @endif
+                <div class="gv-tab-group">
+                    <button type="button" class="gv-tab" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('Goal') }}</button>
+                    <button type="button" class="gv-tab" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('Progress') }}</button>
+                    @if ($id !== '')
+                        <button type="button" class="gv-tab" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
+                    @endif
+                </div>
             </div>
 
             {{-- ── Tab: Goal (name, status, dates, more, discussion) ── --}}
