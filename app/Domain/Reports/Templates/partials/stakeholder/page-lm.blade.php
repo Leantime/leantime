@@ -26,125 +26,73 @@
       $scope       'strategy' | 'program'
 --}}
 
-<style>
-.rd-scope .p2-wrap{max-width:900px;margin:0 auto;}
-.rd-scope .p2-wrap *{min-width:0;}
-.rd-scope .p2-subhead{font-size:12.5px;color:var(--rd-text-3);margin:0 0 14px 2px;line-height:1.5;}
 
-/* Belief — quiet card at top with see-more expand */
-.rd-scope .p2-believe{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:16px 20px;margin-bottom:14px;font-size:13.5px;line-height:1.55;color:var(--rd-text-3);}
-.rd-scope .p2-believe .lb{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-text-4);display:block;margin-bottom:6px;}
-.rd-scope .p2-believe b{color:var(--rd-text-2);font-weight:600;}
+@php
+    // Empty-state trigger is keyed on ITEM COUNT, not just board existence.
+    // A blank Logic Model board (0 items) makes $hasLM true but leaves the
+    // read-out hollow; the reverse flow itself creates a board on start, so
+    // gating only on board-existence would strand users in an empty skeleton.
+    // Treat "no board" and "board with no items" identically — both land on
+    // the populate-from-your-work empty-state below.
+    $lmStages = $hasLM ? ($logicModel['coverageMatrix']['stages'] ?? []) : [];
+    $lmHasContent = false;
+    foreach ($lmStages as $lmStage) {
+        if (count($lmStage['items'] ?? []) > 0) {
+            $lmHasContent = true;
+            break;
+        }
+    }
 
-/* Stage card */
-.rd-scope .p2-stage{background:var(--rd-panel);border:1px solid var(--rd-line);border-left:3px solid var(--rd-s3);border-radius:var(--rd-r-sm);padding:18px 22px;margin-bottom:14px;}
-.rd-scope .p2-stage.outcomes{border-left-color:var(--rd-s4);}
-.rd-scope .p2-stage .stage-hd{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.rd-scope .p2-stage .frame{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;display:flex;align-items:center;gap:7px;flex:1;min-width:0;}
-.rd-scope .p2-stage.outputs .frame{color:var(--rd-s3);}
-.rd-scope .p2-stage.outcomes .frame{color:var(--rd-s4);}
-.rd-scope .p2-stage .frame i{font-size:11px;}
+    // Existing linked work in this strategy, for the empty-state's "we found
+    // your work" line. programRows carry type + projectCount; program rows
+    // count as programs, and projectCount sums to total leaf projects (direct
+    // + under programs). Empty at program scope, so the line self-hides there.
+    $lmProgramCount = 0;
+    $lmProjectCount = 0;
+    foreach ($programRows ?? [] as $lmRow) {
+        // programRows carries stdClass rows (object[], like page-programs), so
+        // cast before array access to avoid "Cannot use object as array".
+        $lmRow = (array) $lmRow;
+        if (($lmRow['type'] ?? '') === 'program') {
+            $lmProgramCount++;
+        }
+        $lmProjectCount += (int) ($lmRow['projectCount'] ?? 0);
+    }
+    // Bold the counts so the totals read as totals. Every piece is server-side
+    // (ints + translated nouns, both e()-escaped), so the {!! !!} render below
+    // carries no user input.
+    $lmFoundParts = [];
+    if ($lmProgramCount > 0) {
+        $lmFoundParts[] = '<b>'.$lmProgramCount.'</b> '.e(__($lmProgramCount === 1 ? 'stakeholder.lm.found_program' : 'stakeholder.lm.found_programs'));
+    }
+    if ($lmProjectCount > 0) {
+        $lmFoundParts[] = '<b>'.$lmProjectCount.'</b> '.e(__($lmProjectCount === 1 ? 'stakeholder.lm.found_project' : 'stakeholder.lm.found_projects'));
+    }
+    $lmFoundStr = implode('<span class="sep">·</span>', $lmFoundParts);
+@endphp
 
-/* Verdict badge — fixed color map, no cream. */
-.rd-scope .p2-vbadge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:22px;padding:5px 13px;flex:none;}
-.rd-scope .p2-vbadge.ok{background:#E7F5EE;color:var(--rd-ok);}
-.rd-scope .p2-vbadge.wip{background:#EAF1F9;color:#3F72B0;}
-.rd-scope .p2-vbadge.risk{background:#fff;color:var(--rd-danger);box-shadow:inset 0 0 0 1.5px var(--rd-danger);}
-.rd-scope .p2-vbadge.pending{background:rgba(140,140,140,.08);color:var(--rd-text-3);}
-.rd-scope .p2-vbadge .sd{width:7px;height:7px;border-radius:50%;background:currentColor;}
-
-/* Read — templated 1-2 lines with dot leads */
-.rd-scope .p2-read{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
-.rd-scope .p2-readline{font-size:14px;line-height:1.6;color:var(--rd-text-2);display:flex;gap:10px;align-items:flex-start;}
-.rd-scope .p2-readline .dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:8px;}
-.rd-scope .p2-readline.good .dot{background:var(--rd-ok);}
-.rd-scope .p2-readline.watch .dot{background:#9A6A11;}
-.rd-scope .p2-readline.risk .dot{background:var(--rd-danger);}
-.rd-scope .p2-readline b{color:var(--rd-text-1);font-weight:600;}
-.rd-scope .p2-readline .g{color:var(--rd-ok);font-weight:600;}
-.rd-scope .p2-readline .w{color:#9A6A11;font-weight:600;}
-.rd-scope .p2-readline .r{color:var(--rd-danger);font-weight:600;}
-.rd-scope .p2-readline .mute{color:var(--rd-text-3);}
-.rd-scope .p2-readline .lead-label{font-weight:700;}
-.rd-scope .p2-readline.watch .lead-label{color:#9A6A11;}
-.rd-scope .p2-readline.risk .lead-label{color:var(--rd-danger);}
-
-/* Unresolved-work data-quality note — muted, non-prose, not a bullet */
-.rd-scope .p2-unresolved{font-size:12px;color:var(--rd-text-3);margin:6px 0 12px;padding-left:2px;font-style:italic;}
-/* Status basis footer — one-line, muted; explains why a status is what it is */
-.rd-scope .p2-basis{font-size:11.5px;color:var(--rd-text-4);margin:8px 0 2px;padding-left:2px;}
-
-/* Evidence rows — compact, one per LM item */
-.rd-scope .p2-rows{display:flex;flex-direction:column;}
-.rd-scope .p2-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:baseline;padding:9px 0;}
-.rd-scope .p2-row + .p2-row{border-top:1px solid var(--rd-line-soft);}
-.rd-scope .p2-row-title{font-size:14px;color:var(--rd-text-1);line-height:1.5;min-width:0;}
-.rd-scope .p2-row-title .lead{font-weight:700;font-size:15.5px;}
-.rd-scope .p2-stage.outputs .p2-row-title .lead{color:var(--rd-s3);}
-.rd-scope .p2-stage.outcomes .p2-row-title .lead{color:var(--rd-s4);}
-.rd-scope .p2-row-title .planof{color:var(--rd-text-3);font-size:12.5px;margin-left:4px;}
-.rd-scope .p2-row-value{color:var(--rd-text-2);font-size:12.5px;margin-left:10px;font-weight:600;font-variant-numeric:tabular-nums;}
-.rd-scope .p2-row-status{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex:none;}
-.rd-scope .p2-row-status .sd{width:7px;height:7px;border-radius:50%;background:currentColor;}
-.rd-scope .p2-row-status.ok{color:var(--rd-ok);}
-.rd-scope .p2-row-status.wip{color:#3F72B0;}
-.rd-scope .p2-row-status.risk{color:var(--rd-danger);}
-.rd-scope .p2-row-status.pending{color:var(--rd-text-4);font-style:italic;font-weight:500;}
-
-/* Show the breakdown */
-.rd-scope .p2-brk{margin-top:6px;padding-top:8px;border-top:1px solid var(--rd-line-soft);}
-.rd-scope .p2-brk summary{list-style:none;cursor:pointer;display:inline-flex;gap:8px;align-items:center;font-size:11px;font-weight:600;color:var(--rd-text-3);letter-spacing:.3px;text-transform:uppercase;padding:2px 0;}
-.rd-scope .p2-brk summary::-webkit-details-marker{display:none;}
-.rd-scope .p2-brk summary:focus{outline:none;}
-.rd-scope .p2-brk summary:focus-visible{outline:2px solid var(--rd-accent);outline-offset:2px;border-radius:3px;}
-.rd-scope .p2-brk summary i{font-size:10px;transition:transform .15s ease;}
-.rd-scope .p2-brk[open] > summary i{transform:rotate(90deg);}
-.rd-scope .p2-brk-body{margin-top:10px;}
-.rd-scope .p2-brk-prog{padding:8px 0;}
-.rd-scope .p2-brk-prog + .p2-brk-prog{border-top:1px solid var(--rd-line-soft);}
-.rd-scope .p2-brk-progrow{display:grid;grid-template-columns:13px minmax(0,1fr) 120px 44px 82px;gap:12px;align-items:center;}
-.rd-scope .p2-brk-progrow.single{grid-template-columns:13px minmax(0,1fr) 82px;}
-.rd-scope .p2-brk-progrow .pdot{width:10px;height:10px;border-radius:3px;justify-self:center;background:var(--rd-accent);}
-.rd-scope .p2-brk-progrow .pn{font-size:13px;font-weight:600;color:var(--rd-text-1);}
-.rd-scope .p2-brk-progrow .pmeta{font-size:10.5px;color:var(--rd-text-4);}
-.rd-scope .p2-brk-progrow .pbar{height:6px;border-radius:3px;background:#eef1f3;overflow:hidden;}
-.rd-scope .p2-brk-progrow .pbar > i{display:block;height:100%;border-radius:3px;background:var(--rd-accent);}
-.rd-scope .p2-brk-progrow .pshare{text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--rd-text-1);}
-.rd-scope .p2-brk-progrow .pstat{justify-self:end;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:20px;padding:3px 9px;white-space:nowrap;}
-.rd-scope .p2-brk-progrow .pstat.ok{background:#E7F5EE;color:var(--rd-ok);}
-.rd-scope .p2-brk-progrow .pstat.wip{background:#EAF1F9;color:#3F72B0;}
-.rd-scope .p2-brk-progrow .pstat.risk{background:#fff;color:var(--rd-danger);box-shadow:inset 0 0 0 1.5px var(--rd-danger);}
-.rd-scope .p2-brk-progrow .pstat .sd{width:6px;height:6px;border-radius:50%;background:currentColor;}
-.rd-scope .p2-brk-projs{margin:6px 0 0 25px;padding-left:14px;border-left:2px solid var(--rd-line-soft);}
-.rd-scope .p2-brk-pj{display:grid;grid-template-columns:minmax(0,1fr) 12px;gap:12px;align-items:center;padding:4px 0;}
-.rd-scope .p2-brk-pj .pjn{font-size:12.5px;color:var(--rd-text-3);}
-.rd-scope .p2-brk-pj .pjd{justify-self:center;width:7px;height:7px;border-radius:50%;}
-.rd-scope .p2-brk-pj .pjd.ok{background:var(--rd-ok);}
-.rd-scope .p2-brk-pj .pjd.wip{background:#3F72B0;}
-.rd-scope .p2-brk-pj .pjd.risk{background:var(--rd-danger);}
-.rd-scope .p2-brk-more{font-size:11.5px;color:#3F72B0;padding:6px 0 0;}
-
-/* Impact — the purpose */
-.rd-scope .p2-impact{background:#f4f9f6;border:1px solid #dcebe3;border-radius:var(--rd-r-sm);padding:16px 20px;margin-bottom:14px;}
-.rd-scope .p2-impact .lb{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-s5);margin-bottom:5px;display:flex;align-items:center;gap:7px;}
-.rd-scope .p2-impact .goal{font-size:15px;font-weight:600;color:var(--rd-text-1);line-height:1.4;}
-.rd-scope .p2-impact .horizon{font-size:11.5px;color:var(--rd-text-3);margin-top:8px;}
-
-/* Risk — the ONE fragile link */
-.rd-scope .p2-risk{background:#FBEAEF;border:1px solid #f2d3dd;border-radius:var(--rd-r-sm);padding:14px 18px;display:flex;gap:12px;margin-bottom:14px;}
-.rd-scope .p2-risk i.ri{color:var(--rd-danger);margin-top:2px;font-size:14px;flex:none;}
-.rd-scope .p2-risk .rb{font-size:13.5px;line-height:1.55;color:var(--rd-text-2);}
-.rd-scope .p2-risk .rb .rl{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-danger);display:block;margin-bottom:3px;}
-.rd-scope .p2-risk .rb b{color:var(--rd-text-1);font-weight:600;}
-
-/* Off-strategy drift */
-.rd-scope .p2-drift{padding:10px 14px;background:#FBF3E4;border-radius:var(--rd-r-xs);color:#9A6A11;font-size:12.5px;line-height:1.5;display:flex;gap:9px;align-items:flex-start;}
-.rd-scope .p2-drift i{color:#b8860b;font-size:11px;margin-top:2px;flex:none;}
-.rd-scope .p2-drift b{color:var(--rd-text-1);font-weight:600;}
-</style>
-
-@if (! $hasLM)
-    <div class="p2-wrap"><div class="rd-empty">{{ __('stakeholder.lm.no_canvas') }}</div></div>
+@if (! $lmHasContent)
+    <div class="p2-wrap">
+        <div class="p2-lm-emptyzone">
+            <div class="p2-lm-empty">
+                <span class="ic"><i class="fa fa-diagram-project" aria-hidden="true"></i></span>
+                <h2 class="t">{{ __('stakeholder.lm.empty_title') }}</h2>
+                <div class="b">{{ __('stakeholder.lm.empty_body') }}</div>
+                @if (($scope ?? '') === 'strategy')
+                    @if ($lmFoundStr !== '')
+                        <div class="found">
+                            <i class="fa fa-circle-check" aria-hidden="true"></i>
+                            <span>{!! sprintf(e(__('stakeholder.lm.empty_found')), $lmFoundStr) !!}</span>
+                        </div>
+                    @endif
+                    <a href="{{ BASE_URL }}/logicmodelcanvas/showCanvas" class="cta">
+                        <i class="fa fa-wand-magic-sparkles" aria-hidden="true"></i> {{ __('stakeholder.lm.empty_cta') }}
+                    </a>
+                    <div class="hint">{{ __('stakeholder.lm.empty_hint') }}</div>
+                @endif
+            </div>
+        </div>
+    </div>
 @else
     @php
         $stages = $logicModel['coverageMatrix']['stages'] ?? [];
@@ -843,15 +791,6 @@
     @endphp
 
     @if ($alsoCount > 0)
-        <style>
-        .rd-scope .p2-also{margin-top:14px;padding:10px 14px;background:var(--rd-bg);border-radius:var(--rd-r-xs);border:1px solid var(--rd-line);}
-        .rd-scope .p2-also .lb{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
-        .rd-scope .p2-also .lb i{font-size:11px;}
-        .rd-scope .p2-also .row{font-size:12.5px;line-height:1.55;color:var(--rd-text-2);padding:3px 0;}
-        .rd-scope .p2-also .row b{color:var(--rd-text-1);font-weight:600;}
-        .rd-scope .p2-also .row .metric{color:var(--rd-text-3);}
-        .rd-scope .p2-also .more{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-style:italic;}
-        </style>
         <div class="p2-also">
             <div class="lb"><i class="fa fa-code-branch"></i> {{ __('stakeholder.lm.also_label') }}</div>
             @foreach ($alsoShown as $row)
