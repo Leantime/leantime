@@ -130,36 +130,55 @@
 
                         {{-- Linked-milestone chips, sorted in-progress -> not-started -> done. The fill is the milestone's OWN color growing with its progress (deliberately not a status color). --}}
                         @if (count($goalMilestones) > 0)
-                            {{-- Horizontal scroller (milestones scroll across, by design). A
-                                 visible thin scrollbar + snap makes "there's more, scroll" read
-                                 clearly instead of the chips looking clipped at the edge. --}}
+                            {{-- Milestones scroll horizontally (by design). Clarity cues: a
+                                 prominent always-visible scrollbar (Chrome renders a persistent
+                                 bar once ::-webkit-scrollbar is styled) + a ">" scroll button and
+                                 a text hint when they overflow. Each chip links to its milestone. --}}
                             <style>
-                                .goalMsRow{scrollbar-width:thin;scrollbar-color:var(--main-border-color,#e4e7ec) transparent;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);}
-                                .goalMsRow::-webkit-scrollbar{height:7px;}
-                                .goalMsRow::-webkit-scrollbar-thumb{background:var(--main-border-color,#e4e7ec);border-radius:10px;}
-                                .goalMsRow::-webkit-scrollbar-track{background:transparent;}
-                                .goalMsRow > .goalMsChip{scroll-snap-align:start;}
+                                .goalMsWrap{position:relative;}
+                                .goalMsRow{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding-bottom:9px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
+                                .goalMsRow::-webkit-scrollbar{height:10px;}
+                                .goalMsRow::-webkit-scrollbar-thumb{background:#9aa7ad;border-radius:10px;border:2px solid transparent;background-clip:padding-box;}
+                                .goalMsRow::-webkit-scrollbar-thumb:hover{background:#7d8b92;}
+                                .goalMsRow::-webkit-scrollbar-track{background:var(--secondary-background,#eef1f2);border-radius:10px;}
+                                .goalMsRow > .goalMsChip{scroll-snap-align:start;transition:border-color .12s;}
+                                .goalMsChip:hover{border-color:var(--primary-color,#004666)!important;}
+                                .goalMsChip .msLink{text-decoration:none;color:inherit;cursor:pointer;display:flex;align-items:center;min-width:0;flex:1;}
+                                .goalMsChip .msLink:hover .msName{color:var(--primary-color,#004666);}
+                                .goalMsNext{position:absolute;right:-3px;top:5px;width:29px;height:29px;border-radius:50%;border:1px solid var(--main-border-color,#e4e7ec);background:var(--primary-background,#fff);color:var(--primary-color,#004666);display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(20,40,50,.16);z-index:5;}
+                                .goalMsNext:hover{background:var(--secondary-background,#f2f4f7);}
+                                .goalMsHint{font-size:11px;color:var(--tertiary-color,#8b9aa1);margin:-2px 0 12px;display:flex;align-items:center;gap:5px;}
                             </style>
-                            <div class="goalMsRow" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;">
-                                @foreach ($goalMilestones as $ms)
-                                    <div class="goalMsChip" style="position:relative;flex:0 0 auto;min-width:150px;max-width:220px;height:42px;border-radius:9px;border:1px solid var(--main-border-color,#e4e7ec);background:var(--secondary-background,#f2f4f7);overflow:hidden;display:flex;align-items:center;padding:0 10px;">
-                                        <span style="position:absolute;left:0;top:0;bottom:0;width:{{ (int) $ms['percentDone'] }}%;background:{{ $ms['color'] }};opacity:.18;border-right:2px solid {{ $ms['color'] }};"></span>
-                                        <span style="position:relative;z-index:1;flex:1;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $ms['headline'] }}</span>
-                                        <span style="position:relative;z-index:1;font-size:11px;font-weight:600;opacity:.7;margin-left:6px;">{{ (int) $ms['percentDone'] }}%</span>
-                                        @if ($login::userIsAtLeast($roles::$editor))
-                                            <button type="button"
-                                                    hx-post="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}"
-                                                    hx-vals='{"removeMilestone": {{ (int) $ms['id'] }}}'
-                                                    hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
-                                                    hx-target="closest .goalMsChip"
-                                                    hx-swap="delete"
-                                                    class="delete"
-                                                    style="position:relative;z-index:1;margin-left:8px;opacity:.6;background:transparent;border:none;cursor:pointer;padding:0;"
-                                                    aria-label="{{ __("links.remove") }}: {{ $ms['headline'] }}" title="{{ __("links.remove") }}"><i class="fa fa-close" aria-hidden="true"></i></button>
-                                        @endif
-                                    </div>
-                                @endforeach
+                            <div class="goalMsWrap">
+                                <div class="goalMsRow">
+                                    @foreach ($goalMilestones as $ms)
+                                        <div class="goalMsChip" style="position:relative;flex:0 0 auto;min-width:150px;max-width:220px;height:42px;border-radius:9px;border:1px solid var(--main-border-color,#e4e7ec);background:var(--secondary-background,#f2f4f7);overflow:hidden;display:flex;align-items:center;padding:0 10px;">
+                                            <span style="position:absolute;left:0;top:0;bottom:0;width:{{ (int) $ms['percentDone'] }}%;background:{{ $ms['color'] }};opacity:.18;border-right:2px solid {{ $ms['color'] }};"></span>
+                                            <a href="#/tickets/editMilestone/{{ (int) $ms['id'] }}" class="msLink" style="position:relative;z-index:1;" title="{{ __('links.edit_milestone') }}: {{ $ms['headline'] }}">
+                                                <span class="msName" style="flex:1;min-width:0;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $ms['headline'] }}</span>
+                                                <span style="flex:none;font-size:11px;font-weight:600;opacity:.7;margin-left:6px;">{{ (int) $ms['percentDone'] }}%</span>
+                                            </a>
+                                            @if ($login::userIsAtLeast($roles::$editor))
+                                                <button type="button"
+                                                        hx-post="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}"
+                                                        hx-vals='{"removeMilestone": {{ (int) $ms['id'] }}}'
+                                                        hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                                                        hx-target="closest .goalMsChip"
+                                                        hx-swap="delete"
+                                                        class="delete"
+                                                        style="position:relative;z-index:1;margin-left:8px;opacity:.6;background:transparent;border:none;cursor:pointer;padding:0;flex:none;"
+                                                        aria-label="{{ __("links.remove") }}: {{ $ms['headline'] }}" title="{{ __("links.remove") }}"><i class="fa fa-close" aria-hidden="true"></i></button>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                                @if (count($goalMilestones) > 2)
+                                    <button type="button" class="goalMsNext" onclick="this.parentElement.querySelector('.goalMsRow').scrollBy({left:210,behavior:'smooth'});" aria-label="Scroll to see more milestones" title="Scroll to see more"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                                @endif
                             </div>
+                            @if (count($goalMilestones) > 2)
+                                <div class="goalMsHint"><i class="fa fa-arrows-left-right" aria-hidden="true"></i> {{ sprintf(__('goalcanvas.scroll_all_milestones'), count($goalMilestones)) }}</div>
+                            @endif
                         @endif
 
                         {{-- Add a milestone (new or existing) — appends; leaves the goal's other links intact. --}}
