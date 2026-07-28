@@ -497,4 +497,34 @@ class GoalcanvasServiceTest extends TestCase
         $this->assertSame([], $result['milestones']);
         $this->assertSame(0, $loaded, 'VIEW-denied returns the empty shape without loading');
     }
+
+    public function test_get_milestones_for_goals_omits_unauthorized_goals(): void
+    {
+        // goal 1 lives in project 7 (VIEW allowed), goal 2 in project 8 (denied) —
+        // the report-read path must present the authorized goal and drop the rest.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectIds' => fn () => [1 => 7, 2 => 8],
+            'getMilestonesForGoals' => fn (array $ids) => in_array(1, $ids, true)
+                ? [1 => [['id' => 10, 'headline' => 'M1']]]
+                : [],
+        ]);
+        $perms = $this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $permission, ?int $projectId = null) => $projectId === 7,
+        ]);
+
+        $result = $this->service($repo, $perms)->getMilestonesForGoals([1, 2]);
+
+        $this->assertArrayHasKey(1, $result, 'authorized goal is present');
+        $this->assertArrayNotHasKey(2, $result, 'unauthorized goal is omitted');
+        $this->assertSame([['id' => 10, 'headline' => 'M1']], $result[1]);
+    }
+
+    public function test_get_milestones_for_goals_is_empty_safe(): void
+    {
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectIds' => fn () => [],
+        ]);
+
+        $this->assertSame([], $this->service($repo)->getMilestonesForGoals([]));
+    }
 }
