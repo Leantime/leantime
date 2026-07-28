@@ -12,7 +12,34 @@
         }
     </script>
 
-    <div style="width:1000px">
+    <style>
+        /* ── Goal dialog v1 skin — restyles the look only; every input/select/
+              date-picker/HTMX hook keeps its name, id and class so the form,
+              chosen dropdowns and save flow are untouched. ── */
+        .goalDialogV1{width:940px;max-width:100%;padding:6px 12px 10px;
+            --gv-acc:#00647a;--gv-acc2:#0e93a8;--gv-line:#e3e9eb;--gv-line-soft:#eef2f3;--gv-ink:#18272e;--gv-ink2:#586970;}
+        .goalDialogV1 h1{font-size:12px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--gv-ink2);margin:2px 0 22px;display:flex;align-items:center;gap:9px;}
+        .goalDialogV1 h1 i{color:var(--gv-acc);font-size:15px;}
+        .goalDialogV1 label{font-size:12px;font-weight:600;color:var(--gv-ink2);display:block;margin:0 0 6px;}
+        /* "What is your goal?" becomes a small eyebrow above a headline field */
+        .goalDialogV1 .col-md-8 > label:first-of-type{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--gv-acc);margin-bottom:9px;}
+        .goalDialogV1 input[name="title"]{font-size:23px!important;font-weight:650!important;line-height:1.25!important;color:var(--gv-ink)!important;border:none!important;border-bottom:2px solid var(--gv-line)!important;border-radius:0!important;padding:4px 2px 9px!important;background:transparent!important;box-shadow:none!important;height:auto!important;}
+        .goalDialogV1 input[name="title"]:focus{border-bottom-color:var(--gv-acc)!important;outline:none!important;box-shadow:none!important;}
+        .goalDialogV1 input[name="title"]::placeholder{color:#aab6bb;font-weight:500;}
+        /* section headers → ruled uppercase eyebrows */
+        .goalDialogV1 h4.widgettitle{font-size:11px!important;font-weight:700!important;letter-spacing:.7px!important;text-transform:uppercase!important;color:var(--gv-acc)!important;border-bottom:1px solid var(--gv-line-soft)!important;padding:0 0 9px!important;margin:30px 0 15px!important;display:flex;align-items:center;gap:8px;line-height:1.2;}
+        .goalDialogV1 h4.widgettitle i,.goalDialogV1 h4.widgettitle span[class*="fa"]{color:var(--gv-acc)!important;font-size:13px;}
+        .goalDialogV1 h4.widgettitle .helperTooltip{color:var(--gv-ink2)!important;opacity:.55;margin-left:auto;}
+        /* soft, consistent inputs + focus ring */
+        .goalDialogV1 input[type="number"],.goalDialogV1 select[name="metricType"],.goalDialogV1 input.startDate,.goalDialogV1 input.endDate,.goalDialogV1 #measureGoalContainer input[type="text"]{border:1px solid var(--gv-line)!important;border-radius:9px!important;padding:9px 12px!important;font-size:14px!important;color:var(--gv-ink)!important;background:#fff!important;box-shadow:none!important;height:auto!important;}
+        .goalDialogV1 input:focus:not([name="title"]),.goalDialogV1 select:focus{border-color:var(--gv-acc)!important;outline:none!important;box-shadow:0 0 0 3px rgba(0,100,122,.09)!important;}
+        /* two-column balance + a divider */
+        .goalDialogV1 .col-md-8{padding-right:38px;}
+        .goalDialogV1 .col-md-4{border-left:1px solid var(--gv-line-soft);padding-left:32px;}
+        .goalDialogV1 #measureGoalContainer{margin-bottom:16px;}
+        .goalDialogV1 input.startDate,.goalDialogV1 input.endDate{width:100%!important;max-width:230px;margin-bottom:6px;}
+    </style>
+    <div class="goalDialogV1" style="width:1000px">
 
         <h1><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
             {{ $canvasTypes[$canvasItem['box']]['title'] }}</h1>
