@@ -273,7 +273,7 @@
                                 @endforeach
                             </div>
                             @if (count($goalMilestones) > 2)
-                                <button type="button" class="goalMsNext" onclick="this.parentElement.querySelector('.goalMsRow').scrollBy({left:210,behavior:'smooth'});" aria-label="Scroll to see more milestones" title="Scroll to see more"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                                <button type="button" class="goalMsNext" onclick="this.parentElement.querySelector('.goalMsRow').scrollBy({left:210,behavior:'smooth'});" aria-label="{{ __('goalcanvas.scroll_more_milestones') }}" title="{{ __('goalcanvas.scroll_more_milestones') }}"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
                             @endif
                         </div>
                     @endif
