@@ -12,6 +12,7 @@ use Leantime\Core\UI\Template;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
 use Leantime\Domain\Oidc\Controllers\Mobile;
 use Leantime\Domain\Oidc\Services\OidcMobileCode;
+use Leantime\Domain\Plugins\Services\Plugins;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
@@ -46,6 +47,13 @@ class MobileTest extends \Unit\TestCase
         $this->app->instance(OidcMobileCode::class, $this->codes);
         $this->app->instance(AccessTokenRepository::class, $this->tokens);
         $this->app->instance(UserRepository::class, $this->userRepo);
+
+        // Mobile SSO is gated on AdvancedAuth (see Mobile::exchange). Mock the
+        // plugin as installed so these exchange-contract tests run past the gate;
+        // the gate itself is verified live e2e (AdvancedAuth off -> 404).
+        $plugins = $this->createMock(Plugins::class);
+        $plugins->method('isEnabled')->willReturn(true);
+        $this->app->instance(Plugins::class, $plugins);
 
         // Back the RateLimiter facade with a fresh in-memory store so throttle
         // state is deterministic and isolated per test.
