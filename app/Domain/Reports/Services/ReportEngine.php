@@ -230,12 +230,23 @@ class ReportEngine extends BaseService
         $byProject = [];
         $counts = ['ontrack' => 0, 'atrisk' => 0, 'miss' => 0];
 
+        // Milestone name(s) come from the tracked_by edge graph (replacing the
+        // removed stale milestoneId-column join). Hydrate them for the whole
+        // goal set in ONE batched pass up front to avoid an N+1 across large
+        // project sets.
+        $milestonesByGoal = $this->goalService->getMilestonesForGoals(
+            array_map(static fn ($goal) => (int) $goal->id, $goals)
+        );
+
         foreach ($goals as $goal) {
             if ($goal->setting === 'linkAndReport') {
                 $goal->currentValue = $this->goalService->getChildGoalsForReporting((int) $goal->id);
             }
 
             $goal->goalProgress = $this->calculateGoalProgress($goal);
+
+            $goalMilestones = $milestonesByGoal[(int) $goal->id] ?? [];
+            $goal->milestoneHeadline = implode(', ', array_map(static fn ($m) => (string) $m['headline'], $goalMilestones));
 
             $statusKey = str_replace('status_', '', (string) $goal->status);
             if (array_key_exists($statusKey, $counts)) {

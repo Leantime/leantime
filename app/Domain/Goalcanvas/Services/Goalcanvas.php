@@ -57,7 +57,13 @@ class Goalcanvas extends BaseService
         $goals = $this->goalRepository->getCanvasItemsById($id);
 
         if ($goals) {
+            // Attach each goal's tracked_by milestone chips (one batched read),
+            // so the board/dashboard render the edge model, not the legacy column.
+            $milestonesByGoal = $this->goalRepository->getMilestonesForGoals(
+                array_map(static fn ($g) => (int) $g['id'], $goals)
+            );
             foreach ($goals as &$goal) {
+                $goal['milestones'] = $milestonesByGoal[(int) $goal['id']] ?? [];
                 $progressValue = 0;
                 $goal['goalProgress'] = 0;
                 $total = $goal['endValue'] - $goal['startValue'];
@@ -213,6 +219,140 @@ class Goalcanvas extends BaseService
         return $goals;
     }
 
+    /**
+     * The milestone chips for a goal + a status summary, authorized for VIEW
+     * against the goal's project. Chips arrive already sorted (in-progress →
+     * not-started → done, then due date). The summary drives the one-line
+     * roll-up above the chips.
+     *
+     * @return array{milestones: array<int, array<string, mixed>>, summary: array{total: int, done: int, inProgress: int, notStarted: int}}
+     *
+     * @api
+     */
+    public function getGoalMilestones(int $goalId): array
+    {
+        $empty = ['total' => 0, 'done' => 0, 'inProgress' => 0, 'notStarted' => 0];
+
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return ['milestones' => [], 'summary' => $empty];
+        }
+
+        $milestones = $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? [];
+
+        $summary = ['total' => count($milestones)] + $empty;
+        foreach ($milestones as $m) {
+            $type = $m['statusType'];
+            if ($type === 'DONE') {
+                $summary['done']++;
+            } elseif ($type === 'INPROGRESS') {
+                $summary['inProgress']++;
+            } else {
+                $summary['notStarted']++;
+            }
+        }
+
+        return ['milestones' => $milestones, 'summary' => $summary];
+    }
+
+    /**
+     * Batch sibling of getGoalMilestones(): hydrate milestone chips for many
+     * goals in a single pass, so callers with a goal set (e.g. the reports
+     * engine) avoid an N+1. Each goal is authorized for VIEW against its real
+     * project; goals the caller can't see are silently omitted. Returns a map
+     * keyed by goal id: every AUTHORIZED goal is present, mapping to an empty
+     * array when it has no milestones — so callers get a predictable key set.
+     * Only unauthorized/invisible goals are absent.
+     *
+     * @param  int[]  $goalIds
+     * @return array<int, array<int, array<string, mixed>>>
+     *
+     * @api
+     */
+    public function getMilestonesForGoals(array $goalIds): array
+    {
+        // Resolve every goal's project in ONE query (not a query per goal), then
+        // authorize per DISTINCT project with a cached VIEW check — so the
+        // auth phase stays O(1) queries regardless of goal-set size.
+        $projectByGoal = $this->goalRepository->getCanvasItemProjectIds($goalIds, self::CANVAS_TYPE);
+        if ($projectByGoal === []) {
+            return [];
+        }
+
+        $accessByProject = [];
+        $authorized = [];
+        foreach ($projectByGoal as $goalId => $projectId) {
+            if (! array_key_exists($projectId, $accessByProject)) {
+                $accessByProject[$projectId] = $this->can(GoalcanvasPermissions::VIEW, $projectId);
+            }
+            if ($accessByProject[$projectId]) {
+                $authorized[] = (int) $goalId;
+            }
+        }
+
+        if ($authorized === []) {
+            return [];
+        }
+
+        // Single hydration pass for the whole authorized set (the expensive part
+        // — status labels + progress — is batched inside the repository). Fill
+        // an empty entry for every authorized goal so an @api caller gets a
+        // predictable key set, not just the goals that happen to have chips.
+        return array_replace(
+            array_fill_keys($authorized, []),
+            $this->goalRepository->getMilestonesForGoals($authorized)
+        );
+    }
+
+    /**
+     * Link one milestone to a goal (append — leaves existing links intact).
+     * Authorized for EDIT against the goal's project.
+     *
+     * @throws AuthorizationException When the goal is unknown/foreign or EDIT is denied.
+     *
+     * @api
+     */
+    public function addMilestoneToGoal(int $goalId, int $milestoneId): bool
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        return $this->goalRepository->addGoalMilestoneLink($goalId, $milestoneId, (int) session('userdata.id'));
+    }
+
+    /**
+     * Unlink one milestone from a goal (leaves the goal's other links intact).
+     * Authorized for EDIT against the goal's project.
+     *
+     * @throws AuthorizationException When the goal is unknown/foreign or EDIT is denied.
+     *
+     * @api
+     */
+    public function removeMilestoneFromGoal(int $goalId, int $milestoneId): bool
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null) {
+            throw new AuthorizationException;
+        }
+        $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        return $this->goalRepository->removeGoalMilestoneLink($goalId, $milestoneId);
+    }
+
+    /**
+     * Cascade: drop every goal's link to a milestone that is being deleted.
+     * Called from the (already-authorized) milestone-delete path. Intentionally
+     * NOT @api — it skips authorization by design, so it must never be reachable
+     * as an unauthenticated JSON-RPC method.
+     */
+    public function detachMilestoneFromGoals(int $milestoneId): bool
+    {
+        return $this->goalRepository->removeMilestoneFromAllGoals($milestoneId);
+    }
+
     // ---------------------------------------------------------------------------------------
     // Secured by-id board/item CRUD chokepoint (controllers call these instead of the repo).
     // ---------------------------------------------------------------------------------------
@@ -229,7 +369,15 @@ class Goalcanvas extends BaseService
             return false;
         }
 
-        return $this->goalRepository->getSingleCanvasItem($id);
+        $item = $this->goalRepository->getSingleCanvasItem($id);
+        if (is_array($item)) {
+            // Surface the item's REAL (authorized) project so callers scope
+            // project-dependent UI to the goal's project, not the session's —
+            // the dialog can be opened for a goal outside the current project.
+            $item['projectId'] = $projectId;
+        }
+
+        return $item;
     }
 
     /**
@@ -420,16 +568,12 @@ class Goalcanvas extends BaseService
     }
 
     /**
-     * Reconcile a goal's tracked_by milestone edges with a single milestoneId
-     * write (the transitional single-select semantics — replace the goal's
-     * links with the one value; an empty value clears them). Set-based so an
-     * unchanged save doesn't churn edges. PR 3 widens this to accept an array.
+     * Reconcile a goal's tracked_by milestone edges against the desired set.
+     * Accepts a single milestone id (scalar — the transitional single-select
+     * write) OR an array (multi-select). Set-based, so an unchanged save
+     * doesn't churn edges and an empty value/array clears all links.
      *
-     * @param  int  $goalId  The goal (canvas item) whose edges are reconciled.
-     * @param  mixed  $milestoneIdValue  The desired milestone id from the write
-     *                                   (string/int/empty); non-scalar or
-     *                                   non-numeric values clear the edge.
-     * @param  int  $userId  Author recorded on any created edge.
+     * @param  mixed  $milestoneIdValue  int|string|array<int|string> milestone id(s), or '' to clear
      */
     private function syncGoalMilestoneEdges(int $goalId, mixed $milestoneIdValue, int $userId): void
     {
@@ -438,16 +582,16 @@ class Goalcanvas extends BaseService
         }
 
         $desired = [];
-        // Only a strictly-numeric SCALAR value becomes a desired edge. A stray
-        // string like '42abc' would cast to 42; a non-scalar (e.g. an array from
-        // milestoneId[]=42 param pollution) would make filter_var() warn — guard
-        // both so the edge just stays cleared rather than drifting or erroring.
-        $milestoneId = is_scalar($milestoneIdValue)
-            ? filter_var($milestoneIdValue, FILTER_VALIDATE_INT)
-            : false;
-        if ($milestoneId !== false && $milestoneId > 0) {
-            $desired[] = $milestoneId;
+        foreach (is_array($milestoneIdValue) ? $milestoneIdValue : [$milestoneIdValue] as $value) {
+            // Strict int validation — (int) would coerce '42abc' to 42 and could
+            // silently link the wrong milestone if a malformed value reaches this
+            // path (e.g. via JSON-RPC). Non-scalar / non-int values are dropped.
+            $milestoneId = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
+            if ($milestoneId !== false && $milestoneId > 0) {
+                $desired[] = $milestoneId;
+            }
         }
+        $desired = array_values(array_unique($desired));
 
         $current = $this->goalRepository->getMilestoneIdsForGoal($goalId);
 
