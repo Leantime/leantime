@@ -153,8 +153,11 @@
 .rd-crumb .sep{color:var(--rd-text-4);}
 .rd-crumb .rd-crumb-cur{color:var(--rd-text-3);}
 /* Title = <h1> + switcher, at the left edge (aligns with breadcrumb + meta). */
-.rd-hdr .st .h{margin:0 0 0 -6px;font-size:22px;font-weight:600;line-height:1.15;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;cursor:pointer;border-radius:8px;padding:1px 6px;transition:background .12s;}
-.rd-hdr .st .h:hover{background:rgba(0,71,102,.05);}
+.rd-hdr .st .h{margin:0 0 0 -6px;font-size:22px;font-weight:600;line-height:1.15;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:1px 6px;transition:background .12s;}
+/* Pointer + hover affordance only on the interactive (switcher) variant — the
+   plain <h1> title in the non-switcher case must not look clickable. */
+.rd-hdr .st a.h{cursor:pointer;}
+.rd-hdr .st a.h:hover{background:rgba(0,71,102,.05);}
 .rd-h-caret{font-size:14px;color:var(--rd-text-4);}
 /* Visually-hidden but screen-reader-available heading (switcher case). */
 .rd-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
@@ -366,7 +369,17 @@
          card; the plugin collapses the shared teal pageheader (body.report-doc)
          so the report reads as one document. Switcher + actions degrade safely
          when the caller doesn't pass switchableSubjects / projectId. --}}
-    @php $rdSwitchBase = BASE_URL.'/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report'; @endphp
+    @php
+        $rdSwitchBase = BASE_URL.'/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report';
+        // Carry the currently selected period across a subject switch so it
+        // isn't silently reset to the default. Mirrors the params the picker
+        // itself submits: preset always, plus from/to for a custom range.
+        $rdPeriodQuery = '&preset='.rawurlencode((string) $period->preset);
+        if ($period->preset === ReportPeriod::PRESET_CUSTOM) {
+            $rdPeriodQuery .= '&from='.rawurlencode($period->from->setToUserTimezone()->formatDateForUser())
+                .'&to='.rawurlencode($period->to->setToUserTimezone()->formatDateForUser());
+        }
+    @endphp
     <div class="rd-hdr">
         <div class="st">
             <nav class="rd-crumb" aria-label="{{ __('stakeholder.header.breadcrumb') }}">
@@ -389,10 +402,14 @@
                 <span class="dropdown dropdownWrapper">
                     <a href="javascript:void(0)" class="h dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $subject }} <i class="fa fa-caret-down rd-h-caret" aria-hidden="true"></i></a>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-header">{{ $scope === 'strategy' ? __('stakeholder.header.switch_strategy') : __('stakeholder.header.switch_program') }}</li>
+                        {{-- nav-header is the app's Bootstrap-2 dropdown label class
+                             (dropdown-header is unstyled in BS2). The switcher only
+                             renders for program scope, so the label is always the
+                             program string. --}}
+                        <li class="nav-header">{{ __('stakeholder.header.switch_program') }}</li>
                         @foreach ($switchableSubjects as $rdSubj)
                             <li>
-                                <a href="{{ $rdSwitchBase }}?switchTo={{ (int) $rdSubj['id'] }}">
+                                <a href="{{ $rdSwitchBase }}?switchTo={{ (int) $rdSubj['id'] }}{{ $rdPeriodQuery }}">
                                     <i class="fa {{ (int) $rdSubj['id'] === (int) ($projectId ?? 0) ? 'fa-circle-dot' : 'fa-circle' }} rd-switch-mark" aria-hidden="true"></i>
                                     {{ $rdSubj['name'] }}
                                 </a>
@@ -401,7 +418,7 @@
                     </ul>
                 </span>
             @else
-                <h1 class="h" style="cursor:default;">{{ $subject }}</h1>
+                <h1 class="h">{{ $subject }}</h1>
             @endif
             <div class="prov">
                 {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}

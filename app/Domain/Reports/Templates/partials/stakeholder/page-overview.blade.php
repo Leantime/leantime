@@ -23,8 +23,6 @@
 .rd-scope .p1-hero .slabel{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-s5);}
 .rd-scope .p1-hero .rec{font-size:11px;font-weight:500;color:var(--rd-text-3);display:flex;align-items:center;gap:6px;}
 .rd-scope .p1-hero .rec i{font-size:11px;color:var(--rd-ok);}
-.rd-scope .p1-hero .rec .rec-change{color:var(--rd-accent);text-decoration:none;font-weight:600;background:none;border:0;padding:0;font:inherit;cursor:pointer;}
-.rd-scope .p1-hero .rec .rec-change:hover{text-decoration:underline;}
 .rd-scope .p1-hero .rec-note{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--rd-text-3);font-style:italic;}
 .rd-scope .p1-hero .rec-note i{font-size:10px;color:var(--rd-text-4);}
 .rd-scope .p1-hero h3{font-size:17px;font-weight:600;letter-spacing:-.2px;line-height:1.3;color:var(--rd-text-1);margin:0;}
@@ -192,6 +190,9 @@
    light bg in dark mode, hiding the white text. Pin a fixed dark fill. */
 .rd-scope.rd-dark .p1-theory .conn .tip,
 .rd-scope.rd-dark .p1-theory .detail-info .pop{background:#0d0e0f;color:#e8eaec;}
+/* The tooltip arrow inherits var(--rd-text-1) too — pin it to the dark fill so
+   it doesn't render as a light triangle under the dark tooltip. */
+.rd-scope.rd-dark .p1-theory .conn .tip::after{border-top-color:#0d0e0f;}
 .rd-scope .p1-theory .detail-info:hover .pop,
 .rd-scope .p1-theory .detail-info:focus-within .pop{opacity:1;visibility:visible;transform:translateY(0);}
 .rd-scope .p1-theory .detail-info .pop .h{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:rgba(255,255,255,.7);display:block;margin-bottom:6px;}
@@ -420,9 +421,14 @@
             <div class="eye"><span class="slabel">{{ __('stakeholder.overview.peak_label') }}</span></div>
             <div class="h">{{ __('stakeholder.overview.peak_none_title') }}</div>
             <div>{{ __('stakeholder.overview.peak_none_hint') }}</div>
-            <a href="{{ BASE_URL }}/logicmodelcanvas/showCanvas" class="p1-hero-cta">
-                <i class="fa fa-wand-magic-sparkles" aria-hidden="true"></i> {{ __('stakeholder.overview.peak_none_cta') }}
-            </a>
+            @if ($scope === 'strategy')
+                {{-- The Logic Model is strategy-scoped, so only offer the
+                     "build it" CTA in a strategy report — a program report
+                     would link to the wrong (or no) canvas. --}}
+                <a href="{{ BASE_URL }}/logicmodelcanvas/showCanvas" class="p1-hero-cta">
+                    <i class="fa fa-wand-magic-sparkles" aria-hidden="true"></i> {{ __('stakeholder.overview.peak_none_cta') }}
+                </a>
+            @endif
         </div>
     @else
         <div class="p1-hero">

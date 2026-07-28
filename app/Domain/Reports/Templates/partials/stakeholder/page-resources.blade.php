@@ -59,7 +59,7 @@
 .rd-scope .p3-rcard .rsub{font-size:12.5px;color:var(--rd-text-2);margin-top:6px;line-height:1.45;}
 .rd-scope .p3-rcard .rsub .risk{color:var(--rd-danger);font-weight:600;}
 .rd-scope .p3-rcard .rsub .muted{color:var(--rd-text-3);}
-.rd-scope .p3-rcard .bar{height:5px;background:#eef1f3;border-radius:3px;margin-top:9px;overflow:hidden;}
+.rd-scope .p3-rcard .bar{height:5px;background:var(--rd-line);border-radius:3px;margin-top:9px;overflow:hidden;}
 .rd-scope .p3-rcard .bar > i{display:block;height:100%;border-radius:3px;}
 .rd-scope .p3-rcard .bar.ok > i{background:var(--rd-s1);}
 .rd-scope .p3-rcard .bar.spend > i{background:var(--rd-ok);}
@@ -294,18 +294,15 @@
     // state and suppress the noisy empty sections below. (For a strategy the
     // strategy's own board is always empty by design; data rolls up from its
     // programs — so this is true whenever ANY program in scope has authored it.)
-    $hasResourceData = false;
-    if ($resourceSummary !== null) {
-        $rsActivePeople = 0;
-        foreach ($resourceSummary->people as $p) {
-            $anyAlloc = false;
-            foreach ($p->allocations as $hrs) { if ((float) $hrs > 0) { $anyAlloc = true; break; } }
-            if ($anyAlloc || $p->capacity > 0) { $rsActivePeople++; }
-        }
-        $hasResourceData = $rsActivePeople > 0
-            || (float) $resourceSummary->totalBudgeted > 0
-            || count($resourceSummary->dependencies) > 0;
-    }
+    // Use the aggregates ResourceSummary already computed — no view-level loop
+    // over people/allocations. "Any active person" (allocation or capacity > 0)
+    // reduces to totalCapacity/totalAllocated being > 0.
+    $hasResourceData = $resourceSummary !== null && (
+        $resourceSummary->totalCapacity > 0
+        || $resourceSummary->totalAllocated > 0
+        || $resourceSummary->totalBudgeted > 0
+        || count($resourceSummary->dependencies) > 0
+    );
 @endphp
 
 @if ($hasResourceData)
@@ -907,10 +904,10 @@
                 if ($days === 1) return __('stakeholder.rc.dep.yesterday');
                 if ($days < 7)   return sprintf(__('stakeholder.rc.dep.days_ago'), $days);
                 if ($days < 30) {
-                    $weeks = (int) round($days / 7);
+                    $weeks = (int) floor($days / 7);
                     return sprintf(__($weeks === 1 ? 'stakeholder.rc.dep.week_ago' : 'stakeholder.rc.dep.weeks_ago'), $weeks);
                 }
-                $months = (int) round($days / 30);
+                $months = (int) floor($days / 30);
                 return sprintf(__($months === 1 ? 'stakeholder.rc.dep.month_ago' : 'stakeholder.rc.dep.months_ago'), $months);
             } catch (\Exception $e) { return null; }
         };
