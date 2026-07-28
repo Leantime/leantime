@@ -57,6 +57,7 @@
         .gv-ms-act{background:none!important;border:none!important;cursor:pointer;color:var(--gv-ink2)!important;font-size:14px;padding:0;line-height:1;opacity:.65;transition:opacity .12s,color .12s;}
         .gv-ms-act:hover{opacity:1;color:var(--gv-acc)!important;}
         .gv-field-lbl{font-size:11.5px;color:var(--gv-ink2);margin:0 0 6px;}
+        .gv-unit{font-size:11px;font-weight:700;color:var(--gv-acc);opacity:.85;}
 
         /* inputs + selects */
         .gvDialog input[type="number"],.gvDialog input[type="text"]:not([name="title"]),.gvDialog select[name="metricType"],.gvDialog input.startDate,.gvDialog input.endDate{border:1px solid var(--gv-line)!important;border-radius:9px!important;padding:9px 11px!important;font-size:14px!important;color:var(--gv-ink)!important;background:#fff!important;box-shadow:none!important;height:auto!important;width:100%!important;}
@@ -102,8 +103,8 @@
 
                 {{-- ── Main: the goal itself ── --}}
                 <div class="gv-main">
-                    <label class="gv-eyebrow">{{ __('label.what_is_your_goal') }}</label>
-                    <x-global::forms.text-input name="title" value="{{ $canvasItem['title'] }}" placeholder="{{ __('label.what_is_your_goal') }}" style="width:100%" />
+                    <label class="gv-eyebrow">{{ __('goalcanvas.name_goal') }}</label>
+                    <x-global::forms.text-input name="title" value="{{ $canvasItem['title'] }}" placeholder="{{ __('goalcanvas.name_goal') }}" style="width:100%" />
 
                     <div class="gv-section">
                         <h4 class="gv-sec-title"><i class="fa-solid fa-ranking-star"></i> {{ __('Metrics') }}</h4>
@@ -127,12 +128,12 @@
 
                         <div class="gv-values">
                             <div>
-                                <label class="gv-field-lbl">{{ __('label.starting_value') }}</label>
+                                <label class="gv-field-lbl">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
                                 <x-global::forms.text-input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}" style="width:100%" />
                             </div>
                             <div>
                                 @php $currentValueIsComputed = $canvasItem['setting'] == 'linkAndReport'; @endphp
-                                <label class="gv-field-lbl">{{ __('label.current_value') }}</label>
+                                <label class="gv-field-lbl">{{ __('goalcanvas.v_now') }} <span class="gv-unit"></span></label>
                                 <x-global::forms.text-input type="number" step="0.01" name="currentValue" id="currentValueField"
                                     value="{{ $canvasItem['currentValue'] }}"
                                     :readonly="$currentValueIsComputed"
@@ -140,7 +141,7 @@
                                     style="width:100%" />
                             </div>
                             <div>
-                                <label class="gv-field-lbl">{{ __('label.goal_value') }}</label>
+                                <label class="gv-field-lbl">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></label>
                                 <x-global::forms.text-input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}" style="width:100%" />
                             </div>
                             <div>
@@ -313,6 +314,20 @@
         jQuery(document).ready(function() {
 
             leantime.dateController.initDateRangePicker(".startDate", ".endDate");
+
+            // Live unit cue on the Start/Now/Goal labels so it's clear they're
+            // numbers (and which kind), updating when the Type dropdown changes.
+            (function () {
+                var typeSel = document.querySelector('.gvDialog select[name="metricType"]');
+                if (!typeSel) return;
+                var units = { number: '#', percent: '%', currency: '$' };
+                var apply = function () {
+                    var u = units[typeSel.value] || '#';
+                    document.querySelectorAll('.gvDialog .gv-unit').forEach(function (s) { s.textContent = '(' + u + ')'; });
+                };
+                apply();
+                typeSel.addEventListener('change', apply);
+            })();
 
             @if (!empty($statusLabels))
             new SlimSelect({
