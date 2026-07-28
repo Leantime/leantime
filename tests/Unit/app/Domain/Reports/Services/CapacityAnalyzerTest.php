@@ -77,9 +77,11 @@ class CapacityAnalyzerTest extends TestCase
     /**
      * @param  array<int, array<string, mixed>>  $tickets
      */
-    private function withTickets(array $tickets): void
+    private function withTickets(array $tickets, int $projectId = 10): void
     {
-        $this->ticketsRepo->method('getAllByProjectId')->willReturn($tickets);
+        // The analyzer batches its ticket reads into one getAllByProjectIds()
+        // call keyed by projectId; the single-project cases here all use id 10.
+        $this->ticketsRepo->method('getAllByProjectIds')->willReturn([$projectId => $tickets]);
     }
 
     private function summaryWithWeeklyAllocation(int $projectId, float $weeklyHours, int $people = 1): ResourceSummary
@@ -194,6 +196,64 @@ class CapacityAnalyzerTest extends TestCase
         $rows = $this->analyzer->analyzeProjects([10], $this->oneWeekPeriod(), ResourceSummary::empty([10]), [10 => 'P']);
 
         $this->assertSame([], $rows);
+    }
+
+    /**
+     * The N+1 guard: tickets for every analyzed project are pulled in a SINGLE
+     * getAllByProjectIds() call, not one getAllByProjectId() per project. This
+     * pins the batching so a future refactor can't quietly reintroduce the
+     * per-project round-trip.
+     */
+    public function test_tickets_are_fetched_in_one_batched_call_for_all_projects(): void
+    {
+        $this->ticketsRepo->expects($this->once())
+            ->method('getAllByProjectIds')
+            ->with($this->equalTo([10, 20, 30]))
+            ->willReturn([
+                10 => [['id' => 1, 'status' => 3, 'planHours' => 10.0, 'storypoints' => 0]],
+                20 => [['id' => 2, 'status' => 3, 'planHours' => 20.0, 'storypoints' => 0]],
+                30 => [['id' => 3, 'status' => 3, 'planHours' => 30.0, 'storypoints' => 0]],
+            ]);
+
+        $summary = new ResourceSummary(
+            [10, 20, 30],
+            [new PersonAllocation(
+                itemId: 1, userId: 1, displayName: 'P', capacity: 40.0,
+                allocations: [10 => 10.0, 20 => 10.0, 30 => 10.0],
+            )],
+            [], [], 40.0, 30.0, 0.0, 0.0,
+        );
+
+        $rows = $this->analyzer->analyzeProjects(
+            [10, 20, 30],
+            $this->oneWeekPeriod(),
+            $summary,
+            [10 => 'A', 20 => 'B', 30 => 'C'],
+        );
+
+        $this->assertSame([10, 20, 30], array_keys($rows));
+        $this->assertEqualsWithDelta(10.0, $rows[10]['budgetedHours'], 0.001);
+        $this->assertEqualsWithDelta(30.0, $rows[30]['budgetedHours'], 0.001);
+    }
+
+    /**
+     * Only the reportable projects (those present in $projectNames) reach the
+     * batched fetch — the skip that used to sit inside the per-project loop now
+     * shapes the single WHERE IN, so we don't over-fetch container projects.
+     */
+    public function test_only_reportable_projects_are_batched(): void
+    {
+        $this->ticketsRepo->expects($this->once())
+            ->method('getAllByProjectIds')
+            ->with($this->equalTo([10])) // 20 is not in $projectNames → excluded
+            ->willReturn([10 => [['id' => 1, 'status' => 3, 'planHours' => 10.0, 'storypoints' => 0]]]);
+
+        $this->analyzer->analyzeProjects(
+            [10, 20],
+            $this->oneWeekPeriod(),
+            $this->summaryWithWeeklyAllocation(10, 20.0),
+            [10 => 'A'], // 20 omitted on purpose
+        );
     }
 
     // ─── Program rollup: supply is capacity, not booked hours ────────

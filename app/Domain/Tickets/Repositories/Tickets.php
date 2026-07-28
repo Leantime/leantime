@@ -933,6 +933,82 @@ class Tickets
         return $tickets;
     }
 
+    /**
+     * Batched sibling of getAllByProjectId(): fetch every ticket for a SET of
+     * projects in a single query, grouped by project id. Callers that would
+     * otherwise loop getAllByProjectId() once per project (e.g. the capacity
+     * analyzer building a plan report) use this to collapse N round-trips into
+     * one. Returns the same hydrated Tickets models, keyed by projectId; every
+     * requested project is present (empty array when it has no tickets) so the
+     * caller can index without existence checks.
+     *
+     * @param  int[]  $projectIds
+     * @return array<int, array<int, \Leantime\Domain\Tickets\Models\Tickets>> projectId => Tickets[]
+     */
+    public function getAllByProjectIds(array $projectIds): array
+    {
+        $projectIds = array_values(array_unique(array_map('intval', $projectIds)));
+        if ($projectIds === []) {
+            return [];
+        }
+
+        $results = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.date',
+                'zp_tickets.dateToFinish',
+                'zp_tickets.projectId',
+                'zp_tickets.priority',
+                'zp_tickets.status',
+                'zp_tickets.sprint',
+                'zp_tickets.storypoints',
+                'zp_tickets.hourRemaining',
+                'zp_tickets.acceptanceCriteria',
+                'zp_tickets.outcomeImpact',
+                'zp_tickets.userId',
+                'zp_tickets.editorId',
+                'zp_tickets.planHours',
+                'zp_tickets.tags',
+                'zp_tickets.url',
+                'zp_tickets.editFrom',
+                'zp_tickets.editTo',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_projects.name as projectName',
+                'zp_clients.name as clientName',
+                'zp_user.firstname as userFirstname',
+                'zp_user.lastname as userLastname',
+                't3.firstname as editorFirstname',
+                't3.lastname as editorLastname',
+            ])
+            ->selectRaw("CASE WHEN zp_tickets.type <> '' THEN zp_tickets.type ELSE 'task' END AS type")
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_clients', 'zp_projects.clientId', '=', 'zp_clients.id')
+            ->leftJoin('zp_user', 'zp_tickets.userId', '=', 'zp_user.id')
+            ->leftJoin('zp_user as t3', function ($join) {
+                $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t3.id'), 'text')));
+            })
+            ->whereIn('zp_tickets.projectId', $projectIds)
+            ->get();
+
+        // Pre-seed every requested project so a project with no tickets maps to
+        // [] rather than a missing key.
+        $grouped = array_fill_keys($projectIds, []);
+        foreach ($results as $row) {
+            $ticket = new \Leantime\Domain\Tickets\Models\Tickets;
+            foreach ((array) $row as $key => $value) {
+                if (property_exists($ticket, $key)) {
+                    $ticket->$key = $value;
+                }
+            }
+            $grouped[(int) $row->projectId][] = $ticket;
+        }
+
+        return $grouped;
+    }
+
     public function getTags($projectId): false|array
     {
         $results = $this->connection->table('zp_tickets')

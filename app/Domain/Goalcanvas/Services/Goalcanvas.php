@@ -527,8 +527,17 @@ class Goalcanvas extends BaseService
 
         $newId = $this->goalRepository->addCanvasItem($values);
 
-        if ($newId !== false && array_key_exists('milestoneId', $values)) {
-            $this->syncGoalMilestoneEdges((int) $newId, $values['milestoneId'], (int) session('userdata.id'));
+        // Only reconcile edges when a real milestone id is supplied. A brand-new
+        // item has no edges to clear, so an empty milestoneId — controllers post
+        // '' for every box via a hidden input — would just cost a wasted lookup.
+        // The update/patch paths still process empty values there, where clearing
+        // an existing link is a meaningful edit.
+        $milestoneIdValue = $values['milestoneId'] ?? null;
+        if ($newId !== false
+            && is_scalar($milestoneIdValue)
+            && filter_var($milestoneIdValue, FILTER_VALIDATE_INT) > 0
+        ) {
+            $this->syncGoalMilestoneEdges((int) $newId, $milestoneIdValue, (int) session('userdata.id'));
         }
 
         return $newId;
@@ -612,7 +621,10 @@ class Goalcanvas extends BaseService
 
         $result = $this->goalRepository->patchCanvasItem($id, $params);
 
-        if (array_key_exists('milestoneId', $params)) {
+        // Only mirror the milestoneId change into the tracked_by edges when the
+        // column patch actually persisted — otherwise the edges would drift from
+        // the milestoneId column and break the dual-write invariant.
+        if ($result && array_key_exists('milestoneId', $params)) {
             $this->syncGoalMilestoneEdges($id, $params['milestoneId'], (int) session('userdata.id'));
         }
 

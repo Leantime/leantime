@@ -39,28 +39,16 @@
         <span class="fa fa-fw fa-thumb-tack"></span>
     </div>
     <div class="pagetitle">
-        <h5>{{ session('currentProjectClient') ?? '' . ' // ' . session('currentProjectName') ?? '' }}</h5>
-
-        @if (
-            ($currentSprint !== false)
-                && ($currentSprint !== null)
-                && count($sprints) > 0
-                && $currentSprintId != 'all'
-                && $currentSprintId != 'backlog'
-        )
-            <span class="dropdown dropdownWrapper headerEditDropdown">
-                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-                <ul class="dropdown-menu editCanvasDropdown">
-                    {{-- Inherited (program-owned) sprints are managed at the program level, never edited
-                         or deleted from a child project. The service IDOR-fences this server-side too.
-                         $sprint can be false (stale/deleted currentSprint), so guard the object access. --}}
-                    @if ($login::userIsAtLeast($roles::$editor) && (! is_object($sprint) || empty($sprint->isInherited)))
-                        <li><a href="#/sprints/editSprint/{{ $currentSprint }}">{!! __('link.edit_sprint') !!}</a></li>
-                        <li><a href="#/sprints/delSprint/{{ $currentSprint }}" class="delete">{!! __('links.delete_sprint') !!}</a></li>
-                    @endif
-                </ul>
-            </span>
-        @endif
+        {{-- Build "Client // Project" only from the parts that exist, so a
+             missing client/project never leaves a stray " // ". (`.` binds
+             tighter than `??`, so the old inline expression mis-grouped.) --}}
+        @php
+            $headerParts = array_filter(
+                [session('currentProjectClient'), session('currentProjectName')],
+                fn ($part) => $part !== null && $part !== ''
+            );
+        @endphp
+        <h5>{{ implode(' // ', $headerParts) }}</h5>
 
         {{-- Migrated to the shared subject switcher (was a hand-rolled
              header-title-dropdown). The sprint menu items stay here — they're
@@ -84,6 +72,49 @@
             @endforeach
         </x-global::subjectSwitcher>
         <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
+    </div>
+
+    {{-- Right cluster on the breadcrumb bar: board stats + (for a real sprint
+         view only) the sprint edit/delete ⋮ menu. --}}
+    <div class="pageheader-right">
+        @isset($boardSummary)
+            @php
+                // Board metrics as a one-line meta string; segments join with a
+                // single " · " so it reads cleanly no matter which are present.
+                $summaryParts = [sprintf(__('label.board_task_count'), $boardSummary->total)];
+                if ($boardSummary->unassigned > 0) {
+                    $summaryParts[] = sprintf(__('label.board_unassigned'), $boardSummary->unassigned);
+                }
+                if ($boardSummary->dueThisWeek > 0) {
+                    $summaryParts[] = sprintf(__('label.board_due_this_week'), $boardSummary->dueThisWeek);
+                }
+                if ($boardSummary->lastUpdated !== null) {
+                    $summaryParts[] = sprintf(__('label.board_updated'), $boardSummary->lastUpdated->setToUserTimezone()->diffForHumans());
+                }
+            @endphp
+            <div class="pageheader-meta">{{ implode(' · ', $summaryParts) }}</div>
+        @endisset
+
+        @if (
+            ($currentSprint !== false)
+                && ($currentSprint !== null)
+                && count($sprints) > 0
+                && $currentSprintId != 'all'
+                && $currentSprintId != 'backlog'
+        )
+            <span class="dropdown dropdownWrapper headerEditDropdown">
+                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
+                <ul class="dropdown-menu editCanvasDropdown">
+                    {{-- Inherited (program-owned) sprints are managed at the program level, never edited
+                         or deleted from a child project. The service IDOR-fences this server-side too.
+                         $sprint can be false (stale/deleted currentSprint), so guard the object access. --}}
+                    @if ($login::userIsAtLeast($roles::$editor) && (! is_object($sprint) || empty($sprint->isInherited)))
+                        <li><a href="#/sprints/editSprint/{{ $currentSprint }}">{!! __('link.edit_sprint') !!}</a></li>
+                        <li><a href="#/sprints/delSprint/{{ $currentSprint }}" class="delete">{!! __('links.delete_sprint') !!}</a></li>
+                    @endif
+                </ul>
+            </span>
+        @endif
     </div>
     @dispatchEvent('beforePageHeaderClose')
 </div><!--pageheader-->
