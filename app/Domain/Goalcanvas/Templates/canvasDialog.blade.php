@@ -52,7 +52,10 @@
         .gv-section{margin-top:24px;}
         .gv-sec-title{font-size:11px!important;font-weight:700!important;letter-spacing:.7px!important;text-transform:uppercase!important;color:var(--gv-acc)!important;border-bottom:1px solid var(--gv-line-soft)!important;padding:0 0 8px!important;margin:0 0 14px!important;display:flex;align-items:center;gap:8px;line-height:1.2;}
         .gv-sec-title i,.gv-sec-title span[class*="fa"]{color:var(--gv-acc)!important;font-size:13px;}
-        .gv-sec-title .helperTooltip{color:var(--gv-ink2)!important;opacity:.55;margin-left:auto;}
+        .gv-sec-title .helperTooltip{color:var(--gv-ink2)!important;opacity:.55;}
+        .gv-ms-actions{margin-left:auto;display:flex;align-items:center;gap:14px;}
+        .gv-ms-act{background:none!important;border:none!important;cursor:pointer;color:var(--gv-ink2)!important;font-size:14px;padding:0;line-height:1;opacity:.65;transition:opacity .12s,color .12s;}
+        .gv-ms-act:hover{opacity:1;color:var(--gv-acc)!important;}
         .gv-field-lbl{font-size:11.5px;color:var(--gv-ink2);margin:0 0 6px;}
 
         /* inputs + selects */
@@ -107,7 +110,7 @@
 
                         @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                         <div id="measureGoalContainer">
-                            <label class="gv-field-lbl">{{ __('text.what_metric_will_you_be_using') }}</label>
+                            <label class="gv-field-lbl">{{ __('goalcanvas.metric_label') }}</label>
                             <x-global::forms.text-input name="description" value="{{ $canvasItem['description'] }}" style="width:100%" />
                         </div>
 
@@ -163,7 +166,17 @@
                     {{-- ── Milestones (full main width) ── --}}
                     @if ($id !== '')
                         <div class="gv-section">
-                            <h4 class="gv-sec-title"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }} <i class="fa fa-question-circle-o helperTooltip" aria-hidden="true" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i></h4>
+                            <h4 class="gv-sec-title"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}
+                                <span class="gv-ms-actions">
+                                    @if ($login::userIsAtLeast($roles::$editor))
+                                        <button type="button" class="gv-ms-act helperTooltip" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');" data-tippy-content="{{ __('goalcanvas.ms_new') }}" title="{{ __('goalcanvas.ms_new') }}" aria-label="{{ __('goalcanvas.ms_new') }}"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                        @if (count($milestones) > 0)
+                                            <button type="button" class="gv-ms-act helperTooltip" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');" data-tippy-content="{{ __('goalcanvas.ms_link') }}" title="{{ __('goalcanvas.ms_link') }}" aria-label="{{ __('goalcanvas.ms_link') }}"><i class="fa fa-link" aria-hidden="true"></i></button>
+                                        @endif
+                                    @endif
+                                    <i class="fa fa-question-circle-o helperTooltip" aria-hidden="true" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i>
+                                </span>
+                            </h4>
 
                             @if (($milestoneSummary['total'] ?? 0) > 0)
                                 <div style="font-size:12px;opacity:.75;margin-bottom:10px;">
@@ -217,20 +230,9 @@
                                         <button type="button" class="goalMsNext" onclick="this.parentElement.querySelector('.goalMsRow').scrollBy({left:210,behavior:'smooth'});" aria-label="Scroll to see more milestones" title="Scroll to see more"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
                                     @endif
                                 </div>
-                                @if (count($goalMilestones) > 2)
-                                    <div class="goalMsHint"><i class="fa fa-arrows-left-right" aria-hidden="true"></i> {{ sprintf(__('goalcanvas.scroll_all_milestones'), count($goalMilestones)) }}</div>
-                                @endif
                             @endif
 
                             @if ($login::userIsAtLeast($roles::$editor))
-                                <div class="row" id="milestoneSelectors">
-                                    <div class="col-md-12">
-                                        <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');"><i class="fa fa-plus"></i> {{ __("links.create_link_milestone") }}</a>
-                                        @if (count($milestones) > 0)
-                                            | <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');">{{ __("links.link_existing_milestone") }}</a>
-                                        @endif
-                                    </div>
-                                </div>
                                 <div class="row" id="newMilestone" style="display:none;">
                                     <div class="col-md-12">
                                         <x-global::forms.text-input width="50%" name="newMilestone" /><br />
