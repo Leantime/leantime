@@ -62,13 +62,13 @@
 
         <div class="tw-overflow-y-scroll tw-max-h-[600px]">
                 @if (! empty($plugin->description))
-                    <div id="plugindetails-panel-overview" role="tabpanel" aria-labelledby="plugindetails-tab-overview" tabindex="0" data-tabs-panel="overview" data-tabs-group="plugindetails">
+                    <x-global::navigation.tabs.panel name="overview" group="plugindetails">
                         <div class="tw-pr-xs mce-content-body">{!! $plugin->description !!}</div>
-                    </div>
+                    </x-global::navigation.tabs.panel>
                 @endif
 
                 @if ($plugin->reviewCount > 0)
-                    <div id="plugindetails-panel-reviews" role="tabpanel" aria-labelledby="plugindetails-tab-reviews" tabindex="0" data-tabs-panel="reviews" data-tabs-group="plugindetails">
+                    <x-global::navigation.tabs.panel name="reviews" group="plugindetails">
                         <div class="tw-flex tw-flex-col tw-gap-base">
                             @foreach($plugin->reviews as $review)
                                 @if (is_array($review) || is_object($review))
@@ -86,11 +86,11 @@
                                 @endif
                             @endforeach
                         </div>
-                    </div>
+                    </x-global::navigation.tabs.panel>
                 @endif
 
                 @if (! empty($plugin->compatibility))
-                    <div id="plugindetails-panel-compatibility" role="tabpanel" aria-labelledby="plugindetails-tab-compatibility" tabindex="0" data-tabs-panel="compatibility" data-tabs-group="plugindetails">
+                    <x-global::navigation.tabs.panel name="compatibility" group="plugindetails">
                         <table class="tw-w-full tw-text-left tw-pt-base">
                             <thead>
                                 <tr>
@@ -107,7 +107,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    </div>
+                    </x-global::navigation.tabs.panel>
                 @endif
         </div>
 
