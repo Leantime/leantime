@@ -35,30 +35,40 @@
             </div>
         </div>
 
-        <x-global::tabs class="tw-overflow-y-scroll tw-max-h-[600px] tw-border-b !tw-border-b-gray-500">
-            <x-slot:headings class="tw-sticky tw-top-0 !tw-bg-[--secondary-background]">
+        @php
+            // First visible tab is the initially-selected one (each section is conditional).
+            $pluginTabOrder = array_values(array_filter([
+                ! empty($plugin->description) ? 'overview' : null,
+                $plugin->reviewCount > 0 ? 'reviews' : null,
+                ! empty($plugin->compatibility) ? 'compatibility' : null,
+            ]));
+            $pluginFirstTab = $pluginTabOrder[0] ?? null;
+        @endphp
+        @if ($pluginFirstTab !== null)
+        <x-global::navigation.tabs group="plugindetails" label="Plugin details sections">
+            @if (! empty($plugin->description))
+                <x-global::navigation.tabs.tab name="overview" :selected="$pluginFirstTab === 'overview'">Overview</x-global::navigation.tabs.tab>
+            @endif
+
+            @if ($plugin->reviewCount > 0)
+                <x-global::navigation.tabs.tab name="reviews" :count="$plugin->reviewCount" :selected="$pluginFirstTab === 'reviews'">Reviews</x-global::navigation.tabs.tab>
+            @endif
+
+            @if (! empty($plugin->compatibility))
+                <x-global::navigation.tabs.tab name="compatibility" :selected="$pluginFirstTab === 'compatibility'">Compatibility</x-global::navigation.tabs.tab>
+            @endif
+        </x-global::navigation.tabs>
+        @endif
+
+        <div class="tw-overflow-y-scroll tw-max-h-[600px]">
                 @if (! empty($plugin->description))
-                    <x-global::tabs.heading name="overview">Overview</x-global::tabs.heading>
-                @endif
-
-                @if ($plugin->reviewCount > 0)
-                    <x-global::tabs.heading name="reviews">Reviews</x-global::tabs.heading>
-                @endif
-
-                @if (! empty($plugin->compatibility))
-                    <x-global::tabs.heading name="compatibility">Compatibility</x-global::tabs.heading>
-                @endif
-            </x-slot:headings>
-
-            <x-slot:contents>
-                @if (! empty($plugin->description))
-                    <x-global::tabs.content name="overview">
+                    <x-global::navigation.tabs.panel name="overview" group="plugindetails">
                         <div class="tw-pr-xs mce-content-body">{!! $plugin->description !!}</div>
-                    </x-global::tabs.content>
+                    </x-global::navigation.tabs.panel>
                 @endif
 
                 @if ($plugin->reviewCount > 0)
-                    <x-global::tabs.content name="reviews">
+                    <x-global::navigation.tabs.panel name="reviews" group="plugindetails">
                         <div class="tw-flex tw-flex-col tw-gap-base">
                             @foreach($plugin->reviews as $review)
                                 @if (is_array($review) || is_object($review))
@@ -76,11 +86,11 @@
                                 @endif
                             @endforeach
                         </div>
-                    </x-global::tabs.content>
+                    </x-global::navigation.tabs.panel>
                 @endif
 
                 @if (! empty($plugin->compatibility))
-                    <x-global::tabs.content name="compatibility">
+                    <x-global::navigation.tabs.panel name="compatibility" group="plugindetails">
                         <table class="tw-w-full tw-text-left tw-pt-base">
                             <thead>
                                 <tr>
@@ -97,10 +107,9 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    </x-global::tabs.content>
+                    </x-global::navigation.tabs.panel>
                 @endif
-            </x-slot:contents>
-        </x-global::tabs>
+        </div>
 
         <div class="tw-flex tw-justify-between tw-items-center">
             @if (! empty($plugin->marketplaceUrl))

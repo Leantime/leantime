@@ -1,0 +1,158 @@
+/*
+ * Shared tab-group (x-global::navigation.tabs) — the ONE tablist skin.
+ *
+ * Consolidates the four hand-rolled copies of the same visual (board tabs in
+ * nav.css, report deck .rd-tabs, goal-dialog .gv-tabs, Resource Allocation
+ * .ra-tabs) into a single component stylesheet. Two variants:
+ *
+ *   .lt-tabs--attached  gradient accent band + translucent framed segment
+ *                       group + white active pill (board/report look). Uses
+ *                       the theme accents with the conditional --nav-scrim
+ *                       (0 for dark accents; raised per-theme where white
+ *                       controls would fail WCAG AA on light accents).
+ *   .lt-tabs--floating  free-floating fully-rounded glass pills (Resource
+ *                       Allocation look); .lt-tabs--dark for dark headers.
+ *
+ * Behavior (ARIA, keyboard, persistence) lives in the component's script.
+ */
+
+/* ── Shared structure ─────────────────────────────────────────────── */
+.lt-tabs {
+    display: flex;
+    align-items: center;
+}
+.lt-tabs-group {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.lt-tabs-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lt-tab {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: all .14s ease;
+    letter-spacing: .1px;
+}
+.lt-tab i {
+    font-size: 12px;
+    opacity: .9;
+}
+.lt-tab:hover:not(.on) {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+}
+.lt-tab:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+.lt-tab.on {
+    color: var(--primary-font-color);
+    background: #fff;
+    font-weight: 600;
+}
+.lt-tab.on i {
+    color: var(--accent1);
+    opacity: 1;
+}
+.lt-tab.on:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: -2px;
+}
+
+/* Count badge */
+.lt-tab .ct {
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 100px;
+    padding: 1px 8px;
+    line-height: 1.5;
+}
+.lt-tab.on .ct {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--accent1);
+}
+
+/* ── Attached variant: gradient band (board/report family) ────────── */
+.lt-tabs--attached {
+    padding: 7px 10px;
+    margin-bottom: 10px;
+    border-radius: 14px;
+    background:
+        linear-gradient(rgba(0, 0, 0, var(--nav-scrim, 0)), rgba(0, 0, 0, var(--nav-scrim, 0))),
+        linear-gradient(90deg, var(--accent1), var(--accent2));
+    /* Flat, no shadow — the bar must read as one system with the content
+       below it, not a separate floating element (Marcel, nav redesign). */
+    box-shadow: none;
+}
+.lt-tabs--attached .lt-tabs-group {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 11px;
+    padding: 3px;
+    gap: 2px;
+}
+.lt-tabs--attached .lt-tab {
+    padding: 7px 14px;
+    border-radius: 9px;
+}
+/* Action-less pages hug the band to its tabs (compact nav, not an empty bar). */
+.lt-tabs--attached:not(:has(.lt-tabs-actions)) {
+    width: fit-content;
+}
+
+/* ── Floating variant: glass pills (Resource Allocation family) ───── */
+.lt-tabs--floating {
+    display: inline-flex;
+    gap: 2px;
+    padding: 4px;
+    margin: 0 0 8px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.lt-tabs--floating .lt-tabs-group {
+    gap: 2px;
+}
+.lt-tabs--floating .lt-tab {
+    padding: 8px 16px;
+    border-radius: 100px;
+}
+.lt-tabs--floating .lt-tab.on {
+    box-shadow: 0 2px 6px rgba(20, 40, 50, .12);
+}
+
+/* Floating on a dark header (server-stamped by the caller) */
+.lt-tabs--dark {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+.lt-tabs--dark .lt-tab.on {
+    color: #182831;
+}
+
+/* ── Print: tabs are navigation, not content ──────────────────────── */
+@media print {
+    .lt-tabs {
+        display: none;
+    }
+}
