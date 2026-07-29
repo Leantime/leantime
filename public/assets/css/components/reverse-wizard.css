@@ -638,6 +638,12 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     margin:0 0 14px;
 }
 
+.rev-wiz .rw-guide .rw-guide-sub {
+    margin-top:8px;
+    color:var(--rw-muted);
+    font-size:12.5px;
+}
+
 .rev-wiz .rw-guide .rw-guide-lbl {
     display:block;
     font-size:11px;
