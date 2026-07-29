@@ -20,6 +20,7 @@
    stamps rd-scope/rd-dark alongside ra-scope/ra-dark. Only the legacy --ra-*
    aliases (pure indirection for the rules below) and the base color remain. */
 .ra-scope {
+    --ra-accent:var(--rd-accent);
     --ra-danger:var(--rd-danger);
     --ra-warn-bg:var(--rd-warn-bg);
     --ra-warn-tx:var(--rd-warn-tx);
