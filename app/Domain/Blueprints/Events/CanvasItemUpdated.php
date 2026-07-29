@@ -27,7 +27,7 @@ final class CanvasItemUpdated implements LeantimeEvent
     /**
      * @param  int  $canvasItemId  The updated canvas item id.
      * @param  array<int, string>  $changedFields  Best-effort names of the fields possibly
-     *                                              written (see class doc); not authoritative.
+     *                                             written (see class doc); not authoritative.
      * @param  string|null  $legacyHook  TEMPORARY (migration window): the emitting method name —
      *                                   pass __FUNCTION__ — used to rebuild the historical string
      *                                   name for legacy string-based listeners.
