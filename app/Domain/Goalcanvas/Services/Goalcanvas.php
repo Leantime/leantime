@@ -7,6 +7,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
 /**
  * Goalcanvas (Goals / OKRs) service.
@@ -29,15 +30,18 @@ class Goalcanvas extends BaseService
 
     private GoalcanvaRepository $goalRepository;
 
+    private ProjectService $projectService;
+
     public array $reportingSettings = [
         'linkonly',
         'linkAndReport',
         'nolink',
     ];
 
-    public function __construct(GoalcanvaRepository $goalRepository)
+    public function __construct(GoalcanvaRepository $goalRepository, ProjectService $projectService)
     {
         $this->goalRepository = $goalRepository;
+        $this->projectService = $projectService;
     }
 
     /**
@@ -351,6 +355,162 @@ class Goalcanvas extends BaseService
     public function detachMilestoneFromGoals(int $milestoneId): bool
     {
         return $this->goalRepository->removeMilestoneFromAllGoals($milestoneId);
+    }
+
+    /**
+     * A goal's milestones (edge model) for the mobile Progress feature —
+     * authorized for VIEW against the goal's project, and each milestone is
+     * further filtered to the caller's accessible projects as defense-in-depth
+     * (goal→milestone links are same-project only, so normally a no-op). Returns []
+     * for a missing/foreign/unauthorized goal. Dates are returned as stored
+     * (UTC). A milestone may appear under several goals — this is many-to-many.
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @api
+     */
+    public function getMilestonesByGoal(int $goalId): array
+    {
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return [];
+        }
+
+        $milestones = $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? [];
+
+        return $this->filterAccessibleMilestones($milestones);
+    }
+
+    /**
+     * Aggregate rollup for a goal's milestones — the payload the mobile
+     * Progress "arc" is drawn from. Authorized for VIEW against the goal's
+     * project; milestones filtered to the caller's accessible projects.
+     * Computed over the batched milestone read (no N+1). Dates returned as
+     * stored (UTC); `currentMilestoneId` is the first not-done milestone in
+     * the working order (in-progress -> not-started -> done, by due date).
+     *
+     * @return array{goalId: int, total: int, done: int, inProgress: int, notStarted: int, percentComplete: int, startDate: string|null, endDate: string|null, currentMilestoneId: int|null}
+     *
+     * @api
+     */
+    public function getGoalRollup(int $goalId): array
+    {
+        $empty = [
+            'goalId' => $goalId, 'total' => 0, 'done' => 0, 'inProgress' => 0, 'notStarted' => 0,
+            'percentComplete' => 0, 'startDate' => null, 'endDate' => null, 'currentMilestoneId' => null,
+        ];
+
+        $projectId = $this->goalRepository->getCanvasItemProjectId($goalId, self::CANVAS_TYPE);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return $empty;
+        }
+
+        $milestones = $this->filterAccessibleMilestones(
+            $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? []
+        );
+        if ($milestones === []) {
+            return $empty;
+        }
+
+        $done = 0;
+        $inProgress = 0;
+        $notStarted = 0;
+        $progressSum = 0;
+        $start = null;
+        $end = null;
+        $current = null;
+
+        foreach ($milestones as $m) {
+            $type = $m['statusType'] ?? 'NEW';
+            if ($type === 'DONE') {
+                $done++;
+            } elseif ($type === 'INPROGRESS') {
+                $inProgress++;
+            } else {
+                $notStarted++;
+            }
+
+            $progressSum += (int) $m['percentDone'];
+
+            $from = $this->validDate($m['editFrom'] ?? null);
+            $to = $this->validDate($m['editTo'] ?? null);
+            if ($from !== null && ($start === null || $from < $start)) {
+                $start = $from;
+            }
+            if ($to !== null && ($end === null || $to > $end)) {
+                $end = $to;
+            }
+
+            if ($current === null && $type !== 'DONE') {
+                $current = (int) $m['id'];
+            }
+        }
+
+        $total = count($milestones);
+
+        return [
+            'goalId' => $goalId,
+            'total' => $total,
+            'done' => $done,
+            'inProgress' => $inProgress,
+            'notStarted' => $notStarted,
+            'percentComplete' => (int) round($progressSum / $total),
+            'startDate' => $start,
+            'endDate' => $end,
+            'currentMilestoneId' => $current,
+        ];
+    }
+
+    /**
+     * Defensive strip: keep only milestones in projects the caller can access.
+     * Goal→milestone links are same-project only (addGoalMilestoneLink fails
+     * closed on a foreign milestone), so in normal data this is a no-op — it
+     * only guards against any legacy cross-project rows.
+     *
+     * @param  array<int, array<string, mixed>>  $milestones
+     * @return array<int, array<string, mixed>>
+     */
+    private function filterAccessibleMilestones(array $milestones): array
+    {
+        $accessible = array_flip($this->accessibleProjectIds());
+
+        return array_values(array_filter(
+            $milestones,
+            static fn ($m) => isset($accessible[(int) ($m['projectId'] ?? 0)])
+        ));
+    }
+
+    /**
+     * Project ids the current user may access.
+     *
+     * @return array<int, int>
+     */
+    private function accessibleProjectIds(): array
+    {
+        $projects = $this->projectService->getProjectsUserHasAccessTo();
+
+        if (! is_array($projects)) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            array_map(static fn ($p) => (int) ($p['id'] ?? 0), $projects),
+            static fn ($id) => $id > 0
+        ));
+    }
+
+    /**
+     * Return a stored datetime if it's a real value, else null (filters the
+     * '0000-00-00 00:00:00' / empty sentinels milestones can carry).
+     */
+    private function validDate(mixed $value): ?string
+    {
+        $s = trim((string) $value);
+        if ($s === '' || str_starts_with($s, '0000-00-00')) {
+            return null;
+        }
+
+        return $s;
     }
 
     // ---------------------------------------------------------------------------------------

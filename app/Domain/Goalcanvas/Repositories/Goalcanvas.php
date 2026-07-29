@@ -1313,14 +1313,12 @@ class Goalcanvas extends Blueprints
 
     /**
      * The milestone chips for a set of goals — each goal's tracked_by
-     * milestones with name, color, due date, and progress fill. A bounded,
-     * N+1-free set of reads regardless of milestone count: edges, milestone
-     * details, progress, plus one status-label read per distinct project
-     * (usually one). Edges pointing at a deleted or non-milestone ticket are
-     * dropped.
+     * milestones with name, color, due date, and progress fill. Three queries
+     * total (edges, milestone details, progress), no N+1. Edges pointing at a
+     * deleted or non-milestone ticket are dropped.
      *
      * @param  array<int, int>  $goalIds
-     * @return array<int, array<int, array{id: int, headline: string, color: string, editTo: mixed, status: int, statusType: string, percentDone: int}>>
+     * @return array<int, array<int, array{id: int, headline: string, color: string, projectId: int, editFrom: mixed, editTo: mixed, status: int, statusType: string, percentDone: int}>>
      *
      * @api
      */
@@ -1343,24 +1341,17 @@ class Goalcanvas extends Blueprints
             return [];
         }
 
-        // Build per-goal milestone id lists, de-duplicated per goal: a race on
-        // addGoalMilestoneLink's check-then-insert could leave a duplicate edge,
-        // so dedup here to guarantee it never renders as a duplicate chip.
-        // Collect the global id set with a nested loop rather than
-        // array_merge(...array_values(...)) unpacking, which has a practical
-        // argument limit and an extra allocation on large goal sets.
         $goalToMilestones = [];
         $milestoneIdSet = [];
         foreach ($edges as $e) {
             $goalId = (int) $e->entityA;
             $milestoneId = (int) $e->entityB;
-            // Associative set per goal → O(1) dedup (no in_array scan over a
-            // growing list), so the whole build stays O(E).
+            // Associative set per goal → O(1) dedup and no array_merge(...) arg
+            // unpacking (which has a practical limit + extra allocation on large
+            // sets); a raced duplicate edge can't render as a duplicate chip.
             $goalToMilestones[$goalId][$milestoneId] = true;
             $milestoneIdSet[$milestoneId] = true;
         }
-        // Collapse each goal's set to an ordered id list (assoc keys keep
-        // insertion order).
         foreach ($goalToMilestones as $goalId => $set) {
             $goalToMilestones[$goalId] = array_keys($set);
         }
@@ -1372,14 +1363,14 @@ class Goalcanvas extends Blueprints
             $this->dbConnection->table('zp_tickets')
                 ->whereIn('id', $milestoneIds)
                 ->where('type', 'milestone')
-                ->where('status', '<>', -1)
-                ->select('id', 'headline', 'tags', 'editTo', 'status', 'projectId')
+                ->select('id', 'headline', 'tags', 'editFrom', 'editTo', 'status', 'projectId')
                 ->get() as $m
         ) {
             $details[(int) $m->id] = [
                 'id' => (int) $m->id,
                 'headline' => (string) $m->headline,
                 'color' => $this->safeChipColor($m->tags),
+                'editFrom' => $m->editFrom,
                 'editTo' => $m->editTo,
                 'status' => (int) $m->status,
                 'projectId' => (int) $m->projectId,
@@ -1415,6 +1406,8 @@ class Goalcanvas extends Blueprints
                     'id' => $d['id'],
                     'headline' => $d['headline'],
                     'color' => $d['color'],
+                    'projectId' => $d['projectId'],
+                    'editFrom' => $d['editFrom'],
                     'editTo' => $d['editTo'],
                     'status' => $d['status'],
                     'statusType' => $statusTypeByProject[$d['projectId']][$d['status']] ?? 'NEW',
@@ -1428,8 +1421,11 @@ class Goalcanvas extends Blueprints
                 if ($ra !== $rb) {
                     return $ra <=> $rb;
                 }
-                $da = ($a['editTo'] === null || $a['editTo'] === '') ? '9999-12-31' : (string) $a['editTo'];
-                $db = ($b['editTo'] === null || $b['editTo'] === '') ? '9999-12-31' : (string) $b['editTo'];
+                // Treat missing AND the zero-date sentinel ('0000-00-00 …') as
+                // "no due date" so those chips sort last, not first.
+                $noDue = static fn ($v): bool => $v === null || $v === '' || str_starts_with((string) $v, '0000-00-00');
+                $da = $noDue($a['editTo']) ? '9999-12-31' : (string) $a['editTo'];
+                $db = $noDue($b['editTo']) ? '9999-12-31' : (string) $b['editTo'];
 
                 return strcmp($da, $db);
             });
