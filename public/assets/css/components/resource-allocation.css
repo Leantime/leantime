@@ -16,6 +16,17 @@
  *     conflicting per-file definitions.
  */
 
+/*
+ * Resource Allocation — chrome styles.
+ *
+ * Palette + component treatments mirror the Stakeholder Report deck
+ * (`.rd-scope`) so this tab reads as part of the same design system.
+ * Where the report uses `.p4-lens` for its segmented lens toggle and
+ * `.p3-sec-hd` for section headers, this file adopts the same visuals
+ * under the existing `.ra-*` class names to keep the template markup
+ * stable. `--ra-*` variables are aliased to their `--rd-*` equivalents
+ * so downstream row/data styles pick up the shared palette automatically.
+ */
 /* Tokens come from the canonical .rd-scope (report-deck.css) — the template
    stamps rd-scope/rd-dark alongside ra-scope/ra-dark. Only the legacy --ra-*
    aliases (pure indirection for the rules below) and the base color remain. */
@@ -79,8 +90,6 @@
     background:#2b2d2f;
     border-color:var(--rd-line);
 }
-/* Seeded/stub rows — the cream light-tint inverts to a bright block on a
-   dark page, and it appears right after the first-open auto-seed. Dark it. */
 .ra-scope.ra-dark .ra-prow.stub,.ra-scope.ra-dark .ra-brow.stub {
     background:rgba(217,164,65,.08);
     border-color:rgba(217,164,65,.35);
@@ -154,8 +163,6 @@
 .ra-scope.ra-dark .ra-emp-badge {
     filter:brightness(1.35);
 }
-/* Planned-hours provenance — dotted underline advertises the hover;
- * bubble lists each contributor ("Gloria — 8h"). */
 .ra-contrib {
     position:relative;
     cursor:help;
@@ -190,10 +197,6 @@
     visibility:visible;
     transform:translateY(0);
 }
-/* v2 chrome — compact shared pageheader with the trail on the left
- * and a three-dot menu on the right. Everything reflows into a single
- * horizontal row so the icon/title/menu align at the same baseline
- * instead of the default h1-wraps-below-icon layout. */
 body.ra-page-active .pageheader {
     padding:20px 15px 14px;
     line-height:1.3;
@@ -206,18 +209,9 @@ body.ra-page-active .maincontent {
     margin-top:0;
     padding-top:0;
 }
-/* Drop the shared `.pageicon` circle for this view — the breadcrumb
- * reads better as pure text-trail without the "here's an icon" prefix.
- * The layer-group icon still appears in the sidebar, so context isn't
- * lost. */
 body.ra-page-active .pageheader .pageicon {
     display:none;
 }
-/* `.pagetitle` wraps the shared `.pageheader` slot — since our slot
- * puts the trail h1 and the three-dot menu inside it, make it a flex
- * row so the two sit on the same line: trail on the left, menu docked
- * on the far right. Without this the menu button wraps to a new line
- * below the trail. */
 body.ra-page-active .pageheader .pagetitle {
     flex:1 1 auto;
     min-width:0;
@@ -227,10 +221,6 @@ body.ra-page-active .pageheader .pagetitle {
     justify-content:space-between;
     gap:14px;
 }
-/* Trail link styling — the breadcrumb `<nav><ol>` renders as a flat
- * horizontal row. List markers are stripped since the visual layout
- * (with "//" separators) carries the ordering; screen readers still
- * see the ordered-list semantics. */
 body.ra-page-active .pageheader .ra-crumb-title {
     font-size:18px;
     font-weight:500;
@@ -273,10 +263,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:rgba(255,255,255,0.45);
     font-weight:400;
 }
-/* Three-dot menu — parked at the far right of the pageheader row.
- * Circular glass button that matches the Strategy Report's action
- * menu treatment. Doesn't do anything yet; hook up when we land
- * Export / period / etc. */
 .ra-more-menu {
     flex:none;
     width:34px;
@@ -302,9 +288,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     outline:2px solid #fff;
     outline-offset:2px;
 }
-/* Outer shell — solid white content card (not glass). Border + soft
- * shadow give the Linear/Notion "single clean surface" feel. Overrides
- * the shared `.maincontentinner` glass background for this view. */
 .ra-shell {
     background:var(--rd-panel) !important;
     backdrop-filter:none !important;
@@ -315,18 +298,11 @@ body.ra-page-active .pageheader .ra-crumb-title {
     padding:0 !important;
     overflow:hidden;
 }
-/* Header row — big bold title on the left (the visual gravity
- * center of the page), quiet metadata subtitle beneath it, action
- * cluster right-aligned. The title's size + weight is what pulls
- * the eye down to the content. Extra right-side padding keeps the
- * action cluster from hugging the content card edge. */
 .ra-header {
     padding:26px 36px 22px 30px;
     border-bottom:1px solid var(--rd-line-soft);
     position:relative;
 }
-/* Action cluster pinned to the card's upper-right corner (matches the
- * ⋮ menu convention) instead of floating mid-header. */
 .ra-header .ra-header-actions {
     position:absolute;
     top:16px;
@@ -361,9 +337,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     flex-wrap:wrap;
     justify-content:flex-end;
 }
-/* Sub-block card — shared class for content sections INSIDE the shell.
- * Flat container with subtle bottom rule instead of a shadowed card,
- * to keep the "one clean surface" feel. */
 .ra-block {
     background:transparent;
     border:none;
@@ -376,11 +349,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-block:last-of-type {
     border-bottom:none;
 }
-/* Nav card + toolbar are gone in v2 chrome; header lives inside
- * `.ra-header` above. */
-/* First-open auto-populate confirmation — uses the report's --rd-ok
- * hue with a soft tint background so it reads as a positive nudge,
- * not an alert. */
 .ra-seed-banner {
     display:flex;
     align-items:flex-start;
@@ -403,10 +371,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-seed-banner b {
     color:var(--rd-text-1);
 }
-/* Auto-fill button — icon-only circular button. Hover / screen
- * readers get the full "Auto-fill from existing data" label; the
- * wand icon carries the meaning at a glance. Sized to match the
- * segmented control's height so the two sit as a cohesive cluster. */
 .ra-autofill {
     display:inline-flex;
     align-items:center;
@@ -440,7 +404,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     opacity:.5;
     cursor:not-allowed;
 }
-/* Drift badge — candidate count riding the wand's top-right corner. */
 .ra-drift-ct {
     position:absolute;
     top:-4px;
@@ -460,10 +423,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-autofill {
     position:relative;
 }
-/* Sync-state colors: drift wears AMBER (attention: the plan is behind
- * its sources) so the two states are scannable by color alone —
- * green chip = synced, amber wand+badge = needs sync. The fresh-plan
- * wand keeps the accent look (it's an action, not a warning). */
 .ra-autofill.has-drift {
     color:var(--ra-warn-tx);
     background:var(--ra-warn-bg);
@@ -479,8 +438,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-autofill.has-drift .ra-drift-ct {
     background:var(--ra-warn-tx);
 }
-/* Synced status — the wand's zero-drift replacement. Quiet green chip
- * confirming everything from child projects is already in the plan. */
 .ra-sync-ok {
     display:inline-flex;
     align-items:center;
@@ -505,9 +462,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     border-color:rgba(62,147,122,.4);
     outline:none;
 }
-/* Instant styled tooltips on the seed UI (chip + wand) — right-anchored
- * so they can't overflow the card edge; same bubble family as the
- * section info tips. Native title attrs were too slow/easy to miss. */
 .ra-sync-ok .ra-info-bubble,.ra-autofill .ra-info-bubble {
     position:absolute;
     top:calc(100% + 8px);
@@ -546,12 +500,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     background:var(--rd-text-1);
     transform:rotate(45deg);
 }
-/* Segmented control (V1/V2) — matches .p4-lens from the report. Pill
- * container on white, dark accent fill on active. */
-/* Segmented control — matches Auto-fill's tint + border treatment
- * so both controls read as the same visual family (buttons). Active
- * segment lifts to solid white with a shadow for the "you are here"
- * signal; inactive stays quiet accent grey. */
 .ra-seg {
     display:inline-flex;
     gap:2px;
@@ -613,9 +561,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     opacity:.35;
     cursor:default;
 }
-/* Deck panel — transparent slot. The outer `.ra-shell` already owns
- * the card surface, so the panel is just a positioning wrapper for
- * the horizontal page track. */
 .ra-panel {
     background:transparent;
     border:none;
@@ -637,9 +582,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     min-width:100%;
     width:100%;
 }
-/* Section header — mirrors .p3-sec-hd from the report. Uppercase
- * accent-colored eyebrow (.sn) above a text-3 subtitle (.sc), with
- * an optional action button pinned right. */
 .ra-secHd {
     display:flex;
     align-items:flex-start;
@@ -666,10 +608,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     font-size:11px;
     margin:0;
 }
-/* reset browser h2 default sizing when the eyebrow is a real heading */
-/* Info-tip — a small circular info icon that anchors to a section
- * heading and reveals its explanatory text on hover / focus. Replaces
- * the pattern where hint copy sat orphaned under the section title. */
 .ra-info-tip {
     display:inline-flex;
     align-items:center;
@@ -724,9 +662,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     background:var(--rd-text-1);
     transform:rotate(45deg);
 }
-/* Legend rendered INSIDE an info bubble — colored swatch + project
- * name per row. Used on the Projects section header to explain the
- * color coding on the rows below. */
 .ra-legend {
     padding:10px 14px;
     min-width:220px;
@@ -767,9 +702,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:var(--rd-text-3);
     line-height:1.4;
 }
-/* !importants guard against the app's global anchor/button hover rules,
- * which repaint link text white on hover — unreadable on this light
- * pill. */
 .ra-addbtn {
     display:inline-flex;
     align-items:center;
@@ -799,14 +731,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-addbtn i {
     font-size:10px;
 }
-/* Inline-edit inputs — display as plain text until hovered/focused. On
- * focus, a subtle border + white background lifts the field to signal
- * editability. HTMX blur triggers save. */
-/* Inline-edit inputs — invisible until hover/focus so values read as
- * text. The `!important`s are load-bearing: Leantime's global form CSS
- * styles every input as a white pill (grey border, 15px radius, 4px/10px
- * padding) and outweighs a bare class selector, which made every inline
- * value render as a form field and clipped surrounding text ("$ 0 spent"). */
 .ra-scope .ra-inline-input {
     background:transparent !important;
     border:1px solid transparent !important;
@@ -867,31 +791,18 @@ body.ra-page-active .pageheader .ra-crumb-title {
     -webkit-appearance:none;
     appearance:none;
     padding-right:22px !important;
-    background:transparent url('data:image/svg+xml;
-    utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path fill="%237a8791" d="M0 0l5 6 5-6z"/></svg>') no-repeat right 7px center !important;
+    background:transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path fill="%237a8791" d="M0 0l5 6 5-6z"/></svg>') no-repeat right 7px center !important;
     cursor:pointer;
     font-size:12.5px;
     color:var(--rd-text-2);
     width:auto;
     max-width:160px;
 }
-/* ── Allocations editor (per-person) ────────────────────────────
- * Disclosure block: an always-visible summary trigger (compact
- * stacked bar + total + chevron) that expands to reveal one row
- * per child project — name · numeric input · mini progress bar ·
- * percent of capacity. Unifies "here's what's allocated" and
- * "here's how to change it" into one visual. Each detail row is
- * a discrete, keyboard-accessible widget. */
 .ra-mid {
     display:flex;
     flex-direction:column;
     min-width:0;
 }
-/* Per-row edit — the bars ARE the trigger. `all:unset` guards against
- * the app's global button fill (#004666 inside .maincontentinner).
- * A pen hint fades in on hover so the bars advertise their editability
- * without permanent chrome. [data-editing] on .ra-mid swaps trigger ↔
- * editor for THIS row only. */
 .ra-bars-trigger {
     all:unset;
     box-sizing:border-box;
@@ -937,8 +848,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-mid[data-editing="true"] .ra-alloc-detail {
     display:flex;
 }
-/* Editor footer — refresh note + Done. Done is a quiet outlined pill;
- * explicit styles beat the global button fill. */
 .ra-alloc-footer {
     display:flex;
     align-items:center;
@@ -1024,9 +933,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     text-align:right;
     font-variant-numeric:tabular-nums;
 }
-/* Allocated but not on the project team — they can't open the project or
-   log time, so these hours can never be worked off. Amber, not red: the
-   allocation itself is legitimate, it's the access that's missing. */
 .ra-alloc-row.noaccess .nm {
     overflow:visible;
     white-space:normal;
@@ -1051,8 +957,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-noaccess i {
     font-size:9.5px;
 }
-/* Alloc inputs stay VISIBLE boxes by design (they're the primary edit
- * affordance in the disclosure) — re-assert over the base reset. */
 .ra-inline-input.alloc {
     width:3em;
     text-align:right;
@@ -1090,8 +994,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     -moz-appearance:textfield;
     appearance:textfield;
 }
-/* Keep the People "role · Xh/wk" line on a single row — the mix of two
- * inputs + separators would otherwise wrap when either field is empty. */
 .ra-prow .prole {
     display:flex;
     align-items:center;
@@ -1099,15 +1001,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     flex-wrap:nowrap;
     white-space:nowrap;
 }
-/* Row-hover delete affordance — a quiet × that only shows on row hover. */
-/* Row-level dropdown menu — replaces the previous single-purpose
- * X-on-hover with a ⋮ trigger that opens a small menu of row actions.
- * Trigger appears on row hover or when the menu is open (kept visible
- * so a mid-open row scroll doesn't hide it). */
-/* Reserve a gutter on the right so the absolute-positioned ⋮ menu
- * never overlaps the row's last data column (e.g. the % cell), and
- * vertically center the trigger on the row instead of pinning it to
- * the top corner. */
 .ra-prow,.ra-brow,.ra-drow {
     position:relative;
     padding-right:34px;
@@ -1192,13 +1085,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     width:14px;
     text-align:center;
 }
-/* Overview — summary strip. Each KPI is an elevated mini-card:
- * light grey background, rounded corners, and a stronger shadow so
- * the numbers read as discrete pieces of information floating above
- * the content card surface. */
-/* KPI grid — 6 compact cards in one row. Content is inline
- * ("0h of 40h/wk") so cards can stay short without wasting
- * vertical space. Wraps to 3×2 at narrower widths. */
 .ra-summary {
     display:grid;
     grid-template-columns:repeat(6,minmax(0,1fr));
@@ -1210,17 +1096,16 @@ body.ra-page-active .pageheader .ra-crumb-title {
     overflow:visible;
     margin:0;
 }
-.ra-summary {
-    grid-template-columns:repeat(3,minmax(0,1fr));
+@media (max-width:1100px) {
+    .ra-summary {
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
 }
-.ra-summary {
-    grid-template-columns:repeat(2,minmax(0,1fr));
+@media (max-width:640px) {
+    .ra-summary {
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
 }
-/* KPI mini-card — compact 2-row rhythm. Uses flex-row + wrap so the
- * label sits on its own row (forced full-width) and the value +
- * first subtitle sit on ONE inline row: "0h of 40h/wk". A trailing
- * second `.sd` (e.g. "set program dates to see totals") wraps to a
- * third quiet row OR gets moved to a corner info icon. */
 .ra-scell {
     padding:12px 14px;
     border:1px solid var(--rd-line);
@@ -1237,13 +1122,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     min-height:88px;
     position:relative;
 }
-/* Corner info action — small icon anchored to the top-right of a
- * KPI cell that carries an overflow action (e.g. "set program dates
- * to see totals"). Keeps the card's inline row short and consistent. */
-/* Corner action chip — a labeled mini-link ("Set dates") anchored to
- * the top-right of a KPI cell. Distinct from .ra-info-tip: info tips
- * are passive ⓘ hovers; this navigates, so it reads as a link (accent
- * color + calendar icon + verb label). Tooltip explains the payoff. */
 .ra-scell-action {
     position:absolute;
     top:8px;
@@ -1313,8 +1191,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-scell:first-child {
     border-left:none;
 }
-/* legacy — no border on cells now anyway */
-/* Label — forced own row via full flex-basis. */
 .ra-scell .sl {
     font-size:11.5px;
     font-weight:500;
@@ -1323,7 +1199,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     line-height:1.2;
     flex:0 0 100%;
 }
-/* Value — big number sitting inline with its first subtitle. */
 .ra-scell .sv {
     font-size:22px;
     font-weight:700;
@@ -1339,8 +1214,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     letter-spacing:0;
     margin-left:1px;
 }
-/* Subtitle — sits inline as a sibling of `.sv`. Any second `.sd`
- * wraps to its own quiet row underneath. */
 .ra-scell .sd {
     font-size:12.5px;
     color:var(--rd-text-3);
@@ -1369,12 +1242,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     display:block;
     height:100%;
 }
-/* Project rows */
-/* Project rows — modernized to list-item style with a full-row hover
- * surface (so the whole row feels clickable), slightly bigger padding,
- * a colored bar swatch, and a subtle background lift on hover. Rows
- * are separated by hairlines that fade to the row hover state rather
- * than sit as a hard divider. */
 .ra-jrow {
     display:grid;
     grid-template-columns:minmax(0,1fr) 200px;
@@ -1443,7 +1310,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:var(--ra-text-3);
     margin-top:3px;
 }
-/* People rows */
 .ra-prow {
     display:grid;
     grid-template-columns:186px minmax(0,1fr) 130px;
@@ -1458,9 +1324,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     gap:10px;
     min-width:0;
 }
-/* Person avatar — real profile picture when available (via /api/users?
- * profileImage=), initials fallback via .pav-initials when the img
- * errors. The <img> onerror hides itself + shows the initials span. */
 .ra-prow .pav {
     width:32px;
     height:32px;
@@ -1495,8 +1358,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     font-size:11px;
     color:var(--ra-text-3);
 }
-/* Badge leads the second line ("FTE · 40 h/wk") — kill the offsets it
- * carries for its old name-line position. */
 .ra-prow .prole .ra-emp-badge {
     margin-left:0;
     vertical-align:baseline;
@@ -1527,9 +1388,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:#fff;
     white-space:nowrap;
 }
-/* One-line stat column: "8/0h  on plan" right-aligned; wraps
- * gracefully in narrow columns (state drops beneath, still right-
- * aligned). */
 .ra-putil {
     display:flex;
     align-items:baseline;
@@ -1554,17 +1412,9 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-putil.cap .pv,.ra-putil.cap .pa {
     color:var(--ra-warn-tx);
 }
-/* Slice 2 — type-aware over-cap tone. FTE = amber (target exceeded,
- * burnout signal); PT / Contractor = red (violates ceiling or bill-cap).
- * Volunteer never applies either class — atCap is false for them. */
 .ra-putil.cap-danger .pv,.ra-putil.cap-danger .pa {
     color:var(--ra-danger);
 }
-/* Employment-type badge shown next to a person's name. Per-type colour
- * tracks EmploymentType::overCapTone() from Slice 1 so the badge
- * carries the same "how loud is a warning here" signal the summary
- * numbers do — planners can read a row's semantics before they read
- * the values. */
 .ra-emp-badge {
     display:inline-block;
     margin-left:6px;
@@ -1593,9 +1443,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     background:#e5eef6;
     color:#3a6b8c;
 }
-/* Capacity value displayed as read-only text (not an input) when it
- * comes from the linked user's profile. Signals "source of truth is
- * elsewhere" without hiding the value. */
 .ra-cap-from-user {
     display:inline-block;
     font-size:11px;
@@ -1606,9 +1453,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     padding:0 5px;
     cursor:help;
 }
-/* Slice 3a — program-total rollup segments. Read-only projections
- * shown alongside the primary weekly value; muted so they don't
- * compete with the number the planner is actually editing. */
 .ra-total-hint {
     color:var(--rd-text-3);
     font-variant-numeric:tabular-nums;
@@ -1655,7 +1499,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:var(--ra-text-1);
     font-weight:600;
 }
-/* Budget */
 .ra-bstrip {
     height:12px;
     border-radius:6px;
@@ -1693,10 +1536,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     font-size:12.5px;
     color:var(--ra-text-2);
 }
-/* Budget money cell — numbers FIRST as one left-aligned readable
- * phrase ("$0 spent of $20000"), thin bar underneath for skimming.
- * The old layout led with the bar and spread the two figures to
- * opposite edges, which made the actual values hard to read. */
 .ra-bbar-wrap {
     display:flex;
     flex-direction:column;
@@ -1732,9 +1571,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:var(--ra-text-1);
     font-weight:600;
 }
-/* The two money inputs size to their VALUE (field-sizing:content,
- * Chrome 123+) so "$0 spent of $20000" reads as one continuous
- * phrase; older browsers fall back to a fixed 4.5em. */
 .ra-bnums .ra-inline-input.money {
     width:4.5em;
     text-align:left;
@@ -1742,11 +1578,13 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:var(--rd-text-1);
     margin:0 !important;
 }
-.ra-bnums .ra-inline-input.money {
-    field-sizing:content;
-    width:auto;
-    min-width:1.2em;
-    max-width:7em;
+@supports (field-sizing: content) {
+    .ra-bnums .ra-inline-input.money {
+        field-sizing:content;
+        width:auto;
+        min-width:1.2em;
+        max-width:7em;
+    }
 }
 .ra-bpct {
     text-align:right;
@@ -1823,7 +1661,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     border-radius:3px;
     flex:none;
 }
-/* Dependencies */
 .ra-drow {
     display:grid;
     grid-template-columns:minmax(0,1fr) 140px 130px;
@@ -1873,11 +1710,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     background:rgba(87,181,152,.16);
     color:#57b598;
 }
-/* Empty-state fallback for sections with no rows yet */
-/* Bare empty state — modernized to match .ra-invite feel: soft
- * illustration, breathable copy, subtle bordered container so it
- * reads as an intentional "nothing here yet" panel rather than a
- * bare error line. */
 .ra-empty {
     text-align:center;
     padding:40px 24px;
@@ -1929,12 +1761,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     outline:2px solid var(--rd-accent);
     outline-offset:2px;
 }
-/* Invite-to-author empty state — modernized with a soft illustration
- * container, larger title, breathable copy, and prominent CTA row.
- * Replaces the bare .ra-empty in the three
- * authoring sections. Icon + plain-language line + two CTAs (fill-from-LM +
- * add-manual). Fill button leads because it's the "easy path"; the manual
- * add is always available. */
 .ra-invite {
     text-align:center;
     padding:26px 20px;
@@ -2013,8 +1839,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-btn-add i {
     font-size:11px;
 }
-/* Stub person row — parallel to .ra-brow.stub for budget. Dashed, warm-tint
- * background, "Seeded" chip linkable to the source LM Input. */
 .ra-prow.stub {
     border:1px dashed #e6d9b3;
     background:#fbfaf6;
@@ -2070,17 +1894,12 @@ body.ra-page-active .pageheader .ra-crumb-title {
     cursor:pointer;
     white-space:nowrap;
 }
-/* Muted/honest summary strip — em-dashes and quiet labels when nothing is
- * authored. Applied on .ra-summary when $isFresh (all totals zero). */
 .ra-summary.fresh .ra-scell .sv {
     color:var(--ra-text-4);
 }
 .ra-summary.fresh .ra-scell .sd {
     color:var(--ra-text-4);
 }
-/* V2 "no actuals — untrackable" ghost bar. Keyed on userId === 0 (see
- * §6.1 in Docs/19). Deliberately neutral — NOT alarm-amber, because
- * "cannot log time" is not the same failure mode as "under plan". */
 .ra-noact {
     height:13px;
     border-radius:4px;
@@ -2099,10 +1918,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:var(--ra-text-4);
     font-style:italic;
 }
-/*
- * V2 additions — plan-vs-actual layers on top of V1.
- * These classes are only used when $isV2. V1 rendering is unaffected.
- */
 .ra-guide {
     display:flex;
     align-items:center;
@@ -2148,11 +1963,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     border-radius:20px;
     padding:2px 9px;
 }
-/* V2 Overview — 6-column summary + a "planned / actual / Δ" project table */
-/* Legacy `.v2` override — removed after the single-view merge. The
- * base `.ra-summary` rule now sets 6 equal columns for the merged
- * "always show actuals" layout. */
-/* .ra-summary.v2 rule intentionally removed */
 .ra-jhead {
     padding:0 6px 6px;
     font-size:10.5px;
@@ -2167,13 +1977,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-jhead > div:nth-child(2), .ra-jhead > div:nth-child(3), .ra-jhead > div:nth-child(4) {
     text-align:right;
 }
-/* Top-align all cells so the numbers and the bar share the row's
- * first visual line (the caption hangs under the bar without pushing
- * it off-axis — centering the taller bar+caption group used to float
- * the bar above the number line). */
-/* margin:0 kills the base .ra-jrow's -14px bleed — the header row
- * (.ra-jhead) has no such bleed, so inheriting it offset every value
- * 14px from its column heading. */
 .ra-jrow.v2 {
     grid-template-columns:minmax(0,1fr) 70px 70px 60px 150px;
     gap:14px;
@@ -2198,9 +2001,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:var(--ra-text-3);
     font-weight:400;
 }
-/* Δ column — NEUTRAL by default (a zero delta is the healthy state
- * and must not wear a warning color). `.under` = amber (behind plan),
- * `.over` = red (over plan). */
 .ra-jrow.v2 .delta {
     text-align:right;
     font-size:13px;
@@ -2216,7 +2016,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-jrow.v2 .delta.over {
     color:var(--ra-danger);
 }
-/* Planned but nothing logged yet — muted, not an under/over alarm color. */
 .ra-jrow.v2 .delta.nolog,.ra-jrow.v2 .jpct.nolog {
     color:var(--rd-text-3);
 }
@@ -2253,9 +2052,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     opacity:1;
     background:#f6f9f8;
 }
-/* People — single bullet bar. Colored segments = planned hours per
- * project; the dark vertical marker = total actual logged. Replaces
- * the stacked plan/actual bar pair. */
 .ra-prow.v2 {
     grid-template-columns:186px minmax(0,1fr) 150px;
     padding:13px 6px;
@@ -2296,15 +2092,10 @@ body.ra-page-active .pageheader .ra-crumb-title {
     font-weight:600;
     color:#fff;
 }
-/* Cross-program commitment: solid-but-muted so it reads as "capacity
- * genuinely spoken for" — distinct from the hatched truly-available
- * remainder, and deliberately colorless since it belongs to no project
- * the viewer can see. */
 .ra-planbar .elsewhere {
     background:#c8d0d4;
     cursor:help;
 }
-/* Over capacity: a hard red cap on the right edge of the bar. */
 .ra-planbar .overcap {
     flex:none;
     width:4px;
@@ -2337,8 +2128,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     box-shadow:0 0 0 1.5px #fff;
     z-index:2;
 }
-/* Person plan-vs-log line — "on plan" (zero drift) renders green,
- * behind-plan amber, over-plan red. Base is neutral. */
 .ra-putil .dl {
     font-size:11.5px;
     font-weight:600;
@@ -2432,78 +2221,80 @@ body.ra-page-active .pageheader .ra-crumb-title {
 .ra-cap-from-user {
     font-size:12px;
 }
-.ra-prow.v2 {
-    grid-template-columns:minmax(0,1fr);
-    gap:8px;
+@media (max-width: 700px) {
+    .ra-prow.v2 {
+        grid-template-columns:minmax(0,1fr);
+        gap:8px;
+    }
+    .ra-putil {
+        justify-content:flex-start;
+    }
+    .ra-ptot {
+        grid-template-columns:minmax(0,1fr);
+        gap:6px;
+        padding-top:10px;
+    }
+    .ra-ptot .ra-putil {
+        justify-content:flex-start;
+    }
+    .ra-jrow.v2 {
+        grid-template-columns:minmax(0,1fr) 44px 44px 48px;
+        gap:8px;
+    }
+    .ra-jrow.v2 > div:nth-child(5) {
+        grid-column:1 / -1;
+    }
+    .ra-jhead {
+        grid-template-columns:minmax(0,1fr) 44px 44px 48px;
+        gap:8px;
+    }
+    .ra-jhead > div:nth-child(5) {
+        display:none;
+    }
+    .ra-header {
+        padding:20px 20px 16px;
+    }
+    .ra-block {
+        padding:16px 14px;
+    }
+    .ra-shell.ra-scope {
+        padding:0;
+    }
+    .ra-header .ra-header-actions {
+        position:static;
+        margin-top:10px;
+    }
 }
-.ra-putil {
-    justify-content:flex-start;
-}
-.ra-ptot {
-    grid-template-columns:minmax(0,1fr);
-    gap:6px;
-    padding-top:10px;
-}
-.ra-ptot .ra-putil {
-    justify-content:flex-start;
-}
-.ra-jrow.v2 {
-    grid-template-columns:minmax(0,1fr) 44px 44px 48px;
-    gap:8px;
-}
-.ra-jrow.v2 > div:nth-child(5) {
-    grid-column:1 / -1;
-}
-.ra-jhead {
-    grid-template-columns:minmax(0,1fr) 44px 44px 48px;
-    gap:8px;
-}
-.ra-jhead > div:nth-child(5) {
-    display:none;
-}
-.ra-header {
-    padding:20px 20px 16px;
-}
-.ra-block {
-    padding:16px 14px;
-}
-.ra-shell.ra-scope {
-    padding:0;
-}
-/* Corner-pinned actions collide with the wrapping title on phones —
-     * let them flow beneath it instead. */
-.ra-header .ra-header-actions {
-    position:static;
-    margin-top:10px;
-}
-.ra-panel {
-    box-shadow: none;
-    padding: 0;
-}
-.ra-deck {
-    height: auto !important;
-    overflow: visible !important;
-}
-.ra-track {
-    display: block !important;
-    transform: none !important;
-}
-.ra-page {
-    min-width: 0 !important;
-    width: 100% !important;
-    page-break-inside: avoid;
-    padding: 8px 0 20px;
-    border-top: 1px solid var(--ra-line-soft);
-}
-.ra-page:first-child {
-    border-top: 0;
-}
-.ra-prow, .ra-brow, .ra-jrow, .ra-drow {
-    page-break-inside: avoid;
-}
-.ra-cbar .sl2 {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+@media print {
+    .ra-panel {
+        box-shadow: none;
+        padding: 0;
+    }
+    .ra-deck {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    .ra-track {
+        display: block !important;
+        transform: none !important;
+    }
+    .ra-page {
+        min-width: 0 !important;
+        width: 100% !important;
+        page-break-inside: avoid;
+        padding: 8px 0 20px;
+        border-top: 1px solid var(--ra-line-soft);
+    }
+    .ra-page:first-child {
+        border-top: 0;
+    }
+    .ra-prow, .ra-brow, .ra-jrow, .ra-drow {
+        page-break-inside: avoid;
+    }
+    .ra-cbar .sl2 {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
 }
 
 /* ═══ Modal partials (folded from 4 files) ═══ */
@@ -2803,9 +2594,6 @@ body.ra-page-active .pageheader .ra-crumb-title {
     color:var(--rd-text-4);
     font-size:12px;
 }
-/* !importants beat the global input pill styling — without them the
-         * inner input renders its own border inside the search pill (double
-         * search bar). */
 .ra-mp-search input {
     border:none !important;
     background:transparent !important;

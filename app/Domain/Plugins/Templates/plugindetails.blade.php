@@ -44,6 +44,7 @@
             ]));
             $pluginFirstTab = $pluginTabOrder[0] ?? null;
         @endphp
+        @if ($pluginFirstTab !== null)
         <x-global::navigation.tabs group="plugindetails" label="Plugin details sections">
             @if (! empty($plugin->description))
                 <x-global::navigation.tabs.tab name="overview" :selected="$pluginFirstTab === 'overview'">Overview</x-global::navigation.tabs.tab>
@@ -57,6 +58,7 @@
                 <x-global::navigation.tabs.tab name="compatibility" :selected="$pluginFirstTab === 'compatibility'">Compatibility</x-global::navigation.tabs.tab>
             @endif
         </x-global::navigation.tabs>
+        @endif
 
         <div class="tw-overflow-y-scroll tw-max-h-[600px]">
                 @if (! empty($plugin->description))
