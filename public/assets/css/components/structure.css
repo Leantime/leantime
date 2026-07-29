@@ -592,3 +592,30 @@ body {
 .announcementBanner:before {
 
 }
+
+/* ── Document-page mode ──────────────────────────────────────────────
+   body.lt-doc-page: for pages whose content card renders its OWN doc-shell
+   header (the stakeholder reports' .rd-hdr — see report-deck.css). The shared
+   teal pageheader collapses (kept in the DOM so its lifecycle hooks still
+   fire) and the content shell goes flush/transparent so the document card IS
+   the page. ONE implementation for every doc-shell page — never re-create
+   this per page in a template. Specificity (body + class) outranks the plain
+   .pageheader/.maincontentinner base rules, so no !important is needed.
+   (RA's body.ra-page-active predates this mode and should converge onto it
+   in the tab-component rollout follow-ups.) */
+body.lt-doc-page .pageheader {
+    display: none;
+}
+body.lt-doc-page .maincontent {
+    margin-top: 0;
+    padding-top: 14px;
+}
+body.lt-doc-page .maincontentinner {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
