@@ -32,12 +32,13 @@ interface ResourcesGateway
      * @param  array<int>  $projectIds  Projects to aggregate over. May include
      *                                  the program row itself and its children,
      *                                  or a hand-picked subset for a report.
-     * @param  string|null  $actualsFrom  Start of the logged-hours window (Y-m-d,
-     *                                    DB timezone). Null = provider default
-     *                                    (current week).
+     * @param  string|null  $actualsFrom  Start of the logged-hours window
+     *                                    (Y-m-d, UTC — DB datetimes are stored
+     *                                    in UTC; do not pass user-local dates).
+     *                                    Null = provider default (current week).
      * @param  string|null  $actualsTo  End of the logged-hours window (Y-m-d,
-     *                                  inclusive). Pass the report period so
-     *                                  actuals line up with what's reported on.
+     *                                  UTC, inclusive). Pass the report period
+     *                                  so actuals line up with what's reported on.
      * @return ResourceSummary Empty summary if none of the projects have
      *                         resources authored.
      */
