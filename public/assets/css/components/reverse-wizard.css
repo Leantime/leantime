@@ -1,0 +1,950 @@
+/*
+ * Reverse wizard + intercept modal + review + source-chip styles.
+ *
+ * Consumed by the StrategyPro plugin's reverse-engineering flow, but loaded
+ * from the CORE bundle (imported via main.less, like report-deck.css) because
+ * the wizard never renders on "its own page": the intercept modal is echoed by
+ * a register.php hook onto arbitrary pages, the stage screens arrive as HTMX
+ * swaps, and the source-chip is procedurally rendered by the board hook —
+ * so the styles must already be in the head everywhere.
+ *
+ * Extracted from per-template <style> blocks (plugins PR #79 cleanup); CSS
+ * lives in CSS files, never in blade templates.
+ *
+ * Scopes: .reverse-modal (intercept), .rev-wiz (stages; .rev-wiz--outcomes /
+ * .rev-wiz--step carry the four per-stage divergences), .rev-review (review),
+ * .sp-source-chip (colors computed per program stay inline).
+ */
+
+/* Scoped design tokens — derived from the global theme tokens so the
+ * light/dark CSS swap re-skins the wizard automatically (nyroModal pattern).
+ * Literals below have no global equivalent; the [data-theme="dark"]/.dark
+ * block (tiptap pattern) retunes them when a theme attribute is stamped.
+ * The source-chip's computed per-program colors are self-contained tinted
+ * pills (AA inside the pill) and deliberately theme-independent. */
+.reverse-modal, .rev-wiz, .rev-review {
+    --rw-panel: var(--secondary-background);
+    --rw-text: var(--primary-font-color);
+    --rw-text-2: #5a6a72;
+    --rw-muted: #8996a0;
+    --rw-faint: #b3bdc4;
+    --rw-border: var(--main-border-color);
+    --rw-border-soft: #f0f3f4;
+    --rw-accent: var(--accent2);
+    --rw-accent-deep: #008062;
+    --rw-primary: var(--primary-color);
+    --rw-tgt: #8E6AAD;
+}
+[data-theme="dark"] .reverse-modal, .dark .reverse-modal,
+[data-theme="dark"] .rev-wiz, .dark .rev-wiz,
+[data-theme="dark"] .rev-review, .dark .rev-review {
+    --rw-text-2: #b6bec4;
+    --rw-muted: #97a1a8;
+    --rw-faint: #6a747c;
+    --rw-border-soft: #3a3f44;
+    --rw-accent-deep: #57b598;
+    --rw-tgt: #b79ad1;
+}
+
+/* ── Intercept modal ─────────────────────────────────────────────── */
+
+/* Scoped to the intercept modal — reverse-* prefix so nothing collides
+       with the canvas view CSS underneath. */
+
+.reverse-modal-backdrop {
+    position:fixed;
+    inset:0;
+    background:rgba(24,40,49,0.45);
+    backdrop-filter:blur(3px);
+    z-index:var(--zlayer-9, 9999);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+    overflow:hidden;
+}
+
+/* Modal itself scrolls internally when the step content is taller than
+       the viewport. Without this, long steps (Activities with two altitudes
+       + textarea + helper hint) push the Continue/Cancel foot below the
+       viewport with no way to reach it. */
+
+.reverse-modal {
+    width:100%;
+    max-width:720px;
+    max-height:calc(100vh - 56px);
+    background:var(--rw-panel);
+    border-radius:18px;
+    box-shadow:0 20px 56px rgba(20,40,50,.18);
+    overflow-y:auto;
+    overflow-x:hidden;
+    font-family:'Hanken Grotesk',sans-serif;
+    color:var(--rw-text);
+    -webkit-overflow-scrolling:touch;
+}
+
+.reverse-modal .rm-hd {
+    padding:24px 28px 6px;
+    text-align:center;
+}
+
+.reverse-modal .rm-hd .ic {
+    width:52px;
+    height:52px;
+    border-radius:14px;
+    background:#eef4f3;
+    color:var(--rw-primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    margin:0 auto 14px;
+}
+
+.reverse-modal .rm-hd h1 {
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:-.3px;
+    margin:0;
+}
+
+.reverse-modal .rm-hd p {
+    font-size:13.5px;
+    color:#7a8791;
+    margin-top:6px;
+    max-width:440px;
+    margin-left:auto;
+    margin-right:auto;
+    line-height:1.5;
+}
+
+.reverse-modal .rm-found {
+    margin:0 28px 20px;
+    padding:11px 15px;
+    background:#f6f8f7;
+    border-radius:11px;
+    font-size:12.5px;
+    color:#4a5a63;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    line-height:1.4;
+}
+
+.reverse-modal .rm-found i {
+    color:var(--rw-accent);
+}
+
+.reverse-modal .rm-found b {
+    color:var(--rw-text);
+}
+
+.reverse-modal .rm-body {
+    padding:16px 28px 26px;
+    display:flex;
+    flex-direction:column;
+    gap:11px;
+}
+
+.reverse-modal .rm-opt {
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:16px 18px;
+    border:1.5px solid #e3e8ea;
+    border-radius:14px;
+    cursor:pointer;
+    transition:all .15s;
+    text-decoration:none;
+    color:inherit;
+    background:var(--rw-panel);
+}
+
+.reverse-modal .rm-opt:hover {
+    border-color:var(--rw-accent);
+    background:#f8fbfa;
+}
+
+.reverse-modal .rm-opt.primary {
+    border-color:#bfe0d4;
+    background:#f4fbf8;
+}
+
+.reverse-modal .rm-opt .oic {
+    width:42px;
+    height:42px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:17px;
+    color:#fff;
+    flex:none;
+}
+
+.reverse-modal .rm-opt .ot {
+    font-size:15px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    line-height:1.3;
+}
+
+.reverse-modal .rm-opt .obadge {
+    font-size:10px;
+    font-weight:600;
+    background:#e7f5ee;
+    color:#1a7d52;
+    border-radius:20px;
+    padding:2px 9px;
+}
+
+.reverse-modal .rm-opt .od {
+    font-size:12.5px;
+    color:#7a8791;
+    margin-top:2px;
+    line-height:1.45;
+}
+
+.reverse-modal .rm-opt .arr {
+    margin-left:auto;
+    color:#aab4bb;
+    font-size:15px;
+}
+
+.reverse-modal .rm-opt.is-loading {
+    opacity:.6;
+    pointer-events:none;
+}
+
+.reverse-modal .htmx-indicator {
+    display:none;
+}
+
+.reverse-modal .htmx-request .htmx-indicator {
+    display:inline-block;
+}
+
+/* When the intercept is up, hide the underlying stage flow so the modal
+       reads as a takeover, not an overlay on active work. */
+
+body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-stages, body.reverse-intercept-open [data-lm-stages] {
+    visibility:hidden;
+}
+
+/* ── Wizard stages: shared chrome (outcomes + step) ─────────────── */
+
+.rev-wiz {
+    font-family:'Hanken Grotesk',sans-serif;
+    color:var(--rw-text);
+}
+
+.rev-wiz .rw-hd {
+    padding:26px 30px 0;
+    text-align:center;
+}
+
+.rev-wiz .rw-hd .ey {
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+    color:var(--rw-accent);
+    margin-bottom:8px;
+}
+
+.rev-wiz .rw-hd h1 {
+    font-size:21px;
+    font-weight:600;
+    letter-spacing:-.3px;
+    margin:0;
+}
+
+.rev-wiz .rw-hd p {
+    font-size:13.5px;
+    color:var(--rw-muted);
+    margin-top:7px;
+    max-width:470px;
+    margin-left:auto;
+    margin-right:auto;
+    line-height:1.5;
+}
+
+.rev-wiz .rw-rail {
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:20px 30px 30px;
+}
+
+.rev-wiz .rw-node {
+    display:flex;
+    align-items:center;
+}
+
+.rev-wiz .rw-dot {
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:var(--rw-border);
+    position:relative;
+}
+
+.rev-wiz .rw-node.done .rw-dot {
+    background:var(--rw-accent);
+}
+
+.rev-wiz .rw-node.on .rw-dot {
+    background:var(--rw-tgt);
+    box-shadow:0 0 0 4px #f2edf8;
+}
+
+.rev-wiz .rw-seg {
+    width:36px;
+    height:2px;
+    background:var(--rw-border);
+}
+
+.rev-wiz .rw-seg.done {
+    background:var(--rw-accent);
+}
+
+.rev-wiz .rw-lab {
+    position:absolute;
+    top:15px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:10.5px;
+    white-space:nowrap;
+    color:var(--rw-tgt);
+    font-weight:600;
+}
+
+.rev-wiz .rw-scope {
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin:0 30px 18px;
+    padding:11px 15px;
+    background:#f7f9f9;
+    border-radius:12px;
+    font-size:12.5px;
+    color:var(--rw-text-2);
+}
+
+.rev-wiz .rw-scope i.si {
+    color:var(--rw-primary);
+    opacity:.7;
+}
+
+.rev-wiz .rw-scope b {
+    color:var(--rw-text);
+    font-weight:600;
+}
+
+.rev-wiz .rw-body {
+    padding:0 30px 6px;
+}
+
+.rev-wiz .rw-row {
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:15px 16px;
+    border:1px solid var(--rw-border-soft);
+    border-radius:14px;
+    margin-bottom:9px;
+    cursor:pointer;
+    transition:border-color .15s,background .15s;
+    background:var(--rw-panel);
+}
+
+.rev-wiz .rw-row:hover {
+    border-color:#d6e3de;
+    background:#fbfdfc;
+}
+
+.rev-wiz .rw-row.is-sel {
+    border-color:#bfe3d6;
+    background:#f5fbf9;
+}
+
+.rev-wiz .rw-ck {
+    width:20px;
+    height:20px;
+    border-radius:6px;
+    border:1.5px solid var(--rw-border);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:none;
+    color:#fff;
+    font-size:10px;
+    transition:.15s;
+    background:var(--rw-panel);
+}
+
+.rev-wiz .rw-row.is-sel .rw-ck {
+    background:var(--rw-accent);
+    border-color:var(--rw-accent);
+}
+
+.rev-wiz .rw-main {
+    min-width:0;
+    flex:1;
+}
+
+.rev-wiz .rw-name {
+    font-size:14px;
+    font-weight:600;
+    line-height:1.3;
+    color:var(--rw-text);
+}
+
+.rev-wiz .rw-meta .dot {
+    margin:0 6px;
+    opacity:.5;
+}
+
+.rev-wiz .rw-reveal {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    padding:13px 16px;
+    margin-top:4px;
+    background:none;
+    border:1px dashed var(--rw-border);
+    border-radius:14px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:12.5px;
+    color:var(--rw-text-2);
+}
+
+.rev-wiz .rw-reveal:hover {
+    border-color:#cdd6db;
+    background:#fafbfb;
+}
+
+.rev-wiz .rw-reveal i.lead {
+    color:var(--rw-faint);
+}
+
+.rev-wiz .rw-reveal .rc {
+    margin-left:auto;
+    color:var(--rw-faint);
+    font-size:11px;
+}
+
+.rev-wiz .rw-hidden {
+    display:none;
+}
+
+.rev-wiz .rw-hidden.open {
+    display:block;
+    margin-top:9px;
+}
+
+.rev-wiz .rw-prov {
+    font-size:11.5px;
+    color:var(--rw-faint);
+    margin:14px 2px 4px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.rev-wiz .rw-foot {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:18px 30px 22px;
+    border-top:1px solid var(--rw-border-soft);
+    margin-top:12px;
+}
+
+.rev-wiz .rw-foot .cnt {
+    font-size:12.5px;
+    color:var(--rw-muted);
+}
+
+.rev-wiz .rw-foot .cnt b {
+    color:var(--rw-text);
+}
+
+.rev-wiz .rw-foot .sp {
+    margin-left:auto;
+}
+
+.rev-wiz .rw-btn-skip {
+    border:none;
+    background:none;
+    color:var(--rw-muted);
+}
+
+/* ── Outcomes-stage specifics ────────────────────────────────────── */
+
+.rev-wiz.rev-wiz--outcomes .rw-seclab {
+    font-size:12px;
+    color:var(--rw-muted);
+    margin:0 2px 11px;
+}
+
+.rev-wiz.rev-wiz--outcomes .rw-meta {
+    font-size:11.5px;
+    color:var(--rw-muted);
+    margin-top:5px;
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:2px;
+}
+
+.rev-wiz.rev-wiz--outcomes .rw-btn {
+    font-family:inherit;
+    font-size:13px;
+    font-weight:500;
+    border-radius:22px;
+    padding:10px 17px;
+    cursor:pointer;
+    border:1px solid var(--rw-border);
+    background:var(--rw-panel);
+    color:var(--rw-text-2);
+}
+
+.rev-wiz.rev-wiz--outcomes .rw-btn-next {
+    background:var(--rw-primary);
+    color:#fff;
+    border-color:var(--rw-primary);
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+}
+
+.rev-wiz .rw-meta .tgt {
+    color:var(--rw-tgt);
+    font-weight:600;
+}
+
+.rev-wiz .rw-source-note {
+    font-size:12px;
+    color:#54636b;
+    margin:16px 2px 2px;
+    padding-top:13px;
+    border-top:1px dashed var(--rw-border-soft);
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    line-height:1.55;
+}
+
+.rev-wiz .rw-source-note i {
+    color:var(--rw-accent-deep);
+    margin-top:2px;
+    flex:none;
+    font-size:11px;
+}
+
+.rev-wiz .rw-btn-next[disabled] {
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* ── Step-stage specifics ────────────────────────────────────────── */
+
+.rev-wiz.rev-wiz--step .rw-seclab {
+    font-size:12px;
+    color:var(--rw-muted);
+    margin:14px 2px 11px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    font-weight:600;
+}
+
+.rev-wiz.rev-wiz--step .rw-meta {
+    font-size:11.5px;
+    color:var(--rw-muted);
+    margin-top:3px;
+}
+
+.rev-wiz.rev-wiz--step .rw-btn {
+    font-family:inherit;
+    font-size:13px;
+    font-weight:500;
+    border-radius:22px;
+    padding:10px 17px;
+    cursor:pointer;
+    border:1px solid var(--rw-border);
+    background:var(--rw-panel);
+    color:var(--rw-text-2);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+}
+
+.rev-wiz.rev-wiz--step .rw-btn-next {
+    background:var(--rw-primary);
+    color:#fff;
+    border-color:var(--rw-primary);
+    font-weight:600;
+}
+
+.rev-wiz .rw-seclab:first-child {
+    margin-top:0;
+}
+
+.rev-wiz .rw-grouplab {
+    font-size:12.5px;
+    color:var(--rw-text-2);
+    margin:12px 2px 8px;
+    font-weight:600;
+}
+
+.rev-wiz .rw-groupmeta {
+    font-size:11.5px;
+    color:var(--rw-muted);
+    font-weight:400;
+    margin-left:6px;
+    font-style:italic;
+}
+
+.rev-wiz .rw-tail {
+    font-size:11.5px;
+    color:var(--rw-muted);
+    margin:6px 2px;
+    font-style:italic;
+}
+
+.rev-wiz .rw-guide {
+    padding:0 4px 8px;
+}
+
+.rev-wiz .rw-guide h2 {
+    font-size:16px;
+    font-weight:600;
+    color:var(--rw-text);
+    margin:0 0 6px;
+    letter-spacing:-.1px;
+}
+
+.rev-wiz .rw-guide p {
+    font-size:14px;
+    color:var(--rw-text-2);
+    line-height:1.55;
+    margin:0 0 14px;
+}
+
+.rev-wiz .rw-guide .rw-guide-lbl {
+    display:block;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    color:var(--rw-muted);
+    margin:16px 2px 8px;
+}
+
+.rev-wiz .rw-guide textarea {
+    width:100%;
+    padding:14px 16px;
+    border:1.5px solid var(--rw-border);
+    border-radius:14px;
+    font-family:inherit;
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--rw-text);
+    resize:vertical;
+    min-height:140px;
+    box-sizing:border-box;
+}
+
+.rev-wiz .rw-guide textarea:focus {
+    outline:none;
+    border-color:var(--rw-accent);
+    box-shadow:0 0 0 3px rgba(0,184,147,.08);
+}
+
+.rev-wiz .rw-guide textarea::placeholder {
+    color:var(--rw-faint);
+    font-style:normal;
+}
+
+/* ── Review screen ───────────────────────────────────────────────── */
+
+.rev-review {
+    font-family:'Hanken Grotesk',sans-serif;
+    color:var(--rw-text);
+}
+
+.rev-review .rr-hd {
+    padding:26px 30px 6px;
+    text-align:center;
+}
+
+.rev-review .rr-hd .ey {
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+    color:var(--rw-accent);
+    margin-bottom:8px;
+}
+
+.rev-review .rr-hd h1 {
+    font-size:21px;
+    font-weight:600;
+    letter-spacing:-.3px;
+    margin:0;
+}
+
+.rev-review .rr-hd p {
+    font-size:13.5px;
+    color:var(--rw-muted);
+    margin-top:7px;
+    max-width:470px;
+    margin-left:auto;
+    margin-right:auto;
+    line-height:1.5;
+}
+
+.rev-review .rr-body {
+    padding:14px 30px 6px;
+}
+
+.rev-review .rr-stage {
+    border:1px solid var(--rw-border-soft);
+    border-radius:14px;
+    margin-bottom:9px;
+    background:var(--rw-panel);
+    overflow:hidden;
+}
+
+.rev-review .rr-stage.is-empty {
+    background:#fafbfc;
+    border-color:#f4f6f7;
+}
+
+.rev-review .rr-stage summary {
+    padding:13px 16px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    list-style:none;
+    user-select:none;
+}
+
+.rev-review .rr-stage summary::-webkit-details-marker {
+    display:none;
+}
+
+.rev-review .rr-stage summary:hover {
+    background:#fbfdfc;
+}
+
+.rev-review .rr-stage .rr-icon {
+    width:28px;
+    height:28px;
+    border-radius:8px;
+    background:#f3f5f6;
+    color:var(--rw-text-2);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    flex:none;
+}
+
+.rev-review .rr-stage[data-count="0"] .rr-icon {
+    background:#f7f9f9;
+    color:var(--rw-faint);
+}
+
+.rev-review .rr-stage .rr-title {
+    font-size:14px;
+    font-weight:600;
+    color:var(--rw-text);
+    flex:1;
+    min-width:0;
+}
+
+.rev-review .rr-stage .rr-count {
+    font-size:12px;
+    font-weight:500;
+    color:var(--rw-text-2);
+    background:var(--rw-border-soft);
+    border-radius:20px;
+    padding:3px 10px;
+}
+
+.rev-review .rr-stage[data-count="0"] .rr-count {
+    background:#f7f9f9;
+    color:var(--rw-faint);
+    font-style:italic;
+}
+
+.rev-review .rr-stage .rr-badge {
+    font-size:10px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    padding:2px 8px;
+    border-radius:20px;
+}
+
+.rev-review .rr-stage .rr-badge.seeded {
+    background:#e7f5ee;
+    color:#1a7d52;
+}
+
+.rev-review .rr-stage .rr-badge.authored {
+    background:#fdf2e6;
+    color:#9A6A11;
+}
+
+.rev-review .rr-stage .rr-badge.mixed {
+    background:#eef2f8;
+    color:#3F5D80;
+}
+
+.rev-review .rr-details .rr-source {
+    color:var(--rw-faint);
+    font-size:11px;
+    font-weight:500;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    margin-left:6px;
+    font-style:normal;
+}
+
+.rev-review .rr-stage summary .arr {
+    margin-left:8px;
+    color:var(--rw-faint);
+    font-size:12px;
+    transition:transform .15s;
+}
+
+.rev-review .rr-stage[open] summary .arr {
+    transform:rotate(90deg);
+}
+
+.rev-review .rr-details {
+    padding:2px 16px 14px 60px;
+}
+
+.rev-review .rr-details ul {
+    margin:0;
+    padding:0;
+    list-style:none;
+    font-size:13px;
+    color:var(--rw-text);
+    line-height:1.65;
+}
+
+.rev-review .rr-details li {
+    padding:2px 0;
+}
+
+.rev-review .rr-details li::before {
+    content:"·";
+    color:var(--rw-faint);
+    margin-right:8px;
+}
+
+.rev-review .rr-details .empty {
+    font-style:italic;
+    color:var(--rw-muted);
+    font-size:12.5px;
+}
+
+.rev-review .rr-details .impact-text {
+    background:#fdf9f2;
+    border-left:2px solid #d4a44c;
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:14px;
+    color:var(--rw-text);
+    line-height:1.55;
+    font-weight:500;
+}
+
+.rev-review .rr-emptyall {
+    background:#fdf6e3;
+    border:1px solid #f2e5b5;
+    color:#5a4a10;
+    padding:14px 18px;
+    border-radius:12px;
+    font-size:13px;
+    margin:14px 0;
+}
+
+.rev-review .rr-foot {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:18px 30px 22px;
+    border-top:1px solid var(--rw-border-soft);
+    margin-top:14px;
+}
+
+.rev-review .rr-note {
+    font-size:12.5px;
+    color:var(--rw-muted);
+    line-height:1.5;
+    flex:1;
+}
+
+.rev-review .rr-note b {
+    color:var(--rw-text);
+}
+
+.rev-review .rr-btn {
+    font-family:inherit;
+    font-size:13px;
+    font-weight:500;
+    border-radius:22px;
+    padding:10px 17px;
+    cursor:pointer;
+    border:1px solid var(--rw-border);
+    background:var(--rw-panel);
+    color:var(--rw-text-2);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+}
+
+.rev-review .rr-btn-primary {
+    background:var(--rw-primary);
+    color:#fff;
+    border-color:var(--rw-primary);
+    font-weight:600;
+}
+
+.rev-review .rr-btn-primary[disabled] {
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* ── Source/altitude chip (colors are computed per program inline) ── */
+
+.sp-source-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+    border-radius: 20px;
+    padding: 2px 9px;
+    border: 1px solid;
+}
+
+.sp-source-chip i {
+    font-size: 9px;
+    opacity: .85;
+}
