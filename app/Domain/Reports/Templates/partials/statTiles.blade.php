@@ -26,7 +26,7 @@
             @if ($delta !== null)
                 <span class="tileDelta {{ $deltaClass }}">
                     @if ($delta['value'] > 0) ▲ +{{ \Illuminate\Support\Number::format($delta['value'], maxPrecision: 1) }}
-                    @elseif ($delta['value'] < 0) ▼ {{ \Illuminate\Support\Number::format($delta['value'], maxPrecision: 1) }}
+                    @elseif ($delta['value'] < 0) ▼ {{ \Illuminate\Support\Number::format(abs($delta['value']), maxPrecision: 1) }}
                     @else ±0
                     @endif
                     {{ $delta['vs'] }}

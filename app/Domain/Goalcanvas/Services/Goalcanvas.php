@@ -65,7 +65,7 @@ class Goalcanvas extends BaseService
             // so the board/dashboard render the edge model, not the legacy column.
             $milestonesByGoal = $this->goalRepository->getMilestonesForGoals(
                 array_map(static fn ($g) => (int) $g['id'], $goals)
-            ) ?: [];
+            );
             foreach ($goals as &$goal) {
                 $goal['milestones'] = $milestonesByGoal[(int) $goal['id']] ?? [];
                 $progressValue = 0;
@@ -261,9 +261,12 @@ class Goalcanvas extends BaseService
 
     /**
      * Batch sibling of getGoalMilestones(): hydrate milestone chips for many
-     * goals in one pass so callers with a goal set (e.g. the reports engine)
-     * avoid an N+1. Each goal is authorized for VIEW against its real project;
-     * goals the caller can't see are omitted. Returns [goalId => milestones[]].
+     * goals in a single pass, so callers with a goal set (e.g. the reports
+     * engine) avoid an N+1. Each goal is authorized for VIEW against its real
+     * project; goals the caller can't see are silently omitted. Returns a map
+     * keyed by goal id: every AUTHORIZED goal is present, mapping to an empty
+     * array when it has no milestones — so callers get a predictable key set.
+     * Only unauthorized/invisible goals are absent.
      *
      * @param  int[]  $goalIds
      * @return array<int, array<int, array<string, mixed>>>
@@ -526,7 +529,15 @@ class Goalcanvas extends BaseService
             return false;
         }
 
-        return $this->goalRepository->getSingleCanvasItem($id);
+        $item = $this->goalRepository->getSingleCanvasItem($id);
+        if (is_array($item)) {
+            // Surface the item's REAL (authorized) project so callers scope
+            // project-dependent UI to the goal's project, not the session's —
+            // the dialog can be opened for a goal outside the current project.
+            $item['projectId'] = $projectId;
+        }
+
+        return $item;
     }
 
     /**
@@ -676,8 +687,17 @@ class Goalcanvas extends BaseService
 
         $newId = $this->goalRepository->addCanvasItem($values);
 
-        if ($newId !== false && array_key_exists('milestoneId', $values)) {
-            $this->syncGoalMilestoneEdges((int) $newId, $values['milestoneId'], (int) session('userdata.id'));
+        // Only reconcile edges when a real milestone id is supplied. A brand-new
+        // item has no edges to clear, so an empty milestoneId — controllers post
+        // '' for every box via a hidden input — would just cost a wasted lookup.
+        // The update/patch paths still process empty values there, where clearing
+        // an existing link is a meaningful edit.
+        $milestoneIdValue = $values['milestoneId'] ?? null;
+        if ($newId !== false
+            && is_scalar($milestoneIdValue)
+            && filter_var($milestoneIdValue, FILTER_VALIDATE_INT) > 0
+        ) {
+            $this->syncGoalMilestoneEdges((int) $newId, $milestoneIdValue, (int) session('userdata.id'));
         }
 
         return $newId;
@@ -723,8 +743,11 @@ class Goalcanvas extends BaseService
 
         $desired = [];
         foreach (is_array($milestoneIdValue) ? $milestoneIdValue : [$milestoneIdValue] as $value) {
-            $milestoneId = (int) $value;
-            if ($milestoneId > 0) {
+            // Strict int validation — (int) would coerce '42abc' to 42 and could
+            // silently link the wrong milestone if a malformed value reaches this
+            // path (e.g. via JSON-RPC). Non-scalar / non-int values are dropped.
+            $milestoneId = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
+            if ($milestoneId !== false && $milestoneId > 0) {
                 $desired[] = $milestoneId;
             }
         }
@@ -758,7 +781,10 @@ class Goalcanvas extends BaseService
 
         $result = $this->goalRepository->patchCanvasItem($id, $params);
 
-        if (array_key_exists('milestoneId', $params)) {
+        // Only mirror the milestoneId change into the tracked_by edges when the
+        // column patch actually persisted — otherwise the edges would drift from
+        // the milestoneId column and break the dual-write invariant.
+        if ($result && array_key_exists('milestoneId', $params)) {
             $this->syncGoalMilestoneEdges($id, $params['milestoneId'], (int) session('userdata.id'));
         }
 

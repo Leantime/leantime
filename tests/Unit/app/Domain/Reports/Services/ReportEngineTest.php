@@ -233,6 +233,10 @@ class ReportEngineTest extends TestCase
             (object) ['id' => 2, 'title' => 'Rollup KPI', 'description' => '', 'status' => 'status_atrisk', 'metricType' => 'count', 'startValue' => 0.0, 'currentValue' => 0.0, 'endValue' => 100.0, 'setting' => 'linkAndReport', 'milestoneId' => '', 'kpi' => '', 'startDate' => null, 'endDate' => null, 'canvasId' => 5, 'projectId' => 10, 'boardTitle' => 'Goals', 'milestoneHeadline' => null],
         ]);
         $this->goalService->method('getChildGoalsForReporting')->with(2)->willReturn(25.0);
+        // The engine batches milestone-chip hydration up front; stub it so the
+        // test exercises the rollup/progress path without relying on a mock's
+        // default null return.
+        $this->goalService->method('getMilestonesForGoals')->willReturn([1 => [], 2 => []]);
 
         $report = $this->service->getGoalReportForProjects([10]);
 

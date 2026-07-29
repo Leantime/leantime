@@ -7,7 +7,6 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -3001,19 +3000,32 @@ class Install
     public function update_sql_30524(): bool|array
     {
         try {
-            if (! Schema::hasTable('zp_canvas_items')
-                || ! Schema::hasTable('zp_entity_relationship')
-                || ! Schema::hasTable('zp_tickets')) {
+            // Guard on the installer's own connection (not the global Schema
+            // facade, which checks the default connection) so the existence
+            // check matches the connection the migration queries run against
+            // (may be a temp/target install connection).
+            // DatabaseManager always resolves a concrete Connection here; the
+            // property is typed to the interface, which doesn't declare the
+            // schema-builder accessor, so narrow it for static analysis.
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_entity_relationship')
+                || ! $schema->hasTable('zp_tickets')
+                || ! $schema->hasColumn('zp_canvas_items', 'milestoneId')) {
                 return true;
             }
 
-            $now = now()->format('Y-m-d H:i:s');
+            // UTC — DB datetimes are stored in UTC; date() would use the server
+            // timezone and write a skewed createdOn.
+            $now = gmdate('Y-m-d H:i:s');
 
             // Chunk the goal rows so a very large zp_canvas_items never loads
             // into memory at once. Each chunk resolves its own live-milestone
             // and existing-edge sets, scoped to the chunk's ids (no full-table
             // scan), then batch-inserts.
-            DB::table('zp_canvas_items')
+            $this->connection->table('zp_canvas_items')
                 ->where('box', 'goal')
                 ->whereNotNull('milestoneId')
                 ->where('milestoneId', '<>', '')
@@ -3047,15 +3059,12 @@ class Install
                     // both scoped to this chunk's ids — O(1) lookups, no N+1.
                     $liveTickets = array_flip(array_map(
                         'intval',
-                        DB::table('zp_tickets')
-                            ->whereIn('id', array_keys($milestoneIds))
-                            ->where('type', 'milestone')
-                            ->pluck('id')->all()
+                        $this->connection->table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->where('type', 'milestone')->where('status', '<>', -1)->pluck('id')->all()
                     ));
 
                     $existingEdges = [];
                     foreach (
-                        DB::table('zp_entity_relationship')
+                        $this->connection->table('zp_entity_relationship')
                             ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
                             ->where('entityAType', 'GoalItem')
                             ->where('entityBType', 'Ticket')
@@ -3063,7 +3072,7 @@ class Install
                             ->select('entityA', 'entityB')
                             ->get() as $e
                     ) {
-                        $existingEdges[(int) $e->entityA.':'.(int) $e->entityB] = true;
+                        $existingEdges[sprintf('%d:%d', (int) $e->entityA, (int) $e->entityB)] = true;
                     }
 
                     $rows = [];
@@ -3090,7 +3099,7 @@ class Install
                     }
 
                     foreach (array_chunk($rows, 200) as $insertChunk) {
-                        DB::table('zp_entity_relationship')->insert($insertChunk);
+                        $this->connection->table('zp_entity_relationship')->insert($insertChunk);
                     }
                 });
         } catch (\Exception $e) {
@@ -3114,6 +3123,14 @@ class Install
      */
     public function update_sql_30525(): bool|array
     {
-        return $this->update_sql_30524();
+        $result = $this->update_sql_30524();
+
+        // Re-label a delegated failure so upgrade logs/output point at the step
+        // that actually ran (30525), not the 30524 delegate.
+        if (is_array($result)) {
+            return ['Migration 30525 failed (delegated to 30524): '.implode('; ', array_map('strval', $result))];
+        }
+
+        return $result;
     }
 }

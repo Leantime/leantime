@@ -7,6 +7,7 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
 use Leantime\Domain\Oidc\Services\OidcMobileCode;
+use Leantime\Domain\Plugins\Services\Plugins;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,16 +37,20 @@ class Mobile extends Controller
 
     private IncomingRequest $request;
 
+    private Plugins $plugins;
+
     public function init(
         OidcMobileCode $codes,
         AccessTokenRepository $tokens,
         UserRepository $userRepo,
-        IncomingRequest $request
+        IncomingRequest $request,
+        Plugins $plugins
     ): void {
         $this->codes = $codes;
         $this->tokens = $tokens;
         $this->userRepo = $userRepo;
         $this->request = $request;
+        $this->plugins = $plugins;
     }
 
     /**
@@ -57,6 +62,16 @@ class Mobile extends Controller
      */
     public function exchange(array $params): Response
     {
+        // Mobile auth is an AdvancedAuth capability. The OIDC bridge lives in core,
+        // so — unlike getToken, which lives in the plugin and is gated by absence —
+        // it must ask explicitly whether AdvancedAuth is installed before minting.
+        // Without it, treat the endpoint as nonexistent (404) so an unlicensed
+        // instance reveals nothing. This is the enforcement boundary: even a direct
+        // caller that never touched /status is refused here.
+        if (! $this->plugins->isEnabled('AdvancedAuth')) {
+            return new JsonResponse(['error' => 'not_found'], 404);
+        }
+
         // Frontcontroller resolves methods by URL segment regardless of verb;
         // enforce POST here so `?code=...&code_verifier=...` on a GET is
         // rejected before we touch the code store.

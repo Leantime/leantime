@@ -23,276 +23,38 @@
       $logicModel, $hasLM — passed through but not used here anymore
 --}}
 
-<style>
-/* Hours / Days unit toggle — top of Page 3. Vanilla-JS controlled. */
-.rd-scope .p3-unit-toggle{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:14px;}
-.rd-scope .p3-unit-toggle .p3-unit-lbl{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-text-3);}
-.rd-scope .p3-unit-toggle .p3-unit-pill{display:inline-flex;border:1px solid var(--rd-line);border-radius:100px;padding:2px;background:var(--rd-panel);}
-.rd-scope .p3-unit-toggle .p3-unit-btn{background:transparent;border:0;padding:5px 14px;border-radius:100px;font-size:12px;font-weight:600;color:var(--rd-text-3);cursor:pointer;letter-spacing:.2px;transition:background .1s ease, color .1s ease;}
-.rd-scope .p3-unit-toggle .p3-unit-btn.is-active{background:var(--rd-accent);color:#fff;}
-.rd-scope .p3-unit-toggle .p3-unit-btn:hover:not(.is-active){color:var(--rd-text-1);}
 
-.rd-scope .p3-sec{margin-bottom:28px;}
-.rd-scope .p3-sec-hd{margin-bottom:14px;}
-.rd-scope .p3-sec-hd .l{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-accent);display:block;margin-bottom:3px;}
-.rd-scope .p3-sec-hd .s{font-size:13.5px;color:var(--rd-text-3);}
+@php
+    // Does this strategy/program actually have authored resource data?
+    // $resourceSummary is non-null whenever the provider (PgmPro) is installed —
+    // even with nothing authored — so a null check alone leaves a wall of empty
+    // "—" cards. Detect "installed but empty" here to drive the onboarding empty
+    // state and suppress the noisy empty sections below. (For a strategy the
+    // strategy's own board is always empty by design; data rolls up from its
+    // programs — so this is true whenever ANY program in scope has authored it.)
+    // Use the aggregates ResourceSummary already computed — no view-level loop
+    // over people/allocations. "Any active person" (allocation or capacity > 0)
+    // reduces to totalCapacity/totalAllocated being > 0.
+    $hasResourceData = $resourceSummary !== null && (
+        $resourceSummary->totalCapacity > 0
+        || $resourceSummary->totalAllocated > 0
+        || $resourceSummary->totalBudgeted > 0
+        || count($resourceSummary->dependencies) > 0
+    );
+@endphp
 
-/* Placeholder strip (only when no ResourcesGateway is registered). */
-.rd-scope .p3-res-strip{border:1px dashed var(--rd-line);border-radius:var(--rd-r-sm);padding:20px 22px;background:var(--rd-bg);display:flex;align-items:center;gap:16px;}
-.rd-scope .p3-res-strip .icn{width:48px;height:48px;border-radius:12px;background:#eef4f3;color:var(--rd-accent);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;}
-.rd-scope .p3-res-strip .cnt{flex:1;min-width:0;}
-.rd-scope .p3-res-strip .cnt .h{font-size:15px;font-weight:600;color:var(--rd-text-1);margin-bottom:3px;}
-.rd-scope .p3-res-strip .cnt .d{font-size:13.5px;color:var(--rd-text-3);line-height:1.5;}
-.rd-scope .p3-res-strip .tag{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-accent);background:rgba(0,71,102,.08);border-radius:10px;padding:4px 10px;flex:none;}
-
-/* Three-card resource summary — larger, roomier, higher contrast. */
-.rd-scope .p3-res-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
-.rd-scope .p3-rcard{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:20px 22px;background:var(--rd-panel);min-width:0;display:flex;flex-direction:column;}
-.rd-scope .p3-rcard .rhead{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-.rd-scope .p3-rcard .rhead .ricn{width:36px;height:36px;border-radius:10px;background:rgba(0,71,102,.08);color:var(--rd-accent);display:grid;place-items:center;font-size:15px;flex:none;}
-.rd-scope .p3-rcard .rhead .rlbl{font-size:13.5px;font-weight:600;color:var(--rd-text-2);letter-spacing:.1px;}
-.rd-scope .p3-rcard .rv{font-size:34px;font-weight:600;letter-spacing:-.5px;line-height:1.05;color:var(--rd-text-1);}
-.rd-scope .p3-rcard .rv small{font-size:15px;color:var(--rd-text-3);font-weight:500;margin-left:4px;letter-spacing:0;}
-.rd-scope .p3-rcard .rsub{font-size:13.5px;color:var(--rd-text-2);margin-top:8px;line-height:1.5;}
-.rd-scope .p3-rcard .rsub .risk{color:var(--rd-danger);font-weight:600;}
-.rd-scope .p3-rcard .rsub .muted{color:var(--rd-text-3);}
-.rd-scope .p3-rcard .bar{height:12px;background:#eef1f3;border-radius:6px;margin-top:12px;overflow:hidden;}
-.rd-scope .p3-rcard .bar > i{display:block;height:100%;border-radius:6px;}
-.rd-scope .p3-rcard .bar.ok > i{background:var(--rd-s1);}
-.rd-scope .p3-rcard .bar.spend > i{background:var(--rd-ok);}
-.rd-scope .p3-rcard .bar.spend.at-risk > i{background:var(--rd-warn);}
-.rd-scope .p3-rcard .bar.spend.over > i{background:var(--rd-danger);}
-.rd-scope .p3-rcard .rtail{font-size:13px;color:var(--rd-text-3);margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 12px;}
-.rd-scope .p3-rcard .rtail .rp{display:inline-flex;align-items:center;gap:6px;}
-.rd-scope .p3-rcard .rtail .dd{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block;}
-.rd-scope .p3-rcard .rtail .dd.ok{background:var(--rd-ok);}
-.rd-scope .p3-rcard .rtail .dd.warn{background:var(--rd-warn);}
-.rd-scope .p3-rcard.empty .rv{color:var(--rd-text-4);}
-
-/* Per-project breakdown — the "where's it going?" answer. Grid table so the
-   columns line up regardless of name length. Row hover lifts a bit for scan. */
-.rd-scope .p3-bd{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);overflow:hidden;background:var(--rd-panel);}
-.rd-scope .p3-bd-row{display:grid;grid-template-columns:2fr 1.2fr 1.6fr 1.4fr;gap:14px;padding:14px 18px;align-items:center;}
-.rd-scope .p3-bd-row + .p3-bd-row{border-top:1px solid var(--rd-line-soft);}
-.rd-scope .p3-bd-row.head{background:var(--rd-bg);border-bottom:1px solid var(--rd-line);padding:12px 18px;}
-.rd-scope .p3-bd-row.head .p3-bd-cell{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);}
-.rd-scope .p3-bd-cell{min-width:0;font-size:14px;color:var(--rd-text-1);}
-.rd-scope .p3-bd-cell .name{font-weight:600;color:var(--rd-text-1);line-height:1.3;word-wrap:break-word;}
-.rd-scope .p3-bd-cell .type{font-size:11.5px;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
-.rd-scope .p3-bd-cell .num{font-size:18px;font-weight:600;color:var(--rd-text-1);line-height:1.1;}
-.rd-scope .p3-bd-cell .num small{font-size:12.5px;color:var(--rd-text-3);font-weight:500;margin-left:3px;}
-.rd-scope .p3-bd-cell .sublabel{font-size:12px;color:var(--rd-text-3);margin-top:2px;}
-.rd-scope .p3-bd-cell .minibar{height:8px;background:#eef1f3;border-radius:4px;overflow:hidden;margin-top:6px;}
-.rd-scope .p3-bd-cell .minibar > i{display:block;height:100%;border-radius:4px;background:var(--rd-s1);}
-.rd-scope .p3-bd-cell .minibar.spend > i{background:var(--rd-ok);}
-.rd-scope .p3-bd-cell .minibar.spend.at-risk > i{background:var(--rd-warn);}
-.rd-scope .p3-bd-cell .minibar.spend.over > i{background:var(--rd-danger);}
-.rd-scope .p3-bd-cell .zero{color:var(--rd-text-4);font-style:italic;font-size:13px;}
-.rd-scope .p3-bd-empty{padding:24px;color:var(--rd-text-3);font-style:italic;text-align:center;font-size:14px;}
-
-/* Program-rollup rendering (strategy scope): each program is a <details> with
-   summary as the program row and child project rows revealed on expand.
-   Uses native <details>/<summary> for a11y — keyboard-accessible, no JS. */
-.rd-scope .p3-bd-program{display:block;}
-.rd-scope .p3-bd-program + .p3-bd-program{border-top:1px solid var(--rd-line);}
-.rd-scope .p3-bd-program summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:2fr 1.2fr 1.6fr 1.4fr;gap:14px;padding:14px 18px;align-items:center;transition:background .1s ease;}
-.rd-scope .p3-bd-program summary::-webkit-details-marker{display:none;}
-.rd-scope .p3-bd-program summary:hover{background:var(--rd-bg);}
-.rd-scope .p3-bd-program summary .name-cell{display:flex;align-items:flex-start;gap:10px;}
-.rd-scope .p3-bd-program summary .expand-chevron{width:20px;padding-top:2px;color:var(--rd-text-3);font-size:11px;transition:transform .15s ease;flex:none;}
-.rd-scope .p3-bd-program[open] > summary .expand-chevron{transform:rotate(90deg);}
-.rd-scope .p3-bd-program[open] > summary{background:var(--rd-bg);border-bottom:1px solid var(--rd-line-soft);}
-.rd-scope .p3-bd-program summary .name{font-weight:600;color:var(--rd-text-1);line-height:1.3;}
-.rd-scope .p3-bd-program summary .type{font-size:11.5px;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
-.rd-scope .p3-bd-row.child-row{background:var(--rd-bg);padding:12px 18px 12px 32px;}
-.rd-scope .p3-bd-row.child-row + .child-row{border-top:1px solid var(--rd-line-soft);}
-.rd-scope .p3-bd-row.child-row .name-cell{display:flex;align-items:flex-start;gap:10px;}
-.rd-scope .p3-bd-row.child-row .child-indent{color:var(--rd-text-4);font-size:14px;flex:none;padding-top:1px;}
-.rd-scope .p3-bd-row.child-row .name{font-weight:500;font-size:13.5px;color:var(--rd-text-2);}
-.rd-scope .p3-bd-row.child-row .num{font-size:15px;}
-
-/* Capacity vs. demand — per-project deep read. Each card compares three
-   independent estimates (budgeted hours, effort points × conversion, people
-   × weeks × allocation) and shows the sensitivity between them so the board
-   can see *how much* off, not just *that* it's off. Rebalance levers land at
-   the bottom of each card so the discussion has options, not just alarms. */
-.rd-scope .p3-cap-stack{display:flex;flex-direction:column;gap:12px;}
-.rd-scope .p3-cap{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);overflow:hidden;}
-.rd-scope .p3-cap.critical{border-color:rgba(220,60,60,.35);}
-.rd-scope .p3-cap.tight{border-color:rgba(245,166,35,.4);}
-.rd-scope .p3-cap.balanced{border-color:var(--rd-line);}
-.rd-scope .p3-cap.buffer{border-color:rgba(46,164,79,.3);}
-
-.rd-scope .p3-cap-hd{display:flex;align-items:center;gap:14px;padding:16px 20px 12px;border-bottom:1px solid var(--rd-line-soft);}
-.rd-scope .p3-cap-hd .verdict{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:100px;font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;flex:none;}
-.rd-scope .p3-cap-hd .verdict.critical{background:rgba(220,60,60,.10);color:var(--rd-danger);}
-.rd-scope .p3-cap-hd .verdict.tight{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
-.rd-scope .p3-cap-hd .verdict.balanced{background:rgba(0,71,102,.09);color:var(--rd-accent);}
-.rd-scope .p3-cap-hd .verdict.buffer{background:rgba(46,164,79,.11);color:var(--rd-ok);}
-.rd-scope .p3-cap-hd .verdict.no_work,
-.rd-scope .p3-cap-hd .verdict.no_capacity{background:rgba(140,140,140,.10);color:var(--rd-text-3);}
-.rd-scope .p3-cap-hd .name{font-size:16px;font-weight:600;color:var(--rd-text-1);flex:1;min-width:0;line-height:1.3;}
-.rd-scope .p3-cap-hd .headline-num{font-size:15px;font-weight:600;flex:none;}
-.rd-scope .p3-cap-hd .headline-num.critical{color:var(--rd-danger);}
-.rd-scope .p3-cap-hd .headline-num.tight{color:var(--rd-warn-tx);}
-.rd-scope .p3-cap-hd .headline-num.buffer{color:var(--rd-ok);}
-.rd-scope .p3-cap-hd .headline-num.balanced{color:var(--rd-text-2);}
-
-/* Trust confidence indicator — small icon-only pill in the header. Hover for
-   the full explanation. Green = both estimates agree; amber = fallback/mixed.
-   Kept subtle so it doesn't compete with the verdict pill. */
-.rd-scope .p3-cap-hd .trust{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-size:10.5px;font-weight:600;letter-spacing:.3px;cursor:help;flex:none;}
-.rd-scope .p3-cap-hd .trust.good{background:rgba(46,164,79,.10);color:var(--rd-ok);}
-.rd-scope .p3-cap-hd .trust.warn{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
-.rd-scope .p3-cap-hd .trust i{font-size:10px;}
-
-.rd-scope .p3-cap-body{padding:14px 20px 18px;}
-.rd-scope .p3-cap-row{display:grid;grid-template-columns:90px 1fr;gap:14px;padding:10px 0;align-items:baseline;}
-.rd-scope .p3-cap-row + .p3-cap-row{border-top:1px dashed var(--rd-line-soft);}
-.rd-scope .p3-cap-row .lbl{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);padding-top:2px;}
-.rd-scope .p3-cap-row .val{font-size:14px;color:var(--rd-text-1);line-height:1.55;}
-.rd-scope .p3-cap-row .val .primary{font-weight:600;color:var(--rd-text-1);}
-.rd-scope .p3-cap-row .val .muted{color:var(--rd-text-3);}
-.rd-scope .p3-cap-row .val .divider{color:var(--rd-text-4);margin:0 6px;}
-.rd-scope .p3-cap-row .val .note{display:block;font-size:12.5px;color:var(--rd-text-3);margin-top:3px;font-style:italic;}
-.rd-scope .p3-cap-row .val .note.warn{color:var(--rd-warn-tx);font-style:normal;font-weight:500;}
-.rd-scope .p3-cap-row .val .note.good{color:var(--rd-ok);font-style:normal;font-weight:500;}
-
-.rd-scope .p3-cap-bar{margin-top:8px;}
-.rd-scope .p3-cap-bar .track{position:relative;height:14px;background:#eef1f3;border-radius:7px;overflow:hidden;}
-/* Supply segment — 0 → available. Always green ("we've got this much"). */
-.rd-scope .p3-cap-bar .track .supply{position:absolute;top:0;left:0;bottom:0;background:var(--rd-ok);opacity:.9;}
-/* Deficit segment — available → needed. Colored by verdict so the shortfall
-   reads at the same visual weight as the verdict pill above. */
-.rd-scope .p3-cap-bar .track .deficit{position:absolute;top:0;bottom:0;background:var(--rd-danger);opacity:.85;}
-.rd-scope .p3-cap-bar .track.tight .deficit{background:var(--rd-warn);}
-.rd-scope .p3-cap-bar .track.critical .deficit{background:var(--rd-danger);}
-.rd-scope .p3-cap-bar .track .marker{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rd-text-1);z-index:2;}
-.rd-scope .p3-cap-bar .track .marker::after{content:'';position:absolute;top:-2px;left:-3px;width:8px;height:8px;background:var(--rd-text-1);border-radius:50%;}
-.rd-scope .p3-cap-bar .legend{display:flex;justify-content:space-between;font-size:11.5px;color:var(--rd-text-3);margin-top:6px;}
-
-.rd-scope .p3-cap-rebalance{margin-top:10px;padding-top:12px;border-top:1px solid var(--rd-line-soft);}
-.rd-scope .p3-cap-rebalance .hd{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:8px;}
-.rd-scope .p3-cap-rebalance .opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
-.rd-scope .p3-cap-rebalance .opt{border:1px solid var(--rd-line);border-radius:var(--rd-r-xs);padding:10px 12px;background:var(--rd-bg);}
-.rd-scope .p3-cap-rebalance .opt .icn{color:var(--rd-accent);font-size:14px;margin-bottom:6px;}
-.rd-scope .p3-cap-rebalance .opt .lever{font-size:14.5px;font-weight:600;color:var(--rd-text-1);line-height:1.3;}
-.rd-scope .p3-cap-rebalance .opt .lever b{font-size:17px;color:var(--rd-danger);}
-.rd-scope .p3-cap-rebalance .opt .detail{font-size:12px;color:var(--rd-text-3);margin-top:4px;line-height:1.5;}
-
-/* Compact one-liner for balanced/buffer projects — no full card, just a row */
-.rd-scope .p3-cap-compact{display:flex;align-items:center;gap:14px;padding:12px 18px;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);}
-.rd-scope .p3-cap-compact .verdict{padding:4px 10px;border-radius:100px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;flex:none;}
-.rd-scope .p3-cap-compact .verdict.balanced{background:rgba(0,71,102,.09);color:var(--rd-accent);}
-.rd-scope .p3-cap-compact .verdict.buffer{background:rgba(46,164,79,.11);color:var(--rd-ok);}
-.rd-scope .p3-cap-compact .verdict.no_work{background:rgba(140,140,140,.10);color:var(--rd-text-3);}
-.rd-scope .p3-cap-compact .name{font-size:14.5px;font-weight:600;color:var(--rd-text-1);flex:1;min-width:0;}
-.rd-scope .p3-cap-compact .summary{font-size:13px;color:var(--rd-text-3);flex:none;}
-
-/* Capacity program-rollup: program-level card wrapped in <details> so click
-   expands to reveal child project cards inline. Chevron rotates on open — the
-   chevron lives in the .subname of the card header (not absolute-positioned)
-   so it doesn't collide with the trust pill or headline gap number. */
-.rd-scope .p3-cap-program{display:block;}
-.rd-scope .p3-cap-program summary{list-style:none;cursor:pointer;}
-.rd-scope .p3-cap-program summary::-webkit-details-marker{display:none;}
-.rd-scope .p3-cap-hd .name .subname{font-size:12px;color:var(--rd-text-3);font-weight:500;margin-top:3px;text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:6px;}
-.rd-scope .p3-cap-hd .name .subname .expand-hint{font-size:10px;color:var(--rd-text-3);transition:transform .15s ease;}
-.rd-scope .p3-cap-program[open] > summary .p3-cap-hd .name .subname .expand-hint{transform:rotate(90deg);}
-.rd-scope .p3-cap-hd .headline-num .headline-days{font-size:12.5px;color:var(--rd-text-3);font-weight:500;margin-left:6px;letter-spacing:0;}
-
-/* Bar marker: always-visible label above the tick so board readers don't have
-   to hover to understand what the marker means. */
-.rd-scope .p3-cap-bar .track{overflow:visible;position:relative;}
-.rd-scope .p3-cap-bar .track .marker .marker-label{position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10.5px;font-weight:600;color:var(--rd-text-2);background:var(--rd-panel);padding:1px 6px;border-radius:3px;letter-spacing:.3px;text-transform:uppercase;}
-.rd-scope .p3-cap-bar{margin-top:22px;}
-
-/* Info icon on "pts" — subtle, clickable-ish. */
-.rd-scope .p3-cap-row .val .pts-info{cursor:help;border-bottom:1px dotted var(--rd-text-4);}
-.rd-scope .p3-cap-row .val .pts-info i{font-size:11px;margin-left:2px;color:var(--rd-text-3);}
-.rd-scope .p3-cap-children{padding:12px 20px 20px;background:var(--rd-bg);border-left:3px solid var(--rd-line);margin-left:20px;margin-right:20px;margin-bottom:14px;border-radius:0 0 var(--rd-r-xs) var(--rd-r-xs);}
-.rd-scope .p3-cap-children-hd{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:10px;padding-top:4px;}
-.rd-scope .p3-cap-children .p3-cap,
-.rd-scope .p3-cap-children .p3-cap-compact{margin-bottom:8px;}
-.rd-scope .p3-cap-children .p3-cap:last-child,
-.rd-scope .p3-cap-children .p3-cap-compact:last-child{margin-bottom:0;}
-
-/* Dependencies — dedicated section rendering each external commitment with
-   owner + decision date + notes. Cards laid out in a 2-column grid on wide
-   viewports, single column on narrow. Tentative deps get a warmer border
-   for scanability; the top "urgent" callout surfaces the soonest decision. */
-.rd-scope .p3-dep-urgent{display:flex;gap:14px;align-items:center;padding:14px 18px;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);margin-bottom:14px;background:var(--rd-panel);}
-.rd-scope .p3-dep-urgent.soon{background:var(--rd-warn-bg);border-color:rgba(245,166,35,.35);}
-.rd-scope .p3-dep-urgent .ic{width:36px;height:36px;border-radius:10px;background:rgba(245,166,35,.15);color:var(--rd-warn-tx);display:grid;place-items:center;font-size:15px;flex:none;}
-.rd-scope .p3-dep-urgent .body{flex:1;min-width:0;}
-.rd-scope .p3-dep-urgent .hd{font-size:14.5px;color:var(--rd-text-1);line-height:1.4;}
-.rd-scope .p3-dep-urgent .hd strong{color:var(--rd-text-1);font-weight:700;}
-.rd-scope .p3-dep-urgent .meta{font-size:12.5px;color:var(--rd-text-3);margin-top:3px;}
-.rd-scope .p3-dep-urgent .meta strong{color:var(--rd-text-2);font-weight:600;}
-
-.rd-scope .p3-dep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
-.rd-scope .p3-dep{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:16px 18px;display:flex;flex-direction:column;gap:10px;}
-.rd-scope .p3-dep.tentative{border-color:rgba(245,166,35,.28);}
-.rd-scope .p3-dep.confirmed{border-color:rgba(46,164,79,.22);}
-.rd-scope .p3-dep-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.rd-scope .p3-dep-hd .status{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 9px;border-radius:100px;flex:none;}
-.rd-scope .p3-dep.tentative .p3-dep-hd .status{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
-.rd-scope .p3-dep.confirmed .p3-dep-hd .status{background:rgba(46,164,79,.11);color:var(--rd-ok);}
-.rd-scope .p3-dep-hd .type-badge{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--rd-bg);color:var(--rd-text-3);flex:none;}
-.rd-scope .p3-dep-name{font-size:15.5px;font-weight:600;color:var(--rd-text-1);line-height:1.35;}
-.rd-scope .p3-dep-meta{display:flex;flex-direction:column;gap:5px;font-size:13px;}
-.rd-scope .p3-dep-meta .row{display:flex;gap:8px;align-items:baseline;}
-.rd-scope .p3-dep-meta .row .lbl{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-text-3);min-width:82px;flex:none;padding-top:2px;}
-.rd-scope .p3-dep-meta .row .val{color:var(--rd-text-1);}
-.rd-scope .p3-dep-meta .row .val .soft{color:var(--rd-text-3);font-size:12px;}
-.rd-scope .p3-dep-meta .row.urgent .val{color:var(--rd-warn-tx);font-weight:600;}
-.rd-scope .p3-dep-meta .row.urgent .val .soft{color:var(--rd-warn-tx);font-weight:500;}
-.rd-scope .p3-dep-notes{font-size:13px;color:var(--rd-text-2);line-height:1.55;padding-top:2px;border-top:1px dashed var(--rd-line-soft);padding-top:10px;margin-top:2px;}
-.rd-scope .p3-dep-foot{font-size:11.5px;color:var(--rd-text-4);font-style:italic;margin-top:auto;}
-
-@media (max-width:900px){
-    .rd-scope .p3-dep-grid{grid-template-columns:1fr;}
-}
-
-/* Resource gaps & risks — remaining observations that aren't project-level
-   capacity math (over-allocated people, idle capacity, tentative dependencies). */
-.rd-scope .p3-gaps{display:flex;flex-direction:column;gap:10px;}
-.rd-scope .p3-gap{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:15px 18px;display:flex;align-items:flex-start;gap:14px;}
-.rd-scope .p3-gap .sev{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:15px;flex:none;}
-.rd-scope .p3-gap.red .sev{background:rgba(220,60,60,.10);color:var(--rd-danger);}
-.rd-scope .p3-gap.yellow .sev{background:rgba(245,166,35,.12);color:var(--rd-warn-tx);}
-.rd-scope .p3-gap.blue .sev{background:rgba(0,71,102,.10);color:var(--rd-accent);}
-.rd-scope .p3-gap .body{flex:1;min-width:0;}
-.rd-scope .p3-gap .body .headline{font-size:14.5px;font-weight:600;color:var(--rd-text-1);line-height:1.4;}
-.rd-scope .p3-gap .body .headline b{color:var(--rd-danger);font-weight:700;}
-.rd-scope .p3-gap.yellow .body .headline b{color:var(--rd-warn-tx);}
-.rd-scope .p3-gap .body .detail{font-size:13px;color:var(--rd-text-3);margin-top:4px;line-height:1.5;}
-.rd-scope .p3-gap .body .detail em{font-style:normal;color:var(--rd-text-2);}
-.rd-scope .p3-gap.ok{background:#f2faf6;border-color:#cfe8d9;}
-.rd-scope .p3-gap.ok .sev{background:rgba(46,164,79,.12);color:var(--rd-ok);}
-.rd-scope .p3-gap.ok .body .headline{color:#186c39;}
-.rd-scope .p3-gap.ok .body .detail{color:#4a7a5b;}
-
-/* Narrow screens — cards stack, breakdown table becomes single column stack. */
-@media (max-width:900px){
-    .rd-scope .p3-res-grid{grid-template-columns:1fr;}
-    .rd-scope .p3-bd-row{grid-template-columns:1fr;gap:8px;padding:14px 16px;}
-    .rd-scope .p3-bd-row.head{display:none;}
-    .rd-scope .p3-bd-cell::before{content:attr(data-label);display:block;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:3px;}
-    .rd-scope .p3-bd-cell.name-cell::before{display:none;}
-}
-</style>
-
-{{-- Hours / Days unit toggle. The server always renders hours (source of
-     truth); JS swaps any element with `data-hours` to a days display (÷ 8)
-     when the toggle is set. Preference stored in localStorage. --}}
-<div class="p3-unit-toggle" data-lt-unit-toggle>
-    <span class="p3-unit-lbl">{{ __('stakeholder.rc.unit.show') }}</span>
-    <div class="p3-unit-pill">
-        <button type="button" class="p3-unit-btn is-active" data-unit="hours">{{ __('stakeholder.rc.unit.hours') }}</button>
-        <button type="button" class="p3-unit-btn" data-unit="days">{{ __('stakeholder.rc.unit.days') }}</button>
+@if ($hasResourceData)
+    {{-- Hours / Days unit toggle. The server always renders hours (source of
+         truth); JS swaps any element with `data-hours` to a days display (÷ 8)
+         when the toggle is set. Preference stored in localStorage. --}}
+    <div class="p3-unit-toggle" data-lt-unit-toggle>
+        <span class="p3-unit-lbl">{{ __('stakeholder.rc.unit.show') }}</span>
+        <div class="p3-unit-pill">
+            <button type="button" class="p3-unit-btn is-active" data-unit="hours">{{ __('stakeholder.rc.unit.hours') }}</button>
+            <button type="button" class="p3-unit-btn" data-unit="days">{{ __('stakeholder.rc.unit.days') }}</button>
+        </div>
     </div>
-</div>
+@endif
 
 {{-- ── Resources summary from ResourcesGateway ────────────────────── --}}
 <div class="p3-sec">
@@ -309,6 +71,43 @@
                 <div class="h">{{ __('stakeholder.rc.no_provider_title') }}</div>
                 <div class="d">{{ __('stakeholder.rc.no_provider_hint') }}</div>
             </div>
+        </div>
+    @elseif (! $hasResourceData)
+        {{-- Provider installed, nothing authored yet. Resource data always comes
+             from the program(s) — a strategy's own board stays empty by design —
+             so guide the reader to the next real action rather than showing a
+             wall of empty cards and sections. Three cases:
+               • program report            → set up that program's allocation
+               • strategy with no programs → create a program first
+               • strategy with programs    → open one and add resources --}}
+        @php
+            $programCount = count($programMeta ?? []);
+            if (($scope ?? '') === 'program') {
+                $emptyTitle    = __('stakeholder.rc.empty_title');
+                $emptyHint     = __('stakeholder.rc.empty_hint_program');
+                $emptyCtaHref  = BASE_URL.'/pgmPro/resourceAllocation';
+                $emptyCtaLabel = __('stakeholder.rc.empty_cta');
+            } elseif ($programCount === 0) {
+                $emptyTitle    = __('stakeholder.rc.empty_noprog_title');
+                $emptyHint     = __('stakeholder.rc.empty_hint_noprog');
+                $emptyCtaHref  = (int) ($projectId ?? 0) > 0 ? BASE_URL.'/projects/newProject?parent='.(int) $projectId : null;
+                $emptyCtaLabel = __('stakeholder.rc.empty_cta_create_program');
+            } else {
+                $emptyTitle    = __('stakeholder.rc.empty_title');
+                $emptyHint     = __('stakeholder.rc.empty_hint_strategy');
+                $emptyCtaHref  = null;
+                $emptyCtaLabel = null;
+            }
+        @endphp
+        <div class="p3-res-strip">
+            <div class="icn"><i class="fa fa-people-arrows"></i></div>
+            <div class="cnt">
+                <div class="h">{{ $emptyTitle }}</div>
+                <div class="d">{{ $emptyHint }}</div>
+            </div>
+            @if ($emptyCtaHref !== null)
+                <a href="{{ $emptyCtaHref }}" class="p3-res-cta">{{ $emptyCtaLabel }} <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+            @endif
         </div>
     @else
         @php
@@ -360,11 +159,9 @@
                 @if ($resourceSummary->totalCapacity > 0)
                     <div class="rsub">
                         <strong>{{ (int) $capacityPct }}%</strong> {{ __('stakeholder.rc.res_capacity_used') }}
+                        <span class="muted">· {{ round($resourceSummary->totalAllocated) }} / {{ round($resourceSummary->totalCapacity) }}h {{ __('stakeholder.rc.res_hours_weekly') }}</span>
                     </div>
                     <div class="bar ok"><i style="width:{{ min(100, (int) $capacityPct) }}%;"></i></div>
-                    <div class="rtail">
-                        <span class="rp">{{ round($resourceSummary->totalAllocated) }} / {{ round($resourceSummary->totalCapacity) }}h {{ __('stakeholder.rc.res_hours_weekly') }}</span>
-                    </div>
                 @else
                     <div class="rsub muted">{{ __('stakeholder.rc.res_no_capacity') }}</div>
                 @endif
@@ -416,7 +213,7 @@
      first drill-down question: which program is hot, which is idle.
      Skipped when there are 0-1 projects (aggregate is the same as the
      breakdown, no point). --}}
-@if ($resourceSummary !== null && count($resourceSummary->projectIds) > 1)
+@if ($resourceSummary !== null && $hasResourceData && count($resourceSummary->projectIds) > 1)
     @php
         // Build per-project name lookup from ReportEngine summaries.
         $projectNames = [];
@@ -733,7 +530,7 @@
      capacity (people × weeks × allocation). Shows the sensitivity, not just a
      flag. When the plan doesn't fit, lists the three rebalance levers with
      specific numbers. --}}
-@if (! empty($capacityAnalysis))
+@if (! empty($capacityAnalysis) && $hasResourceData)
     @php
         // Verdict ordering — worst first so board can scan top-down.
         $verdictRank = ['critical' => 0, 'tight' => 1, 'balanced' => 2, 'buffer' => 3, 'no_capacity' => 4, 'no_work' => 5];
@@ -844,8 +641,12 @@
                 if ($days === 0) return __('stakeholder.rc.dep.today');
                 if ($days === 1) return __('stakeholder.rc.dep.yesterday');
                 if ($days < 7)   return sprintf(__('stakeholder.rc.dep.days_ago'), $days);
-                if ($days < 30)  return sprintf(__('stakeholder.rc.dep.weeks_ago'), (int) round($days / 7));
-                return sprintf(__('stakeholder.rc.dep.months_ago'), (int) round($days / 30));
+                if ($days < 30) {
+                    $weeks = (int) floor($days / 7);
+                    return sprintf(__($weeks === 1 ? 'stakeholder.rc.dep.week_ago' : 'stakeholder.rc.dep.weeks_ago'), $weeks);
+                }
+                $months = (int) floor($days / 30);
+                return sprintf(__($months === 1 ? 'stakeholder.rc.dep.month_ago' : 'stakeholder.rc.dep.months_ago'), $months);
             } catch (\Exception $e) { return null; }
         };
     @endphp
@@ -948,7 +749,7 @@
      report — a portfolio audience reads at program/project scope; per-person
      analysis belongs on the program report where a manager can act on it.
      Capacity vs demand above already covers program-level tightness. --}}
-@if ($resourceSummary !== null)
+@if ($resourceSummary !== null && $hasResourceData)
     @php
         $gaps = [];
         $isProgramScope = ($scope ?? '') === 'program';
