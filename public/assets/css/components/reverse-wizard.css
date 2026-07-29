@@ -639,9 +639,9 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-wiz .rw-guide .rw-guide-sub {
-    margin-top: 8px;
-    color: var(--rw-muted);
-    font-size: 12.5px;
+    margin-top:8px;
+    color:var(--rw-muted);
+    font-size:12.5px;
 }
 
 .rev-wiz .rw-guide .rw-guide-lbl {
