@@ -18,11 +18,18 @@
 <link rel="shortcut icon" href="{!! BASE_URL !!}/dist/images/favicon.png"/>
 <link rel="apple-touch-icon" href="{!! BASE_URL !!}/dist/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css"/>
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css"/>
+@php
+    // Cache-buster: the filenames only change per app version, so rebuilds of
+    // the SAME version were served stale from browser cache (no query hash in
+    // the mix manifest — core mix does not version() the css). The bundle's
+    // mtime changes on every build, which busts exactly when needed.
+    $cssBust = @filemtime(APP_ROOT.'/public/dist/css/main.'.$version.'.min.css') ?: $version;
+@endphp
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css?v={!! $cssBust !!}"/>
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css?v={!! $cssBust !!}"/>
 @if($tpl->needsComponent('tiptap'))
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/tiptap-editor.{!! $version !!}.min.css"/>
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/katex.min.css"/>
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/tiptap-editor.{!! $version !!}.min.css?v={!! $cssBust !!}"/>
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/katex.min.css?v={!! $cssBust !!}"/>
 @endif
 
 @dispatchEvent('afterLinkTags')
