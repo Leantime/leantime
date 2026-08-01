@@ -486,13 +486,39 @@ class Auth implements Authenticatable
         $redirectUrl = BASE_URL.'/dashboard/home';
 
         if ($redirect !== null && trim($redirect) !== '' && trim($redirect) !== '/') {
-            $url = urldecode($redirect);
+            // Normalize backslash-based protocol tricks (e.g. \/\/attacker.com)
+            // to forward slashes before any checks.
+            $url = str_replace('\\', '/', rawurldecode($redirect));
 
-            // Check for open redirects, don't allow redirects to external sites.
-            if (
-                filter_var($url, FILTER_VALIDATE_URL) === false &&
-                ! in_array($url, ['/auth/logout'])
-            ) {
+            // Strip the application base URL when present so that same-origin
+            // absolute URLs (e.g. https://my-leantime.com/dashboard/home) are
+            // treated the same as their relative counterparts.
+            if (str_starts_with($url, BASE_URL)) {
+                $url = substr($url, strlen(BASE_URL));
+            }
+
+            // Guard: protocol-relative URL (//attacker.com) — explicitly reject.
+            // FILTER_VALIDATE_URL treats these as valid without a scheme, but
+            // browsers resolve them to the current scheme, making them an open
+            // redirect vector.
+            if (str_starts_with($url, '//')) {
+                return $redirectUrl;
+            }
+
+            // Guard: external absolute URL — reject.
+            // filter_var returns the URL (truthy) for well-formed absolute URLs
+            // with a scheme; relative paths return false.
+            if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
+                return $redirectUrl;
+            }
+
+            // At this point $url is a relative path. Guard against an empty
+            // path that could result from stripping a BASE_URL-only input.
+            $url = ltrim($url, '/');
+
+            // Block redirect to logout — allowing a POST-login redirect to
+            // /auth/logout would create a forced-logout loop.
+            if ($url !== '' && $url !== 'auth/logout') {
                 $redirectUrl = BASE_URL.'/'.$url;
             }
         }
