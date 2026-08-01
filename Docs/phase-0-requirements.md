@@ -18,8 +18,8 @@ Leantime is an open-source project management application built on Laravel 11. A
 Phase 0 establishes the modern foundation before any component forward-porting begins. Every subsequent phase depends on this work being solid.
 
 ### Codebase Location
-- **Backend:** `/Users/gloriafolaron/Herd/leantime`
-- **Mobile App:** `/Users/gloriafolaron/Herd/leantime-mobile` (React Native/Expo)
+- **Backend:** this repository's root
+- **Mobile App:** the `leantime-mobile` repository (React Native/Expo), checked out as a sibling
 - **Docker:** `.docker/Dockerfile` and `.docker/docker-compose.yml`
 - **Dev Docker:** `.dev/docker-compose.yaml` and `.dev/dockerfile`
 

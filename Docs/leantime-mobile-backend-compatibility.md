@@ -130,7 +130,7 @@ All methods verified present in v3.6.2:
 | `Comments.Comments.deleteComment` | `deleteComment($commentId)` | ✅ |
 | `Comments.Comments.pollComments` | `pollComments(?int $projectId, ?int $moduleId)` | ⚠️ |
 
-**Signature mismatch concern:** The mobile app sends `{ moduleId, module }` as named params, but the backend `getComments()` signature is `($module, $entityId, ...)` — parameter ORDER matters for JSON-RPC. The mobile sends `moduleId` but backend expects `entityId`. Similarly, `addComment` expects 4 positional params but mobile sends a `values` object. These may work if the RPC layer maps named params, but could break if it uses positional mapping. **Test thoroughly.**
+**Signature mismatch concern:** The mobile app sends `{ moduleId, module }` as named params, but the backend `getComments()` signature is `($module, $entityId, ...)` — the JSON-RPC controller maps request keys to parameter NAMES via reflection, so the risk is mismatched parameter names, not ordering. The mobile sends `moduleId` but the backend parameter is `$entityId` — that key never binds. Similarly `addComment` takes 4 named params while mobile sends a `values` object. **Test thoroughly.**
 
 ### ✅ Users — `app/Domain/Users/Services/Users.php`
 

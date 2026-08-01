@@ -48,7 +48,7 @@ Title + provenance line left. Top-right: the **status verdict** — a stated ver
 KPI band (4 big-number tiles from `stats`), the **"peak this period" hero** (recommend-and-override — nominate from a structural closure OR a completed milestone carrying `outcomeImpact`; expose the override), needs-attention block (from `needsAttention`), Theory-of-Change narrative (stage-colored sentence from `logicModel.narrative`), theory-health strip (from `zp_logicmodel_health`).
 
 ### 5. Page 2 — Logic Model read-out
-The 5-stage board (`lm_inputs → lm_impact`, colors per design §5). Cards = **task-card standard**: title left; status pill + owner avatar top-right; assumption line (`hp-text`); linked projects; dashed divider → "This period" fold-out with count, delta, attributed close.
+The 5-stage board (`lm_inputs → lm_impact`, colors per design §5). Cards = **task-card standard**: title left; status pill + owner avatar top-right; assumption line (from the `assumptions` canvas-item column); linked projects; dashed divider → "This period" fold-out with count, delta, attributed close.
 - **Outputs and Outcomes** carry the fold-out read-out (default folded).
 - **Resources / Activities / Impact** stay lean (context header + status line).
 - **Connection-health badges** between stages from `zp_logicmodel_health.health_status` (ok/warning/risk).
