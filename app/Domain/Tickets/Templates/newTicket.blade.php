@@ -30,6 +30,7 @@
 
             <div id="ticketdetails">
                 <form class="ticketModal" action="{{ BASE_URL }}/tickets/newTicket" method="post">
+                @csrf
                     @include('tickets::submodules.ticketDetails')
                 </form>
             </div>

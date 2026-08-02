@@ -16,6 +16,7 @@
 {!! $tpl->displayNotification() !!}
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/sprints/editSprint/{{ $id }}">
+@csrf
 
     <label>{!! __('label.sprint_name') !!}</label>
     <x-global::forms.text-input name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" /><br />

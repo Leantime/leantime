@@ -4,6 +4,7 @@
 @endphp
 
 <form action="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/boardDialog{{ isset($_GET['id']) ? '/' . (int) $_GET['id'] : '' }}" method="post" class="formModal">
+@csrf
     <div class="modal-header">
         <h4 class="modal-title"><i class='fa fa-plus'></i> {!! __('subtitles.create_new_board') !!}</h4>
     </div>

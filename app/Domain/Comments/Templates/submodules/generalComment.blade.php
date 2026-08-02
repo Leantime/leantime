@@ -20,6 +20,7 @@
 @endphp
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}" id="commentForm-{{ $formHash }}" class="formModal">
+@csrf
 
     @if ($login::userIsAtLeast($roles::$commenter))
         <div class="mainToggler-{{ $formHash }}" id="">

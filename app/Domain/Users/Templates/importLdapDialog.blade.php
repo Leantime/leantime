@@ -11,6 +11,7 @@
 
     @if ($confirmUsers)
         <form class="importModal userImportModal" method="post" action="{{ BASE_URL }}/users/import">
+        @csrf
             @foreach ($allLdapUsers as $user)
                 <input type="checkbox" value="{{ $user['user'] }}" id="{{ $user['user'] }}" name="users[]" checked="checked"/>
                 <label for="{{ $user['user'] }}" style="display:inline;">{{ $user['user'] }} - {{ $user['firstname'] }},  {{ $user['lastname'] }}<br />
@@ -22,6 +23,7 @@
 
     @else
         <form class="importModal userImportModal" method="post" action="{{ BASE_URL }}/users/import">
+        @csrf
             <label>{!! __('label.please_enter_password') !!} </label>
             <x-global::forms.text-input type="password" name="password" />
             <input type="hidden" name="pwSubmit" value="1"/>

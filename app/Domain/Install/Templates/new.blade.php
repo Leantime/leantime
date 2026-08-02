@@ -14,6 +14,7 @@
     {!! $tpl->displayInlineNotification() !!}
 
     <form action="{{ BASE_URL }}/install" method="post" class="registrationForm">
+    @csrf
         <h3 class="subtitle">{!! __('subtitles.login_info') !!}</h3>
         <x-global::forms.text-input type="email" name="email" placeholder="{{ __('label.email') }}" value="" /><br />
         <br /><br />

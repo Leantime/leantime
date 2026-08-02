@@ -36,6 +36,7 @@
     {!! $tpl->displayNotification() !!}
 
     <form class="formModal" method="post" action="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $id }}">
+    @csrf
 
         <input type="hidden" value="{{ $currentCanvas }}" name="canvasId" />
         <input type="hidden" value="{{ $canvasItem['box'] }}" name="box" id="box"/>

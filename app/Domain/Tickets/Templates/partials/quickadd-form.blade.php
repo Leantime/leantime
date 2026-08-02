@@ -32,6 +32,7 @@ $hasError = $isActive && !empty($reopenState['error']);
           data-quickadd-form
           style="{{ $isActive ? '' : 'display:none;' }}"
           data-submitting="false">
+    @csrf
         <input type="hidden" name="quickadd" value="1" />
         <input type="hidden" name="status" value="{{ $statusId }}" />
         <input type="hidden" name="swimlane" value="{{ $swimlaneKey ?? '' }}" />

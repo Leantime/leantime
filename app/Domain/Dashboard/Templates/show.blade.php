@@ -321,6 +321,7 @@
                 <h5 class="subtitle">{{ __('subtitles.project_updates') }}</h5>
 
                 <form method="post" action="{{ BASE_URL }}/dashboard/show">
+                @csrf
                     <input type="hidden" name="comment" value="1" />
                         @if ($login::userIsAtLeast($roles::$editor))
                             <div id="comment0" class="commentBox tw-hidden">

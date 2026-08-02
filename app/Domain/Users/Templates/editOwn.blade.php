@@ -30,6 +30,7 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <form action="" method="post">
+                                @csrf
                                     <h4 class="widgettitle title-light"><?php echo $tpl->__('label.profile_information'); ?></h4>
                                     <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                     <div class="row-fluid">
@@ -151,6 +152,7 @@
                             <strong> {{  __("text.account_managed_external_auth") }}</strong><br /><br />
                         @endif
                         <form method="post">
+                        @csrf
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
@@ -202,6 +204,7 @@
 
                     <div id="settings">
                         <form action="" method="post">
+                        @csrf
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
@@ -278,6 +281,7 @@
 
                     <div id="theme">
                         <form action="" method="post">
+                        @csrf
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
@@ -356,6 +360,7 @@
 
                     <div id="notifications">
                         <form action="" method="post">
+                        @csrf
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">

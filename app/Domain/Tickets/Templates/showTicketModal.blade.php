@@ -93,6 +93,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
 
         <div id="ticketdetails">
             <form class="formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" method="post">
+            @csrf
                 @include('tickets::submodules.ticketDetails')
             </form>
         </div>

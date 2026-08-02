@@ -168,6 +168,7 @@
 
         <div class="row-fluid">
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" class="formModal">
+        @csrf
             <input type="hidden" name="comment" value="1" />
             @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/tickets/showTicket/' . $ticket->id])
         </form>

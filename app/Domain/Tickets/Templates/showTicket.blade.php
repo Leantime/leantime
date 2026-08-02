@@ -39,6 +39,7 @@
 
             <div id="ticketdetails">
                 <form class="formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" method="post">
+                @csrf
                     @include('tickets::submodules.ticketDetails')
                 </form>
             </div>
@@ -51,6 +52,7 @@
 
             <div id="files">
                 <form action='#files' method='POST' enctype="multipart/form-data" class="formModal">
+                @csrf
                     @include('tickets::submodules.attachments')
                 </form>
             </div>
@@ -67,6 +69,7 @@
 
     <div class="maincontentinner">
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#comments" class="formModal">
+        @csrf
             <input type="hidden" name="comment" value="1" />
             @include('comments::submodules.generalComment', ['formUrl' => BASE_URL.'/tickets/showTicket/'.$ticket->id])
         </form>

@@ -6,6 +6,7 @@
 
     @if (is_object($ticket))
         <form method="post" action="{{ BASE_URL }}/tickets/delTicket/{{ $ticket->id }}">
+        @csrf
             <p>{!! __('text.confirm_ticket_deletion') !!}</p><br />
             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />
 

@@ -3,6 +3,7 @@
 @endphp
 
 <form action="" method="post" class="stdform">
+@csrf
 
     <div class="row">
 

@@ -71,6 +71,7 @@ use Leantime\Core\Support\FromFormat;
 
 <h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> {!! __('headlines.edit_time') !!}</h4>
 <form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
+@csrf
 
 <label for="clients">{!! __('label.client') !!}</label>
 <select name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">

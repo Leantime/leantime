@@ -5,6 +5,7 @@
 <h4 class="widgettitle title-light">{!! __('subtitles.delete') !!}</h4>
 
 <form method="post" action="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvas/{{ $id }}">
+@csrf
     <p>{!! __('text.confirm_board_deletion') !!}</p><br />
     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />
     <x-global::forms.button tag="a" contentRole="tertiary"

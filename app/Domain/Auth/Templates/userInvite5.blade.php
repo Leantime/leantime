@@ -9,6 +9,7 @@
 <div class="regcontent">
 
     <form id="resetPassword" action="" method="post">
+    @csrf
 
         <input type="hidden" name="step" value="5"/>
         <input type="hidden" name="complete" value="1"/>

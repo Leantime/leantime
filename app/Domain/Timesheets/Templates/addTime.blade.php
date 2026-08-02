@@ -7,6 +7,7 @@ $values = $values ?? [];
 
 <div class="pageheader">
     <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
+    @csrf
         <x-global::forms.text-input name="term"
                placeholder="{{ __('input.placeholders.search_type_hit_enter') }}" />
     </form>
@@ -30,6 +31,7 @@ $values = $values ?? [];
 
         <div id="loader">&nbsp;</div>
         <form action="" method="post" class="stdform">
+        @csrf
 
             <div class="row-fluid">
                 <div class="span12">

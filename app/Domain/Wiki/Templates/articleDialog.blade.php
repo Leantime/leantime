@@ -45,6 +45,7 @@
 @endphp
 
 <form class="formModal" method="post" action="{{ CURRENT_URL }}">
+@csrf
 
     <div class="row">
         <div class="col-md-2">

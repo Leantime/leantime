@@ -253,6 +253,7 @@
                             <h4 class="widgettitle title-light"><span class="fa-solid fa-comments"></span> {!! __('subtitles.discussion') !!}</h4>
 
                             <form method="post" action="{{ BASE_URL }}/wiki/show/{{ $currentArticle->id }}#comment">
+                            @csrf
                                 <input type="hidden" name="comment" value="1" />
                                 @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/wiki/show/' . $currentArticle->id])
                             </form>

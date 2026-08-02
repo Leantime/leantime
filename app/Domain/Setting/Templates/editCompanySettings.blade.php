@@ -31,6 +31,7 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings#details" >
+                                @csrf
                                     <p>{!! __('text.these_are_system_wide_settings') !!}</p>
                                     <br />
                                     <input type="hidden" value="1" name="saveSettings" />
@@ -150,6 +151,7 @@
                             <div class="col-md-4">
 
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings" >
+                                @csrf
                                     <input type="hidden" value="1" name="saveLogo" />
                                     <h5 class="widgettitle title-light">{!! __('headlines.logo') !!}</h5>
                                     <br />

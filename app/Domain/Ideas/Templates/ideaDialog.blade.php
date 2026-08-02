@@ -15,6 +15,7 @@
 {!! $tpl->displayNotification() !!}
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
+@csrf
 
 <div class="row">
 

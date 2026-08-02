@@ -172,6 +172,7 @@
                               hx-target="#yourToDoContainer"
                               hx-swap="outerHTML"
                               hx-indicator="#todoWidgetLoader">
+                        @csrf
                             <div class="tw-flex tw-flex-row tw-gap-2">
                                 <div class="tw-flex-grow">
                                     <x-global::forms.text-input variant="headline" name="headline"
@@ -248,6 +249,7 @@
                                   hx-target="#yourToDoContainer"
                                   hx-swap="outerHTML"
                                   hx-indicator="#todoWidgetLoader">
+                            @csrf
                                 <div class="tw-flex tw-flex-row tw-gap-2">
                                     <div class="tw-flex-grow">
                                         <x-global::forms.text-input variant="headline" name="headline"

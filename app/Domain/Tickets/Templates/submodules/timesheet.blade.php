@@ -14,6 +14,7 @@ $currentPay = $userHours * $userInfo['wage'];
                 <br />
 
                 <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#timesheet" class="formModal">
+                @csrf
 
                     <label for="kind">{!! __('label.timesheet_kind') !!}</label>
                     <span class="field">

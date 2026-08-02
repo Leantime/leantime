@@ -5,6 +5,7 @@
 
 
 <form action="{{ BASE_URL }}/calendar/importGCal" method="post" class="formModal">
+@csrf
 
     <label for="name">{{ $tpl->__('label.calendar_name') }}:</label>
     <x-global::forms.text-input id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" /><br />

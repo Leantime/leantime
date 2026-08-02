@@ -25,6 +25,7 @@
 
             <div id="projectdetails">
                 <form action="" method="post" class="">
+                @csrf
 
                     <div class="row">
 

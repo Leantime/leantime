@@ -9,6 +9,7 @@
 </div>
 <div class="regcontent">
     <form id="login" action="{{ BASE_URL }}/twoFA/verify" method="post">
+    @csrf
         <input type="hidden" name="redirectUrl" value="{{ $redirectUrl }}"/>
 
         {!! $tpl->displayInlineNotification() !!}

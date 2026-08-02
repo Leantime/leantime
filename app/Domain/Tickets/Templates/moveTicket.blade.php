@@ -6,6 +6,7 @@
 
 
     <form method="post" action="{{ BASE_URL }}/tickets/moveTicket/{{ $ticket->id }}" class="formModal">
+    @csrf
         <h3>#{{ $ticket->id }} - {{ $ticket->headline }}</h3> <br />
         <p>
             @if ($ticket->type == 'milestone')

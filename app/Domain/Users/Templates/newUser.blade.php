@@ -10,6 +10,7 @@
 {!! $tpl->displayNotification() !!}
 
 <form action="{{ BASE_URL }}/users/newUser" method="post" class="stdform userEditModal formModal">
+@csrf
     <div class="row" style="width:800px;">
         <div class="col-md-7">
 

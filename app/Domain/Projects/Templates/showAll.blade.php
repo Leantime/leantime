@@ -23,6 +23,7 @@
 
         <div class="pull-right">
             <form action="" method="post">
+            @csrf
                 <input type="hidden" name="hideClosedProjects" value="1" />
                 <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" @if ($showClosedProjects) checked='checked' @endif />&nbsp;<label for="showClosed" class="pull-right">Show Closed Projects</label>
             </form>

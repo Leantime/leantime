@@ -57,6 +57,7 @@
     {!! $tpl->displayNotification() !!}
 
     <form class="formModal" method="post" action="{{ BASE_URL }}/{{ $canvasName }}canvas/editCanvasItem/{{ $id }}">
+    @csrf
 
         <input type="hidden" value="{{ $tpl->get('currentCanvas') }}" name="canvasId" />
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>

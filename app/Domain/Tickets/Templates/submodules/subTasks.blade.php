@@ -7,6 +7,7 @@
         <div class="ticketBox hideOnLoad" id="subticket_new" >
 
             <form method="post" class="form-group formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#substasks">
+            @csrf
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
                 <x-global::forms.text-input name="headline" title="{{ __('label.headline') }}" style="width:100%" placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
