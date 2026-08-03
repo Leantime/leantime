@@ -257,7 +257,7 @@ class Messengers
 
                 $resBody = json_decode((string) $response->getBody(), true);
 
-                return ! empty($resBody['ok']);
+                return is_array($resBody) && ! empty($resBody['ok']);
             } catch (\Throwable $e) {
                 Log::warning('Telegram sendMessage failed', ['exception' => get_class($e)]);
 
@@ -380,8 +380,6 @@ class Messengers
             $lines[] = '';
             $lines[] = '👉 <a href="'.e($hrefUrl).'">'.$this->language->__('label.open_in_leantime').'</a>';
         }
-
-        return implode("\n", $lines);
 
         return implode("\n", $lines);
     }

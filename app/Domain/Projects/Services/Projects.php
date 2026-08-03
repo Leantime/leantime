@@ -3263,7 +3263,7 @@ class Projects extends BaseService implements ChecksProjectAccess
             );
 
             $body = json_decode((string) $response->getBody(), true);
-            $result = $body['result'] ?? [];
+            $result = is_array($body) ? ($body['result'] ?? []) : [];
             $lastUpdate = is_array($result) && $result !== [] ? $result[array_key_last($result)] : null;
             $chatId = $lastUpdate['message']['chat']['id'] ?? null;
             $topicId = $lastUpdate['message']['message_thread_id'] ?? null;
