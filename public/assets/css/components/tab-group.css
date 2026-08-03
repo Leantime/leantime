@@ -117,28 +117,159 @@
     width: fit-content;
 }
 
-/* ── Floating variant: glass pills (Resource Allocation family) ───── */
+/* ── Floating variant: glass pills (Resource Allocation family) — THE
+      standard look for horizontal tab navs (design call 2026-08-03). The
+      glass container lives on the GROUP so page-level actions (period
+      pickers, New/Filter/Group By) sit inline on the same row, borderless,
+      on the page background. ─────────────────────────────────────────── */
 .lt-tabs--floating {
-    display: inline-flex;
-    gap: 2px;
-    padding: 4px;
+    display: flex;
+    align-items: center;
     margin: 0 0 8px;
     position: relative;
+}
+.lt-tabs--floating .lt-tabs-group {
+    gap: 2px;
+    padding: 4px;
     background: rgba(255, 255, 255, 0.14);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 100px;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
-.lt-tabs--floating .lt-tabs-group {
-    gap: 2px;
-}
 .lt-tabs--floating .lt-tab {
     padding: 8px 16px;
     border-radius: 100px;
 }
-.lt-tabs--floating .lt-tab.on {
+.lt-tabs--floating .lt-tab.on,
+.lt-tabs--floating .lt-tab.is-active {
     box-shadow: 0 2px 6px rgba(20, 40, 50, .12);
+}
+
+/* Link flavor — server-side-active nav tabs (board/timeline views): same
+   pills, <ul><li class="active"><a> structure. */
+.lt-tabs--links .lt-tabs-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.lt-tabs--links .lt-tabs-group li {
+    list-style: none;
+    margin: 0;
+}
+.lt-tabs--links .lt-tabs-group li a {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: all .14s ease;
+    letter-spacing: .1px;
+    padding: 8px 16px;
+    border-radius: 100px;
+}
+.lt-tabs--links .lt-tabs-group li:not(.active) a:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+}
+.lt-tabs--links .lt-tabs-group li a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+.lt-tabs--links .lt-tabs-group li.active a {
+    color: var(--primary-font-color);
+    background: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(20, 40, 50, .12);
+}
+.lt-tabs--links .lt-tabs-group li.active a:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: -2px;
+}
+
+/* Light-surface flavor — floating pills inside white cards/modals (goal
+   dialog): same shape, ink adapted so the glass doesn't vanish on white. */
+.lt-tabs--onlight .lt-tabs-group {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.08);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.lt-tabs--onlight .lt-tab {
+    color: var(--primary-font-color);
+    opacity: .75;
+}
+.lt-tabs--onlight .lt-tab:hover:not(.on):not(.is-active) {
+    color: var(--primary-font-color);
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
+}
+.lt-tabs--onlight .lt-tab.on,
+.lt-tabs--onlight .lt-tab.is-active {
+    color: var(--accent1);
+    opacity: 1;
+    background: #fff;
+}
+.lt-tabs--onlight .lt-tab:focus-visible {
+    outline-color: var(--accent1);
+}
+
+/* Inline actions (right cluster) — borderless on the page background.
+   Ported from the retired band (.maincontentinner.tabs .tabs-actions). */
+.lt-tabs-actions .btn {
+    line-height: 1.2;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.lt-tabs-actions .btn .badge {
+    line-height: 1;
+    padding: 3px 6px;
+    font-size: 10px;
+    height: auto;
+    align-self: center;
+}
+.lt-tabs-actions .btn-link {
+    color: #fff;
+    opacity: 1;
+    background: transparent;
+}
+.lt-tabs-actions .btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+.lt-tabs-actions form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+.lt-tabs-actions .filterWrapper {
+    margin-bottom: 0 !important;
+    display: inline-flex;
+    align-items: center;
+}
+/* Right-edge actions: panels/menus open LEFTWARD or they fall off screen. */
+.lt-tabs-actions .filterBar,
+.lt-tabs-actions .dropdown-menu {
+    left: auto !important;
+    right: 0;
+}
+.lt-tabs-actions .btn-group {
+    float: none;
+    margin: 0 !important;
+    display: inline-flex;
+    align-items: center;
 }
 
 /* Floating on a dark header (server-stamped by the caller) */

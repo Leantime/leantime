@@ -37,13 +37,11 @@
         .gv-unit{font-size:11px;font-weight:700;color:var(--gv-acc);opacity:.85;}
 
         /* tab bar — report deck style (gradient bar + translucent group + white active pill) */
-        .gv-tabs{display:flex;align-items:center;margin:0 0 22px;background:linear-gradient(90deg,var(--gv-acc),var(--gv-acc2));border-radius:14px;padding:7px 12px;}
-        .gv-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
-        .gv-tab{background:none;border:none;font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);padding:8px 15px;cursor:pointer;border-radius:9px;display:inline-flex;align-items:center;gap:7px;transition:color .15s,background .15s;}
+        /* Tab visuals come from the shared floating-pill standard
+           (tab-group.css: .lt-tabs--floating + --onlight for this white
+           modal surface); only the dialog-specific spacing stays here. */
+        .gv-tabs{margin:0 0 22px;}
         .gv-tab i,.gv-tab span[class*="fa"]{font-size:12px;}
-        .gv-tab:hover{color:#fff;background:rgba(255,255,255,.16);}
-        .gv-tab.is-active{color:var(--gv-acc);font-weight:600;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);}
-        .gv-tab:focus-visible{outline:2px solid #fff;outline-offset:2px;}
         .gv-panel{min-height:210px;}
         .gv-row{margin-bottom:20px;}
 
@@ -108,12 +106,12 @@
             <input type="hidden" name="changeItem" value="1">
 
             {{-- ── Tabs ── --}}
-            <div class="gv-tabs" role="tablist" aria-label="{{ __('goalcanvas.tabs_label') }}">
-                <div class="gv-tab-group">
-                    <button type="button" class="gv-tab" role="tab" id="gvTab-goal" aria-controls="gvPanel-goal" aria-selected="false" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('goalcanvas.tab_goal') }}</button>
-                    <button type="button" class="gv-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
+            <div class="gv-tabs lt-tabs lt-tabs--floating lt-tabs--onlight" role="tablist" aria-label="{{ __('goalcanvas.tabs_label') }}">
+                <div class="gv-tab-group lt-tabs-group">
+                    <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-goal" aria-controls="gvPanel-goal" aria-selected="false" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('goalcanvas.tab_goal') }}</button>
+                    <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
                     @if ($id !== '')
-                        <button type="button" class="gv-tab" role="tab" id="gvTab-milestones" aria-controls="gvPanel-milestones" aria-selected="false" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
+                        <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-milestones" aria-controls="gvPanel-milestones" aria-selected="false" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
                     @endif
                 </div>
             </div>

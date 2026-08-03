@@ -162,18 +162,18 @@
 
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
          space; picker sits with the view-mode controls it belongs with) ── --}}
-    <div class="rd-tabs hideOnPrint">
+    <div class="lt-tabs lt-tabs--floating hideOnPrint">
         {{-- Framed segmented tab group (mirrors the global .tabs nav): the tabs
              sit in one outlined container so they read as a connected control,
              the active one a white segment inside it. --}}
-        <div class="rd-tab-group">
-            <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
-            <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
-            <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
-            <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+        <div class="lt-tabs-group" role="tablist" aria-label="{{ __('stakeholder.tab.overview') }}">
+            <button type="button" class="lt-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
+            <button type="button" class="lt-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
+            <button type="button" class="lt-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
+            <button type="button" class="lt-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
         </div>
 
-        <div class="rd-tab-right">
+        <div class="lt-tabs-actions">
             <div class="rd-picker" id="rdPicker">
                 <button type="button" class="rd-picker-btn" onclick="rdTogglePicker(event)">
                     <i class="fa fa-calendar"></i>
@@ -289,7 +289,7 @@
         pages.forEach(function (p, i) { p.classList.toggle('on', i === idx); });
 
         // Tab state.
-        document.querySelectorAll('.rd-tab').forEach(function (btn) {
+        document.querySelectorAll('.lt-tab').forEach(function (btn) {
             btn.classList.toggle('on', parseInt(btn.dataset.page, 10) === idx);
         });
 
