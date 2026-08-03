@@ -250,6 +250,7 @@ class Messengers
                 $response = $this->httpClient->post(
                     "https://api.telegram.org/bot{$telegramHook['telegramBotToken']}/sendMessage",
                     [
+                        'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                         'json' => $data,
                     ]
                 );
@@ -350,34 +351,37 @@ class Messengers
         }
 
         // 5. Due Date
-        $formattedDueDate = 'None';
+        $formattedDueDate = $this->language->__('label.none');
         if (! empty($dateToFinish) && $dateToFinish !== '0000-00-00 00:00:00' && $dateToFinish !== '0000-00-00') {
-            $timestamp = strtotime($dateToFinish);
-            if ($timestamp !== false && $timestamp > 0) {
-                $formattedDueDate = date('Y-m-d', $timestamp);
+            try {
+                $formattedDueDate = dtHelper()->parseDbDateTime($dateToFinish)->formatDate();
+            } catch (\Throwable $e) {
+                $formattedDueDate = (string) $dateToFinish;
             }
         }
 
         // 6. Link
-        $urlLink = ! empty($notification->url['url']) ? $notification->url['url'] : '';
+        $urlLink = is_array($notification->url) && ! empty($notification->url['url']) ? $notification->url['url'] : '';
 
         // Build clean Telegram message
         $lines = [];
         $lines[] = '📋 <b>'.e($this->projectName).'</b>';
         $lines[] = '';
-        $lines[] = '📌 <b>Title:</b> '.e($taskTitle);
-        $lines[] = '🏷 <b>Status:</b> '.e($statusName);
-        $lines[] = '⚡ <b>Priority:</b> '.e($priorityName);
-        $lines[] = '👤 <b>Assigned To:</b> '.e($assignedTo);
-        $lines[] = '📅 <b>Due Date:</b> '.e($formattedDueDate);
+        $lines[] = '📌 <b>'.$this->language->__('label.title').':</b> '.e($taskTitle);
+        $lines[] = '🏷 <b>'.$this->language->__('label.todo_status').':</b> '.e($statusName);
+        $lines[] = '⚡ <b>'.$this->language->__('label.priority').':</b> '.e($priorityName);
+        $lines[] = '👤 <b>'.$this->language->__('label.assigned_to').':</b> '.e($assignedTo);
+        $lines[] = '📅 <b>'.$this->language->__('label.due_date').':</b> '.e($formattedDueDate);
 
         if (! empty($urlLink)) {
             // Rewrite local 'localhost' host to '127.0.0.1' for Telegram Bot API link validation in local dev; live production domains remain untouched.
             $hrefUrl = preg_replace('/^(https?:\/\/)localhost(?=[\/:]|$)/i', '${1}127.0.0.1', $urlLink);
             $hrefUrl = str_replace('#', '%23', $hrefUrl);
             $lines[] = '';
-            $lines[] = '👉 <a href="'.e($hrefUrl).'">Open in Leantime</a>';
+            $lines[] = '👉 <a href="'.e($hrefUrl).'">'.$this->language->__('label.open_in_leantime').'</a>';
         }
+
+        return implode("\n", $lines);
 
         return implode("\n", $lines);
     }

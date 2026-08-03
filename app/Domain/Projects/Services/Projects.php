@@ -17,6 +17,7 @@ use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
+use Leantime\Core\Support\OutboundUrlGuard;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
@@ -66,6 +67,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     private array $assignedProjectsMemo = [];
 
+    private Client $httpClient;
+
     public function __construct(
         private ProjectRepository $projectRepository,
         private TicketRepository $ticketRepository,
@@ -79,7 +82,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         private UserRepository $userRepo,
         private CommentRepository $commentRepo,
         private ClientRepository $clientRepo,
-        private ?Client $httpClient = null
+        ?Client $httpClient = null
     ) {
         $this->httpClient = $httpClient ?? new Client();
     }
@@ -3230,13 +3233,9 @@ class Projects extends BaseService implements ChecksProjectAccess
                 return ['hook' => $telegramHook, 'saved' => false, 'error' => 'chat_not_found'];
             }
 
-            if (is_array($detected)) {
-                $telegramHook['telegramChatId'] = $detected['chatId'];
-                if ($telegramHook['telegramTopicId'] === '' && ! empty($detected['topicId'])) {
-                    $telegramHook['telegramTopicId'] = (string) $detected['topicId'];
-                }
-            } else {
-                $telegramHook['telegramChatId'] = (string) $detected;
+            $telegramHook['telegramChatId'] = $detected['chatId'];
+            if ($telegramHook['telegramTopicId'] === '' && ! empty($detected['topicId'])) {
+                $telegramHook['telegramTopicId'] = (string) $detected['topicId'];
             }
         }
 
@@ -3257,7 +3256,10 @@ class Projects extends BaseService implements ChecksProjectAccess
         try {
             $response = $this->httpClient->get(
                 "https://api.telegram.org/bot{$botToken}/getUpdates",
-                ['query' => ['limit' => 100]]
+                [
+                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                    'query' => ['limit' => 100],
+                ]
             );
 
             $body = json_decode((string) $response->getBody(), true);
