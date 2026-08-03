@@ -19,7 +19,7 @@ class Messengers
 
     private LanguageCore $language;
 
-    private array $supportedMessengers = ['slack', 'discord', 'mattermost', 'zulip'];
+    private array $supportedMessengers = ['slack', 'discord', 'mattermost', 'zulip', 'telegram'];
 
     private string $projectName = '';
 
@@ -204,6 +204,58 @@ class Messengers
                         $botKey,
                     ],
                 ]);
+
+                return true;
+            } catch (\Throwable $e) {
+                report($e);
+
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * telegramWebhook
+     *
+     *
+     * @api
+     */
+    private function telegramWebhook(NotificationModel $notification): bool
+    {
+        $telegramHookSerialized = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.telegramHook");
+
+        if ($telegramHookSerialized !== false && $telegramHookSerialized !== '') {
+            $telegramHook = safe_unserialize($telegramHookSerialized, []);
+
+            if (empty($telegramHook['telegramBotToken']) || empty($telegramHook['telegramChatId'])) {
+                return false;
+            }
+
+            $text = '<b>'.e($this->projectName).'</b>'."\n".e($notification->message);
+            if (! empty($notification->url['url'])) {
+                $text .= "\n".e($notification->url['url']);
+            }
+
+            $data = [
+                'chat_id' => $telegramHook['telegramChatId'],
+                'text' => $text,
+                'parse_mode' => 'HTML',
+                'disable_web_page_preview' => true,
+            ];
+
+            if (! empty($telegramHook['telegramTopicId'])) {
+                $data['message_thread_id'] = (int) $telegramHook['telegramTopicId'];
+            }
+
+            try {
+                $this->httpClient->post(
+                    "https://api.telegram.org/bot{$telegramHook['telegramBotToken']}/sendMessage",
+                    [
+                        'json' => $data,
+                    ]
+                );
 
                 return true;
             } catch (\Throwable $e) {
