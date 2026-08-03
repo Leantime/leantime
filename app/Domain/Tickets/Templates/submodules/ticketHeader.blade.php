@@ -48,12 +48,13 @@
                 fn ($part) => $part !== null && $part !== ''
             );
         @endphp
-        <h5>{{ implode(' › ', $headerParts) }}</h5>
+        <h5>{{ implode(' / ', $headerParts) }}</h5>
 
         {{-- Migrated to the shared subject switcher (was a hand-rolled
              header-title-dropdown). The sprint menu items stay here — they're
              domain-specific — but the "To-Dos // <current> ▾" chrome is now the
              component. Zero visual change. --}}
+        <div class="pagetitle-row">
         <x-global::subjectSwitcher
             :parent="__('headlines.todos')"
             :current="$sprint !== false ? $sprint->name : __('dropdown.choose_sprint')">
@@ -72,9 +73,9 @@
             @endforeach
         </x-global::subjectSwitcher>
         <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
-        {{-- Board meta lives UNDER the title (left) — the consistent spot
-             across all pageheaders (matches the report header). Right cluster
-             stays status + actions only. --}}
+        {{-- Board meta trails the title on the SAME line (left) — one-line
+             headers keep the pageicon centered; right cluster stays status +
+             actions only. .pagetitle-row makes title + meta one flex row. --}}
         @isset($boardSummary)
             @php
                 // Board metrics as a one-line meta string; segments join with a
@@ -92,6 +93,7 @@
             @endphp
             <div class="pageheader-meta">{{ implode(' · ', $summaryParts) }}</div>
         @endisset
+        </div>{{-- /.pagetitle-row --}}
 
     </div>
 

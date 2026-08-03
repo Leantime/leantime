@@ -505,10 +505,20 @@ body {
 .pageheader-meta {
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
-    /* .75 (was .6): the meta line sits under the title now and must stay
-       readable (review feedback: side text was hard to read). */
+    /* .75 (was .6): review feedback — the meta text was hard to read. */
     opacity: .75;
-    margin-top: 2px;
+}
+/* Title + meta as ONE row (meta trails the title, left) — keeps the
+   pageicon vertically centered against a single-line header. */
+.pagetitle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+.pagetitle-row h1 {
+    margin: 0;
 }
 /* Sprint edit/delete ⋮ menu — a subtle icon button inline in the right cluster
    (only rendered for a real sprint view). */

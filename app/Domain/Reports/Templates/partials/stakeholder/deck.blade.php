@@ -95,7 +95,7 @@
                  scope label and period meaning are redundant here — the
                  breadcrumb says Report, the period picker below owns the
                  period context — so the under-text keeps only freshness. --}}
-            <h1 class="h"><span class="crumb-type">{{ __('stakeholder.header.crumb_report') }}</span> <span class="crumb-sep" aria-hidden="true">›</span> {{ $subject }}</h1>
+            <h1 class="h"><span class="crumb-type">{{ __('stakeholder.header.crumb_report') }}</span> <span class="crumb-sep" aria-hidden="true">/</span> {{ $subject }}</h1>
             <div class="prov">{{ __('stakeholder.header.updated') }} {{ $updatedAt }}</div>
         </div>
         <div class="verdict">
