@@ -76,9 +76,9 @@
 .rd-scope.rd-dark .rd-kcell .kv .down{color:#e46589;background:rgba(228,101,137,.16);}
 .rd-scope *{min-width:0;}
 
-/* Persistent header — sits above the deck. Left: subject + provenance. Right:
-   status verdict (stated verdict with provenance line, NOT a tappable pill). */
-.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:4px 18px;align-items:start;padding:16px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
+/* Persistent header — one vertically-centered row. LEFT = orientation
+   (crumb / title); RIGHT = freshness → verdict → ⋮. */
+.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:18px;align-items:center;padding:16px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
 .rd-hdr .st{min-width:0;}
 /* Title = <h1> + switcher, at the left edge (aligns with breadcrumb + meta). */
 /* Title matches the Tasks pageheader treatment exactly (18px / 400 / text-1)
@@ -89,9 +89,9 @@
 .rd-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 .rd-hdr .dropdown-menu .rd-hdr .dropdown-menu li a .fa-circle-dot{color:var(--rd-accent);}
 .rd-hdr .prov{font-size:12px;color:var(--rd-text-3);margin:0;white-space:nowrap;}
-.rd-hdr .verdict{text-align:right;min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
-/* ⋮ is its own column; top-aligned with the verdict label ("In progress"). */
-.rd-hdr .rd-actions{line-height:1;display:flex;align-items:flex-start;}
+.rd-hdr .verdict{min-width:0;display:flex;align-items:center;}
+/* ⋮ is its own column, centered with the rest of the row. */
+.rd-hdr .rd-actions{line-height:1;display:flex;align-items:center;}
 .rd-hdr .rd-actions .dropdown{margin:0 !important;padding:0 !important;line-height:1 !important;display:inline-flex !important;}
 .rd-hdr .rd-actions .dropdown-toggle.btn{padding:0 4px !important;margin:0 !important;height:auto !important;line-height:1.4 !important;min-width:0 !important;border:none !important;background:transparent !important;color:var(--rd-text-4) !important;font-size:16px !important;box-shadow:none !important;}
 .rd-hdr .rd-actions .dropdown-toggle.btn:hover{color:var(--rd-text-2) !important;background:rgba(0,0,0,.04) !important;border-radius:6px;}
