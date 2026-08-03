@@ -233,10 +233,7 @@ class Messengers
                 return false;
             }
 
-            $text = "📌 <b>".e($this->projectName)."</b>\n\n".e($notification->message);
-            if (! empty($notification->url['url'])) {
-                $text .= "\n\n🔗 <a href=\"".e($notification->url['url'])."\">".e($notification->url['url'])."</a>";
-            }
+            $text = $this->prepareTelegramMessage($notification);
 
             $data = [
                 'chat_id' => $telegramHook['telegramChatId'],
@@ -266,6 +263,75 @@ class Messengers
         }
 
         return false;
+    }
+
+    /**
+     * prepareTelegramMessage
+     *
+     * @api
+     */
+    public function prepareTelegramMessage(NotificationModel $notification): string
+    {
+        $headline = '';
+        $status = '';
+        $type = '';
+
+        if (isset($notification->entity)) {
+            if (is_array($notification->entity)) {
+                $headline = $notification->entity['headline'] ?? '';
+                $status = $notification->entity['status'] ?? '';
+                $type = $notification->entity['type'] ?? '';
+            } elseif (is_object($notification->entity)) {
+                $headline = $notification->entity->headline ?? '';
+                $status = $notification->entity->status ?? '';
+                $type = $notification->entity->type ?? '';
+            }
+        }
+
+        $lines = [];
+
+        // Project header
+        $lines[] = '📂 <b>'.e($this->projectName).'</b>';
+        $lines[] = '';
+
+        // Notification message
+        $lines[] = '🔔 '.e($notification->message);
+
+        // Metadata line
+        $meta = [];
+        if (! empty($headline) && strpos($notification->message, $headline) === false) {
+            $meta[] = '📌 <b>Title:</b> '.e($headline);
+        }
+
+        if (! empty($status)) {
+            $statusName = $status;
+            try {
+                $ticketService = app()->make(Tickets::class);
+                $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
+                if (! empty($statusLabelsArray[$status]['name'])) {
+                    $statusName = $statusLabelsArray[$status]['name'];
+                }
+            } catch (\Throwable $e) {
+                // Keep raw status if service unresolvable in test env
+            }
+            $meta[] = '🏷 <b>Status:</b> '.e($statusName);
+        }
+
+        if (! empty($type)) {
+            $meta[] = '🔖 <b>Type:</b> '.e(ucfirst($type));
+        }
+
+        if (! empty($meta)) {
+            $lines[] = implode(' | ', $meta);
+        }
+
+        // Clickable URL
+        if (! empty($notification->url['url'])) {
+            $lines[] = '';
+            $lines[] = '👉 <a href="'.e($notification->url['url']).'">View in Leantime</a>';
+        }
+
+        return implode("\n", $lines);
     }
 
     /**
