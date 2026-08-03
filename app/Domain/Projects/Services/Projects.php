@@ -3218,8 +3218,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     {
         $telegramHook = [
             'telegramBotToken' => trim(strip_tags($hookData['telegramBotToken'] ?? '')),
-            'telegramChatId'   => trim(strip_tags($hookData['telegramChatId'] ?? '')),
-            'telegramTopicId'  => trim(strip_tags($hookData['telegramTopicId'] ?? '')),
+            'telegramChatId' => trim(strip_tags($hookData['telegramChatId'] ?? '')),
+            'telegramTopicId' => trim(strip_tags($hookData['telegramTopicId'] ?? '')),
         ];
 
         if ($telegramHook['telegramBotToken'] === '') {
