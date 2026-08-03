@@ -484,6 +484,26 @@ class Goalcanvas extends Blueprints
     }
 
     /**
+     * Resolve a milestone's project id. Null when the id is not a live
+     * milestone-type ticket — the read-auth counterpart of the same-project
+     * validation in addGoalMilestoneLink().
+     */
+    public function getMilestoneProjectId(int $milestoneId): ?int
+    {
+        if ($milestoneId <= 0) {
+            return null;
+        }
+
+        $projectId = $this->dbConnection->table('zp_tickets')
+            ->where('id', $milestoneId)
+            ->where('type', 'milestone')
+            ->where('status', '<>', -1)
+            ->value('projectId');
+
+        return $projectId === null ? null : (int) $projectId;
+    }
+
+    /**
      * Remove a single goal↔milestone link: delete the tracked_by edge and clear
      * the legacy milestoneId column if it still points at this milestone.
      *
@@ -937,12 +957,24 @@ class Goalcanvas extends Blueprints
     /**
      * {@inheritDoc}
      *
-     * Goal boards additionally record metric value changes to zp_goal_history.
+     * Goal boards additionally record metric value changes to zp_goal_history,
+     * and preserve the legacy milestoneId column on payloads that omit it.
      */
     public function editCanvasItem(array $values): void
     {
         $itemId = (int) ($values['itemId'] ?? $values['id'] ?? 0);
         $previousValue = $this->getCurrentGoalValue($itemId);
+
+        // Blueprints::editCanvasItem writes milestoneId unconditionally with
+        // `?? ''`, so a payload that simply omits the key (the edges-driven
+        // goal dialog does, by design) would blank the goal's legacy column on
+        // every save and break the dual-write invariant for column readers.
+        // Absent key = "don't touch", matching the service's edge-sync guard.
+        if (! array_key_exists('milestoneId', $values) && $itemId > 0) {
+            $values['milestoneId'] = (string) ($this->dbConnection->table('zp_canvas_items')
+                ->where('id', $itemId)
+                ->value('milestoneId') ?? '');
+        }
 
         parent::editCanvasItem($values);
 

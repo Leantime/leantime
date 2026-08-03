@@ -3680,6 +3680,14 @@ class Tickets extends BaseService
             return ['msg' => 'notifications.ticket_delete_error', 'type' => 'error'];
         }
 
+        // Milestones carry goal tracked_by edges (and child-ticket links) that
+        // only deleteMilestone() cascades — deleting one through the generic
+        // path would strand orphaned edges. Route by actual type, not by which
+        // entry point the caller happened to use.
+        if (($ticket->type ?? '') === 'milestone') {
+            return $this->deleteMilestone($id);
+        }
+
         // Editor+ in the ticket's project AND access to it (was access-only, no role gate).
         $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 

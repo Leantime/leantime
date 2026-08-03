@@ -37,13 +37,11 @@
         .gv-unit{font-size:11px;font-weight:700;color:var(--gv-acc);opacity:.85;}
 
         /* tab bar — report deck style (gradient bar + translucent group + white active pill) */
-        .gv-tabs{display:flex;align-items:center;margin:0 0 22px;background:linear-gradient(90deg,var(--gv-acc),var(--gv-acc2));border-radius:14px;padding:7px 12px;}
-        .gv-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
-        .gv-tab{background:none;border:none;font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);padding:8px 15px;cursor:pointer;border-radius:9px;display:inline-flex;align-items:center;gap:7px;transition:color .15s,background .15s;}
+        /* Tab visuals come from the shared floating-pill standard
+           (tab-group.css: .lt-tabs--floating + --onlight for this white
+           modal surface); only the dialog-specific spacing stays here. */
+        .gv-tabs{margin:0 0 22px;}
         .gv-tab i,.gv-tab span[class*="fa"]{font-size:12px;}
-        .gv-tab:hover{color:#fff;background:rgba(255,255,255,.16);}
-        .gv-tab.is-active{color:var(--gv-acc);font-weight:600;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);}
-        .gv-tab:focus-visible{outline:2px solid #fff;outline-offset:2px;}
         .gv-panel{min-height:210px;}
         .gv-row{margin-bottom:20px;}
 
@@ -108,12 +106,12 @@
             <input type="hidden" name="changeItem" value="1">
 
             {{-- ── Tabs ── --}}
-            <div class="gv-tabs" role="tablist" aria-label="{{ __('goalcanvas.tabs_label') }}">
-                <div class="gv-tab-group">
-                    <button type="button" class="gv-tab" role="tab" id="gvTab-goal" aria-controls="gvPanel-goal" aria-selected="false" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('goalcanvas.tab_goal') }}</button>
-                    <button type="button" class="gv-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
+            <div class="gv-tabs lt-tabs lt-tabs--floating lt-tabs--onlight" role="tablist" aria-label="{{ __('goalcanvas.tabs_label') }}">
+                <div class="gv-tab-group lt-tabs-group">
+                    <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-goal" aria-controls="gvPanel-goal" aria-selected="false" data-tab="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> {{ __('goalcanvas.tab_goal') }}</button>
+                    <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
                     @if ($id !== '')
-                        <button type="button" class="gv-tab" role="tab" id="gvTab-milestones" aria-controls="gvPanel-milestones" aria-selected="false" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
+                        <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-milestones" aria-controls="gvPanel-milestones" aria-selected="false" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
                     @endif
                 </div>
             </div>
@@ -215,68 +213,10 @@
             {{-- ── Tab: Milestones ── --}}
             @if ($id !== '')
                 <div class="gv-panel" data-panel="milestones" role="tabpanel" id="gvPanel-milestones" aria-labelledby="gvTab-milestones" tabindex="0">
-                    <div class="gv-ms-head">
-                        @if (($milestoneSummary['total'] ?? 0) > 0)
-                            <span class="gv-ms-summary"><b>{{ $milestoneSummary['total'] }}</b> {{ $milestoneSummary['total'] == 1 ? __("goalcanvas.summary_milestone_one") : __("goalcanvas.summary_milestones") }}
-                                @if ($milestoneSummary['inProgress'] > 0)&middot; {{ $milestoneSummary['inProgress'] }} {{ __("goalcanvas.summary_in_progress") }} @endif
-                                @if ($milestoneSummary['notStarted'] > 0)&middot; {{ $milestoneSummary['notStarted'] }} {{ __("goalcanvas.summary_not_started") }} @endif
-                                @if ($milestoneSummary['done'] > 0)&middot; {{ $milestoneSummary['done'] }} {{ __("goalcanvas.summary_done") }} @endif
-                            </span>
-                        @endif
-                        <span class="gv-ms-actions">
-                            @if ($login::userIsAtLeast($roles::$editor))
-                                <button type="button" class="gv-ms-act helperTooltip" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');" data-tippy-content="{{ __('goalcanvas.ms_new') }}" title="{{ __('goalcanvas.ms_new') }}" aria-label="{{ __('goalcanvas.ms_new') }}"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                                @if (count($milestones) > 0)
-                                    <button type="button" class="gv-ms-act helperTooltip" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');" data-tippy-content="{{ __('goalcanvas.ms_link') }}" title="{{ __('goalcanvas.ms_link') }}" aria-label="{{ __('goalcanvas.ms_link') }}"><i class="fa fa-link" aria-hidden="true"></i></button>
-                                @endif
-                            @endif
-                            <i class="fa fa-question-circle-o helperTooltip" aria-hidden="true" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i>
-                        </span>
-                    </div>
-
-                    @if (count($goalMilestones) > 0)
-                        <style>
-                            .goalMsWrap{position:relative;}
-                            .goalMsRow{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding-bottom:9px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
-                            .goalMsRow::-webkit-scrollbar{height:10px;}
-                            .goalMsRow::-webkit-scrollbar-thumb{background:#9aa7ad;border-radius:10px;border:2px solid transparent;background-clip:padding-box;}
-                            .goalMsRow::-webkit-scrollbar-thumb:hover{background:#7d8b92;}
-                            .goalMsRow::-webkit-scrollbar-track{background:var(--secondary-background,#eef1f2);border-radius:10px;}
-                            .goalMsRow > .goalMsChip{scroll-snap-align:start;transition:border-color .12s;}
-                            .goalMsChip:hover{border-color:var(--primary-color,#004666)!important;}
-                            .goalMsChip .msLink{text-decoration:none;color:inherit;cursor:pointer;display:flex;align-items:center;min-width:0;flex:1;}
-                            .goalMsChip .msLink:hover .msName{color:var(--primary-color,#004666);}
-                            .goalMsNext{position:absolute;right:-3px;top:5px;width:29px;height:29px;border-radius:50%;border:1px solid var(--main-border-color,#e4e7ec);background:var(--primary-background,#fff);color:var(--primary-color,#004666);display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(20,40,50,.16);z-index:5;}
-                            .goalMsNext:hover{background:var(--secondary-background,#f2f4f7);}
-                        </style>
-                        <div class="goalMsWrap">
-                            <div class="goalMsRow">
-                                @foreach ($goalMilestones as $ms)
-                                    <div class="goalMsChip" style="position:relative;flex:0 0 auto;min-width:150px;max-width:220px;height:42px;border-radius:9px;border:1px solid var(--main-border-color,#e4e7ec);background:var(--secondary-background,#f2f4f7);overflow:hidden;display:flex;align-items:center;padding:0 10px;">
-                                        <span style="position:absolute;left:0;top:0;bottom:0;width:{{ (int) $ms['percentDone'] }}%;background:{{ $ms['color'] }};opacity:.18;border-right:2px solid {{ $ms['color'] }};"></span>
-                                        <a href="#/tickets/editMilestone/{{ (int) $ms['id'] }}" class="msLink" style="position:relative;z-index:1;" title="{{ __('links.edit_milestone') }}: {{ $ms['headline'] }}">
-                                            <span class="msName" style="flex:1;min-width:0;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $ms['headline'] }}</span>
-                                            <span style="flex:none;font-size:11px;font-weight:600;opacity:.7;margin-left:6px;">{{ (int) $ms['percentDone'] }}%</span>
-                                        </a>
-                                        @if ($login::userIsAtLeast($roles::$editor))
-                                            <button type="button"
-                                                    hx-post="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}"
-                                                    hx-vals='{"removeMilestone": {{ (int) $ms['id'] }}}'
-                                                    hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
-                                                    hx-target="closest .goalMsChip"
-                                                    hx-swap="delete"
-                                                    class="delete"
-                                                    style="position:relative;z-index:1;margin-left:8px;opacity:.6;background:transparent;border:none;cursor:pointer;padding:0;flex:none;"
-                                                    aria-label="{{ __("links.remove") }}: {{ $ms['headline'] }}" title="{{ __("links.remove") }}"><i class="fa fa-close" aria-hidden="true"></i></button>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                            @if (count($goalMilestones) > 2)
-                                <button type="button" class="goalMsNext" onclick="this.parentElement.querySelector('.goalMsRow').scrollBy({left:210,behavior:'smooth'});" aria-label="{{ __('goalcanvas.scroll_more_milestones') }}" title="{{ __('goalcanvas.scroll_more_milestones') }}"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
-                            @endif
-                        </div>
-                    @endif
+                    {{-- Summary + chips live in a partial so the chip-remove
+                         hx-post re-renders the whole section (counts + arrow
+                         stay correct — deleting only the chip left them stale). --}}
+                    @include('goalcanvas::partials.milestonesSection')
 
                     @if ($login::userIsAtLeast($roles::$editor))
                         <div class="row" id="newMilestone" style="display:none;">
