@@ -275,6 +275,31 @@
                     </div>
                 </div>
 
+                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Telegram</h4>
+                <div class="row">
+                    <div class="col-md-3">
+                        <img src="{{ BASE_URL }}/dist/images/telegram-logo.png" width="200"/>
+                    </div>
+
+                    <div class="col-md-5">
+                        {!! __('text.telegram_instructions') !!}
+                    </div>
+                    <div class="col-md-4">
+                        <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
+                            <strong>{!! __('label.botkey') !!}</strong><br />
+                            <x-global::forms.text-input name="telegramBotToken" id="telegramBotToken" placeholder="" value="{{ $tpl->escape($telegramHook['telegramBotToken']) }}" />
+                            <br />
+                            <strong>{!! __('label.telegram_chat_id') !!}</strong><br />
+                            <x-global::forms.text-input name="telegramChatId" id="telegramChatId" placeholder="{{ __('input.placeholders.telegram_chat_id') }}" value="{{ $tpl->escape($telegramHook['telegramChatId']) }}" />
+                            <br />
+                            <strong>{!! __('label.telegram_topic_id') !!}</strong><br />
+                            <x-global::forms.text-input name="telegramTopicId" id="telegramTopicId" placeholder="{{ __('input.placeholders.telegram_topic_id') }}" value="{{ $tpl->escape($telegramHook['telegramTopicId']) }}" />
+                            <br />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="telegramSave" />
+                        </form>
+                    </div>
+                </div>
+
                 {{-- Slack webhook --}}
                 <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
                 <div class='row'>
