@@ -22,7 +22,7 @@
                                genuinely needs markup.
       parentHref  string|null  Optional link for the parent crumb.
       current     string       The current subject name (escaped — user data safe).
-      separator   string       House-style divider (escaped). Default "//".
+      separator   string       House-style divider (escaped). Default "›".
       switchStyle 'legacy'|'pill'  Visual variant. 'legacy' = the established
                                underlined-caret look. 'pill' is reserved for the
                                modern treatment (styled in a follow-up); the prop
@@ -34,7 +34,7 @@
     'parent' => null,
     'parentHref' => null,
     'current' => '',
-    'separator' => '//',
+    'separator' => '›',
     'switchStyle' => 'legacy',
 ])
 

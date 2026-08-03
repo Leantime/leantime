@@ -48,7 +48,7 @@
                 fn ($part) => $part !== null && $part !== ''
             );
         @endphp
-        <h5>{{ implode(' // ', $headerParts) }}</h5>
+        <h5>{{ implode(' › ', $headerParts) }}</h5>
 
         {{-- Migrated to the shared subject switcher (was a hand-rolled
              header-title-dropdown). The sprint menu items stay here — they're
@@ -72,11 +72,9 @@
             @endforeach
         </x-global::subjectSwitcher>
         <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
-    </div>
-
-    {{-- Right cluster on the breadcrumb bar: board stats + (for a real sprint
-         view only) the sprint edit/delete ⋮ menu. --}}
-    <div class="pageheader-right">
+        {{-- Board meta lives UNDER the title (left) — the consistent spot
+             across all pageheaders (matches the report header). Right cluster
+             stays status + actions only. --}}
         @isset($boardSummary)
             @php
                 // Board metrics as a one-line meta string; segments join with a
@@ -95,6 +93,11 @@
             <div class="pageheader-meta">{{ implode(' · ', $summaryParts) }}</div>
         @endisset
 
+    </div>
+
+    {{-- Right cluster on the breadcrumb bar: board stats + (for a real sprint
+         view only) the sprint edit/delete ⋮ menu. --}}
+    <div class="pageheader-right">
         @if (
             ($currentSprint !== false)
                 && ($currentSprint !== null)

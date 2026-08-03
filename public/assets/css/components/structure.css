@@ -505,8 +505,10 @@ body {
 .pageheader-meta {
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
-    opacity: .6;
-    white-space: nowrap;
+    /* .75 (was .6): the meta line sits under the title now and must stay
+       readable (review feedback: side text was hard to read). */
+    opacity: .75;
+    margin-top: 2px;
 }
 /* Sprint edit/delete ⋮ menu — a subtle icon button inline in the right cluster
    (only rendered for a real sprint view). */
