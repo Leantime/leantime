@@ -54,7 +54,6 @@
              header-title-dropdown). The sprint menu items stay here — they're
              domain-specific — but the "To-Dos // <current> ▾" chrome is now the
              component. Zero visual change. --}}
-        <div class="pagetitle-row">
         <x-global::subjectSwitcher
             :parent="__('headlines.todos')"
             :current="$sprint !== false ? $sprint->name : __('dropdown.choose_sprint')">
@@ -73,9 +72,15 @@
             @endforeach
         </x-global::subjectSwitcher>
         <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
-        {{-- Board meta trails the title on the SAME line (left) — one-line
-             headers keep the pageicon centered; right cluster stays status +
-             actions only. .pagetitle-row makes title + meta one flex row. --}}
+
+    </div>
+
+    {{-- Right cluster on the breadcrumb bar: board stats + (for a real sprint
+         view only) the sprint edit/delete ⋮ menu. --}}
+    <div class="pageheader-right">
+        {{-- Header rule (2026-08-03): LEFT = orientation (where you are),
+             RIGHT = information (what about it) — meta, then status, then ⋮,
+             one vertically-centered row. --}}
         @isset($boardSummary)
             @php
                 // Board metrics as a one-line meta string; segments join with a
@@ -93,13 +98,6 @@
             @endphp
             <div class="pageheader-meta">{{ implode(' · ', $summaryParts) }}</div>
         @endisset
-        </div>{{-- /.pagetitle-row --}}
-
-    </div>
-
-    {{-- Right cluster on the breadcrumb bar: board stats + (for a real sprint
-         view only) the sprint edit/delete ⋮ menu. --}}
-    <div class="pageheader-right">
         @if (
             ($currentSprint !== false)
                 && ($currentSprint !== null)

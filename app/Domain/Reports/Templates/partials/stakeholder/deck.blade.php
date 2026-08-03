@@ -96,8 +96,9 @@
                  breadcrumb says Report, the period picker below owns the
                  period context — so the under-text keeps only freshness. --}}
             <h1 class="h"><span class="crumb-type">{{ __('stakeholder.header.crumb_report') }}</span> <span class="crumb-sep" aria-hidden="true">/</span> {{ $subject }}</h1>
-            <div class="prov">{{ __('stakeholder.header.updated') }} {{ $updatedAt }}</div>
         </div>
+        {{-- RIGHT = what about it: freshness, then verdict, then ⋮. --}}
+        <div class="prov">{{ __('stakeholder.header.updated') }} {{ $updatedAt }}</div>
         <div class="verdict">
             {{-- Provenance ("set 1 month ago · overrides metrics") is secondary:
                  it lives in the tooltip so the right side stays one balanced,
