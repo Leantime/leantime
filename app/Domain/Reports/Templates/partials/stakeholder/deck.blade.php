@@ -97,13 +97,14 @@
                  period context — so the under-text keeps only freshness. --}}
             <h1 class="h"><span class="crumb-type">{{ __('stakeholder.header.crumb_report') }}</span> <span class="crumb-sep" aria-hidden="true">/</span> {{ $subject }}</h1>
         </div>
-        {{-- RIGHT = what about it: freshness, then verdict, then ⋮. --}}
-        <div class="prov">{{ __('stakeholder.header.updated') }} {{ $updatedAt }}</div>
+        {{-- RIGHT = what about it: verdict with freshness stacked under it,
+             centered as one group against the title row, then ⋮. --}}
         <div class="verdict">
             {{-- Provenance ("set 1 month ago · overrides metrics") is secondary:
                  it lives in the tooltip so the right side stays one balanced,
                  vertically-centered row with the actions menu. --}}
             <div class="v" data-tippy-content="{{ $verdictSource }}"><span class="dot" style="background:{{ $verdictDotColor }}"></span>{{ $verdictLabel }}</div>
+            <div class="prov">{{ __('stakeholder.header.updated') }} {{ $updatedAt }}</div>
         </div>
         @if (! empty($projectId ?? null))
             <div class="rd-actions">
