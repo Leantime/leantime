@@ -39,25 +39,21 @@ foreach ($allCanvas as $canvasRow) {
 <div class="pageheader">
     <div class="pageicon"><span class='fa {{ $canvasIcon }}'></span></div>
     <div class="pagetitle">
-        <h5>{{ session("currentProjectClient") . " // " . session("currentProjectName") }}</h5>
-
-        <h1>{{ __("headline.goal.dashboardboard") }} //
-            @if (count($allCanvas) > 0)
-                <span class="dropdown dropdownWrapper">
-                    <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">All Goal Groups&nbsp;<i class="fa fa-caret-down"></i></a>
-
-                    <ul class="dropdown-menu canvasSelector">
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
-                        @endif
-                        <li class="border"></li>
-                        @foreach ($allCanvas as $canvasRow)
-                            <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
-                        @endforeach
-                    </ul>
-                </span>
-            @endif
-        </h1>
+        @if (count($allCanvas) > 0)
+            <x-global::subjectSwitcher
+                :parent="__('headline.goal.dashboardboard')"
+                current="All Goal Groups">
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
+                @endif
+                <li class="border"></li>
+                @foreach ($allCanvas as $canvasRow)
+                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
+                @endforeach
+            </x-global::subjectSwitcher>
+        @else
+            <h1>{{ __("headline.goal.dashboardboard") }}</h1>
+        @endif
     </div>
 </div><!--pageheader-->
 
