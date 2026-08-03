@@ -3224,13 +3224,20 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         if ($telegramHook['telegramChatId'] === '') {
-            $detectedChatId = $this->detectTelegramChatId($projectId, $telegramHook['telegramBotToken']);
+            $detected = $this->detectTelegramChatId($projectId, $telegramHook['telegramBotToken']);
 
-            if ($detectedChatId === null) {
+            if ($detected === null) {
                 return ['hook' => $telegramHook, 'saved' => false, 'error' => 'chat_not_found'];
             }
 
-            $telegramHook['telegramChatId'] = $detectedChatId;
+            if (is_array($detected)) {
+                $telegramHook['telegramChatId'] = $detected['chatId'];
+                if ($telegramHook['telegramTopicId'] === '' && ! empty($detected['topicId'])) {
+                    $telegramHook['telegramTopicId'] = (string) $detected['topicId'];
+                }
+            } else {
+                $telegramHook['telegramChatId'] = (string) $detected;
+            }
         }
 
         $this->saveProjectSetting($projectId, 'telegramHook', serialize($telegramHook));
@@ -3239,13 +3246,13 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * Calls Telegram's getUpdates API and returns the chat id of the most recent
-     * message sent to the bot, or null if none is found / the call fails.
+     * Calls Telegram's getUpdates API and returns the detected chat id and topic id (if present)
+     * of the most recent message sent to the bot, or null if none is found / the call fails.
      *
      * @api
      */
     #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
-    public function detectTelegramChatId(int $projectId, string $botToken): ?string
+    public function detectTelegramChatId(int $projectId, string $botToken): ?array
     {
         try {
             $response = $this->httpClient->get(
@@ -3257,8 +3264,16 @@ class Projects extends BaseService implements ChecksProjectAccess
             $result = $body['result'] ?? [];
             $lastUpdate = is_array($result) && $result !== [] ? $result[array_key_last($result)] : null;
             $chatId = $lastUpdate['message']['chat']['id'] ?? null;
+            $topicId = $lastUpdate['message']['message_thread_id'] ?? null;
 
-            return $chatId !== null ? (string) $chatId : null;
+            if ($chatId === null) {
+                return null;
+            }
+
+            return [
+                'chatId' => (string) $chatId,
+                'topicId' => $topicId !== null ? (string) $topicId : null,
+            ];
         } catch (\Throwable $e) {
             Log::warning('Telegram getUpdates failed', ['exception' => get_class($e)]);
 

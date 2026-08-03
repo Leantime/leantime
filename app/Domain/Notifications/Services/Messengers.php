@@ -242,19 +242,21 @@ class Messengers
                 'disable_web_page_preview' => true,
             ];
 
-            if (! empty($telegramHook['telegramTopicId'])) {
+            if (! empty($telegramHook['telegramTopicId']) && is_numeric($telegramHook['telegramTopicId']) && (int) $telegramHook['telegramTopicId'] > 0) {
                 $data['message_thread_id'] = (int) $telegramHook['telegramTopicId'];
             }
 
             try {
-                $this->httpClient->post(
+                $response = $this->httpClient->post(
                     "https://api.telegram.org/bot{$telegramHook['telegramBotToken']}/sendMessage",
                     [
                         'json' => $data,
                     ]
                 );
 
-                return true;
+                $resBody = json_decode((string) $response->getBody(), true);
+
+                return ! empty($resBody['ok']);
             } catch (\Throwable $e) {
                 Log::warning('Telegram sendMessage failed', ['exception' => get_class($e)]);
 
@@ -371,7 +373,7 @@ class Messengers
 
         if (! empty($urlLink)) {
             // Rewrite local 'localhost' host to '127.0.0.1' for Telegram Bot API link validation in local dev; live production domains remain untouched.
-            $hrefUrl = preg_replace('/^(https?:\/\/)localhost(?=[\/:]|$)/i', '$1127.0.0.1', $urlLink);
+            $hrefUrl = preg_replace('/^(https?:\/\/)localhost(?=[\/:]|$)/i', '${1}127.0.0.1', $urlLink);
             $hrefUrl = str_replace('#', '%23', $hrefUrl);
             $lines[] = '';
             $lines[] = '👉 <a href="'.e($hrefUrl).'">Open in Leantime</a>';
