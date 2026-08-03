@@ -84,7 +84,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         private ClientRepository $clientRepo,
         ?Client $httpClient = null
     ) {
-        $this->httpClient = $httpClient ?? new Client();
+        $this->httpClient = $httpClient ?? app()->make(Client::class);
     }
 
     /**
@@ -3217,9 +3217,9 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function saveTelegramWebhook(int $projectId, array $hookData): array
     {
         $telegramHook = [
-            'telegramBotToken' => strip_tags($hookData['telegramBotToken'] ?? ''),
-            'telegramChatId' => strip_tags($hookData['telegramChatId'] ?? ''),
-            'telegramTopicId' => strip_tags($hookData['telegramTopicId'] ?? ''),
+            'telegramBotToken' => trim(strip_tags($hookData['telegramBotToken'] ?? '')),
+            'telegramChatId'   => trim(strip_tags($hookData['telegramChatId'] ?? '')),
+            'telegramTopicId'  => trim(strip_tags($hookData['telegramTopicId'] ?? '')),
         ];
 
         if ($telegramHook['telegramBotToken'] === '') {

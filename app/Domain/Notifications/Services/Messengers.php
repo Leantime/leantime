@@ -354,7 +354,7 @@ class Messengers
         $formattedDueDate = $this->language->__('label.none');
         if (! empty($dateToFinish) && $dateToFinish !== '0000-00-00 00:00:00' && $dateToFinish !== '0000-00-00') {
             try {
-                $formattedDueDate = dtHelper()->parseDbDateTime($dateToFinish)->formatDate();
+                $formattedDueDate = dtHelper()->parseDbDateTime($dateToFinish)->formatDateForUser();
             } catch (\Throwable $e) {
                 $formattedDueDate = (string) $dateToFinish;
             }
@@ -374,8 +374,13 @@ class Messengers
         $lines[] = '📅 <b>'.$this->language->__('label.due_date').':</b> '.e($formattedDueDate);
 
         if (! empty($urlLink)) {
-            // Rewrite local 'localhost' host to '127.0.0.1' for Telegram Bot API link validation in local dev; live production domains remain untouched.
-            $hrefUrl = preg_replace('/^(https?:\/\/)localhost(?=[\/:]|$)/i', '${1}127.0.0.1', $urlLink);
+            $hrefUrl = $urlLink;
+            // Only rewrite localhost→127.0.0.1 in local/dev environments.
+            // Self-hosted installs that legitimately use localhost as their base URL
+            // must not be mutated in production.
+            if (app()->isLocal()) {
+                $hrefUrl = preg_replace('/^(https?:\/\/)localhost(?=[\/:]|$)/i', '${1}127.0.0.1', $hrefUrl);
+            }
             $hrefUrl = str_replace('#', '%23', $hrefUrl);
             $lines[] = '';
             $lines[] = '👉 <a href="'.e($hrefUrl).'">'.$this->language->__('label.open_in_leantime').'</a>';
