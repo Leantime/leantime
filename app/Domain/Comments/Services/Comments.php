@@ -67,7 +67,6 @@ class Comments extends BaseService
     /**
      * @api
      */
-    #[RequiresPermission(CommentsPermissions::VIEW, entityScoped: true)]
     public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
     {
         // IDOR fence: comments are read by (module, entityId) with no project scoping in the repo,
