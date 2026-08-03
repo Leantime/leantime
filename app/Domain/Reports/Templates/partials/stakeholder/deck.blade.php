@@ -123,12 +123,15 @@
         {{-- Framed segmented tab group (mirrors the global .tabs nav): the tabs
              sit in one outlined container so they read as a connected control,
              the active one a white segment inside it. --}}
-        <div class="lt-tabs-group" role="tablist" aria-label="{{ __('stakeholder.tab.overview') }}">
-            <button type="button" class="lt-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
+        {{-- <nav> + aria-current, not the ARIA tabs pattern: the deck pages
+             aren't role=tabpanel targets, so tablist semantics would mislead
+             assistive tech (Copilot review). --}}
+        <nav class="lt-tabs-group" id="rdTabs" aria-label="{{ __('stakeholder.tabs.label') }}">
+            <button type="button" class="lt-tab on" data-page="0" onclick="rdGo(0)" aria-current="true"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
             <button type="button" class="lt-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
             <button type="button" class="lt-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
             <button type="button" class="lt-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
-        </div>
+        </nav>
 
         <div class="lt-tabs-actions">
             <div class="rd-picker" id="rdPicker">
@@ -245,9 +248,12 @@
         var pages = track.querySelectorAll('.rd-page');
         pages.forEach(function (p, i) { p.classList.toggle('on', i === idx); });
 
-        // Tab state.
-        document.querySelectorAll('.lt-tab').forEach(function (btn) {
-            btn.classList.toggle('on', parseInt(btn.dataset.page, 10) === idx);
+        // Tab state — scoped to this deck's nav; .lt-tab is a shared global
+        // class, so a bare selector could toggle unrelated tab groups.
+        document.querySelectorAll('#rdTabs .lt-tab').forEach(function (btn) {
+            var on = parseInt(btn.dataset.page, 10) === idx;
+            btn.classList.toggle('on', on);
+            if (on) { btn.setAttribute('aria-current', 'true'); } else { btn.removeAttribute('aria-current'); }
         });
 
         // Arrow enable state.
