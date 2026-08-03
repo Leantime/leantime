@@ -261,7 +261,7 @@ class ProjectsServiceTest extends TestCase
     {
         $savedValue = null;
         $settingsRepo = $this->make(SettingRepository::class, [
-            'saveSetting' => function ($projectId, $key, $value) use (&$savedValue) {
+            'saveSetting' => function ($type, $value) use (&$savedValue) {
                 $savedValue = $value;
 
                 return true;
@@ -312,7 +312,7 @@ class ProjectsServiceTest extends TestCase
 
         $savedValue = null;
         $settingsRepo = $this->make(SettingRepository::class, [
-            'saveSetting' => function ($projectId, $key, $value) use (&$savedValue) {
+            'saveSetting' => function ($type, $value) use (&$savedValue) {
                 $savedValue = $value;
 
                 return true;

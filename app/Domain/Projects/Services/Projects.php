@@ -3224,7 +3224,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         if ($telegramHook['telegramChatId'] === '') {
-            $detectedChatId = $this->detectTelegramChatId($telegramHook['telegramBotToken']);
+            $detectedChatId = $this->detectTelegramChatId($projectId, $telegramHook['telegramBotToken']);
 
             if ($detectedChatId === null) {
                 return ['hook' => $telegramHook, 'saved' => false, 'error' => 'chat_not_found'];
@@ -3245,7 +3245,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      * @api
      */
     #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
-    public function detectTelegramChatId(string $botToken): ?string
+    public function detectTelegramChatId(int $projectId, string $botToken): ?string
     {
         try {
             $response = $this->httpClient->get(
