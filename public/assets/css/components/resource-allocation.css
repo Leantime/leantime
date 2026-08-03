@@ -207,45 +207,8 @@
     padding:0 !important;
     overflow:hidden;
 }
-.ra-header {
-    padding:26px 36px 22px 30px;
-    border-bottom:1px solid var(--rd-line-soft);
-    position:relative;
-}
-.ra-header .ra-header-actions {
-    position:absolute;
-    top:16px;
-    right:16px;
-}
-.ra-header-row {
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:24px;
-    flex-wrap:wrap;
-}
-.ra-header-title h1 {
-    font-size:30px;
-    font-weight:700;
-    line-height:1.1;
-    color:var(--rd-text-1);
-    margin:0 0 6px;
-    letter-spacing:-.5px;
-}
-.ra-header-sub {
-    font-size:13px;
-    color:var(--rd-text-3);
-    margin:0;
-    line-height:1.4;
-}
-.ra-header-actions {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex:none;
-    flex-wrap:wrap;
-    justify-content:flex-end;
-}
+/* The in-card RA header is gone — title/meta/sync status live on the
+   standard pageheader now (header rule 2026-08-03). */
 .ra-block {
     background:transparent;
     border:none;
@@ -2160,18 +2123,11 @@
     .ra-jhead > div:nth-child(5) {
         display:none;
     }
-    .ra-header {
-        padding:20px 20px 16px;
-    }
     .ra-block {
         padding:16px 14px;
     }
     .ra-shell.ra-scope {
         padding:0;
-    }
-    .ra-header .ra-header-actions {
-        position:static;
-        margin-top:10px;
     }
 }
 @media print {

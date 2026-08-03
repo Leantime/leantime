@@ -59,10 +59,26 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-book"></span></div>
     <div class="pagetitle">
-
-        <h5>{{ session('currentProjectClient') }}</h5>
-
         @if(count($wikis) > 0)
+            <x-global::subjectSwitcher
+                :parent="__('headlines.documents')"
+                :current="$currentWiki !== false ? $currentWiki->title : __('label.select_board')">
+                <li><a class="inlineEdit" href="#/wiki/wikiModal/">{!! __('link.new_wiki') !!}</a></li>
+                <li class='nav-header border'></li>
+                @foreach($wikis as $wiki)
+                    <li>
+                        <a href="{{ BASE_URL . '/wiki/show?setWiki=' . $wiki->id }}">{{ $wiki->title }}</a>
+                    </li>
+                @endforeach
+            </x-global::subjectSwitcher>
+        @else
+            <h1>{!! __('headlines.documents') !!}</h1>
+        @endif
+    </div>
+    {{-- Header rule (2026-08-03): actions ⋮ sits in the right cluster,
+         vertically centered — never floated inside the title block. --}}
+    @if(count($wikis) > 0)
+        <div class="pageheader-right">
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
@@ -72,34 +88,8 @@
                     @endif
                 </ul>
             </span>
-        @endif
-
-        <h1>{!! __('headlines.documents') !!}
-            @if(count($wikis) > 0)
-                //
-                <span class="dropdown dropdownWrapper">
-                    <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                        @if($currentWiki !== false)
-                            {{ $currentWiki->title }}
-                        @else
-                            {!! __('label.select_board') !!}
-                        @endif
-                        <i class="fa fa-caret-down"></i>
-                    </a>
-
-                    <ul class="dropdown-menu">
-                        <li><a class="inlineEdit" href="#/wiki/wikiModal/">{!! __('link.new_wiki') !!}</a></li>
-                        <li class='nav-header border'></li>
-                        @foreach($wikis as $wiki)
-                            <li>
-                                <a href="{{ BASE_URL . '/wiki/show?setWiki=' . $wiki->id }}">{{ $wiki->title }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </span>
-            @endif
-        </h1>
-    </div>
+        </div>
+    @endif
 </div>
 
 <div class="maincontent">

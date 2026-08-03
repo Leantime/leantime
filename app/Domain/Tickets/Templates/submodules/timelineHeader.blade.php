@@ -39,15 +39,37 @@
         <span class="fa fa-fw fa-chart-gantt"></span>
     </div>
     <div class="pagetitle">
-        <h5>{{ session('currentProjectClient') ?? '' . ' // ' . session('currentProjectName') ?? '' }}</h5>
-
-        @if (
-            ($currentSprint !== false)
-                && ($currentSprint !== null)
-                && count($sprints) > 0
-                && $sprint->id != 'all'
-                && $sprint->id != 'backlog'
-        )
+        @if (($sprints !== false) && ($sprints !== null) && count($sprints) > 0)
+            <x-global::subjectSwitcher
+                :parent="__('headline.milestones')"
+                :current="$sprint !== false ? $sprint->name : __('label.select_board')">
+                <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {!! __('links.create_sprint_no_icon') !!}</a></li>
+                <li class='nav-header border'></li>
+                <li>
+                    <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.all_todos') !!}</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('label.backlog') !!}</a>
+                </li>
+                @foreach ($sprints as $sprintRow)
+                    <li>
+                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ $tpl->escape($sprintRow->name) }}<br /><small>{!! sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) !!}</small></a>
+                    </li>
+                @endforeach
+            </x-global::subjectSwitcher>
+        @else
+            <h1>{!! __('headline.milestones') !!}</h1>
+        @endif
+        <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
+    </div>
+    @if (
+        ($currentSprint !== false)
+            && ($currentSprint !== null)
+            && count($sprints) > 0
+            && $currentSprintId != 'all'
+            && $currentSprintId != 'backlog'
+    )
+        <div class="pageheader-right">
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
@@ -59,42 +81,8 @@
                     @endif
                 </ul>
             </span>
-        @endif
-
-        <h1>
-            {!! __('headline.milestones') !!}
-            @if (($sprints !== false) && ($sprints !== null) && count($sprints) > 0)
-            //
-            <span class="dropdown dropdownWrapper">
-                <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                    @if ($sprint !== false)
-                        {{ $sprint->name }}
-                    @else
-                        {!! __('label.select_board') !!}
-                    @endif
-                    <i class="fa fa-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> {!! __('links.create_sprint_no_icon') !!}</a></li>
-                    <li class='nav-header border'></li>
-                    <li>
-                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('links.all_todos') !!}</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{!! __('label.backlog') !!}</a>
-                    </li>
-                    @foreach ($sprints as $sprintRow)
-                        <li>
-                            <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ $tpl->escape($sprintRow->name) }}<br /><small>{!! sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) !!}</small></a>
-                        </li>
-                    @endforeach
-                </ul>
-            </span>
-            @endif
-        </h1>
-        <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
-    </div>
+        </div>
+    @endif
     @dispatchEvent('beforePageHeaderClose')
 </div><!--pageheader-->
 @dispatchEvent('afterPageHeaderClose')

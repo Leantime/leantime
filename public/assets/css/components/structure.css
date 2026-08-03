@@ -505,8 +505,17 @@ body {
 .pageheader-meta {
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
-    opacity: .6;
-    white-space: nowrap;
+    /* .75 (was .6): review feedback — the meta text was hard to read. */
+    opacity: .75;
+}
+/* Muted crumb separator — the "/" between orientation segments in a page
+   title ("Resources / Plan", "Docs / Default"), matching the report header.
+   Opacity (not --secondary-font-color, which is #000 in the default theme)
+   so it reads as muted on every theme. */
+.pagetitle h1 .crumb-sep,
+.subjectSwitcher-sep {
+    color: var(--primary-font-color);
+    opacity: .45;
 }
 /* Sprint edit/delete ⋮ menu — a subtle icon button inline in the right cluster
    (only rendered for a real sprint view). */
