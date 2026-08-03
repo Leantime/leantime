@@ -233,9 +233,9 @@ class Messengers
                 return false;
             }
 
-            $text = '<b>'.e($this->projectName).'</b>'."\n".e($notification->message);
+            $text = "📌 <b>".e($this->projectName)."</b>\n\n".e($notification->message);
             if (! empty($notification->url['url'])) {
-                $text .= "\n".e($notification->url['url']);
+                $text .= "\n\n🔗 <a href=\"".e($notification->url['url'])."\">".e($notification->url['url'])."</a>";
             }
 
             $data = [
