@@ -241,8 +241,10 @@
     align-self: center;
 }
 /* Filter / Group By match the report period-picker: white pill, dark text
-   (design call 2026-08-03 — one filter style everywhere). */
-.lt-tabs-actions .btn-link {
+   (design call 2026-08-03 — one filter style everywhere). Three classes so
+   this outranks forms.css `body .btn.btn-link` (0-2-1), which otherwise
+   flattens the pill back to transparent text. */
+.lt-tabs .lt-tabs-actions .btn-link {
     color: var(--primary-font-color);
     opacity: 1;
     background: #fff;
@@ -252,11 +254,12 @@
     box-shadow: 0 1px 3px rgba(20, 40, 50, .06);
     transition: border-color .12s ease;
 }
-.lt-tabs-actions .btn-link:hover {
+.lt-tabs .lt-tabs-actions .btn-link:hover {
     border-color: var(--accent1);
+    background: #fff;
     color: var(--primary-font-color);
 }
-.lt-tabs-actions .btn-link:focus-visible {
+.lt-tabs .lt-tabs-actions .btn-link:focus-visible {
     outline: 2px solid var(--accent1);
     outline-offset: 2px;
 }
