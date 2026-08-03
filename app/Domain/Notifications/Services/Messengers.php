@@ -370,8 +370,9 @@ class Messengers
         $lines[] = '📅 <b>Due Date:</b> '.e($formattedDueDate);
 
         if (! empty($urlLink)) {
-            $lines[] = '🔗 <b>Link:</b> <a href="'.e($urlLink).'">Open in Leantime</a>';
-            $lines[] = e($urlLink);
+            $hrefUrl = str_replace('#', '%23', $urlLink);
+            $lines[] = '';
+            $lines[] = '👉 <a href="'.e($hrefUrl).'">Open in Leantime</a>';
         }
 
         return implode("\n", $lines);
