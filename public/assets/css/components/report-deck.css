@@ -82,6 +82,8 @@
 .rd-hdr .st{min-width:0;}
 /* Title = <h1> + switcher, at the left edge (aligns with breadcrumb + meta). */
 .rd-hdr .st .h{margin:0;font-size:18px;font-weight:600;line-height:1.2;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;}
+.rd-hdr .st .h .crumb-type{font-weight:600;color:var(--rd-text-1);}
+.rd-hdr .st .h .crumb-sep{color:var(--rd-text-4);font-weight:400;}
 /* Visually-hidden but screen-reader-available heading (switcher case). */
 .rd-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 .rd-hdr .dropdown-menu .rd-hdr .dropdown-menu li a .fa-circle-dot{color:var(--rd-accent);}
@@ -94,7 +96,6 @@
 .rd-hdr .rd-actions .dropdown-toggle.btn:hover{color:var(--rd-text-2) !important;background:rgba(0,0,0,.04) !important;border-radius:6px;}
 .rd-hdr .verdict .v{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--rd-text-1);}
 .rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}
-.rd-hdr .verdict .src{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-weight:400;}
 
 
 /* Compact period picker — one button showing current period; click opens a

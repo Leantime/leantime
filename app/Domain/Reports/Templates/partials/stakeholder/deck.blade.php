@@ -90,20 +90,19 @@
          when the caller doesn't pass switchableSubjects / projectId. --}}
     <div class="rd-hdr">
         <div class="st">
-            {{-- One report = ONE subject (design call 2026-08-03): no breadcrumb
-                 row, no program switcher — change programs via the project
-                 selector. Compact Task-view proportions; the prov line sits
-                 tucked under the title. --}}
-            <h1 class="h">{{ $subject }}</h1>
-            <div class="prov">
-                {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
-                @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif
-                · {{ __('stakeholder.header.updated') }} {{ $updatedAt }}
-            </div>
+            {{-- One report = ONE subject; Task-view breadcrumb flow
+                 ("Report // {subject}", like "To-Dos // All To-Dos"). The
+                 scope label and period meaning are redundant here — the
+                 breadcrumb says Report, the period picker below owns the
+                 period context — so the under-text keeps only freshness. --}}
+            <h1 class="h"><span class="crumb-type">{{ __('stakeholder.header.crumb_report') }}</span> <span class="crumb-sep" aria-hidden="true">//</span> {{ $subject }}</h1>
+            <div class="prov">{{ __('stakeholder.header.updated') }} {{ $updatedAt }}</div>
         </div>
         <div class="verdict">
-            <div class="v"><span class="dot" style="background:{{ $verdictDotColor }}"></span>{{ $verdictLabel }}</div>
-            <div class="src">{{ $verdictSource }}</div>
+            {{-- Provenance ("set 1 month ago · overrides metrics") is secondary:
+                 it lives in the tooltip so the right side stays one balanced,
+                 vertically-centered row with the actions menu. --}}
+            <div class="v" data-tippy-content="{{ $verdictSource }}"><span class="dot" style="background:{{ $verdictDotColor }}"></span>{{ $verdictLabel }}</div>
         </div>
         @if (! empty($projectId ?? null))
             <div class="rd-actions">
