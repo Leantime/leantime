@@ -274,61 +274,105 @@ class Messengers
     {
         $headline = '';
         $status = '';
-        $type = '';
+        $priority = '';
+        $userId = 0;
+        $userFirstname = '';
+        $userLastname = '';
+        $dateToFinish = '';
 
         if (isset($notification->entity)) {
             if (is_array($notification->entity)) {
                 $headline = $notification->entity['headline'] ?? '';
                 $status = $notification->entity['status'] ?? '';
-                $type = $notification->entity['type'] ?? '';
+                $priority = $notification->entity['priority'] ?? '';
+                $userId = (int) ($notification->entity['userId'] ?? 0);
+                $userFirstname = $notification->entity['userFirstname'] ?? $notification->entity['user_firstname'] ?? '';
+                $userLastname = $notification->entity['userLastname'] ?? $notification->entity['user_lastname'] ?? '';
+                $dateToFinish = $notification->entity['dateToFinish'] ?? $notification->entity['timelineDateToFinish'] ?? '';
             } elseif (is_object($notification->entity)) {
                 $headline = $notification->entity->headline ?? '';
                 $status = $notification->entity->status ?? '';
-                $type = $notification->entity->type ?? '';
+                $priority = $notification->entity->priority ?? '';
+                $userId = (int) ($notification->entity->userId ?? 0);
+                $userFirstname = $notification->entity->userFirstname ?? $notification->entity->user_firstname ?? '';
+                $userLastname = $notification->entity->userLastname ?? $notification->entity->user_lastname ?? '';
+                $dateToFinish = $notification->entity->dateToFinish ?? $notification->entity->timelineDateToFinish ?? '';
             }
         }
 
-        $lines = [];
+        // 1. Task Title
+        $taskTitle = ! empty($headline) ? $headline : $notification->message;
 
-        // Project header
-        $lines[] = '📂 <b>'.e($this->projectName).'</b>';
-        $lines[] = '';
-
-        // Notification message
-        $lines[] = '🔔 '.e($notification->message);
-
-        // Metadata line
-        $meta = [];
-        if (! empty($headline) && strpos($notification->message, $headline) === false) {
-            $meta[] = '📌 <b>Title:</b> '.e($headline);
-        }
-
+        // 2. Status
+        $statusName = 'N/A';
         if (! empty($status)) {
-            $statusName = $status;
             try {
                 $ticketService = app()->make(Tickets::class);
                 $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
                 if (! empty($statusLabelsArray[$status]['name'])) {
                     $statusName = $statusLabelsArray[$status]['name'];
+                } else {
+                    $statusName = (string) $status;
                 }
             } catch (\Throwable $e) {
-                // Keep raw status if service unresolvable in test env
+                $statusName = (string) $status;
             }
-            $meta[] = '🏷 <b>Status:</b> '.e($statusName);
         }
 
-        if (! empty($type)) {
-            $meta[] = '🔖 <b>Type:</b> '.e(ucfirst($type));
+        // 3. Priority
+        $priorityMap = [
+            '1' => 'Low',
+            '2' => 'Medium',
+            '3' => 'High',
+            '4' => 'Urgent',
+            'low' => 'Low',
+            'medium' => 'Medium',
+            'high' => 'High',
+            'urgent' => 'Urgent',
+        ];
+        $priorityName = ! empty($priority) ? ($priorityMap[strtolower((string) $priority)] ?? (string) $priority) : 'Medium';
+
+        // 4. Assigned To
+        $assignedTo = trim("{$userFirstname} {$userLastname}");
+        if (empty($assignedTo) && $userId > 0) {
+            try {
+                $userService = app()->make(\Leantime\Domain\Users\Services\Users::class);
+                $user = $userService->getUser($userId);
+                if (! empty($user)) {
+                    $assignedTo = trim(($user['firstname'] ?? '').' '.($user['lastname'] ?? ''));
+                }
+            } catch (\Throwable $e) {
+                // Keep default if user service unresolvable
+            }
+        }
+        if (empty($assignedTo)) {
+            $assignedTo = 'Unassigned';
         }
 
-        if (! empty($meta)) {
-            $lines[] = implode(' | ', $meta);
+        // 5. Due Date
+        $formattedDueDate = 'None';
+        if (! empty($dateToFinish) && $dateToFinish !== '0000-00-00 00:00:00' && $dateToFinish !== '0000-00-00') {
+            $timestamp = strtotime($dateToFinish);
+            if ($timestamp !== false && $timestamp > 0) {
+                $formattedDueDate = date('Y-m-d', $timestamp);
+            }
         }
 
-        // Clickable URL
-        if (! empty($notification->url['url'])) {
-            $lines[] = '';
-            $lines[] = '👉 <a href="'.e($notification->url['url']).'">View in Leantime</a>';
+        // 6. Link
+        $urlLink = ! empty($notification->url['url']) ? $notification->url['url'] : '';
+
+        // Build clean Telegram message
+        $lines = [];
+        $lines[] = '📋 <b>'.e($this->projectName).'</b>';
+        $lines[] = '';
+        $lines[] = '📌 <b>Title:</b> '.e($taskTitle);
+        $lines[] = '🏷 <b>Status:</b> '.e($statusName);
+        $lines[] = '⚡ <b>Priority:</b> '.e($priorityName);
+        $lines[] = '👤 <b>Assigned To:</b> '.e($assignedTo);
+        $lines[] = '📅 <b>Due Date:</b> '.e($formattedDueDate);
+
+        if (! empty($urlLink)) {
+            $lines[] = '🔗 <b>Link:</b> <a href="'.e($urlLink).'">'.e($urlLink).'</a>';
         }
 
         return implode("\n", $lines);
