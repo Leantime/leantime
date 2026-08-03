@@ -3250,15 +3250,17 @@ class Projects extends BaseService implements ChecksProjectAccess
         try {
             $response = $this->httpClient->get(
                 "https://api.telegram.org/bot{$botToken}/getUpdates",
-                ['query' => ['limit' => 1, 'offset' => -1]]
+                ['query' => ['limit' => 100]]
             );
 
             $body = json_decode((string) $response->getBody(), true);
-            $chatId = $body['result'][0]['message']['chat']['id'] ?? null;
+            $result = $body['result'] ?? [];
+            $lastUpdate = is_array($result) && $result !== [] ? $result[array_key_last($result)] : null;
+            $chatId = $lastUpdate['message']['chat']['id'] ?? null;
 
             return $chatId !== null ? (string) $chatId : null;
         } catch (\Throwable $e) {
-            report($e);
+            Log::warning('Telegram getUpdates failed', ['exception' => get_class($e)]);
 
             return null;
         }

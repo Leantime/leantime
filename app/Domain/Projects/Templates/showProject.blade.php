@@ -278,7 +278,7 @@
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Telegram</h4>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="{{ BASE_URL }}/dist/images/telegram-logo.png" width="130"/>
+                        <img src="{{ BASE_URL }}/dist/images/telegram-logo.png" width="130" alt="Telegram logo" />
                     </div>
 
                     <div class="col-md-5">

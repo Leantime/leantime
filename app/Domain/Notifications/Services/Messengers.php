@@ -256,7 +256,7 @@ class Messengers
 
                 return true;
             } catch (\Throwable $e) {
-                report($e);
+                Log::warning('Telegram sendMessage failed', ['exception' => get_class($e)]);
 
                 return false;
             }
@@ -267,10 +267,8 @@ class Messengers
 
     /**
      * prepareTelegramMessage
-     *
-     * @api
      */
-    public function prepareTelegramMessage(NotificationModel $notification): string
+    private function prepareTelegramMessage(NotificationModel $notification): string
     {
         $headline = '';
         $status = '';
