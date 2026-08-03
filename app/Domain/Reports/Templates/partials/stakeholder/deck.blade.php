@@ -88,57 +88,13 @@
          card; the plugin collapses the shared teal pageheader (body.report-doc)
          so the report reads as one document. Switcher + actions degrade safely
          when the caller doesn't pass switchableSubjects / projectId. --}}
-    @php
-        $rdSwitchBase = BASE_URL.'/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report';
-        // Carry the currently selected period across a subject switch so it
-        // isn't silently reset to the default. Mirrors the params the picker
-        // itself submits: preset always, plus from/to for a custom range.
-        $rdPeriodQuery = '&preset='.rawurlencode((string) $period->preset);
-        if ($period->preset === ReportPeriod::PRESET_CUSTOM) {
-            $rdPeriodQuery .= '&from='.rawurlencode($period->from->setToUserTimezone()->formatDateForUser())
-                .'&to='.rawurlencode($period->to->setToUserTimezone()->formatDateForUser());
-        }
-    @endphp
     <div class="rd-hdr">
         <div class="st">
-            <nav class="rd-crumb" aria-label="{{ __('stakeholder.header.breadcrumb') }}">
-                <a href="{{ BASE_URL }}/{{ $scope === 'strategy' ? 'strategyPro' : 'pgmPro' }}/dashboard">{{ $scope === 'strategy' ? __('projectType.strategy') : __('projectType.program') }}</a>
-                <span class="sep" aria-hidden="true">›</span>
-                <span class="rd-crumb-cur">{{ $subject }}</span>
-            </nav>
-            @if ($scope !== 'strategy' && count($switchableSubjects ?? []) > 1)
-                {{-- Subject switcher: Bootstrap dropdown; items reload the report
-                     with the chosen subject (?switchTo) so you stay in the report.
-                     Deliberately NOT shown for strategy scope: a strategy is a
-                     self-contained top-level root (Strategy → Programs → Projects),
-                     never a sibling in a set of strategies — so its report doesn't
-                     offer switching between strategies. Change strategy the normal
-                     way, via the project selector. The switcher remains available
-                     for program reports (switching between sibling programs).
-                     The visible title is an interactive <a>, so also emit a real
-                     (visually-hidden) <h1> to keep a proper document heading. --}}
-                <h1 class="rd-visually-hidden">{{ $subject }}</h1>
-                <span class="dropdown dropdownWrapper">
-                    <a href="javascript:void(0)" class="h dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $subject }} <i class="fa fa-caret-down rd-h-caret" aria-hidden="true"></i></a>
-                    <ul class="dropdown-menu">
-                        {{-- nav-header is the app's Bootstrap-2 dropdown label class
-                             (dropdown-header is unstyled in BS2). The switcher only
-                             renders for program scope, so the label is always the
-                             program string. --}}
-                        <li class="nav-header">{{ __('stakeholder.header.switch_program') }}</li>
-                        @foreach ($switchableSubjects as $rdSubj)
-                            <li>
-                                <a href="{{ $rdSwitchBase }}?switchTo={{ (int) $rdSubj['id'] }}{{ $rdPeriodQuery }}">
-                                    <i class="fa {{ (int) $rdSubj['id'] === (int) ($projectId ?? 0) ? 'fa-circle-dot' : 'fa-circle' }} rd-switch-mark" aria-hidden="true"></i>
-                                    {{ $rdSubj['name'] }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </span>
-            @else
-                <h1 class="h">{{ $subject }}</h1>
-            @endif
+            {{-- One report = ONE subject (design call 2026-08-03): no breadcrumb
+                 row, no program switcher — change programs via the project
+                 selector. Compact Task-view proportions; the prov line sits
+                 tucked under the title. --}}
+            <h1 class="h">{{ $subject }}</h1>
             <div class="prov">
                 {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
                 @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif

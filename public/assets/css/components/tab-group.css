@@ -240,10 +240,25 @@
     height: auto;
     align-self: center;
 }
+/* Filter / Group By match the report period-picker: white pill, dark text
+   (design call 2026-08-03 — one filter style everywhere). */
 .lt-tabs-actions .btn-link {
-    color: #fff;
+    color: var(--primary-font-color);
     opacity: 1;
-    background: transparent;
+    background: #fff;
+    border: 1px solid var(--main-border-color);
+    border-radius: 22px;
+    padding: 7px 14px;
+    box-shadow: 0 1px 3px rgba(20, 40, 50, .06);
+    transition: border-color .12s ease;
+}
+.lt-tabs-actions .btn-link:hover {
+    border-color: var(--accent1);
+    color: var(--primary-font-color);
+}
+.lt-tabs-actions .btn-link:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
 }
 .lt-tabs-actions .btn:focus-visible {
     outline: 2px solid #fff;
