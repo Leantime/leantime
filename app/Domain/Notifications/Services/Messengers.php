@@ -305,7 +305,7 @@ class Messengers
         $taskTitle = ! empty($headline) ? $headline : $notification->message;
 
         // 2. Status
-        $statusName = 'N/A';
+        $statusName = '';
         if (! empty($status)) {
             try {
                 $ticketService = app()->make(Tickets::class);
@@ -331,7 +331,7 @@ class Messengers
             'high' => 'High',
             'urgent' => 'Urgent',
         ];
-        $priorityName = ! empty($priority) ? ($priorityMap[strtolower((string) $priority)] ?? (string) $priority) : 'Medium';
+        $priorityName = ! empty($priority) ? ($priorityMap[strtolower((string) $priority)] ?? (string) $priority) : '';
 
         // 4. Assigned To
         $assignedTo = trim("{$userFirstname} {$userLastname}");
@@ -346,12 +346,9 @@ class Messengers
                 // Keep default if user service unresolvable
             }
         }
-        if (empty($assignedTo)) {
-            $assignedTo = 'Unassigned';
-        }
 
         // 5. Due Date
-        $formattedDueDate = $this->language->__('label.none');
+        $formattedDueDate = '';
         if (! empty($dateToFinish) && $dateToFinish !== '0000-00-00 00:00:00' && $dateToFinish !== '0000-00-00') {
             try {
                 $formattedDueDate = dtHelper()->parseDbDateTime($dateToFinish)->formatDateForUser();
@@ -367,11 +364,22 @@ class Messengers
         $lines = [];
         $lines[] = '📋 <b>'.e($this->projectName).'</b>';
         $lines[] = '';
-        $lines[] = '📌 <b>'.$this->language->__('label.title').':</b> '.e($taskTitle);
-        $lines[] = '🏷 <b>'.$this->language->__('label.todo_status').':</b> '.e($statusName);
-        $lines[] = '⚡ <b>'.$this->language->__('label.priority').':</b> '.e($priorityName);
-        $lines[] = '👤 <b>'.$this->language->__('label.assigned_to').':</b> '.e($assignedTo);
-        $lines[] = '📅 <b>'.$this->language->__('label.due_date').':</b> '.e($formattedDueDate);
+
+        if (! empty($taskTitle)) {
+            $lines[] = '📌 <b>'.$this->language->__('label.title').':</b> '.e($taskTitle);
+        }
+        if (! empty($statusName) && $statusName !== 'N/A') {
+            $lines[] = '🏷 <b>'.$this->language->__('label.todo_status').':</b> '.e($statusName);
+        }
+        if (! empty($priorityName)) {
+            $lines[] = '⚡ <b>'.$this->language->__('label.priority').':</b> '.e($priorityName);
+        }
+        if (! empty($assignedTo) && $assignedTo !== 'Unassigned') {
+            $lines[] = '👤 <b>'.$this->language->__('label.assigned_to').':</b> '.e($assignedTo);
+        }
+        if (! empty($formattedDueDate)) {
+            $lines[] = '📅 <b>'.$this->language->__('label.due_date').':</b> '.e($formattedDueDate);
+        }
 
         if (! empty($urlLink)) {
             $hrefUrl = $urlLink;
