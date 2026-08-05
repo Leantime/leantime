@@ -4,6 +4,7 @@ namespace Leantime\Domain\Projects\Services;
 
 use DateInterval;
 use DateTime;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -16,6 +17,7 @@ use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
+use Leantime\Core\Support\OutboundUrlGuard;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
@@ -65,6 +67,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     private array $assignedProjectsMemo = [];
 
+    private Client $httpClient;
+
     public function __construct(
         private ProjectRepository $projectRepository,
         private TicketRepository $ticketRepository,
@@ -77,8 +81,11 @@ class Projects extends BaseService implements ChecksProjectAccess
         private QueueRepository $queueRepo,
         private UserRepository $userRepo,
         private CommentRepository $commentRepo,
-        private ClientRepository $clientRepo
-    ) {}
+        private ClientRepository $clientRepo,
+        ?Client $httpClient = null
+    ) {
+        $this->httpClient = $httpClient ?? app()->make(Client::class);
+    }
 
     /**
      * Gets the project types.
@@ -3193,6 +3200,99 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
+     * Validates and persists the Telegram bot configuration for a project.
+     *
+     * Requires a bot token. If no chat id is supplied, calls Telegram's getUpdates
+     * API to auto-detect the most recent chat that has messaged the bot. If a chat
+     * id is supplied directly (group/topic mode), it is used as-is and no API call
+     * is made.
+     *
+     * @param  int  $projectId  The project id.
+     * @param  array  $hookData  Raw hook fields (telegramBotToken, telegramChatId, telegramTopicId).
+     * @return array{hook: array, saved: bool, error: string|null}
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
+    public function saveTelegramWebhook(int $projectId, array $hookData): array
+    {
+        $rawTopicId = trim(strip_tags($hookData['telegramTopicId'] ?? ''));
+        $telegramTopicId = (is_numeric($rawTopicId) && (int) $rawTopicId > 0) ? (string) (int) $rawTopicId : '';
+
+        $telegramHook = [
+            'telegramBotToken' => trim(strip_tags($hookData['telegramBotToken'] ?? '')),
+            'telegramChatId' => trim(strip_tags($hookData['telegramChatId'] ?? '')),
+            'telegramTopicId' => $telegramTopicId,
+        ];
+
+        if ($telegramHook['telegramBotToken'] === '') {
+            return ['hook' => $telegramHook, 'saved' => false, 'error' => 'missing_token'];
+        }
+
+        if ($telegramHook['telegramChatId'] === '') {
+            $detected = $this->detectTelegramChatId($projectId, $telegramHook['telegramBotToken']);
+
+            if ($detected === null) {
+                return ['hook' => $telegramHook, 'saved' => false, 'error' => 'chat_not_found'];
+            }
+
+            $telegramHook['telegramChatId'] = $detected['chatId'];
+            if ($telegramHook['telegramTopicId'] === '' && ! empty($detected['topicId'])) {
+                $telegramHook['telegramTopicId'] = (string) $detected['topicId'];
+            }
+        }
+
+        $this->saveProjectSetting($projectId, 'telegramHook', serialize($telegramHook));
+
+        return ['hook' => $telegramHook, 'saved' => true, 'error' => null];
+    }
+
+    /**
+     * Calls Telegram's getUpdates API and returns the detected chat id and topic id (if present)
+     * of the most recent message sent to the bot, or null if none is found / the call fails.
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
+    public function detectTelegramChatId(int $projectId, string $botToken): ?array
+    {
+        try {
+            $response = $this->httpClient->get(
+                "https://api.telegram.org/bot{$botToken}/getUpdates",
+                [
+                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                    'connect_timeout' => 5,
+                    'timeout' => 10,
+                    'query' => ['limit' => 100],
+                ]
+            );
+
+            $body = json_decode((string) $response->getBody(), true);
+            $result = is_array($body) ? ($body['result'] ?? []) : [];
+
+            if (is_array($result)) {
+                foreach (array_reverse($result) as $update) {
+                    if (is_array($update) && isset($update['message']['chat']['id'])) {
+                        $chatId = $update['message']['chat']['id'];
+                        $topicId = $update['message']['message_thread_id'] ?? null;
+
+                        return [
+                            'chatId' => (string) $chatId,
+                            'topicId' => $topicId !== null ? (string) $topicId : null,
+                        ];
+                    }
+                }
+            }
+
+            return null;
+        } catch (\Throwable $e) {
+            Log::warning('Telegram getUpdates failed', ['exception' => get_class($e)]);
+
+            return null;
+        }
+    }
+
+    /**
      * Persists the (up to three) Discord webhooks for a project.
      *
      * @param  int  $projectId  The project id.
@@ -3243,6 +3343,17 @@ class Projects extends BaseService implements ChecksProjectAccess
             ];
         } else {
             $settings['zulipHook'] = safe_unserialize($zulipWebhook, []);
+        }
+
+        $telegramHook = $this->getProjectSetting($projectId, 'telegramHook');
+        if ($telegramHook == '') {
+            $settings['telegramHook'] = [
+                'telegramBotToken' => '',
+                'telegramChatId' => '',
+                'telegramTopicId' => '',
+            ];
+        } else {
+            $settings['telegramHook'] = safe_unserialize($telegramHook, []);
         }
 
         return $settings;

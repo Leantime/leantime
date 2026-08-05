@@ -131,6 +131,22 @@ class ShowProject extends Controller
             $this->tpl->assign('zulipHook', $zulipResult['hook']);
         }
 
+        // Handle Telegram integration
+        if (isset($_POST['telegramSave'])) {
+            $telegramResult = $this->projectService->saveTelegramWebhook($id, $_POST);
+
+            if ($telegramResult['saved']) {
+                $this->tpl->setNotification($this->language->__('notification.saved_telegram_webhook'), 'success');
+            } else {
+                $errorKey = $telegramResult['error'] === 'missing_token'
+                    ? 'notification.error_telegram_missing_token'
+                    : 'notification.error_telegram_chat_not_found';
+                $this->tpl->setNotification($this->language->__($errorKey), 'error');
+            }
+
+            $this->tpl->assign('telegramHook', $telegramResult['hook']);
+        }
+
         // Handle Discord integration
         if (isset($_POST['discordSave'])) {
             $this->projectService->saveDiscordWebhooks($id, $_POST);
