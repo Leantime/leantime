@@ -3264,18 +3264,22 @@ class Projects extends BaseService implements ChecksProjectAccess
 
             $body = json_decode((string) $response->getBody(), true);
             $result = is_array($body) ? ($body['result'] ?? []) : [];
-            $lastUpdate = is_array($result) && $result !== [] ? $result[array_key_last($result)] : null;
-            $chatId = $lastUpdate['message']['chat']['id'] ?? null;
-            $topicId = $lastUpdate['message']['message_thread_id'] ?? null;
 
-            if ($chatId === null) {
-                return null;
+            if (is_array($result)) {
+                foreach (array_reverse($result) as $update) {
+                    if (is_array($update) && isset($update['message']['chat']['id'])) {
+                        $chatId = $update['message']['chat']['id'];
+                        $topicId = $update['message']['message_thread_id'] ?? null;
+
+                        return [
+                            'chatId' => (string) $chatId,
+                            'topicId' => $topicId !== null ? (string) $topicId : null,
+                        ];
+                    }
+                }
             }
 
-            return [
-                'chatId' => (string) $chatId,
-                'topicId' => $topicId !== null ? (string) $topicId : null,
-            ];
+            return null;
         } catch (\Throwable $e) {
             Log::warning('Telegram getUpdates failed', ['exception' => get_class($e)]);
 

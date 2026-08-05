@@ -86,7 +86,7 @@ class MessengersServiceTest extends TestCase
                 $capturedUrl = $url;
                 $capturedOptions = $options;
 
-                return new Response(200);
+                return new Response(200, [], json_encode(['ok' => true]));
             },
         ]);
 
@@ -121,7 +121,7 @@ class MessengersServiceTest extends TestCase
             'post' => function ($url, $options) use (&$capturedOptions) {
                 $capturedOptions = $options;
 
-                return new Response(200);
+                return new Response(200, [], json_encode(['ok' => true]));
             },
         ]);
 
@@ -163,8 +163,10 @@ class MessengersServiceTest extends TestCase
 
         $messengers = new Messengers($client, $settingRepo, $language);
 
-        // Does not throw
-        $messengers->sendNotificationToMessengers($this->makeNotification(), 'Test Project', ['telegram']);
-        $this->assertTrue(true);
+        $reflectedMethod = new \ReflectionMethod($messengers, 'telegramWebhook');
+        $reflectedMethod->setAccessible(true);
+        $result = $reflectedMethod->invoke($messengers, $this->makeNotification());
+
+        $this->assertFalse($result);
     }
 }
