@@ -251,6 +251,8 @@ class Messengers
                     "https://api.telegram.org/bot{$telegramHook['telegramBotToken']}/sendMessage",
                     [
                         'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                        'connect_timeout' => 5,
+                        'timeout' => 10,
                         'json' => $data,
                     ]
                 );

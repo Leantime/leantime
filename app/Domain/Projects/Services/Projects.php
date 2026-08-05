@@ -3216,10 +3216,13 @@ class Projects extends BaseService implements ChecksProjectAccess
     #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function saveTelegramWebhook(int $projectId, array $hookData): array
     {
+        $rawTopicId = trim(strip_tags($hookData['telegramTopicId'] ?? ''));
+        $telegramTopicId = (is_numeric($rawTopicId) && (int) $rawTopicId > 0) ? (string) (int) $rawTopicId : '';
+
         $telegramHook = [
             'telegramBotToken' => trim(strip_tags($hookData['telegramBotToken'] ?? '')),
             'telegramChatId' => trim(strip_tags($hookData['telegramChatId'] ?? '')),
-            'telegramTopicId' => trim(strip_tags($hookData['telegramTopicId'] ?? '')),
+            'telegramTopicId' => $telegramTopicId,
         ];
 
         if ($telegramHook['telegramBotToken'] === '') {
@@ -3258,6 +3261,8 @@ class Projects extends BaseService implements ChecksProjectAccess
                 "https://api.telegram.org/bot{$botToken}/getUpdates",
                 [
                     'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                    'connect_timeout' => 5,
+                    'timeout' => 10,
                     'query' => ['limit' => 100],
                 ]
             );
