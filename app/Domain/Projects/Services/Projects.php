@@ -82,8 +82,9 @@ class Projects extends BaseService implements ChecksProjectAccess
         private UserRepository $userRepo,
         private CommentRepository $commentRepo,
         private ClientRepository $clientRepo,
-        private Client $httpClient
+        ?Client $httpClient = null
     ) {
+        $this->httpClient = $httpClient ?? app()->make(Client::class);
     }
 
     /**
