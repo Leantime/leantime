@@ -218,9 +218,6 @@ class Messengers
 
     /**
      * telegramWebhook
-     *
-     *
-     * @api
      */
     private function telegramWebhook(NotificationModel $notification): bool
     {
@@ -323,17 +320,35 @@ class Messengers
         }
 
         // 3. Priority
-        $priorityMap = [
-            '1' => 'Low',
-            '2' => 'Medium',
-            '3' => 'High',
-            '4' => 'Urgent',
-            'low' => 'Low',
-            'medium' => 'Medium',
-            'high' => 'High',
-            'urgent' => 'Urgent',
-        ];
-        $priorityName = ! empty($priority) ? ($priorityMap[strtolower((string) $priority)] ?? (string) $priority) : '';
+        $priorityName = '';
+        if (! empty($priority)) {
+            try {
+                $ticketService = app()->make(Tickets::class);
+                $priorityLabels = $ticketService->getPriorityLabels();
+                if (! empty($priorityLabels[$priority])) {
+                    $priorityName = $priorityLabels[$priority];
+                }
+            } catch (\Throwable $e) {
+                // Fallback to static mapping if tickets service fails
+            }
+
+            if (empty($priorityName)) {
+                $priorityMap = [
+                    '1' => 'Critical',
+                    '2' => 'High',
+                    '3' => 'Medium',
+                    '4' => 'Low',
+                    '5' => 'Lowest',
+                    'critical' => 'Critical',
+                    'high' => 'High',
+                    'medium' => 'Medium',
+                    'low' => 'Low',
+                    'lowest' => 'Lowest',
+                    'urgent' => 'Urgent',
+                ];
+                $priorityName = $priorityMap[strtolower((string) $priority)] ?? (string) $priority;
+            }
+        }
 
         // 4. Assigned To
         $assignedTo = trim("{$userFirstname} {$userLastname}");
