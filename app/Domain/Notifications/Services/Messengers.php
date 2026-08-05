@@ -300,21 +300,31 @@ class Messengers
             }
         }
 
+        $ticketService = null;
+        try {
+            $ticketService = app()->make(Tickets::class);
+        } catch (\Throwable $e) {
+            // Container resolution fallback
+        }
+
         // 1. Task Title
         $taskTitle = ! empty($headline) ? $headline : $notification->message;
 
         // 2. Status
         $statusName = '';
         if (! empty($status)) {
-            try {
-                $ticketService = app()->make(Tickets::class);
-                $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
-                if (! empty($statusLabelsArray[$status]['name'])) {
-                    $statusName = $statusLabelsArray[$status]['name'];
-                } else {
+            if ($ticketService !== null) {
+                try {
+                    $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
+                    if (! empty($statusLabelsArray[$status]['name'])) {
+                        $statusName = $statusLabelsArray[$status]['name'];
+                    } else {
+                        $statusName = (string) $status;
+                    }
+                } catch (\Throwable $e) {
                     $statusName = (string) $status;
                 }
-            } catch (\Throwable $e) {
+            } else {
                 $statusName = (string) $status;
             }
         }
@@ -322,14 +332,15 @@ class Messengers
         // 3. Priority
         $priorityName = '';
         if (! empty($priority)) {
-            try {
-                $ticketService = app()->make(Tickets::class);
-                $priorityLabels = $ticketService->getPriorityLabels();
-                if (! empty($priorityLabels[$priority])) {
-                    $priorityName = $priorityLabels[$priority];
+            if ($ticketService !== null) {
+                try {
+                    $priorityLabels = $ticketService->getPriorityLabels();
+                    if (! empty($priorityLabels[$priority])) {
+                        $priorityName = $priorityLabels[$priority];
+                    }
+                } catch (\Throwable $e) {
+                    // Fallback to static mapping
                 }
-            } catch (\Throwable $e) {
-                // Fallback to static mapping if tickets service fails
             }
 
             if (empty($priorityName)) {
