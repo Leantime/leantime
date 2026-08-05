@@ -229,7 +229,7 @@ class Messengers
         if ($telegramHookSerialized !== false && $telegramHookSerialized !== '') {
             $telegramHook = safe_unserialize($telegramHookSerialized, []);
 
-            if (empty($telegramHook['telegramBotToken']) || empty($telegramHook['telegramChatId'])) {
+            if (! is_array($telegramHook) || empty($telegramHook['telegramBotToken']) || empty($telegramHook['telegramChatId'])) {
                 return false;
             }
 
@@ -366,19 +366,19 @@ class Messengers
         $lines[] = '';
 
         if (! empty($taskTitle)) {
-            $lines[] = '📌 <b>'.$this->language->__('label.title').':</b> '.e($taskTitle);
+            $lines[] = '📌 <b>'.e($this->language->__('label.title')).':</b> '.e($taskTitle);
         }
         if (! empty($statusName) && $statusName !== 'N/A') {
-            $lines[] = '🏷 <b>'.$this->language->__('label.todo_status').':</b> '.e($statusName);
+            $lines[] = '🏷 <b>'.e($this->language->__('label.todo_status')).':</b> '.e($statusName);
         }
         if (! empty($priorityName)) {
-            $lines[] = '⚡ <b>'.$this->language->__('label.priority').':</b> '.e($priorityName);
+            $lines[] = '⚡ <b>'.e($this->language->__('label.priority')).':</b> '.e($priorityName);
         }
         if (! empty($assignedTo) && $assignedTo !== 'Unassigned') {
-            $lines[] = '👤 <b>'.$this->language->__('label.assigned_to').':</b> '.e($assignedTo);
+            $lines[] = '👤 <b>'.e($this->language->__('label.assigned_to')).':</b> '.e($assignedTo);
         }
         if (! empty($formattedDueDate)) {
-            $lines[] = '📅 <b>'.$this->language->__('label.due_date').':</b> '.e($formattedDueDate);
+            $lines[] = '📅 <b>'.e($this->language->__('label.due_date')).':</b> '.e($formattedDueDate);
         }
 
         if (! empty($urlLink)) {
@@ -391,7 +391,7 @@ class Messengers
             }
             $hrefUrl = str_replace('#', '%23', $hrefUrl);
             $lines[] = '';
-            $lines[] = '👉 <a href="'.e($hrefUrl).'">'.$this->language->__('label.open_in_leantime').'</a>';
+            $lines[] = '👉 <a href="'.e($hrefUrl).'">'.e($this->language->__('label.open_in_leantime')).'</a>';
         }
 
         return implode("\n", $lines);
