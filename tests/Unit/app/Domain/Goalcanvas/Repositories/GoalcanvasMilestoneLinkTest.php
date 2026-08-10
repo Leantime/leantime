@@ -64,9 +64,20 @@ class GoalcanvasMilestoneLinkTest extends TestCase
                     private bool $edgeExists,
                     private int $edgeDeleteCount,
                     private int $columnUpdateCount,
-                    private array &$inserted,
-                    private array &$updates
-                ) {}
+                    array &$inserted,
+                    array &$updates
+                ) {
+                    // Explicit reference assignment (not promotion) so the
+                    // captures stay version-proof across supported PHP.
+                    $this->inserted = &$inserted;
+                    $this->updates = &$updates;
+                }
+
+                /** @var array<int, array<string, mixed>> */
+                private array $inserted;
+
+                /** @var array<int, array<string, mixed>> */
+                private array $updates;
 
                 public function join(...$a): static
                 {
