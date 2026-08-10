@@ -28,7 +28,8 @@ class Updated
             return $next($request);
         }
 
-        $dbVersion = session('dbVersion') ?? app()->make(SettingRepository::class)->getSetting('db-version');
+        $cachedDbVersion = session('dbVersion');
+        $dbVersion = $cachedDbVersion ?? app()->make(SettingRepository::class)->getSetting('db-version');
         $settingsDbVersion = app()->make(AppSettings::class)->dbVersion;
 
         if ($dbVersion !== false) {
@@ -39,6 +40,22 @@ class Updated
 
         $dbVersionInt = $this->getVersionInt($dbVersion);
         $settingsDbVersionInt = $this->getVersionInt($settingsDbVersion);
+
+        // Self-heal a stale session cache: the cached db-version survives an
+        // update run by ANOTHER session (an admin upgrading the install), which
+        // used to strand every other live session in a redirect loop (any page
+        // -> /install/update -> back again) until their cookies were cleared.
+        // Before concluding "not updated" from a CACHED value, re-read the real
+        // version from the database — one extra query, and only on the path
+        // that would otherwise redirect.
+        if ($dbVersionInt < $settingsDbVersionInt && $cachedDbVersion !== null) {
+            $freshDbVersion = app()->make(SettingRepository::class)->getSetting('db-version');
+            if ($freshDbVersion !== false) {
+                $dbVersion = $freshDbVersion;
+                session(['dbVersion' => $dbVersion]);
+                $dbVersionInt = $this->getVersionInt($dbVersion);
+            }
+        }
 
         session(['isUpdated' => $dbVersionInt >= $settingsDbVersionInt]);
 
