@@ -35,7 +35,9 @@ class UpdatedTest extends \Unit\TestCase
     {
         $reads = 0;
         app()->instance(SettingRepository::class, $this->make(SettingRepository::class, [
-            'getSetting' => function () use (&$reads, $dbVersions) {
+            // Mirrors the real signature so forwarded arguments can't ever
+            // make the stub brittle.
+            'getSetting' => function (string $type = 'db-version') use (&$reads, $dbVersions) {
                 $value = $dbVersions[min($reads, count($dbVersions) - 1)];
                 $reads++;
 
