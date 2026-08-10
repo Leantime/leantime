@@ -75,8 +75,18 @@ class GoalcanvasMilestoneLinkTest extends TestCase
 
                 public function where(...$a): static
                 {
+                    // Record scalar predicates so tests can pin WHICH rows an
+                    // update/delete was scoped to (a fake that discards its
+                    // where() arguments can't catch a lost predicate).
+                    if (count($a) === 2 && is_scalar($a[1])) {
+                        $this->wheres[$a[0]] = $a[1];
+                    }
+
                     return $this;
                 }
+
+                /** @var array<string, mixed> scalar where() predicates seen by this builder */
+                public array $wheres = [];
 
                 public function lockForUpdate(): static
                 {
@@ -112,7 +122,7 @@ class GoalcanvasMilestoneLinkTest extends TestCase
 
                 public function update(array $values): int
                 {
-                    $this->updates[] = ['table' => $this->table, 'values' => $values];
+                    $this->updates[] = ['table' => $this->table, 'values' => $values, 'wheres' => $this->wheres];
 
                     return $this->columnUpdateCount;
                 }
@@ -204,6 +214,11 @@ class GoalcanvasMilestoneLinkTest extends TestCase
         $this->assertTrue($repo->removeGoalMilestoneLink(5, 42));
         $this->assertCount(1, $this->columnUpdates, 'the legacy milestoneId column must be cleared with the edge');
         $this->assertSame(['milestoneId' => ''], $this->columnUpdates[0]['values']);
+        // The clear must be SCOPED: only the goal's row, and only when the
+        // column still points at the milestone being unlinked — dropping the
+        // milestoneId predicate would blank an unrelated newer link.
+        $this->assertSame(5, $this->columnUpdates[0]['wheres']['id'] ?? null);
+        $this->assertSame('42', $this->columnUpdates[0]['wheres']['milestoneId'] ?? null);
     }
 
     public function test_unlink_reports_success_when_only_the_stale_column_held_the_link(): void
@@ -239,5 +254,20 @@ class GoalcanvasMilestoneLinkTest extends TestCase
         $this->assertTrue($repo->removeMilestoneFromAllGoals(42));
         $this->assertNotEmpty($this->columnUpdates, 'the milestone-delete cascade must clear matching legacy columns');
         $this->assertSame(['milestoneId' => ''], $this->columnUpdates[0]['values']);
+        $this->assertSame('42', $this->columnUpdates[0]['wheres']['milestoneId'] ?? null, 'only columns pointing at THIS milestone are cleared');
+    }
+
+    public function test_remove_milestone_from_all_goals_reports_only_edge_deletions(): void
+    {
+        // PINS CURRENT BEHAVIOR: unlike removeGoalMilestoneLink /
+        // removeAllGoalMilestoneLinks (which return deleted OR columnCleared),
+        // the cascade returns only whether edges were deleted — a stale-column
+        // -only cleanup reads as false. No caller branches on this today; if
+        // the sibling semantics are ever unified, this test should fail and be
+        // updated deliberately.
+        $repo = $this->repo(edgeDeleteCount: 0, columnUpdateCount: 3);
+
+        $this->assertFalse($repo->removeMilestoneFromAllGoals(42));
+        $this->assertNotEmpty($this->columnUpdates, 'stale columns are still cleared even though the return is false');
     }
 }
