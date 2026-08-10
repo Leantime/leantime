@@ -3016,6 +3016,10 @@ class Install
                 || ! $schema->hasTable('zp_entity_relationship')
                 || ! $schema->hasTable('zp_tickets')
                 || ! $schema->hasColumn('zp_canvas_items', 'milestoneId')) {
+                // Surface the skip in the update log — a partial install
+                // silently no-oping would be invisible otherwise.
+                Log::info('Migration 30524 skipped: required tables/columns missing (partial install?)');
+
                 return true;
             }
 
@@ -3182,6 +3186,10 @@ class Install
                 || ! $schema->hasTable('zp_canvas_items')
                 || ! $schema->hasTable('zp_canvas')
                 || ! $schema->hasTable('zp_tickets')) {
+                // Surface the skip in the update log — a partial install
+                // silently no-oping would be invisible otherwise.
+                Log::info('Migration 30526 skipped: required tables missing (partial install?)');
+
                 return true;
             }
 

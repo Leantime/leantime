@@ -156,14 +156,22 @@ class EditCanvasItem extends Controller
             $itemId = (int) $params['id'];
             $this->goalService->removeMilestoneFromGoal($itemId, (int) $params['removeMilestone']);
 
+            // getGoalItem() always stamps the goal's REAL projectId on success;
+            // false only for a missing/foreign/unauthorized goal — fail closed
+            // rather than fall back to the SESSION project, which could load
+            // another project's milestone options into the re-rendered picker.
             $canvasItem = $this->goalService->getGoalItem($itemId);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
             $goalMilestones = $this->goalService->getGoalMilestones($itemId);
             $this->tpl->assign('id', $itemId);
             $this->tpl->assign('goalMilestones', $goalMilestones['milestones']);
             $this->tpl->assign('milestoneSummary', $goalMilestones['summary']);
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones([
                 'sprint' => '', 'type' => 'milestone',
-                'currentProject' => $canvasItem['projectId'] ?? session('currentProject'),
+                'currentProject' => $canvasItem['projectId'],
             ]));
 
             return $this->tpl->displayPartial('goalcanvas::partials.milestonesSection');
