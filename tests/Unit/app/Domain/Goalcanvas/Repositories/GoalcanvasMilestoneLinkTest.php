@@ -79,6 +79,7 @@ class GoalcanvasMilestoneLinkTest extends TestCase
                 /** @var array<int, array<string, mixed>> */
                 private array $updates;
 
+                /** Stands in for addGoalMilestoneLink's zp_canvas_items↔zp_canvas join. */
                 public function join(...$a): static
                 {
                     return $this;
@@ -99,26 +100,31 @@ class GoalcanvasMilestoneLinkTest extends TestCase
                 /** @var array<string, mixed> scalar where() predicates seen by this builder */
                 public array $wheres = [];
 
+                /** Stands in for the in-transaction dedup's ->lockForUpdate(). */
                 public function lockForUpdate(): static
                 {
                     return $this;
                 }
 
+                /** Stands in for addGoalMilestoneLink's ->value('cb.projectId') goal-project resolve. */
                 public function value($column)
                 {
                     return $this->goalProjectId;
                 }
 
+                /** Stands in for addGoalMilestoneLink's zp_tickets ->first(['projectId']) milestone lookup. */
                 public function first($columns = ['*'])
                 {
                     return $this->milestoneRow;
                 }
 
+                /** Stands in for the edge-dedup ->exists() inside the insert transaction. */
                 public function exists(): bool
                 {
                     return $this->edgeExists;
                 }
 
+                /** Stands in for the zp_entity_relationship edge insert. */
                 public function insert($row): bool
                 {
                     $this->inserted[] = $row;
@@ -126,11 +132,13 @@ class GoalcanvasMilestoneLinkTest extends TestCase
                     return true;
                 }
 
+                /** Stands in for the tracked_by edge ->delete() in the removal methods. */
                 public function delete(): int
                 {
                     return $this->edgeDeleteCount;
                 }
 
+                /** Stands in for the legacy zp_canvas_items.milestoneId column clear. */
                 public function update(array $values): int
                 {
                     $this->updates[] = ['table' => $this->table, 'values' => $values, 'wheres' => $this->wheres];
