@@ -3012,6 +3012,7 @@ class Install
             $connection = $this->connection;
             $schema = $connection->getSchemaBuilder();
             if (! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_canvas')
                 || ! $schema->hasTable('zp_entity_relationship')
                 || ! $schema->hasTable('zp_tickets')
                 || ! $schema->hasColumn('zp_canvas_items', 'milestoneId')) {
@@ -3203,7 +3204,12 @@ class Install
                     $join->on('er.entityA', '=', 'ci.id')->where('ci.box', '=', 'goal');
                 })
                 ->leftJoin('zp_tickets as t', function ($join): void {
-                    $join->on('er.entityB', '=', 't.id')->where('t.type', '=', 'milestone');
+                    // "Live" = milestone-type AND not soft-deleted — matches
+                    // the addGoalMilestoneLink chokepoint's definition, so an
+                    // edge to a deleted milestone counts as orphaned.
+                    $join->on('er.entityB', '=', 't.id')
+                        ->where('t.type', '=', 'milestone')
+                        ->where('t.status', '<>', -1);
                 })
                 ->where('er.relationship', EntityRelationshipEnum::TrackedBy->value)
                 ->where('er.entityAType', 'GoalItem')

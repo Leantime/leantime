@@ -223,7 +223,11 @@ class Goalcanvas extends BaseService
      */
     public function getGoalsByMilestone($milestoneId): array
     {
-        $projectId = $this->goalRepository->getMilestoneProjectId((int) $milestoneId);
+        // One cast, used for BOTH the authorization resolve and the read —
+        // authorizing one value and reading another invites drift.
+        $milestoneId = (int) $milestoneId;
+
+        $projectId = $this->goalRepository->getMilestoneProjectId($milestoneId);
         if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
             return [];
         }
