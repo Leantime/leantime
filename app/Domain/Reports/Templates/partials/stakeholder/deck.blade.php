@@ -88,66 +88,23 @@
          card; the plugin collapses the shared teal pageheader (body.report-doc)
          so the report reads as one document. Switcher + actions degrade safely
          when the caller doesn't pass switchableSubjects / projectId. --}}
-    @php
-        $rdSwitchBase = BASE_URL.'/'.($scope === 'strategy' ? 'strategyPro' : 'pgmPro').'/report';
-        // Carry the currently selected period across a subject switch so it
-        // isn't silently reset to the default. Mirrors the params the picker
-        // itself submits: preset always, plus from/to for a custom range.
-        $rdPeriodQuery = '&preset='.rawurlencode((string) $period->preset);
-        if ($period->preset === ReportPeriod::PRESET_CUSTOM) {
-            $rdPeriodQuery .= '&from='.rawurlencode($period->from->setToUserTimezone()->formatDateForUser())
-                .'&to='.rawurlencode($period->to->setToUserTimezone()->formatDateForUser());
-        }
-    @endphp
     <div class="rd-hdr">
         <div class="st">
-            <nav class="rd-crumb" aria-label="{{ __('stakeholder.header.breadcrumb') }}">
-                <a href="{{ BASE_URL }}/{{ $scope === 'strategy' ? 'strategyPro' : 'pgmPro' }}/dashboard">{{ $scope === 'strategy' ? __('projectType.strategy') : __('projectType.program') }}</a>
-                <span class="sep" aria-hidden="true">›</span>
-                <span class="rd-crumb-cur">{{ $subject }}</span>
-            </nav>
-            @if ($scope !== 'strategy' && count($switchableSubjects ?? []) > 1)
-                {{-- Subject switcher: Bootstrap dropdown; items reload the report
-                     with the chosen subject (?switchTo) so you stay in the report.
-                     Deliberately NOT shown for strategy scope: a strategy is a
-                     self-contained top-level root (Strategy → Programs → Projects),
-                     never a sibling in a set of strategies — so its report doesn't
-                     offer switching between strategies. Change strategy the normal
-                     way, via the project selector. The switcher remains available
-                     for program reports (switching between sibling programs).
-                     The visible title is an interactive <a>, so also emit a real
-                     (visually-hidden) <h1> to keep a proper document heading. --}}
-                <h1 class="rd-visually-hidden">{{ $subject }}</h1>
-                <span class="dropdown dropdownWrapper">
-                    <a href="javascript:void(0)" class="h dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $subject }} <i class="fa fa-caret-down rd-h-caret" aria-hidden="true"></i></a>
-                    <ul class="dropdown-menu">
-                        {{-- nav-header is the app's Bootstrap-2 dropdown label class
-                             (dropdown-header is unstyled in BS2). The switcher only
-                             renders for program scope, so the label is always the
-                             program string. --}}
-                        <li class="nav-header">{{ __('stakeholder.header.switch_program') }}</li>
-                        @foreach ($switchableSubjects as $rdSubj)
-                            <li>
-                                <a href="{{ $rdSwitchBase }}?switchTo={{ (int) $rdSubj['id'] }}{{ $rdPeriodQuery }}">
-                                    <i class="fa {{ (int) $rdSubj['id'] === (int) ($projectId ?? 0) ? 'fa-circle-dot' : 'fa-circle' }} rd-switch-mark" aria-hidden="true"></i>
-                                    {{ $rdSubj['name'] }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </span>
-            @else
-                <h1 class="h">{{ $subject }}</h1>
-            @endif
-            <div class="prov">
-                {{ $scope === 'strategy' ? __('stakeholder.header.strategy_report') : __('stakeholder.header.program_report') }}
-                @if ($periodMeaning !== '') · {{ $periodMeaning }} @endif
-                · {{ __('stakeholder.header.updated') }} {{ $updatedAt }}
-            </div>
+            {{-- One report = ONE subject; Task-view breadcrumb flow
+                 ("Report // {subject}", like "To-Dos // All To-Dos"). The
+                 scope label and period meaning are redundant here — the
+                 breadcrumb says Report, the period picker below owns the
+                 period context — so the under-text keeps only freshness. --}}
+            <h1 class="h"><span class="crumb-type">{{ __('stakeholder.header.crumb_report') }}</span> <span class="crumb-sep" aria-hidden="true">/</span> {{ $subject }}</h1>
         </div>
+        {{-- RIGHT = what about it: verdict with freshness stacked under it,
+             centered as one group against the title row, then ⋮. --}}
         <div class="verdict">
-            <div class="v"><span class="dot" style="background:{{ $verdictDotColor }}"></span>{{ $verdictLabel }}</div>
-            <div class="src">{{ $verdictSource }}</div>
+            {{-- Provenance ("set 1 month ago · overrides metrics") is secondary:
+                 it lives in the tooltip so the right side stays one balanced,
+                 vertically-centered row with the actions menu. --}}
+            <div class="v" data-tippy-content="{{ $verdictSource }}"><span class="dot" style="background:{{ $verdictDotColor }}"></span>{{ $verdictLabel }}</div>
+            <div class="prov">{{ __('stakeholder.header.updated') }} {{ $updatedAt }}</div>
         </div>
         @if (! empty($projectId ?? null))
             <div class="rd-actions">
@@ -162,18 +119,21 @@
 
     {{-- ── Tab bar + period picker on ONE row (saves a full row of vertical
          space; picker sits with the view-mode controls it belongs with) ── --}}
-    <div class="rd-tabs hideOnPrint">
+    <div class="lt-tabs lt-tabs--floating hideOnPrint">
         {{-- Framed segmented tab group (mirrors the global .tabs nav): the tabs
              sit in one outlined container so they read as a connected control,
              the active one a white segment inside it. --}}
-        <div class="rd-tab-group">
-            <button type="button" class="rd-tab on" data-page="0" onclick="rdGo(0)"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
-            <button type="button" class="rd-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
-            <button type="button" class="rd-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
-            <button type="button" class="rd-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
-        </div>
+        {{-- <nav> + aria-current, not the ARIA tabs pattern: the deck pages
+             aren't role=tabpanel targets, so tablist semantics would mislead
+             assistive tech (Copilot review). --}}
+        <nav class="lt-tabs-group" id="rdTabs" aria-label="{{ __('stakeholder.tabs.label') }}">
+            <button type="button" class="lt-tab on" data-page="0" onclick="rdGo(0)" aria-current="true"><i class="fa fa-gauge-simple-high"></i> {{ __('stakeholder.tab.overview') }}</button>
+            <button type="button" class="lt-tab" data-page="1" onclick="rdGo(1)"><i class="fa fa-diagram-project"></i> {{ __('stakeholder.tab.logic_model') }}</button>
+            <button type="button" class="lt-tab" data-page="2" onclick="rdGo(2)"><i class="fa fa-people-arrows"></i> {{ __('stakeholder.tab.resources_coverage') }}</button>
+            <button type="button" class="lt-tab" data-page="3" onclick="rdGo(3)"><i class="fa fa-compass"></i> {{ __('stakeholder.tab.impact_journey') }}</button>
+        </nav>
 
-        <div class="rd-tab-right">
+        <div class="lt-tabs-actions">
             <div class="rd-picker" id="rdPicker">
                 <button type="button" class="rd-picker-btn" onclick="rdTogglePicker(event)">
                     <i class="fa fa-calendar"></i>
@@ -288,9 +248,12 @@
         var pages = track.querySelectorAll('.rd-page');
         pages.forEach(function (p, i) { p.classList.toggle('on', i === idx); });
 
-        // Tab state.
-        document.querySelectorAll('.rd-tab').forEach(function (btn) {
-            btn.classList.toggle('on', parseInt(btn.dataset.page, 10) === idx);
+        // Tab state — scoped to this deck's nav; .lt-tab is a shared global
+        // class, so a bare selector could toggle unrelated tab groups.
+        document.querySelectorAll('#rdTabs .lt-tab').forEach(function (btn) {
+            var on = parseInt(btn.dataset.page, 10) === idx;
+            btn.classList.toggle('on', on);
+            if (on) { btn.setAttribute('aria-current', 'true'); } else { btn.removeAttribute('aria-current'); }
         });
 
         // Arrow enable state.

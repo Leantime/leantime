@@ -76,48 +76,30 @@
 .rd-scope.rd-dark .rd-kcell .kv .down{color:#e46589;background:rgba(228,101,137,.16);}
 .rd-scope *{min-width:0;}
 
-/* Persistent header — sits above the deck. Left: subject + provenance. Right:
-   status verdict (stated verdict with provenance line, NOT a tappable pill). */
-.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px 18px;align-items:start;padding:16px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
+/* Persistent header — one vertically-centered row. LEFT = orientation
+   (crumb / title); RIGHT = freshness → verdict → ⋮. */
+.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:18px;align-items:center;padding:12px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
 .rd-hdr .st{min-width:0;}
-/* Breadcrumb: small gray line at the top of the left column. The verdict + ⋮
-   top-align with it (align-items:start on the grid), sitting level with it. */
-.rd-crumb{display:flex;align-items:center;gap:6px;min-width:0;margin-bottom:2px;font-size:12.5px;}
-.rd-crumb > a{color:var(--rd-text-3);text-decoration:none;font-weight:500;}
-.rd-crumb > a:hover{color:var(--rd-accent);text-decoration:underline;}
-.rd-crumb .sep{color:var(--rd-text-4);}
-.rd-crumb .rd-crumb-cur{color:var(--rd-text-3);}
 /* Title = <h1> + switcher, at the left edge (aligns with breadcrumb + meta). */
-.rd-hdr .st .h{margin:0 0 0 -6px;font-size:22px;font-weight:600;line-height:1.15;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:1px 6px;transition:background .12s;}
-/* Pointer + hover affordance only on the interactive (switcher) variant — the
-   plain <h1> title in the non-switcher case must not look clickable. */
-.rd-hdr .st a.h{cursor:pointer;}
-.rd-hdr .st a.h:hover{background:rgba(0,71,102,.05);}
-.rd-h-caret{font-size:14px;color:var(--rd-text-4);}
+/* Title matches the Tasks pageheader treatment exactly (18px / 400 / text-1)
+   — headers stay consistent across views (review feedback 2026-08-03). */
+.rd-hdr .st .h{margin:0;font-size:18px;font-weight:400;line-height:1.2;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;}
+.rd-hdr .st .h .crumb-sep{color:var(--rd-text-4);}
 /* Visually-hidden but screen-reader-available heading (switcher case). */
 .rd-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-/* Subject switcher: the dropdown wrapper aligns the toggle box, title text,
-   breadcrumb, and menu on one left edge; the menu drops straight under the
-   title + caret. */
-.rd-hdr .st .dropdown{position:relative;display:inline-flex;align-items:center;}
-.rd-hdr .st .dropdown > .h{margin:0;padding-left:0;}
-.rd-hdr .st .dropdown-menu{left:0;margin-top:6px;min-width:230px;}
-.rd-hdr .dropdown-menu .rd-switch-mark{font-size:8px;margin-right:8px;color:var(--rd-text-4);vertical-align:middle;}
-.rd-hdr .dropdown-menu li a .fa-circle-dot{color:var(--rd-accent);}
-.rd-hdr .st .prov{font-size:12px;color:var(--rd-text-3);margin-top:4px;}
-.rd-hdr .verdict{text-align:right;min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
-/* ⋮ is its own column; top-aligned with the verdict label ("In progress"). */
-.rd-hdr .rd-actions{line-height:1;display:flex;align-items:flex-start;}
+.rd-hdr .dropdown-menu .rd-hdr .dropdown-menu li a .fa-circle-dot{color:var(--rd-accent);}
+.rd-hdr .prov{font-size:12px;color:var(--rd-text-3);margin:0;white-space:nowrap;}
+/* Verdict + freshness stack right-aligned; the grid centers the pair
+   as one group against the title (review feedback 2026-08-03). */
+.rd-hdr .verdict{min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+/* ⋮ is its own column, centered with the rest of the row. */
+.rd-hdr .rd-actions{line-height:1;display:flex;align-items:center;}
 .rd-hdr .rd-actions .dropdown{margin:0 !important;padding:0 !important;line-height:1 !important;display:inline-flex !important;}
 .rd-hdr .rd-actions .dropdown-toggle.btn{padding:0 4px !important;margin:0 !important;height:auto !important;line-height:1.4 !important;min-width:0 !important;border:none !important;background:transparent !important;color:var(--rd-text-4) !important;font-size:16px !important;box-shadow:none !important;}
 .rd-hdr .rd-actions .dropdown-toggle.btn:hover{color:var(--rd-text-2) !important;background:rgba(0,0,0,.04) !important;border-radius:6px;}
 .rd-hdr .verdict .v{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--rd-text-1);}
 .rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}
-.rd-hdr .verdict .src{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-weight:400;}
 
-/* Tab-bar right cluster — period picker + prev/next arrows sit here to keep
-   the tab row self-contained instead of a separate "globalbar" row above. */
-.rd-tab-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}
 
 /* Compact period picker — one button showing current period; click opens a
    dropdown with the 3 quarter presets + a custom-range mini-form. Replaces the
@@ -152,24 +134,6 @@
 .rd-picker-cdash{color:var(--rd-text-3);font-size:11px;flex:none;}
 .rd-picker-capply{font:inherit;font-size:11px;font-weight:500;color:#fff;background:var(--rd-accent);border:none;border-radius:5px;padding:5px 9px;height:26px;cursor:pointer;flex:none;}
 
-/* Tab bar — sits ON the page background (matches the To-Dos Kanban·Table·List
-   pattern). Not on a panel. */
-/* Nav bar: horizontal tabs on their own accent-gradient strip above the white
-   content card — reads as navigation, not a button group. Conditional dark
-   scrim (--nav-scrim) for light accents that fail contrast; NO shadow so it
-   reads connected to the content. Active tab = white pill. */
-.rd-tabs{display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(rgba(0,0,0,var(--nav-scrim,0)),rgba(0,0,0,var(--nav-scrim,0))),linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:14px;box-shadow:none;padding:7px 10px;}
-/* Framed segmented tab group — one outlined container grouping the tabs. */
-.rd-tab-group{display:flex;align-items:center;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);}
-.rd-tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);padding:8px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;border-radius:9px;transition:color .15s,background .15s;}
-.rd-tab:hover{color:#fff;background:rgba(255,255,255,.16);}
-.rd-tab.on{color:var(--rd-accent);font-weight:600;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);}
-/* Keyboard focus: white ring on the gradient, accent ring on the white chip. */
-.rd-tab:focus-visible{outline:2px solid #fff;outline-offset:2px;}
-.rd-tab.on:focus-visible{outline-color:var(--rd-accent);}
-.rd-tab i{font-size:12px;}
-.rd-tab .ct{font-size:11px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.18);border-radius:10px;padding:1px 7px;margin-left:2px;}
-.rd-tab.on .ct{color:var(--rd-accent);background:rgba(0,71,102,.1);}
 .rd-arrows{display:flex;gap:4px;}
 .rd-arrow{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-text-2);}
 .rd-arrow:hover{color:var(--rd-text-1);border-color:var(--rd-text-4);}
@@ -281,8 +245,7 @@
 
 /* Print (§7) — expand all pages, hide screen affordances. */
 @media print {
-    .rd-tabs, .rd-arrows, .rd-tab-right, .hideOnPrint { display: none !important; }
-    .rd-deck { box-shadow: none; }
+        .rd-deck { box-shadow: none; }
     .rd-deck-viewport { overflow: visible !important; }
     .rd-deck-track { transform: none !important; display: block !important; }
     .rd-page { min-width: 0 !important; width: 100% !important; padding: 12px 0 24px; border-top: 1px solid var(--rd-line-soft); page-break-inside: avoid; }
