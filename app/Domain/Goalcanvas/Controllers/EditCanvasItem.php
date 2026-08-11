@@ -149,12 +149,32 @@ class EditCanvasItem extends Controller
         // Detach a milestone edge. State-changing, so it goes through POST (not a
         // GET link) with a CSRF token — the chip's remove control is an hx-post.
         // Authorized by the service (EDIT against the item's real project; a
-        // view-only user is denied). Returns an empty 200 so the caller's
-        // hx-swap="delete" removes just that chip.
+        // view-only user is denied). Returns the re-rendered milestones section
+        // (hx-target="#goalMsSection" outerHTML) so the summary counts and
+        // scroll arrow update with the removed chip, not just the chip node.
         if (isset($params['removeMilestone']) && isset($params['id'])) {
-            $this->goalService->removeMilestoneFromGoal((int) $params['id'], (int) $params['removeMilestone']);
+            $itemId = (int) $params['id'];
+            $this->goalService->removeMilestoneFromGoal($itemId, (int) $params['removeMilestone']);
 
-            return $this->tpl->emptyResponse();
+            // getGoalItem() always stamps the goal's REAL projectId on success;
+            // false only for a missing/foreign/unauthorized goal — fail closed
+            // rather than fall back to the SESSION project, which could load
+            // another project's milestone options into the re-rendered picker.
+            $canvasItem = $this->goalService->getGoalItem($itemId);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
+            $goalMilestones = $this->goalService->getGoalMilestones($itemId);
+            $this->tpl->assign('id', $itemId);
+            $this->tpl->assign('goalMilestones', $goalMilestones['milestones']);
+            $this->tpl->assign('milestoneSummary', $goalMilestones['summary']);
+            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones([
+                'sprint' => '', 'type' => 'milestone',
+                'currentProject' => $canvasItem['projectId'],
+            ]));
+
+            return $this->tpl->displayPartial('goalcanvas::partials.milestonesSection');
         }
 
         if (isset($params['comment']) && isset($params['id'])) {

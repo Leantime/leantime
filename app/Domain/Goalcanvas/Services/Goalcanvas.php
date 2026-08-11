@@ -32,6 +32,9 @@ class Goalcanvas extends BaseService
 
     private ProjectService $projectService;
 
+    /** @var array<int, int>|null Memoized accessibleProjectIds() result. */
+    private ?array $accessibleProjectIdsCache = null;
+
     public array $reportingSettings = [
         'linkonly',
         'linkAndReport',
@@ -67,7 +70,7 @@ class Goalcanvas extends BaseService
                 array_map(static fn ($g) => (int) $g['id'], $goals)
             );
             foreach ($goals as &$goal) {
-                $goal['milestones'] = $milestonesByGoal[(int) $goal['id']] ?? [];
+                $goal['milestones'] = $this->filterAccessibleMilestones($milestonesByGoal[(int) $goal['id']] ?? []);
                 $progressValue = 0;
                 $goal['goalProgress'] = 0;
                 $total = $goal['endValue'] - $goal['startValue'];
@@ -213,14 +216,23 @@ class Goalcanvas extends BaseService
     }
 
     /**
-     * Goals linked to a milestone. Internal read used by the milestone UI; the data-access is
-     * the milestone the caller is already viewing.
+     * Goals linked to a milestone, authorized for VIEW against the milestone's
+     * project. Reachable beyond the milestone UI (MCP getGoalsByMilestone wraps
+     * it verbatim), so the caller's access to the milestone cannot be assumed —
+     * a missing/foreign/unauthorized milestone returns [] (neutral, no oracle).
      */
     public function getGoalsByMilestone($milestoneId): array
     {
-        $goals = $this->goalRepository->getGoalsByMilestone($milestoneId);
+        // One cast, used for BOTH the authorization resolve and the read —
+        // authorizing one value and reading another invites drift.
+        $milestoneId = (int) $milestoneId;
 
-        return $goals;
+        $projectId = $this->goalRepository->getMilestoneProjectId($milestoneId);
+        if ($projectId === null || ! $this->can(GoalcanvasPermissions::VIEW, $projectId)) {
+            return [];
+        }
+
+        return $this->goalRepository->getGoalsByMilestone($milestoneId);
     }
 
     /**
@@ -242,7 +254,12 @@ class Goalcanvas extends BaseService
             return ['milestones' => [], 'summary' => $empty];
         }
 
-        $milestones = $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? [];
+        // Same defensive strip the rollup reads apply — keeps the editor chips
+        // consistent with getMilestonesByGoal/getGoalRollup for any legacy
+        // cross-project rows, and the summary counts what is actually shown.
+        $milestones = $this->filterAccessibleMilestones(
+            $this->goalRepository->getMilestonesForGoals([$goalId])[$goalId] ?? []
+        );
 
         $summary = ['total' => count($milestones)] + $empty;
         foreach ($milestones as $m) {
@@ -302,9 +319,15 @@ class Goalcanvas extends BaseService
         // — status labels + progress — is batched inside the repository). Fill
         // an empty entry for every authorized goal so an @api caller gets a
         // predictable key set, not just the goals that happen to have chips.
+        // Each goal's chips get the same defensive cross-project strip as the
+        // single-goal reads (accessibleProjectIds is memoized, so this stays
+        // one projects lookup for the whole batch).
         return array_replace(
             array_fill_keys($authorized, []),
-            $this->goalRepository->getMilestonesForGoals($authorized)
+            array_map(
+                fn (array $milestones) => $this->filterAccessibleMilestones($milestones),
+                $this->goalRepository->getMilestonesForGoals($authorized)
+            )
         );
     }
 
@@ -481,19 +504,25 @@ class Goalcanvas extends BaseService
     }
 
     /**
-     * Project ids the current user may access.
+     * Project ids the current user may access. Memoized per request — the
+     * filter now runs per goal in batched reads, and the underlying projects
+     * lookup is expensive.
      *
      * @return array<int, int>
      */
     private function accessibleProjectIds(): array
     {
+        if ($this->accessibleProjectIdsCache !== null) {
+            return $this->accessibleProjectIdsCache;
+        }
+
         $projects = $this->projectService->getProjectsUserHasAccessTo();
 
         if (! is_array($projects)) {
-            return [];
+            return $this->accessibleProjectIdsCache = [];
         }
 
-        return array_values(array_filter(
+        return $this->accessibleProjectIdsCache = array_values(array_filter(
             array_map(static fn ($p) => (int) ($p['id'] ?? 0), $projects),
             static fn ($id) => $id > 0
         ));

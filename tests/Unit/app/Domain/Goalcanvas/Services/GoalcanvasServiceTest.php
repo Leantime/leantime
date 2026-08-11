@@ -658,23 +658,49 @@ class GoalcanvasServiceTest extends TestCase
 
     public function test_get_goal_milestones_returns_chips_and_summarizes_by_status(): void
     {
+        // Chips carry their projectId and pass the accessible-projects strip.
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasItemProjectId' => fn () => 9,
             'getMilestonesForGoals' => fn () => [
                 7 => [
-                    ['id' => 1, 'headline' => 'A', 'statusType' => 'DONE'],
-                    ['id' => 2, 'headline' => 'B', 'statusType' => 'INPROGRESS'],
-                    ['id' => 3, 'headline' => 'C', 'statusType' => 'NEW'],
-                    ['id' => 4, 'headline' => 'D', 'statusType' => 'NEW'],
+                    ['id' => 1, 'headline' => 'A', 'statusType' => 'DONE', 'projectId' => 9],
+                    ['id' => 2, 'headline' => 'B', 'statusType' => 'INPROGRESS', 'projectId' => 9],
+                    ['id' => 3, 'headline' => 'C', 'statusType' => 'NEW', 'projectId' => 9],
+                    ['id' => 4, 'headline' => 'D', 'statusType' => 'NEW', 'projectId' => 9],
                 ],
             ],
         ]);
 
-        $result = $this->service($repo)->getGoalMilestones(7);
+        $result = $this->service($repo, projects: $this->projectsWithAccess([9]))->getGoalMilestones(7);
 
         $this->assertCount(4, $result['milestones']);
         $this->assertSame(
             ['total' => 4, 'done' => 1, 'inProgress' => 1, 'notStarted' => 2],
+            $result['summary'],
+        );
+    }
+
+    public function test_get_goal_milestones_strips_legacy_cross_project_chips_and_counts_only_shown(): void
+    {
+        // Same defensive strip as the rollup reads: a legacy cross-project row
+        // (milestone in project 8, caller can only access 9) must not surface
+        // in the editor chips, and the summary counts what is actually shown.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'getMilestonesForGoals' => fn () => [
+                7 => [
+                    ['id' => 1, 'headline' => 'Mine', 'statusType' => 'DONE', 'projectId' => 9],
+                    ['id' => 2, 'headline' => 'Foreign', 'statusType' => 'INPROGRESS', 'projectId' => 8],
+                ],
+            ],
+        ]);
+
+        $result = $this->service($repo, projects: $this->projectsWithAccess([9]))->getGoalMilestones(7);
+
+        $this->assertCount(1, $result['milestones']);
+        $this->assertSame('Mine', $result['milestones'][0]['headline']);
+        $this->assertSame(
+            ['total' => 1, 'done' => 1, 'inProgress' => 0, 'notStarted' => 0],
             $result['summary'],
         );
     }
@@ -724,18 +750,67 @@ class GoalcanvasServiceTest extends TestCase
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasItemProjectIds' => fn () => [1 => 7, 2 => 8],
             'getMilestonesForGoals' => fn (array $ids) => in_array(1, $ids, true)
-                ? [1 => [['id' => 10, 'headline' => 'M1']]]
+                ? [1 => [['id' => 10, 'headline' => 'M1', 'projectId' => 7]]]
                 : [],
         ]);
         $perms = $this->make(PermissionService::class, [
             'currentUserCan' => fn (string $permission, ?int $projectId = null) => $projectId === 7,
         ]);
 
-        $result = $this->service($repo, $perms)->getMilestonesForGoals([1, 2]);
+        $result = $this->service($repo, $perms, $this->projectsWithAccess([7]))->getMilestonesForGoals([1, 2]);
 
         $this->assertArrayHasKey(1, $result, 'authorized goal is present');
         $this->assertArrayNotHasKey(2, $result, 'unauthorized goal is omitted');
-        $this->assertSame([['id' => 10, 'headline' => 'M1']], $result[1]);
+        $this->assertSame([['id' => 10, 'headline' => 'M1', 'projectId' => 7]], $result[1]);
+    }
+
+    public function test_get_goals_by_milestone_soft_denies_unknown_or_foreign_milestone(): void
+    {
+        // The MCP getGoalsByMilestone tool wraps this verbatim, so the service
+        // itself must gate: an unknown/non-milestone id returns [] without
+        // reading any goals (no oracle).
+        $read = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getMilestoneProjectId' => fn () => null,
+            'getGoalsByMilestone' => function () use (&$read) {
+                $read++;
+
+                return [['id' => 1]];
+            },
+        ]);
+
+        $this->assertSame([], $this->service($repo)->getGoalsByMilestone(999));
+        $this->assertSame(0, $read, 'goals must not be read for an unresolvable milestone');
+    }
+
+    public function test_get_goals_by_milestone_soft_denies_when_view_not_permitted(): void
+    {
+        $read = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getMilestoneProjectId' => fn () => 8,
+            'getGoalsByMilestone' => function () use (&$read) {
+                $read++;
+
+                return [['id' => 1]];
+            },
+        ]);
+        $perms = $this->make(PermissionService::class, ['currentUserCan' => fn () => false]);
+
+        $this->assertSame([], $this->service($repo, $perms)->getGoalsByMilestone(5));
+        $this->assertSame(0, $read, 'VIEW-denied returns [] without reading goals');
+    }
+
+    public function test_get_goals_by_milestone_returns_goals_for_an_accessible_milestone(): void
+    {
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getMilestoneProjectId' => fn () => 9,
+            'getGoalsByMilestone' => fn () => [['id' => 1, 'title' => 'G']],
+        ]);
+
+        $this->assertSame(
+            [['id' => 1, 'title' => 'G']],
+            $this->service($repo)->getGoalsByMilestone(5)
+        );
     }
 
     public function test_get_milestones_for_goals_is_empty_safe(): void

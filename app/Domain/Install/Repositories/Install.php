@@ -98,6 +98,7 @@ class Install
         30523,
         30524,
         30525,
+        30526,
     ];
 
     /**
@@ -3011,9 +3012,14 @@ class Install
             $connection = $this->connection;
             $schema = $connection->getSchemaBuilder();
             if (! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_canvas')
                 || ! $schema->hasTable('zp_entity_relationship')
                 || ! $schema->hasTable('zp_tickets')
                 || ! $schema->hasColumn('zp_canvas_items', 'milestoneId')) {
+                // Surface the skip in the update log — a partial install
+                // silently no-oping would be invisible otherwise.
+                Log::info('Migration 30524 skipped: required tables/columns missing (partial install?)');
+
                 return true;
             }
 
@@ -3036,6 +3042,7 @@ class Install
                     // varchar, so trim before the digit check.
                     $pairs = [];
                     $milestoneIds = [];
+                    $canvasIds = [];
                     foreach ($goals as $g) {
                         $raw = trim((string) $g->milestoneId);
                         if (! ctype_digit($raw)) {
@@ -3045,8 +3052,9 @@ class Install
                         if ($mid <= 0) {
                             continue;
                         }
-                        $pairs[] = ['goalId' => (int) $g->id, 'milestoneId' => $mid, 'author' => $g->author];
+                        $pairs[] = ['goalId' => (int) $g->id, 'milestoneId' => $mid, 'author' => $g->author, 'canvasId' => (int) $g->canvasId];
                         $milestoneIds[$mid] = true;
+                        $canvasIds[(int) $g->canvasId] = true;
                     }
 
                     if ($pairs === []) {
@@ -3057,10 +3065,23 @@ class Install
 
                     // Drop edges to deleted milestones + dedup existing edges,
                     // both scoped to this chunk's ids — O(1) lookups, no N+1.
-                    $liveTickets = array_flip(array_map(
-                        'intval',
-                        $this->connection->table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->where('type', 'milestone')->where('status', '<>', -1)->pluck('id')->all()
-                    ));
+                    // The milestone lookup keeps projectId: links are
+                    // same-project only (product rule), so a legacy
+                    // cross-project row must NOT be promoted to an edge.
+                    $liveTickets = [];
+                    foreach (
+                        $this->connection->table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->where('type', 'milestone')->where('status', '<>', -1)->get(['id', 'projectId']) as $t
+                    ) {
+                        $liveTickets[(int) $t->id] = (int) $t->projectId;
+                    }
+
+                    // Goal projects, resolved via each goal's canvas (chunk-scoped).
+                    $projectByCanvas = [];
+                    foreach (
+                        $this->connection->table('zp_canvas')->whereIn('id', array_keys($canvasIds))->get(['id', 'projectId']) as $c
+                    ) {
+                        $projectByCanvas[(int) $c->id] = (int) $c->projectId;
+                    }
 
                     $existingEdges = [];
                     foreach (
@@ -3078,6 +3099,12 @@ class Install
                     $rows = [];
                     foreach ($pairs as $p) {
                         if (! isset($liveTickets[$p['milestoneId']])) {
+                            continue;
+                        }
+                        // Same-project only: skip legacy rows pointing at a
+                        // milestone in a different project than the goal's.
+                        if (! isset($projectByCanvas[$p['canvasId']])
+                            || $liveTickets[$p['milestoneId']] !== $projectByCanvas[$p['canvasId']]) {
                             continue;
                         }
                         if (isset($existingEdges[$p['goalId'].':'.$p['milestoneId']])) {
@@ -3132,5 +3159,85 @@ class Install
         }
 
         return $result;
+    }
+
+    /**
+     * update_sql_30526 — database update for v3.5.26.
+     *
+     * Hygiene pass over the goal↔milestone `tracked_by` edges:
+     *  1. Removes CROSS-PROJECT edges — links are same-project only (product
+     *     rule), but the original 30524/30525 backfill promoted legacy
+     *     cross-project `milestoneId` rows into edges before the guard existed.
+     *  2. Removes ORPHANED edges — a milestone deleted through the generic
+     *     ticket-delete path (which historically skipped the goal-detach
+     *     cascade) or a goal removed out-of-band leaves edges pointing at
+     *     rows that no longer exist.
+     *
+     * Query-builder only (portable) and naturally idempotent: a clean graph
+     * yields zero deletions.
+     */
+    public function update_sql_30526(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_entity_relationship')
+                || ! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_canvas')
+                || ! $schema->hasTable('zp_tickets')) {
+                // Surface the skip in the update log — a partial install
+                // silently no-oping would be invisible otherwise.
+                Log::info('Migration 30526 skipped: required tables missing (partial install?)');
+
+                return true;
+            }
+
+            // Cross-project edges: goal's canvas project != milestone's project.
+            $crossProject = $this->connection->table('zp_entity_relationship as er')
+                ->join('zp_canvas_items as ci', 'er.entityA', '=', 'ci.id')
+                ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+                ->join('zp_tickets as t', 'er.entityB', '=', 't.id')
+                ->where('er.relationship', EntityRelationshipEnum::TrackedBy->value)
+                ->where('er.entityAType', 'GoalItem')
+                ->where('er.entityBType', 'Ticket')
+                ->whereColumn('t.projectId', '<>', 'cb.projectId')
+                ->pluck('er.id')
+                ->all();
+
+            // Orphans: entityA no longer a goal item, or entityB no longer a
+            // live milestone ticket.
+            $orphaned = $this->connection->table('zp_entity_relationship as er')
+                ->leftJoin('zp_canvas_items as ci', function ($join): void {
+                    $join->on('er.entityA', '=', 'ci.id')->where('ci.box', '=', 'goal');
+                })
+                ->leftJoin('zp_tickets as t', function ($join): void {
+                    // "Live" = milestone-type AND not soft-deleted — matches
+                    // the addGoalMilestoneLink chokepoint's definition, so an
+                    // edge to a deleted milestone counts as orphaned.
+                    $join->on('er.entityB', '=', 't.id')
+                        ->where('t.type', '=', 'milestone')
+                        ->where('t.status', '<>', -1);
+                })
+                ->where('er.relationship', EntityRelationshipEnum::TrackedBy->value)
+                ->where('er.entityAType', 'GoalItem')
+                ->where('er.entityBType', 'Ticket')
+                ->where(function ($q): void {
+                    $q->whereNull('ci.id')->orWhereNull('t.id');
+                })
+                ->pluck('er.id')
+                ->all();
+
+            $ids = array_values(array_unique(array_map('intval', array_merge($crossProject, $orphaned))));
+            foreach (array_chunk($ids, 500) as $chunk) {
+                $this->connection->table('zp_entity_relationship')->whereIn('id', $chunk)->delete();
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30526: '.$e->getMessage());
+
+            return ['Migration 30526 failed: '.$e->getMessage()];
+        }
+
+        return true;
     }
 }
