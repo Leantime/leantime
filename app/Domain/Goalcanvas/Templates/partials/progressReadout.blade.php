@@ -64,6 +64,11 @@
                    data-tippy-content="{{ __('goalcanvas.update_current') }}">
         @else
             <span class="gv-mb-now" @if (($canvasItem['setting'] ?? '') === 'linkAndReport') data-tippy-content="{{ __('text.current_value_calculated_from_children') }}" @endif>{{ $roFmt($roCur) }}</span>
+            {{-- Static readout (linkAndReport / viewer) submits no currentValue,
+                 and EditCanvasItem defaults an absent one to '' — which would
+                 blank the stored metric when the user saves other fields. Round
+                 the stored value back through the form to preserve it. --}}
+            <input type="hidden" name="currentValue" value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}">
         @endif
         {{-- How far away it ISN'T — the missing half of every progress bar. --}}
         @if ($roHasRange)
