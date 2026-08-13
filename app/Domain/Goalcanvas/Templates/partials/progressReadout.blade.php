@@ -32,6 +32,11 @@
     // linkAndReport current values are computed from children; viewers can't
     // write — both render the number as static text instead of an input.
     $roEditable = $login::userIsAtLeast($roles::$editor) && ($canvasItem['setting'] ?? '') !== 'linkAndReport';
+    // Inline blur-save needs a PERSISTED goal: on the create form (id empty)
+    // an hx-post with itemId=0 would swap the readout back to zeros and wipe
+    // the value the user just typed — new goals get a plain input that
+    // submits with the create form instead.
+    $roLive = (int) ($canvasItem['id'] ?? 0) > 0;
 @endphp
 <div class="gv-metric-bar" id="gvReadout">
     {{-- WHAT is being measured — without it the tab is a bare number. --}}
@@ -39,7 +44,7 @@
         <div class="gv-mb-metric">{{ $canvasItem['description'] }}</div>
     @endif
     <div class="gv-mb-top">
-        @if ($roEditable)
+        @if ($roEditable && $roLive)
             <input class="gv-mb-input" type="number" step="0.01" name="currentValue"
                    value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}"
                    aria-label="{{ __('goalcanvas.update_current') }}"
@@ -50,6 +55,13 @@
                    hx-trigger="blur changed"
                    hx-target="#gvReadout"
                    hx-swap="outerHTML">
+        @elseif ($roEditable)
+            {{-- New goal: same editable number, no HTMX — the value rides the
+                 create form's own submit. --}}
+            <input class="gv-mb-input" type="number" step="0.01" name="currentValue"
+                   value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}"
+                   aria-label="{{ __('goalcanvas.update_current') }}"
+                   data-tippy-content="{{ __('goalcanvas.update_current') }}">
         @else
             <span class="gv-mb-now" @if (($canvasItem['setting'] ?? '') === 'linkAndReport') data-tippy-content="{{ __('text.current_value_calculated_from_children') }}" @endif>{{ $roFmt($roCur) }}</span>
         @endif

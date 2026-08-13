@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leantime\Domain\Goalcanvas\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
