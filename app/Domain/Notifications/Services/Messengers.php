@@ -19,7 +19,7 @@ class Messengers
 
     private LanguageCore $language;
 
-    private array $supportedMessengers = ['slack', 'discord', 'mattermost', 'zulip'];
+    private array $supportedMessengers = ['slack', 'discord', 'mattermost', 'zulip', 'telegram'];
 
     private string $projectName = '';
 
@@ -214,6 +214,215 @@ class Messengers
         }
 
         return false;
+    }
+
+    /**
+     * telegramWebhook
+     */
+    private function telegramWebhook(NotificationModel $notification): bool
+    {
+        $telegramHookSerialized = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.telegramHook");
+
+        if ($telegramHookSerialized !== false && $telegramHookSerialized !== '') {
+            $telegramHook = safe_unserialize($telegramHookSerialized, []);
+
+            if (! is_array($telegramHook) || empty($telegramHook['telegramBotToken']) || empty($telegramHook['telegramChatId'])) {
+                return false;
+            }
+
+            $text = $this->prepareTelegramMessage($notification);
+
+            $data = [
+                'chat_id' => $telegramHook['telegramChatId'],
+                'text' => $text,
+                'parse_mode' => 'HTML',
+                'disable_web_page_preview' => true,
+            ];
+
+            if (! empty($telegramHook['telegramTopicId']) && is_numeric($telegramHook['telegramTopicId']) && (int) $telegramHook['telegramTopicId'] > 0) {
+                $data['message_thread_id'] = (int) $telegramHook['telegramTopicId'];
+            }
+
+            try {
+                $response = $this->httpClient->post(
+                    "https://api.telegram.org/bot{$telegramHook['telegramBotToken']}/sendMessage",
+                    [
+                        'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                        'connect_timeout' => 5,
+                        'timeout' => 10,
+                        'json' => $data,
+                    ]
+                );
+
+                $resBody = json_decode((string) $response->getBody(), true);
+
+                return is_array($resBody) && ! empty($resBody['ok']);
+            } catch (\Throwable $e) {
+                Log::warning('Telegram sendMessage failed', ['exception' => get_class($e)]);
+
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * prepareTelegramMessage
+     */
+    private function prepareTelegramMessage(NotificationModel $notification): string
+    {
+        $headline = '';
+        $status = '';
+        $priority = '';
+        $userId = 0;
+        $userFirstname = '';
+        $userLastname = '';
+        $dateToFinish = '';
+
+        if (isset($notification->entity)) {
+            if (is_array($notification->entity)) {
+                $headline = $notification->entity['headline'] ?? '';
+                $status = $notification->entity['status'] ?? '';
+                $priority = $notification->entity['priority'] ?? '';
+                $userId = (int) ($notification->entity['userId'] ?? 0);
+                $userFirstname = $notification->entity['userFirstname'] ?? $notification->entity['user_firstname'] ?? '';
+                $userLastname = $notification->entity['userLastname'] ?? $notification->entity['user_lastname'] ?? '';
+                $dateToFinish = $notification->entity['dateToFinish'] ?? $notification->entity['timelineDateToFinish'] ?? '';
+            } elseif (is_object($notification->entity)) {
+                $headline = $notification->entity->headline ?? '';
+                $status = $notification->entity->status ?? '';
+                $priority = $notification->entity->priority ?? '';
+                $userId = (int) ($notification->entity->userId ?? 0);
+                $userFirstname = $notification->entity->userFirstname ?? $notification->entity->user_firstname ?? '';
+                $userLastname = $notification->entity->userLastname ?? $notification->entity->user_lastname ?? '';
+                $dateToFinish = $notification->entity->dateToFinish ?? $notification->entity->timelineDateToFinish ?? '';
+            }
+        }
+
+        $ticketService = null;
+        try {
+            $ticketService = app()->make(Tickets::class);
+        } catch (\Throwable $e) {
+            // Container resolution fallback
+        }
+
+        // 1. Task Title
+        $taskTitle = ! empty($headline) ? $headline : $notification->message;
+
+        // 2. Status
+        $statusName = '';
+        if (! empty($status)) {
+            if ($ticketService !== null) {
+                try {
+                    $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
+                    if (! empty($statusLabelsArray[$status]['name'])) {
+                        $statusName = $statusLabelsArray[$status]['name'];
+                    } else {
+                        $statusName = (string) $status;
+                    }
+                } catch (\Throwable $e) {
+                    $statusName = (string) $status;
+                }
+            } else {
+                $statusName = (string) $status;
+            }
+        }
+
+        // 3. Priority
+        $priorityName = '';
+        if (! empty($priority)) {
+            if ($ticketService !== null) {
+                try {
+                    $priorityLabels = $ticketService->getPriorityLabels();
+                    if (! empty($priorityLabels[$priority])) {
+                        $priorityName = $priorityLabels[$priority];
+                    }
+                } catch (\Throwable $e) {
+                    // Fallback to static mapping
+                }
+            }
+
+            if (empty($priorityName)) {
+                $priorityMap = [
+                    '1' => 'Critical',
+                    '2' => 'High',
+                    '3' => 'Medium',
+                    '4' => 'Low',
+                    '5' => 'Lowest',
+                    'critical' => 'Critical',
+                    'high' => 'High',
+                    'medium' => 'Medium',
+                    'low' => 'Low',
+                    'lowest' => 'Lowest',
+                    'urgent' => 'Urgent',
+                ];
+                $priorityName = $priorityMap[strtolower((string) $priority)] ?? (string) $priority;
+            }
+        }
+
+        // 4. Assigned To
+        $assignedTo = trim("{$userFirstname} {$userLastname}");
+        if (empty($assignedTo) && $userId > 0) {
+            try {
+                $userService = app()->make(\Leantime\Domain\Users\Services\Users::class);
+                $user = $userService->getUser($userId);
+                if (! empty($user)) {
+                    $assignedTo = trim(($user['firstname'] ?? '').' '.($user['lastname'] ?? ''));
+                }
+            } catch (\Throwable $e) {
+                // Keep default if user service unresolvable
+            }
+        }
+
+        // 5. Due Date
+        $formattedDueDate = '';
+        if (! empty($dateToFinish) && $dateToFinish !== '0000-00-00 00:00:00' && $dateToFinish !== '0000-00-00') {
+            try {
+                $formattedDueDate = dtHelper()->parseDbDateTime($dateToFinish)->formatDateForUser();
+            } catch (\Throwable $e) {
+                $formattedDueDate = (string) $dateToFinish;
+            }
+        }
+
+        // 6. Link
+        $urlLink = is_array($notification->url) && ! empty($notification->url['url']) ? $notification->url['url'] : '';
+
+        // Build clean Telegram message
+        $lines = [];
+        $lines[] = '📋 <b>'.e($this->projectName).'</b>';
+        $lines[] = '';
+
+        if (! empty($taskTitle)) {
+            $lines[] = '📌 <b>'.e($this->language->__('label.title')).':</b> '.e($taskTitle);
+        }
+        if (! empty($statusName) && $statusName !== 'N/A') {
+            $lines[] = '🏷 <b>'.e($this->language->__('label.todo_status')).':</b> '.e($statusName);
+        }
+        if (! empty($priorityName)) {
+            $lines[] = '⚡ <b>'.e($this->language->__('label.priority')).':</b> '.e($priorityName);
+        }
+        if (! empty($assignedTo) && $assignedTo !== 'Unassigned') {
+            $lines[] = '👤 <b>'.e($this->language->__('label.assigned_to')).':</b> '.e($assignedTo);
+        }
+        if (! empty($formattedDueDate)) {
+            $lines[] = '📅 <b>'.e($this->language->__('label.due_date')).':</b> '.e($formattedDueDate);
+        }
+
+        if (! empty($urlLink)) {
+            $hrefUrl = $urlLink;
+            // Only rewrite localhost→127.0.0.1 in local/dev environments.
+            // Self-hosted installs that legitimately use localhost as their base URL
+            // must not be mutated in production.
+            if (app()->isLocal()) {
+                $hrefUrl = preg_replace('/^(https?:\/\/)localhost(?=[\/:]|$)/i', '${1}127.0.0.1', $hrefUrl);
+            }
+            $hrefUrl = str_replace('#', '%23', $hrefUrl);
+            $lines[] = '';
+            $lines[] = '👉 <a href="'.e($hrefUrl).'">'.e($this->language->__('label.open_in_leantime')).'</a>';
+        }
+
+        return implode("\n", $lines);
     }
 
     /**
