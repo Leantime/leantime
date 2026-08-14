@@ -734,7 +734,7 @@ class ProjectsServiceTest extends TestCase
         }
 
         // Mutations: global manager+.
-        foreach (['addProject' => 'projects.create', 'duplicateProject' => 'projects.create', 'editProject' => 'projects.edit', 'patch' => 'projects.edit', 'patchProject' => 'projects.edit', 'updateProjectUsers' => 'projects.edit', 'saveSlackWebhook' => 'projects.edit', 'saveZulipWebhook' => 'projects.edit', 'saveTelegramWebhook' => 'projects.edit', 'detectTelegramChatId' => 'projects.edit', 'deleteProject' => 'projects.delete', 'editUserProjectRelations' => 'projects.edit', 'addUserToProject' => 'projects.edit'] as $m => $perm) {
+        foreach (['addProject' => 'projects.create', 'duplicateProject' => 'projects.create', 'editProject' => 'projects.edit', 'patch' => 'projects.edit', 'patchProject' => 'projects.edit', 'updateProjectUsers' => 'projects.edit', 'saveSlackWebhook' => 'projects.edit', 'saveZulipWebhook' => 'projects.edit', 'saveTelegramWebhook' => 'projects.edit', 'deleteProject' => 'projects.delete', 'editUserProjectRelations' => 'projects.edit', 'addUserToProject' => 'projects.edit'] as $m => $perm) {
             $g = $gate($m);
             $this->assertNotNull($g, "$m must be gated");
             $this->assertSame($perm, $g['permission'], $m);

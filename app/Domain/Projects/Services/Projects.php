@@ -82,9 +82,9 @@ class Projects extends BaseService implements ChecksProjectAccess
         private UserRepository $userRepo,
         private CommentRepository $commentRepo,
         private ClientRepository $clientRepo,
-        ?Client $httpClient = null
+        Client $httpClient,
     ) {
-        $this->httpClient = $httpClient ?? app()->make(Client::class);
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -3230,7 +3230,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         if ($telegramHook['telegramChatId'] === '') {
-            $detected = $this->detectTelegramChatId($projectId, $telegramHook['telegramBotToken']);
+            $detected = $this->detectTelegramChatId($telegramHook['telegramBotToken']);
 
             if ($detected === null) {
                 return ['hook' => $telegramHook, 'saved' => false, 'error' => 'chat_not_found'];
@@ -3251,10 +3251,11 @@ class Projects extends BaseService implements ChecksProjectAccess
      * Calls Telegram's getUpdates API and returns the detected chat id and topic id (if present)
      * of the most recent message sent to the bot, or null if none is found / the call fails.
      *
-     * @api
+     * Internal helper for saveTelegramWebhook(), which carries the permission gate. Kept private
+     * so it stays off the JSON-RPC surface: it makes the server issue an outbound request with a
+     * caller-supplied token, which is not something to expose as an @api method.
      */
-    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
-    public function detectTelegramChatId(int $projectId, string $botToken): ?array
+    private function detectTelegramChatId(string $botToken): ?array
     {
         try {
             $response = $this->httpClient->get(
