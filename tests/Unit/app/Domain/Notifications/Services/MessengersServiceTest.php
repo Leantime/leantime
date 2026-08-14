@@ -18,7 +18,7 @@ class MessengersServiceTest extends TestCase
 
     private function makeNotification(int $projectId = 1, string $message = 'Test notification'): NotificationModel
     {
-        $notification = new NotificationModel();
+        $notification = new NotificationModel;
         $notification->projectId = $projectId;
         $notification->message = $message;
         $notification->url = ['url' => 'https://example.com/ticket/123'];
