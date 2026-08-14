@@ -53,8 +53,18 @@ class DelCanvasItem
             return $this->tpl->displayPartial('errors.error404');
         }
 
+        // The route id is optional in the pattern but mandatory in practice: every caller
+        // links with a concrete id. Validate strictly rather than sanitising — FILTER_SANITIZE_NUMBER_INT
+        // lets "1-2" through, which a later (int) cast would silently read as 1 and act on the
+        // wrong record. Fail closed instead.
+        $canvasId = filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        if ($canvasId === false) {
+            return $this->tpl->displayPartial('errors.error404');
+        }
+
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
-        $this->tpl->assign('id', $id);
+        $this->tpl->assign('id', $canvasId);
 
         return $this->tpl->displayPartial('blueprints.delCanvasItem');
     }
@@ -72,11 +82,21 @@ class DelCanvasItem
             return $this->tpl->displayPartial('errors.error404');
         }
 
-        if ($this->request->has('del') && (int) $id > 0) {
+        // The route id is optional in the pattern but mandatory in practice: every caller
+        // links with a concrete id. Validate strictly rather than sanitising — FILTER_SANITIZE_NUMBER_INT
+        // lets "1-2" through, which a later (int) cast would silently read as 1 and act on the
+        // wrong record. Fail closed instead.
+        $canvasId = filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        if ($canvasId === false) {
+            return $this->tpl->displayPartial('errors.error404');
+        }
+
+        if ($this->request->has('del')) {
             // The service resolves the item's REAL project and authorizes DELETE against it
             // (throwing 403 for a missing/foreign item) — closing the by-id delete IDOR that
             // the previous role-only Auth::authOrRedirect left open.
-            $this->blueprintsService->deleteCanvasItem((int) $id, $this->template->getDatabaseType());
+            $this->blueprintsService->deleteCanvasItem($canvasId, $this->template->getDatabaseType());
 
             $this->tpl->setNotification(
                 $this->language->__('notification.element_deleted'),
@@ -88,7 +108,7 @@ class DelCanvasItem
         }
 
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
-        $this->tpl->assign('id', $id);
+        $this->tpl->assign('id', $canvasId);
 
         return $this->tpl->displayPartial('blueprints.delCanvasItem');
     }

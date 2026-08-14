@@ -55,8 +55,18 @@ class DelCanvas
             return $this->tpl->displayPartial('errors.error404');
         }
 
+        // The route id is optional in the pattern but mandatory in practice: every caller
+        // links with a concrete id. Validate strictly rather than sanitising — FILTER_SANITIZE_NUMBER_INT
+        // lets "1-2" through, which a later (int) cast would silently read as 1 and act on the
+        // wrong record. Fail closed instead.
+        $canvasId = filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        if ($canvasId === false) {
+            return $this->tpl->displayPartial('errors.error404');
+        }
+
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
-        $this->tpl->assign('id', $id);
+        $this->tpl->assign('id', $canvasId);
 
         return $this->tpl->displayPartial('blueprints.delCanvas');
     }
@@ -74,14 +84,24 @@ class DelCanvas
             return $this->tpl->displayPartial('errors.error404');
         }
 
+        // The route id is optional in the pattern but mandatory in practice: every caller
+        // links with a concrete id. Validate strictly rather than sanitising — FILTER_SANITIZE_NUMBER_INT
+        // lets "1-2" through, which a later (int) cast would silently read as 1 and act on the
+        // wrong record. Fail closed instead.
+        $canvasId = filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        if ($canvasId === false) {
+            return $this->tpl->displayPartial('errors.error404');
+        }
+
         $canvasType = $this->template->getDatabaseType();
         $sessionKey = $this->template->getSessionKey();
 
-        if ($this->request->has('del') && (int) $id > 0) {
+        if ($this->request->has('del')) {
             // The service resolves the board's REAL project and authorizes DELETE against it
             // (throwing 403 for a missing/foreign board) — closing the by-id board-delete IDOR
             // that the previous role-only Auth::authOrRedirect left open.
-            $this->blueprintsService->deleteBoard((int) $id, $canvasType);
+            $this->blueprintsService->deleteBoard($canvasId, $canvasType);
 
             $allCanvas = $this->blueprintsRepo->getAllCanvas(session('currentProject'), $canvasType);
             session([$sessionKey => $allCanvas[0]['id'] ?? -1]);
@@ -100,7 +120,7 @@ class DelCanvas
         }
 
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
-        $this->tpl->assign('id', $id);
+        $this->tpl->assign('id', $canvasId);
 
         return $this->tpl->displayPartial('blueprints.delCanvas');
     }
