@@ -490,11 +490,28 @@ class Auth implements Authenticatable
             // to forward slashes before any checks.
             $url = str_replace('\\', '/', rawurldecode($redirect));
 
+            // Drop control characters and surrounding whitespace before any guard, so a
+            // padded variant (" //evil.com", "%09//evil.com") can't slip past the checks
+            // below and can't reach the Location header.
+            $url = trim(preg_replace('/[\x00-\x1F\x7F]/', '', $url));
+
             // Strip the application base URL when present so that same-origin
             // absolute URLs (e.g. https://my-leantime.com/dashboard/home) are
             // treated the same as their relative counterparts.
-            if (str_starts_with($url, BASE_URL)) {
-                $url = substr($url, strlen(BASE_URL));
+            //
+            // Match only on a real boundary: a bare str_starts_with() would also fire on
+            // https://hostile.com/pwn when BASE_URL is https://host, rewriting an external
+            // URL into the bogus internal path /ile.com/pwn instead of rejecting it. The
+            // same applies to subdirectory installs (BASE_URL /app vs a /application path).
+            $base = rtrim(BASE_URL, '/');
+
+            if ($base !== '' && (
+                $url === $base
+                || str_starts_with($url, $base.'/')
+                || str_starts_with($url, $base.'?')
+                || str_starts_with($url, $base.'#')
+            )) {
+                $url = substr($url, strlen($base));
             }
 
             // Guard: protocol-relative URL (//attacker.com) — explicitly reject.
@@ -517,8 +534,12 @@ class Auth implements Authenticatable
             $url = ltrim($url, '/');
 
             // Block redirect to logout — allowing a POST-login redirect to
-            // /auth/logout would create a forced-logout loop.
-            if ($url !== '' && $url !== 'auth/logout') {
+            // /auth/logout would create a forced-logout loop. Compare the normalized
+            // path so the query string, a trailing slash and casing can't be used to
+            // walk around the block (/auth/logout/, /auth/logout?next=/x, /AUTH/logout).
+            $path = rtrim(strtolower(strtok($url, '?#')), '/');
+
+            if ($url !== '' && $path !== 'auth/logout') {
                 $redirectUrl = BASE_URL.'/'.$url;
             }
         }

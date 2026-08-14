@@ -119,6 +119,91 @@ class AuthServiceTest extends TestCase
         );
     }
 
+    public function test_resolve_safe_redirect_rejects_host_prefix_without_a_boundary(): void
+    {
+        $service = $this->makeService();
+
+        // The real prefix hazard: a host that merely *begins* with our host, e.g.
+        // BASE_URL https://host vs https://hostile.example.com. A bare
+        // str_starts_with($url, BASE_URL) strips the prefix and rewrites this into the
+        // bogus internal path /ile.example.com/pwn instead of rejecting it outright.
+        // Stripping only on a boundary (end, '/', '?', '#') keeps it external.
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect(BASE_URL.'ile.example.com/pwn')
+        );
+    }
+
+    public function test_resolve_safe_redirect_returns_dashboard_for_base_url_itself(): void
+    {
+        $service = $this->makeService();
+
+        // Exactly BASE_URL (with and without a trailing slash) has no path to go to —
+        // it must fall back to the dashboard rather than the bare app root.
+        $this->assertSame(BASE_URL.'/dashboard/home', $service->resolveSafeRedirect(BASE_URL));
+        $this->assertSame(BASE_URL.'/dashboard/home', $service->resolveSafeRedirect(BASE_URL.'/'));
+    }
+
+    public function test_resolve_safe_redirect_blocks_logout_including_variants(): void
+    {
+        $service = $this->makeService();
+
+        // Redirecting to logout right after login is a forced-logout loop. An exact
+        // string match on '/auth/logout' is walkable with a trailing slash, a query
+        // string or different casing, so the normalized path is what gets compared.
+        foreach ([
+            '/auth/logout',
+            '/auth/logout/',
+            'auth/logout',
+            '/auth/logout?next=/dashboard/home',
+            '/auth/logout#x',
+            '/AUTH/logout',
+            BASE_URL.'/auth/logout',
+        ] as $variant) {
+            $this->assertSame(
+                BASE_URL.'/dashboard/home',
+                $service->resolveSafeRedirect($variant),
+                sprintf('logout variant "%s" must not be an accepted redirect target', $variant)
+            );
+        }
+    }
+
+    public function test_resolve_safe_redirect_strips_control_characters(): void
+    {
+        $service = $this->makeService();
+
+        // Encoded CR/LF must never reach the Location header, and leading whitespace
+        // must not be usable to pad a protocol-relative URL past the '//' guard.
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect('%09//evil.example.com')
+        );
+        $this->assertSame(
+            BASE_URL.'/dashboard/home',
+            $service->resolveSafeRedirect(' //evil.example.com')
+        );
+        $this->assertStringNotContainsString(
+            "\r",
+            $service->resolveSafeRedirect('tickets/showAll%0d%0aSet-Cookie:x')
+        );
+        $this->assertStringNotContainsString(
+            "\n",
+            $service->resolveSafeRedirect('tickets/showAll%0d%0aSet-Cookie:x')
+        );
+    }
+
+    public function test_resolve_safe_redirect_preserves_plus_in_query_strings(): void
+    {
+        $service = $this->makeService();
+
+        // rawurldecode (not urldecode) is used precisely so a '+' in a query string
+        // survives instead of silently becoming a space.
+        $this->assertSame(
+            BASE_URL.'/tickets/showAll?searchTerm=a+b',
+            $service->resolveSafeRedirect('tickets/showAll?searchTerm=a+b')
+        );
+    }
+
     public function test_resolve_safe_redirect_rejects_protocol_relative_url(): void
     {
         $service = $this->makeService();

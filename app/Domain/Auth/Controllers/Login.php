@@ -43,7 +43,10 @@ class Login extends Controller
             return $return;
         }
 
-        $redirectUrl = $this->authService->resolveSafeRedirect($_GET['redirect'] ?? null);
+        // Guard the type: redirect[]=x arrives as an array, which would TypeError against
+        // resolveSafeRedirect(?string) and 500 the login page on malformed input.
+        $rawRedirect = $_GET['redirect'] ?? null;
+        $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
         $this->tpl->assign('inputPlaceholder', $this->authService->getLoginInputPlaceholder());
         $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
@@ -65,7 +68,9 @@ class Login extends Controller
     {
         if (isset($_POST['username']) === true && isset($_POST['password']) === true) {
 
-            $redirectUrl = $this->authService->resolveSafeRedirect($_POST['redirectUrl'] ?? null);
+            // Same array guard as the GET path above — redirectUrl[]=x must not 500 the login POST.
+            $rawRedirect = $_POST['redirectUrl'] ?? null;
+            $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
             $username = trim($_POST['username']);
             $password = $_POST['password'];
