@@ -2,10 +2,12 @@
 
 namespace Unit\app\Domain\Goalcanvas\Services;
 
+use Codeception\Stub\Expected;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Unit\TestCase;
 
 /**
@@ -28,18 +30,59 @@ class GoalcanvasServiceTest extends TestCase
         ]);
     }
 
-    private function service(GoalcanvaRepository $repo, ?PermissionService $perms = null): GoalcanvasService
+    private function service(GoalcanvaRepository $repo, ?PermissionService $perms = null, ?ProjectService $projects = null): GoalcanvasService
     {
-        $service = new GoalcanvasService($repo);
+        $service = new GoalcanvasService($repo, $projects ?? $this->projectsWithAccess([]));
         $service->setPermissionService($perms ?? $this->allowingPermissions());
 
         return $service;
+    }
+
+    /** A Projects service granting access to exactly the given project ids. */
+    private function projectsWithAccess(array $projectIds): ProjectService
+    {
+        return $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn () => array_map(static fn ($id) => ['id' => $id], $projectIds),
+        ]);
+    }
+
+    private function denyingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+            'currentUserCan' => fn () => false,
+        ]);
+    }
+
+    /**
+     * A repo where goal #7 lives in project 9 and returns the given milestone
+     * chip rows from getMilestonesForGoals.
+     */
+    private function goalRepoWithMilestones(array $milestones, int $projectId = 9): GoalcanvaRepository
+    {
+        return $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn (...$args) => $projectId,
+            'getCanvasItemProjectIds' => fn (...$args) => [7 => (int) $projectId],
+            'getMilestonesForGoals' => fn (...$args) => [7 => $milestones],
+        ]);
+    }
+
+    private function milestone(int $id, string $statusType, int $percentDone, ?string $from, ?string $to, int $projectId = 9): array
+    {
+        return [
+            'id' => $id, 'headline' => "MS $id", 'color' => '#ccc', 'projectId' => $projectId,
+            'editFrom' => $from, 'editTo' => $to, 'status' => 3, 'statusType' => $statusType,
+            'percentDone' => $percentDone,
+        ];
     }
 
     public function test_computes_goal_progress_as_percentage_of_range(): void
     {
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasProjectId' => fn () => 9,
+            'getMilestonesForGoals' => fn () => [],
             'getCanvasItemsById' => fn () => [
                 ['id' => 1, 'setting' => 'linkonly', 'startValue' => 0.0, 'endValue' => 100.0, 'currentValue' => 50.0],
             ],
@@ -54,6 +97,7 @@ class GoalcanvasServiceTest extends TestCase
     {
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasProjectId' => fn () => 9,
+            'getMilestonesForGoals' => fn () => [],
             'getCanvasItemsById' => fn () => [
                 ['id' => 1, 'setting' => 'linkonly', 'startValue' => 0.0, 'endValue' => 100.0, 'currentValue' => 150.0],
                 ['id' => 2, 'setting' => 'linkonly', 'startValue' => 0.0, 'endValue' => 100.0, 'currentValue' => -20.0],
@@ -70,6 +114,7 @@ class GoalcanvasServiceTest extends TestCase
     {
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasProjectId' => fn () => 9,
+            'getMilestonesForGoals' => fn () => [],
             'getCanvasItemsById' => fn () => [
                 ['id' => 1, 'setting' => 'linkonly', 'startValue' => 50.0, 'endValue' => 50.0, 'currentValue' => 50.0],
             ],
@@ -326,5 +371,541 @@ class GoalcanvasServiceTest extends TestCase
         } catch (AuthorizationException) {
         }
         $this->assertSame(0, $copied);
+    }
+
+    // ---------------------------------------------------------------------
+    // Dual-write: syncing tracked_by edges from a single milestoneId write.
+    // ---------------------------------------------------------------------
+
+    /**
+     * Build a repo whose edge writers record into $added / $removed (passed by
+     * reference), so a test can assert exactly which links were created/removed.
+     *
+     * @param  array<int, int>  $currentEdges  Milestone ids the goal is already linked to
+     * @param  array<string, callable>  $extraStubs  Extra repo method stubs (the write path)
+     * @param  array<int, array{0:int,1:int}>  $added  Receives [goalId, milestoneId] per add
+     * @param  array<int, int>  $removed  Receives milestoneId per remove
+     */
+    private function edgeRepo(array $currentEdges, array $extraStubs, array &$added, array &$removed): GoalcanvaRepository
+    {
+        return $this->make(GoalcanvaRepository::class, array_merge([
+            'getCanvasProjectId' => fn () => 9,
+            'getCanvasItemProjectId' => fn () => 9,
+            'getMilestoneIdsForGoal' => fn () => $currentEdges,
+            'addGoalMilestoneLink' => function ($goalId, $milestoneId, $userId) use (&$added) {
+                // $userId is required (no default) so the tests fail loudly if
+                // production ever stops passing the author argument.
+                $added[] = [(int) $goalId, (int) $milestoneId];
+
+                return true;
+            },
+            'removeGoalMilestoneLink' => function ($goalId, $milestoneId) use (&$removed) {
+                $removed[] = (int) $milestoneId;
+
+                return true;
+            },
+        ], $extraStubs));
+    }
+
+    public function test_create_goal_links_milestone_edge_when_milestone_id_present(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['createGoal' => fn () => '50'], $added, $removed);
+
+        $this->service($repo)->createGoal(['canvasId' => 9, 'milestoneId' => 42]);
+
+        $this->assertSame([[50, 42]], $added, 'The new goal is linked to the given milestone');
+        $this->assertSame([], $removed);
+    }
+
+    public function test_create_goal_item_links_milestone_edge_when_milestone_id_present(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['addCanvasItem' => fn () => '50'], $added, $removed);
+
+        $this->service($repo)->createGoalItem(['canvasId' => 9, 'box' => 'goal', 'milestoneId' => 42]);
+
+        $this->assertSame([[50, 42]], $added, 'A new goal item is linked to the given milestone');
+        $this->assertSame([], $removed);
+    }
+
+    public function test_update_goal_item_links_milestone_edge_when_milestone_id_present(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['editCanvasItem' => fn () => null], $added, $removed);
+
+        $this->service($repo)->updateGoalItem(['itemId' => 7, 'milestoneId' => 42]);
+
+        $this->assertSame([[7, 42]], $added);
+        $this->assertSame([], $removed);
+    }
+
+    public function test_patch_goal_item_links_milestone_edge_when_milestone_id_present(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['patchCanvasItem' => fn () => true], $added, $removed);
+
+        $this->service($repo)->patchGoalItem(7, ['milestoneId' => 42]);
+
+        $this->assertSame([[7, 42]], $added);
+        $this->assertSame([], $removed);
+    }
+
+    public function test_patch_goal_item_skips_edge_sync_when_patch_fails(): void
+    {
+        $added = [];
+        $removed = [];
+        // patchCanvasItem returns false → the milestoneId edge sync must NOT run,
+        // else the tracked_by edges would drift from the (unchanged) column.
+        $repo = $this->edgeRepo([], ['patchCanvasItem' => fn () => false], $added, $removed);
+
+        $result = $this->service($repo)->patchGoalItem(7, ['milestoneId' => 42]);
+
+        $this->assertFalse($result);
+        $this->assertSame([], $added, 'no edge added when the underlying patch failed');
+        $this->assertSame([], $removed);
+    }
+
+    public function test_patch_goal_item_ignores_non_numeric_milestone_id(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([], ['patchCanvasItem' => fn () => true], $added, $removed);
+
+        // '42abc' must not cast to milestone edge 42.
+        $this->service($repo)->patchGoalItem(7, ['milestoneId' => '42abc']);
+
+        $this->assertSame([], $added, 'a non-numeric milestoneId creates no edge');
+        $this->assertSame([], $removed);
+    }
+
+    public function test_delete_goal_item_removes_all_edges_on_successful_delete(): void
+    {
+        $deleted = 0;
+        $cleared = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'delCanvasItem' => function () use (&$deleted) {
+                $deleted++;
+            },
+            'removeAllGoalMilestoneLinks' => function ($goalId) use (&$cleared) {
+                $cleared = (int) $goalId;
+
+                return true;
+            },
+        ]);
+
+        $this->service($repo)->deleteGoalItem(5);
+
+        $this->assertSame(1, $deleted);
+        $this->assertSame(5, $cleared, 'deleting a goal item clears its tracked_by edges');
+    }
+
+    public function test_empty_milestone_id_clears_existing_edges_without_adding(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([11], ['editCanvasItem' => fn () => null], $added, $removed);
+
+        $this->service($repo)->updateGoalItem(['itemId' => 7, 'milestoneId' => '']);
+
+        $this->assertSame([], $added, 'An empty milestoneId adds nothing');
+        $this->assertSame([11], $removed, 'It unlinks the existing edge');
+    }
+
+    public function test_zero_milestone_id_clears_existing_edges_without_adding(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([11], ['patchCanvasItem' => fn () => true], $added, $removed);
+
+        $this->service($repo)->patchGoalItem(7, ['milestoneId' => '0']);
+
+        $this->assertSame([], $added, 'A "0" milestoneId adds nothing');
+        $this->assertSame([11], $removed, 'It unlinks the existing edge');
+    }
+
+    public function test_unchanged_milestone_id_does_not_churn_edges(): void
+    {
+        $added = [];
+        $removed = [];
+        $repo = $this->edgeRepo([42], ['editCanvasItem' => fn () => null], $added, $removed);
+
+        $this->service($repo)->updateGoalItem(['itemId' => 7, 'milestoneId' => 42]);
+
+        $this->assertSame([], $added, 'Re-saving the same milestone neither adds');
+        $this->assertSame([], $removed, 'nor removes an edge');
+    }
+
+    public function test_missing_milestone_id_key_leaves_edges_untouched(): void
+    {
+        // No milestoneId key at all (e.g. a description-only edit) must not
+        // touch edges — the sync only runs when the key is present.
+        $synced = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'editCanvasItem' => fn () => null,
+            'getMilestoneIdsForGoal' => function () use (&$synced) {
+                $synced++;
+
+                return [];
+            },
+        ]);
+
+        $this->service($repo)->updateGoalItem(['itemId' => 7, 'description' => 'x']);
+
+        $this->assertSame(0, $synced, 'Edge sync must not run when milestoneId is absent');
+    }
+
+    // Multi-milestone chip UI actions + report read (edge model).
+    // ---------------------------------------------------------------------
+
+    public function test_add_milestone_to_goal_authorizes_edit_and_links(): void
+    {
+        $linked = null;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'addGoalMilestoneLink' => function ($goalId, $milestoneId, $userId = null) use (&$linked) {
+                $linked = [(int) $goalId, (int) $milestoneId];
+
+                return true;
+            },
+        ]);
+
+        $this->assertTrue($this->service($repo)->addMilestoneToGoal(7, 42));
+        $this->assertSame([7, 42], $linked, 'The link is created against the resolved goal');
+    }
+
+    public function test_add_milestone_to_goal_throws_and_never_links_for_foreign_goal(): void
+    {
+        $linked = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => null,
+            'addGoalMilestoneLink' => function () use (&$linked) {
+                $linked++;
+
+                return true;
+            },
+        ]);
+
+        try {
+            $this->service($repo)->addMilestoneToGoal(999, 42);
+            $this->fail('Expected AuthorizationException');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame(0, $linked, 'A foreign/unknown goal must not have a milestone linked');
+    }
+
+    public function test_add_milestone_to_goal_throws_and_never_links_when_edit_denied(): void
+    {
+        $linked = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'addGoalMilestoneLink' => function () use (&$linked) {
+                $linked++;
+
+                return true;
+            },
+        ]);
+
+        try {
+            $this->service($repo, $this->denyingPermissions())->addMilestoneToGoal(7, 42);
+            $this->fail('Expected AuthorizationException');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame(0, $linked, 'EDIT-denied on the goal project must not link');
+    }
+
+    public function test_remove_milestone_from_goal_authorizes_edit_and_unlinks(): void
+    {
+        $unlinked = null;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'removeGoalMilestoneLink' => function ($goalId, $milestoneId) use (&$unlinked) {
+                $unlinked = [(int) $goalId, (int) $milestoneId];
+
+                return true;
+            },
+        ]);
+
+        $this->assertTrue($this->service($repo)->removeMilestoneFromGoal(7, 42));
+        $this->assertSame([7, 42], $unlinked);
+    }
+
+    public function test_remove_milestone_from_goal_throws_and_never_unlinks_for_foreign_goal(): void
+    {
+        $unlinked = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => null,
+            'removeGoalMilestoneLink' => function () use (&$unlinked) {
+                $unlinked++;
+
+                return true;
+            },
+        ]);
+
+        try {
+            $this->service($repo)->removeMilestoneFromGoal(999, 42);
+            $this->fail('Expected AuthorizationException');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame(0, $unlinked);
+    }
+
+    public function test_get_goal_milestones_returns_chips_and_summarizes_by_status(): void
+    {
+        // Chips carry their projectId and pass the accessible-projects strip.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'getMilestonesForGoals' => fn () => [
+                7 => [
+                    ['id' => 1, 'headline' => 'A', 'statusType' => 'DONE', 'projectId' => 9],
+                    ['id' => 2, 'headline' => 'B', 'statusType' => 'INPROGRESS', 'projectId' => 9],
+                    ['id' => 3, 'headline' => 'C', 'statusType' => 'NEW', 'projectId' => 9],
+                    ['id' => 4, 'headline' => 'D', 'statusType' => 'NEW', 'projectId' => 9],
+                ],
+            ],
+        ]);
+
+        $result = $this->service($repo, projects: $this->projectsWithAccess([9]))->getGoalMilestones(7);
+
+        $this->assertCount(4, $result['milestones']);
+        $this->assertSame(
+            ['total' => 4, 'done' => 1, 'inProgress' => 1, 'notStarted' => 2],
+            $result['summary'],
+        );
+    }
+
+    public function test_get_goal_milestones_strips_legacy_cross_project_chips_and_counts_only_shown(): void
+    {
+        // Same defensive strip as the rollup reads: a legacy cross-project row
+        // (milestone in project 8, caller can only access 9) must not surface
+        // in the editor chips, and the summary counts what is actually shown.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'getMilestonesForGoals' => fn () => [
+                7 => [
+                    ['id' => 1, 'headline' => 'Mine', 'statusType' => 'DONE', 'projectId' => 9],
+                    ['id' => 2, 'headline' => 'Foreign', 'statusType' => 'INPROGRESS', 'projectId' => 8],
+                ],
+            ],
+        ]);
+
+        $result = $this->service($repo, projects: $this->projectsWithAccess([9]))->getGoalMilestones(7);
+
+        $this->assertCount(1, $result['milestones']);
+        $this->assertSame('Mine', $result['milestones'][0]['headline']);
+        $this->assertSame(
+            ['total' => 1, 'done' => 1, 'inProgress' => 0, 'notStarted' => 0],
+            $result['summary'],
+        );
+    }
+
+    public function test_get_goal_milestones_soft_denies_foreign_goal_without_loading(): void
+    {
+        $loaded = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => null,
+            'getMilestonesForGoals' => function () use (&$loaded) {
+                $loaded++;
+
+                return [];
+            },
+        ]);
+
+        $result = $this->service($repo)->getGoalMilestones(999);
+
+        $this->assertSame([], $result['milestones']);
+        $this->assertSame(['total' => 0, 'done' => 0, 'inProgress' => 0, 'notStarted' => 0], $result['summary']);
+        $this->assertSame(0, $loaded, 'A foreign/unknown goal must not have its milestones read (no oracle)');
+    }
+
+    public function test_get_goal_milestones_soft_denies_when_view_not_permitted(): void
+    {
+        $loaded = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'getMilestonesForGoals' => function () use (&$loaded) {
+                $loaded++;
+
+                return [7 => [['id' => 1, 'headline' => 'A', 'statusType' => 'DONE']]];
+            },
+        ]);
+
+        $perms = $this->make(PermissionService::class, ['currentUserCan' => fn () => false]);
+        $result = $this->service($repo, $perms)->getGoalMilestones(7);
+
+        $this->assertSame([], $result['milestones']);
+        $this->assertSame(0, $loaded, 'VIEW-denied returns the empty shape without loading');
+    }
+
+    public function test_get_milestones_for_goals_omits_unauthorized_goals(): void
+    {
+        // goal 1 lives in project 7 (VIEW allowed), goal 2 in project 8 (denied) —
+        // the report-read path must present the authorized goal and drop the rest.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectIds' => fn () => [1 => 7, 2 => 8],
+            'getMilestonesForGoals' => fn (array $ids) => in_array(1, $ids, true)
+                ? [1 => [['id' => 10, 'headline' => 'M1', 'projectId' => 7]]]
+                : [],
+        ]);
+        $perms = $this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $permission, ?int $projectId = null) => $projectId === 7,
+        ]);
+
+        $result = $this->service($repo, $perms, $this->projectsWithAccess([7]))->getMilestonesForGoals([1, 2]);
+
+        $this->assertArrayHasKey(1, $result, 'authorized goal is present');
+        $this->assertArrayNotHasKey(2, $result, 'unauthorized goal is omitted');
+        $this->assertSame([['id' => 10, 'headline' => 'M1', 'projectId' => 7]], $result[1]);
+    }
+
+    public function test_get_goals_by_milestone_soft_denies_unknown_or_foreign_milestone(): void
+    {
+        // The MCP getGoalsByMilestone tool wraps this verbatim, so the service
+        // itself must gate: an unknown/non-milestone id returns [] without
+        // reading any goals (no oracle).
+        $read = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getMilestoneProjectId' => fn () => null,
+            'getGoalsByMilestone' => function () use (&$read) {
+                $read++;
+
+                return [['id' => 1]];
+            },
+        ]);
+
+        $this->assertSame([], $this->service($repo)->getGoalsByMilestone(999));
+        $this->assertSame(0, $read, 'goals must not be read for an unresolvable milestone');
+    }
+
+    public function test_get_goals_by_milestone_soft_denies_when_view_not_permitted(): void
+    {
+        $read = 0;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getMilestoneProjectId' => fn () => 8,
+            'getGoalsByMilestone' => function () use (&$read) {
+                $read++;
+
+                return [['id' => 1]];
+            },
+        ]);
+        $perms = $this->make(PermissionService::class, ['currentUserCan' => fn () => false]);
+
+        $this->assertSame([], $this->service($repo, $perms)->getGoalsByMilestone(5));
+        $this->assertSame(0, $read, 'VIEW-denied returns [] without reading goals');
+    }
+
+    public function test_get_goals_by_milestone_returns_goals_for_an_accessible_milestone(): void
+    {
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getMilestoneProjectId' => fn () => 9,
+            'getGoalsByMilestone' => fn () => [['id' => 1, 'title' => 'G']],
+        ]);
+
+        $this->assertSame(
+            [['id' => 1, 'title' => 'G']],
+            $this->service($repo)->getGoalsByMilestone(5)
+        );
+    }
+
+    public function test_get_milestones_for_goals_is_empty_safe(): void
+    {
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectIds' => fn () => [],
+        ]);
+
+        $this->assertSame([], $this->service($repo)->getMilestonesForGoals([]));
+    }
+
+    // ─── Milestone rollup / mobile Progress (many-to-many) ────────────────
+
+    public function test_get_goal_rollup_aggregates_status_progress_and_span(): void
+    {
+        $repo = $this->goalRepoWithMilestones([
+            $this->milestone(1, 'INPROGRESS', 40, '2025-01-10 00:00:00', '2025-03-01 00:00:00'),
+            $this->milestone(2, 'NEW', 0, '2025-02-01 00:00:00', '2025-04-15 00:00:00'),
+            $this->milestone(3, 'DONE', 100, '2024-12-01 00:00:00', '2025-01-20 00:00:00'),
+        ]);
+
+        $rollup = $this->service($repo, null, $this->projectsWithAccess([9]))->getGoalRollup(7);
+
+        $this->assertSame(3, $rollup['total']);
+        $this->assertSame(1, $rollup['done']);
+        $this->assertSame(1, $rollup['inProgress']);
+        $this->assertSame(1, $rollup['notStarted']);
+        $this->assertSame(47, $rollup['percentComplete']); // round((40+0+100)/3)
+        $this->assertSame('2024-12-01 00:00:00', $rollup['startDate']); // earliest start
+        $this->assertSame('2025-04-15 00:00:00', $rollup['endDate']);   // latest due
+        $this->assertSame(1, $rollup['currentMilestoneId']);            // first not-done
+    }
+
+    public function test_get_goal_rollup_skips_zero_sentinel_dates(): void
+    {
+        $repo = $this->goalRepoWithMilestones([
+            $this->milestone(1, 'INPROGRESS', 50, '0000-00-00 00:00:00', '2025-05-01 00:00:00'),
+            $this->milestone(2, 'NEW', 0, '2025-01-01 00:00:00', '0000-00-00 00:00:00'),
+        ]);
+
+        $rollup = $this->service($repo, null, $this->projectsWithAccess([9]))->getGoalRollup(7);
+
+        $this->assertSame('2025-01-01 00:00:00', $rollup['startDate']); // m1 start skipped
+        $this->assertSame('2025-05-01 00:00:00', $rollup['endDate']);   // m2 due skipped
+    }
+
+    public function test_get_milestones_by_goal_strips_inaccessible_project_milestones(): void
+    {
+        $repo = $this->goalRepoWithMilestones([
+            $this->milestone(1, 'NEW', 0, null, null, projectId: 9),
+            $this->milestone(2, 'NEW', 0, null, null, projectId: 99), // not accessible
+        ]);
+
+        // goal is in project 9 (VIEW ok); only project 9 is accessible.
+        $list = $this->service($repo, null, $this->projectsWithAccess([9]))->getMilestonesByGoal(7);
+
+        $this->assertCount(1, $list);
+        $this->assertSame(1, $list[0]['id']);
+    }
+
+    public function test_get_milestones_by_goal_soft_denies_unauthorized_goal(): void
+    {
+        $repo = $this->goalRepoWithMilestones([
+            $this->milestone(1, 'NEW', 0, null, null),
+        ]);
+
+        $list = $this->service($repo, $this->denyingPermissions(), $this->projectsWithAccess([9]))
+            ->getMilestonesByGoal(7);
+
+        $this->assertSame([], $list);
+    }
+
+    public function test_get_goal_rollup_returns_empty_shape_for_foreign_goal(): void
+    {
+        // getCanvasItemProjectId returns null (missing/foreign/wrong type) -> deny.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => null,
+        ]);
+
+        $rollup = $this->service($repo)->getGoalRollup(7);
+
+        $this->assertSame(0, $rollup['total']);
+        $this->assertNull($rollup['currentMilestoneId']);
+    }
+
+    public function test_add_milestone_to_goal_does_not_unlink_others_many_to_many(): void
+    {
+        // Marcel's correction: a milestone can belong to multiple goals, so
+        // linking it to a goal must NOT unlink it from any other goal.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'addGoalMilestoneLink' => Expected::once(fn ($goalId, $milestoneId, $userId = null) => true),
+            'removeMilestoneFromAllGoals' => Expected::never(),
+        ]);
+
+        $this->assertTrue($this->service($repo)->addMilestoneToGoal(7, 42));
     }
 }

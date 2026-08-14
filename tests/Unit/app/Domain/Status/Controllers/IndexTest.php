@@ -11,6 +11,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
+use Leantime\Domain\Plugins\Services\Plugins;
 use Leantime\Domain\Status\Controllers\Index;
 
 /**
@@ -47,6 +48,13 @@ class IndexTest extends \Unit\TestCase
         $this->app->instance(IncomingRequest::class, $request);
         $this->app->instance(Environment::class, $env);
         $this->app->instance(AppSettings::class, new AppSettings);
+
+        // Mobile-auth advertising is gated on AdvancedAuth; mock it installed so
+        // these contract tests cover a mobile-capable instance. The gate itself
+        // is verified live e2e (AdvancedAuth off -> mobile OIDC not advertised).
+        $plugins = $this->createMock(Plugins::class);
+        $plugins->method('isEnabled')->willReturn(true);
+        $this->app->instance(Plugins::class, $plugins);
 
         return new Index($request, $this->createMock(Template::class), $this->createMock(Language::class));
     }

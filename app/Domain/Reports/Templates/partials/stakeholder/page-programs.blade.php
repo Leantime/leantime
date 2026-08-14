@@ -11,22 +11,6 @@
       $programUpdates  array<int,object[]>  (byProject at strategy scope)
 --}}
 
-<style>
-.rd-scope .p4-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:30px;}
-.rd-scope .p4-lbl{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-accent);margin-bottom:12px;}
-.rd-scope .p4-prog{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--rd-line-soft);font-size:14px;}
-.rd-scope .p4-prog .pd{width:9px;height:9px;border-radius:50%;flex:none;}
-.rd-scope .p4-prog .pn{flex:1;font-weight:500;color:var(--rd-text-1);min-width:0;}
-.rd-scope .p4-prog .pm{color:var(--rd-text-3);font-size:12.5px;}
-.rd-scope .p4-prog:last-child{border-bottom:none;}
-.rd-scope .p4-exec{font-size:13.5px;color:var(--rd-text-2);line-height:1.6;padding:11px 0;border-bottom:1px solid var(--rd-line-soft);}
-.rd-scope .p4-exec b{color:var(--rd-text-1);font-weight:600;}
-.rd-scope .p4-exec .ed{color:var(--rd-text-4);font-size:12px;margin-left:6px;}
-.rd-scope .p4-exec:last-child{border-bottom:none;}
-.rd-scope .p4-also{margin-top:22px;padding-top:16px;border-top:1px solid var(--rd-line);font-size:13.5px;color:var(--rd-text-2);}
-.rd-scope .p4-also .al-lb{color:var(--rd-text-3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;font-size:11px;}
-.rd-scope .p4-empty{color:var(--rd-text-3);font-size:12.5px;font-style:italic;padding:12px 0;}
-</style>
 
 <div class="p4-two">
     {{-- ── Programs column (strategy scope only) ─────────────────── --}}

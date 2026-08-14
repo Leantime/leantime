@@ -18,11 +18,19 @@
 <link rel="shortcut icon" href="{!! BASE_URL !!}/dist/images/favicon.png"/>
 <link rel="apple-touch-icon" href="{!! BASE_URL !!}/dist/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css"/>
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css"/>
+@php
+    // Cache-buster: the filenames only change per app version, so rebuilds of
+    // the SAME version were served stale from browser cache (no query hash in
+    // the mix manifest — core mix does not version() the css). The bundle's
+    // mtime changes on every build, which busts exactly when needed.
+    $mainCssPath = APP_ROOT.'/public/dist/css/main.'.$version.'.min.css';
+    $cssBust = is_file($mainCssPath) ? filemtime($mainCssPath) : $version;
+@endphp
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css?v={!! $cssBust !!}"/>
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css?v={!! $cssBust !!}"/>
 @if($tpl->needsComponent('tiptap'))
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/tiptap-editor.{!! $version !!}.min.css"/>
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/katex.min.css"/>
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/tiptap-editor.{!! $version !!}.min.css?v={!! $cssBust !!}"/>
+<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/katex.min.css?v={!! $cssBust !!}"/>
 @endif
 
 @dispatchEvent('afterLinkTags')
@@ -81,7 +89,34 @@
 @dispatchEvent('afterScriptsAndStyles')
 
 <!-- Replace main theme colors -->
+@php
+    // The nav bar sets white controls on the accent gradient. A light accent is
+    // a mid-tone that fails WCAG AA for white text; detect that per-theme and
+    // enable a dark scrim only then, so dark-accent themes stay fully vivid.
+    $navNeedsScrim = false;
+    foreach ($accents as $accentColor) {
+        // No usable accent value here — nothing to reason about, skip.
+        if ($accentColor === false || $accentColor === null || $accentColor === '') {
+            continue;
+        }
+        // A real accent we can't parse as 6-digit hex (e.g. rgb()/hsl()/named
+        // colors): we can't measure its luminance, so fail closed and enable the
+        // scrim to protect white nav-text contrast rather than assuming it's safe.
+        if (! is_string($accentColor) || ! preg_match('/^#?([0-9a-fA-F]{6})$/', $accentColor, $accentHex)) {
+            $navNeedsScrim = true;
+            break;
+        }
+        [$ar, $ag, $ab] = sscanf($accentHex[1], '%02x%02x%02x');
+        $linChannel = static fn ($v) => ($v /= 255) <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
+        $accentLum = 0.2126 * $linChannel($ar) + 0.7152 * $linChannel($ag) + 0.0722 * $linChannel($ab);
+        if (1.05 / ($accentLum + 0.05) < 4.5) { // white-on-accent below AA
+            $navNeedsScrim = true;
+            break;
+        }
+    }
+@endphp
 <style id="colorSchemeSetter">
+    :root { --nav-scrim: {{ $navNeedsScrim ? '0.22' : '0' }}; }
     @foreach ($accents as $accent)
         @if($accent !== false)
             :root {

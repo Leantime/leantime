@@ -51,8 +51,19 @@ class GetAllGoalsTool extends Tool
             return ToolResult::text("No goals found for project ID: {$projectId}");
         }
 
+        // Milestone links come from the tracked_by edge model (many-to-many),
+        // hydrated in ONE batched call — the legacy milestoneId column goes
+        // stale after edits and misses every link beyond the first.
+        $milestonesByGoal = $this->goalcanvasService->getMilestonesForGoals(
+            array_map(static fn ($g) => (int) $g['id'], $goals)
+        );
+
         $response = "## Goals\n";
         foreach ($goals as $goal) {
+            $milestones = array_map(
+                static fn (array $m) => ($m['headline'] ?? '').' ('.((int) ($m['percentDone'] ?? 0)).'%)',
+                $milestonesByGoal[(int) $goal['id']] ?? []
+            );
             $result = [
                 'id' => $goal['id'],
                 'title' => Str::sanitizeForLLM($goal['title']),
@@ -62,7 +73,7 @@ class GetAllGoalsTool extends Tool
                 'endValue' => $goal['endValue'],
                 'metricType' => $goal['metricType'],
                 'canvasId' => $goal['canvasId'],
-                'milestoneId' => $goal['milestoneId'] ?: 'None',
+                'milestones' => $milestones !== [] ? Str::sanitizeForLLM(implode('; ', $milestones)) : 'None',
                 'startDate' => $goal['startDate'],
                 'endDate' => $goal['endDate'],
                 'status' => $goal['status'],

@@ -1,0 +1,307 @@
+/*
+ * Shared tab-group (x-global::navigation.tabs) — the ONE tablist skin.
+ *
+ * Consolidates the four hand-rolled copies of the same visual (board tabs in
+ * nav.css, report deck .rd-tabs, goal-dialog .gv-tabs, Resource Allocation
+ * .ra-tabs) into a single component stylesheet. Two variants:
+ *
+ *   .lt-tabs--attached  gradient accent band + translucent framed segment
+ *                       group + white active pill (board/report look). Uses
+ *                       the theme accents with the conditional --nav-scrim
+ *                       (0 for dark accents; raised per-theme where white
+ *                       controls would fail WCAG AA on light accents).
+ *   .lt-tabs--floating  free-floating fully-rounded glass pills (Resource
+ *                       Allocation look); .lt-tabs--dark for dark headers.
+ *
+ * Behavior (ARIA, keyboard, persistence) lives in the component's script.
+ */
+
+/* ── Shared structure ─────────────────────────────────────────────── */
+.lt-tabs {
+    display: flex;
+    align-items: center;
+}
+.lt-tabs-group {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.lt-tabs-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lt-tab {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: all .14s ease;
+    letter-spacing: .1px;
+}
+.lt-tab i {
+    font-size: 12px;
+    opacity: .9;
+}
+.lt-tab:hover:not(.on) {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+}
+.lt-tab:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+.lt-tab.on {
+    color: var(--primary-font-color);
+    background: #fff;
+    font-weight: 600;
+}
+.lt-tab.on i {
+    color: var(--accent1);
+    opacity: 1;
+}
+.lt-tab.on:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: -2px;
+}
+
+/* Count badge */
+.lt-tab .ct {
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 100px;
+    padding: 1px 8px;
+    line-height: 1.5;
+}
+.lt-tab.on .ct {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--accent1);
+}
+
+/* ── Attached variant: gradient band (board/report family) ────────── */
+.lt-tabs--attached {
+    padding: 7px 10px;
+    margin-bottom: 10px;
+    border-radius: 14px;
+    background:
+        linear-gradient(rgba(0, 0, 0, var(--nav-scrim, 0)), rgba(0, 0, 0, var(--nav-scrim, 0))),
+        linear-gradient(90deg, var(--accent1), var(--accent2));
+    /* Flat, no shadow — the bar must read as one system with the content
+       below it, not a separate floating element (Marcel, nav redesign). */
+    box-shadow: none;
+}
+.lt-tabs--attached .lt-tabs-group {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 11px;
+    padding: 3px;
+    gap: 2px;
+}
+.lt-tabs--attached .lt-tab {
+    padding: 7px 14px;
+    border-radius: 9px;
+}
+/* Action-less pages hug the band to its tabs (compact nav, not an empty bar). */
+.lt-tabs--attached:not(:has(.lt-tabs-actions)) {
+    width: fit-content;
+}
+
+/* ── Floating variant: glass pills (Resource Allocation family) — THE
+      standard look for horizontal tab navs (design call 2026-08-03). The
+      glass container lives on the GROUP so page-level actions (period
+      pickers, New/Filter/Group By) sit inline on the same row, borderless,
+      on the page background. ─────────────────────────────────────────── */
+.lt-tabs--floating {
+    display: flex;
+    align-items: center;
+    margin: 0 0 8px;
+    position: relative;
+}
+.lt-tabs--floating .lt-tabs-group {
+    gap: 2px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.lt-tabs--floating .lt-tab {
+    padding: 8px 16px;
+    border-radius: 100px;
+}
+.lt-tabs--floating .lt-tab.on,
+.lt-tabs--floating .lt-tab.is-active {
+    box-shadow: 0 2px 6px rgba(20, 40, 50, .12);
+}
+
+/* Link flavor — server-side-active nav tabs (board/timeline views): same
+   pills, <ul><li class="active"><a> structure. */
+.lt-tabs--links .lt-tabs-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.lt-tabs--links .lt-tabs-group li {
+    list-style: none;
+    margin: 0;
+}
+.lt-tabs--links .lt-tabs-group li a {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: all .14s ease;
+    letter-spacing: .1px;
+    padding: 8px 16px;
+    border-radius: 100px;
+}
+.lt-tabs--links .lt-tabs-group li:not(.active) a:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+}
+.lt-tabs--links .lt-tabs-group li a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+.lt-tabs--links .lt-tabs-group li.active a {
+    color: var(--primary-font-color);
+    background: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(20, 40, 50, .12);
+}
+.lt-tabs--links .lt-tabs-group li.active a:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: -2px;
+}
+
+/* Light-surface flavor — floating pills inside white cards/modals (goal
+   dialog): same shape, ink adapted so the glass doesn't vanish on white. */
+.lt-tabs--onlight .lt-tabs-group {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.08);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.lt-tabs--onlight .lt-tab {
+    color: var(--primary-font-color);
+    opacity: .75;
+}
+.lt-tabs--onlight .lt-tab:hover:not(.on):not(.is-active) {
+    color: var(--primary-font-color);
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
+}
+.lt-tabs--onlight .lt-tab.on,
+.lt-tabs--onlight .lt-tab.is-active {
+    color: var(--accent1);
+    opacity: 1;
+    background: #fff;
+}
+.lt-tabs--onlight .lt-tab:focus-visible {
+    outline-color: var(--accent1);
+}
+
+/* Inline actions (right cluster) — borderless on the page background.
+   Ported from the retired band (.maincontentinner.tabs .tabs-actions). */
+.lt-tabs-actions .btn {
+    line-height: 1.2;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.lt-tabs-actions .btn .badge {
+    line-height: 1;
+    padding: 3px 6px;
+    font-size: 10px;
+    height: auto;
+    align-self: center;
+}
+/* Filter / Group By match the report period-picker: white pill, dark text
+   (design call 2026-08-03 — one filter style everywhere). Three classes so
+   this outranks forms.css `body .btn.btn-link` (0-2-1), which otherwise
+   flattens the pill back to transparent text. */
+.lt-tabs .lt-tabs-actions .btn-link {
+    color: var(--primary-font-color);
+    opacity: 1;
+    background: #fff;
+    border: 1px solid var(--main-border-color);
+    border-radius: 22px;
+    padding: 7px 14px;
+    box-shadow: 0 1px 3px rgba(20, 40, 50, .06);
+    transition: border-color .12s ease;
+}
+.lt-tabs .lt-tabs-actions .btn-link:hover {
+    border-color: var(--accent1);
+    background: #fff;
+    color: var(--primary-font-color);
+}
+.lt-tabs .lt-tabs-actions .btn-link:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+.lt-tabs-actions .btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+.lt-tabs-actions form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+.lt-tabs-actions .filterWrapper {
+    margin-bottom: 0 !important;
+    display: inline-flex;
+    align-items: center;
+}
+/* Right-edge actions: panels/menus open LEFTWARD or they fall off screen. */
+.lt-tabs-actions .filterBar,
+.lt-tabs-actions .dropdown-menu {
+    left: auto !important;
+    right: 0;
+}
+.lt-tabs-actions .btn-group {
+    float: none;
+    margin: 0 !important;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Floating on a dark header (server-stamped by the caller) */
+.lt-tabs--dark {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+.lt-tabs--dark .lt-tab.on {
+    color: #182831;
+}
+
+/* ── Print: tabs are navigation, not content ──────────────────────── */
+@media print {
+    .lt-tabs {
+        display: none;
+    }
+}

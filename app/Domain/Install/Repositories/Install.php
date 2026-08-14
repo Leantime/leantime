@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Install\Services\SchemaBuilder;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -95,6 +96,9 @@ class Install
         30521,
         30522,
         30523,
+        30524,
+        30525,
+        30526,
     ];
 
     /**
@@ -2971,6 +2975,267 @@ class Install
             Log::error('Migration 30523: '.$e->getMessage());
 
             return ['Migration 30523 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30524 — database update for v3.5.24.
+     *
+     * Backfills the legacy single goal→milestone link (the varchar
+     * `zp_canvas_items.milestoneId` column, `box='goal'`) into many-to-many
+     * edges on the core `zp_entity_relationship` graph, so a goal can be
+     * tracked by any number of milestones. Each edge:
+     *   entityA = goal canvas item (GoalItem), entityB = milestone (Ticket),
+     *   relationship = 'tracked_by'.
+     *
+     * The `milestoneId` column is intentionally KEPT here — readers are cut
+     * over incrementally and a later migration drops it once nothing reads it.
+     *
+     * Written with the query builder (not raw REGEXP/CAST) so it is portable
+     * across MySQL/Postgres/MSSQL, and idempotent: junk values (empty, '0',
+     * non-numeric, deleted-milestone) are skipped and already-migrated pairs
+     * are not duplicated on re-run.
+     */
+    public function update_sql_30524(): bool|array
+    {
+        try {
+            // Guard on the installer's own connection (not the global Schema
+            // facade, which checks the default connection) so the existence
+            // check matches the connection the migration queries run against
+            // (may be a temp/target install connection).
+            // DatabaseManager always resolves a concrete Connection here; the
+            // property is typed to the interface, which doesn't declare the
+            // schema-builder accessor, so narrow it for static analysis.
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_canvas')
+                || ! $schema->hasTable('zp_entity_relationship')
+                || ! $schema->hasTable('zp_tickets')
+                || ! $schema->hasColumn('zp_canvas_items', 'milestoneId')) {
+                // Surface the skip in the update log — a partial install
+                // silently no-oping would be invisible otherwise.
+                Log::info('Migration 30524 skipped: required tables/columns missing (partial install?)');
+
+                return true;
+            }
+
+            // UTC — DB datetimes are stored in UTC; date() would use the server
+            // timezone and write a skewed createdOn.
+            $now = gmdate('Y-m-d H:i:s');
+
+            // Chunk the goal rows so a very large zp_canvas_items never loads
+            // into memory at once. Each chunk resolves its own live-milestone
+            // and existing-edge sets, scoped to the chunk's ids (no full-table
+            // scan), then batch-inserts.
+            $this->connection->table('zp_canvas_items')
+                ->where('box', 'goal')
+                ->whereNotNull('milestoneId')
+                ->where('milestoneId', '<>', '')
+                ->where('milestoneId', '<>', '0')
+                ->orderBy('id')
+                ->chunkById(500, function ($goals) use ($now): void {
+                    // Numeric-only (goal, milestone) pairs. milestoneId is a
+                    // varchar, so trim before the digit check.
+                    $pairs = [];
+                    $milestoneIds = [];
+                    $canvasIds = [];
+                    foreach ($goals as $g) {
+                        $raw = trim((string) $g->milestoneId);
+                        if (! ctype_digit($raw)) {
+                            continue;
+                        }
+                        $mid = (int) $raw;
+                        if ($mid <= 0) {
+                            continue;
+                        }
+                        $pairs[] = ['goalId' => (int) $g->id, 'milestoneId' => $mid, 'author' => $g->author, 'canvasId' => (int) $g->canvasId];
+                        $milestoneIds[$mid] = true;
+                        $canvasIds[(int) $g->canvasId] = true;
+                    }
+
+                    if ($pairs === []) {
+                        return;
+                    }
+
+                    $goalIds = array_values(array_unique(array_map(static fn ($p) => $p['goalId'], $pairs)));
+
+                    // Drop edges to deleted milestones + dedup existing edges,
+                    // both scoped to this chunk's ids — O(1) lookups, no N+1.
+                    // The milestone lookup keeps projectId: links are
+                    // same-project only (product rule), so a legacy
+                    // cross-project row must NOT be promoted to an edge.
+                    $liveTickets = [];
+                    foreach (
+                        $this->connection->table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->where('type', 'milestone')->where('status', '<>', -1)->get(['id', 'projectId']) as $t
+                    ) {
+                        $liveTickets[(int) $t->id] = (int) $t->projectId;
+                    }
+
+                    // Goal projects, resolved via each goal's canvas (chunk-scoped).
+                    $projectByCanvas = [];
+                    foreach (
+                        $this->connection->table('zp_canvas')->whereIn('id', array_keys($canvasIds))->get(['id', 'projectId']) as $c
+                    ) {
+                        $projectByCanvas[(int) $c->id] = (int) $c->projectId;
+                    }
+
+                    $existingEdges = [];
+                    foreach (
+                        $this->connection->table('zp_entity_relationship')
+                            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+                            ->where('entityAType', 'GoalItem')
+                            ->where('entityBType', 'Ticket')
+                            ->whereIn('entityA', $goalIds)
+                            ->select('entityA', 'entityB')
+                            ->get() as $e
+                    ) {
+                        $existingEdges[sprintf('%d:%d', (int) $e->entityA, (int) $e->entityB)] = true;
+                    }
+
+                    $rows = [];
+                    foreach ($pairs as $p) {
+                        if (! isset($liveTickets[$p['milestoneId']])) {
+                            continue;
+                        }
+                        // Same-project only: skip legacy rows pointing at a
+                        // milestone in a different project than the goal's.
+                        if (! isset($projectByCanvas[$p['canvasId']])
+                            || $liveTickets[$p['milestoneId']] !== $projectByCanvas[$p['canvasId']]) {
+                            continue;
+                        }
+                        if (isset($existingEdges[$p['goalId'].':'.$p['milestoneId']])) {
+                            continue;
+                        }
+                        // Unknown author stays NULL ("unknown"), not 0 — 0 would
+                        // read as a real user id in downstream joins/filters.
+                        $author = (int) ($p['author'] ?? 0);
+                        $rows[] = [
+                            'entityA' => $p['goalId'],
+                            'entityAType' => 'GoalItem',
+                            'entityB' => $p['milestoneId'],
+                            'entityBType' => 'Ticket',
+                            'relationship' => EntityRelationshipEnum::TrackedBy->value,
+                            'createdOn' => $now,
+                            'createdBy' => $author > 0 ? $author : null,
+                            'meta' => json_encode(['source' => 'milestoneId_migration']),
+                        ];
+                    }
+
+                    foreach (array_chunk($rows, 200) as $insertChunk) {
+                        $this->connection->table('zp_entity_relationship')->insert($insertChunk);
+                    }
+                });
+        } catch (\Exception $e) {
+            Log::error('Migration 30524: '.$e->getMessage());
+
+            return ['Migration 30524 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30525 — database update for v3.5.25.
+     *
+     * Top-up backfill for the goal↔milestone edge migration. `update_sql_30524`
+     * ran when the edge model shipped, but goal↔milestone assignments made
+     * after that point and before dual-write went live were written to the
+     * legacy `milestoneId` column only. Re-running the (idempotent) 30524
+     * backfill captures those stragglers as `tracked_by` edges; goals already
+     * migrated are skipped.
+     */
+    public function update_sql_30525(): bool|array
+    {
+        $result = $this->update_sql_30524();
+
+        // Re-label a delegated failure so upgrade logs/output point at the step
+        // that actually ran (30525), not the 30524 delegate.
+        if (is_array($result)) {
+            return ['Migration 30525 failed (delegated to 30524): '.implode('; ', array_map('strval', $result))];
+        }
+
+        return $result;
+    }
+
+    /**
+     * update_sql_30526 — database update for v3.5.26.
+     *
+     * Hygiene pass over the goal↔milestone `tracked_by` edges:
+     *  1. Removes CROSS-PROJECT edges — links are same-project only (product
+     *     rule), but the original 30524/30525 backfill promoted legacy
+     *     cross-project `milestoneId` rows into edges before the guard existed.
+     *  2. Removes ORPHANED edges — a milestone deleted through the generic
+     *     ticket-delete path (which historically skipped the goal-detach
+     *     cascade) or a goal removed out-of-band leaves edges pointing at
+     *     rows that no longer exist.
+     *
+     * Query-builder only (portable) and naturally idempotent: a clean graph
+     * yields zero deletions.
+     */
+    public function update_sql_30526(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_entity_relationship')
+                || ! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_canvas')
+                || ! $schema->hasTable('zp_tickets')) {
+                // Surface the skip in the update log — a partial install
+                // silently no-oping would be invisible otherwise.
+                Log::info('Migration 30526 skipped: required tables missing (partial install?)');
+
+                return true;
+            }
+
+            // Cross-project edges: goal's canvas project != milestone's project.
+            $crossProject = $this->connection->table('zp_entity_relationship as er')
+                ->join('zp_canvas_items as ci', 'er.entityA', '=', 'ci.id')
+                ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+                ->join('zp_tickets as t', 'er.entityB', '=', 't.id')
+                ->where('er.relationship', EntityRelationshipEnum::TrackedBy->value)
+                ->where('er.entityAType', 'GoalItem')
+                ->where('er.entityBType', 'Ticket')
+                ->whereColumn('t.projectId', '<>', 'cb.projectId')
+                ->pluck('er.id')
+                ->all();
+
+            // Orphans: entityA no longer a goal item, or entityB no longer a
+            // live milestone ticket.
+            $orphaned = $this->connection->table('zp_entity_relationship as er')
+                ->leftJoin('zp_canvas_items as ci', function ($join): void {
+                    $join->on('er.entityA', '=', 'ci.id')->where('ci.box', '=', 'goal');
+                })
+                ->leftJoin('zp_tickets as t', function ($join): void {
+                    // "Live" = milestone-type AND not soft-deleted — matches
+                    // the addGoalMilestoneLink chokepoint's definition, so an
+                    // edge to a deleted milestone counts as orphaned.
+                    $join->on('er.entityB', '=', 't.id')
+                        ->where('t.type', '=', 'milestone')
+                        ->where('t.status', '<>', -1);
+                })
+                ->where('er.relationship', EntityRelationshipEnum::TrackedBy->value)
+                ->where('er.entityAType', 'GoalItem')
+                ->where('er.entityBType', 'Ticket')
+                ->where(function ($q): void {
+                    $q->whereNull('ci.id')->orWhereNull('t.id');
+                })
+                ->pluck('er.id')
+                ->all();
+
+            $ids = array_values(array_unique(array_map('intval', array_merge($crossProject, $orphaned))));
+            foreach (array_chunk($ids, 500) as $chunk) {
+                $this->connection->table('zp_entity_relationship')->whereIn('id', $chunk)->delete();
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30526: '.$e->getMessage());
+
+            return ['Migration 30526 failed: '.$e->getMessage()];
         }
 
         return true;

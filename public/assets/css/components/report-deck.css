@@ -1,0 +1,1057 @@
+/*
+ * Stakeholder report deck — the `.rd-*` scoped design system for the strategy /
+ * program report (Overview / Logic Model / Resources / Impact Journey / Programs).
+ *
+ * Extracted from the blade partials' inline <style> blocks into one stylesheet
+ * (imported via main.less). Everything is scoped under `.rd-scope` (with
+ * `.rd-scope.rd-dark` dark-mode overrides) so it can't collide with the app's
+ * Bootstrap / legacy CSS. Order matters: `deck` defines the `.rd-scope` tokens
+ * and base layout first; the page sections build on them.
+ */
+
+/* ─────────────────────────────  deck  ───────────────────────────── */
+/*
+ * Report deck — scoped styles. `.rd-*` class prefix isolates from the app's
+ * Bootstrap / legacy CSS. Layout discipline (§2): `minmax(0,1fr)` on every
+ * grid track, `min-width:0` on every grid/flex child, so nothing pushes the
+ * deck wider than the viewport.
+ */
+.rd-scope {
+    --rd-accent:#004766;
+    --rd-text-1:#182831;
+    --rd-text-2:#4a5a63;
+    --rd-text-3:#67747d; /* AA 4.5:1 — RA a11y-floor value, canonical */
+    --rd-text-4:#aab4bb;
+    --rd-line:#e3e8ea;
+    --rd-line-soft:#eef1f3;
+    --rd-bg:#fafbfb;
+    --rd-panel:#fff;
+    --rd-ok:#3E937A;
+    --rd-warn:#C09035;
+    --rd-warn-bg:#FBF3E4;
+    --rd-warn-tx:#8a6212;
+    --rd-danger:#C2295B;
+    --rd-danger-bg:#FBE9EF;
+    --rd-r-sm:11px;
+    --rd-r-xs:8px;
+    --rd-sh-sm:0 1px 3px rgba(20,40,50,.06);
+    --rd-sh-lg:0 20px 56px rgba(20,40,50,.16);
+    color:var(--rd-text-1);
+}
+/* Dark mode — server-stamped .rd-dark (mirrors the RA tab's .ra-dark).
+   Overriding the token layer adapts everything that reads var(--rd-*);
+   the few hardcoded literals in the page partials carry their own
+   .rd-dark overrides alongside their light rules. */
+.rd-scope.rd-dark {
+    --rd-accent:#7fc1e0;
+    --rd-text-1:#e8eaec;
+    --rd-text-2:#b6bec4;
+    --rd-text-3:#97a1a8;
+    --rd-text-4:#6a747c;
+    --rd-line:#3a3f44;
+    --rd-line-soft:#313539;
+    --rd-bg:#222426;
+    --rd-panel:#292b2d;
+    --rd-ok:#57b598;
+    --rd-warn:#d9a441;
+    --rd-warn-bg:rgba(217,164,65,.14);
+    --rd-warn-tx:#d9a441;
+    --rd-danger:#e46589;
+    --rd-danger-bg:rgba(228,101,137,.14);
+    --rd-sh-sm:0 1px 3px rgba(0,0,0,.4);
+    --rd-sh-lg:0 20px 56px rgba(0,0,0,.5);
+    /* Stage tints as low-alpha overlays so they read as dark surfaces on the
+       panel instead of the light pastels used in light mode. */
+    --rd-s1-bg:rgba(74,133,181,.16);
+    --rd-s2-bg:rgba(62,147,122,.16);
+    --rd-s3-bg:rgba(192,144,53,.16);
+    --rd-s4-bg:rgba(142,106,173,.16);
+    --rd-s5-bg:rgba(45,125,94,.16);
+}
+/* Dark overrides for deck literals that bypass the token layer. */
+.rd-scope.rd-dark .rd-kcell.has-detail:hover,
+.rd-scope.rd-dark .rd-kcell.has-detail.open,
+.rd-scope.rd-dark .rd-cardx{background:var(--rd-panel);}
+.rd-scope.rd-dark .rd-kcell .kv .up{color:#57b598;background:rgba(87,181,152,.16);}
+.rd-scope.rd-dark .rd-kcell .kv .down{color:#e46589;background:rgba(228,101,137,.16);}
+.rd-scope *{min-width:0;}
+
+/* Persistent header — one vertically-centered row. LEFT = orientation
+   (crumb / title); RIGHT = freshness → verdict → ⋮. */
+.rd-hdr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:18px;align-items:center;padding:12px 20px;background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-sm);margin-bottom:10px;}
+.rd-hdr .st{min-width:0;}
+/* Title = <h1> + switcher, at the left edge (aligns with breadcrumb + meta). */
+/* Title matches the Tasks pageheader treatment exactly (18px / 400 / text-1)
+   — headers stay consistent across views (review feedback 2026-08-03). */
+.rd-hdr .st .h{margin:0;font-size:18px;font-weight:400;line-height:1.2;color:var(--rd-text-1);display:inline-flex;align-items:center;gap:8px;}
+.rd-hdr .st .h .crumb-sep{color:var(--rd-text-4);}
+/* Visually-hidden but screen-reader-available heading (switcher case). */
+.rd-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.rd-hdr .dropdown-menu .rd-hdr .dropdown-menu li a .fa-circle-dot{color:var(--rd-accent);}
+.rd-hdr .prov{font-size:12px;color:var(--rd-text-3);margin:0;white-space:nowrap;}
+/* Verdict + freshness stack right-aligned; the grid centers the pair
+   as one group against the title (review feedback 2026-08-03). */
+.rd-hdr .verdict{min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+/* ⋮ is its own column, centered with the rest of the row. */
+.rd-hdr .rd-actions{line-height:1;display:flex;align-items:center;}
+.rd-hdr .rd-actions .dropdown{margin:0 !important;padding:0 !important;line-height:1 !important;display:inline-flex !important;}
+.rd-hdr .rd-actions .dropdown-toggle.btn{padding:0 4px !important;margin:0 !important;height:auto !important;line-height:1.4 !important;min-width:0 !important;border:none !important;background:transparent !important;color:var(--rd-text-4) !important;font-size:16px !important;box-shadow:none !important;}
+.rd-hdr .rd-actions .dropdown-toggle.btn:hover{color:var(--rd-text-2) !important;background:rgba(0,0,0,.04) !important;border-radius:6px;}
+.rd-hdr .verdict .v{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--rd-text-1);}
+.rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}
+
+
+/* Compact period picker — one button showing current period; click opens a
+   dropdown with the 3 quarter presets + a custom-range mini-form. Replaces the
+   inline pill row; the design (§3 + board mockup p1) calls for a stated period
+   with a single affordance to change it, not four always-visible options. */
+.rd-picker{position:relative;}
+.rd-picker-btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13px;color:var(--rd-text-1);background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:22px;padding:7px 14px;cursor:pointer;box-shadow:var(--rd-sh-sm);}
+.rd-picker-btn:hover{border-color:var(--rd-text-4);}
+.rd-picker-btn .rd-picker-q{font-weight:600;}
+.rd-picker-btn .rd-picker-range{color:var(--rd-text-3);font-size:12px;}
+.rd-picker-btn i{font-size:11px;color:var(--rd-text-3);}
+/* Picker dropdown — sized defensively against the app's global anchor/input
+   styles that would otherwise inflate everything (Bootstrap 2.x menus, form
+   inputs, etc.). Fixed width + explicit font-size on every text element. */
+.rd-picker-menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);width:280px;padding:4px;z-index:100;font-size:12px;line-height:1.3;}
+.rd-picker-menu[hidden]{display:none;}
+.rd-picker-menu *{box-sizing:border-box;}
+
+.rd-picker-opt{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--rd-text-1);gap:10px;font-size:12px;line-height:1.3;}
+.rd-picker-opt:hover{background:var(--rd-bg);color:var(--rd-text-1);text-decoration:none;}
+.rd-picker-opt.on{background:rgba(0,71,102,.06);color:var(--rd-accent);}
+.rd-picker-opt .l{font-size:12.5px;font-weight:500;color:inherit;}
+.rd-picker-opt.on .l{font-weight:600;}
+.rd-picker-opt .d{font-size:10.5px;color:var(--rd-text-3);font-weight:400;}
+
+.rd-picker-sep{height:1px;background:var(--rd-line-soft);margin:4px 4px;}
+.rd-picker-custom{padding:6px 10px 8px;margin:0;}
+.rd-picker-cl{display:block;font-size:9.5px;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;margin:0 0 5px;font-weight:600;}
+.rd-picker-crow{display:flex;align-items:center;gap:5px;}
+.rd-picker-cinput{flex:1;min-width:0;width:auto;font:inherit;font-size:11.5px;line-height:1.2;padding:5px 7px;height:26px;border:1px solid var(--rd-line);border-radius:5px;background:var(--rd-panel);color:var(--rd-text-1);margin:0;box-shadow:none;}
+.rd-picker-cinput:focus{outline:none;border-color:var(--rd-accent);}
+.rd-picker-cdash{color:var(--rd-text-3);font-size:11px;flex:none;}
+.rd-picker-capply{font:inherit;font-size:11px;font-weight:500;color:#fff;background:var(--rd-accent);border:none;border-radius:5px;padding:5px 9px;height:26px;cursor:pointer;flex:none;}
+
+.rd-arrows{display:flex;gap:4px;}
+.rd-arrow{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-text-2);}
+.rd-arrow:hover{color:var(--rd-text-1);border-color:var(--rd-text-4);}
+.rd-arrow[disabled]{opacity:.4;cursor:not-allowed;}
+
+/* Deck — one panel that sizes to the active page (no dead space on short pages).
+   Pages are stacked in a horizontal track; we translate the track and only the
+   active page's content contributes to height. */
+.rd-deck{background:var(--rd-panel);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);overflow:hidden;position:relative;}
+.rd-deck-viewport{overflow:hidden;position:relative;}
+.rd-deck-track{display:flex;align-items:flex-start;transition:transform .28s cubic-bezier(.4,.15,.25,1);}
+.rd-page{flex:0 0 100%;padding:24px 26px;min-width:100%;width:100%;}
+.rd-page:not(.on){visibility:hidden;height:0;padding-top:0;padding-bottom:0;}
+
+/* Page-1 KPI band — value-first, delta inline, lowercase label beneath.
+   Matches the mockup: big number reads first, the "what" is a quiet caption. */
+.rd-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px;}
+.rd-kcell{padding:13px 16px;border-radius:var(--rd-r-xs);background:var(--rd-bg);}
+/* KV row: center-align vertically so the delta pill and the /X subscript
+   both sit at the number's optical center instead of dropping to its baseline
+   (which made them look "small next to" the big number). */
+.rd-kcell .kv{font-size:28px;font-weight:600;letter-spacing:-.6px;line-height:1;display:flex;align-items:center;gap:10px;color:var(--rd-text-1);}
+.rd-kcell .kv small{font-size:15px;color:var(--rd-text-3);font-weight:500;align-self:flex-end;margin-bottom:2px;margin-left:-2px;letter-spacing:.5px;}
+/* Delta pills — the "vs prior" signal needs to READ, not hide. Green pill for
+   gains, red pill for losses. Bigger + backed + weighted so it's not lost next
+   to the big number. */
+.rd-kcell .kv .up,
+.rd-kcell .kv .down{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;line-height:1;letter-spacing:.2px;}
+.rd-kcell .kv .up{color:#1a7d52;background:#dcf1e6;}
+.rd-kcell .kv .down{color:#a11a44;background:#fbe0e8;}
+.rd-kcell .kv .up i,
+.rd-kcell .kv .down i{font-size:9px;}
+.rd-kcell .kl{font-size:12.5px;color:var(--rd-text-2);margin-top:5px;display:flex;align-items:center;gap:6px;}
+.rd-kcell.risk .kv{color:var(--rd-danger);}
+
+/* KPI drill-down — hover the whole cell to see the list of items behind the
+   count (which milestones completed, which goals off-track, etc.). Compact
+   popover; won't render if the count is zero.
+   Affordance: cursor:pointer + subtle hover treatment + a visible "see list"
+   chevron at the top-right so the interactivity is discoverable, not a
+   guess-the-dot. */
+.rd-kcell{position:relative;transition:background .12s,box-shadow .12s;}
+.rd-kcell.has-detail{cursor:pointer;}
+.rd-kcell.has-detail:hover{background:#fff;box-shadow:var(--rd-sh-sm);}
+.rd-kcell.has-detail .see-list{position:absolute;top:8px;right:10px;display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;opacity:.7;transition:opacity .12s,color .12s;pointer-events:none;}
+.rd-kcell.has-detail .see-list i{font-size:9px;}
+.rd-kcell.has-detail:hover .see-list{opacity:1;color:var(--rd-accent);}
+.rd-kcell .kdrill{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);padding:8px;z-index:20;opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .12s,transform .12s,visibility .12s;font-size:11.5px;line-height:1.4;text-align:left;letter-spacing:0;}
+.rd-kcell.has-detail.open .kdrill{opacity:1;visibility:visible;transform:translateY(0);}
+.rd-kcell.has-detail.open{background:#fff;box-shadow:var(--rd-sh-sm);}
+.rd-kcell.has-detail.open .see-list{opacity:1;color:var(--rd-accent);}
+.rd-kcell.has-detail.open .see-list i{transform:rotate(180deg);}
+.rd-kcell.has-detail .see-list i{transition:transform .18s;}
+.rd-kcell .kdrill .kd-hd{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--rd-text-3);padding:2px 6px 6px;}
+.rd-kcell .kdrill ul{list-style:none;margin:0;padding:0;}
+.rd-kcell .kdrill li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 6px;border-radius:4px;color:var(--rd-text-1);font-weight:400;}
+.rd-kcell .kdrill li:hover{background:var(--rd-bg);}
+.rd-kcell .kdrill li .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;}
+.rd-kcell .kdrill li .mt{color:var(--rd-text-3);font-size:10.5px;flex:none;}
+.rd-kcell .kdrill .kd-more{font-size:10.5px;color:var(--rd-text-3);font-style:italic;padding:4px 6px 2px;}
+
+/* Section container inside a page. */
+.rd-section{margin-top:20px;}
+.rd-section:first-child{margin-top:0;}
+.rd-section .hd{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+.rd-section .hd .t{font-size:14px;font-weight:600;color:var(--rd-text-1);}
+.rd-section .hd .sub{font-size:12px;color:var(--rd-text-3);}
+.rd-empty{padding:22px;text-align:center;color:var(--rd-text-3);font-size:13px;background:var(--rd-bg);border-radius:var(--rd-r-xs);}
+
+/* Stage colors — five Logic Model stages, matching the canvas board. Used
+   across Page 1 (ToC narrative colored spans), Page 2 (5-stage board), and
+   Page 3 (coverage matrix rows tied to stages). */
+.rd-scope{
+    --rd-s1:#4A85B5; --rd-s1-bg:#e5eef6;
+    --rd-s2:#3E937A; --rd-s2-bg:#e2efe9;
+    --rd-s3:#C09035; --rd-s3-bg:#f6ecd7;
+    --rd-s4:#8E6AAD; --rd-s4-bg:#eee5f4;
+    --rd-s5:#2D7D5E; --rd-s5-bg:#dbeae1;
+}
+
+/* Task-card standard (from the canvas board): title left, status icon +
+   owner avatar top-right, assumption line beneath, optional read-out
+   fold below. Used on Page 2 for the 5-stage LM cards. Tight padding —
+   5 columns share the deck width so cards can't afford bulk. */
+.rd-cardx{border-radius:var(--rd-r-xs);padding:8px 10px;background:#fff;border:1px solid var(--rd-line-soft);border-left:3px solid var(--rd-text-4);min-width:0;}
+.rd-cx-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;}
+.rd-cx-t{font-size:12.5px;font-weight:600;line-height:1.3;min-width:0;color:var(--rd-text-1);flex:1;}
+.rd-cx-t .cd{display:none;}   /* colored border already carries stage identity */
+.rd-cx-corner{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+/* Icon-only status pill — compact, hover for full label. Colored circle
+   maps to the LM canvas status icons (fa-circle-check / -exclamation / etc). */
+.rd-pill-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--rd-bg);flex:none;cursor:help;}
+.rd-pill-icon i{font-size:14px;line-height:1;}
+.rd-pill-ok i{color:#3E937A;}
+.rd-pill-wip i{color:#4A85B5;}
+.rd-pill-draft i{color:#9aa4ab;}
+.rd-pill-flag i{color:var(--rd-danger);}
+.rd-avatar{width:18px;height:18px;border-radius:50%;background:#5aa889;color:#fff;font-size:8px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none;text-decoration:none;}
+.rd-cx-hyp{font-size:10.5px;color:var(--rd-text-3);line-height:1.4;margin-top:5px;font-style:italic;}
+.rd-cx-hyp .hl{font-style:normal;font-weight:600;color:var(--rd-text-2);}
+.rd-cx-status{font-size:11.5px;color:var(--rd-text-3);margin-top:7px;display:inline-flex;align-items:center;gap:5px;}
+.rd-cx-status .sd{width:7px;height:7px;border-radius:50%;}
+.rd-cx-empty{border:1px dashed var(--rd-line);border-radius:var(--rd-r-xs);padding:10px 11px;font-size:11.5px;color:var(--rd-text-3);text-align:center;}
+
+/* Placeholder for pages not yet built. Removed as each page lands. */
+.rd-placeholder{padding:38px 24px;text-align:center;color:var(--rd-text-3);font-size:13px;line-height:1.5;background:repeating-linear-gradient(135deg,#fafbfb,#fafbfb 8px,#f4f6f7 8px,#f4f6f7 16px);border-radius:var(--rd-r-xs);}
+.rd-placeholder .h{font-size:15px;font-weight:600;color:var(--rd-text-2);margin-bottom:6px;}
+.rd-placeholder .coming{display:inline-block;font-size:10px;font-weight:600;color:var(--rd-accent);background:rgba(0,71,102,.08);border-radius:10px;padding:2px 8px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px;}
+
+/* Print (§7) — expand all pages, hide screen affordances. */
+@media print {
+        .rd-deck { box-shadow: none; }
+    .rd-deck-viewport { overflow: visible !important; }
+    .rd-deck-track { transform: none !important; display: block !important; }
+    .rd-page { min-width: 0 !important; width: 100% !important; padding: 12px 0 24px; border-top: 1px solid var(--rd-line-soft); page-break-inside: avoid; }
+    .rd-page:first-child { border-top: 0; padding-top: 0; }
+    .rd-page:not(.on) { visibility: visible !important; height: auto !important; padding-top: 12px !important; padding-bottom: 24px !important; }
+}
+
+/* ─────────────────────────────  page-overview  ───────────────────────────── */
+.rd-scope .p1-topband{display:grid;grid-template-columns:1.55fr minmax(0,1fr);gap:12px;margin-bottom:14px;align-items:stretch;}
+.rd-scope .p1-hero{border:1px solid #d3e4dc;border-radius:var(--rd-r-sm);background:linear-gradient(180deg,var(--rd-s5-bg) 0%,#fff 80px);padding:14px 16px;}
+.rd-scope .p1-hero .eye{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.rd-scope .p1-hero .slabel{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-s5);}
+.rd-scope .p1-hero .rec{font-size:11px;font-weight:500;color:var(--rd-text-3);display:flex;align-items:center;gap:6px;}
+.rd-scope .p1-hero .rec i{font-size:11px;color:var(--rd-ok);}
+.rd-scope .p1-hero .rec-note{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--rd-text-3);font-style:italic;}
+.rd-scope .p1-hero .rec-note i{font-size:10px;color:var(--rd-text-4);}
+.rd-scope .p1-hero h3{font-size:17px;font-weight:600;letter-spacing:-.2px;line-height:1.3;color:var(--rd-text-1);margin:0;}
+.rd-scope .p1-hero p{font-size:13px;color:var(--rd-text-2);line-height:1.5;margin-top:6px;margin-bottom:0;}
+.rd-scope .p1-hero .hf{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.rd-scope .p1-hero .badge-goal{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--rd-s3-bg);color:#7d5c18;}
+.rd-scope .p1-hero .badge-goal i{font-size:9px;}
+.rd-scope .p1-hero .hm{font-size:11.5px;color:var(--rd-text-3);}
+.rd-scope .p1-hero.empty{background:none;border-style:dashed;color:var(--rd-text-3);font-size:12.5px;text-align:center;padding:20px 16px;}
+.rd-scope .p1-hero.empty .h{font-size:13.5px;font-weight:600;color:var(--rd-text-2);margin-bottom:4px;}
+.rd-scope .p1-hero.empty .p1-hero-cta{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:12.5px;font-weight:600;color:var(--rd-accent);text-decoration:none;background:rgba(0,71,102,.06);border-radius:20px;padding:7px 16px;transition:background .12s;}
+.rd-scope .p1-hero.empty .p1-hero-cta:hover{background:rgba(0,71,102,.12);text-decoration:none;color:var(--rd-accent);}
+.rd-scope .p1-hero.empty .p1-hero-cta i{font-size:11px;}
+.rd-scope.rd-dark .p1-hero.empty .p1-hero-cta{background:rgba(127,193,224,.12);}
+.rd-scope.rd-dark .p1-hero.empty .p1-hero-cta:hover{background:rgba(127,193,224,.2);}
+/* Dark: the hero gradient and border are hardcoded light literals (var(--rd-s5-bg) → #fff,
+   #d3e4dc). Land the fade on the panel instead of white, dark the border, and keep the
+   goal badge legible now that --rd-s3-bg is a dark overlay. */
+.rd-scope.rd-dark .p1-hero{border-color:var(--rd-line);background:linear-gradient(180deg,var(--rd-s5-bg) 0%,var(--rd-panel) 80px);}
+.rd-scope.rd-dark .p1-hero .badge-goal{color:var(--rd-warn);}
+
+.rd-scope .p1-needs{background:var(--rd-danger-bg);border-radius:var(--rd-r-sm);border-left:4px solid var(--rd-danger);padding:14px 16px;}
+.rd-scope .p1-needs.calm{background:var(--rd-bg);border-left-color:var(--rd-ok);}
+.rd-scope .p1-needs .nt{margin-bottom:7px;display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-danger);}
+.rd-scope .p1-needs.calm .nt{color:var(--rd-ok);}
+.rd-scope .p1-needs .nt i{font-size:10px;}
+.rd-scope .p1-needs .nx{font-size:13px;color:var(--rd-text-1);line-height:1.55;}
+.rd-scope .p1-needs .na-grp{margin-top:10px;}
+.rd-scope .p1-needs .na-grp:first-child{margin-top:0;}
+.rd-scope .p1-needs .na-hd{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--rd-danger);margin-bottom:5px;}
+.rd-scope .p1-needs.calm .na-hd{color:var(--rd-ok);}
+.rd-scope .p1-needs .na-items{list-style:none;margin:0;padding:0;}
+.rd-scope .p1-needs .na-items li{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:3px 0;font-size:12.5px;color:var(--rd-text-1);}
+.rd-scope .p1-needs .na-name{font-weight:600;}
+.rd-scope .p1-needs .na-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--rd-warn-bg);color:var(--rd-warn-tx);text-transform:none;letter-spacing:.2px;}
+.rd-scope .p1-needs .na-badge.miss{background:var(--rd-danger-bg);color:var(--rd-danger);}
+.rd-scope .p1-needs .na-meta{color:var(--rd-text-3);font-size:11.5px;font-weight:400;}
+.rd-scope .p1-needs .na-more{color:var(--rd-text-3);font-size:11.5px;font-style:italic;padding-top:2px;}
+
+.rd-scope .p1-toc{border:1px solid var(--rd-line);border-left:4px solid var(--rd-s5);border-radius:var(--rd-r-sm);padding:13px 17px;margin-bottom:10px;}
+.rd-scope .p1-toc .tl{margin-bottom:6px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-s5);display:flex;align-items:center;gap:6px;}
+.rd-scope .p1-toc .tl .lbl-inner{display:inline-flex;align-items:center;gap:6px;flex:1;}
+.rd-scope .p1-toc .tl .toc-toggle{background:none;border:none;padding:2px 6px;margin-left:auto;cursor:pointer;color:var(--rd-text-3);font-size:10px;line-height:1;border-radius:4px;}
+.rd-scope .p1-toc .tl .toc-toggle:hover{background:var(--rd-bg);color:var(--rd-text-1);}
+.rd-scope .p1-toc .tl .toc-toggle i{transition:transform .18s;display:inline-block;}
+.rd-scope .p1-toc.collapsed .tl .toc-toggle i{transform:rotate(-90deg);}
+.rd-scope .p1-toc .tx{font-size:13.5px;line-height:1.6;color:var(--rd-text-2);overflow:hidden;max-height:600px;transition:max-height .22s ease,opacity .18s ease,margin .18s ease,padding .18s ease;margin-top:6px;}
+.rd-scope .p1-toc.collapsed .tx{max-height:0;opacity:0;margin:0;padding:0;pointer-events:none;}
+.rd-scope .p1-toc.collapsed{padding-bottom:8px;}
+.rd-scope .p1-toc .n1{color:var(--rd-s1);font-weight:600;}
+.rd-scope .p1-toc .n2{color:var(--rd-s2);font-weight:600;}
+.rd-scope .p1-toc .n3{color:var(--rd-s3);font-weight:600;}
+.rd-scope .p1-toc .n4{color:var(--rd-s4);font-weight:600;}
+.rd-scope .p1-toc .n5{color:var(--rd-s5);font-weight:600;}
+.rd-scope .p1-toc.empty{color:var(--rd-text-3);font-style:italic;border-left-color:var(--rd-line);}
+
+/* Color legend popover — hover the info icon on the ToC label to show
+   which color maps to which stage. Vanilla CSS hover; no JS needed. */
+.rd-scope .p1-info{position:relative;display:inline-flex;}
+.rd-scope .p1-info .ii{width:14px;height:14px;border-radius:50%;background:var(--rd-line-soft);color:var(--rd-text-3);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:help;text-transform:none;letter-spacing:0;}
+.rd-scope .p1-info .ii:hover{background:var(--rd-line);color:var(--rd-text-1);}
+.rd-scope .p1-info .pop{position:absolute;top:calc(100% + 8px);left:-6px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);padding:10px 12px;width:220px;font-size:11.5px;line-height:1.4;color:var(--rd-text-2);z-index:50;opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .12s,transform .12s,visibility .12s;text-transform:none;letter-spacing:0;font-weight:400;}
+.rd-scope .p1-info:hover .pop,
+.rd-scope .p1-info:focus-within .pop{opacity:1;visibility:visible;transform:translateY(0);}
+.rd-scope .p1-info .pop .h{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:6px;}
+.rd-scope .p1-info .pop .lg{display:flex;align-items:center;gap:8px;padding:3px 0;}
+.rd-scope .p1-info .pop .lg .sw{width:12px;height:12px;border-radius:3px;flex:none;}
+.rd-scope .p1-info .pop .lg .nm{font-weight:600;color:var(--rd-text-1);}
+.rd-scope .p1-info .pop .lg .sub{color:var(--rd-text-3);margin-left:auto;font-size:10.5px;}
+
+/* Strategic goals — a compact goal-per-row list. Progress bar + status pill
+   + current/target read. Enough detail for a board to grok how the goals sit,
+   without a full goal-board dive (that's Goals & Outcomes). */
+.rd-scope .p1-goals{margin-bottom:14px;}
+.rd-scope .p1-goals-hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
+.rd-scope .p1-goals-hd .l{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-accent);}
+.rd-scope .p1-goals-hd .sub{font-size:11.5px;color:var(--rd-text-3);}
+.rd-scope .p1-goals-list{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);overflow:hidden;background:var(--rd-panel);}
+.rd-scope .p1-goal{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 84px 78px;gap:12px;align-items:center;padding:11px 14px;border-top:1px solid var(--rd-line-soft);}
+.rd-scope .p1-goal:first-child{border-top:none;}
+.rd-scope .p1-goal .gn{min-width:0;}
+.rd-scope .p1-goal .gn .t{font-size:13px;font-weight:600;color:var(--rd-text-1);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rd-scope .p1-goal .gn .m{font-size:11px;color:var(--rd-text-3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rd-scope .p1-goal .gbar-wrap{min-width:0;}
+.rd-scope .p1-goal .gbar{height:6px;background:#eef1f3;border-radius:3px;overflow:hidden;}
+.rd-scope .p1-goal .gbar > i{display:block;height:100%;border-radius:3px;background:var(--rd-ok);}
+.rd-scope .p1-goal.atrisk .gbar > i{background:var(--rd-warn);}
+.rd-scope .p1-goal.miss .gbar > i{background:var(--rd-danger);}
+.rd-scope .p1-goal .gvals{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-variant-numeric:tabular-nums;}
+.rd-scope .p1-goal .gpct{font-size:15px;font-weight:600;color:var(--rd-text-1);text-align:right;font-variant-numeric:tabular-nums;}
+.rd-scope .p1-goal .gstat{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:none;letter-spacing:.2px;justify-self:end;}
+.rd-scope .p1-goal .gstat.ontrack{background:#dcf1e6;color:#1a7d52;}
+.rd-scope .p1-goal .gstat.atrisk{background:var(--rd-warn-bg);color:var(--rd-warn-tx);}
+.rd-scope .p1-goal .gstat.miss{background:var(--rd-danger-bg);color:var(--rd-danger);}
+.rd-scope .p1-goal .gstat.none{background:var(--rd-bg);color:var(--rd-text-3);}
+.rd-scope .p1-goals-empty{padding:22px;text-align:center;color:var(--rd-text-3);font-size:12.5px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);}
+
+/* Theory-health strip — a summary bar showing all 4 stage-to-stage links at
+   once (segmented by status), plus the detail on any fragile link beneath.
+   Reads positive-first: the segments read left→right so a healthy chain
+   shows mostly green; a fragile chain has an amber segment mid-flow. */
+.rd-scope .p1-theory{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:11px 15px;background:var(--rd-panel);}
+.rd-scope .p1-theory .hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.rd-scope .p1-theory .hd .l{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);}
+.rd-scope .p1-theory .hd .rd{font-size:12px;color:var(--rd-text-2);}
+.rd-scope .p1-theory .hd .rd b{color:var(--rd-text-1);font-weight:600;}
+.rd-scope .p1-theory .hd .rd.risk b{color:var(--rd-warn-tx);}
+/* Chain layout — 5 stage chips with 4 colored connector "arrows" between
+   them. Each connector is a horizontal band with the health icon as a badge
+   sitting on top. Reads left-to-right as a mini logic model with per-link
+   health surfaced by icon color + prominence (not text). */
+.rd-scope .p1-theory .segs{display:flex;align-items:center;gap:0;margin-bottom:12px;padding:2px 0;}
+.rd-scope .p1-theory .stage{flex:none;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600;color:#fff;letter-spacing:.1px;white-space:nowrap;}
+.rd-scope .p1-theory .stage.s1{background:var(--rd-s1);}
+.rd-scope .p1-theory .stage.s2{background:var(--rd-s2);}
+.rd-scope .p1-theory .stage.s3{background:var(--rd-s3);}
+.rd-scope .p1-theory .stage.s4{background:var(--rd-s4);}
+.rd-scope .p1-theory .stage.s5{background:var(--rd-s5);}
+.rd-scope .p1-theory .conn{position:relative;flex:1;min-width:24px;height:3px;margin:0 4px;border-radius:2px;cursor:default;}
+.rd-scope .p1-theory .conn.ok{background:#3E937A;}
+.rd-scope .p1-theory .conn.warning{background:#C09035;}
+.rd-scope .p1-theory .conn.risk{background:var(--rd-danger);}
+.rd-scope .p1-theory .conn.none{background:var(--rd-line);}
+/* Badge — panel-white circle with a small colored icon centered inside. The
+   badge circle carries the boundary; the icon sits at a uniform size that
+   works for any glyph shape (circles, triangles, etc.) so no icon looks
+   larger, smaller, or off-baseline relative to the others. */
+.rd-scope .p1-theory .conn .badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--rd-panel);display:grid;place-items:center;}
+.rd-scope .p1-theory .conn .badge i{font-size:14px;line-height:1;display:block;}
+.rd-scope .p1-theory .conn.ok .badge i{color:#3E937A;}
+.rd-scope .p1-theory .conn.warning .badge i{color:#C09035;}
+.rd-scope .p1-theory .conn.risk .badge i{color:var(--rd-danger);}
+.rd-scope .p1-theory .conn.none .badge i{color:var(--rd-text-3);}
+.rd-scope .p1-theory .conn .tip{position:absolute;bottom:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(4px);background:var(--rd-text-1);color:#fff;font-size:11px;font-weight:400;padding:8px 10px;border-radius:6px;line-height:1.4;box-shadow:var(--rd-sh-lg);opacity:0;visibility:hidden;transition:opacity .12s,transform .12s,visibility .12s;z-index:10;text-align:left;pointer-events:none;width:220px;}
+.rd-scope .p1-theory .conn .tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--rd-text-1);}
+.rd-scope .p1-theory .conn .tip b{color:#fff;font-weight:600;display:block;margin-bottom:3px;}
+.rd-scope .p1-theory .conn .tip em{font-style:italic;color:rgba(255,255,255,.85);}
+.rd-scope .p1-theory .conn:hover .tip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+.rd-scope .p1-theory .detail{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--rd-warn-tx);background:var(--rd-warn-bg);border-radius:var(--rd-r-xs);padding:12px 15px;line-height:1.55;}
+.rd-scope .p1-theory .detail.crit{color:var(--rd-danger);background:var(--rd-danger-bg);}
+.rd-scope .p1-theory .detail.crit i{color:var(--rd-danger);}
+.rd-scope .p1-theory .detail i{font-size:13px;color:#b8860b;margin-top:3px;flex:none;}
+.rd-scope .p1-theory .detail b{font-weight:600;}
+.rd-scope .p1-theory .detail b{color:var(--rd-text-1);font-weight:600;}
+.rd-scope .p1-theory .detail em{font-style:italic;color:var(--rd-text-2);}
+.rd-scope .p1-theory .calm-line{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--rd-text-2);}
+.rd-scope .p1-theory .calm-line i{color:var(--rd-ok);font-size:12px;}
+
+/* "Assumption unproven" pill — a proper visible state chip on its own line,
+   not an inline dashed-underlined phrase. Icon + label reads as a status,
+   hover reveals the "how to fix" explainer. */
+.rd-scope .p1-theory .detail-info{position:relative;display:inline-flex;align-items:center;gap:5px;margin-left:0;}
+/* Sits inline with the assumption text — vertical-align:middle + a small left
+   margin keeps it on the same visual line without pushing to a new row. */
+.rd-scope .p1-theory .detail-info.evidence-tag{display:inline-flex;vertical-align:middle;margin:0 0 0 6px;padding:3px 10px;border-radius:20px;background:rgba(194,41,91,.11);cursor:help;font-weight:600;font-size:12px;color:var(--rd-danger);line-height:1.2;}
+.rd-scope .p1-theory .detail:not(.crit) .detail-info.evidence-tag{background:rgba(192,144,53,.13);color:var(--rd-warn-tx);}
+.rd-scope .p1-theory .detail-info.evidence-tag i{font-size:11px;opacity:.9;}
+.rd-scope .p1-theory .detail-info.evidence-tag .tag{font-weight:600;border-bottom:none;opacity:1;font-size:12px;letter-spacing:.1px;}
+.rd-scope .p1-theory .detail-info .lk{font-weight:600;color:inherit;border-bottom:1px dashed currentColor;cursor:help;opacity:.75;font-size:12.5px;}
+/* Reset top to auto — without this, the .p1-info base rule's `top: calc(100% + 8px)`
+   still applies (both classes are on the element), and the popover stretches
+   across the trigger instead of anchoring to bottom. */
+.rd-scope .p1-theory .detail-info .pop{position:absolute;top:auto;bottom:calc(100% + 6px);left:0;background:var(--rd-text-1);color:#fff;font-size:12.5px;font-weight:400;padding:10px 12px;border-radius:6px;line-height:1.5;box-shadow:var(--rd-sh-lg);opacity:0;visibility:hidden;transform:translateY(3px);transition:opacity .12s,transform .12s,visibility .12s;z-index:10;text-align:left;pointer-events:none;width:280px;font-style:normal;letter-spacing:0;}
+/* These tooltips use var(--rd-text-1) as their fill — which INVERTS to a
+   light bg in dark mode, hiding the white text. Pin a fixed dark fill. */
+.rd-scope.rd-dark .p1-theory .conn .tip,
+.rd-scope.rd-dark .p1-theory .detail-info .pop{background:#0d0e0f;color:#e8eaec;}
+/* The tooltip arrow inherits var(--rd-text-1) too — pin it to the dark fill so
+   it doesn't render as a light triangle under the dark tooltip. */
+.rd-scope.rd-dark .p1-theory .conn .tip::after{border-top-color:#0d0e0f;}
+.rd-scope .p1-theory .detail-info:hover .pop,
+.rd-scope .p1-theory .detail-info:focus-within .pop{opacity:1;visibility:visible;transform:translateY(0);}
+.rd-scope .p1-theory .detail-info .pop .h{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:rgba(255,255,255,.7);display:block;margin-bottom:6px;}
+.rd-scope .p1-theory .detail-info .pop .lg{display:flex;align-items:center;gap:8px;padding:4px 0;font-weight:400;color:#fff;}
+.rd-scope .p1-theory .detail-info .pop .lg i{font-size:13px;flex:none;}
+.rd-scope .p1-theory .detail-info .pop .lg .nm{font-weight:600;color:#fff;flex:1;min-width:0;font-size:12.5px;}
+.rd-scope .p1-theory .detail-info .pop .lg .sub{color:rgba(255,255,255,.65);font-size:11.5px;text-transform:none;}
+
+/* "Also fragile" chip row — sits under the primary callout, one chip per
+   additional fragile link so all fragile signals are visible without a hover. */
+.rd-scope .p1-theory .also-fragile{display:flex;align-items:center;gap:8px;margin-top:8px;padding:0 3px;font-size:12.5px;flex-wrap:wrap;}
+.rd-scope .p1-theory .also-fragile .lbl{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--rd-text-3);}
+.rd-scope .p1-theory .af-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;cursor:default;}
+.rd-scope .p1-theory .af-chip i{font-size:11px;}
+.rd-scope .p1-theory .af-chip.warning{background:var(--rd-warn-bg);color:var(--rd-warn-tx);}
+.rd-scope .p1-theory .af-chip.warning i{color:#C09035;}
+.rd-scope .p1-theory .af-chip.risk{background:var(--rd-danger-bg);color:var(--rd-danger);}
+.rd-scope .p1-theory .af-chip.risk i{color:var(--rd-danger);}
+    .rd-scope .p1-narrative{margin:14px 0;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:14px 18px;}
+    .rd-scope .p1-narrative .lb{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+    .rd-scope .p1-narrative .lb i{font-size:11px;}
+    .rd-scope .p1-narrative .nn{display:flex;flex-direction:column;gap:10px;}
+    .rd-scope .p1-narrative .nr{font-size:13.5px;line-height:1.55;color:var(--rd-text-2);}
+    .rd-scope .p1-narrative .nr.portfolio{padding-bottom:10px;border-bottom:1px solid var(--rd-line-soft);}
+    .rd-scope .p1-narrative .nr b{color:var(--rd-text-1);font-weight:600;}
+    .rd-scope .p1-narrative .nr .dt{font-size:11.5px;color:var(--rd-text-4);margin-left:8px;font-style:italic;}
+    /* Empty-state nudge — the section stays visible with no updates so the team
+       knows it exists and is prompted to keep status current. */
+    .rd-scope .p1-narrative .nempty{font-size:13px;line-height:1.55;color:var(--rd-text-3);}
+    .rd-scope .p1-narrative .nempty b{color:var(--rd-text-2);font-weight:600;}
+
+/* ─────────────────────────────  page-lm  ───────────────────────────── */
+.rd-scope .p2-wrap{margin:0 auto;}
+.rd-scope .p2-wrap *{min-width:0;}
+.rd-scope .p2-subhead{font-size:12.5px;color:var(--rd-text-3);margin:0 0 14px 2px;line-height:1.5;}
+
+/* Belief — quiet card at top with see-more expand */
+.rd-scope .p2-believe{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:16px 20px;margin-bottom:14px;font-size:13.5px;line-height:1.55;color:var(--rd-text-3);}
+.rd-scope .p2-believe .lb{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-text-4);display:block;margin-bottom:6px;}
+.rd-scope .p2-believe b{color:var(--rd-text-2);font-weight:600;}
+
+/* Stage card */
+.rd-scope .p2-stage{background:var(--rd-panel);border:1px solid var(--rd-line);border-left:3px solid var(--rd-s3);border-radius:var(--rd-r-sm);padding:18px 22px;margin-bottom:14px;}
+.rd-scope .p2-stage.outcomes{border-left-color:var(--rd-s4);}
+.rd-scope .p2-stage .stage-hd{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.rd-scope .p2-stage .frame{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;display:flex;align-items:center;gap:7px;flex:1;min-width:0;}
+.rd-scope .p2-stage.outputs .frame{color:var(--rd-s3);}
+.rd-scope .p2-stage.outcomes .frame{color:var(--rd-s4);}
+.rd-scope .p2-stage .frame i{font-size:11px;}
+
+/* Verdict badge — fixed color map, no cream. */
+.rd-scope .p2-vbadge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:22px;padding:5px 13px;flex:none;}
+.rd-scope .p2-vbadge.ok{background:#E7F5EE;color:var(--rd-ok);}
+.rd-scope .p2-vbadge.wip{background:#EAF1F9;color:#3F72B0;}
+.rd-scope .p2-vbadge.risk{background:#fff;color:var(--rd-danger);box-shadow:inset 0 0 0 1.5px var(--rd-danger);}
+.rd-scope .p2-vbadge.pending{background:rgba(140,140,140,.08);color:var(--rd-text-3);}
+.rd-scope .p2-vbadge .sd{width:7px;height:7px;border-radius:50%;background:currentColor;}
+
+/* Read — templated 1-2 lines with dot leads */
+.rd-scope .p2-read{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.rd-scope .p2-readline{font-size:14px;line-height:1.6;color:var(--rd-text-2);display:flex;gap:10px;align-items:flex-start;}
+.rd-scope .p2-readline .dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:8px;}
+.rd-scope .p2-readline.good .dot{background:var(--rd-ok);}
+.rd-scope .p2-readline.watch .dot{background:#9A6A11;}
+.rd-scope .p2-readline.risk .dot{background:var(--rd-danger);}
+.rd-scope .p2-readline b{color:var(--rd-text-1);font-weight:600;}
+.rd-scope .p2-readline .g{color:var(--rd-ok);font-weight:600;}
+.rd-scope .p2-readline .w{color:#9A6A11;font-weight:600;}
+.rd-scope .p2-readline .r{color:var(--rd-danger);font-weight:600;}
+.rd-scope .p2-readline .mute{color:var(--rd-text-3);}
+.rd-scope .p2-readline .lead-label{font-weight:700;}
+.rd-scope .p2-readline.watch .lead-label{color:#9A6A11;}
+.rd-scope .p2-readline.risk .lead-label{color:var(--rd-danger);}
+
+/* Unresolved-work data-quality note — muted, non-prose, not a bullet */
+.rd-scope .p2-unresolved{font-size:12px;color:var(--rd-text-3);margin:6px 0 12px;padding-left:2px;font-style:italic;}
+/* Status basis footer — one-line, muted; explains why a status is what it is */
+.rd-scope .p2-basis{font-size:11.5px;color:var(--rd-text-4);margin:8px 0 2px;padding-left:2px;}
+
+/* Evidence rows — compact, one per LM item */
+.rd-scope .p2-rows{display:flex;flex-direction:column;}
+.rd-scope .p2-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:baseline;padding:9px 0;}
+.rd-scope .p2-row + .p2-row{border-top:1px solid var(--rd-line-soft);}
+.rd-scope .p2-row-title{font-size:14px;color:var(--rd-text-1);line-height:1.5;min-width:0;}
+.rd-scope .p2-row-title .lead{font-weight:700;font-size:15.5px;}
+.rd-scope .p2-stage.outputs .p2-row-title .lead{color:var(--rd-s3);}
+.rd-scope .p2-stage.outcomes .p2-row-title .lead{color:var(--rd-s4);}
+.rd-scope .p2-row-title .planof{color:var(--rd-text-3);font-size:12.5px;margin-left:4px;}
+.rd-scope .p2-row-value{color:var(--rd-text-2);font-size:12.5px;margin-left:10px;font-weight:600;font-variant-numeric:tabular-nums;}
+.rd-scope .p2-row-status{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex:none;}
+.rd-scope .p2-row-status .sd{width:7px;height:7px;border-radius:50%;background:currentColor;}
+.rd-scope .p2-row-status.ok{color:var(--rd-ok);}
+.rd-scope .p2-row-status.wip{color:#3F72B0;}
+.rd-scope .p2-row-status.risk{color:var(--rd-danger);}
+.rd-scope .p2-row-status.pending{color:var(--rd-text-4);font-style:italic;font-weight:500;}
+
+/* Show the breakdown */
+.rd-scope .p2-brk{margin-top:6px;padding-top:8px;border-top:1px solid var(--rd-line-soft);}
+.rd-scope .p2-brk summary{list-style:none;cursor:pointer;display:inline-flex;gap:8px;align-items:center;font-size:11px;font-weight:600;color:var(--rd-text-3);letter-spacing:.3px;text-transform:uppercase;padding:2px 0;}
+.rd-scope .p2-brk summary::-webkit-details-marker{display:none;}
+.rd-scope .p2-brk summary:focus{outline:none;}
+.rd-scope .p2-brk summary:focus-visible{outline:2px solid var(--rd-accent);outline-offset:2px;border-radius:3px;}
+.rd-scope .p2-brk summary i{font-size:10px;transition:transform .15s ease;}
+.rd-scope .p2-brk[open] > summary i{transform:rotate(90deg);}
+.rd-scope .p2-brk-body{margin-top:10px;}
+.rd-scope .p2-brk-prog{padding:8px 0;}
+.rd-scope .p2-brk-prog + .p2-brk-prog{border-top:1px solid var(--rd-line-soft);}
+.rd-scope .p2-brk-progrow{display:grid;grid-template-columns:13px minmax(0,1fr) 120px 44px 82px;gap:12px;align-items:center;}
+.rd-scope .p2-brk-progrow.single{grid-template-columns:13px minmax(0,1fr) 82px;}
+.rd-scope .p2-brk-progrow .pdot{width:10px;height:10px;border-radius:3px;justify-self:center;background:var(--rd-accent);}
+.rd-scope .p2-brk-progrow .pn{font-size:13px;font-weight:600;color:var(--rd-text-1);}
+.rd-scope .p2-brk-progrow .pmeta{font-size:10.5px;color:var(--rd-text-4);}
+.rd-scope .p2-brk-progrow .pbar{height:6px;border-radius:3px;background:#eef1f3;overflow:hidden;}
+.rd-scope .p2-brk-progrow .pbar > i{display:block;height:100%;border-radius:3px;background:var(--rd-accent);}
+.rd-scope .p2-brk-progrow .pshare{text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--rd-text-1);}
+.rd-scope .p2-brk-progrow .pstat{justify-self:end;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:20px;padding:3px 9px;white-space:nowrap;}
+.rd-scope .p2-brk-progrow .pstat.ok{background:#E7F5EE;color:var(--rd-ok);}
+.rd-scope .p2-brk-progrow .pstat.wip{background:#EAF1F9;color:#3F72B0;}
+.rd-scope .p2-brk-progrow .pstat.risk{background:#fff;color:var(--rd-danger);box-shadow:inset 0 0 0 1.5px var(--rd-danger);}
+.rd-scope .p2-brk-progrow .pstat .sd{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.rd-scope .p2-brk-projs{margin:6px 0 0 25px;padding-left:14px;border-left:2px solid var(--rd-line-soft);}
+.rd-scope .p2-brk-pj{display:grid;grid-template-columns:minmax(0,1fr) 12px;gap:12px;align-items:center;padding:4px 0;}
+.rd-scope .p2-brk-pj .pjn{font-size:12.5px;color:var(--rd-text-3);}
+.rd-scope .p2-brk-pj .pjd{justify-self:center;width:7px;height:7px;border-radius:50%;}
+.rd-scope .p2-brk-pj .pjd.ok{background:var(--rd-ok);}
+.rd-scope .p2-brk-pj .pjd.wip{background:#3F72B0;}
+.rd-scope .p2-brk-pj .pjd.risk{background:var(--rd-danger);}
+.rd-scope .p2-brk-more{font-size:11.5px;color:#3F72B0;padding:6px 0 0;}
+
+/* Impact — the purpose */
+.rd-scope .p2-impact{background:#f4f9f6;border:1px solid #dcebe3;border-radius:var(--rd-r-sm);padding:16px 20px;margin-bottom:14px;}
+.rd-scope .p2-impact .lb{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-s5);margin-bottom:5px;display:flex;align-items:center;gap:7px;}
+.rd-scope .p2-impact .goal{font-size:15px;font-weight:600;color:var(--rd-text-1);line-height:1.4;}
+.rd-scope .p2-impact .horizon{font-size:11.5px;color:var(--rd-text-3);margin-top:8px;}
+
+/* Risk — the ONE fragile link */
+.rd-scope .p2-risk{background:#FBEAEF;border:1px solid #f2d3dd;border-radius:var(--rd-r-sm);padding:14px 18px;display:flex;gap:12px;margin-bottom:14px;}
+/* Dark overrides for LM read-out literals that bypass the token layer. */
+.rd-scope.rd-dark .p2-vbadge.ok,.rd-scope.rd-dark .p2-brk-progrow .pstat.ok{background:rgba(87,181,152,.16);}
+.rd-scope.rd-dark .p2-vbadge.wip,.rd-scope.rd-dark .p2-brk-progrow .pstat.wip{background:rgba(63,114,176,.22);color:#8fb4e0;}
+.rd-scope.rd-dark .p2-vbadge.risk,.rd-scope.rd-dark .p2-brk-progrow .pstat.risk{background:transparent;}
+.rd-scope.rd-dark .p2-impact{background:rgba(87,181,152,.10);border-color:rgba(87,181,152,.25);}
+.rd-scope.rd-dark .p2-risk{background:var(--rd-danger-bg);border-color:rgba(228,101,137,.30);}
+.rd-scope .p2-risk i.ri{color:var(--rd-danger);margin-top:2px;font-size:14px;flex:none;}
+.rd-scope .p2-risk .rb{font-size:13.5px;line-height:1.55;color:var(--rd-text-2);}
+.rd-scope .p2-risk .rb .rl{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-danger);display:block;margin-bottom:3px;}
+.rd-scope .p2-risk .rb b{color:var(--rd-text-1);font-weight:600;}
+
+/* Off-strategy drift */
+.rd-scope .p2-drift{padding:10px 14px;background:#FBF3E4;border-radius:var(--rd-r-xs);color:#9A6A11;font-size:12.5px;line-height:1.5;display:flex;gap:9px;align-items:flex-start;}
+.rd-scope .p2-drift i{color:#b8860b;font-size:11px;margin-top:2px;flex:none;}
+.rd-scope .p2-drift b{color:var(--rd-text-1);font-weight:600;}
+
+/* Empty-state (rendered only when the Logic Model has no items). Colors are
+   set for WCAG AA on white (the --rd-text-3/-4 tokens are ~3:1 and fail as
+   body copy), so the invitation stays legible. Scoped under .p2-lm-empty so
+   these rules stay inert until the empty-state markup is present. */
+.rd-scope .p2-lm-emptyzone{margin:24px auto 8px;max-width:640px;}
+.rd-scope .p2-lm-empty{margin:0 auto;text-align:center;padding:16px 24px 8px;}
+.rd-scope .p2-lm-empty .found{display:flex;width:fit-content;max-width:100%;align-items:center;gap:10px;font-size:13px;line-height:1.4;color:#356f5b;background:#eef7f2;border:1px solid #d8ece2;border-radius:22px;padding:10px 20px;margin:0 auto 26px;}
+.rd-scope .p2-lm-empty .found i{color:#3E937A;font-size:12px;flex:none;}
+.rd-scope .p2-lm-empty .found b{color:#2c5f4d;font-weight:700;}
+.rd-scope .p2-lm-empty .found .sep{color:#9ec7b6;margin:0 5px;font-weight:400;}
+.rd-scope .p2-lm-empty .ic{width:62px;height:62px;border-radius:18px;background:linear-gradient(135deg,var(--rd-s3,#3F72B0),var(--rd-s4,#3E937A));display:inline-flex;align-items:center;justify-content:center;margin-bottom:22px;box-shadow:0 8px 20px rgba(62,147,122,.24);}
+.rd-scope .p2-lm-empty .ic i{color:#fff;font-size:26px;}
+.rd-scope .p2-lm-empty h2.t{font-size:22px;font-weight:600;color:var(--rd-text-1);margin:0 0 12px;letter-spacing:-.2px;line-height:1.25;}
+.rd-scope .p2-lm-empty .b{font-size:14.5px;line-height:1.65;color:#54636b;margin:0 auto 28px;max-width:462px;}
+.rd-scope .p2-lm-empty .cta{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#fff;background:var(--rd-accent);border-radius:26px;padding:13px 27px;text-decoration:none;box-shadow:0 5px 16px rgba(0,71,102,.24);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;}
+.rd-scope .p2-lm-empty .cta:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 7px 20px rgba(0,71,102,.28);text-decoration:none;color:#fff;}
+.rd-scope .p2-lm-empty .cta:focus-visible{outline:2px solid var(--rd-accent);outline-offset:3px;}
+.rd-scope .p2-lm-empty .cta i{font-size:13px;}
+.rd-scope .p2-lm-empty .hint{font-size:12.5px;color:#69767d;margin-top:18px;line-height:1.55;max-width:420px;margin-left:auto;margin-right:auto;}
+/* Dark overrides for the empty-state literals that bypass the token layer. */
+.rd-scope.rd-dark .p2-lm-empty .found{color:#8fd3ba;background:rgba(87,181,152,.12);border-color:rgba(87,181,152,.28);}
+.rd-scope.rd-dark .p2-lm-empty .found b{color:#b7e6d3;}
+.rd-scope.rd-dark .p2-lm-empty .found .sep{color:rgba(143,211,186,.5);}
+.rd-scope.rd-dark .p2-lm-empty .b{color:var(--rd-text-2);}
+.rd-scope.rd-dark .p2-lm-empty .hint{color:var(--rd-text-3);}
+        .rd-scope .p2-also{margin-top:14px;padding:10px 14px;background:var(--rd-bg);border-radius:var(--rd-r-xs);border:1px solid var(--rd-line);}
+        .rd-scope .p2-also .lb{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+        .rd-scope .p2-also .lb i{font-size:11px;}
+        .rd-scope .p2-also .row{font-size:12.5px;line-height:1.55;color:var(--rd-text-2);padding:3px 0;}
+        .rd-scope .p2-also .row b{color:var(--rd-text-1);font-weight:600;}
+        .rd-scope .p2-also .row .metric{color:var(--rd-text-3);}
+        .rd-scope .p2-also .more{font-size:11.5px;color:var(--rd-text-3);margin-top:4px;font-style:italic;}
+
+/* ─────────────────────────────  page-resources  ───────────────────────────── */
+/* Hours / Days unit toggle — top of Page 3. Vanilla-JS controlled. */
+.rd-scope .p3-unit-toggle{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:14px;}
+.rd-scope .p3-unit-toggle .p3-unit-lbl{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-text-3);}
+.rd-scope .p3-unit-toggle .p3-unit-pill{display:inline-flex;border:1px solid var(--rd-line);border-radius:100px;padding:2px;background:var(--rd-panel);}
+.rd-scope .p3-unit-toggle .p3-unit-btn{background:transparent;border:0;padding:5px 14px;border-radius:100px;font-size:12px;font-weight:600;color:var(--rd-text-3);cursor:pointer;letter-spacing:.2px;transition:background .1s ease, color .1s ease;}
+.rd-scope .p3-unit-toggle .p3-unit-btn.is-active{background:var(--rd-accent);color:#fff;}
+.rd-scope .p3-unit-toggle .p3-unit-btn:hover:not(.is-active){color:var(--rd-text-1);}
+
+.rd-scope .p3-sec{margin-bottom:40px;}
+.rd-scope .p3-sec-hd{margin-bottom:16px;padding:0 0 11px 14px;border-bottom:1px solid var(--rd-line);position:relative;}
+.rd-scope .p3-sec-hd::before{content:'';position:absolute;left:0;top:2px;width:4px;height:calc(100% - 13px);min-height:26px;background:var(--rd-accent);border-radius:2px;}
+.rd-scope .p3-sec-hd .l{font-size:13.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-accent);display:block;margin-bottom:4px;}
+.rd-scope .p3-sec-hd .s{font-size:13px;color:var(--rd-text-2);}
+
+/* Placeholder strip (only when no ResourcesGateway is registered). */
+.rd-scope .p3-res-strip{border:1px dashed var(--rd-line);border-radius:var(--rd-r-sm);padding:20px 22px;background:var(--rd-bg);display:flex;align-items:center;gap:16px;}
+.rd-scope .p3-res-strip .icn{width:48px;height:48px;border-radius:12px;background:#eef4f3;color:var(--rd-accent);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;}
+.rd-scope .p3-res-strip .cnt{flex:1;min-width:0;}
+.rd-scope .p3-res-strip .cnt .h{font-size:15px;font-weight:600;color:var(--rd-text-1);margin-bottom:3px;}
+.rd-scope .p3-res-strip .cnt .d{font-size:13.5px;color:var(--rd-text-3);line-height:1.5;}
+.rd-scope .p3-res-strip .tag{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-accent);background:rgba(0,71,102,.08);border-radius:10px;padding:4px 10px;flex:none;}
+.rd-scope .p3-res-strip .p3-res-cta{flex:none;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#fff;background:var(--rd-accent);border-radius:100px;padding:9px 17px;text-decoration:none;white-space:nowrap;transition:opacity .12s ease;}
+.rd-scope .p3-res-strip .p3-res-cta:hover{opacity:.9;color:#fff;}
+
+/* Three-card resource summary — larger, roomier, higher contrast. */
+.rd-scope .p3-res-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+.rd-scope .p3-rcard{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:14px 18px;background:var(--rd-panel);min-width:0;display:flex;flex-direction:column;}
+.rd-scope .p3-rcard .rhead{display:flex;align-items:center;gap:7px;margin-bottom:9px;}
+.rd-scope .p3-rcard .rhead .ricn{width:18px;height:18px;background:transparent;color:var(--rd-accent);display:grid;place-items:center;font-size:13px;flex:none;}
+.rd-scope .p3-rcard .rhead .rlbl{font-size:11px;font-weight:700;color:var(--rd-text-3);letter-spacing:.6px;text-transform:uppercase;}
+.rd-scope .p3-rcard .rv{font-size:26px;font-weight:600;letter-spacing:-.4px;line-height:1.05;color:var(--rd-text-1);}
+.rd-scope .p3-rcard .rv small{font-size:13px;color:var(--rd-text-3);font-weight:500;margin-left:4px;letter-spacing:0;}
+.rd-scope .p3-rcard .rsub{font-size:12.5px;color:var(--rd-text-2);margin-top:6px;line-height:1.45;}
+.rd-scope .p3-rcard .rsub .risk{color:var(--rd-danger);font-weight:600;}
+.rd-scope .p3-rcard .rsub .muted{color:var(--rd-text-3);}
+.rd-scope .p3-rcard .bar{height:5px;background:var(--rd-line);border-radius:3px;margin-top:9px;overflow:hidden;}
+.rd-scope .p3-rcard .bar > i{display:block;height:100%;border-radius:3px;}
+.rd-scope .p3-rcard .bar.ok > i{background:var(--rd-s1);}
+.rd-scope .p3-rcard .bar.spend > i{background:var(--rd-ok);}
+.rd-scope .p3-rcard .bar.spend.at-risk > i{background:var(--rd-warn);}
+.rd-scope .p3-rcard .bar.spend.over > i{background:var(--rd-danger);}
+.rd-scope .p3-rcard .rtail{font-size:12px;color:var(--rd-text-3);margin-top:7px;display:flex;flex-wrap:wrap;gap:4px 12px;}
+.rd-scope .p3-rcard .rtail .rp{display:inline-flex;align-items:center;gap:6px;}
+.rd-scope .p3-rcard .rtail .dd{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block;}
+.rd-scope .p3-rcard .rtail .dd.ok{background:var(--rd-ok);}
+.rd-scope .p3-rcard .rtail .dd.warn{background:var(--rd-warn);}
+.rd-scope .p3-rcard.empty .rv{color:var(--rd-text-4);}
+
+/* Per-project breakdown — the "where's it going?" answer. Grid table so the
+   columns line up regardless of name length. Row hover lifts a bit for scan. */
+.rd-scope .p3-bd{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);overflow:hidden;background:var(--rd-panel);}
+.rd-scope .p3-bd-row{display:grid;grid-template-columns:2fr 1.2fr 1.6fr 1.4fr;gap:14px;padding:11px 18px;align-items:center;}
+.rd-scope .p3-bd-row + .p3-bd-row{border-top:1px solid var(--rd-line-soft);}
+.rd-scope .p3-bd-row.head{background:var(--rd-bg);border-bottom:1px solid var(--rd-line);padding:9px 18px;}
+.rd-scope .p3-bd-row.head .p3-bd-cell{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);}
+.rd-scope .p3-bd-cell{min-width:0;font-size:14px;color:var(--rd-text-1);}
+.rd-scope .p3-bd-cell .name{font-weight:600;color:var(--rd-text-1);line-height:1.3;word-wrap:break-word;}
+.rd-scope .p3-bd-cell .type{font-size:11.5px;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.rd-scope .p3-bd-cell .num{font-size:18px;font-weight:600;color:var(--rd-text-1);line-height:1.1;}
+.rd-scope .p3-bd-cell .num small{font-size:12.5px;color:var(--rd-text-3);font-weight:500;margin-left:3px;}
+.rd-scope .p3-bd-cell .sublabel{font-size:12px;color:var(--rd-text-3);margin-top:2px;}
+.rd-scope .p3-bd-cell .minibar{height:5px;background:#eef1f3;border-radius:3px;overflow:hidden;margin-top:6px;}
+.rd-scope .p3-bd-cell .minibar > i{display:block;height:100%;border-radius:3px;background:var(--rd-s1);}
+.rd-scope .p3-bd-cell .minibar.spend > i{background:var(--rd-ok);}
+.rd-scope .p3-bd-cell .minibar.spend.at-risk > i{background:var(--rd-warn);}
+.rd-scope .p3-bd-cell .minibar.spend.over > i{background:var(--rd-danger);}
+.rd-scope .p3-bd-cell .zero{color:var(--rd-text-4);font-style:italic;font-size:13px;}
+.rd-scope .p3-bd-empty{padding:24px;color:var(--rd-text-3);font-style:italic;text-align:center;font-size:14px;}
+
+/* Program-rollup rendering (strategy scope): each program is a <details> with
+   summary as the program row and child project rows revealed on expand.
+   Uses native <details>/<summary> for a11y — keyboard-accessible, no JS. */
+.rd-scope .p3-bd-program{display:block;}
+.rd-scope .p3-bd-program + .p3-bd-program{border-top:1px solid var(--rd-line);}
+.rd-scope .p3-bd-program summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:2fr 1.2fr 1.6fr 1.4fr;gap:14px;padding:11px 18px;align-items:center;transition:background .1s ease;}
+.rd-scope .p3-bd-program summary::-webkit-details-marker{display:none;}
+.rd-scope .p3-bd-program summary:hover{background:var(--rd-bg);}
+.rd-scope .p3-bd-program summary .name-cell{display:flex;align-items:flex-start;gap:10px;}
+.rd-scope .p3-bd-program summary .expand-chevron{width:20px;padding-top:2px;color:var(--rd-text-3);font-size:11px;transition:transform .15s ease;flex:none;}
+.rd-scope .p3-bd-program[open] > summary .expand-chevron{transform:rotate(90deg);}
+.rd-scope .p3-bd-program[open] > summary{background:var(--rd-bg);border-bottom:1px solid var(--rd-line-soft);}
+.rd-scope .p3-bd-program summary .name{font-weight:600;color:var(--rd-text-1);line-height:1.3;}
+.rd-scope .p3-bd-program summary .type{font-size:11.5px;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.rd-scope .p3-bd-row.child-row{background:var(--rd-bg);padding:9px 18px 9px 32px;}
+.rd-scope .p3-bd-row.child-row + .child-row{border-top:1px solid var(--rd-line-soft);}
+.rd-scope .p3-bd-row.child-row .name-cell{display:flex;align-items:flex-start;gap:10px;}
+.rd-scope .p3-bd-row.child-row .child-indent{color:var(--rd-text-4);font-size:14px;flex:none;padding-top:1px;}
+.rd-scope .p3-bd-row.child-row .name{font-weight:500;font-size:13.5px;color:var(--rd-text-2);}
+.rd-scope .p3-bd-row.child-row .num{font-size:15px;}
+
+/* Capacity vs. demand — per-project deep read. Each card compares three
+   independent estimates (budgeted hours, effort points × conversion, people
+   × weeks × allocation) and shows the sensitivity between them so the board
+   can see *how much* off, not just *that* it's off. Rebalance levers land at
+   the bottom of each card so the discussion has options, not just alarms. */
+.rd-scope .p3-cap-stack{display:flex;flex-direction:column;gap:12px;}
+.rd-scope .p3-cap{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);overflow:hidden;}
+.rd-scope .p3-cap.critical{border-color:rgba(220,60,60,.35);}
+.rd-scope .p3-cap.tight{border-color:rgba(245,166,35,.4);}
+.rd-scope .p3-cap.balanced{border-color:var(--rd-line);}
+.rd-scope .p3-cap.buffer{border-color:rgba(46,164,79,.3);}
+
+.rd-scope .p3-cap-hd{display:flex;align-items:center;gap:14px;padding:12px 20px 10px;border-bottom:1px solid var(--rd-line-soft);}
+.rd-scope .p3-cap-hd .verdict{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:100px;font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;flex:none;}
+.rd-scope .p3-cap-hd .verdict.critical{background:rgba(220,60,60,.10);color:var(--rd-danger);}
+.rd-scope .p3-cap-hd .verdict.tight{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
+.rd-scope .p3-cap-hd .verdict.balanced{background:rgba(0,71,102,.09);color:var(--rd-accent);}
+.rd-scope .p3-cap-hd .verdict.buffer{background:rgba(46,164,79,.11);color:var(--rd-ok);}
+.rd-scope .p3-cap-hd .verdict.no_work,
+.rd-scope .p3-cap-hd .verdict.no_capacity{background:rgba(140,140,140,.10);color:var(--rd-text-3);}
+.rd-scope .p3-cap-hd .name{font-size:16px;font-weight:600;color:var(--rd-text-1);flex:1;min-width:0;line-height:1.3;}
+.rd-scope .p3-cap-hd .headline-num{font-size:15px;font-weight:600;flex:none;}
+.rd-scope .p3-cap-hd .headline-num.critical{color:var(--rd-danger);}
+.rd-scope .p3-cap-hd .headline-num.tight{color:var(--rd-warn-tx);}
+.rd-scope .p3-cap-hd .headline-num.buffer{color:var(--rd-ok);}
+.rd-scope .p3-cap-hd .headline-num.balanced{color:var(--rd-text-2);}
+
+/* Trust confidence indicator — small icon-only pill in the header. Hover for
+   the full explanation. Green = both estimates agree; amber = fallback/mixed.
+   Kept subtle so it doesn't compete with the verdict pill. */
+.rd-scope .p3-cap-hd .trust{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-size:10.5px;font-weight:600;letter-spacing:.3px;cursor:help;flex:none;}
+.rd-scope .p3-cap-hd .trust.good{background:rgba(46,164,79,.10);color:var(--rd-ok);}
+.rd-scope .p3-cap-hd .trust.warn{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
+.rd-scope .p3-cap-hd .trust i{font-size:10px;}
+
+.rd-scope .p3-cap-body{padding:12px 20px 14px;}
+.rd-scope .p3-cap-row{display:grid;grid-template-columns:90px 1fr;gap:14px;padding:10px 0;align-items:baseline;}
+.rd-scope .p3-cap-row + .p3-cap-row{border-top:1px dashed var(--rd-line-soft);}
+.rd-scope .p3-cap-row .lbl{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);padding-top:2px;}
+.rd-scope .p3-cap-row .val{font-size:14px;color:var(--rd-text-1);line-height:1.55;}
+.rd-scope .p3-cap-row .val .primary{font-weight:600;color:var(--rd-text-1);}
+.rd-scope .p3-cap-row .val .muted{color:var(--rd-text-3);}
+.rd-scope .p3-cap-row .val .divider{color:var(--rd-text-4);margin:0 6px;}
+.rd-scope .p3-cap-row .val .note{display:block;font-size:12.5px;color:var(--rd-text-3);margin-top:3px;font-style:italic;}
+.rd-scope .p3-cap-row .val .note.warn{color:var(--rd-warn-tx);font-style:normal;font-weight:500;}
+.rd-scope .p3-cap-row .val .note.good{color:var(--rd-ok);font-style:normal;font-weight:500;}
+
+.rd-scope .p3-cap-bar{margin-top:8px;}
+.rd-scope .p3-cap-bar .track{position:relative;height:10px;background:#eef1f3;border-radius:5px;overflow:hidden;}
+/* Supply segment — 0 → available. Always green ("we've got this much"). */
+.rd-scope .p3-cap-bar .track .supply{position:absolute;top:0;left:0;bottom:0;background:var(--rd-ok);opacity:.9;}
+/* Deficit segment — available → needed. Colored by verdict so the shortfall
+   reads at the same visual weight as the verdict pill above. */
+.rd-scope .p3-cap-bar .track .deficit{position:absolute;top:0;bottom:0;background:var(--rd-danger);opacity:.85;}
+.rd-scope .p3-cap-bar .track.tight .deficit{background:var(--rd-warn);}
+.rd-scope .p3-cap-bar .track.critical .deficit{background:var(--rd-danger);}
+.rd-scope .p3-cap-bar .track .marker{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rd-text-1);z-index:2;}
+.rd-scope .p3-cap-bar .track .marker::after{content:'';position:absolute;top:-2px;left:-3px;width:8px;height:8px;background:var(--rd-text-1);border-radius:50%;}
+.rd-scope .p3-cap-bar .legend{display:flex;justify-content:space-between;font-size:11.5px;color:var(--rd-text-3);margin-top:6px;}
+
+.rd-scope .p3-cap-rebalance{margin-top:10px;padding-top:12px;border-top:1px solid var(--rd-line-soft);}
+.rd-scope .p3-cap-rebalance .hd{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:8px;}
+.rd-scope .p3-cap-rebalance .opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.rd-scope .p3-cap-rebalance .opt{border:1px solid var(--rd-line);border-radius:var(--rd-r-xs);padding:10px 12px;background:var(--rd-bg);}
+.rd-scope .p3-cap-rebalance .opt .icn{color:var(--rd-accent);font-size:14px;margin-bottom:6px;}
+.rd-scope .p3-cap-rebalance .opt .lever{font-size:14.5px;font-weight:600;color:var(--rd-text-1);line-height:1.3;}
+.rd-scope .p3-cap-rebalance .opt .lever b{font-size:17px;color:var(--rd-danger);}
+.rd-scope .p3-cap-rebalance .opt .detail{font-size:12px;color:var(--rd-text-3);margin-top:4px;line-height:1.5;}
+
+/* Compact one-liner for balanced/buffer projects — no full card, just a row */
+.rd-scope .p3-cap-compact{display:flex;align-items:center;gap:14px;padding:12px 18px;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);}
+.rd-scope .p3-cap-compact .verdict{padding:4px 10px;border-radius:100px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;flex:none;}
+.rd-scope .p3-cap-compact .verdict.balanced{background:rgba(0,71,102,.09);color:var(--rd-accent);}
+.rd-scope .p3-cap-compact .verdict.buffer{background:rgba(46,164,79,.11);color:var(--rd-ok);}
+.rd-scope .p3-cap-compact .verdict.no_work{background:rgba(140,140,140,.10);color:var(--rd-text-3);}
+.rd-scope .p3-cap-compact .name{font-size:14.5px;font-weight:600;color:var(--rd-text-1);flex:1;min-width:0;}
+.rd-scope .p3-cap-compact .summary{font-size:13px;color:var(--rd-text-3);flex:none;}
+
+/* Capacity program-rollup: program-level card wrapped in <details> so click
+   expands to reveal child project cards inline. Chevron rotates on open — the
+   chevron lives in the .subname of the card header (not absolute-positioned)
+   so it doesn't collide with the trust pill or headline gap number. */
+.rd-scope .p3-cap-program{display:block;}
+.rd-scope .p3-cap-program summary{list-style:none;cursor:pointer;}
+.rd-scope .p3-cap-program summary::-webkit-details-marker{display:none;}
+.rd-scope .p3-cap-hd .name .subname{font-size:12px;color:var(--rd-text-3);font-weight:500;margin-top:3px;text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:6px;}
+.rd-scope .p3-cap-hd .name .subname .expand-hint{font-size:10px;color:var(--rd-text-3);transition:transform .15s ease;}
+.rd-scope .p3-cap-program[open] > summary .p3-cap-hd .name .subname .expand-hint{transform:rotate(90deg);}
+.rd-scope .p3-cap-hd .headline-num .headline-days{font-size:12.5px;color:var(--rd-text-3);font-weight:500;margin-left:6px;letter-spacing:0;}
+
+/* Bar marker: always-visible label above the tick so board readers don't have
+   to hover to understand what the marker means. */
+.rd-scope .p3-cap-bar .track{overflow:visible;position:relative;}
+.rd-scope .p3-cap-bar .track .marker .marker-label{position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10.5px;font-weight:600;color:var(--rd-text-2);background:var(--rd-panel);padding:1px 6px;border-radius:3px;letter-spacing:.3px;text-transform:uppercase;}
+.rd-scope .p3-cap-bar{margin-top:22px;}
+
+/* Info icon on "pts" — subtle, clickable-ish. */
+.rd-scope .p3-cap-row .val .pts-info{cursor:help;border-bottom:1px dotted var(--rd-text-4);}
+.rd-scope .p3-cap-row .val .pts-info i{font-size:11px;margin-left:2px;color:var(--rd-text-3);}
+.rd-scope .p3-cap-children{padding:12px 20px 20px;background:var(--rd-bg);border-left:3px solid var(--rd-line);margin-left:20px;margin-right:20px;margin-bottom:14px;border-radius:0 0 var(--rd-r-xs) var(--rd-r-xs);}
+.rd-scope .p3-cap-children-hd{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:10px;padding-top:4px;}
+.rd-scope .p3-cap-children .p3-cap,
+.rd-scope .p3-cap-children .p3-cap-compact{margin-bottom:8px;}
+.rd-scope .p3-cap-children .p3-cap:last-child,
+.rd-scope .p3-cap-children .p3-cap-compact:last-child{margin-bottom:0;}
+
+/* Dependencies — dedicated section rendering each external commitment with
+   owner + decision date + notes. Cards laid out in a 2-column grid on wide
+   viewports, single column on narrow. Tentative deps get a warmer border
+   for scanability; the top "urgent" callout surfaces the soonest decision. */
+.rd-scope .p3-dep-urgent{display:flex;gap:12px;align-items:center;padding:12px 16px;border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);margin-bottom:14px;background:var(--rd-panel);}
+.rd-scope .p3-dep-urgent.soon{background:var(--rd-warn-bg);border-color:rgba(245,166,35,.35);}
+.rd-scope .p3-dep-urgent .ic{width:30px;height:30px;border-radius:8px;background:rgba(245,166,35,.15);color:var(--rd-warn-tx);display:grid;place-items:center;font-size:13px;flex:none;}
+.rd-scope .p3-dep-urgent .body{flex:1;min-width:0;}
+.rd-scope .p3-dep-urgent .hd{font-size:14.5px;color:var(--rd-text-1);line-height:1.4;}
+.rd-scope .p3-dep-urgent .hd strong{color:var(--rd-text-1);font-weight:700;}
+.rd-scope .p3-dep-urgent .meta{font-size:12.5px;color:var(--rd-text-3);margin-top:3px;}
+.rd-scope .p3-dep-urgent .meta strong{color:var(--rd-text-2);font-weight:600;}
+
+.rd-scope .p3-dep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.rd-scope .p3-dep{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:13px 16px;display:flex;flex-direction:column;gap:8px;}
+.rd-scope .p3-dep.tentative{border-color:rgba(245,166,35,.28);}
+.rd-scope .p3-dep.confirmed{border-color:rgba(46,164,79,.22);}
+.rd-scope .p3-dep-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.rd-scope .p3-dep-hd .status{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 9px;border-radius:100px;flex:none;}
+.rd-scope .p3-dep.tentative .p3-dep-hd .status{background:rgba(245,166,35,.14);color:var(--rd-warn-tx);}
+.rd-scope .p3-dep.confirmed .p3-dep-hd .status{background:rgba(46,164,79,.11);color:var(--rd-ok);}
+.rd-scope .p3-dep-hd .type-badge{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--rd-bg);color:var(--rd-text-3);flex:none;}
+.rd-scope .p3-dep-name{font-size:14.5px;font-weight:600;color:var(--rd-text-1);line-height:1.35;}
+.rd-scope .p3-dep-meta{display:flex;flex-direction:column;gap:5px;font-size:13px;}
+.rd-scope .p3-dep-meta .row{display:flex;gap:8px;align-items:baseline;}
+.rd-scope .p3-dep-meta .row .lbl{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--rd-text-3);min-width:82px;flex:none;padding-top:2px;}
+.rd-scope .p3-dep-meta .row .val{color:var(--rd-text-1);}
+.rd-scope .p3-dep-meta .row .val .soft{color:var(--rd-text-3);font-size:12px;}
+.rd-scope .p3-dep-meta .row.urgent .val{color:var(--rd-warn-tx);font-weight:600;}
+.rd-scope .p3-dep-meta .row.urgent .val .soft{color:var(--rd-warn-tx);font-weight:500;}
+.rd-scope .p3-dep-notes{font-size:13px;color:var(--rd-text-2);line-height:1.55;padding-top:2px;border-top:1px dashed var(--rd-line-soft);padding-top:10px;margin-top:2px;}
+.rd-scope .p3-dep-foot{font-size:11.5px;color:var(--rd-text-4);font-style:italic;margin-top:auto;}
+
+@media (max-width:900px){
+    .rd-scope .p3-dep-grid{grid-template-columns:1fr;}
+}
+
+/* Resource gaps & risks — remaining observations that aren't project-level
+   capacity math (over-allocated people, idle capacity, tentative dependencies). */
+.rd-scope .p3-gaps{display:flex;flex-direction:column;gap:10px;}
+.rd-scope .p3-gap{border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);background:var(--rd-panel);padding:12px 16px;display:flex;align-items:flex-start;gap:12px;}
+.rd-scope .p3-gap .sev{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex:none;}
+.rd-scope .p3-gap.red .sev{background:rgba(220,60,60,.10);color:var(--rd-danger);}
+.rd-scope .p3-gap.yellow .sev{background:rgba(245,166,35,.12);color:var(--rd-warn-tx);}
+.rd-scope .p3-gap.blue .sev{background:rgba(0,71,102,.10);color:var(--rd-accent);}
+.rd-scope .p3-gap .body{flex:1;min-width:0;}
+.rd-scope .p3-gap .body .headline{font-size:14.5px;font-weight:600;color:var(--rd-text-1);line-height:1.4;}
+.rd-scope .p3-gap .body .headline b{color:var(--rd-danger);font-weight:700;}
+.rd-scope .p3-gap.yellow .body .headline b{color:var(--rd-warn-tx);}
+.rd-scope .p3-gap .body .detail{font-size:13px;color:var(--rd-text-3);margin-top:4px;line-height:1.5;}
+.rd-scope .p3-gap .body .detail em{font-style:normal;color:var(--rd-text-2);}
+.rd-scope .p3-gap.ok{background:#f2faf6;border-color:#cfe8d9;}
+.rd-scope .p3-gap.ok .sev{background:rgba(46,164,79,.12);color:var(--rd-ok);}
+.rd-scope .p3-gap.ok .body .headline{color:#186c39;}
+.rd-scope .p3-gap.ok .body .detail{color:#4a7a5b;}
+
+/* Narrow screens — cards stack, breakdown table becomes single column stack. */
+@media (max-width:900px){
+    .rd-scope .p3-res-grid{grid-template-columns:1fr;}
+    .rd-scope .p3-bd-row{grid-template-columns:1fr;gap:8px;padding:14px 16px;}
+    .rd-scope .p3-bd-row.head{display:none;}
+    .rd-scope .p3-bd-cell::before{content:attr(data-label);display:block;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:3px;}
+    .rd-scope .p3-bd-cell.name-cell::before{display:none;}
+}
+
+/* ─────────────────────────────  page-impact-journey  ───────────────────────────── */
+.rd-scope .p4-wrap{max-width:900px;margin:0 auto;}
+.rd-scope .p4-wrap *{min-width:0;}
+
+/* Lens visibility — active data-lens shows; others hide. One component per
+   metric renders all three variants server-side; CSS reveals the current
+   lens's version. Keeps the JS toggle trivial and the DOM stable. */
+.rd-scope .p4-wrap[data-active-lens="vision"]   [data-lens]:not([data-lens="vision"])   {display:none;}
+.rd-scope .p4-wrap[data-active-lens="progress"] [data-lens]:not([data-lens="progress"]) {display:none;}
+.rd-scope .p4-wrap[data-active-lens="impact"]   [data-lens]:not([data-lens="impact"])   {display:none;}
+
+/* Header — subject + lens toggle */
+.rd-scope .p4-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+.rd-scope .p4-hd .t{font-size:17px;font-weight:600;color:var(--rd-text-1);letter-spacing:-.2px;}
+.rd-scope .p4-hd .s{font-size:12.5px;color:var(--rd-text-3);margin-top:2px;}
+
+/* Lens toggle */
+.rd-scope .p4-lens{display:flex;gap:0;margin-bottom:16px;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:100px;padding:3px;width:fit-content;}
+.rd-scope .p4-lens .lopt{background:none;border:0;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--rd-text-3);cursor:pointer;border-radius:100px;transition:all .12s ease;letter-spacing:.1px;}
+.rd-scope .p4-lens .lopt.is-active{background:var(--rd-accent);color:#fff;}
+.rd-scope .p4-lens .lopt:hover:not(.is-active):not(.locked){color:var(--rd-text-1);}
+.rd-scope .p4-lens .lopt.locked{color:var(--rd-text-4);cursor:not-allowed;}
+.rd-scope .p4-lens .lopt.locked i{margin-right:5px;font-size:10px;}
+
+/* Bookend cards */
+.rd-scope .p4-bookend{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:18px 22px;margin-bottom:14px;}
+.rd-scope .p4-bookend.started{border-left:3px solid #9A6A11;}
+.rd-scope .p4-bookend.different{border-left:3px solid var(--rd-ok);}
+.rd-scope .p4-bookend .lb{font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.rd-scope .p4-bookend.started .lb{color:#9A6A11;}
+.rd-scope .p4-bookend.different .lb{color:var(--rd-ok);}
+.rd-scope .p4-bookend .txt{font-size:15px;font-weight:600;color:var(--rd-text-1);line-height:1.4;}
+.rd-scope .p4-bookend .meaning{font-size:13.5px;color:var(--rd-text-2);margin-top:8px;line-height:1.55;}
+.rd-scope .p4-bookend .tense-hint{font-size:11.5px;color:var(--rd-text-3);margin-top:10px;font-style:italic;display:block;}
+.rd-scope .p4-bookend .empty{font-size:13px;color:var(--rd-text-3);font-style:italic;}
+.rd-scope .p4-bookend .empty .nudge{color:var(--rd-text-2);font-style:normal;font-weight:400;margin-left:4px;}
+.rd-scope .p4-bookend .empty .nudge a{color:var(--rd-accent);font-weight:600;text-decoration:none;}
+.rd-scope .p4-bookend .empty .nudge a:hover{text-decoration:underline;}
+
+/* Metrics — the arc */
+.rd-scope .p4-arc{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:18px 22px;margin-bottom:14px;}
+.rd-scope .p4-arc .lb{font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.rd-scope .p4-arc .lb i{font-size:11px;}
+.rd-scope .p4-mgroup{margin-top:18px;}
+.rd-scope .p4-mgroup:first-of-type{margin-top:0;}
+.rd-scope .p4-mgroup .gh{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-text-3);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.rd-scope .p4-mgroup.outputs .gh{color:var(--rd-s3);}
+.rd-scope .p4-mgroup.outcomes .gh{color:var(--rd-s4);}
+
+/* Metric row */
+.rd-scope .p4-metric{display:grid;grid-template-columns:minmax(0,1.4fr) 200px 140px;gap:16px;align-items:center;padding:12px 0;border-top:1px solid var(--rd-line-soft);}
+.rd-scope .p4-metric:first-child{border-top:none;padding-top:2px;}
+.rd-scope .p4-metric .mn{font-size:13.5px;font-weight:600;color:var(--rd-text-1);line-height:1.35;}
+.rd-scope .p4-metric .mn .tgt{font-size:11.5px;color:var(--rd-text-3);font-weight:400;display:block;margin-top:2px;}
+.rd-scope .p4-metric .mn .meaning{font-size:11.5px;color:var(--rd-text-3);font-style:italic;display:block;margin-top:6px;line-height:1.5;}
+
+/* ────────────────────────────────────────────────────────────────────────
+   The bar is ONE component per metric, persistent across lenses. The lens
+   changes its STATE (fill amount + label + verdict), never its existence.
+   Continuity is the reason lenses aren't tabs — the promise fills in as
+   you switch, and that morph is the moment the page tells its story.
+   ──────────────────────────────────────────────────────────────────────── */
+.rd-scope .p4-arc-viz{display:flex;flex-direction:column;gap:6px;}
+.rd-scope .p4-arc-viz .p4-scale{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;font-variant-numeric:tabular-nums;line-height:1.2;}
+.rd-scope .p4-arc-viz .p4-scale .p4-fill-lbl{font-weight:700;color:var(--rd-text-1);transition:opacity .18s ease;}
+.rd-scope .p4-arc-viz .p4-scale .p4-target-lbl{color:var(--rd-text-3);font-size:10.5px;letter-spacing:.2px;}
+
+/* The track: fixed length outline in the stage color at low opacity. This
+   is the target — always visible, same shape across all lenses. */
+.rd-scope .p4-track{position:relative;height:12px;background:#eef1f3;border-radius:6px;overflow:hidden;}
+.rd-scope .p4-mgroup.outputs .p4-track{background:rgba(192,144,53,.14);}
+.rd-scope .p4-mgroup.outcomes .p4-track{background:rgba(142,106,173,.14);}
+
+/* The fill: rises from 0 to current/target on lens change. Animates via
+   CSS transition; JS sets the inline width. Respects reduced motion. */
+.rd-scope .p4-fill{position:absolute;top:0;left:0;bottom:0;width:0;border-radius:6px;transition:width 700ms cubic-bezier(.22,1,.36,1);}
+.rd-scope .p4-mgroup.outputs .p4-fill{background:var(--rd-s3);}
+.rd-scope .p4-mgroup.outcomes .p4-fill{background:var(--rd-s4);}
+
+@media (prefers-reduced-motion: reduce) {
+    .rd-scope .p4-fill,
+    .rd-scope .p4-arc-viz .p4-scale .p4-fill-lbl {transition:none;}
+}
+
+/* Verdict — right column */
+.rd-scope .p4-verdict{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;justify-self:end;white-space:nowrap;}
+.rd-scope .p4-verdict .sd{width:7px;height:7px;border-radius:50%;background:currentColor;}
+.rd-scope .p4-verdict.willbe{color:var(--rd-text-3);}
+.rd-scope .p4-verdict.trending{color:#3F72B0;}
+.rd-scope .p4-verdict.hit{color:var(--rd-ok);}
+.rd-scope .p4-verdict.captured{color:var(--rd-text-3);font-style:italic;font-weight:500;}
+
+/* Encouragement chip */
+.rd-scope .p4-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--rd-text-3);background:var(--rd-bg);border-radius:20px;padding:4px 10px;margin-top:10px;}
+.rd-scope .p4-chip i{font-size:9px;}
+
+/* Empty state */
+.rd-scope .p4-empty{background:var(--rd-panel);border:1px dashed var(--rd-line);border-radius:var(--rd-r-sm);padding:26px 22px;text-align:center;color:var(--rd-text-3);}
+.rd-scope .p4-empty .lb{font-size:12.5px;color:var(--rd-text-2);margin-bottom:4px;font-weight:600;}
+.rd-scope .p4-empty .s{font-size:12px;color:var(--rd-text-3);}
+
+/* ────────────────────────────────────────────────────────────────────────
+   Vision lens — three beats. NOT a table. NOT waiting for data. This is
+   the shareable, screenshot-for-a-funder view: the world today (authored),
+   the measurable arc as one prose statement (assembled from authored
+   labels), the world when we've delivered (authored). No tracks, no
+   status column, no bars — the Vision is complete on day one, by design.
+   ──────────────────────────────────────────────────────────────────────── */
+.rd-scope .p4-vision{margin-bottom:14px;}
+.rd-scope .p4-vision .beat{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);padding:24px 28px;margin-bottom:14px;}
+.rd-scope .p4-vision .beat.today{border-left:3px solid #9A6A11;}
+.rd-scope .p4-vision .beat.arc{border-left:3px solid var(--rd-accent);background:var(--rd-bg);}
+.rd-scope .p4-vision .beat.delivered{border-left:3px solid var(--rd-ok);}
+.rd-scope .p4-vision .beat .lb{font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.rd-scope .p4-vision .beat.today .lb{color:#9A6A11;}
+.rd-scope .p4-vision .beat.arc .lb{color:var(--rd-accent);}
+.rd-scope .p4-vision .beat.delivered .lb{color:var(--rd-ok);}
+.rd-scope .p4-vision .beat.today .txt,
+.rd-scope .p4-vision .beat.delivered .txt{font-size:19px;font-weight:600;color:var(--rd-text-1);line-height:1.45;letter-spacing:-.2px;}
+.rd-scope .p4-vision .beat.arc .statement{font-size:16px;font-weight:500;color:var(--rd-text-1);line-height:1.65;letter-spacing:-.05px;}
+.rd-scope .p4-vision .beat.delivered .meaning{font-size:14px;color:var(--rd-text-2);margin-top:12px;line-height:1.55;}
+.rd-scope .p4-vision .beat .empty{font-size:13.5px;color:var(--rd-text-3);font-style:italic;}
+.rd-scope .p4-vision .beat .empty .nudge{color:var(--rd-text-2);font-style:normal;font-weight:400;margin-left:4px;}
+.rd-scope .p4-vision .beat .empty .nudge a{color:var(--rd-accent);font-weight:600;text-decoration:none;}
+.rd-scope .p4-vision .beat .empty .nudge a:hover{text-decoration:underline;}
+
+/* Block-level lens visibility — the beats show on Vision only, the tracks
+   block shows on Progress/Impact only. Per-element [data-lens] rules
+   still apply INSIDE each block (verdicts, tense hints). */
+.rd-scope .p4-wrap[data-active-lens="vision"]   [data-lens-block="tracks"]{display:none;}
+.rd-scope .p4-wrap[data-active-lens="progress"] [data-lens-block="vision"]{display:none;}
+.rd-scope .p4-wrap[data-active-lens="impact"]   [data-lens-block="vision"]{display:none;}
+
+/* Arrival — when the reader flips Vision → Progress/Impact, the arc
+   statement recedes (block swap is instant) and the metric rows stagger in.
+   `.arriving` is added by JS immediately after the block swap; the row is
+   already opacity:1 in its resting state so SSR-rendered non-Vision pages
+   (returning readers) never see a flash. */
+.rd-scope .p4-metric.arriving{opacity:0;transform:translateY(6px);}
+.rd-scope .p4-metric.arrived{opacity:1;transform:none;transition:opacity 260ms ease, transform 260ms ease;}
+@media (prefers-reduced-motion: reduce) {
+    .rd-scope .p4-metric.arriving,
+    .rd-scope .p4-metric.arrived {opacity:1;transform:none;transition:none;}
+}
+
+/* ─────────────────────────────  page-programs  ───────────────────────────── */
+.rd-scope .p4-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:30px;}
+.rd-scope .p4-lbl{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--rd-accent);margin-bottom:12px;}
+.rd-scope .p4-prog{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--rd-line-soft);font-size:14px;}
+.rd-scope .p4-prog .pd{width:9px;height:9px;border-radius:50%;flex:none;}
+.rd-scope .p4-prog .pn{flex:1;font-weight:500;color:var(--rd-text-1);min-width:0;}
+.rd-scope .p4-prog .pm{color:var(--rd-text-3);font-size:12.5px;}
+.rd-scope .p4-prog:last-child{border-bottom:none;}
+.rd-scope .p4-exec{font-size:13.5px;color:var(--rd-text-2);line-height:1.6;padding:11px 0;border-bottom:1px solid var(--rd-line-soft);}
+.rd-scope .p4-exec b{color:var(--rd-text-1);font-weight:600;}
+.rd-scope .p4-exec .ed{color:var(--rd-text-4);font-size:12px;margin-left:6px;}
+.rd-scope .p4-exec:last-child{border-bottom:none;}
+.rd-scope .p4-also{margin-top:22px;padding-top:16px;border-top:1px solid var(--rd-line);font-size:13.5px;color:var(--rd-text-2);}
+.rd-scope .p4-also .al-lb{color:var(--rd-text-3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;font-size:11px;}
+.rd-scope .p4-empty{color:var(--rd-text-3);font-size:12.5px;font-style:italic;padding:12px 0;}
+
+/* ─────────────────────────────  actionsMenu  ───────────────────────────── */
+/*
+ * Scoped fixes for the actions dropdown — the app's global .dropdown-menu
+ * styles size items for the sidebar / nav, not for a compact utility menu.
+ * Constrain width, left-align text, tighten padding, uniform icon spacing.
+ */
+.rd-actions-menu{width:220px !important;min-width:220px !important;padding:5px 0 !important;text-align:left !important;letter-spacing:0 !important;}
+.rd-actions-menu li{text-align:left !important;}
+/* Explicit hex — the `--main-titles-color` variable resolves to white inside
+   the pageheader (dark-bg context), so items inherit white on the white menu
+   background and read as invisible. Same reason for hover color. */
+.rd-actions-menu li > a{display:flex !important;align-items:center !important;gap:9px !important;padding:7px 14px !important;font-size:13px !important;font-weight:500 !important;color:#182831 !important;line-height:1.3 !important;text-transform:none !important;letter-spacing:0 !important;text-align:left !important;text-decoration:none !important;}
+.rd-actions-menu li > a:hover{background:rgba(0,0,0,.04) !important;color:#004766 !important;text-decoration:none !important;}
+.rd-actions-menu li > a i{font-size:12px !important;width:14px !important;text-align:center !important;flex:none !important;}
+.rd-actions-menu .dropdown-header{padding:8px 14px 6px !important;font-size:10px !important;font-weight:700 !important;letter-spacing:.5px !important;color:#7a8791 !important;text-align:left !important;text-transform:uppercase !important;}
+.rd-actions-menu .border{border-top:1px solid #eef1f3 !important;margin:5px 0 !important;height:1px !important;}

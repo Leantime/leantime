@@ -11,6 +11,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Blueprints\Events\CanvasItemUpdated;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
@@ -166,6 +167,29 @@ class Blueprints extends BaseService
         $this->authorize(BlueprintsPermissions::EDIT, $projectId);
 
         $this->blueprintsRepo->editCanvasItem($values);
+
+        CanvasItemUpdated::dispatch(
+            canvasItemId: $itemId,
+            changedFields: $this->fieldNames($values),
+            legacyHook: __FUNCTION__,
+        );
+    }
+
+    /**
+     * Extract the canvas-item field names from a controller payload for the
+     * CanvasItemUpdated event, dropping the transport/identifier keys (id,
+     * itemId, canvasId, changeItem, routing params) that ride along in the
+     * payload but are not columns — so `changedFields` reads as field names,
+     * not request plumbing.
+     *
+     * @param  array<string, mixed>  $payload
+     * @return array<int, string>
+     */
+    private function fieldNames(array $payload): array
+    {
+        $transportKeys = ['id', 'itemId', 'canvasId', 'changeItem', 'action', 'module'];
+
+        return array_values(array_diff(array_map('strval', array_keys($payload)), $transportKeys));
     }
 
     /**
@@ -187,7 +211,17 @@ class Blueprints extends BaseService
         }
         $this->authorize(BlueprintsPermissions::EDIT, $projectId);
 
-        return $this->blueprintsRepo->patchCanvasItem($id, $params);
+        $patched = $this->blueprintsRepo->patchCanvasItem($id, $params);
+
+        if ($patched) {
+            CanvasItemUpdated::dispatch(
+                canvasItemId: $id,
+                changedFields: $this->fieldNames($params),
+                legacyHook: __FUNCTION__,
+            );
+        }
+
+        return $patched;
     }
 
     /**
@@ -484,7 +518,6 @@ class Blueprints extends BaseService
         }
 
         $dom = new DOMDocument('1.0', 'UTF-8');
-        $users = app()->make(UserRepository::class);
 
         // Validate the file path and extension to prevent SSRF and Local File
         // Inclusion. Reject URL wrappers (http://, ftp://, etc.), restrict
@@ -553,6 +586,11 @@ class Blueprints extends BaseService
         }
 
         $elementNodeList = $dataNodeList->item(0)->getElementsByTagName('element');
+
+        // Resolved here rather than at the top of the method: it is only needed to map
+        // item authors below, so a rejected path or malformed document never pays for
+        // building a database-backed repository.
+        $users = app()->make(UserRepository::class);
 
         foreach ($elementNodeList as $elementNode) {
             if (! $elementNode->hasAttribute('key')) {

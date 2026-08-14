@@ -20,7 +20,8 @@
     ];
 @endphp
 
-<div class="maincontentinner tabs">
+<div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
+    <nav class="lt-tabs-group" aria-label="{{ __('links.kanban') }} / {{ __('links.table') }} / {{ __('links.list') }}">
     <ul>
         <li class="{{ findActive($boardTabs['kanban']['active']) }}">
             <a href="{{ $boardTabs['kanban']['url'] }}{{ $searchParams }}" preload="mouseover">
@@ -38,4 +39,18 @@
             </a>
         </li>
     </ul>
+    </nav>
+
+    {{-- Board actions (New / Filter / Group By) live on the right of the nav bar
+         — like the report's period picker — so the bar is balanced and the board
+         needs no separate toolbar row below it. Guarded on $searchCriteria so the
+         partial stays safe if the nav is ever reused without the board context. --}}
+    @isset($searchCriteria)
+        <div class="lt-tabs-actions">
+            @dispatchEvent('filters.afterLefthandSectionOpen')
+            @include('tickets::submodules.ticketNewBtn')
+            @include('tickets::submodules.ticketFilter')
+            @dispatchEvent('filters.beforeLefthandSectionClose')
+        </div>
+    @endisset
 </div>
