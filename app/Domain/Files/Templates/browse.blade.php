@@ -82,7 +82,7 @@
                                 @else
                                     <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/doc.png' />
                                 @endif
-                                <span class="filename">{{ substr($file['realName'], 0, 10) . '(...).' . $file['extension'] }}</span>
+                                <span class="filename" title="{{ $file['realName'] }}.{{ $file['extension'] }}">{{ $file['realName'] }}.{{ $file['extension'] }}</span>
                             </a>
                         </li>
                     @endforeach
@@ -242,7 +242,7 @@
                             '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
                                 '<img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'" alt="" />'+
 
-                                '<span class="filename">'+response.realName+'.</span>'+
+                                '<span class="filename" title="'+response.realName+'.'+response.extension+'">'+response.realName+'.'+response.extension+'</span>'+
                             '</a>'+
                         '</li>';
 
