@@ -68,7 +68,7 @@
                                     @else
                                         <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/thumbs/doc.png' />
                                     @endif
-                                    <span class="filename">{{ substr($file['realName'], 0, 10) . '(...).' . $file['extension'] }}</span>
+                                    <span class="filename" title="{{ $file['realName'] }}.{{ $file['extension'] }}">{{ $file['realName'] }}.{{ $file['extension'] }}</span>
                                 </a>
                             </li>
                         @endforeach
