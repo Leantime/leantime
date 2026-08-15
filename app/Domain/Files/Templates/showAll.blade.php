@@ -10,7 +10,7 @@
             <div class='mediamgr_left'>
                 <div class="mediamgr_category">
 
-                    <form action='{{ BASE_URL }}/files/showAll@if(isset($_GET['modalPopUp']))?modalPopUp=true @endif' method='post' enctype="multipart/form-data" class="fileModal" >
+                    <form action='{{ BASE_URL }}/files/showAll{{ isset($_GET['modalPopUp']) ? '?modalPopUp=true' : '' }}' method='post' enctype="multipart/form-data" class="fileModal" >
                         <div class="par f-left" style="margin-right: 15px;">
 
                             <div class='fileupload fileupload-new' data-provides='fileupload'>

@@ -594,7 +594,16 @@ class Timesheets extends Repository
         $onTheClock['id'] = $result->id;
         $onTheClock['since'] = $result->punchIn;
         $onTheClock['headline'] = $result->headline;
-        $start_date = new Carbon($result->punchIn, 'UTC');
+        // punchIn is an integer column and punchIn() writes time(), so the stored value is a
+        // Unix timestamp. PDO hands integer columns back as STRINGS, and Carbon's constructor
+        // parses an int epoch but throws InvalidFormatException on the string form
+        // ("Failed to parse time string (1786766470) at position 8") — 500ing every page that
+        // renders the timer (#3632). punchOut() already reads it as an epoch, so the epoch is
+        // the intended storage and only this read was wrong. A legacy datetime string is still
+        // accepted so no install trades one crash for another.
+        $start_date = is_numeric($result->punchIn)
+            ? Carbon::createFromTimestamp((int) $result->punchIn, 'UTC')
+            : new Carbon($result->punchIn, 'UTC');
         $since_start = $start_date->diff(Carbon::now(session('usersettings.timezone'))->setTimezone('UTC'));
 
         $r = $since_start->format('%H:%I');
