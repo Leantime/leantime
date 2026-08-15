@@ -730,7 +730,13 @@ class Template
         if (! is_null($content)) {
             $content = $this->convertRelativePaths($content);
 
-            return htmlentities($content);
+            // htmlspecialchars, not htmlentities: both escape every character that matters for
+            // XSS (< > & " ') identically, but htmlentities ALSO converts non-ASCII to named
+            // entities, so "Müller" became "M&uuml;ller". Most call sites sit inside {{ }},
+            // which escapes the ampersand again, and the user was shown a literal "M&uuml;ller"
+            // in dropdowns, filters and Ideas (#3636). Escaping strength is unchanged for the
+            // call sites that render through {!! !!} and rely on this for safety.
+            return htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         }
 
         return '';

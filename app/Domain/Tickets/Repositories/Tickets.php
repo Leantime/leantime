@@ -1781,17 +1781,28 @@ class Tickets
     {
         $this->addTicketChange(session('userdata.id'), $id, $params);
 
+        // Match field names case-insensitively, then write the CANONICAL column name.
+        // PATCHABLE_COLUMNS is mostly camelCase but 'milestoneid' matches the real column, so a
+        // caller sending the documented 'milestoneId' fell through the case-sensitive isset()
+        // and was silently dropped while the call still reported success (#3692). Resolving to
+        // the canonical name (rather than aliasing) also keeps the UPDATE correct on
+        // PostgreSQL, where a quoted "milestoneId" would not match the milestoneid column.
+        $canonicalColumns = [];
+        foreach (array_keys(self::PATCHABLE_COLUMNS) as $column) {
+            $canonicalColumns[strtolower($column)] = $column;
+        }
+
         $updates = [];
         foreach ($params as $key => $value) {
-            $sanitizedKey = DbCore::sanitizeToColumnString($key);
+            $sanitizedKey = strtolower(DbCore::sanitizeToColumnString($key));
 
-            if (! isset(self::PATCHABLE_COLUMNS[$sanitizedKey])) {
+            if (! isset($canonicalColumns[$sanitizedKey])) {
                 continue;
             }
 
-            $updates[$sanitizedKey] = $value;
+            $updates[$canonicalColumns[$sanitizedKey]] = $value;
 
-            if ($key == 'status') {
+            if ($sanitizedKey === 'status') {
                 TicketStatusUpdated::dispatch(ticketId: (int) $id, status: $value, legacyHook: __FUNCTION__);
             }
         }
