@@ -312,7 +312,7 @@ class Messengers
 
         // 2. Status
         $statusName = '';
-        if ($status !== '' && $status !== null) {
+        if ((is_int($status) || is_string($status)) && $status !== '') {
             if ($ticketService !== null) {
                 try {
                     $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
