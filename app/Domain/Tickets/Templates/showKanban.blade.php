@@ -28,8 +28,20 @@
 
     <div class="maincontentinner kanban-board-wrapper" >
 
-        {{-- Board actions (New / Filter / Group By) moved into the nav bar
-             (ticketBoardTabs) so there's no separate toolbar row here. --}}
+        <div class="row">
+            <div class="col-md-4">
+                @dispatchEvent('filters.afterLefthandSectionOpen')
+                @include('tickets::submodules.ticketNewBtn')
+                @include('tickets::submodules.ticketFilter')
+                @dispatchEvent('filters.beforeLefthandSectionClose')
+            </div>
+
+            <div class="col-md-4 center">
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+
         <div class="clearfix"></div>
 
         @if ($programBoard)

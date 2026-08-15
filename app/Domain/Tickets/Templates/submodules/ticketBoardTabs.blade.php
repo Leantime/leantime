@@ -2,12 +2,9 @@
     use Leantime\Core\Controller\Frontcontroller;
 
     if (!function_exists('findActive')) {
-        function findActive($route): string
+        function findActive($route): bool
         {
-            if (str_contains(Frontcontroller::getCurrentRoute(), $route)) {
-                return 'active';
-            }
-            return '';
+            return str_contains(Frontcontroller::getCurrentRoute(), $route);
         }
     }
 
@@ -18,39 +15,33 @@
         'table'  => ['url' => BASE_URL . '/tickets/showAll',    'active' => 'showAll'],
         'list'   => ['url' => BASE_URL . '/tickets/showList',   'active' => 'showList'],
     ];
+
+    $plainKanban = strip_tags(__('links.kanban'));
+    $plainTable  = strip_tags(__('links.table'));
+    $plainList   = strip_tags(__('links.list'));
+    $navLabel    = trim("{$plainKanban} / {$plainTable} / {$plainList}");
 @endphp
 
-<div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
-    <nav class="lt-tabs-group" aria-label="{{ __('links.kanban') }} / {{ __('links.table') }} / {{ __('links.list') }}">
-    <ul>
-        <li class="{{ findActive($boardTabs['kanban']['active']) }}">
-            <a href="{{ $boardTabs['kanban']['url'] }}{{ $searchParams }}" preload="mouseover">
-                {!! __('links.kanban') !!}
-            </a>
-        </li>
-        <li class="{{ findActive($boardTabs['table']['active']) }}">
-            <a href="{{ $boardTabs['table']['url'] }}{{ $searchParams }}" preload="mouseover">
-                {!! __('links.table') !!}
-            </a>
-        </li>
-        <li class="{{ findActive($boardTabs['list']['active']) }}">
-            <a href="{{ $boardTabs['list']['url'] }}{{ $searchParams }}" preload="mouseover">
-                {!! __('links.list') !!}
-            </a>
-        </li>
-    </ul>
-    </nav>
+<link rel="stylesheet" href="{{ BASE_URL }}/assets/css/components/tab-group.css" />
 
-    {{-- Board actions (New / Filter / Group By) live on the right of the nav bar
-         — like the report's period picker — so the bar is balanced and the board
-         needs no separate toolbar row below it. Guarded on $searchCriteria so the
-         partial stays safe if the nav is ever reused without the board context. --}}
-    @isset($searchCriteria)
-        <div class="lt-tabs-actions">
-            @dispatchEvent('filters.afterLefthandSectionOpen')
-            @include('tickets::submodules.ticketNewBtn')
-            @include('tickets::submodules.ticketFilter')
-            @dispatchEvent('filters.beforeLefthandSectionClose')
-        </div>
-    @endisset
+<div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
+    <nav class="lt-tabs-group" aria-label="{{ $navLabel }}">
+        <ul>
+            <li class="{{ findActive($boardTabs['kanban']['active']) ? 'active' : '' }}">
+                <a href="{{ $boardTabs['kanban']['url'] }}{{ $searchParams }}" class="lt-tab {{ findActive($boardTabs['kanban']['active']) ? 'on' : '' }}" preload="mouseover">
+                    {!! __('links.kanban') !!}
+                </a>
+            </li>
+            <li class="{{ findActive($boardTabs['table']['active']) ? 'active' : '' }}">
+                <a href="{{ $boardTabs['table']['url'] }}{{ $searchParams }}" class="lt-tab {{ findActive($boardTabs['table']['active']) ? 'on' : '' }}" preload="mouseover">
+                    {!! __('links.table') !!}
+                </a>
+            </li>
+            <li class="{{ findActive($boardTabs['list']['active']) ? 'active' : '' }}">
+                <a href="{{ $boardTabs['list']['url'] }}{{ $searchParams }}" class="lt-tab {{ findActive($boardTabs['list']['active']) ? 'on' : '' }}" preload="mouseover">
+                    {!! __('links.list') !!}
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
