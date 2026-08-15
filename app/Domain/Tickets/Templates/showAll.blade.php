@@ -22,23 +22,16 @@
     <div class="maincontentinner">
 
         <div class="row">
-            <div class="col-md-4">
-                @dispatchEvent('filters.afterLefthandSectionOpen')
-                @include('tickets::submodules.ticketNewBtn')
-                @include('tickets::submodules.ticketFilter')
-                @dispatchEvent('filters.beforeLefthandSectionClose')
+            <div class="col-md-6 col-sm-12">
+                @include('tickets::submodules.ticketBoardActions')
             </div>
-
-            <div class="col-md-4 center">
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-6 col-sm-12">
                 <div class="pull-right">
                     @dispatchEvent('filters.afterRighthandSectionOpen')
                     <div id="tableButtons" style="display:inline-block"></div>
                     @dispatchEvent('filters.beforeRighthandSectionClose')
                 </div>
             </div>
-
         </div>
 
         <div class="clearfix" style="margin-bottom: 20px;"></div>

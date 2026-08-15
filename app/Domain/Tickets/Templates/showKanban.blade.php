@@ -29,16 +29,8 @@
     <div class="maincontentinner kanban-board-wrapper" >
 
         <div class="row">
-            <div class="col-md-4">
-                @dispatchEvent('filters.afterLefthandSectionOpen')
-                @include('tickets::submodules.ticketNewBtn')
-                @include('tickets::submodules.ticketFilter')
-                @dispatchEvent('filters.beforeLefthandSectionClose')
-            </div>
-
-            <div class="col-md-4 center">
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-12">
+                @include('tickets::submodules.ticketBoardActions')
             </div>
         </div>
 
