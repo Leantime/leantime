@@ -882,8 +882,13 @@ class SchemaBuilder
 
     /**
      * Create zp_access_tokens table (Laravel Sanctum personal access tokens).
+     *
+     * Public because update_sql_30504() reuses it to self-heal installs that
+     * reached that migration without the table (see #3706). Keeping one
+     * definition here also keeps the create database-agnostic, unlike the raw
+     * MySQL in update_sql_30400().
      */
-    private function createAccessTokensTable(): void
+    public function createAccessTokensTable(): void
     {
         Schema::create('zp_access_tokens', function (Blueprint $table) {
             $table->id();
