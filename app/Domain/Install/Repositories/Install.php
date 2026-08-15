@@ -2004,7 +2004,7 @@ class Install
         $errors = [];
 
         $sql = [
-            'CREATE TABLE `zp_access_tokens` (
+            'CREATE TABLE IF NOT EXISTS `zp_access_tokens` (
                     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                     `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `tokenable_id` bigint unsigned NOT NULL,
@@ -2019,7 +2019,7 @@ class Install
                     UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
                     KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-            'CREATE TABLE `zp_jobs` (
+            'CREATE TABLE IF NOT EXISTS `zp_jobs` (
                     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                     `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -2055,7 +2055,16 @@ class Install
             } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
+                $errors[] = 'Migration 30400 failed: '.$e->getMessage();
             }
+        }
+
+        // Report failures instead of returning true regardless. Swallowing them here is what
+        // let installs record 3.4.0 as applied while zp_access_tokens did not exist, which
+        // then broke every subsequent upgrade at 30504 (#3706). The creates above are
+        // IF NOT EXISTS, so a re-run on a healthy install is still a no-op.
+        if ($errors !== []) {
+            return $errors;
         }
 
         return true;
@@ -2654,6 +2663,18 @@ class Install
     public function update_sql_30504(): bool|array
     {
         try {
+            // Self-heal a missing table rather than dying on it (#3706). zp_access_tokens is
+            // created by update_sql_30400, but that migration wrapped its statements in a
+            // swallow-everything try/catch and still returned success — so an install whose
+            // CREATE TABLE failed recorded 3.4.0 as applied with no table to show for it, and
+            // every later upgrade died here on "1146 Table 'zp_access_tokens' doesn't exist"
+            // with no way forward. Recreating it is safe: the table only holds API tokens, and
+            // an install that never had one has none to lose.
+            if (! Schema::hasTable('zp_access_tokens')) {
+                Log::warning('Migration 30504: zp_access_tokens missing, recreating it before adding push columns.');
+                app()->make(SchemaBuilder::class)->createAccessTokensTable();
+            }
+
             Schema::table('zp_access_tokens', function (Blueprint $table) {
                 if (! Schema::hasColumn('zp_access_tokens', 'push_token')) {
                     $table->string('push_token', 255)->nullable()->after('expires_at');
