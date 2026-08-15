@@ -1,12 +1,7 @@
 @php
     use Leantime\Core\Controller\Frontcontroller;
 
-    if (!function_exists('routeIsActive')) {
-        function routeIsActive($route): bool
-        {
-            return str_contains(Frontcontroller::getCurrentRoute(), $route);
-        }
-    }
+    $currentRoute = Frontcontroller::getCurrentRoute();
 
     // Program boards inject their own kanban/table/list URLs + the route fragments used to
     // highlight the active tab. Per-project views fall back to the core /tickets/* routes.
@@ -15,6 +10,10 @@
         'table'  => ['url' => BASE_URL . '/tickets/showAll',    'active' => 'showAll'],
         'list'   => ['url' => BASE_URL . '/tickets/showList',   'active' => 'showList'],
     ];
+
+    $isKanban = str_contains($currentRoute, $boardTabs['kanban']['active']);
+    $isTable  = str_contains($currentRoute, $boardTabs['table']['active']);
+    $isList   = str_contains($currentRoute, $boardTabs['list']['active']);
 
     $plainKanban = strip_tags(__('links.kanban'));
     $plainTable  = strip_tags(__('links.table'));
@@ -29,23 +28,23 @@
 <div class="maincontentinner tabs board-tabs-bar hideOnPrint">
     <nav aria-label="{{ $navLabel }}">
         <ul>
-            <li class="{{ routeIsActive($boardTabs['kanban']['active']) ? 'active' : '' }}">
+            <li class="{{ $isKanban ? 'active' : '' }}">
                 <a href="{{ $boardTabs['kanban']['url'] }}{{ $searchParams }}"
-                   @if (routeIsActive($boardTabs['kanban']['active'])) aria-current="page" @endif
+                   @if ($isKanban) aria-current="page" @endif
                    preload="mouseover">
                     {!! __('links.kanban') !!}
                 </a>
             </li>
-            <li class="{{ routeIsActive($boardTabs['table']['active']) ? 'active' : '' }}">
+            <li class="{{ $isTable ? 'active' : '' }}">
                 <a href="{{ $boardTabs['table']['url'] }}{{ $searchParams }}"
-                   @if (routeIsActive($boardTabs['table']['active'])) aria-current="page" @endif
+                   @if ($isTable) aria-current="page" @endif
                    preload="mouseover">
                     {!! __('links.table') !!}
                 </a>
             </li>
-            <li class="{{ routeIsActive($boardTabs['list']['active']) ? 'active' : '' }}">
+            <li class="{{ $isList ? 'active' : '' }}">
                 <a href="{{ $boardTabs['list']['url'] }}{{ $searchParams }}"
-                   @if (routeIsActive($boardTabs['list']['active'])) aria-current="page" @endif
+                   @if ($isList) aria-current="page" @endif
                    preload="mouseover">
                     {!! __('links.list') !!}
                 </a>
