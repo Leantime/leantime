@@ -38,7 +38,7 @@
     gap: 7px;
     color: var(--primary-font-color);
     text-decoration: none;
-    transition: all 0.15s ease;
+    transition: color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 .maincontentinner.tabs.board-tabs-bar ul li a:hover {
     color: var(--primary-font-color);

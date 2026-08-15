@@ -1,8 +1,8 @@
 @php
     use Leantime\Core\Controller\Frontcontroller;
 
-    if (!function_exists('findActive')) {
-        function findActive($route): bool
+    if (!function_exists('routeIsActive')) {
+        function routeIsActive($route): bool
         {
             return str_contains(Frontcontroller::getCurrentRoute(), $route);
         }
@@ -22,23 +22,31 @@
     $navLabel    = trim("{$plainKanban} / {$plainTable} / {$plainList}");
 @endphp
 
-<link rel="stylesheet" href="{{ BASE_URL }}/assets/css/components/ticket-board-tabs.css" />
+@pushOnce('styles')
+    <link rel="stylesheet" href="{{ BASE_URL }}/assets/css/components/ticket-board-tabs.css" />
+@endPushOnce
 
 <div class="maincontentinner tabs board-tabs-bar hideOnPrint">
     <nav aria-label="{{ $navLabel }}">
         <ul>
-            <li class="{{ findActive($boardTabs['kanban']['active']) ? 'active' : '' }}">
-                <a href="{{ $boardTabs['kanban']['url'] }}{{ $searchParams }}" preload="mouseover">
+            <li class="{{ routeIsActive($boardTabs['kanban']['active']) ? 'active' : '' }}">
+                <a href="{{ $boardTabs['kanban']['url'] }}{{ $searchParams }}"
+                   @if (routeIsActive($boardTabs['kanban']['active'])) aria-current="page" @endif
+                   preload="mouseover">
                     {!! __('links.kanban') !!}
                 </a>
             </li>
-            <li class="{{ findActive($boardTabs['table']['active']) ? 'active' : '' }}">
-                <a href="{{ $boardTabs['table']['url'] }}{{ $searchParams }}" preload="mouseover">
+            <li class="{{ routeIsActive($boardTabs['table']['active']) ? 'active' : '' }}">
+                <a href="{{ $boardTabs['table']['url'] }}{{ $searchParams }}"
+                   @if (routeIsActive($boardTabs['table']['active'])) aria-current="page" @endif
+                   preload="mouseover">
                     {!! __('links.table') !!}
                 </a>
             </li>
-            <li class="{{ findActive($boardTabs['list']['active']) ? 'active' : '' }}">
-                <a href="{{ $boardTabs['list']['url'] }}{{ $searchParams }}" preload="mouseover">
+            <li class="{{ routeIsActive($boardTabs['list']['active']) ? 'active' : '' }}">
+                <a href="{{ $boardTabs['list']['url'] }}{{ $searchParams }}"
+                   @if (routeIsActive($boardTabs['list']['active'])) aria-current="page" @endif
+                   preload="mouseover">
                     {!! __('links.list') !!}
                 </a>
             </li>
