@@ -11,14 +11,25 @@
         'list'   => ['url' => BASE_URL . '/tickets/showList',   'active' => 'showList'],
     ];
 
-    $isKanban = str_contains($currentRoute, $boardTabs['kanban']['active']);
-    $isTable  = str_contains($currentRoute, $boardTabs['table']['active']);
-    $isList   = str_contains($currentRoute, $boardTabs['list']['active']);
+    $tabs = [
+        [
+            'url'      => $boardTabs['kanban']['url'] . $searchParams,
+            'label'    => __('links.kanban'),
+            'isActive' => str_contains($currentRoute, $boardTabs['kanban']['active']),
+        ],
+        [
+            'url'      => $boardTabs['table']['url'] . $searchParams,
+            'label'    => __('links.table'),
+            'isActive' => str_contains($currentRoute, $boardTabs['table']['active']),
+        ],
+        [
+            'url'      => $boardTabs['list']['url'] . $searchParams,
+            'label'    => __('links.list'),
+            'isActive' => str_contains($currentRoute, $boardTabs['list']['active']),
+        ],
+    ];
 
-    $plainKanban = strip_tags(__('links.kanban'));
-    $plainTable  = strip_tags(__('links.table'));
-    $plainList   = strip_tags(__('links.list'));
-    $navLabel    = trim("{$plainKanban} / {$plainTable} / {$plainList}");
+    $navLabel = implode(' / ', array_map(fn($tab) => strip_tags((string) $tab['label']), $tabs));
 @endphp
 
 @pushOnce('styles')
@@ -28,27 +39,15 @@
 <div class="maincontentinner tabs board-tabs-bar hideOnPrint">
     <nav aria-label="{{ $navLabel }}">
         <ul>
-            <li class="{{ $isKanban ? 'active' : '' }}">
-                <a href="{{ $boardTabs['kanban']['url'] }}{{ $searchParams }}"
-                   @if ($isKanban) aria-current="page" @endif
-                   preload="mouseover">
-                    {!! __('links.kanban') !!}
-                </a>
-            </li>
-            <li class="{{ $isTable ? 'active' : '' }}">
-                <a href="{{ $boardTabs['table']['url'] }}{{ $searchParams }}"
-                   @if ($isTable) aria-current="page" @endif
-                   preload="mouseover">
-                    {!! __('links.table') !!}
-                </a>
-            </li>
-            <li class="{{ $isList ? 'active' : '' }}">
-                <a href="{{ $boardTabs['list']['url'] }}{{ $searchParams }}"
-                   @if ($isList) aria-current="page" @endif
-                   preload="mouseover">
-                    {!! __('links.list') !!}
-                </a>
-            </li>
+            @foreach ($tabs as $tab)
+                <li class="{{ $tab['isActive'] ? 'active' : '' }}">
+                    <a href="{{ $tab['url'] }}"
+                       @if ($tab['isActive']) aria-current="page" @endif
+                       preload="mouseover">
+                        {!! $tab['label'] !!}
+                    </a>
+                </li>
+            @endforeach
         </ul>
     </nav>
 </div>

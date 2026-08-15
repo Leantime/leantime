@@ -42,15 +42,19 @@
 }
 .maincontentinner.tabs.board-tabs-bar ul li a:hover {
     color: var(--primary-font-color);
-    background: rgba(0, 0, 0, 0.04);
+    background-color: rgba(0, 0, 0, 0.04);
+}
+.maincontentinner.tabs.board-tabs-bar ul li a:focus-visible {
+    outline: 2px solid var(--accent1, #007bb3);
+    outline-offset: 2px;
 }
 .maincontentinner.tabs.board-tabs-bar ul li.active a {
     color: var(--accent1, #007bb3);
-    background: #fff;
+    background-color: #fff;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     font-weight: 600;
 }
 .maincontentinner.tabs.board-tabs-bar ul li.active a:hover {
     color: var(--accent1, #007bb3);
-    background: #fff;
+    background-color: #fff;
 }
