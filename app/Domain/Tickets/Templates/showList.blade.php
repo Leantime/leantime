@@ -21,8 +21,12 @@
 
     <div class="maincontentinner">
 
-        {{-- Board actions (New / Filter / Group By) moved into the nav bar
-             (ticketBoardTabs) so there's no separate toolbar row here. --}}
+        <div class="row">
+            <div class="col-md-12">
+                @include('tickets::submodules.ticketBoardActions')
+            </div>
+        </div>
+
         <div class="clearfix"></div>
 
         @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
