@@ -28,11 +28,12 @@ class Verify extends Controller
      */
     public function get($params)
     {
-        $redirectUrl = BASE_URL.'/dashboard/home';
-
-        if (isset($_GET['redirect'])) {
-            $redirectUrl = BASE_URL.urldecode($_GET['redirect']);
-        }
+        // Guard the type: redirect[]=x arrives as an array, which would TypeError
+        // against resolveSafeRedirect(?string). Route the user-supplied value
+        // through resolveSafeRedirect() (as Login::get() does) so an open-redirect
+        // target (e.g. //attacker.com) can never reach the redirect.
+        $rawRedirect = $_GET['redirect'] ?? null;
+        $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
         $this->tpl->assign('redirectUrl', $redirectUrl);
 
