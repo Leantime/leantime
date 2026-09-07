@@ -23,7 +23,7 @@
     // links.* carry a Font Awesome icon (e.g. "<i class='fas fa-columns'></i> Kanban"), which
     // is what the tab body wants but not the accessible name — an unstripped label puts escaped
     // markup into the attribute. Strip tags for aria-label, keep the markup in the link. #3748
-    $navLabel = implode(' / ', array_map(fn ($tab) => strip_tags((string) $tab['label']), $tabs));
+    $navLabel = implode(' / ', array_map(fn ($tab) => trim(strip_tags((string) $tab['label'])), $tabs));
 @endphp
 
 <div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
