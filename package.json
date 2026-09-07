@@ -111,6 +111,9 @@
   "author": "Marcel Folaron",
   "license": "AGPL-3.0",
   "homepage": "https://github.com/Leantime/leantime/blob/master/README.md",
+  "engines": {
+    "node": ">=18"
+  },
   "overrides": {
     "@uppy/aws-s3": {
       "nanoid": "^5.1.16"
