@@ -76,7 +76,8 @@ class Registration
         $languageDir = '/Language/';
 
         // Check both possible locations for language files
-        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar".$languageDir;
+        $pharFile = "{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar";
+        $pharPath = 'phar://'.$pharFile.$languageDir;
         $regularPath = "{$pluginPath}{$this->pluginId}".$languageDir;
 
         $languageFiles = [];
@@ -91,8 +92,8 @@ class Registration
             }
         }
 
-        // Check phar if no files found in regular directory
-        if (empty($languageFiles) && file_exists($pharPath)) {
+        // Check phar if no files found in regular directory (only when the on-disk archive exists)
+        if (empty($languageFiles) && is_file($pharFile) && is_dir($pharPath)) {
             $files = scandir($pharPath);
             foreach ($files as $file) {
                 if (substr($file, -4) === '.ini') {
@@ -114,13 +115,14 @@ class Registration
 
         $pluginPath = APP_ROOT.'/app/Plugins/';
 
-        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar";
+        $pharFile = "{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar";
+        $pharPath = 'phar://'.$pharFile;
         $regularPath = "{$pluginPath}{$this->pluginId}";
 
         $languagePath = "/Language/{$language}.ini";
 
-        // Check phar first
-        if (file_exists($pharPath.$languagePath)) {
+        // Check phar first, only after the on-disk archive exists as a real file (open_basedir hosts)
+        if (is_file($pharFile) && file_exists($pharPath.$languagePath)) {
             $completeLanguagePath = $pharPath.$languagePath;
         } elseif (file_exists($regularPath.$languagePath)) {
             $completeLanguagePath = $regularPath.$languagePath;
@@ -146,10 +148,13 @@ class Registration
 
         $pluginPath = APP_ROOT.'/app/Plugins/';
 
-        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar";
+        $pharFile = "{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar";
+        $pharPath = 'phar://'.$pharFile;
         $regularPath = "{$pluginPath}{$this->pluginId}";
 
-        if (file_exists($pharPath)) {
+        // Stat the on-disk archive first: stat'ing a phar:// path for a missing archive
+        // raises a spurious open_basedir error on hosts with open_basedir set.
+        if (is_file($pharFile) && file_exists($pharPath)) {
             return $pharPath;
         }
 

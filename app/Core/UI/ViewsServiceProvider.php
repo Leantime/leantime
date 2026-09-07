@@ -430,9 +430,9 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
                 $pluginFolder = basename($path);
 
                 // Check phar templates first
-                $pharTemplatesPath = 'phar://'.APP_ROOT.'/app/Plugins/'.$pluginFolder.'/'.$pluginFolder.'.phar/Templates';
-                if (is_dir($pharTemplatesPath)) {
-                    return [strtolower($pluginFolder) => [$pharTemplatesPath]];
+                $pharFile = APP_ROOT.'/app/Plugins/'.$pluginFolder.'/'.$pluginFolder.'.phar';
+                if (is_file($pharFile) && is_dir('phar://'.$pharFile.'/Templates')) {
+                    return [strtolower($pluginFolder) => ['phar://'.$pharFile.'/Templates']];
                 }
 
                 // Check folder templates
