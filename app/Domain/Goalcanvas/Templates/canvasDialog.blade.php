@@ -73,12 +73,15 @@
         .gv-panel{min-height:170px;}
         .gv-row{margin-bottom:18px;}
 
-        /* inputs + selects */
-        .gvDialog input[name="title"]{font-size:var(--font-size-xxl)!important;font-weight:600!important;line-height:1.25!important;color:var(--gv-ink)!important;border:none!important;border-bottom:1px solid var(--gv-line)!important;border-radius:0!important;padding:4px 2px 9px!important;background:transparent!important;box-shadow:none!important;height:auto!important;width:100%!important;}
-        .gvDialog input[name="title"]:focus{border-bottom-color:var(--gv-acc)!important;outline:none!important;box-shadow:none!important;}
-        .gvDialog input[name="title"]::placeholder{color:var(--gv-ink2);font-weight:500;}
-        .gvDialog input[type="number"]:not(.gv-mb-input),.gvDialog input[type="text"]:not([name="title"]),.gvDialog select[name="metricType"],.gvDialog input.startDate,.gvDialog input.endDate{border:1px solid var(--gv-line)!important;border-radius:var(--input-radius, 9px)!important;padding:9px 11px!important;font-size:var(--base-font-size)!important;color:var(--gv-ink)!important;background:var(--input-background, #fff)!important;box-shadow:none!important;height:auto!important;width:100%!important;}
-        .gvDialog input:focus:not([name="title"]):not(.gv-mb-input),.gvDialog select:focus{border-color:var(--gv-acc)!important;outline:none!important;box-shadow:0 0 0 3px rgba(0,100,122,.09)!important;}
+        /* Inputs and selects are NOT restyled here. This block used to override
+           border/radius/padding/background/focus with !important, which is why the
+           dialog's fields looked unlike every other form in the app. They now take
+           the app's own forms.css styling, same as the task modal. The title uses
+           the shared component's variant="headline" instead of a private rule.
+           Only the inline-edit metric input below keeps a bespoke look, because it
+           is a deliberately different affordance (the number IS the field). */
+        .gvDialog input[name="title"]{width:100%;}
+        .gvDialog select{width:100%;}
 
         /* Progress readout — deliberately QUIET (review 2026-08-03: the big
            teal number + gradient card pulled the eye away from the actual
@@ -192,7 +195,10 @@
             {{-- Name — one label only (the placeholder); the modal's GOAL
                  header already names the object, so no third repetition. --}}
             <div class="gv-row">
-                <x-global::forms.text-input name="title" id="goalTitleInput" value="{{ $canvasItem['title'] }}" placeholder="{{ __('goalcanvas.name_goal') }}" aria-label="{{ __('goalcanvas.name_goal') }}" style="width:100%" />
+                {{-- variant="headline" is the shared component's title treatment —
+                     the same one the task modal uses for its headline — replacing a
+                     block of dialog-private !important overrides on input[name=title]. --}}
+                <x-global::forms.text-input variant="headline" name="title" id="goalTitleInput" value="{{ $canvasItem['title'] }}" placeholder="{{ __('goalcanvas.name_goal') }}" aria-label="{{ __('goalcanvas.name_goal') }}" style="width:100%" />
             </div>
 
             {{-- ── Tab: Edit — the goal's DEFINITION (metric, type, start,
@@ -200,13 +206,13 @@
                  monitoring job (review 2026-08-03). --}}
             <div class="gv-panel" data-panel="edit" role="tabpanel" id="gvPanel-edit" aria-labelledby="gvTab-edit" tabindex="0">
                 <div id="measureGoalContainer" class="gv-row">
-                    <label class="gv-field-lbl" for="goalDescriptionInput">{{ __('goalcanvas.metric_label') }}</label>
+                    <label class="control-label" for="goalDescriptionInput">{{ __('goalcanvas.metric_label') }}</label>
                     <x-global::forms.text-input name="description" id="goalDescriptionInput" value="{{ $canvasItem['description'] }}" style="width:100%" />
                 </div>
 
                 <div class="gv-values">
                     <div>
-                        <label class="gv-field-lbl" for="goalMetricType">{{ __('label.type') }}</label>
+                        <label class="control-label" for="goalMetricType">{{ __('label.type') }}</label>
                         <select name="metricType" id="goalMetricType">
                             <option value="number" @if ($mType == 'number') selected @endif>{{ __('goalcanvas.type_number') }}</option>
                             <option value="percent" @if ($mType == 'percent') selected @endif>{{ __('goalcanvas.type_percent') }}</option>
@@ -214,11 +220,11 @@
                         </select>
                     </div>
                     <div>
-                        <label class="gv-field-lbl" for="goalStartValue">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
+                        <label class="control-label" for="goalStartValue">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
                         <x-global::forms.text-input type="number" step="0.01" name="startValue" id="goalStartValue" value="{{ $canvasItem['startValue'] }}" style="width:100%" />
                     </div>
                     <div>
-                        <label class="gv-field-lbl" for="goalEndValue">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></label>
+                        <label class="control-label" for="goalEndValue">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></label>
                         <x-global::forms.text-input type="number" step="0.01" name="endValue" id="goalEndValue" value="{{ $canvasItem['endValue'] }}" style="width:100%" />
                     </div>
                 </div>
@@ -303,10 +309,20 @@
             <aside class="gv-side">
                 <h4 class="widgettitle title-light gv-side-head"><i class="fa fa-circle-info" aria-hidden="true"></i> {{ __('goalcanvas.side_details') }}</h4>
 
-                <div>
-                    <label for="statusCanvas">{{ __('label.status') }}</label>
+                <div class="form-group">
+                    <label class="control-label" for="statusCanvas">{{ __('label.status') }}</label>
                     @if (!empty($statusLabels))
-                        <select name="status" id="statusCanvas"></select>
+                        {{-- Plain <select>, options rendered server-side. This was a
+                             SlimSelect instance — a library used nowhere else in the app
+                             — which is why the goal dialog had three different-looking
+                             dropdowns while the task modal has one. --}}
+                        <select name="status" id="statusCanvas">
+                            @foreach ($statusLabels as $key => $data)
+                                @if ($data['active'])
+                                    <option value="{{ $key }}" @if ($canvasItem['status'] == $key) selected @endif>{{ $data['title'] }}</option>
+                                @endif
+                            @endforeach
+                        </select>
                     @else
                         <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
                     @endif
@@ -314,21 +330,33 @@
 
                 {{-- One label per field ("Due Dates" + "Start Date" + "End
                      Date" was triple-labeling — part of the clutter). --}}
+                {{-- `dates` is the app's bound datepicker class (the task modal's due
+                     date uses it). These fields previously carried only .startDate /
+                     .endDate, which NOTHING binds — so they had no picker at all and
+                     the date had to be typed by hand. The original classes stay for
+                     any existing hook. --}}
                 <div class="gv-dates">
-                    <div>
-                        <label for="goalStartDate">{{ __('label.start_date') }}</label>
-                        <input type="text" autocomplete="off" id="goalStartDate" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="startDate"/>
+                    <div class="form-group">
+                        <label class="control-label" for="goalStartDate">{{ __('label.start_date') }}</label>
+                        <input type="text" autocomplete="off" id="goalStartDate" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="dates startDate"/>
                     </div>
-                    <div>
-                        <label for="goalEndDate">{{ __('label.end_date') }}</label>
-                        <input type="text" autocomplete="off" id="goalEndDate" value="{{ format($canvasItem['endDate'])->date() }}" name="endDate" class="endDate"/>
+                    <div class="form-group">
+                        <label class="control-label" for="goalEndDate">{{ __('label.end_date') }}</label>
+                        <input type="text" autocomplete="off" id="goalEndDate" value="{{ format($canvasItem['endDate'])->date() }}" name="endDate" class="dates endDate"/>
                     </div>
                 </div>
 
-                <div>
+                <div class="form-group">
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                     @if (!empty($relatesLabels))
-                        <label class="gv-field-lbl" for="relatesCanvas">{{ __('label.relates') }}</label><select name="relates" id="relatesCanvas"></select>
+                        <label class="control-label" for="relatesCanvas">{{ __('label.relates') }}</label>
+                        <select name="relates" id="relatesCanvas">
+                            @foreach ($relatesLabels as $key => $data)
+                                @if ($data['active'])
+                                    <option value="{{ $key }}" @if ($canvasItem['relates'] == $key) selected @endif>{{ $data['title'] }}</option>
+                                @endif
+                            @endforeach
+                        </select>
                     @else
                         <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
                     @endif
@@ -414,45 +442,9 @@
                 if (!saved || !show(saved)) { if (!show('progress')) { show(tabs[0].getAttribute('data-tab')); } }
             })();
 
-            @if (!empty($statusLabels))
-            new SlimSelect({
-                select: '#statusCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                        @foreach ($statusLabels as $key => $data)
-                        @if ($data['active'])
-                    {
-                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                        text: "{{ $data['title'] }}",
-                        value: "{{ $key }}",
-                        selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }}
-                    },
-                    @endif
-                    @endforeach
-                ]
-            });
-            @endif
-
-            @if (!empty($relatesLabels))
-            new SlimSelect({
-                select: '#relatesCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                        @foreach ($relatesLabels as $key => $data)
-                        @if ($data['active'])
-                    {
-                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                        text: "{{ $data['title'] }}",
-                        value: "{{ $key }}",
-                        selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }}
-                    },
-                    @endif
-                    @endforeach
-                ]
-            });
-            @endif
+            {{-- SlimSelect initialisers removed: #statusCanvas and #relatesCanvas
+                 render their options server-side as plain <select>s now, matching
+                 the task modal. SlimSelect was used nowhere else in the app. --}}
 
             if (window.leantime && window.leantime.tiptapController) {
                 leantime.tiptapController.initSimpleEditor();
