@@ -2,8 +2,14 @@
 
 namespace Unit\app\Views\Components;
 
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\HtmlString;
+use Illuminate\View\Compilers\BladeCompiler;
+use Illuminate\View\Engines\CompilerEngine;
+use Illuminate\View\Engines\EngineResolver;
+use Illuminate\View\Factory;
+use Illuminate\View\FileViewFinder;
 use Unit\TestCase;
 
 /**
@@ -22,12 +28,42 @@ use Unit\TestCase;
  */
 class StatTileEscapingTest extends TestCase
 {
+    /**
+     * Renders through an ISOLATED Blade environment rather than the Blade facade.
+     *
+     * Going through the app's view factory drags in the registered view composers,
+     * one of which resolves the database — and unit tests run with
+     * `database.default => []`, so that surfaces as a misleading
+     * "str_ends_with(): must be of type string, array given" from DatabaseManager.
+     * It passed locally on a warm cache and failed on CI's cold one. The escaping
+     * contract has nothing to do with app bootstrapping, so this builds the
+     * minimum Blade stack the component needs and nothing else.
+     */
     private function render(array $data): string
     {
-        return (string) Blade::render(
-            '<x-global::statTile :value="$value" :label="$label" :sub="$sub" />',
-            $data
-        );
+        $files = new Filesystem;
+        $cache = sys_get_temp_dir().'/lt-stattile-blade-'.getmypid();
+        $files->ensureDirectoryExists($cache);
+
+        $compiler = new BladeCompiler($files, $cache);
+        $compiler->anonymousComponentNamespace('global::components', 'global');
+
+        $resolver = new EngineResolver;
+        $resolver->register('blade', fn () => new CompilerEngine($compiler, $files));
+
+        $finder = new FileViewFinder($files, [APP_ROOT.'/app/Views/Templates']);
+        $finder->addNamespace('global', APP_ROOT.'/app/Views/Templates');
+
+        $factory = new Factory($resolver, $finder, new Dispatcher);
+
+        // The component tag compiler resolves the view factory off the container.
+        app()->instance(\Illuminate\Contracts\View\Factory::class, $factory);
+        app()->instance('view', $factory);
+
+        $template = $cache.'/tile.blade.php';
+        $files->put($template, '<x-global::statTile :value="$value" :label="$label" :sub="$sub" />');
+
+        return (string) $factory->file($template, $data)->render();
     }
 
     public function test_a_plain_string_sub_is_escaped(): void
