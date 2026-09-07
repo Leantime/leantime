@@ -13,7 +13,7 @@
 @endphp
 
 <div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
-    <nav class="lt-tabs-group" aria-label="{{ __('links.timeline') }}">
+    <nav class="lt-tabs-group" aria-label="{{ strip_tags(__('links.timeline')) }}">
     <ul>
         <li class="{{ findActive('roadmap') }}">
             <a href="{{ BASE_URL }}/tickets/roadmap{{ $searchParams }}" preload="mouseover">
