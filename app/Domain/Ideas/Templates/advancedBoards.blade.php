@@ -45,7 +45,7 @@
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="javascript:void(0)" class="editCanvasLink ">{!! __('links.icon.edit') !!}</a></li>
+                        <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
                         <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
                     @endif
                 </ul>
