@@ -48,7 +48,11 @@
         .gv-side-head{margin:0;}
         .gv-side label{margin-bottom:5px;}
         .gv-side .gv-dates{grid-template-columns:1fr;max-width:none;gap:12px;}
-        .gv-side .gv-delete-slot{padding-top:16px;border-top:1px solid var(--gv-line-soft);}
+        /* Beside the modal's × — right-padding clears the close button.
+           position:relative so the z-index actually applies (it is inert on a
+           statically positioned element) and the open dropdown clears the
+           surrounding chrome. */
+        .gv-actions-menu{float:right;position:relative;z-index:50;padding:10px 34px 0 0;}
         /* Discussion sits under the MAIN column (its own form — kept outside
            the goal form so the nested-form parse never orphans the Save
            buttons again). */
@@ -73,12 +77,15 @@
         .gv-panel{min-height:170px;}
         .gv-row{margin-bottom:18px;}
 
-        /* inputs + selects */
-        .gvDialog input[name="title"]{font-size:var(--font-size-xxl)!important;font-weight:600!important;line-height:1.25!important;color:var(--gv-ink)!important;border:none!important;border-bottom:1px solid var(--gv-line)!important;border-radius:0!important;padding:4px 2px 9px!important;background:transparent!important;box-shadow:none!important;height:auto!important;width:100%!important;}
-        .gvDialog input[name="title"]:focus{border-bottom-color:var(--gv-acc)!important;outline:none!important;box-shadow:none!important;}
-        .gvDialog input[name="title"]::placeholder{color:var(--gv-ink2);font-weight:500;}
-        .gvDialog input[type="number"]:not(.gv-mb-input),.gvDialog input[type="text"]:not([name="title"]),.gvDialog select[name="metricType"],.gvDialog input.startDate,.gvDialog input.endDate{border:1px solid var(--gv-line)!important;border-radius:var(--input-radius, 9px)!important;padding:9px 11px!important;font-size:var(--base-font-size)!important;color:var(--gv-ink)!important;background:var(--input-background, #fff)!important;box-shadow:none!important;height:auto!important;width:100%!important;}
-        .gvDialog input:focus:not([name="title"]):not(.gv-mb-input),.gvDialog select:focus{border-color:var(--gv-acc)!important;outline:none!important;box-shadow:0 0 0 3px rgba(0,100,122,.09)!important;}
+        /* Inputs and selects are NOT restyled here. This block used to override
+           border/radius/padding/background/focus with !important, which is why the
+           dialog's fields looked unlike every other form in the app. They now take
+           the app's own forms.css styling, same as the task modal. The title uses
+           the shared component's variant="headline" instead of a private rule.
+           Only the inline-edit metric input below keeps a bespoke look, because it
+           is a deliberately different affordance (the number IS the field). */
+        .gvDialog input[name="title"]{width:100%;}
+        .gvDialog select{width:100%;}
 
         /* Progress readout — deliberately QUIET (review 2026-08-03: the big
            teal number + gradient card pulled the eye away from the actual
@@ -97,7 +104,22 @@
         .gv-track--scored .gv-fill{position:absolute;inset:0 auto 0 0;border-radius:6px 0 0 6px;opacity:1;}
         .gv-tick{position:absolute;top:2px;bottom:2px;width:1px;background:color-mix(in srgb, var(--gv-ink) 22%, transparent);}
         .gv-marker{position:absolute;top:-3px;bottom:-3px;width:2px;border-radius:2px;background:var(--gv-ink);box-shadow:0 0 0 1.5px var(--primary-background, #fff);transform:translateX(-1px);}
-        .gv-scale{display:flex;justify-content:space-between;margin-top:5px;font-size:var(--font-size-xs);color:var(--gv-ink2);font-variant-numeric:tabular-nums;}
+        /* Start / Now / Goal under the bar. Three equal columns so "Now" lands
+           centred between its two anchors — the current value used to float
+           above the bar with no visible label at all. */
+        .gv-scale{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:12px;margin-top:7px;font-size:var(--font-size-xs);color:var(--gv-ink2);font-variant-numeric:tabular-nums;}
+        .gv-scale-col{display:flex;flex-direction:column;gap:2px;min-width:0;}
+        .gv-scale-col--now{align-items:center;text-align:center;}
+        .gv-scale-col--goal{align-items:flex-end;text-align:right;}
+        .gv-scale-lbl{font-size:var(--font-size-xs);text-transform:uppercase;letter-spacing:.4px;font-weight:600;opacity:.75;line-height:1.2;}
+        .gv-scale-val{font-size:var(--font-size-s);color:var(--gv-ink);line-height:1.2;}
+        /* The centre column holds the inline-edit input, which is taller than the
+           plain end values — pull its label tight so the three baselines agree. */
+        .gv-scale-col--now .gv-scale-lbl{margin-bottom:1px;}
+        /* Centre the digits inside the field, not just the field inside the
+           column: with the fixed-ch fallback width the number otherwise sits
+           left while its label sits centred above it. */
+        .gvDialog .gv-metric-bar .gv-scale-col--now input.gv-mb-input{text-align:center;}
         /* The input hugs its digits (no fill-in-the-blank dashes past the
            number) in browsers with field-sizing; others keep the fixed ch. */
         @supports (field-sizing: content){
@@ -119,7 +141,9 @@
         .gvDialog .gv-metric-bar input.gv-mb-input:focus{border-bottom:1px solid var(--gv-acc)!important;outline:none!important;box-shadow:none!important;}
 
         /* Milestone bars on the Progress tab — read-only rows, quiet. */
-        .gv-ms-bars{margin-top:22px;padding-top:16px;border-top:1px solid var(--gv-line-soft);display:flex;flex-direction:column;gap:11px;}
+        .gv-ms-bars-section{margin-top:22px;padding-top:16px;border-top:1px solid var(--gv-line-soft);}
+        .gv-ms-bars-head{margin:0 0 12px;}
+        .gv-ms-bars{display:flex;flex-direction:column;gap:11px;}
         .gv-msb-row{display:grid;grid-template-columns:9px minmax(0,1fr) 130px 38px;align-items:center;gap:12px;}
         .gv-msb-dot{width:9px;height:9px;border-radius:50%;}
         .gv-msb-name{font-size:var(--font-size-s);color:var(--gv-ink2);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -130,18 +154,26 @@
 
         /* Milestones tab — MANAGEMENT list (RA line-item style). */
         .gv-ms-list{display:flex;flex-direction:column;}
-        .gv-ms-item{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--gv-line-soft);}
-        .gv-ms-name{font-size:var(--base-font-size);color:var(--gv-ink);text-decoration:none;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        /* One merged row: dot | name | due | bar | % | unlink. The grid keeps the
+           bar and percent columns aligned down the list (a flex row let them
+           drift with the name length). */
+        .gv-ms-item{display:grid;grid-template-columns:9px minmax(0,1fr) auto 130px 38px 28px;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--gv-line-soft);}
+        .gv-ms-name{font-size:var(--base-font-size);color:var(--gv-ink);text-decoration:none;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .gv-ms-name:hover{color:var(--gv-acc);text-decoration:underline;text-underline-offset:3px;}
-        .gv-ms-due{font-size:var(--font-size-s);color:var(--gv-ink2);flex:none;}
-        .gv-ms-remove{flex:none;background:transparent;border:none;cursor:pointer;padding:6px 8px;opacity:.55;color:var(--gv-ink2);}
+        .gv-ms-due{font-size:var(--font-size-s);color:var(--gv-ink2);white-space:nowrap;}
+        /* The last row closes on the panel's own edge — a trailing rule under it
+           is the "odd line above Save" and reads as a separator to nothing. */
+        .gv-ms-list .gv-ms-item:last-child{border-bottom:0;}
+        .gv-ms-remove{background:transparent;border:none;cursor:pointer;padding:6px 4px;opacity:.55;color:var(--gv-ink2);justify-self:end;}
         .gv-ms-remove:hover{opacity:1;color:var(--gv-acc);}
         .gv-values .gv-field-lbl{font-size:11px;}
         .gv-dates{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:360px;}
 
         /* milestones panel */
-        .gv-ms-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-        .gv-ms-summary{font-size:var(--font-size-s);color:var(--gv-ink2);}
+        .gv-ms-head{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+        .gv-ms-head .gv-ms-bars-head{margin:0;}
+        /* Its own line under the heading, not inline with it. */
+        .gv-ms-summary{font-size:var(--font-size-s);color:var(--gv-ink2);margin:0 0 12px;}
         .gv-ms-summary b{color:var(--gv-ink);font-weight:700;}
         .gv-ms-actions{margin-left:auto;display:flex;align-items:center;gap:14px;}
         .gv-ms-act{background:none!important;border:none!important;cursor:pointer;color:var(--gv-ink2)!important;font-size:15px;padding:0;line-height:1;opacity:.65;transition:opacity .12s,color .12s;}
@@ -152,13 +184,35 @@
         /* discussion sub-heading inside the Goal tab */
 
         /* actions (always visible under the tabs) */
-        .gv-actions{display:flex;align-items:center;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--gv-line);}
-        .gv-actions .gv-delete{margin-left:auto;}
+        /* No top rule: the panel above already ends with its own divider, so a
+           second line right above Save read as a stray separator. */
+        .gv-actions{display:flex;align-items:center;gap:10px;margin-top:22px;}
 
         @media (max-width:560px){.gv-values{grid-template-columns:1fr 1fr;}}
     </style>
 
     <div class="gvDialog">
+
+        {{-- Destructive action lives in a ⋮ menu at the top right, beside the
+             modal's × — the same place and markup the task modal uses. It used
+             to sit at the BOTTOM of the Details rail, which is both a different
+             spot from every other entity dialog and an odd resting place for the
+             one irreversible action. --}}
+        @if ($login::userIsAtLeast($roles::$editor) && $id != '')
+            <div class="inlineDropDownContainer gv-actions-menu">
+                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown" aria-label="{{ __('label.actions') }}">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="nav-header">{{ $canvasTypes[$canvasItem['box']]['title'] }}</li>
+                    <li>
+                        <a href="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete">
+                            <i class="fa fa-trash-can"></i> {{ __('links.delete') }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        @endif
 
         {{-- Section headers use the SYSTEM modal recipe (h4.widgettitle
              .title-light — same as Subtasks/Discussion/Schedule on the task
@@ -184,7 +238,6 @@
                     <div class="gv-tab-group lt-tabs-group">
                         <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-edit" aria-controls="gvPanel-edit" aria-selected="false" data-tab="edit"><i class="fa-solid fa-pen" aria-hidden="true"></i> {{ __('links.edit') }}</button>
                         <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
-                        <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-milestones" aria-controls="gvPanel-milestones" aria-selected="false" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
                     </div>
                 </div>
             @endif
@@ -192,7 +245,10 @@
             {{-- Name — one label only (the placeholder); the modal's GOAL
                  header already names the object, so no third repetition. --}}
             <div class="gv-row">
-                <x-global::forms.text-input name="title" id="goalTitleInput" value="{{ $canvasItem['title'] }}" placeholder="{{ __('goalcanvas.name_goal') }}" aria-label="{{ __('goalcanvas.name_goal') }}" style="width:100%" />
+                {{-- variant="headline" is the shared component's title treatment —
+                     the same one the task modal uses for its headline — replacing a
+                     block of dialog-private !important overrides on input[name=title]. --}}
+                <x-global::forms.text-input variant="headline" name="title" id="goalTitleInput" value="{{ $canvasItem['title'] }}" placeholder="{{ __('goalcanvas.name_goal') }}" aria-label="{{ __('goalcanvas.name_goal') }}" style="width:100%" />
             </div>
 
             {{-- ── Tab: Edit — the goal's DEFINITION (metric, type, start,
@@ -200,13 +256,13 @@
                  monitoring job (review 2026-08-03). --}}
             <div class="gv-panel" data-panel="edit" role="tabpanel" id="gvPanel-edit" aria-labelledby="gvTab-edit" tabindex="0">
                 <div id="measureGoalContainer" class="gv-row">
-                    <label class="gv-field-lbl" for="goalDescriptionInput">{{ __('goalcanvas.metric_label') }}</label>
+                    <label class="control-label" for="goalDescriptionInput">{{ __('goalcanvas.metric_label') }}</label>
                     <x-global::forms.text-input name="description" id="goalDescriptionInput" value="{{ $canvasItem['description'] }}" style="width:100%" />
                 </div>
 
                 <div class="gv-values">
                     <div>
-                        <label class="gv-field-lbl" for="goalMetricType">{{ __('label.type') }}</label>
+                        <label class="control-label" for="goalMetricType">{{ __('label.type') }}</label>
                         <select name="metricType" id="goalMetricType">
                             <option value="number" @if ($mType == 'number') selected @endif>{{ __('goalcanvas.type_number') }}</option>
                             <option value="percent" @if ($mType == 'percent') selected @endif>{{ __('goalcanvas.type_percent') }}</option>
@@ -214,11 +270,11 @@
                         </select>
                     </div>
                     <div>
-                        <label class="gv-field-lbl" for="goalStartValue">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
+                        <label class="control-label" for="goalStartValue">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
                         <x-global::forms.text-input type="number" step="0.01" name="startValue" id="goalStartValue" value="{{ $canvasItem['startValue'] }}" style="width:100%" />
                     </div>
                     <div>
-                        <label class="gv-field-lbl" for="goalEndValue">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></label>
+                        <label class="control-label" for="goalEndValue">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></label>
                         <x-global::forms.text-input type="number" step="0.01" name="endValue" id="goalEndValue" value="{{ $canvasItem['endValue'] }}" style="width:100%" />
                     </div>
                 </div>
@@ -232,61 +288,45 @@
             <div class="gv-panel" data-panel="progress" role="tabpanel" id="gvPanel-progress" aria-labelledby="gvTab-progress" tabindex="0">
                 @include('goalcanvas::partials.progressReadout')
 
-                {{-- Milestone bars — read-only context, one quiet row per
-                     linked milestone. Goal progress stays metric-defined
-                     (Marcel): these never aggregate into the bar above. --}}
-                @if (count($goalMilestones ?? []) > 0)
-                    <div class="gv-ms-bars">
-                        @foreach ($goalMilestones as $ms)
-                            <div class="gv-msb-row">
-                                {{-- Status dot — the monitoring signal, moved here
-                                     from the management list; it also carries the
-                                     status color when the bar sits at 0%. --}}
-                                <span class="gv-msb-dot" style="background:{{ $ms['color'] }};" aria-hidden="true"></span>
-                                <a class="gv-msb-name" href="#/tickets/editMilestone/{{ (int) $ms['id'] }}" title="{{ __('links.edit_milestone') }}: {{ $ms['headline'] }}">{{ $ms['headline'] }}</a>
-                                <div class="gv-msb-track"><div class="gv-msb-fill" style="width:{{ (int) $ms['percentDone'] }}%;background:{{ $ms['color'] }};"></div></div>
-                                <span class="gv-msb-pct">{{ (int) $ms['percentDone'] }}%</span>
+                {{-- The linked milestones — ONE list (summary + bars + management).
+                     There used to be a read-only bar list here and a separate
+                     Milestones TAB with the management list: the same milestones
+                     twice, each view holding half the information. Merged, which
+                     also lets the tab bar drop to the distinction that actually
+                     matters — define the goal once (Edit) vs keep it current
+                     (Progress). --}}
+                @if ($id !== '')
+                    <div class="gv-ms-bars-section">
+                        @include('goalcanvas::partials.milestonesSection')
+
+                        @if ($login::userIsAtLeast($roles::$editor))
+                            <div class="row" id="newMilestone" style="display:none;">
+                                <div class="col-md-12">
+                                    <x-global::forms.text-input width="50%" name="newMilestone" /><br />
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
+                                </div>
                             </div>
-                        @endforeach
+                            <div class="row" id="existingMilestone" style="display:none;">
+                                <div class="col-md-12">
+                                    <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
+                                        <option value=""></option>
+                                        @foreach ($milestones as $milestoneRow)
+                                            <option value="{{ $milestoneRow->id }}">{{ $milestoneRow->headline }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 @endif
             </div>
-
-            {{-- ── Tab: Milestones ── --}}
-            @if ($id !== '')
-                <div class="gv-panel" data-panel="milestones" role="tabpanel" id="gvPanel-milestones" aria-labelledby="gvTab-milestones" tabindex="0">
-                    {{-- Summary + chips live in a partial so the chip-remove
-                         hx-post re-renders the whole section (counts + arrow
-                         stay correct — deleting only the chip left them stale). --}}
-                    @include('goalcanvas::partials.milestonesSection')
-
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <div class="row" id="newMilestone" style="display:none;">
-                            <div class="col-md-12">
-                                <x-global::forms.text-input width="50%" name="newMilestone" /><br />
-                                <input type="hidden" name="type" value="milestone" />
-                                <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                                <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
-                            </div>
-                        </div>
-                        <div class="row" id="existingMilestone" style="display:none;">
-                            <div class="col-md-12">
-                                <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
-                                    <option value=""></option>
-                                    @foreach ($milestones as $milestoneRow)
-                                        <option value="{{ $milestoneRow->id }}">{{ $milestoneRow->headline }}</option>
-                                    @endforeach
-                                </select>
-                                <input type="hidden" name="type" value="milestone" />
-                                <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                                <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            @endif
 
             {{-- ── Actions (main column; Delete lives in the Details rail) ── --}}
             @if ($login::userIsAtLeast($roles::$editor))
@@ -303,10 +343,22 @@
             <aside class="gv-side">
                 <h4 class="widgettitle title-light gv-side-head"><i class="fa fa-circle-info" aria-hidden="true"></i> {{ __('goalcanvas.side_details') }}</h4>
 
-                <div>
-                    <label for="statusCanvas">{{ __('label.status') }}</label>
+                <div class="form-group">
+                    <label class="control-label" for="statusCanvas">{{ __('label.status') }}</label>
                     @if (!empty($statusLabels))
-                        <select name="status" id="statusCanvas"></select>
+                        {{-- Plain <select>, options rendered server-side. This was a
+                             SlimSelect instance while the Type select next to it was a
+                             native one, which is what made the dialog show differently
+                             styled dropdowns side by side. SlimSelect is still used by
+                             other canvas templates and the ticket filter — this change
+                             is local to the goal dialog, not a dependency removal. --}}
+                        <select name="status" id="statusCanvas">
+                            @foreach ($statusLabels as $key => $data)
+                                @if ($data['active'])
+                                    <option value="{{ $key }}" @if ($canvasItem['status'] == $key) selected @endif>{{ $data['title'] }}</option>
+                                @endif
+                            @endforeach
+                        </select>
                     @else
                         <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
                     @endif
@@ -314,33 +366,38 @@
 
                 {{-- One label per field ("Due Dates" + "Start Date" + "End
                      Date" was triple-labeling — part of the clutter). --}}
+                {{-- Keep .startDate / .endDate exactly as they are: the script block
+                     below calls initDateRangePicker('.startDate', '.endDate'), which
+                     binds them as a LINKED RANGE (start constrains end). Adding the
+                     generic `dates` class would attach a second, independent
+                     datepicker to the same fields. --}}
                 <div class="gv-dates">
-                    <div>
-                        <label for="goalStartDate">{{ __('label.start_date') }}</label>
+                    <div class="form-group">
+                        <label class="control-label" for="goalStartDate">{{ __('label.start_date') }}</label>
                         <input type="text" autocomplete="off" id="goalStartDate" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="startDate"/>
                     </div>
-                    <div>
-                        <label for="goalEndDate">{{ __('label.end_date') }}</label>
+                    <div class="form-group">
+                        <label class="control-label" for="goalEndDate">{{ __('label.end_date') }}</label>
                         <input type="text" autocomplete="off" id="goalEndDate" value="{{ format($canvasItem['endDate'])->date() }}" name="endDate" class="endDate"/>
                     </div>
                 </div>
 
-                <div>
+                <div class="form-group">
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                     @if (!empty($relatesLabels))
-                        <label class="gv-field-lbl" for="relatesCanvas">{{ __('label.relates') }}</label><select name="relates" id="relatesCanvas"></select>
+                        <label class="control-label" for="relatesCanvas">{{ __('label.relates') }}</label>
+                        <select name="relates" id="relatesCanvas">
+                            @foreach ($relatesLabels as $key => $data)
+                                @if ($data['active'])
+                                    <option value="{{ $key }}" @if ($canvasItem['relates'] == $key) selected @endif>{{ $data['title'] }}</option>
+                                @endif
+                            @endforeach
+                        </select>
                     @else
                         <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
                     @endif
                 </div>
 
-                @if ($login::userIsAtLeast($roles::$editor) && $id != '')
-                    <div class="gv-delete-slot">
-                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete gv-delete" state="danger" variant="outline">
-                            <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
-                        </x-global::forms.button>
-                    </div>
-                @endif
             </aside>
             </div>{{-- /gv-cols --}}
 
@@ -414,45 +471,10 @@
                 if (!saved || !show(saved)) { if (!show('progress')) { show(tabs[0].getAttribute('data-tab')); } }
             })();
 
-            @if (!empty($statusLabels))
-            new SlimSelect({
-                select: '#statusCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                        @foreach ($statusLabels as $key => $data)
-                        @if ($data['active'])
-                    {
-                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                        text: "{{ $data['title'] }}",
-                        value: "{{ $key }}",
-                        selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }}
-                    },
-                    @endif
-                    @endforeach
-                ]
-            });
-            @endif
-
-            @if (!empty($relatesLabels))
-            new SlimSelect({
-                select: '#relatesCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                        @foreach ($relatesLabels as $key => $data)
-                        @if ($data['active'])
-                    {
-                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                        text: "{{ $data['title'] }}",
-                        value: "{{ $key }}",
-                        selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }}
-                    },
-                    @endif
-                    @endforeach
-                ]
-            });
-            @endif
+            {{-- SlimSelect initialisers removed for THIS dialog: #statusCanvas and
+                 #relatesCanvas render their options server-side as plain <select>s
+                 now, matching the task modal. SlimSelect itself is still used by the
+                 other canvas templates and the ticket filter. --}}
 
             if (window.leantime && window.leantime.tiptapController) {
                 leantime.tiptapController.initSimpleEditor();
