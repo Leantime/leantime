@@ -697,12 +697,16 @@ class Tickets extends BaseService
                 if (isset($ticketGroups[$groupedFieldValue])) {
                     $ticketGroups[$groupedFieldValue]['items'][] = $ticket;
                 } else {
+                    // 'label' is rendered RAW by every consumer (kanban swimlane header,
+                    // table/list accordion headers) because some groups embed markup — a type
+                    // icon, the assignee avatar. So this switch is the escaping boundary:
+                    // every branch must htmlspecialchars any user-controlled text it embeds.
                     switch ($searchCriteria['groupBy']) {
                         case 'status':
                             $status = $this->getStatusLabels();
 
                             if (isset($status[$groupedFieldValue])) {
-                                $label = $status[$groupedFieldValue]['name'];
+                                $label = htmlspecialchars((string) $status[$groupedFieldValue]['name'], ENT_QUOTES, 'UTF-8');
                                 $class = $status[$groupedFieldValue]['class'];
                             } else {
                                 $label = 'New';
@@ -755,15 +759,16 @@ class Tickets extends BaseService
                                 }
 
                                 $statusLabels = $this->getStatusLabels($milestone->projectId);
-                                $status = $statusLabels[$milestone->status]['name'];
+                                $status = htmlspecialchars((string) ($statusLabels[$milestone->status]['name'] ?? ''), ENT_QUOTES, 'UTF-8');
                                 $moreInfo = $this->language->__('label.start').': '.$startDate.' • '.$this->language->__('label.end').': '.$endDate.' • '.$this->language->__('label.status_lowercase').': '.$status;
-                                $label = $ticket['milestoneHeadline'];
+                                $label = htmlspecialchars((string) $ticket['milestoneHeadline'], ENT_QUOTES, 'UTF-8');
                                 $sortId = 'a_'.preg_replace('/[^a-zA-Z0-9_-]/', '_', $ticket['milestoneHeadline']); // Named milestones sort first alphabetically
                             }
 
                             break;
                         case 'editorId':
-                            $label = "<div class='profileImage'><img src='".BASE_URL.'/api/users?profileImage='.$ticket['editorId']."' /></div> ".$ticket['editorFirstname'].' '.$ticket['editorLastname'];
+                            $editorName = htmlspecialchars(trim($ticket['editorFirstname'].' '.$ticket['editorLastname']), ENT_QUOTES, 'UTF-8');
+                            $label = "<div class='profileImage'><img alt='' src='".BASE_URL.'/api/users?profileImage='.(int) $ticket['editorId']."' /></div> ".$editorName;
 
                             if ($ticket['editorFirstname'] == '' && $ticket['editorLastname'] == '') {
                                 $label = 'Not Assigned to Anyone';
@@ -780,7 +785,7 @@ class Tickets extends BaseService
                             break;
                         case 'type':
                             $icon = $this->getTypeIcons();
-                            $label = "<i class='fa ".($icon[strtolower($ticket['type'])] ?? '')."'></i>".$ticket['type'];
+                            $label = "<i class='fa ".($icon[strtolower($ticket['type'])] ?? '')."'></i>".htmlspecialchars((string) $ticket['type'], ENT_QUOTES, 'UTF-8');
                             break;
                         case 'dependingTicketId':
                             if ($ticket['dependingTicketId'] > 0 && ! empty($ticket['parentHeadline'])) {
@@ -794,8 +799,11 @@ class Tickets extends BaseService
                             break;
                         case 'projectId':
                             // Program cross-project board: group by the ticket's project.
-                            $label = $ticket['projectName'] ?? ('Project #'.$groupedFieldValue);
-                            $sortId = 'a_'.strtolower((string) ($ticket['projectName'] ?? $groupedFieldValue));
+                            $label = htmlspecialchars((string) ($ticket['projectName'] ?? ('Project #'.$groupedFieldValue)), ENT_QUOTES, 'UTF-8');
+                            // Becomes $group['id'], which templates interpolate into inline
+                            // onclick JS string literals — sanitize like the milestone and
+                            // parent-task branches already do.
+                            $sortId = 'a_'.preg_replace('/[^a-zA-Z0-9_-]/', '_', strtolower((string) ($ticket['projectName'] ?? $groupedFieldValue)));
                             break;
                         default:
                             $label = htmlspecialchars((string) $groupedFieldValue, ENT_QUOTES, 'UTF-8');
