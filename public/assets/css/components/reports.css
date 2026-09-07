@@ -193,6 +193,37 @@
     white-space: nowrap;
 }
 
+/* Inline explanatory link in the header band ("Complete more To-Dos to see
+   that!", "Project complete, onto the next"). These sit mid-sentence and
+   explain the state — they were `btn btn-primary`, which made a filled call to
+   action out of a caption and left the loudest element on the page saying
+   there wasn't enough data yet. */
+/* Scoped under the band so it outranks the app's global link color, which
+   otherwise painted this caption the same accent blue as a real action. */
+.reportHeaderBand a.reportHint {
+    color: color-mix(in srgb, var(--primary-font-color) 68%, transparent);
+    text-decoration: none;
+    border-bottom: 1px dotted color-mix(in srgb, var(--primary-font-color) 35%, transparent);
+    white-space: nowrap;
+}
+
+.reportHeaderBand a.reportHint:hover {
+    color: var(--accent1);
+    border-bottom-color: var(--accent1);
+    text-decoration: none;
+}
+
+.reportHeaderBand a.reportHint i {
+    font-size: var(--font-size-s);
+    opacity: .8;
+}
+
+/* Verdict pill in the page header, next to Print — the report's "what about
+   it", mirroring the deck header. */
+.pageheader-right .reportStatusPill {
+    font-weight: 600;
+}
+
 .statusDot {
     display: inline-block;
     width: 9px;

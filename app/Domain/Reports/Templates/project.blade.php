@@ -14,8 +14,22 @@
         <h5>{{ session('currentProjectClient') ? session('currentProjectClient') . ' // ' : '' }}{{ session('currentProjectName') }}</h5>
         <h1>{!! __('headlines.status_report') !!}</h1>
 
-        <x-slot:actions class="hideOnPrint">
+        {{-- Verdict lives in the header, matching the strategy/program report
+             decks (rd-hdr .verdict). It was buried in a text line inside the
+             body; the header is where a reader looks for "what about it".
+             Safe to sit outside #reportBody (the HTMX swap target): the latest
+             status update and the progress figure are project-level state, not
+             period-scoped, so changing the period can't make this stale. --}}
+        <x-slot:actions>
+            @if ($summary !== null)
+                @include('reports::partials.statusPill', [
+                    'status' => $summary->latestStatus,
+                    'date' => $summary->latestStatusDate,
+                ])
+            @endif
+
             <x-global::forms.button tag="button" inputType="button" onclick="window.print();"
+                                    class="hideOnPrint"
                                     leadingVisual="fa fa-print" :labelText="__('label.print_report')" />
         </x-slot:actions>
     </x-global::pageheader>
