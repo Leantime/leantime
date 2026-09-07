@@ -96,14 +96,62 @@ class FrontcontrollerPluginCasingTest extends TestCase
         );
     }
 
-    /** Same for the Hxcontrollers branch — the surface that actually 404'd. */
-    public function test_plugin_hxcontroller_resolves_despite_the_studlied_segment(): void
+    /**
+     * The surface that actually 404'd. getControllerType() returns 'Hxcontrollers'
+     * for a real HTMX request, which makes the FIRST plugin lookup the
+     * Hxcontrollers one rather than the fallback — so this has to be asserted with
+     * that controllerType, not with 'Controllers'.
+     */
+    public function test_plugin_hxcontroller_resolves_on_the_htmx_controller_type(): void
+    {
+        $fc = $this->frontcontroller([self::CASED_FOLDER]);
+
+        $this->assertSame(
+            'Leantime\\Plugins\\'.self::CASED_FOLDER.'\\Hxcontrollers\\FixtureModal',
+            $fc->getClassPath('Hxcontrollers', self::STUDLIED_SEGMENT, 'FixtureModal')
+        );
+    }
+
+    /** And via the fallback, for a non-HTMX request that names an Hx controller. */
+    public function test_plugin_hxcontroller_resolves_through_the_fallback(): void
     {
         $fc = $this->frontcontroller([self::CASED_FOLDER]);
 
         $this->assertSame(
             'Leantime\\Plugins\\'.self::CASED_FOLDER.'\\Hxcontrollers\\FixtureModal',
             $fc->getClassPath('Controllers', self::STUDLIED_SEGMENT, 'FixtureModal')
+        );
+    }
+
+    /**
+     * getEnabledPlugins() is typed `mixed` and its payload passes through a
+     * plugin-modifiable filter; cached entries can also unserialize to
+     * __PHP_Incomplete_Class. Malformed entries must be skipped, not fataled on —
+     * routing resolution runs for every request.
+     */
+    public function test_malformed_enabled_plugin_entries_are_skipped_not_fataled(): void
+    {
+        $incomplete = unserialize('O:22:"SomeClassThatIsNotHere":0:{}');
+
+        $pluginService = $this->createMock(PluginService::class);
+        $pluginService->method('getEnabledPlugins')->willReturn([
+            $incomplete,                                  // __PHP_Incomplete_Class
+            ['foldername' => 'ArrayShapedPlugin'],        // array shape
+            'a-bare-string',                              // neither
+            (object) ['name' => 'no-foldername-key'],     // object missing the key
+            (object) ['foldername' => self::CASED_FOLDER],
+        ]);
+        app()->instance(PluginService::class, $pluginService);
+
+        $fc = new Frontcontroller(
+            IncomingRequest::create('/', 'GET'),
+            $this->createMock(PermissionEnforcer::class),
+        );
+
+        // Reaches the well-formed entry at the end without fataling on the others.
+        $this->assertSame(
+            'Leantime\\Plugins\\'.self::CASED_FOLDER.'\\Hxcontrollers\\FixtureModal',
+            $fc->getClassPath('Hxcontrollers', self::STUDLIED_SEGMENT, 'FixtureModal')
         );
     }
 

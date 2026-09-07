@@ -285,10 +285,27 @@ class Frontcontroller
         // for the class lookup.
         $pluginFolder = null;
         foreach ($enabledPlugins as $key => $obj) {
-            if (strtolower($obj->foldername) !== strtolower($moduleName)) {
+            // getEnabledPlugins() is typed `mixed` and its payload goes through the
+            // beforeReturnCachedPlugins filter, so a plugin can reshape it — and a
+            // cached entry can come back as __PHP_Incomplete_Class when the model
+            // isn't loaded at unserialize time. Read the folder name defensively:
+            // this runs on every route resolution, so a fatal here would turn one
+            // bad cache entry into a 500 on every request instead of a clean 404.
+            // __PHP_Incomplete_Class must be excluded BEFORE any property access:
+            // even isset() on one raises "tried to access a property on an
+            // incomplete object", so testing for the property is not enough.
+            $folder = match (true) {
+                $obj instanceof \__PHP_Incomplete_Class => null,
+                is_object($obj) && isset($obj->foldername) => $obj->foldername,
+                is_array($obj) && isset($obj['foldername']) => $obj['foldername'],
+                default => null,
+            };
+
+            if (! is_string($folder) || strtolower($folder) !== strtolower($moduleName)) {
                 continue;
             }
-            $pluginFolder = $obj->foldername;
+
+            $pluginFolder = $folder;
             break;
         }
 
