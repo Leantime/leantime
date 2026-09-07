@@ -45,7 +45,12 @@ class Verify extends Controller
 
         if (session()->exists('userdata') && $this->authService->use2FA()) {
             if (isset($params['twoFA_code']) === true) {
-                $redirectUrl = filter_var($params['redirectUrl'], FILTER_SANITIZE_URL);
+                // redirectUrl round-trips as a form field, so it is just as
+                // attacker-controllable here as the GET param — and FILTER_SANITIZE_URL is a
+                // sanitizer, not a safety check ("//attacker.com" passes through it
+                // untouched). Run it through the same guard get() uses.
+                $rawRedirect = $params['redirectUrl'] ?? null;
+                $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
                 if ($this->authService->verify2FA($params['twoFA_code'])) {
                     $this->authService->set2FAVerified();
