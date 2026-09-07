@@ -151,17 +151,24 @@
 
         /* Milestones tab — MANAGEMENT list (RA line-item style). */
         .gv-ms-list{display:flex;flex-direction:column;}
-        .gv-ms-item{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--gv-line-soft);}
-        .gv-ms-name{font-size:var(--base-font-size);color:var(--gv-ink);text-decoration:none;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        /* One merged row: dot | name | due | bar | % | unlink. The grid keeps the
+           bar and percent columns aligned down the list (a flex row let them
+           drift with the name length). */
+        .gv-ms-item{display:grid;grid-template-columns:9px minmax(0,1fr) auto 130px 38px 28px;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--gv-line-soft);}
+        .gv-ms-name{font-size:var(--base-font-size);color:var(--gv-ink);text-decoration:none;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .gv-ms-name:hover{color:var(--gv-acc);text-decoration:underline;text-underline-offset:3px;}
-        .gv-ms-due{font-size:var(--font-size-s);color:var(--gv-ink2);flex:none;}
-        .gv-ms-remove{flex:none;background:transparent;border:none;cursor:pointer;padding:6px 8px;opacity:.55;color:var(--gv-ink2);}
+        .gv-ms-due{font-size:var(--font-size-s);color:var(--gv-ink2);white-space:nowrap;}
+        /* The last row closes on the panel's own edge — a trailing rule under it
+           is the "odd line above Save" and reads as a separator to nothing. */
+        .gv-ms-list .gv-ms-item:last-child{border-bottom:0;}
+        .gv-ms-remove{background:transparent;border:none;cursor:pointer;padding:6px 4px;opacity:.55;color:var(--gv-ink2);justify-self:end;}
         .gv-ms-remove:hover{opacity:1;color:var(--gv-acc);}
         .gv-values .gv-field-lbl{font-size:11px;}
         .gv-dates{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:360px;}
 
         /* milestones panel */
-        .gv-ms-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+        .gv-ms-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+        .gv-ms-head .gv-ms-bars-head{margin:0;}
         .gv-ms-summary{font-size:var(--font-size-s);color:var(--gv-ink2);}
         .gv-ms-summary b{color:var(--gv-ink);font-weight:700;}
         .gv-ms-actions{margin-left:auto;display:flex;align-items:center;gap:14px;}
@@ -173,7 +180,9 @@
         /* discussion sub-heading inside the Goal tab */
 
         /* actions (always visible under the tabs) */
-        .gv-actions{display:flex;align-items:center;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--gv-line);}
+        /* No top rule: the panel above already ends with its own divider, so a
+           second line right above Save read as a stray separator. */
+        .gv-actions{display:flex;align-items:center;gap:10px;margin-top:22px;}
 
         @media (max-width:560px){.gv-values{grid-template-columns:1fr 1fr;}}
     </style>
@@ -225,7 +234,6 @@
                     <div class="gv-tab-group lt-tabs-group">
                         <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-edit" aria-controls="gvPanel-edit" aria-selected="false" data-tab="edit"><i class="fa-solid fa-pen" aria-hidden="true"></i> {{ __('links.edit') }}</button>
                         <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
-                        <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-milestones" aria-controls="gvPanel-milestones" aria-selected="false" data-tab="milestones"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __("headlines.milestones") }}</button>
                     </div>
                 </div>
             @endif
@@ -276,68 +284,45 @@
             <div class="gv-panel" data-panel="progress" role="tabpanel" id="gvPanel-progress" aria-labelledby="gvTab-progress" tabindex="0">
                 @include('goalcanvas::partials.progressReadout')
 
-                {{-- Milestone bars — read-only context, one quiet row per
-                     linked milestone. Goal progress stays metric-defined
-                     (Marcel): these never aggregate into the bar above. --}}
-                @if (count($goalMilestones ?? []) > 0)
+                {{-- The linked milestones — ONE list (summary + bars + management).
+                     There used to be a read-only bar list here and a separate
+                     Milestones TAB with the management list: the same milestones
+                     twice, each view holding half the information. Merged, which
+                     also lets the tab bar drop to the distinction that actually
+                     matters — define the goal once (Edit) vs keep it current
+                     (Progress). --}}
+                @if ($id !== '')
                     <div class="gv-ms-bars-section">
-                        {{-- The bars arrived with no heading, so the rows read as a
-                             loose continuation of the goal's own bar rather than a
-                             separate thing. Same section-header recipe as Details and
-                             Discussion, and the same icon as the Milestones tab. --}}
-                        <h4 class="widgettitle title-light gv-ms-bars-head"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __('headlines.milestones') }}</h4>
-                    <div class="gv-ms-bars">
-                        @foreach ($goalMilestones as $ms)
-                            <div class="gv-msb-row">
-                                {{-- Status dot — the monitoring signal, moved here
-                                     from the management list; it also carries the
-                                     status color when the bar sits at 0%. --}}
-                                <span class="gv-msb-dot" style="background:{{ $ms['color'] }};" aria-hidden="true"></span>
-                                <a class="gv-msb-name" href="#/tickets/editMilestone/{{ (int) $ms['id'] }}" title="{{ __('links.edit_milestone') }}: {{ $ms['headline'] }}">{{ $ms['headline'] }}</a>
-                                <div class="gv-msb-track"><div class="gv-msb-fill" style="width:{{ (int) $ms['percentDone'] }}%;background:{{ $ms['color'] }};"></div></div>
-                                <span class="gv-msb-pct">{{ (int) $ms['percentDone'] }}%</span>
+                        @include('goalcanvas::partials.milestonesSection')
+
+                        @if ($login::userIsAtLeast($roles::$editor))
+                            <div class="row" id="newMilestone" style="display:none;">
+                                <div class="col-md-12">
+                                    <x-global::forms.text-input width="50%" name="newMilestone" /><br />
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
+                                </div>
                             </div>
-                        @endforeach
+                            <div class="row" id="existingMilestone" style="display:none;">
+                                <div class="col-md-12">
+                                    <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
+                                        <option value=""></option>
+                                        @foreach ($milestones as $milestoneRow)
+                                            <option value="{{ $milestoneRow->id }}">{{ $milestoneRow->headline }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
+                                </div>
+                            </div>
+                        @endif
                     </div>
-                    </div>{{-- /gv-ms-bars-section --}}
                 @endif
             </div>
-
-            {{-- ── Tab: Milestones ── --}}
-            @if ($id !== '')
-                <div class="gv-panel" data-panel="milestones" role="tabpanel" id="gvPanel-milestones" aria-labelledby="gvTab-milestones" tabindex="0">
-                    {{-- Summary + chips live in a partial so the chip-remove
-                         hx-post re-renders the whole section (counts + arrow
-                         stay correct — deleting only the chip left them stale). --}}
-                    @include('goalcanvas::partials.milestonesSection')
-
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <div class="row" id="newMilestone" style="display:none;">
-                            <div class="col-md-12">
-                                <x-global::forms.text-input width="50%" name="newMilestone" /><br />
-                                <input type="hidden" name="type" value="milestone" />
-                                <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                                <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
-                            </div>
-                        </div>
-                        <div class="row" id="existingMilestone" style="display:none;">
-                            <div class="col-md-12">
-                                <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
-                                    <option value=""></option>
-                                    @foreach ($milestones as $milestoneRow)
-                                        <option value="{{ $milestoneRow->id }}">{{ $milestoneRow->headline }}</option>
-                                    @endforeach
-                                </select>
-                                <input type="hidden" name="type" value="milestone" />
-                                <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
-                                <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
-                                <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            @endif
 
             {{-- ── Actions (main column; Delete lives in the Details rail) ── --}}
             @if ($login::userIsAtLeast($roles::$editor))
