@@ -274,28 +274,34 @@ class Frontcontroller
             return $classname;
         }
 
-        $classname = 'Leantime\\Plugins\\'.$moduleName.'\\'.$controllerType.'\\'.$actionName;
-
         $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
 
-        $pluginEnabled = false;
+        // $moduleName arrives here as Str::studly() of the URL segment, which
+        // FLATTENS internal capitals: "pgmpro" becomes "Pgmpro", never "PgmPro".
+        // Composer's PSR-4 prefix map is case-sensitive, so every controller in a
+        // plugin whose folder has an inner capital (PgmPro, StrategyPro) failed to
+        // resolve and 404'd. The enabled-plugin record already carries the real
+        // folder name, so match case-insensitively and then adopt that spelling
+        // for the class lookup.
+        $pluginFolder = null;
         foreach ($enabledPlugins as $key => $obj) {
             if (strtolower($obj->foldername) !== strtolower($moduleName)) {
                 continue;
             }
-            $pluginEnabled = true;
+            $pluginFolder = $obj->foldername;
             break;
         }
 
-        if (! $pluginEnabled) {
+        if ($pluginFolder === null) {
             return false;
         }
 
+        $classname = 'Leantime\\Plugins\\'.$pluginFolder.'\\'.$controllerType.'\\'.$actionName;
         if (class_exists($classname)) {
             return $classname;
         }
 
-        $classname = 'Leantime\\Plugins\\'.$moduleName.'\\Hxcontrollers\\'.$actionName;
+        $classname = 'Leantime\\Plugins\\'.$pluginFolder.'\\Hxcontrollers\\'.$actionName;
         if (class_exists($classname)) {
             return $classname;
         }
