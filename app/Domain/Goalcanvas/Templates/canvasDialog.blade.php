@@ -48,8 +48,11 @@
         .gv-side-head{margin:0;}
         .gv-side label{margin-bottom:5px;}
         .gv-side .gv-dates{grid-template-columns:1fr;max-width:none;gap:12px;}
-        /* Beside the modal's × — right-padding clears the close button. */
-        .gv-actions-menu{float:right;z-index:50;padding:10px 34px 0 0;}
+        /* Beside the modal's × — right-padding clears the close button.
+           position:relative so the z-index actually applies (it is inert on a
+           statically positioned element) and the open dropdown clears the
+           surrounding chrome. */
+        .gv-actions-menu{float:right;position:relative;z-index:50;padding:10px 34px 0 0;}
         /* Discussion sits under the MAIN column (its own form — kept outside
            the goal form so the nested-form parse never orphans the Save
            buttons again). */
@@ -167,9 +170,10 @@
         .gv-dates{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:360px;}
 
         /* milestones panel */
-        .gv-ms-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+        .gv-ms-head{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
         .gv-ms-head .gv-ms-bars-head{margin:0;}
-        .gv-ms-summary{font-size:var(--font-size-s);color:var(--gv-ink2);}
+        /* Its own line under the heading, not inline with it. */
+        .gv-ms-summary{font-size:var(--font-size-s);color:var(--gv-ink2);margin:0 0 12px;}
         .gv-ms-summary b{color:var(--gv-ink);font-weight:700;}
         .gv-ms-actions{margin-left:auto;display:flex;align-items:center;gap:14px;}
         .gv-ms-act{background:none!important;border:none!important;cursor:pointer;color:var(--gv-ink2)!important;font-size:15px;padding:0;line-height:1;opacity:.65;transition:opacity .12s,color .12s;}
@@ -343,9 +347,11 @@
                     <label class="control-label" for="statusCanvas">{{ __('label.status') }}</label>
                     @if (!empty($statusLabels))
                         {{-- Plain <select>, options rendered server-side. This was a
-                             SlimSelect instance — a library used nowhere else in the app
-                             — which is why the goal dialog had three different-looking
-                             dropdowns while the task modal has one. --}}
+                             SlimSelect instance while the Type select next to it was a
+                             native one, which is what made the dialog show differently
+                             styled dropdowns side by side. SlimSelect is still used by
+                             other canvas templates and the ticket filter — this change
+                             is local to the goal dialog, not a dependency removal. --}}
                         <select name="status" id="statusCanvas">
                             @foreach ($statusLabels as $key => $data)
                                 @if ($data['active'])
@@ -360,19 +366,19 @@
 
                 {{-- One label per field ("Due Dates" + "Start Date" + "End
                      Date" was triple-labeling — part of the clutter). --}}
-                {{-- `dates` is the app's bound datepicker class (the task modal's due
-                     date uses it). These fields previously carried only .startDate /
-                     .endDate, which NOTHING binds — so they had no picker at all and
-                     the date had to be typed by hand. The original classes stay for
-                     any existing hook. --}}
+                {{-- Keep .startDate / .endDate exactly as they are: the script block
+                     below calls initDateRangePicker('.startDate', '.endDate'), which
+                     binds them as a LINKED RANGE (start constrains end). Adding the
+                     generic `dates` class would attach a second, independent
+                     datepicker to the same fields. --}}
                 <div class="gv-dates">
                     <div class="form-group">
                         <label class="control-label" for="goalStartDate">{{ __('label.start_date') }}</label>
-                        <input type="text" autocomplete="off" id="goalStartDate" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="dates startDate"/>
+                        <input type="text" autocomplete="off" id="goalStartDate" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="startDate"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="goalEndDate">{{ __('label.end_date') }}</label>
-                        <input type="text" autocomplete="off" id="goalEndDate" value="{{ format($canvasItem['endDate'])->date() }}" name="endDate" class="dates endDate"/>
+                        <input type="text" autocomplete="off" id="goalEndDate" value="{{ format($canvasItem['endDate'])->date() }}" name="endDate" class="endDate"/>
                     </div>
                 </div>
 
@@ -465,9 +471,10 @@
                 if (!saved || !show(saved)) { if (!show('progress')) { show(tabs[0].getAttribute('data-tab')); } }
             })();
 
-            {{-- SlimSelect initialisers removed: #statusCanvas and #relatesCanvas
-                 render their options server-side as plain <select>s now, matching
-                 the task modal. SlimSelect was used nowhere else in the app. --}}
+            {{-- SlimSelect initialisers removed for THIS dialog: #statusCanvas and
+                 #relatesCanvas render their options server-side as plain <select>s
+                 now, matching the task modal. SlimSelect itself is still used by the
+                 other canvas templates and the ticket filter. --}}
 
             if (window.leantime && window.leantime.tiptapController) {
                 leantime.tiptapController.initSimpleEditor();

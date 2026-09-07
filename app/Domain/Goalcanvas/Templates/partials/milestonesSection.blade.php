@@ -16,16 +16,12 @@
     milestone options — drives the "link existing" button visibility).
 --}}
 <div id="goalMsSection">
+    {{-- Heading row = title + actions. The counts sit on their OWN line beneath
+         it: inline they sat on a different baseline from the heading and read as
+         neither part of it nor separate from it, and the string grows with each
+         status bucket so it would eventually crowd the action buttons. --}}
     <div class="gv-ms-head">
         <h4 class="widgettitle title-light gv-ms-bars-head"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __('headlines.milestones') }}</h4>
-
-        @if (($milestoneSummary['total'] ?? 0) > 0)
-            <span class="gv-ms-summary"><b>{{ $milestoneSummary['total'] }}</b> {{ $milestoneSummary['total'] == 1 ? __("goalcanvas.summary_milestone_one") : __("goalcanvas.summary_milestones") }}
-                @if ($milestoneSummary['inProgress'] > 0)&middot; {{ $milestoneSummary['inProgress'] }} {{ __("goalcanvas.summary_in_progress") }} @endif
-                @if ($milestoneSummary['notStarted'] > 0)&middot; {{ $milestoneSummary['notStarted'] }} {{ __("goalcanvas.summary_not_started") }} @endif
-                @if ($milestoneSummary['done'] > 0)&middot; {{ $milestoneSummary['done'] }} {{ __("goalcanvas.summary_done") }} @endif
-            </span>
-        @endif
 
         <span class="gv-ms-actions">
             @if ($login::userIsAtLeast($roles::$editor))
@@ -37,6 +33,14 @@
             <i class="fa fa-question-circle-o helperTooltip" aria-hidden="true" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i>
         </span>
     </div>
+
+    @if (($milestoneSummary['total'] ?? 0) > 0)
+        <div class="gv-ms-summary"><b>{{ $milestoneSummary['total'] }}</b> {{ $milestoneSummary['total'] == 1 ? __("goalcanvas.summary_milestone_one") : __("goalcanvas.summary_milestones") }}
+            @if ($milestoneSummary['inProgress'] > 0)&middot; {{ $milestoneSummary['inProgress'] }} {{ __("goalcanvas.summary_in_progress") }} @endif
+            @if ($milestoneSummary['notStarted'] > 0)&middot; {{ $milestoneSummary['notStarted'] }} {{ __("goalcanvas.summary_not_started") }} @endif
+            @if ($milestoneSummary['done'] > 0)&middot; {{ $milestoneSummary['done'] }} {{ __("goalcanvas.summary_done") }} @endif
+        </div>
+    @endif
 
     @if (count($goalMilestones) > 0)
         <div class="gv-ms-list">
