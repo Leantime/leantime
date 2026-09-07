@@ -112,6 +112,10 @@
         /* The centre column holds the inline-edit input, which is taller than the
            plain end values — pull its label tight so the three baselines agree. */
         .gv-scale-col--now .gv-scale-lbl{margin-bottom:1px;}
+        /* Centre the digits inside the field, not just the field inside the
+           column: with the fixed-ch fallback width the number otherwise sits
+           left while its label sits centred above it. */
+        .gvDialog .gv-metric-bar .gv-scale-col--now input.gv-mb-input{text-align:center;}
         /* The input hugs its digits (no fill-in-the-blank dashes past the
            number) in browsers with field-sizing; others keep the fixed ch. */
         @supports (field-sizing: content){
@@ -133,7 +137,9 @@
         .gvDialog .gv-metric-bar input.gv-mb-input:focus{border-bottom:1px solid var(--gv-acc)!important;outline:none!important;box-shadow:none!important;}
 
         /* Milestone bars on the Progress tab — read-only rows, quiet. */
-        .gv-ms-bars{margin-top:22px;padding-top:16px;border-top:1px solid var(--gv-line-soft);display:flex;flex-direction:column;gap:11px;}
+        .gv-ms-bars-section{margin-top:22px;padding-top:16px;border-top:1px solid var(--gv-line-soft);}
+        .gv-ms-bars-head{margin:0 0 12px;}
+        .gv-ms-bars{display:flex;flex-direction:column;gap:11px;}
         .gv-msb-row{display:grid;grid-template-columns:9px minmax(0,1fr) 130px 38px;align-items:center;gap:12px;}
         .gv-msb-dot{width:9px;height:9px;border-radius:50%;}
         .gv-msb-name{font-size:var(--font-size-s);color:var(--gv-ink2);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -253,6 +259,12 @@
                      linked milestone. Goal progress stays metric-defined
                      (Marcel): these never aggregate into the bar above. --}}
                 @if (count($goalMilestones ?? []) > 0)
+                    <div class="gv-ms-bars-section">
+                        {{-- The bars arrived with no heading, so the rows read as a
+                             loose continuation of the goal's own bar rather than a
+                             separate thing. Same section-header recipe as Details and
+                             Discussion, and the same icon as the Milestones tab. --}}
+                        <h4 class="widgettitle title-light gv-ms-bars-head"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __('headlines.milestones') }}</h4>
                     <div class="gv-ms-bars">
                         @foreach ($goalMilestones as $ms)
                             <div class="gv-msb-row">
@@ -266,6 +278,7 @@
                             </div>
                         @endforeach
                     </div>
+                    </div>{{-- /gv-ms-bars-section --}}
                 @endif
             </div>
 
