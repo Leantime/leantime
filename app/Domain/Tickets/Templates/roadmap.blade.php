@@ -16,18 +16,11 @@
 
     <div class="maincontentinner">
 
+        {{-- New / Filter moved into the nav bar (timelineTabs) so they get the
+             same pill treatment as every other board. Only the timeframe
+             control remains here. --}}
         <div class="row">
-            <div class="col-md-4">
-                @dispatchEvent('filters.afterLefthandSectionOpen')
-
-                @include('tickets::submodules.ticketNewBtn')
-                @include('tickets::submodules.ticketFilter')
-
-                @dispatchEvent('filters.beforeLefthandSectionClose')
-            </div>
-            <div class="col-md-4">
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-12">
                 <div class="pull-right">
 
                     <div class="btn-group dropRight">

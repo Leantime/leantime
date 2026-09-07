@@ -134,46 +134,18 @@
         </nav>
 
         <div class="lt-tabs-actions">
-            <div class="rd-picker" id="rdPicker">
-                <button type="button" class="rd-picker-btn" onclick="rdTogglePicker(event)">
-                    <i class="fa fa-calendar"></i>
-                    <span class="rd-picker-q">{{ $presetName }}</span>
-                    <span class="rd-picker-range">· {{ $period->from->setToUserTimezone()->format('M j') }} – {{ $period->to->setToUserTimezone()->format('M j, Y') }}</span>
-                    <i class="fa fa-caret-down"></i>
-                </button>
-                <div class="rd-picker-menu" id="rdPickerMenu" hidden>
-                    <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_LAST_QUARTER }}"
-                       class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_LAST_QUARTER) on @endif">
-                        <span class="l">{{ __('label.period_last_quarter') }}</span>
-                        <span class="d">{{ __('stakeholder.period.default_hint') }}</span>
-                    </a>
-                    <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_THIS_QUARTER }}"
-                       class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_THIS_QUARTER) on @endif">
-                        <span class="l">{{ __('label.period_this_quarter') }}</span>
-                        <span class="d">{{ __('stakeholder.period.in_progress_hint') }}</span>
-                    </a>
-                    <a href="{{ $reportUrl }}?preset={{ ReportPeriod::PRESET_NEXT_QUARTER }}"
-                       class="rd-picker-opt @if ($period->preset === ReportPeriod::PRESET_NEXT_QUARTER) on @endif">
-                        <span class="l">{{ __('label.period_next_quarter') }}</span>
-                        <span class="d">{{ __('stakeholder.period.upcoming_hint') }}</span>
-                    </a>
-                    <div class="rd-picker-sep"></div>
-                    <form method="GET" action="{{ $reportUrl }}" class="rd-picker-custom">
-                        <input type="hidden" name="preset" value="{{ ReportPeriod::PRESET_CUSTOM }}">
-                        <label class="rd-picker-cl">{{ __('label.period_custom') }}</label>
-                        <div class="rd-picker-crow">
-                            <input type="text" name="from" class="rd-picker-cinput periodPickerDate"
-                                   placeholder="{{ __('label.period_from') }}"
-                                   value="{{ $period->preset === ReportPeriod::PRESET_CUSTOM ? $period->from->setToUserTimezone()->formatDateForUser() : '' }}">
-                            <span class="rd-picker-cdash">–</span>
-                            <input type="text" name="to" class="rd-picker-cinput periodPickerDate"
-                                   placeholder="{{ __('label.period_to') }}"
-                                   value="{{ $period->preset === ReportPeriod::PRESET_CUSTOM ? $period->to->setToUserTimezone()->formatDateForUser() : '' }}">
-                            <button type="submit" class="rd-picker-capply">{{ __('label.period_apply') }}</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            {{-- The shared x-global::periodpicker. This deck's local .rd-picker
+                 WAS this design, so the component was modelled on it; the project
+                 reports now render the same control instead of their old row of
+                 four separate pills. Plain links (no hxUrl): the deck reloads. --}}
+            <x-global::periodpicker
+                :period="$period"
+                :url="$reportUrl"
+                :hints="[
+                    ReportPeriod::PRESET_LAST_QUARTER => __('stakeholder.period.default_hint'),
+                    ReportPeriod::PRESET_THIS_QUARTER => __('stakeholder.period.in_progress_hint'),
+                    ReportPeriod::PRESET_NEXT_QUARTER => __('stakeholder.period.upcoming_hint'),
+                ]" />
 
             <div class="rd-arrows">
                 <button type="button" class="rd-arrow" id="rdPrev" onclick="rdGo(rdActive - 1)" aria-label="{{ __('stakeholder.nav.prev') }}"><i class="fa fa-chevron-left"></i></button>
@@ -303,36 +275,20 @@
     window.rdGo(initialPage, { persist: false });
 
     // Compact period-picker dropdown: toggle open, dismiss on outside click.
-    window.rdTogglePicker = function (e) {
-        if (e) e.stopPropagation();
-        var menu = document.getElementById('rdPickerMenu');
-        if (!menu) return;
-        menu.toggleAttribute('hidden');
-    };
-    document.addEventListener('click', function (e) {
-        var picker = document.getElementById('rdPicker');
-        if (!picker || picker.contains(e.target)) return;
-        var menu = document.getElementById('rdPickerMenu');
-        if (menu && !menu.hasAttribute('hidden')) menu.setAttribute('hidden', '');
-    });
+    // The period picker's toggle and datepicker init now live in the shared
+    // x-global::periodpicker component.
 
-    // Wire the datepicker to the two custom-range inputs (same helper Marcel's
-    // periodpicker uses). Only if jQuery + the helper are present.
-    if (typeof jQuery !== 'undefined' && jQuery.fn.datepicker && window.leantime?.dateHelper) {
-        jQuery('.rd-picker-cinput').datepicker({
-            dateFormat: window.leantime.dateHelper.getFormatFromSettings('dateformat', 'jquery')
-        });
-    }
-
-    // KPI drill toggle — click a cell with .has-detail to open its drill list.
+    // KPI drill toggle — click a tile with .has-detail to open its drill list.
     // Click elsewhere closes it. Only one open at a time.
+    // Targets the shared .lt-stat tile (x-global::statTile); the deck-local
+    // .rd-kcell copy it used to drive was retired.
     document.addEventListener('click', function (e) {
-        var cell = e.target.closest('.rd-kcell.has-detail');
+        var cell = e.target.closest('.lt-stat.has-detail');
         // Clicked inside the open drill? Let the click through (don't close).
-        if (e.target.closest('.rd-kcell.has-detail .kdrill')) return;
+        if (e.target.closest('.lt-stat.has-detail .lt-stat-drill')) return;
 
         // Close every other open drill first (single-open behavior).
-        document.querySelectorAll('.rd-kcell.has-detail.open').forEach(function (c) {
+        document.querySelectorAll('.lt-stat.has-detail.open').forEach(function (c) {
             if (c !== cell) c.classList.remove('open');
         });
 

@@ -63,23 +63,22 @@
     $hoursItems = array_slice($hoursItems, 0, 5);
     $fmtDate = fn ($v) => is_object($v) ? $v->setToUserTimezone()->format('M j') : ($v ? date('M j', strtotime((string) $v)) : '');
 @endphp
-<div class="rd-kpi">
+{{-- KPI band — the shared x-global::statTile (design call 2026-09-07). This
+     band WAS the reference look, so the component was modelled on it; the tiles
+     now render from the same component the project reports use instead of the
+     deck-local .rd-kcell copy. The drill-down list rides in the tile's slot. --}}
+<x-global::statTiles>
     {{-- Completed --}}
-    <div class="rd-kcell @if ($completedCount > 0) has-detail @endif" tabindex="{{ $completedCount > 0 ? 0 : -1 }}">
+    <x-global::statTile
+        :value="$completedCount"
+        :unit="$totalMsCount > 0 ? '/'.$totalMsCount : null"
+        :label="$totalMsCount > 0 ? __('stakeholder.kpi.milestones_completed') : __('stakeholder.kpi.completed_this_period')"
+        :delta="$completedDelta != 0 ? ['value' => $completedDelta, 'goodWhenUp' => true, 'label' => sprintf(__('stakeholder.kpi.delta_vs_prior'), $completedDelta)] : null"
+        class="@if ($completedCount > 0) has-detail @endif"
+        tabindex="{{ $completedCount > 0 ? 0 : -1 }}">
         @if ($completedCount > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
-        @endif
-        <div class="kv">
-            {{ $completedCount }}@if ($totalMsCount > 0)<small>/{{ $totalMsCount }}</small>@endif
-            @if ($completedDelta > 0)
-                <span class="up" title="{{ sprintf(__('stakeholder.kpi.delta_vs_prior'), $completedDelta) }}"><i class="fa fa-arrow-up"></i> +{{ $completedDelta }}</span>
-            @elseif ($completedDelta < 0)
-                <span class="down" title="{{ sprintf(__('stakeholder.kpi.delta_vs_prior'), $completedDelta) }}"><i class="fa fa-arrow-down"></i> {{ $completedDelta }}</span>
-            @endif
-        </div>
-        <div class="kl">{{ $totalMsCount > 0 ? __('stakeholder.kpi.milestones_completed') : __('stakeholder.kpi.completed_this_period') }}</div>
-        @if ($completedCount > 0)
-            <div class="kdrill">
+            <div class="lt-stat-drill">
                 <div class="kd-hd">{{ __('stakeholder.kpi.drill.completed') }}</div>
                 <ul>
                     @foreach ($completedItems as $m)
@@ -95,17 +94,18 @@
                 @endif
             </div>
         @endif
-    </div>
+    </x-global::statTile>
 
     {{-- Goals on track — drill lists the ON-TRACK goals (what the count is) --}}
-    <div class="rd-kcell @if (count($onTrackItems) > 0) has-detail @endif" tabindex="{{ count($onTrackItems) > 0 ? 0 : -1 }}">
+    <x-global::statTile
+        :value="$goalsOnTrack"
+        :unit="'/'.$goalsTotal"
+        :label="__('stakeholder.kpi.goals_on_track_lc')"
+        class="@if (count($onTrackItems) > 0) has-detail @endif"
+        tabindex="{{ count($onTrackItems) > 0 ? 0 : -1 }}">
         @if (count($onTrackItems) > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
-        @endif
-        <div class="kv">{{ $goalsOnTrack }}<small>/{{ $goalsTotal }}</small></div>
-        <div class="kl">{{ __('stakeholder.kpi.goals_on_track_lc') }}</div>
-        @if (count($onTrackItems) > 0)
-            <div class="kdrill">
+            <div class="lt-stat-drill">
                 <div class="kd-hd">{{ __('stakeholder.kpi.drill.on_track') }}</div>
                 <ul>
                     @foreach ($onTrackItems as $g)
@@ -121,17 +121,19 @@
                 @endif
             </div>
         @endif
-    </div>
+    </x-global::statTile>
 
     {{-- Overdue milestones --}}
-    <div class="rd-kcell @if ($overdueCount > 0) risk @endif @if ($overdueCount > 0) has-detail @endif" tabindex="{{ $overdueCount > 0 ? 0 : -1 }}">
+    <x-global::statTile
+        :value="$overdueCount"
+        :unit="$openMsCount > 0 ? '/'.$openMsCount : null"
+        :label="$openMsCount > 0 ? __('stakeholder.kpi.overdue_of_open') : __('stakeholder.kpi.milestones_overdue')"
+        :tone="$overdueCount > 0 ? 'risk' : 'default'"
+        class="@if ($overdueCount > 0) has-detail @endif"
+        tabindex="{{ $overdueCount > 0 ? 0 : -1 }}">
         @if ($overdueCount > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
-        @endif
-        <div class="kv">{{ $overdueCount }}@if ($openMsCount > 0)<small>/{{ $openMsCount }}</small>@endif</div>
-        <div class="kl">{{ $openMsCount > 0 ? __('stakeholder.kpi.overdue_of_open') : __('stakeholder.kpi.milestones_overdue') }}</div>
-        @if ($overdueCount > 0)
-            <div class="kdrill">
+            <div class="lt-stat-drill">
                 <div class="kd-hd">{{ __('stakeholder.kpi.drill.overdue') }}</div>
                 <ul>
                     @foreach ($overdueItems as $m)
@@ -147,17 +149,18 @@
                 @endif
             </div>
         @endif
-    </div>
+    </x-global::statTile>
 
     {{-- Hours logged — drill lists per-project breakdown, largest first --}}
-    <div class="rd-kcell @if (count($hoursItems) > 0) has-detail @endif" tabindex="{{ count($hoursItems) > 0 ? 0 : -1 }}">
+    <x-global::statTile
+        :value="number_format($hoursLogged, $hoursLogged >= 100 ? 0 : 1)"
+        unit="h"
+        :label="__('stakeholder.kpi.hours_this_period')"
+        class="@if (count($hoursItems) > 0) has-detail @endif"
+        tabindex="{{ count($hoursItems) > 0 ? 0 : -1 }}">
         @if (count($hoursItems) > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
-        @endif
-        <div class="kv">{{ number_format($hoursLogged, $hoursLogged >= 100 ? 0 : 1) }}<small>h</small></div>
-        <div class="kl">{{ __('stakeholder.kpi.hours_this_period') }}</div>
-        @if (count($hoursItems) > 0)
-            <div class="kdrill">
+            <div class="lt-stat-drill">
                 <div class="kd-hd">{{ __('stakeholder.kpi.drill.hours') }}</div>
                 <ul>
                     @foreach ($hoursItems as $h)
@@ -172,8 +175,8 @@
                 @endif
             </div>
         @endif
-    </div>
-</div>
+    </x-global::statTile>
+</x-global::statTiles>
 
 {{-- ── Hero (peak this period) + Needs attention ─────────────────── --}}
 @php

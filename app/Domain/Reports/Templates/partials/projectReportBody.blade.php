@@ -19,20 +19,26 @@
 
     {{-- Header band: status, progress, timeline --}}
     @if ($summary !== null)
+        {{-- The verdict pill moved to the pageheader (see project.blade.php), and
+             the period label is gone: the picker pill in the nav band above
+             already states the active range, so this was the same fact twice. --}}
         <div class="reportHeaderBand">
-            @include('reports::partials.statusPill', ['status' => $summary->latestStatus, 'date' => $summary->latestStatusDate])
             <span>
                 <strong>{{ round($summary->progress['percent'] ?? 0) }}%</strong> {{ __('label.report_complete') }}
                 @php $completionState = $summary->progress['estimatedCompletionState'] ?? 'ready'; @endphp
+                {{-- These are explanations of why there is (or isn't) a completion
+                     estimate — not calls to action. They were filled primary
+                     buttons dropped mid-sentence, which read as the loudest thing
+                     on the page while saying "there isn't enough data yet". Quiet
+                     inline links instead. --}}
                 @if ($completionState === 'needs_more_data')
-                    · <a href="{{ BASE_URL }}/tickets/showAll" class="btn btn-primary"><i class="fa fa-thumb-tack"></i> {{ __('label.complete_more_todos') }}</a>
+                    · <a href="{{ BASE_URL }}/tickets/showAll" class="reportHint"><i class="fa fa-thumb-tack"></i> {{ __('label.complete_more_todos') }}</a>
                 @elseif ($completionState === 'complete')
-                    · <a href="{{ BASE_URL }}/projects/showAll" class="btn btn-primary"><i class="fa fa-suitcase"></i> {{ __('label.project_complete_onto_next') }}</a>
+                    · <a href="{{ BASE_URL }}/projects/showAll" class="reportHint"><i class="fa fa-suitcase"></i> {{ __('label.project_complete_onto_next') }}</a>
                 @elseif (!empty($summary->progress['estimatedCompletionDate']) && $summary->progress['estimatedCompletionDate'] !== false)
                     · {{ __('label.estimated_completion') }} {{ $summary->progress['estimatedCompletionDate'] }}
                 @endif
             </span>
-            <span class="tw-opacity-70">{{ $period->label() }}</span>
         </div>
     @endif
 

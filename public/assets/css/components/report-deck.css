@@ -68,12 +68,11 @@
     --rd-s4-bg:rgba(142,106,173,.16);
     --rd-s5-bg:rgba(45,125,94,.16);
 }
-/* Dark overrides for deck literals that bypass the token layer. */
-.rd-scope.rd-dark .rd-kcell.has-detail:hover,
-.rd-scope.rd-dark .rd-kcell.has-detail.open,
+/* Dark overrides for deck literals that bypass the token layer.
+   The KPI tile overrides that used to live here are gone with `.rd-kcell` —
+   the shared `.lt-stat` tile derives its surfaces and delta pills from theme
+   tokens, so it adapts without a parallel dark rule set. */
 .rd-scope.rd-dark .rd-cardx{background:var(--rd-panel);}
-.rd-scope.rd-dark .rd-kcell .kv .up{color:#57b598;background:rgba(87,181,152,.16);}
-.rd-scope.rd-dark .rd-kcell .kv .down{color:#e46589;background:rgba(228,101,137,.16);}
 .rd-scope *{min-width:0;}
 
 /* Persistent header — one vertically-centered row. LEFT = orientation
@@ -98,42 +97,12 @@
 .rd-hdr .rd-actions .dropdown-toggle.btn{padding:0 4px !important;margin:0 !important;height:auto !important;line-height:1.4 !important;min-width:0 !important;border:none !important;background:transparent !important;color:var(--rd-text-4) !important;font-size:16px !important;box-shadow:none !important;}
 .rd-hdr .rd-actions .dropdown-toggle.btn:hover{color:var(--rd-text-2) !important;background:rgba(0,0,0,.04) !important;border-radius:6px;}
 .rd-hdr .verdict .v{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--rd-text-1);}
-.rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}
-
-
-/* Compact period picker — one button showing current period; click opens a
-   dropdown with the 3 quarter presets + a custom-range mini-form. Replaces the
-   inline pill row; the design (§3 + board mockup p1) calls for a stated period
-   with a single affordance to change it, not four always-visible options. */
-.rd-picker{position:relative;}
-.rd-picker-btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13px;color:var(--rd-text-1);background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:22px;padding:7px 14px;cursor:pointer;box-shadow:var(--rd-sh-sm);}
-.rd-picker-btn:hover{border-color:var(--rd-text-4);}
-.rd-picker-btn .rd-picker-q{font-weight:600;}
-.rd-picker-btn .rd-picker-range{color:var(--rd-text-3);font-size:12px;}
-.rd-picker-btn i{font-size:11px;color:var(--rd-text-3);}
-/* Picker dropdown — sized defensively against the app's global anchor/input
-   styles that would otherwise inflate everything (Bootstrap 2.x menus, form
-   inputs, etc.). Fixed width + explicit font-size on every text element. */
-.rd-picker-menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);width:280px;padding:4px;z-index:100;font-size:12px;line-height:1.3;}
-.rd-picker-menu[hidden]{display:none;}
-.rd-picker-menu *{box-sizing:border-box;}
-
-.rd-picker-opt{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--rd-text-1);gap:10px;font-size:12px;line-height:1.3;}
-.rd-picker-opt:hover{background:var(--rd-bg);color:var(--rd-text-1);text-decoration:none;}
-.rd-picker-opt.on{background:rgba(0,71,102,.06);color:var(--rd-accent);}
-.rd-picker-opt .l{font-size:12.5px;font-weight:500;color:inherit;}
-.rd-picker-opt.on .l{font-weight:600;}
-.rd-picker-opt .d{font-size:10.5px;color:var(--rd-text-3);font-weight:400;}
-
-.rd-picker-sep{height:1px;background:var(--rd-line-soft);margin:4px 4px;}
-.rd-picker-custom{padding:6px 10px 8px;margin:0;}
-.rd-picker-cl{display:block;font-size:9.5px;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;margin:0 0 5px;font-weight:600;}
-.rd-picker-crow{display:flex;align-items:center;gap:5px;}
-.rd-picker-cinput{flex:1;min-width:0;width:auto;font:inherit;font-size:11.5px;line-height:1.2;padding:5px 7px;height:26px;border:1px solid var(--rd-line);border-radius:5px;background:var(--rd-panel);color:var(--rd-text-1);margin:0;box-shadow:none;}
-.rd-picker-cinput:focus{outline:none;border-color:var(--rd-accent);}
-.rd-picker-cdash{color:var(--rd-text-3);font-size:11px;flex:none;}
-.rd-picker-capply{font:inherit;font-size:11px;font-weight:500;color:#fff;background:var(--rd-accent);border:none;border-radius:5px;padding:5px 9px;height:26px;cursor:pointer;flex:none;}
-
+.rd-hdr .verdict .v .dot{width:10px;height:10px;border-radius:50%;flex:none;}/* Explicit background + color, not just a border tint: overwrites.css has a
+   blanket `button:hover { background-color: var(--main-action-hover-bg); color:#fff }`
+   which otherwise paints the PRIMARY action hover over this neutral pill.
+   The fill is the app's shared secondary hover (same as the Filter / Group By
+   pills and the buttons in the content card) so every pill-shaped control
+   answers the pointer the same way. */
 .rd-arrows{display:flex;gap:4px;}
 .rd-arrow{background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-text-2);}
 .rd-arrow:hover{color:var(--rd-text-1);border-color:var(--rd-text-4);}
@@ -148,52 +117,11 @@
 .rd-page{flex:0 0 100%;padding:24px 26px;min-width:100%;width:100%;}
 .rd-page:not(.on){visibility:hidden;height:0;padding-top:0;padding-bottom:0;}
 
-/* Page-1 KPI band — value-first, delta inline, lowercase label beneath.
-   Matches the mockup: big number reads first, the "what" is a quiet caption. */
-.rd-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px;}
-.rd-kcell{padding:13px 16px;border-radius:var(--rd-r-xs);background:var(--rd-bg);}
-/* KV row: center-align vertically so the delta pill and the /X subscript
-   both sit at the number's optical center instead of dropping to its baseline
-   (which made them look "small next to" the big number). */
-.rd-kcell .kv{font-size:28px;font-weight:600;letter-spacing:-.6px;line-height:1;display:flex;align-items:center;gap:10px;color:var(--rd-text-1);}
-.rd-kcell .kv small{font-size:15px;color:var(--rd-text-3);font-weight:500;align-self:flex-end;margin-bottom:2px;margin-left:-2px;letter-spacing:.5px;}
-/* Delta pills — the "vs prior" signal needs to READ, not hide. Green pill for
-   gains, red pill for losses. Bigger + backed + weighted so it's not lost next
-   to the big number. */
-.rd-kcell .kv .up,
-.rd-kcell .kv .down{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;line-height:1;letter-spacing:.2px;}
-.rd-kcell .kv .up{color:#1a7d52;background:#dcf1e6;}
-.rd-kcell .kv .down{color:#a11a44;background:#fbe0e8;}
-.rd-kcell .kv .up i,
-.rd-kcell .kv .down i{font-size:9px;}
-.rd-kcell .kl{font-size:12.5px;color:var(--rd-text-2);margin-top:5px;display:flex;align-items:center;gap:6px;}
-.rd-kcell.risk .kv{color:var(--rd-danger);}
-
-/* KPI drill-down — hover the whole cell to see the list of items behind the
-   count (which milestones completed, which goals off-track, etc.). Compact
-   popover; won't render if the count is zero.
-   Affordance: cursor:pointer + subtle hover treatment + a visible "see list"
-   chevron at the top-right so the interactivity is discoverable, not a
-   guess-the-dot. */
-.rd-kcell{position:relative;transition:background .12s,box-shadow .12s;}
-.rd-kcell.has-detail{cursor:pointer;}
-.rd-kcell.has-detail:hover{background:#fff;box-shadow:var(--rd-sh-sm);}
-.rd-kcell.has-detail .see-list{position:absolute;top:8px;right:10px;display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--rd-text-3);text-transform:uppercase;letter-spacing:.4px;opacity:.7;transition:opacity .12s,color .12s;pointer-events:none;}
-.rd-kcell.has-detail .see-list i{font-size:9px;}
-.rd-kcell.has-detail:hover .see-list{opacity:1;color:var(--rd-accent);}
-.rd-kcell .kdrill{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--rd-panel);border:1px solid var(--rd-line);border-radius:var(--rd-r-sm);box-shadow:var(--rd-sh-lg);padding:8px;z-index:20;opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .12s,transform .12s,visibility .12s;font-size:11.5px;line-height:1.4;text-align:left;letter-spacing:0;}
-.rd-kcell.has-detail.open .kdrill{opacity:1;visibility:visible;transform:translateY(0);}
-.rd-kcell.has-detail.open{background:#fff;box-shadow:var(--rd-sh-sm);}
-.rd-kcell.has-detail.open .see-list{opacity:1;color:var(--rd-accent);}
-.rd-kcell.has-detail.open .see-list i{transform:rotate(180deg);}
-.rd-kcell.has-detail .see-list i{transition:transform .18s;}
-.rd-kcell .kdrill .kd-hd{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--rd-text-3);padding:2px 6px 6px;}
-.rd-kcell .kdrill ul{list-style:none;margin:0;padding:0;}
-.rd-kcell .kdrill li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 6px;border-radius:4px;color:var(--rd-text-1);font-weight:400;}
-.rd-kcell .kdrill li:hover{background:var(--rd-bg);}
-.rd-kcell .kdrill li .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;}
-.rd-kcell .kdrill li .mt{color:var(--rd-text-3);font-size:10.5px;flex:none;}
-.rd-kcell .kdrill .kd-more{font-size:10.5px;color:var(--rd-text-3);font-style:italic;padding:4px 6px 2px;}
+/* Page-1 KPI band — retired. The deck's `.rd-kcell` tiles WERE the reference
+   look, so they were promoted into the shared x-global::statTile component
+   (public/assets/css/components/stat-tiles.css, `.lt-stat*`) and this deck-local
+   copy was deleted rather than left to drift a fourth time. The drill-down
+   markup moved with it (`.kdrill` -> `.lt-stat-drill`). */
 
 /* Section container inside a page. */
 .rd-section{margin-top:20px;}

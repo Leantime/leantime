@@ -254,11 +254,17 @@ a.btn-default,
     line-height:21px;
     background: var(--secondary-action-bg);
     text-shadow: none;
-    box-shadow:none;
+    /* Matches the filter / period-picker pill (.lt-tabs-actions .btn-link) so
+       secondary actions read as the same control everywhere. */
+    box-shadow: 0 1px 3px rgba(20, 40, 50, .06);
     color: var(--secondary-action-color);
     display: inline-block;
     word-spacing: 2px;
-    border:1px solid var(--secondary-action-bg);
+    /* Was `1px solid var(--secondary-action-bg)` — the border painted itself in
+       the button's OWN background color, so on the white content card a
+       secondary button (Export, Columns, Print) was white-on-white and read as
+       bare text. Border the outline instead so the button is identifiable. */
+    border:1px solid var(--main-border-color);
     border-radius:var(--element-radius) !important;
     outline:0;
     vertical-align: top;

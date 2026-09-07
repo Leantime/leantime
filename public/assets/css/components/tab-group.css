@@ -254,10 +254,21 @@
     box-shadow: 0 1px 3px rgba(20, 40, 50, .06);
     transition: border-color .12s ease;
 }
+/* Hover is the SAME dark-grey fill the secondary buttons in the content card
+   below use (--secondary-action-hover-bg / -color). These pills used to shift
+   only their border color, so the two rows of controls on one screen answered
+   the pointer in two different visual languages. */
 .lt-tabs .lt-tabs-actions .btn-link:hover {
-    border-color: var(--accent1);
-    background: #fff;
-    color: var(--primary-font-color);
+    border-color: var(--secondary-action-hover-bg);
+    background: var(--secondary-action-hover-bg);
+    color: var(--secondary-action-hover-color);
+}
+
+/* The count badge and icon inherit the pill's ink, so they have to flip with
+   it or they vanish against the dark fill. */
+.lt-tabs .lt-tabs-actions .btn-link:hover i,
+.lt-tabs .lt-tabs-actions .btn-link:hover .badge {
+    color: var(--secondary-action-hover-color);
 }
 .lt-tabs .lt-tabs-actions .btn-link:focus-visible {
     outline: 2px solid var(--accent1);
@@ -267,7 +278,12 @@
     outline: 2px solid #fff;
     outline-offset: 2px;
 }
-.lt-tabs-actions form {
+/* DIRECT children only. As a descendant selector this reached into any form
+   nested deeper in the actions cluster — including the report period picker's
+   custom-range form inside its popover. Turning that into an inline-flex row
+   put the "CUSTOM" label beside the From/To inputs and sized the row to its
+   content, so it burst straight out of the 280px menu and off the screen edge. */
+.lt-tabs-actions > form {
     display: inline-flex;
     align-items: center;
     margin: 0;

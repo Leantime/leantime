@@ -957,43 +957,10 @@
     width:14px;
     text-align:center;
 }
-.ra-summary {
-    display:grid;
-    grid-template-columns:repeat(6,minmax(0,1fr));
-    gap:10px;
-    background:transparent;
-    border:none;
-    border-radius:0;
-    box-shadow:none;
-    overflow:visible;
-    margin:0;
-}
-@media (max-width:1100px) {
-    .ra-summary {
-        grid-template-columns:repeat(3,minmax(0,1fr));
-    }
-}
-@media (max-width:640px) {
-    .ra-summary {
-        grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-}
-.ra-scell {
-    padding:12px 14px;
-    border:1px solid var(--rd-line);
-    background:var(--rd-bg);
-    border-radius:10px;
-    box-shadow:0 1px 2px rgba(20,40,50,.04);
-    transition:box-shadow .14s ease,transform .14s ease;
-    display:flex;
-    flex-direction:row;
-    flex-wrap:wrap;
-    align-items:baseline;
-    column-gap:6px;
-    row-gap:3px;
-    min-height:88px;
-    position:relative;
-}
+
+/* The .ra-summary grid + its two column breakpoints are gone with `.ra-scell`:
+   the shared `.lt-stats` grid is auto-fit, so it reflows on its own. Only the
+   RA-specific ornaments that ride in a tile's slot remain below. */
 .ra-scell-action {
     position:absolute;
     top:8px;
@@ -1057,50 +1024,7 @@
     background:var(--rd-text-1);
     transform:rotate(45deg);
 }
-.ra-scell:hover {
-    box-shadow:0 2px 6px rgba(20,40,50,.06);
-}
-.ra-scell:first-child {
-    border-left:none;
-}
-.ra-scell .sl {
-    font-size:11.5px;
-    font-weight:500;
-    color:var(--rd-text-2);
-    margin:0;
-    line-height:1.2;
-    flex:0 0 100%;
-}
-.ra-scell .sv {
-    font-size:22px;
-    font-weight:700;
-    letter-spacing:-.4px;
-    line-height:1.1;
-    color:var(--rd-text-1);
-    margin:0;
-}
-.ra-scell .sv small {
-    font-size:12px;
-    color:var(--rd-text-3);
-    font-weight:500;
-    letter-spacing:0;
-    margin-left:1px;
-}
-.ra-scell .sd {
-    font-size:12.5px;
-    color:var(--rd-text-3);
-    margin:0;
-    line-height:1.35;
-    align-self:baseline;
-}
-.ra-scell .sd + .sd {
-    flex:0 0 100%;
-    font-size:11.5px;
-}
-.ra-scell .sd .risk {
-    color:var(--ra-warn-tx);
-    font-weight:500;
-}
+
 .ra-ubar {
     height:6px;
     background:#eef1f3;
@@ -1766,12 +1690,7 @@
     cursor:pointer;
     white-space:nowrap;
 }
-.ra-summary.fresh .ra-scell .sv {
-    color:var(--ra-text-4);
-}
-.ra-summary.fresh .ra-scell .sd {
-    color:var(--ra-text-4);
-}
+
 .ra-noact {
     height:13px;
     border-radius:4px;
@@ -2061,15 +1980,7 @@
 .ra-putil .pa {
     font-size:12px;
 }
-.ra-scell .sl {
-    font-size:12.5px;
-}
-.ra-scell .sv small {
-    margin-left:2px;
-}
-.ra-scell .sd + .sd {
-    font-size:12px;
-}
+
 .ra-alloc-row .in .hh {
     font-size:11.5px;
 }

@@ -495,9 +495,17 @@ body.loginpage {
 
 }
 
+/* The entry/registration panel is already its own card, so the global
+   .pageheader card treatment (glass background, border, radius, shadow,
+   15px side margin) would draw a second box around the headline. Reset it
+   back to plain text on the panel. */
 .regpanelinner .pageheader {
     padding:0;
+    margin:0;
+    border: 0;
     border-bottom: 0px solid #ddd;
+    border-radius: 0;
+    box-shadow: none;
     position: relative;
     color:var(--main-action-bg);
     background:none;

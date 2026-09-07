@@ -168,9 +168,16 @@
                                                     <div class="kanbanCardContent">
                                                         <h4><a href="#/tickets/showTicket/{{ $row['id'] }}" data-hx-get="{{ BASE_URL }}/tickets/showTicket/{{ $row['id'] }}" hx-swap="none" preload="mouseover">{{ $row['headline'] }}</a></h4>
 
-                                                        <div class="kanbanContent" style="margin-bottom: 20px">
+                                                        {{-- Only render the description block when there IS one. The
+                                                             20px bottom margin was inline and unconditional, so every card
+                                                             without a description carried 20px of dead space above its
+                                                             meta row — which is why cards in the same column sat at
+                                                             visibly different densities. --}}
+                                                        @if (trim(strip_tags((string) $row['description'])) !== '')
+                                                        <div class="kanbanContent">
                                                             {!! $tpl->escapeMinimal($row['description']) !!}
                                                         </div>
+                                                        @endif
 
                                                     </div>
                                                     <div class="tw-flex">
