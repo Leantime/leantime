@@ -178,6 +178,38 @@ class FrontcontrollerPluginCasingTest extends TestCase
     }
 
     /**
+     * The enabled-plugin COLLECTION is as untrustworthy as its elements:
+     * getEnabledPlugins() is typed `mixed` and the beforeReturnCachedPlugins
+     * filter can hand back false/null. foreach over a non-iterable would warn on
+     * every route resolution, so it must degrade to "no enabled plugins".
+     *
+     * @dataProvider nonIterablePluginPayloads
+     */
+    public function test_non_iterable_enabled_plugins_degrade_to_no_plugins(mixed $payload): void
+    {
+        $pluginService = $this->createMock(PluginService::class);
+        $pluginService->method('getEnabledPlugins')->willReturn($payload);
+        app()->instance(PluginService::class, $pluginService);
+
+        $fc = new Frontcontroller(
+            IncomingRequest::create('/', 'GET'),
+            $this->createMock(PermissionEnforcer::class),
+        );
+
+        $this->assertFalse($fc->getClassPath('Hxcontrollers', self::STUDLIED_SEGMENT, 'FixtureModal'));
+    }
+
+    public static function nonIterablePluginPayloads(): array
+    {
+        return [
+            'false' => [false],
+            'null' => [null],
+            'string' => ['not-a-list'],
+            'int' => [0],
+        ];
+    }
+
+    /**
      * Core domain controllers resolve before the plugin branch is reached and must
      * be unaffected.
      */

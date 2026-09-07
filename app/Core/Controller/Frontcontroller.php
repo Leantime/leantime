@@ -276,6 +276,15 @@ class Frontcontroller
 
         $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
 
+        // The collection itself is as untrustworthy as its elements: the method is
+        // typed `mixed` and the beforeReturnCachedPlugins filter can return
+        // anything, including false/null. foreach over a non-iterable warns on
+        // EVERY route resolution (and is a TypeError under strict error handling),
+        // so degrade to "no enabled plugins" instead.
+        if (! is_iterable($enabledPlugins)) {
+            return false;
+        }
+
         // $moduleName arrives here as Str::studly() of the URL segment, which
         // FLATTENS internal capitals: "pgmpro" becomes "Pgmpro", never "PgmPro".
         // Composer's PSR-4 prefix map is case-sensitive, so every controller in a
