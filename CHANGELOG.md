@@ -1,3 +1,60 @@
+# Version: 3.10.0
+
+## Highlights
+
+### Telegram Messenger Integration
+Connect Leantime to Telegram to receive rich, auto-detected task notification cards directly in your chats, keeping your team informed without leaving their messenger. (#3726)
+
+### Redesigned Goals with Multi-Milestone Support
+The goal dialog has been rebuilt with a split layout, monitor/manage tabs, and inline updates, and a single goal can now link to many milestones with a new chip UI and milestone rollup progress. (#3739, #3688, #3687, #3690)
+
+## New Features
+- **Period-Based Status Reports** - Added period-based status report screens backed by a shared report engine and a period-aware actuals window for resources. (#3643, #3714)
+- **Mobile SSO** - Introduced a generic OIDC mobile SSO bridge with one-time-code to bearer-token exchange, a public `/status` discovery endpoint advertising auth methods, and AdvancedAuth gating. (#3637, #3662, #3664, #3711)
+- **User Capacity Fields** - Added weekly hours and employment type to user profiles for better resource planning. (#3653)
+- **Resources Contract** - Added a new Resources gateway surface with value objects, registry, and shared Blade primitives, including current-week actuals on the resource summary. (#3645, #3669)
+- **Canvas Events** - Added a CanvasItemUpdated event as a foundation for change propagation. (#3691)
+
+## Bug Fixes
+- **Ideas on Kanban** - Fixed the "Edit" option for Ideas not working in the Kanban view. (#3752)
+- **Sidebar Projects** - Admins and owners now see all projects they have access to, fixing an empty project sidebar. (#3710)
+- **Batch Fixes** - Resolved a set of five reported bugs across the app. (#3738, #3632, #3685, #3636, #3692, #3746)
+- **Upgrades** - The installer now self-heals a missing `zp_access_tokens` table and a stale session-cached db-version so updates can't get blocked. (#3745, #3735)
+- **Blueprints** - Restored board and item deletion by keeping the id on delete-confirm forms. (#3705)
+- **Files** - File names now display in full with a title tooltip instead of being truncated to 10 characters. (#3734)
+- **Reports** - The report deck no longer errors when a projectId is omitted, program supply now reflects capacity rather than booked hours, and fixed an HTML leak, decimal count, and empty burndown. (#3715, #3672, #3665)
+- **Telegram** - Fixed a status handling bug so "Done" (status 0) is evaluated correctly. (#3747)
+- **Editor** - Restored Backspace deletion of empty lines in the editor. (#3629)
+- **Timesheets** - A user's own general-work (no-project) time now appears in account reads. (#3642)
+- **Tickets** - Archived-project tickets are excluded from open ticket lists, status→Done history is logged with an accurate "last updated" time, and ticket parents are preserved on failed new-ticket submissions. (#3639, #3638, #3650, #3641)
+- **Onboarding** - First-login completion now persists even when the user can't create tickets. (#3684)
+- **Content Templates** - Fixed a slug bug, status label rendering, and typos. (#3644)
+- **Goals** - Fixed invalid Goal input markup by using proper name=value pairs. (#3634)
+
+## Improvements
+- **Unified UI** - Consolidated to one table design, one stat tile, and one period picker with report and button polish. (#3771)
+- **Navigation & Chrome** - Standardized on the floating pill horizontal tab group, added a glass pageheader and gradient tabs, a Tasks board summary, a reusable subject switcher, and a single document-page mode. (#3728, #3716, #3680, #3676, #3677, #3717)
+- **Stakeholder Report** - Refined the stakeholder report with a doc-shell header. (#3707)
+- **Performance** - Batched capacity analyzer ticket reads into a single query. (#3697)
+- **Assets** - CSS bundles are now cache-busted using the build mtime. (#3724)
+
+## Security
+- **Open Redirects** - Closed open redirect vulnerabilities in the TwoFA verify and POST flows and the Login POST handler. (#3770, #3750, #3658)
+- **Cross-Site Scripting** - Escaped user-controlled group labels at the source and stripped markup from board/timeline tab aria-labels. (#3767, #3748, #3768)
+- **Blueprints** - Validated the import file path to prevent SSRF/LFI and guarded phar:// plugin probes against open_basedir violations. (#3656, #3693, #3762)
+- **Access Control** - Added a project ownership check to `getMilestone()` to prevent IDOR. (#3657)
+- **OIDC** - Hardened the mobile SSO flow with a lock-guarded one-time-code consume, TTL, throttling, and atomic consumption. (#3662, #3663)
+- **Invitations** - Stopped invite-email spam by sanitizing names and adding rate limits. (#3661)
+- **npm Advisories** - Cleared all nine high-severity npm advisories and a critical websocket-driver finding. (#3769, #3679, #3667)
+
+## Localization
+- **Indonesian** - Added an Indonesian (id-ID) translation. (#3764)
+
+## Dependency Updates
+- Bumped the plugins submodule to current main. (#3742, #3719)
+
+---
+
 # Version: 3.9.8
 
 ## Bug Fixes
