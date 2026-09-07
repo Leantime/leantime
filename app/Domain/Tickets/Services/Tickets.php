@@ -768,7 +768,7 @@ class Tickets extends BaseService
                             break;
                         case 'editorId':
                             $editorName = htmlspecialchars(trim($ticket['editorFirstname'].' '.$ticket['editorLastname']), ENT_QUOTES, 'UTF-8');
-                            $label = "<div class='profileImage'><img src='".BASE_URL.'/api/users?profileImage='.(int) $ticket['editorId']."' /></div> ".$editorName;
+                            $label = "<div class='profileImage'><img alt='' src='".BASE_URL.'/api/users?profileImage='.(int) $ticket['editorId']."' /></div> ".$editorName;
 
                             if ($ticket['editorFirstname'] == '' && $ticket['editorLastname'] == '') {
                                 $label = 'Not Assigned to Anyone';
@@ -800,7 +800,10 @@ class Tickets extends BaseService
                         case 'projectId':
                             // Program cross-project board: group by the ticket's project.
                             $label = htmlspecialchars((string) ($ticket['projectName'] ?? ('Project #'.$groupedFieldValue)), ENT_QUOTES, 'UTF-8');
-                            $sortId = 'a_'.strtolower((string) ($ticket['projectName'] ?? $groupedFieldValue));
+                            // Becomes $group['id'], which templates interpolate into inline
+                            // onclick JS string literals — sanitize like the milestone and
+                            // parent-task branches already do.
+                            $sortId = 'a_'.preg_replace('/[^a-zA-Z0-9_-]/', '_', strtolower((string) ($ticket['projectName'] ?? $groupedFieldValue)));
                             break;
                         default:
                             $label = htmlspecialchars((string) $groupedFieldValue, ENT_QUOTES, 'UTF-8');
