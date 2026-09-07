@@ -360,14 +360,39 @@
 
 .ticketBox {
     background: var(--kanban-card-bg);
-    border:none;
-    border-left:3px solid transparent;
-    border-right: 3px solid transparent;
-    padding:10px; /* account for 3px border */
-    padding-bottom:10px;
+    /* A real hairline edge on all four sides. --kanban-card-bg resolves to
+       --layered-background (white at 90% in the light theme), so on the My Work
+       dashboard — where these cards sit on a WHITE widget — the card was white
+       on white with a soft drop shadow as the only thing separating one task
+       from the next. A shadow alone is not a boundary; it disappears against a
+       light surface and at low zoom. The border defines the card on any
+       background, and the kanban's grey column still reads fine behind it. */
+    border: 1px solid color-mix(in srgb, var(--primary-font-color) 12%, transparent);
+    /* Neutral rail, not `transparent`: the accent color comes from
+       .priority-border-{1..5}, and a task with no priority set renders the class
+       as `priority-border-` which matches nothing — so those cards had NO left
+       rail at all while their neighbours did, and a column read as a ragged mix
+       of two different card shapes. Every card now has a rail; priority just
+       colors it. */
+    border-left:3px solid color-mix(in srgb, var(--primary-font-color) 22%, transparent);
+    /* +2px on the right balances the 3px rail against the 1px hairline. */
+    padding:10px 12px 10px 10px;
     margin-bottom:10px;
     cursor:move;
     border-radius:var(--box-radius);
+    /* Now that the border carries the edge, the shadow only lifts the card
+       instead of being the sole separator (was --regular-shadow, 4px/8%). */
+    box-shadow: var(--min-shadow);
+}
+
+/* Hover lifts the card and firms the edge — real affordance on a surface where
+   the card previously only changed background. */
+.ticketBox:hover {
+    /* Per-side, never the `border-color` shorthand: that would repaint the
+       left rail and wipe out the priority color. */
+    border-top-color: color-mix(in srgb, var(--primary-font-color) 20%, transparent);
+    border-right-color: color-mix(in srgb, var(--primary-font-color) 20%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--primary-font-color) 20%, transparent);
     box-shadow: var(--regular-shadow);
 }
 
@@ -377,6 +402,9 @@
     border-radius:4px;
     padding:0px;
     padding-left:5px;
+    /* Nested cards are list rows inside a card, not cards themselves — clear the
+       outer hairline so they don't draw a box inside a box. */
+    border: none;
     border-left:3px solid var(--main-border-color);
     padding-top:5px;
     margin-top:5px;

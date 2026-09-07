@@ -5,24 +5,28 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-chart-bar"></span></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
-                <h1>{!! __('headlines.reports') !!}</h1>
-            </div>
-        </div>
+        <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
+        <h1>{!! __('headlines.reports') !!}</h1>
     </div>
 </div>
 
 <div class="maincontent">
+
+    {{-- Same nav band as the status report tab (see project.blade.php): on the
+         gradient between the two cards, not a bare <ul class="tabs-list"> — that
+         class has no CSS, so it rendered with disc bullets inside the card. --}}
+    <div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
+        <nav class="lt-tabs-group" aria-label="{{ __('label.status_report_tab') }} / {{ __('label.delivery_metrics_tab') }}">
+            <ul>
+                <li><a href="{{ BASE_URL }}/reports/project" preload="mouseover">{{ __('label.status_report_tab') }}</a></li>
+                <li class="active"><a href="{{ BASE_URL }}/reports/show">{{ __('label.delivery_metrics_tab') }}</a></li>
+            </ul>
+        </nav>
+    </div>
+
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
-
-        <ul class="tabs-list tw-mb-4" style="display:inline-flex; gap: 4px;">
-            <li><a href="{{ BASE_URL }}/reports/project">{{ __('label.status_report_tab') }}</a></li>
-            <li class="active"><a href="{{ BASE_URL }}/reports/show">{{ __('label.delivery_metrics_tab') }}</a></li>
-        </ul>
 
         <div class="row">
             <div class="col-lg-8">

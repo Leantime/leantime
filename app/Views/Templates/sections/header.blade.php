@@ -78,12 +78,21 @@
 -->
 
 <!-- theme & custom -->
+{{-- Theme js/css are optional: Theme::getAssetPath() returns FALSE when the
+     file doesn't exist (the default theme ships no js at all). Rendering that
+     as src=""/href="" makes the browser re-request the current page and try to
+     execute the HTML as a script ("Refused to execute script ... MIME type
+     ('text/html')"), so skip missing assets entirely. --}}
 @foreach ($themeScripts as $script)
-    <script src="{!! $script !!}"></script>
+    @if(! empty($script))
+        <script src="{!! $script !!}"></script>
+    @endif
 @endforeach
 
 @foreach ($themeStyles as $style)
-    <link rel="stylesheet" @isset($style['id']) id="{{{ $style['id'] }}}" @endisset href="{!! $style['url'] !!}"/>
+    @if(! empty($style['url']))
+        <link rel="stylesheet" @isset($style['id']) id="{{{ $style['id'] }}}" @endisset href="{!! $style['url'] !!}"/>
+    @endif
 @endforeach
 
 @dispatchEvent('afterScriptsAndStyles')

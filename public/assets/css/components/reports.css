@@ -4,50 +4,10 @@
  * elements are the status dots and the needs-attention accent border.
  */
 
-/* ── stat tiles ─────────────────────────────────────────────────────── */
-
-.reportStatTiles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.reportStatTile {
-    background: var(--card-bg, var(--secondary-background));
-    border: 1px solid var(--card-border, var(--main-border-color));
-    border-radius: var(--card-radius, var(--box-radius));
-    padding: 14px 16px;
-}
-
-.reportStatTile .tileLabel {
-    display: block;
-    font-size: var(--font-size-s);
-    color: var(--secondary-font-color);
-    margin-bottom: 4px;
-}
-
-.reportStatTile .tileValue {
-    display: block;
-    font-size: var(--font-size-xxxl);
-    font-weight: 600;
-    line-height: 1.15;
-    color: var(--primary-font-color);
-}
-
-.reportStatTile .tileValue.tileValueDanger {
-    color: var(--red);
-}
-
-.reportStatTile .tileDelta {
-    display: block;
-    font-size: var(--font-size-s);
-    color: var(--secondary-font-color);
-    margin-top: 4px;
-}
-
-.reportStatTile .tileDelta.deltaGood { color: var(--green); }
-.reportStatTile .tileDelta.deltaBad { color: var(--red); }
+/* ── stat tiles ─────────────────────────────────────────────────────
+   Retired. `.reportStatTile` was one of three divergent KPI tiles; the reports
+   now render the shared x-global::statTile component (`.lt-stat*` in
+   stat-tiles.css), so this local copy is gone rather than left to drift. */
 
 /* ── sections ───────────────────────────────────────────────────────── */
 
