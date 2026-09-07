@@ -312,11 +312,11 @@ class Messengers
 
         // 2. Status
         $statusName = '';
-        if (! empty($status)) {
+        if ((is_int($status) || is_string($status)) && $status !== '') {
             if ($ticketService !== null) {
                 try {
                     $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
-                    if (! empty($statusLabelsArray[$status]['name'])) {
+                    if (isset($statusLabelsArray[$status]['name']) && $statusLabelsArray[$status]['name'] !== '') {
                         $statusName = $statusLabelsArray[$status]['name'];
                     } else {
                         $statusName = (string) $status;
@@ -396,7 +396,7 @@ class Messengers
         if (! empty($taskTitle)) {
             $lines[] = '📌 <b>'.e($this->language->__('label.title')).':</b> '.e($taskTitle);
         }
-        if (! empty($statusName) && $statusName !== 'N/A') {
+        if ($statusName !== '' && $statusName !== 'N/A') {
             $lines[] = '🏷 <b>'.e($this->language->__('label.todo_status')).':</b> '.e($statusName);
         }
         if (! empty($priorityName)) {
