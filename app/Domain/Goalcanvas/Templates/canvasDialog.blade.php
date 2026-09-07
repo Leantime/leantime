@@ -100,7 +100,18 @@
         .gv-track--scored .gv-fill{position:absolute;inset:0 auto 0 0;border-radius:6px 0 0 6px;opacity:1;}
         .gv-tick{position:absolute;top:2px;bottom:2px;width:1px;background:color-mix(in srgb, var(--gv-ink) 22%, transparent);}
         .gv-marker{position:absolute;top:-3px;bottom:-3px;width:2px;border-radius:2px;background:var(--gv-ink);box-shadow:0 0 0 1.5px var(--primary-background, #fff);transform:translateX(-1px);}
-        .gv-scale{display:flex;justify-content:space-between;margin-top:5px;font-size:var(--font-size-xs);color:var(--gv-ink2);font-variant-numeric:tabular-nums;}
+        /* Start / Now / Goal under the bar. Three equal columns so "Now" lands
+           centred between its two anchors — the current value used to float
+           above the bar with no visible label at all. */
+        .gv-scale{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:12px;margin-top:7px;font-size:var(--font-size-xs);color:var(--gv-ink2);font-variant-numeric:tabular-nums;}
+        .gv-scale-col{display:flex;flex-direction:column;gap:2px;min-width:0;}
+        .gv-scale-col--now{align-items:center;text-align:center;}
+        .gv-scale-col--goal{align-items:flex-end;text-align:right;}
+        .gv-scale-lbl{font-size:var(--font-size-xs);text-transform:uppercase;letter-spacing:.4px;font-weight:600;opacity:.75;line-height:1.2;}
+        .gv-scale-val{font-size:var(--font-size-s);color:var(--gv-ink);line-height:1.2;}
+        /* The centre column holds the inline-edit input, which is taller than the
+           plain end values — pull its label tight so the three baselines agree. */
+        .gv-scale-col--now .gv-scale-lbl{margin-bottom:1px;}
         /* The input hugs its digits (no fill-in-the-blank dashes past the
            number) in browsers with field-sizing; others keep the fixed ch. */
         @supports (field-sizing: content){
