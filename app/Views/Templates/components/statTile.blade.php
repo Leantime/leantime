@@ -20,9 +20,11 @@
       sub    mixed   Optional detail line(s) under the label — a string, or an
                      array of strings for a second, smaller line ("of 40h/wk",
                      "0h of 4200h over 105 weeks").
-                     NOTE: rendered UNESCAPED so a line can carry a `<span
-                     class="risk">` fragment. Pass translated strings and
-                     formatted numbers only — never raw user input.
+                     ESCAPED by default, so it is safe to pass user-derived text.
+                     To include markup (e.g. a `<span class="risk">` emphasis),
+                     pass an `\Illuminate\Support\HtmlString` and escape the
+                     interpolated parts yourself — Blade renders Htmlable values
+                     through as-is.
       subTone string 'default' | 'risk' (ambers the sub-line, e.g. "2h over plan").
       muted  bool    Empty/unset state: dims the value and sub-line so a tile
                      with no data reads as absent rather than as a real zero.
@@ -61,7 +63,13 @@
         : ((float) $deltaValue > 0 ? 'fa-caret-up' : 'fa-caret-down');
 
     // A single sub-line and a list of them are the same thing to the markup.
-    $subLines = $sub === null ? [] : (is_array($sub) ? array_values(array_filter($sub, fn ($l) => $l !== null && $l !== '')) : [$sub]);
+    // Compare against null/'' explicitly rather than a truthiness filter: an
+    // HtmlString is an object and must survive, and a legitimate "0" must too.
+    $subLines = $sub === null
+        ? []
+        : (is_array($sub)
+            ? array_values(array_filter($sub, fn ($l) => $l !== null && $l !== ''))
+            : [$sub]);
 
     $tileClasses = 'lt-stat'
         .($tone === 'risk' ? ' risk' : '')
@@ -94,7 +102,11 @@
     </div>
 
     @foreach ($subLines as $subIndex => $subLine)
-        <div class="lt-stat-sub @if ($subIndex > 0) lt-stat-sub-more @endif @if ($subTone === 'risk' && $subIndex === 0) risk @endif">{!! $subLine !!}</div>
+        {{-- {{ }} not {!! !!}: escapes plain strings, and Blade passes Htmlable
+             values (HtmlString) through untouched — so a caller opts into markup
+             explicitly for one value instead of the prop being unescaped for
+             everyone. --}}
+        <div class="lt-stat-sub @if ($subIndex > 0) lt-stat-sub-more @endif @if ($subTone === 'risk' && $subIndex === 0) risk @endif">{{ $subLine }}</div>
     @endforeach
 
     {{ $slot }}
