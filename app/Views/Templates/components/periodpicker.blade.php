@@ -99,29 +99,56 @@
             (function () {
                 'use strict';
 
-                // Delegated, so pickers swapped in by HTMX work without re-init.
-                document.addEventListener('click', function (e) {
-                    var btn = e.target.closest('[data-lt-periodpicker] .lt-periodpicker-btn');
-                    var root = e.target.closest('[data-lt-periodpicker]');
-
-                    // Inside an OPEN menu (picking a date, typing a range): leave it alone.
-                    if (!btn && e.target.closest('.lt-periodpicker-menu')) { return; }
-
+                function closeAll(except) {
                     document.querySelectorAll('[data-lt-periodpicker]').forEach(function (p) {
+                        if (p === except) { return; }
                         var menu = p.querySelector('.lt-periodpicker-menu');
                         var trigger = p.querySelector('.lt-periodpicker-btn');
-                        if (!menu) { return; }
-
-                        var open = btn && p === root && menu.hasAttribute('hidden');
-                        menu.toggleAttribute('hidden', !open);
-                        if (trigger) { trigger.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+                        if (menu) { menu.setAttribute('hidden', ''); }
+                        if (trigger) { trigger.setAttribute('aria-expanded', 'false'); }
                     });
+                }
+
+                function setOpen(picker, open) {
+                    var menu = picker.querySelector('.lt-periodpicker-menu');
+                    var trigger = picker.querySelector('.lt-periodpicker-btn');
+                    if (menu) { menu.toggleAttribute('hidden', !open); }
+                    if (trigger) { trigger.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+                }
+
+                // Delegated, so pickers swapped in by HTMX work without re-init.
+                document.addEventListener('click', function (e) {
+                    var root = e.target.closest('[data-lt-periodpicker]');
+                    var btn = e.target.closest('[data-lt-periodpicker] .lt-periodpicker-btn');
+
+                    if (btn && root) {
+                        var willOpen = root.querySelector('.lt-periodpicker-menu').hasAttribute('hidden');
+                        closeAll(root);
+                        setOpen(root, willOpen);
+                        return;
+                    }
+
+                    // Picking a preset closes the menu — with hx-get the body swaps in
+                    // place, so nothing else would dismiss it and it hung open over the
+                    // report until the next outside click.
+                    if (e.target.closest('.lt-periodpicker-opt')) {
+                        closeAll();
+                        if (root) { setOpen(root, false); }
+                        return;
+                    }
+
+                    // Anywhere else inside an open menu (typing a range, picking a date
+                    // in the calendar overlay): leave it alone.
+                    if (e.target.closest('.lt-periodpicker-menu')) { return; }
+
+                    closeAll();
                 });
 
                 document.addEventListener('keydown', function (e) {
                     if (e.key !== 'Escape') { return; }
-                    document.querySelectorAll('[data-lt-periodpicker] .lt-periodpicker-menu:not([hidden])')
-                        .forEach(function (m) { m.setAttribute('hidden', ''); });
+                    // Reset aria-expanded too, or screen readers keep announcing the
+                    // trigger as expanded after the menu is gone.
+                    closeAll();
                 });
 
                 function initDatepickers() {
