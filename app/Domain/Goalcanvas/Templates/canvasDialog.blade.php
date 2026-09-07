@@ -48,7 +48,8 @@
         .gv-side-head{margin:0;}
         .gv-side label{margin-bottom:5px;}
         .gv-side .gv-dates{grid-template-columns:1fr;max-width:none;gap:12px;}
-        .gv-side .gv-delete-slot{padding-top:16px;border-top:1px solid var(--gv-line-soft);}
+        /* Beside the modal's × — right-padding clears the close button. */
+        .gv-actions-menu{float:right;z-index:50;padding:10px 34px 0 0;}
         /* Discussion sits under the MAIN column (its own form — kept outside
            the goal form so the nested-form parse never orphans the Save
            buttons again). */
@@ -173,12 +174,32 @@
 
         /* actions (always visible under the tabs) */
         .gv-actions{display:flex;align-items:center;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--gv-line);}
-        .gv-actions .gv-delete{margin-left:auto;}
 
         @media (max-width:560px){.gv-values{grid-template-columns:1fr 1fr;}}
     </style>
 
     <div class="gvDialog">
+
+        {{-- Destructive action lives in a ⋮ menu at the top right, beside the
+             modal's × — the same place and markup the task modal uses. It used
+             to sit at the BOTTOM of the Details rail, which is both a different
+             spot from every other entity dialog and an odd resting place for the
+             one irreversible action. --}}
+        @if ($login::userIsAtLeast($roles::$editor) && $id != '')
+            <div class="inlineDropDownContainer gv-actions-menu">
+                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown" aria-label="{{ __('label.actions') }}">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="nav-header">{{ $canvasTypes[$canvasItem['box']]['title'] }}</li>
+                    <li>
+                        <a href="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete">
+                            <i class="fa fa-trash-can"></i> {{ __('links.delete') }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        @endif
 
         {{-- Section headers use the SYSTEM modal recipe (h4.widgettitle
              .title-light — same as Subtasks/Discussion/Schedule on the task
@@ -386,13 +407,6 @@
                     @endif
                 </div>
 
-                @if ($login::userIsAtLeast($roles::$editor) && $id != '')
-                    <div class="gv-delete-slot">
-                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete gv-delete" state="danger" variant="outline">
-                            <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
-                        </x-global::forms.button>
-                    </div>
-                @endif
             </aside>
             </div>{{-- /gv-cols --}}
 
