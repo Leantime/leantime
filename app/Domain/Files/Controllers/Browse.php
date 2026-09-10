@@ -53,7 +53,9 @@ class Browse extends Controller
             if ($result['success'] === true) {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
 
-                return Frontcontroller::redirect(BASE_URL.'/files/browse'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
+                $modalPopUp = filter_var($params['modalPopUp'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+                return Frontcontroller::redirect(BASE_URL.'/files/browse'.($modalPopUp ? '?modalPopUp=true' : ''));
             }
 
             $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
