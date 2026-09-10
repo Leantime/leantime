@@ -4,6 +4,7 @@
 @php
     $maxSize = \Leantime\Core\Files\FileManager::getMaximumFileUploadSize();
     $moduleId = session('currentProject');
+    $modalPopUp = request()->boolean('modalPopUp');
 @endphp
 
 <div class="pageheader">
@@ -66,7 +67,7 @@
 
                                     @if ($login::userIsAtLeast($roles::$editor))
                                         <li>
-                                            <form method="post" action="{{ BASE_URL }}/files/browse" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
+                                            <form method="post" action="{{ BASE_URL }}/files/browse{{ $modalPopUp ? '?modalPopUp=true' : '' }}" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
                                                 @csrf
                                                 <input type="hidden" name="delFile" value="{{ $file['id'] }}" />
                                                 <button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</button>
@@ -134,7 +135,7 @@
 
         //jQuery("#medialist a").colorbox();
 
-        @if (isset($_GET['modalPopUp']))
+        @if ($modalPopUp)
 
             jQuery('#medialist a.imageLink').on("click", function(event){
 
