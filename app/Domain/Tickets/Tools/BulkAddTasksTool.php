@@ -39,7 +39,7 @@ class BulkAddTasksTool extends Tool
     public function schema(ToolInputSchema $schema): ToolInputSchema
     {
         return $schema
-            ->raw('tasks', ['type' => 'array', 'description' => 'Array of task objects. Each must contain headline and projectId.'])->required();
+            ->raw('tasks', ['type' => 'array', 'description' => 'Array of task objects. Each must contain headline and projectId. Optional fields: description, editorId, collaborators, userId, dateToFinish, status, sprint, editFrom, editTo, milestone.'])->required();
     }
 
     /**
@@ -53,21 +53,22 @@ class BulkAddTasksTool extends Tool
         $failureCount = 0;
 
         foreach ($tasks as $taskData) {
-            try {
-                $params = [
-                    'headline' => $taskData['headline'] ?? '',
-                    'description' => $taskData['description'] ?? '',
-                    'projectId' => $taskData['projectId'] ?? null,
-                    'editorId' => $taskData['editorId'] ?? null,
-                    'userId' => $taskData['userId'] ?? null,
-                    'dateToFinish' => $taskData['dateToFinish'] ?? null,
-                    'status' => $taskData['status'] ?? 3,
-                    'sprint' => $taskData['sprint'] ?? null,
-                    'editFrom' => $taskData['editFrom'] ?? null,
-                    'editTo' => $taskData['editTo'] ?? null,
-                    'milestone' => $taskData['milestone'] ?? null,
-                    'type' => 'task',
-                ];
+                    try {
+                        $params = [
+                            'headline' => $taskData['headline'] ?? '',
+                            'description' => $taskData['description'] ?? '',
+                            'projectId' => $taskData['projectId'] ?? null,
+                            'editorId' => $taskData['editorId'] ?? null,
+                            'collaborators' => ($taskData['collaborators'] ?? []),
+                            'userId' => $taskData['userId'] ?? null,
+                            'dateToFinish' => $taskData['dateToFinish'] ?? null,
+                            'status' => $taskData['status'] ?? 3,
+                            'sprint' => $taskData['sprint'] ?? null,
+                            'editFrom' => $taskData['editFrom'] ?? null,
+                            'editTo' => $taskData['editTo'] ?? null,
+                            'milestone' => $taskData['milestone'] ?? null,
+                            'type' => 'task',
+                        ];
 
                 $result = $this->ticketsService->quickAddTicket($params);
 

@@ -42,6 +42,7 @@ class AddTaskTool extends Tool
             ->string('description')->description('Task description.')
             ->integer('projectId')->description('Project ID.')
             ->integer('editorId')->description('Assigned user ID.')
+            ->array('collaborators')->description('Collaborator user IDs.')->default([])
             ->integer('userId')->description('Creator user ID.')
             ->string('dateToFinish')->description('Due date in ISO8601 format.')
             ->integer('status')->description('Status ID.')
@@ -61,6 +62,7 @@ class AddTaskTool extends Tool
             'description' => ($arguments['description'] ?? ''),
             'projectId' => ($arguments['projectId'] ?? null),
             'editorId' => ($arguments['editorId'] ?? null),
+            'collaborators' => ($arguments['collaborators'] ?? []),
             'userId' => ($arguments['userId'] ?? null),
             'dateToFinish' => ($arguments['dateToFinish'] ?? null),
             'status' => (int) ($arguments['status'] ?? 3),
