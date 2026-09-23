@@ -111,7 +111,7 @@ class AdvancedBoards extends Controller
             session(['currentIdeaCanvas' => $currentCanvasId]);
         }
 
-        return $currentCanvasId;
+        return (int) $currentCanvasId;
     }
 
     /**
