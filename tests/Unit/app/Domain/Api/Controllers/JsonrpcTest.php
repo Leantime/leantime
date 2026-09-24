@@ -280,6 +280,7 @@ class JsonrpcTest extends \Unit\TestCase
             [\Leantime\Domain\Api\Services\Api::class, 'getAPIKeyUser'],
             [\Leantime\Domain\Menu\Services\Menu::class, 'getProjectSelectorViewData'],
             [\Leantime\Domain\Reactions\Services\Reactions::class, 'getUserReactions'],
+            [\Leantime\Domain\Notifications\Services\Notifications::class, 'processMentions'],
         ];
 
         foreach ($mustBeInternal as [$class, $method]) {
