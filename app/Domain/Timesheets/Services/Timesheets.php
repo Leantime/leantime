@@ -33,9 +33,11 @@ use Leantime\Domain\Users\Repositories\Users;
  * manager-less user editing a peer's entry is a silent no-op, not a 403. Reads soft-deny (return
  * the neutral empty value) for the unauthorized/cross-user case.
  *
- * NOTE: the ticket-hours aggregate reads (getLoggedHoursForTicketByDate / getSumLoggedHoursForTicket
- * / getRemainingHours) are intentionally UNGATED — they render on the ticket view (ShowTicket,
- * reachable by readonly users) and expose only a ticket's total logged hours, not per-user data.
+ * NOTE: the ticket-hours reads (getLoggedHoursForTicketByDate / getSumLoggedHoursForTicket /
+ * getRemainingHours / getUsersTicketHours) carry NO timesheets.* role gate — they render on the
+ * ticket view (ShowTicket, reachable by readonly users). They are scoped instead by
+ * {@see authorizeTicketView()}: tickets.view on the ticket's REAL project, so a caller-supplied
+ * ticket id cannot read hours across projects the caller is not a member of.
  */
 class Timesheets extends BaseService
 {
@@ -530,7 +532,8 @@ class Timesheets extends BaseService
             $planHours = $ticketOrId->planHours;
         } else {
             $ticketId = $ticketOrId;
-            // Fetch plan hours from repository
+            // Authorize BEFORE touching the ticket's plan hours: the id is caller-supplied.
+            $this->authorizeTicketView($ticketId);
             $planHours = $this->timesheetsRepo->getTicketPlanHours($ticketId);
         }
 
@@ -553,6 +556,8 @@ class Timesheets extends BaseService
     #[RequiresPermission(TimesheetsPermissions::VIEW, global: true, entityScoped: true)]
     public function getUsersTicketHours(int $ticketId, int $userId): mixed
     {
+        $this->authorizeTicketView($ticketId);
+
         // Own hours render on the ticket page for any role with ticket access; ANOTHER user's
         // hours require timesheets.manage (soft-deny to 0, no cross-user leak).
         if ($userId !== $this->currentUserId() && ! $this->can(TimesheetsPermissions::MANAGE)) {
