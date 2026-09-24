@@ -120,7 +120,7 @@ class Reactions
      *
      *
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied. Service-internal use only.
      */
     public function getUserReactions(int $userId, string $module = '', ?int $moduleId = null, string $reaction = ''): array|false
     {

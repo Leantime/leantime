@@ -82,7 +82,7 @@ class Install
      * @param  array  $values  Validated install values (email, firstname, lastname, company).
      * @return bool True on successful setup, false otherwise.
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: only the Install controller may run the installer.
      */
     public function runInstall(array $values): bool
     {
@@ -114,7 +114,7 @@ class Install
      *
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: only the Install/Update controllers may run migrations.
      */
     public function runUpdate(): bool|array
     {

@@ -274,28 +274,60 @@ class Frontcontroller
             return $classname;
         }
 
-        $classname = 'Leantime\\Plugins\\'.$moduleName.'\\'.$controllerType.'\\'.$actionName;
-
         $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
 
-        $pluginEnabled = false;
-        foreach ($enabledPlugins as $key => $obj) {
-            if (strtolower($obj->foldername) !== strtolower($moduleName)) {
-                continue;
-            }
-            $pluginEnabled = true;
-            break;
-        }
-
-        if (! $pluginEnabled) {
+        // The collection itself is as untrustworthy as its elements: the method is
+        // typed `mixed` and the beforeReturnCachedPlugins filter can return
+        // anything, including false/null. foreach over a non-iterable warns on
+        // EVERY route resolution (and is a TypeError under strict error handling),
+        // so degrade to "no enabled plugins" instead.
+        if (! is_iterable($enabledPlugins)) {
             return false;
         }
 
+        // $moduleName arrives here as Str::studly() of the URL segment, which
+        // FLATTENS internal capitals: "pgmpro" becomes "Pgmpro", never "PgmPro".
+        // Composer's PSR-4 prefix map is case-sensitive, so every controller in a
+        // plugin whose folder has an inner capital (PgmPro, StrategyPro) failed to
+        // resolve and 404'd. The enabled-plugin record already carries the real
+        // folder name, so match case-insensitively and then adopt that spelling
+        // for the class lookup.
+        $pluginFolder = null;
+        foreach ($enabledPlugins as $key => $obj) {
+            // getEnabledPlugins() is typed `mixed` and its payload goes through the
+            // beforeReturnCachedPlugins filter, so a plugin can reshape it — and a
+            // cached entry can come back as __PHP_Incomplete_Class when the model
+            // isn't loaded at unserialize time. Read the folder name defensively:
+            // this runs on every route resolution, so a fatal here would turn one
+            // bad cache entry into a 500 on every request instead of a clean 404.
+            // __PHP_Incomplete_Class must be excluded BEFORE any property access:
+            // even isset() on one raises "tried to access a property on an
+            // incomplete object", so testing for the property is not enough.
+            $folder = match (true) {
+                $obj instanceof \__PHP_Incomplete_Class => null,
+                is_object($obj) && isset($obj->foldername) => $obj->foldername,
+                is_array($obj) && isset($obj['foldername']) => $obj['foldername'],
+                default => null,
+            };
+
+            if (! is_string($folder) || strtolower($folder) !== strtolower($moduleName)) {
+                continue;
+            }
+
+            $pluginFolder = $folder;
+            break;
+        }
+
+        if ($pluginFolder === null) {
+            return false;
+        }
+
+        $classname = 'Leantime\\Plugins\\'.$pluginFolder.'\\'.$controllerType.'\\'.$actionName;
         if (class_exists($classname)) {
             return $classname;
         }
 
-        $classname = 'Leantime\\Plugins\\'.$moduleName.'\\Hxcontrollers\\'.$actionName;
+        $classname = 'Leantime\\Plugins\\'.$pluginFolder.'\\Hxcontrollers\\'.$actionName;
         if (class_exists($classname)) {
             return $classname;
         }
