@@ -35,6 +35,7 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Wiki\Repositories\Wiki;
 use SVG\SVG;
@@ -2106,6 +2107,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function getAllProjects()
     {
         return $this->projectRepository->getAll();
@@ -2960,6 +2962,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getAllUsers(bool $activeOnly = false): array
     {
         return $this->userRepo->getAll($activeOnly);
@@ -2974,6 +2977,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getEmployees(): array
     {
         return $this->userRepo->getEmployees();

@@ -8,6 +8,7 @@ use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\CarbonMacros;
+use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -377,10 +378,57 @@ class TimesheetsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))->getUsersTicketHours(3, 2);
+        // The ticket resolves to a project the caller is a member of (tickets.view granted).
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+        $perms = $this->permissionsGranting([...self::EDITOR_KEYS, 'tickets.view']);
+
+        $result = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $perms)->getUsersTicketHours(3, 2);
 
         $this->assertSame(0, $result);
         $this->assertSame(0, $loaded, "An editor must not read another user's ticket hours");
+    }
+
+    /**
+     * The ticket-hour reads are keyed by a caller-supplied ticket id (and are @api), so they
+     * must authorize tickets.view on the ticket's REAL project: a member of other projects
+     * only must not learn hours for a ticket outside their projects.
+     */
+    public function test_ticket_hours_reads_deny_a_ticket_outside_the_callers_projects(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            'getLoggedHoursForTicket' => function () {
+                $this->fail('hours must not be loaded for a ticket the caller cannot view');
+            },
+            'getUsersTicketHours' => function () {
+                $this->fail('hours must not be loaded for a ticket the caller cannot view');
+            },
+            'getTicketPlanHours' => function () {
+                $this->fail('plan hours must not be loaded before the ticket is authorized');
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 9]),
+        ]);
+        // Editor verbs only — no tickets.view anywhere, i.e. not a member of project 9.
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting(self::EDITOR_KEYS));
+
+        foreach (['getLoggedHoursForTicketByDate', 'getSumLoggedHoursForTicket', 'getRemainingHours'] as $method) {
+            try {
+                $service->$method(3);
+                $this->fail("$method must throw for a ticket outside the caller's projects");
+            } catch (AuthorizationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+
+        try {
+            $service->getUsersTicketHours(3, 1);
+            $this->fail("getUsersTicketHours must throw for a ticket outside the caller's projects");
+        } catch (AuthorizationException) {
+            $this->addToAssertionCount(1);
+        }
     }
 
     public function test_users_tickets_soft_denies_another_user_for_editor(): void

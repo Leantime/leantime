@@ -13,6 +13,9 @@ use Leantime\Domain\Users\Services\Users as UserService;
 /**
  * Onboarding service - encapsulates the multi-step user invite / onboarding
  * flow that was previously orchestrated inside the UserInvite controller.
+ *
+ * Deliberately NOT part of the JSON-RPC surface: every step trusts the invited-user record
+ * it is handed, so the only legitimate entry point is the invite-link controller.
  */
 class Onboarding
 {
@@ -48,7 +51,9 @@ class Onboarding
      *               date/time formats, timezone, workdays and daySchedule plus the
      *               available option catalogs)
      *
-     * @api
+     * @internal Not exposed over JSON-RPC. The $user/$userInvite record is resolved from the
+     *           invite link by the UserInvite controller; an authenticated caller must never
+     *           be able to supply one (it carries the id, role and status that get persisted).
      */
     public function getInviteSettings(array $user): array
     {
@@ -222,7 +227,9 @@ class Onboarding
      * @return string 'weak' if the password is not strong enough, 'saved' if the user was
      *                persisted, 'error' if persistence failed
      *
-     * @api
+     * @internal Not exposed over JSON-RPC. The $user/$userInvite record is resolved from the
+     *           invite link by the UserInvite controller; an authenticated caller must never
+     *           be able to supply one (it carries the id, role and status that get persisted).
      */
     public function saveAccount(array $userInvite, string $name, string $jobTitle, string $password): string
     {
@@ -257,7 +264,9 @@ class Onboarding
      *
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC. The $user/$userInvite record is resolved from the
+     *           invite link by the UserInvite controller; an authenticated caller must never
+     *           be able to supply one (it carries the id, role and status that get persisted).
      */
     public function saveThemeChoice(array $userInvite, string $theme, string $themeFont): void
     {
@@ -286,7 +295,9 @@ class Onboarding
      *
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC. The $user/$userInvite record is resolved from the
+     *           invite link by the UserInvite controller; an authenticated caller must never
+     *           be able to supply one (it carries the id, role and status that get persisted).
      */
     public function saveColorChoice(array $userInvite, string $colorMode, string $colorScheme): void
     {
@@ -316,7 +327,9 @@ class Onboarding
      *
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC. The $user/$userInvite record is resolved from the
+     *           invite link by the UserInvite controller; an authenticated caller must never
+     *           be able to supply one (it carries the id, role and status that get persisted).
      */
     public function saveSchedule(array $userInvite, string $workStart, string $lunch, string $workEnd): void
     {
@@ -345,7 +358,9 @@ class Onboarding
      *
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC. The $user/$userInvite record is resolved from the
+     *           invite link by the UserInvite controller; an authenticated caller must never
+     *           be able to supply one (it carries the id, role and status that get persisted).
      */
     public function completeOnboarding(array $userInvite): bool
     {
