@@ -16,6 +16,7 @@ The goal dialog has been rebuilt with a split layout, monitor/manage tabs, and i
 - **Canvas Events** - Added a CanvasItemUpdated event as a foundation for change propagation. (#3691)
 
 ## Bug Fixes
+- **Routing** - Resolved plugin controllers whose folder name has an inner capital letter. (#3773)
 - **Ideas on Kanban** - Fixed the "Edit" option for Ideas not working in the Kanban view. (#3752)
 - **Sidebar Projects** - Admins and owners now see all projects they have access to, fixing an empty project sidebar. (#3710)
 - **Batch Fixes** - Resolved a set of five reported bugs across the app. (#3738, #3632, #3685, #3636, #3692, #3746)
@@ -39,6 +40,8 @@ The goal dialog has been rebuilt with a split layout, monitor/manage tabs, and i
 - **Assets** - CSS bundles are now cache-busted using the build mtime. (#3724)
 
 ## Security
+- **JSON-RPC Authorization** - Closed an account-takeover chain: any authenticated user could call the onboarding service over JSON-RPC to set another account's password and role, activate it, then disable its 2FA. The onboarding and 2FA services are no longer RPC-reachable, and a sweep of the remaining unguarded `@api` methods closed marketplace license-key exposure, cross-user dashboard/widget writes, unauthorized ticket-dependency rewrites, mention forgery, and installer/scheduler/queue triggers. (#3797)
+- **Components** - Escaped the statTile `sub` slot by default; markup now has to opt in via HtmlString. (#3774)
 - **Open Redirects** - Closed open redirect vulnerabilities in the TwoFA verify and POST flows and the Login POST handler. (#3770, #3750, #3658)
 - **Cross-Site Scripting** - Escaped user-controlled group labels at the source and stripped markup from board/timeline tab aria-labels. (#3767, #3748, #3768)
 - **Blueprints** - Validated the import file path to prevent SSRF/LFI and guarded phar:// plugin probes against open_basedir violations. (#3656, #3693, #3762)
