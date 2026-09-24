@@ -17,7 +17,9 @@ use RobThree\Auth\TwoFactorAuthException;
  * Owns TOTP secret generation, QR-code construction, code verification, and
  * persistence of the user's 2FA state so controllers stay thin.
  *
- * @api
+ * Deliberately NOT part of the JSON-RPC surface: every method takes a caller-supplied
+ * $userId with no ownership check. The only caller is TwoFA\Controllers\Edit acting on
+ * the session user.
  */
 class TwoFA
 {
@@ -36,7 +38,7 @@ class TwoFA
      *
      * @throws TwoFactorAuthException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied and unverified.
      */
     public function getSetupData(int $userId): array
     {
@@ -66,7 +68,7 @@ class TwoFA
      * @param  int  $userId  The user to store the secret for
      * @param  string  $secret  The TOTP secret
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied and unverified.
      */
     public function saveSecret(int $userId, string $secret): void
     {
@@ -83,7 +85,7 @@ class TwoFA
      *
      * @throws TwoFactorAuthException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied and unverified.
      */
     public function verifyAndEnable(int $userId, string $secret, string $code): bool
     {
@@ -106,7 +108,7 @@ class TwoFA
      *
      * @param  int  $userId  The user to disable 2FA for
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied and unverified.
      */
     public function disable2FA(int $userId): void
     {

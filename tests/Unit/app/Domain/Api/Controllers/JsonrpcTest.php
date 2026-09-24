@@ -243,6 +243,57 @@ class JsonrpcTest extends \Unit\TestCase
         // ...while a genuine @api service method stays reachable.
         $this->assertTrue($invoke(\Leantime\Domain\Clients\Services\Clients::class, 'getAll'));
     }
+
+    /**
+     * Regression guard for the JSON-RPC account-takeover report (fenko.nz, Sept 2026).
+     *
+     * A read-only user could call leantime.rpc.auth.onboarding.saveAccount with a crafted
+     * $userInvite (any id, role 50, new password), then completeOnboarding to activate the
+     * account, then twoFA.disable2FA on the victim's id. None of those steps had an
+     * authorization check — they only ever made sense behind the invite link / session user —
+     * so they must not be reachable over JSON-RPC at all. The raw company-wide listings the
+     * same report flagged must carry a GLOBAL #[RequiresPermission] gate instead.
+     */
+    public function test_account_takeover_chain_is_not_rpc_reachable(): void
+    {
+        $isApiMethod = new \ReflectionMethod(Jsonrpc::class, 'isApiMethod');
+        $isApiMethod->setAccessible(true);
+        $invoke = fn (string $class, string $method): bool => $isApiMethod->invoke($this->controller, $class, $method);
+
+        $mustBeInternal = [
+            [\Leantime\Domain\Auth\Services\Onboarding::class, 'getInviteSettings'],
+            [\Leantime\Domain\Auth\Services\Onboarding::class, 'saveAccount'],
+            [\Leantime\Domain\Auth\Services\Onboarding::class, 'saveThemeChoice'],
+            [\Leantime\Domain\Auth\Services\Onboarding::class, 'saveColorChoice'],
+            [\Leantime\Domain\Auth\Services\Onboarding::class, 'saveSchedule'],
+            [\Leantime\Domain\Auth\Services\Onboarding::class, 'completeOnboarding'],
+            [\Leantime\Domain\TwoFA\Services\TwoFA::class, 'getSetupData'],
+            [\Leantime\Domain\TwoFA\Services\TwoFA::class, 'saveSecret'],
+            [\Leantime\Domain\TwoFA\Services\TwoFA::class, 'verifyAndEnable'],
+            [\Leantime\Domain\TwoFA\Services\TwoFA::class, 'disable2FA'],
+            [\Leantime\Domain\Notifications\Services\Notifications::class, 'addNotifications'],
+            [\Leantime\Domain\Cron\Services\Cron::class, 'runScheduledTasks'],
+            [\Leantime\Domain\Queue\Services\Queue::class, 'processQueue'],
+        ];
+
+        foreach ($mustBeInternal as [$class, $method]) {
+            $this->assertFalse($invoke($class, $method), "$class::$method must not be reachable over JSON-RPC");
+        }
+
+        $mustBeGloballyGated = [
+            [\Leantime\Domain\Projects\Services\Projects::class, 'getAllProjects'],
+            [\Leantime\Domain\Projects\Services\Projects::class, 'getAllUsers'],
+            [\Leantime\Domain\Projects\Services\Projects::class, 'getEmployees'],
+        ];
+
+        foreach ($mustBeGloballyGated as [$class, $method]) {
+            $attributes = (new \ReflectionMethod($class, $method))
+                ->getAttributes(\Leantime\Core\Auth\Permissions\RequiresPermission::class);
+
+            $this->assertNotEmpty($attributes, "$class::$method must declare #[RequiresPermission]");
+            $this->assertTrue($attributes[0]->newInstance()->global, "$class::$method must be gated on a GLOBAL permission");
+        }
+    }
 }
 
 /**

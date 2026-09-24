@@ -9,7 +9,7 @@ use Leantime\Domain\Queue\Workers\HttpRequestWorker;
 use Leantime\Domain\Queue\Workers\Workers;
 
 /**
- * @api
+ * Queue processing. Not part of the JSON-RPC surface (see processQueue).
  */
 class Queue
 {
@@ -35,7 +35,8 @@ class Queue
      * @param  Workers  $worker  The worker for which to process the queue.
      * @return bool Returns true if the queue was processed successfully, false otherwise.
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: workers are driven by the scheduler (see register.php),
+     *           never by an arbitrary authenticated API caller.
      */
     public function processQueue(Workers $worker): bool
     {

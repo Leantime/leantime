@@ -47,7 +47,9 @@ class Notifications
     }
 
     /**
-     * @api
+     * @internal Not exposed over JSON-RPC: it writes into ANY user's inbox (the target user
+     *           id is part of each notification row), so a remote caller could forge messages.
+     *           Called by listeners, services and plugins only.
      */
     public function addNotifications(array $notifications): ?bool
     {
