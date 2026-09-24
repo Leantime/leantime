@@ -198,7 +198,8 @@ class Menu
      * @param  string  $requestUri  The incoming request URI.
      * @return array<string, mixed> Flat map of template variable names to values.
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied (leaks another user's
+     *           project list) and the method writes the session filter. HTMX-controller use only.
      */
     public function getProjectSelectorViewData(?int $userId, array $projectSelectFilter, string $currentRoute, string $requestUri): array
     {

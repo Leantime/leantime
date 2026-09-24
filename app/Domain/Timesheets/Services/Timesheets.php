@@ -12,6 +12,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Tickets\Models\Tickets;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -470,7 +471,28 @@ class Timesheets extends BaseService
      */
     public function getLoggedHoursForTicketByDate(int $ticketId): array
     {
+        $this->authorizeTicketView($ticketId);
+
         return $this->timesheetsRepo->getLoggedHoursForTicket($ticketId);
+    }
+
+    /**
+     * Authorizes VIEW on the real project of a ticket before exposing its hours.
+     *
+     * The hour lookups are keyed by a caller-supplied ticket id, so without this any
+     * authenticated caller could read logged/remaining hours across every project.
+     *
+     * @throws AuthorizationException
+     */
+    private function authorizeTicketView(int $ticketId): void
+    {
+        $ticket = $this->ticketRepo->getTicket($ticketId);
+
+        if (! $ticket) {
+            throw new AuthorizationException;
+        }
+
+        $this->authorize(TicketsPermissions::VIEW, (int) $ticket->projectId);
     }
 
     /**

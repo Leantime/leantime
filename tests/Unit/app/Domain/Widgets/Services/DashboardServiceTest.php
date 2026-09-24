@@ -2,9 +2,11 @@
 
 namespace Unit\app\Domain\Widgets\Services;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Leantime\Domain\Widgets\Services\Dashboard;
@@ -37,7 +39,7 @@ class DashboardServiceTest extends TestCase
      */
     private function makeService(array $overrides = []): Dashboard
     {
-        return new Dashboard(
+        $service = new Dashboard(
             $overrides['tickets'] ?? $this->make(TicketService::class),
             $overrides['settings'] ?? $this->make(SettingService::class),
             $overrides['projects'] ?? $this->make(ProjectService::class),
@@ -45,6 +47,34 @@ class DashboardServiceTest extends TestCase
             $overrides['reports'] ?? $this->make(ReportService::class),
             $overrides['widgets'] ?? $this->make(Widgets::class),
         );
+        $service->setPermissionService($overrides['perms'] ?? $this->allowingPermissions());
+
+        return $service;
+    }
+
+    /** Permission stub that allows everything. */
+    private function allowingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => fn () => true,
+            'authorize' => fn () => null,
+        ]);
+    }
+
+    /** Permission stub that denies everything (currentUserCan is false). */
+    private function denyingPermissions(): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => fn () => false,
+        ]);
+    }
+
+    /** Tickets-service stub whose getTicket() resolves every id to a ticket in project 1. */
+    private function ticketsResolvingEveryId(array $extra = []): TicketService
+    {
+        return $this->make(TicketService::class, $extra + [
+            'getTicket' => fn ($id) => new TicketModel(['id' => (int) $id, 'projectId' => 1]),
+        ]);
     }
 
     public function test_resolve_quick_add_due_date_keeps_existing_date(): void
@@ -169,8 +199,10 @@ class DashboardServiceTest extends TestCase
         ]);
 
         $service = $this->makeService(['settings' => $settings]);
+        session(['userdata' => ['id' => 7]]);
 
-        $newState = $service->toggleTaskCollapse(7, '42');
+        // The user id is pinned to the session (the argument is ignored — RPC IDOR guard).
+        $newState = $service->toggleTaskCollapse(999, '42');
 
         $this->assertSame('closed', $newState);
         $this->assertSame('closed', $saved['user.7.taskCollapsed.42']);
@@ -186,8 +218,8 @@ class DashboardServiceTest extends TestCase
                 return true;
             },
         ]);
-        // No dependencies / patches expected when there are no parents.
-        $tickets = $this->make(TicketService::class, [
+        // No parents: dependencies are cleared via patch, which needs an editable ticket.
+        $tickets = $this->ticketsResolvingEveryId([
             'patch' => fn () => true,
         ]);
 
@@ -223,7 +255,7 @@ class DashboardServiceTest extends TestCase
     public function test_update_ticket_dependencies_sets_and_clears_parents(): void
     {
         $patches = [];
-        $tickets = $this->make(TicketService::class, [
+        $tickets = $this->ticketsResolvingEveryId([
             'patch' => function ($id, $fields) use (&$patches) {
                 $patches[$id] = $fields;
 
@@ -242,6 +274,29 @@ class DashboardServiceTest extends TestCase
         $this->assertSame(['dependingTicketId' => 5], $patches[1]);
         $this->assertSame(['dependingTicketId' => '', 'milestoneid' => ''], $patches[2]);
         $this->assertArrayNotHasKey(3, $patches);
+    }
+
+    /**
+     * The item list is caller-supplied (and saveTodoSorting is @api), so a caller who can
+     * only VIEW a ticket must not be able to re-parent it: no patch may be issued without
+     * EDIT in the ticket's project.
+     */
+    public function test_update_ticket_dependencies_skips_tickets_the_caller_cannot_edit(): void
+    {
+        $tickets = $this->ticketsResolvingEveryId([
+            'patch' => function () {
+                $this->fail('patch must not be called for a ticket the caller cannot edit');
+            },
+        ]);
+
+        $service = $this->makeService(['tickets' => $tickets, 'perms' => $this->denyingPermissions()]);
+
+        $service->updateTicketDependencies([
+            ['id' => 1, 'parentId' => 5, 'parentType' => 'ticket'],
+            ['id' => 2, 'parentId' => null, 'parentType' => null],
+        ]);
+
+        $this->assertTrue(true, 'no patch was issued');
     }
 
     public function test_get_welcome_widget_data_aggregates_counts(): void

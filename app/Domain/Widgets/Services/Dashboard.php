@@ -3,9 +3,11 @@
 namespace Leantime\Domain\Widgets\Services;
 
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Domains\BaseService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Users\Services\Users as UserService;
 
@@ -17,7 +19,7 @@ use Leantime\Domain\Users\Services\Users as UserService;
  * domain delegate all data access, grouping, ordering and orchestration to this
  * service so they can stay thin.
  */
-class Dashboard
+class Dashboard extends BaseService
 {
     /**
      * Constructs the dashboard service.
@@ -81,6 +83,8 @@ class Dashboard
      */
     public function getWelcomeWidgetData(int $userId): array
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $currentUser = $this->usersService->getUser($userId);
 
         // Check for new widgets to show settings indicator
@@ -145,6 +149,8 @@ class Dashboard
      */
     public function getToDoWidgetData(int $userId, array $params): array
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $tplVars = $this->ticketsService->getToDoWidgetHierarchicalAssignments($params);
 
         $tplVars['hasMoreTickets'] = $this->hasMoreTickets($tplVars['tickets'] ?? [], (int) $params['limit']);
@@ -168,6 +174,8 @@ class Dashboard
      */
     public function getToDoWidgetLoadMoreData(int $userId, array $params, int $pageSize): array
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $params['limit'] = $params['limit'] + $pageSize;
         $params['offset'] = 0;
 
@@ -212,6 +220,8 @@ class Dashboard
      */
     public function getUserSorting(int $userId): array
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $sorting = $this->settingsService->getSetting($this->sortingKey($userId));
 
         if ($sorting) {
@@ -240,6 +250,8 @@ class Dashboard
      */
     public function saveTodoSorting(int $userId, mixed $rawItems, array $groupChanges, string $groupBy): array
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $successCount = 0;
         $errorCount = 0;
 
@@ -296,6 +308,8 @@ class Dashboard
      */
     public function toggleTaskCollapse(int $userId, string $taskId): string
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $toggleKey = "user.{$userId}.taskCollapsed.{$taskId}";
 
         $currentState = $this->settingsService->getSetting($toggleKey, 'open');
@@ -537,8 +551,9 @@ class Dashboard
                 return false;
             }
 
-            // If user can view the ticket, they can update it
-            return true;
+            // Viewing is not enough: the sorting/grouping paths PATCH the ticket, so the
+            // caller needs EDIT in the ticket's real project (a read-only member can view).
+            return $this->can(TicketsPermissions::EDIT, (int) $ticket->projectId);
         } catch (\Exception $e) {
             Log::error("Permission check failed for task {$taskId}: ".$e->getMessage());
 
@@ -570,6 +585,12 @@ class Dashboard
         foreach ($parentMap as $ticketId => $parent) {
             // Skip if the parent is the same as the ticket (prevent self-reference)
             if ($ticketId == $parent['parentId']) {
+                continue;
+            }
+
+            // Only rewrite dependencies on tickets the caller may edit — the item list is
+            // caller-supplied, so without this any ticket id could be re-parented.
+            if (! $this->canUserUpdateTask((int) $ticketId)) {
                 continue;
             }
 

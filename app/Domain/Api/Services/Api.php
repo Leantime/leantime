@@ -13,6 +13,7 @@ use Leantime\Domain\Api\Permissions\ApiPermissions;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Auth\Services\UserSessionBuilder;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
@@ -51,7 +52,8 @@ class Api
     /**
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: it verifies a key AND rewrites the session to that
+     *           key's user, so only the API guard may call it.
      */
     public function getAPIKeyUser(string $apiKey): bool|array
     {
@@ -294,6 +296,7 @@ class Api
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function getAllProjects(): array
     {
         return $this->projectRepo->getAll();

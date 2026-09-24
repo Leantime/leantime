@@ -274,6 +274,12 @@ class JsonrpcTest extends \Unit\TestCase
             [\Leantime\Domain\Notifications\Services\Notifications::class, 'addNotifications'],
             [\Leantime\Domain\Cron\Services\Cron::class, 'runScheduledTasks'],
             [\Leantime\Domain\Queue\Services\Queue::class, 'processQueue'],
+            // Follow-up sweep of the same shape (caller-supplied ids / infrastructure triggers):
+            [\Leantime\Domain\Install\Services\Install::class, 'runInstall'],
+            [\Leantime\Domain\Install\Services\Install::class, 'runUpdate'],
+            [\Leantime\Domain\Api\Services\Api::class, 'getAPIKeyUser'],
+            [\Leantime\Domain\Menu\Services\Menu::class, 'getProjectSelectorViewData'],
+            [\Leantime\Domain\Reactions\Services\Reactions::class, 'getUserReactions'],
         ];
 
         foreach ($mustBeInternal as [$class, $method]) {
@@ -284,6 +290,10 @@ class JsonrpcTest extends \Unit\TestCase
             [\Leantime\Domain\Projects\Services\Projects::class, 'getAllProjects'],
             [\Leantime\Domain\Projects\Services\Projects::class, 'getAllUsers'],
             [\Leantime\Domain\Projects\Services\Projects::class, 'getEmployees'],
+            [\Leantime\Domain\Api\Services\Api::class, 'getAllProjects'],
+            // Installed-plugin rows carry the marketplace license key.
+            [\Leantime\Domain\Plugins\Services\Plugins::class, 'getAllPlugins'],
+            [\Leantime\Domain\Plugins\Services\Plugins::class, 'getEnabledPlugins'],
         ];
 
         foreach ($mustBeGloballyGated as [$class, $method]) {
