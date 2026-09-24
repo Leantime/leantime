@@ -562,6 +562,29 @@ class Dashboard extends BaseService
     }
 
     /**
+     * Whether the current user may view the given ticket (VIEW in its real project).
+     *
+     * @param  int  $taskId  The ticket id.
+     * @return bool True when the ticket exists and the caller may view it.
+     */
+    private function canUserViewTask(int $taskId): bool
+    {
+        try {
+            $ticket = $this->ticketsService->getTicket($taskId);
+
+            if (! $ticket) {
+                return false;
+            }
+
+            return $this->can(TicketsPermissions::VIEW, (int) $ticket->projectId);
+        } catch (\Exception $e) {
+            Log::error("Permission check failed for task {$taskId}: ".$e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
      * Updates ticket dependencies based on the sorting hierarchy.
      *
      * @param  array  $sorting  The sorting data with parent-child relationships.
@@ -594,7 +617,13 @@ class Dashboard extends BaseService
                 continue;
             }
 
-            $parentId = $parent['parentId'];
+            $parentId = (int) $parent['parentId'];
+
+            // The parent id is caller-supplied too: linking to a ticket the caller cannot view
+            // would expose that parent's headline through the dependency join on later reads.
+            if ($parentId > 0 && ! $this->canUserViewTask($parentId)) {
+                continue;
+            }
 
             // For tickets with parents, set the dependingTicketId
             if ($parentId > 0) {

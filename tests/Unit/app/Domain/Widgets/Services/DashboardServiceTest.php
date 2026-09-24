@@ -299,6 +299,37 @@ class DashboardServiceTest extends TestCase
         $this->assertTrue(true, 'no patch was issued');
     }
 
+    /**
+     * The parent id is caller-supplied as well: an editable ticket must not be pointed at a
+     * ticket in a project the caller cannot view (the dependency join would expose its headline).
+     */
+    public function test_update_ticket_dependencies_skips_parents_the_caller_cannot_view(): void
+    {
+        $patches = [];
+        // Ticket 1 lives in project 1 (accessible); ticket 5 lives in project 9 (not accessible).
+        $tickets = $this->make(TicketService::class, [
+            'getTicket' => fn ($id) => new TicketModel(['id' => (int) $id, 'projectId' => (int) $id === 5 ? 9 : 1]),
+            'patch' => function ($id, $fields) use (&$patches) {
+                $patches[$id] = $fields;
+
+                return true;
+            },
+        ]);
+        $perms = $this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $key, ?int $projectId = null) => $projectId === 1,
+        ]);
+
+        $service = $this->makeService(['tickets' => $tickets, 'perms' => $perms]);
+
+        $service->updateTicketDependencies([
+            ['id' => 1, 'parentId' => 5, 'parentType' => 'ticket'],   // parent in a foreign project
+            ['id' => 2, 'parentId' => 1, 'parentType' => 'ticket'],   // parent accessible
+        ]);
+
+        $this->assertArrayNotHasKey(1, $patches);
+        $this->assertSame(['dependingTicketId' => 1], $patches[2]);
+    }
+
     public function test_get_welcome_widget_data_aggregates_counts(): void
     {
         session(['userdata' => ['id' => 4]]);
