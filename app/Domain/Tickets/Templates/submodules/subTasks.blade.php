@@ -33,11 +33,10 @@ $sumEstHours = 0;
     $sumPlanHours = $sumPlanHours + $subticket['planHours'];
     $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
 
-    if ($subticket['dateToFinish'] == '0000-00-00 00:00:00' || $subticket['dateToFinish'] == '1969-12-31 00:00:00') {
+    if ($subticket['dateToFinish'] == '0000-00-00 00:00:00' || $subticket['dateToFinish'] == '1969-12-31 00:00:00' || empty($subticket['dateToFinish'])) {
         $date = __('text.anytime');
     } else {
-        $date = new DateTime($subticket['dateToFinish']);
-        $date = $date->format(__('language.dateformat'));
+        $date = format($subticket['dateToFinish'])->date(__('text.anytime'));
     }
     @endphp
     <li class="ui-state-default" id="ticket_{{ $subticket['id'] }}" >
