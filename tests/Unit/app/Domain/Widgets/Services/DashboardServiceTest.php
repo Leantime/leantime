@@ -300,6 +300,30 @@ class DashboardServiceTest extends TestCase
     }
 
     /**
+     * VIEW alone is not enough (a read-only project member can view): the dependency rewrite
+     * patches the ticket, so EDIT in the ticket's project is required.
+     */
+    public function test_update_ticket_dependencies_requires_edit_not_just_view(): void
+    {
+        $tickets = $this->ticketsResolvingEveryId([
+            'patch' => function () {
+                $this->fail('patch must not be called with VIEW-only rights');
+            },
+        ]);
+        $viewOnly = $this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $key) => $key === 'tickets.view',
+        ]);
+
+        $service = $this->makeService(['tickets' => $tickets, 'perms' => $viewOnly]);
+
+        $service->updateTicketDependencies([
+            ['id' => 1, 'parentId' => 5, 'parentType' => 'ticket'],
+        ]);
+
+        $this->assertTrue(true, 'no patch was issued');
+    }
+
+    /**
      * The parent id is caller-supplied as well: an editable ticket must not be pointed at a
      * ticket in a project the caller cannot view (the dependency join would expose its headline).
      */
