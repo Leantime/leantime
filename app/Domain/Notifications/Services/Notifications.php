@@ -342,7 +342,7 @@ class Notifications
      * @throws BindingResolutionException
      *
      * @internal Not exposed over JSON-RPC: the author id, target users (data-tagged-user-id in
-     *           \$content) and URL are all caller-supplied, so an RPC caller could forge mention
+     *           $content) and URL are all caller-supplied, so an RPC caller could forge mention
      *           notifications and emails to any user. Called by the comment/status-update flows only.
      */
     public function processMentions(string $content, string $module, int $moduleId, int $authorId, string $url): void
