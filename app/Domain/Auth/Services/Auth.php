@@ -683,7 +683,7 @@ class Auth implements Authenticatable
         $date = new \DateTime;
         $date = $date->format('y:m:d h:i:s');
 
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = request()->getClientIp();
         $msg = '['.$date.']['.$ip.'] Login failed for user: '.$user;
 
         Log::info($msg);
