@@ -142,6 +142,7 @@ class Messengers
                 $this->httpClient->post($mattermostWebhookURL, [
                     'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                     'body' => $data_string,
+                    'headers' => ['Content-Type' => 'application/json'],
                 ]);
 
                 return true;
@@ -532,7 +533,7 @@ class Messengers
                 'pretext' => $notification->message,
                 'title' => $headline,
                 'title_link' => $notification->url['url'],
-                'fields' => $fields,
+                'fields' => [$fields],
             ],
         ];
 
