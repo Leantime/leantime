@@ -42,7 +42,10 @@ final class OutboundUrlGuard
     ];
 
     /**
-     * True when $url is safe for a server-initiated outbound request.
+     * True when $url is safe for a server-initiated outbound request: http/https, and the host —
+     * an IPv4 literal, a bracketed IPv6 literal, or every A/AAAA record of a name — is public.
+     *
+     * @param  string  $url  The URL to check.
      */
     public static function isAllowedUrl(string $url): bool
     {
@@ -59,6 +62,16 @@ final class OutboundUrlGuard
         }
 
         $host = $parsed['host'];
+
+        // parse_url keeps the brackets of an IPv6 literal ("[2606:4700::1111]"). Brackets may only
+        // wrap an IPv6 address (RFC 3986), so unwrap and classify it; anything else in brackets
+        // (IPv4, zone ids, IPvFuture) is refused rather than handed to DNS.
+        if (str_starts_with($host, '[')) {
+            $ipv6 = str_ends_with($host, ']') ? substr($host, 1, -1) : '';
+
+            return filter_var($ipv6, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false
+                && self::isIpAllowed($ipv6);
+        }
 
         // IP literal: validate directly.
         if (filter_var($host, FILTER_VALIDATE_IP)) {

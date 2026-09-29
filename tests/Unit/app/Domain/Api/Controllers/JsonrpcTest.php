@@ -305,6 +305,58 @@ class JsonrpcTest extends \Unit\TestCase
             $this->assertTrue($attributes[0]->newInstance()->global, "$class::$method must be gated on a GLOBAL permission");
         }
     }
+
+    /**
+     * Regression guard: a forged leantime.rpc.projects.notifyProjectUsers call reached every
+     * notification channel — email queue, project messengers, push, in-app and the recipients'
+     * personal webhooks — with caller-chosen project, author, subject, message and link.
+     * notifyProjectUsers has no authorization of its own; it is only ever the internal last
+     * step after a service or controller already authorized the change. Driven end-to-end
+     * through the controller: the call must be refused as method-not-found and the service
+     * (the single entry point to all of those channels) must never be invoked.
+     */
+    public function test_forged_notify_project_users_is_not_rpc_reachable(): void
+    {
+        $dispatchedNotifications = new \ArrayObject;
+
+        $this->app->bind(
+            \Leantime\Domain\Projects\Services\Projects::class,
+            fn () => new class($dispatchedNotifications)
+            {
+                public function __construct(private \ArrayObject $dispatchedNotifications) {}
+
+                public function notifyProjectUsers(\Leantime\Domain\Notifications\Models\Notification $notification): void
+                {
+                    $this->dispatchedNotifications->append($notification);
+                }
+            }
+        );
+
+        $params = [
+            'method' => 'leantime.rpc.projects.notifyProjectUsers',
+            'params' => [
+                'notification' => [
+                    'id' => 0,
+                    'projectId' => 5,
+                    'authorId' => 1,
+                    'module' => 'tickets',
+                    'action' => 'updated',
+                    'subject' => 'Password reset required',
+                    'message' => 'Your session expired, sign in again',
+                    'url' => ['url' => 'https://attacker.example/login', 'text' => 'Sign in'],
+                    'entity' => ['id' => 42],
+                ],
+            ],
+            'id' => 9,
+            'jsonrpc' => '2.0',
+        ];
+
+        $body = $this->bodyOf($this->controller->post($params));
+
+        $this->assertCount(0, $dispatchedNotifications, 'A forged notification must never reach Projects::notifyProjectUsers (and so no notification channel)');
+        $this->assertSame(-32601, $body['error']['code'] ?? null, 'Projects::notifyProjectUsers must be method-not-found over JSON-RPC');
+        $this->assertSame(9, $body['id']);
+    }
 }
 
 /**

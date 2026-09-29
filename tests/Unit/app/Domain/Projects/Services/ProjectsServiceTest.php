@@ -4,6 +4,9 @@ namespace Unit\app\Domain\Projects\Services;
 
 use Carbon\CarbonImmutable;
 use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Exceptions\AuthorizationException;
@@ -13,8 +16,11 @@ use Leantime\Core\Support\CarbonMacros;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
+use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
+use Leantime\Domain\Notifications\Services\Push;
+use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
@@ -67,6 +73,9 @@ class ProjectsServiceTest extends TestCase
         ?ClientRepository $clientRepo = null,
         ?LanguageCore $language = null,
         ?Client $httpClient = null,
+        ?Messengers $messengers = null,
+        ?NotificationService $notificationService = null,
+        ?Webhooks $webhooks = null,
     ): ProjectService {
         $language ??= $this->make(LanguageCore::class, [
             '__' => fn ($key) => $key,
@@ -77,8 +86,8 @@ class ProjectsServiceTest extends TestCase
             $ticketRepo ?? $this->make(TicketRepository::class),
             $settingsRepo ?? $this->make(SettingRepository::class),
             $language,
-            $this->make(Messengers::class),
-            $this->make(NotificationService::class),
+            $messengers ?? $this->make(Messengers::class),
+            $notificationService ?? $this->make(NotificationService::class),
             $this->make(FileService::class),
             $this->make(Avatarcreator::class),
             $queueRepo ?? $this->make(QueueRepository::class),
@@ -86,7 +95,130 @@ class ProjectsServiceTest extends TestCase
             $commentRepo ?? $this->make(CommentRepository::class),
             $clientRepo ?? $this->make(ClientRepository::class),
             $httpClient ?? $this->make(Client::class),
+            $webhooks ?? $this->make(Webhooks::class),
         );
+    }
+
+    // ---------------------------------------------------------------------
+    // notifyProjectUsers() → personal webhooks. Runs the real dispatch path
+    // with every other channel stubbed, so the webhook recipients are exactly
+    // what the relevance/category/mention filtering produced.
+    // ---------------------------------------------------------------------
+
+    /**
+     * Wires notifyProjectUsers for project 5 with members 1 (author), 2, 3, 4, 5;
+     * user 6 is not a member but is @mentioned. Returns what each channel saw.
+     *
+     * @param  array<string, string>  $settings  Setting key => stored value (preferences + webhooks).
+     * @param  Webhooks  $webhooks  The webhook service under test.
+     * @return array{emailRecipients: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null}
+     */
+    private function runNotifyProjectUsers(array $settings, Webhooks $webhooks): array
+    {
+        $seen = ['emailRecipients' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null];
+
+        $members = [];
+        foreach ([1, 2, 3, 4, 5] as $userId) {
+            $members[] = ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a'];
+        }
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUsersAssignedToProject' => fn () => $members,
+            'getProject' => fn () => ['id' => 5, 'name' => 'Acme'],
+        ]);
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSettingsForKeys' => fn (array $keys) => array_intersect_key($settings, array_flip($keys)),
+        ]);
+
+        // Email queue and push are resolved from the container inside notifyProjectUsers.
+        app()->instance(QueueRepository::class, $this->make(QueueRepository::class, [
+            'queueMessageToUsers' => function ($recipients) use (&$seen) {
+                $seen['emailRecipients'] = array_values($recipients);
+            },
+        ]));
+        app()->instance(Push::class, $this->make(Push::class, [
+            'sendFromNotification' => function ($notification, $userIds) use (&$seen) {
+                $seen['pushRecipients'] = array_values($userIds);
+            },
+        ]));
+        // The in-app listener resolves the notifications service from the container too.
+        $notificationService = $this->make(NotificationService::class, [
+            'processMentions' => fn () => null,
+            'addNotifications' => function ($notifications) use (&$seen) {
+                $seen['inAppNotifications'] = $notifications;
+            },
+        ]);
+        app()->instance(NotificationService::class, $notificationService);
+        $messengers = $this->make(Messengers::class, [
+            'sendNotificationToMessengers' => function () use (&$seen) {
+                $seen['messengerCalls']++;
+            },
+        ]);
+
+        $notification = new Notification;
+        $notification->projectId = 5;
+        $notification->authorId = 1;
+        $notification->module = 'tickets';
+        $notification->action = 'updated';
+        $notification->subject = 'To-Do updated';
+        $notification->message = 'Ada updated "Ship it"';
+        $notification->url = ['url' => 'https://leantime.example.com/tickets/showTicket/42', 'text' => 'Open'];
+        $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review'];
+
+        $this->makeService(
+            projectRepo: $projectRepo,
+            settingsRepo: $settingsRepo,
+            messengers: $messengers,
+            notificationService: $notificationService,
+            webhooks: $webhooks,
+        )->notifyProjectUsers($notification);
+
+        return $seen;
+    }
+
+    public function test_notify_project_users_posts_personal_webhooks_only_to_filtered_opted_in_recipients(): void
+    {
+        $settings = [
+            'usersettings.3.projectNotificationLevels' => json_encode([5 => 'muted']),
+            'usersettings.4.notificationEventTypes' => json_encode(['comments']),
+        ];
+        // Everyone except user 5 opted in — including the author and the filtered-out users.
+        foreach ([1, 2, 3, 4, 6] as $userId) {
+            $settings["usersettings.{$userId}.webhook"] = json_encode(['url' => "https://1.1.1.1/hooks/user-{$userId}", 'enabled' => true]);
+        }
+
+        $sentRequests = [];
+        $stack = HandlerStack::create(new MockHandler(array_fill(0, 6, new Response(200))));
+        $stack->push(Middleware::history($sentRequests));
+        $webhooks = new Webhooks(new Client(['handler' => $stack]), $this->make(SettingRepository::class, [
+            'getSettingsForKeys' => fn (array $keys) => array_intersect_key($settings, array_flip($keys)),
+        ]));
+
+        $seen = $this->runNotifyProjectUsers($settings, $webhooks);
+
+        // Author 1 excluded, 3 muted the project, 4 disabled the tasks category, 6 bypasses via @mention.
+        $this->assertSame([2, 5, 6], $seen['emailRecipients']);
+        $this->assertSame(
+            ['https://1.1.1.1/hooks/user-2', 'https://1.1.1.1/hooks/user-6'],
+            array_map(fn ($sent) => (string) $sent['request']->getUri(), $sentRequests),
+            'Only filtered recipients who opted in (5 did not) get a webhook'
+        );
+        $this->assertSame(1, $seen['messengerCalls'], 'Project messengers still fire independently of personal webhooks');
+    }
+
+    public function test_notify_project_users_still_delivers_every_other_channel_when_webhooks_fail(): void
+    {
+        $webhooks = $this->make(Webhooks::class, [
+            'sendToUsers' => function () {
+                throw new \RuntimeException('webhook outage');
+            },
+        ]);
+
+        $seen = $this->runNotifyProjectUsers([], $webhooks);
+
+        $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients']);
+        $this->assertSame([2, 3, 4, 5, 6], $seen['pushRecipients']);
+        $this->assertSame(1, $seen['messengerCalls']);
+        $this->assertNotNull($seen['inAppNotifications'], 'In-app notifications are still created');
     }
 
     public function test_get_project_hub_data_builds_unique_client_map_and_returns_all_projects_when_no_filter(): void
