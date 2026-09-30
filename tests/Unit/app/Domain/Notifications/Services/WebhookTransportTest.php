@@ -510,22 +510,38 @@ namespace Unit\app\Domain\Notifications\Services {
             $this->assertSame([], $this->dnsLookups, 'Checking a URL never resolves its host');
         }
 
+        /**
+         * A per-user token can sit in the endpoint's hostname as well as its path or query, so
+         * neither the host nor an address it resolved to may be logged — including by the SSRF
+         * guard, the only thing on this path that logs at all.
+         */
         public function test_nothing_about_the_endpoint_or_payload_is_logged(): void
         {
             $logged = [];
             foreach (['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'] as $level) {
                 Log::shouldReceive($level)->andReturnUsing(function ($message, $context = []) use (&$logged) {
-                    $logged[] = $message.' '.json_encode($context);
+                    $logged[] = $message.' '.json_encode($context, JSON_UNESCAPED_SLASHES);
                 });
             }
             $this->fakeDns([
-                'hooks.example.test' => ['A' => [self::PUBLIC_V4]],
-                'mixed.example.test' => ['A' => [self::PUBLIC_V4, '10.0.0.5']],
+                'secret-token.hooks.example.test' => ['A' => [self::PUBLIC_V4]],
+                'secret-token.mixed.example.test' => ['A' => [self::PUBLIC_V4, '10.0.0.5']],
             ]);
-            $transport = $this->makeTransport([new Response(500), new ConnectException('timed out for '.self::SECRET_ENDPOINT, new Request('POST', self::SECRET_ENDPOINT))]);
+            $tokenHostEndpoint = 'https://secret-token.hooks.example.test/hooks/secret-path?sig=secret-sig';
+            $transport = $this->makeTransport([
+                new Response(500),
+                new ConnectException('cURL error 28: timed out for '.$tokenHostEndpoint, new Request('POST', $tokenHostEndpoint)),
+            ]);
             $payload = ['message' => 'secret-payload'];
 
-            foreach ([self::SECRET_ENDPOINT, self::SECRET_ENDPOINT, 'https://mixed.example.test/hooks/secret-token?sig=secret-sig'] as $url) {
+            $urls = [
+                $tokenHostEndpoint,                                    // answers 500
+                $tokenHostEndpoint,                                    // times out
+                'https://secret-token.mixed.example.test/endpoint',    // refused by the guard: one private address
+                'https://secret-token.unresolved.example.test/endpoint', // refused by the guard: no address
+                'http://secret-token.hooks.example.test/endpoint',     // refused before any lookup: not https
+            ];
+            foreach ($urls as $url) {
                 try {
                     $transport->post($url, $payload);
                 } catch (\Throwable) {
@@ -533,8 +549,11 @@ namespace Unit\app\Domain\Notifications\Services {
                 }
             }
 
+            $this->assertCount(2, $logged, 'Only the guard logs here, once for each host it refused');
             foreach ($logged as $line) {
-                $this->assertStringNotContainsString('secret', $line, 'Webhook path, query and payload must never reach the logs');
+                foreach (['secret', 'example.test', self::PUBLIC_V4, '10.0.0.5'] as $partOfTheRequest) {
+                    $this->assertStringNotContainsString($partOfTheRequest, $line, 'Webhook host, address, path, query and payload must never reach the logs');
+                }
             }
         }
     }

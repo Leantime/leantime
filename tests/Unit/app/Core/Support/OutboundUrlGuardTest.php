@@ -22,6 +22,7 @@ namespace Unit\app\Core\Support {
     use GuzzleHttp\Psr7\Request;
     use GuzzleHttp\Psr7\Response;
     use GuzzleHttp\Psr7\Uri;
+    use Illuminate\Support\Facades\Log;
     use Leantime\Core\Support\OutboundUrlGuard;
     use Unit\TestCase;
 
@@ -228,6 +229,40 @@ namespace Unit\app\Core\Support {
             $this->assertSame([], OutboundUrlGuard::resolveAllowedAddresses('ftp://hooks.example.test/hook'));
             $this->assertSame([], OutboundUrlGuard::resolveAllowedAddresses('not-a-url'));
             $this->assertSame([], $this->dnsLookups);
+        }
+
+        /**
+         * Every part of a user-supplied URL can carry a secret — a webhook's per-user token often
+         * sits in its hostname — so a refusal is logged by its reason alone: never the scheme, the
+         * host or an address the host resolved to.
+         *
+         * @dataProvider refusedUrlProvider
+         */
+        public function test_refusals_are_logged_without_any_part_of_the_url(string $url, array $records): void
+        {
+            $logged = [];
+            foreach (['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'] as $level) {
+                Log::shouldReceive($level)->andReturnUsing(function ($message, $context = []) use (&$logged) {
+                    $logged[] = $message.' '.json_encode($context, JSON_UNESCAPED_SLASHES);
+                });
+            }
+            $this->fakeDns(['secret-token.hooks.example.test' => $records]);
+
+            $this->assertSame([], OutboundUrlGuard::resolveAllowedAddresses($url));
+
+            $this->assertCount(1, $logged, 'The refusal is logged once');
+            foreach (['secret-token', 'hooks.example.test', '93.184.216.34', '10.0.0.5', '/endpoint'] as $partOfTheUrl) {
+                $this->assertStringNotContainsString($partOfTheUrl, $logged[0]);
+            }
+        }
+
+        public static function refusedUrlProvider(): array
+        {
+            return [
+                'host that does not resolve' => ['https://secret-token.hooks.example.test/endpoint', []],
+                'host with a public and a private address' => ['https://secret-token.hooks.example.test/endpoint', ['A' => ['93.184.216.34', '10.0.0.5']]],
+                'disallowed scheme' => ['secret-token://hooks.example.test/endpoint', []],
+            ];
         }
 
         public function test_redirect_options_block_disallowed_hop(): void

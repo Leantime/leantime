@@ -99,6 +99,7 @@ class Install
         30524,
         30525,
         30526,
+        30527,
     ];
 
     /**
@@ -3257,6 +3258,71 @@ class Install
             Log::error('Migration 30526: '.$e->getMessage());
 
             return ['Migration 30526 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30527 — database update for v3.5.27.
+     *
+     * Indexes zp_queue on (channel, thedate, msghash), in that order. The queue runner reads
+     * one channel oldest first, msghash breaking ties, a batch at a time; with this index the
+     * read walks the index in order instead of scanning and sorting the table on every run.
+     * Fresh installs get the same index from SchemaBuilder::createQueueTable().
+     *
+     * Idempotent and data-preserving: an index already on exactly those columns in that order,
+     * under any name, is kept and nothing is added; queued rows are never touched. A missing
+     * zp_queue is skipped like the other partial-install guards — there is nothing to index.
+     *
+     * On MySQL and MariaDB, an InnoDB zp_queue still in the COMPACT or REDUNDANT row format
+     * (767-byte key columns) is first rebuilt as ROW_FORMAT=DYNAMIC so the index fits. If that
+     * change fails, the migration fails and db-version stays where it was.
+     *
+     * @return bool|array<int, string> true on success or skip, otherwise the error messages
+     */
+    public function update_sql_30527(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_queue')) {
+                Log::info('Migration 30527 skipped: zp_queue table missing (partial install?)');
+
+                return true;
+            }
+
+            $channelBatchColumns = ['channel', 'thedate', 'msghash'];
+            if ($schema->hasIndex('zp_queue', $channelBatchColumns)) {
+                return true;
+            }
+
+            // InnoDB's COMPACT and REDUNDANT row formats cap an index key column at 767 bytes;
+            // channel (varchar(255), utf8mb4) needs 1020, so the index cannot be built on them.
+            // Queue tables created under old server defaults keep that row format across server
+            // upgrades, so move such a table to DYNAMIC (3072 bytes) first. The rebuild keeps
+            // every row; other drivers, engines and row formats are left as they are.
+            if (in_array($connection->getDriverName(), ['mysql', 'mariadb'], true)) {
+                $queueTableStatus = $connection->selectOne(
+                    'select engine as table_engine, row_format as table_row_format from information_schema.tables where table_schema = ? and table_name = ?',
+                    [$connection->getDatabaseName(), $connection->getTablePrefix().'zp_queue']
+                );
+
+                if ($queueTableStatus !== null
+                    && strcasecmp((string) $queueTableStatus->table_engine, 'InnoDB') === 0
+                    && in_array(strtolower((string) $queueTableStatus->table_row_format), ['compact', 'redundant'], true)) {
+                    $connection->statement('alter table '.$connection->getQueryGrammar()->wrapTable('zp_queue').' row_format = dynamic');
+                }
+            }
+
+            $schema->table('zp_queue', function (Blueprint $table) use ($channelBatchColumns): void {
+                $table->index($channelBatchColumns, 'idx_queue_channel_thedate_msghash');
+            });
+        } catch (\Exception $e) {
+            Log::error('Migration 30527: '.$e->getMessage());
+
+            return ['Migration 30527 failed: '.$e->getMessage()];
         }
 
         return true;

@@ -27,8 +27,9 @@ use Leantime\Core\Support\OutboundUrlGuard;
  * applies. Always cURL (a stream handler can't honour the pin), never a proxy (it would resolve
  * the host itself), never a redirect (every 3xx is a failure), TLS verification always on.
  *
- * Throws only fixed-message exceptions and never logs: a webhook URL's path and query usually
- * carry its secret, and Guzzle's own exception messages embed the full URL.
+ * Throws only fixed-message exceptions and logs nothing itself (the SSRF guard logs only why it
+ * refused a URL): a webhook URL's host, path and query can all carry its secret, and Guzzle's own
+ * exception messages embed the full URL.
  *
  * Intentionally carries no @api tags: it would let any authenticated JSON-RPC caller make the
  * server POST arbitrary payloads.

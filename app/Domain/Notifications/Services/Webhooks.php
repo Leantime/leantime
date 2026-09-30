@@ -246,10 +246,11 @@ class Webhooks
 
     /**
      * Sends one payload through WebhookTransport, which resolves and checks the
-     * endpoint's addresses itself. Logs failures by host only: a webhook URL's
-     * path and query commonly carry its secret, and transport exception messages
-     * can embed the full URL, so neither the URL nor the exception message is
-     * ever logged.
+     * endpoint's addresses itself. Logs failures by recipient, HTTP status and
+     * exception class only: a webhook URL can carry its secret in any part — a
+     * per-user token in the hostname as much as in the path or query — and
+     * transport exception messages can embed the full URL, so no part of the
+     * URL and no exception message is ever logged.
      *
      * @param  string  $webhookUrl  The recipient's stored endpoint.
      * @param  array<string, mixed>  $payload  The JSON body.
@@ -257,10 +258,8 @@ class Webhooks
      */
     private function deliver(string $webhookUrl, array $payload, int $recipientId): void
     {
-        $host = (string) parse_url($webhookUrl, PHP_URL_HOST);
-
         if (! self::isValidEndpointUrl($webhookUrl)) {
-            Log::warning('Personal webhook skipped: endpoint not allowed', ['recipientId' => $recipientId, 'host' => $host]);
+            Log::warning('Personal webhook skipped: endpoint not allowed', ['recipientId' => $recipientId]);
 
             return;
         }
@@ -270,7 +269,6 @@ class Webhooks
         } catch (\Throwable $e) {
             Log::warning('Personal webhook delivery failed', [
                 'recipientId' => $recipientId,
-                'host' => $host,
                 'status' => $e instanceof BadResponseException ? $e->getResponse()->getStatusCode() : null,
                 'exception' => get_class($e),
             ]);

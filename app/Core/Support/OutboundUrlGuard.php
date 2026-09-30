@@ -21,6 +21,10 @@ use Psr\Http\Message\UriInterface;
  * A check alone still lets the HTTP client resolve the host a second time and get a different
  * answer (DNS rebinding). Callers that need the connection itself pinned to a checked address use
  * {@see resolveAllowedAddresses()} and hand the result to their transport.
+ *
+ * Refusals are logged by reason alone — never the scheme, host or a resolved address. The URLs
+ * checked here are user-supplied and any part of one can carry a secret (a webhook's per-user
+ * token often sits in its hostname).
  */
 final class OutboundUrlGuard
 {
@@ -109,7 +113,7 @@ final class OutboundUrlGuard
         }
 
         if (! in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
-            Log::warning('SSRF guard: blocked disallowed scheme', ['scheme' => $parsed['scheme']]);
+            Log::warning('SSRF guard: blocked disallowed scheme');
 
             return [];
         }
@@ -143,14 +147,14 @@ final class OutboundUrlGuard
         $ips = array_values(array_unique(array_filter($ips)));
 
         if ($ips === []) {
-            Log::warning('SSRF guard: unable to resolve host', ['host' => $host]);
+            Log::warning('SSRF guard: unable to resolve host');
 
             return [];
         }
 
         foreach ($ips as $ip) {
             if (! self::isIpAllowed($ip)) {
-                Log::warning('SSRF guard: blocked private/reserved IP', ['host' => $host, 'ip' => $ip]);
+                Log::warning('SSRF guard: blocked private/reserved IP');
 
                 return [];
             }
