@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Notifications\Services;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\SQLiteConnection;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
@@ -31,6 +32,9 @@ use Unit\TestCase;
  * request changes something: the user switches the webhook off, rotates its URL, turns
  * notifications off, is deactivated, deleted, demoted or taken off the project team. The
  * second row must follow that change.
+ *
+ * Nor does the queue fold two rows into one: the same notification raised twice in one second
+ * is posted twice.
  *
  * Only the database (in-memory SQLite) and the transport (a recorder) are stand-ins. The
  * WebhookQueue, DeliverPersonalWebhooks, Webhooks, the Setting/User/Project/Queue repositories
@@ -105,6 +109,13 @@ class WebhookRevocationTest extends TestCase
         $this->webSettings->saveSetting(Webhooks::settingKey(self::RECIPIENT_ID), Webhooks::encodeSetting(self::OLD_ENDPOINT, true));
     }
 
+    protected function tearDown(): void
+    {
+        CarbonImmutable::setTestNow();
+
+        parent::tearDown();
+    }
+
     private function settingRepository(): SettingRepository
     {
         return new SettingRepository($this->db, new SettingCache);
@@ -158,13 +169,13 @@ class WebhookRevocationTest extends TestCase
      * Two notifications raised in one request queue two rows for user 7; one scheduler run then
      * delivers both, and $changeAfterFirstPost runs between the two posts.
      */
-    private function deliverTwoQueuedNotifications(\Closure $changeAfterFirstPost): void
+    private function deliverTwoQueuedNotifications(\Closure $changeAfterFirstPost, string $firstSubject = 'first', string $secondSubject = 'second'): void
     {
         // The request that raised the notifications: its own repositories, cached reads.
         app()->instance(UserRepository::class, $this->webUsers);
         $request = new Webhooks($this->recordingTransport(), $this->webSettings, $this->webUsers, $this->webProjects, $this->queueRepository());
-        $request->queueToUsers($this->makeNotification('first'), [self::RECIPIENT_ID]);
-        $request->queueToUsers($this->makeNotification('second'), [self::RECIPIENT_ID]);
+        $request->queueToUsers($this->makeNotification($firstSubject), [self::RECIPIENT_ID]);
+        $request->queueToUsers($this->makeNotification($secondSubject), [self::RECIPIENT_ID]);
         $this->assertSame(2, $this->connection->table('zp_queue')->count(), 'Both notifications are queued for user 7');
         $this->assertSame([], $this->posts, 'Queueing posts nothing');
 
@@ -194,6 +205,16 @@ class WebhookRevocationTest extends TestCase
 
         $this->assertSame([self::OLD_ENDPOINT, self::OLD_ENDPOINT], $this->postedUrls());
         $this->assertEqualsCanonicalizing(['first', 'second'], array_column($this->posts, 'subject'));
+    }
+
+    public function test_the_same_notification_raised_twice_in_one_second_is_posted_twice(): void
+    {
+        // Same second, recipient, project and payload: nothing but each row's own id tells them apart.
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-07-01 08:00:00', 'UTC'));
+
+        $this->deliverTwoQueuedNotifications(fn () => null, firstSubject: 'same', secondSubject: 'same');
+
+        $this->assertSame(array_fill(0, 2, ['url' => self::OLD_ENDPOINT, 'subject' => 'same']), $this->posts, 'Each row is claimed and posted on its own');
     }
 
     public function test_switching_the_webhook_off_stops_the_next_row(): void

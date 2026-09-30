@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Queue\Repositories;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Queue\Workers\Workers;
@@ -123,10 +124,26 @@ class Queue
         return $everyHashRemovedARow;
     }
 
+    /**
+     * Queues one message on a channel. Every call writes its own row: the row's msghash is a
+     * random id, never derived from the content, so a message identical to one queued in the
+     * same second (the same notification raised twice, say) is kept, and workers claim and
+     * delete each row on its own.
+     *
+     * thedate is stamped in UTC, never the request's timezone, so rows queued by users in
+     * different timezones list oldest first in the order they were actually queued.
+     *
+     * @param  Workers  $channel  The channel whose worker runs the message.
+     * @param  string  $subject  What that worker runs it with, e.g. the job class on DEFAULT and WEBHOOKS.
+     * @param  string  $message  The serialized payload.
+     * @param  int  $userId  The user the message belongs to.
+     * @param  int  $projectId  The project the message belongs to; 0 for none.
+     */
     public function addMessageToQueue(Workers $channel, string $subject, string $message, int $userId, int $projectId = 0): void
     {
-        $thedate = date('Y-m-d H:i:s');
-        $msghash = md5($thedate.$subject.$message.$projectId);
+        $thedate = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
+        // 128 random bits as 32 hex characters: unique per row, fits msghash VARCHAR(50).
+        $msghash = bin2hex(random_bytes(16));
 
         try {
             $this->db->table('zp_queue')->insert([

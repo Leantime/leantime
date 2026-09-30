@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Queue\Repositories;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\SQLiteConnection;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
@@ -16,6 +17,10 @@ use Unit\TestCase;
  *
  * deleteMessageInQueue() reports true only when every hash it was given removed a row, so a
  * worker holding a stale listing can tell a row it claimed from one another worker already took.
+ *
+ * addMessageToQueue() writes one row per call, even for a message identical to one queued in the
+ * same second: a row's id is its own, never its content. It stamps the row in UTC, so rows queued
+ * by requests in different timezones still list in the order they were queued.
  */
 class QueueRepositoryTest extends TestCase
 {
@@ -25,9 +30,16 @@ class QueueRepositoryTest extends TestCase
 
     private QueueRepository $queueRepo;
 
+    /**
+     * PHP's default timezone as the test started, restored after it.
+     */
+    private string $defaultTimezone;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->defaultTimezone = date_default_timezone_get();
 
         $this->connection = new SQLiteConnection(new \PDO('sqlite::memory:'));
         // The columns SchemaBuilder::createQueueTable() creates.
@@ -53,6 +65,14 @@ class QueueRepositoryTest extends TestCase
         $this->insertRow('d-hash', Workers::WEBHOOKS, userId: 1, thedate: '2026-09-30 10:00:02');
         // Older than all of them, but on another channel.
         $this->insertRow('default-hash', Workers::DEFAULT, userId: 1, thedate: '2026-09-30 09:00:00');
+    }
+
+    protected function tearDown(): void
+    {
+        CarbonImmutable::setTestNow();
+        date_default_timezone_set($this->defaultTimezone);
+
+        parent::tearDown();
     }
 
     private function insertRow(string $msghash, Workers $channel, int $userId, string $thedate): void
@@ -112,5 +132,42 @@ class QueueRepositoryTest extends TestCase
         $this->assertFalse($this->queueRepo->deleteMessageInQueue(['a-hash', 'b-hash']));
         $this->assertSame(['c-hash', 'd-hash', 'default-hash'], $this->connection->table('zp_queue')->orderBy('msghash')->pluck('msghash')->all());
         $this->assertTrue($this->queueRepo->deleteMessageInQueue(['c-hash', 'd-hash']), 'Every hash removed a row');
+    }
+
+    public function test_identical_messages_queued_in_the_same_second_each_keep_their_own_row_and_claim(): void
+    {
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-07-01 08:00:00', 'UTC'));
+        $message = serialize(['subject' => 'Ada updated "Ship it"', 'recipientIds' => [7]]);
+
+        $this->queueRepo->addMessageToQueue(Workers::WEBHOOKS, 'Some\\Job', $message, userId: 7, projectId: 5);
+        $this->queueRepo->addMessageToQueue(Workers::WEBHOOKS, 'Some\\Job', $message, userId: 7, projectId: 5);
+
+        $rows = $this->connection->table('zp_queue')->where('subject', 'Some\\Job')->get()->map(fn ($row) => (array) $row)->all();
+        $this->assertCount(2, $rows, 'The second message is not dropped as a duplicate of the first');
+        [$first, $second] = $rows;
+        $this->assertNotSame($first['msghash'], $second['msghash']);
+        $this->assertLessThanOrEqual(50, strlen($first['msghash']), 'Fits msghash VARCHAR(50), which SQLite does not enforce');
+        $this->assertSame(array_diff_key($first, ['msghash' => true]), array_diff_key($second, ['msghash' => true]), 'Same channel, recipient, project, second and payload');
+
+        $this->assertTrue($this->queueRepo->deleteMessageInQueue($first['msghash']), 'Claiming one row');
+        $this->assertTrue($this->queueRepo->deleteMessageInQueue($second['msghash']), 'leaves the other to be claimed on its own');
+    }
+
+    public function test_rows_queued_under_different_timezones_are_stored_in_utc_and_listed_in_the_order_they_were_queued(): void
+    {
+        // A request in Tokyo queues first, at 10:00 UTC (19:00 there); one in Los Angeles a minute later (03:01 there).
+        date_default_timezone_set('Asia/Tokyo');
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-07-01 10:00:00', 'UTC'));
+        $this->queueRepo->addMessageToQueue(Workers::WEBHOOKS, 'Some\\Job', 'queued first, from Tokyo', userId: 2, projectId: 5);
+
+        date_default_timezone_set('America/Los_Angeles');
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-07-01 10:01:00', 'UTC'));
+        $this->queueRepo->addMessageToQueue(Workers::WEBHOOKS, 'Some\\Job', 'queued later, from Los Angeles', userId: 3, projectId: 5);
+
+        // Both are older than every setUp row, so they make up the batch of two.
+        $rows = $this->queueRepo->listMessageInQueue(Workers::WEBHOOKS, limit: 2);
+
+        $this->assertSame(['queued first, from Tokyo', 'queued later, from Los Angeles'], array_column($rows, 'message'), 'Oldest first by when they were queued, whatever the request timezone');
+        $this->assertSame(['2026-07-01 10:00:00', '2026-07-01 10:01:00'], array_column($rows, 'thedate'), 'Stored in UTC');
     }
 }
