@@ -36,6 +36,10 @@ use Unit\TestCase;
  * Nor does the queue fold two rows into one: the same notification raised twice in one second
  * is posted twice.
  *
+ * Because every check happens when the row is posted, the request that raised the notification
+ * checks none of them: queueing reads the recipients' webhook settings in one batch and writes
+ * queue rows, never a user, project or access row, however many recipients opted in.
+ *
  * Only the database (in-memory SQLite) and the transport (a recorder) are stand-ins. The
  * WebhookQueue, DeliverPersonalWebhooks, Webhooks, the Setting/User/Project/Queue repositories
  * and SettingCache (its shared tier on the array cache store) are the real classes. The other
@@ -197,6 +201,29 @@ class WebhookRevocationTest extends TestCase
     private function postedUrls(): array
     {
         return array_column($this->posts, 'url');
+    }
+
+    public function test_queueing_reads_only_the_webhook_settings_however_many_recipients_opted_in(): void
+    {
+        // Users 8 and 9 join 7 on the team with webhooks switched on; user 10 never set one up.
+        foreach ([8, 9, 10] as $userId) {
+            $this->connection->table('zp_user')->insert(['id' => $userId, 'status' => 'a', 'notifications' => 1, 'role' => 20, 'clientId' => 0]);
+            $this->connection->table('zp_relationuserproject')->insert(['userId' => $userId, 'projectId' => self::PROJECT_ID, 'projectRole' => '']);
+        }
+        $this->webSettings->saveSetting(Webhooks::settingKey(8), Webhooks::encodeSetting('https://8.8.8.8/hooks/eight', true));
+        $this->webSettings->saveSetting(Webhooks::settingKey(9), Webhooks::encodeSetting('https://9.9.9.9/hooks/nine', true));
+        app()->instance(UserRepository::class, $this->webUsers);
+        $request = new Webhooks($this->recordingTransport(), $this->webSettings, $this->webUsers, $this->webProjects, $this->queueRepository());
+
+        $this->connection->enableQueryLog();
+        $request->queueToUsers($this->makeNotification('first'), [self::RECIPIENT_ID, 8, 9, 10]);
+        $queries = array_column($this->connection->getQueryLog(), 'query');
+
+        preg_match_all('/"(zp_\w+)"/', implode("\n", $queries), $tableNames);
+        $this->assertSame([], array_values(array_diff(array_unique($tableNames[1]), ['zp_settings', 'zp_queue'])), 'No user, project or access read while the request queues');
+        $this->assertLessThanOrEqual(1, count(array_filter($queries, fn (string $sql) => str_contains($sql, '"zp_settings"'))), 'One batched settings read covers every recipient');
+        $this->assertSame([self::RECIPIENT_ID, 8, 9], array_map('intval', $this->connection->table('zp_queue')->orderBy('userId')->pluck('userId')->all()), 'One row per opted-in recipient');
+        $this->assertSame([], $this->posts, 'Queueing posts nothing');
     }
 
     public function test_both_rows_post_when_nothing_changes_between_them(): void

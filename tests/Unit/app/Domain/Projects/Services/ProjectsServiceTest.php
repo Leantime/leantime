@@ -103,8 +103,9 @@ class ProjectsServiceTest extends TestCase
     // notifyProjectUsers() → personal webhooks. Runs the real dispatch path
     // with every other channel stubbed and a real Webhooks service, so the
     // webhook recipients are what the relevance/category/mention filtering
-    // produced, narrowed by Webhooks' own per-recipient checks. Delivery is
-    // queued; runWebhookQueue() plays the scheduler's WebhookQueue run.
+    // produced, narrowed to the opted-in ones when queued and by Webhooks' own
+    // per-recipient checks when posted. Delivery is queued; runWebhookQueue()
+    // plays the scheduler's WebhookQueue run.
     // ---------------------------------------------------------------------
 
     /**

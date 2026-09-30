@@ -467,9 +467,9 @@ class Projects extends BaseService implements ChecksProjectAccess
         // Personal webhooks go last, to the same filtered recipients as email (relevance,
         // category, mentions, collaborators). This only queues one row per recipient: the
         // scheduler's WebhookQueue posts later, so no endpoint is contacted during this
-        // request. Webhooks re-checks each recipient's opt-in, account and project access
-        // itself — at queue time and again at send time. The catch is a last guard so this
-        // step can never break the dispatch path.
+        // request. Queueing reads only the recipients' opt-in; Webhooks checks each queued
+        // recipient's opt-in, account and project access itself when the row is posted. The
+        // catch is a last guard so this step can never break the dispatch path.
         try {
             $this->webhookService->queueToUsers($notification, $users);
         } catch (\Throwable $e) {

@@ -23,13 +23,15 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  *
  * Two steps. queueToUsers() runs in the request that raised the notification and
  * only writes zp_queue rows on the WEBHOOKS channel, one DeliverPersonalWebhooks
- * job per recipient — no HTTP, no DNS. The scheduler's WebhookQueue later runs
- * those rows (independently of the DEFAULT queue); each calls sendToUsers() to
- * post through WebhookTransport.
+ * job per opted-in recipient — no HTTP, no DNS, and no user, project or access
+ * reads, so a notification to many recipients stays cheap for the request. The
+ * scheduler's WebhookQueue later runs those rows (independently of the DEFAULT
+ * queue); each calls sendToUsers() to post through WebhookTransport.
  *
- * Both steps check every recipient themselves (see eligibleEndpoints()): the ids
- * they receive include mention/collaborator bypasses that skipped the project's
- * member filters, and a lot can change before the worker runs.
+ * sendToUsers() alone decides who may receive the post (see eligibleEndpoints()):
+ * the ids include mention/collaborator bypasses that skipped the project's member
+ * filters, and a lot can change before the worker runs, so a queued row is never
+ * a promise of delivery.
  *
  * Intentionally carries no @api tags: exposing queueToUsers()/sendToUsers() over
  * JSON-RPC would let any authenticated caller push arbitrary payloads to other
@@ -109,17 +111,20 @@ class Webhooks
 
     /**
      * Queues the notification for the personal webhooks of the given users:
-     * one WEBHOOKS-channel DeliverPersonalWebhooks row per recipient who may
-     * receive it right now (see eligibleEndpoints()), nothing when there is
-     * none. Reads settings, users and the project; never contacts an endpoint
-     * or resolves DNS.
+     * one WEBHOOKS-channel DeliverPersonalWebhooks row per recipient whose
+     * webhook is switched on with a URL, nothing when there is none.
+     *
+     * Reads only the recipients' webhook settings, in one batched (cached)
+     * read — no users, no project, no access checks, and it never contacts an
+     * endpoint or resolves DNS. Whether a queued recipient may still receive
+     * the post is decided by sendToUsers() when the row runs.
      *
      * @param  NotificationModel  $notification  The notification being dispatched.
      * @param  array<int|string>  $userIds  Recipient user ids after the project's notification filters.
      */
     public function queueToUsers(NotificationModel $notification, array $userIds): void
     {
-        foreach (array_keys($this->eligibleEndpoints($notification->projectId ?? 0, $userIds, useCache: true)) as $recipientId) {
+        foreach (array_keys($this->optedInEndpoints($userIds, useCache: true)) as $recipientId) {
             $this->queueRepo->addMessageToQueue(
                 channel: Workers::WEBHOOKS,
                 subject: DeliverPersonalWebhooks::class,
@@ -145,26 +150,20 @@ class Webhooks
      */
     public function sendToUsers(NotificationModel $notification, array $userIds): void
     {
-        foreach ($this->eligibleEndpoints($notification->projectId ?? 0, $userIds, useCache: false) as $userId => $webhookUrl) {
+        foreach ($this->eligibleEndpoints($notification->projectId ?? 0, $userIds) as $userId => $webhookUrl) {
             $this->deliver($webhookUrl, $this->buildPayload($notification, $userId), $userId);
         }
     }
 
     /**
-     * Narrows recipients to those who may receive a personal webhook for the
-     * project right now: webhook enabled with a URL, account active with
-     * notifications switched on, and access to the project — which must still
-     * exist. Checked here rather than trusted from the caller because the ids
-     * include mention/collaborator bypasses that skipped the project's member
-     * filters. Access follows the project's own rules (team, client, everyone,
-     * admin/owner) for the recipient, never the session user.
+     * The stored endpoint of every given user whose personal webhook is switched
+     * on with a URL, from one batched settings read. Checks nothing else.
      *
-     * @param  int  $projectId  The project the notification belongs to.
-     * @param  array<int|string>  $userIds  Candidate recipient user ids.
-     * @param  bool  $useCache  False reads every setting and user row from the database.
-     * @return array<int, string> Stored endpoint URL by eligible user id, in input order.
+     * @param  array<int|string>  $userIds  Candidate recipient user ids; ids that are not positive integers are dropped, as are repeats.
+     * @param  bool  $useCache  False reads every setting from the database.
+     * @return array<int, string> Stored endpoint URL by opted-in user id, in input order.
      */
-    private function eligibleEndpoints(int $projectId, array $userIds, bool $useCache): array
+    private function optedInEndpoints(array $userIds, bool $useCache): array
     {
         $userIds = array_values(array_unique(array_filter(array_map('intval', $userIds), fn (int $userId) => $userId > 0)));
         if ($userIds === []) {
@@ -181,6 +180,30 @@ class Webhooks
             }
         }
 
+        return $enabledEndpoints;
+    }
+
+    /**
+     * Narrows recipients to those who may receive a personal webhook for the
+     * project right now: webhook enabled with a URL, account active with
+     * notifications switched on, and access to the project — which must still
+     * exist. The only place these are checked: the ids include
+     * mention/collaborator bypasses that skipped the project's member filters,
+     * and queueToUsers() checks nothing but the opt-in. Access follows the
+     * project's own rules (team, client, everyone, admin/owner) for the
+     * recipient, never the session user.
+     *
+     * Reads every setting and user row from the database, past the
+     * repositories' caches.
+     *
+     * @param  int  $projectId  The project the notification belongs to.
+     * @param  array<int|string>  $userIds  Candidate recipient user ids.
+     * @return array<int, string> Stored endpoint URL by eligible user id, in input order.
+     */
+    private function eligibleEndpoints(int $projectId, array $userIds): array
+    {
+        $enabledEndpoints = $this->optedInEndpoints($userIds, useCache: false);
+
         // Admins and owners pass isUserAssignedToProject() for any id, so the project's existence is checked on its own.
         if ($enabledEndpoints === [] || $this->projectRepo->getProject($projectId) === false) {
             return [];
@@ -188,7 +211,7 @@ class Webhooks
 
         return array_filter(
             $enabledEndpoints,
-            fn (int $userId) => $this->mayReceiveProjectNotifications($userId, $projectId, $useCache),
+            fn (int $userId) => $this->mayReceiveProjectNotifications($userId, $projectId),
             ARRAY_FILTER_USE_KEY
         );
     }
@@ -196,17 +219,16 @@ class Webhooks
     /**
      * Whether the user's account currently allows project notifications to reach
      * them: it exists, is active, has notifications switched on, and can access
-     * the project.
+     * the project. Re-reads the user row, past the repository's memo.
      *
      * @param  int  $userId  The recipient.
      * @param  int  $projectId  The project the notification belongs to.
-     * @param  bool  $useCache  False re-reads the user row, past the repository's memo.
      */
-    private function mayReceiveProjectNotifications(int $userId, int $projectId, bool $useCache): bool
+    private function mayReceiveProjectNotifications(int $userId, int $projectId): bool
     {
-        // Uncached, this also refreshes the repository's memo, so when the container shares that
-        // repository with isUserAssignedToProject() below, access is judged by the current role too.
-        $user = $this->userRepo->getUser($userId, $useCache);
+        // This also refreshes the repository's memo, so when the container shares that repository
+        // with isUserAssignedToProject() below, access is judged by the current role too.
+        $user = $this->userRepo->getUser($userId, useCache: false);
 
         if ($user === false
             || strtolower((string) ($user['status'] ?? '')) !== 'a'

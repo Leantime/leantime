@@ -46,10 +46,12 @@ namespace Unit\app\Domain\Notifications\Services {
      * Personal notification webhooks, end to end across the queue.
      *
      * queueToUsers() runs inside the request that raised the notification: it may
-     * only read settings/users/projects and write one WEBHOOKS-channel zp_queue row
-     * per recipient — no HTTP, no DNS. The scheduler's WebhookQueue later runs those
-     * rows through DeliverPersonalWebhooks, and sendToUsers() re-reads opt-in,
-     * endpoint, user status and project access before posting anything.
+     * only read the recipients' webhook settings and write one WEBHOOKS-channel
+     * zp_queue row per opted-in recipient — no HTTP, no DNS, no user or project
+     * reads. The scheduler's WebhookQueue later runs those rows through
+     * DeliverPersonalWebhooks, and sendToUsers() re-reads opt-in, endpoint, user
+     * status and project access before posting anything. So a recipient who may
+     * not receive the notification can be queued, but is never posted.
      *
      * Everything the service reads lives in one in-memory "world" the tests change
      * between enqueue and delivery. Project access is decided by the real
@@ -403,7 +405,7 @@ namespace Unit\app\Domain\Notifications\Services {
             }
         }
 
-        public function test_queue_to_users_only_includes_opted_in_active_notifiable_users_with_project_access(): void
+        public function test_only_opted_in_recipients_are_queued_and_only_active_notifiable_users_with_project_access_are_posted(): void
         {
             $this->addTeamMember(7);                              // eligible
             $this->addTeamMember(8);                              // webhook switched off
@@ -419,29 +421,39 @@ namespace Unit\app\Domain\Notifications\Services {
             $this->storeWebhook(8, 'https://1.1.1.1/hooks/user-8', false);
 
             $this->makeService()->queueToUsers($this->makeNotification(), [7, 8, 9, 10, 11, 12]);
+            $this->assertSame([[7], [9], [10], [11], [12]], $this->queuedRecipientIds(), 'Queueing checks the opt-in only: 8 switched the webhook off');
 
-            $this->assertSame([[7]], $this->queuedRecipientIds());
+            $this->runWebhookQueue();
+
+            $this->assertSame(['https://1.1.1.1/hooks/user-7'], $this->postedUrls(), 'Deactivated, notifications off, deleted and outside the project: never posted');
+            $this->assertSame([], $this->queuedRows(), 'A row with nothing left to send is still handled, never left in the queue');
         }
 
-        public function test_nothing_is_queued_when_no_recipient_is_eligible(): void
+        public function test_nothing_is_posted_when_no_recipient_is_eligible(): void
         {
-            $this->addTeamMember(7);
-            $this->addUser(12);
+            $this->addTeamMember(7);  // on the team, but never set a webhook up
+            $this->addUser(12);       // opted in, but not on this restricted project
             $this->storeWebhook(12, 'https://1.1.1.1/hooks/outsider');
 
             $this->makeService()->queueToUsers($this->makeNotification(), [7, 12]);
+            $this->assertSame([[12]], $this->queuedRecipientIds(), 'Only the opted-in recipient produces a job');
 
-            $this->assertSame([], $this->queuedRows(), 'Only opted-in recipients with access produce a job');
+            $this->runWebhookQueue();
+
+            $this->assertSame([], $this->posts, 'Only opted-in recipients with access are posted');
+            $this->assertSame([], $this->queuedRows());
         }
 
-        public function test_nothing_is_queued_for_a_project_that_no_longer_exists(): void
+        public function test_nothing_is_posted_for_a_project_that_no_longer_exists(): void
         {
             $this->addUser(7, ['role' => 50]); // owners can reach every project that exists
             $this->storeWebhook(7, 'https://1.1.1.1/hooks/owner');
             unset($this->world->projects[self::PROJECT_ID]);
 
             $this->makeService()->queueToUsers($this->makeNotification(), [7]);
+            $this->runWebhookQueue();
 
+            $this->assertSame([], $this->posts);
             $this->assertSame([], $this->queuedRows());
         }
 
@@ -537,7 +549,7 @@ namespace Unit\app\Domain\Notifications\Services {
             $this->addTeamMember(7);
             $this->storeWebhook(7, 'https://1.1.1.1/hooks/seven');
             $this->makeService()->queueToUsers($this->makeNotification(), [7]);
-            $this->assertCount(1, $this->queuedRows(), 'Eligible when the notification was raised');
+            $this->assertCount(1, $this->queuedRows(), 'Queued while opted in and eligible');
 
             $changeAfterQueueing($this->world);
             $this->runWebhookQueue();
