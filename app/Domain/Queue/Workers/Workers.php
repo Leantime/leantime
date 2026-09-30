@@ -8,4 +8,7 @@ enum Workers: string
     case HTTPREQUESTS = 'httprequests';
 
     case DEFAULT = 'default';
+
+    // Personal notification webhooks, drained by Notifications\Services\WebhookQueue.
+    case WEBHOOKS = 'webhooks';
 }

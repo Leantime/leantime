@@ -105,12 +105,29 @@ class Setting
      * Retrieves multiple settings in a single query.
      *
      * @param  array<string>  $keys  The setting keys to fetch.
+     * @param  bool  $useCache  False reads every key from the database, neither reading nor
+     *                          writing the cache — for long-running callers (queue workers)
+     *                          whose in-memory copy may predate another process's save. The
+     *                          cache is left alone so this read can never overwrite a newer save.
      * @return array<string, mixed> Map of key => value for found settings.
      */
-    public function getSettingsForKeys(array $keys): array
+    public function getSettingsForKeys(array $keys, bool $useCache = true): array
     {
         if (empty($keys) || $this->checkIfInstalled() === false) {
             return [];
+        }
+
+        if (! $useCache) {
+            try {
+                return $this->db->table('zp_settings')
+                    ->whereIn('key', $keys)
+                    ->pluck('value', 'key')
+                    ->all();
+            } catch (Exception $e) {
+                report($e);
+
+                return [];
+            }
         }
 
         $results = [];

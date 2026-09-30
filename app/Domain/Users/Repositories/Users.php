@@ -54,13 +54,19 @@ class Users
     }
 
     /**
-     * getUser - get on user from db
+     * getUser - get one user from db
+     *
+     * @param  int|string  $id  The user id.
+     * @param  bool  $useCache  False skips the memo and re-reads the row, refreshing the memo
+     *                          with it — for long-running callers (queue workers) that must see
+     *                          changes other processes made since the memo was filled.
+     * @return array|bool The user row, or false when there is none.
      */
-    public function getUser($id): array|bool
+    public function getUser($id, bool $useCache = true): array|bool
     {
         // Request-scoped memo: getUser is hit repeatedly per request for
         // author/role/avatar lookups. Cleared by editUser/patchUser/deleteUser.
-        if (array_key_exists($id, $this->userMemo)) {
+        if ($useCache && array_key_exists($id, $this->userMemo)) {
             return $this->userMemo[$id];
         }
 

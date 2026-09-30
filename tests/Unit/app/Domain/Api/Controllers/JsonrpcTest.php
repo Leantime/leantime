@@ -357,6 +357,44 @@ class JsonrpcTest extends \Unit\TestCase
         $this->assertSame(-32601, $body['error']['code'] ?? null, 'Projects::notifyProjectUsers must be method-not-found over JSON-RPC');
         $this->assertSame(9, $body['id']);
     }
+
+    /**
+     * The personal-webhook queue is drained by the scheduler only. Reachable over JSON-RPC, any
+     * authenticated caller could make the server run webhook deliveries on demand. Driven
+     * end-to-end through the controller: refused as method-not-found, never invoked.
+     */
+    public function test_webhook_queue_is_not_rpc_reachable(): void
+    {
+        $queueRuns = new \ArrayObject;
+        $this->assertTrue(
+            method_exists(\Leantime\Domain\Notifications\Services\WebhookQueue::class, 'processQueue'),
+            'Guards the real scheduler entry point, not a method that does not exist'
+        );
+
+        $this->app->bind(
+            \Leantime\Domain\Notifications\Services\WebhookQueue::class,
+            fn () => new class($queueRuns)
+            {
+                public function __construct(private \ArrayObject $queueRuns) {}
+
+                public function processQueue(): void
+                {
+                    $this->queueRuns->append(true);
+                }
+            }
+        );
+
+        $body = $this->bodyOf($this->controller->post([
+            'method' => 'leantime.rpc.notifications.webhookQueue.processQueue',
+            'params' => [],
+            'id' => 11,
+            'jsonrpc' => '2.0',
+        ]));
+
+        $this->assertCount(0, $queueRuns, 'A JSON-RPC call must never run the webhook queue');
+        $this->assertSame(-32601, $body['error']['code'] ?? null, 'WebhookQueue::processQueue must be method-not-found over JSON-RPC');
+        $this->assertSame(11, $body['id']);
+    }
 }
 
 /**

@@ -19,6 +19,9 @@ use Unit\TestCase;
  * a setting back to confirm a save (the personal webhook in Users::saveOwnNotificationPreferences)
  * were then told a lost write had succeeded.
  *
+ * Also pins getSettingsForKeys()'s uncached read, which the personal webhook queue uses
+ * so a long-running worker never delivers from an in-memory copy another process outdated.
+ *
  * Faked connection and an in-memory cache — no DB, no cache store.
  */
 class SettingRepositoryTest extends TestCase
@@ -95,6 +98,24 @@ class SettingRepositoryTest extends TestCase
                 $this->key = (string) $value;
 
                 return $this;
+            }
+
+            /** @var array<int, string> keys asked for by whereIn() */
+            private array $keys = [];
+
+            public function whereIn(string $column, array $values): static
+            {
+                $this->keys = array_map('strval', $values);
+
+                return $this;
+            }
+
+            /** Stands in for getSettingsForKeys()'s uncached read. */
+            public function pluck(string $value, string $key): \Illuminate\Support\Collection
+            {
+                array_push($this->database->reads, ...$this->keys);
+
+                return collect(array_intersect_key($this->database->rows, array_flip($this->keys)));
             }
 
             public function limit(int $limit): static
@@ -200,5 +221,21 @@ class SettingRepositoryTest extends TestCase
 
         $this->assertNotNull($thrown, 'saveSetting() must let the database exception reach the caller');
         $this->assertNotSame('new', $this->cache->entries[self::KEY] ?? null);
+    }
+
+    public function test_an_uncached_multi_key_read_comes_from_the_database_and_never_touches_the_cache(): void
+    {
+        // This process cached 'old' earlier; another process has since stored 'new'.
+        $this->database->rows[self::KEY] = 'new';
+        $this->cache->set(self::KEY, 'old');
+        $repository = $this->repository();
+
+        $this->assertSame([self::KEY => 'old'], $repository->getSettingsForKeys([self::KEY]), 'by default the cached copy is served');
+        $this->assertSame([], $this->database->reads);
+
+        $this->assertSame([self::KEY => 'new'], $repository->getSettingsForKeys([self::KEY], useCache: false));
+        $this->assertSame([self::KEY], $this->database->reads, 'the uncached read comes from the database');
+        // Were it written back, a read racing a concurrent save could put the pre-save value over the saved one.
+        $this->assertSame('old', $this->cache->entries[self::KEY], 'an uncached read never writes the cache');
     }
 }

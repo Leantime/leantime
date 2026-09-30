@@ -305,8 +305,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      * @mentions always bypass both layers.
      *
      * Channels: queued email, project messengers, mobile push, in-app
-     * notifications and — last — the personal webhooks of recipients who
-     * opted in.
+     * notifications and — last — queued rows for the personal webhooks of
+     * recipients who opted in (delivered later by the webhook queue).
      *
      * @param  Notification  $notification  The notification object to send.
      *
@@ -465,12 +465,13 @@ class Projects extends BaseService implements ChecksProjectAccess
         self::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => array_values($filteredUsersToNotify), 'url' => $notification->url['url']], 'leantime.domain.projects.services.projects.notifyProjectUsers');
 
         // Personal webhooks go last, to the same filtered recipients as email (relevance,
-        // category, mentions, collaborators), so a slow endpoint can never delay the email
-        // queue, messengers, push, mentions or in-app notifications above. Webhooks only
-        // posts for users who opted in and swallows its own delivery failures; the catch is
-        // a last guard so this step can never break the dispatch path.
+        // category, mentions, collaborators). This only queues one row per recipient: the
+        // scheduler's WebhookQueue posts later, so no endpoint is contacted during this
+        // request. Webhooks re-checks each recipient's opt-in, account and project access
+        // itself — at queue time and again at send time. The catch is a last guard so this
+        // step can never break the dispatch path.
         try {
-            $this->webhookService->sendToUsers($notification, $users);
+            $this->webhookService->queueToUsers($notification, $users);
         } catch (\Throwable $e) {
             Log::warning('Personal webhook dispatch failed', ['exception' => get_class($e)]);
         }

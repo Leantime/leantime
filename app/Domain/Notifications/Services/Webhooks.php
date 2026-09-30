@@ -2,12 +2,15 @@
 
 namespace Leantime\Domain\Notifications\Services;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Support\Facades\Log;
-use Leantime\Core\Support\OutboundUrlGuard;
+use Leantime\Domain\Notifications\Jobs\DeliverPersonalWebhooks;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+use Leantime\Domain\Queue\Workers\Workers;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
  * Webhooks — delivers project notifications to the personal webhook endpoint a
@@ -18,32 +21,28 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
  * managers) and Push (mobile). Deliberately independent of both: a personal
  * endpoint never changes what the project messengers send, and vice versa.
  *
- * Delivery runs inline in the request that raised the notification, so every
- * send uses short timeouts and swallows its own failures.
+ * Two steps. queueToUsers() runs in the request that raised the notification and
+ * only writes zp_queue rows on the WEBHOOKS channel, one DeliverPersonalWebhooks
+ * job per recipient — no HTTP, no DNS. The scheduler's WebhookQueue later runs
+ * those rows (independently of the DEFAULT queue); each calls sendToUsers() to
+ * post through WebhookTransport.
  *
- * Intentionally carries no @api tags: exposing sendToUsers() over JSON-RPC would
- * let any authenticated caller push arbitrary payloads to other users' endpoints.
+ * Both steps check every recipient themselves (see eligibleEndpoints()): the ids
+ * they receive include mention/collaborator bypasses that skipped the project's
+ * member filters, and a lot can change before the worker runs.
+ *
+ * Intentionally carries no @api tags: exposing queueToUsers()/sendToUsers() over
+ * JSON-RPC would let any authenticated caller push arbitrary payloads to other
+ * users' endpoints.
  */
 class Webhooks
 {
-    /**
-     * Upper bound for a stored webhook URL.
-     */
-    public const MAX_URL_LENGTH = 2048;
-
-    /**
-     * Seconds to wait for the TCP/TLS connection to the endpoint.
-     */
-    private const CONNECT_TIMEOUT_SECONDS = 2;
-
-    /**
-     * Seconds the whole request (connect + send + response) may take.
-     */
-    private const TOTAL_TIMEOUT_SECONDS = 5;
-
     public function __construct(
-        private Client $httpClient,
+        private WebhookTransport $transport,
         private SettingRepository $settingsRepo,
+        private UserRepository $userRepo,
+        private ProjectRepository $projectRepo,
+        private QueueRepository $queueRepo,
     ) {}
 
     /**
@@ -91,71 +90,131 @@ class Webhooks
 
     /**
      * Syntax-level check for a personal webhook URL, used both when a user
-     * saves the URL and again right before delivery. Requires https, a valid
-     * host (a dotted hostname or a public IP literal), no embedded credentials,
-     * and at most MAX_URL_LENGTH characters.
+     * saves the URL and again right before delivery. Delegates to
+     * WebhookTransport::isValidEndpointUrl(), the rule the transport itself
+     * enforces, so a URL the transport would refuse can never be saved: https
+     * only, no embedded credentials, and a public IP literal or a plain
+     * hostname (see there).
      *
-     * Does not resolve DNS — the SSRF guard does that at delivery time, since a
-     * hostname's addresses can change after the URL was saved.
+     * Does not resolve DNS — WebhookTransport checks the resolved addresses at
+     * delivery time, since a hostname's addresses can change after the URL was saved.
      *
      * @param  string  $url  The URL to check.
      * @return bool True when the URL is acceptable as a personal webhook endpoint.
      */
     public static function isValidEndpointUrl(string $url): bool
     {
-        if ($url === '' || strlen($url) > self::MAX_URL_LENGTH) {
-            return false;
-        }
+        return WebhookTransport::isValidEndpointUrl($url);
+    }
 
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            return false;
+    /**
+     * Queues the notification for the personal webhooks of the given users:
+     * one WEBHOOKS-channel DeliverPersonalWebhooks row per recipient who may
+     * receive it right now (see eligibleEndpoints()), nothing when there is
+     * none. Reads settings, users and the project; never contacts an endpoint
+     * or resolves DNS.
+     *
+     * @param  NotificationModel  $notification  The notification being dispatched.
+     * @param  array<int|string>  $userIds  Recipient user ids after the project's notification filters.
+     */
+    public function queueToUsers(NotificationModel $notification, array $userIds): void
+    {
+        foreach (array_keys($this->eligibleEndpoints($notification->projectId ?? 0, $userIds, useCache: true)) as $recipientId) {
+            $this->queueRepo->addMessageToQueue(
+                channel: Workers::WEBHOOKS,
+                subject: DeliverPersonalWebhooks::class,
+                message: serialize(DeliverPersonalWebhooks::payload($notification, [$recipientId])),
+                userId: $recipientId,
+                projectId: $notification->projectId ?? 0,
+            );
         }
-
-        $parts = parse_url($url);
-        if ($parts === false || strtolower($parts['scheme'] ?? '') !== 'https' || empty($parts['host'])) {
-            return false;
-        }
-
-        // user:pass@host would be sent as basic auth to whoever owns the host; refuse it outright.
-        if (isset($parts['user']) || isset($parts['pass'])) {
-            return false;
-        }
-
-        $host = trim($parts['host'], '[]');
-        if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
-            return OutboundUrlGuard::isIpAllowed($host);
-        }
-
-        // Single-label names (localhost, intranet) are never public endpoints.
-        return str_contains($host, '.')
-            && filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false;
     }
 
     /**
      * Posts the notification to the personal webhook of every given user who
-     * opted in. Users without the opt-in, without a URL, or whose URL fails the
-     * checks are skipped. Never throws for delivery problems.
+     * may receive it now (see eligibleEndpoints()), reading each endpoint as it
+     * is stored at this moment. Runs in the scheduler's WebhookQueue. Never
+     * throws for delivery problems.
+     *
+     * Reads settings and users past the repositories' caches: one scheduler run
+     * reuses this service for its whole batch, so a cached copy could predate a
+     * change another request made after an earlier row was posted.
      *
      * @param  NotificationModel  $notification  The notification being dispatched.
-     * @param  array<int|string>  $userIds  Already-filtered recipient user ids.
+     * @param  array<int|string>  $userIds  Recipient user ids.
      */
     public function sendToUsers(NotificationModel $notification, array $userIds): void
     {
+        foreach ($this->eligibleEndpoints($notification->projectId ?? 0, $userIds, useCache: false) as $userId => $webhookUrl) {
+            $this->deliver($webhookUrl, $this->buildPayload($notification, $userId), $userId);
+        }
+    }
+
+    /**
+     * Narrows recipients to those who may receive a personal webhook for the
+     * project right now: webhook enabled with a URL, account active with
+     * notifications switched on, and access to the project — which must still
+     * exist. Checked here rather than trusted from the caller because the ids
+     * include mention/collaborator bypasses that skipped the project's member
+     * filters. Access follows the project's own rules (team, client, everyone,
+     * admin/owner) for the recipient, never the session user.
+     *
+     * @param  int  $projectId  The project the notification belongs to.
+     * @param  array<int|string>  $userIds  Candidate recipient user ids.
+     * @param  bool  $useCache  False reads every setting and user row from the database.
+     * @return array<int, string> Stored endpoint URL by eligible user id, in input order.
+     */
+    private function eligibleEndpoints(int $projectId, array $userIds, bool $useCache): array
+    {
         $userIds = array_values(array_unique(array_filter(array_map('intval', $userIds), fn (int $userId) => $userId > 0)));
         if ($userIds === []) {
-            return;
+            return [];
         }
 
-        $settings = $this->settingsRepo->getSettingsForKeys(array_map(fn (int $userId) => self::settingKey($userId), $userIds));
+        $settings = $this->settingsRepo->getSettingsForKeys(array_map(fn (int $userId) => self::settingKey($userId), $userIds), $useCache);
 
+        $enabledEndpoints = [];
         foreach ($userIds as $userId) {
             $webhook = self::decodeSetting($settings[self::settingKey($userId)] ?? null);
-            if (! $webhook['enabled']) {
-                continue;
+            if ($webhook['enabled']) {
+                $enabledEndpoints[$userId] = $webhook['url'];
             }
-
-            $this->deliver($webhook['url'], $this->buildPayload($notification, $userId), $userId);
         }
+
+        // Admins and owners pass isUserAssignedToProject() for any id, so the project's existence is checked on its own.
+        if ($enabledEndpoints === [] || $this->projectRepo->getProject($projectId) === false) {
+            return [];
+        }
+
+        return array_filter(
+            $enabledEndpoints,
+            fn (int $userId) => $this->mayReceiveProjectNotifications($userId, $projectId, $useCache),
+            ARRAY_FILTER_USE_KEY
+        );
+    }
+
+    /**
+     * Whether the user's account currently allows project notifications to reach
+     * them: it exists, is active, has notifications switched on, and can access
+     * the project.
+     *
+     * @param  int  $userId  The recipient.
+     * @param  int  $projectId  The project the notification belongs to.
+     * @param  bool  $useCache  False re-reads the user row, past the repository's memo.
+     */
+    private function mayReceiveProjectNotifications(int $userId, int $projectId, bool $useCache): bool
+    {
+        // Uncached, this also refreshes the repository's memo, so when the container shares that
+        // repository with isUserAssignedToProject() below, access is judged by the current role too.
+        $user = $this->userRepo->getUser($userId, $useCache);
+
+        if ($user === false
+            || strtolower((string) ($user['status'] ?? '')) !== 'a'
+            || (int) ($user['notifications'] ?? 0) === 0) {
+            return false;
+        }
+
+        return $this->projectRepo->isUserAssignedToProject($userId, $projectId);
     }
 
     /**
@@ -186,9 +245,11 @@ class Webhooks
     }
 
     /**
-     * Sends one payload. Logs failures by host only: a webhook URL's path and
-     * query commonly carry its secret, and Guzzle exception messages embed the
-     * full URL, so neither the URL nor the exception message is ever logged.
+     * Sends one payload through WebhookTransport, which resolves and checks the
+     * endpoint's addresses itself. Logs failures by host only: a webhook URL's
+     * path and query commonly carry its secret, and transport exception messages
+     * can embed the full URL, so neither the URL nor the exception message is
+     * ever logged.
      *
      * @param  string  $webhookUrl  The recipient's stored endpoint.
      * @param  array<string, mixed>  $payload  The JSON body.
@@ -198,20 +259,14 @@ class Webhooks
     {
         $host = (string) parse_url($webhookUrl, PHP_URL_HOST);
 
-        if (! self::isValidEndpointUrl($webhookUrl) || ! OutboundUrlGuard::isAllowedUrl($webhookUrl)) {
+        if (! self::isValidEndpointUrl($webhookUrl)) {
             Log::warning('Personal webhook skipped: endpoint not allowed', ['recipientId' => $recipientId, 'host' => $host]);
 
             return;
         }
 
         try {
-            $this->httpClient->post($webhookUrl, [
-                // Same SSRF re-check on every hop, and never downgrade to plain http.
-                'allow_redirects' => array_merge(OutboundUrlGuard::redirectOptions(), ['protocols' => ['https']]),
-                'connect_timeout' => self::CONNECT_TIMEOUT_SECONDS,
-                'timeout' => self::TOTAL_TIMEOUT_SECONDS,
-                'json' => $payload,
-            ]);
+            $this->transport->post($webhookUrl, $payload);
         } catch (\Throwable $e) {
             Log::warning('Personal webhook delivery failed', [
                 'recipientId' => $recipientId,
