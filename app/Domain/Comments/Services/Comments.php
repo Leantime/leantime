@@ -175,25 +175,25 @@ class Comments extends BaseService
 
                 $notification = app()->make(Notification::class);
 
+                // Notify the project the comment was AUTHORIZED against (resolved from the host
+                // entity above), not the ambient session project: an RPC call from a browser whose
+                // current project is A, commenting on an item in B, must not send B's comment to
+                // A's members or webhooks. The session project is only a last-resort fallback.
+                $entityProjectId = is_object($entity)
+                    ? ($entity->projectId ?? 0)
+                    : (is_array($entity) ? ($entity['projectId'] ?? $entity['id'] ?? 0) : 0);
+                $notificationProjectId = (int) ($projectId ?? ($entityProjectId ?: session('currentProject')));
+
                 $urlQueryParameter = str_contains($currentUrl, '?') ? '&' : '?';
                 $notification->url = [
-                    'url' => $currentUrl.$urlQueryParameter.'projectId='.session('currentProject'),
+                    'url' => $currentUrl.$urlQueryParameter.'projectId='.$notificationProjectId,
                     'text' => $linkLabel,
                 ];
 
                 $notification->entity = $mapper;
                 $notification->module = 'comments';
                 $notification->action = 'commented';
-                // session('currentProject') is set when a user is browsing
-                // a project on web; RPC callers (mobile) don't have that
-                // session key populated, and the Notification model types
-                // projectId as `int` (rejects null). Fall back to the
-                // commented-on entity's project so we always have a real
-                // integer.
-                $entityProjectId = is_object($entity)
-                    ? ($entity->projectId ?? 0)
-                    : (is_array($entity) ? ($entity['projectId'] ?? $entity['id'] ?? 0) : 0);
-                $notification->projectId = (int) (session('currentProject') ?? $entityProjectId);
+                $notification->projectId = $notificationProjectId;
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');
                 $notification->message = $message;

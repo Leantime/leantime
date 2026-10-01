@@ -138,6 +138,31 @@ class CommentsServiceTest extends TestCase
         $this->assertTrue($service->addComment(['text' => 'hi'], 'ticket', 1, 'a string'));
     }
 
+    /**
+     * The notification goes to the project the comment was authorized against, not the ambient
+     * session project (a browser session can be "in" project A while commenting on B over RPC).
+     */
+    public function test_add_comment_notifies_the_items_project_not_the_session_project(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 1]);
+
+        $notified = null;
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => 9,
+            'addComment' => fn () => '503',
+        ]);
+        $projects = $this->make(ProjectService::class, [
+            'notifyProjectUsers' => function ($notification) use (&$notified) {
+                $notified = $notification;
+            },
+        ]);
+
+        $this->makeService($this->noopReactions(), $repo, null, $projects)->addComment(['text' => 'hi'], 'idea', 140);
+
+        $this->assertSame(9, $notified->projectId);
+        $this->assertStringContainsString('projectId=9', $notified->url['url']);
+    }
+
     public function test_add_comment_on_a_missing_canvas_item_writes_nothing(): void
     {
         $repo = $this->make(CommentRepository::class, [
