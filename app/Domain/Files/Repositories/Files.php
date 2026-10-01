@@ -33,7 +33,7 @@ class Files
             'module' => $module,
             'moduleId' => $values['moduleId'],
             'userId' => $values['userId'],
-            'date' => now(),
+            'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ]);
 
         return (string) $id;

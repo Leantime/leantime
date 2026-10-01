@@ -87,8 +87,8 @@ class WikiApplier implements Applier
                 'description' => (string) ($article['content'] ?? ''),
                 'parent' => $parent,
                 'author' => $userId,
-                'created' => now(),
-                'modified' => now(),
+                'created' => dtHelper()->dbNow()->formatDateTimeForDb(),
+                'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'sortindex' => $sortBase + $offset * 10,
             ]);
             $created++;

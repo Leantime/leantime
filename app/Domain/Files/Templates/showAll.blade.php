@@ -68,7 +68,7 @@
                                     @else
                                         <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/thumbs/doc.png' />
                                     @endif
-                                    <span class="filename" title="{{ $file['realName'] }}.{{ $file['extension'] }}">{{ $file['realName'] }}.{{ $file['extension'] }}</span>
+                                    <x-files::fileName :file="$file" />
                                 </a>
                             </li>
                         @endforeach

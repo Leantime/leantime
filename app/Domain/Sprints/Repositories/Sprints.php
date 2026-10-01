@@ -195,7 +195,7 @@ class Sprints
             'projectId' => $sprint->projectId,
             'startDate' => $sprint->startDate,
             'endDate' => $sprint->endDate,
-            'modified' => now(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ]);
 
         return $id ?: false;
@@ -210,7 +210,7 @@ class Sprints
                 'projectId' => $sprint->projectId,
                 'startDate' => $sprint->startDate,
                 'endDate' => $sprint->endDate,
-                'modified' => now(),
+                'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
             ]) >= 0;
     }
 

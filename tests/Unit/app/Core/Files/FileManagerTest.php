@@ -448,6 +448,39 @@ class FileManagerTest extends TestCase
         $this->assertMatchesRegularExpression('/^[0-9a-f]{32}\.txt$/', $first['fileName']);
     }
 
+    /**
+     * Uploads since v3.5.4 store the full original name, older ones stored it without the
+     * extension; the display name must not double it ("x.txt.txt") nor lose it.
+     */
+    public function test_display_name_appends_the_extension_only_when_missing(): void
+    {
+        $this->assertSame('report.pdf', FileManager::displayName('report.pdf', 'pdf'));
+        $this->assertSame('Report.PDF', FileManager::displayName('Report.PDF', 'pdf'));
+        $this->assertSame('report.pdf', FileManager::displayName('report', 'pdf'));
+        $this->assertSame('Makefile', FileManager::displayName('Makefile', ''));
+        $this->assertSame('Πρόγραμμα_έργου.txt', FileManager::displayName('Πρόγραμμα_έργου.txt', 'txt'));
+    }
+
+    /**
+     * A raw UTF-8 name in filename="…" is read as Latin-1 by browsers ("Î ÏÏ…"). The header
+     * must carry the exact name in filename*=UTF-8'' and an ASCII-only fallback.
+     */
+    public function test_content_disposition_carries_utf8_names_with_an_ascii_fallback(): void
+    {
+        $header = FileManager::contentDisposition('inline', 'Πρόγραμμα_έργου.txt');
+
+        $this->assertStringStartsWith('inline;', $header);
+        $this->assertStringContainsString("filename*=utf-8''".rawurlencode('Πρόγραμμα_έργου.txt'), $header);
+        $this->assertMatchesRegularExpression('/filename="?[\x20-\x7E]+"?;/', $header.';');
+        $this->assertTrue(mb_check_encoding($header, 'ASCII'), 'the header itself must be pure ASCII');
+
+        // Plain ASCII names stay readable, and hostile characters can't break out of the header.
+        $this->assertSame('attachment; filename=report.pdf', FileManager::contentDisposition('attachment', 'report.pdf'));
+        $evil = FileManager::contentDisposition('attachment', 'a"b/c\\d%.txt');
+        $this->assertStringNotContainsString("\n", $evil);
+        $this->assertStringNotContainsString('/', explode('filename*=', $evil)[0]);
+    }
+
     public function test_get_avatar_with_cache_hit()
     {
         // We already have a test file at userfiles/test/test.txt

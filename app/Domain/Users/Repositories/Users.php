@@ -302,7 +302,7 @@ class Users
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
-            'modified' => now(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ];
 
         // Capacity attributes (v3.5.23) — only overwrite when explicitly
@@ -358,7 +358,7 @@ class Users
             ->where('id', $userId)
             ->update([
                 'clientId' => null,
-                'modified' => now(),
+                'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
             ]) > 0;
     }
 
@@ -373,7 +373,7 @@ class Users
             'username' => $values['user'],
             'phone' => $values['phone'],
             'notifications' => $values['notifications'],
-            'modified' => now(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ];
 
         if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
@@ -411,13 +411,13 @@ class Users
             'source' => $values['source'] ?? '',
             'pwReset' => $values['pwReset'] ?? '',
             'status' => $values['status'] ?? '',
-            'createdOn' => now(),
+            'createdOn' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
             'weekly_hours' => $this->normalizeWeeklyHours($values['weekly_hours'] ?? null),
             'employment_type' => $this->normalizeEmploymentType($values['employment_type'] ?? null),
-            'modified' => now(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ]);
 
         return (string) $userId;

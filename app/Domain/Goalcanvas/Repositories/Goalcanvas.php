@@ -475,7 +475,7 @@ class Goalcanvas extends Blueprints
                 'entityB' => $milestoneId,
                 'entityBType' => 'Ticket',
                 'relationship' => EntityRelationshipEnum::TrackedBy->value,
-                'createdOn' => now(),
+                'createdOn' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'createdBy' => $userId > 0 ? $userId : null,
             ]);
 
@@ -735,8 +735,8 @@ class Goalcanvas extends Blueprints
             'conclusion' => $values['conclusion'] ?? '',
             'box' => $values['box'],
             'author' => $values['author'],
-            'created' => now(),
-            'modified' => now(),
+            'created' => dtHelper()->dbNow()->formatDateTimeForDb(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'canvasId' => $values['canvasId'],
             'status' => $values['status'] ?? '',
             'relates' => $values['relates'] ?? '',
