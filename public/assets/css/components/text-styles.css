@@ -108,6 +108,17 @@ a .label.feature-label:after {
     margin:0px;
 }
 
+/* Beta, not Premium. Reuses .feature-label's placement (and its
+   hide-when-the-menu-is-collapsed rule in nav.css) but carries its own color, so
+   "this is new and still moving" doesn't read as "this is a paid add-on" — they
+   sit in the same menu and would otherwise be indistinguishable.
+   Applied as `class="label feature-label beta-label"`. */
+a .label.feature-label.beta-label {
+    background: var(--yellow);
+    /* Dark ink: --yellow is a mid-tone in both themes and white on it fails AA. */
+    color: #2b2b2b;
+}
+
 .nav .label.feature-label {
 }
 
