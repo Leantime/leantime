@@ -495,18 +495,24 @@ class UsersServiceTest extends TestCase
     /**
      * A settings service backed by an in-memory map, recording every write.
      *
-     * @param  array<string, mixed>  $stored  Initial setting values (what reads return).
+     * @param  array<string, mixed>  $stored  Initial setting values; a write that reports success replaces what reads return.
      * @param  array<string, mixed>  $saved  Receives key => value for each saveSetting call.
      * @param  \Closure|null  $saveResult  fn ($key, $value): bool — the write's result (may throw); default true.
      */
     private function settingsStore(array $stored, array &$saved = [], ?\Closure $saveResult = null): SettingService
     {
         return $this->make(SettingService::class, [
-            'getSetting' => fn ($key, $default = false) => $stored[$key] ?? $default,
-            'saveSetting' => function ($key, $value) use (&$saved, $saveResult) {
+            'getSetting' => function ($key, $default = false) use (&$stored) {
+                return $stored[$key] ?? $default;
+            },
+            'saveSetting' => function ($key, $value) use (&$stored, &$saved, $saveResult) {
                 $saved[$key] = $value;
+                $writeSucceeded = $saveResult ? $saveResult($key, $value) : true;
+                if ($writeSucceeded) {
+                    $stored[$key] = $value;
+                }
 
-                return $saveResult ? $saveResult($key, $value) : true;
+                return $writeSucceeded;
             },
         ]);
     }
@@ -558,6 +564,37 @@ class UsersServiceTest extends TestCase
             ->saveOwnNotificationPreferences(1, ['webhookUrl' => '', 'webhookEnabled' => '1']);
 
         $this->assertSame(['url' => '', 'enabled' => false], json_decode($saved['usersettings.1.webhook'], true));
+    }
+
+    /**
+     * @dataProvider payloadWithoutWebhookUrlProvider
+     */
+    public function test_omitting_the_webhook_url_leaves_the_stored_webhook_unchanged(array $post): void
+    {
+        // API clients built before the webhook existed only send the older preferences.
+        $storedWebhook = $this->webhookSetting('https://hooks.example.com/abc', true);
+        $saved = [];
+        $editOwnCalls = 0;
+        $settings = $this->settingsStore(['usersettings.1.webhook' => $storedWebhook], $saved);
+
+        $this->makeService($this->profileRepo($editOwnCalls), ['settingsService' => $settings])
+            ->saveOwnNotificationPreferences(1, $post);
+
+        $this->assertSame($storedWebhook, $settings->getSetting('usersettings.1.webhook'), 'The stored webhook must be left exactly as it was');
+        $this->assertArrayNotHasKey('usersettings.1.webhook', $saved, 'Nothing may be written to the webhook setting');
+        $this->assertSame(1, $editOwnCalls, 'The notifications flag is still saved');
+        $this->assertSame(60, $saved['usersettings.1.messageFrequency']);
+        $this->assertSame(json_encode(['tasks']), $saved['usersettings.1.notificationEventTypes']);
+    }
+
+    public static function payloadWithoutWebhookUrlProvider(): array
+    {
+        $olderPreferences = ['notifications' => '1', 'messagesfrequency' => '60', 'enabledEventTypes' => ['tasks']];
+
+        return [
+            'older preferences only' => [$olderPreferences],
+            'opt-in without a url' => [$olderPreferences + ['webhookEnabled' => '0']],
+        ];
     }
 
     public function test_a_failed_webhook_disable_is_not_reported_as_saved(): void
@@ -673,6 +710,7 @@ class UsersServiceTest extends TestCase
             'not a url' => ['hooks.example.com/abc'],
             'too long' => ['https://hooks.example.com/'.str_repeat('a', 2048)],
             'array instead of string' => [['https://hooks.example.com/abc']],
+            'explicit null' => [null],
         ];
     }
 
