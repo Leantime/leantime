@@ -341,7 +341,7 @@ class Sprints extends BaseService
                 $burnDown[$i]['actualEffort'] = $plannedEffortStart;
             } else {
                 // If the date is in the future. Set to 0
-                $today = new DateTime;
+                $today = dtHelper()->userNow(); // the user's today, not the process (UTC) day
                 if ($value->format('Ymd') < $today->format('Ymd')) {
                     $burnDown[$i]['actualHours'] = $burnDown[$i - 1]['actualHours'];
                     $burnDown[$i]['actualNum'] = $burnDown[$i - 1]['actualNum'];
@@ -386,7 +386,7 @@ class Sprints extends BaseService
             $period = new DatePeriod(
                 new DateTime($allKeys[count($allKeys) - 1]),
                 new DateInterval('P1D'),
-                new DateTime
+                dtHelper()->userNow()
             );
 
             $i = 0;
@@ -420,7 +420,7 @@ class Sprints extends BaseService
                     $burnDown[$i]['done']['actualEffort'] = 0;
                 } else {
                     // If the date is in the future. Set to 0
-                    $today = new DateTime;
+                    $today = dtHelper()->userNow(); // the user's today, not the process (UTC) day
                     if ($value->format('Ymd') < $today->format('Ymd')) {
                         $burnDown[$i]['open']['actualHours'] = $burnDown[$i - 1]['open']['actualHours'];
                         $burnDown[$i]['open']['actualNum'] = $burnDown[$i - 1]['open']['actualNum'];

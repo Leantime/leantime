@@ -103,7 +103,11 @@ class LoadConfig extends LoadConfiguration
         // the environment in a web context where an "--env" switch is not present.
         $app->detectEnvironment(fn () => $config->get('app.env', 'production'));
 
-        date_default_timezone_set($config->get('app.timezone', 'UTC'));
+        // The PHP process always runs in UTC: every DB datetime is UTC by convention, and date()/
+        // now()/strtotime() must agree with that. app.timezone (LEAN_DEFAULT_TIMEZONE) is the
+        // default *user* timezone, applied explicitly via DateTimeHelper/format(), never to the
+        // process. Using it here made cron, queue and logged-out requests write local time.
+        date_default_timezone_set('UTC');
 
         mb_internal_encoding('UTF-8');
 

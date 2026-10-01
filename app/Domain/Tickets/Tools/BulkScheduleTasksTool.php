@@ -61,8 +61,10 @@ class BulkScheduleTasksTool extends Tool
             }
 
             try {
-                $editFrom = new \DateTime($schedule['editFrom']);
-                $editTo = new \DateTime($schedule['editTo']);
+                // Strings without an offset are the user's local time (an explicit offset still wins).
+                $userTimezone = dtHelper()->userNow()->getTimezone();
+                $editFrom = new \DateTime($schedule['editFrom'], $userTimezone);
+                $editTo = new \DateTime($schedule['editTo'], $userTimezone);
             } catch (\Exception $e) {
                 $validationErrors[] = "Schedule #{$index} has invalid date format. Use ISO8601 (e.g. 2024-04-30T15:00:00-04:00)";
 

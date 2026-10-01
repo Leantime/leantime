@@ -898,4 +898,23 @@ class TicketsServiceTest extends TestCase
         $this->assertSame([], $result);
         $this->assertFalse($fetchCalled, 'an empty commented set must short-circuit before the ticket fetch');
     }
+
+    /**
+     * dateToFinish is stored in UTC as the user's end-of-day. A task due on 17 March in
+     * Los Angeles is stored as 2026-03-18 06:59:59 UTC; on the 18th (LA) it is overdue. Parsing
+     * the stored value in the process timezone put it on the 18th, so it showed as "due today".
+     */
+    public function test_due_date_bucket_uses_the_users_calendar_day(): void
+    {
+        $bucket = new \ReflectionMethod($this->ticketsService, 'getDueDateBucket');
+        $bucket->setAccessible(true);
+
+        $todayLa = \Carbon\CarbonImmutable::parse('2026-03-18 09:00:00', 'America/Los_Angeles')->startOfDay();
+
+        $this->assertSame('overdue', $bucket->invoke($this->ticketsService, '2026-03-18 06:59:59', $todayLa));
+        $this->assertSame('due-this-week', $bucket->invoke($this->ticketsService, '2026-03-19 06:59:59', $todayLa));
+        // Due 24 March (LA) = 2026-03-25 06:59:59 UTC: six days out, so still this week. Read on the
+        // UTC calendar it landed 6.7 days out and was bucketed as next week.
+        $this->assertSame('due-this-week', $bucket->invoke($this->ticketsService, '2026-03-25 06:59:59', $todayLa));
+    }
 }

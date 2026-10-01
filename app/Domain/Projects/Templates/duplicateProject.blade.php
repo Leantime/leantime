@@ -8,7 +8,7 @@
     <x-global::forms.text-input name="projectName" value="{!! __('label.copy_of') !!} {{ $project['name'] }}" /><br />
 
     <label>{!! __('label.planned_start_date') !!}</label>
-    <input type="text" name="startDate" class="projectDateFrom" value="{{ format(date('Y-m-d'))->date() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" /><br />
+    <input type="text" name="startDate" class="projectDateFrom" value="{{ dtHelper()->userNow()->formatDateForUser() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" /><br />
 
     <label>{!! __('label.client_product') !!}</label>
     <select name="clientId" id="clientId">

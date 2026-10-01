@@ -28,9 +28,9 @@
         <span class="fa fa-stop"></span>
 
         @if (is_array($onTheClock) == true)
-            {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}
+            {!!  sprintf(__("links.stop_work_started_at"), dtHelper()->userNow()->setTimestamp((int) $onTheClock["since"])->format(__("language.timeformat"))) !!}
         @else
-            {!! sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), time())) !!}
+            {!! sprintf(__("links.stop_work_started_at"), dtHelper()->userNow()->format(__("language.timeformat"))) !!}
         @endif
     </a>
     @endif

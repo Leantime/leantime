@@ -457,10 +457,10 @@ class Calendar extends BaseService
     {
         // Convert date parameters to Carbon instances if they're strings
         if (is_string($from)) {
-            $from = CarbonImmutable::parse($from);
+            $from = CarbonImmutable::parse($from, dtHelper()->userNow()->getTimezone());
         }
         if (is_string($until)) {
-            $until = CarbonImmutable::parse($until);
+            $until = CarbonImmutable::parse($until, dtHelper()->userNow()->getTimezone());
         }
 
         // Get tickets and filter by date range
@@ -761,10 +761,10 @@ class Calendar extends BaseService
         // Convert date parameters to Carbon instances if they're strings
         try {
             if (is_string($from)) {
-                $from = CarbonImmutable::parse($from);
+                $from = CarbonImmutable::parse($from, dtHelper()->userNow()->getTimezone());
             }
             if (is_string($until)) {
-                $until = CarbonImmutable::parse($until);
+                $until = CarbonImmutable::parse($until, dtHelper()->userNow()->getTimezone());
             }
         } catch (\Exception $e) {
             Log::error('Error converting date parameters to Carbon instances: '.$e->getMessage());
@@ -786,9 +786,10 @@ class Calendar extends BaseService
 
                 // Filter events by date range if specified
                 if ($from || $until) {
-                    $events = array_filter($events, function ($event) use ($from, $until) {
-                        $eventStart = CarbonImmutable::parse($event->dtstart);
-                        $eventEnd = isset($event->dtend) ? CarbonImmutable::parse($event->dtend) : $eventStart;
+                    $userTimezone = dtHelper()->userNow()->getTimezone(); // floating (no TZ) iCal times are local
+                    $events = array_filter($events, function ($event) use ($from, $until, $userTimezone) {
+                        $eventStart = CarbonImmutable::parse($event->dtstart, $userTimezone);
+                        $eventEnd = isset($event->dtend) ? CarbonImmutable::parse($event->dtend, $userTimezone) : $eventStart;
 
                         if ($from && $eventEnd < $from) {
                             return false;
