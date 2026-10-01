@@ -603,6 +603,9 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
 
+        // Reachable over JSON-RPC: the author is the authenticated user, never a caller-supplied id.
+        $values['author'] = (int) session('userdata.id');
+
         return $this->goalRepository->addCanvas($values);
     }
 

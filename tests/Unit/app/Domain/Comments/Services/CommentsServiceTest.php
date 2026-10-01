@@ -148,6 +148,10 @@ class CommentsServiceTest extends TestCase
         ]);
 
         $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404));
+
+        // A caller-supplied entity must not stand in for an item that doesn't resolve (or belongs to
+        // a different canvas type): canvas-family entities are always resolved server-side.
+        $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404, ['id' => 404, 'projectId' => 9]));
     }
 
     public function test_toggle_rejects_unknown_reaction_type(): void

@@ -144,9 +144,19 @@ class Comments
         // Canvas-backed comment targets store the canvas-item id as the moduleId. Restrict to the
         // known canvas comment modules so an unknown module falls through to null (session-scoped).
         if ($module === 'article' || $module === 'idea' || str_ends_with($module, 'canvasitem')) {
+            // zp_canvas_items is shared by every canvas type with one id sequence, so a bare item
+            // id may belong to a different canvas type. Require the canvas type the module implies
+            // (article -> wiki, idea -> idea, {x}canvasitem -> {x}canvas) and fail closed otherwise.
+            $expectedCanvasType = match (true) {
+                $module === 'article' => 'wiki',
+                $module === 'idea' => 'idea',
+                default => substr($module, 0, -strlen('item')),
+            };
+
             $projectId = $this->db->table('zp_canvas_items')
-                ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
+                ->join('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
                 ->where('zp_canvas_items.id', $moduleId)
+                ->where('zp_canvas.type', $expectedCanvasType)
                 ->value('zp_canvas.projectId');
 
             return $projectId !== null ? (int) $projectId : null;

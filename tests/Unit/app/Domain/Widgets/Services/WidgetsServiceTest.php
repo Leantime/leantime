@@ -86,6 +86,23 @@ class WidgetsServiceTest extends TestCase
         $this->assertArrayNotHasKey('calendar', $active, 'only ALWAYS-visible widgets are restored');
     }
 
+    public function test_active_widgets_restore_welcome_on_a_cached_grid_too(): void
+    {
+        $userId = 78;
+        session(['userdata' => ['id' => $userId]]); // getActiveWidgets is pinned to the session user
+        $service = new Widgets($this->make(Setting::class, ['getSetting' => fn () => false]), $this->make(ProjectService::class), $this->make(ReportService::class));
+
+        $todosOnly = ['todos' => app()->make(\Leantime\Domain\Widgets\Models\Widget::class, ['id' => 'todos', 'name' => 'widgets.title.my_todos', 'description' => '', 'widgetUrl' => '', 'gridX' => 0, 'gridY' => 2])];
+        \Illuminate\Support\Facades\Cache::set('usersettings.'.$userId.'.dashboardGrid', $todosOnly, new \DateInterval('PT1H'));
+
+        $active = $service->getActiveWidgets($userId);
+
+        $this->assertArrayHasKey('welcome', $active);
+        $this->assertArrayHasKey('todos', $active);
+
+        \Illuminate\Support\Facades\Cache::forget('usersettings.'.$userId.'.dashboardGrid');
+    }
+
     public function test_my_projects_widget_data_enriches_each_project(): void
     {
         $projectService = $this->make(ProjectService::class, [

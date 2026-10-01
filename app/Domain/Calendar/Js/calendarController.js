@@ -311,10 +311,20 @@ leantime.calendarController = (function () {
                     id: event.event.id,
                     values: ticketDateValues(event.event)
                 }).then(function () {
-                    // The dropped placeholder and the ticket the event source now returns are the
-                    // same ticket; drop the placeholder and refetch so it shows once (#3733).
-                    event.event.remove();
-                    calendar.refetchEvents();
+                    // Keep the dropped event: it is the only one with the new dates (the event source
+                    // is a server-rendered snapshot). Make it behave like a scheduled ticket, and drop
+                    // any stale copy of the same ticket still shown at its old slot, so it appears
+                    // once (#3733).
+                    var ticketId = event.event.id;
+                    event.event.setExtendedProp('enitityType', 'ticket');
+                    event.event.setExtendedProp('enitityId', ticketId);
+                    calendar.getEvents().forEach(function (otherEvent) {
+                        if (otherEvent !== event.event
+                            && otherEvent.extendedProps.enitityType == 'ticket'
+                            && String(otherEvent.extendedProps.enitityId) === String(ticketId)) {
+                            otherEvent.remove();
+                        }
+                    });
                 }).catch(function (error) {
                         jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         event.revert();

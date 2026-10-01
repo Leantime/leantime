@@ -104,8 +104,12 @@ class Comments extends BaseService
         // JSON-RPC decodes a caller-supplied entity as an array (or a string), but the ticket
         // notification path dereferences an object and the project path an array (#3067, #2164).
         // Load the real entity server-side whenever the supplied one has the wrong shape.
+        // Canvas-family entities are always resolved server-side, so the item's existence and canvas
+        // type are enforced rather than taken from the caller.
+        $isCanvasFamilyModule = $module === 'article' || $module === 'idea' || str_ends_with((string) $module, 'canvasitem');
         $entityHasWrongShape = ($module === 'ticket' && ! is_object($entity))
-            || ($module === 'project' && ! is_array($entity));
+            || ($module === 'project' && ! is_array($entity))
+            || $isCanvasFamilyModule;
 
         if (($entity === null || $entityHasWrongShape) && $module && $entityId) {
             $entity = $this->loadEntityForComment($module, (int) $entityId);
