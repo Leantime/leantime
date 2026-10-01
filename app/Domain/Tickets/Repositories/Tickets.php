@@ -2181,7 +2181,7 @@ class Tickets
             return true;
         }
 
-        $now = now();
+        $now = dtHelper()->dbNow()->formatDateTimeForDb(); // UTC, not the request user's tz
         $rows = array_map(fn ($userId) => [
             'entityA' => $ticketId,
             'entityAType' => 'Ticket',

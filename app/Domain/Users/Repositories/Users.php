@@ -482,7 +482,7 @@ class Users
             }
         }
 
-        $updates['modified'] = now();
+        $updates['modified'] = dtHelper()->dbNow()->formatDateTimeForDb();
 
         return $this->connection->table('zp_user')
             ->where('id', $id)
