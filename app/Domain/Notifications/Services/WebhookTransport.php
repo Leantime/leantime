@@ -9,8 +9,10 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\FnStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\Utils;
 use Leantime\Core\Support\OutboundUrlGuard;
 
 /**
@@ -26,6 +28,10 @@ use Leantime\Core\Support\OutboundUrlGuard;
  * Always https to an endpoint that passes isValidEndpointUrl() — the same rule the profile save
  * applies. Always cURL (a stream handler can't honour the pin), never a proxy (it would resolve
  * the host itself), never a redirect (every 3xx is a failure), TLS verification always on.
+ *
+ * Only the status code is read. The response body is dropped as it arrives, never buffered in
+ * memory or on disk, and compressed bodies are neither asked for nor decoded, so an endpoint
+ * streaming a huge or gzip-bombed answer costs nothing beyond the total timeout.
  *
  * Throws only fixed-message exceptions and logs nothing itself (the SSRF guard logs only why it
  * refused a URL): a webhook URL's host, path and query can all carry its secret, and Guzzle's own
@@ -109,7 +115,8 @@ class WebhookTransport
 
     /**
      * POSTs $payload as JSON to $webhookUrl over a new connection, pinned to an address the SSRF
-     * guard validated for this call and closed afterwards. Returns only when the endpoint answered 2xx.
+     * guard validated for this call and closed afterwards. Returns only when the endpoint answered
+     * 2xx, whatever its body; the body is discarded unread, so no response this throws carries one.
      *
      * @param  string  $webhookUrl  The endpoint; must pass isValidEndpointUrl().
      * @param  array<string, mixed>  $payload  The JSON body.
@@ -158,9 +165,12 @@ class WebhookTransport
                 'allow_redirects' => false,
                 'connect_timeout' => self::CONNECT_TIMEOUT_SECONDS,
                 'curl' => $curlOptions,
+                'decode_content' => false, // no Accept-Encoding, no inflating: the body is never read
                 'http_errors' => false,
                 'json' => $payload,
                 'proxy' => '', // CURLOPT_PROXY "" — no proxy, and proxy environment variables ignored
+                // Drop the body as it arrives instead of buffering it; claim every byte or cURL aborts.
+                'sink' => FnStream::decorate(Utils::streamFor(''), ['write' => static fn (string $bytes): int => strlen($bytes)]),
                 'timeout' => self::TOTAL_TIMEOUT_SECONDS,
                 'verify' => true,
             ]);

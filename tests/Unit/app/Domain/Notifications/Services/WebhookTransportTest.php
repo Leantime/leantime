@@ -26,12 +26,16 @@ namespace Unit\app\Domain\Notifications\Services {
     use GuzzleHttp\Handler\CurlHandler;
     use GuzzleHttp\Promise\Create;
     use GuzzleHttp\Promise\PromiseInterface;
+    use GuzzleHttp\Psr7\LazyOpenStream;
+    use GuzzleHttp\Psr7\PumpStream;
     use GuzzleHttp\Psr7\Request;
     use GuzzleHttp\Psr7\Response;
+    use GuzzleHttp\Psr7\Utils;
     use Illuminate\Support\Facades\Log;
     use Leantime\Domain\Notifications\Services\Webhooks;
     use Leantime\Domain\Notifications\Services\WebhookTransport;
     use Psr\Http\Message\RequestInterface;
+    use Psr\Http\Message\StreamInterface;
     use Unit\TestCase;
 
     /**
@@ -39,8 +43,9 @@ namespace Unit\app\Domain\Notifications\Services {
      * handler receives must be pinned to the address the SSRF guard validated (CURLOPT_RESOLVE) on a
      * connection of its own (never a pooled one, never left for the next request) while keeping the
      * real hostname for Host/SNI/certificate checks, go through the injected cURL handler
-     * only, use no proxy, follow no redirect and verify TLS. DNS is faked (see the namespaced
-     * dns_get_record above) and the handler records instead of connecting, so nothing here touches
+     * only, use no proxy, follow no redirect and verify TLS — and must not keep the response body
+     * of an endpoint that streams a large one. DNS is faked (see the namespaced dns_get_record
+     * above) and the handler records and answers instead of connecting, so nothing here touches
      * the network.
      */
     class WebhookTransportTest extends TestCase
@@ -51,6 +56,8 @@ namespace Unit\app\Domain\Notifications\Services {
 
         private const PUBLIC_V6 = '2606:2800:220:1::248';
 
+        private const LARGE_BODY_BYTES = 32 * 1024 * 1024;
+
         /**
          * Hostnames the fake resolver was asked about, in order.
          *
@@ -59,9 +66,10 @@ namespace Unit\app\Domain\Notifications\Services {
         private array $dnsLookups = [];
 
         /**
-         * Requests the fake cURL handler received: ['request' => RequestInterface, 'options' => array].
+         * Requests the fake cURL handler received, with the options it was given and the sink it
+         * wrote the response body into.
          *
-         * @var array<int, array{request: RequestInterface, options: array<string, mixed>}>
+         * @var array<int, array{request: RequestInterface, options: array<string, mixed>, sink: StreamInterface}>
          */
         private array $handledRequests = [];
 
@@ -119,13 +127,18 @@ namespace Unit\app\Domain\Notifications\Services {
          * A transport over a cURL handler that records each request and answers from $outcomes
          * (a Response, or a Throwable to reject with) instead of opening a connection.
          *
+         * A Response's body reaches the transport the way Guzzle's CurlFactory delivers one: written
+         * in cURL-sized chunks into the request's 'sink' option (a php://temp stream when unset),
+         * the transfer failing with cURL's write error as soon as the sink takes fewer bytes than it
+         * was handed, and the sink becoming the response body.
+         *
          * @param  array<int, Response|\Throwable>  $outcomes
          */
         private function makeTransport(array $outcomes = []): WebhookTransport
         {
             $this->handledRequests = [];
-            $record = function (RequestInterface $request, array $options): void {
-                $this->handledRequests[] = ['request' => $request, 'options' => $options];
+            $record = function (RequestInterface $request, array $options, StreamInterface $sink): void {
+                $this->handledRequests[] = ['request' => $request, 'options' => $options, 'sink' => $sink];
             };
 
             $recordingCurlHandler = new class($outcomes, $record) extends CurlHandler
@@ -134,14 +147,48 @@ namespace Unit\app\Domain\Notifications\Services {
 
                 public function __invoke(RequestInterface $request, array $options): PromiseInterface
                 {
-                    ($this->record)($request, $options);
+                    $sink = $options['sink'] ?? Utils::tryFopen('php://temp', 'w+');
+                    $sink = is_string($sink) ? new LazyOpenStream($sink, 'w+') : Utils::streamFor($sink);
+                    ($this->record)($request, $options, $sink);
                     $outcome = array_shift($this->outcomes) ?? new Response(204);
+                    if ($outcome instanceof \Throwable) {
+                        return Create::rejectionFor($outcome);
+                    }
 
-                    return $outcome instanceof \Throwable ? Create::rejectionFor($outcome) : Create::promiseFor($outcome);
+                    $body = $outcome->getBody();
+                    while (! $body->eof()) {
+                        $chunk = $body->read(16384); // CURL_MAX_WRITE_SIZE
+                        if ($chunk !== '' && $sink->write($chunk) !== strlen($chunk)) {
+                            return Create::rejectionFor(new RequestException('cURL error 23: Failure writing output to destination', $request));
+                        }
+                    }
+                    if ($sink->isSeekable()) {
+                        $sink->rewind();
+                    }
+
+                    return Create::promiseFor($outcome->withBody($sink));
                 }
             };
 
             return new WebhookTransport($recordingCurlHandler);
+        }
+
+        /**
+         * A response body of $bytes bytes generated as it is read, so the test never holds it whole.
+         */
+        private static function streamedBody(int $bytes): StreamInterface
+        {
+            $remaining = $bytes;
+
+            return new PumpStream(function (int $length) use (&$remaining): string|false {
+                if ($remaining === 0) {
+                    return false;
+                }
+                $chunk = str_repeat('x', min($length, $remaining));
+                $remaining -= strlen($chunk);
+
+                return $chunk;
+            }, ['size' => $bytes]);
         }
 
         /**
@@ -274,6 +321,7 @@ namespace Unit\app\Domain\Notifications\Services {
             $this->assertSame('', $options['proxy'], 'An empty proxy makes cURL connect directly and ignore proxy environment variables');
             $this->assertSame(2, $options['connect_timeout']);
             $this->assertSame(5, $options['timeout']);
+            $this->assertFalse($options['decode_content'], 'cURL neither asks for nor inflates a compressed body nobody reads');
         }
 
         public function test_proxy_environment_variables_are_ignored(): void
@@ -464,6 +512,41 @@ namespace Unit\app\Domain\Notifications\Services {
         public static function errorStatusProvider(): array
         {
             return ['400' => [400], '404' => [404], '410' => [410], '500' => [500], '503' => [503]];
+        }
+
+        /**
+         * Only the status code decides a delivery, so an endpoint that answers 2xx with a huge body
+         * is still delivered to — without that body piling up in memory or spilling to a temp file.
+         */
+        public function test_a_2xx_answer_with_a_large_body_is_delivered_without_keeping_the_body(): void
+        {
+            $this->fakeDns(['hooks.example.test' => ['A' => [self::PUBLIC_V4]]]);
+            $transport = $this->makeTransport([new Response(200, [], self::streamedBody(self::LARGE_BODY_BYTES))]);
+            memory_reset_peak_usage();
+            $memoryBefore = memory_get_usage();
+
+            $transport->post(self::SECRET_ENDPOINT, []);
+
+            $peakMemoryGrowth = memory_get_peak_usage() - $memoryBefore;
+            $sink = $this->handledRequests[0]['sink'];
+            $this->assertSame(0, $sink->getSize(), 'No byte of the response body may be kept');
+            $this->assertSame('', (string) $sink);
+            $this->assertLessThan(1024 * 1024, $peakMemoryGrowth, 'Streaming a 32 MiB body must not grow memory');
+        }
+
+        public function test_an_error_answer_with_a_large_body_fails_without_keeping_the_body(): void
+        {
+            $this->fakeDns(['hooks.example.test' => ['A' => [self::PUBLIC_V4]]]);
+            $transport = $this->makeTransport([new Response(500, [], self::streamedBody(self::LARGE_BODY_BYTES))]);
+
+            try {
+                $transport->post(self::SECRET_ENDPOINT, []);
+                $this->fail('A 500 answer must be a delivery failure, whatever its body');
+            } catch (BadResponseException $e) {
+                $this->assertSame(500, $e->getResponse()->getStatusCode());
+                $this->assertSame(0, $e->getResponse()->getBody()->getSize(), 'The failure carries the status, never the body');
+                $this->assertSame('', (string) $e->getResponse()->getBody());
+            }
         }
 
         public function test_transport_failures_carry_a_fixed_message_without_the_url(): void
