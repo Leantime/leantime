@@ -3275,9 +3275,12 @@ class Install
      * under any name, is kept and nothing is added; queued rows are never touched. A missing
      * zp_queue is skipped like the other partial-install guards — there is nothing to index.
      *
-     * On MySQL and MariaDB, an InnoDB zp_queue still in the COMPACT or REDUNDANT row format
-     * (767-byte key columns) is first rebuilt as ROW_FORMAT=DYNAMIC so the index fits. If that
-     * change fails, the migration fails and db-version stays where it was.
+     * On MySQL and MariaDB, zp_queue is first rebuilt as InnoDB with ROW_FORMAT=DYNAMIC when it is
+     * on any engine other than InnoDB (MyISAM, Aria, ...) or is InnoDB still in the COMPACT or
+     * REDUNDANT row format. Leantime creates zp_queue as InnoDB, so another engine means the
+     * table drifted; MyISAM's 1000-byte key limit and the old row formats' 767-byte key columns
+     * cannot hold the index at all. If the rebuild fails, the migration fails and db-version
+     * stays where it was.
      *
      * @return bool|array<int, string> true on success or skip, otherwise the error messages
      */
@@ -3298,11 +3301,13 @@ class Install
                 return true;
             }
 
-            // InnoDB's COMPACT and REDUNDANT row formats cap an index key column at 767 bytes;
-            // channel (varchar(255), utf8mb4) needs 1020, so the index cannot be built on them.
-            // Queue tables created under old server defaults keep that row format across server
-            // upgrades, so move such a table to DYNAMIC (3072 bytes) first. The rebuild keeps
-            // every row; other drivers, engines and row formats are left as they are.
+            // channel (varchar(255), utf8mb4) needs 1020 bytes of key. MyISAM caps a whole key at
+            // 1000 bytes and InnoDB's COMPACT and REDUNDANT row formats cap a key column at 767,
+            // so the index cannot be built on either. Leantime always creates zp_queue as InnoDB,
+            // so a table on any other engine (MyISAM, Aria, ...) has drifted, and one created
+            // under old server defaults keeps its row format across server upgrades. Rebuild such
+            // a table as InnoDB DYNAMIC (3072 bytes) first. The rebuild keeps every row; other
+            // drivers and InnoDB tables already in DYNAMIC or COMPRESSED are left as they are.
             if (in_array($connection->getDriverName(), ['mysql', 'mariadb'], true)) {
                 $queueTableStatus = $connection->selectOne(
                     'select engine as table_engine, row_format as table_row_format from information_schema.tables where table_schema = ? and table_name = ?',
@@ -3310,9 +3315,9 @@ class Install
                 );
 
                 if ($queueTableStatus !== null
-                    && strcasecmp((string) $queueTableStatus->table_engine, 'InnoDB') === 0
-                    && in_array(strtolower((string) $queueTableStatus->table_row_format), ['compact', 'redundant'], true)) {
-                    $connection->statement('alter table '.$connection->getQueryGrammar()->wrapTable('zp_queue').' row_format = dynamic');
+                    && (strcasecmp((string) $queueTableStatus->table_engine, 'InnoDB') !== 0
+                        || in_array(strtolower((string) $queueTableStatus->table_row_format), ['compact', 'redundant'], true))) {
+                    $connection->statement('alter table '.$connection->getQueryGrammar()->wrapTable('zp_queue').' engine = InnoDB, row_format = dynamic');
                 }
             }
 

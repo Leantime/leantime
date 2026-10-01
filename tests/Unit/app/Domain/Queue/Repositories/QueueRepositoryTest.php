@@ -3,7 +3,10 @@
 namespace Unit\app\Domain\Queue\Repositories;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\SQLiteConnection;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Queue\Workers\Workers;
@@ -20,7 +23,10 @@ use Unit\TestCase;
  *
  * addMessageToQueue() writes one row per call, even for a message identical to one queued in the
  * same second: a row's id is its own, never its content. It stamps the row in UTC, so rows queued
- * by requests in different timezones still list in the order they were queued.
+ * by requests in different timezones still list in the order they were queued. An insert that
+ * fails never throws, so a message that cannot be queued does not stop the notifications sent
+ * beside it, and it is logged without its content: the database exception's message is the SQL
+ * with the subject and payload filled in.
  */
 class QueueRepositoryTest extends TestCase
 {
@@ -169,5 +175,81 @@ class QueueRepositoryTest extends TestCase
 
         $this->assertSame(['queued first, from Tokyo', 'queued later, from Los Angeles'], array_column($rows, 'message'), 'Oldest first by when they were queued, whatever the request timezone');
         $this->assertSame(['2026-07-01 10:00:00', '2026-07-01 10:01:00'], array_column($rows, 'thedate'), 'Stored in UTC');
+    }
+
+    public function test_a_failed_insert_is_logged_without_its_content_and_is_neither_thrown_nor_reported(): void
+    {
+        $subject = 'Some\\Job secret-subject-marker';
+        $message = serialize([
+            'message' => 'Ada updated "secret-message-marker"',
+            'url' => 'https://leantime.example.com/tickets/42?token=secret-link-token',
+        ]);
+        $this->connection->statement('DROP TABLE zp_queue');
+
+        try {
+            $this->connection->table('zp_queue')->insert(['subject' => $subject, 'message' => $message]);
+            $this->fail('The insert must fail for this test to mean anything');
+        } catch (QueryException $e) {
+            $this->assertStringContainsString('secret-link-token', $e->getMessage(), 'The failure under test carries the payload in its message');
+        }
+
+        // report() hands the exception, message and all, to the handler, which logs it.
+        $exceptionHandler = new class implements ExceptionHandler
+        {
+            /** @var array<int, \Throwable> */
+            public array $reported = [];
+
+            public function report(\Throwable $e)
+            {
+                $this->reported[] = $e;
+            }
+
+            public function shouldReport(\Throwable $e)
+            {
+                return true;
+            }
+
+            public function render($request, \Throwable $e)
+            {
+                throw $e;
+            }
+
+            public function renderForConsole($output, \Throwable $e) {}
+        };
+        $this->app->instance(ExceptionHandler::class, $exceptionHandler);
+        $logged = [];
+        foreach (['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'] as $level) {
+            Log::shouldReceive($level)->andReturnUsing(function ($logMessage, $context = []) use (&$logged, $level) {
+                $logged[] = ['level' => $level, 'message' => $logMessage, 'context' => $context];
+            });
+        }
+
+        // Never throws: a webhook that cannot be queued must not stop the email, push or in-app notification.
+        $this->queueRepo->addMessageToQueue(Workers::WEBHOOKS, $subject, $message, userId: 7, projectId: 5);
+
+        $this->assertSame([], array_map('get_class', $exceptionHandler->reported), 'The exception is never reported, so its message never reaches the handler');
+        $this->assertSame([[
+            'level' => 'error',
+            'message' => 'Queue message could not be saved',
+            'context' => [
+                'channel' => Workers::WEBHOOKS->value,
+                'userId' => 7,
+                'projectId' => 5,
+                'exception' => QueryException::class,
+                'sqlState' => 'HY000',
+            ],
+        ]], $logged, 'Logged once, by channel, recipient, project, exception class and SQLSTATE only');
+        $mustNeverBeLogged = [
+            // The subject and payload.
+            'secret-subject-marker', 'secret-message-marker', 'secret-link-token', 'leantime.example.com',
+            // The exception message and the SQL in it.
+            'no such table', 'insert into', 'SQLSTATE[', 'zp_queue',
+        ];
+        foreach ($logged as $entry) {
+            $line = $entry['message'].' '.json_encode($entry['context'], JSON_UNESCAPED_SLASHES);
+            foreach ($mustNeverBeLogged as $leak) {
+                $this->assertStringNotContainsString($leak, $line);
+            }
+        }
     }
 }

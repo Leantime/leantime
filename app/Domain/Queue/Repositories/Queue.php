@@ -4,6 +4,7 @@ namespace Leantime\Domain\Queue\Repositories;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Queue\Workers\Workers;
 use Leantime\Domain\Users\Repositories\Users as UserRepo;
@@ -133,6 +134,10 @@ class Queue
      * thedate is stamped in UTC, never the request's timezone, so rows queued by users in
      * different timezones list oldest first in the order they were actually queued.
      *
+     * A failed insert never throws, so a message that cannot be queued does not stop the
+     * notifications sent beside it. It is logged without its content: by channel, user, project,
+     * exception class and SQLSTATE only.
+     *
      * @param  Workers  $channel  The channel whose worker runs the message.
      * @param  string  $subject  What that worker runs it with, e.g. the job class on DEFAULT and WEBHOOKS.
      * @param  string  $message  The serialized payload.
@@ -156,7 +161,15 @@ class Queue
                 'projectId' => $projectId,
             ]);
         } catch (\PDOException $e) {
-            report($e);
+            // Not report($e), and never the message: a QueryException's message is the SQL with
+            // its bindings filled in, so it carries the whole subject and payload.
+            Log::error('Queue message could not be saved', [
+                'channel' => $channel->value,
+                'userId' => $userId,
+                'projectId' => $projectId,
+                'exception' => get_class($e),
+                'sqlState' => $e->getCode(),
+            ]);
         }
     }
 }

@@ -26,9 +26,10 @@ use Unit\TestCase;
  * Everything runs against real in-memory SQLite tables, and the query plan is SQLite's own.
  *
  * On MySQL and MariaDB, InnoDB's COMPACT and REDUNDANT row formats cannot hold the index (767-byte
- * key columns), so the migration first moves such a queue table to DYNAMIC. Those cases use
- * SqliteStandInForInstalledDatabase presented as MySQL or MariaDB; the real engines were checked
- * separately.
+ * key columns), nor can MyISAM (1000-byte keys). Leantime creates the queue table as InnoDB, so the
+ * migration first rebuilds one in those row formats, or on any other engine, as InnoDB DYNAMIC.
+ * Those cases use SqliteStandInForInstalledDatabase presented as MySQL or MariaDB; the real engines
+ * were checked separately.
  */
 class UpdateSql30527Test extends TestCase
 {
@@ -265,9 +266,46 @@ class UpdateSql30527Test extends TestCase
         $this->assertSame(['leantime', 'lt_zp_queue'], $connection->informationSchemaReads[0]['bindings'], 'Schema and prefixed table name are bound, not interpolated');
         $this->assertStringNotContainsString('zp_queue', $connection->informationSchemaReads[0]['query']);
         $this->assertSame(
-            ['alter table "lt_zp_queue" row_format = dynamic', 'create index "idx_queue_channel_thedate_msghash" on "lt_zp_queue" ("channel", "thedate", "msghash")'],
+            ['alter table "lt_zp_queue" engine = InnoDB, row_format = dynamic', 'create index "idx_queue_channel_thedate_msghash" on "lt_zp_queue" ("channel", "thedate", "msghash")'],
             $connection->statementsRun,
             'The table moves to DYNAMIC first, then the index is built on it'
+        );
+        $this->assertSame(['a-hash', 'b-hash'], $connection->table('zp_queue')->orderBy('msghash')->pluck('msghash')->all());
+    }
+
+    /**
+     * Leantime creates zp_queue as InnoDB. MyISAM caps a key at 1000 bytes, below the 1020 that
+     * channel alone needs in utf8mb4; Aria holds the index but has drifted all the same.
+     *
+     * @return array<string, array{0: string, 1: string, 2: string}> driver, engine and row format information_schema reports
+     */
+    public static function enginesOtherThanInnodb(): array
+    {
+        return [
+            'MySQL, MyISAM' => ['mysql', 'MyISAM', 'Dynamic'],
+            'MariaDB driver, MyISAM' => ['mariadb', 'MyISAM', 'Dynamic'],
+            'MariaDB server behind the mysql driver, Aria' => ['mysql', 'Aria', 'Page'],
+            'MariaDB driver, Aria' => ['mariadb', 'Aria', 'Page'],
+        ];
+    }
+
+    /**
+     * @dataProvider enginesOtherThanInnodb
+     */
+    public function test_a_mysql_family_queue_on_myisam_or_aria_moves_to_innodb_dynamic_before_the_index_is_built(string $driver, string $engine, string $rowFormat): void
+    {
+        $connection = new SqliteStandInForInstalledDatabase($driver, 'lt_');
+        $this->createQueueTableAsBefore3527($connection);
+        $connection->queueTableStatus = ['table_engine' => $engine, 'table_row_format' => $rowFormat];
+        $connection->statementsRun = [];
+
+        $this->assertSame(true, $this->updateFrom3526($connection));
+
+        $this->assertSame([['db-version', '3.5.27']], $this->savedSettings);
+        $this->assertSame(
+            ['alter table "lt_zp_queue" engine = InnoDB, row_format = dynamic', 'create index "idx_queue_channel_thedate_msghash" on "lt_zp_queue" ("channel", "thedate", "msghash")'],
+            $connection->statementsRun,
+            'One rebuild moves the table to InnoDB DYNAMIC, then the index is built on it'
         );
         $this->assertSame(['a-hash', 'b-hash'], $connection->table('zp_queue')->orderBy('msghash')->pluck('msghash')->all());
     }
@@ -280,7 +318,6 @@ class UpdateSql30527Test extends TestCase
         return [
             'InnoDB, DYNAMIC (every current default)' => ['InnoDB', 'Dynamic'],
             'InnoDB, COMPRESSED' => ['InnoDB', 'Compressed'],
-            'not InnoDB, whatever row format it reports' => ['MyISAM', 'Compact'],
         ];
     }
 
@@ -326,11 +363,25 @@ class UpdateSql30527Test extends TestCase
         $this->assertTrue($connection->getSchemaBuilder()->hasIndex('zp_queue', 'idx_queue_channel_thedate_msghash'));
     }
 
-    public function test_a_failed_row_format_change_fails_the_update_and_leaves_db_version_at_3_5_26(): void
+    /**
+     * @return array<string, array{0: string, 1: string}> engine, row format information_schema reports
+     */
+    public static function queueTablesThatMustBeRebuilt(): array
+    {
+        return [
+            'InnoDB, COMPACT' => ['InnoDB', 'Compact'],
+            'MyISAM' => ['MyISAM', 'Dynamic'],
+        ];
+    }
+
+    /**
+     * @dataProvider queueTablesThatMustBeRebuilt
+     */
+    public function test_a_failed_row_format_change_fails_the_update_and_leaves_db_version_at_3_5_26(string $engine, string $rowFormat): void
     {
         $connection = new SqliteStandInForInstalledDatabase('mysql');
         $this->createQueueTableAsBefore3527($connection);
-        $connection->queueTableStatus = ['table_engine' => 'InnoDB', 'table_row_format' => 'Compact'];
+        $connection->queueTableStatus = ['table_engine' => $engine, 'table_row_format' => $rowFormat];
         $connection->rowFormatChangeFails = true;
 
         $result = $this->updateFrom3526($connection);
