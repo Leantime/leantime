@@ -486,13 +486,60 @@ class Auth implements Authenticatable
         $redirectUrl = BASE_URL.'/dashboard/home';
 
         if ($redirect !== null && trim($redirect) !== '' && trim($redirect) !== '/') {
-            $url = urldecode($redirect);
+            // Normalize backslash-based protocol tricks (e.g. \/\/attacker.com)
+            // to forward slashes before any checks.
+            $url = str_replace('\\', '/', rawurldecode($redirect));
 
-            // Check for open redirects, don't allow redirects to external sites.
-            if (
-                filter_var($url, FILTER_VALIDATE_URL) === false &&
-                ! in_array($url, ['/auth/logout'])
-            ) {
+            // Drop control characters and surrounding whitespace before any guard, so a
+            // padded variant (" //evil.com", "%09//evil.com") can't slip past the checks
+            // below and can't reach the Location header.
+            $url = trim(preg_replace('/[\x00-\x1F\x7F]/', '', $url));
+
+            // Strip the application base URL when present so that same-origin
+            // absolute URLs (e.g. https://my-leantime.com/dashboard/home) are
+            // treated the same as their relative counterparts.
+            //
+            // Match only on a real boundary: a bare str_starts_with() would also fire on
+            // https://hostile.com/pwn when BASE_URL is https://host, rewriting an external
+            // URL into the bogus internal path /ile.com/pwn instead of rejecting it. The
+            // same applies to subdirectory installs (BASE_URL /app vs a /application path).
+            $base = rtrim(BASE_URL, '/');
+
+            if ($base !== '' && (
+                $url === $base
+                || str_starts_with($url, $base.'/')
+                || str_starts_with($url, $base.'?')
+                || str_starts_with($url, $base.'#')
+            )) {
+                $url = substr($url, strlen($base));
+            }
+
+            // Guard: protocol-relative URL (//attacker.com) — explicitly reject.
+            // FILTER_VALIDATE_URL treats these as valid without a scheme, but
+            // browsers resolve them to the current scheme, making them an open
+            // redirect vector.
+            if (str_starts_with($url, '//')) {
+                return $redirectUrl;
+            }
+
+            // Guard: external absolute URL — reject.
+            // filter_var returns the URL (truthy) for well-formed absolute URLs
+            // with a scheme; relative paths return false.
+            if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
+                return $redirectUrl;
+            }
+
+            // At this point $url is a relative path. Guard against an empty
+            // path that could result from stripping a BASE_URL-only input.
+            $url = ltrim($url, '/');
+
+            // Block redirect to logout — allowing a POST-login redirect to
+            // /auth/logout would create a forced-logout loop. Compare the normalized
+            // path so the query string, a trailing slash and casing can't be used to
+            // walk around the block (/auth/logout/, /auth/logout?next=/x, /AUTH/logout).
+            $path = rtrim(strtolower(strtok($url, '?#')), '/');
+
+            if ($url !== '' && $path !== 'auth/logout') {
                 $redirectUrl = BASE_URL.'/'.$url;
             }
         }

@@ -172,6 +172,8 @@ class Widgets
      */
     public function getActiveWidgets(int $userId): array
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
 
         $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
 
@@ -231,6 +233,8 @@ class Widgets
      */
     public function resetDashboard(int $userId): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
 
         $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
 
@@ -248,6 +252,8 @@ class Widgets
      */
     public function getNewWidgets(int $userId): array
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $availableWidgets = $this->getAll();
         $widgetHistory = $this->getWidgetHistory($userId);
         $activeWidgets = $this->getActiveWidgets($userId);
@@ -308,6 +314,8 @@ class Widgets
      */
     public function saveGridForUser($data, int $userId, ?array $visibilityData = null): void
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $this->saveGrid($data, $userId);
 
         if ($visibilityData !== null && ! empty($visibilityData['visible'])) {
@@ -328,6 +336,8 @@ class Widgets
      */
     public function getMyProjectsWidgetData(int $userId, string $clientFilter = ''): array
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $assignedProjects = $this->projectService->getProjectsAssignedToUser($userId, 'open');
 
         $clients = [];

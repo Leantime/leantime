@@ -43,7 +43,10 @@ class Login extends Controller
             return $return;
         }
 
-        $redirectUrl = $this->authService->resolveSafeRedirect($_GET['redirect'] ?? null);
+        // Guard the type: redirect[]=x arrives as an array, which would TypeError against
+        // resolveSafeRedirect(?string) and 500 the login page on malformed input.
+        $rawRedirect = $_GET['redirect'] ?? null;
+        $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
         $this->tpl->assign('inputPlaceholder', $this->authService->getLoginInputPlaceholder());
         $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
@@ -64,16 +67,10 @@ class Login extends Controller
     public function post(array $params): Response
     {
         if (isset($_POST['username']) === true && isset($_POST['password']) === true) {
-            if (isset($_POST['redirectUrl'])) {
-                $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
-            } else {
-                // Browser flow always submits the hidden redirectUrl field. Non-
-                // browser callers (curl/API/test rigs) may omit it; previously
-                // this branch yielded '' and Frontcontroller::redirect('') threw
-                // "Cannot redirect to an empty URL". Match the GET-path default
-                // from Auth::resolveSafeRedirect().
-                $redirectUrl = BASE_URL.'/dashboard/home';
-            }
+
+            // Same array guard as the GET path above — redirectUrl[]=x must not 500 the login POST.
+            $rawRedirect = $_POST['redirectUrl'] ?? null;
+            $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
             $username = trim($_POST['username']);
             $password = $_POST['password'];

@@ -10,7 +10,7 @@
             <div class='mediamgr_left'>
                 <div class="mediamgr_category">
 
-                    <form action='{{ BASE_URL }}/files/showAll@if(isset($_GET['modalPopUp']))?modalPopUp=true @endif' method='post' enctype="multipart/form-data" class="fileModal" >
+                    <form action='{{ BASE_URL }}/files/showAll{{ isset($_GET['modalPopUp']) ? '?modalPopUp=true' : '' }}' method='post' enctype="multipart/form-data" class="fileModal" >
                         <div class="par f-left" style="margin-right: 15px;">
 
                             <div class='fileupload fileupload-new' data-provides='fileupload'>
@@ -68,7 +68,7 @@
                                     @else
                                         <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/thumbs/doc.png' />
                                     @endif
-                                    <span class="filename">{{ substr($file['realName'], 0, 10) . '(...).' . $file['extension'] }}</span>
+                                    <span class="filename" title="{{ $file['realName'] }}.{{ $file['extension'] }}">{{ $file['realName'] }}.{{ $file['extension'] }}</span>
                                 </a>
                             </li>
                         @endforeach

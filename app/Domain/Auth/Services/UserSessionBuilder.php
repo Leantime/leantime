@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Auth\Services;
 
+use Leantime\Core\Support\NameSanitizer;
 use Leantime\Domain\Auth\Models\Roles;
 
 /**
@@ -36,7 +37,7 @@ class UserSessionBuilder
     {
         return [
             'id' => (int) $user['id'],
-            'name' => strip_tags($user['firstname'] ?? ''),
+            'name' => NameSanitizer::clean($user['firstname'] ?? ''),
             'profileId' => $user['profileId'] ?? '',
             'mail' => filter_var($user['username'] ?? '', FILTER_SANITIZE_EMAIL),
             'clientId' => $user['clientId'] ?? '',

@@ -215,6 +215,20 @@ class Timesheets extends Repository
                         if ($requesterRole === 'admin' || $requesterRole === 'manager') {
                             $q3->whereRaw('1=1');
                         }
+                    })
+                    ->orWhere(function ($q4) use ($userId) {
+                        // General-work time (virtual ticketId -1 → no matching
+                        // ticket/project after the left joins) has no project to
+                        // gate on, so it fails every project-access branch above
+                        // and silently disappears from this read — e.g. mobile's
+                        // Time tab (which can only call pollForNewTimesheets over
+                        // JSON-RPC) shows 0h even on a day with real general
+                        // hours. Always let a user see their OWN no-project
+                        // entries. Non-managers are AND-scoped to their userId
+                        // just below; managers already match via 1=1, so this
+                        // only rescues the regular-user case.
+                        $q4->whereNull('zp_tickets.projectId')
+                            ->where('zp_timesheets.userId', $userId);
                     });
             });
 
@@ -580,7 +594,16 @@ class Timesheets extends Repository
         $onTheClock['id'] = $result->id;
         $onTheClock['since'] = $result->punchIn;
         $onTheClock['headline'] = $result->headline;
-        $start_date = new Carbon($result->punchIn, 'UTC');
+        // punchIn is an integer column and punchIn() writes time(), so the stored value is a
+        // Unix timestamp. PDO hands integer columns back as STRINGS, and Carbon's constructor
+        // parses an int epoch but throws InvalidFormatException on the string form
+        // ("Failed to parse time string (1786766470) at position 8") — 500ing every page that
+        // renders the timer (#3632). punchOut() already reads it as an epoch, so the epoch is
+        // the intended storage and only this read was wrong. A legacy datetime string is still
+        // accepted so no install trades one crash for another.
+        $start_date = is_numeric($result->punchIn)
+            ? Carbon::createFromTimestamp((int) $result->punchIn, 'UTC')
+            : new Carbon($result->punchIn, 'UTC');
         $since_start = $start_date->diff(Carbon::now(session('usersettings.timezone'))->setTimezone('UTC'));
 
         $r = $since_start->format('%H:%I');

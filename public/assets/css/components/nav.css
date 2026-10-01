@@ -1220,66 +1220,10 @@ a.barmenu:hover {
 
 /* New horizontal content tab nav */
 
-.maincontentinner.tabs {
-    height: 50px;
-    margin-bottom: 7px;
-    padding: 9px 14px;
-    position:sticky;
-    top:55px;
-    z-index: 9;
-}
+/* The horizontal tab-nav band that lived here was retired 2026-08-03 —
+   all horizontal tab navs use the floating pill standard in tab-group.css
+   (.lt-tabs--floating / --links). */
 
-
-.maincontentinner.tabs ul {
-    margin:0;
-    padding:0;
-}
-
-.maincontentinner.tabs ul li {
-    display:inline-block;
-    float:left;
-    padding:0;
-    margin-right:2px;
-
-
-}
-
-.maincontentinner.tabs ul li.active {
-    box-shadow: var(--regular-shadow);
-    border-radius: 5px;
-    background:var(--secondary-background);
-}
-
-.maincontentinner.tabs ul li a {
-    font-weight:bold;
-    padding:5px 16px; /*Other buttons have 1px borders so this makes up for it */
-    border-radius: 5px;
-    line-height:21px;
-    display:block;
-    color:var(--primary-font-color);
-}
-
-.maincontentinner.tabs ul li.active a {
-    color:var(--primary-color);
-}
-
-.maincontentinner.tabs ul li a:hover,
-.maincontentinner.tabs ul li.active a:hover {
-    background:var(--main-menu-link-active-bg);
-    color:var(--primary-color);
-}
-
-.maincontentinner.tabs ul li a.active {
-
-}
-
-.maincontentinner.tabs .intro {
-    display: inline-block;
-    padding-top: 5px;
-    padding-left: 10px;
-    float: left;
-
-}
 
 .headerinner .bigProjectSelector {
     width:270px;

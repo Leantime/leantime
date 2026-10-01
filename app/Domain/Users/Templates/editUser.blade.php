@@ -120,6 +120,42 @@
                             name="department" id="department" value="{{ $values['department'] }}" /><br />
 
 
+                        @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin))
+                            {{-- Capacity attributes — admin-only. Weekly hours is what
+                                 downstream resource-planning surfaces (Resource
+                                 Allocation, cross-program warnings, portfolio
+                                 rollups) use to answer "how much of this person
+                                 is available to plan against?". Employment type
+                                 sets the semantic (target vs ceiling vs cap vs
+                                 best-effort). Both nullable — until an admin
+                                 sets them, capacity math treats this user as
+                                 unconfigured and skips warnings. --}}
+                            <h4 class="widgettitle title-light">{!! __('label.capacity') !!}</h4>
+
+                            <label for="weekly_hours">{!! __('label.weekly_hours') !!}</label>
+                            <x-global::forms.text-input
+                                name="weekly_hours"
+                                id="weekly_hours"
+                                type="number"
+                                min="0"
+                                max="168"
+                                :value="$values['weekly_hours'] ?? ''"
+                                placeholder="{{ __('label.weekly_hours_placeholder') }}" /><br />
+                            <span class="hint">{!! __('label.weekly_hours_hint') !!}</span><br /><br />
+
+                            <label for="employment_type">{!! __('label.employment_type') !!}</label>
+                            <select name="employment_type" id="employment_type">
+                                <option value="">{!! __('label.employment_type.unset') !!}</option>
+                                @foreach (\Leantime\Domain\Users\Enums\EmploymentType::cases() as $type)
+                                    <option value="{{ $type->value }}"
+                                        @if (($values['employment_type'] ?? '') === $type->value) selected="selected" @endif>
+                                        {!! __($type->langKey()) !!}
+                                    </option>
+                                @endforeach
+                            </select><br />
+                            <span class="hint">{!! __('label.employment_type_hint') !!}</span><br /><br />
+                        @endif
+
 
                     <p class="stdformbutton">
                         <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />

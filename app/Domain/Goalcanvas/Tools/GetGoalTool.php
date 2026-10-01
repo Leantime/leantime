@@ -48,6 +48,14 @@ class GetGoalTool extends Tool
             return ToolResult::error("Goal with ID {$goalId} not found.");
         }
 
+        // Milestones come from the tracked_by edge model (many-to-many), not
+        // the frozen legacy milestoneId column — a goal can have several, and
+        // the column goes stale after edits.
+        $milestones = array_map(
+            static fn (array $m) => ($m['headline'] ?? '').' ('.((int) ($m['percentDone'] ?? 0)).'%, '.($m['statusType'] ?? 'NEW').')',
+            $this->goalcanvasService->getGoalMilestones($goalId)['milestones']
+        );
+
         $response = "## Goal Details\n";
         $result = [
             'id' => $goal['id'],
@@ -61,7 +69,7 @@ class GetGoalTool extends Tool
             'status' => $goal['status'],
             'startDate' => $goal['startDate'],
             'endDate' => $goal['endDate'],
-            'milestone' => Str::sanitizeForLLM($goal['milestoneHeadline'] ?? ''),
+            'milestones' => $milestones !== [] ? Str::sanitizeForLLM(implode('; ', $milestones)) : 'None',
             'author' => $goal['authorFirstname'].' '.$goal['authorLastname'],
             'created' => $goal['created'],
         ];

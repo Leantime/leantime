@@ -35,6 +35,7 @@ use Leantime\Domain\Tickets\Events\TicketDeleted;
 use Leantime\Domain\Tickets\Events\TicketListFilter;
 use Leantime\Domain\Tickets\Events\TicketUpdated;
 use Leantime\Domain\Tickets\Events\TodoWidgetTasksFilter;
+use Leantime\Domain\Tickets\Models\BoardSummary;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\TicketHistory;
@@ -552,7 +553,10 @@ class Tickets extends BaseService
     public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array
     {
 
-        $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+        // Exclude closed projects (state === -1) at the SQL level — "My open
+        // tickets" shouldn't surface work from projects that are no longer
+        // active (they were padding the mobile task list).
+        $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project, excludeClosedProjects: true);
 
         $ticketArray = [];
 
@@ -693,12 +697,16 @@ class Tickets extends BaseService
                 if (isset($ticketGroups[$groupedFieldValue])) {
                     $ticketGroups[$groupedFieldValue]['items'][] = $ticket;
                 } else {
+                    // 'label' is rendered RAW by every consumer (kanban swimlane header,
+                    // table/list accordion headers) because some groups embed markup — a type
+                    // icon, the assignee avatar. So this switch is the escaping boundary:
+                    // every branch must htmlspecialchars any user-controlled text it embeds.
                     switch ($searchCriteria['groupBy']) {
                         case 'status':
                             $status = $this->getStatusLabels();
 
                             if (isset($status[$groupedFieldValue])) {
-                                $label = $status[$groupedFieldValue]['name'];
+                                $label = htmlspecialchars((string) $status[$groupedFieldValue]['name'], ENT_QUOTES, 'UTF-8');
                                 $class = $status[$groupedFieldValue]['class'];
                             } else {
                                 $label = 'New';
@@ -751,15 +759,16 @@ class Tickets extends BaseService
                                 }
 
                                 $statusLabels = $this->getStatusLabels($milestone->projectId);
-                                $status = $statusLabels[$milestone->status]['name'];
+                                $status = htmlspecialchars((string) ($statusLabels[$milestone->status]['name'] ?? ''), ENT_QUOTES, 'UTF-8');
                                 $moreInfo = $this->language->__('label.start').': '.$startDate.' • '.$this->language->__('label.end').': '.$endDate.' • '.$this->language->__('label.status_lowercase').': '.$status;
-                                $label = $ticket['milestoneHeadline'];
+                                $label = htmlspecialchars((string) $ticket['milestoneHeadline'], ENT_QUOTES, 'UTF-8');
                                 $sortId = 'a_'.preg_replace('/[^a-zA-Z0-9_-]/', '_', $ticket['milestoneHeadline']); // Named milestones sort first alphabetically
                             }
 
                             break;
                         case 'editorId':
-                            $label = "<div class='profileImage'><img src='".BASE_URL.'/api/users?profileImage='.$ticket['editorId']."' /></div> ".$ticket['editorFirstname'].' '.$ticket['editorLastname'];
+                            $editorName = htmlspecialchars(trim($ticket['editorFirstname'].' '.$ticket['editorLastname']), ENT_QUOTES, 'UTF-8');
+                            $label = "<div class='profileImage'><img alt='' src='".BASE_URL.'/api/users?profileImage='.(int) $ticket['editorId']."' /></div> ".$editorName;
 
                             if ($ticket['editorFirstname'] == '' && $ticket['editorLastname'] == '') {
                                 $label = 'Not Assigned to Anyone';
@@ -776,7 +785,7 @@ class Tickets extends BaseService
                             break;
                         case 'type':
                             $icon = $this->getTypeIcons();
-                            $label = "<i class='fa ".($icon[strtolower($ticket['type'])] ?? '')."'></i>".$ticket['type'];
+                            $label = "<i class='fa ".($icon[strtolower($ticket['type'])] ?? '')."'></i>".htmlspecialchars((string) $ticket['type'], ENT_QUOTES, 'UTF-8');
                             break;
                         case 'dependingTicketId':
                             if ($ticket['dependingTicketId'] > 0 && ! empty($ticket['parentHeadline'])) {
@@ -790,8 +799,11 @@ class Tickets extends BaseService
                             break;
                         case 'projectId':
                             // Program cross-project board: group by the ticket's project.
-                            $label = $ticket['projectName'] ?? ('Project #'.$groupedFieldValue);
-                            $sortId = 'a_'.strtolower((string) ($ticket['projectName'] ?? $groupedFieldValue));
+                            $label = htmlspecialchars((string) ($ticket['projectName'] ?? ('Project #'.$groupedFieldValue)), ENT_QUOTES, 'UTF-8');
+                            // Becomes $group['id'], which templates interpolate into inline
+                            // onclick JS string literals — sanitize like the milestone and
+                            // parent-task branches already do.
+                            $sortId = 'a_'.preg_replace('/[^a-zA-Z0-9_-]/', '_', strtolower((string) ($ticket['projectName'] ?? $groupedFieldValue)));
                             break;
                         default:
                             $label = htmlspecialchars((string) $groupedFieldValue, ENT_QUOTES, 'UTF-8');
@@ -2062,6 +2074,7 @@ class Tickets extends BaseService
             'dependingTicketId' => '',
             'milestoneid' => $params['dependentMilestone'] ?? '',
             'acceptanceCriteria' => '',
+            'outcomeImpact' => $params['outcomeImpact'] ?? '',
             'tags' => $params['tags'] ?? '',
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
@@ -2137,6 +2150,7 @@ class Tickets extends BaseService
             'hourRemaining' => $values['hourRemaining'] ?? '',
             'priority' => $values['priority'] ?? '',
             'acceptanceCriteria' => $values['acceptanceCriteria'] ?? '',
+            'outcomeImpact' => $values['outcomeImpact'] ?? '',
             'editFrom' => $values['editFrom'] ?? '',
             'timeFrom' => $values['timeFrom'] ?? '',
             'editTo' => $values['editTo'] ?? '',
@@ -2252,6 +2266,12 @@ class Tickets extends BaseService
             $values['headline'] = $currentTicket->headline;
         }
 
+        // Only touch the outcome narrative when the caller sends it — most edit forms don't
+        // carry the field, and defaulting it to '' would wipe a saved milestone outcome
+        // (the repository skips the column when the key is absent).
+        $hasOutcomeImpact = array_key_exists('outcomeImpact', $values);
+        $outcomeImpact = $values['outcomeImpact'] ?? null;
+
         $values = [
             'id' => $values['id'],
             'headline' => $values['headline'] ?? '',
@@ -2278,6 +2298,10 @@ class Tickets extends BaseService
             'milestoneid' => $values['milestoneid'] ?? '',
             'collaborators' => $values['collaborators'] ?? [],
         ];
+
+        if ($hasOutcomeImpact) {
+            $values['outcomeImpact'] = $outcomeImpact;
+        }
 
         if ($values['projectId'] === null || $values['projectId'] === '' || $values['projectId'] === false) {
             return ['msg' => 'project id is not set', 'type' => 'error'];
@@ -2402,6 +2426,194 @@ class Tickets extends BaseService
         }
 
         return $ticketArray;
+    }
+
+    /**
+     * @api
+     *
+     * Returns the user's tasks that were marked DONE on a specific date
+     * (default today), each annotated with `dateClosed` (the completion
+     * timestamp). Powers the mobile "Done today" reflection — an accurate,
+     * complete mirror of what actually got finished, including unplanned work.
+     *
+     * "Closed on date" means the ticket is currently DONE *and* its status
+     * was changed to that DONE status on the given date (per zp_tickethistory).
+     * So a task finished on an earlier day is excluded, and a task reopened
+     * then re-completed the same day is included once. Built on the general
+     * getStatusChangeEvents primitive, so throughput/burndown and strategy
+     * reporting can reuse the same query.
+     *
+     * Thin wrapper over {@see getMyClosedTicketsForRange} with from == to.
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
+    public function getMyClosedTicketsForDate(?int $userId = null, ?string $date = null): array
+    {
+        $date = $date ?: date('Y-m-d');
+
+        return $this->getMyClosedTicketsForRange($userId, $date, $date);
+    }
+
+    /**
+     * @api
+     *
+     * Range form of {@see getMyClosedTicketsForDate}: the user's tasks marked
+     * DONE anywhere within [$from, $to] (inclusive, dates 'Y-m-d'), each
+     * annotated with `dateClosed` (the completion timestamp). Powers the mobile
+     * Progress "Closed this week / this month" sections — completed arcs are
+     * keyed on close-date within the period, independent of how recently the
+     * project was otherwise touched, so finished work never disappears.
+     *
+     * Same "closed" definition as the single-date form: the ticket is currently
+     * DONE and its status was changed to that DONE status within the range. A
+     * ticket completed more than once in the range is included once, keyed to
+     * its latest completion (events are newest-first).
+     *
+     * Bounds: an omitted $from or $to defaults to today; the range is then
+     * normalized so the earlier date is the lower bound (a reversed range is
+     * swapped rather than returning nothing). So passing only one bound yields
+     * the span between that date and today, in date order.
+     *
+     * A non-admin may only read their OWN closures: a caller-supplied $userId
+     * for someone else is forced back to the session user (IDOR guard).
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
+    public function getMyClosedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
+    {
+        $sessionUser = (int) session('userdata.id');
+        $userId = $userId ?: $sessionUser;
+        // IDOR guard: reading another user's closures requires admin.
+        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
+        if ($userId === 0) {
+            return [];
+        }
+
+        // Resolve "today" once (in the USER's calendar, not the server's) so a run
+        // across midnight can't disagree on bounds.
+        $today = dtHelper()->userNow()->format('Y-m-d');
+        $from = $from ?: $today;
+        $to = $to ?: $today;
+        // Tolerate a reversed range rather than returning nothing.
+        if ($from > $to) {
+            [$from, $to] = [$to, $from];
+        }
+
+        // Candidates: the user's currently-DONE tickets (statusType resolved).
+        $doneTickets = $this->getAllDoneUserTickets($userId);
+        if (empty($doneTickets)) {
+            return [];
+        }
+
+        $byId = [];
+        foreach ($doneTickets as $ticket) {
+            $byId[$ticket['id']] = $ticket;
+        }
+
+        $events = $this->ticketRepository->getStatusChangeEvents(array_keys($byId), $from, $to);
+
+        $closed = [];
+        foreach ($events as $event) {
+            $ticketId = (int) $event['ticketId'];
+            $ticket = $byId[$ticketId] ?? null;
+            if ($ticket === null || isset($closed[$ticketId])) {
+                continue;
+            }
+
+            // Only count changes INTO the ticket's current (DONE) status — it
+            // was actually marked done in the range, not merely touched. Events
+            // are newest-first, so the first match keeps the latest completion.
+            if ((string) $event['changeValue'] === (string) $ticket['status']) {
+                $ticket['dateClosed'] = $event['dateModified'];
+                $closed[$ticketId] = $ticket;
+            }
+        }
+
+        return array_values($closed);
+    }
+
+    /**
+     * @api
+     *
+     * Tickets the user COMMENTED on within [$from, $to] that they do NOT own
+     * (they're not the ticket's editor) — i.e. work they supported by weighing
+     * in on someone else's arc. Powers the mobile Progress "Supported" section
+     * (presence counts as much as production).
+     *
+     * Access safety: commented ticket ids are constrained to the PROJECTS the
+     * user can access (getProjectsUserHasAccessTo) — NOT to tickets they edit
+     * or collaborate on. Commenting on a ticket rarely makes you its editor or
+     * a collaborator, so scoping by those (as an earlier version did via
+     * simpleTicketQuery) silently dropped most supported work — it collapsed to
+     * "commented AND collaborator" and could return empty even when comments
+     * exist. Project access is the correct, still-safe boundary: a historical
+     * comment can't surface a ticket in a project the user no longer sees. The
+     * ownership filter then drops tickets the user is the editor of — those are
+     * "your work," not support. Defaults either bound to today.
+     *
+     * A non-admin may only read their OWN commented tickets: a caller-supplied
+     * $userId for someone else is forced back to the session user (IDOR guard,
+     * matching Projects::getProjectsUserHasAccessTo()).
+     *
+     * @return array<int, array<string, mixed>> Raw ticket rows (id, headline,
+     *                                          projectName, editorId, status, …).
+     *
+     * Note: these rows do NOT carry the resolved statusLabel / statusClass /
+     * statusType that the getAll*UserTickets methods attach.
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW)]
+    public function getMyCommentedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
+    {
+        $sessionUser = (int) session('userdata.id');
+        $userId = $userId ?: $sessionUser;
+        // IDOR guard: reading someone else's comment activity requires admin.
+        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+            $userId = $sessionUser;
+        }
+        if ($userId === 0) {
+            return [];
+        }
+        // Resolve "today" once (in the USER's calendar, not the server's) so a run
+        // across midnight can't disagree on bounds.
+        $today = dtHelper()->userNow()->format('Y-m-d');
+        $from = $from ?: $today;
+        $to = $to ?: $today;
+        if ($from > $to) {
+            [$from, $to] = [$to, $from];
+        }
+
+        $commentedIds = $this->ticketRepository->getTicketIdsCommentedByUser($userId, $from, $to);
+        if (empty($commentedIds)) {
+            return [];
+        }
+
+        // Scope to the projects the user can see — the correct access boundary
+        // for "tickets I commented on" (you comment on others' work without
+        // being its editor/collaborator, so filtering by those would drop it).
+        $projects = $this->projectService->getProjectsUserHasAccessTo($userId);
+        if (! is_array($projects) || empty($projects)) {
+            return [];
+        }
+        $projectIds = array_values(array_filter(array_map(
+            fn ($p) => (int) ($p['id'] ?? 0),
+            $projects
+        )));
+        if (empty($projectIds)) {
+            return [];
+        }
+
+        $tickets = $this->ticketRepository->getTicketsByIdsWithinProjects($commentedIds, $projectIds);
+
+        // "Supported", not "yours": drop tickets the user is the editor of.
+        $out = [];
+        foreach ($tickets as $ticket) {
+            if ((string) ($ticket['editorId'] ?? '') === (string) $userId) {
+                continue;
+            }
+            $out[] = $ticket;
+        }
+
+        return array_values($out);
     }
 
     /**
@@ -2784,6 +2996,11 @@ class Tickets extends BaseService
             'editTo' => $params['editTo'] ?? '',
         ];
 
+        // Callers without the field (e.g. inline kanban edits) must not wipe a saved outcome.
+        if (array_key_exists('outcomeImpact', $params)) {
+            $values['outcomeImpact'] = $params['outcomeImpact'];
+        }
+
         $values = $this->prepareTicketDates($values);
 
         MilestoneUpdated::dispatch(milestoneId: $milestoneId, legacyHook: __FUNCTION__);
@@ -2804,10 +3021,18 @@ class Tickets extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(TicketsPermissions::VIEW)]
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'id')]
     public function getMilestone(int $id): TicketModel|bool
     {
-        return $this->ticketRepository->getTicket($id);
+        $milestone = $this->ticketRepository->getTicket($id);
+
+        // Verify the user is assigned to the milestone's project.
+        // Mirrors the authorization check in getTicket().
+        if ($milestone && $this->projectService->isUserAssignedToProject(session('userdata.id'), $milestone->projectId)) {
+            return $milestone;
+        }
+
+        return false;
     }
 
     /**
@@ -3463,6 +3688,14 @@ class Tickets extends BaseService
             return ['msg' => 'notifications.ticket_delete_error', 'type' => 'error'];
         }
 
+        // Milestones carry goal tracked_by edges (and child-ticket links) that
+        // only deleteMilestone() cascades — deleting one through the generic
+        // path would strand orphaned edges. Route by actual type, not by which
+        // entry point the caller happened to use.
+        if (($ticket->type ?? '') === 'milestone') {
+            return $this->deleteMilestone($id);
+        }
+
         // Editor+ in the ticket's project AND access to it (was access-only, no role gate).
         $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
@@ -3517,6 +3750,9 @@ class Tickets extends BaseService
         $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
         $this->ticketRepository->delMilestone($id);
+        // Drop this milestone's tracked_by links from any goals. (Refine: move
+        // to a MilestoneDeleted listener per the event-driven pattern.)
+        $this->goalcanvasService->detachMilestoneFromGoals((int) $id);
         MilestoneDeleted::dispatch(milestoneId: (int) $id, legacyHook: __FUNCTION__);
 
         return true;
@@ -3750,8 +3986,81 @@ class Tickets extends BaseService
     }
 
     /**
-     * @throws BindingResolutionException
+     * Compute at-a-glance board metrics (total, unassigned, due-this-week, last
+     * updated) from an already-fetched grouped ticket set. Working off the rows
+     * the board just rendered means the counts reflect the current filters and
+     * cost no extra query.
+     *
+     * @param  array  $groupedTickets  Grouped tickets as returned by getAllGrouped()
+     *                                 (each group holds its rows under 'items').
+     *
+     * @internal Board-header helper only; deliberately NOT @api, so it is not
+     *           reachable via JSON-RPC (which would let a caller submit an
+     *           arbitrarily large groupedTickets payload).
      */
+    public function getBoardSummary(array $groupedTickets): BoardSummary
+    {
+        $summary = new BoardSummary;
+
+        // Resolve the datetime helper once — it's used per ticket (twice) below,
+        // and dtHelper() resolves through the container, so caching it avoids
+        // avoidable overhead on large boards.
+        $dt = dtHelper();
+
+        // "This week" = today through the end of the current week, compared as
+        // calendar dates in the user's timezone (Y-m-d string compare is
+        // chronological) so a date-only due date lands in the intended week.
+        $userNow = $dt->userNow();
+        $weekStartDate = $userNow->format('Y-m-d');
+        $weekEndDate = $userNow->endOfWeek()->format('Y-m-d');
+
+        // Parse a DB date to CarbonImmutable, or null if it's unusable.
+        // isValidDateString() cheaply filters the common sentinels (empty,
+        // 0000-00-00, 1969-12-31); the try/catch then catches a genuinely
+        // malformed-but-non-sentinel value so one bad row can't throw and blank
+        // the whole board header.
+        $safeParse = static function (mixed $value) use ($dt): ?CarbonImmutable {
+            if (! $dt->isValidDateString($value !== null ? (string) $value : null)) {
+                return null;
+            }
+            try {
+                return $dt->parseDbDateTime((string) $value);
+            } catch (\Exception $e) {
+                return null;
+            }
+        };
+
+        foreach ($groupedTickets as $group) {
+            foreach ($group['items'] ?? [] as $ticket) {
+                $summary->total++;
+
+                $editorId = is_object($ticket) ? ($ticket->editorId ?? null) : ($ticket['editorId'] ?? null);
+                if (empty($editorId)) {
+                    $summary->unassigned++;
+                }
+
+                $due = is_object($ticket) ? ($ticket->dateToFinish ?? null) : ($ticket['dateToFinish'] ?? null);
+                $dueDt = $safeParse($due);
+                if ($dueDt !== null) {
+                    $dueDate = $dueDt->setToUserTimezone()->format('Y-m-d');
+                    if ($dueDate >= $weekStartDate && $dueDate <= $weekEndDate) {
+                        $summary->dueThisWeek++;
+                    }
+                }
+
+                $modified = is_object($ticket) ? ($ticket->modified ?? null) : ($ticket['modified'] ?? null);
+                $modifiedDt = $safeParse($modified);
+                if ($modifiedDt !== null) {
+                    if ($summary->lastUpdated === null || $modifiedDt->greaterThan($summary->lastUpdated)) {
+                        $summary->lastUpdated = $modifiedDt;
+                    }
+                }
+            }
+        }
+
+        return $summary;
+    }
+
     public function getTicketTemplateAssignments($params): array
     {
 
@@ -3803,6 +4112,7 @@ class Tickets extends BaseService
             'currentSprint' => session('currentSprint'),
             'searchCriteria' => $searchCriteria,
             'allTickets' => $allTickets,
+            'boardSummary' => $this->getBoardSummary($allTickets),
             'allTicketStates' => $allTicketStates,
             'efforts' => $efforts,
             'priorities' => $priorities,

@@ -19,9 +19,9 @@ class CreateGoalTool extends Tool
     public function schema(ToolInputSchema $schema): ToolInputSchema
     {
         return $schema
-            ->string('title')->description('Title of the goal.')
+            ->string('title')->description('The goal as an outcome statement, e.g. "Increase early-detection screenings". NOT the metric — must differ from description.')
             ->required()
-            ->string('description')->description('Description of what the goal is measuring.')
+            ->string('description')->description('The metric being tracked, e.g. "Screenings at clinic walk-ins" (shown as "What are you tracking?"). Must differ from the title.')
             ->required()
             ->number('startValue')->description('Starting value for the goal metric.')
             ->required()

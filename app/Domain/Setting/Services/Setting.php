@@ -189,7 +189,7 @@ class Setting
      * @api
      */
     #[RequiresPermission(SettingPermissions::PROJECT_LABELS, projectIdParam: 'projectId')]
-    public function getProjectLabel(string $module, int $labelKey, int $projectId): string
+    public function getProjectLabel(string $module, int|string $labelKey, int $projectId): string
     {
         if ($module === 'ticketlabels') {
             $stateLabels = $this->ticketsRepo->getStateLabels();
@@ -228,7 +228,7 @@ class Setting
      * @api
      */
     #[RequiresPermission(SettingPermissions::PROJECT_LABELS, projectIdParam: 'projectId')]
-    public function saveProjectLabel(string $module, int $labelKey, string $newLabel, int $projectId): void
+    public function saveProjectLabel(string $module, int|string $labelKey, string $newLabel, int $projectId): void
     {
         if ($module === 'ticketlabels') {
             $currentStateLabels = $this->ticketsRepo->getStateLabels();
@@ -249,6 +249,14 @@ class Setting
 
         if ($module === 'idealabels') {
             $stateLabels = $this->ideaRepo->getCanvasLabels();
+
+            // Only rename a label that actually exists, mirroring the ticketlabels branch
+            // above. Writing an unknown key persisted junk into the project setting, which is
+            // how the board ended up permanently broken (#3685).
+            if (! isset($stateLabels[$labelKey])) {
+                return;
+            }
+
             $newStateLabels = [];
             foreach ($stateLabels as $key => $label) {
                 $newStateLabels[$key] = $label['name'];

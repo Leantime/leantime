@@ -558,23 +558,40 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     display:inline-block;
 }
 
+/* Subject switcher toggle — a subtle pill on the white header card (was
+   underlined white text, which is near-invisible since the header became a
+   light card). Dark text, soft pill background, caret. */
 .pagetitle .header-title-dropdown {
-    border: 1px solid transparent;
-    display:inline-block;
-    background:transparent;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
     width:auto;
-    color: var(--main-titles-color);
-    text-decoration:underline;
-    padding:0px 3px ;
-    border-radius: var(--box-radius-small);
+    color: var(--primary-font-color);
+    text-decoration:none;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid transparent;
+    padding: 3px 12px;
+    border-radius: 100px;
+    transition: background .12s, border-color .12s;
 }
 
 .pagetitle .header-title-dropdown .fa {
-    padding-left:10px;
+    padding-left:4px;
+    font-size:.8em;
+    opacity:.55;
 }
 
 .pagetitle .header-title-dropdown:hover {
-    border: 1px solid var(--main-titles-color);
+    background: rgba(0, 0, 0, 0.09);
+    border-color: transparent;
+}
+
+/* Meta/metrics line under the title (subjectSwitcher subline slot). */
+.pagetitle .subjectSwitcher-subline {
+    font-size: var(--font-size-s);
+    color: var(--main-titles-color-subtle, var(--primary-font-color));
+    opacity: .6;
+    margin-top: 4px;
 }
 
 .dropdownWrapper {
@@ -590,11 +607,18 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding-top:20px;
 }
 
+/* Header action ⋮ — plain dark icon on the white header card (no circle,
+   was a bordered white button that read as an empty circle on the light box). */
 .pagetitle .btn-transparent {
     background:transparent;
-    color:var(--main-titles-color);
-    border:1px solid var(--main-action-color);
+    color:var(--primary-font-color);
+    border:none;
     font-size:var(--font-size-l);
+}
+.pagetitle .btn-transparent:hover {
+    color:var(--accent1);
+    background:rgba(0, 0, 0, 0.05);
+    border-radius:6px;
 }
 
 .headerEditDropdown .dropdown-toggle {

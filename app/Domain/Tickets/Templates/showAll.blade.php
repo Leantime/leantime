@@ -21,17 +21,11 @@
 
     <div class="maincontentinner">
 
+        {{-- Board actions (New / Filter / Group By) moved into the nav bar
+             (ticketBoardTabs). Only the table-specific DataTables buttons remain
+             here, right-aligned above the table. --}}
         <div class="row">
-            <div class="col-md-4">
-                @dispatchEvent('filters.afterLefthandSectionOpen')
-                @include('tickets::submodules.ticketNewBtn')
-                @include('tickets::submodules.ticketFilter')
-                @dispatchEvent('filters.beforeLefthandSectionClose')
-            </div>
-
-            <div class="col-md-4 center">
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-12">
                 <div class="pull-right">
                     @dispatchEvent('filters.afterRighthandSectionOpen')
                     <div id="tableButtons" style="display:inline-block"></div>
@@ -69,7 +63,7 @@
             @if ($group['label'] != 'all')
                 <h5 class="accordionTitle {{ $group['class'] }}" @if (!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                        <i class="fa fa-angle-down"></i>{{ $group['label'] }}({{ count($group['items']) }})
+                        <i class="fa fa-angle-down"></i>{!! $group['label'] !!}({{ count($group['items']) }})
                     </a><br />
                     <small style="padding-left:20px; color:var(--primary-font-color); font-size:var(--font-size-s);">{{ $group['more-info'] }}</small>
                 </h5>

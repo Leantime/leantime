@@ -4,11 +4,14 @@ namespace Leantime\Domain\Users\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Support\Avatarcreator;
+use Leantime\Core\Support\NameSanitizer;
 use Leantime\Core\UI\Theme as ThemeCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -91,6 +94,12 @@ class Users extends BaseService
     #[RequiresPermission(UsersPermissions::EDIT, global: true)]
     public function editUser($values, $id): bool
     {
+        if (isset($values['firstname'])) {
+            $values['firstname'] = NameSanitizer::clean($values['firstname']);
+        }
+        if (isset($values['lastname'])) {
+            $values['lastname'] = NameSanitizer::clean($values['lastname']);
+        }
 
         $results = $this->userRepo->editUser($values, $id);
         self::dispatch_event('editUser', ['id' => $id, 'values' => $values]);
@@ -350,7 +359,8 @@ class Users extends BaseService
      * createUserInvite - generates a new invite token, creates the user in the db and sends the invitation email TODO: Should accept userModel
      *
      * @param  array  $values  basic user values
-     * @return false|string returns the new user id on success, false on failure
+     * @return false|string returns the new user id on success, false on failure or
+     *                      when the invite rate limit is exhausted
      *
      * @throws BindingResolutionException
      *
@@ -359,6 +369,12 @@ class Users extends BaseService
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function createUserInvite(array $values): false|string
     {
+        if ($this->invitesRateLimited()) {
+            return false;
+        }
+
+        $values['firstname'] = NameSanitizer::clean($values['firstname'] ?? '');
+        $values['lastname'] = NameSanitizer::clean($values['lastname'] ?? '');
 
         // Generate strong password
         $tempPasswordVar = Uuid::uuid4()->toString();
@@ -388,18 +404,78 @@ class Users extends BaseService
         $mailer->setSubject($this->language->__('email_notifications.new_user_subject'));
         $actual_link = BASE_URL.'/auth/userInvite/'.$inviteCode;
 
+        // The inviter identifies themselves in the body only (sanitized name + verified email);
+        // the From header stays a fixed 'Leantime' so user content never reaches mail headers.
+        $inviterName = NameSanitizer::clean(session('userdata.name') ?? '');
+        $inviterDisplay = $inviterName !== '' ? $inviterName : 'Leantime';
+
+        $inviterEmail = filter_var((string) (session('userdata.mail') ?? ''), FILTER_VALIDATE_EMAIL);
+        if ($inviterEmail !== false) {
+            $inviterDisplay .= ' ('.$inviterEmail.')';
+        }
+
+        // Every interpolated value is HTML-escaped with a fixed UTF-8 encoding (ENT_SUBSTITUTE
+        // replaces invalid byte sequences rather than emitting an empty string). The link sits
+        // inside a single-quoted href, so ENT_QUOTES is required even though it is system-built.
+        $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
         $message = sprintf(
             $this->language->__('email_notifications.user_invite_message'),
-            session('userdata.name') ?? 'Leantime',
-            $actual_link,
-            $user
+            $escape($inviterDisplay),
+            $escape($actual_link),
+            $escape($user)
         );
 
         $mailer->setHtml($message);
 
         $to = [$user];
 
-        $mailer->sendMail($to, session('userdata.name') ?? 'Leantime');
+        $mailer->sendMail($to, 'Leantime');
+    }
+
+    /**
+     * Checks and consumes the invite-email rate limit for the authenticated inviter.
+     *
+     * Caps invites per inviting user per hour and per installation per day so a single
+     * account cannot use invite emails as a spam channel. This is the entry-point-agnostic
+     * backstop: it covers the web form, JSON-RPC (leantime.rpc.*.inviteNewUser) and resend
+     * alike, because it runs in the service layer. The per-IP throttle in RequestRateLimiter
+     * is an additional layer for the unauthenticated/web signup form only.
+     *
+     * The counter records invite *attempts*, not successful sends: the token is consumed
+     * before the DB insert, so a subsequent insert failure still counts. This is deliberate —
+     * it fails safe (over-counts, never under-counts) and keeps the check side-effect-cheap.
+     *
+     * Not logged per attempt: a blocked attacker could otherwise amplify the block into log
+     * spam. Enforcement is the RateLimiter itself; aggregate abuse monitoring belongs elsewhere.
+     *
+     * @return bool True when the limit is exhausted and no invite may be sent.
+     */
+    private function invitesRateLimited(): bool
+    {
+        $inviterId = (int) (session('userdata.id') ?? 0);
+        if ($inviterId === 0) {
+            return false;
+        }
+
+        $config = app()->make(Environment::class);
+        $userLimit = (int) ($config->ratelimitInvitesUser ?? 10);
+        $tenantLimit = (int) ($config->ratelimitInvitesTenant ?? 30);
+
+        // BASE_URL is defined for every web/console entry (LoadConfig / SetRequestForConsole) and
+        // namespaces the counters per install/tenant so keys never collide across workspaces.
+        $userKey = 'invites:'.BASE_URL.':user:'.$inviterId;
+        $tenantKey = 'invites:'.BASE_URL.':tenant';
+
+        if (RateLimiter::tooManyAttempts($userKey, $userLimit)
+            || RateLimiter::tooManyAttempts($tenantKey, $tenantLimit)) {
+            return true;
+        }
+
+        RateLimiter::hit($userKey, 3600);
+        RateLimiter::hit($tenantKey, 86400);
+
+        return false;
     }
 
     /**
@@ -416,8 +492,8 @@ class Users extends BaseService
     public function addUser(array $values): bool|int
     {
         $values = [
-            'firstname' => $values['firstname'] ?? '',
-            'lastname' => $values['lastname'] ?? '',
+            'firstname' => NameSanitizer::clean($values['firstname'] ?? ''),
+            'lastname' => NameSanitizer::clean($values['lastname'] ?? ''),
             'phone' => $values['phone'] ?? '',
             'user' => $values['username'] ?? $values['user'],
             'role' => $values['role'],
@@ -921,8 +997,8 @@ class Users extends BaseService
         $row = $this->getUser($userId);
 
         $values = [
-            'firstname' => ($post['firstname']) ?? $row['firstname'],
-            'lastname' => ($post['lastname']) ?? $row['lastname'],
+            'firstname' => NameSanitizer::clean(($post['firstname']) ?? $row['firstname']),
+            'lastname' => NameSanitizer::clean(($post['lastname']) ?? $row['lastname']),
             'user' => ($post['user']) ?? $row['username'],
             'phone' => ($post['phone']) ?? $row['phone'],
             'notifications' => $row['notifications'],
@@ -1332,8 +1408,9 @@ class Users extends BaseService
      * sends the invitation email.
      *
      * Returns a status code the controller maps to a notification:
-     *   - 'sent'      invitation sent
-     *   - 'too_soon'  another invite was sent within the rate-limit window
+     *   - 'sent'             invitation sent
+     *   - 'too_soon'         another invite was sent within the 240s resend cooldown
+     *   - 'too_many_invites' the hourly/daily invite cap was reached
      *
      * @param  int  $id  The id of the user to re-invite.
      * @param  array<string, mixed>  $row  The current stored user row.
@@ -1348,6 +1425,10 @@ class Users extends BaseService
     {
         if (session()->exists('lastInvite.'.$id) && session('lastInvite.'.$id) >= time() - 240) {
             return 'too_soon';
+        }
+
+        if ($this->invitesRateLimited()) {
+            return 'too_many_invites';
         }
 
         session(['lastInvite.'.$id => time()]);
@@ -1378,6 +1459,8 @@ class Users extends BaseService
      *   - 'enter_email'    email was empty
      *   - 'no_valid_email' email is not a valid address
      *   - 'user_exists'    email already belongs to another account
+     *   - 'invite_failed'  invite could not be created (rate limit reached OR db failure — the
+     *                      two are indistinguishable here, so the mapped message stays generic)
      *
      * @param  array<string, mixed>  $post  Raw request input.
      * @param  int|string|null  $sessionClientId  The session user's client id (used for managers).
@@ -1392,8 +1475,8 @@ class Users extends BaseService
     public function inviteNewUser(array $post, int|string|null $sessionClientId, bool $isManager): string
     {
         $values = [
-            'firstname' => $post['firstname'] ?? '',
-            'lastname' => $post['lastname'] ?? '',
+            'firstname' => NameSanitizer::clean($post['firstname'] ?? ''),
+            'lastname' => NameSanitizer::clean($post['lastname'] ?? ''),
             'user' => $post['user'] ?? '',
             'phone' => $post['phone'] ?? '',
             'role' => $post['role'] ?? '',
@@ -1419,6 +1502,10 @@ class Users extends BaseService
         }
 
         $userId = $this->createUserInvite($values);
+
+        if ($userId === false) {
+            return 'invite_failed';
+        }
 
         $projects = $post['projects'] ?? null;
         if (is_array($projects) && count($projects) > 0) {

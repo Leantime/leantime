@@ -1,0 +1,289 @@
+/*
+ * Stat tiles — THE shared KPI tile (x-global::statTiles / x-global::statTile).
+ *
+ * One implementation replacing the three that had drifted apart: the report
+ * deck's `.rd-kcell`, the core reports' `.reportStatTile`, and Resource
+ * Allocation's `.ra-scell`. Canonical look is the deck's value-first tile
+ * (design call 2026-09-07): the number reads first, the "what" is a quiet
+ * caption beneath it, delta rides inline with the value as a colored pill.
+ *
+ * Unlike `.rd-kcell` these rules use the app's own theme tokens (not the
+ * `.rd-*` scope), so the tile works on any page and adapts to every theme.
+ * The surface tint is a color-mix of the text color rather than a hardcoded
+ * grey, so it inverts correctly in dark mode without a second rule set.
+ */
+
+.lt-stats {
+    display: grid;
+    /* auto-fit + minmax so a 4-tile and a 6-tile row both lay out sanely, and
+       minmax(0,…) so a long label can never push the grid wider than its
+       container. */
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.lt-stat {
+    padding: 13px 16px;
+    border-radius: var(--box-radius-small, 8px);
+    background: color-mix(in srgb, var(--primary-font-color) 4%, transparent);
+    /* Grid children must be allowed to shrink or a long value/label forces
+       horizontal overflow on the whole row. */
+    min-width: 0;
+}
+
+/* Value row — the number, an optional "/6"-style denominator, and the delta
+   pill all sit on one optically centered line (baseline alignment made the
+   small parts look like they were falling off the big number). */
+.lt-stat-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -.6px;
+    line-height: 1;
+    color: var(--primary-font-color);
+    min-width: 0;
+}
+
+.lt-stat-value .lt-stat-unit {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: .5px;
+    align-self: flex-end;
+    margin-bottom: 2px;
+    margin-left: -2px;
+    color: color-mix(in srgb, var(--primary-font-color) 60%, transparent);
+}
+
+/* Label — the quiet caption under the number. Opacity rather than
+   --secondary-font-color, which is #000 in the default theme and so would read
+   as loud as the value it is meant to sit behind. */
+.lt-stat-label {
+    font-size: 12.5px;
+    line-height: 1.3;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: color-mix(in srgb, var(--primary-font-color) 70%, transparent);
+    min-width: 0;
+}
+
+/* Detail line under the label — the "of 40h/wk" / "100% open" context that
+   qualifies the number. A second line (lt-stat-sub-more) steps down again so a
+   tile can carry a rollup without competing with the primary caption. */
+.lt-stat-sub {
+    font-size: 12.5px;
+    line-height: 1.35;
+    margin-top: 3px;
+    color: color-mix(in srgb, var(--primary-font-color) 60%, transparent);
+    min-width: 0;
+}
+
+.lt-stat-sub-more {
+    font-size: 11.5px;
+}
+
+/* Amber, not red: a sub-line saying "2h over plan" is a caution worth reading,
+   not the alarm that --red carries on the value itself. */
+.lt-stat-sub.risk,
+.lt-stat-sub .risk {
+    /* Raw --yellow is unreadable as small text on white, so mix it toward the
+       theme's text color: that darkens it to a legible amber in light mode and
+       lightens it in dark mode, from one declaration. */
+    color: color-mix(in srgb, var(--yellow) 60%, var(--primary-font-color));
+    font-weight: 500;
+}
+
+/* Empty state — no capacity set, no budget set. Dimming the value keeps an
+   unset tile from reading as a real measured zero. */
+.lt-stat.is-muted .lt-stat-value,
+.lt-stat.is-muted .lt-stat-sub {
+    color: color-mix(in srgb, var(--primary-font-color) 38%, transparent);
+}
+
+/* Delta pill — "vs prior period" has to READ, not hide, so it is backed and
+   weighted instead of being a faint line of text under the tile. */
+.lt-stat-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    line-height: 1;
+    flex: none;
+}
+
+.lt-stat-delta i {
+    font-size: 9px;
+}
+
+/* Token-driven, not the deck's hardcoded #dcf1e6/#fbe0e8 pair: --green/--red
+   already differ per theme, so mixing the tint from them means the pills adapt
+   in dark mode without a parallel set of overrides. */
+.lt-stat-delta.up {
+    color: var(--green);
+    background: color-mix(in srgb, var(--green) 16%, transparent);
+}
+
+.lt-stat-delta.down {
+    color: var(--red);
+    background: color-mix(in srgb, var(--red) 16%, transparent);
+}
+
+/* Neutral delta (±0) — no signal, so no color. */
+.lt-stat-delta.flat {
+    color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
+    background: color-mix(in srgb, var(--primary-font-color) 7%, transparent);
+}
+
+/* Risk tone — the value itself carries the alarm; the tile surface stays
+   neutral so a row of tiles doesn't turn into a wall of red. */
+.lt-stat.risk .lt-stat-value {
+    color: var(--red);
+}
+
+/* Drill-down affordance: tiles that have a detail list behind them (which
+   milestones completed, which goals are off track) are clickable/focusable.
+   The hover/open surface treatment lives in the drill-down block below. */
+.lt-stat.has-detail {
+    cursor: pointer;
+}
+
+.lt-stat.has-detail:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+/* ── Drill-down ──────────────────────────────────────────────────────
+   Click a tile marked .has-detail to reveal the list of items behind the
+   count (which milestones completed, which goals are off track). The
+   "see list" chevron in the corner makes the interactivity discoverable
+   instead of a guess. Ported from the report deck's .rd-kcell so every
+   tile in the app shares one behavior. */
+
+.lt-stat {
+    position: relative;
+    transition: background .12s, box-shadow .12s;
+}
+
+.lt-stat.has-detail:hover,
+.lt-stat.has-detail.open {
+    background: var(--secondary-background);
+    box-shadow: 0 1px 3px rgba(20, 40, 50, .06);
+}
+
+.lt-stat.has-detail .see-list {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    opacity: .7;
+    color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
+    transition: opacity .12s, color .12s;
+    pointer-events: none;
+}
+
+.lt-stat.has-detail .see-list i {
+    font-size: 9px;
+    transition: transform .18s;
+}
+
+.lt-stat.has-detail:hover .see-list,
+.lt-stat.has-detail.open .see-list {
+    opacity: 1;
+    color: var(--accent1);
+}
+
+.lt-stat.has-detail.open .see-list i {
+    transform: rotate(180deg);
+}
+
+.lt-stat-drill {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--secondary-background);
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--box-radius-small, 8px);
+    box-shadow: 0 20px 56px rgba(20, 40, 50, .16);
+    padding: 8px;
+    z-index: 20;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-3px);
+    transition: opacity .12s, transform .12s, visibility .12s;
+    font-size: 11.5px;
+    line-height: 1.4;
+    text-align: left;
+    letter-spacing: 0;
+}
+
+.lt-stat.has-detail.open .lt-stat-drill {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.lt-stat-drill .kd-hd {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
+    padding: 2px 6px 6px;
+}
+
+.lt-stat-drill ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.lt-stat-drill li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    color: var(--primary-font-color);
+    font-weight: 400;
+}
+
+.lt-stat-drill li:hover {
+    background: color-mix(in srgb, var(--primary-font-color) 5%, transparent);
+}
+
+.lt-stat-drill li .nm {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1;
+}
+
+.lt-stat-drill li .mt {
+    color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
+    font-size: 10.5px;
+    flex: none;
+}
+
+.lt-stat-drill .kd-more {
+    font-size: 10.5px;
+    color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
+    font-style: italic;
+    padding: 4px 6px 2px;
+}

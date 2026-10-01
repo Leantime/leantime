@@ -3,6 +3,8 @@
 namespace Unit\app\Domain\Projects\Services;
 
 use Carbon\CarbonImmutable;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
@@ -64,6 +66,7 @@ class ProjectsServiceTest extends TestCase
         ?CommentRepository $commentRepo = null,
         ?ClientRepository $clientRepo = null,
         ?LanguageCore $language = null,
+        ?Client $httpClient = null,
     ): ProjectService {
         $language ??= $this->make(LanguageCore::class, [
             '__' => fn ($key) => $key,
@@ -82,6 +85,7 @@ class ProjectsServiceTest extends TestCase
             $userRepo ?? $this->make(UserRepository::class),
             $commentRepo ?? $this->make(CommentRepository::class),
             $clientRepo ?? $this->make(ClientRepository::class),
+            $httpClient ?? $this->make(Client::class),
         );
     }
 
@@ -229,6 +233,162 @@ class ProjectsServiceTest extends TestCase
 
         $this->assertSame('https://z.example.com', $settings['zulipHook']['zulipURL']);
         $this->assertSame('t', $settings['zulipHook']['zulipTopic']);
+    }
+
+    public function test_save_telegram_webhook_does_not_persist_without_token(): void
+    {
+        $saveCalls = 0;
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'saveSetting' => function () use (&$saveCalls) {
+                $saveCalls++;
+
+                return true;
+            },
+        ]);
+
+        $result = $this->makeService(settingsRepo: $settingsRepo)->saveTelegramWebhook(7, [
+            'telegramBotToken' => '',
+            'telegramChatId' => '12345',
+            'telegramTopicId' => '',
+        ]);
+
+        $this->assertFalse($result['saved']);
+        $this->assertSame('missing_token', $result['error']);
+        $this->assertSame(0, $saveCalls);
+    }
+
+    public function test_save_telegram_webhook_auto_detects_chat_id_when_blank(): void
+    {
+        $savedValue = null;
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'saveSetting' => function ($type, $value) use (&$savedValue) {
+                $savedValue = $value;
+
+                return true;
+            },
+        ]);
+
+        $httpClient = $this->make(Client::class, [
+            'get' => function ($url, $options) {
+                return new Response(200, [], json_encode([
+                    'ok' => true,
+                    'result' => [
+                        [
+                            'message' => [
+                                'chat' => [
+                                    'id' => 987654321,
+                                ],
+                            ],
+                        ],
+                    ],
+                ]));
+            },
+        ]);
+
+        $result = $this->makeService(settingsRepo: $settingsRepo, httpClient: $httpClient)->saveTelegramWebhook(7, [
+            'telegramBotToken' => '123456:ABC',
+            'telegramChatId' => '',
+            'telegramTopicId' => '',
+        ]);
+
+        $this->assertTrue($result['saved']);
+        $this->assertNull($result['error']);
+        $this->assertSame('987654321', $result['hook']['telegramChatId']);
+        $this->assertNotNull($savedValue);
+        $unserialized = safe_unserialize($savedValue, []);
+        $this->assertSame('987654321', $unserialized['telegramChatId']);
+    }
+
+    public function test_save_telegram_webhook_uses_provided_chat_and_topic_id_without_calling_get_updates(): void
+    {
+        $getCalled = false;
+        $httpClient = $this->make(Client::class, [
+            'get' => function () use (&$getCalled) {
+                $getCalled = true;
+
+                return new Response(200);
+            },
+        ]);
+
+        $savedValue = null;
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'saveSetting' => function ($type, $value) use (&$savedValue) {
+                $savedValue = $value;
+
+                return true;
+            },
+        ]);
+
+        $result = $this->makeService(settingsRepo: $settingsRepo, httpClient: $httpClient)->saveTelegramWebhook(7, [
+            'telegramBotToken' => '123456:ABC',
+            'telegramChatId' => '-1001234567890',
+            'telegramTopicId' => '10',
+        ]);
+
+        $this->assertFalse($getCalled, 'getUpdates API must not be called when chat_id is provided directly');
+        $this->assertTrue($result['saved']);
+        $this->assertSame('-1001234567890', $result['hook']['telegramChatId']);
+        $this->assertSame('10', $result['hook']['telegramTopicId']);
+    }
+
+    public function test_save_telegram_webhook_reports_chat_not_found_when_auto_detect_fails(): void
+    {
+        $saveCalls = 0;
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'saveSetting' => function () use (&$saveCalls) {
+                $saveCalls++;
+
+                return true;
+            },
+        ]);
+
+        $httpClient = $this->make(Client::class, [
+            'get' => function () {
+                return new Response(200, [], json_encode([
+                    'ok' => true,
+                    'result' => [],
+                ]));
+            },
+        ]);
+
+        $result = $this->makeService(settingsRepo: $settingsRepo, httpClient: $httpClient)->saveTelegramWebhook(7, [
+            'telegramBotToken' => '123456:ABC',
+            'telegramChatId' => '',
+            'telegramTopicId' => '',
+        ]);
+
+        $this->assertFalse($result['saved']);
+        $this->assertSame('chat_not_found', $result['error']);
+        $this->assertSame(0, $saveCalls);
+    }
+
+    public function test_get_project_integration_settings_returns_empty_telegram_hook_when_unset(): void
+    {
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn () => '',
+        ]);
+
+        $settings = $this->makeService(settingsRepo: $settingsRepo)->getProjectIntegrationSettings(5);
+
+        $this->assertSame([
+            'telegramBotToken' => '',
+            'telegramChatId' => '',
+            'telegramTopicId' => '',
+        ], $settings['telegramHook']);
+    }
+
+    public function test_get_project_integration_settings_unserializes_stored_telegram_hook(): void
+    {
+        $storedHook = serialize(['telegramBotToken' => 'tok', 'telegramChatId' => '123', 'telegramTopicId' => '1']);
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn ($key) => str_ends_with($key, 'telegramHook') ? $storedHook : '',
+        ]);
+
+        $settings = $this->makeService(settingsRepo: $settingsRepo)->getProjectIntegrationSettings(5);
+
+        $this->assertSame('tok', $settings['telegramHook']['telegramBotToken']);
+        $this->assertSame('123', $settings['telegramHook']['telegramChatId']);
+        $this->assertSame('1', $settings['telegramHook']['telegramTopicId']);
     }
 
     public function test_get_project_card_data_sets_last_update_and_status_from_first_comment(): void
@@ -574,7 +734,7 @@ class ProjectsServiceTest extends TestCase
         }
 
         // Mutations: global manager+.
-        foreach (['addProject' => 'projects.create', 'duplicateProject' => 'projects.create', 'editProject' => 'projects.edit', 'patch' => 'projects.edit', 'patchProject' => 'projects.edit', 'updateProjectUsers' => 'projects.edit', 'saveSlackWebhook' => 'projects.edit', 'deleteProject' => 'projects.delete'] as $m => $perm) {
+        foreach (['addProject' => 'projects.create', 'duplicateProject' => 'projects.create', 'editProject' => 'projects.edit', 'patch' => 'projects.edit', 'patchProject' => 'projects.edit', 'updateProjectUsers' => 'projects.edit', 'saveSlackWebhook' => 'projects.edit', 'saveZulipWebhook' => 'projects.edit', 'saveTelegramWebhook' => 'projects.edit', 'deleteProject' => 'projects.delete', 'editUserProjectRelations' => 'projects.edit', 'addUserToProject' => 'projects.edit'] as $m => $perm) {
             $g = $gate($m);
             $this->assertNotNull($g, "$m must be gated");
             $this->assertSame($perm, $g['permission'], $m);
@@ -694,5 +854,142 @@ class ProjectsServiceTest extends TestCase
         $this->assertCount(1, $hierarchy, 'only the top-level strategy sits at the root');
         $this->assertSame(1, $hierarchy[0]['id']);
         $this->assertCount(2, $hierarchy[0]['children'], 'project and plan nest under the strategy');
+    }
+
+    /**
+     * addUserToProject() must be ADDITIVE. The sibling
+     * editUserProjectRelations() is a full replace that deletes any
+     * relation not in the array it is handed, so the whole point of this
+     * method is that it never touches a user's other memberships.
+     */
+    public function test_add_user_to_project_inserts_when_not_a_member(): void
+    {
+        $added = [];
+        $repo = $this->makeEmpty(ProjectRepository::class, [
+            'getProject' => fn () => ['id' => 42],
+            'isUserMemberOfProject' => fn () => false,
+            'addProjectRelation' => function ($userId, $projectId, $role) use (&$added) {
+                $added[] = [$userId, $projectId, $role];
+            },
+            'editUserProjectRelations' => fn () => throw new \LogicException(
+                'addUserToProject must never call the destructive full-replace method'
+            ),
+        ]);
+
+        $result = $this->makeService($repo, userRepo: $this->validUserRepo())->addUserToProject(7, 42, 'contributor');
+
+        $this->assertTrue($result, 'a new membership reports true');
+        $this->assertSame([[7, 42, 'contributor']], $added);
+    }
+
+    /**
+     * Membership is not access. isUserAssignedToProject() returns true for
+     * every admin and owner whether or not a relation row exists, so using
+     * it as the idempotence check would make this method a permanent
+     * no-op for exactly those users: an admin could never be put on a
+     * project team, and the caller would be told "already a member" about
+     * someone who is not on the team at all.
+     */
+    public function test_add_user_to_project_adds_admin_who_has_access_but_no_membership(): void
+    {
+        $added = [];
+        $repo = $this->makeEmpty(ProjectRepository::class, [
+            'getProject' => fn () => ['id' => 42],
+            // An admin: reaches every project...
+            'isUserAssignedToProject' => fn () => true,
+            // ...but holds no relation row for this one.
+            'isUserMemberOfProject' => fn () => false,
+            'addProjectRelation' => function ($userId, $projectId, $role) use (&$added) {
+                $added[] = [$userId, $projectId, $role];
+            },
+        ]);
+
+        $this->assertTrue($this->makeService($repo, userRepo: $this->validUserRepo())->addUserToProject(7, 42));
+        $this->assertSame([[7, 42, '']], $added, 'access must not be mistaken for membership');
+    }
+
+    /**
+     * Idempotence guard. zp_relationuserproject has no unique index on
+     * (userId, projectId), so a blind insert would duplicate the row and
+     * show the person twice on the project team.
+     */
+    public function test_add_user_to_project_is_idempotent_for_existing_member(): void
+    {
+        $addCalls = 0;
+        $repo = $this->makeEmpty(ProjectRepository::class, [
+            'getProject' => fn () => ['id' => 42],
+            'isUserMemberOfProject' => fn () => true,
+            'addProjectRelation' => function () use (&$addCalls) {
+                $addCalls++;
+            },
+        ]);
+
+        $result = $this->makeService($repo, userRepo: $this->validUserRepo())->addUserToProject(7, 42);
+
+        $this->assertFalse($result, 'an existing membership reports false');
+        $this->assertSame(0, $addCalls, 'must not insert a duplicate relation row');
+    }
+
+    /**
+     * Invalid ids must fail before touching persistence — a 0 userId
+     * reaching addProjectRelation would create an orphan relation row.
+     */
+    public function test_add_user_to_project_rejects_invalid_ids(): void
+    {
+        $touched = 0;
+        $repo = $this->makeEmpty(ProjectRepository::class, [
+            'isUserMemberOfProject' => function () use (&$touched) {
+                $touched++;
+
+                return false;
+            },
+            'addProjectRelation' => function () use (&$touched) {
+                $touched++;
+            },
+        ]);
+        $service = $this->makeService($repo);
+
+        $this->assertFalse($service->addUserToProject(0, 42));
+        $this->assertFalse($service->addUserToProject(7, 0));
+        $this->assertSame(0, $touched, 'invalid ids must not reach the repository');
+    }
+
+    /**
+     * Non-zero ids that don't resolve to real rows must also fail closed —
+     * isUserMemberOfProject() returns false for a missing user/project, so
+     * without the existence guard addProjectRelation() would write an orphan
+     * relation row for a user or project that isn't there.
+     */
+    public function test_add_user_to_project_rejects_nonexistent_user_or_project(): void
+    {
+        $added = 0;
+        $mkRepo = fn (bool $projectExists) => $this->makeEmpty(ProjectRepository::class, [
+            'getProject' => fn () => $projectExists ? ['id' => 42] : false,
+            'isUserMemberOfProject' => fn () => false,
+            'addProjectRelation' => function () use (&$added) {
+                $added++;
+            },
+        ]);
+        $missingUser = $this->makeEmpty(UserRepository::class, ['getUser' => fn () => false]);
+
+        // User missing (project resolves fine).
+        $this->assertFalse(
+            $this->makeService($mkRepo(true), userRepo: $missingUser)->addUserToProject(999, 42)
+        );
+        // Project missing (user resolves fine).
+        $this->assertFalse(
+            $this->makeService($mkRepo(false), userRepo: $this->validUserRepo())->addUserToProject(7, 999)
+        );
+
+        $this->assertSame(0, $added, 'a non-existent user or project must never reach addProjectRelation');
+    }
+
+    /**
+     * A UserRepository stub whose getUser() resolves to a real row, for the
+     * addUserToProject() tests that need the existence guard to pass.
+     */
+    private function validUserRepo(): UserRepository
+    {
+        return $this->makeEmpty(UserRepository::class, ['getUser' => fn () => ['id' => 7]]);
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Install\Services\SchemaBuilder;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -92,6 +93,12 @@ class Install
         30518,
         30519,
         30520,
+        30521,
+        30522,
+        30523,
+        30524,
+        30525,
+        30526,
     ];
 
     /**
@@ -429,6 +436,8 @@ class Install
                     `assumptions` text,
                     `data` MEDIUMTEXT,
                     `conclusion` text,
+                    `why_this_matters` text,
+                    `starting_picture` text,
                     `box` varchar(255) DEFAULT NULL,
                     `author` int(11) DEFAULT NULL,
                     `created` datetime DEFAULT NULL,
@@ -604,12 +613,23 @@ class Install
                     PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+                CREATE TABLE `zp_goal_history` (
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `itemId` int(11) NOT NULL,
+                    `value` double DEFAULT NULL,
+                    `userId` int(11) DEFAULT NULL,
+                    `dateRecorded` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `idx_goal_history_item_date` (`itemId`,`dateRecorded`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
                 CREATE TABLE `zp_tickets` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `projectId` int(11) DEFAULT NULL,
                     `headline` varchar(255) DEFAULT NULL,
                     `description` text,
                     `acceptanceCriteria` text,
+                    `outcomeImpact` text,
                     `date` datetime DEFAULT NULL,
                     `dateToFinish` datetime DEFAULT NULL,
                     `priority` varchar(60) DEFAULT NULL,
@@ -695,6 +715,8 @@ class Install
                     `sessiontime` varchar(50) DEFAULT NULL,
                     `wage` int(11) DEFAULT NULL,
                     `hours` int(11) DEFAULT NULL,
+                    `weekly_hours` int(11) DEFAULT NULL,
+                    `employment_type` varchar(20) DEFAULT NULL,
                     `description` text,
                     `clientId` int(11) DEFAULT NULL,
                     `notifications` int(2) DEFAULT NULL,
@@ -1982,7 +2004,7 @@ class Install
         $errors = [];
 
         $sql = [
-            'CREATE TABLE `zp_access_tokens` (
+            'CREATE TABLE IF NOT EXISTS `zp_access_tokens` (
                     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                     `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `tokenable_id` bigint unsigned NOT NULL,
@@ -1997,7 +2019,7 @@ class Install
                     UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
                     KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-            'CREATE TABLE `zp_jobs` (
+            'CREATE TABLE IF NOT EXISTS `zp_jobs` (
                     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                     `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -2033,7 +2055,16 @@ class Install
             } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
+                $errors[] = 'Migration 30400 failed: '.$e->getMessage();
             }
+        }
+
+        // Report failures instead of returning true regardless. Swallowing them here is what
+        // let installs record 3.4.0 as applied while zp_access_tokens did not exist, which
+        // then broke every subsequent upgrade at 30504 (#3706). The creates above are
+        // IF NOT EXISTS, so a re-run on a healthy install is still a no-op.
+        if ($errors !== []) {
+            return $errors;
         }
 
         return true;
@@ -2632,6 +2663,18 @@ class Install
     public function update_sql_30504(): bool|array
     {
         try {
+            // Self-heal a missing table rather than dying on it (#3706). zp_access_tokens is
+            // created by update_sql_30400, but that migration wrapped its statements in a
+            // swallow-everything try/catch and still returned success — so an install whose
+            // CREATE TABLE failed recorded 3.4.0 as applied with no table to show for it, and
+            // every later upgrade died here on "1146 Table 'zp_access_tokens' doesn't exist"
+            // with no way forward. Recreating it is safe: the table only holds API tokens, and
+            // an install that never had one has none to lose.
+            if (! Schema::hasTable('zp_access_tokens')) {
+                Log::warning('Migration 30504: zp_access_tokens missing, recreating it before adding push columns.');
+                app()->make(SchemaBuilder::class)->createAccessTokensTable();
+            }
+
             Schema::table('zp_access_tokens', function (Blueprint $table) {
                 if (! Schema::hasColumn('zp_access_tokens', 'push_token')) {
                     $table->string('push_token', 255)->nullable()->after('expires_at');
@@ -2838,6 +2881,382 @@ class Install
             Log::error('Migration 30520: '.$e->getMessage());
 
             return ['Migration 30520 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30521 — reporting groundwork (#reporting-screens):
+     *   - zp_tickets.outcomeImpact TEXT NULL: retrospective outcome & impact narrative on
+     *     milestones ("what did completing this produce"), captured inline on the report
+     *     screens and rolled up into plan/strategy board reports. Distinct from `description`,
+     *     which is forward-looking.
+     *   - zp_goal_history: append-only record of goal currentValue changes. Goal values were
+     *     previously overwritten in place, making KPI trend reporting impossible; rows are
+     *     written on every value change plus a daily snapshot, so trends become chartable
+     *     once history accumulates.
+     */
+    public function update_sql_30521(): bool|array
+    {
+        try {
+            if (Schema::hasTable('zp_tickets') && ! Schema::hasColumn('zp_tickets', 'outcomeImpact')) {
+                Schema::table('zp_tickets', function (Blueprint $table) {
+                    $table->text('outcomeImpact')->nullable()->after('acceptanceCriteria');
+                });
+            }
+
+            if (! Schema::hasTable('zp_goal_history')) {
+                Schema::create('zp_goal_history', function (Blueprint $table) {
+                    $table->increments('id');
+                    $table->integer('itemId');
+                    $table->double('value')->nullable();
+                    $table->integer('userId')->nullable();
+                    $table->dateTime('dateRecorded')->nullable();
+
+                    $table->index(['itemId', 'dateRecorded'], 'idx_goal_history_item_date');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30521: '.$e->getMessage());
+
+            return ['Migration 30521 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30522: adds two authored-meaning fields to canvas items.
+     *
+     *   why_this_matters — the human change (Outcome and Impact items).
+     *   starting_picture — the world today, before the work (Impact only).
+     *
+     * Both nullable, both additive. `conclusion` is untouched — going forward
+     * it narrows to "as measured by" methodology only. The report's Impact
+     * Journey page (Page 4) reads `why_this_matters` as the meaning lead
+     * where present, falling back to today's rendering when absent.
+     */
+    public function update_sql_30522(): bool|array
+    {
+        try {
+            if (Schema::hasTable('zp_canvas_items')) {
+                if (! Schema::hasColumn('zp_canvas_items', 'why_this_matters')) {
+                    Schema::table('zp_canvas_items', function (Blueprint $table) {
+                        $table->text('why_this_matters')->nullable()->after('conclusion');
+                    });
+                }
+                if (! Schema::hasColumn('zp_canvas_items', 'starting_picture')) {
+                    Schema::table('zp_canvas_items', function (Blueprint $table) {
+                        $table->text('starting_picture')->nullable()->after('why_this_matters');
+                    });
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30522: '.$e->getMessage());
+
+            return ['Migration 30522 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30523 — database update for v3.5.23.
+     *
+     * Adds user-level capacity attributes so downstream resource-planning
+     * surfaces (starting with PgmPro's Resource Allocation tab) can
+     * distinguish an FTE's target from a PT's ceiling, a contractor's
+     * billable cap, and a volunteer's best-effort throughput.
+     *
+     * Both columns are nullable with no default and no backfill —
+     * per product decision: teach users to configure this explicitly
+     * rather than assume everyone is 40h/FTE. Downstream code treats
+     * NULL as "not configured" and prompts admins to set it before
+     * capacity warnings can fire.
+     */
+    public function update_sql_30523(): bool|array
+    {
+        try {
+            if (! Schema::hasTable('zp_user')) {
+                return true;
+            }
+
+            if (! Schema::hasColumn('zp_user', 'weekly_hours')) {
+                Schema::table('zp_user', function (Blueprint $table) {
+                    $table->integer('weekly_hours')->nullable()->after('hours');
+                });
+            }
+            if (! Schema::hasColumn('zp_user', 'employment_type')) {
+                Schema::table('zp_user', function (Blueprint $table) {
+                    $table->string('employment_type', 20)->nullable()->after('weekly_hours');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30523: '.$e->getMessage());
+
+            return ['Migration 30523 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30524 — database update for v3.5.24.
+     *
+     * Backfills the legacy single goal→milestone link (the varchar
+     * `zp_canvas_items.milestoneId` column, `box='goal'`) into many-to-many
+     * edges on the core `zp_entity_relationship` graph, so a goal can be
+     * tracked by any number of milestones. Each edge:
+     *   entityA = goal canvas item (GoalItem), entityB = milestone (Ticket),
+     *   relationship = 'tracked_by'.
+     *
+     * The `milestoneId` column is intentionally KEPT here — readers are cut
+     * over incrementally and a later migration drops it once nothing reads it.
+     *
+     * Written with the query builder (not raw REGEXP/CAST) so it is portable
+     * across MySQL/Postgres/MSSQL, and idempotent: junk values (empty, '0',
+     * non-numeric, deleted-milestone) are skipped and already-migrated pairs
+     * are not duplicated on re-run.
+     */
+    public function update_sql_30524(): bool|array
+    {
+        try {
+            // Guard on the installer's own connection (not the global Schema
+            // facade, which checks the default connection) so the existence
+            // check matches the connection the migration queries run against
+            // (may be a temp/target install connection).
+            // DatabaseManager always resolves a concrete Connection here; the
+            // property is typed to the interface, which doesn't declare the
+            // schema-builder accessor, so narrow it for static analysis.
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_canvas')
+                || ! $schema->hasTable('zp_entity_relationship')
+                || ! $schema->hasTable('zp_tickets')
+                || ! $schema->hasColumn('zp_canvas_items', 'milestoneId')) {
+                // Surface the skip in the update log — a partial install
+                // silently no-oping would be invisible otherwise.
+                Log::info('Migration 30524 skipped: required tables/columns missing (partial install?)');
+
+                return true;
+            }
+
+            // UTC — DB datetimes are stored in UTC; date() would use the server
+            // timezone and write a skewed createdOn.
+            $now = gmdate('Y-m-d H:i:s');
+
+            // Chunk the goal rows so a very large zp_canvas_items never loads
+            // into memory at once. Each chunk resolves its own live-milestone
+            // and existing-edge sets, scoped to the chunk's ids (no full-table
+            // scan), then batch-inserts.
+            $this->connection->table('zp_canvas_items')
+                ->where('box', 'goal')
+                ->whereNotNull('milestoneId')
+                ->where('milestoneId', '<>', '')
+                ->where('milestoneId', '<>', '0')
+                ->orderBy('id')
+                ->chunkById(500, function ($goals) use ($now): void {
+                    // Numeric-only (goal, milestone) pairs. milestoneId is a
+                    // varchar, so trim before the digit check.
+                    $pairs = [];
+                    $milestoneIds = [];
+                    $canvasIds = [];
+                    foreach ($goals as $g) {
+                        $raw = trim((string) $g->milestoneId);
+                        if (! ctype_digit($raw)) {
+                            continue;
+                        }
+                        $mid = (int) $raw;
+                        if ($mid <= 0) {
+                            continue;
+                        }
+                        $pairs[] = ['goalId' => (int) $g->id, 'milestoneId' => $mid, 'author' => $g->author, 'canvasId' => (int) $g->canvasId];
+                        $milestoneIds[$mid] = true;
+                        $canvasIds[(int) $g->canvasId] = true;
+                    }
+
+                    if ($pairs === []) {
+                        return;
+                    }
+
+                    $goalIds = array_values(array_unique(array_map(static fn ($p) => $p['goalId'], $pairs)));
+
+                    // Drop edges to deleted milestones + dedup existing edges,
+                    // both scoped to this chunk's ids — O(1) lookups, no N+1.
+                    // The milestone lookup keeps projectId: links are
+                    // same-project only (product rule), so a legacy
+                    // cross-project row must NOT be promoted to an edge.
+                    $liveTickets = [];
+                    foreach (
+                        $this->connection->table('zp_tickets')->whereIn('id', array_keys($milestoneIds))->where('type', 'milestone')->where('status', '<>', -1)->get(['id', 'projectId']) as $t
+                    ) {
+                        $liveTickets[(int) $t->id] = (int) $t->projectId;
+                    }
+
+                    // Goal projects, resolved via each goal's canvas (chunk-scoped).
+                    $projectByCanvas = [];
+                    foreach (
+                        $this->connection->table('zp_canvas')->whereIn('id', array_keys($canvasIds))->get(['id', 'projectId']) as $c
+                    ) {
+                        $projectByCanvas[(int) $c->id] = (int) $c->projectId;
+                    }
+
+                    $existingEdges = [];
+                    foreach (
+                        $this->connection->table('zp_entity_relationship')
+                            ->where('relationship', EntityRelationshipEnum::TrackedBy->value)
+                            ->where('entityAType', 'GoalItem')
+                            ->where('entityBType', 'Ticket')
+                            ->whereIn('entityA', $goalIds)
+                            ->select('entityA', 'entityB')
+                            ->get() as $e
+                    ) {
+                        $existingEdges[sprintf('%d:%d', (int) $e->entityA, (int) $e->entityB)] = true;
+                    }
+
+                    $rows = [];
+                    foreach ($pairs as $p) {
+                        if (! isset($liveTickets[$p['milestoneId']])) {
+                            continue;
+                        }
+                        // Same-project only: skip legacy rows pointing at a
+                        // milestone in a different project than the goal's.
+                        if (! isset($projectByCanvas[$p['canvasId']])
+                            || $liveTickets[$p['milestoneId']] !== $projectByCanvas[$p['canvasId']]) {
+                            continue;
+                        }
+                        if (isset($existingEdges[$p['goalId'].':'.$p['milestoneId']])) {
+                            continue;
+                        }
+                        // Unknown author stays NULL ("unknown"), not 0 — 0 would
+                        // read as a real user id in downstream joins/filters.
+                        $author = (int) ($p['author'] ?? 0);
+                        $rows[] = [
+                            'entityA' => $p['goalId'],
+                            'entityAType' => 'GoalItem',
+                            'entityB' => $p['milestoneId'],
+                            'entityBType' => 'Ticket',
+                            'relationship' => EntityRelationshipEnum::TrackedBy->value,
+                            'createdOn' => $now,
+                            'createdBy' => $author > 0 ? $author : null,
+                            'meta' => json_encode(['source' => 'milestoneId_migration']),
+                        ];
+                    }
+
+                    foreach (array_chunk($rows, 200) as $insertChunk) {
+                        $this->connection->table('zp_entity_relationship')->insert($insertChunk);
+                    }
+                });
+        } catch (\Exception $e) {
+            Log::error('Migration 30524: '.$e->getMessage());
+
+            return ['Migration 30524 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30525 — database update for v3.5.25.
+     *
+     * Top-up backfill for the goal↔milestone edge migration. `update_sql_30524`
+     * ran when the edge model shipped, but goal↔milestone assignments made
+     * after that point and before dual-write went live were written to the
+     * legacy `milestoneId` column only. Re-running the (idempotent) 30524
+     * backfill captures those stragglers as `tracked_by` edges; goals already
+     * migrated are skipped.
+     */
+    public function update_sql_30525(): bool|array
+    {
+        $result = $this->update_sql_30524();
+
+        // Re-label a delegated failure so upgrade logs/output point at the step
+        // that actually ran (30525), not the 30524 delegate.
+        if (is_array($result)) {
+            return ['Migration 30525 failed (delegated to 30524): '.implode('; ', array_map('strval', $result))];
+        }
+
+        return $result;
+    }
+
+    /**
+     * update_sql_30526 — database update for v3.5.26.
+     *
+     * Hygiene pass over the goal↔milestone `tracked_by` edges:
+     *  1. Removes CROSS-PROJECT edges — links are same-project only (product
+     *     rule), but the original 30524/30525 backfill promoted legacy
+     *     cross-project `milestoneId` rows into edges before the guard existed.
+     *  2. Removes ORPHANED edges — a milestone deleted through the generic
+     *     ticket-delete path (which historically skipped the goal-detach
+     *     cascade) or a goal removed out-of-band leaves edges pointing at
+     *     rows that no longer exist.
+     *
+     * Query-builder only (portable) and naturally idempotent: a clean graph
+     * yields zero deletions.
+     */
+    public function update_sql_30526(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_entity_relationship')
+                || ! $schema->hasTable('zp_canvas_items')
+                || ! $schema->hasTable('zp_canvas')
+                || ! $schema->hasTable('zp_tickets')) {
+                // Surface the skip in the update log — a partial install
+                // silently no-oping would be invisible otherwise.
+                Log::info('Migration 30526 skipped: required tables missing (partial install?)');
+
+                return true;
+            }
+
+            // Cross-project edges: goal's canvas project != milestone's project.
+            $crossProject = $this->connection->table('zp_entity_relationship as er')
+                ->join('zp_canvas_items as ci', 'er.entityA', '=', 'ci.id')
+                ->join('zp_canvas as cb', 'ci.canvasId', '=', 'cb.id')
+                ->join('zp_tickets as t', 'er.entityB', '=', 't.id')
+                ->where('er.relationship', EntityRelationshipEnum::TrackedBy->value)
+                ->where('er.entityAType', 'GoalItem')
+                ->where('er.entityBType', 'Ticket')
+                ->whereColumn('t.projectId', '<>', 'cb.projectId')
+                ->pluck('er.id')
+                ->all();
+
+            // Orphans: entityA no longer a goal item, or entityB no longer a
+            // live milestone ticket.
+            $orphaned = $this->connection->table('zp_entity_relationship as er')
+                ->leftJoin('zp_canvas_items as ci', function ($join): void {
+                    $join->on('er.entityA', '=', 'ci.id')->where('ci.box', '=', 'goal');
+                })
+                ->leftJoin('zp_tickets as t', function ($join): void {
+                    // "Live" = milestone-type AND not soft-deleted — matches
+                    // the addGoalMilestoneLink chokepoint's definition, so an
+                    // edge to a deleted milestone counts as orphaned.
+                    $join->on('er.entityB', '=', 't.id')
+                        ->where('t.type', '=', 'milestone')
+                        ->where('t.status', '<>', -1);
+                })
+                ->where('er.relationship', EntityRelationshipEnum::TrackedBy->value)
+                ->where('er.entityAType', 'GoalItem')
+                ->where('er.entityBType', 'Ticket')
+                ->where(function ($q): void {
+                    $q->whereNull('ci.id')->orWhereNull('t.id');
+                })
+                ->pluck('er.id')
+                ->all();
+
+            $ids = array_values(array_unique(array_map('intval', array_merge($crossProject, $orphaned))));
+            foreach (array_chunk($ids, 500) as $chunk) {
+                $this->connection->table('zp_entity_relationship')->whereIn('id', $chunk)->delete();
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30526: '.$e->getMessage());
+
+            return ['Migration 30526 failed: '.$e->getMessage()];
         }
 
         return true;

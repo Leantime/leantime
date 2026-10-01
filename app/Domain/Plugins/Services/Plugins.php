@@ -113,6 +113,7 @@ class Plugins
      *
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function getAllPlugins(bool $enabledOnly = false): false|array
     {
         $installedPluginsById = [];
@@ -202,6 +203,7 @@ class Plugins
      *
      * @api
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function getEnabledPlugins(): mixed
     {
 

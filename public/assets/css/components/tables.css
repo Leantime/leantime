@@ -140,8 +140,11 @@
     margin: 0;
 }
 
+/* Was `background: var(--primary-font-color)` — a TEXT color used as a
+   background, i.e. a solid black bar behind the header of any scroll-mode
+   table. The header cells paint their own band. */
 .dataTables_scrollHead {
-    background: var(--primary-font-color);
+    background: transparent;
 }
 
 .dataTables_scrollHead table {
@@ -155,12 +158,20 @@
 
 }
 
+/* Sortable header hover — a step darker than the header band, not the dropdown
+   menu's hover colors (which are a different control's palette and made the
+   header flash a completely unrelated tint). */
 .dataTable thead th.sorting:hover,
 .dataTable thead th.sorting_asc:hover,
 .dataTable thead th.sorting_desc:hover {
-    background: var(--dropdown-link-hover-bg);
-    color:var(--dropdown-link-hover-color);
+    background: color-mix(in srgb, var(--primary-font-color) 10%, transparent);
+    color: color-mix(in srgb, var(--primary-font-color) 85%, transparent);
+}
 
+/* The active sort column reads as active. */
+.dataTable thead th.sorting_asc,
+.dataTable thead th.sorting_desc {
+    color: var(--primary-font-color);
 }
 
 .dataTable thead th.sorting:after {
@@ -180,10 +191,12 @@
     content: "\00a0\00a0\f0dd";
 }
 
+/* No outer border: --col-content-bg is white in the light theme, so this drew a
+   white line on a white card. The content card already supplies the edge. */
 .maincontentinner .table,
-.maincontentinner table{
-    border:1px solid var(--col-content-bg);
-
+.maincontentinner .dataTable,
+.maincontentinner .reportTable{
+    border: 0;
 }
 
 .table-bordered {
@@ -191,9 +204,14 @@
     border-top-right-radius:var(--box-radius);
 }
 
+/* Scoped off bare `table` for the same reason as the block below: this rule
+   zeroes borders and repaints the background, and as a bare selector it reached
+   into FullCalendar's month grid and the wiki/tiptap content tables. */
 .maincontentinner .table th,
-.maincontentinner table th,
-.maincontentinner table thead td,
+.maincontentinner .dataTable th,
+.maincontentinner .reportTable th,
+.maincontentinner .table thead td,
+.maincontentinner .dataTable thead td,
 .maincontentinner .table.table-bordered th,
 .maincontentinner .table tr.dtrg-group td{
     font-weight: normal;
@@ -214,13 +232,56 @@
     background:var(--secondary-background);
 }
 
+/* SCOPING RULE FOR EVERYTHING BELOW: target the app's OWN data tables
+   (.table / .dataTable / .reportTable) — never a bare `table` selector.
+   FullCalendar's month grid, the tiptap/wiki content tables and other embedded
+   widgets are all built from <table>, ship their own complete styling, and a
+   bare `.maincontentinner table th` reaches straight into them: the calendar's
+   day-of-week row picked up this header band and its cells picked up the row
+   rules and padding, which wrecked the month grid. */
+
+/* Column headers — the app's established column-label treatment (small, bold,
+   uppercase, tracked, muted), matching the Resource Allocation table and the
+   report section headers.
+   Before: --col-title-bg is plain white in the light theme and the rule above
+   zeroes every border, so the header row was pure white text-on-white with the
+   same size and weight as the data under it — nothing said "this is the header".
+   Now it carries its own tinted band, its own type treatment, and a rule beneath
+   it. Tints are color-mixed off the text color rather than hardcoded grey so
+   they invert correctly in dark mode. */
 .maincontentinner .table th,
-.maincontentinner table thead td,
+.maincontentinner .table thead td,
 .maincontentinner .table.table-bordered th,
-.maincontentinner table th {
-    background:var(--col-title-bg);
-    padding: 10px 10px;
-    font-weight:bold;
+.maincontentinner .dataTable th,
+.maincontentinner .reportTable th {
+    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
+    color: color-mix(in srgb, var(--primary-font-color) 55%, transparent);
+    /* Horizontal padding stays at the original 10px on purpose: these tables
+       already run out of room (Due Date truncates at ~12 columns), so the
+       breathing room is bought vertically only. Labels still wrap when a column
+       is narrow — vertical-align keeps a wrapped label centered against its
+       single-line neighbours. */
+    padding: 9px 10px;
+    font-size: 11px;
+    /* Quieter than the first pass (was 700 / .5px / 16% rule): the header only
+       needs to be legible as a different KIND of row, not to compete with the
+       data for attention. */
+    font-weight: 600;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    line-height: 1.3;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary-font-color) 11%, transparent);
+    vertical-align: middle;
+}
+
+/* Round the header band with the card it sits in. */
+.maincontentinner .table thead tr:first-child th:first-child,
+.maincontentinner .dataTable thead tr:first-child th:first-child {
+    border-top-left-radius: var(--box-radius-small, 8px);
+}
+.maincontentinner .table thead tr:first-child th:last-child,
+.maincontentinner .dataTable thead tr:first-child th:last-child {
+    border-top-right-radius: var(--box-radius-small, 8px);
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -242,23 +303,47 @@
 }
 
 
+/* Group header rows (group-by view) — a labelled band that separates runs of
+   rows. Same uppercase column-label language as the header, one step louder,
+   so a grouped table has a clear second level of structure. */
 .maincontentinner .table tr.dtrg-group td {
-    color: var(--kanban-col-title-color);
-    padding: 5px 10px;
-    padding-top:25px;
-    font-weight: bold;
+    color: color-mix(in srgb, var(--primary-font-color) 68%, transparent);
+    padding: 22px 10px 7px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    background: transparent;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary-font-color) 14%, transparent);
 }
 
 .maincontentinner .table {
     margin-top:10px;
 }
 
+/* Data cells — horizontal rules only.
+   Before: `border-right: 1px solid var(--secondary-background)` drew a vertical
+   line between EVERY column while rows had no separator at all, so the table
+   read as a set of columns rather than a set of rows — exactly backwards for
+   scanning records. The rows are what you read; they get the rules, and the
+   column dividers go away. Padding was 5px/3px top/bottom, which crowded the
+   status/priority pills against each other. */
 .maincontentinner .table td,
-.maincontentinner table td{
-    padding:5px 10px 3px 10px;
+.maincontentinner .dataTable td,
+.maincontentinner .reportTable td{
+    padding: 8px 10px;
     vertical-align: middle;
     min-height:17px;
-    border-right:1px solid var(--secondary-background);
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary-font-color) 8%, transparent);
+}
+
+/* The last row closes on the card's own edge — a trailing rule under it reads
+   as an empty row. */
+.maincontentinner .table tbody tr:last-child td,
+.maincontentinner .dataTable tbody tr:last-child td,
+.maincontentinner .reportTable tbody tr:last-child td {
+    border-bottom: 0;
 }
 
 .maincontentinner .listStyleTable td {
@@ -267,13 +352,14 @@
 
 
 
-.dataTable tr:hover {
-    box-shadow:var(--regular-shadow);
-}
-
-.dataTable tr:hover td {
-    background:var(--col-title-bg);
-
+/* Row hover — a tint on the cells, not a box-shadow on the <tr>. Shadows on
+   table rows don't render as a clean rectangle (the row isn't a stacking box)
+   and it bled over the neighbouring rows' rules. --col-title-bg is white in the
+   light theme, so the old hover background was invisible anyway. */
+.maincontentinner .table tbody tr:hover td,
+.maincontentinner .dataTable tbody tr:hover td,
+.maincontentinner .reportTable tbody tr:hover td {
+    background: color-mix(in srgb, var(--primary-font-color) 4%, transparent);
 }
 
 .maincontentinner .table td .small-input {
@@ -376,11 +462,11 @@
 
 .maincontentinner .dt-buttons>.dt-button {
     display: inline-block;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    border-color: var(--neutral);
-    border: 1px solid var(--secondary-action-bg);
+    /* Same fix as the secondary button in forms.css: the border used to be the
+       button's own background color, leaving Export / Columns white-on-white
+       (invisible) on the content card. Outline + the shared pill shadow. */
+    box-shadow: 0 1px 3px rgba(20, 40, 50, .06);
+    border: 1px solid var(--main-border-color);
     margin: 0 0 9px;
     padding: 4px 14px;
     line-height: 21px;
@@ -548,13 +634,16 @@ table td{
     padding-top:0px
 }
 
+/* Totals row — separated from the data by a rule that is clearly heavier than
+   the row rules, and padded on the same 12px grid as the cells above it (was
+   20px on the left only, so the totals sat off the column they totalled). */
 .maincontentinner .table tfoot td,
-.maincontentinner table tfoot td {
+.maincontentinner .dataTable tfoot td,
+.maincontentinner .reportTable tfoot td {
     font-weight: bold;
-    border-top: 1px solid var(--neutral);
-    /* text-align: center; */
-    /* min-height: 41px; */
-    padding: 8px 5px 8px 20px;
+    border-top: 2px solid color-mix(in srgb, var(--primary-font-color) 16%, transparent);
+    border-bottom: 0;
+    padding: 10px 10px;
 }
 
 .ticketTable .ticketModal {

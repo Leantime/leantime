@@ -17,15 +17,13 @@
     @include('tickets::submodules.timelineTabs')
     <div class="maincontentinner">
 
+        {{-- New / Filter moved into the nav bar (timelineTabs). The month
+             title and the FullCalendar prev/next controls remain here. --}}
         <div class="row">
-            <div class="col-md-4">
-                @dispatchEvent('filters.afterLefthandSectionOpen')
-
-                @include('tickets::submodules.ticketNewBtn')
-                @include('tickets::submodules.ticketFilter')
-
-                @dispatchEvent('filters.beforeLefthandSectionClose')
-            </div>
+            {{-- Empty leading column keeps the month title optically centered on
+                 the page: it is centered WITHIN its column, so it needs the
+                 middle third, not the left half. --}}
+            <div class="col-md-4"></div>
             <div class="col-md-4">
                 <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
                     <h2>..</h2>

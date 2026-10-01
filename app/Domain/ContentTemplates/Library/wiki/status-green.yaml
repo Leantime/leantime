@@ -11,4 +11,8 @@ sector: "t:templates.elements"
 wiki:
   articles:
     - title: "Green Status"
-      content: '<span class="label label-success">Green</span>'
+      # Renders via TipTap's Highlight extension (multicolor). The pre-
+      # migration Bootstrap label class (.label-success) never worked in
+      # the editor because no Span mark is registered; <mark> with an
+      # inline background is the editor-native equivalent.
+      content: '<p><mark data-color="#75BB1B" style="background-color: #75BB1B; color: #ffffff; padding: 0 6px; border-radius: 3px;">Green</mark></p>'

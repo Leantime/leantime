@@ -563,4 +563,21 @@ class DefaultConfig
      *          limit because agentic LLM clients burst many parallel tool calls per turn.
      */
     public int $ratelimitMcp = 300;
+
+    /**
+     * @var int rate limit on signup + user-invite POSTs (per IP per minute). These endpoints
+     *          send email and provision resources, so they get a tight budget (invite-spam abuse).
+     */
+    public int $ratelimitSignup = 5;
+
+    /**
+     * @var int maximum user invites per inviting user per hour
+     */
+    public int $ratelimitInvitesUser = 10;
+
+    /**
+     * @var int maximum user invites per installation per day. Raise for legitimate bulk
+     *          onboarding (CSV/directory imports).
+     */
+    public int $ratelimitInvitesTenant = 30;
 }

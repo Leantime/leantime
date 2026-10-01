@@ -5,16 +5,25 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-chart-bar"></span></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
-                <h1>{!! __('headlines.reports') !!}</h1>
-            </div>
-        </div>
+        <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
+        <h1>{!! __('headlines.reports') !!}</h1>
     </div>
 </div>
 
 <div class="maincontent">
+
+    {{-- Same nav band as the status report tab (see project.blade.php): on the
+         gradient between the two cards, not a bare <ul class="tabs-list"> — that
+         class has no CSS, so it rendered with disc bullets inside the card. --}}
+    <div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
+        <nav class="lt-tabs-group" aria-label="{{ __('label.status_report_tab') }} / {{ __('label.delivery_metrics_tab') }}">
+            <ul>
+                <li><a href="{{ BASE_URL }}/reports/project" preload="mouseover">{{ __('label.status_report_tab') }}</a></li>
+                <li class="active"><a href="{{ BASE_URL }}/reports/show">{{ __('label.delivery_metrics_tab') }}</a></li>
+            </ul>
+        </nav>
+    </div>
+
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
@@ -55,8 +64,12 @@
                                     <div class="boxedHighlight">
                                         <span class="headline">{!! __('label.open_todos') !!}</span>
                                         <span class="value">
+                                            {{-- Open To-Dos is a COUNT of tickets (SUM of CASE WHEN
+                                                 status = X THEN 1 in the repo), so it's inherently
+                                                 an integer. ->decimal() rendered "1" as "1.00" —
+                                                 read as a broken chart value in the audit. --}}
                                             @if ($fullReportLatest !== false)
-                                                {{ format(($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']))->decimal() }}
+                                                {{ (int) ($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']) }}
                                             @else
                                                 {{ 0 }}
                                             @endif
@@ -67,11 +80,16 @@
 
                             </div>
 
-                            @if ($allSprints !== false)
+                            {{-- Hide the whole Sprint Burndown section when the project has
+                                 no sprints. Previously the outer guard was just `!== false`, so an
+                                 empty array (project without sprints) rendered the title + toggle
+                                 buttons + empty canvas with no chart underneath — read as broken
+                                 in the audit. --}}
+                            @if ($allSprints !== false && count($allSprints) > 0)
                                 <h5 class="subtitle">{!! __('subtitles.sprint_burndown') !!}</h5>
                                 <br />
                                 <span class="pull-left">
-                                @if ($allSprints !== false && count($allSprints) > 0)
+                                @if (true)
                                     <select data-placeholder="{{ __('input.placeholders.filter_by_sprint') }}" title="{{ __('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
 
                                         <option value="" >{!! __('input.placeholders.filter_by_sprint') !!}</option>

@@ -11,6 +11,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Blueprints\Events\CanvasItemUpdated;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
@@ -166,6 +167,29 @@ class Blueprints extends BaseService
         $this->authorize(BlueprintsPermissions::EDIT, $projectId);
 
         $this->blueprintsRepo->editCanvasItem($values);
+
+        CanvasItemUpdated::dispatch(
+            canvasItemId: $itemId,
+            changedFields: $this->fieldNames($values),
+            legacyHook: __FUNCTION__,
+        );
+    }
+
+    /**
+     * Extract the canvas-item field names from a controller payload for the
+     * CanvasItemUpdated event, dropping the transport/identifier keys (id,
+     * itemId, canvasId, changeItem, routing params) that ride along in the
+     * payload but are not columns — so `changedFields` reads as field names,
+     * not request plumbing.
+     *
+     * @param  array<string, mixed>  $payload
+     * @return array<int, string>
+     */
+    private function fieldNames(array $payload): array
+    {
+        $transportKeys = ['id', 'itemId', 'canvasId', 'changeItem', 'action', 'module'];
+
+        return array_values(array_diff(array_map('strval', array_keys($payload)), $transportKeys));
     }
 
     /**
@@ -187,7 +211,17 @@ class Blueprints extends BaseService
         }
         $this->authorize(BlueprintsPermissions::EDIT, $projectId);
 
-        return $this->blueprintsRepo->patchCanvasItem($id, $params);
+        $patched = $this->blueprintsRepo->patchCanvasItem($id, $params);
+
+        if ($patched) {
+            CanvasItemUpdated::dispatch(
+                canvasItemId: $id,
+                changedFields: $this->fieldNames($params),
+                legacyHook: __FUNCTION__,
+            );
+        }
+
+        return $patched;
     }
 
     /**
@@ -244,23 +278,31 @@ class Blueprints extends BaseService
      */
     private function applyStartContent(int $canvasId, string $canvasType): void
     {
-        $blueprint = $this->templateRegistry->get($canvasType);
+        // createBoard() is invoked with the DATABASE type (e.g. "swotcanvas",
+        // "logicmodelcanvas"), but both registries key by the SLUG form
+        // ("swot", "logicmodel"). Use getByDatabaseType() to bridge, then
+        // pass the resolved slug to the ContentTemplates lookups so both
+        // sides agree on the identifier. Prior to this the initial registry
+        // read silently returned null and the whole feature was a no-op.
+        $blueprint = $this->templateRegistry->getByDatabaseType($canvasType);
         if ($blueprint === null || $blueprint->startContent === null) {
             return;
         }
 
-        $contentTpl = $this->contentTemplates->get($canvasType, $blueprint->startContent);
+        $slug = $blueprint->slug;
+
+        $contentTpl = $this->contentTemplates->get($slug, $blueprint->startContent);
         if ($contentTpl === null) {
             Log::debug(sprintf(
                 'Blueprints::createBoard: blueprint "%s" references startContent "%s" but the template was not found.',
-                $canvasType,
+                $slug,
                 $blueprint->startContent
             ));
 
             return;
         }
 
-        $applier = $this->contentTemplates->applierFor($canvasType);
+        $applier = $this->contentTemplates->applierFor($slug);
         if ($applier === null) {
             return;
         }
@@ -371,6 +413,80 @@ class Blueprints extends BaseService
     }
 
     /**
+     * Validate that a resolved import file path is safe to read.
+     *
+     * Rejects files outside a fixed allow-list of local directories and
+     * requires a known extension. The caller must resolve the path via
+     * {@see realpath()} first — realpath canonicalizes the path (resolves
+     * symlinks, relative segments, and `..` traversal) so the allow-list
+     * check operates on the true absolute path rather than the
+     * user-supplied string.
+     *
+     * The allow-list covers two directories:
+     *  - the PHP upload temp directory (UI file-upload flow), and
+     *  - the shipped fixture directory under the Blueprints domain.
+     *
+     * base_path('userfiles') is intentionally EXCLUDED: the global userfiles
+     * storage is managed by the Files domain with per-file authorization.
+     * Allowing import() to read arbitrary .xml files from userfiles would
+     * bypass that authorization — a caller with CREATE on any project could
+     * ingest files they should not have access to.
+     *
+     * .xml files in sys_get_temp_dir() are accepted by design: this is how PHP
+     * delivers uploaded files to the application (upload_tmp_dir / sys_temp_dir).
+     * On Unix systems the temp directory is typically world-writable with the
+     * sticky bit; the allow-list check is the gate, and we accept the residual
+     * risk that another local user could place a malicious .xml there — that
+     * attacker already has local code execution as the web server user, so
+     * crafting a temp file does not represent an additional escalation.
+     *
+     * @param  string  $resolvedPath  Already-resolved absolute path (from realpath)
+     * @return bool True when the path is within an allowed directory
+     *              and has an allowed extension
+     */
+    private function isImportPathAllowed(string $resolvedPath): bool
+    {
+        $allowedDirs = [
+            sys_get_temp_dir(),
+            APP_ROOT.'/app/Domain/Blueprints/imports',
+        ];
+
+        // Validate file extension — only XML is permitted because import()
+        // parses via DOMDocument::loadXML(). Shipped fixture files under the
+        // imports/ directory are .xml as well.
+        $ext = strtolower(pathinfo($resolvedPath, PATHINFO_EXTENSION));
+        if ($ext !== 'xml') {
+            Log::warning('Blueprints import: disallowed file extension', [
+                'resolvedPath' => $resolvedPath,
+                'extension' => $ext,
+            ]);
+
+            return false;
+        }
+
+        // Anchor each allowed directory with a trailing separator so
+        // str_starts_with doesn't match sibling-prefix paths (e.g.
+        // /tmp-evil/x must NOT match against allowed /tmp).
+        foreach ($allowedDirs as $allowedDir) {
+            $resolvedAllowed = realpath($allowedDir);
+
+            if ($resolvedAllowed === false) {
+                continue;
+            }
+
+            if (str_starts_with($resolvedPath, $resolvedAllowed.DIRECTORY_SEPARATOR)) {
+                return true;
+            }
+        }
+
+        Log::warning('Blueprints import: path traversal or SSRF attempt blocked', [
+            'resolvedPath' => $resolvedPath,
+        ]);
+
+        return false;
+    }
+
+    /**
      * Import a canvas board from an XML file.
      *
      * Parses the XML, validates its structure, then creates a new canvas board
@@ -402,16 +518,48 @@ class Blueprints extends BaseService
         }
 
         $dom = new DOMDocument('1.0', 'UTF-8');
-        $users = app()->make(UserRepository::class);
 
-        $canvasData = file_get_contents($filename);
+        // Validate the file path and extension to prevent SSRF and Local File
+        // Inclusion. Reject URL wrappers (http://, ftp://, etc.), restrict
+        // reads to allowed local directories, and require a known import
+        // extension.
+        $resolvedPath = realpath($filename);
+        if ($resolvedPath === false) {
+            Log::warning('Blueprints import: file not found or path does not exist', [
+                'filename' => $filename,
+            ]);
+
+            return false;
+        }
+
+        if (! $this->isImportPathAllowed($resolvedPath)) {
+            return false;
+        }
+
+        // Guard against non-regular files (FIFO, device, socket) in
+        // world-writable /tmp — a named pipe named *.xml would hang the
+        // request if read without this check.
+        if (! is_file($resolvedPath) || ! is_readable($resolvedPath)) {
+            Log::warning('Blueprints import: path is not a readable regular file', [
+                'resolvedPath' => $resolvedPath,
+            ]);
+
+            return false;
+        }
+
+        $canvasData = file_get_contents($resolvedPath);
         if ($canvasData === false) {
             return false;
         }
 
+        // Defend against XXE-based SSRF: LIBXML_NONET disables network access
+        // during parsing. PHP 8.0+ disables external entity loading by default;
+        // this flag provides defense-in-depth for older or misconfigured builds.
+        $oldInternalErrors = libxml_use_internal_errors(true);
         $oldErrorReporting = error_reporting(error_reporting() & ~E_WARNING);
-        $status = $dom->loadXML($canvasData);
+        $status = $dom->loadXML($canvasData, LIBXML_NONET);
         error_reporting($oldErrorReporting);
+        libxml_use_internal_errors($oldInternalErrors);
         if ($status === false) {
             return false;
         }
@@ -438,6 +586,11 @@ class Blueprints extends BaseService
         }
 
         $elementNodeList = $dataNodeList->item(0)->getElementsByTagName('element');
+
+        // Resolved here rather than at the top of the method: it is only needed to map
+        // item authors below, so a rejected path or malformed document never pays for
+        // building a database-backed repository.
+        $users = app()->make(UserRepository::class);
 
         foreach ($elementNodeList as $elementNode) {
             if (! $elementNode->hasAttribute('key')) {

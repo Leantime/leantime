@@ -6,6 +6,7 @@ use DOMDocument;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Core\Support\NameSanitizer;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -46,7 +47,9 @@ class Notifications
     }
 
     /**
-     * @api
+     * @internal Not exposed over JSON-RPC: it writes into ANY user's inbox (the target user
+     *           id is part of each notification row), so a remote caller could forge messages.
+     *           Called by listeners, services and plugins only.
      */
     public function addNotifications(array $notifications): ?bool
     {
@@ -338,7 +341,9 @@ class Notifications
     /**
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: the author id, target users (data-tagged-user-id in
+     *           $content) and URL are all caller-supplied, so an RPC caller could forge mention
+     *           notifications and emails to any user. Called by the comment/status-update flows only.
      */
     public function processMentions(string $content, string $module, int $moduleId, int $authorId, string $url): void
     {
@@ -354,7 +359,7 @@ class Notifications
             return;
         }
 
-        $authorName = htmlentities($author['firstname']);
+        $authorName = htmlspecialchars(NameSanitizer::clean($author['firstname'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         for ($i = 0; $i < $links->count(); $i++) {
             $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');
@@ -396,7 +401,7 @@ class Notifications
 
                     $taggedUserObject = $this->userRepository->getUser($taggedUser);
                     if (isset($taggedUserObject['username'])) {
-                        $mailer->sendMail([$taggedUserObject['username']], $authorName);
+                        $mailer->sendMail([$taggedUserObject['username']], 'Leantime');
                     }
                 }
             }

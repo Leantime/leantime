@@ -16,7 +16,7 @@ wiki:
          <tbody>
          <tr>
          <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
-         <td style="width: 82.7562%;">summarize the issue your are experiencing</td>
+         <td style="width: 82.7562%;">summarize the issue you are experiencing</td>
          </tr>
          <tr>
          <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Environment</strong></span></td>

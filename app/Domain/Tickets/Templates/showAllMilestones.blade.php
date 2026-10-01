@@ -20,17 +20,10 @@
 
         {!! $tpl->displayNotification() !!}
 
+        {{-- New / Filter moved into the nav bar (timelineTabs). Only the
+             table's own export/columns buttons remain here. --}}
         <div class="row">
-            <div class="col-md-6">
-                @dispatchEvent('filters.afterLefthandSectionOpen')
-                @include('tickets::submodules.ticketNewBtn')
-                @include('tickets::submodules.ticketFilter')
-                @dispatchEvent('filters.beforeLefthandSectionClose')
-
-            </div>
-
-
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="pull-right">
                     @dispatchEvent('filters.afterRighthandSectionOpen')
                     <div id="tableButtons" style="display:inline-block"></div>
@@ -50,7 +43,7 @@
             @if ($group['label'] != 'all')
         <h5 class="accordionTitle {{ $group['class'] }}" @if (!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
             <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                <i class="fa fa-angle-down"></i>{{ $group['label'] }} ({{ count($group['items']) }})
+                <i class="fa fa-angle-down"></i>{!! $group['label'] !!} ({{ count($group['items']) }})
             </a>
         </h5>
         <div class="simpleAccordionContainer" id="accordion_content-{{ $group['id'] }}">

@@ -28,11 +28,12 @@ class Verify extends Controller
      */
     public function get($params)
     {
-        $redirectUrl = BASE_URL.'/dashboard/home';
-
-        if (isset($_GET['redirect'])) {
-            $redirectUrl = BASE_URL.urldecode($_GET['redirect']);
-        }
+        // Guard the type: redirect[]=x arrives as an array, which would TypeError
+        // against resolveSafeRedirect(?string). Route the user-supplied value
+        // through resolveSafeRedirect() (as Login::get() does) so an open-redirect
+        // target (e.g. //attacker.com) can never reach the redirect.
+        $rawRedirect = $_GET['redirect'] ?? null;
+        $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
         $this->tpl->assign('redirectUrl', $redirectUrl);
 
@@ -44,7 +45,12 @@ class Verify extends Controller
 
         if (session()->exists('userdata') && $this->authService->use2FA()) {
             if (isset($params['twoFA_code']) === true) {
-                $redirectUrl = filter_var($params['redirectUrl'], FILTER_SANITIZE_URL);
+                // redirectUrl round-trips as a form field, so it is just as
+                // attacker-controllable here as the GET param — and FILTER_SANITIZE_URL is a
+                // sanitizer, not a safety check ("//attacker.com" passes through it
+                // untouched). Run it through the same guard get() uses.
+                $rawRedirect = $params['redirectUrl'] ?? null;
+                $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
                 if ($this->authService->verify2FA($params['twoFA_code'])) {
                     $this->authService->set2FAVerified();

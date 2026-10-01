@@ -38,8 +38,24 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fas {{ $canvasIcon }}"></span></div>
     <div class="pagetitle">
-        <h5>{!! e(session('currentProjectClient') . ' // ' . session('currentProjectName')) !!}</h5>
         @if (count($allCanvas) > 0)
+            <x-global::subjectSwitcher
+                :parent="$tpl->__('headline.logicmodel.board')"
+                :current="$canvasTitle">
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/{{ $canvasName }}canvas/boardDialog">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
+                @endif
+                <li class="border"></li>
+                @foreach ($allCanvas as $canvasRow)
+                    <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
+                @endforeach
+            </x-global::subjectSwitcher>
+        @else
+            <h1>{{ $tpl->__('headline.logicmodel.board') }}</h1>
+        @endif
+    </div>
+    @if (count($allCanvas) > 0)
+        <div class="pageheader-right">
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
@@ -54,26 +70,8 @@
                     @endif
                 </ul>
             </span>
-        @endif
-        <h1>{{ $tpl->__('headline.logicmodel.board') }} //
-            @if (count($allCanvas) > 0)
-                <span class="dropdown dropdownWrapper">
-                    <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                        {{ $tpl->escape($canvasTitle) }}&nbsp;<i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu canvasSelector">
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/{{ $canvasName }}canvas/boardDialog">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
-                        @endif
-                        <li class="border"></li>
-                        @foreach ($allCanvas as $canvasRow)
-                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
-                        @endforeach
-                    </ul>
-                </span>
-            @endif
-        </h1>
-    </div>
+        </div>
+    @endif
 </div>
 
 <div class="maincontent">

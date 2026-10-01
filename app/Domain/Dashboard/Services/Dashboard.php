@@ -117,6 +117,8 @@ class Dashboard
      */
     public function userHasFavoritedProject(int $userId, int $projectId): bool
     {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
         $userReaction = $this->reactionsService->getUserReactions($userId, 'project', $projectId, Reactions::$favorite);
 
         return $userReaction && is_array($userReaction);

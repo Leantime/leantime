@@ -21,6 +21,47 @@ class WidgetsServiceTest extends TestCase
         return new Widgets($this->make(Setting::class), $projectService, $reportService);
     }
 
+    /**
+     * The $userId parameters are pinned to the session user (RPC IDOR guard): the argument must
+     * be ignored and the session id is what reaches the collaborators.
+     */
+    public function test_my_projects_widget_data_uses_the_session_user_not_the_argument(): void
+    {
+        session(['userdata' => ['id' => 7]]);
+
+        $requestedUserId = null;
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsAssignedToUser' => function ($userId) use (&$requestedUserId) {
+                $requestedUserId = $userId;
+
+                return [];
+            },
+        ]);
+
+        $this->makeService($projectService, $this->make(ReportService::class))->getMyProjectsWidgetData(999);
+
+        $this->assertSame(7, $requestedUserId);
+    }
+
+    public function test_reset_dashboard_clears_the_session_users_grid_not_the_arguments(): void
+    {
+        session(['userdata' => ['id' => 7]]);
+
+        $deletedKey = null;
+        $settingRepo = $this->make(Setting::class, [
+            'deleteSetting' => function ($key) use (&$deletedKey) {
+                $deletedKey = $key;
+
+                return true;
+            },
+        ]);
+
+        (new Widgets($settingRepo, $this->make(ProjectService::class), $this->make(ReportService::class)))
+            ->resetDashboard(999);
+
+        $this->assertSame('usersettings.7.dashboardGrid', $deletedKey);
+    }
+
     public function test_my_projects_widget_data_enriches_each_project(): void
     {
         $projectService = $this->make(ProjectService::class, [

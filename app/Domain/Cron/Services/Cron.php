@@ -9,7 +9,7 @@ use Leantime\Core\Events\DispatchesEvents;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
- * @api
+ * Scheduler orchestration. Not part of the JSON-RPC surface (see runScheduledTasks).
  */
 class Cron
 {
@@ -31,7 +31,8 @@ class Cron
      *
      * @return int The exit code returned by the `schedule:run` command.
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: the scheduler is triggered by the Cron\Controllers\Run
+     *           endpoint or the CLI, never by an arbitrary authenticated API caller.
      */
     public function runScheduledTasks(): int
     {

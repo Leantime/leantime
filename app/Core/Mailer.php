@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Support\NameSanitizer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -213,7 +214,14 @@ class Mailer
 
         $this->mailAgent->isHTML(true); // Set email format to HTML
 
-        $this->mailAgent->setFrom($this->emailDomain, $from.' (Leantime)');
+        // The From display name must never carry user-controlled content (invite-spam abuse
+        // used attacker firstnames here). Callers pass fixed labels; sanitize regardless.
+        $fromName = NameSanitizer::clean($from);
+        $fromDisplay = ($fromName === '' || strcasecmp($fromName, 'Leantime') === 0)
+            ? 'Leantime'
+            : $fromName.' (Leantime)';
+
+        $this->mailAgent->setFrom($this->emailDomain, $fromDisplay);
 
         $this->mailAgent->Subject = $this->subject;
 

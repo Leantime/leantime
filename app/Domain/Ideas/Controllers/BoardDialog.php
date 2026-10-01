@@ -64,7 +64,7 @@ class BoardDialog extends Controller
      *
      * @param  array  $params  Request parameters
      */
-    #[RequiresPermission(IdeasPermissions::VIEW)]
+    #[RequiresPermission(IdeasPermissions::EDIT, entityScoped: true)]
     public function post(array $params): Response
     {
         $currentCanvasId = '';

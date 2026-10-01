@@ -90,6 +90,15 @@ class Ideas
 
             if ($result !== null) {
                 foreach (safe_unserialize($result->value, []) as $key => $label) {
+                    // Ignore keys we have no status class for. Idea labels are keyed by the
+                    // canvasTypes strings, but a bug in the rename dialog used to persist an
+                    // integer 0 key, and reading it back threw "Undefined array key 0" on every
+                    // render — permanently 500ing the board with no way to undo it from the UI
+                    // (#3685). Skipping unknown keys lets an already-broken board heal itself.
+                    if (! isset($this->statusClasses[$key])) {
+                        continue;
+                    }
+
                     $labels[$key] = [
                         'name' => $label,
                         'class' => $this->statusClasses[$key],

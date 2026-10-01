@@ -307,6 +307,13 @@ min-width: 1200px
         min-height: 50px;
     }
 
+    /* Let the header meta wrap on phones — it's white-space:nowrap for the
+       desktop single-line layout, which would otherwise overflow the card
+       once the string carries updated + multiple metrics. */
+    .pageheader-meta {
+        white-space: normal;
+    }
+
     .searchbar {
         position: static;
         margin-bottom: 5px;

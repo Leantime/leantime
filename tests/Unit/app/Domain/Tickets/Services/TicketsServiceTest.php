@@ -99,6 +99,9 @@ class TicketsServiceTest extends TestCase
 
     protected function _after()
     {
+        // Clear any frozen Carbon "now" so a test that freezes it (e.g. the
+        // board-summary due-this-week test) can't leak into later tests.
+        CarbonImmutable::setTestNow();
         $this->ticketsService = null;
     }
 
@@ -136,6 +139,113 @@ class TicketsServiceTest extends TestCase
 
         $this->assertEquals('', $result['editTo']);
         $this->assertArrayNotHasKey('timeTo', $result);
+    }
+
+    /**
+     * getBoardSummary should count total/unassigned/due-this-week and surface the
+     * most recent modified date, working off the grouped ticket set as-is.
+     */
+    public function test_get_board_summary_computes_counts_and_last_updated()
+    {
+        // Freeze "now" to a fixed instant (noon, well clear of a midnight/week
+        // boundary) so $dueToday and getBoardSummary's weekStart/weekEnd are
+        // computed from the same clock — otherwise a run straddling midnight
+        // could make the due-this-week assertion flaky. Cleared in _after().
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-07-15 12:00:00', 'UTC'));
+
+        // getBoardSummary parses dateToFinish via parseDbDateTime() (DB tz) and
+        // converts to the user tz before the "this week" compare, so the stored
+        // strings must be DB-tz. Derive them from userNow()->setToDbTimezone()
+        // so they round-trip user→db→user and "due today" stays stable even if
+        // this test's user timezone is later moved off UTC.
+        $nowUser = dtHelper()->userNow();
+        $dueToday = $nowUser->setToDbTimezone()->format('Y-m-d H:i:s');
+        $dueTwoMonthsAgo = $nowUser->subMonths(2)->setToDbTimezone()->format('Y-m-d H:i:s');
+        $dueTwoMonthsOut = $nowUser->addMonths(2)->setToDbTimezone()->format('Y-m-d H:i:s');
+
+        $mk = function (mixed $editorId, ?string $due, ?string $modified) {
+            $ticket = new \stdClass;
+            $ticket->editorId = $editorId;
+            $ticket->dateToFinish = $due;
+            $ticket->modified = $modified;
+
+            return $ticket;
+        };
+
+        $grouped = [
+            'all' => [
+                'label' => 'all',
+                'items' => [
+                    // assigned, due today (this week), older change
+                    $mk(5, $dueToday, '2026-07-01 10:00:00'),
+                    // unassigned (empty editor), due 2 months ago (not this week), newest change
+                    $mk('', $dueTwoMonthsAgo, '2026-07-15 09:00:00'),
+                    // unassigned (zero editor), no due date set
+                    $mk(0, '0000-00-00 00:00:00', '2026-06-01 08:00:00'),
+                    // assigned, due 2 months out (beyond this week), no modified stamp
+                    $mk(7, $dueTwoMonthsOut, null),
+                ],
+            ],
+        ];
+
+        $summary = $this->ticketsService->getBoardSummary($grouped);
+
+        $this->assertSame(4, $summary->total);
+        $this->assertSame(2, $summary->unassigned);
+        $this->assertSame(1, $summary->dueThisWeek);
+        $this->assertNotNull($summary->lastUpdated);
+        $this->assertSame('2026-07-15 09:00:00', $summary->lastUpdated->format('Y-m-d H:i:s'));
+    }
+
+    /**
+     * An empty board yields zeroed counts and a null last-updated.
+     */
+    public function test_get_board_summary_handles_empty_board()
+    {
+        $summary = $this->ticketsService->getBoardSummary(['all' => ['items' => []]]);
+
+        $this->assertSame(0, $summary->total);
+        $this->assertSame(0, $summary->unassigned);
+        $this->assertSame(0, $summary->dueThisWeek);
+        $this->assertNull($summary->lastUpdated);
+    }
+
+    /**
+     * Sentinel date strings (0000-00-00 and 1969-12-31 — both rejected by
+     * parseDbDateTime) must be skipped, not blow up the whole board summary.
+     * Regression: the guard originally only filtered 0000-00-00, so a
+     * 1969-12-31 stamp threw InvalidDateException and broke the header.
+     */
+    public function test_get_board_summary_skips_sentinel_dates_without_throwing()
+    {
+        $mk = function (?string $due, ?string $modified) {
+            $ticket = new \stdClass;
+            $ticket->editorId = 5;
+            $ticket->dateToFinish = $due;
+            $ticket->modified = $modified;
+
+            return $ticket;
+        };
+
+        $grouped = [
+            'all' => [
+                'items' => [
+                    $mk('1969-12-31 00:00:00', '1969-12-31 00:00:00'),
+                    $mk('0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+                    // Malformed but NON-sentinel — passes isValidDateString yet
+                    // parseDbDateTime throws. The try/catch must swallow it.
+                    $mk('not a date', 'garbage-value'),
+                    $mk(null, null),
+                ],
+            ],
+        ];
+
+        $summary = $this->ticketsService->getBoardSummary($grouped);
+
+        $this->assertSame(4, $summary->total);
+        // No valid due dates → none counted this week; no valid modified → null.
+        $this->assertSame(0, $summary->dueThisWeek);
+        $this->assertNull($summary->lastUpdated);
     }
 
     /**
@@ -323,6 +433,28 @@ class TicketsServiceTest extends TestCase
             commentService: $this->make(CommentService::class),
             clientService: $this->make(ClientService::class)
         );
+    }
+
+    public function test_get_all_open_user_tickets_excludes_closed_projects_at_query_level(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'admin']]);
+
+        // Closed-project (state === -1) exclusion lives in the SQL layer now, so
+        // the service's contract is simply: ask simpleTicketQuery to exclude
+        // them. Capture the flag it passes.
+        $captured = null;
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => function ($userId, $projectId, $types = [], $excludeClosedProjects = false) use (&$captured) {
+                $captured = $excludeClosedProjects;
+
+                return [];
+            },
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+        $service->getAllOpenUserTickets(1);
+
+        $this->assertTrue($captured, 'getAllOpenUserTickets must exclude closed-project tickets at the query level');
     }
 
     // ---------------------------------------------------------------------
@@ -543,5 +675,227 @@ class TicketsServiceTest extends TestCase
 
         $this->assertSame([], $result);
         $this->assertFalse($called, 'repository should not be queried when criteria are not project-scoped');
+    }
+
+    /**
+     * getMyClosedTicketsForRange: a reversed range is normalized (earlier date
+     * first), only status changes INTO the ticket's current DONE status count,
+     * and a ticket completed more than once keeps its latest completion.
+     */
+    public function test_closed_tickets_range_normalizes_swapped_range_and_keeps_latest_completion(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+        $capturedFrom = null;
+        $capturedTo = null;
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => fn (...$args) => [
+                ['id' => 10, 'type' => 'task', 'projectId' => 5, 'status' => 0],
+                ['id' => 20, 'type' => 'task', 'projectId' => 5, 'status' => 0],
+            ],
+            'getStateLabels' => fn (...$args) => [
+                0 => ['statusType' => 'DONE', 'name' => 'Done', 'class' => ''],
+                3 => ['statusType' => 'INPROGRESS', 'name' => 'In Progress', 'class' => ''],
+            ],
+            'getStatusChangeEvents' => function ($ids, $from, $to) use (&$capturedFrom, &$capturedTo) {
+                $capturedFrom = $from;
+                $capturedTo = $to;
+
+                return [
+                    ['ticketId' => 10, 'changeValue' => 0, 'dateModified' => '2026-07-10 10:00:00'],
+                    ['ticketId' => 10, 'changeValue' => 0, 'dateModified' => '2026-07-09 09:00:00'],
+                    ['ticketId' => 20, 'changeValue' => 3, 'dateModified' => '2026-07-10 10:00:00'],
+                ];
+            },
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+
+        // Reversed range on purpose.
+        $result = $service->getMyClosedTicketsForRange(1, '2026-07-12', '2026-07-05');
+
+        $this->assertEquals('2026-07-05', $capturedFrom, 'range should be normalized earliest-first');
+        $this->assertEquals('2026-07-12', $capturedTo);
+
+        // 20's only event was a change to a non-DONE status → excluded. 10 kept
+        // to its latest completion (newest event wins).
+        $this->assertCount(1, $result);
+        $this->assertEquals(10, $result[0]['id']);
+        $this->assertEquals('2026-07-10 10:00:00', $result[0]['dateClosed']);
+    }
+
+    public function test_closed_tickets_range_forces_session_user_for_non_admin(): void
+    {
+        // Non-admin session user (no admin role granted).
+        session(['userdata' => ['id' => 1]]);
+        $capturedUserId = 'unset';
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => function (...$args) use (&$capturedUserId) {
+                $capturedUserId = $args[0] ?? null;
+
+                return []; // no done tickets — the asserted-on value is the userId
+            },
+            'getStateLabels' => fn (...$args) => [],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+
+        // Caller supplies SOMEONE ELSE's id — the IDOR guard must force it back
+        // to the session user before any query runs.
+        $service->getMyClosedTicketsForRange(999, '2026-07-01', '2026-07-10');
+
+        $this->assertSame(1, $capturedUserId, 'a non-admin must not read another user\'s closures — userId is forced to the session user');
+    }
+
+    /**
+     * Builds a service with a specific ticket repository AND project service —
+     * the two deps getMyCommentedTicketsForRange exercises.
+     */
+    private function buildServiceWithTicketRepoAndProjectService(
+        TicketRepository $ticketRepository,
+        ProjectService $projectService
+    ): TicketsService {
+        return new TicketsService(
+            language: $this->make(LanguageCore::class),
+            ticketRepository: $ticketRepository,
+            timesheetsRepo: $this->make(TimesheetRepository::class),
+            settingsRepo: $this->make(SettingRepository::class),
+            projectService: $projectService,
+            timesheetService: $this->make(TimesheetService::class),
+            sprintService: $this->make(SprintService::class),
+            ticketHistoryRepo: $this->make(TicketHistory::class),
+            goalcanvasService: $this->make(Goalcanvas::class),
+            dateTimeHelper: $this->make(DateTimeHelper::class),
+            commentService: $this->make(CommentService::class),
+            clientService: $this->make(ClientService::class)
+        );
+    }
+
+    /**
+     * Supported = tickets you commented on within accessible projects, minus
+     * the ones you're the editor of. Editor-owned tickets are dropped; tickets
+     * outside the project-scoped fetch never appear.
+     */
+    public function test_commented_tickets_range_excludes_owned_and_scopes_by_projects(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn (...$args) => [10, 20, 30],
+            // Project-scoped fetch only returns 10 + 20 (30 is outside access).
+            'getTicketsByIdsWithinProjects' => fn (...$args) => [
+                ['id' => 10, 'headline' => 'A', 'editorId' => '99', 'projectId' => 5, 'projectName' => 'P'],
+                ['id' => 20, 'headline' => 'B', 'editorId' => '1', 'projectId' => 5, 'projectName' => 'P'],
+            ],
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5], ['id' => 7]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $result = $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07');
+
+        // 20 is the user's own (editorId === 1) → excluded; 30 wasn't returned
+        // by the project-scoped fetch → absent. Only 10 remains.
+        $this->assertCount(1, $result);
+        $this->assertEquals(10, $result[0]['id']);
+    }
+
+    /**
+     * No accessible projects → empty, without ever fetching tickets.
+     */
+    public function test_commented_tickets_range_empty_without_project_access(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn (...$args) => [10],
+            'getTicketsByIdsWithinProjects' => fn (...$args) => [['id' => 10, 'editorId' => '99']],
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => false,
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $this->assertSame([], $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07'));
+    }
+
+    public function test_commented_tickets_range_forces_session_user_for_non_admin(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+        $capturedUserId = 'unset';
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => function (...$args) use (&$capturedUserId) {
+                $capturedUserId = $args[0] ?? null;
+
+                return [];
+            },
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        // Non-admin supplies someone else's id — forced back to the session user.
+        $service->getMyCommentedTicketsForRange(999, '2026-07-01', '2026-07-07');
+
+        $this->assertSame(1, $capturedUserId, 'a non-admin must not read another user\'s comment activity — userId forced to session user');
+    }
+
+    public function test_commented_tickets_range_normalizes_reversed_range(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+        $capturedFrom = null;
+        $capturedTo = null;
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => function (...$args) use (&$capturedFrom, &$capturedTo) {
+                $capturedFrom = $args[1] ?? null;
+                $capturedTo = $args[2] ?? null;
+
+                return [];
+            },
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        // Reversed on purpose — must be swapped earliest-first before the query.
+        $service->getMyCommentedTicketsForRange(1, '2026-07-12', '2026-07-05');
+
+        $this->assertSame('2026-07-05', $capturedFrom, 'range normalized earliest-first');
+        $this->assertSame('2026-07-12', $capturedTo);
+    }
+
+    public function test_commented_tickets_range_short_circuits_when_no_comments(): void
+    {
+        session(['userdata' => ['id' => 1]]);
+        $fetchCalled = false;
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => fn (...$args) => [], // nothing commented
+            'getTicketsByIdsWithinProjects' => function (...$args) use (&$fetchCalled) {
+                $fetchCalled = true;
+
+                return [];
+            },
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+
+        $result = $service->getMyCommentedTicketsForRange(1, '2026-07-01', '2026-07-07');
+
+        $this->assertSame([], $result);
+        $this->assertFalse($fetchCalled, 'an empty commented set must short-circuit before the ticket fetch');
     }
 }

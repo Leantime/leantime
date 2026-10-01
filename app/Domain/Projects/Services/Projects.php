@@ -4,6 +4,7 @@ namespace Leantime\Domain\Projects\Services;
 
 use DateInterval;
 use DateTime;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -16,6 +17,7 @@ use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
+use Leantime\Core\Support\OutboundUrlGuard;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
@@ -33,6 +35,7 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Wiki\Repositories\Wiki;
 use SVG\SVG;
@@ -65,6 +68,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     private array $assignedProjectsMemo = [];
 
+    private Client $httpClient;
+
     public function __construct(
         private ProjectRepository $projectRepository,
         private TicketRepository $ticketRepository,
@@ -77,8 +82,11 @@ class Projects extends BaseService implements ChecksProjectAccess
         private QueueRepository $queueRepo,
         private UserRepository $userRepo,
         private CommentRepository $commentRepo,
-        private ClientRepository $clientRepo
-    ) {}
+        private ClientRepository $clientRepo,
+        Client $httpClient,
+    ) {
+        $this->httpClient = $httpClient;
+    }
 
     /**
      * Gets the project types.
@@ -134,7 +142,16 @@ class Projects extends BaseService implements ChecksProjectAccess
     #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectProgress($projectId): array
     {
-        $returnValue = ['percent' => 0, 'estimatedCompletionDate' => 'We need more data to determine that.', 'plannedCompletionDate' => ''];
+        // Same shape as the computed return below — including
+        // `estimatedCompletionState`. Without it the no-data early return
+        // let templates fall back to the default 'ready' state and render
+        // as though an estimate existed. Copy is i18n'd to match.
+        $returnValue = [
+            'percent' => 0,
+            'estimatedCompletionDate' => $this->language->__('label.complete_more_todos'),
+            'estimatedCompletionState' => 'needs_more_data',
+            'plannedCompletionDate' => '',
+        ];
 
         $averageStorySize = $this->ticketRepository->getAverageTodoSize($projectId);
 
@@ -200,11 +217,23 @@ class Projects extends BaseService implements ChecksProjectAccess
             $completionDate = $today->format($this->language->__('language.dateformat'));
         }
 
-        $returnValue = ['percent' => $finalPercent, 'estimatedCompletionDate' => $completionDate, 'plannedCompletionDate' => ''];
+        // Return shape carries a plain-text status and a machine-readable
+        // state — templates branch on the state to render the appropriate
+        // CTA (e.g. a "showAll" link) instead of embedding presentation
+        // HTML in the string. Non-template callers (MCP tools, JSON-RPC)
+        // just read the plain text as-is.
+        $returnValue = [
+            'percent' => $finalPercent,
+            'estimatedCompletionDate' => $completionDate,
+            'estimatedCompletionState' => 'ready',
+            'plannedCompletionDate' => '',
+        ];
         if ($numberOfClosedTickets < 10) {
-            $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
+            $returnValue['estimatedCompletionState'] = 'needs_more_data';
+            $returnValue['estimatedCompletionDate'] = $this->language->__('label.complete_more_todos');
         } elseif ($finalPercent == 100) {
-            $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
+            $returnValue['estimatedCompletionState'] = 'complete';
+            $returnValue['estimatedCompletionDate'] = $this->language->__('label.project_complete_onto_next');
         }
 
         return $returnValue;
@@ -1207,7 +1236,11 @@ class Projects extends BaseService implements ChecksProjectAccess
             return false;
         }
 
-        $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: 'all');
+        // projectStatus 'open' excludes archived projects (state === -1) at the
+        // query level — "projects I'm actively working in" shouldn't surface
+        // archived ones. Without it this defaulted to 'all' and returned
+        // archived projects too (they were padding the mobile project picker).
+        $projects = $this->projectRepository->getUserProjects(userId: $userId, projectStatus: 'open', accessStatus: 'all');
         if (! $projects) {
             return false;
         }
@@ -2074,6 +2107,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function getAllProjects()
     {
         return $this->projectRepository->getAll();
@@ -2334,6 +2368,75 @@ class Projects extends BaseService implements ChecksProjectAccess
     public function editUserProjectRelations($id, $projects): bool
     {
         return $this->projectRepository->editUserProjectRelations($id, $projects);
+    }
+
+    /**
+     * Adds a single user to a project, leaving their other project
+     * relations untouched.
+     *
+     * Exists because {@see self::editUserProjectRelations()} is a full
+     * REPLACE — it deletes any relation not present in the array it is
+     * given. Callers that only want to add one membership had to read the
+     * user's current projects, append, and write the whole set back; if
+     * that read returned an incomplete list for any reason, the write
+     * silently deleted every other assignment the user had. This method
+     * removes the need for that read-modify-write entirely.
+     *
+     * Idempotent: an existing membership is left alone and reported as
+     * false rather than inserted twice. The check matters because
+     * `zp_relationuserproject` has no unique index on
+     * (userId, projectId) — a blind insert would produce duplicate rows
+     * and show the person twice on the project team.
+     *
+     * Permission is deliberately identical to editUserProjectRelations
+     * (global projects.edit, i.e. manager+). Assigning users to projects
+     * is a company-scoped action; gating this per-project instead would
+     * let a project-scoped editor grant access to a project, which is
+     * more power than they have today.
+     *
+     * @param  int  $userId  The user to add.
+     * @param  int  $projectId  The project to add them to.
+     * @param  string  $projectRole  Optional per-project role.
+     * @return bool True when a relation was created, false when the user
+     *              was already a member (or the ids were invalid).
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
+    public function addUserToProject(int $userId, int $projectId, string $projectRole = ''): bool
+    {
+        if ($userId <= 0 || $projectId <= 0) {
+            return false;
+        }
+
+        // Fail closed on ids that don't resolve to a real row. isUserMemberOfProject()
+        // returns false for a missing user or project, so without this guard
+        // addProjectRelation() would blindly write an orphan relation row —
+        // corrupting zp_relationuserproject and breaking downstream listeners that
+        // assume both ids resolve.
+        if (empty($this->userRepo->getUser($userId)) || empty($this->projectRepository->getProject($projectId))) {
+            return false;
+        }
+
+        // Idempotence is a check-then-insert. zp_relationuserproject has no unique
+        // index on (userId, projectId), so two concurrent adds could both pass this
+        // check and each insert. That's bounded (a duplicate membership row, not
+        // corruption); a unique index is the real fix and is left as a follow-up.
+        // isUserMemberOfProject, NOT isUserAssignedToProject: the latter
+        // answers "can this user reach the project", which is true for
+        // every admin and owner regardless of any relation row. Using it
+        // here would make the method a silent no-op for exactly those
+        // users — an admin could never be added to a project team, and
+        // callers would get false ("already a member") for someone who
+        // isn't on the team at all. Membership is what we're writing, so
+        // membership is what we check.
+        if ($this->projectRepository->isUserMemberOfProject($userId, $projectId)) {
+            return false;
+        }
+
+        $this->projectRepository->addProjectRelation($userId, $projectId, $projectRole);
+
+        return true;
     }
 
     /**
@@ -2859,6 +2962,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getAllUsers(bool $activeOnly = false): array
     {
         return $this->userRepo->getAll($activeOnly);
@@ -2873,6 +2977,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @api
      */
+    #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getEmployees(): array
     {
         return $this->userRepo->getEmployees();
@@ -3099,6 +3204,100 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
+     * Validates and persists the Telegram bot configuration for a project.
+     *
+     * Requires a bot token. If no chat id is supplied, calls Telegram's getUpdates
+     * API to auto-detect the most recent chat that has messaged the bot. If a chat
+     * id is supplied directly (group/topic mode), it is used as-is and no API call
+     * is made.
+     *
+     * @param  int  $projectId  The project id.
+     * @param  array  $hookData  Raw hook fields (telegramBotToken, telegramChatId, telegramTopicId).
+     * @return array{hook: array, saved: bool, error: string|null}
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
+    public function saveTelegramWebhook(int $projectId, array $hookData): array
+    {
+        $rawTopicId = trim(strip_tags($hookData['telegramTopicId'] ?? ''));
+        $telegramTopicId = (is_numeric($rawTopicId) && (int) $rawTopicId > 0) ? (string) (int) $rawTopicId : '';
+
+        $telegramHook = [
+            'telegramBotToken' => trim(strip_tags($hookData['telegramBotToken'] ?? '')),
+            'telegramChatId' => trim(strip_tags($hookData['telegramChatId'] ?? '')),
+            'telegramTopicId' => $telegramTopicId,
+        ];
+
+        if ($telegramHook['telegramBotToken'] === '') {
+            return ['hook' => $telegramHook, 'saved' => false, 'error' => 'missing_token'];
+        }
+
+        if ($telegramHook['telegramChatId'] === '') {
+            $detected = $this->detectTelegramChatId($telegramHook['telegramBotToken']);
+
+            if ($detected === null) {
+                return ['hook' => $telegramHook, 'saved' => false, 'error' => 'chat_not_found'];
+            }
+
+            $telegramHook['telegramChatId'] = $detected['chatId'];
+            if ($telegramHook['telegramTopicId'] === '' && ! empty($detected['topicId'])) {
+                $telegramHook['telegramTopicId'] = (string) $detected['topicId'];
+            }
+        }
+
+        $this->saveProjectSetting($projectId, 'telegramHook', serialize($telegramHook));
+
+        return ['hook' => $telegramHook, 'saved' => true, 'error' => null];
+    }
+
+    /**
+     * Calls Telegram's getUpdates API and returns the detected chat id and topic id (if present)
+     * of the most recent message sent to the bot, or null if none is found / the call fails.
+     *
+     * Internal helper for saveTelegramWebhook(), which carries the permission gate. Kept private
+     * so it stays off the JSON-RPC surface: it makes the server issue an outbound request with a
+     * caller-supplied token, which is not something to expose as an @api method.
+     */
+    private function detectTelegramChatId(string $botToken): ?array
+    {
+        try {
+            $response = $this->httpClient->get(
+                "https://api.telegram.org/bot{$botToken}/getUpdates",
+                [
+                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                    'connect_timeout' => 5,
+                    'timeout' => 10,
+                    'query' => ['limit' => 100],
+                ]
+            );
+
+            $body = json_decode((string) $response->getBody(), true);
+            $result = is_array($body) ? ($body['result'] ?? []) : [];
+
+            if (is_array($result)) {
+                foreach (array_reverse($result) as $update) {
+                    if (is_array($update) && isset($update['message']['chat']['id'])) {
+                        $chatId = $update['message']['chat']['id'];
+                        $topicId = $update['message']['message_thread_id'] ?? null;
+
+                        return [
+                            'chatId' => (string) $chatId,
+                            'topicId' => $topicId !== null ? (string) $topicId : null,
+                        ];
+                    }
+                }
+            }
+
+            return null;
+        } catch (\Throwable $e) {
+            Log::warning('Telegram getUpdates failed', ['exception' => get_class($e)]);
+
+            return null;
+        }
+    }
+
+    /**
      * Persists the (up to three) Discord webhooks for a project.
      *
      * @param  int  $projectId  The project id.
@@ -3149,6 +3348,17 @@ class Projects extends BaseService implements ChecksProjectAccess
             ];
         } else {
             $settings['zulipHook'] = safe_unserialize($zulipWebhook, []);
+        }
+
+        $telegramHook = $this->getProjectSetting($projectId, 'telegramHook');
+        if ($telegramHook == '') {
+            $settings['telegramHook'] = [
+                'telegramBotToken' => '',
+                'telegramChatId' => '',
+                'telegramTopicId' => '',
+            ];
+        } else {
+            $settings['telegramHook'] = safe_unserialize($telegramHook, []);
         }
 
         return $settings;
