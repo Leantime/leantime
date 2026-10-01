@@ -1932,7 +1932,7 @@ class Tickets
         }
 
         $oldValues = (array) $oldValues;
-        $now = date('Y-m-d H:i:s');
+        $now = dtHelper()->dbNow()->formatDateTimeForDb();
         $historyRows = [];
 
         // Compare tracked fields

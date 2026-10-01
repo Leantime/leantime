@@ -1793,7 +1793,7 @@ class Projects extends BaseService implements ChecksProjectAccess
                 'projectId' => $newProjectId,
                 'editorId' => $ticket->editorId,
                 'userId' => session('userdata.id'),
-                'date' => date('Y-m-d H:i:s'),
+                'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'dateToFinish' => $dateToFinishValue,
                 'status' => $ticket->status,
                 'storypoints' => $ticket->storypoints,

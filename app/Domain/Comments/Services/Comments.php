@@ -101,7 +101,13 @@ class Comments extends BaseService
         // RPC callers (mobile) typically don't pre-load the entity — they
         // just know module + entityId. Load it server-side so they don't
         // have to ship a whole ticket payload over the wire just to comment.
-        if ($entity === null && $module && $entityId) {
+        // JSON-RPC decodes a caller-supplied entity as an array (or a string), but the ticket
+        // notification path dereferences an object and the project path an array (#3067, #2164).
+        // Load the real entity server-side whenever the supplied one has the wrong shape.
+        $entityHasWrongShape = ($module === 'ticket' && ! is_object($entity))
+            || ($module === 'project' && ! is_array($entity));
+
+        if (($entity === null || $entityHasWrongShape) && $module && $entityId) {
             $entity = $this->loadEntityForComment($module, (int) $entityId);
         }
 

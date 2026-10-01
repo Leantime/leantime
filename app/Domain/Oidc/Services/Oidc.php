@@ -465,6 +465,11 @@ class Oidc
                     $modulus = $this->base64UrlDecode($key['n']);
                     $exponent = $this->base64UrlDecode($key['e']);
                     $keySource = $this->createPublicKey($modulus, exponent: $exponent);
+                } elseif (($key['kty'] ?? '') === 'EC') {
+                    // Elliptic-curve keys (ES256 etc.) are not supported yet. Say so explicitly
+                    // instead of the generic format hint, which sent deployers looking for a
+                    // different JWKS endpoint rather than switching the provider to RSA (#3761).
+                    $this->displayError('oidc.error.unsupportedKeyTypeEc');
                 } else {
                     $this->displayError('oidc.error.unsupportedKeyFormat');
                 }

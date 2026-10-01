@@ -195,6 +195,24 @@ leantime.calendarController = (function () {
         let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
         let userTimeFormat = leantime.dateHelper.getFormatFromSettings("timeformat", "luxon");
 
+        // Ticket dates for a moved/resized/received calendar event. FullCalendar leaves `end` null
+        // for single-point events (a task with only a due date, or a to-do dragged in), and
+        // formatting null produced "Invalid DateTime", which 500'd the PATCH (#3139, #3733).
+        // Fall back to the start: same day for all-day events, one hour later for timed ones.
+        let ticketDateValues = function (fcEvent) {
+            let start = luxon.DateTime.fromJSDate(fcEvent.start);
+            let end = fcEvent.end
+                ? luxon.DateTime.fromJSDate(fcEvent.end)
+                : (fcEvent.allDay ? start : start.plus({ hours: 1 }));
+
+            return {
+                editFrom: start.toFormat(userDateFormat),
+                timeFrom: start.toFormat(userTimeFormat),
+                editTo: end.toFormat(userDateFormat),
+                timeTo: end.toFormat(userTimeFormat),
+            };
+        };
+
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: leantime.i18n.__("usersettings.timezone"),
@@ -238,12 +256,7 @@ leantime.calendarController = (function () {
                 if (event.event.extendedProps.enitityType == "ticket") {
                     leantime.rpc('Tickets.Tickets.patchTicket', {
                         id: event.event.extendedProps.enitityId,
-                        values: {
-                            editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
-                            timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
-                            editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
-                            timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
-                        }
+                        values: ticketDateValues(event.event)
                     }).catch(function (error) {
                         jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         event.revert();
@@ -269,12 +282,7 @@ leantime.calendarController = (function () {
                 if (event.event.extendedProps.enitityType == "ticket") {
                     leantime.rpc('Tickets.Tickets.patchTicket', {
                         id: event.event.extendedProps.enitityId,
-                        values: {
-                            editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
-                            timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
-                            editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
-                            timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
-                        }
+                        values: ticketDateValues(event.event)
                     }).catch(function (error) {
                         jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         event.revert();
@@ -301,12 +309,12 @@ leantime.calendarController = (function () {
 
                 leantime.rpc('Tickets.Tickets.patchTicket', {
                     id: event.event.id,
-                    values: {
-                        editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
-                        timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
-                        editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
-                        timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
-                    }
+                    values: ticketDateValues(event.event)
+                }).then(function () {
+                    // The dropped placeholder and the ticket the event source now returns are the
+                    // same ticket; drop the placeholder and refetch so it shows once (#3733).
+                    event.event.remove();
+                    calendar.refetchEvents();
                 }).catch(function (error) {
                         jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         event.revert();

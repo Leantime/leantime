@@ -382,7 +382,7 @@ class Notifications
                         'module' => $module,
                         'moduleId' => $moduleId,
                         'message' => sprintf($this->language->__('text.x_mentioned_you'), $authorName),
-                        'datetime' => date('Y-m-d H:i:s'),
+                        'datetime' => dtHelper()->dbNow()->formatDateTimeForDb(), // UTC; date() is the user's tz here (#3201)
                         'url' => $url,
                         'authorId' => $authorId,
                     ];

@@ -113,6 +113,31 @@ class CommentsServiceTest extends TestCase
         }
     }
 
+    /**
+     * #3067 / #2164: over JSON-RPC the entity arrives as an array (or a string), and the ticket
+     * notification path read ->type off it ("Attempt to read property on string/array"). The
+     * real ticket must be loaded instead of trusting the caller-supplied shape.
+     */
+    public function test_add_comment_on_a_ticket_loads_the_ticket_when_the_entity_is_not_an_object(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        $ticket = new \Leantime\Domain\Tickets\Models\Tickets(['id' => 1, 'projectId' => 9, 'type' => 'task', 'headline' => 'H']);
+        $this->app->instance(\Leantime\Domain\Tickets\Services\Tickets::class, $this->make(\Leantime\Domain\Tickets\Services\Tickets::class, [
+            'getTicket' => fn () => $ticket,
+        ]));
+
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => 9,
+            'addComment' => fn () => '502',
+        ]);
+        $projects = $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]);
+        $service = $this->makeService($this->noopReactions(), $repo, null, $projects);
+
+        $this->assertTrue($service->addComment(['text' => 'hi'], 'ticket', 1, ['id' => 1, 'type' => 'task']));
+        $this->assertTrue($service->addComment(['text' => 'hi'], 'ticket', 1, 'a string'));
+    }
+
     public function test_add_comment_on_a_missing_canvas_item_writes_nothing(): void
     {
         $repo = $this->make(CommentRepository::class, [

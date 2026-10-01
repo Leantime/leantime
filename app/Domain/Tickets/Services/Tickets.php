@@ -1983,7 +1983,7 @@ class Tickets extends BaseService
             'projectId' => $projectId,
             'editorId' => $params['editorId'] ?? session('userdata.id'),
             'userId' => session('userdata.id') ?? $params['userId'] ?? null,
-            'date' => date('Y-m-d H:i:s'),
+            'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
             'status' => isset($params['status']) ? (int) $params['status'] : $defaultStatus,
             'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',

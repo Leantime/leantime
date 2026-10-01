@@ -853,7 +853,7 @@ class Plugins
             'module' => 'plugins',
             'moduleId' => $pluginId,
             'message' => sprintf("The plugin '%s' has been disabled due to license validation failure. Please check your marketplace subscription.", $plugin->name),
-            'datetime' => date('Y-m-d H:i:s'),
+            'datetime' => dtHelper()->dbNow()->formatDateTimeForDb(), // UTC; date() is the user's tz here (#3201)
             'url' => '/plugins/show',
             'authorId' => 1,
         ])->toArray();
