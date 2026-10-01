@@ -132,6 +132,9 @@
     },
     "@uppy/url": {
       "nanoid": "^5.1.16"
+    },
+    "laravel-mix": {
+      "webpack-dev-server": "^6.0.0"
     }
   }
 }
