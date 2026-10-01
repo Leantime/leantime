@@ -312,11 +312,10 @@
                             </td>
 
                             @php
-                            if ($row['dateToFinish'] == '0000-00-00 00:00:00' || $row['dateToFinish'] == '1969-12-31 00:00:00') {
+                            if ($row['dateToFinish'] == '0000-00-00 00:00:00' || $row['dateToFinish'] == '1969-12-31 00:00:00' || empty($row['dateToFinish'])) {
                                 $date = __('text.anytime');
                             } else {
-                                $date = new DateTime($row['dateToFinish']);
-                                $date = $date->format(__('language.dateformat'));
+                                $date = format($row['dateToFinish'])->date(__('text.anytime'));
                             }
                             @endphp
                             <td data-order="{{ $row['dateToFinish'] }}" >
