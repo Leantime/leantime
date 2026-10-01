@@ -193,7 +193,8 @@
                                     </ul>
                                 </div>
                             </td>
-                            <td  data-order="{{ $row['storypoints'] ? $efforts[''.$row['storypoints'].''] ?? '?' : __('label.story_points_unkown') }}">
+                            {{-- Sort by effort SIZE, not its label (L/M/S/XL sorted alphabetically); unknown last. --}}
+                            <td data-order="{{ $row['storypoints'] ? (float) $row['storypoints'] : 999 }}" data-export="{{ $row['storypoints'] ? $efforts[''.$row['storypoints'].''] ?? '?' : __('label.story_points_unkown') }}">
                                 <div class="dropdown ticketDropdown effortDropdown show">
                                     <a class="dropdown-toggle label-default effort  f-left" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">@if ($row['storypoints'] != '' && $row['storypoints'] > 0){{ $efforts[''.$row['storypoints']] ?? $row['storypoints'] }}@else{!! __('label.story_points_unkown') !!}@endif</span>
@@ -212,7 +213,8 @@
                                 </div>
                             </td>
 
-                            <td  data-order="@php if ($row['priority'] != '' && $row['priority'] > 0) { echo $priorities[$row['priority']] ?? __('label.priority_unkown'); } else { echo __('label.priority_unkown'); } @endphp">
+                            {{-- Sort by the priority NUMBER (1 = Critical), not its label, which sorted alphabetically (#1715); unknown last. The label is the CSV value. --}}
+                            <td data-order="{{ ($row['priority'] != '' && $row['priority'] > 0) ? (int) $row['priority'] : 99 }}" data-export="@php if ($row['priority'] != '' && $row['priority'] > 0) { echo $priorities[$row['priority']] ?? __('label.priority_unkown'); } else { echo __('label.priority_unkown'); } @endphp">
                                 <div class="dropdown ticketDropdown priorityDropdown show">
                                     <a class="dropdown-toggle label-default priority priority-bg-{{ $row['priority'] }}  f-left" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">@php if ($row['priority'] != '' && $row['priority'] > 0) { echo $priorities[$row['priority']] ?? __('label.priority_unkown'); } else { echo __('label.priority_unkown'); } @endphp</span>

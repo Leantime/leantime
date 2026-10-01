@@ -1193,11 +1193,18 @@ class Tickets
                 $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t3.id'), 'text')));
             })
             ->where('zp_tickets.id', '<>', $ticket->id ?? 0)
-            ->where('zp_tickets.type', '<>', 'milestone')
-            ->where(function ($q) use ($ticket) {
-                $q->where('zp_tickets.dependingTicketId', '<>', $ticket->id ?? 0)
+            ->where('zp_tickets.type', '<>', 'milestone');
+
+        // Exclude this ticket's own children (they can't also be its parent). Only meaningful for a
+        // saved ticket: for a new one the id is empty, and comparing against 0 dropped every
+        // top-level ticket (dependingTicketId = 0), so stories were missing from "Related to"
+        // until the ticket was saved once (#3147).
+        if (! empty($ticket->id)) {
+            $query->where(function ($q) use ($ticket) {
+                $q->where('zp_tickets.dependingTicketId', '<>', $ticket->id)
                     ->orWhereNull('zp_tickets.dependingTicketId');
             });
+        }
 
         if ($projectId !== 0) {
             $query->where('zp_tickets.projectId', $projectId);

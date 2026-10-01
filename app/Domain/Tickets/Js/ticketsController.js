@@ -1683,13 +1683,22 @@ leantime.ticketsController = (function () {
                         charset: 'utf-8',
                         bom: true,
                         exportOptions: {
+                            // Skip the unlabelled per-row actions menu (.no-sort): it has no export value and
+                            // dumped its menu markup into every CSV row (#2042, #2192).
+                            columns: ':not(.no-sort)',
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
-                                        data = jQuery(node).data('order');
+                                    // data-export: readable value when the sort key is numeric (priority, effort).
+                                    if ( typeof jQuery(node).data('export') !== 'undefined') {
+                                        return jQuery(node).data('export');
                                     }
-                                    return data;
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                        return jQuery(node).data('order');
+                                    }
+
+                                    // No explicit export value: export the visible text, never raw HTML.
+                                    return jQuery('<div>').html(data).text().replace(/\s+/g, ' ').trim();
                                 }
                             }
                         }
@@ -1852,13 +1861,22 @@ leantime.ticketsController = (function () {
                         charset: 'utf-8',
                         bom: true,
                         exportOptions: {
+                            // Skip the unlabelled per-row actions menu (.no-sort): it has no export value and
+                            // dumped its menu markup into every CSV row (#2042, #2192).
+                            columns: ':not(.no-sort)',
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
-                                        data = jQuery(node).data('order');
+                                    // data-export: readable value when the sort key is numeric (priority, effort).
+                                    if ( typeof jQuery(node).data('export') !== 'undefined') {
+                                        return jQuery(node).data('export');
                                     }
-                                    return data;
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                        return jQuery(node).data('order');
+                                    }
+
+                                    // No explicit export value: export the visible text, never raw HTML.
+                                    return jQuery('<div>').html(data).text().replace(/\s+/g, ' ').trim();
                                 }
                             }
                         }
