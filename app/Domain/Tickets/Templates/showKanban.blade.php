@@ -65,9 +65,6 @@
             top: 110px;
             justify-content: flex-start;
             z-index: 9;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scrollbar-width: none;
             ">
         @foreach ($allKanbanColumns as $key => $statusRow)
             <div class="column">
