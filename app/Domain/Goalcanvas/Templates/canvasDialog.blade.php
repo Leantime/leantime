@@ -328,7 +328,7 @@
                 @endif
             </div>
 
-            {{-- ── Actions (main column; Delete lives in the Details rail) ── --}}
+            {{-- ── Actions (main column; Delete lives in the top-right actions menu) ── --}}
             @if ($login::userIsAtLeast($roles::$editor))
                 <div class="gv-actions">
                     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
