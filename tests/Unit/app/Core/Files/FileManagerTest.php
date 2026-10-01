@@ -394,6 +394,60 @@ class FileManagerTest extends TestCase
         $this->assertEquals('测试文件.txt', $result);
     }
 
+    /**
+     * #3782: without the /u modifier the sanitizer matched the raw bytes 0xA0/0xAD, which are
+     * UTF-8 continuation bytes, and split multi-byte characters into invalid UTF-8 (the upload
+     * then 500'd serializing the JSON response). Names from the report must survive intact.
+     */
+    public function test_sanitize_filename_keeps_multibyte_characters_intact(): void
+    {
+        $method = (new \ReflectionClass(FileManager::class))->getMethod('sanitizeFilename');
+        $method->setAccessible(true);
+
+        $names = ['Πρόγραμμα_έργου.txt', 'محادثة_المشروع.txt', 'נספח_לפרויקט.txt', '中文报告.txt', 'café_à_í.txt', '🏠_план.txt', 'Отчёт_Работа.txt'];
+
+        foreach ($names as $name) {
+            $result = $method->invoke($this->fileManager, $name);
+
+            $this->assertTrue(mb_check_encoding($result, 'UTF-8'), "$name must stay valid UTF-8");
+            $this->assertSame($name, $result, "$name must not be altered");
+        }
+
+        // The intended code points are still replaced: NO-BREAK SPACE and SOFT HYPHEN.
+        $this->assertSame('a-b-c.txt', $method->invoke($this->fileManager, "a\u{00A0}b\u{00AD}c.txt"));
+    }
+
+    /**
+     * #3783: the stored name was md5(userId . time()), so a user's uploads within the same second
+     * shared one file on disk and overwrote each other. Two back-to-back uploads must differ.
+     */
+    public function test_uploads_in_the_same_second_get_distinct_stored_names(): void
+    {
+        session(['userdata.id' => 123]);
+        config(['filesystems.disks.local.renameFiles' => true]);
+
+        $file = $this->createMock(UploadedFile::class);
+        $file->method('isValid')->willReturn(true);
+        $file->method('getError')->willReturn(0);
+        $file->method('getSize')->willReturn(1000);
+        $file->method('getClientOriginalName')->willReturn('one.txt');
+        $file->method('getClientOriginalExtension')->willReturn('txt');
+        $file->method('getRealPath')->willReturn(base_path('userfiles/test/test.txt'));
+
+        $this->filesystemManager->method('getDefaultDriver')->willReturn('local');
+        $this->filesystemManager->method('disk')->with('local')->willReturn($this->storage);
+        $this->storage->method('mimeType')->willReturn('text/plain');
+        $this->storage->method('put')->willReturn(true);
+
+        $first = $this->fileManager->upload($file);
+        $second = $this->fileManager->upload($file);
+
+        $this->assertIsArray($first);
+        $this->assertIsArray($second);
+        $this->assertNotSame($first['fileName'], $second['fileName']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{32}\.txt$/', $first['fileName']);
+    }
+
     public function test_get_avatar_with_cache_hit()
     {
         // We already have a test file at userfiles/test/test.txt

@@ -908,4 +908,26 @@ class GoalcanvasServiceTest extends TestCase
 
         $this->assertTrue($this->service($repo)->addMilestoneToGoal(7, 42));
     }
+
+    /**
+     * createGoalboard is reachable over JSON-RPC (#3755), so a caller-supplied author must not
+     * be persisted: the board is attributed to the authenticated user.
+     */
+    public function test_create_goalboard_pins_the_author_to_the_session_user(): void
+    {
+        session(['userdata.id' => 42]);
+
+        $captured = null;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'addCanvas' => function ($values) use (&$captured) {
+                $captured = $values;
+
+                return '9';
+            },
+        ]);
+
+        $this->service($repo)->createGoalboard(['title' => 'Q4', 'projectId' => 3, 'author' => 999]);
+
+        $this->assertSame(42, $captured['author']);
+    }
 }

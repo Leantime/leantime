@@ -302,7 +302,7 @@ class EditCanvasItem extends Controller
 
             $values = [
                 'text' => $params['text'],
-                'date' => date('Y-m-d H:i:s'),
+                'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'userId' => (session('userdata.id')),
                 'moduleId' => $itemId,
                 'commentParent' => ($params['father']),

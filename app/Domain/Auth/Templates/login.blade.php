@@ -50,9 +50,11 @@
         @dispatchEvent('beforeOidcButton')
 
         <div class="">
-            <div style="margin-top:20px; border-bottom:1px solid #ccc; with:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
-                <p style="text-align:center; display:inline-block; background:var(--secondary-background); padding:0px 5px;">{!! __('label.or_login_with') !!}</p>
-            </div>
+            @if ($noLoginForm === false)
+                <div style="margin-top:20px; border-bottom:1px solid #ccc; with:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
+                    <p style="text-align:center; display:inline-block; background:var(--secondary-background); padding:0px 5px;">{!! __('label.or_login_with') !!}</p>
+                </div>
+            @endif
             <x-global::forms.button tag="a" :link="BASE_URL . '/oidc/login'" contentRole="primary" style="width:100%;">{!! __('buttons.oidclogin') !!}</x-global::forms.button>
         </div>
     @endif

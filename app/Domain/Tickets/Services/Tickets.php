@@ -608,6 +608,9 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getScheduledTasks(CarbonImmutable|string $dateFrom, CarbonImmutable|string $dateTo, ?int $userId)
     {
+        // Reachable over JSON-RPC: only the authenticated user's own schedule. Every in-app caller
+        // already passes the session user; a caller-supplied id would expose another user's tasks.
+        $userId = (int) session('userdata.id');
 
         if (is_string($dateFrom) && dtHelper()->isValidDateString($dateFrom)) {
             $dateFrom = dtHelper()->parseUserDateTime($dateFrom);
@@ -1827,6 +1830,10 @@ class Tickets extends BaseService
         return $milestones;
     }
 
+    /**
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied and unverified, so it would
+     *           expose another user's work. The Welcome widget calls it for the session user.
+     */
     public function getRecentlyCompletedTicketsByUser(int $userId, ?int $projectId = null): array
     {
 
@@ -1870,6 +1877,10 @@ class Tickets extends BaseService
         return $doneTasks;
     }
 
+    /**
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied and unverified, so it would
+     *           expose another user's work. The Welcome widget calls it for the session user.
+     */
     public function goalsRelatedToWork(int $userId, $projectId = null)
     {
 
@@ -1975,7 +1986,7 @@ class Tickets extends BaseService
             'projectId' => $projectId,
             'editorId' => $params['editorId'] ?? session('userdata.id'),
             'userId' => session('userdata.id') ?? $params['userId'] ?? null,
-            'date' => date('Y-m-d H:i:s'),
+            'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
             'status' => isset($params['status']) ? (int) $params['status'] : $defaultStatus,
             'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',

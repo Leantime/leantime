@@ -296,7 +296,7 @@ class EditCanvasComment
 
             $values = [
                 'text' => $data['text'],
-                'date' => date('Y-m-d H:i:s'),
+                'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'userId' => (session('userdata.id')),
                 'moduleId' => $itemId,
                 'commentParent' => ($data['father']),

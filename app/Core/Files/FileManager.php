@@ -44,6 +44,10 @@ class FileManager implements FileManagerInterface
         // Remove any directory paths
         $filename = basename($filename);
 
+        // The pattern below is Unicode-aware (/u), which makes preg_replace() return null on
+        // invalid UTF-8 input. Scrub first so a malformed name degrades instead of vanishing.
+        $filename = mb_scrub($filename, 'UTF-8');
+
         // sanitize filename
         $filename = preg_replace(
             '~
@@ -52,7 +56,7 @@ class FileManager implements FileManagerInterface
         [\x7F\xA0\xAD]|          # non-printing characters DEL, NO-BREAK SPACE, SOFT HYPHEN
         [#\[\]@!$&\'()+,;=]|     # URI reserved https://www.rfc-editor.org/rfc/rfc3986#section-2.2
         [{}^\~`]                 # URL unsafe characters https://www.ietf.org/rfc/rfc1738.txt
-        ~x',
+        ~xu',
             '-', $filename);
         // avoids ".", ".." or ".hiddenFiles"
         $filename = ltrim($filename, '.-');
@@ -177,7 +181,10 @@ class FileManager implements FileManagerInterface
 
             $newName = pathinfo($fileName, PATHINFO_FILENAME);
             if (config('filesystems.disks.'.$disk.'.renameFiles')) {
-                $newName = md5(session('userdata.id').time());
+                // Random, not md5(userId.time()): time() has one-second resolution, so files one user
+                // uploaded within the same second (Uppy sends a multi-select at once) got the SAME
+                // stored name and overwrote each other on disk (#3783). Same 32-hex shape as before.
+                $newName = bin2hex(random_bytes(16));
                 $fileName = $newName.'.'.$extension;
             }
 

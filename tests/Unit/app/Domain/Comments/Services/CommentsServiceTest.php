@@ -36,10 +36,11 @@ class CommentsServiceTest extends TestCase
         ReactionsService $reactionsService,
         ?CommentRepository $repo = null,
         ?PermissionService $permissions = null,
+        ?ProjectService $projects = null,
     ): Comments {
         $service = new Comments(
             $repo ?? $this->defaultRepo(),
-            $this->make(ProjectService::class),
+            $projects ?? $this->make(ProjectService::class),
             $this->make(LanguageCore::class),
             $reactionsService,
         );
@@ -82,6 +83,101 @@ class CommentsServiceTest extends TestCase
     // ---------------------------------------------------------------------
     // Reaction orchestration (existing behaviour, now session-pinned).
     // ---------------------------------------------------------------------
+
+    /**
+     * #3756: a comment on a canvas-family target (wiki article, idea, *canvasitem) was
+     * permission-checked and then silently discarded, because only tickets and projects were
+     * loaded as the host entity. It must now be written.
+     */
+    public function test_add_comment_writes_for_canvas_family_modules(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        foreach (['article', 'idea', 'leancanvasitem'] as $module) {
+            $written = null;
+            $repo = $this->make(CommentRepository::class, [
+                'resolveModuleProjectId' => fn () => 9,
+                'addComment' => function ($mapper, $writtenModule) use (&$written) {
+                    $written = [$writtenModule, $mapper['moduleId']];
+
+                    return '501';
+                },
+            ]);
+
+            $projects = $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]);
+
+            $result = $this->makeService($this->noopReactions(), $repo, null, $projects)->addComment(['text' => 'hello'], $module, 140);
+
+            $this->assertTrue($result, "$module comment must be written");
+            $this->assertSame([$module, 140], $written);
+        }
+    }
+
+    /**
+     * #3067 / #2164: over JSON-RPC the entity arrives as an array (or a string), and the ticket
+     * notification path read ->type off it ("Attempt to read property on string/array"). The
+     * real ticket must be loaded instead of trusting the caller-supplied shape.
+     */
+    public function test_add_comment_on_a_ticket_loads_the_ticket_when_the_entity_is_not_an_object(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        $ticket = new \Leantime\Domain\Tickets\Models\Tickets(['id' => 1, 'projectId' => 9, 'type' => 'task', 'headline' => 'H']);
+        $this->app->instance(\Leantime\Domain\Tickets\Services\Tickets::class, $this->make(\Leantime\Domain\Tickets\Services\Tickets::class, [
+            'getTicket' => fn () => $ticket,
+        ]));
+
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => 9,
+            'addComment' => fn () => '502',
+        ]);
+        $projects = $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]);
+        $service = $this->makeService($this->noopReactions(), $repo, null, $projects);
+
+        $this->assertTrue($service->addComment(['text' => 'hi'], 'ticket', 1, ['id' => 1, 'type' => 'task']));
+        $this->assertTrue($service->addComment(['text' => 'hi'], 'ticket', 1, 'a string'));
+    }
+
+    /**
+     * The notification goes to the project the comment was authorized against, not the ambient
+     * session project (a browser session can be "in" project A while commenting on B over RPC).
+     */
+    public function test_add_comment_notifies_the_items_project_not_the_session_project(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 1]);
+
+        $notified = null;
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => 9,
+            'addComment' => fn () => '503',
+        ]);
+        $projects = $this->make(ProjectService::class, [
+            'notifyProjectUsers' => function ($notification) use (&$notified) {
+                $notified = $notification;
+            },
+        ]);
+
+        $this->makeService($this->noopReactions(), $repo, null, $projects)->addComment(['text' => 'hi'], 'idea', 140);
+
+        $this->assertSame(9, $notified->projectId);
+        $this->assertStringContainsString('projectId=9', $notified->url['url']);
+    }
+
+    public function test_add_comment_on_a_missing_canvas_item_writes_nothing(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => null,
+            'addComment' => function () {
+                $this->fail('nothing may be written for an item that does not exist');
+            },
+        ]);
+
+        $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404));
+
+        // A caller-supplied entity must not stand in for an item that doesn't resolve (or belongs to
+        // a different canvas type): canvas-family entities are always resolved server-side.
+        $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404, ['id' => 404, 'projectId' => 9]));
+    }
 
     public function test_toggle_rejects_unknown_reaction_type(): void
     {

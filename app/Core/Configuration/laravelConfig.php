@@ -227,7 +227,13 @@ return [
         'channels' => [
             'stack' => [
                 'driver' => 'stack',
-                'channels' => explode(',', env('LEAN_LOG_CHANNELS', 'single,syslog,sentry')),
+                // Drop syslog when the host disables it (shared hosting often lists syslog/openlog in
+                // disable_functions): the default stack otherwise fatals on every log write,
+                // including during installation (#3203).
+                'channels' => array_values(array_filter(
+                    array_map('trim', explode(',', env('LEAN_LOG_CHANNELS', 'single,syslog,sentry'))),
+                    fn (string $channel) => $channel !== 'syslog' || (function_exists('syslog') && function_exists('openlog'))
+                )),
                 'ignore_exceptions' => false,
             ],
             'single' => [

@@ -853,7 +853,7 @@ class Plugins
             'module' => 'plugins',
             'moduleId' => $pluginId,
             'message' => sprintf("The plugin '%s' has been disabled due to license validation failure. Please check your marketplace subscription.", $plugin->name),
-            'datetime' => date('Y-m-d H:i:s'),
+            'datetime' => dtHelper()->dbNow()->formatDateTimeForDb(), // UTC; date() is the user's tz here (#3201)
             'url' => '/plugins/show',
             'authorId' => 1,
         ])->toArray();
@@ -1011,5 +1011,16 @@ class Plugins
 
         $composerPathCachePath = storage_path('framework/composerPaths.php');
         $files->delete($composerPathCachePath);
+
+        // Compiled Blade views are invalidated by the source file's mtime, which a phar-packaged
+        // plugin does not change across releases, so an upgraded plugin kept executing its OLD
+        // templates (including already-fixed crashes) until someone cleared the folder by hand
+        // (#3594). Plugin changes are rare, so recompiling everything once is cheap.
+        $compiledViewsPath = config('view.compiled');
+        if (is_string($compiledViewsPath) && $files->isDirectory($compiledViewsPath)) {
+            foreach ($files->glob($compiledViewsPath.'/*.php') as $compiledView) {
+                $files->delete($compiledView);
+            }
+        }
     }
 }
