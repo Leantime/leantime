@@ -477,6 +477,31 @@
                                 @endif
                             </div>
 
+                            <hr />
+
+                            <h4 class="widgettitle title-light">{{ __('label.webhook_notifications') }}</h4>
+                            <p><small>{{ __('label.webhook_notifications_description') }}</small></p>
+                            <div class="form-group">
+                                <label for="webhookEnabled" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" value="1" name="webhookEnabled" class="input"
+                                           id="webhookEnabled"
+                                           @if (!empty($webhookEnabled))
+                                               checked="checked"
+                                           @endif/>
+                                    {{ __('label.enable_webhook_notifications') }}
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="webhookUrl">{{ __('label.webhook_url') }}</label>
+                                <span>
+                                    <x-global::forms.text-input type="url" name="webhookUrl" id="webhookUrl" class="input"
+                                                                placeholder="https://example.com/webhook"
+                                                                value="{{ $webhookUrl ?? '' }}" />
+                                    <br/>
+                                    <small class="tw-text-gray-500">{{ __('label.webhook_url_hint') }}</small>
+                                </span>
+                            </div>
+
                             <input type="hidden" name="savenotifications" value="1" />
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
                         </form>

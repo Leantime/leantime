@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Support\Avatarcreator;
@@ -20,9 +21,11 @@ use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Ldap\Services\Ldap as LdapService;
 use Leantime\Domain\Notifications\Models\Notification;
+use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Users\Exceptions\WebhookSettingNotSavedException;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Ramsey\Uuid\Uuid;
@@ -923,7 +926,9 @@ class Users extends BaseService
     /**
      * Gathers the notification preferences for the "edit own profile" screen,
      * applying company defaults and the per-project notification levels
-     * (including the lazy migration from the legacy muted-projects format).
+     * (including the lazy migration from the legacy muted-projects format),
+     * plus the personal webhook endpoint (webhookUrl) and its opt-in
+     * (webhookEnabled, only true while a URL is stored).
      *
      * @param  int  $userId  The id of the user whose preferences are loaded.
      * @return array<string, mixed> Template-ready notification preference data.
@@ -961,6 +966,8 @@ class Users extends BaseService
             $companyDefaultRelevance = Notification::RELEVANCE_ALL;
         }
 
+        $webhook = Webhooks::decodeSetting($this->settingsService->getSetting(Webhooks::settingKey($userId)));
+
         return [
             'notificationCategories' => Notification::NOTIFICATION_CATEGORIES,
             'enabledEventTypes' => $enabledEventTypes,
@@ -968,6 +975,8 @@ class Users extends BaseService
             'companyDefaultRelevance' => $companyDefaultRelevance,
             'relevanceLevels' => Notification::RELEVANCE_LEVELS,
             'userProjects' => $userProjects,
+            'webhookUrl' => $webhook['url'],
+            'webhookEnabled' => $webhook['enabled'],
         ];
     }
 
@@ -1155,8 +1164,24 @@ class Users extends BaseService
      * per-project notification levels (validated against the known relevance
      * levels). Cleans up the legacy muted-projects format when present.
      *
+     * Also stores the personal webhook: webhookUrl (https only, validated
+     * before anything is written) and the webhookEnabled checkbox. An empty
+     * URL disables the webhook; unchecking the box keeps the URL on file.
+     * Both go into one setting (Webhooks::settingKey()), written before any
+     * other preference and verified, so a failed save never leaves an old URL
+     * or opt-in live behind a success message.
+     *
+     * Omitting the webhookUrl key leaves the stored webhook unchanged, and any
+     * webhookEnabled sent without it is ignored. Sending webhookUrl, even as an
+     * empty string, sets the URL and the opt-in together, with a missing
+     * webhookEnabled meaning unchecked. API clients that change only the opt-in
+     * must therefore send the current URL as well.
+     *
      * @param  int  $userId  The id of the user being edited.
      * @param  array<string, mixed>  $post  Raw request input.
+     *
+     * @throws ValidationException When webhookUrl is not an acceptable endpoint; nothing is saved.
+     * @throws WebhookSettingNotSavedException When the webhook setting could not be persisted; nothing is saved.
      *
      * @api
      */
@@ -1164,6 +1189,37 @@ class Users extends BaseService
     {
         // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
         $userId = (int) session('userdata.id');
+
+        // A payload without webhookUrl (API clients predating the webhook) leaves the webhook as it is.
+        if (array_key_exists('webhookUrl', $post)) {
+            // Validate the webhook first so a rejected URL leaves every preference untouched.
+            $webhookUrl = is_string($post['webhookUrl']) ? trim($post['webhookUrl']) : null;
+            if ($webhookUrl === null || ($webhookUrl !== '' && ! Webhooks::isValidEndpointUrl($webhookUrl))) {
+                throw ValidationException::withMessages(['webhookUrl' => ['notification.invalid_webhook_url']]);
+            }
+            $webhookEnabled = $webhookUrl !== '' && filter_var($post['webhookEnabled'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+            // Persist the webhook first: if it can't be saved, fail before any other preference is touched.
+            $webhookSettingKey = Webhooks::settingKey($userId);
+            $webhookSetting = Webhooks::encodeSetting($webhookUrl, $webhookEnabled);
+            $webhookSaveException = null;
+            try {
+                // updateOrInsert also reports false when the row already held this exact value, so a
+                // false result only counts as a failure when reading the setting back shows otherwise.
+                $webhookSaved = $this->settingsService->saveSetting($webhookSettingKey, $webhookSetting)
+                    || $this->settingsService->getSetting($webhookSettingKey) === $webhookSetting;
+            } catch (\Throwable $e) {
+                $webhookSaved = false;
+                $webhookSaveException = get_class($e);
+            }
+
+            if (! $webhookSaved) {
+                // Class name only: the setting value and DB exception messages carry the URL and its secret.
+                Log::error('Personal webhook setting could not be saved', ['userId' => $userId, 'exception' => $webhookSaveException]);
+
+                throw new WebhookSettingNotSavedException;
+            }
+        }
 
         $row = $this->getUser($userId);
 

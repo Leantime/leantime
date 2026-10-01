@@ -30,6 +30,7 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
+use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
@@ -84,6 +85,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         private CommentRepository $commentRepo,
         private ClientRepository $clientRepo,
         Client $httpClient,
+        private Webhooks $webhookService,
     ) {
         $this->httpClient = $httpClient;
     }
@@ -302,9 +304,17 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @mentions always bypass both layers.
      *
+     * Channels: queued email, project messengers, mobile push, in-app
+     * notifications and — last — queued rows for the personal webhooks of
+     * recipients who opted in (delivered later by the webhook queue).
+     *
      * @param  Notification  $notification  The notification object to send.
      *
-     * @api
+     * @internal Local-only: not exposed over JSON-RPC. This performs no authorization and
+     *           trusts every field of the caller-built Notification (project, author, subject,
+     *           message, link), fanning it out to email, messengers, push, in-app and personal
+     *           webhooks. It must only run as the last step after the calling service or
+     *           controller has already authorized the change being announced.
      */
     public function notifyProjectUsers(Notification $notification): void
     {
@@ -453,6 +463,18 @@ class Projects extends BaseService implements ChecksProjectAccess
          * @context domain.services.projects
          */
         self::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => array_values($filteredUsersToNotify), 'url' => $notification->url['url']], 'leantime.domain.projects.services.projects.notifyProjectUsers');
+
+        // Personal webhooks go last, to the same filtered recipients as email (relevance,
+        // category, mentions, collaborators). This only queues one row per recipient: the
+        // scheduler's WebhookQueue posts later, so no endpoint is contacted during this
+        // request. Queueing reads only the recipients' opt-in; Webhooks checks each queued
+        // recipient's opt-in, account and project access itself when the row is posted. The
+        // catch is a last guard so this step can never break the dispatch path.
+        try {
+            $this->webhookService->queueToUsers($notification, $users);
+        } catch (\Throwable $e) {
+            Log::warning('Personal webhook dispatch failed', ['exception' => get_class($e)]);
+        }
     }
 
     /**

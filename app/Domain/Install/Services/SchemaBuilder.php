@@ -774,6 +774,8 @@ class SchemaBuilder
 
             $table->index(['projectId'], 'idx_queue_projectId');
             $table->index(['userId'], 'idx_queue_userId');
+            // Serves the batch read: one channel, oldest first, msghash breaking ties, LIMIT n.
+            $table->index(['channel', 'thedate', 'msghash'], 'idx_queue_channel_thedate_msghash');
         });
     }
 

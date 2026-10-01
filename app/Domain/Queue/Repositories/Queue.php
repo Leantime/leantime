@@ -2,7 +2,9 @@
 
 namespace Leantime\Domain\Queue\Repositories;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Queue\Workers\Workers;
 use Leantime\Domain\Users\Repositories\Users as UserRepo;
@@ -63,36 +65,90 @@ class Queue
 
     // TODO later : lists messages per user or per project ?
 
-    public function listMessageInQueue(Workers $channel, mixed $recipients = null, int $projectId = 0): false|array
+    /**
+     * Lists the queued messages of one channel.
+     *
+     * Without a limit, every row of the channel ordered by userId, projectId, thedate. With a
+     * limit, at most that many rows, oldest first (msghash breaking ties), limited in the query
+     * so a caller that takes a batch never loads the whole backlog.
+     *
+     * @param  Workers  $channel  The channel to list.
+     * @param  mixed  $recipients  Unused.
+     * @param  int  $projectId  Unused.
+     * @param  int|null  $limit  Most rows to return, oldest first; null for the whole channel.
+     * @return false|array<int, array<string, mixed>> The rows as column arrays.
+     */
+    public function listMessageInQueue(Workers $channel, mixed $recipients = null, int $projectId = 0, ?int $limit = null): false|array
     {
-        $results = $this->db->table('zp_queue')
-            ->where('channel', $channel->value)
-            ->orderBy('userId')
-            ->orderBy('projectId')
-            ->orderBy('thedate')
-            ->get();
+        $query = $this->db->table('zp_queue')
+            ->where('channel', $channel->value);
 
-        return array_map(fn ($item) => (array) $item, $results->toArray());
+        if ($limit === null) {
+            $query->orderBy('userId')
+                ->orderBy('projectId')
+                ->orderBy('thedate');
+        } else {
+            $query->orderBy('thedate')
+                ->orderBy('msghash')
+                ->limit($limit);
+        }
+
+        return array_map(fn ($item) => (array) $item, $query->get()->toArray());
     }
 
+    /**
+     * Deletes queued messages by hash.
+     *
+     * Each hash is its own DELETE, so the database decides which of two workers holding the same
+     * row removes it: a caller that must act on a row at most once acts only on true.
+     *
+     * @param  string|array<int, string>  $msghashes  One hash or several.
+     * @return bool True when every hash removed a row; false when any row was already gone, e.g.
+     *              deleted by another worker. The rows still there are deleted either way.
+     */
     public function deleteMessageInQueue(string|array $msghashes): bool
     {
         // NEW : Allowing one hash or an array of them
         $thehashes = is_string($msghashes) ? [$msghashes] : $msghashes;
 
+        $everyHashRemovedARow = true;
         foreach ($thehashes as $msghash) {
-            $this->db->table('zp_queue')
+            $deletedRows = $this->db->table('zp_queue')
                 ->where('msghash', $msghash)
                 ->delete();
+
+            if ($deletedRows === 0) {
+                $everyHashRemovedARow = false;
+            }
         }
 
-        return true;
+        return $everyHashRemovedARow;
     }
 
+    /**
+     * Queues one message on a channel. Every call writes its own row: the row's msghash is a
+     * random id, never derived from the content, so a message identical to one queued in the
+     * same second (the same notification raised twice, say) is kept, and workers claim and
+     * delete each row on its own.
+     *
+     * thedate is stamped in UTC, never the request's timezone, so rows queued by users in
+     * different timezones list oldest first in the order they were actually queued.
+     *
+     * A failed insert never throws, so a message that cannot be queued does not stop the
+     * notifications sent beside it. It is logged without its content: by channel, user, project,
+     * exception class and SQLSTATE only.
+     *
+     * @param  Workers  $channel  The channel whose worker runs the message.
+     * @param  string  $subject  What that worker runs it with, e.g. the job class on DEFAULT and WEBHOOKS.
+     * @param  string  $message  The serialized payload.
+     * @param  int  $userId  The user the message belongs to.
+     * @param  int  $projectId  The project the message belongs to; 0 for none.
+     */
     public function addMessageToQueue(Workers $channel, string $subject, string $message, int $userId, int $projectId = 0): void
     {
-        $thedate = date('Y-m-d H:i:s');
-        $msghash = md5($thedate.$subject.$message.$projectId);
+        $thedate = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
+        // 128 random bits as 32 hex characters: unique per row, fits msghash VARCHAR(50).
+        $msghash = bin2hex(random_bytes(16));
 
         try {
             $this->db->table('zp_queue')->insert([
@@ -105,7 +161,15 @@ class Queue
                 'projectId' => $projectId,
             ]);
         } catch (\PDOException $e) {
-            report($e);
+            // Not report($e), and never the message: a QueryException's message is the SQL with
+            // its bindings filled in, so it carries the whole subject and payload.
+            Log::error('Queue message could not be saved', [
+                'channel' => $channel->value,
+                'userId' => $userId,
+                'projectId' => $projectId,
+                'exception' => get_class($e),
+                'sqlState' => $e->getCode(),
+            ]);
         }
     }
 }
