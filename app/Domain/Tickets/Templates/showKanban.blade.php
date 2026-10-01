@@ -458,6 +458,44 @@
 
     })();
 
+    // Copilot review fix: the desktop-only overflow on .kanban-column-headers
+    // (needed for the scroll-sync above) also clips each column's
+    // "Edit label / Add column" dropdown menu, since Bootstrap 2's dropdown
+    // plugin just toggles an "open" class and positions the menu with
+    // ordinary `position: absolute` relative to the header -- which this
+    // element now clips. Watch for that class toggle and, only while open,
+    // switch the menu to `position: fixed` with live coordinates so it
+    // escapes the clipping scrollport; revert on close so normal layout
+    // (and the mobile/no-overflow case) is unaffected.
+    (function initKanbanHeaderDropdownEscape() {
+        var header = document.querySelector('.kanban-column-headers');
+        if (!header) return;
+
+        var containers = header.querySelectorAll('.inlineDropDownContainer');
+        containers.forEach(function (container) {
+            var menu = container.querySelector('.dropdown-menu');
+            if (!menu) return;
+
+            var observer = new MutationObserver(function () {
+                if (container.classList.contains('open')) {
+                    var rect = container.getBoundingClientRect();
+                    menu.style.position = 'fixed';
+                    menu.style.top = rect.bottom + 'px';
+                    menu.style.left = 'auto';
+                    menu.style.right = (window.innerWidth - rect.right) + 'px';
+                    menu.style.zIndex = '1051';
+                } else {
+                    menu.style.position = '';
+                    menu.style.top = '';
+                    menu.style.left = '';
+                    menu.style.right = '';
+                    menu.style.zIndex = '';
+                }
+            });
+            observer.observe(container, { attributes: true, attributeFilter: ['class'] });
+        });
+    })();
+
 
         @if (isset($_GET['showTicketModal']))
             @php
