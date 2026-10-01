@@ -1525,7 +1525,9 @@ class Users extends BaseService
      *
      * @throws BindingResolutionException
      *
-     * @api
+     * @internal Not exposed over JSON-RPC: the client restriction, manager flag and role are
+     *           enforced by the NewUser controller, so a direct call could invite into any client
+     *           or with any role (including Owner).
      */
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function inviteNewUser(array $post, int|string|null $sessionClientId, bool $isManager): string

@@ -43,7 +43,8 @@ class Messengers
      * @api
      */
     /**
-     * @api
+     * @internal Not exposed over JSON-RPC: it posts a caller-built message to a project's
+     *           Slack/Mattermost/Teams webhooks with no permission check. Projects service only.
      */
     public function sendNotificationToMessengers(NotificationModel $notification, $projectName, array|string $messengers = 'all'): void
     {

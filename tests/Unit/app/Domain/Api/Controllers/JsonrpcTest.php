@@ -317,6 +317,10 @@ class JsonrpcTest extends \Unit\TestCase
         // #3755: these two take a caller-supplied $userId with no check, so they stay internal.
         $mustBeInternal[] = [\Leantime\Domain\Tickets\Services\Tickets::class, 'getRecentlyCompletedTicketsByUser'];
         $mustBeInternal[] = [\Leantime\Domain\Tickets\Services\Tickets::class, 'goalsRelatedToWork'];
+        // Became reachable with union-typed parameters (#3754) but trust caller-supplied security
+        // context (client/role, or post to project webhooks unauthenticated), so they stay internal.
+        $mustBeInternal[] = [\Leantime\Domain\Users\Services\Users::class, 'inviteNewUser'];
+        $mustBeInternal[] = [\Leantime\Domain\Notifications\Services\Messengers::class, 'sendNotificationToMessengers'];
 
         foreach ($mustBeInternal as [$class, $method]) {
             $this->assertFalse($invoke($class, $method), "$class::$method must not be reachable over JSON-RPC");

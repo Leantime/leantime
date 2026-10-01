@@ -608,6 +608,9 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getScheduledTasks(CarbonImmutable|string $dateFrom, CarbonImmutable|string $dateTo, ?int $userId)
     {
+        // Reachable over JSON-RPC: only the authenticated user's own schedule. Every in-app caller
+        // already passes the session user; a caller-supplied id would expose another user's tasks.
+        $userId = (int) session('userdata.id');
 
         if (is_string($dateFrom) && dtHelper()->isValidDateString($dateFrom)) {
             $dateFrom = dtHelper()->parseUserDateTime($dateFrom);

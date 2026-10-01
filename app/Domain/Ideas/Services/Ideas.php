@@ -819,9 +819,14 @@ class Ideas extends BaseService
         }
         $this->authorize(CommentsPermissions::CREATE, $itemProjectId);
 
+        // Reachable over JSON-RPC: the author is the authenticated user, and the project is the
+        // idea's real one resolved above. Neither is taken from the caller.
+        $authorId = (int) session('userdata.id');
+        $projectId = $itemProjectId;
+
         $values = [
             'text' => $text,
-            'date' => date('Y-m-d H:i:s'),
+            'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'userId' => $authorId,
             'moduleId' => $ideaItemId,
             'commentParent' => $parentCommentId,

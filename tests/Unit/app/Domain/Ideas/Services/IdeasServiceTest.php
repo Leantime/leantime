@@ -36,11 +36,12 @@ class IdeasServiceTest extends TestCase
         ?CommentRepository $commentsRepo = null,
         ?LanguageCore $language = null,
         ?PermissionService $perms = null,
+        ?ProjectService $projects = null,
     ): IdeaService {
         $service = new IdeaService(
             $ideasRepo ?? $this->make(IdeasRepository::class),
             $commentsRepo ?? $this->make(CommentRepository::class),
-            $this->make(ProjectService::class),
+            $projects ?? $this->make(ProjectService::class),
             $this->make(TicketService::class),
             $language ?? $this->make(LanguageCore::class),
         );
@@ -445,6 +446,35 @@ class IdeasServiceTest extends TestCase
 
         $this->assertFalse($service->addIdeaComment('hi', 999, 0, 9, self::SESSION_USER));
         $this->assertFalse($added, 'A non-idea item must never receive a comment against the caller project');
+    }
+
+    /**
+     * addIdeaComment became reachable over JSON-RPC with the union-type fix (#3754), so the
+     * caller-supplied author and project must not be used: the comment is the session user's and
+     * notifications go to the idea's real project.
+     */
+    public function test_add_idea_comment_uses_the_session_author_and_the_items_real_project(): void
+    {
+        $writtenAuthor = null;
+        $notifiedProject = null;
+        $commentsRepo = $this->make(CommentRepository::class, [
+            'addComment' => function ($values) use (&$writtenAuthor) {
+                $writtenAuthor = $values['userId'];
+
+                return '7';
+            },
+        ]);
+        $projects = $this->make(ProjectService::class, [
+            'notifyProjectUsers' => function ($notification) use (&$notifiedProject) {
+                $notifiedProject = $notification->projectId;
+            },
+        ]);
+        $service = $this->makeService(ideasRepo: $this->ideaRepoInProject9(), commentsRepo: $commentsRepo, projects: $projects);
+
+        $service->addIdeaComment('hi', 5, 0, 1234, 999);
+
+        $this->assertSame(self::SESSION_USER, $writtenAuthor);
+        $this->assertSame(9, $notifiedProject);
     }
 
     public function test_remove_idea_comment_fails_closed_for_non_author_non_idea_comment(): void
