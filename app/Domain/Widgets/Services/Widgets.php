@@ -216,6 +216,17 @@ class Widgets
             }
         }
 
+        // Always-visible widgets must survive a saved grid that lost them (#3791). The Welcome
+        // widget carries the only link to the Widget Manager; the mobile layout drops it from the
+        // grid engine and any later saveGrid persisted that, leaving hidden widgets unrestorable.
+        foreach ($this->defaultWidgets as $widgetId => $defaultWidget) {
+            $isAlwaysVisible = $this->availableWidgets[$widgetId]->alwaysVisible ?? false;
+
+            if ($isAlwaysVisible && ! isset($widgets[$widgetId])) {
+                $widgets[$widgetId] = $defaultWidget;
+            }
+        }
+
         // Sort Widgets
         $widgets = array_sort($widgets, [['gridY', 'asc'], ['gridX', 'asc']]);
 

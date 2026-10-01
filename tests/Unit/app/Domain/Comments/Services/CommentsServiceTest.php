@@ -36,10 +36,11 @@ class CommentsServiceTest extends TestCase
         ReactionsService $reactionsService,
         ?CommentRepository $repo = null,
         ?PermissionService $permissions = null,
+        ?ProjectService $projects = null,
     ): Comments {
         $service = new Comments(
             $repo ?? $this->defaultRepo(),
-            $this->make(ProjectService::class),
+            $projects ?? $this->make(ProjectService::class),
             $this->make(LanguageCore::class),
             $reactionsService,
         );
@@ -82,6 +83,47 @@ class CommentsServiceTest extends TestCase
     // ---------------------------------------------------------------------
     // Reaction orchestration (existing behaviour, now session-pinned).
     // ---------------------------------------------------------------------
+
+    /**
+     * #3756: a comment on a canvas-family target (wiki article, idea, *canvasitem) was
+     * permission-checked and then silently discarded, because only tickets and projects were
+     * loaded as the host entity. It must now be written.
+     */
+    public function test_add_comment_writes_for_canvas_family_modules(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        foreach (['article', 'idea', 'leancanvasitem'] as $module) {
+            $written = null;
+            $repo = $this->make(CommentRepository::class, [
+                'resolveModuleProjectId' => fn () => 9,
+                'addComment' => function ($mapper, $writtenModule) use (&$written) {
+                    $written = [$writtenModule, $mapper['moduleId']];
+
+                    return '501';
+                },
+            ]);
+
+            $projects = $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]);
+
+            $result = $this->makeService($this->noopReactions(), $repo, null, $projects)->addComment(['text' => 'hello'], $module, 140);
+
+            $this->assertTrue($result, "$module comment must be written");
+            $this->assertSame([$module, 140], $written);
+        }
+    }
+
+    public function test_add_comment_on_a_missing_canvas_item_writes_nothing(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => null,
+            'addComment' => function () {
+                $this->fail('nothing may be written for an item that does not exist');
+            },
+        ]);
+
+        $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404));
+    }
 
     public function test_toggle_rejects_unknown_reaction_type(): void
     {

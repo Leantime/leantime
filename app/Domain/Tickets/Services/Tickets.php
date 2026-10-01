@@ -1827,6 +1827,10 @@ class Tickets extends BaseService
         return $milestones;
     }
 
+    /**
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied and unverified, so it would
+     *           expose another user's work. The Welcome widget calls it for the session user.
+     */
     public function getRecentlyCompletedTicketsByUser(int $userId, ?int $projectId = null): array
     {
 
@@ -1870,6 +1874,10 @@ class Tickets extends BaseService
         return $doneTasks;
     }
 
+    /**
+     * @internal Not exposed over JSON-RPC: $userId is caller-supplied and unverified, so it would
+     *           expose another user's work. The Welcome widget calls it for the session user.
+     */
     public function goalsRelatedToWork(int $userId, $projectId = null)
     {
 

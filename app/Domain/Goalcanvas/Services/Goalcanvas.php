@@ -220,6 +220,8 @@ class Goalcanvas extends BaseService
      * project. Reachable beyond the milestone UI (MCP getGoalsByMilestone wraps
      * it verbatim), so the caller's access to the milestone cannot be assumed —
      * a missing/foreign/unauthorized milestone returns [] (neutral, no oracle).
+     *
+     * @api
      */
     public function getGoalsByMilestone($milestoneId): array
     {
@@ -573,6 +575,8 @@ class Goalcanvas extends BaseService
      * Fetch a single goal board by id, authorized for VIEW against the board's real project.
      *
      * @return array<string, mixed>|false False when missing/foreign/unauthorized.
+     *
+     * @api
      */
     public function getSingleCanvas($id)
     {
@@ -588,6 +592,8 @@ class Goalcanvas extends BaseService
      * Create a goal board, authorized for CREATE against the target project.
      *
      * @throws AuthorizationException When projectId is missing or CREATE is denied.
+     *
+     * @api
      */
     public function createGoalboard($values)
     {
@@ -604,6 +610,8 @@ class Goalcanvas extends BaseService
      * Rename a goal board, authorized for EDIT against the board's real project.
      *
      * @throws AuthorizationException When the board is unknown/foreign or EDIT is denied.
+     *
+     * @api
      */
     public function updateGoalboard($values)
     {

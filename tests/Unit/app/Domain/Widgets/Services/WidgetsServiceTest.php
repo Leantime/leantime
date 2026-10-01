@@ -62,6 +62,30 @@ class WidgetsServiceTest extends TestCase
         $this->assertSame('usersettings.7.dashboardGrid', $deletedKey);
     }
 
+    /**
+     * #3791: the Welcome widget holds the only link to the Widget Manager. A saved grid that
+     * lost it (the mobile layout drops it, then saveGrid persists that) must get it back.
+     */
+    public function test_active_widgets_restore_an_always_visible_widget_missing_from_the_saved_grid(): void
+    {
+        $userId = 77;
+        \Illuminate\Support\Facades\Cache::forget('usersettings.'.$userId.'.dashboardGrid');
+
+        $savedGridWithoutWelcome = serialize([
+            ['id' => 'todos', 'gridX' => 0, 'gridY' => 2, 'gridWidth' => 6, 'gridHeight' => 4],
+        ]);
+        $settingRepo = $this->make(Setting::class, [
+            'getSetting' => fn ($key) => str_ends_with($key, '.dashboardGrid') ? $savedGridWithoutWelcome : false,
+        ]);
+
+        $service = new Widgets($settingRepo, $this->make(ProjectService::class), $this->make(ReportService::class));
+        $active = $service->getActiveWidgets($userId);
+
+        $this->assertArrayHasKey('welcome', $active);
+        $this->assertArrayHasKey('todos', $active);
+        $this->assertArrayNotHasKey('calendar', $active, 'only ALWAYS-visible widgets are restored');
+    }
+
     public function test_my_projects_widget_data_enriches_each_project(): void
     {
         $projectService = $this->make(ProjectService::class, [

@@ -57,6 +57,16 @@ class Comments extends BaseService
 
                 return $projectService->getProject($entityId) ?: null;
             }
+
+            // Canvas-family targets (wiki articles, ideas, *canvasitem). The notification path for
+            // these only needs the item's project, so a minimal record is enough; without it the
+            // comment was permission-checked and then silently discarded (#3756). A missing item
+            // resolves to no project and stays null.
+            if ($module === 'article' || $module === 'idea' || str_ends_with($module, 'canvasitem')) {
+                $projectId = $this->commentRepository->resolveModuleProjectId($module, $entityId);
+
+                return $projectId !== null ? ['id' => $entityId, 'projectId' => $projectId] : null;
+            }
         } catch (\Throwable $e) {
             return null;
         }

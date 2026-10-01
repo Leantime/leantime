@@ -245,6 +245,37 @@ class JsonrpcTest extends \Unit\TestCase
     }
 
     /**
+     * #3754: ReflectionUnionType has no getName(), so every union-typed @api method failed with
+     * "Could not cast parameter". Values matching a member pass through; others are cast.
+     */
+    public function test_union_typed_parameters_are_accepted(): void
+    {
+        $prepare = new \ReflectionMethod(Jsonrpc::class, 'prepareParameters');
+        $prepare->setAccessible(true);
+        $methodParams = (new \ReflectionMethod(UnionTypeFixture::class, 'find'))->getParameters();
+
+        $this->assertSame([5, ['a'], null], $prepare->invoke($this->controller, ['id' => 5, 'flags' => ['a'], 'limit' => null], $methodParams));
+        $this->assertSame(['abc', true, 10], $prepare->invoke($this->controller, ['id' => 'abc', 'flags' => true, 'limit' => '10'], $methodParams));
+        $this->assertSame([7, false, null], $prepare->invoke($this->controller, ['id' => 7], $methodParams));
+    }
+
+    /**
+     * #3755: board/goal methods that authorize against the real project are reachable over RPC.
+     */
+    public function test_goalcanvas_board_methods_are_rpc_reachable(): void
+    {
+        $isApiMethod = new \ReflectionMethod(Jsonrpc::class, 'isApiMethod');
+        $isApiMethod->setAccessible(true);
+
+        foreach (['getSingleCanvas', 'createGoalboard', 'updateGoalboard', 'getGoalsByMilestone'] as $method) {
+            $this->assertTrue(
+                $isApiMethod->invoke($this->controller, \Leantime\Domain\Goalcanvas\Services\Goalcanvas::class, $method),
+                "Goalcanvas::$method must be reachable over JSON-RPC"
+            );
+        }
+    }
+
+    /**
      * Regression guard for the JSON-RPC account-takeover report (fenko.nz, Sept 2026).
      *
      * A read-only user could call leantime.rpc.auth.onboarding.saveAccount with a crafted
@@ -282,6 +313,10 @@ class JsonrpcTest extends \Unit\TestCase
             [\Leantime\Domain\Reactions\Services\Reactions::class, 'getUserReactions'],
             [\Leantime\Domain\Notifications\Services\Notifications::class, 'processMentions'],
         ];
+
+        // #3755: these two take a caller-supplied $userId with no check, so they stay internal.
+        $mustBeInternal[] = [\Leantime\Domain\Tickets\Services\Tickets::class, 'getRecentlyCompletedTicketsByUser'];
+        $mustBeInternal[] = [\Leantime\Domain\Tickets\Services\Tickets::class, 'goalsRelatedToWork'];
 
         foreach ($mustBeInternal as [$class, $method]) {
             $this->assertFalse($invoke($class, $method), "$class::$method must not be reachable over JSON-RPC");
@@ -395,6 +430,14 @@ class JsonrpcTest extends \Unit\TestCase
         $this->assertSame(-32601, $body['error']['code'] ?? null, 'WebhookQueue::processQueue must be method-not-found over JSON-RPC');
         $this->assertSame(11, $body['id']);
     }
+}
+
+/**
+ * Fixture for union-typed parameter casting (#3754).
+ */
+class UnionTypeFixture
+{
+    public function find(int|string $id, array|bool $flags = false, ?int $limit = null): void {}
 }
 
 /**
