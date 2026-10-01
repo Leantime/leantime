@@ -257,6 +257,12 @@ leantime.calendarController = (function () {
                     leantime.rpc('Tickets.Tickets.patchTicket', {
                         id: event.event.extendedProps.enitityId,
                         values: ticketDateValues(event.event)
+                    }).then(function (success) {
+                        // patchTicket resolves false when the write fails; undo the visual move.
+                        if (! success) {
+                            jQuery.growl({ message: leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                            event.revert();
+                        }
                     }).catch(function (error) {
                         jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         event.revert();
@@ -283,6 +289,12 @@ leantime.calendarController = (function () {
                     leantime.rpc('Tickets.Tickets.patchTicket', {
                         id: event.event.extendedProps.enitityId,
                         values: ticketDateValues(event.event)
+                    }).then(function (success) {
+                        // patchTicket resolves false when the write fails; undo the visual move.
+                        if (! success) {
+                            jQuery.growl({ message: leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                            event.revert();
+                        }
                     }).catch(function (error) {
                         jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         event.revert();
@@ -310,7 +322,13 @@ leantime.calendarController = (function () {
                 leantime.rpc('Tickets.Tickets.patchTicket', {
                     id: event.event.id,
                     values: ticketDateValues(event.event)
-                }).then(function () {
+                }).then(function (success) {
+                    if (! success) {
+                        jQuery.growl({ message: leantime.i18n.__("short_notifications.not_saved"), style: "error" });
+                        event.revert();
+                        return;
+                    }
+
                     // Keep the dropped event: it is the only one with the new dates (the event source
                     // is a server-rendered snapshot). Make it behave like a scheduled ticket, and drop
                     // any stale copy of the same ticket still shown at its old slot, so it appears
