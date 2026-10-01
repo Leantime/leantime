@@ -185,8 +185,10 @@ class MessengersServiceTest extends TestCase
             },
         ]);
 
-        // An IP literal keeps OutboundUrlGuard from performing a DNS lookup during the test.
-        $webhookUrl = 'https://203.0.113.10/hooks/abcdefghijklmnopqrstuvwxyz';
+        // A PUBLIC IP literal: it keeps OutboundUrlGuard from doing a DNS lookup, and it is not in
+        // any blocked range (the TEST-NET documentation ranges are blocked since #3799). The HTTP
+        // client is stubbed, so nothing is actually sent.
+        $webhookUrl = 'https://1.1.1.1/hooks/abcdefghijklmnopqrstuvwxyz';
 
         $settingRepo = $this->make(SettingRepository::class, [
             'getSetting' => fn ($key) => $key === 'projectsettings.1.mattermostWebhookURL' ? $webhookUrl : false,
