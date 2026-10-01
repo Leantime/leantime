@@ -1200,6 +1200,14 @@ body .maincontent .priority-text-5 a:link {
 }
 
 /* Column headers alignment with swimlane sidebar */
+.kanban-column-headers {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
 .kanban-column-headers.groupby-active {
     /* Add left margin to align with kanban content when groupBy is active */
     margin-left: 158px; /* Matches sidebar width (150px) + margin (8px) */

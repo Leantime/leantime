@@ -65,6 +65,9 @@
             top: 110px;
             justify-content: flex-start;
             z-index: 9;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
             ">
         @foreach ($allKanbanColumns as $key => $statusRow)
             <div class="column">
@@ -414,6 +417,50 @@
     @endif
 
     leantime.ticketsController.setUpKanbanColumns();
+
+
+    (function initKanbanHorizontalScrollSync() {
+
+        var header = document.querySelector('.kanban-column-headers');
+
+        var rows = document.querySelectorAll('.sortableTicketList.kanbanBoard .row-fluid');
+
+        var syncTargets = [];
+
+        if (header) { syncTargets.push(header); }
+
+        rows.forEach(function (r) { syncTargets.push(r); });
+
+
+
+        var isSyncing = false;
+
+        syncTargets.forEach(function (el) {
+
+            el.addEventListener('scroll', function () {
+
+                if (isSyncing) return;
+
+                isSyncing = true;
+
+                syncTargets.forEach(function (other) {
+
+                    if (other !== el) {
+
+                        other.scrollLeft = el.scrollLeft;
+
+                    }
+
+                });
+
+                isSyncing = false;
+
+            });
+
+        });
+
+    })();
+
 
         @if (isset($_GET['showTicketModal']))
             @php
