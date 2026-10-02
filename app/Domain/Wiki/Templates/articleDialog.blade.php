@@ -130,7 +130,7 @@
                                     {!! __('label.loading_milestone') !!}
                                 </div>
                             </div>
-                            <x-global::forms.button tag="a" link="{{ CURRENT_URL }}?removeMilestone={{ $currentArticle->milestoneId }}" class="formModal" state="danger" variant="outline"><i class="fa fa-close"></i> {!! __('links.remove') !!}</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="javascript:void(0);" data-post-field="removeMilestone" data-post-value="{{ $currentArticle->milestoneId }}" class="" state="danger" variant="outline"><i class="fa fa-close"></i> {!! __('links.remove') !!}</x-global::forms.button>
 
                         </li>
                     @endif

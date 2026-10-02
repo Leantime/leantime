@@ -88,24 +88,6 @@ class EditCanvasComment
                 return $this->tpl->displayPartial('errors.error404');
             }
 
-            // Delete comment — ONLY when it belongs to THIS gated item (module + moduleId).
-            // deleteComment() filters on the comment id alone, so without this bind a viewable
-            // item would let any global comment id be deleted (cross-item / cross-project).
-            if (isset($data['delComment']) === true) {
-                $commentId = (int) ($data['delComment']);
-                $comment = $this->commentsRepo->getComment($commentId);
-                if ($comment !== false
-                    && (string) $comment['module'] === $commentModule
-                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                    $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification(
-                        $this->language->__('notifications.comment_deleted'),
-                        'success',
-                        strtoupper($this->canvasSlug).'canvascomment_deleted'
-                    );
-                }
-            }
-
             $comments = $this->commentsRepo->getComments($commentModule, $canvasItem['id']);
             $this->tpl->assign(
                 'numComments',
@@ -164,6 +146,33 @@ class EditCanvasComment
         $commentModule = $this->template->getCommentModule();
         $sessionKey = $this->template->getSessionKey();
         $basePath = '/blueprints/'.$this->canvasSlug;
+
+        // Comment delete (POST only: it changes data).
+        if (isset($data['id']) && isset($data['delComment'])) {
+            // Resolve + authorize the item against its real project before anything else.
+            $canvasItem = $this->blueprintsService->getCanvasItem((int) $data['id'], $canvasType);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
+            // Delete comment — ONLY when it belongs to THIS gated item (module + moduleId).
+            // deleteComment() filters on the comment id alone, so without this bind a viewable
+            // item would let any global comment id be deleted (cross-item / cross-project).
+            $commentId = (int) ($data['delComment']);
+            $comment = $this->commentsRepo->getComment($commentId);
+            if ($comment !== false
+                && (string) $comment['module'] === $commentModule
+                && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                $this->commentsRepo->deleteComment($commentId);
+                $this->tpl->setNotification(
+                    $this->language->__('notifications.comment_deleted'),
+                    'success',
+                    strtoupper($this->canvasSlug).'canvascomment_deleted'
+                );
+            }
+
+            return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasComment/'.(int) $data['id']);
+        }
 
         if (isset($data['changeItem'])) {
             if (isset($data['itemId']) && $data['itemId'] != '') {

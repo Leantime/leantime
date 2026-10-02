@@ -94,29 +94,6 @@ class EditCanvasItem
                 return $this->tpl->displayPartial('errors.error404');
             }
 
-            // Delete comment — ONLY when it actually belongs to THIS gated item (same module +
-            // moduleId). The item being viewable is not enough: deleteComment() filters on the
-            // comment id alone, so without this bind any global comment id (a comment on another
-            // item, canvas type, or project — one shared id sequence) could be deleted.
-            if (isset($data['delComment'])) {
-                $commentId = (int) ($data['delComment']);
-                $comment = $this->commentsRepo->getComment($commentId);
-                if ($comment !== false
-                    && (string) $comment['module'] === $commentModule
-                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                    $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-                }
-            }
-
-            // Delete milestone relationship — an EDIT, authorized by the service against the
-            // item's project (a view-only user is denied here).
-            if (isset($data['removeMilestone'])) {
-                $this->blueprintsService->patchCanvasItem((int) $data['id'], ['milestoneId' => ''], $canvasType);
-                $canvasItem = $this->blueprintsService->getCanvasItem((int) $data['id'], $canvasType);
-                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
-            }
-
             $comments = $this->commentsRepo->getComments($commentModule, $canvasItem['id']);
             $this->tpl->assign(
                 'numComments',
@@ -192,6 +169,38 @@ class EditCanvasItem
         $commentModule = $this->template->getCommentModule();
         $sessionKey = $this->template->getSessionKey();
         $basePath = '/blueprints/'.$this->canvasSlug;
+
+        // Comment delete / milestone detach (POST only: both change data).
+        if (isset($data['id']) && (isset($data['delComment']) || isset($data['removeMilestone']))) {
+            // Resolve + authorize the item against its real project BEFORE any mutation.
+            $canvasItem = $this->blueprintsService->getCanvasItem((int) $data['id'], $canvasType);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
+            // Delete comment — ONLY when it actually belongs to THIS gated item (same module +
+            // moduleId). The item being viewable is not enough: deleteComment() filters on the
+            // comment id alone, so without this bind any global comment id (a comment on another
+            // item, canvas type, or project — one shared id sequence) could be deleted.
+            if (isset($data['delComment'])) {
+                $commentId = (int) ($data['delComment']);
+                $comment = $this->commentsRepo->getComment($commentId);
+                if ($comment !== false
+                    && (string) $comment['module'] === $commentModule
+                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                    $this->commentsRepo->deleteComment($commentId);
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+                }
+            }
+
+            // Delete milestone relationship — authorized by the service against the item's project.
+            if (isset($data['removeMilestone'])) {
+                $this->blueprintsService->patchCanvasItem((int) $data['id'], ['milestoneId' => ''], $canvasType);
+                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasItem/'.(int) $data['id']);
+        }
 
         if (isset($data['changeItem'])) {
             if (isset($data['itemId']) && ! empty($data['itemId'])) {

@@ -35,14 +35,6 @@ class EditMilestone extends Controller
     public function get($params)
     {
         if (isset($params['id'])) {
-            // Delete comment
-            if (isset($params['delComment']) === true) {
-                $commentId = (int) ($params['delComment']);
-                $this->commentsService->deleteComment($commentId);
-
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-            }
-
             $milestone = $this->ticketService->getMilestone((int) $params['id']);
 
             if ($milestone === false || ! isset($milestone->id)) {
@@ -86,6 +78,15 @@ class EditMilestone extends Controller
         // If ID is set its an update
         if (isset($_GET['id']) && (int) $_GET['id'] > 0) {
             $params['id'] = (int) $_GET['id'];
+
+            // Delete comment (POST only: it changes data)
+            if (isset($params['delComment']) === true) {
+                if ($this->commentsService->deleteComment((int) $params['delComment'])) {
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+                }
+
+                return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
+            }
 
             if (isset($params['comment']) === true) {
                 $milestone = $this->ticketService->getMilestone($params['id']);

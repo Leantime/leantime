@@ -123,20 +123,4 @@ class Dashboard
 
         return $userReaction && is_array($userReaction);
     }
-
-    /**
-     * Builds the base URL used to delete a dashboard comment.
-     *
-     * Derives scheme/host/path from the current request URL and appends the
-     * delComment query parameter, leaving the caller to suffix the comment id.
-     *
-     * @return string The delete-comment URL base (ends with 'delComment=')
-     *
-     * @api
-     */
-    public function buildDeleteCommentUrlBase(): string
-    {
-        // Current URL up to (but excluding) any existing query string, plus the delComment flag.
-        return strtok(CURRENT_URL, '?').'?delComment=';
-    }
 }

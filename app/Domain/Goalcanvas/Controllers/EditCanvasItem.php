@@ -65,20 +65,6 @@ class EditCanvasItem extends Controller
                 return $this->tpl->displayPartial('errors.error404');
             }
 
-            // Delete comment — only when it belongs to THIS gated item (module + moduleId);
-            // deleteComment() filters on the comment id alone, so the bind prevents deleting a
-            // foreign item's / project's comment.
-            if (isset($params['delComment'])) {
-                $commentId = (int) ($params['delComment']);
-                $comment = $this->commentsRepo->getComment($commentId);
-                if ($comment !== false
-                    && (string) $comment['module'] === 'goalcanvasitem'
-                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                    $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-                }
-            }
-
             $comments = $this->commentsRepo->getComments('goalcanvasitem', $canvasItem['id']);
             $this->tpl->assign(
                 'numComments',
@@ -175,6 +161,27 @@ class EditCanvasItem extends Controller
             ]));
 
             return $this->tpl->displayPartial('goalcanvas::partials.milestonesSection');
+        }
+
+        // Delete comment (POST only: it changes data) — only when it belongs to THIS gated item
+        // (module + moduleId); deleteComment() filters on the comment id alone, so the bind
+        // prevents deleting a foreign item's / project's comment.
+        if (isset($params['delComment']) && isset($params['id'])) {
+            $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
+            $commentId = (int) ($params['delComment']);
+            $comment = $this->commentsRepo->getComment($commentId);
+            if ($comment !== false
+                && (string) $comment['module'] === 'goalcanvasitem'
+                && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                $this->commentsRepo->deleteComment($commentId);
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $canvasItem['id']);
         }
 
         if (isset($params['comment']) && isset($params['id'])) {

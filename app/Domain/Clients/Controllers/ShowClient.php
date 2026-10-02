@@ -59,19 +59,6 @@ class ShowClient extends Controller
             return $this->tpl->display('errors.error404', responseCode: 404);
         }
 
-        // Handle file deletion via GET param
-        if (isset($_GET['delFile'])) {
-            $result = $this->fileService->deleteFile($_GET['delFile']);
-
-            if ($result === true) {
-                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'clientfile_deleted');
-
-                return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id.'#files');
-            } else {
-                $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
-            }
-        }
-
         if (session('userdata.role') == 'admin') {
             $this->tpl->assign('admin', true);
         }
@@ -101,6 +88,28 @@ class ShowClient extends Controller
 
         if ($client === false) {
             return $this->tpl->display('errors.error404', responseCode: 404);
+        }
+
+        // Handle file deletion (POST only: it changes data)
+        if (isset($params['delFile'])) {
+            if ($this->fileService->deleteFile($params['delFile']) === true) {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'clientfile_deleted');
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id.'#files');
+        }
+
+        // Handle comment deletion
+        if (isset($params['delComment'])) {
+            if ($this->commentService->deleteComment((int) $params['delComment'])) {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id.'#comment');
         }
 
         // Handle file upload

@@ -121,7 +121,7 @@
                                 {!! __('label.loading_milestone') !!}
                             </div>
                         </div>
-                        <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem['milestoneId'] }}" class="ideaCanvasModal delete formModal"><i class="fa fa-close"></i> {!! __('links.remove') !!}</a>
+                        <a href="javascript:void(0);" data-post-field="removeMilestone" data-post-value="{{ $canvasItem['milestoneId'] }}" class="delete"><i class="fa fa-close"></i> {!! __('links.remove') !!}</a>
 
                     </li>
                 @endif

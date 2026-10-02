@@ -21,26 +21,12 @@ class IdeaDialog extends Controller
     }
 
     /**
-     * get - handle get requests. The embedded ?delComment / ?removeMilestone mutations are fenced
-     * by the service (removeIdeaComment = author-or-moderate; removeMilestone = edit) in-body.
+     * get - handle get requests.
      */
     #[RequiresPermission(IdeasPermissions::VIEW)]
     public function get($params)
     {
         if (isset($params['id'])) {
-            // Delete comment
-            if (isset($params['delComment']) === true) {
-                $commentId = (int) ($params['delComment']);
-                $this->ideaService->removeIdeaComment($commentId);
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'ideacomment_deleted');
-            }
-
-            // Delete milestone relationship
-            if (isset($params['removeMilestone']) === true) {
-                $this->ideaService->removeMilestone((int) $params['id']);
-                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
-            }
-
             $canvasItem = $this->ideaService->getIdeaItem((int) $params['id']);
             $comments = $this->ideaService->getIdeaComments('idea', $canvasItem['id']);
             $this->tpl->assign('numComments', $this->ideaService->countIdeaComments('ideas', $canvasItem['id']));
@@ -67,11 +53,27 @@ class IdeaDialog extends Controller
     /**
      * post - handle post requests. Create/update/comment all defer to the service methods, which
      * authorize the correct verb (ideas.create / ideas.edit / comments.create) against the entity's
-     * real project.
+     * real project. Comment delete / milestone detach are fenced by the service
+     * (removeIdeaComment = author-or-moderate; removeMilestone = edit).
      */
     #[RequiresPermission(IdeasPermissions::VIEW)]
     public function post($params)
     {
+        if (isset($params['id']) && (isset($params['delComment']) || isset($params['removeMilestone']))) {
+            // Delete comment
+            if (isset($params['delComment']) === true) {
+                $this->ideaService->removeIdeaComment((int) $params['delComment']);
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'ideacomment_deleted');
+            }
+
+            // Delete milestone relationship
+            if (isset($params['removeMilestone']) === true) {
+                $this->ideaService->removeMilestone((int) $params['id']);
+                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/'.(int) $params['id']);
+        }
 
         if (isset($params['comment']) === true) {
             if ($params['text'] != '') {

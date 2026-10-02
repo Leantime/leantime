@@ -185,3 +185,52 @@ leantime.showNotification = function (evt) {
 
 window.addEventListener("lt:ui:notify", leantime.showNotification);
 window.addEventListener("HTMX.ShowNotification", leantime.showNotification);
+
+// Links that change data (delete a comment, remove a file, enable a plugin…) must be sent as
+// POST: a GET can be fired by any other site through a plain link or image. Such links carry
+// data-post-field / data-post-value instead of a query string:
+//   - with data-post-url, a one-off form is posted to that URL (full page submit);
+//   - without it, the field is added to the surrounding <form> and that form is submitted,
+//     so forms that live in a modal keep posting through the modal.
+// Optional data-post-confirm asks before submitting.
+jQuery(document).on('click', '[data-post-field]', function (event) {
+    event.preventDefault();
+
+    var link = jQuery(this);
+    var fieldName = link.attr('data-post-field');
+    var fieldValue = link.attr('data-post-value') || '';
+    var postUrl = link.attr('data-post-url');
+    var confirmText = link.attr('data-post-confirm');
+
+    if (confirmText && !window.confirm(confirmText)) {
+        return;
+    }
+
+    var form;
+    if (postUrl) {
+        form = jQuery('<form method="post" style="display:none;"></form>').attr('action', postUrl);
+        var csrfToken = jQuery('meta[name=csrf-token]').attr('content');
+        if (csrfToken) {
+            form.append(jQuery('<input type="hidden" name="_token">').val(csrfToken));
+        }
+        jQuery('body').append(form);
+    } else {
+        form = link.closest('form');
+        if (form.length === 0) {
+            return;
+        }
+        form.find('input[type=hidden]').filter(function () {
+            return this.name === fieldName;
+        }).remove();
+    }
+
+    form.append(jQuery('<input type="hidden">').attr('name', fieldName).val(fieldValue));
+
+    // Fire a real submit event so modal (nyroModal) and htmx handlers can take over; fall back
+    // to a native submit when nobody intercepted it. No field validation — this is not a save.
+    var formElement = form[0];
+    var submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+    if (formElement.dispatchEvent(submitEvent)) {
+        HTMLFormElement.prototype.submit.call(formElement);
+    }
+});

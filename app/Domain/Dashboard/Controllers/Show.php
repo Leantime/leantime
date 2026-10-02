@@ -93,14 +93,6 @@ class Show extends Controller
         $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
         $this->tpl->assign('milestones', $allProjectMilestones);
 
-        // Delete comment (only confirm success when the auth-checked delete actually ran)
-        if (isset($_GET['delComment']) === true) {
-            if ($this->dashboardService->deleteProjectComment((int) $_GET['delComment'])) {
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'projectcomment_deleted');
-            }
-        }
-
-        $this->tpl->assign('delUrlBase', $this->dashboardService->buildDeleteCommentUrlBase());
         $this->tpl->assign('comments', $this->dashboardService->getProjectCommentsWithReplies($currentProjectId));
         $this->tpl->assign('numComments', $this->dashboardService->countProjectComments($currentProjectId));
 
@@ -127,6 +119,14 @@ class Show extends Controller
      */
     public function post($params): Response
     {
+        // Delete comment (only confirm success when the auth-checked delete actually ran)
+        if (isset($params['delComment']) === true) {
+            if ($this->dashboardService->deleteProjectComment((int) $params['delComment'])) {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'projectcomment_deleted');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/dashboard/show');
+        }
 
         if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
             if (isset($params['quickadd'])) {
