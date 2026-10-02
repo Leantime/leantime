@@ -30,7 +30,7 @@ class Files
             'encName' => $values['encName'],
             'realName' => $values['realName'],
             'extension' => $values['extension'],
-            'module' => $module,
+            'module' => strtolower(trim($module)),
             'moduleId' => $values['moduleId'],
             'userId' => $values['userId'],
             'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
@@ -91,14 +91,15 @@ class Files
      *
      * For 'project' module files the moduleId is the project id directly.
      * For 'ticket' module files the owning ticket is looked up to find its project.
-     * All other module types have no project context and return null.
+     * All other module types have no project context and return null. The module name is
+     * compared case-insensitively so an odd-cased stored module still resolves.
      *
      * @param  array  $fileRecord  The file record as returned by getFileByEncName().
      * @return int|null The owning project id, or null when no project context applies.
      */
     public function getProjectIdForFile(array $fileRecord): ?int
     {
-        $module = $fileRecord['module'] ?? '';
+        $module = strtolower(trim((string) ($fileRecord['module'] ?? '')));
         $moduleId = (int) ($fileRecord['moduleId'] ?? 0);
 
         if ($moduleId <= 0) {
@@ -208,6 +209,7 @@ class Files
             ->addSelect('file.date AS rawDate')
             ->join('zp_user as user', 'file.userId', '=', 'user.id');
 
+        $module = strtolower(trim($module));
         if ($module !== '') {
             $query->where('file.module', $module);
         } else {
@@ -255,6 +257,7 @@ class Files
     public function upload(array $file, string $module, int $moduleId): false|string|array
     {
         // Clean module mess
+        $module = strtolower(trim($module));
         if ($module === 'projects') {
             $module = 'project';
         }
