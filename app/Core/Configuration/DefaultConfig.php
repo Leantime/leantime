@@ -537,9 +537,13 @@ class DefaultConfig
 
     // Security/Rate Limiting Settings ===============================================================================
     /**
-     * @var string trusted Proxies
+     * @var string Comma separated IPs / CIDR ranges of reverse proxies whose X-Forwarded-* headers
+     *             (client IP, scheme, host) are honoured. Empty = loopback and private networks
+     *             only (PRIVATE_SUBNETS). When set explicitly, requests that do not come from one of
+     *             these addresses are rejected. 'REMOTE_ADDR' trusts every client and lets anyone
+     *             spoof their IP — only use it if Leantime is never reachable without the proxy.
      */
-    public string $trustedProxies = '127.0.0.1,REMOTE_ADDR';
+    public string $trustedProxies = '';
 
     /**
      * @var int rate limit on all requests
@@ -557,6 +561,16 @@ class DefaultConfig
      * @var int rate limit on auth requests
      */
     public int $ratelimitAuth = 20;
+
+    /**
+     * @var int password reset POSTs (reset email requests + new password submissions) per IP per 10 minutes
+     */
+    public int $ratelimitPasswordReset = 5;
+
+    /**
+     * @var int two-factor code submissions per user per 5 minutes
+     */
+    public int $ratelimitTwofa = 5;
 
     /**
      * @var int rate limit on MCP endpoint requests (per user+IP per minute). Higher than the API

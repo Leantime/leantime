@@ -11,6 +11,7 @@ use Leantime\Core\Configuration\Attributes\LaravelConfig;
 use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Middleware\TrustProxies;
 
 class LoadConfig extends LoadConfiguration
 {
@@ -132,9 +133,8 @@ class LoadConfig extends LoadConfiguration
 
         $appUrl = $config->get('appUrl');
 
-        // Set trusted prozies as early as possible to ensure schema is identified correctly
-        $proxies = explode(',', ($config->trustedProxies ?? '127.0.0.1,REMOTE_ADDR'));
-        Request::setTrustedProxies($proxies, $this->headers);
+        // Set trusted proxies as early as possible to ensure schema is identified correctly
+        Request::setTrustedProxies(TrustProxies::resolveTrustedProxies($config->trustedProxies ?? ''), $this->headers);
 
         if (! defined('BASE_URL')) {
             if (isset($appUrl) && ! empty($appUrl)) {
