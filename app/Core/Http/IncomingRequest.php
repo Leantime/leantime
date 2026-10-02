@@ -42,11 +42,10 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     public const HEADER_X_FORWARDED_TRAEFIK = parent::HEADER_X_FORWARDED_TRAEFIK; // All "X-Forwarded-*"
 
-    // List of valid api endpoint urls
+    // First path segments that mark an API endpoint (matched against the normalized path)
     public array $apiEndpoints = [
-        '/api/jsonrpc',
-        '/mcp',
-        '/api',
+        'api',
+        'mcp',
     ];
 
     public static function createFromGlobals(): static
@@ -186,27 +185,68 @@ class IncomingRequest extends \Illuminate\Http\Request
     /**
      * Determines whether the current request is an API or Cron request.
      *
+     * Classified from the normalized (decoded, slash-collapsed, lowercased) path — the same
+     * view of the URL the router dispatches on — so an encoded or padded path such as
+     * `/%61pi/jsonrpc` or `/api//jsonrpc` cannot reach the API controller while being
+     * treated as an ordinary web request by the middleware.
+     *
      * @return bool Returns true if the request is an API or Cron request, false otherwise.
      */
     public function isApiOrCronRequest(): bool
     {
-        $requestUri = $this->getRequestUri();
+        $segments = $this->normalizedSegments();
+        $firstSegment = $segments[0] ?? '';
+        $secondSegment = $segments[1] ?? '';
 
-        return str_starts_with(strtolower($requestUri), '/api/jsonrpc') || str_starts_with($requestUri, '/cron');
+        if ($firstSegment === 'api' && $secondSegment === 'jsonrpc') {
+            return true;
+        }
+
+        return $firstSegment === 'cron';
     }
 
     /**
      * Determines whether the current request targets the MCP server endpoint.
      *
+     * Uses the normalized path (see {@see self::normalizedSegments()}).
+     *
      * @return bool Returns true if the request is an MCP request, false otherwise.
      */
     public function isMcpRequest(): bool
     {
-        $requestUri = strtolower($this->getRequestUri());
+        return ($this->normalizedSegments()[0] ?? '') === 'mcp';
+    }
 
-        return $requestUri === '/mcp'
-            || str_starts_with($requestUri, '/mcp/')
-            || str_starts_with($requestUri, '/mcp?');
+    /**
+     * The decoded path segments, lowercased, with empty segments (duplicate slashes) removed.
+     *
+     * This is exactly the segment list the Frontcontroller routes on ({@see self::segments()}),
+     * lowercased so classification is case-insensitive. All request-type classification must use
+     * this instead of the raw request URI.
+     *
+     * @return array<int, string>
+     */
+    public function normalizedSegments(): array
+    {
+        return array_map('strtolower', $this->segments());
+    }
+
+    /**
+     * Whether the raw request path differs from the normalized path the router dispatches on
+     * (percent-encoding, duplicate slashes).
+     *
+     * Used to reject ambiguous paths on API endpoints, where a mismatch between how a request
+     * is classified and how it is routed has security impact. Letter case is not considered a
+     * mismatch.
+     *
+     * @return bool True if the raw path is not in its canonical form.
+     */
+    public function hasNonCanonicalPath(): bool
+    {
+        $rawPath = strtolower(trim($this->getPathInfo(), '/'));
+        $canonicalPath = implode('/', $this->normalizedSegments());
+
+        return $rawPath !== $canonicalPath;
     }
 
     /**
@@ -329,21 +369,16 @@ class IncomingRequest extends \Illuminate\Http\Request
     }
 
     /**
-     * Checks if the current request is an API request.
+     * Checks if the current request is an API request (`/api/...` or `/mcp/...`).
+     *
+     * Uses the normalized path (see {@see self::normalizedSegments()}), never the raw URI.
      *
      * @return bool Returns true if the current request is an API request, false otherwise.
      */
     public function isApiRequest(): bool
     {
-        $requestUri = strtolower($this->getRequestUri());
+        $firstSegment = $this->normalizedSegments()[0] ?? '';
 
-        // Check the endpoint
-        foreach ($this->apiEndpoints as $apiEndpoint) {
-            if (str_starts_with($requestUri, $apiEndpoint)) {
-                return true;
-            }
-        }
-
-        return false;
+        return in_array($firstSegment, $this->apiEndpoints, true);
     }
 }

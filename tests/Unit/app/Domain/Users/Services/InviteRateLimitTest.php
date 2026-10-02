@@ -47,7 +47,7 @@ class InviteRateLimitTest extends TestCase
 
     public function test_create_user_invite_returns_false_and_skips_db_when_user_cap_exceeded(): void
     {
-        session(['userdata' => ['id' => self::INVITER_ID, 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
+        session(['userdata' => ['id' => self::INVITER_ID, 'role' => 'owner', 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
 
         // Exhaust the per-user hourly cap (default 10) on the exact key the service computes.
         [$userKey] = $this->limiterKeys();

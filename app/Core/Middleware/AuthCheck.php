@@ -12,6 +12,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Domain\Auth\Guards\WebGuard;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,6 +58,12 @@ class AuthCheck
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+        // Token-authenticated endpoints must be addressed by their canonical path. A path that only
+        // resolves to the API after decoding/normalization (e.g. /%61pi/jsonrpc, /api//jsonrpc) is
+        // rejected outright so classification and routing can never disagree.
+        if (($request->isApiOrCronRequest() || $request->isMcpRequest()) && $request->hasNonCanonicalPath()) {
+            return new Response(json_encode(['error' => 'Invalid request path']), Response::HTTP_BAD_REQUEST);
+        }
 
         if ($this->isPublicController($request->getCurrentRoute())) {
             return $next($request);
@@ -113,7 +120,7 @@ class AuthCheck
                 $this->auth->shouldUse($guard);
 
                 // Check two-factor authentication
-                if (session('userdata.twoFAEnabled') && ! session('userdata.twoFAVerified')) {
+                if (! $this->sessionTwoFASatisfied()) {
                     $response = $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
                 } else {
                     $authenticated = true;
@@ -135,11 +142,37 @@ class AuthCheck
         return $authenticated ? true : $response;
     }
 
-    protected function authenticateApi($request, array $guards)
+    /**
+     * Authenticate a token-authenticated request (JSON-RPC, cron, MCP).
+     *
+     * The stateful web session guard is only honoured for same-origin XHR calls (the app's own
+     * JavaScript) whose session has completed two-factor verification. Anything else — a top-level
+     * navigation or cross-site form riding the session cookie, or a session still waiting on 2FA —
+     * must authenticate with an API key or Bearer token.
+     *
+     * @return true|Response True when authenticated, otherwise the 401 response.
+     */
+    protected function authenticateApi(IncomingRequest $request, array $guards): bool|Response
     {
+        $sessionAwaitingTwoFA = false;
+
         foreach ($guards as $guard) {
             try {
-                if ($this->auth->guard($guard)->check()) {
+                $guardInstance = $this->auth->guard($guard);
+
+                if ($guardInstance instanceof WebGuard) {
+                    if (! $request->ajax()) {
+                        continue;
+                    }
+
+                    if (! $this->sessionTwoFASatisfied()) {
+                        $sessionAwaitingTwoFA = $sessionAwaitingTwoFA || $guardInstance->check();
+
+                        continue;
+                    }
+                }
+
+                if ($guardInstance->check()) {
                     $this->auth->shouldUse($guard);
 
                     $this->establishApiUserSession($request);
@@ -184,9 +217,25 @@ class AuthCheck
             }
         }
 
+        // A logged-in browser session that has not finished 2FA is not a credential-guessing
+        // attempt; reject it without counting against the per-IP failed-auth budget.
+        if ($sessionAwaitingTwoFA) {
+            return new Response(json_encode(['error' => 'Two-factor authentication required']), 401);
+        }
+
         $this->hitFailedAuthLimiter($request);
 
         return new Response(json_encode(['error' => 'Unauthorized']), 401);
+    }
+
+    /**
+     * Whether the current session satisfies two-factor authentication: either 2FA is not enabled
+     * for the user, or the code has been verified in this session. Mirrors the web check in
+     * {@see self::authenticateWeb()}.
+     */
+    protected function sessionTwoFASatisfied(): bool
+    {
+        return ! session('userdata.twoFAEnabled') || (bool) session('userdata.twoFAVerified');
     }
 
     /**

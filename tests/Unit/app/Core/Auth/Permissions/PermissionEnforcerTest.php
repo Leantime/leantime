@@ -177,6 +177,24 @@ class PermissionEnforcerTest extends \Unit\TestCase
 
         $this->assertSame([['key' => 'tickets.view', 'projectId' => 7, 'forceGlobal' => false]], $calls);
     }
+
+    public function test_missing_enforce_setting_fails_closed(): void
+    {
+        // Audit mode must be configured explicitly. With the setting absent, a denial blocks.
+        $previous = config('permissions');
+        config(['permissions' => []]);
+
+        $calls = [];
+        $enforcer = $this->spyEnforcer($calls, allow: false);
+
+        try {
+            $this->expectException(\Leantime\Core\Exceptions\AuthorizationException::class);
+
+            $enforcer->enforce(PermissionEnforcerFixture::class, 'globalAction', []);
+        } finally {
+            config(['permissions' => $previous]);
+        }
+    }
 }
 
 /**

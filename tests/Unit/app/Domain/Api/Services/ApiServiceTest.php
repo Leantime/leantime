@@ -153,6 +153,7 @@ class ApiServiceTest extends TestCase
                 'username' => 'lt_old',
                 'status' => 'i',
                 'role' => '10',
+                'source' => 'api',
             ],
             'editUser' => function ($values, $id) use (&$editUserCalledWith) {
                 $editUserCalledWith = [$values, $id];
@@ -192,6 +193,7 @@ class ApiServiceTest extends TestCase
                 'username' => 'lt_old',
                 'status' => 'i',
                 'role' => '10',
+                'source' => 'api',
             ],
             'editUser' => function ($values) use (&$editUserCalledWith) {
                 $editUserCalledWith = $values;
@@ -216,5 +218,42 @@ class ApiServiceTest extends TestCase
         $this->expectException(\Exception::class);
 
         $this->makeService()->updateApiKey(0, [], null);
+    }
+
+    public function test_api_key_cannot_outrank_its_creator(): void
+    {
+        session(['userdata' => ['id' => 4, 'role' => 'admin']]);
+        $userRepo = $this->make(UserRepository::class, [
+            'addUser' => function () {
+                $this->fail('the owner-role key must not be created');
+            },
+        ]);
+
+        $this->expectException(\Leantime\Core\Exceptions\AuthorizationException::class);
+
+        $this->makeService(userRepo: $userRepo)->createAPIKey(['firstname' => 'key', 'role' => '50']);
+    }
+
+    public function test_update_api_key_rejects_non_api_accounts_and_promotions(): void
+    {
+        session(['userdata' => ['id' => 4, 'role' => 'admin']]);
+        $userRepo = $this->make(UserRepository::class, [
+            'getUser' => fn ($id) => $id === 1
+                ? ['firstname' => 'Owner', 'username' => 'owner@example.com', 'status' => 'a', 'role' => '50', 'source' => '']
+                : ['firstname' => 'Key', 'username' => 'lt_key', 'status' => 'a', 'role' => '20', 'source' => 'api'],
+            'editUser' => function () {
+                $this->fail('nothing may be stored');
+            },
+        ]);
+        $service = $this->makeService(userRepo: $userRepo);
+
+        try {
+            $service->updateApiKey(1, ['firstname' => 'Hijacked'], null);
+            $this->fail('a regular user account must not be editable as an API key');
+        } catch (\Leantime\Core\Exceptions\AuthorizationException) {
+        }
+
+        $this->expectException(\Leantime\Core\Exceptions\AuthorizationException::class);
+        $service->updateApiKey(2, ['role' => '50'], null);
     }
 }

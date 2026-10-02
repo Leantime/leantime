@@ -4,6 +4,7 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -75,9 +76,13 @@ class ApiKey extends Controller
 
         if (isset($_POST['save'])) {
             if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
-                $this->apiService->updateApiKey($id, $_POST, $_POST['projects'] ?? null);
+                try {
+                    $this->apiService->updateApiKey($id, $_POST, $_POST['projects'] ?? null);
 
-                $this->tpl->setNotification($this->language->__('notifications.key_updated'), 'success', 'apikey_updated');
+                    $this->tpl->setNotification($this->language->__('notifications.key_updated'), 'success', 'apikey_updated');
+                } catch (AuthorizationException $e) {
+                    $this->tpl->setNotification($this->language->__('notification.role_not_allowed'), 'error');
+                }
             } else {
                 $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
             }
@@ -98,7 +103,7 @@ class ApiKey extends Controller
         $this->apiService->generateFormToken();
 
         $this->tpl->assign('allProjects', $this->apiService->getAllProjects());
-        $this->tpl->assign('roles', Roles::getRoles());
+        $this->tpl->assign('roles', $this->apiService->getAssignableRoles());
         $this->tpl->assign('clients', $this->clientService->getAll());
         $this->tpl->assign('values', $values);
         $this->tpl->assign('relations', $this->apiService->getProjectRelationIds($id));
