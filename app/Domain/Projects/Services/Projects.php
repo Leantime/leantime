@@ -2047,6 +2047,69 @@ class Projects extends BaseService implements ChecksProjectAccess
         return $this->projectRepository->patch($id, $params);
     }
 
+    /** Settings key recording the onboarding default project created for a user. */
+    public const ONBOARDING_PROJECT_SETTING = 'user.%d.onboardingProjectId';
+
+    /** Fields the first-login onboarding steps may change on a project. */
+    private const ONBOARDING_PATCHABLE_FIELDS = ['name', 'details'];
+
+    /**
+     * Patch the name/details of a project from the first-login onboarding wizard.
+     *
+     * Unlike patch() this does not require the company-wide projects.edit capability, because the
+     * wizard is shown to any newly signed-up user. It is NOT a bypass: the caller must either hold
+     * projects.edit, or the project must be the onboarding default project that was created for
+     * the session user (recorded at creation time) AND the user must still be assigned to it.
+     * Only `name` and `details` are written. A denial is logged and returns false so onboarding
+     * never traps the user.
+     *
+     * @param  int  $projectId  The project to patch (the session's current project in the wizard).
+     * @param  array<string, mixed>  $params  Fields to update; anything but name/details is dropped.
+     * @return bool True when the project was patched.
+     *
+     * @internal Onboarding wizard only. Not exposed over JSON-RPC.
+     */
+    public function patchOnboardingProject(int $projectId, array $params): bool
+    {
+        $params = array_intersect_key($params, array_flip(self::ONBOARDING_PATCHABLE_FIELDS));
+
+        if ($projectId <= 0 || $params === []) {
+            return false;
+        }
+
+        if (! $this->userMayPatchOnboardingProject($projectId)) {
+            Log::info('Onboarding project patch denied for project '.$projectId.' (user '.(session('userdata.id') ?? 'guest').')');
+
+            return false;
+        }
+
+        return $this->projectRepository->patch($projectId, $params);
+    }
+
+    /**
+     * Whether the session user may change $projectId through the onboarding wizard: company-wide
+     * project editors always; otherwise only the user's own onboarding default project, while
+     * they are still assigned to it.
+     *
+     * @param  int  $projectId  The project the wizard wants to change.
+     */
+    private function userMayPatchOnboardingProject(int $projectId): bool
+    {
+        if ($this->can(ProjectsPermissions::EDIT, null, true)) {
+            return true;
+        }
+
+        $userId = $this->currentUserId();
+        if ($userId === null || $userId <= 0) {
+            return false;
+        }
+
+        $onboardingProjectId = (int) $this->settingsRepo->getSetting(sprintf(self::ONBOARDING_PROJECT_SETTING, $userId));
+
+        return $onboardingProjectId === $projectId
+            && $this->isUserAssignedToProject($userId, $projectId);
+    }
+
     /**
      * Drops a parent assignment that would make the project its own ancestor.
      *

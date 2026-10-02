@@ -432,6 +432,15 @@ class Helper
 
         $projectId = $projectService->createProject($values);
 
+        // Remember which project is this user's onboarding project: the first-login wizard may
+        // rename/describe exactly this project without the company-wide projects.edit capability.
+        if ($projectId) {
+            $this->settingsRepo->saveSetting(
+                sprintf(\Leantime\Domain\Projects\Services\Projects::ONBOARDING_PROJECT_SETTING, $userId),
+                (int) $projectId
+            );
+        }
+
         // Create Milestone
         $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
         $values = [

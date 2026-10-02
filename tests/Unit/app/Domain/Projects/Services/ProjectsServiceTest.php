@@ -518,6 +518,74 @@ class ProjectsServiceTest extends TestCase
         }
     }
 
+    /**
+     * Builds a service for the onboarding-patch tests: the session user (1) is assigned to the
+     * listed projects and their recorded onboarding project is $onboardingProjectId.
+     *
+     * @param  array<int, int>  $assignedProjects
+     * @param  array<int, array{0: int, 1: array}>  $patches
+     */
+    private function onboardingService(int|false $onboardingProjectId, array $assignedProjects, bool $canManage, array &$patches): ProjectService
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn ($userId, $projectId) => in_array($projectId, $assignedProjects, true),
+            'patch' => function ($id, $params) use (&$patches) {
+                $patches[] = [$id, $params];
+
+                return true;
+            },
+        ]);
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn ($key) => $key === 'user.1.onboardingProjectId' ? $onboardingProjectId : false,
+        ]);
+
+        $service = $this->makeService(projectRepo: $projectRepo, settingsRepo: $settingsRepo);
+        $service->setPermissionService($this->projectPermissions([], $canManage));
+
+        return $service;
+    }
+
+    public function test_onboarding_patch_allows_the_users_own_onboarding_project(): void
+    {
+        $patches = [];
+        $service = $this->onboardingService(12, [12], false, $patches);
+
+        $this->assertTrue($service->patchOnboardingProject(12, ['name' => 'Mine', 'parent' => 99, 'psettings' => 'all']));
+        $this->assertSame([[12, ['name' => 'Mine']]], $patches, 'Only name/details may be written');
+    }
+
+    public function test_onboarding_patch_denies_any_other_project_for_non_managers(): void
+    {
+        $patches = [];
+        // The user is assigned to team project 30, but it is not their onboarding project.
+        $service = $this->onboardingService(12, [12, 30], false, $patches);
+
+        $this->assertFalse($service->patchOnboardingProject(30, ['name' => 'Renamed']));
+
+        // No recorded onboarding project at all (e.g. invited before this was tracked).
+        $noRecord = [];
+        $this->assertFalse($this->onboardingService(false, [30], false, $noRecord)->patchOnboardingProject(30, ['name' => 'Renamed']));
+
+        // Recorded project the user was since removed from.
+        $removed = [];
+        $this->assertFalse($this->onboardingService(12, [], false, $removed)->patchOnboardingProject(12, ['name' => 'Renamed']));
+
+        $this->assertSame([], $patches);
+        $this->assertSame([], $noRecord);
+        $this->assertSame([], $removed);
+    }
+
+    public function test_onboarding_patch_allows_company_wide_project_editors(): void
+    {
+        $patches = [];
+        $service = $this->onboardingService(false, [], true, $patches);
+
+        $this->assertTrue($service->patchOnboardingProject(30, ['details' => 'About']));
+        $this->assertSame([[30, ['details' => 'About']]], $patches);
+    }
+
     public function test_get_client_manager_projects_pins_non_admins_to_their_own_client(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'manager', 'clientId' => 3]]);
