@@ -440,6 +440,11 @@ class Auth implements Authenticatable
                 $result = $this->authRepo->setPWResetLink($username, $this->hashResetToken($resetToken));
 
                 if ($result) {
+                    if (empty($this->config->appUrl)) {
+                        // Without LEAN_APP_URL the link's host is derived from the request.
+                        Log::warning('Password reset link built from the request host because LEAN_APP_URL is not set. Set LEAN_APP_URL to your public URL so emailed links always point to your installation.');
+                    }
+
                     // Don't queue, send right away
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('password_reset');
