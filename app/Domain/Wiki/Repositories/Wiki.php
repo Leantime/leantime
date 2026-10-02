@@ -209,7 +209,7 @@ class Wiki extends Blueprints
             'title' => $wiki->title,
             'projectId' => $wiki->projectId,
             'author' => $wiki->author,
-            'created' => date('Y-m-d'),
+            'created' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'type' => 'wiki',
         ]);
 
@@ -238,8 +238,8 @@ class Wiki extends Blueprints
             'parent' => $article->parent,
             'tags' => $article->tags,
             'status' => $article->status,
-            'created' => date('Y-m-d'),
-            'modified' => date('Y-m-d'),
+            'created' => dtHelper()->dbNow()->formatDateTimeForDb(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'sortindex' => '10',
         ]);
 
@@ -260,7 +260,7 @@ class Wiki extends Blueprints
                 'parent' => $article->parent,
                 'tags' => $article->tags,
                 'status' => $article->status,
-                'modified' => date('Y-m-d'),
+                'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'milestoneId' => $article->milestoneId,
             ]) >= 0;
     }

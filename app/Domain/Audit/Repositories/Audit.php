@@ -28,7 +28,9 @@ class Audit
      */
     public function storeEvent(string $action = 'ping', string $values = '', string $entity = '', int $entityId = 0, int $userId = 0, int $projectId = 0, string $thedate = ''): void
     {
-        $eventDate = $thedate === '' ? now() : $thedate;
+        // UTC explicitly: now() follows PHP's default timezone, which the Localization middleware
+        // sets to the USER's, so audit times (e.g. wiki activity) were off by their UTC offset.
+        $eventDate = $thedate === '' ? dtHelper()->dbNow()->formatDateTimeForDb() : $thedate;
 
         $this->db->table('zp_audit')->insert([
             'userId' => $userId,

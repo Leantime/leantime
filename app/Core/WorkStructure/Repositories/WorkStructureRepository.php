@@ -86,7 +86,7 @@ class WorkStructureRepository
      */
     public function createStructure(array $values): int
     {
-        $now = now()->toDateTimeString();
+        $now = dtHelper()->dbNow()->formatDateTimeForDb();
 
         return (int) $this->db->table('zp_work_structures')->insertGetId([
             'title' => $values['title'],
@@ -161,7 +161,7 @@ class WorkStructureRepository
             'domain_reference' => $values['domainReference'] ?? null,
             'sort_order' => $values['sortOrder'] ?? 0,
             'meta' => isset($values['meta']) ? json_encode($values['meta']) : null,
-            'created_at' => now()->toDateTimeString(),
+            'created_at' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ]);
     }
 

@@ -320,7 +320,8 @@
                                 $date = format($row['dateToFinish'])->date(__('text.anytime'));
                             }
                             @endphp
-                            <td data-order="{{ $row['dateToFinish'] }}" >
+                            {{-- Sort on the raw UTC value; export the date the user sees (not "0000-00-00 00:00:00"). --}}
+                            <td data-order="{{ $row['dateToFinish'] }}" data-export="{{ $date }}">
                                 <input type="text" title="{{ __('label.due') }}" value="{{ $date }}" class="quickDueDates secretInput" data-id="{{ $row['id'] }}" name="date" />
                             </td>
                             <td data-order="{{ $row['planHours'] }}">

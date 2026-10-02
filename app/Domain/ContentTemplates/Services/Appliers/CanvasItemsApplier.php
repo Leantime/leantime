@@ -73,7 +73,7 @@ class CanvasItemsApplier implements Applier
         // One timestamp for the whole apply — all items from the same template
         // application should share created/modified so recent-activity sorts
         // don't rank them arbitrarily against each other.
-        $now = now();
+        $now = dtHelper()->dbNow()->formatDateTimeForDb(); // UTC, not the request user's tz
 
         foreach ($items as $offset => $item) {
             if (! is_array($item) || empty($item['box'])) {

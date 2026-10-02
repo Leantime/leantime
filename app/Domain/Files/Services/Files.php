@@ -363,8 +363,8 @@ class Files extends BaseService
         }
 
         // Use DB values instead of user-supplied params to prevent parameter tampering
-        $realName = $fileRecord['realName'];
         $ext = $fileRecord['extension'];
+        $realName = FileManager::displayName((string) $fileRecord['realName'], (string) $ext);
 
         $currentUserId = $this->currentUserId();
         $projectId = $this->resolveProjectId($fileRecord);
