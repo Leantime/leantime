@@ -13,6 +13,7 @@ use GuzzleHttp\Psr7\FnStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Utils;
+use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Core\Support\OutboundUrlGuard;
 
 /**
@@ -23,7 +24,8 @@ use Leantime\Core\Support\OutboundUrlGuard;
  * guard validated is pinned onto the connection with CURLOPT_RESOLVE: cURL connects to exactly
  * that address and never resolves the host itself, while the URL — and with it the Host header,
  * TLS SNI and the certificate check — keeps the real hostname. A pin can't redirect a connection
- * that is already open, so no request reuses a pooled connection or leaves one behind.
+ * that is already open, so no request reuses a pooled connection or leaves one behind. The pin is
+ * built by {@see OutboundHttpClient::pinnedCurlOptions()}, shared with the other outbound features.
  *
  * Always https to an endpoint that passes isValidEndpointUrl() — the same rule the profile save
  * applies. Always cURL (a stream handler can't honour the pin), never a proxy (it would resolve
@@ -106,11 +108,8 @@ class WebhookTransport
             return filter_var($ip, FILTER_VALIDATE_IP) !== false && OutboundUrlGuard::isIpAllowed($ip);
         }
 
-        // The pin only holds if cURL looks up the very name the guard resolved. Refuse spellings it
-        // rewrites first ("127.1", "0x7f000001", "2130706433", percent-encoding, IDN), keys
-        // differently (trailing dot) or the resolver may expand with search domains (single label).
-        return filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false
-            && preg_match('/\.[a-z][a-z0-9-]*$/', $host) === 1;
+        // The pin only holds if cURL looks up the very name the guard resolved.
+        return OutboundHttpClient::isPinnableHostname($host);
     }
 
     /**
@@ -135,27 +134,11 @@ class WebhookTransport
 
         // Parses exactly as isValidEndpointUrl() just did, so it cannot throw here.
         $uri = new Uri($webhookUrl);
-        $host = $uri->getHost();
-        $isIpLiteral = str_starts_with($host, '[') || filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
 
-        $allowedAddresses = OutboundUrlGuard::resolveAllowedAddresses((string) $uri);
-        if ($allowedAddresses === []) {
+        // Resolves, checks and pins the host for this call (fresh connection, closed after).
+        $curlOptions = OutboundHttpClient::pinnedCurlOptions($uri);
+        if ($curlOptions === null) {
             throw new \InvalidArgumentException(self::NOT_ALLOWED_MESSAGE);
-        }
-
-        // The pin only steers new connections: cURL would hand a pooled live connection for this
-        // host:port to the request without looking at CURLOPT_RESOLVE, reaching the address checked
-        // for an earlier delivery. So every request dials its own connection and closes it after.
-        $curlOptions = [
-            CURLOPT_FRESH_CONNECT => true,
-            CURLOPT_FORBID_REUSE => true,
-        ];
-
-        // cURL connects to an IP literal as-is (the guard just classified it), so only names need a pin.
-        if (! $isIpLiteral) {
-            $port = $uri->getPort() ?? 443; // https only (isValidEndpointUrl)
-            $pinnedAddress = str_contains($allowedAddresses[0], ':') ? '['.$allowedAddresses[0].']' : $allowedAddresses[0];
-            $curlOptions[CURLOPT_RESOLVE] = [$host.':'.$port.':'.$pinnedAddress];
         }
 
         $request = new Request('POST', $uri);

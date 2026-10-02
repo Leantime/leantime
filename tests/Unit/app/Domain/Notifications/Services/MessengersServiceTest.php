@@ -2,11 +2,12 @@
 
 namespace Unit\app\Domain\Notifications\Services;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -30,7 +31,7 @@ class MessengersServiceTest extends TestCase
     public function test_send_notification_to_messengers_skips_telegram_when_unconfigured(): void
     {
         $posted = false;
-        $client = $this->make(Client::class, [
+        $client = $this->make(OutboundHttpClient::class, [
             'post' => function () use (&$posted) {
                 $posted = true;
 
@@ -53,7 +54,7 @@ class MessengersServiceTest extends TestCase
     public function test_telegram_webhook_returns_false_when_hook_missing_required_fields(): void
     {
         $posted = false;
-        $client = $this->make(Client::class, [
+        $client = $this->make(OutboundHttpClient::class, [
             'post' => function () use (&$posted) {
                 $posted = true;
 
@@ -82,7 +83,7 @@ class MessengersServiceTest extends TestCase
         $capturedUrl = null;
         $capturedOptions = null;
 
-        $client = $this->make(Client::class, [
+        $client = $this->make(OutboundHttpClient::class, [
             'post' => function ($url, $options) use (&$capturedUrl, &$capturedOptions) {
                 $capturedUrl = $url;
                 $capturedOptions = $options;
@@ -118,7 +119,7 @@ class MessengersServiceTest extends TestCase
     {
         $capturedOptions = null;
 
-        $client = $this->make(Client::class, [
+        $client = $this->make(OutboundHttpClient::class, [
             'post' => function ($url, $options) use (&$capturedOptions) {
                 $capturedOptions = $options;
 
@@ -146,7 +147,7 @@ class MessengersServiceTest extends TestCase
 
     public function test_telegram_webhook_catches_guzzle_exception_and_returns_false(): void
     {
-        $client = $this->make(Client::class, [
+        $client = $this->make(OutboundHttpClient::class, [
             'post' => function () {
                 throw new RequestException('API connection error', new Request('POST', 'test'));
             },
@@ -176,7 +177,7 @@ class MessengersServiceTest extends TestCase
         $capturedUrl = null;
         $capturedOptions = null;
 
-        $client = $this->make(Client::class, [
+        $client = $this->make(OutboundHttpClient::class, [
             'post' => function ($url, $options) use (&$capturedUrl, &$capturedOptions) {
                 $capturedUrl = $url;
                 $capturedOptions = $options;
@@ -230,5 +231,39 @@ class MessengersServiceTest extends TestCase
         $this->assertSame('headlines.project_with_name Acme Project', $fields[0]['title']);
         $this->assertSame('label.todo_status: New', $fields[0]['value']);
         $this->assertFalse($fields[0]['short']);
+    }
+
+    public function test_slack_webhook_to_internal_address_is_refused_before_any_connection(): void
+    {
+        // The real pinned client over a cURL handler that must never be reached: the SSRF guard
+        // refuses the metadata address before a connection is attempted.
+        $handlerCalls = new \ArrayObject;
+        $handler = new class($handlerCalls) extends CurlHandler
+        {
+            public function __construct(private \ArrayObject $calls) {}
+
+            public function __invoke($request, array $options): never
+            {
+                $this->calls->append($request);
+
+                throw new \LogicException('No request may be sent to a refused URL');
+            }
+        };
+
+        $settingRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn ($key) => $key === 'projectsettings.1.slackWebhookURL' ? 'http://169.254.169.254/latest/meta-data/' : false,
+        ]);
+
+        $language = $this->make(LanguageCore::class, ['__' => fn ($key) => $key]);
+        $this->app->instance(Tickets::class, $this->make(Tickets::class, ['getStatusLabels' => fn () => []]));
+
+        $notification = $this->makeNotification();
+        $notification->entity = ['headline' => 'Test Todo', 'status' => 3];
+
+        $messengers = new Messengers(new OutboundHttpClient($handler), $settingRepo, $language);
+
+        $reflectedMethod = new \ReflectionMethod($messengers, 'slackWebhook');
+        $this->assertFalse($reflectedMethod->invoke($messengers, $notification));
+        $this->assertCount(0, $handlerCalls, 'The refused URL must never reach the HTTP handler');
     }
 }

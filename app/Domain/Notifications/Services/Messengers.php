@@ -3,17 +3,24 @@
 namespace Leantime\Domain\Notifications\Services;
 
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\OutboundUrlGuard;
+use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets;
 
+/**
+ * Posts project notifications to the messenger webhooks a project has configured (Slack,
+ * Mattermost, Zulip, Discord, Telegram).
+ *
+ * Every request goes through {@see OutboundHttpClient}: the webhook URL is checked by the SSRF guard,
+ * the connection is pinned to the validated address (no DNS re-resolution), and connect/total
+ * timeouts bound each call. A refused URL surfaces as an exception and the webhook reports false.
+ */
 class Messengers
 {
-    private Client $httpClient;
+    private OutboundHttpClient $httpClient;
 
     private SettingRepository $settingsRepo;
 
@@ -30,7 +37,7 @@ class Messengers
      * @api
      */
     public function __construct(
-        Client $httpClient,
+        OutboundHttpClient $httpClient,
         SettingRepository $settingsRepo,
         LanguageCore $language
     ) {
@@ -87,14 +94,7 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                if (! OutboundUrlGuard::isAllowedUrl($slackWebhookURL)) {
-                    Log::warning('Blocked Slack webhook to disallowed URL (SSRF guard)', ['host' => parse_url($slackWebhookURL, PHP_URL_HOST)]);
-
-                    return false;
-                }
-
                 $this->httpClient->post($slackWebhookURL, [
-                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                 ]);
@@ -134,14 +134,7 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                if (! OutboundUrlGuard::isAllowedUrl($mattermostWebhookURL)) {
-                    Log::warning('Blocked Mattermost webhook to disallowed URL (SSRF guard)', ['host' => parse_url($mattermostWebhookURL, PHP_URL_HOST)]);
-
-                    return false;
-                }
-
                 $this->httpClient->post($mattermostWebhookURL, [
-                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                 ]);
@@ -191,14 +184,7 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                if (! OutboundUrlGuard::isAllowedUrl($curlUrl)) {
-                    Log::warning('Blocked Zulip webhook to disallowed URL (SSRF guard)', ['host' => parse_url($curlUrl, PHP_URL_HOST)]);
-
-                    return false;
-                }
-
                 $this->httpClient->post($curlUrl, [
-                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                     'auth' => [
@@ -249,7 +235,6 @@ class Messengers
                 $response = $this->httpClient->post(
                     "https://api.telegram.org/bot{$telegramHook['telegramBotToken']}/sendMessage",
                     [
-                        'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                         'connect_timeout' => 5,
                         'timeout' => 10,
                         'json' => $data,
@@ -479,14 +464,7 @@ class Messengers
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
                 try {
-                    if (! OutboundUrlGuard::isAllowedUrl($discordWebhookURL)) {
-                        Log::warning('Blocked Discord webhook to disallowed URL (SSRF guard)', ['host' => parse_url($discordWebhookURL, PHP_URL_HOST)]);
-
-                        return false;
-                    }
-
                     $this->httpClient->post($discordWebhookURL, [
-                        'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                         'body' => $data_string,
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);
