@@ -8,6 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
+use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
@@ -258,6 +259,15 @@ class Auth implements Authenticatable
     }
 
     /**
+     * setUserSession - establishes the web session for an authenticated user.
+     *
+     * When the session does not already belong to this user (a fresh login) the session id is
+     * regenerated first, so an id planted before authentication can never be carried into the
+     * authenticated session. The session is also pinned to the user's current password hash
+     * (see {@see PasswordFingerprint}) so a later password change logs it out.
+     *
+     * @param  mixed  $user  the zp_user row
+     * @param  bool  $isExternalAuth  true when an external identity provider authenticated the user
      * @return false|void
      *
      * @throws BindingResolutionException
@@ -268,6 +278,10 @@ class Auth implements Authenticatable
             return false;
         }
 
+        if ((int) session('userdata.id') !== (int) $user['id']) {
+            session()->regenerate(true);
+        }
+
         // Web-login session. twoFAVerified: false — the web flow enforces interactive 2FA via the
         // AuthCheck gate. Built via the shared factory (role NAME string + consistent fields), with
         // the web-only globalUserId added on top.
@@ -275,6 +289,13 @@ class Auth implements Authenticatable
         $currentUser['globalUserId'] = Uuid::uuid5(Uuid::NAMESPACE_DNS, strtolower($user['username']));
 
         $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
+
+        // Set after the filter so plugins can't drop it. The row may come from a stripped source
+        // without the hash; fall back to the repository so the fingerprint is always real.
+        $passwordHash = array_key_exists('password', $user)
+            ? $user['password']
+            : ($this->userRepo->getUser((int) $user['id'], false)['password'] ?? '');
+        $currentUser['pwfp'] = PasswordFingerprint::of($passwordHash);
 
         session(['userdata' => $currentUser]);
         session(['usersettings' => $currentUser['settings']]);
@@ -346,6 +367,11 @@ class Auth implements Authenticatable
         foreach ($sessionsToDestroy as $key) {
             session()->forget($key);
         }
+
+        // Drop the whole session and issue a new id + CSRF token so nothing from the
+        // authenticated session (including its id) survives the logout.
+        session()->invalidate();
+        session()->regenerateToken();
 
         self::dispatch_event('afterSessionDestroy', ['authService' => app()->make(self::class)]);
 
@@ -704,8 +730,14 @@ class Auth implements Authenticatable
         return session('userdata.twoFAVerified');
     }
 
+    /**
+     * set2FAVerified - marks the session as having passed the second factor.
+     *
+     * The session id is regenerated because the session gains privileges at this point.
+     */
     public function set2FAVerified(): void
     {
+        session()->regenerate(true);
         session(['userdata.twoFAVerified' => true]);
     }
 

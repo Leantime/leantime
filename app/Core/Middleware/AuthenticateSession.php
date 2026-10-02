@@ -3,146 +3,96 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Session\Middleware\AuthenticatesSessions;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\PasswordFingerprint;
+use Leantime\Core\Http\ApiRequest;
+use Leantime\Core\Http\HtmxRequest;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Domain\Setting\Services\Setting;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Ends web sessions whose password is no longer current.
+ *
+ * Login pins the session to a fingerprint of the user's password hash
+ * ({@see PasswordFingerprint}). Each request compares it with the hash in the database; after a
+ * password reset or change every other session of that user no longer matches and is logged
+ * out. Costs one primary-key lookup per authenticated web request.
+ */
 class AuthenticateSession implements AuthenticatesSessions
 {
-    /**
-     * Create a new middleware instance.
-     *
-     * @return void
-     */
     public function __construct(
-        protected AuthFactory $auth,
-        private readonly Setting $settings) {}
+        private readonly UserRepository $userRepo,
+    ) {}
 
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(IncomingRequest $request, Closure $next): Response
     {
-        if (! $request->hasSession() || ! $request->user()) {
+        if (! $request->hasSession()) {
             return $next($request);
         }
 
-        if ($this->guard()->viaRemember()) {
-            $passwordHash = explode('|', $request->cookies->get($this->guard()->getRecallerName()))[2] ?? null;
+        $session = $request->session();
+        $userId = (int) $session->get('userdata.id', 0);
 
-            if (! $passwordHash || $passwordHash != $request->user()->getAuthPassword()) {
-                $this->logout($request);
-            }
+        if ($userId === 0) {
+            return $next($request);
         }
 
-        if (! $request->session()->has('password_hash_'.$this->auth->getDefaultDriver())) {
-            $this->storePasswordHashInSession($request);
+        $storedFingerprint = $session->get(PasswordFingerprint::SESSION_KEY);
+
+        // Token-authenticated requests (x-api-key / Bearer) rebuild userdata from the credential on
+        // every request and never carry a fingerprint — the token is checked instead.
+        if ($storedFingerprint === null && $request instanceof ApiRequest) {
+            return $next($request);
         }
 
-        if ($request->session()->get('password_hash_'.$this->auth->getDefaultDriver()) !== $request->user(
-        )->getAuthPassword()) {
-            $this->logout($request);
+        $user = $this->userRepo->getUser($userId);
+
+        if (! is_array($user)) {
+            return $this->endSession($request, 'user no longer exists');
         }
 
-        return tap($next($request), function () use ($request) {
-            if (! is_null($this->guard()->user())) {
-                $this->storePasswordHashInSession($request);
-            }
-        });
-    }
+        $currentPasswordHash = $user['password'] ?? '';
 
-    /**
-     * Store the user's current password hash in the session.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    protected function storePasswordHashInSession($request)
-    {
-        if (! $request->user()) {
-            return;
-        }
-
-        $request->session()->put([
-            'password_hash_'.$this->auth->getDefaultDriver() => $request->user()->getAuthPassword(),
-        ]);
-    }
-
-    /**
-     * Log the user out of the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     *
-     * @throws \Illuminate\Auth\AuthenticationException
-     */
-    protected function logout($request)
-    {
-        $this->guard()->logoutCurrentDevice();
-
-        $request->session()->flush();
-
-        throw new AuthenticationException(
-            'Unauthenticated.', [$this->auth->getDefaultDriver()], $this->redirectTo($request)
-        );
-    }
-
-    /**
-     * Get the guard instance that should be used by the middleware.
-     *
-     * @return \Illuminate\Contracts\Auth\Guard
-     */
-    protected function guard()
-    {
-        return $this->auth->guard();
-    }
-
-    /**
-     * Get the path the user should be redirected to when their session is not authenticated.
-     *
-     * @return string|null
-     */
-    protected function redirectTo(Request $request)
-    {
-        return null;
-    }
-
-    public function setLeantimeSession(IncomingRequest $request, Closure $next): Response
-    {
-        if (! $request->hasSession() || ! $request->user()) {
-            session(['userdata' => null]);
+        // Sessions created before fingerprints existed: pin them to the current password now.
+        if (! is_string($storedFingerprint) || $storedFingerprint === '') {
+            $session->put(PasswordFingerprint::SESSION_KEY, PasswordFingerprint::of($currentPasswordHash));
 
             return $next($request);
         }
 
-        $user = $request->user();
-
-        // Set up the user session data
-        $currentUser = [
-            'id' => (int) $user->id,
-            'name' => strip_tags($user->firstname),
-            'profileId' => $user->profileId,
-            'mail' => filter_var($user->username, FILTER_SANITIZE_EMAIL),
-            'clientId' => $user->clientId,
-            'role' => $user->role,
-            'settings' => $user->settings ? safe_unserialize($user->settings, []) : [],
-            'twoFAEnabled' => $user->twoFAEnabled ?? false,
-            'twoFAVerified' => false,
-            'twoFASecret' => $user->twoFASecret ?? '',
-            'isExternalAuth' => false,
-            'createdOn' => ! empty($user->createdOn) ? dtHelper()->parseDbDateTime($user->createdOn) : dtHelper()->userNow(),
-            'modified' => ! empty($user->modified) ? dtHelper()->parseDbDateTime($user->modified) : dtHelper()->userNow(),
-        ];
-
-        session(['userdata' => $currentUser]);
+        if (! PasswordFingerprint::matches($storedFingerprint, $currentPasswordHash)) {
+            return $this->endSession($request, 'password changed');
+        }
 
         return $next($request);
+    }
+
+    /**
+     * Log the session out and send the client back to the login page.
+     */
+    private function endSession(IncomingRequest $request, string $reason): Response
+    {
+        Log::info('Ending session for user '.$request->session()->get('userdata.id').': '.$reason);
+
+        app(AuthService::class)->logout();
+
+        if ($request instanceof ApiRequest) {
+            return new Response(json_encode(['error' => 'Session expired']), Response::HTTP_UNAUTHORIZED);
+        }
+
+        $loginUrl = BASE_URL.'/auth/login';
+
+        if ($request instanceof HtmxRequest) {
+            return new Response('', Response::HTTP_OK, ['HX-Redirect' => $loginUrl]);
+        }
+
+        return new RedirectResponse($loginUrl);
     }
 }

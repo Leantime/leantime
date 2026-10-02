@@ -4,6 +4,7 @@ namespace Leantime\Domain\Users\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\ConnectionInterface;
+use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
@@ -323,9 +324,13 @@ class Users
             $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
 
-        return $this->connection->table('zp_user')
+        $updated = $this->connection->table('zp_user')
             ->where('id', $id)
             ->update($updateData) > 0;
+
+        $this->keepOwnSessionAfterPasswordChange($id, $updateData);
+
+        return $updated;
     }
 
     /**
@@ -383,6 +388,25 @@ class Users
         $this->connection->table('zp_user')
             ->where('id', $id)
             ->update($updateData);
+
+        $this->keepOwnSessionAfterPasswordChange($id, $updateData);
+    }
+
+    /**
+     * keepOwnSessionAfterPasswordChange - a password change logs out every other session of the
+     * user (see AuthenticateSession). When the session user changed their own password, re-pin
+     * this session to the new hash so the request that made the change stays signed in.
+     *
+     * @param  mixed  $id  the edited user's id
+     * @param  array  $updateData  the column values that were written
+     */
+    private function keepOwnSessionAfterPasswordChange(mixed $id, array $updateData): void
+    {
+        if (! isset($updateData['password']) || ! is_string($updateData['password'])) {
+            return;
+        }
+
+        PasswordFingerprint::refreshForSessionUser((int) $id, $updateData['password']);
     }
 
     /**
@@ -484,9 +508,13 @@ class Users
 
         $updates['modified'] = dtHelper()->dbNow()->formatDateTimeForDb();
 
-        return $this->connection->table('zp_user')
+        $updated = $this->connection->table('zp_user')
             ->where('id', $id)
             ->update($updates) > 0;
+
+        $this->keepOwnSessionAfterPasswordChange($id, $updates);
+
+        return $updated;
     }
 
     /**
