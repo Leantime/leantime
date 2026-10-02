@@ -502,7 +502,6 @@ class Files extends BaseService
             if (isset($files['file'])) {
                 try {
                     $result = $this->upload($files, $module, $moduleId);
-                    // @phpstan-ignore-next-line catch.neverThrown — upload() throws AuthorizationException (Files.php:136); PHPStan can't track it through the call.
                 } catch (AuthorizationException) {
                     // A denied upload becomes a clean "upload failed" notification, not a 403 page.
                     return ['action' => 'upload', 'success' => false];
