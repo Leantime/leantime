@@ -430,7 +430,7 @@ class Helper
             'end' => null,
         ];
 
-        $projectId = $projectService->addProject($values);
+        $projectId = $projectService->createProject($values);
 
         // Create Milestone
         $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);

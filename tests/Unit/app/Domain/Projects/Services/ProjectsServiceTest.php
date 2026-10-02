@@ -413,6 +413,162 @@ class ProjectsServiceTest extends TestCase
         $this->assertSame(42, $captured['projectId']);
     }
 
+    public function test_notify_project_created_escapes_the_author_and_project_names(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUsersAssignedToProject' => fn () => [
+                ['username' => 'wants@example.com', 'notifications' => 1, 'modified' => ''],
+            ],
+        ]);
+
+        $captured = null;
+        $queueRepo = $this->make(QueueRepository::class, [
+            'queueMessageToUsers' => function ($recipients, $message) use (&$captured) {
+                $captured = $message;
+            },
+        ]);
+        $language = $this->make(LanguageCore::class, [
+            '__' => fn ($key) => $key === 'email_notifications.project_created_message' ? '%s|%s|%s|%s' : $key,
+        ]);
+
+        $this->makeService(projectRepo: $projectRepo, queueRepo: $queueRepo, language: $language)
+            ->notifyProjectCreated(42, 'P & Co', '<a href="https://evil.example">Click</a>"');
+
+        $this->assertStringNotContainsString('<a href', $captured);
+        $this->assertStringContainsString('P &amp; Co', $captured);
+        $this->assertStringContainsString('Click&quot;', $captured);
+    }
+
+    // ---- in-body authorization (MCP tools call these services directly) ----
+
+    /** Permission stub: VIEW granted only on the listed projects; global capabilities per flag. */
+    private function projectPermissions(array $viewableProjects, bool $canManage): \Leantime\Core\Auth\Permissions\PermissionService
+    {
+        $decide = function (string $key, ?int $projectId = null, ?bool $forceGlobal = null) use ($viewableProjects, $canManage): bool {
+            if ($key === 'projects.view' && $forceGlobal !== true) {
+                return in_array($projectId, $viewableProjects, true);
+            }
+
+            return $canManage;
+        };
+
+        return $this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, [
+            'currentUserCan' => $decide,
+            'authorize' => function (string $key, ?int $projectId = null, ?bool $forceGlobal = null) use ($decide): void {
+                if (! $decide($key, $projectId, $forceGlobal)) {
+                    throw new AuthorizationException;
+                }
+            },
+        ]);
+    }
+
+    public function test_get_project_is_false_for_a_project_the_caller_cannot_view(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getProject' => fn ($id) => ['id' => $id, 'name' => 'Secret'],
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+        $service->setPermissionService($this->projectPermissions([5], false));
+
+        $this->assertSame(5, $service->getProject(5)['id']);
+        $this->assertFalse($service->getProject(6), 'A non-member without projects.edit must not read the project');
+    }
+
+    public function test_get_project_allows_company_wide_managers(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getProject' => fn ($id) => ['id' => $id],
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+        // Not a member of 6, but holds the company-wide projects.edit capability (manager+).
+        $service->setPermissionService($this->projectPermissions([], true));
+
+        $this->assertSame(6, $service->getProject(6)['id']);
+    }
+
+    public function test_project_mutations_self_authorize(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'addProject' => function () {
+                throw new \RuntimeException('must not create without projects.create');
+            },
+            'patch' => function () {
+                throw new \RuntimeException('must not patch without projects.edit');
+            },
+            'editProject' => function () {
+                throw new \RuntimeException('must not edit without projects.edit');
+            },
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+        $service->setPermissionService($this->projectPermissions([5], false));
+
+        $calls = [
+            'addProject' => fn () => $service->addProject(['name' => 'X', 'clientId' => 1]),
+            'patch' => fn () => $service->patch(5, ['name' => 'X']),
+            'editProject' => fn () => $service->editProject(['name' => 'X', 'type' => 'project'], 5),
+        ];
+
+        foreach ($calls as $method => $call) {
+            try {
+                $call();
+                $this->fail("$method must throw without the company-wide capability");
+            } catch (AuthorizationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    public function test_get_client_manager_projects_pins_non_admins_to_their_own_client(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'manager', 'clientId' => 3]]);
+
+        $requestedClient = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getClientProjects' => function ($clientId) use (&$requestedClient) {
+                $requestedClient = $clientId;
+
+                return [];
+            },
+            'getUserProjects' => fn () => [],
+        ]);
+
+        $this->makeService(projectRepo: $projectRepo)->getClientManagerProjects(1, 8);
+
+        $this->assertSame(3, $requestedClient, 'A non-admin must only list their own client\'s projects');
+    }
+
+    public function test_get_user_project_relation_pins_non_admins_to_themselves(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $requestedUser = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjectRelation' => function ($userId) use (&$requestedUser) {
+                $requestedUser = $userId;
+
+                return [];
+            },
+        ]);
+
+        $this->makeService(projectRepo: $projectRepo)->getUserProjectRelation(2);
+
+        $this->assertSame(1, $requestedUser);
+    }
+
+    public function test_get_all_programs_only_returns_accessible_programs_for_non_admins(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getProjectsByType' => fn () => [['id' => 5, 'name' => 'Mine'], ['id' => 6, 'name' => 'Not mine']],
+            'getUserProjects' => fn () => [['id' => 5]],
+        ]);
+
+        $programs = $this->makeService(projectRepo: $projectRepo)->getAllPrograms();
+
+        $this->assertSame([5], array_column($programs, 'id'));
+    }
+
     public function test_save_zulip_webhook_persists_when_all_fields_present(): void
     {
         $savedKey = null;
@@ -891,8 +1047,13 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService(projectRepo: $projectRepo)
-            ->patchProject(5, ['act' => 'projects.x', 'id' => 5, 'sortIndex' => 2, 'start' => '2026-01-01']);
+        $service = $this->makeService(projectRepo: $projectRepo);
+        $service->setPermissionService($this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, [
+            'authorize' => fn () => null,
+            'currentUserCan' => fn () => true,
+        ]));
+
+        $result = $service->patchProject(5, ['act' => 'projects.x', 'id' => 5, 'sortIndex' => 2, 'start' => '2026-01-01']);
 
         $this->assertTrue($result);
         $this->assertArrayNotHasKey('act', $patchedValues, 'Control fields must be stripped before persisting');

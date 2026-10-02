@@ -451,11 +451,77 @@ class TimesheetsServiceTest extends TestCase
             },
         ]);
 
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+
         // Editor (no manage) tries to log for user 2 → pinned to self (user 1).
-        $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))
-            ->addTime(['userId' => 2, 'hours' => 1]);
+        $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting([...self::EDITOR_KEYS, 'tickets.view']))
+            ->addTime(['userId' => 2, 'hours' => 1, 'ticket' => 3]);
 
         $this->assertSame(1, $captured['userId'], 'A non-manager must be pinned to their own userId');
+    }
+
+    /**
+     * Timesheet capabilities are company-wide, so the WRITE paths must additionally fence the
+     * ticket the time is booked on to a project the caller can view — otherwise any editor could
+     * log/punch time onto another project's tickets by id.
+     */
+    public function test_time_writes_deny_a_ticket_outside_the_callers_projects(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            'addTime' => function () {
+                $this->fail('time must not be added to a ticket the caller cannot view');
+            },
+            'upsertTimesheetEntry' => function () {
+                $this->fail('time must not be upserted on a ticket the caller cannot view');
+            },
+            'updateTime' => function () {
+                $this->fail('an entry must not be moved onto a ticket the caller cannot view');
+            },
+            'punchIn' => function () {
+                $this->fail('the timer must not start on a ticket the caller cannot view');
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 9]),
+        ]);
+        // Editor verbs only — no tickets.view, i.e. not a member of project 9.
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting(self::EDITOR_KEYS));
+
+        $calls = [
+            'logTime' => fn () => $service->logTime(3, ['date' => '2026-01-01', 'hours' => 1, 'kind' => 'GENERAL_BILLABLE']),
+            'upsertTime' => fn () => $service->upsertTime(3, ['date' => '2026-01-01', 'hours' => 1, 'kind' => 'GENERAL_BILLABLE']),
+            'addTime' => fn () => $service->addTime(['ticket' => 3, 'hours' => 1]),
+            'updateTime' => fn () => $service->updateTime(['ticket' => 3, 'hours' => 1]),
+            'punchIn' => fn () => $service->punchIn(3),
+        ];
+
+        foreach ($calls as $method => $call) {
+            try {
+                $call();
+                $this->fail("$method must throw for a ticket outside the caller's projects");
+            } catch (AuthorizationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    public function test_time_writes_reject_a_missing_or_malformed_ticket(): void
+    {
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => false,
+        ]);
+        $service = $this->makeService(ticketRepo: $ticketRepo);
+
+        foreach ([['ticket' => 404], ['ticket' => [3]], []] as $values) {
+            try {
+                $service->addTime($values + ['hours' => 1]);
+                $this->fail('addTime must reject an unknown or non-scalar ticket id');
+            } catch (AuthorizationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     // ---- Weekly grid bucketing across DST (#3310: Monday entry echoed on previous week's Sunday) ----

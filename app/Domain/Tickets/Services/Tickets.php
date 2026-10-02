@@ -296,9 +296,8 @@ class Tickets extends BaseService
             $searchCriteria['currentProject'] = $searchParams['currentProject'];
         }
 
-        if (isset($searchParams['currentUser']) === true) {
-            $searchCriteria['currentUser'] = $searchParams['currentUser'];
-        }
+        // currentUser/currentClient are deliberately NOT taken from $searchParams: they define the
+        // project-membership scope of the query and must always be the session user/client.
 
         if (isset($searchParams['users']) === true) {
             $searchCriteria['users'] = $searchParams['users'];
@@ -1140,17 +1139,33 @@ class Tickets extends BaseService
     }
 
     /**
+     * Tickets of a project that may serve as the parent of $ticket.
+     *
+     * The project defaults to the session project. Whatever it resolves to, the caller must hold
+     * tickets.view in THAT project; an unresolvable/non-positive project or a denied one yields
+     * an empty list (never the unscoped all-projects query).
+     *
+     * @param  TicketModel  $ticket  The ticket whose possible parents are listed.
+     * @param  string  $projectId  Project id, or 'currentProject' for the session project.
+     * @return array<int, TicketModel>
+     *
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllPossibleParents(TicketModel $ticket, string $projectId = 'currentProject'): array
     {
+        $rawProjectId = $projectId === 'currentProject' ? session('currentProject') : $projectId;
 
-        if ($projectId == 'currentProject') {
-            $projectId = session('currentProject');
+        $resolvedProjectId = filter_var($rawProjectId, FILTER_VALIDATE_INT);
+        if ($resolvedProjectId === false || $resolvedProjectId <= 0) {
+            return [];
         }
 
-        $results = $this->ticketRepository->getAllPossibleParents($ticket, $projectId);
+        if (! $this->can(TicketsPermissions::VIEW, $resolvedProjectId)) {
+            return [];
+        }
+
+        $results = $this->ticketRepository->getAllPossibleParents($ticket, $resolvedProjectId);
 
         if (is_array($results)) {
             return $results;
@@ -2816,6 +2831,21 @@ class Tickets extends BaseService
         return (int) array_key_first($candidates);
     }
 
+    /**
+     * Patch individual fields of a ticket.
+     *
+     * Self-authorizing: besides the @api wrappers (patchTicket, markTicketDone, ...) this is
+     * called directly by HTMX controllers, widgets and MCP tools, none of which pass through the
+     * #[RequiresPermission] dispatch gate. It therefore requires tickets.edit on the ticket's
+     * REAL project (project-scoped role + membership), and edit on the target project when the
+     * patch moves the ticket.
+     *
+     * @param  int|string  $id  The ticket id.
+     * @param  array  $params  Field => value pairs to update.
+     * @return bool True on success, false when the ticket is not visible or the write fails.
+     *
+     * @throws AuthorizationException When the caller may not edit the ticket (or the target project).
+     */
     public function patch($id, $params): bool
     {
         if (! is_array($params)) {
@@ -2836,6 +2866,8 @@ class Tickets extends BaseService
         if (! $ticket) {
             return false;
         }
+
+        $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         // Reassigning a ticket to a different project requires edit rights in the TARGET project,
         // not just the source (which the @api callers already authorized). Without this a user
@@ -3024,23 +3056,21 @@ class Tickets extends BaseService
     /**
      * Loads a milestone (or any ticket) by id for the milestone dialog.
      *
-     * Wraps the repository directly (no project-assignment gate) to preserve
-     * the legacy milestone-dialog behavior where the controller used the
-     * repository and relied on its own current-project redirect logic.
+     * Entity-scoped: the id is a ticket id, not a project id, so the attribute only marks
+     * coverage and the body authorizes tickets.view against the milestone's REAL project.
      *
      * @param  int  $id  The ticket/milestone id.
-     * @return TicketModel|bool The milestone model, or false if not found.
+     * @return TicketModel|bool The milestone model, or false if not found or not viewable.
      *
      * @api
      */
-    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'id')]
+    #[RequiresPermission(TicketsPermissions::VIEW, entityScoped: true)]
     public function getMilestone(int $id): TicketModel|bool
     {
         $milestone = $this->ticketRepository->getTicket($id);
 
-        // Verify the user is assigned to the milestone's project.
-        // Mirrors the authorization check in getTicket().
-        if ($milestone && $this->projectService->isUserAssignedToProject(session('userdata.id'), $milestone->projectId)) {
+        // Verify the user may view the milestone's project (role + membership).
+        if ($milestone && ! empty($milestone->projectId) && $this->can(TicketsPermissions::VIEW, (int) $milestone->projectId)) {
             return $milestone;
         }
 
@@ -3387,14 +3417,65 @@ class Tickets extends BaseService
     }
 
     /**
+     * Create a subtask under a parent ticket, or update one of the parent's existing subtasks.
+     *
+     * The parent is always reloaded server-side by id (a caller-supplied object/array is never
+     * trusted for its projectId), and authorization runs against the parent's REAL project:
+     * tickets.create for a new subtask, tickets.edit for an update. An update additionally
+     * requires that the target really is a subtask of that parent in the same project, so a
+     * caller cannot overwrite an arbitrary ticket by id or move it into another project.
+     *
+     * @param  array  $values  Subtask fields (headline, status, ...); `subtaskId` selects an update.
+     * @param  TicketModel|array|int|string|false|null  $parentTicket  The parent ticket (or its id).
+     * @return bool True on success, false when the parent/subtask cannot be resolved or the write fails.
+     *
+     * @throws AuthorizationException When the caller may not create/edit in the parent's project.
+     *
      * @api
      */
     #[RequiresPermission(TicketsPermissions::CREATE, entityScoped: true)]
     public function upsertSubtask($values, $parentTicket): bool
     {
-        $this->authorize(TicketsPermissions::CREATE, (int) $parentTicket->projectId);
+        if (! is_array($values)) {
+            return false;
+        }
+
+        $parentTicketId = $this->resolveTicketId($parentTicket);
+        if ($parentTicketId === null) {
+            return false;
+        }
+
+        // Reload the parent so its project comes from the database, never from the caller.
+        $parentTicket = $this->ticketRepository->getTicket($parentTicketId);
+        if (! $parentTicket || empty($parentTicket->projectId)) {
+            return false;
+        }
+
+        $parentProjectId = (int) $parentTicket->projectId;
 
         $subtaskId = $values['subtaskId'] ?? 'new';
+        $isNewSubtask = $subtaskId === 'new' || $subtaskId === '';
+
+        if ($isNewSubtask) {
+            $this->authorize(TicketsPermissions::CREATE, $parentProjectId);
+        } else {
+            $subtaskId = $this->resolveTicketId($subtaskId);
+            if ($subtaskId === null) {
+                return false;
+            }
+
+            $this->authorize(TicketsPermissions::EDIT, $parentProjectId);
+
+            // Only an existing subtask of THIS parent, in the parent's project, may be overwritten.
+            $existingSubtask = $this->ticketRepository->getTicket($subtaskId);
+            $isChildOfParent = $existingSubtask
+                && (int) $existingSubtask->dependingTicketId === $parentTicketId
+                && (int) $existingSubtask->projectId === $parentProjectId;
+
+            if (! $isChildOfParent) {
+                return false;
+            }
+        }
 
         $values = [
             'headline' => $values['headline'],
@@ -3421,7 +3502,7 @@ class Tickets extends BaseService
 
         $values = $this->prepareTicketDates($values);
 
-        if ($subtaskId == 'new' || $subtaskId == '') {
+        if ($isNewSubtask) {
             // New Ticket
             if (! $this->ticketRepository->addTicket($values)) {
                 return false;
@@ -3443,6 +3524,34 @@ class Tickets extends BaseService
     }
 
     /**
+     * Resolve a caller-supplied ticket reference (model, array, or scalar id) to a positive int.
+     *
+     * Strict on purpose — the result keys authorization lookups, so arrays nested in params,
+     * non-numeric strings and non-positive values are rejected instead of being cast.
+     *
+     * @param  mixed  $ticket  A TicketModel, an array/object carrying `id`, or a scalar id.
+     * @return int|null The ticket id, or null when it does not name a ticket.
+     */
+    private function resolveTicketId(mixed $ticket): ?int
+    {
+        if ($ticket instanceof TicketModel) {
+            $ticket = $ticket->id;
+        } elseif (is_array($ticket)) {
+            $ticket = $ticket['id'] ?? null;
+        } elseif (is_object($ticket)) {
+            $ticket = $ticket->id ?? null;
+        }
+
+        if (! is_int($ticket) && ! is_string($ticket)) {
+            return null;
+        }
+
+        $id = filter_var($ticket, FILTER_VALIDATE_INT);
+
+        return ($id !== false && $id > 0) ? $id : null;
+    }
+
+    /**
      * Authorized JSON-RPC entry point for Gantt re-sorting of tickets/milestones.
      *
      * Enforces editor+ and per-ticket project access (the RPC endpoint has no
@@ -3459,19 +3568,15 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function sortTickets(array $params): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
-            throw new AuthorizationException('You are not allowed to re-sort tasks.');
-        }
-
-        $userId = session('userdata.id');
+        // Authorize tickets.edit against EACH ticket's real project (the project-scoped role, not
+        // the session role), so a mixed batch cannot smuggle in tickets the caller may only view.
         foreach (array_keys($params) as $ticketId) {
             $ticket = $this->getTicket((int) $ticketId);
             if (! $ticket) {
                 throw new NotFoundException('A task referenced in the sort order could not be found.');
             }
-            if (! $this->projectService->isUserAssignedToProject($userId, $ticket->projectId)) {
-                throw new AuthorizationException('You are not allowed to re-sort this task.');
-            }
+
+            $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
         }
 
         return $this->updateTicketSorting($params);
@@ -3585,7 +3690,7 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
     public function updateTicketStatusAndSorting($params, $handler = null): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$editor)) {
+        if (! is_array($params)) {
             return false;
         }
 
@@ -3609,8 +3714,8 @@ class Tickets extends BaseService
             }
         }
 
-        // Verify project access for every ticket in the batch
-        $userId = session('userdata.id');
+        // Verify tickets.edit in the real project of every ticket in the batch (project-scoped
+        // role + membership via the permission engine — not the session role).
         $checkedProjects = [];
         foreach ($allTicketIds as $ticketId) {
             $ticket = $this->getTicket($ticketId);
@@ -3618,10 +3723,10 @@ class Tickets extends BaseService
                 return false;
             }
 
-            $projectId = $ticket->projectId;
-            // Cache project access checks to avoid redundant DB lookups
+            $projectId = (int) $ticket->projectId;
+            // Cache per-project decisions to avoid redundant lookups
             if (! isset($checkedProjects[$projectId])) {
-                $checkedProjects[$projectId] = $this->projectService->isUserAssignedToProject($userId, $projectId);
+                $checkedProjects[$projectId] = $this->can(TicketsPermissions::EDIT, $projectId);
             }
 
             if (! $checkedProjects[$projectId]) {
@@ -4155,14 +4260,25 @@ class Tickets extends BaseService
      *
      * @param  array  $params  Incoming request/search parameters.
      * @param  int  $programId  The program project id (owns the shared sprints + canonical labels).
-     * @param  int[]  $childIds  The child project ids the board spans (already authorized by the caller).
+     * @param  int[]  $childIds  The child project ids the board spans. Re-checked here: ids the
+     *                           caller may not view are dropped (this is an @api entry point).
      * @param  array<int, string>  $availableProjects  id => name map used by the project filter/grouping.
+     *
+     * @throws AuthorizationException When the caller may not view the program itself.
      *
      * @api
      */
+    #[RequiresPermission(TicketsPermissions::VIEW, entityScoped: true)]
     public function getProgramTicketTemplateAssignments(array $params, int $programId, array $childIds, array $availableProjects): array
     {
-        $childIds = array_values(array_filter(array_map('intval', $childIds), static fn ($id) => $id > 0));
+        $this->authorize(TicketsPermissions::VIEW, $programId);
+
+        // Never trust the child list: keep only real ids the caller can view, so the board's
+        // tickets, milestones and user rosters cannot be pulled from arbitrary projects.
+        $childIds = array_values(array_unique(array_filter(
+            array_map('intval', array_filter($childIds, 'is_scalar')),
+            fn (int $id) => $id > 0 && $this->can(TicketsPermissions::VIEW, $id)
+        )));
 
         $searchCriteria = $this->prepareTicketSearchArray($params);
         // Neutralize the single-project filter (currentProject is the program, which owns no

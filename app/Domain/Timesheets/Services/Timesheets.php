@@ -96,11 +96,24 @@ class Timesheets extends BaseService
     }
 
     /**
+     * Start the session user's timer on a ticket.
+     *
+     * Besides the (global) timesheets.create capability, the ticket must exist and the caller must
+     * be able to view its real project — time cannot be tracked on another project's tickets.
+     *
+     * @param  int  $ticketId  The ticket to clock in on.
+     * @return mixed The repository result (true on success).
+     *
+     * @throws AuthorizationException When the ticket is unknown or not accessible.
+     *
      * @api
      */
-    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
+    #[RequiresPermission(TimesheetsPermissions::CREATE, global: true, entityScoped: true)]
     public function punchIn(int $ticketId): mixed
     {
+        $this->authorize(TimesheetsPermissions::CREATE);
+        $this->authorizeTicketForTimeEntry($ticketId);
+
         return $this->timesheetsRepo->punchIn($ticketId);
     }
 
@@ -150,6 +163,7 @@ class Timesheets extends BaseService
         // Editor+ to log any time; non-managers are pinned to their own account (cannot log for
         // another user — that needs timesheets.manage).
         $this->authorize(TimesheetsPermissions::CREATE);
+        $this->authorizeTicketForTimeEntry($ticketId);
         if (! $this->can(TimesheetsPermissions::MANAGE)) {
             $params['userId'] = $this->currentUserId();
         }
@@ -222,6 +236,7 @@ class Timesheets extends BaseService
     {
         // Editor+ to log any time; non-managers are pinned to their own account.
         $this->authorize(TimesheetsPermissions::CREATE);
+        $this->authorizeTicketForTimeEntry($ticketId);
         if (! $this->can(TimesheetsPermissions::MANAGE)) {
             $params['userId'] = $this->currentUserId();
         }
@@ -346,6 +361,7 @@ class Timesheets extends BaseService
     public function addTime(array $values): void
     {
         $this->authorize(TimesheetsPermissions::CREATE);
+        $this->authorizeTicketForTimeEntry($values['ticket'] ?? null);
 
         // Non-managers can only add time entries for themselves.
         if (! $this->can(TimesheetsPermissions::MANAGE)) {
@@ -369,6 +385,9 @@ class Timesheets extends BaseService
     public function updateTime(array $values): void
     {
         $this->authorize(TimesheetsPermissions::EDIT);
+
+        // The write sets ticketId from the payload, so the (possibly new) ticket must be accessible.
+        $this->authorizeTicketForTimeEntry($values['ticket'] ?? null);
 
         $currentUserId = $this->currentUserId();
 
@@ -456,8 +475,13 @@ class Timesheets extends BaseService
                 continue;
             }
 
+            // A placeholder row without a real ticket has nothing to log (and no ticket to authorize).
+            if ((int) $ticketId <= 0) {
+                continue;
+            }
+
             try {
-                $this->upsertTime($ticketId, $values);
+                $this->upsertTime((int) $ticketId, $values);
                 $notifications[] = ['type' => 'success', 'message' => 'Timesheet saved successfully'];
             } catch (\Exception $e) {
                 $notifications[] = ['type' => 'error', 'message' => 'Error logging time: '.$e->getMessage()];
@@ -476,6 +500,32 @@ class Timesheets extends BaseService
         $this->authorizeTicketView($ticketId);
 
         return $this->timesheetsRepo->getLoggedHoursForTicket($ticketId);
+    }
+
+    /**
+     * Authorizes a time-entry WRITE against the real project of the ticket it is booked on.
+     *
+     * The timesheets.* capabilities are GLOBAL (they carry no project membership), so on their
+     * own they would let a caller book time onto any ticket id in any project. This loads the
+     * ticket server-side and requires tickets.view (role + membership) in ITS project.
+     *
+     * @param  mixed  $ticketId  The ticket id from the payload.
+     *
+     * @throws AuthorizationException When the id is invalid, the ticket is unknown, or not accessible.
+     */
+    private function authorizeTicketForTimeEntry(mixed $ticketId): void
+    {
+        $ticketId = is_int($ticketId) || is_string($ticketId) ? filter_var($ticketId, FILTER_VALIDATE_INT) : false;
+        if ($ticketId === false || $ticketId <= 0) {
+            throw new AuthorizationException;
+        }
+
+        $ticket = $this->ticketRepo->getTicket($ticketId);
+        if (! $ticket || empty($ticket->projectId)) {
+            throw new AuthorizationException;
+        }
+
+        $this->authorize(TicketsPermissions::VIEW, (int) $ticket->projectId);
     }
 
     /**
