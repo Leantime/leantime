@@ -93,6 +93,7 @@ class Plugins
         private SettingsService $settingsService,
         private UsersService $usersService,
         private AppSettings $appSettings,
+        private PluginArchive $pluginArchive,
     ) {
         $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         // $this->marketplaceUrl = 'https://marketplace.leantime.test';
@@ -679,6 +680,9 @@ class Plugins
     /**
      * Installs a marketplace plugin by downloading, extracting, and registering it in the plugin repository.
      *
+     * The archive is downloaded over verified TLS and checked by {@see PluginArchive} (safe entries,
+     * then the phar signature in a staging directory) before it replaces the installed version.
+     *
      * @param  MarketplacePlugin  $plugin  The marketplace plugin to be installed, including its identifier and license key.
      * @param  string  $version  The version of the plugin to be installed.
      *
@@ -691,7 +695,9 @@ class Plugins
 
         $this->clearCache();
 
-        $response = $this->httpClient()->withHeaders([
+        // The archive is code this server will run, so its download always verifies TLS (unlike
+        // the other marketplace calls made through httpClient()).
+        $response = Http::timeout($this->timeout)->withHeaders([
             'X-License-Key' => $plugin->license,
             'X-Instance-Id' => $this->settingsService->getCompanyId(),
             'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
@@ -707,53 +713,30 @@ class Plugins
         }
 
         $filename = $response->header('Content-Disposition');
-        $filename = substr($filename, strpos($filename, 'filename=') + 9);
+        $filename = trim(substr($filename, strpos($filename, 'filename=') + 9), " \"'");
         $foldername = Str::studly(basename($filename, '.zip'));
-        $filename = Str::finish($foldername, '.zip');
 
-        if (
-            ! file_put_contents(
-                $temporaryFile = Str::finish(sys_get_temp_dir(), '/').$filename,
-                $response->body()
-            )
-        ) {
+        // The folder name ends up in filesystem paths; only accept a plain identifier.
+        if (preg_match('/^[A-Za-z0-9_-]+$/', $foldername) !== 1) {
             throw new \Exception(__('notification.plugin_cant_download'));
         }
 
-        if (
-            is_dir($pluginDir = "{$this->pluginDirectory}{$foldername}")
-            && ! File::deleteDirectory($pluginDir)
-        ) {
-            throw new \Exception(__('notification.plugin_cant_remove'));
+        // A private, unpredictable temp path for the download, always removed afterwards.
+        $temporaryFile = Str::finish(sys_get_temp_dir(), '/').'leantime-plugin-'.bin2hex(random_bytes(16)).'.zip';
+
+        try {
+            if (! file_put_contents($temporaryFile, $response->body())) {
+                throw new \Exception(__('notification.plugin_cant_download'));
+            }
+
+            // Verifies the archive (entries, then the phar signature in a staging directory) before
+            // anything reaches the plugin directory; the installed version is only replaced after.
+            $this->pluginArchive->install($temporaryFile, $foldername, "{$this->pluginDirectory}{$foldername}");
+        } finally {
+            if (is_file($temporaryFile)) {
+                @unlink($temporaryFile);
+            }
         }
-
-        if (! mkdir($pluginDir) && ! is_dir($pluginDir)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
-        }
-
-        $zip = new \ZipArchive;
-
-        match ($zip->open($temporaryFile)) {
-            \ZipArchive::ER_EXISTS => throw new \Exception(__('notification.plugin_zip_exists')),
-            \ZipArchive::ER_INCONS => throw new \Exception(__('notification.plugin_zip_inconsistent')),
-            \ZipArchive::ER_INVAL => throw new \Exception(__('notification.plugin_zip_invalid_arg')),
-            \ZipArchive::ER_MEMORY => throw new \Exception(__('notification.plugin_zip_malloc')),
-            \ZipArchive::ER_NOENT => throw new \Exception(__('notification.plugin_zip_no_file')),
-            \ZipArchive::ER_NOZIP => throw new \Exception(__('notification.plugin_zip_not_zip')),
-            \ZipArchive::ER_OPEN => throw new \Exception(__('notification.plugin_zip_cant_open')),
-            \ZipArchive::ER_READ => throw new \Exception(__('notification.plugin_zip_read_err')),
-            \ZipArchive::ER_SEEK => throw new \Exception(__('notification.plugin_zip_seek_err')),
-            default => throw new \Exception(__('notification.plugin_zip_unknown_err')),
-            true => null,
-        };
-
-        if (! $zip->extractTo($pluginDir)) {
-            throw new \Exception(__('notification.plugin_zip_cant_extract'));
-        }
-
-        $zip->close();
-
-        unlink($temporaryFile);
 
         // read the composer.json content from the plugin phar file
         $pluginModel = $this->createPluginFromComposer($foldername, $plugin->license);
