@@ -31,8 +31,8 @@ var patterns = {
     googleForms: /^(?:https?:\/\/)?docs\.google\.com\/forms\/d\/(?:e\/)?([a-zA-Z0-9_-]+)(?:\/\S*)?$/,
 
     // Microsoft
-    oneDrive: /^(?:https?:\/\/)?(?:1drv\.ms|onedrive\.live\.com|.*\.sharepoint\.com)\/\S+$/,
-    office365: /^(?:https?:\/\/)?(?:.*\.sharepoint\.com|.*\.officeapps\.live\.com)\/\S+$/,
+    oneDrive: /^(?:https?:\/\/)?(?:1drv\.ms|onedrive\.live\.com|[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.sharepoint\.com)\/\S+$/,
+    office365: /^(?:https?:\/\/)?(?:[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.sharepoint\.com|[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.officeapps\.live\.com)\/\S+$/,
 
     // Design & Collaboration
     figma: /^(?:https?:\/\/)?(?:www\.)?figma\.com\/(file|proto|design)\/([a-zA-Z0-9]+)(?:\/\S*)?$/,
@@ -131,20 +131,101 @@ function getEmbedUrl(url, type, id) {
 
         case 'oneDrive':
         case 'office365':
-            // For Office docs, use action=edit for editable embeds
-            if (url.includes('sharepoint.com')) {
-                return url.replace(/\?.*$/, '') + '?action=edit&embedded=true';
+            // For Office docs, use action=edit for editable embeds. The pattern has already
+            // pinned the host; force https so the iframe never gets a relative or plain-http src.
+            var officeUrl = url.replace(/^(?:https?:\/\/)?/i, 'https://');
+            if (officeUrl.includes('sharepoint.com') || officeUrl.includes('1drv.ms') || officeUrl.includes('onedrive.live.com')) {
+                return officeUrl.replace(/\?.*$/, '') + '?action=edit&embedded=true';
             }
-            // For OneDrive personal links
-            if (url.includes('1drv.ms') || url.includes('onedrive.live.com')) {
-                return url.replace(/\?.*$/, '') + '?action=edit&embedded=true';
-            }
-            return url;
+            return officeUrl;
 
         default:
             // Unknown embed type - return null to reject
             return null;
     }
+}
+
+/**
+ * Hosts an embed iframe may point at, per embed type. Used to validate src values that
+ * come from stored HTML rather than from the embed dialog.
+ */
+var allowedEmbedHosts = {
+    youtube: [/^(?:www\.)?youtube\.com$/, /^(?:www\.)?youtube-nocookie\.com$/],
+    vimeo: [/^player\.vimeo\.com$/],
+    loom: [/^(?:www\.)?loom\.com$/],
+    googleDocs: [/^docs\.google\.com$/],
+    googleSheets: [/^docs\.google\.com$/],
+    googleSlides: [/^docs\.google\.com$/],
+    googleForms: [/^docs\.google\.com$/],
+    figma: [/^(?:www\.)?figma\.com$/],
+    miro: [/^(?:www\.)?miro\.com$/],
+    airtable: [/^airtable\.com$/],
+    typeform: [/^(?:[a-z0-9-]+\.)?typeform\.com$/],
+    calendly: [/^calendly\.com$/],
+    codepen: [/^codepen\.io$/],
+    codesandbox: [/^codesandbox\.io$/],
+    oneDrive: [/^1drv\.ms$/, /^onedrive\.live\.com$/, /^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.sharepoint\.com$/],
+    office365: [/^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.sharepoint\.com$/, /^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.officeapps\.live\.com$/],
+};
+
+/**
+ * Whether src is an https URL on a host allowed for the given embed type.
+ */
+function isAllowedEmbedSrc(src, type) {
+    if (!src || !type || !allowedEmbedHosts[type]) return false;
+
+    var parsedUrl;
+    try {
+        parsedUrl = new URL(src);
+    } catch (e) {
+        return false;
+    }
+
+    if (parsedUrl.protocol !== 'https:') return false;
+
+    var hostname = parsedUrl.hostname.toLowerCase();
+    return allowedEmbedHosts[type].some(function(hostPattern) {
+        return hostPattern.test(hostname);
+    });
+}
+
+/**
+ * Rebuild embed attributes from untrusted stored HTML.
+ *
+ * Stored data-src / data-type are never trusted on their own: the src is rebuilt from the
+ * original URL the same way the embed dialog does it, and the result must be an https URL
+ * on a host that belongs to the embed type. Returns false (node is dropped) otherwise.
+ */
+function buildSafeEmbedAttrs(storedSrc, storedType, originalUrl, title) {
+    var type = null;
+    var embedId = null;
+    var embedSrc = null;
+
+    if (originalUrl) {
+        type = detectEmbedType(originalUrl);
+        if (type) {
+            embedId = extractId(originalUrl, type);
+            embedSrc = getEmbedUrl(originalUrl, type, embedId);
+        }
+    }
+
+    // Older content may lack the original URL; accept the stored src only if it checks out.
+    if (!embedSrc && storedType && patterns[storedType]) {
+        type = storedType;
+        embedSrc = storedSrc;
+    }
+
+    if (!type || !isAllowedEmbedSrc(embedSrc, type)) {
+        return false;
+    }
+
+    return {
+        src: embedSrc,
+        type: type,
+        embedId: embedId,
+        originalUrl: originalUrl || null,
+        title: title,
+    };
 }
 
 /**
@@ -249,13 +330,12 @@ var EmbedNode = Node.create({
             {
                 tag: 'div[data-embed]',
                 getAttrs: function(dom) {
-                    return {
-                        src: dom.getAttribute('data-src'),
-                        type: dom.getAttribute('data-type'),
-                        embedId: dom.getAttribute('data-embed-id'),
-                        originalUrl: dom.getAttribute('data-original-url'),
-                        title: dom.getAttribute('data-title'),
-                    };
+                    return buildSafeEmbedAttrs(
+                        dom.getAttribute('data-src'),
+                        dom.getAttribute('data-type'),
+                        dom.getAttribute('data-original-url'),
+                        dom.getAttribute('data-title')
+                    );
                 },
             },
             // Legacy support for direct iframes
@@ -264,12 +344,8 @@ var EmbedNode = Node.create({
                 getAttrs: function(dom) {
                     var src = dom.getAttribute('src');
                     var videoId = src.match(/embed\/([a-zA-Z0-9_-]{11})/);
-                    return {
-                        src: src,
-                        type: 'youtube',
-                        embedId: videoId ? videoId[1] : null,
-                        title: dom.getAttribute('title'),
-                    };
+                    if (!videoId) return false;
+                    return buildSafeEmbedAttrs('https://www.youtube.com/embed/' + videoId[1], 'youtube', null, dom.getAttribute('title'));
                 },
             },
             {
@@ -277,12 +353,8 @@ var EmbedNode = Node.create({
                 getAttrs: function(dom) {
                     var src = dom.getAttribute('src');
                     var videoId = src.match(/video\/(\d+)/);
-                    return {
-                        src: src,
-                        type: 'vimeo',
-                        embedId: videoId ? videoId[1] : null,
-                        title: dom.getAttribute('title'),
-                    };
+                    if (!videoId) return false;
+                    return buildSafeEmbedAttrs('https://player.vimeo.com/video/' + videoId[1], 'vimeo', null, dom.getAttribute('title'));
                 },
             },
             {
@@ -293,21 +365,13 @@ var EmbedNode = Node.create({
                     if (src.includes('spreadsheets')) type = 'googleSheets';
                     if (src.includes('presentation')) type = 'googleSlides';
                     if (src.includes('forms')) type = 'googleForms';
-                    return {
-                        src: src,
-                        type: type,
-                        title: dom.getAttribute('title'),
-                    };
+                    return buildSafeEmbedAttrs(src, type, null, dom.getAttribute('title'));
                 },
             },
             {
                 tag: 'iframe[src*="figma.com"]',
                 getAttrs: function(dom) {
-                    return {
-                        src: dom.getAttribute('src'),
-                        type: 'figma',
-                        title: dom.getAttribute('title'),
-                    };
+                    return buildSafeEmbedAttrs(dom.getAttribute('src'), 'figma', null, dom.getAttribute('title'));
                 },
             },
         ];
@@ -316,7 +380,8 @@ var EmbedNode = Node.create({
     renderHTML: function(props) {
         var attrs = props.HTMLAttributes;
         var type = attrs.type || 'youtube';
-        var embedSrc = attrs.src;
+        // Last line of defense: never hand the iframe anything but an allowed https URL.
+        var embedSrc = isAllowedEmbedSrc(attrs.src, type) ? attrs.src : 'about:blank';
         var aspectRatio = getAspectRatio(type);
 
         // Trusted embeds are services that require same-origin cookie access or

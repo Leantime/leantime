@@ -242,6 +242,9 @@ var Gantt = (function () {
                 parent.appendChild(elem);
             } else if (attr === 'innerHTML') {
                 elem.innerHTML = attrs.innerHTML;
+            } else if (attr === 'textContent') {
+                // Use for any user-provided text (task names) so it is never parsed as markup.
+                elem.textContent = attrs.textContent;
             } else if (attr === 'clipPath') {
                 elem.setAttribute('clip-path', 'url(#' + attrs[attr] + ')');
             } else {
@@ -504,7 +507,7 @@ var Gantt = (function () {
             createSVG('text', {
                 x: x_coord,
                 y: this.y + this.height / 2,
-                innerHTML: this.task.name,
+                textContent: this.task.name,
                 class: 'bar-label',
                 append_to: this.bar_group,
             });
@@ -1078,8 +1081,8 @@ var Gantt = (function () {
                 this.pointer = this.parent.querySelector('.pointer');
             } else {
                 // set data
-                this.title.innerHTML = options.title;
-                this.subtitle.innerHTML = options.subtitle;
+                this.title.textContent = options.title;
+                this.subtitle.textContent = options.subtitle;
                 this.parent.style.width = this.parent.clientWidth + 'px';
             }
 
