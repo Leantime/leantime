@@ -1,3 +1,25 @@
+# Version: 3.10.1
+
+## New Features
+- **Personal Webhooks** - Added personal webhook delivery for notifications. (#3799)
+- **Beta Badge** - Added a Beta badge variant for navigation menu items. (#3777)
+
+## Bug Fixes
+- **Bug Sweep** - Resolved two rounds of reported issues across uploads, timezones, calendar, JSON-RPC, comments, text wrapping, Gantt labels, logo, idea board, invite email, toolbar, ticket header, and general UI. (#3802, #3805)
+- **Timezones** - The PHP process now runs in UTC with the user's timezone applied explicitly, and download names, double extensions, UTC timestamps, and CSV dates were corrected. (#3804, #3803)
+- **Tickets** - Due dates now display localized via the format helper in table and subtask views. (#3787, #3788)
+- **Goals** - Aligned the goal dialog with the task detail view. (#3776)
+- **Notifications** - Mattermost attachment fields are now sent as an array. (#3784)
+- **Ideas** - Fixed the current canvas id resolution by casting it to an integer. (#3796)
+
+## Improvements
+- **Telegram** - Replaced the Telegram integration PNG logo with a crisp SVG. (#3786)
+
+## Security
+- **npm Advisories** - Cleared the newly reported high-severity npm advisories. (#3801)
+
+---
+
 # Version: 3.10.0
 
 ## Highlights
