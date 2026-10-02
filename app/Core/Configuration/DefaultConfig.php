@@ -494,6 +494,19 @@ class DefaultConfig
      */
     public string $oidcFieldDepartment = '';
 
+    /**
+     * @var bool Reject logins whose identity token / userinfo carries email_verified=false. Providers
+     *           that omit the claim (e.g. Microsoft Entra ID, GitHub) are not affected. Only disable if
+     *           your provider marks admin-managed accounts as unverified (e.g. some Keycloak setups).
+     */
+    public bool $oidcRequireVerifiedEmail = true;
+
+    /**
+     * @var bool Skip TLS certificate verification for requests to the OIDC provider. Only for
+     *           providers with self-signed certificates on a trusted network — never in production.
+     */
+    public bool $oidcSkipTlsVerify = false;
+
     // Redis Settings ===============================================================================
     /**
      * @var bool Set to true if you want to use Redis
