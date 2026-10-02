@@ -91,6 +91,7 @@ class Files
      *
      * For 'project' module files the moduleId is the project id directly.
      * For 'ticket' module files the owning ticket is looked up to find its project.
+     * For 'wiki' module files the moduleId is a wiki article; its board's project is returned.
      * All other module types have no project context and return null. The module name is
      * compared case-insensitively so an odd-cased stored module still resolves.
      *
@@ -121,7 +122,37 @@ class Files
             }
         }
 
+        if ($module === 'wiki') {
+            return $this->getProjectIdForWikiArticle($moduleId);
+        }
+
         return null;
+    }
+
+    /**
+     * Resolves the project a wiki article belongs to.
+     *
+     * zp_canvas_items is shared by every canvas type, so the row must be an article ('article'
+     * box) on a wiki board; any other id resolves to null (fail closed).
+     *
+     * @param  int  $articleId  The wiki article id (zp_canvas_items.id).
+     * @return int|null The article's project id, or null when it is not a wiki article.
+     */
+    public function getProjectIdForWikiArticle(int $articleId): ?int
+    {
+        if ($articleId <= 0) {
+            return null;
+        }
+
+        $article = $this->db->table('zp_canvas_items')
+            ->join('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
+            ->select('zp_canvas.projectId')
+            ->where('zp_canvas_items.id', $articleId)
+            ->where('zp_canvas_items.box', 'article')
+            ->where('zp_canvas.type', 'wiki')
+            ->first();
+
+        return $article ? (int) $article->projectId : null;
     }
 
     public function getFiles(int $userId = 0): false|array

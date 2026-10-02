@@ -7,6 +7,7 @@ use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Files\FileManager;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Clients\Permissions\ClientsPermissions;
+use Leantime\Domain\Files\Permissions\FilesPermissions;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files;
 use Symfony\Component\HttpFoundation\Response;
@@ -301,7 +302,7 @@ class FilesServiceTest extends TestCase
 
         $service = $this->makeService($repo, null, $this->allowingPermissions());
 
-        $this->assertSame([], $service->getFilesByModule('wiki', 3));
+        $this->assertSame([], $service->getFilesByModule('comments', 3));
         $this->assertSame([], $service->getFilesByModule('zp_file', 3));
     }
 
@@ -462,7 +463,7 @@ class FilesServiceTest extends TestCase
         // Unknown or empty modules are denied even with allow-all permissions.
         $service = $this->makeService(null, null, $this->allowingPermissions());
 
-        $this->assertFalse($service->userCanUploadToModule('wiki', 9));
+        $this->assertFalse($service->userCanUploadToModule('comments', 9));
         $this->assertFalse($service->userCanUploadToModule('', 9));
     }
 
@@ -510,7 +511,7 @@ class FilesServiceTest extends TestCase
 
         $this->expectException(AuthorizationException::class);
 
-        $service->upload(['file' => []], 'wiki', 3);
+        $service->upload(['file' => []], 'comments', 3);
     }
 
     // ---- getFileForUser ---------------------------------------------------
@@ -639,7 +640,7 @@ class FilesServiceTest extends TestCase
     {
         $record = fn (int $owner) => [
             'id' => 17, 'realName' => 'a.png', 'extension' => 'png',
-            'module' => '', 'moduleId' => 4, 'userId' => $owner,
+            'module' => 'comments', 'moduleId' => 4, 'userId' => $owner,
         ];
         $fileManager = $this->make(FileManager::class, ['getFile' => fn () => new Response('bytes', 200)]);
 
@@ -648,6 +649,128 @@ class FilesServiceTest extends TestCase
 
         $ownFile = $this->make(FileRepository::class, ['getFileByEncName' => fn () => $record(1)]);
         $this->assertSame(200, $this->makeService($ownFile, $fileManager, $this->allowingPermissions())->getFileForUser('enc', 1)->getStatusCode());
+    }
+
+    public function test_get_file_for_user_legacy_empty_module_stays_readable_by_authenticated_users(): void
+    {
+        // Legacy wiki images were stored with module '' on MySQL; other users must still see them.
+        $repo = $this->make(FileRepository::class, [
+            'getFileByEncName' => fn () => [
+                'id' => 19, 'realName' => 'diagram.png', 'extension' => 'png',
+                'module' => '', 'moduleId' => 44, 'userId' => 2,
+            ],
+        ]);
+        $fileManager = $this->make(FileManager::class, ['getFile' => fn () => new Response('bytes', 200)]);
+
+        $this->assertSame(200, $this->makeService($repo, $fileManager, $this->denyingPermissions())->getFileForUser('enc', 1)->getStatusCode());
+
+        // ...but never without a session user.
+        session(['userdata.id' => null]);
+        $this->assertSame(403, $this->makeService($repo, $fileManager, $this->allowingPermissions())->getFileForUser('enc', 0)->getStatusCode());
+    }
+
+    public function test_legacy_empty_module_stays_strict_for_list_upload_and_delete(): void
+    {
+        $repo = $this->make(FileRepository::class, [
+            'getFilesByModule' => fn () => $this->fail('an empty module must not be listed'),
+            'getFile' => fn () => ['id' => 19, 'userId' => 2, 'module' => '', 'moduleId' => 44],
+            'deleteFile' => fn () => $this->fail('a non-owner must not delete a legacy file'),
+        ]);
+        $service = $this->makeService($repo, null, $this->allowingPermissions());
+
+        $this->assertSame([], $service->getFilesByModule('', 44));
+        $this->assertFalse($service->userCanUploadToModule('', 44));
+        $this->assertFalse($service->deleteFile(19));
+    }
+
+    public function test_wiki_upload_is_authorized_against_the_articles_project(): void
+    {
+        $checked = [];
+        $perms = $this->make(PermissionService::class, [
+            'currentUserCan' => function (string $permission, ?int $projectId = null) use (&$checked) {
+                $checked[] = [$permission, $projectId];
+
+                return $projectId === 7;
+            },
+        ]);
+        $repo = $this->make(FileRepository::class, [
+            'getProjectIdForWikiArticle' => fn (int $articleId) => $articleId === 44 ? 7 : null,
+        ]);
+        $service = $this->makeService($repo, null, $perms);
+
+        // Article 44 lives in project 7: files.upload is checked there (not the session project).
+        $this->assertTrue($service->userCanUploadToModule('wiki', 44));
+        $this->assertSame([[FilesPermissions::UPLOAD, 7]], $checked);
+
+        // An id that is not a wiki article resolves to nothing and fails closed.
+        $this->assertFalse($service->userCanUploadToModule('Wiki', 999));
+    }
+
+    public function test_wiki_upload_without_article_falls_back_to_the_session_project(): void
+    {
+        session(['currentProject' => 9]);
+        $checked = [];
+        $perms = $this->make(PermissionService::class, [
+            'currentUserCan' => function (string $permission, ?int $projectId = null) use (&$checked) {
+                $checked[] = [$permission, $projectId];
+
+                return true;
+            },
+        ]);
+        $repo = $this->make(FileRepository::class, [
+            'getProjectIdForWikiArticle' => fn () => $this->fail('no article id was given'),
+        ]);
+
+        $this->assertTrue($this->makeService($repo, null, $perms)->userCanUploadToModule('wiki', 0));
+        $this->assertSame([[FilesPermissions::UPLOAD, 9]], $checked);
+    }
+
+    public function test_wiki_upload_is_stored_against_the_project(): void
+    {
+        $stored = null;
+        $repo = $this->make(FileRepository::class, [
+            'getProjectIdForWikiArticle' => fn () => 7,
+            'addFile' => function (array $values, string $module) use (&$stored) {
+                $stored = [$module, $values['moduleId']];
+
+                return '55';
+            },
+        ]);
+        $fileManager = $this->make(FileManager::class, [
+            'upload' => fn () => ['encName' => 'abc', 'realName' => 'img', 'extension' => 'png', 'userId' => 1],
+        ]);
+        $service = $this->makeService($repo, $fileManager, $this->allowingPermissions());
+
+        $tmp = tempnam(sys_get_temp_dir(), 'wikiimg');
+        file_put_contents($tmp, 'png');
+        try {
+            $result = $service->upload(['file' => [
+                'tmp_name' => $tmp, 'name' => 'img.png', 'type' => 'image/png', 'error' => 0, 'size' => 3,
+            ]], 'wiki', 44);
+        } finally {
+            @unlink($tmp);
+        }
+
+        // zp_file.module has no 'wiki' enum value on MySQL: the row is a project file of project 7,
+        // so downloads are authorized with files.view there.
+        $this->assertSame(['project', 7], $stored);
+        $this->assertSame('project', $result['module']);
+    }
+
+    public function test_get_file_for_user_wiki_row_is_authorized_against_the_articles_project(): void
+    {
+        // Rows stored with module 'wiki' (string-column installs) resolve through the article.
+        $repo = $this->make(FileRepository::class, [
+            'getFileByEncName' => fn () => [
+                'id' => 20, 'realName' => 'a.png', 'extension' => 'png',
+                'module' => 'wiki', 'moduleId' => 44, 'userId' => 2,
+            ],
+            'getProjectIdForWikiArticle' => fn () => 7,
+        ]);
+        $fileManager = $this->make(FileManager::class, ['getFile' => fn () => new Response('bytes', 200)]);
+
+        $this->assertSame(403, $this->makeService($repo, $fileManager, $this->denyingPermissions())->getFileForUser('enc', 1)->getStatusCode());
+        $this->assertSame(200, $this->makeService($repo, $fileManager, $this->allowingPermissions())->getFileForUser('enc', 1)->getStatusCode());
     }
 
     public function test_delete_file_client_file_requires_clients_edit_even_for_uploader(): void

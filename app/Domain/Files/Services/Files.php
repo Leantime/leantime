@@ -44,7 +44,14 @@ class Files extends BaseService
      *
      * @var array<int, string>
      */
-    private const PROJECT_SCOPED_MODULES = ['project', 'ticket'];
+    private const PROJECT_SCOPED_MODULES = ['project', 'ticket', 'wiki'];
+
+    /**
+     * Module the editor uses for images pasted into a wiki article. zp_file.module is an enum
+     * without it on MySQL, so wiki uploads are stored against the article's project instead
+     * (see resolveUploadTarget()).
+     */
+    private const WIKI_MODULE = 'wiki';
 
     /**
      * Module whose files belong to a client (company account). Clients are a company-wide
@@ -102,6 +109,33 @@ class Files extends BaseService
     }
 
     /**
+     * The module/moduleId an upload is actually stored against.
+     *
+     * Normalizes the module name. A wiki upload (the editor sends module=wiki with the article id)
+     * is retargeted to its project: the article id is resolved through its wiki board to the real
+     * project — an id that isn't a wiki article resolves to 0 and fails closed. Only when no
+     * article id is given does it fall back to the session project, the editor's own fallback.
+     *
+     * @param  string  $module  The requested module.
+     * @param  int  $moduleId  The requested entity id.
+     * @return array{0: string, 1: int} The normalized [module, moduleId] to authorize and store.
+     */
+    private function resolveUploadTarget(string $module, int $moduleId): array
+    {
+        $module = self::normalizeModule($module);
+
+        if ($module !== self::WIKI_MODULE) {
+            return [$module, $moduleId];
+        }
+
+        $projectId = $moduleId > 0
+            ? $this->fileRepository->getProjectIdForWikiArticle($moduleId)
+            : (int) session('currentProject');
+
+        return ['project', (int) $projectId];
+    }
+
+    /**
      * Whether the current user may list the files of a module/entity.
      *
      * @param  string  $module  The normalized module name.
@@ -140,6 +174,11 @@ class Files extends BaseService
      */
     public function upload($file, $module, $moduleId, $entity = null, $disk = 'default'): array|string|false
     {
+        // Normalize module names (case + legacy plurals) and retarget wiki uploads onto the
+        // article's project, so the checks below see the canonical target and the stored row
+        // matches it.
+        [$module, $moduleId] = $this->resolveUploadTarget((string) $module, (int) $moduleId);
+
         try {
             // Validate input parameters
             if (empty($module) || empty($moduleId)) {
@@ -158,10 +197,6 @@ class Files extends BaseService
 
             return $e->getUserMessage();
         }
-
-        // Normalize module names (case + legacy plurals) so the checks below see the canonical
-        // spelling and the stored row matches it.
-        $module = self::normalizeModule((string) $module);
 
         // Authorize against the target before writing anything. This guards the JSON-RPC path,
         // which reaches the @api upload() directly, without the Upload controller's
@@ -353,6 +388,8 @@ class Files extends BaseService
      * request, so every target is checked here and upload() enforces the same verdict in-body:
      *  - project-scoped targets (project/ticket) need files.upload in the owning project
      *    (admin/owner bypass membership); an unresolvable id fails closed
+     *  - wiki targets resolve to the article's project (see resolveUploadTarget()) and need
+     *    files.upload there
      *  - client targets need the global clients.edit permission
      *  - owner-restricted targets (user/private/lead/export) keep prior behavior; their flows pin
      *    moduleId server-side (e.g. ProfileImage forces the session user's id)
@@ -366,7 +403,7 @@ class Files extends BaseService
      */
     public function userCanUploadToModule(string $module, int $moduleId): bool
     {
-        $module = self::normalizeModule($module);
+        [$module, $moduleId] = $this->resolveUploadTarget($module, $moduleId);
 
         if (in_array($module, self::PROJECT_SCOPED_MODULES, true)) {
             $projectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $moduleId]);
@@ -448,7 +485,8 @@ class Files extends BaseService
      *    (e.g. a deleted ticket) is denied
      *  - client files need the global clients.view permission
      *  - owner-restricted files are limited to their uploader
-     *  - files with an empty or unknown module are limited to their uploader (fail closed)
+     *  - legacy files with an empty module stay readable by any authenticated user
+     *  - files with any other unknown module are limited to their uploader (fail closed)
      *
      * @param  string  $module  The normalized module of the file.
      * @param  array  $fileRecord  The file record from the database.
@@ -464,6 +502,14 @@ class Files extends BaseService
 
         if ($module === self::CLIENT_MODULE) {
             return $this->can(ClientsPermissions::VIEW);
+        }
+
+        // Legacy rows with an empty module: MySQL stored '' for module values outside the column's
+        // enum (earlier editor uploads to wiki articles). They carry no context to authorize
+        // against and are embedded in content other users read, so downloads keep their prior
+        // behaviour: any authenticated user. Listing, uploading and deleting stay strict.
+        if ($module === '') {
+            return $currentUserId !== null;
         }
 
         // Owner-restricted and unknown modules: only the uploader.
