@@ -880,7 +880,12 @@ var Gantt = (function () {
             const x_offset_label_img = this.image_size + 10;
             const y_offset_label_img = (bar.getHeight() - this.image_size) / 2;
 
-            if (label.getBBox().width > bar.getWidth()) {
+            // The label sits inside the bar after the image (or padding), so only that remaining
+            // width is available. Comparing against the full bar width let 45+ character labels
+            // spill out of the bar (#3188; fix suggested in the issue thread).
+            const availableLabelWidth = bar.getWidth() - (img ? this.image_size + 10 : 10);
+
+            if (label.getBBox().width > availableLabelWidth) {
                 label.classList.add('big');
 
                 if (img) {

@@ -202,8 +202,11 @@ leantime.ideasController = (function () {
 
         var maxHeight = 0;
 
+        // A floor, not a fixed height: columns must grow with their cards. A fixed height made
+        // a long column's cards spill out of the container (#2258); the floor keeps empty columns
+        // tall enough to drop into.
         var height = jQuery("html").height() - 320;
-        jQuery("#sortableIdeaKanban .column .contentInner").css("height", height);
+        jQuery("#sortableIdeaKanban .column .contentInner").css("min-height", height);
 
     };
 

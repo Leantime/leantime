@@ -712,8 +712,10 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-toolbar__group {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 2px;
+    min-width: 0;
 }
 
 .tiptap-toolbar__separator {

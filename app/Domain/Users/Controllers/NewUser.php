@@ -102,6 +102,8 @@ class NewUser extends Controller
                 $this->tpl->setNotification($this->language->__('notification.user_exists'), 'error');
             } elseif ($result === 'invite_failed') {
                 $this->tpl->setNotification($this->language->__('notification.invite_failed'), 'error');
+            } elseif ($result === 'invite_email_failed') {
+                $this->tpl->setNotification($this->language->__('notification.invite_email_failed'), 'error');
             } else {
                 $this->tpl->setNotification('notification.user_invited_successfully', 'success', 'user_invited');
             }

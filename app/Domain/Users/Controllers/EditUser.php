@@ -139,6 +139,8 @@ class EditUser extends Controller
             $this->tpl->setNotification($this->language->__('notification.invite_too_soon'), 'error');
         } elseif ($result === 'too_many_invites') {
             $this->tpl->setNotification($this->language->__('notification.too_many_invites'), 'error');
+        } elseif ($result === 'invite_email_failed') {
+            $this->tpl->setNotification($this->language->__('notification.invite_email_failed'), 'error');
         } else {
             $this->tpl->setNotification($this->language->__('notification.invitation_sent'), 'success', 'userinvitation_sent');
         }
