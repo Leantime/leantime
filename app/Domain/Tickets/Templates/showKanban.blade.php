@@ -412,6 +412,7 @@
 
 
     (function initKanbanHorizontalScrollSync() {
+        if (!window.matchMedia("(min-width: 1200px)").matches) { return; }
         var header = document.querySelector('.kanban-column-headers');
         var rows = document.querySelectorAll('.sortableTicketList.kanbanBoard .row-fluid');
         var syncTargets = [];
@@ -462,6 +463,7 @@
     // escapes the clipping scrollport; revert on close so normal layout
     // (and the mobile/no-overflow case) is unaffected.
     (function initKanbanHeaderDropdownEscape() {
+        if (!window.matchMedia("(min-width: 1200px)").matches) { return; }
         var header = document.querySelector('.kanban-column-headers');
         if (!header) return;
 

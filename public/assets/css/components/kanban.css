@@ -1234,11 +1234,11 @@ body .maincontent .priority-text-5 a:link {
     transition: margin-left 300ms ease-out;
 }
 
-/* Desktop only: header gets its own horizontal scroller, synced to the
+/* Desktop (>=1200px, matching mobile.css): header gets its own horizontal scroller, synced to the
    board body via JS (see showKanban.blade.php). On mobile, #1364's fix
    makes .kanban-board-wrapper the single scroller instead, so this must
    not apply there or the two scroll mechanisms fight each other. */
-@media (min-width: 769px) {
+@media (min-width: 1200px) {
     .kanban-column-headers {
         width: 100%;
         max-width: 100%;
