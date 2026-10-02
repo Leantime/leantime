@@ -21,7 +21,8 @@ class InviteEmailFailureTest extends TestCase
     {
         parent::setUp();
         session(['userdata' => ['id' => self::INVITER_ID, 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
-        RateLimiter::clear('invites:user:'.self::INVITER_ID);
+        RateLimiter::clear('invites:'.BASE_URL.':user:'.self::INVITER_ID);
+        RateLimiter::clear('invites:'.BASE_URL.':tenant');
     }
 
     public function test_new_user_invite_reports_a_failed_email(): void
