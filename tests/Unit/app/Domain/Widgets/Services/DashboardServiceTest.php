@@ -110,15 +110,24 @@ class DashboardServiceTest extends TestCase
      */
     public function test_quick_add_today_is_the_users_calendar_day(): void
     {
-        session(['usersettings.timezone' => 'Pacific/Kiritimati']);
-        app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+        // Process at UTC-12 and user at UTC+14 are 26 hours apart, so their calendar dates ALWAYS
+        // differ: the old date('Y-m-d') (process timezone) can never coincidentally pass.
+        $originalTimezone = date_default_timezone_get();
 
-        $result = $this->makeService()->resolveQuickAddDueDate(['group' => 'overdue']);
+        try {
+            date_default_timezone_set('Etc/GMT+12');
+            session(['usersettings.timezone' => 'Pacific/Kiritimati']);
+            app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
 
-        $this->assertSame(\Carbon\CarbonImmutable::now('Pacific/Kiritimati')->format('Y-m-d'), $result);
+            $result = $this->makeService()->resolveQuickAddDueDate(['group' => 'overdue']);
 
-        session(['usersettings.timezone' => 'UTC']);
-        app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+            $this->assertSame(\Carbon\CarbonImmutable::now('Pacific/Kiritimati')->format('Y-m-d'), $result);
+            $this->assertNotSame(date('Y-m-d'), $result, 'the process date must not leak in');
+        } finally {
+            date_default_timezone_set($originalTimezone);
+            session(['usersettings.timezone' => 'UTC']);
+            app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+        }
     }
 
     public function test_resolve_quick_add_due_date_later_stays_empty(): void

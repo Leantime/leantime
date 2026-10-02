@@ -383,8 +383,10 @@ class Sprints extends BaseService
         $burnDown = [];
 
         if (count($allKeys) > 0) {
+            // Both ends in the user's timezone, so the user's current day is always included.
+            $userTimezone = dtHelper()->userNow()->getTimezone();
             $period = new DatePeriod(
-                new DateTime($allKeys[count($allKeys) - 1]),
+                new DateTime($allKeys[count($allKeys) - 1], $userTimezone),
                 new DateInterval('P1D'),
                 dtHelper()->userNow()
             );
