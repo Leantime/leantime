@@ -973,7 +973,7 @@ class Tickets extends BaseService
         }
 
         // Get today's date at midnight in user's timezone
-        $today = CarbonImmutable::now()->startOfDay();
+        $today = dtHelper()->userNow()->startOfDay();
 
         // Assign each ticket to appropriate bucket
         foreach ($tickets as $ticket) {
@@ -1022,7 +1022,8 @@ class Tickets extends BaseService
         }
 
         try {
-            $dueDate = CarbonImmutable::parse($dateToFinish)->startOfDay();
+            // Stored in UTC (a user's end-of-day); compare on the user's calendar day.
+            $dueDate = CarbonImmutable::parse($dateToFinish, 'UTC')->setTimezone($today->getTimezone())->startOfDay();
         } catch (\Exception $e) {
             return 'no-due-date';
         }
@@ -2459,7 +2460,7 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyClosedTicketsForDate(?int $userId = null, ?string $date = null): array
     {
-        $date = $date ?: date('Y-m-d');
+        $date = $date ?: dtHelper()->userNow()->format('Y-m-d');
 
         return $this->getMyClosedTicketsForRange($userId, $date, $date);
     }
@@ -3058,7 +3059,7 @@ class Tickets extends BaseService
         $milestone = app()->make(TicketModel::class);
         $milestone->status = 3;
 
-        $today = CarbonImmutable::now();
+        $today = dtHelper()->userNow();
         $milestone->editFrom = $today->format('Y-m-d');
         $milestone->editTo = $today->addWeek()->format('Y-m-d');
 

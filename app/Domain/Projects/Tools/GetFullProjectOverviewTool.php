@@ -101,10 +101,10 @@ class GetFullProjectOverviewTool extends Tool
 
                 // Set default date range if not provided
                 if (empty($dateFrom)) {
-                    $dateFrom = date('Y-m-01'); // First day of current month
+                    $dateFrom = dtHelper()->userNow()->format('Y-m-01'); // First day of the user's current month
                 }
                 if (empty($dateTo)) {
-                    $dateTo = date('Y-m-d'); // Today
+                    $dateTo = dtHelper()->userNow()->format('Y-m-d'); // The user's today
                 }
 
                 try {

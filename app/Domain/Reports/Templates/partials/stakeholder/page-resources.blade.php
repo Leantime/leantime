@@ -602,7 +602,7 @@
 
         // Find the most-urgent tentative dep with a dueDate for the risk banner.
         $urgent = null;
-        $today = new \DateTimeImmutable('today');
+        $today = dtHelper()->userNow()->startOfDay();
         foreach ($depsSorted as $d) {
             if (! $d->confirmed && $d->dueDate !== null) {
                 $urgent = $d;
@@ -613,7 +613,7 @@
         $daysUntil = function (?string $iso) use ($today) {
             if ($iso === null || $iso === '') return null;
             try {
-                $d = new \DateTimeImmutable($iso);
+                $d = new \DateTimeImmutable(substr($iso, 0, 10), $today->getTimezone());
                 return (int) $today->diff($d)->format('%r%a');
             } catch (\Exception $e) { return null; }
         };
@@ -636,7 +636,7 @@
         $fmtAgo = function (?string $iso) use ($today) {
             if ($iso === null) return null;
             try {
-                $d = new \DateTimeImmutable(substr($iso, 0, 10));
+                $d = new \DateTimeImmutable(substr($iso, 0, 10), $today->getTimezone());
                 $days = (int) $today->diff($d)->format('%a');
                 if ($days === 0) return __('stakeholder.rc.dep.today');
                 if ($days === 1) return __('stakeholder.rc.dep.yesterday');

@@ -5,7 +5,7 @@
 @php
 use Leantime\Domain\Wiki\Models\Template;
 
-$today = date(__('language.dateformat'));
+$today = dtHelper()->userNow()->format(__('language.dateformat'));
 $author = session('userdata.name') . ' (' . session('userdata.mail') . ')';
 
 // Document templates for the editor

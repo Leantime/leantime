@@ -375,12 +375,12 @@ class Dashboard extends BaseService
 
         if ($group === 'thisWeek') {
             // Due this week - set to end of week (Friday)
-            return date('Y-m-d', strtotime('next friday'));
+            return dtHelper()->userNow()->next(\Carbon\CarbonInterface::FRIDAY)->format('Y-m-d');
         }
 
         if ($group === 'overdue') {
             // Overdue - set to today
-            return date('Y-m-d');
+            return dtHelper()->userNow()->format('Y-m-d');
         }
 
         // For 'later' group (or no group), leave date empty
@@ -482,11 +482,11 @@ class Dashboard extends BaseService
         switch ($groupKey) {
             case 'overdue':
                 // Set due date to yesterday to make it overdue
-                return ['dateToFinish' => date('Y-m-d', strtotime('yesterday'))];
+                return ['dateToFinish' => dtHelper()->userNow()->subDay()->format('Y-m-d')];
 
             case 'thisWeek':
                 // Set due date to end of current week (Friday)
-                return ['dateToFinish' => date('Y-m-d', strtotime('next friday'))];
+                return ['dateToFinish' => dtHelper()->userNow()->next(\Carbon\CarbonInterface::FRIDAY)->format('Y-m-d')];
 
             case 'later':
                 // Clear due date for "later" group

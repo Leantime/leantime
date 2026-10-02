@@ -185,7 +185,7 @@ abstract class AbstractEntityFormatter implements EntityFormatterInterface
         }
 
         try {
-            $dateTime = CarbonImmutable::parse($date);
+            $dateTime = CarbonImmutable::parse($date, 'UTC'); // DB values are UTC
 
             return $dateTime->toIso8601String();
         } catch (\Exception $e) {

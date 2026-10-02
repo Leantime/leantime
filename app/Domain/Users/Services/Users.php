@@ -831,7 +831,7 @@ class Users extends BaseService
 
         $timezone = $this->settingsService->getSetting('usersettings.'.$userId.'.timezone');
         if (! $timezone) {
-            $timezone = date_default_timezone_get();
+            $timezone = app()->make(\Leantime\Core\Configuration\Environment::class)->defaultTimezone;
         }
 
         $messagesfrequency = $this->settingsService->getSetting('usersettings.'.$row['id'].'.messageFrequency');
@@ -898,7 +898,7 @@ class Users extends BaseService
                 'workStart' => null,
                 'lunch' => null,
                 'workEnd' => null,
-                'timezone' => date_default_timezone_get(),
+                'timezone' => app()->make(\Leantime\Core\Configuration\Environment::class)->defaultTimezone,
             ];
         }
 
@@ -912,7 +912,7 @@ class Users extends BaseService
 
         $timezone = $this->settingsService->getSetting('usersettings.'.$userId.'.timezone');
         if (! $timezone) {
-            $timezone = date_default_timezone_get();
+            $timezone = app()->make(\Leantime\Core\Configuration\Environment::class)->defaultTimezone;
         }
 
         return [

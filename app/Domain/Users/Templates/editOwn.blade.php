@@ -223,7 +223,7 @@
                                         <select name="date_format" id="date_format" style="width: 220px">
                                            @php
                                             $dateFormats = $dateTimeValues['dates'];
-                                            $dateTimeNow = date_create();
+                                            $dateTimeNow = dtHelper()->userNow();
                                            @endphp
 
                                             @foreach ($dateFormats as $format)
@@ -242,7 +242,7 @@
                                         <select name="time_format" id="time_format" style="width: 220px">
                                             @php
                                                 $timeFormats = $dateTimeValues['times'];
-                                                $dateTimeNow = date_create();
+                                                $dateTimeNow = dtHelper()->userNow();
                                             @endphp
 
                                             @foreach ($timeFormats as $format)
