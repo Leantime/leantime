@@ -414,6 +414,15 @@ class Users extends BaseService
         return ['userId' => $result, 'emailSent' => $emailSent];
     }
 
+    /**
+     * Sends the invitation email with the account-setup link to a user.
+     *
+     * @param  string  $inviteCode  The invite/password-reset code for the setup link.
+     * @param  string  $user  The recipient's email address (username).
+     * @return bool True when the email was sent, false when delivery failed.
+     *
+     * @throws BindingResolutionException
+     */
     public function sendUserInvite(string $inviteCode, string $user): bool
     {
 
@@ -1483,6 +1492,7 @@ class Users extends BaseService
      *   - 'sent'             invitation sent
      *   - 'too_soon'         another invite was sent within the 240s resend cooldown
      *   - 'too_many_invites' the hourly/daily invite cap was reached
+     *   - 'invite_email_failed' the invitation email could not be sent
      *
      * @param  int  $id  The id of the user to re-invite.
      * @param  array<string, mixed>  $row  The current stored user row.
@@ -1533,6 +1543,7 @@ class Users extends BaseService
      *   - 'user_exists'    email already belongs to another account
      *   - 'invite_failed'  invite could not be created (rate limit reached OR db failure — the
      *                      two are indistinguishable here, so the mapped message stays generic)
+     *   - 'invite_email_failed' the user was created but the invitation email could not be sent
      *
      * @param  array<string, mixed>  $post  Raw request input.
      * @param  int|string|null  $sessionClientId  The session user's client id (used for managers).

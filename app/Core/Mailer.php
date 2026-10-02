@@ -321,7 +321,13 @@ class Mailer
             foreach ($to as $recip) {
                 try {
                     $this->mailAgent->addAddress($recip);
-                    $this->mailAgent->send();
+
+                    // PHPMailer runs with exceptions off, so most SMTP failures return false
+                    // instead of throwing.
+                    if (! $this->mailAgent->send()) {
+                        $allSent = false;
+                        Log::error($this->mailAgent->ErrorInfo);
+                    }
                 } catch (Exception $e) {
                     $allSent = false;
                     Log::error($this->mailAgent->ErrorInfo);
