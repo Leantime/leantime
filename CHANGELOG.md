@@ -5,18 +5,28 @@
 - **Beta Badge** - Added a Beta badge variant for navigation menu items. (#3777)
 
 ## Bug Fixes
-- **Bug Sweep** - Resolved two rounds of reported issues across uploads, timezones, calendar, JSON-RPC, comments, text wrapping, Gantt labels, logo, idea board, invite email, toolbar, ticket header, and general UI. (#3802, #3805)
-- **Timezones** - The PHP process now runs in UTC with the user's timezone applied explicitly, and download names, double extensions, UTC timestamps, and CSV dates were corrected. (#3804, #3803)
-- **Tickets** - Due dates now display localized via the format helper in table and subtask views. (#3787, #3788)
+- **Timezones** - The PHP process now always runs in UTC and the user's timezone is applied explicitly. This fixes timestamps (comments, history, audit, files, canvas items, wiki) being stored in the viewer's local time, due-date buckets and quick-add dates near midnight, and calendar "Invalid DateTime" errors. (#3802, #3803, #3804)
+- **Files** - Uploads in the same second no longer overwrite each other; non-Latin filenames upload and download correctly (UTF-8 `Content-Disposition`); no more double extensions in the file list. (#3802, #3803)
+- **Text overflow** - Long URLs and words wrap in comments, status updates and descriptions; the editor toolbar wraps instead of running into the ticket sidebar. (#3805)
+- **Timeline** - Long milestone labels no longer spill over their Gantt bars. (#3805)
+- **Ideas** - Idea board columns grow with their cards; fixed the current canvas id resolution. (#3805, #3796)
+- **User invites** - Inviting a user (admin screen, resend and onboarding) now reports when the invitation email could not be sent instead of claiming success. (#3805)
+- **Login** - A custom logo keeps its aspect ratio on the login page. (#3805)
+- **Tickets** - The ticket header shows the real last-updated date; due dates are localized in table and subtask views; priority/effort sorting fixed; "Related to" works on new to-dos. (#3802, #3805, #3787, #3788)
+- **JSON-RPC** - Methods with union-typed parameters can be called. (#3802)
+- **CSV export** - Exports plain text instead of HTML and formats due dates. (#3802, #3803)
+- **Translations** - The Khmer language file loads again; the dead calendar help link now points to the support site. (#3805)
 - **Goals** - Aligned the goal dialog with the task detail view. (#3776)
 - **Notifications** - Mattermost attachment fields are now sent as an array. (#3784)
-- **Ideas** - Fixed the current canvas id resolution by casting it to an integer. (#3796)
 
 ## Improvements
 - **Telegram** - Replaced the Telegram integration PNG logo with a crisp SVG. (#3786)
 
 ## Security
 - **npm Advisories** - Cleared the newly reported high-severity npm advisories. (#3801)
+
+## Upgrade Notes
+- `LEAN_DEFAULT_TIMEZONE` is now only the default timezone for users who haven't set one; the server process always runs in UTC. Timestamps written before this release in a non-UTC timezone are not migrated and may display shifted by the old offset.
 
 ---
 
