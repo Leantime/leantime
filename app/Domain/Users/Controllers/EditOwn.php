@@ -30,9 +30,8 @@ class EditOwn extends Controller
      */
     public function get(): Response
     {
-        $permitted_chars = '123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
+        session(['formTokenName' => bin2hex(random_bytes(16))]);
+        session(['formTokenValue' => bin2hex(random_bytes(16))]);
 
         $profileSettings = $this->userService->getOwnProfileSettings($this->userId);
         array_map([$this->tpl, 'assign'], array_keys($profileSettings), array_values($profileSettings));

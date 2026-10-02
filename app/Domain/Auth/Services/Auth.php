@@ -354,12 +354,32 @@ class Auth implements Authenticatable
     /**
      * validateResetLink - validates that the password reset link belongs to a user account in the database
      *
-     * @param  string  $hash  invite link hash
+     * Only a hash of the reset token is stored, so the token from the link is hashed
+     * before it is looked up.
+     *
+     * @param  string  $token  the reset token from the password reset link
      */
-    public function validateResetLink(string $hash): bool
+    public function validateResetLink(string $token): bool
     {
+        if ($token === '') {
+            return false;
+        }
 
-        return $this->authRepo->validateResetLink($hash);
+        return $this->authRepo->validateResetLink($this->hashResetToken($token));
+    }
+
+    /**
+     * hashResetToken - one-way hash of a password reset token as it is stored in the database.
+     *
+     * The token itself is only ever sent to the user by email; a database read therefore
+     * never yields a usable reset link.
+     *
+     * @param  string  $token  the plain reset token
+     * @return string the sha256 hex digest stored in zp_user.pwReset
+     */
+    public function hashResetToken(string $token): string
+    {
+        return hash('sha256', $token);
     }
 
     /**
@@ -387,17 +407,18 @@ class Auth implements Authenticatable
 
         if ($userFromDB !== false && count($userFromDB) > 0) {
             if ($userFromDB['pwResetCount'] < $this->pwResetLimit) {
-                $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-                $resetLink = substr(str_shuffle($permitted_chars), 0, 32);
+                // 256 bits from the CSPRNG. Only the hash is persisted; the plain token
+                // exists solely in the emailed link.
+                $resetToken = bin2hex(random_bytes(32));
 
-                $result = $this->authRepo->setPWResetLink($username, $resetLink);
+                $result = $this->authRepo->setPWResetLink($username, $this->hashResetToken($resetToken));
 
                 if ($result) {
                     // Don't queue, send right away
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('password_reset');
                     $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
-                    $actual_link = ''.BASE_URL.'/auth/resetPw/'.$resetLink;
+                    $actual_link = ''.BASE_URL.'/auth/resetPw/'.$resetToken;
                     $mailer->setHtml(sprintf($this->language->__('email_notifications.password_reset_message'), $actual_link));
                     $to = [$username];
                     $mailer->sendMail($to, 'Leantime System');
@@ -413,9 +434,20 @@ class Auth implements Authenticatable
         return false;
     }
 
-    public function changePw(string $password, string $hash): bool
+    /**
+     * changePw - sets a new password for the account the reset token belongs to.
+     *
+     * @param  string  $password  the new plain password
+     * @param  string  $token  the reset token from the password reset link
+     * @return bool true when a matching, unexpired reset request was found and updated
+     */
+    public function changePw(string $password, string $token): bool
     {
-        return $this->authRepo->changePW($password, $hash);
+        if ($token === '') {
+            return false;
+        }
+
+        return $this->authRepo->changePW($password, $this->hashResetToken($token));
     }
 
     /**

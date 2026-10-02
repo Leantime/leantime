@@ -95,8 +95,12 @@ class Edit extends Controller
      */
     private function isValidFormToken(): bool
     {
-        return isset($_POST[session('formTokenName')])
-            && $_POST[session('formTokenName')] == session('formTokenValue');
+        $tokenName = (string) session('formTokenName');
+        $submitted = $_POST[$tokenName] ?? null;
+
+        return $tokenName !== ''
+            && is_string($submitted)
+            && hash_equals((string) session('formTokenValue'), $submitted);
     }
 
     /**
@@ -104,8 +108,7 @@ class Edit extends Controller
      */
     private function generateFormTokens(): void
     {
-        $permittedChars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permittedChars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permittedChars), 0, 32)]);
+        session(['formTokenName' => bin2hex(random_bytes(16))]);
+        session(['formTokenValue' => bin2hex(random_bytes(16))]);
     }
 }
