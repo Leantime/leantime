@@ -372,6 +372,22 @@ class Users extends BaseService
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function createUserInvite(array $values): false|string
     {
+        $invite = $this->createUserInviteWithStatus($values);
+
+        return $invite === false ? false : $invite['userId'];
+    }
+
+    /**
+     * Creates an invited user and sends the invitation, reporting whether the email went out.
+     *
+     * The user exists even when the email fails (e.g. bad SMTP settings); the admin can fix the
+     * mail settings and resend, so the caller must be able to tell them (#1795).
+     *
+     * @param  array  $values  The new user's values.
+     * @return false|array{userId: string, emailSent: bool} False when the user wasn't created.
+     */
+    public function createUserInviteWithStatus(array $values): false|array
+    {
         if ($this->invitesRateLimited()) {
             return false;
         }
@@ -393,12 +409,21 @@ class Users extends BaseService
             return false;
         }
 
-        $this->sendUserInvite($inviteCode, $values['user']);
+        $emailSent = $this->sendUserInvite($inviteCode, $values['user']);
 
-        return $result;
+        return ['userId' => $result, 'emailSent' => $emailSent];
     }
 
-    public function sendUserInvite(string $inviteCode, string $user)
+    /**
+     * Sends the invitation email with the account-setup link to a user.
+     *
+     * @param  string  $inviteCode  The invite/password-reset code for the setup link.
+     * @param  string  $user  The recipient's email address (username).
+     * @return bool True when the email was sent, false when delivery failed.
+     *
+     * @throws BindingResolutionException
+     */
+    public function sendUserInvite(string $inviteCode, string $user): bool
     {
 
         $mailer = app()->make(MailerCore::class);
@@ -433,7 +458,7 @@ class Users extends BaseService
 
         $to = [$user];
 
-        $mailer->sendMail($to, 'Leantime');
+        return $mailer->sendMail($to, 'Leantime');
     }
 
     /**
@@ -1467,6 +1492,7 @@ class Users extends BaseService
      *   - 'sent'             invitation sent
      *   - 'too_soon'         another invite was sent within the 240s resend cooldown
      *   - 'too_many_invites' the hourly/daily invite cap was reached
+     *   - 'invite_email_failed' the invitation email could not be sent
      *
      * @param  int  $id  The id of the user to re-invite.
      * @param  array<string, mixed>  $row  The current stored user row.
@@ -1495,12 +1521,12 @@ class Users extends BaseService
             $this->patchUser($id, ['pwReset' => $pwReset]);
         }
 
-        $this->sendUserInvite(
+        $emailSent = $this->sendUserInvite(
             inviteCode: $pwReset,
             user: $row['username']
         );
 
-        return 'sent';
+        return $emailSent ? 'sent' : 'invite_email_failed';
     }
 
     /**
@@ -1517,6 +1543,7 @@ class Users extends BaseService
      *   - 'user_exists'    email already belongs to another account
      *   - 'invite_failed'  invite could not be created (rate limit reached OR db failure — the
      *                      two are indistinguishable here, so the mapped message stays generic)
+     *   - 'invite_email_failed' the user was created but the invitation email could not be sent
      *
      * @param  array<string, mixed>  $post  Raw request input.
      * @param  int|string|null  $sessionClientId  The session user's client id (used for managers).
@@ -1559,18 +1586,19 @@ class Users extends BaseService
             return 'user_exists';
         }
 
-        $userId = $this->createUserInvite($values);
+        $invite = $this->createUserInviteWithStatus($values);
 
-        if ($userId === false) {
+        if ($invite === false) {
             return 'invite_failed';
         }
 
         $projects = $post['projects'] ?? null;
         if (is_array($projects) && count($projects) > 0) {
-            $this->reconcileProjectRelations((int) $userId, $projects);
+            $this->reconcileProjectRelations((int) $invite['userId'], $projects);
         }
 
-        return 'success';
+        // The user exists either way; only report full success if the invitation email left.
+        return $invite['emailSent'] ? 'success' : 'invite_email_failed';
     }
 
     /**

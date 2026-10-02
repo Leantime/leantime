@@ -203,10 +203,18 @@ class Mailer
     /**
      * sendMail - send the mail with mail()
      *
+     * Send failures (bad SMTP credentials, unreachable host…) are logged, not thrown, so
+     * one bad recipient doesn't stop the others. The return value says whether EVERY recipient
+     * was sent, so callers can stop reporting success for mail that never left (#1795).
+     *
+     * @return bool True when every recipient was sent successfully.
+     *
      * @throws Exception
      */
-    public function sendMail(array $to, $from): void
+    public function sendMail(array $to, $from): bool
     {
+        $allSent = true;
+
         $this->dispatchMailerEvent('beforeSendMail', []);
 
         $to = $this->dispatchMailerFilter('sendMailTo', $to, []);
@@ -313,8 +321,15 @@ class Mailer
             foreach ($to as $recip) {
                 try {
                     $this->mailAgent->addAddress($recip);
-                    $this->mailAgent->send();
+
+                    // PHPMailer runs with exceptions off, so most SMTP failures return false
+                    // instead of throwing.
+                    if (! $this->mailAgent->send()) {
+                        $allSent = false;
+                        Log::error($this->mailAgent->ErrorInfo);
+                    }
                 } catch (Exception $e) {
+                    $allSent = false;
                     Log::error($this->mailAgent->ErrorInfo);
                     Log::error($e);
                 }
@@ -324,5 +339,7 @@ class Mailer
         }
 
         $this->dispatchMailerEvent('afterSendMail', $to);
+
+        return $allSent;
     }
 }

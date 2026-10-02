@@ -57,13 +57,15 @@ class InviteTeamStep implements OnboardingSteps
      * It iterates over the parameters and checks if the corresponding email is set and not empty.
      * If the email is valid and does not exist as a username, it creates a new user invite and then establishes a relation
      * between the new user and the current project.
-     * In the end, a success notification is set.
+     * In the end, a success notification is set, replaced by an error when an invitation email could not be sent.
      *
      * @param  array  $params  The parameters to be handled.
      * @return bool True if the handling was successful, false otherwise.
      */
     public function handle($params): bool
     {
+
+        $allEmailsSent = true;
 
         for ($i = 1; $i <= 3; $i++) {
             if (isset($params['email'.$i]) && $params['email'.$i] != '') {
@@ -81,15 +83,24 @@ class InviteTeamStep implements OnboardingSteps
 
                 if (filter_var($params['email'.$i], FILTER_VALIDATE_EMAIL)) {
                     if ($this->userService->usernameExist($params['email'.$i]) === false) {
-                        $userId = $this->userService->createUserInvite($values);
-                        if ($userId !== false) {
-                            $this->projectService->editUserProjectRelations((int) $userId, [session('currentProject')]);
+                        $invite = $this->userService->createUserInviteWithStatus($values);
+                        if ($invite !== false) {
+                            $this->projectService->editUserProjectRelations((int) $invite['userId'], [session('currentProject')]);
+
+                            if (! $invite['emailSent']) {
+                                $allEmailsSent = false;
+                            }
                         }
                     }
                 }
 
                 $this->tplService->setNotification(__('notification.invitation_sent'), 'success', 'user_invited');
             }
+        }
+
+        // The users exist either way; say so when an invitation email did not go out.
+        if (! $allEmailsSent) {
+            $this->tplService->setNotification(__('notification.invite_email_failed'), 'error', 'user_invited');
         }
 
         return true;

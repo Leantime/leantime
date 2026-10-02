@@ -2175,6 +2175,14 @@ body .widgettitle .editHeadline:hover {
     border: 1px solid var(--main-border-color);
 }
 
+/* Long unbroken strings (URLs, paths, IDs) wrap instead of pushing comments, status updates and
+   rendered rich text past their container (#2251, #2539). Normal text still breaks at spaces. */
+.commentContent,
+.tiptap-content,
+.ProseMirror {
+    overflow-wrap: anywhere;
+}
+
 .commentContent.statusUpdate h3 {
     margin-bottom:8px;
     font-weight: bold;

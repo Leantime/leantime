@@ -22,7 +22,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
     <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
-    <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
+    <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px"><?= $tpl->__('label.created_by') ?> <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | <?= $tpl->__('label.last_updated') ?>: <?= format(! empty($ticket->modified) ? $ticket->modified : $ticket->date)->date(); ?> </small>
     <h1 class="tw-mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)] ?? 'fa-circle'; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
 
     <br />
