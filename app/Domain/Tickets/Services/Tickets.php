@@ -165,9 +165,15 @@ class Tickets extends BaseService
             foreach ($params['labelKeys'] as $labelKey) {
                 $labelKey = filter_var($labelKey, FILTER_SANITIZE_NUMBER_INT);
 
+                // The class is rendered into class attributes; only accept a plain label-* css class.
+                $labelClass = (string) ($params['labelClass-'.$labelKey] ?? '');
+                if (preg_match('/^label-[a-z0-9-]+$/', $labelClass) !== 1) {
+                    $labelClass = 'label-default';
+                }
+
                 $statusArray[$labelKey] = [
                     'name' => $params['label-'.$labelKey] ?? '',
-                    'class' => $params['labelClass-'.$labelKey] ?? 'label-default',
+                    'class' => $labelClass,
                     'statusType' => $params['labelType-'.$labelKey] ?? 'NEW',
                     'kanbanCol' => $params['labelKanbanCol-'.$labelKey] ?? false,
                     'sortKey' => $params['labelSort-'.$labelKey] ?? 99,

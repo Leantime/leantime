@@ -99,7 +99,7 @@
                                     <a href="#/tickets/showTicket/{{ $row['id'] }}">{{ $row['headline'] }}</a>
                                 @endif
                             </td>
-                            <td>{!! __('label.'.strtolower($row['type'])) !!}</td>
+                            <td>{{ __('label.'.strtolower($row['type'])) }}</td>
 
                             <td>
                                 @if ($row['type'] == 'milestone')

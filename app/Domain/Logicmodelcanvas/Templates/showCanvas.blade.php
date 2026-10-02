@@ -160,7 +160,7 @@
                             <x-global::stageflow.item
                                 :itemId="$row['id']"
                                 :title="$row['description']"
-                                :description="$row['conclusion'] != '' ? $tpl->convertRelativePaths($row['conclusion']) : ''"
+                                :description="$row['conclusion'] ?? ''"
                                 :editUrl="'#/' . $canvasName . 'canvas/editCanvasItem/' . $row['id']"
                                 :deleteUrl="'#/' . $canvasName . 'canvas/delCanvasItem/' . $row['id']"
                                 :commentUrl="'#/' . $canvasName . 'canvas/editCanvasComment/' . $row['id']"

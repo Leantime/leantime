@@ -48,7 +48,7 @@
                     <strong>
                     {!! sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) !!}
                     </strong><br/>
-                    <div style="margin-left:60px;">{!! $row['text'] !!}</div>
+                    <div style="margin-left:60px;">{!! $tpl->escapeMinimal($row['text']) !!}</div>
                     <div class="clear"></div>
                     <div style="padding-left:60px" class="commentLinks">
                         <a href="javascript:void(0);" class="replyButton"
@@ -90,7 +90,7 @@
                                 <strong>
                                 {!! sprintf(__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])) !!}
                                 </strong><br/>
-                                <p style="margin-left:60px;">{!! nl2br($comment['text']) !!}</p>
+                                <p style="margin-left:60px;">{!! nl2br($tpl->escapeMinimal($comment['text'])) !!}</p>
                                 <div class="clear"></div>
 
                                 <div style="padding-left:60px" class="commentLinks">

@@ -1,4 +1,4 @@
-<h4 class="widgettitle title-light">{!! sprintf(__('headlines.duplicate_project_x'), $project['name']) !!}</h4>
+<h4 class="widgettitle title-light">{!! sprintf(__('headlines.duplicate_project_x'), e($project['name'])) !!}</h4>
 
 {!! $tpl->displayNotification() !!}
 

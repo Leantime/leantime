@@ -10,7 +10,7 @@
             >{!! sprintf(
                     __('text.timer_on_todo'),
                     $onTheClock['totalTime'],
-                    substr($onTheClock['headline'], 0, 10)
+                    e(mb_substr((string) $onTheClock['headline'], 0, 10))
                 ) !!}</a>
 
             <ul class="dropdown-menu">

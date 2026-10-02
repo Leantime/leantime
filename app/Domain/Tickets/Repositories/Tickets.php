@@ -1807,6 +1807,12 @@ class Tickets
                 continue;
             }
 
+            // Priority is rendered into css class names; only empty or 0-5 is meaningful.
+            if ($sanitizedKey === 'priority' && $value !== '' && $value !== null
+                && filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 5]]) === false) {
+                continue;
+            }
+
             $updates[$canonicalColumns[$sanitizedKey]] = $value;
 
             if ($sanitizedKey === 'status') {
