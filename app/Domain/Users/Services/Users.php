@@ -1713,7 +1713,8 @@ class Users extends BaseService
         foreach ($stagedUsers as $user) {
             // Staged rows come from Ldap::getSingleUser(); the import dialog posts each row's `user`
             // (the email) as the selection value.
-            if (in_array($user['user'], $selectedUsernames, true)) {
+            $email = $user['user'] ?? null;
+            if (is_string($email) && in_array($email, $selectedUsernames, true)) {
                 $users[] = $user;
             }
         }
@@ -1723,7 +1724,7 @@ class Users extends BaseService
         foreach ($users as $user) {
             $this->assertRoleAssignable($user['role'] ?? '');
 
-            $existingUser = $this->userRepo->getUserByEmail((string) ($user['user'] ?? ''));
+            $existingUser = $this->userRepo->getUserByEmail((string) $user['user']);
             if (is_array($existingUser)) {
                 $this->assertRoleAssignable($existingUser['role'] ?? '');
             }
