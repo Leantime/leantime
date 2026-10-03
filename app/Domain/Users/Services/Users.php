@@ -823,7 +823,11 @@ class Users extends BaseService
      * @param  int  $id  The id of the user to delete.
      * @return bool True if the user was deleted successfully, false otherwise.
      *
-     * @throws \Exception If the user is not authorized to delete the user.
+     * Role ceiling: an account whose role is above the caller's own (e.g. an owner, for an admin)
+     * cannot be deleted.
+     *
+     * @throws AuthorizationException If the caller may not delete users or the account's role is
+     *                                above the caller's.
      *
      * @api
      */
@@ -834,6 +838,7 @@ class Users extends BaseService
         // attribute defers (entityScoped), so this in-method check is the single source of
         // truth and throws AuthorizationException (RPC -32001 / 403) when denied.
         $this->authorize(UsersPermissions::DELETE, forceGlobal: true);
+        $this->assertUserManageable($id);
 
         $this->userRepo->deleteUser($id);
         $this->projectRepository->deleteAllProjectRelations($id);

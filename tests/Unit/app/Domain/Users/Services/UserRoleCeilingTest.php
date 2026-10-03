@@ -50,7 +50,7 @@ class UserRoleCeilingTest extends TestCase
         $service = $this->construct(UserService::class, [
             $this->make(UserRepository::class, $repoMethods),
             $this->make(LanguageCore::class),
-            $this->make(ProjectRepository::class),
+            $this->make(ProjectRepository::class, ['deleteAllProjectRelations' => fn () => true]),
             $this->make(ClientRepository::class),
             $this->make(AuthService::class),
             $this->make(Files::class),
@@ -348,5 +348,32 @@ class UserRoleCeilingTest extends TestCase
         ], ['first', 'second']);
 
         $this->assertSame(['first@example.com', 'second@example.com'], array_column($imported, 'user'));
+    }
+
+    public function test_admin_cannot_delete_an_owner_but_owner_can(): void
+    {
+        $this->actAs('admin');
+        $deleted = [];
+        $repo = [
+            'getUser' => fn () => ['id' => 1, 'role' => 50],
+            'deleteUser' => function ($id) use (&$deleted) {
+                $deleted[] = $id;
+
+                return true;
+            },
+        ];
+        $service = $this->makeService($repo);
+
+        try {
+            $service->deleteUser(1);
+            $this->fail('an admin must not delete an owner account');
+        } catch (AuthorizationException) {
+        }
+        $this->assertSame([], $deleted);
+
+        $this->actAs('owner');
+        $service = $this->makeService($repo);
+        $this->assertTrue($service->deleteUser(1));
+        $this->assertSame([1], $deleted);
     }
 }

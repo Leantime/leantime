@@ -256,4 +256,38 @@ class ApiServiceTest extends TestCase
         $this->expectException(\Leantime\Core\Exceptions\AuthorizationException::class);
         $service->updateApiKey(2, ['role' => '50'], null);
     }
+
+    public function test_delete_api_key_only_deletes_api_keys_within_the_ceiling(): void
+    {
+        session(['userdata' => ['id' => 4, 'role' => 'admin']]);
+        $deleted = [];
+        $rows = [
+            1 => ['id' => 1, 'role' => '50', 'source' => ''],
+            2 => ['id' => 2, 'role' => '50', 'source' => 'api'],
+            3 => ['id' => 3, 'role' => '20', 'source' => 'api'],
+        ];
+        $userRepo = $this->make(UserRepository::class, [
+            'getUser' => fn ($id) => $rows[$id] ?? false,
+            'deleteUser' => function ($id) use (&$deleted) {
+                $deleted[] = $id;
+
+                return true;
+            },
+        ]);
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'deleteAllProjectRelations' => fn () => null,
+        ]);
+        $service = $this->makeService(userRepo: $userRepo, projectRepo: $projectRepo);
+
+        foreach ([1, 2, 99] as $id) {
+            try {
+                $service->deleteApiKey($id);
+                $this->fail('id '.$id.' must not be deletable as an API key');
+            } catch (\Leantime\Core\Exceptions\AuthorizationException) {
+            }
+        }
+
+        $this->assertTrue($service->deleteApiKey(3));
+        $this->assertSame([3], $deleted);
+    }
 }

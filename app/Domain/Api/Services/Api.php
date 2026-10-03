@@ -241,6 +241,36 @@ class Api
     }
 
     /**
+     * Deletes an API key and its project relations.
+     *
+     * Only API-key accounts can be deleted here, and only when the key's role is not above the
+     * caller's own role.
+     *
+     * @param  int  $id  API key (user) id
+     * @return bool True when deleted.
+     *
+     * @throws AuthorizationException When the id is not an API key or its role is above the caller's.
+     *
+     * @api
+     */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
+    public function deleteApiKey(int $id): bool
+    {
+        $row = $this->userRepo->getUser($id);
+
+        if (! is_array($row) || ($row['source'] ?? '') !== 'api') {
+            throw new AuthorizationException('Only API keys can be deleted here.');
+        }
+
+        $this->assertRoleAssignable($row['role'] ?? '');
+
+        $this->userRepo->deleteUser($id);
+        $this->projectRepo->deleteAllProjectRelations($id);
+
+        return true;
+    }
+
+    /**
      * Creates a new API key and reconciles its project relations.
      *
      * @param  array  $values  Basic user/key values (firstname, role, ...)
