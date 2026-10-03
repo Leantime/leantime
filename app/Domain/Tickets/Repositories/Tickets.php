@@ -1716,7 +1716,7 @@ class Tickets
             'tags' => $values['tags'],
             'sprint' => $values['sprint'],
             'storypoints' => $values['storypoints'],
-            'priority' => $values['priority'],
+            'priority' => self::isValidPriority($values['priority'] ?? '') ? ($values['priority'] ?? '') : '',
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'acceptanceCriteria' => $values['acceptanceCriteria'],
@@ -1775,6 +1775,21 @@ class Tickets
     ];
 
     /**
+     * Whether a priority value may be stored: empty, or an integer 0-5.
+     *
+     * Priority is rendered into css class names and used as a lookup key, so every
+     * create/update/patch path checks it here.
+     */
+    public static function isValidPriority(mixed $priority): bool
+    {
+        if ($priority === '' || $priority === null) {
+            return true;
+        }
+
+        return filter_var($priority, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 5]]) !== false;
+    }
+
+    /**
      * Patch specific fields on a ticket.
      *
      * Only fields present in PATCHABLE_COLUMNS are included in the update.
@@ -1807,9 +1822,7 @@ class Tickets
                 continue;
             }
 
-            // Priority is rendered into css class names; only empty or 0-5 is meaningful.
-            if ($sanitizedKey === 'priority' && $value !== '' && $value !== null
-                && filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 5]]) === false) {
+            if ($sanitizedKey === 'priority' && ! self::isValidPriority($value)) {
                 continue;
             }
 
@@ -1848,7 +1861,7 @@ class Tickets
             'dateToFinish' => $values['dateToFinish'],
             'sprint' => $values['sprint'],
             'storypoints' => $values['storypoints'],
-            'priority' => $values['priority'],
+            'priority' => self::isValidPriority($values['priority'] ?? '') ? ($values['priority'] ?? '') : '',
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'tags' => $values['tags'],

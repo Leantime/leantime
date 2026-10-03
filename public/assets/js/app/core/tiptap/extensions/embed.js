@@ -134,10 +134,20 @@ function getEmbedUrl(url, type, id) {
             // For Office docs, use action=edit for editable embeds. The pattern has already
             // pinned the host; force https so the iframe never gets a relative or plain-http src.
             var officeUrl = url.replace(/^(?:https?:\/\/)?/i, 'https://');
-            if (officeUrl.includes('sharepoint.com') || officeUrl.includes('1drv.ms') || officeUrl.includes('onedrive.live.com')) {
-                return officeUrl.replace(/\?.*$/, '') + '?action=edit&embedded=true';
+            var officeHost;
+            try {
+                officeHost = new URL(officeUrl).hostname.toLowerCase();
+            } catch (e) {
+                return null;
             }
-            return officeUrl;
+            if (!isAllowedEmbedHost(officeHost, type)) {
+                return null;
+            }
+            // officeapps viewer links are already embeddable; the others need the edit/embed flags.
+            if (/\.officeapps\.live\.com$/.test(officeHost)) {
+                return officeUrl;
+            }
+            return officeUrl.replace(/\?.*$/, '') + '?action=edit&embedded=true';
 
         default:
             // Unknown embed type - return null to reject
@@ -183,7 +193,15 @@ function isAllowedEmbedSrc(src, type) {
 
     if (parsedUrl.protocol !== 'https:') return false;
 
-    var hostname = parsedUrl.hostname.toLowerCase();
+    return isAllowedEmbedHost(parsedUrl.hostname.toLowerCase(), type);
+}
+
+/**
+ * Whether a (lower-case) hostname belongs to the given embed type.
+ */
+function isAllowedEmbedHost(hostname, type) {
+    if (!hostname || !allowedEmbedHosts[type]) return false;
+
     return allowedEmbedHosts[type].some(function(hostPattern) {
         return hostPattern.test(hostname);
     });

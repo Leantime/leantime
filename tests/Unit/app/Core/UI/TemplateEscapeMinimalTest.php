@@ -118,6 +118,18 @@ class TemplateEscapeMinimalTest extends TestCase
         $this->assertSame($this->escapeMinimal($input), $this->escapeMinimal($input));
     }
 
+    public function test_memo_cache_stays_within_its_byte_budget(): void
+    {
+        // Many distinct large values must not pile up in the static memo cache.
+        for ($i = 0; $i < 60; $i++) {
+            $this->escapeMinimal('<p>'.$i.str_repeat('x', 200000).'</p>');
+        }
+
+        $cacheBytes = (new \ReflectionClass(Template::class))->getStaticPropertyValue('escapeMinimalCacheBytes');
+
+        $this->assertLessThanOrEqual(8388608, $cacheBytes);
+    }
+
     public function test_null_is_an_empty_string(): void
     {
         $this->assertSame('', $this->escapeMinimal(null));

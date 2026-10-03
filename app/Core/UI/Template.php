@@ -758,8 +758,17 @@ class Template
     /** How many sanitized results are memoized per process. */
     private const ESCAPE_MINIMAL_CACHE_SIZE = 500;
 
+    /** Total bytes of memoized output kept per process before the cache is reset. */
+    private const ESCAPE_MINIMAL_CACHE_MAX_BYTES = 8388608;
+
+    /** Results larger than this are not memoized (they would crowd out everything else). */
+    private const ESCAPE_MINIMAL_CACHE_MAX_ENTRY_BYTES = 262144;
+
     /** @var array<string, string> sanitized output keyed by a hash of the raw input */
     private static array $escapeMinimalCache = [];
+
+    /** Bytes currently held in $escapeMinimalCache. */
+    private static int $escapeMinimalCacheBytes = 0;
 
     /**
      * escapeMinimal - sanitizes rich text (HTML) for output.
@@ -800,10 +809,20 @@ class Template
             'hook_tag' => [self::class, 'filterSanitizedTag'],
         ]);
 
-        if (count(self::$escapeMinimalCache) >= self::ESCAPE_MINIMAL_CACHE_SIZE) {
-            self::$escapeMinimalCache = [];
+        $sanitizedBytes = strlen($sanitized);
+        if ($sanitizedBytes > self::ESCAPE_MINIMAL_CACHE_MAX_ENTRY_BYTES) {
+            return $sanitized;
         }
+
+        $cacheIsFull = count(self::$escapeMinimalCache) >= self::ESCAPE_MINIMAL_CACHE_SIZE
+            || self::$escapeMinimalCacheBytes + $sanitizedBytes > self::ESCAPE_MINIMAL_CACHE_MAX_BYTES;
+        if ($cacheIsFull) {
+            self::$escapeMinimalCache = [];
+            self::$escapeMinimalCacheBytes = 0;
+        }
+
         self::$escapeMinimalCache[$cacheKey] = $sanitized;
+        self::$escapeMinimalCacheBytes += $sanitizedBytes;
 
         return $sanitized;
     }
