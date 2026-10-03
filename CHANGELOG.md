@@ -1,3 +1,18 @@
+# Version: 3.10.2
+
+## Security
+- **Authentication** - Hardened password-reset tokens, session rotation, OIDC token validation and login rate limiting. (#3810)
+- **API** - Tightened API request handling, enforced 2FA for API sessions and limited role assignments. (#3808)
+- **Access Control** - Ticket, timesheet, sprint, reaction and project operations are now authorized against their owning project. (#3809)
+- **File Module** - Strengthened file module authorization and pinned outbound HTTP connections. (#3812)
+- **CSRF Protection** - State-changing requests now verify their origin and delete actions moved from GET to POST. (#3811)
+- **Output Escaping** - Escaped remaining raw template output and hardened the HTML sanitizer. (#3813)
+
+## Dependency Updates
+- Dropped the unused Sentry webpack plugin and scoped npm audit to runtime dependencies. (#3815)
+
+---
+
 # Version: 3.10.1
 
 ## New Features
