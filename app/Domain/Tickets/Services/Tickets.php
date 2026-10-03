@@ -1953,6 +1953,46 @@ class Tickets extends BaseService
     }
 
     /**
+     * Planned and logged hours of a To-Do's direct subtasks, so the parent can show totals
+     * "including subtasks" (#1798). Time logged on a subtask is booked against the subtask's own
+     * id, never the parent's, so adding these to the parent's own figures cannot double count.
+     *
+     * Only subtasks the current user may view are counted (a subtask can live in another project
+     * than its parent, e.g. after the parent was moved); subtaskCount is the number actually
+     * included. Logged hours come from one SUM query over the included ids.
+     *
+     * Internal (no RPC exposure): callers have already loaded and authorized the parent.
+     *
+     * @param  int  $ticketId  Parent To-Do id
+     * @return array{subtaskCount: int, planHours: float, loggedHours: float}
+     */
+    public function getSubtaskHourTotals(int $ticketId): array
+    {
+        $subtasks = $this->getAllSubtasks($ticketId) ?: [];
+
+        $canViewProject = [];
+        $includedIds = [];
+        $planHours = 0.0;
+        foreach ($subtasks as $subtask) {
+            $projectId = (int) ($subtask['projectId'] ?? 0);
+            $canViewProject[$projectId] ??= $this->can(TicketsPermissions::VIEW, $projectId);
+
+            if (! $canViewProject[$projectId]) {
+                continue;
+            }
+
+            $includedIds[] = (int) $subtask['id'];
+            $planHours += (float) ($subtask['planHours'] ?? 0);
+        }
+
+        return [
+            'subtaskCount' => count($includedIds),
+            'planHours' => $planHours,
+            'loggedHours' => $this->ticketRepository->sumLoggedHoursForTickets($includedIds),
+        ];
+    }
+
+    /**
      * Adds a new ticket quickly based on the provided parameters.
      *
      * @param  array  $params  An associative array of ticket details which may include:

@@ -303,6 +303,69 @@ class Format
         return number_format((float) $this->value, 2);
     }
 
+    /**
+     * Render decimal hours as hours and minutes, e.g. 1.25 -> "1h 15m", 0.26 -> "0h 16m" (#2004).
+     *
+     * Static on purpose: the Format constructor tries to parse its value as a date first, which a
+     * decimal like "1.25" must never go through. Minutes are rounded; non-numeric input yields ''.
+     *
+     * @param  mixed  $decimalHours  Hours as stored (float, int or numeric string)
+     * @param  string  $pattern  sprintf pattern receiving (hours, zero-padded minutes)
+     * @return string The formatted duration, or '' when the input is not numeric
+     */
+    public static function hoursMinutes(mixed $decimalHours, string $pattern = '%sh %sm'): string
+    {
+        if (! is_numeric($decimalHours)) {
+            return '';
+        }
+
+        $totalMinutes = (int) round(abs((float) $decimalHours) * 60);
+        $sign = (float) $decimalHours < 0 && $totalMinutes > 0 ? '-' : '';
+        $hours = intdiv($totalMinutes, 60);
+        $minutes = str_pad((string) ($totalMinutes % 60), 2, '0', STR_PAD_LEFT);
+
+        return $sign.sprintf($pattern, $hours, $minutes);
+    }
+
+    /**
+     * Rich-text (editor HTML) to a single line of plain text, e.g. for CSV export (#786).
+     *
+     * Block-level boundaries and <br> become spaces so "<p>a</p><p>b</p>" reads "a b", entities
+     * are decoded, and all whitespace (including non-breaking spaces) collapses to single spaces.
+     *
+     * @param  string|null  $html  Stored description markup
+     * @return string Plain text without markup
+     */
+    public static function plainText(?string $html): string
+    {
+        if ($html === null || $html === '') {
+            return '';
+        }
+
+        $blockBoundary = '/<\/?(p|div|br|li|ul|ol|h[1-6]|tr|td|th|table|blockquote|pre)\b[^>]*>/i';
+        $withBoundaries = preg_replace($blockBoundary, ' ', $html) ?? $html;
+        $text = html_entity_decode(strip_tags($withBoundaries), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $text) ?? $text);
+    }
+
+    /**
+     * Neutralize spreadsheet formulas in an exported cell value (CSV injection): a value starting
+     * with =, +, -, @, tab or carriage return is prefixed with a single quote so Excel/Sheets/Calc
+     * treat it as text. Other values are returned unchanged.
+     *
+     * @param  string  $value  Cell value as it would be exported
+     * @return string Formula-safe cell value
+     */
+    public static function spreadsheetSafe(string $value): string
+    {
+        if ($value !== '' && str_contains("=+-@\t\r", $value[0])) {
+            return "'".$value;
+        }
+
+        return $value;
+    }
+
     public function diffForHumans(): string
     {
         if ($this->value->isToday()) {

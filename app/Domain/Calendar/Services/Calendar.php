@@ -528,9 +528,10 @@ class Calendar extends BaseService
      * @param  int  $userId  The user whose calendar to build
      * @param  null|string|CarbonImmutable  $from  Optional start of the window
      * @param  null|string|CarbonImmutable  $until  Optional end of the window
+     * @param  bool  $includeDoneTickets  Include To-Dos in a DONE status (dashboard widget can hide them)
      * @return array<int, array<string, mixed>> FullCalendar-shaped event arrays
      */
-    public function getCalendar(int $userId, null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
+    public function getCalendar(int $userId, null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null, bool $includeDoneTickets = true): array
     {
         // Convert date parameters to Carbon instances if they're strings
         if (is_string($from)) {
@@ -542,7 +543,7 @@ class Calendar extends BaseService
 
         // Get tickets and filter by date range
         $ticketService = app()->make(Tickets::class);
-        $dbTickets = $ticketService->getOpenUserTicketsThisWeekAndLater($userId, '', true);
+        $dbTickets = $ticketService->getOpenUserTicketsThisWeekAndLater($userId, '', $includeDoneTickets);
 
         $tickets = [];
         if (isset($dbTickets['thisWeek']['tickets'])) {
