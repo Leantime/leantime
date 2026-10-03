@@ -10,6 +10,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -146,10 +147,12 @@ class RequestRateLimiter
             $key = 'ratelimit-'.$clientIp.':loginAttempts';
 
             // Per-account budget so a distributed guessing run against one user is throttled too.
-            $username = $request->input('username');
-            if ($request->isMethod('POST') && is_string($username) && trim($username) !== '') {
+            // Only for usernames that belong to an account, keyed by its id: unknown usernames are
+            // bounded by the per-IP bucket and must not create a cache entry each.
+            $accountId = $request->isMethod('POST') ? $this->loginAccountId($request->input('username')) : null;
+            if ($accountId !== null) {
                 $extraBuckets[] = [
-                    'key' => 'ratelimit-login-user-'.hash('sha256', strtolower(trim($username))),
+                    'key' => 'ratelimit-login-user-'.$accountId,
                     'limit' => $rateLimitAuth,
                     'decay' => 60,
                 ];
@@ -206,6 +209,20 @@ class RequestRateLimiter
         }
 
         return $next($request);
+    }
+
+    /**
+     * Resolve the account a login attempt targets, or null for an empty/unknown username.
+     */
+    private function loginAccountId(mixed $username): ?int
+    {
+        if (! is_string($username) || trim($username) === '') {
+            return null;
+        }
+
+        $user = app(UserRepository::class)->getUserByEmail(trim($username));
+
+        return is_array($user) && ! empty($user['id']) ? (int) $user['id'] : null;
     }
 
     /**

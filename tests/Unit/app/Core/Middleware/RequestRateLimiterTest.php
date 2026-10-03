@@ -8,6 +8,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Middleware\RequestRateLimiter;
 use Leantime\Core\Middleware\TrustProxies;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -43,7 +44,7 @@ class RequestRateLimiterTest extends \Unit\TestCase
         parent::tearDown();
     }
 
-    private function limiter(array $limits = []): RequestRateLimiter
+    private function limiter(array $limits = [], ?RateLimiter $recorder = null): RequestRateLimiter
     {
         $limits += [
             'ratelimitGeneral' => 2000,
@@ -60,7 +61,7 @@ class RequestRateLimiterTest extends \Unit\TestCase
             'get' => fn ($key, $default = null) => $limits[$key] ?? $default,
         ]);
 
-        return new RequestRateLimiter($config, app(RateLimiter::class));
+        return new RequestRateLimiter($config, $recorder ?? app(RateLimiter::class));
     }
 
     private function send(RequestRateLimiter $limiter, string $uri, string $method = 'GET', array $params = [], string $ip = '203.0.113.10'): int
@@ -96,16 +97,51 @@ class RequestRateLimiterTest extends \Unit\TestCase
         $this->assertSame(200, $this->send($limiter, '/auth/login', 'GET', [], '198.51.100.99'), 'another IP has its own budget');
     }
 
-    public function test_login_is_also_limited_per_username_across_ips(): void
+    private function knownAccounts(array $accounts): void
     {
+        app()->instance(UserRepository::class, $this->make(UserRepository::class, [
+            'getUserByEmail' => fn (string $email) => isset($accounts[$email]) ? ['id' => $accounts[$email]] : false,
+        ]));
+    }
+
+    public function test_login_is_also_limited_per_account_across_ips(): void
+    {
+        $this->knownAccounts(['victim@example.com' => 42, 'other@example.com' => 43]);
         $limiter = $this->limiter();
 
         $this->assertSame(200, $this->send($limiter, '/auth/login', 'POST', ['username' => 'victim@example.com'], '198.51.100.1'));
-        $this->assertSame(200, $this->send($limiter, '/auth/login', 'POST', ['username' => 'Victim@example.com'], '198.51.100.2'));
-        $this->assertSame(200, $this->send($limiter, '/auth/login', 'POST', ['username' => 'victim@example.com '], '198.51.100.3'));
+        $this->assertSame(200, $this->send($limiter, '/auth/login', 'POST', ['username' => 'victim@example.com '], '198.51.100.2'));
+        $this->assertSame(200, $this->send($limiter, '/auth/login', 'POST', ['username' => 'victim@example.com'], '198.51.100.3'));
         $this->assertSame(429, $this->send($limiter, '/auth/login', 'POST', ['username' => 'victim@example.com'], '198.51.100.4'));
 
         $this->assertSame(200, $this->send($limiter, '/auth/login', 'POST', ['username' => 'other@example.com'], '198.51.100.5'));
+    }
+
+    public function test_unknown_username_creates_no_per_account_key(): void
+    {
+        $this->knownAccounts([]);
+
+        $hitKeys = [];
+        $recordingLimiter = new class(app('cache')->store(), $hitKeys) extends RateLimiter
+        {
+            public function __construct($cache, private array &$keys)
+            {
+                parent::__construct($cache);
+            }
+
+            public function hit($key, $decaySeconds = 60)
+            {
+                $this->keys[] = $key;
+
+                return parent::hit($key, $decaySeconds);
+            }
+        };
+
+        $limiter = $this->limiter(recorder: $recordingLimiter);
+
+        $this->send($limiter, '/auth/login', 'POST', ['username' => 'nobody-'.bin2hex(random_bytes(4)).'@example.com']);
+
+        $this->assertSame(['ratelimit-203.0.113.10:loginAttempts'], $hitKeys, 'only the per-IP bucket is touched');
     }
 
     public function test_password_reset_posts_are_limited(): void
