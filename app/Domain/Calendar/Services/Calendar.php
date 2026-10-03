@@ -34,6 +34,9 @@ use Spatie\IcalendarGenerator\Enums\Display;
  */
 class Calendar extends BaseService
 {
+    /** A valid, event-less calendar: served when a feed is unavailable so the client parser never sees an empty body. */
+    public const EMPTY_ICAL_CALENDAR = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Leantime//External Calendar//EN\r\nEND:VCALENDAR\r\n";
+
     private CalendarRepository $calendarRepo;
 
     private LanguageCore $language;
@@ -306,13 +309,13 @@ class Calendar extends BaseService
      * returns it when still fresh. Otherwise it resolves the external
      * calendar's URL, fetches its content (with SSRF protection via
      * {@see loadIcalUrl()}), stores it in the session cache and returns it.
-     * Any fetch failure resolves to an empty string, matching the previous
-     * controller behaviour.
+     * Any fetch failure (or a body that is not iCal) is logged and resolves to an
+     * empty calendar, which the browser's iCal parser accepts.
      *
      * @param  int  $calId  The external calendar id.
      * @param  int  $userId  Retained for signature compatibility; the underlying read is pinned to
      *                       the session user via getExternalCalendar().
-     * @return string The iCal content, or an empty string when unavailable.
+     * @return string The iCal content, or an empty calendar when unavailable.
      *
      * @api
      */
@@ -336,19 +339,46 @@ class Calendar extends BaseService
         $cal = $this->getExternalCalendar($calId, $userId);
 
         if (! isset($cal['url'])) {
-            return '';
+            return self::EMPTY_ICAL_CALENDAR;
         }
 
         try {
             // loadIcalUrl includes SSRF protection.
-            $content = $this->loadIcalUrl($cal['url']);
-            session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
-            session(['calendarCache.'.$calId.'.content' => $content]);
-
-            return $content;
+            $content = self::normalizeIcalContent($this->loadIcalUrl($cal['url']));
         } catch (\Exception $e) {
-            return '';
+            Log::warning('External calendar '.$calId.' could not be loaded: '.$e->getMessage());
+
+            return self::EMPTY_ICAL_CALENDAR;
         }
+
+        // A feed that isn't iCal (an HTML login/error page, e.g. a non-public Google Calendar
+        // address) crashed the browser's iCal parser and hid every event without any log (#3165).
+        if (! str_contains($content, 'BEGIN:VCALENDAR')) {
+            Log::warning('External calendar '.$calId.' did not return iCal data (check that the address is the public/secret iCal address).');
+
+            return self::EMPTY_ICAL_CALENDAR;
+        }
+
+        session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
+        session(['calendarCache.'.$calId.'.content' => $content]);
+
+        return $content;
+    }
+
+    /**
+     * Strip what the browser's iCal parser chokes on but servers commonly send: a UTF-8 byte
+     * order mark and leading whitespace before BEGIN:VCALENDAR.
+     *
+     * @param  string  $content  Raw feed body.
+     * @return string The feed body, starting at its first line.
+     */
+    public static function normalizeIcalContent(string $content): string
+    {
+        if (str_starts_with($content, "\xEF\xBB\xBF")) {
+            $content = substr($content, 3);
+        }
+
+        return ltrim($content);
     }
 
     /**

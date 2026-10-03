@@ -519,4 +519,36 @@ class CalendarServiceTest extends TestCase
 
         $this->assertMatchesRegularExpression('/DTSTART[^:\\r\\n]*VALUE=DATE:20250417/', $ics);
     }
+
+    public function test_normalize_ical_content_strips_bom_and_leading_whitespace(): void
+    {
+        $normalized = \Leantime\Domain\Calendar\Services\Calendar::normalizeIcalContent("\xEF\xBB\xBF\r\n BEGIN:VCALENDAR");
+
+        $this->assertSame('BEGIN:VCALENDAR', $normalized);
+    }
+
+    public function test_external_calendar_that_is_not_ical_resolves_to_an_empty_calendar(): void
+    {
+        session(['userdata' => ['id' => 1], 'calendarCache' => []]);
+
+        $calendarRepo = $this->make(CalendarRepository::class, [
+            'getExternalCalendar' => fn () => ['id' => 9, 'url' => 'https://calendar.example.test/basic.ics'],
+        ]);
+        $outboundClient = $this->make(OutboundHttpClient::class, [
+            'get' => fn () => new \GuzzleHttp\Psr7\Response(200, [], '<html>Sign in</html>'),
+        ]);
+
+        $calendar = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $calendarRepo,
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: $outboundClient,
+        );
+
+        $content = $calendar->getCachedExternalCalendarContent(9, 1);
+
+        $this->assertSame(\Leantime\Domain\Calendar\Services\Calendar::EMPTY_ICAL_CALENDAR, $content, 'an HTML page must never reach the browser iCal parser (#3165)');
+        $this->assertFalse(session()->exists('calendarCache.9.content'), 'a failed fetch must not be cached');
+    }
 }
