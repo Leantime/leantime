@@ -240,13 +240,12 @@ class UserRoleCeilingTest extends TestCase
         $service = $this->makeService(['getUserByEmail' => fn () => false]);
 
         $staged = [
-            ['username' => 'skip', 'user' => 'skip@example.com', 'role' => 20],
             ['username' => 'boss', 'user' => 'boss@example.com', 'role' => 50],
         ];
 
         $this->expectException(AuthorizationException::class);
 
-        $service->importSelectedLdapUsers($staged, ['skip', 'boss']);
+        $service->importSelectedLdapUsers($staged, ['boss']);
     }
 
     public function test_ldap_import_cannot_update_an_account_above_the_caller(): void
@@ -260,13 +259,12 @@ class UserRoleCeilingTest extends TestCase
         $service = $this->makeService(['getUserByEmail' => fn () => ['id' => 1, 'role' => 50]]);
 
         $staged = [
-            ['username' => 'skip', 'user' => 'skip@example.com', 'role' => 20],
             ['username' => 'owner', 'user' => 'owner@example.com', 'role' => 5],
         ];
 
         $this->expectException(AuthorizationException::class);
 
-        $service->importSelectedLdapUsers($staged, ['skip', 'owner']);
+        $service->importSelectedLdapUsers($staged, ['owner']);
     }
 
     public function test_ldap_import_within_the_ceiling_is_passed_on(): void
@@ -283,9 +281,8 @@ class UserRoleCeilingTest extends TestCase
         $service = $this->makeService(['getUserByEmail' => fn () => ['id' => 8, 'role' => 20]]);
 
         $service->importSelectedLdapUsers([
-            ['username' => 'skip', 'user' => 'skip@example.com', 'role' => 20],
             ['username' => 'dev', 'user' => 'dev@example.com', 'role' => 40],
-        ], ['skip', 'dev']);
+        ], ['dev']);
 
         $this->assertSame('dev@example.com', $imported[0]['user'] ?? null);
     }
@@ -329,5 +326,27 @@ class UserRoleCeilingTest extends TestCase
         RateLimiter::clear('invites:'.BASE_URL.':user:'.self::CALLER_ID);
         $service->addUser(['username' => 'csv2@example.com', 'role' => 20, 'password' => 'x', 'source' => 'ldap']);
         $this->assertSame('', $stored);
+    }
+
+    public function test_ldap_import_includes_the_first_selected_user(): void
+    {
+        $this->actAs('admin');
+        $imported = null;
+        app()->instance(\Leantime\Domain\Ldap\Services\Ldap::class, $this->make(\Leantime\Domain\Ldap\Services\Ldap::class, [
+            'upsertUsers' => function (array $users) use (&$imported) {
+                $imported = $users;
+
+                return true;
+            },
+        ]));
+        $service = $this->makeService(['getUserByEmail' => fn () => false]);
+
+        $service->importSelectedLdapUsers([
+            ['username' => 'first', 'user' => 'first@example.com', 'role' => 20],
+            ['username' => 'second', 'user' => 'second@example.com', 'role' => 20],
+            ['username' => 'unselected', 'user' => 'unselected@example.com', 'role' => 20],
+        ], ['first', 'second']);
+
+        $this->assertSame(['first@example.com', 'second@example.com'], array_column($imported, 'user'));
     }
 }

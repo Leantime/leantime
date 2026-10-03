@@ -1706,7 +1706,7 @@ class Users extends BaseService
     {
         $users = [];
         foreach ($stagedUsers as $user) {
-            if (array_search($user['username'], $selectedUsernames)) {
+            if (in_array($user['username'] ?? null, $selectedUsernames, true)) {
                 $users[] = $user;
             }
         }
