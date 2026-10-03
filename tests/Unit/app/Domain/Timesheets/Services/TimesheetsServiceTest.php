@@ -544,6 +544,57 @@ class TimesheetsServiceTest extends TestCase
         $this->assertSame(1.5, $service->punchOut(3));
     }
 
+    public function test_stopping_a_timer_without_the_create_capability_discards_it(): void
+    {
+        $discarded = 0;
+        $repo = $this->make(TimesheetRepository::class, [
+            'punchOut' => function () {
+                $this->fail('no time may be booked once timesheets.create is revoked');
+            },
+            'discardPunch' => function () use (&$discarded) {
+                $discarded++;
+
+                return true;
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+        // Ticket still viewable, but timesheets.create was revoked.
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting([TimesheetsPermissions::VIEW, 'tickets.view']));
+
+        $this->assertFalse($service->punchOut(3));
+        $this->assertSame(1, $discarded);
+    }
+
+    public function test_update_time_denies_an_existing_entry_on_an_inaccessible_ticket(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            // Entry 50 is the caller's own, but booked on ticket 8 in a project they cannot view.
+            'getTimesheet' => fn () => ['id' => 50, 'userId' => 1, 'ticketId' => 8],
+            'updateTime' => function () {
+                $this->fail('a foreign-project entry must not be rewritten');
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn ($id) => new TicketModel(['id' => (int) $id, 'projectId' => (int) $id === 8 ? 9 : 1]),
+        ]);
+        $perms = $this->make(PermissionService::class, [
+            'authorize' => function (string $key, ?int $projectId = null): void {
+                if ($key === 'tickets.view' && $projectId !== 1) {
+                    throw new AuthorizationException;
+                }
+            },
+            'currentUserCan' => fn () => true,
+        ]);
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $perms);
+
+        $this->expectException(AuthorizationException::class);
+
+        // Destination ticket 3 is accessible; the entry's current ticket 8 is not.
+        $service->updateTime(['id' => 50, 'ticket' => 3, 'hours' => 1]);
+    }
+
     public function test_time_writes_reject_a_missing_or_malformed_ticket(): void
     {
         $ticketRepo = $this->make(TicketRepository::class, [

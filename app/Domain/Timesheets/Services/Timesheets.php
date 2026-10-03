@@ -142,12 +142,19 @@ class Timesheets extends BaseService
     }
 
     /**
-     * Non-throwing variant of {@see authorizeTicketForTimeEntry()} for stop-timer paths.
+     * Whether time may still be booked on $ticketId: the base timesheets.create capability AND
+     * access to the ticket's project. Re-checked at stop time because direct callers (HTMX
+     * stopwatch, MCP tools) do not pass the attribute gate and either right may have been
+     * revoked while the timer ran.
      *
      * @param  int  $ticketId  The ticket the time would be booked on.
      */
     private function canBookTimeOnTicket(int $ticketId): bool
     {
+        if (! $this->can(TimesheetsPermissions::CREATE)) {
+            return false;
+        }
+
         try {
             $this->authorizeTicketForTimeEntry($ticketId);
         } catch (AuthorizationException) {
@@ -426,7 +433,15 @@ class Timesheets extends BaseService
         if (isset($values['id'])) {
             $existing = $this->timesheetsRepo->getTimesheet($values['id']);
 
-            if ($existing && (int) $existing['userId'] !== $currentUserId && ! $this->can(TimesheetsPermissions::MANAGE)) {
+            if (! $existing) {
+                return;
+            }
+
+            // The entry's CURRENT ticket must be accessible too — otherwise an entry booked on
+            // another project's ticket could be rewritten (or moved) by id.
+            $this->authorizeTicketForTimeEntry($existing['ticketId'] ?? null);
+
+            if ((int) $existing['userId'] !== $currentUserId && ! $this->can(TimesheetsPermissions::MANAGE)) {
                 return;
             }
         }
