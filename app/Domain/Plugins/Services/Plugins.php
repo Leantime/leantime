@@ -3,8 +3,11 @@
 namespace Leantime\Domain\Plugins\Services;
 
 use Exception;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -81,6 +84,9 @@ class Plugins
     public string $marketplaceUrl;
 
     private int $timeout = 60;
+
+    /** Redirect hops followed when downloading a marketplace archive. */
+    private const MAX_DOWNLOAD_REDIRECTS = 5;
 
     /**
      * @return void
@@ -697,19 +703,20 @@ class Plugins
 
         // The archive is code this server will run, so it is only ever fetched over verified
         // HTTPS (unlike the other marketplace calls made through httpClient()): the marketplace
-        // URL must be https and redirects may not leave https.
+        // URL must be https and redirects may not leave https (downloadMarketplaceArchive()).
         if (strtolower((string) parse_url($this->marketplaceUrl, PHP_URL_SCHEME)) !== 'https') {
             throw new \Exception(__('notification.plugin_cant_download'));
         }
 
-        $response = Http::timeout($this->timeout)->withOptions([
-            'allow_redirects' => ['max' => 5, 'strict' => true, 'referer' => false, 'protocols' => ['https']],
-        ])->withHeaders([
-            'X-License-Key' => $plugin->license,
-            'X-Instance-Id' => $this->settingsService->getCompanyId(),
-            'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
-            'X-Leantime-Version' => $this->appSettings->appVersion,
-        ])->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
+        $response = $this->downloadMarketplaceArchive(
+            "{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}",
+            [
+                'X-License-Key' => $plugin->license,
+                'X-Instance-Id' => $this->settingsService->getCompanyId(),
+                'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
+                'X-Leantime-Version' => $this->appSettings->appVersion,
+            ]
+        );
 
         if (! $response->ok()) {
             throw new RequestException($response);
@@ -751,6 +758,57 @@ class Plugins
         if (! $this->pluginRepository->addPlugin($pluginModel)) {
             throw new \Exception(__('notification_cant_add_to_db'));
         }
+    }
+
+    /**
+     * Downloads a marketplace archive over verified HTTPS, following at most
+     * MAX_DOWNLOAD_REDIRECTS https redirects itself. The marketplace headers (license key,
+     * instance id, user count) are sent only to the configured marketplace origin and are never
+     * forwarded to a redirect target on another origin.
+     *
+     * @param  string  $url  The marketplace download URL.
+     * @param  array<string, mixed>  $marketplaceHeaders  Headers meant for the marketplace only.
+     *
+     * @throws \Exception When a redirect leaves https or the redirect limit is exceeded.
+     */
+    private function downloadMarketplaceArchive(string $url, array $marketplaceHeaders): Response
+    {
+        $marketplaceOrigin = self::urlOrigin($this->marketplaceUrl);
+
+        for ($hop = 0; ; $hop++) {
+            if (strtolower((string) parse_url($url, PHP_URL_SCHEME)) !== 'https') {
+                throw new \Exception(__('notification.plugin_cant_download'));
+            }
+
+            $headers = self::urlOrigin($url) === $marketplaceOrigin ? $marketplaceHeaders : [];
+
+            $response = Http::timeout($this->timeout)
+                ->withOptions(['allow_redirects' => false])
+                ->withHeaders($headers)
+                ->get($url);
+
+            if (! $response->redirect()) {
+                return $response;
+            }
+
+            $location = (string) $response->header('Location');
+            if ($location === '' || $hop >= self::MAX_DOWNLOAD_REDIRECTS) {
+                throw new \Exception(__('notification.plugin_cant_download'));
+            }
+
+            $url = (string) UriResolver::resolve(new Uri($url), new Uri($location));
+        }
+    }
+
+    /**
+     * The origin (scheme, host, effective port) of a URL, lower-cased.
+     */
+    private static function urlOrigin(string $url): string
+    {
+        $uri = new Uri($url);
+        $port = $uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80);
+
+        return $uri->getScheme().'://'.$uri->getHost().':'.$port;
     }
 
     /**
