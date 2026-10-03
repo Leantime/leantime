@@ -127,10 +127,14 @@ class PluginArchiveTest extends TestCase
     public function test_refuses_an_archive_with_a_traversal_entry_before_extracting(): void
     {
         [$phar, $publicKey] = $this->opensslSignedPhar();
+        // Extraction happens in a staging directory directly under sys_get_temp_dir(), so one `../`
+        // hop would land exactly here.
+        $escapedName = 'escaped-'.bin2hex(random_bytes(8)).'.php';
+        $escapeTarget = sys_get_temp_dir().DIRECTORY_SEPARATOR.$escapedName;
         $zipPath = $this->makeZip([
             'Notes.phar' => $phar,
             'Notes.phar.pubkey' => $publicKey,
-            '../../escaped.php' => '<?php echo 1;',
+            '../'.$escapedName => '<?php echo 1;',
         ]);
         $pluginDir = $this->existingPluginDir();
 
@@ -141,7 +145,7 @@ class PluginArchiveTest extends TestCase
         }
 
         $this->assertSame('installed-version', file_get_contents($pluginDir.'/Notes.phar'));
-        $this->assertFileDoesNotExist(dirname($this->workDir).DIRECTORY_SEPARATOR.'escaped.php');
+        $this->assertFileDoesNotExist($escapeTarget);
     }
 
     public function test_refuses_unsigned_files_beside_the_signed_phar(): void
