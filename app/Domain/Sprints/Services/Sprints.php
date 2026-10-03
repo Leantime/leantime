@@ -97,11 +97,27 @@ class Sprints extends BaseService
     }
 
     /**
+     * All sprints of a project.
+     *
+     * A null project means the session project (never "every project"); a non-positive or
+     * unresolvable project, or one the caller cannot view, yields an empty list.
+     *
+     * @param  int|string|null  $projectId  The project id, or null for the session project.
+     * @return array<int, Models\Sprints>
+     *
      * @api
      */
     #[RequiresPermission(SprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getAllSprints($projectId = null): array
     {
+        $projectId = filter_var($projectId ?? session('currentProject'), FILTER_VALIDATE_INT);
+        if ($projectId === false || $projectId <= 0) {
+            return [];
+        }
+
+        if (! $this->can(SprintsPermissions::VIEW, $projectId)) {
+            return [];
+        }
 
         $sprints = $this->sprintRepository->getAllSprints($projectId);
 
@@ -257,15 +273,29 @@ class Sprints extends BaseService
     }
 
     /**
+     * Burndown chart data for a sprint.
+     *
+     * The sprint is reloaded by id and authorized against its REAL project (a caller-supplied
+     * model is never trusted for its project or dates).
+     *
+     * @param  Models\Sprints  $sprint  The sprint (only its id is used).
+     * @return false|array The burndown rows, or false when the sprint does not exist.
+     *
      * @throws \Exception
      *
      * @api
      */
-    #[RequiresPermission(SprintsPermissions::VIEW)]
+    #[RequiresPermission(SprintsPermissions::VIEW, entityScoped: true)]
     public function getSprintBurndown(Models\Sprints $sprint): false|array
     {
+        $sprintId = filter_var($sprint->id ?? null, FILTER_VALIDATE_INT);
+        if ($sprintId === false || $sprintId <= 0) {
+            return false;
+        }
 
-        if (! is_object($sprint)) {
+        // getSprint() authorizes VIEW on the sprint's real project (throws when denied).
+        $sprint = $this->getSprint($sprintId);
+        if (! $sprint) {
             return false;
         }
 

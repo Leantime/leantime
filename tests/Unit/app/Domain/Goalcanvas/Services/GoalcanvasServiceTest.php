@@ -217,6 +217,27 @@ class GoalcanvasServiceTest extends TestCase
         $this->assertSame(1, $wrote);
     }
 
+    public function test_update_goal_item_rejects_an_array_item_id_and_writes_the_authorized_id(): void
+    {
+        $writtenIds = [];
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'editCanvasItem' => function ($values) use (&$writtenIds) {
+                $writtenIds[] = [$values['itemId'], $values['id']];
+            },
+        ]);
+
+        try {
+            $this->service($repo)->updateGoalItem(['itemId' => [77], 'description' => 'x']);
+            $this->fail('An array item id must be rejected');
+        } catch (AuthorizationException) {
+            $this->assertSame([], $writtenIds);
+        }
+
+        $this->service($repo)->updateGoalItem(['itemId' => '42', 'id' => 77, 'description' => 'x']);
+        $this->assertSame([[42, 42]], $writtenIds, 'The write must target exactly the authorized id');
+    }
+
     public function test_patch_goal_item_throws_and_never_writes_for_unresolved_item(): void
     {
         $patched = 0;

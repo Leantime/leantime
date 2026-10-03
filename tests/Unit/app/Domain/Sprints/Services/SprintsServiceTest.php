@@ -209,4 +209,71 @@ class SprintsServiceTest extends TestCase
         $this->assertFalse($service->getSprint(999));
         $this->assertSame(0, $authorizeCalls, 'A non-existent sprint must short-circuit before authorize');
     }
+
+    public function test_get_all_sprints_never_queries_every_project(): void
+    {
+        $queried = [];
+        $service = $this->makeService(sprintRepo: $this->make(SprintRepository::class, [
+            'getAllSprints' => function ($projectId) use (&$queried) {
+                $queried[] = $projectId;
+
+                return [];
+            },
+        ]));
+        $service->setPermissionService($this->make(PermissionService::class, ['currentUserCan' => fn () => true]));
+
+        // No session project: a null project must not become the unscoped "all projects" query.
+        session(['currentProject' => null]);
+        $this->assertSame([], $service->getAllSprints());
+        $this->assertSame([], $service->getAllSprints(0));
+        $this->assertSame([], $service->getAllSprints(-3));
+        $this->assertSame([], $queried);
+
+        // Null resolves to the session project.
+        session(['currentProject' => 9]);
+        $service->getAllSprints();
+        $this->assertSame([9], $queried);
+    }
+
+    public function test_get_all_sprints_is_empty_for_a_project_the_caller_cannot_view(): void
+    {
+        $service = $this->makeService(sprintRepo: $this->make(SprintRepository::class, [
+            'getAllSprints' => function () {
+                throw new \RuntimeException('must not list sprints of a project the caller cannot view');
+            },
+        ]));
+        $service->setPermissionService($this->make(PermissionService::class, ['currentUserCan' => fn () => false]));
+
+        $this->assertSame([], $service->getAllSprints(7));
+    }
+
+    public function test_sprint_burndown_authorizes_the_reloaded_sprints_project(): void
+    {
+        $authorizedProject = null;
+        $service = $this->makeService(
+            sprintRepo: $this->make(SprintRepository::class, [
+                // The stored sprint 7 belongs to project 4, whatever the caller's model claims.
+                'getSprint' => fn () => $this->make(SprintModel::class, ['id' => 7, 'projectId' => 4]),
+            ]),
+            reportRepo: $this->make(ReportRepository::class, [
+                'getSprintReport' => function () {
+                    throw new \RuntimeException('report data must not load before authorization');
+                },
+            ]),
+        );
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => function (string $key, ?int $projectId = null) use (&$authorizedProject): void {
+                $authorizedProject = $projectId;
+
+                throw new AuthorizationException;
+            },
+        ]));
+
+        try {
+            $service->getSprintBurndown($this->make(SprintModel::class, ['id' => 7, 'projectId' => 9]));
+            $this->fail('getSprintBurndown must authorize the sprint\'s real project');
+        } catch (AuthorizationException) {
+            $this->assertSame(4, $authorizedProject);
+        }
+    }
 }

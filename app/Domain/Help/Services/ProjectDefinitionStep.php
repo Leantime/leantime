@@ -68,7 +68,8 @@ class ProjectDefinitionStep implements OnboardingSteps
             $description .= ''.$params['whyImportant'];
         }
 
-        $this->projectService->patch(session('currentProject'), ['details' => $description]);
+        // Onboarding-scoped patch: only the user's own onboarding project (or a project editor).
+        $this->projectService->patchOnboardingProject((int) session('currentProject'), ['details' => $description]);
         $this->projectService->changeCurrentSessionProject(session('currentProject'));
 
         $this->settingsRepo->saveSetting('companysettings.completedOnboarding', true);

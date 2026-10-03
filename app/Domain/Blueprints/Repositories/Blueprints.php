@@ -200,12 +200,27 @@ class Blueprints extends Repository
     }
 
     /**
-     * @param  array<string, mixed>  $values  Item values
+     * Update a canvas item's editable columns.
+     *
+     * The target id must be a single positive integer; anything else (notably an array, which a
+     * `where('id', [...])` would silently turn into an IN-list) is ignored.
+     *
+     * @param  array<string, mixed>  $values  Item values (`itemId` or `id` selects the row)
      */
     public function editCanvasItem(array $values): void
     {
+        $rawItemId = $values['itemId'] ?? $values['id'] ?? null;
+        if (! is_int($rawItemId) && ! is_string($rawItemId)) {
+            return;
+        }
+
+        $itemId = (int) $rawItemId;
+        if ($itemId <= 0) {
+            return;
+        }
+
         $this->connection->table('zp_canvas_items')
-            ->where('id', $values['itemId'] ?? $values['id'])
+            ->where('id', $itemId)
             ->update([
                 'title' => $values['title'] ?? '',
                 'description' => $values['description'],
