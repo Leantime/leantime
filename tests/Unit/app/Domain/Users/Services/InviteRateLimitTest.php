@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Users\Services;
 
 use Illuminate\Support\Facades\RateLimiter;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\UI\Theme as ThemeCore;
@@ -47,7 +48,7 @@ class InviteRateLimitTest extends TestCase
 
     public function test_create_user_invite_returns_false_and_skips_db_when_user_cap_exceeded(): void
     {
-        session(['userdata' => ['id' => self::INVITER_ID, 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
+        session(['userdata' => ['id' => self::INVITER_ID, 'role' => 'owner', 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
 
         // Exhaust the per-user hourly cap (default 10) on the exact key the service computes.
         [$userKey] = $this->limiterKeys();
@@ -71,6 +72,9 @@ class InviteRateLimitTest extends TestCase
             $this->createMock(ThemeCore::class),
             $this->createMock(ProjectService::class),
         );
+        $permissions = $this->createMock(PermissionService::class);
+        $permissions->method('currentUserCan')->willReturn(true);
+        $service->setPermissionService($permissions);
 
         $result = $service->createUserInvite([
             'user' => 'newuser@example.com',

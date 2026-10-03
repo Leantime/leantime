@@ -7,7 +7,9 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Auth\RoleCeiling;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Api\Contracts\StaticAssetType;
 use Leantime\Domain\Api\Permissions\ApiPermissions;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
@@ -121,12 +123,16 @@ class Api
 
      *
      * @throws Exception
+     * @throws AuthorizationException When the requested role is above the caller's role.
      *
      * @api
      */
     #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function createAPIKey(array $values): bool|array
     {
+        // Role ceiling: an API key acts as a user, so it may not outrank the user minting it.
+        $this->assertRoleAssignable($values['role'] ?? '');
+
         $user = $this->randomStr(32);
         $password = $this->randomStr(32);
 
@@ -137,6 +143,8 @@ class Api
         $values['status'] = 'a';
         $values['clientId'] = '';
         $values['phone'] = '';
+        // Always an API-key account, whatever the caller passed in.
+        $values['source'] = 'api';
         $values['id'] = $this->userRepo->addUser($values);
 
         return $values['id'] ? $values : false;
@@ -184,11 +192,15 @@ class Api
      * controller did: only firstname/status/role are taken from the posted
      * values, everything else is blanked and the source stays 'api'.
      *
+     * Only API-key accounts can be updated here, and the role ceiling applies: the key's current
+     * role and the requested role may not exceed the caller's own role.
+     *
      * @param  int  $id  API key (user) id
      * @param  array  $postValues  Posted form values (firstname, status, role, ...)
      * @param  array|null  $projects  Selected project ids, or null when none submitted
      *
      * @throws Exception When the id is not a positive integer
+     * @throws AuthorizationException When the id is not an API key or the role ceiling is violated.
      *
      * @api
      */
@@ -200,6 +212,13 @@ class Api
         }
 
         $row = $this->userRepo->getUser($id);
+
+        if (! is_array($row) || ($row['source'] ?? '') !== 'api') {
+            throw new AuthorizationException('Only API keys can be updated here.');
+        }
+
+        $this->assertRoleAssignable($row['role'] ?? '');
+        $this->assertRoleAssignable($postValues['role'] ?? $row['role']);
 
         $values = [
             'firstname' => ($postValues['firstname'] ?? $row['firstname']),
@@ -219,6 +238,36 @@ class Api
         $this->userRepo->editUser($values, $id);
 
         $this->reconcileProjectRelations($id, $projects);
+
+        return true;
+    }
+
+    /**
+     * Deletes an API key and its project relations.
+     *
+     * Only API-key accounts can be deleted here, and only when the key's role is not above the
+     * caller's own role.
+     *
+     * @param  int  $id  API key (user) id
+     * @return bool True when deleted.
+     *
+     * @throws AuthorizationException When the id is not an API key or its role is above the caller's.
+     *
+     * @api
+     */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
+    public function deleteApiKey(int $id): bool
+    {
+        $row = $this->userRepo->getUser($id);
+
+        if (! is_array($row) || ($row['source'] ?? '') !== 'api') {
+            throw new AuthorizationException('Only API keys can be deleted here.');
+        }
+
+        $this->assertRoleAssignable($row['role'] ?? '');
+
+        $this->userRepo->deleteUser($id);
+        $this->projectRepo->deleteAllProjectRelations($id);
 
         return true;
     }
@@ -523,5 +572,31 @@ class Api
     public function healthCheck()
     {
         return true;
+    }
+
+    /**
+     * The roles the current user may give an API key (their own role and below).
+     *
+     * @return array<int, string> Role names keyed by role level.
+     */
+    public function getAssignableRoles(): array
+    {
+        return app(RoleCeiling::class)->assignableRoles();
+    }
+
+    /**
+     * Role ceiling: throws unless the current user may assign $role (at or below their own role).
+     *
+     * @param  mixed  $role  Requested role key or name.
+     *
+     * @throws AuthorizationException
+     */
+    private function assertRoleAssignable(mixed $role): void
+    {
+        if (app(RoleCeiling::class)->canAssign($role)) {
+            return;
+        }
+
+        throw new AuthorizationException('You cannot assign a role higher than your own.');
     }
 }

@@ -421,10 +421,11 @@ class UsersServiceTest extends TestCase
 
     public function test_patch_user_allows_other_account_with_edit_permission(): void
     {
-        session(['userdata' => ['id' => 7]]);
+        session(['userdata' => ['id' => 7, 'role' => 'admin']]);
 
         $patched = [];
         $service = $this->makeService($this->make(UserRepository::class, [
+            'getUser' => fn () => ['id' => 99, 'role' => 20],
             'patchUser' => function ($id, $fields) use (&$patched) {
                 $patched = ['id' => $id, 'fields' => $fields];
 

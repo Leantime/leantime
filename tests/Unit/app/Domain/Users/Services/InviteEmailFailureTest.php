@@ -20,7 +20,7 @@ class InviteEmailFailureTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        session(['userdata' => ['id' => self::INVITER_ID, 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
+        session(['userdata' => ['id' => self::INVITER_ID, 'role' => 'owner', 'name' => 'Inviter', 'mail' => 'inviter@example.com']]);
         RateLimiter::clear('invites:'.BASE_URL.':user:'.self::INVITER_ID);
         RateLimiter::clear('invites:'.BASE_URL.':tenant');
     }

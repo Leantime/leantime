@@ -18,9 +18,9 @@ use ReflectionMethod;
  * Safety properties:
  *  - A method WITHOUT the attribute is a complete no-op — it never touches the session, DB,
  *    or permission engine. So wiring the hooks in is inert until methods are annotated.
- *  - Audit mode (the default, `config('permissions.enforce')` falsy) only LOGS would-be
- *    denials instead of blocking, so enforcement can be rolled out and observed per domain
- *    before flipping to blocking.
+ *  - Enforcement is the default (`config('permissions.enforce')` true, LEAN_PERMISSIONS_ENFORCE).
+ *    Audit mode — `permissions.enforce` explicitly set to false — only LOGS would-be denials
+ *    instead of blocking. A missing or unreadable setting fails closed (blocks).
  */
 class PermissionEnforcer
 {
@@ -227,13 +227,16 @@ class PermissionEnforcer
         return $this->mandatoryParamCache[$key] = $mandatory;
     }
 
-    /** Whether denials block (true) or are only logged (false, the default — audit mode). */
+    /**
+     * Whether denials block (true, the default) or are only logged (false — audit mode, which must
+     * be configured explicitly). A missing or unreadable setting fails closed.
+     */
     private function shouldBlock(): bool
     {
         try {
-            return (bool) config('permissions.enforce', false);
+            return (bool) config('permissions.enforce', true);
         } catch (\Throwable) {
-            return false;
+            return true;
         }
     }
 }

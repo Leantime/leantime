@@ -6,8 +6,10 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Auth\RoleCeiling;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
@@ -92,11 +94,28 @@ class Users extends BaseService
     }
 
     /**
+     * Updates another user's account.
+     *
+     * Role ceiling: the caller may not edit an account whose current role is above their own,
+     * nor assign a role above their own.
+     *
+     * @param  array  $values  The user values to store.
+     * @param  int|string  $id  The id of the user being edited.
+     * @return bool True on success.
+     *
+     * @throws AuthorizationException When the role ceiling is violated.
+     *
      * @api
      */
     #[RequiresPermission(UsersPermissions::EDIT, global: true)]
     public function editUser($values, $id): bool
     {
+        $this->assertUserManageable((int) $id);
+
+        if (is_array($values) && array_key_exists('role', $values)) {
+            $this->assertRoleAssignable($values['role']);
+        }
+
         if (isset($values['firstname'])) {
             $values['firstname'] = NameSanitizer::clean($values['firstname']);
         }
@@ -366,6 +385,7 @@ class Users extends BaseService
      *                      when the invite rate limit is exhausted
      *
      * @throws BindingResolutionException
+     * @throws AuthorizationException When the requested role is above the caller's role.
      *
      * @api
      */
@@ -383,11 +403,27 @@ class Users extends BaseService
      * The user exists even when the email fails (e.g. bad SMTP settings); the admin can fix the
      * mail settings and resend, so the caller must be able to tell them (#1795).
      *
+     * Requires users.create here, not only at the entry points, because other services (e.g. the
+     * onboarding invite step) call it directly. Role ceiling: the requested role may not exceed the
+     * caller's own role. Callers below admin can only invite into their own client.
+     *
      * @param  array  $values  The new user's values.
      * @return false|array{userId: string, emailSent: bool} False when the user wasn't created.
+     *
+     * @throws AuthorizationException When the caller may not create users or the requested role
+     *                                is above the caller's role.
      */
     public function createUserInviteWithStatus(array $values): false|array
     {
+        $this->authorize(UsersPermissions::CREATE, forceGlobal: true);
+        $this->assertRoleAssignable($values['role'] ?? '');
+
+        if ($this->callerIsBelowAdmin()) {
+            $values['clientId'] = session('userdata.clientId') ?? '';
+        }
+
+        $values['source'] = $this->allowedAccountSource($values['source'] ?? '');
+
         if ($this->invitesRateLimited()) {
             return false;
         }
@@ -509,10 +545,17 @@ class Users extends BaseService
     /**
      * addUser - simple service wrapper to create a new user
      *
+     * Role ceiling: the requested role may not exceed the caller's own role. Callers below admin
+     * (e.g. managers, who hold users.create) cannot create active accounts with a password they
+     * chose: their request is turned into an invitation, scoped to their own client. The reserved
+     * 'api' source is never accepted here (see allowedAccountSource()).
+     *
      * TODO: Should accept userModel
      *
      * @param  array  $values  basic user values
      * @return bool|int returns new user id on success, false on failure
+     *
+     * @throws AuthorizationException When the requested role is above the caller's role.
      *
      * @api
      */
@@ -524,11 +567,11 @@ class Users extends BaseService
             'lastname' => NameSanitizer::clean($values['lastname'] ?? ''),
             'phone' => $values['phone'] ?? '',
             'user' => $values['username'] ?? $values['user'],
-            'role' => $values['role'],
+            'role' => $values['role'] ?? '',
             'notifications' => $values['notifications'] ?? 1,
             'clientId' => $values['clientId'] ?? '',
             'password' => $values['password'],
-            'source' => $values['source'] ?? '',
+            'source' => $this->allowedAccountSource($values['source'] ?? ''),
             'pwReset' => $values['pwReset'] ?? '',
             'status' => $values['status'] ?? '',
             'createdOn' => $values['createdOn'] ?? '',
@@ -536,6 +579,14 @@ class Users extends BaseService
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
         ];
+
+        $this->assertRoleAssignable($values['role']);
+
+        if ($this->callerIsBelowAdmin()) {
+            $invite = $this->createUserInviteWithStatus($values);
+
+            return $invite === false ? false : (int) $invite['userId'];
+        }
 
         return $this->userRepo->addUser($values);
     }
@@ -561,10 +612,13 @@ class Users extends BaseService
      * Patch specific fields on a user record.
      *
      * Only admins/owners can patch other users. Regular users may only patch
-     * their own record and only non-privileged fields.
+     * their own record and only non-privileged fields. Role ceiling: privileged patches may not
+     * target an account with a higher role than the caller's, nor set a role above it.
      *
      * @param  int  $id  The user ID
      * @param  array  $params  The fields to update
+     *
+     * @throws AuthorizationException When the role ceiling is violated.
      *
      * @api
      */
@@ -587,8 +641,15 @@ class Users extends BaseService
         ];
 
         if ($this->can(UsersPermissions::EDIT, forceGlobal: true)) {
-            // users.edit holders (admin+) can patch any user, but only whitelisted fields
+            // users.edit holders (admin+) can patch any user at or below their own role, but
+            // only whitelisted fields
             $filteredParams = array_intersect_key($params, array_flip($adminPatchableFields));
+
+            $this->assertUserManageable($id);
+
+            if (array_key_exists('role', $filteredParams)) {
+                $this->assertRoleAssignable($filteredParams['role']);
+            }
         } elseif ($id === $currentUserId) {
             // Regular users can only patch their own profile with limited fields
             $filteredParams = array_intersect_key($params, array_flip($selfPatchableFields));
@@ -762,7 +823,11 @@ class Users extends BaseService
      * @param  int  $id  The id of the user to delete.
      * @return bool True if the user was deleted successfully, false otherwise.
      *
-     * @throws \Exception If the user is not authorized to delete the user.
+     * Role ceiling: an account whose role is above the caller's own (e.g. an owner, for an admin)
+     * cannot be deleted.
+     *
+     * @throws AuthorizationException If the caller may not delete users or the account's role is
+     *                                above the caller's.
      *
      * @api
      */
@@ -773,6 +838,7 @@ class Users extends BaseService
         // attribute defers (entityScoped), so this in-method check is the single source of
         // truth and throws AuthorizationException (RPC -32001 / 403) when denied.
         $this->authorize(UsersPermissions::DELETE, forceGlobal: true);
+        $this->assertUserManageable($id);
 
         $this->userRepo->deleteUser($id);
         $this->projectRepository->deleteAllProjectRelations($id);
@@ -1541,6 +1607,7 @@ class Users extends BaseService
      *   - 'enter_email'    email was empty
      *   - 'no_valid_email' email is not a valid address
      *   - 'user_exists'    email already belongs to another account
+     *   - 'role_not_allowed' the requested role is above the inviting user's own role
      *   - 'invite_failed'  invite could not be created (rate limit reached OR db failure — the
      *                      two are indistinguishable here, so the mapped message stays generic)
      *   - 'invite_email_failed' the user was created but the invitation email could not be sent
@@ -1552,9 +1619,9 @@ class Users extends BaseService
      *
      * @throws BindingResolutionException
      *
-     * @internal Not exposed over JSON-RPC: the client restriction, manager flag and role are
-     *           enforced by the NewUser controller, so a direct call could invite into any client
-     *           or with any role (including Owner).
+     * @internal Not exposed over JSON-RPC: the manager flag and client id are supplied by the
+     *           NewUser controller from the session. The role ceiling is enforced here (and in
+     *           createUserInviteWithStatus()).
      */
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function inviteNewUser(array $post, int|string|null $sessionClientId, bool $isManager): string
@@ -1580,6 +1647,10 @@ class Users extends BaseService
 
         if (! filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
             return 'no_valid_email';
+        }
+
+        if (! $this->roleCeiling()->canAssign($values['role'])) {
+            return 'role_not_allowed';
         }
 
         if ($this->usernameExist($values['user'])) {
@@ -1628,7 +1699,10 @@ class Users extends BaseService
      * Imports/updates the LDAP users selected from the staged member list.
      *
      * @param  array<int, array<string, mixed>>  $stagedUsers  The full staged member list.
-     * @param  array<int, string>  $selectedUsernames  The usernames the admin selected for import.
+     * @param  array<int, string>  $selectedUsernames  The `user` values (emails) the admin selected for import.
+     *
+     * @throws AuthorizationException When a selected user's role, or the role of the existing
+     *                                account it would update, is above the caller's role.
      *
      * @api
      */
@@ -1637,11 +1711,114 @@ class Users extends BaseService
     {
         $users = [];
         foreach ($stagedUsers as $user) {
-            if (array_search($user['username'], $selectedUsernames)) {
+            // Staged rows come from Ldap::getSingleUser(); the import dialog posts each row's `user`
+            // (the email) as the selection value.
+            $email = $user['user'] ?? null;
+            if (is_string($email) && in_array($email, $selectedUsernames, true)) {
                 $users[] = $user;
             }
         }
 
+        // Role ceiling, checked for the whole batch before anything is written: the imported role
+        // and the existing account it would update (matched the same way upsertUsers() does).
+        foreach ($users as $user) {
+            $this->assertRoleAssignable($user['role'] ?? '');
+
+            $existingUser = $this->userRepo->getUserByEmail((string) $user['user']);
+            if (is_array($existingUser)) {
+                $this->assertRoleAssignable($existingUser['role'] ?? '');
+            }
+        }
+
         app()->make(LdapService::class)->upsertUsers($users);
+    }
+
+    /**
+     * The roles the current user may assign (their own role and below), for role dropdowns.
+     *
+     * @return array<int, string> Role names keyed by role level.
+     *
+     * @api
+     */
+    public function getAssignableRoles(): array
+    {
+        return $this->roleCeiling()->assignableRoles();
+    }
+
+    /**
+     * Role ceiling: throws unless the current user may assign $role (at or below their own role).
+     *
+     * @param  mixed  $role  Requested role key or name.
+     *
+     * @throws AuthorizationException
+     */
+    private function assertRoleAssignable(mixed $role): void
+    {
+        if ($this->roleCeiling()->canAssign($role)) {
+            return;
+        }
+
+        throw new AuthorizationException('You cannot assign a role higher than your own.');
+    }
+
+    /**
+     * Role ceiling: throws when the account $userId currently holds a role above the caller's, so
+     * e.g. an admin cannot edit (and take over) an owner account. Unknown ids pass; the update
+     * itself then affects nothing.
+     *
+     * @param  int  $userId  The account being modified.
+     *
+     * @throws AuthorizationException
+     */
+    private function assertUserManageable(int $userId): void
+    {
+        $targetUser = $this->userRepo->getUser($userId);
+
+        if (! is_array($targetUser)) {
+            return;
+        }
+
+        if ($this->roleCeiling()->canAssign($targetUser['role'] ?? '')) {
+            return;
+        }
+
+        throw new AuthorizationException('You cannot edit a user with a higher role than your own.');
+    }
+
+    /**
+     * The account `source` a caller may set when creating a user. 'api' is reserved for API keys
+     * (created through the Api service only) because it makes the account authenticate as a
+     * service account. Callers below admin cannot set a source at all.
+     *
+     * @param  mixed  $requestedSource  Caller-supplied source.
+     * @return string The source to store.
+     */
+    private function allowedAccountSource(mixed $requestedSource): string
+    {
+        if (! is_string($requestedSource) || strtolower(trim($requestedSource)) === 'api') {
+            return '';
+        }
+
+        if ($this->callerIsBelowAdmin()) {
+            return '';
+        }
+
+        return $requestedSource;
+    }
+
+    /**
+     * Whether an authenticated caller ranks below admin (e.g. a manager holding users.create).
+     */
+    private function callerIsBelowAdmin(): bool
+    {
+        return $this->roleCeiling()->callerIsBelow(Roles::$admin);
+    }
+
+    /**
+     * The shared role ceiling policy.
+     */
+    private function roleCeiling(): RoleCeiling
+    {
+        return app(RoleCeiling::class);
     }
 }

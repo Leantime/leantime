@@ -100,6 +100,8 @@ class NewUser extends Controller
                 $this->tpl->setNotification($this->language->__('notification.no_valid_email'), 'error');
             } elseif ($result === 'user_exists') {
                 $this->tpl->setNotification($this->language->__('notification.user_exists'), 'error');
+            } elseif ($result === 'role_not_allowed') {
+                $this->tpl->setNotification($this->language->__('notification.role_not_allowed'), 'error');
             } elseif ($result === 'invite_failed') {
                 $this->tpl->setNotification($this->language->__('notification.invite_failed'), 'error');
             } elseif ($result === 'invite_email_failed') {
@@ -143,6 +145,6 @@ class NewUser extends Controller
     {
         $this->tpl->assign('clients', $this->clientService->getAll());
         $this->tpl->assign('allProjects', $this->projectService->getAll());
-        $this->tpl->assign('roles', Roles::getRoles());
+        $this->tpl->assign('roles', $this->userService->getAssignableRoles());
     }
 }
