@@ -695,6 +695,31 @@ class TicketsServiceTest extends TestCase
         $this->assertSame([5], $punchedOut, 'every ticket in the batch counts, not only the optional handler');
     }
 
+    public function test_kanban_batch_failing_later_still_stops_the_timer_of_a_persisted_done_ticket(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $timesheetService = $this->make(TimesheetService::class, [
+            'isClocked' => fn () => ['id' => 5],
+            'punchOut' => function (int $ticketId) use (&$punchedOut) {
+                $punchedOut[] = $ticketId;
+
+                return 1.0;
+            },
+        ]);
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            // Ticket 5 is written; ticket 6 reports false (e.g. 0 rows changed).
+            'updateTicketStatus' => fn ($id) => (int) $id === 5,
+            'getStateLabels' => fn () => [0 => ['name' => 'Done', 'statusType' => 'DONE']],
+        ], $this->permissionsForProjects([7]), $timesheetService);
+
+        $this->assertFalse($service->updateTicketStatusAndSorting(['0' => 'ticket[]=5&ticket[]=6'], null));
+
+        $this->assertSame([5], $punchedOut, 'a status that was persisted before the failure still stops the timer');
+    }
+
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor']]);

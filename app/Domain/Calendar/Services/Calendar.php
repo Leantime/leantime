@@ -375,8 +375,11 @@ class Calendar extends BaseService
      */
     public static function looksLikeIcalCalendar(string $content): bool
     {
-        return str_starts_with($content, 'BEGIN:VCALENDAR')
-            && str_ends_with(rtrim($content), 'END:VCALENDAR');
+        // RFC 5545 property names and values like VCALENDAR are case-insensitive.
+        $upperContent = strtoupper(rtrim($content));
+
+        return str_starts_with($upperContent, 'BEGIN:VCALENDAR')
+            && str_ends_with($upperContent, 'END:VCALENDAR');
     }
 
     /**

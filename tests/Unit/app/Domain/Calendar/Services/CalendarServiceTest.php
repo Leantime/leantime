@@ -532,6 +532,7 @@ class CalendarServiceTest extends TestCase
         $calendar = \Leantime\Domain\Calendar\Services\Calendar::class;
 
         $this->assertTrue($calendar::looksLikeIcalCalendar("BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n"));
+        $this->assertTrue($calendar::looksLikeIcalCalendar("begin:vcalendar\r\nend:VCalendar\r\n"), 'RFC 5545 names are case-insensitive');
         $this->assertFalse($calendar::looksLikeIcalCalendar('<html>BEGIN:VCALENDAR</html>'));
         $this->assertFalse($calendar::looksLikeIcalCalendar("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\n"), 'a truncated download is rejected');
     }

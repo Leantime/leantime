@@ -3831,6 +3831,10 @@ class Tickets extends BaseService
                         $id = substr($ticketString, 9);
 
                         if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
+                            // Earlier tickets in the batch were already written (the repository
+                            // also reports false for "0 rows changed"), so their timers must still stop.
+                            $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
+
                             return false;
                         }
 
