@@ -5,6 +5,7 @@ namespace Unit\app\Domain\Tickets\Services;
 use Carbon\CarbonImmutable;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Core\Support\DateTimeHelper;
@@ -209,5 +210,143 @@ class TicketsApiContractTest extends TestCase
         $this->assertSame('alpha,beta', $written['tags']);
         $this->assertSame(974, $written['dependingTicketId']);
         $this->assertSame('subtask', $written['type']);
+    }
+
+    // ---------------------------------------------------------------------
+    // #3702: one status contract for create/update
+    // ---------------------------------------------------------------------
+
+    /** Seed-style labels: 3 New, 4 In Progress, 0 Done, plus a custom label. */
+    private function seedLabels(): array
+    {
+        return [
+            3 => ['name' => 'status.new', 'statusType' => 'NEW', 'sortKey' => 1],
+            4 => ['name' => 'status.in_progress', 'statusType' => 'INPROGRESS', 'sortKey' => 3],
+            7 => ['name' => 'Needs Review', 'statusType' => 'INPROGRESS', 'sortKey' => 4],
+            0 => ['name' => 'status.done', 'statusType' => 'DONE', 'sortKey' => 5],
+        ];
+    }
+
+    /**
+     * @return array{0: TicketsService, 1: \Closure(): ?array}
+     */
+    private function creatingService(): array
+    {
+        $created = null;
+        $service = $this->service([
+            'getStateLabels' => fn () => $this->seedLabels(),
+            'getTicket' => fn ($id) => (int) $id === 974 ? $this->make(TicketModel::class, ['id' => 974, 'projectId' => 9]) : false,
+            'addTicket' => function ($values) use (&$created) {
+                $created = $values;
+
+                return 101;
+            },
+        ]);
+
+        return [$service, function () use (&$created) {
+            return $created;
+        }];
+    }
+
+    public function test_add_ticket_resolves_a_status_name_instead_of_casting_it_to_done(): void
+    {
+        [$service, $created] = $this->creatingService();
+
+        $this->assertSame(101, $service->addTicket(['headline' => 'Sub', 'projectId' => 9, 'status' => 'New', 'dependingTicketId' => 974, 'type' => 'subtask']));
+        $this->assertSame(3, $created()['status']);
+    }
+
+    public function test_add_ticket_accepts_status_types_custom_labels_and_numeric_strings(): void
+    {
+        [$service, $created] = $this->creatingService();
+
+        $service->addTicket(['headline' => 'A', 'projectId' => 9, 'status' => 'inprogress']);
+        $this->assertSame(4, $created()['status']);
+
+        $service->addTicket(['headline' => 'B', 'projectId' => 9, 'status' => 'needs review']);
+        $this->assertSame(7, $created()['status']);
+
+        $service->addTicket(['headline' => 'C', 'projectId' => 9, 'status' => '0']);
+        $this->assertSame(0, $created()['status']);
+    }
+
+    public function test_add_ticket_defaults_to_the_projects_new_status(): void
+    {
+        [$service, $created] = $this->creatingService();
+
+        $service->addTicket(['headline' => 'Sub', 'projectId' => 9, 'status' => '']);
+        $this->assertSame(3, $created()['status']);
+    }
+
+    public function test_add_ticket_rejects_an_unknown_status_string(): void
+    {
+        [$service] = $this->creatingService();
+
+        try {
+            $service->addTicket(['headline' => 'Sub', 'projectId' => 9, 'status' => 'Bogus']);
+            $this->fail('an unknown status must be rejected, not stored as 0 (Done)');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('status', $e->getErrorData());
+            $this->assertStringContainsString('Bogus', $e->getClientMessage());
+        }
+    }
+
+    public function test_add_ticket_rejects_a_parent_the_caller_cannot_see(): void
+    {
+        [$service] = $this->creatingService();
+
+        $this->expectException(ValidationException::class);
+
+        $service->addTicket(['headline' => 'Sub', 'projectId' => 9, 'dependingTicketId' => 5555]);
+    }
+
+    public function test_patch_resolves_status_names_and_drops_an_empty_status(): void
+    {
+        $patched = [];
+        $service = $this->service([
+            'getStateLabels' => fn () => $this->seedLabels(),
+            'getTicket' => fn () => $this->storedSubtask(),
+            'patchTicket' => function ($id, $params) use (&$patched) {
+                $patched[] = $params;
+
+                return true;
+            },
+        ]);
+
+        $service->patch(977, ['status' => 'In Progress']);
+        $service->patch(977, ['status' => '', 'headline' => 'x']);
+
+        $this->assertSame(['status' => 4], $patched[0]);
+        $this->assertSame(['headline' => 'x'], $patched[1]);
+    }
+
+    public function test_update_ticket_with_an_empty_status_keeps_the_stored_status(): void
+    {
+        $written = null;
+        $service = $this->service([
+            'getStateLabels' => fn () => $this->seedLabels(),
+            'getTicket' => fn () => $this->storedSubtask(),
+            'updateTicket' => function ($values) use (&$written) {
+                $written = $values;
+
+                return true;
+            },
+        ]);
+
+        $service->updateTicket(['id' => 977, 'status' => '']);
+
+        $this->assertSame(3, $written['status']);
+    }
+
+    public function test_get_all_subtasks_is_empty_for_a_parent_the_caller_cannot_see(): void
+    {
+        $service = $this->service([
+            'getTicket' => fn () => false,
+            'getAllSubtasks' => function () {
+                throw new \RuntimeException('must not list children of an invisible parent');
+            },
+        ]);
+
+        $this->assertSame([], $service->getAllSubtasks(974));
     }
 }

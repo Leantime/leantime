@@ -5,6 +5,7 @@ namespace Leantime\Domain\Tickets\Tools;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -45,7 +46,7 @@ class AddSubtaskTool extends Tool
             ->integer('editorId')->description('Assigned user ID.')
             ->integer('userId')->description('Creator user ID.')
             ->string('dateToFinish')->description('Due date in ISO8601 format.')
-            ->integer('status')->description('Status ID.')
+            ->raw('status', ['type' => ['integer', 'string'], 'description' => 'Status id (see getStatusLabels), status name ("New") or status type (new, inprogress, done). Defaults to the project\'s NEW status.'])
             ->string('editFrom')->description('Scheduled start date in ISO8601 format.')
             ->string('editTo')->description('Scheduled end date in ISO8601 format.')
             ->integer('effort')->description('Effort T-shirt size: 1=XS, 2=S, 3=M, 5=L, 8=XL, 13=XXL.')
@@ -65,7 +66,7 @@ class AddSubtaskTool extends Tool
             'editorId' => ($arguments['editorId'] ?? null),
             'userId' => ($arguments['userId'] ?? null),
             'dateToFinish' => ($arguments['dateToFinish'] ?? null),
-            'status' => (int) ($arguments['status'] ?? 3),
+            'status' => ($arguments['status'] ?? null),
             'sprint' => null,
             'editFrom' => ($arguments['editFrom'] ?? null),
             'editTo' => ($arguments['editTo'] ?? null),
@@ -77,7 +78,15 @@ class AddSubtaskTool extends Tool
             'planHours' => (int) ($arguments['planHours'] ?? 0),
         ];
 
-        $result = $this->ticketsService->quickAddTicket($params);
+        try {
+            $result = $this->ticketsService->quickAddTicket($params);
+        } catch (LeantimeExceptionInterface $e) {
+            return ToolResult::error($e->getClientMessage());
+        }
+
+        if (is_array($result)) {
+            return ToolResult::error((string) ($result['message'] ?? $result['msg'] ?? 'Failed to create the task.'));
+        }
 
         if ($result) {
             return ToolResult::text("Subtask created successfully. ID: {$result}");

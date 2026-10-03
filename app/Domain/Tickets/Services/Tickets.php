@@ -15,6 +15,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Auth\Models\Roles;
@@ -1947,6 +1948,11 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllSubtasks(int $ticketId): false|array
     {
+        // Subtasks are read by parent id only, so fence on the parent: a caller who cannot see the
+        // parent ticket (or whose id names nothing) gets no children from another project.
+        if (! $this->getTicket($ticketId)) {
+            return [];
+        }
 
         // TODO: Refactor to be recursive
         return $this->ticketRepository->getAllSubtasks($ticketId);
@@ -1980,26 +1986,12 @@ class Tickets extends BaseService
 
         $this->authorize(TicketsPermissions::CREATE, $projectId !== null ? (int) $projectId : null);
 
-        // Resolve the default status from the PROJECT's status config
-        // rather than hardcoding `3`. The hardcoded `3` was the "New"
-        // status for the default Leantime install, but custom projects
-        // can have status `3` mean "Done", "Blocked", or anything else,
-        // and we don't want to silently create new tasks in those
-        // statuses. Fall back to `3` only if the project has no
-        // NEW-statusType status configured (which would itself be a
-        // misconfiguration but shouldn't break task creation).
-        $defaultStatus = 3;
-        if ($projectId) {
-            $statusLabels = $this->ticketRepository->getStateLabels((int) $projectId);
-            if (is_array($statusLabels)) {
-                foreach ($statusLabels as $statusId => $config) {
-                    if (($config['statusType'] ?? '') === 'NEW') {
-                        $defaultStatus = (int) $statusId;
-                        break;
-                    }
-                }
-            }
-        }
+        $this->assertParentTicketIsVisible($params['dependingTicketId'] ?? null);
+
+        // Status ids, label names ("New") and status types ("inprogress") are all accepted;
+        // anything unknown is rejected instead of being cast to 0 (= Done) (#3702).
+        $status = $this->resolveStatusInput($params['status'] ?? null, (int) $projectId)
+            ?? $this->defaultNewStatus((int) $projectId);
 
         $values = [
             'headline' => $params['headline'],
@@ -2010,7 +2002,7 @@ class Tickets extends BaseService
             'userId' => session('userdata.id') ?? $params['userId'] ?? null,
             'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
-            'status' => isset($params['status']) ? (int) $params['status'] : $defaultStatus,
+            'status' => $status,
             'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',
             'hourRemaining' => '',
             'planHours' => isset($params['planHours']) ? (int) $params['planHours'] : '',
@@ -2175,7 +2167,7 @@ class Tickets extends BaseService
             'date' => gmdate('Y-m-d H:i:s'),
             'dateToFinish' => $values['dateToFinish'] ?? '',
             'timeToFinish' => $values['timeToFinish'] ?? '',
-            'status' => $values['status'] ?? 3,
+            'status' => $values['status'] ?? null,
             'planHours' => $values['planHours'] ?? '',
             'tags' => $values['tags'] ?? '',
             'sprint' => $values['sprint'] ?? '',
@@ -2197,6 +2189,13 @@ class Tickets extends BaseService
         // project membership). Replaces the previous access-only check, which let any
         // assigned role create via RPC.
         $this->authorize(TicketsPermissions::CREATE, (int) $values['projectId']);
+
+        $this->assertParentTicketIsVisible($values['dependingTicketId']);
+
+        // New work defaults to the project's NEW status; label names and status types are
+        // resolved, unknown strings are rejected instead of becoming 0 (= Done) (#3702).
+        $values['status'] = $this->resolveStatusInput($values['status'], (int) $values['projectId'])
+            ?? $this->defaultNewStatus((int) $values['projectId']);
 
         if ($values['headline'] === '') {
             return ['msg' => 'notifications.ticket_save_error_no_headline', 'type' => 'error'];
@@ -2350,6 +2349,14 @@ class Tickets extends BaseService
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
+        // An empty status means "unchanged"; names/types are resolved, unknown strings rejected (#3702).
+        if (array_key_exists('status', $submittedValues)) {
+            $values['status'] = $this->resolveStatusInput($submittedValues['status'], (int) $values['projectId']);
+            if ($values['status'] === null) {
+                unset($submittedValues['status']);
+            }
+        }
+
         $values = $this->prepareTicketDates($values);
 
         $values = $this->keepStoredValuesForOmittedFields($values, $submittedValues, $currentTicket);
@@ -2381,6 +2388,125 @@ class Tickets extends BaseService
         }
 
         return false;
+    }
+
+    /**
+     * Resolve a caller-supplied ticket status to a status id of the given project (#3702).
+     *
+     * Accepts a status id (int or numeric string), a status label name as shown in the project
+     * ("New", "In Progress", a custom label, or the raw language key "status.new"), or a status
+     * type ("new", "inprogress", "done"). Previously any non-numeric string was cast to 0, which is
+     * the Done status, so "New" silently completed new work.
+     *
+     * @param  mixed  $status  The submitted status.
+     * @param  int  $projectId  The project whose status labels apply.
+     * @return int|null The status id, or null when no status was submitted (null or '').
+     *
+     * @throws ValidationException When the status does not name a status of the project.
+     */
+    private function resolveStatusInput(mixed $status, int $projectId): ?int
+    {
+        if ($status === null || $status === '') {
+            return null;
+        }
+
+        if (is_int($status)) {
+            return $status;
+        }
+
+        if (is_float($status)) {
+            return (int) $status;
+        }
+
+        if (! is_string($status)) {
+            $message = 'The status must be a status id, a status name or a status type.';
+
+            throw new ValidationException(['status' => [$message]], $message);
+        }
+
+        $status = trim($status);
+        if (preg_match('/^-?\d+$/', $status) === 1) {
+            return (int) $status;
+        }
+
+        $normalize = fn (string $value): string => (string) preg_replace('/[\s_\-]+/', '', strtolower(trim($value)));
+        $wanted = $normalize($status);
+        $labels = $this->ticketRepository->getStateLabels($projectId);
+
+        foreach ($labels as $statusId => $label) {
+            $name = (string) ($label['name'] ?? '');
+            $candidates = [$name, $this->language->__($name), (string) preg_replace('/^status\./', '', $name)];
+
+            foreach ($candidates as $candidate) {
+                if ($candidate !== '' && $normalize($candidate) === $wanted) {
+                    return (int) $statusId;
+                }
+            }
+        }
+
+        $statusTypes = ['new' => 'NEW', 'inprogress' => 'INPROGRESS', 'done' => 'DONE'];
+        if (isset($statusTypes[$wanted])) {
+            $statusId = $this->resolveProjectStatusKeyForType($projectId, $statusTypes[$wanted]);
+            if ($statusId !== null) {
+                return $statusId;
+            }
+        }
+
+        $knownStatuses = [];
+        foreach ($labels as $statusId => $label) {
+            $knownStatuses[] = $statusId.' ('.$this->language->__((string) ($label['name'] ?? '')).')';
+        }
+
+        $message = "Unknown status '{$status}'. Use a status id of this project (".implode(', ', $knownStatuses).') or a status type: new, inprogress, done.';
+
+        throw new ValidationException(['status' => [$message]], $message);
+    }
+
+    /**
+     * The status new work starts in: the project's first NEW-type status, falling back to 3.
+     *
+     * Custom projects can repurpose status 3, so the default comes from the project's status
+     * configuration rather than being hardcoded.
+     *
+     * @param  int  $projectId  The project the ticket is created in.
+     * @return int The default status id.
+     */
+    private function defaultNewStatus(int $projectId): int
+    {
+        if ($projectId <= 0) {
+            return 3;
+        }
+
+        foreach ($this->ticketRepository->getStateLabels($projectId) as $statusId => $config) {
+            if (($config['statusType'] ?? '') === 'NEW') {
+                return (int) $statusId;
+            }
+        }
+
+        return 3;
+    }
+
+    /**
+     * A new ticket may only be linked under a parent the caller can see (#3702).
+     *
+     * Subtasks are listed by parent id and listings expose the parent's headline, so linking to a
+     * ticket the caller cannot access (or one that does not exist) is rejected.
+     *
+     * @param  mixed  $parentTicketId  The submitted dependingTicketId (empty = no parent).
+     *
+     * @throws ValidationException When the parent does not exist or is not visible to the caller.
+     */
+    private function assertParentTicketIsVisible(mixed $parentTicketId): void
+    {
+        if ($parentTicketId === null || $parentTicketId === '' || (int) $parentTicketId <= 0) {
+            return;
+        }
+
+        if (! $this->getTicket((int) $parentTicketId)) {
+            $message = "Parent ticket {$parentTicketId} does not exist or is not accessible.";
+
+            throw new ValidationException(['dependingTicketId' => [$message]], $message);
+        }
     }
 
     /**
@@ -2928,6 +3054,16 @@ class Tickets extends BaseService
         // could move/inject a ticket into a project they have no access to.
         if (isset($params['projectId']) && (int) $params['projectId'] !== (int) $ticket->projectId) {
             $this->authorize(TicketsPermissions::EDIT, (int) $params['projectId']);
+        }
+
+        // Resolve a status name/type to the project's status id; an empty status is dropped rather
+        // than written as '' (which the int column stores as 0 = Done) (#3702).
+        if (array_key_exists('status', $params)) {
+            $statusProjectId = (int) ($params['projectId'] ?? $ticket->projectId);
+            $params['status'] = $this->resolveStatusInput($params['status'], $statusProjectId);
+            if ($params['status'] === null) {
+                unset($params['status']);
+            }
         }
 
         // Handle collaborators separately since they live in the relationship table, not on zp_tickets
@@ -3543,7 +3679,7 @@ class Tickets extends BaseService
             'date' => $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
             'dateToFinish' => $values['dateToFinish'] ?? '',
             'priority' => $values['priority'] ?? 3,
-            'status' => $values['status'],
+            'status' => $this->resolveStatusInput($values['status'] ?? null, $parentProjectId),
             'storypoints' => $values['storypoints'] ?? '',
             'hourRemaining' => $values['hourRemaining'] ?? 0,
             'planHours' => $values['planHours'] ?? 0,
@@ -3555,6 +3691,15 @@ class Tickets extends BaseService
             'dependingTicketId' => $parentTicket->id,
             'milestoneid' => $parentTicket->milestoneid,
         ];
+
+        // An omitted/empty status keeps the stored one on update and is the project's NEW status
+        // on create (it used to be written as null/'' = Done) (#3702).
+        if ($values['status'] === null) {
+            unset($submittedValues['status']);
+            if ($isNewSubtask) {
+                $values['status'] = $this->defaultNewStatus($parentProjectId);
+            }
+        }
 
         $values = $this->prepareTicketDates($values);
 

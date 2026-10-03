@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -61,7 +62,7 @@ class BulkAddTasksTool extends Tool
                     'editorId' => $taskData['editorId'] ?? null,
                     'userId' => $taskData['userId'] ?? null,
                     'dateToFinish' => $taskData['dateToFinish'] ?? null,
-                    'status' => $taskData['status'] ?? 3,
+                    'status' => $taskData['status'] ?? null,
                     'sprint' => $taskData['sprint'] ?? null,
                     'editFrom' => $taskData['editFrom'] ?? null,
                     'editTo' => $taskData['editTo'] ?? null,
@@ -78,6 +79,9 @@ class BulkAddTasksTool extends Tool
                     $failureCount++;
                     $results[] = ['headline' => $taskData['headline'], 'status' => 'error', 'message' => 'Failed to create task'];
                 }
+            } catch (LeantimeExceptionInterface $e) {
+                $failureCount++;
+                $results[] = ['headline' => $taskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => $e->getClientMessage()];
             } catch (\Exception $e) {
                 $failureCount++;
                 $results[] = ['headline' => $taskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => $e->getMessage()];
