@@ -58,4 +58,29 @@ class Roles
     {
         return self::getFilteredRoles();
     }
+
+    /**
+     * Hierarchy level of a role given either as its numeric key (50, '50') or its name ('owner').
+     * Higher is more privileged. Returns false for an unknown role.
+     *
+     * @param  mixed  $role  Role key or role name.
+     *
+     * @throws BindingResolutionException
+     */
+    public static function getRoleLevel(mixed $role): int|false
+    {
+        $roles = self::getFilteredRoles();
+
+        if (is_int($role) || (is_string($role) && ctype_digit($role))) {
+            return isset($roles[(int) $role]) ? (int) $role : false;
+        }
+
+        if (! is_string($role) || $role === '') {
+            return false;
+        }
+
+        $level = array_search($role, $roles, true);
+
+        return $level === false ? false : (int) $level;
+    }
 }

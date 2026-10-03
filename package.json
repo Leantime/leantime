@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "3.10.0",
+  "version": "3.10.2",
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
@@ -13,7 +13,6 @@
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
     "@sentry/browser": "^7.119.1",
-    "@sentry/webpack-plugin": "^2.16.1",
     "@tiptap/core": "^2.11.5",
     "@tiptap/extension-bubble-menu": "^2.11.5",
     "@tiptap/extension-character-count": "^2.27.2",
@@ -132,6 +131,9 @@
     },
     "@uppy/url": {
       "nanoid": "^5.1.16"
+    },
+    "laravel-mix": {
+      "webpack-dev-server": "^6.0.0"
     }
   }
 }

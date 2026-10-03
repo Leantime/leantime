@@ -220,6 +220,8 @@ class Goalcanvas extends BaseService
      * project. Reachable beyond the milestone UI (MCP getGoalsByMilestone wraps
      * it verbatim), so the caller's access to the milestone cannot be assumed —
      * a missing/foreign/unauthorized milestone returns [] (neutral, no oracle).
+     *
+     * @api
      */
     public function getGoalsByMilestone($milestoneId): array
     {
@@ -573,6 +575,8 @@ class Goalcanvas extends BaseService
      * Fetch a single goal board by id, authorized for VIEW against the board's real project.
      *
      * @return array<string, mixed>|false False when missing/foreign/unauthorized.
+     *
+     * @api
      */
     public function getSingleCanvas($id)
     {
@@ -588,6 +592,8 @@ class Goalcanvas extends BaseService
      * Create a goal board, authorized for CREATE against the target project.
      *
      * @throws AuthorizationException When projectId is missing or CREATE is denied.
+     *
+     * @api
      */
     public function createGoalboard($values)
     {
@@ -597,6 +603,9 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
 
+        // Reachable over JSON-RPC: the author is the authenticated user, never a caller-supplied id.
+        $values['author'] = (int) session('userdata.id');
+
         return $this->goalRepository->addCanvas($values);
     }
 
@@ -604,6 +613,8 @@ class Goalcanvas extends BaseService
      * Rename a goal board, authorized for EDIT against the board's real project.
      *
      * @throws AuthorizationException When the board is unknown/foreign or EDIT is denied.
+     *
+     * @api
      */
     public function updateGoalboard($values)
     {
@@ -738,16 +749,29 @@ class Goalcanvas extends BaseService
      *
      * @param  array<string, mixed>  $values  Item values (must include `itemId` or `id`)
      *
-     * @throws AuthorizationException When the item is unknown/foreign or EDIT is denied.
+     * The id is validated strictly (an array such as `itemId[]=N` is rejected rather than cast)
+     * and the SAME authorized id is written back into the payload, so the row that is written is
+     * always the row that was authorized.
+     *
+     * @throws AuthorizationException When the item id is invalid, the item is unknown/foreign or EDIT is denied.
      */
     public function updateGoalItem(array $values): void
     {
-        $itemId = (int) ($values['itemId'] ?? $values['id'] ?? 0);
+        $rawItemId = $values['itemId'] ?? $values['id'] ?? null;
+        $itemId = is_int($rawItemId) || is_string($rawItemId) ? filter_var($rawItemId, FILTER_VALIDATE_INT) : false;
+        if ($itemId === false || $itemId <= 0) {
+            throw new AuthorizationException;
+        }
+
         $projectId = $this->goalRepository->getCanvasItemProjectId($itemId, self::CANVAS_TYPE);
         if ($projectId === null) {
             throw new AuthorizationException;
         }
         $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        // Write exactly the id that was authorized.
+        $values['itemId'] = $itemId;
+        $values['id'] = $itemId;
 
         $this->goalRepository->editCanvasItem($values);
 

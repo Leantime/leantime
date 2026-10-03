@@ -1,7 +1,7 @@
 @props([
     'itemId' => '',
     'title' => '',
-    'description' => '',
+    'description' => '', // rich text (HTML); sanitized here before output
     'editUrl' => '',
     'deleteUrl' => '',
     'commentUrl' => '',
@@ -49,7 +49,7 @@
     </div>
 
     @if ($description)
-        <div class="sf-item-desc">{!! $description !!}</div>
+        <div class="sf-item-desc">{!! app(\Leantime\Core\UI\Template::class)->escapeMinimal($description) !!}</div>
     @endif
 
     <div class="sf-item-foot">

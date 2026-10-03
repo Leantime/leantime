@@ -13,11 +13,17 @@ use Leantime\Core\Support\CarbonMacros;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
+use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
+use Leantime\Domain\Notifications\Services\Push;
+use Leantime\Domain\Notifications\Services\WebhookQueue;
+use Leantime\Domain\Notifications\Services\Webhooks;
+use Leantime\Domain\Notifications\Services\WebhookTransport;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+use Leantime\Domain\Queue\Workers\Workers;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -67,6 +73,9 @@ class ProjectsServiceTest extends TestCase
         ?ClientRepository $clientRepo = null,
         ?LanguageCore $language = null,
         ?Client $httpClient = null,
+        ?Messengers $messengers = null,
+        ?NotificationService $notificationService = null,
+        ?Webhooks $webhooks = null,
     ): ProjectService {
         $language ??= $this->make(LanguageCore::class, [
             '__' => fn ($key) => $key,
@@ -77,8 +86,8 @@ class ProjectsServiceTest extends TestCase
             $ticketRepo ?? $this->make(TicketRepository::class),
             $settingsRepo ?? $this->make(SettingRepository::class),
             $language,
-            $this->make(Messengers::class),
-            $this->make(NotificationService::class),
+            $messengers ?? $this->make(Messengers::class),
+            $notificationService ?? $this->make(NotificationService::class),
             $this->make(FileService::class),
             $this->make(Avatarcreator::class),
             $queueRepo ?? $this->make(QueueRepository::class),
@@ -86,7 +95,257 @@ class ProjectsServiceTest extends TestCase
             $commentRepo ?? $this->make(CommentRepository::class),
             $clientRepo ?? $this->make(ClientRepository::class),
             $httpClient ?? $this->make(Client::class),
+            $webhooks ?? $this->make(Webhooks::class),
         );
+    }
+
+    // ---------------------------------------------------------------------
+    // notifyProjectUsers() → personal webhooks. Runs the real dispatch path
+    // with every other channel stubbed and a real Webhooks service, so the
+    // webhook recipients are what the relevance/category/mention filtering
+    // produced, narrowed to the opted-in ones when queued and by Webhooks' own
+    // per-recipient checks when posted. Delivery is queued; runWebhookQueue()
+    // plays the scheduler's WebhookQueue run.
+    // ---------------------------------------------------------------------
+
+    /**
+     * The fake zp_queue table the webhook rows are written to, keyed by msghash.
+     *
+     * @var array<string, array<string, mixed>>
+     */
+    private array $queueTable = [];
+
+    /**
+     * URLs the personal webhook transport posted to, in order.
+     *
+     * @var array<int, string>
+     */
+    private array $webhookPosts = [];
+
+    private ?QueueRepository $fakeQueueRepo = null;
+
+    /**
+     * Wires notifyProjectUsers for restricted project 5 with team members 1 (author), 2, 3, 4, 5;
+     * user 6 is not on the team but is @mentioned. Returns what each channel saw during the call.
+     *
+     * @param  array<string, string>  $settings  Setting key => stored value (preferences + webhooks).
+     * @param  array<int>  $usersWithProjectAccess  Who ProjectRepository::isUserAssignedToProject() lets into project 5.
+     * @param  array<int, array<string, mixed>|false>  $userOverrides  zp_user column overrides by user id; false = user deleted.
+     * @param  Webhooks|null  $webhooks  Replaces the real Webhooks service (built over a recording transport) when given.
+     * @return array{emailRecipients: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null}
+     */
+    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null): array
+    {
+        $seen = ['emailRecipients' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null];
+        $this->queueTable = [];
+        $this->webhookPosts = [];
+
+        $users = [];
+        foreach ([1, 2, 3, 4, 5, 6] as $userId) {
+            $users[$userId] = ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a', 'role' => 20, 'clientId' => 0];
+        }
+        foreach ($userOverrides as $userId => $columns) {
+            $users[$userId] = $columns === false ? false : $columns + $users[$userId];
+        }
+        $team = array_map(fn (int $userId) => $users[$userId], [1, 2, 3, 4, 5]);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUsersAssignedToProject' => fn () => $team,
+            'getProject' => fn ($projectId) => $projectId == 5 ? ['id' => 5, 'name' => 'Acme', 'psettings' => 'restricted', 'clientId' => 3] : false,
+            'isUserAssignedToProject' => fn ($userId, $projectId) => $projectId == 5 && in_array((int) $userId, $usersWithProjectAccess, true),
+        ]);
+        $userRepo = $this->make(UserRepository::class, [
+            'getUser' => fn ($userId) => $users[(int) $userId] ?? false,
+        ]);
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSettingsForKeys' => fn (array $keys) => array_intersect_key($settings, array_flip($keys)),
+        ]);
+
+        // Email rows and the webhook rows share the zp_queue table; the email queue is resolved from the container.
+        $this->fakeQueueRepo = $this->make(QueueRepository::class, [
+            'queueMessageToUsers' => function ($recipients) use (&$seen) {
+                $seen['emailRecipients'] = array_values($recipients);
+            },
+            'addMessageToQueue' => function (Workers $channel, string $subject, string $message, int $userId, int $projectId = 0) {
+                $msghash = md5(count($this->queueTable).$subject.$message);
+                $thedate = sprintf('2026-09-30 10:00:%02d', count($this->queueTable));
+                $this->queueTable[$msghash] = ['msghash' => $msghash, 'channel' => $channel->value, 'subject' => $subject, 'message' => $message, 'userId' => $userId, 'projectId' => $projectId, 'thedate' => $thedate];
+            },
+            // Rows are written with rising timestamps, so table order is the repository's oldest-first order.
+            'listMessageInQueue' => function (Workers $channel, mixed $recipients = null, int $projectId = 0, ?int $limit = null) {
+                $rows = array_values(array_filter($this->queueTable, fn (array $row) => $row['channel'] === $channel->value));
+
+                return $limit === null ? $rows : array_slice($rows, 0, $limit);
+            },
+            'deleteMessageInQueue' => function (string|array $msghashes) {
+                foreach ((array) $msghashes as $msghash) {
+                    unset($this->queueTable[$msghash]);
+                }
+
+                return true;
+            },
+        ]);
+        app()->instance(QueueRepository::class, $this->fakeQueueRepo);
+        app()->instance(Push::class, $this->make(Push::class, [
+            'sendFromNotification' => function ($notification, $userIds) use (&$seen) {
+                $seen['pushRecipients'] = array_values($userIds);
+            },
+        ]));
+        // The in-app listener resolves the notifications service from the container too.
+        $notificationService = $this->make(NotificationService::class, [
+            'processMentions' => fn () => null,
+            'addNotifications' => function ($notifications) use (&$seen) {
+                $seen['inAppNotifications'] = $notifications;
+            },
+        ]);
+        app()->instance(NotificationService::class, $notificationService);
+        $messengers = $this->make(Messengers::class, [
+            'sendNotificationToMessengers' => function () use (&$seen) {
+                $seen['messengerCalls']++;
+            },
+        ]);
+
+        $webhooks ??= new Webhooks(
+            $this->make(WebhookTransport::class, [
+                'post' => function (string $url) {
+                    $this->webhookPosts[] = $url;
+                },
+            ]),
+            $settingsRepo,
+            $userRepo,
+            $projectRepo,
+            $this->fakeQueueRepo,
+        );
+        // The queued rows' job resolves the webhook service from the container when WebhookQueue runs.
+        app()->instance(Webhooks::class, $webhooks);
+
+        $notification = new Notification;
+        $notification->projectId = 5;
+        $notification->authorId = 1;
+        $notification->module = 'tickets';
+        $notification->action = 'updated';
+        $notification->subject = 'To-Do updated';
+        $notification->message = 'Ada updated "Ship it"';
+        $notification->url = ['url' => 'https://leantime.example.com/tickets/showTicket/42', 'text' => 'Open'];
+        $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review'];
+
+        $this->makeService(
+            projectRepo: $projectRepo,
+            settingsRepo: $settingsRepo,
+            userRepo: $userRepo,
+            messengers: $messengers,
+            notificationService: $notificationService,
+            webhooks: $webhooks,
+        )->notifyProjectUsers($notification);
+
+        return $seen;
+    }
+
+    /**
+     * Runs the WEBHOOKS queue once the way the scheduler does: WebhookQueue built by the container.
+     */
+    private function runWebhookQueue(): void
+    {
+        app()->make(WebhookQueue::class)->processQueue();
+    }
+
+    /**
+     * @param  array<int>  $userIds
+     * @return array<string, string> The users' opted-in personal webhook settings.
+     */
+    private function optedInWebhooks(array $userIds): array
+    {
+        $settings = [];
+        foreach ($userIds as $userId) {
+            $settings["usersettings.{$userId}.webhook"] = json_encode(['url' => "https://1.1.1.1/hooks/user-{$userId}", 'enabled' => true]);
+        }
+
+        return $settings;
+    }
+
+    public function test_notify_project_users_queues_personal_webhooks_for_filtered_opted_in_recipients_and_sends_none_in_request(): void
+    {
+        // Laravel's queue driver plays no part — the job goes to Leantime's own zp_queue table,
+        // drained by the scheduler — so even the sync driver must not deliver during the request.
+        config(['queue.default' => 'sync']);
+        $settings = [
+            'usersettings.3.projectNotificationLevels' => json_encode([5 => 'muted']),
+            'usersettings.4.notificationEventTypes' => json_encode(['comments']),
+        ];
+        // Everyone except user 5 opted in — including the author and the filtered-out users.
+        $settings += $this->optedInWebhooks([1, 2, 3, 4, 6]);
+
+        // User 6 is not on the team but reaches project 5 another way (e.g. through its client),
+        // so the @mention bypass stands for the webhook too.
+        $seen = $this->runNotifyProjectUsers($settings, usersWithProjectAccess: [1, 2, 3, 4, 5, 6]);
+
+        // Author 1 excluded, 3 muted the project, 4 disabled the tasks category, 6 bypasses via @mention.
+        $this->assertSame([2, 5, 6], $seen['emailRecipients']);
+        $this->assertSame([2, 5, 6], $seen['pushRecipients']);
+        $this->assertSame(1, $seen['messengerCalls'], 'Project messengers still fire independently of personal webhooks');
+        $this->assertNotNull($seen['inAppNotifications'], 'In-app notifications are still created');
+        $this->assertSame([], $this->webhookPosts, 'No webhook is sent while the request is running');
+        $queuedRows = array_values($this->queueTable);
+        $this->assertSame([Workers::WEBHOOKS->value, Workers::WEBHOOKS->value], array_column($queuedRows, 'channel'), 'One webhooks-channel row per recipient, nothing on DEFAULT');
+        $this->assertSame(
+            [[2], [6]],
+            array_map(fn (array $row) => unserialize($row['message'], ['allowed_classes' => false])['recipientIds'], $queuedRows),
+            'Only filtered recipients who opted in (5 did not) are queued'
+        );
+
+        $this->runWebhookQueue();
+
+        $this->assertSame(
+            ['https://1.1.1.1/hooks/user-2', 'https://1.1.1.1/hooks/user-6'],
+            $this->webhookPosts,
+            'Every queued recipient is delivered in one run'
+        );
+        $this->assertSame([], $this->queueTable, 'The run removes the handled rows');
+    }
+
+    /**
+     * Mentions and collaborators bypass the relevance/category filters, but a bypass is no
+     * licence to post project content to someone's endpoint: the webhook boundary rechecks
+     * the recipient itself, while email keeps its own policy.
+     *
+     * @dataProvider bypassRecipientsWhoMayNotReceiveWebhooksProvider
+     */
+    public function test_notify_project_users_never_webhooks_a_bypass_recipient_who_may_not_receive_it(array $usersWithProjectAccess, array $userOverrides): void
+    {
+        $seen = $this->runNotifyProjectUsers($this->optedInWebhooks([2, 6]), $usersWithProjectAccess, $userOverrides);
+        $this->runWebhookQueue();
+
+        $this->assertSame(['https://1.1.1.1/hooks/user-2'], $this->webhookPosts);
+        $this->assertContains(6, $seen['emailRecipients'], 'The webhook checks narrow webhooks only; email keeps its own policy');
+    }
+
+    /**
+     * @return array<string, array{array<int>, array<int, array<string, mixed>|false>}>
+     */
+    public static function bypassRecipientsWhoMayNotReceiveWebhooksProvider(): array
+    {
+        return [
+            'mentioned user who lost access to the restricted project' => [[1, 2, 3, 4, 5], []],
+            'mentioned user who was deactivated' => [[1, 2, 3, 4, 5, 6], [6 => ['status' => 'i']]],
+            'mentioned user who switched notifications off' => [[1, 2, 3, 4, 5, 6], [6 => ['notifications' => 0]]],
+            'mentioned user who was deleted' => [[1, 2, 3, 4, 5, 6], [6 => false]],
+        ];
+    }
+
+    public function test_notify_project_users_still_delivers_every_other_channel_when_webhooks_fail(): void
+    {
+        $webhooks = $this->make(Webhooks::class, [
+            'queueToUsers' => function () {
+                throw new \RuntimeException('webhook queue outage');
+            },
+        ]);
+
+        $seen = $this->runNotifyProjectUsers([], webhooks: $webhooks);
+
+        $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients']);
+        $this->assertSame([2, 3, 4, 5, 6], $seen['pushRecipients']);
+        $this->assertSame(1, $seen['messengerCalls']);
+        $this->assertNotNull($seen['inAppNotifications'], 'In-app notifications are still created');
     }
 
     public function test_get_project_hub_data_builds_unique_client_map_and_returns_all_projects_when_no_filter(): void
@@ -152,6 +411,230 @@ class ProjectsServiceTest extends TestCase
         $this->assertNotNull($captured, 'A message must be queued');
         $this->assertSame(['wants@example.com'], $captured['recipients'], 'Users with notifications=0 are excluded');
         $this->assertSame(42, $captured['projectId']);
+    }
+
+    public function test_notify_project_created_escapes_the_author_and_project_names(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUsersAssignedToProject' => fn () => [
+                ['username' => 'wants@example.com', 'notifications' => 1, 'modified' => ''],
+            ],
+        ]);
+
+        $captured = null;
+        $queueRepo = $this->make(QueueRepository::class, [
+            'queueMessageToUsers' => function ($recipients, $message) use (&$captured) {
+                $captured = $message;
+            },
+        ]);
+        $language = $this->make(LanguageCore::class, [
+            '__' => fn ($key) => $key === 'email_notifications.project_created_message' ? '%s|%s|%s|%s' : $key,
+        ]);
+
+        $this->makeService(projectRepo: $projectRepo, queueRepo: $queueRepo, language: $language)
+            ->notifyProjectCreated(42, 'P & Co', '<a href="https://evil.example">Click</a>"');
+
+        $this->assertStringNotContainsString('<a href', $captured);
+        $this->assertStringContainsString('P &amp; Co', $captured);
+        $this->assertStringContainsString('Click&quot;', $captured);
+    }
+
+    // ---- in-body authorization (MCP tools call these services directly) ----
+
+    /** Permission stub: VIEW granted only on the listed projects; global capabilities per flag. */
+    private function projectPermissions(array $viewableProjects, bool $canManage): \Leantime\Core\Auth\Permissions\PermissionService
+    {
+        $decide = function (string $key, ?int $projectId = null, ?bool $forceGlobal = null) use ($viewableProjects, $canManage): bool {
+            if ($key === 'projects.view' && $forceGlobal !== true) {
+                return in_array($projectId, $viewableProjects, true);
+            }
+
+            return $canManage;
+        };
+
+        return $this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, [
+            'currentUserCan' => $decide,
+            'authorize' => function (string $key, ?int $projectId = null, ?bool $forceGlobal = null) use ($decide): void {
+                if (! $decide($key, $projectId, $forceGlobal)) {
+                    throw new AuthorizationException;
+                }
+            },
+        ]);
+    }
+
+    public function test_get_project_is_false_for_a_project_the_caller_cannot_view(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getProject' => fn ($id) => ['id' => $id, 'name' => 'Secret'],
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+        $service->setPermissionService($this->projectPermissions([5], false));
+
+        $this->assertSame(5, $service->getProject(5)['id']);
+        $this->assertFalse($service->getProject(6), 'A non-member without projects.edit must not read the project');
+    }
+
+    public function test_get_project_allows_company_wide_managers(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getProject' => fn ($id) => ['id' => $id],
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+        // Not a member of 6, but holds the company-wide projects.edit capability (manager+).
+        $service->setPermissionService($this->projectPermissions([], true));
+
+        $this->assertSame(6, $service->getProject(6)['id']);
+    }
+
+    public function test_project_mutations_self_authorize(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'addProject' => function () {
+                throw new \RuntimeException('must not create without projects.create');
+            },
+            'patch' => function () {
+                throw new \RuntimeException('must not patch without projects.edit');
+            },
+            'editProject' => function () {
+                throw new \RuntimeException('must not edit without projects.edit');
+            },
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+        $service->setPermissionService($this->projectPermissions([5], false));
+
+        $calls = [
+            'addProject' => fn () => $service->addProject(['name' => 'X', 'clientId' => 1]),
+            'patch' => fn () => $service->patch(5, ['name' => 'X']),
+            'editProject' => fn () => $service->editProject(['name' => 'X', 'type' => 'project'], 5),
+        ];
+
+        foreach ($calls as $method => $call) {
+            try {
+                $call();
+                $this->fail("$method must throw without the company-wide capability");
+            } catch (AuthorizationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    /**
+     * Builds a service for the onboarding-patch tests: the session user (1) is assigned to the
+     * listed projects and their recorded onboarding project is $onboardingProjectId.
+     *
+     * @param  array<int, int>  $assignedProjects
+     * @param  array<int, array{0: int, 1: array}>  $patches
+     */
+    private function onboardingService(int|false $onboardingProjectId, array $assignedProjects, bool $canManage, array &$patches): ProjectService
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn ($userId, $projectId) => in_array($projectId, $assignedProjects, true),
+            'patch' => function ($id, $params) use (&$patches) {
+                $patches[] = [$id, $params];
+
+                return true;
+            },
+        ]);
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn ($key) => $key === 'user.1.onboardingProjectId' ? $onboardingProjectId : false,
+        ]);
+
+        $service = $this->makeService(projectRepo: $projectRepo, settingsRepo: $settingsRepo);
+        $service->setPermissionService($this->projectPermissions([], $canManage));
+
+        return $service;
+    }
+
+    public function test_onboarding_patch_allows_the_users_own_onboarding_project(): void
+    {
+        $patches = [];
+        $service = $this->onboardingService(12, [12], false, $patches);
+
+        $this->assertTrue($service->patchOnboardingProject(12, ['name' => 'Mine', 'parent' => 99, 'psettings' => 'all']));
+        $this->assertSame([[12, ['name' => 'Mine']]], $patches, 'Only name/details may be written');
+    }
+
+    public function test_onboarding_patch_denies_any_other_project_for_non_managers(): void
+    {
+        $patches = [];
+        // The user is assigned to team project 30, but it is not their onboarding project.
+        $service = $this->onboardingService(12, [12, 30], false, $patches);
+
+        $this->assertFalse($service->patchOnboardingProject(30, ['name' => 'Renamed']));
+
+        // No recorded onboarding project at all (e.g. invited before this was tracked).
+        $noRecord = [];
+        $this->assertFalse($this->onboardingService(false, [30], false, $noRecord)->patchOnboardingProject(30, ['name' => 'Renamed']));
+
+        // Recorded project the user was since removed from.
+        $removed = [];
+        $this->assertFalse($this->onboardingService(12, [], false, $removed)->patchOnboardingProject(12, ['name' => 'Renamed']));
+
+        $this->assertSame([], $patches);
+        $this->assertSame([], $noRecord);
+        $this->assertSame([], $removed);
+    }
+
+    public function test_onboarding_patch_allows_company_wide_project_editors(): void
+    {
+        $patches = [];
+        $service = $this->onboardingService(false, [], true, $patches);
+
+        $this->assertTrue($service->patchOnboardingProject(30, ['details' => 'About']));
+        $this->assertSame([[30, ['details' => 'About']]], $patches);
+    }
+
+    public function test_get_client_manager_projects_pins_non_admins_to_their_own_client(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'manager', 'clientId' => 3]]);
+
+        $requestedClient = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getClientProjects' => function ($clientId) use (&$requestedClient) {
+                $requestedClient = $clientId;
+
+                return [];
+            },
+            'getUserProjects' => fn () => [],
+        ]);
+
+        $this->makeService(projectRepo: $projectRepo)->getClientManagerProjects(1, 8);
+
+        $this->assertSame(3, $requestedClient, 'A non-admin must only list their own client\'s projects');
+    }
+
+    public function test_get_user_project_relation_pins_non_admins_to_themselves(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $requestedUser = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjectRelation' => function ($userId) use (&$requestedUser) {
+                $requestedUser = $userId;
+
+                return [];
+            },
+        ]);
+
+        $this->makeService(projectRepo: $projectRepo)->getUserProjectRelation(2);
+
+        $this->assertSame(1, $requestedUser);
+    }
+
+    public function test_get_all_programs_only_returns_accessible_programs_for_non_admins(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getProjectsByType' => fn () => [['id' => 5, 'name' => 'Mine'], ['id' => 6, 'name' => 'Not mine']],
+            'getUserProjects' => fn () => [['id' => 5]],
+        ]);
+
+        $programs = $this->makeService(projectRepo: $projectRepo)->getAllPrograms();
+
+        $this->assertSame([5], array_column($programs, 'id'));
     }
 
     public function test_save_zulip_webhook_persists_when_all_fields_present(): void
@@ -632,8 +1115,13 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $result = $this->makeService(projectRepo: $projectRepo)
-            ->patchProject(5, ['act' => 'projects.x', 'id' => 5, 'sortIndex' => 2, 'start' => '2026-01-01']);
+        $service = $this->makeService(projectRepo: $projectRepo);
+        $service->setPermissionService($this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, [
+            'authorize' => fn () => null,
+            'currentUserCan' => fn () => true,
+        ]));
+
+        $result = $service->patchProject(5, ['act' => 'projects.x', 'id' => 5, 'sortIndex' => 2, 'start' => '2026-01-01']);
 
         $this->assertTrue($result);
         $this->assertArrayNotHasKey('act', $patchedValues, 'Control fields must be stripped before persisting');

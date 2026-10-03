@@ -34,7 +34,6 @@ class Localization
         // Settings rarely change mid-session, so we only fetch from DB on first load.
         // When users change their settings, the settings save endpoint refreshes the session.
         if (session()->has('localization.cached')) {
-            date_default_timezone_set(session('usersettings.timezone') ?: $this->config->defaultTimezone);
 
             CarbonImmutable::mixin(new CarbonMacros(
                 session('usersettings.timezone') ?: $this->config->defaultTimezone,
@@ -80,7 +79,6 @@ class Localization
 
         session()->put('usersettings.language', ($settings["usersettings.$userId.language"] ?? false) ?: session('companysettings.language'));
         session()->put('usersettings.timezone', ($settings["usersettings.$userId.timezone"] ?? false) ?: $this->config->defaultTimezone);
-        date_default_timezone_set(session('usersettings.timezone'));
 
         session()->put('usersettings.date_format', ($settings["usersettings.$userId.date_format"] ?? false) ?: $this->language->__('language.dateformat'));
         session()->put('usersettings.time_format', ($settings["usersettings.$userId.time_format"] ?? false) ?: $this->language->__('language.timeformat'));

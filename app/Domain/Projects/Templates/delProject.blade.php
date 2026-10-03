@@ -7,7 +7,7 @@
     <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
     <div class="pagetitle">
         <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! sprintf(__('headlines.delete_project_x'), $project['name']) !!}</h1>
+        <h1>{!! sprintf(__('headlines.delete_project_x'), e($project['name'])) !!}</h1>
     </div>
 </div><!--pageheader-->
 

@@ -217,6 +217,27 @@ class GoalcanvasServiceTest extends TestCase
         $this->assertSame(1, $wrote);
     }
 
+    public function test_update_goal_item_rejects_an_array_item_id_and_writes_the_authorized_id(): void
+    {
+        $writtenIds = [];
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'editCanvasItem' => function ($values) use (&$writtenIds) {
+                $writtenIds[] = [$values['itemId'], $values['id']];
+            },
+        ]);
+
+        try {
+            $this->service($repo)->updateGoalItem(['itemId' => [77], 'description' => 'x']);
+            $this->fail('An array item id must be rejected');
+        } catch (AuthorizationException) {
+            $this->assertSame([], $writtenIds);
+        }
+
+        $this->service($repo)->updateGoalItem(['itemId' => '42', 'id' => 77, 'description' => 'x']);
+        $this->assertSame([[42, 42]], $writtenIds, 'The write must target exactly the authorized id');
+    }
+
     public function test_patch_goal_item_throws_and_never_writes_for_unresolved_item(): void
     {
         $patched = 0;
@@ -907,5 +928,27 @@ class GoalcanvasServiceTest extends TestCase
         ]);
 
         $this->assertTrue($this->service($repo)->addMilestoneToGoal(7, 42));
+    }
+
+    /**
+     * createGoalboard is reachable over JSON-RPC (#3755), so a caller-supplied author must not
+     * be persisted: the board is attributed to the authenticated user.
+     */
+    public function test_create_goalboard_pins_the_author_to_the_session_user(): void
+    {
+        session(['userdata.id' => 42]);
+
+        $captured = null;
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'addCanvas' => function ($values) use (&$captured) {
+                $captured = $values;
+
+                return '9';
+            },
+        ]);
+
+        $this->service($repo)->createGoalboard(['title' => 'Q4', 'projectId' => 3, 'author' => 999]);
+
+        $this->assertSame(42, $captured['author']);
     }
 }

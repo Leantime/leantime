@@ -22,7 +22,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
     <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
-    <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
+    <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px"><?= $tpl->__('label.created_by') ?> <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | <?= $tpl->__('label.last_updated') ?>: <?= format(! empty($ticket->modified) ? $ticket->modified : $ticket->date)->date(); ?> </small>
     <h1 class="tw-mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)] ?? 'fa-circle'; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
 
     <br />
@@ -65,9 +65,9 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                             <span class="fa fa-stop"></span>
 
                             @if (is_array($onTheClock) == true)
-                                {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}
+                                {!!  sprintf(__("links.stop_work_started_at"), dtHelper()->userNow()->setTimestamp((int) $onTheClock["since"])->format(__("language.timeformat"))) !!}
                             @else
-                                {!! sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), time())) !!}
+                                {!! sprintf(__("links.stop_work_started_at"), dtHelper()->userNow()->format(__("language.timeformat"))) !!}
                             @endif
                         </a>
                     @endif

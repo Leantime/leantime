@@ -345,6 +345,73 @@ class Jsonrpc extends Controller
     }
 
     /**
+     * Casts a request value to a parameter's declared type.
+     *
+     * Handles plain named types and union types (#3754: ReflectionUnionType has no getName(), so
+     * every union-typed @api method used to fail with "Could not cast parameter"). A value that
+     * already satisfies one member of the type is passed through unchanged; otherwise each member
+     * is tried in declaration order and the first successful cast wins.
+     *
+     * @param  mixed  $value  The non-null request value.
+     * @param  \ReflectionType  $type  The parameter's declared type.
+     * @param  string  $name  The parameter name (for error messages).
+     * @return mixed The value, cast to one of the declared types.
+     *
+     * @throws Exception When no member of the declared type accepts the value.
+     */
+    private function castToDeclaredType(mixed $value, \ReflectionType $type, string $name): mixed
+    {
+        $candidateTypes = $type instanceof \ReflectionUnionType ? $type->getTypes() : [$type];
+
+        foreach ($candidateTypes as $candidateType) {
+            if ($candidateType instanceof \ReflectionNamedType && $this->valueMatchesNamedType($value, $candidateType)) {
+                return $value;
+            }
+        }
+
+        $lastError = null;
+        foreach ($candidateTypes as $candidateType) {
+            if (! $candidateType instanceof \ReflectionNamedType) {
+                continue;
+            }
+
+            try {
+                return cast($value, $candidateType->getName());
+            } catch (\Throwable $e) {
+                $lastError = $e;
+            }
+        }
+
+        if ($lastError !== null) {
+            Log::error($lastError);
+        }
+
+        throw new Exception("Could not cast parameter: $name. See server logs for more details.");
+    }
+
+    /**
+     * Whether a value already satisfies a named type without casting.
+     *
+     * @param  mixed  $value  The request value.
+     * @param  \ReflectionNamedType  $type  One declared type.
+     * @return bool True when the value can be passed through as-is.
+     */
+    private function valueMatchesNamedType(mixed $value, \ReflectionNamedType $type): bool
+    {
+        return match ($type->getName()) {
+            'mixed' => true,
+            'int' => is_int($value),
+            'float' => is_float($value),
+            'string' => is_string($value),
+            'bool' => is_bool($value),
+            'array' => is_array($value),
+            'false' => $value === false,
+            'true' => $value === true,
+            default => is_object($value) && $value instanceof ($type->getName()),
+        };
+    }
+
+    /**
      * Checks if a service method is marked with the @api annotation.
      *
      * @param  string  $serviceName  Fully qualified class name
@@ -444,22 +511,19 @@ class Jsonrpc extends Controller
 
             // check if type is correct or can be correct
             if ($methodParam->hasType()) {
-                if (in_array($type, [gettype($params[$name]), 'mixed'])) {
-                    $filtered_parameters[$position] = $params[$name];
+                if ($params[$name] === null) {
+                    if (! $type->allowsNull()) {
+                        throw new Exception("Parameter $name can't be null");
+                    }
+
+                    $filtered_parameters[$position] = null;
 
                     continue;
                 }
 
-                if ($params[$name] === null && ! $type->allowsNull()) {
-                    throw new Exception("Parameter $name can't be null");
-                }
+                $filtered_parameters[$position] = $this->castToDeclaredType($params[$name], $type, $name);
 
-                try {
-                    $filtered_parameters[$position] = cast($params[$name], $type->getName());
-                } catch (\Throwable $e) {
-                    Log::error($e);
-                    throw new \Exception("Could not cast parameter: $name. See server logs for more details.");
-                }
+                continue;
             }
 
             if (! isset($filtered_parameters[$position])) {

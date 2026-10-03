@@ -4,6 +4,7 @@ namespace Leantime\Domain\Users\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\ConnectionInterface;
+use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
@@ -54,13 +55,19 @@ class Users
     }
 
     /**
-     * getUser - get on user from db
+     * getUser - get one user from db
+     *
+     * @param  int|string  $id  The user id.
+     * @param  bool  $useCache  False skips the memo and re-reads the row, refreshing the memo
+     *                          with it — for long-running callers (queue workers) that must see
+     *                          changes other processes made since the memo was filled.
+     * @return array|bool The user row, or false when there is none.
      */
-    public function getUser($id): array|bool
+    public function getUser($id, bool $useCache = true): array|bool
     {
         // Request-scoped memo: getUser is hit repeatedly per request for
         // author/role/avatar lookups. Cleared by editUser/patchUser/deleteUser.
-        if (array_key_exists($id, $this->userMemo)) {
+        if ($useCache && array_key_exists($id, $this->userMemo)) {
             return $this->userMemo[$id];
         }
 
@@ -296,7 +303,7 @@ class Users
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
-            'modified' => now(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ];
 
         // Capacity attributes (v3.5.23) — only overwrite when explicitly
@@ -317,9 +324,13 @@ class Users
             $updateData['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
         }
 
-        return $this->connection->table('zp_user')
+        $updated = $this->connection->table('zp_user')
             ->where('id', $id)
             ->update($updateData) > 0;
+
+        $this->keepOwnSessionAfterPasswordChange($id, $updateData);
+
+        return $updated;
     }
 
     /**
@@ -352,7 +363,7 @@ class Users
             ->where('id', $userId)
             ->update([
                 'clientId' => null,
-                'modified' => now(),
+                'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
             ]) > 0;
     }
 
@@ -367,7 +378,7 @@ class Users
             'username' => $values['user'],
             'phone' => $values['phone'],
             'notifications' => $values['notifications'],
-            'modified' => now(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ];
 
         if (isset($values['password']) && $values['password'] != '' && ! $this->isHashedPassword($values['password'])) {
@@ -377,6 +388,25 @@ class Users
         $this->connection->table('zp_user')
             ->where('id', $id)
             ->update($updateData);
+
+        $this->keepOwnSessionAfterPasswordChange($id, $updateData);
+    }
+
+    /**
+     * keepOwnSessionAfterPasswordChange - a password change logs out every other session of the
+     * user (see AuthenticateSession). When the session user changed their own password, re-pin
+     * this session to the new hash so the request that made the change stays signed in.
+     *
+     * @param  mixed  $id  the edited user's id
+     * @param  array  $updateData  the column values that were written
+     */
+    private function keepOwnSessionAfterPasswordChange(mixed $id, array $updateData): void
+    {
+        if (! isset($updateData['password']) || ! is_string($updateData['password'])) {
+            return;
+        }
+
+        PasswordFingerprint::refreshForSessionUser((int) $id, $updateData['password']);
     }
 
     /**
@@ -405,13 +435,13 @@ class Users
             'source' => $values['source'] ?? '',
             'pwReset' => $values['pwReset'] ?? '',
             'status' => $values['status'] ?? '',
-            'createdOn' => now(),
+            'createdOn' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'jobTitle' => $values['jobTitle'] ?? '',
             'jobLevel' => $values['jobLevel'] ?? '',
             'department' => $values['department'] ?? '',
             'weekly_hours' => $this->normalizeWeeklyHours($values['weekly_hours'] ?? null),
             'employment_type' => $this->normalizeEmploymentType($values['employment_type'] ?? null),
-            'modified' => now(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
         ]);
 
         return (string) $userId;
@@ -476,11 +506,15 @@ class Users
             }
         }
 
-        $updates['modified'] = now();
+        $updates['modified'] = dtHelper()->dbNow()->formatDateTimeForDb();
 
-        return $this->connection->table('zp_user')
+        $updated = $this->connection->table('zp_user')
             ->where('id', $id)
             ->update($updates) > 0;
+
+        $this->keepOwnSessionAfterPasswordChange($id, $updates);
+
+        return $updated;
     }
 
     /**

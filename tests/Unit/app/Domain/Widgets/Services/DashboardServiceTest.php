@@ -92,7 +92,7 @@ class DashboardServiceTest extends TestCase
 
         $result = $service->resolveQuickAddDueDate(['dateToFinish' => '', 'group' => 'thisWeek']);
 
-        $this->assertSame(date('Y-m-d', strtotime('next friday')), $result);
+        $this->assertSame(dtHelper()->userNow()->next(\Carbon\CarbonInterface::FRIDAY)->format('Y-m-d'), $result);
     }
 
     public function test_resolve_quick_add_due_date_overdue_maps_to_today(): void
@@ -101,7 +101,33 @@ class DashboardServiceTest extends TestCase
 
         $result = $service->resolveQuickAddDueDate(['group' => 'overdue']);
 
-        $this->assertSame(date('Y-m-d'), $result);
+        $this->assertSame(dtHelper()->userNow()->format('Y-m-d'), $result);
+    }
+
+    /**
+     * "Today" is the USER's calendar day, not the process (UTC) day. Kiritimati is UTC+14, so its
+     * date differs from UTC's for most of the day; the old date('Y-m-d') returned the UTC date.
+     */
+    public function test_quick_add_today_is_the_users_calendar_day(): void
+    {
+        // Process at UTC-12 and user at UTC+14 are 26 hours apart, so their calendar dates ALWAYS
+        // differ: the old date('Y-m-d') (process timezone) can never coincidentally pass.
+        $originalTimezone = date_default_timezone_get();
+
+        try {
+            date_default_timezone_set('Etc/GMT+12');
+            session(['usersettings.timezone' => 'Pacific/Kiritimati']);
+            app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+
+            $result = $this->makeService()->resolveQuickAddDueDate(['group' => 'overdue']);
+
+            $this->assertSame(\Carbon\CarbonImmutable::now('Pacific/Kiritimati')->format('Y-m-d'), $result);
+            $this->assertNotSame(date('Y-m-d'), $result, 'the process date must not leak in');
+        } finally {
+            date_default_timezone_set($originalTimezone);
+            session(['usersettings.timezone' => 'UTC']);
+            app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+        }
     }
 
     public function test_resolve_quick_add_due_date_later_stays_empty(): void

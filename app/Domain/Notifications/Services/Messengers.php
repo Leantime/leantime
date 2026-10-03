@@ -3,17 +3,25 @@
 namespace Leantime\Domain\Notifications\Services;
 
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\OutboundUrlGuard;
+use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets;
+use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Posts project notifications to the messenger webhooks a project has configured (Slack,
+ * Mattermost, Zulip, Discord, Telegram).
+ *
+ * Every request goes through {@see OutboundHttpClient}: the webhook URL is checked by the SSRF guard,
+ * the connection is pinned to the validated address (no DNS re-resolution), and connect/total
+ * timeouts bound each call. A refused URL surfaces as an exception and the webhook reports false.
+ */
 class Messengers
 {
-    private Client $httpClient;
+    private OutboundHttpClient $httpClient;
 
     private SettingRepository $settingsRepo;
 
@@ -30,7 +38,7 @@ class Messengers
      * @api
      */
     public function __construct(
-        Client $httpClient,
+        OutboundHttpClient $httpClient,
         SettingRepository $settingsRepo,
         LanguageCore $language
     ) {
@@ -43,7 +51,8 @@ class Messengers
      * @api
      */
     /**
-     * @api
+     * @internal Not exposed over JSON-RPC: it posts a caller-built message to a project's
+     *           Slack/Mattermost/Teams webhooks with no permission check. Projects service only.
      */
     public function sendNotificationToMessengers(NotificationModel $notification, $projectName, array|string $messengers = 'all'): void
     {
@@ -86,19 +95,12 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                if (! OutboundUrlGuard::isAllowedUrl($slackWebhookURL)) {
-                    Log::warning('Blocked Slack webhook to disallowed URL (SSRF guard)', ['host' => parse_url($slackWebhookURL, PHP_URL_HOST)]);
-
-                    return false;
-                }
-
-                $this->httpClient->post($slackWebhookURL, [
-                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                $response = $this->httpClient->post($slackWebhookURL, [
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                 ]);
 
-                return true;
+                return $this->isDelivered($response, 'Slack');
             } catch (\Throwable $e) {
                 report($e);
 
@@ -133,18 +135,12 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                if (! OutboundUrlGuard::isAllowedUrl($mattermostWebhookURL)) {
-                    Log::warning('Blocked Mattermost webhook to disallowed URL (SSRF guard)', ['host' => parse_url($mattermostWebhookURL, PHP_URL_HOST)]);
-
-                    return false;
-                }
-
-                $this->httpClient->post($mattermostWebhookURL, [
-                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                $response = $this->httpClient->post($mattermostWebhookURL, [
                     'body' => $data_string,
+                    'headers' => ['Content-Type' => 'application/json'],
                 ]);
 
-                return true;
+                return $this->isDelivered($response, 'Mattermost');
             } catch (Exception $e) {
                 report($e);
 
@@ -189,14 +185,7 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                if (! OutboundUrlGuard::isAllowedUrl($curlUrl)) {
-                    Log::warning('Blocked Zulip webhook to disallowed URL (SSRF guard)', ['host' => parse_url($curlUrl, PHP_URL_HOST)]);
-
-                    return false;
-                }
-
-                $this->httpClient->post($curlUrl, [
-                    'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                $response = $this->httpClient->post($curlUrl, [
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                     'auth' => [
@@ -205,7 +194,7 @@ class Messengers
                     ],
                 ]);
 
-                return true;
+                return $this->isDelivered($response, 'Zulip');
             } catch (\Throwable $e) {
                 report($e);
 
@@ -247,7 +236,6 @@ class Messengers
                 $response = $this->httpClient->post(
                     "https://api.telegram.org/bot{$telegramHook['telegramBotToken']}/sendMessage",
                     [
-                        'allow_redirects' => OutboundUrlGuard::redirectOptions(),
                         'connect_timeout' => 5,
                         'timeout' => 10,
                         'json' => $data,
@@ -477,17 +465,14 @@ class Messengers
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
                 try {
-                    if (! OutboundUrlGuard::isAllowedUrl($discordWebhookURL)) {
-                        Log::warning('Blocked Discord webhook to disallowed URL (SSRF guard)', ['host' => parse_url($discordWebhookURL, PHP_URL_HOST)]);
-
-                        return false;
-                    }
-
-                    $this->httpClient->post($discordWebhookURL, [
-                        'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+                    $response = $this->httpClient->post($discordWebhookURL, [
                         'body' => $data_string,
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);
+
+                    if (! $this->isDelivered($response, 'Discord')) {
+                        return false;
+                    }
                 } catch (\Throwable $e) {
                     report($e);
 
@@ -497,6 +482,26 @@ class Messengers
         }
 
         return true;
+    }
+
+    /**
+     * Whether a messenger accepted the notification: only a 2xx answer counts. The outbound
+     * client never follows a redirect for a POST, so a 3xx means the payload was not delivered.
+     * Logs the messenger and status only — never the webhook URL, which carries its secret.
+     *
+     * @param  ResponseInterface  $response  The messenger's answer.
+     * @param  string  $messenger  The messenger name, for the log.
+     */
+    private function isDelivered(ResponseInterface $response, string $messenger): bool
+    {
+        $status = $response->getStatusCode();
+        if ($status >= 200 && $status < 300) {
+            return true;
+        }
+
+        Log::warning('Messenger notification was not delivered', ['messenger' => $messenger, 'status' => $status]);
+
+        return false;
     }
 
     /**
@@ -532,7 +537,7 @@ class Messengers
                 'pretext' => $notification->message,
                 'title' => $headline,
                 'title_link' => $notification->url['url'],
-                'fields' => $fields,
+                'fields' => [$fields],
             ],
         ];
 

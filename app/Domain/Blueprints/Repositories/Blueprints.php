@@ -178,7 +178,7 @@ class Blueprints extends Repository
             'title' => $values['title'],
             'description' => $values['description'] ?? '',
             'author' => $values['author'],
-            'created' => now(),
+            'created' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'type' => $canvasType,
             'projectId' => $values['projectId'],
         ]);
@@ -200,19 +200,34 @@ class Blueprints extends Repository
     }
 
     /**
-     * @param  array<string, mixed>  $values  Item values
+     * Update a canvas item's editable columns.
+     *
+     * The target id must be a single positive integer; anything else (notably an array, which a
+     * `where('id', [...])` would silently turn into an IN-list) is ignored.
+     *
+     * @param  array<string, mixed>  $values  Item values (`itemId` or `id` selects the row)
      */
     public function editCanvasItem(array $values): void
     {
+        $rawItemId = $values['itemId'] ?? $values['id'] ?? null;
+        if (! is_int($rawItemId) && ! is_string($rawItemId)) {
+            return;
+        }
+
+        $itemId = (int) $rawItemId;
+        if ($itemId <= 0) {
+            return;
+        }
+
         $this->connection->table('zp_canvas_items')
-            ->where('id', $values['itemId'] ?? $values['id'])
+            ->where('id', $itemId)
             ->update([
                 'title' => $values['title'] ?? '',
                 'description' => $values['description'],
                 'assumptions' => $values['assumptions'] ?? '',
                 'data' => $values['data'] ?? '',
                 'conclusion' => $values['conclusion'] ?? '',
-                'modified' => now(),
+                'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'status' => $values['status'] ?? '',
                 'relates' => $values['relates'] ?? '',
                 'milestoneId' => $values['milestoneId'] ?? '',
@@ -457,8 +472,8 @@ class Blueprints extends Repository
             'conclusion' => $values['conclusion'] ?? '',
             'box' => $values['box'],
             'author' => $values['author'],
-            'created' => now(),
-            'modified' => now(),
+            'created' => dtHelper()->dbNow()->formatDateTimeForDb(),
+            'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'canvasId' => $values['canvasId'],
             'status' => $values['status'] ?? '',
             'relates' => $values['relates'] ?? '',

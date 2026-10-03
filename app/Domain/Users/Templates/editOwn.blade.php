@@ -223,7 +223,7 @@
                                         <select name="date_format" id="date_format" style="width: 220px">
                                            @php
                                             $dateFormats = $dateTimeValues['dates'];
-                                            $dateTimeNow = date_create();
+                                            $dateTimeNow = dtHelper()->userNow();
                                            @endphp
 
                                             @foreach ($dateFormats as $format)
@@ -242,7 +242,7 @@
                                         <select name="time_format" id="time_format" style="width: 220px">
                                             @php
                                                 $timeFormats = $dateTimeValues['times'];
-                                                $dateTimeNow = date_create();
+                                                $dateTimeNow = dtHelper()->userNow();
                                             @endphp
 
                                             @foreach ($timeFormats as $format)
@@ -475,6 +475,31 @@
                                 @else
                                     <p class="tw-text-gray-400 tw-p-2">{{ __('label.no_projects') }}</p>
                                 @endif
+                            </div>
+
+                            <hr />
+
+                            <h4 class="widgettitle title-light">{{ __('label.webhook_notifications') }}</h4>
+                            <p><small>{{ __('label.webhook_notifications_description') }}</small></p>
+                            <div class="form-group">
+                                <label for="webhookEnabled" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" value="1" name="webhookEnabled" class="input"
+                                           id="webhookEnabled"
+                                           @if (!empty($webhookEnabled))
+                                               checked="checked"
+                                           @endif/>
+                                    {{ __('label.enable_webhook_notifications') }}
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="webhookUrl">{{ __('label.webhook_url') }}</label>
+                                <span>
+                                    <x-global::forms.text-input type="url" name="webhookUrl" id="webhookUrl" class="input"
+                                                                placeholder="https://example.com/webhook"
+                                                                value="{{ $webhookUrl ?? '' }}" />
+                                    <br/>
+                                    <small class="tw-text-gray-500">{{ __('label.webhook_url_hint') }}</small>
+                                </span>
                             </div>
 
                             <input type="hidden" name="savenotifications" value="1" />

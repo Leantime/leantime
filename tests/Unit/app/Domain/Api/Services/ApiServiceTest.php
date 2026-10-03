@@ -153,6 +153,7 @@ class ApiServiceTest extends TestCase
                 'username' => 'lt_old',
                 'status' => 'i',
                 'role' => '10',
+                'source' => 'api',
             ],
             'editUser' => function ($values, $id) use (&$editUserCalledWith) {
                 $editUserCalledWith = [$values, $id];
@@ -192,6 +193,7 @@ class ApiServiceTest extends TestCase
                 'username' => 'lt_old',
                 'status' => 'i',
                 'role' => '10',
+                'source' => 'api',
             ],
             'editUser' => function ($values) use (&$editUserCalledWith) {
                 $editUserCalledWith = $values;
@@ -216,5 +218,93 @@ class ApiServiceTest extends TestCase
         $this->expectException(\Exception::class);
 
         $this->makeService()->updateApiKey(0, [], null);
+    }
+
+    public function test_api_key_cannot_outrank_its_creator(): void
+    {
+        session(['userdata' => ['id' => 4, 'role' => 'admin']]);
+        $userRepo = $this->make(UserRepository::class, [
+            'addUser' => function () {
+                $this->fail('the owner-role key must not be created');
+            },
+        ]);
+
+        $this->expectException(\Leantime\Core\Exceptions\AuthorizationException::class);
+
+        $this->makeService(userRepo: $userRepo)->createAPIKey(['firstname' => 'key', 'role' => '50']);
+    }
+
+    public function test_update_api_key_rejects_non_api_accounts_and_promotions(): void
+    {
+        session(['userdata' => ['id' => 4, 'role' => 'admin']]);
+        $userRepo = $this->make(UserRepository::class, [
+            'getUser' => fn ($id) => $id === 1
+                ? ['firstname' => 'Owner', 'username' => 'owner@example.com', 'status' => 'a', 'role' => '50', 'source' => '']
+                : ['firstname' => 'Key', 'username' => 'lt_key', 'status' => 'a', 'role' => '20', 'source' => 'api'],
+            'editUser' => function () {
+                $this->fail('nothing may be stored');
+            },
+        ]);
+        $service = $this->makeService(userRepo: $userRepo);
+
+        try {
+            $service->updateApiKey(1, ['firstname' => 'Hijacked'], null);
+            $this->fail('a regular user account must not be editable as an API key');
+        } catch (\Leantime\Core\Exceptions\AuthorizationException) {
+        }
+
+        $this->expectException(\Leantime\Core\Exceptions\AuthorizationException::class);
+        $service->updateApiKey(2, ['role' => '50'], null);
+    }
+
+    public function test_delete_api_key_only_deletes_api_keys_within_the_ceiling(): void
+    {
+        session(['userdata' => ['id' => 4, 'role' => 'admin']]);
+        $deleted = [];
+        $rows = [
+            1 => ['id' => 1, 'role' => '50', 'source' => ''],
+            2 => ['id' => 2, 'role' => '50', 'source' => 'api'],
+            3 => ['id' => 3, 'role' => '20', 'source' => 'api'],
+        ];
+        $userRepo = $this->make(UserRepository::class, [
+            'getUser' => fn ($id) => $rows[$id] ?? false,
+            'deleteUser' => function ($id) use (&$deleted) {
+                $deleted[] = $id;
+
+                return true;
+            },
+        ]);
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'deleteAllProjectRelations' => fn () => null,
+        ]);
+        $service = $this->makeService(userRepo: $userRepo, projectRepo: $projectRepo);
+
+        foreach ([1, 2, 99] as $id) {
+            try {
+                $service->deleteApiKey($id);
+                $this->fail('id '.$id.' must not be deletable as an API key');
+            } catch (\Leantime\Core\Exceptions\AuthorizationException) {
+            }
+        }
+
+        $this->assertTrue($service->deleteApiKey(3));
+        $this->assertSame([3], $deleted);
+    }
+
+    public function test_create_api_key_always_stores_the_api_source(): void
+    {
+        session(['userdata' => ['id' => 4, 'role' => 'admin']]);
+        $storedSource = null;
+        $userRepo = $this->make(UserRepository::class, [
+            'addUser' => function (array $values) use (&$storedSource) {
+                $storedSource = $values['source'] ?? null;
+
+                return '31';
+            },
+        ]);
+
+        $this->makeService(userRepo: $userRepo)->createAPIKey(['firstname' => 'key', 'role' => '20', 'source' => 'ldap']);
+
+        $this->assertSame('api', $storedSource);
     }
 }

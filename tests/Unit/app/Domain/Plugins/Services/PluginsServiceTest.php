@@ -152,4 +152,26 @@ class PluginsServiceTest extends TestCase
 
         $service->performPluginAction('explode', 5);
     }
+
+    /**
+     * #3594: compiled Blade views are keyed on the source mtime, which a phar plugin does not
+     * change across releases, so an upgraded plugin kept running its old templates. Any plugin
+     * change must drop the compiled views (and only the compiled .php files).
+     */
+    public function test_clear_cache_removes_compiled_views(): void
+    {
+        $compiledDir = sys_get_temp_dir().'/lt-compiled-views-'.uniqid();
+        mkdir($compiledDir);
+        file_put_contents($compiledDir.'/abc123.php', '<?php // compiled');
+        file_put_contents($compiledDir.'/.gitignore', '*');
+        config(['view.compiled' => $compiledDir]);
+
+        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class)->clearCache();
+
+        $this->assertFileDoesNotExist($compiledDir.'/abc123.php');
+        $this->assertFileExists($compiledDir.'/.gitignore');
+
+        @unlink($compiledDir.'/.gitignore');
+        @rmdir($compiledDir);
+    }
 }

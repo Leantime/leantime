@@ -235,7 +235,7 @@ leantime.ticketsController = (function () {
 
         function htmlEntities(str)
         {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
         jQuery(document).ready(
@@ -275,19 +275,19 @@ leantime.ticketsController = (function () {
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (task.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                    popUpHTML +=  '<h3><b>' + htmlEntities(task.projectName) + '</b></h3>';
                                 }
-                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
+                                popUpHTML += '<small>' + htmlEntities(task.type) + ' #' + htmlEntities(task.id) + ' </small>';
 
                                 if (task.type === 'milestone') {
-                                    popUpHTML += '<h4><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                    popUpHTML += '<h4><a href="#/tickets/editMilestone/' + htmlEntities(task.id) + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                      '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                      '' + Math.round(task.progress) + '%</p> ' +
-                                     '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                     '<a href="#/tickets/editMilestone/' + htmlEntities(task.id) + '" ><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + htmlEntities(task.id) + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
-                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                     '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + htmlEntities(task.id) + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                     '<a href="#/tickets/showTicket/' + htmlEntities(task.id) + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                  popUpHTML += '</div>';
@@ -353,18 +353,18 @@ leantime.ticketsController = (function () {
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (task.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                    popUpHTML +=  '<h3><b>' + htmlEntities(task.projectName) + '</b></h3>';
                                 }
-                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
+                                popUpHTML += '<small>' + htmlEntities(task.type) + ' #' + htmlEntities(task.id) + ' </small>';
 
                                 if (task.type === 'milestone') {
                                     popUpHTML += '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                         '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                         '' + Math.round(task.progress) + '%</p> ' +
-                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + htmlEntities(task.id) + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
-                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                        '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + htmlEntities(task.id) + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                        '<a href="#/tickets/showTicket/' + htmlEntities(task.id) + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                 popUpHTML += '</div>';
@@ -1683,13 +1683,22 @@ leantime.ticketsController = (function () {
                         charset: 'utf-8',
                         bom: true,
                         exportOptions: {
+                            // Skip the unlabelled per-row actions menu (.no-sort): it has no export value and
+                            // dumped its menu markup into every CSV row (#2042, #2192).
+                            columns: ':not(.no-sort)',
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
-                                        data = jQuery(node).data('order');
+                                    // data-export: readable value when the sort key is numeric (priority, effort).
+                                    if ( typeof jQuery(node).data('export') !== 'undefined') {
+                                        return jQuery(node).data('export');
                                     }
-                                    return data;
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                        return jQuery(node).data('order');
+                                    }
+
+                                    // No explicit export value: export the visible text, never raw HTML.
+                                    return jQuery('<div>').html(data).text().replace(/\s+/g, ' ').trim();
                                 }
                             }
                         }
@@ -1852,13 +1861,22 @@ leantime.ticketsController = (function () {
                         charset: 'utf-8',
                         bom: true,
                         exportOptions: {
+                            // Skip the unlabelled per-row actions menu (.no-sort): it has no export value and
+                            // dumped its menu markup into every CSV row (#2042, #2192).
+                            columns: ':not(.no-sort)',
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
-                                        data = jQuery(node).data('order');
+                                    // data-export: readable value when the sort key is numeric (priority, effort).
+                                    if ( typeof jQuery(node).data('export') !== 'undefined') {
+                                        return jQuery(node).data('export');
                                     }
-                                    return data;
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                        return jQuery(node).data('order');
+                                    }
+
+                                    // No explicit export value: export the visible text, never raw HTML.
+                                    return jQuery('<div>').html(data).text().replace(/\s+/g, ' ').trim();
                                 }
                             }
                         }

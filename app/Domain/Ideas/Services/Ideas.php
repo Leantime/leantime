@@ -673,6 +673,11 @@ class Ideas extends BaseService
     #[RequiresPermission(IdeasPermissions::EDIT, entityScoped: true)]
     public function updateIdeaItem(array $input, int $projectId, int $authorId): int
     {
+        // Reject non-scalar ids (e.g. `itemId[]=N`) instead of letting (int) turn them into 1.
+        if (! is_int($input['itemId'] ?? null) && ! is_string($input['itemId'] ?? null)) {
+            return 0;
+        }
+
         $itemId = (int) $input['itemId'];
 
         // Fail closed: resolve the EXISTING item's real project (shared zp_canvas_items) and require
@@ -707,10 +712,11 @@ class Ideas extends BaseService
             'data' => $input['data'],
             'conclusion' => '',
             'tags' => $input['tags'],
-            'itemId' => $input['itemId'],
+            // Write exactly the (int) id that was authorized above, never the raw input.
+            'itemId' => $itemId,
             'canvasId' => $input['canvasId'],
             'milestoneId' => $input['milestoneId'],
-            'id' => $input['itemId'],
+            'id' => $itemId,
         ];
 
         if (isset($input['newMilestone']) && $input['newMilestone'] != '') {
@@ -819,9 +825,14 @@ class Ideas extends BaseService
         }
         $this->authorize(CommentsPermissions::CREATE, $itemProjectId);
 
+        // Reachable over JSON-RPC: the author is the authenticated user, and the project is the
+        // idea's real one resolved above. Neither is taken from the caller.
+        $authorId = (int) session('userdata.id');
+        $projectId = $itemProjectId;
+
         $values = [
             'text' => $text,
-            'date' => date('Y-m-d H:i:s'),
+            'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'userId' => $authorId,
             'moduleId' => $ideaItemId,
             'commentParent' => $parentCommentId,

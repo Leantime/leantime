@@ -18,6 +18,10 @@ class SanitizeFilename
     public function sanitizeFilename($beautify = true)
     {
         return function ($filename) use ($beautify) {
+            // The pattern is Unicode-aware (/u, #3782): scrub invalid UTF-8 first, since
+            // preg_replace() returns null for it in that mode.
+            $filename = mb_scrub((string) $filename, 'UTF-8');
+
             // sanitize filename
             $filename = preg_replace(
                 '~
@@ -26,7 +30,7 @@ class SanitizeFilename
                         [\x7F\xA0\xAD]|          # non-printing characters DEL, NO-BREAK SPACE, SOFT HYPHEN
                         [#\[\]@!$&\'()+,;=]|     # URI reserved https://www.rfc-editor.org/rfc/rfc3986#section-2.2
                         [{}^\~`]                 # URL unsafe characters https://www.ietf.org/rfc/rfc1738.txt
-                        ~x',
+                        ~xu',
                 '-',
                 $filename
             );

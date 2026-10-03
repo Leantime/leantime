@@ -24,7 +24,7 @@ class NotifyProjectUsers
                 'module' => $payload['module'],
                 'moduleId' => $payload['moduleId'],
                 'message' => $payload['message'],
-                'datetime' => date('Y-m-d H:i:s'),
+                'datetime' => dtHelper()->dbNow()->formatDateTimeForDb(), // UTC; date() is the user's tz here (#3201)
                 'url' => $payload['url'],
                 'authorId' => session('userdata.id'),
             ];

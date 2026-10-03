@@ -99,4 +99,21 @@ class PatchTicketColumnsTest extends TestCase
             'Nothing patchable means nothing was written, and the caller must be told'
         );
     }
+
+    public function test_priority_is_stored_in_canonical_form(): void
+    {
+        $this->assertSame('3', $this->runPatch(['priority' => '3'])['updates']['priority'] ?? null);
+        $this->assertSame('4', $this->runPatch(['priority' => 4])['updates']['priority'] ?? null);
+        $this->assertSame('', $this->runPatch(['priority' => ''])['updates']['priority'] ?? null);
+    }
+
+    public function test_non_canonical_priority_is_not_written(): void
+    {
+        foreach (['+1', ' 1 ', '01', '6', '-1', '2.5', 'x" onmouseover="a', 9] as $invalidPriority) {
+            $run = $this->runPatch(['priority' => $invalidPriority, 'headline' => 'kept']);
+
+            $this->assertArrayNotHasKey('priority', $run['updates'], 'Priority '.var_export($invalidPriority, true).' must not be written');
+            $this->assertSame('kept', $run['updates']['headline'] ?? null);
+        }
+    }
 }

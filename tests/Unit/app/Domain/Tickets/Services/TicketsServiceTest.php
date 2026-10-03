@@ -498,20 +498,247 @@ class TicketsServiceTest extends TestCase
         $service->patchTicket(5, ['status' => 3]);
     }
 
+    /**
+     * Builds a TicketsService whose ticket repository is stubbed, whose project service reports
+     * the session user as a member of every project (so getTicket() resolves), and whose
+     * permission engine is the given stub.
+     *
+     * @param  array<string, mixed>  $ticketRepoStubs
+     */
+    private function buildAuthzService(array $ticketRepoStubs, PermissionService $permissions): TicketsService
+    {
+        $service = new TicketsService(
+            language: $this->make(LanguageCore::class, ['__' => fn ($key) => $key]),
+            ticketRepository: $this->make(TicketRepository::class, $ticketRepoStubs),
+            timesheetsRepo: $this->make(TimesheetRepository::class),
+            settingsRepo: $this->make(SettingRepository::class),
+            projectService: $this->make(ProjectService::class, [
+                'isUserAssignedToProject' => fn () => true,
+                'notifyProjectUsers' => fn () => null,
+            ]),
+            timesheetService: $this->make(TimesheetService::class),
+            sprintService: $this->make(SprintService::class),
+            ticketHistoryRepo: $this->make(TicketHistory::class),
+            goalcanvasService: $this->make(Goalcanvas::class),
+            dateTimeHelper: $this->make(DateTimeHelper::class, ['userNow' => fn () => CarbonImmutable::now('UTC')]),
+            commentService: $this->make(CommentService::class),
+            clientService: $this->make(ClientService::class)
+        );
+        $service->setPermissionService($permissions);
+
+        return $service;
+    }
+
+    /**
+     * Permission stub that grants $key only in the listed projects and records every check.
+     *
+     * @param  array<int, int>  $allowedProjects
+     * @param  array<int, array{0: string, 1: int|null}>  $checks
+     */
+    private function permissionsForProjects(array $allowedProjects, array &$checks = []): PermissionService
+    {
+        $decide = function (string $key, ?int $projectId = null) use ($allowedProjects, &$checks): bool {
+            $checks[] = [$key, $projectId];
+
+            return in_array($projectId, $allowedProjects, true);
+        };
+
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => $decide,
+            'authorize' => function (string $key, ?int $projectId = null) use ($decide): void {
+                if (! $decide($key, $projectId)) {
+                    throw new AuthorizationException;
+                }
+            },
+        ]);
+    }
+
+    /** A ticket model in the given project. */
+    private function ticketIn(int $id, int $projectId, array $extra = []): TicketModel
+    {
+        return $this->make(TicketModel::class, array_merge(['id' => $id, 'projectId' => $projectId, 'headline' => 'T'.$id], $extra));
+    }
+
     public function test_sort_tickets_is_denied_for_non_editor(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
 
+        // Editor in project 9 only; ticket 5 lives in project 7 where the caller is read-only.
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            'bulkUpdateSortIndex' => function () {
+                throw new \RuntimeException('must not re-sort when denied');
+            },
+        ], $this->permissionsForProjects([9]));
+
         $this->expectException(AuthorizationException::class);
 
-        $this->ticketsService->sortTickets(['5' => 1]);
+        $service->sortTickets(['5' => 1]);
+    }
+
+    public function test_sort_tickets_checks_each_tickets_own_project(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor'], 'currentProject' => 9]);
+
+        // Ticket 5 is editable (project 9), ticket 6 is in project 7 — a mixed batch must fail.
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, (int) $id === 5 ? 9 : 7),
+            'bulkUpdateSortIndex' => function () {
+                throw new \RuntimeException('must not re-sort a batch containing a foreign ticket');
+            },
+        ], $this->permissionsForProjects([9]));
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->sortTickets(['5' => 1, '6' => 2]);
     }
 
     public function test_status_and_sorting_is_denied_for_non_editor(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
 
-        $this->assertFalse($this->ticketsService->updateTicketStatusAndSorting(['3' => 'ticket[]=5'], null));
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            'updateTicketStatus' => function () {
+                throw new \RuntimeException('must not change status when denied');
+            },
+        ], $this->permissionsForProjects([9]));
+
+        $this->assertFalse($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5'], null));
+    }
+
+    public function test_patch_requires_edit_on_the_tickets_real_project(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'readonly']]);
+
+        $checks = [];
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            'patchTicket' => function () {
+                throw new \RuntimeException('patch must not write without edit rights');
+            },
+        ], $this->permissionsForProjects([9], $checks));
+
+        try {
+            $service->patch(5, ['headline' => 'x']);
+            $this->fail('patch() must self-authorize (MCP tools and HTMX widgets call it directly)');
+        } catch (AuthorizationException) {
+            $this->assertContains(['tickets.edit', 7], $checks);
+        }
+    }
+
+    public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $checks = [];
+        $service = $this->buildAuthzService([
+            // The real parent (id 5) lives in project 7.
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            'addTicket' => function () {
+                throw new \RuntimeException('must not create a subtask when denied');
+            },
+        ], $this->permissionsForProjects([9], $checks));
+
+        try {
+            // The caller claims the parent belongs to project 9 (where they are an editor).
+            $service->upsertSubtask(['headline' => 'Sub', 'status' => 3], ['id' => 5, 'projectId' => 9]);
+            $this->fail('upsertSubtask must authorize the parent\'s real project');
+        } catch (AuthorizationException) {
+            $this->assertContains(['tickets.create', 7], $checks);
+            $this->assertNotContains(['tickets.create', 9], $checks);
+        }
+    }
+
+    public function test_upsert_subtask_update_refuses_a_ticket_that_is_not_a_child_of_the_parent(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => match ((int) $id) {
+                5 => $this->ticketIn(5, 9),
+                // Ticket 77 is an unrelated task in another project.
+                77 => $this->ticketIn(77, 4, ['dependingTicketId' => 0]),
+                default => false,
+            },
+            'updateTicket' => function () {
+                throw new \RuntimeException('must not overwrite a ticket that is not this parent\'s subtask');
+            },
+        ], $this->permissionsForProjects([9]));
+
+        $this->assertFalse($service->upsertSubtask(
+            ['headline' => 'Pwn', 'status' => 3, 'subtaskId' => 77],
+            $this->ticketIn(5, 9)
+        ));
+    }
+
+    public function test_upsert_subtask_update_writes_a_real_child(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $updatedId = null;
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => match ((int) $id) {
+                5 => $this->ticketIn(5, 9),
+                12 => $this->ticketIn(12, 9, ['dependingTicketId' => 5]),
+                default => false,
+            },
+            'updateTicket' => function ($values, $id) use (&$updatedId) {
+                $updatedId = $id;
+
+                return true;
+            },
+        ], $this->permissionsForProjects([9]));
+
+        $this->assertTrue($service->upsertSubtask(['headline' => 'Sub', 'status' => 3, 'subtaskId' => '12'], $this->ticketIn(5, 9)));
+        $this->assertSame(12, $updatedId);
+    }
+
+    public function test_get_all_possible_parents_is_empty_for_a_project_the_caller_cannot_view(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor'], 'currentProject' => 9]);
+
+        $service = $this->buildAuthzService([
+            'getAllPossibleParents' => function () {
+                throw new \RuntimeException('must not query a project the caller cannot view');
+            },
+        ], $this->permissionsForProjects([9]));
+
+        $this->assertSame([], $service->getAllPossibleParents($this->ticketIn(1, 9), '7'));
+        // Project 0 used to mean "every project" in the repository — never reachable now.
+        $this->assertSame([], $service->getAllPossibleParents($this->ticketIn(1, 9), '0'));
+    }
+
+    public function test_prepare_ticket_search_array_ignores_caller_supplied_membership_scope(): void
+    {
+        session(['userdata' => ['id' => 1, 'clientId' => 3], 'currentProject' => 9]);
+
+        $criteria = $this->ticketsService->prepareTicketSearchArray(['currentUser' => 2, 'currentClient' => 8]);
+
+        $this->assertSame(1, $criteria['currentUser']);
+        $this->assertSame(3, $criteria['currentClient']);
+    }
+
+    public function test_program_board_requires_view_on_the_program(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $service = $this->buildAuthzService([], $this->permissionsForProjects([9]));
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->getProgramTicketTemplateAssignments([], 50, [9], []);
+    }
+
+    public function test_get_milestone_is_false_for_a_project_the_caller_cannot_view(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['type' => 'milestone']),
+        ], $this->permissionsForProjects([9]));
+
+        $this->assertFalse($service->getMilestone(5));
     }
 
     public function test_quick_add_ticket_is_denied_without_create_permission(): void
@@ -897,5 +1124,24 @@ class TicketsServiceTest extends TestCase
 
         $this->assertSame([], $result);
         $this->assertFalse($fetchCalled, 'an empty commented set must short-circuit before the ticket fetch');
+    }
+
+    /**
+     * dateToFinish is stored in UTC as the user's end-of-day. A task due on 17 March in
+     * Los Angeles is stored as 2026-03-18 06:59:59 UTC; on the 18th (LA) it is overdue. Parsing
+     * the stored value in the process timezone put it on the 18th, so it showed as "due today".
+     */
+    public function test_due_date_bucket_uses_the_users_calendar_day(): void
+    {
+        $bucket = new \ReflectionMethod($this->ticketsService, 'getDueDateBucket');
+        $bucket->setAccessible(true);
+
+        $todayLa = \Carbon\CarbonImmutable::parse('2026-03-18 09:00:00', 'America/Los_Angeles')->startOfDay();
+
+        $this->assertSame('overdue', $bucket->invoke($this->ticketsService, '2026-03-18 06:59:59', $todayLa));
+        $this->assertSame('due-this-week', $bucket->invoke($this->ticketsService, '2026-03-19 06:59:59', $todayLa));
+        // Due 24 March (LA) = 2026-03-25 06:59:59 UTC: six days out, so still this week. Read on the
+        // UTC calendar it landed 6.7 days out and was bucketed as next week.
+        $this->assertSame('due-this-week', $bucket->invoke($this->ticketsService, '2026-03-25 06:59:59', $todayLa));
     }
 }

@@ -35,7 +35,7 @@
         </div>
         <div class="col-md-6 align-right">
             @if ($url)
-                 <x-global::forms.button tag="a" link="{{ BASE_URL }}/calendar/export?remove=1" class="delete formModal" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('links.remove_access') !!}</x-global::forms.button>
+                 <x-global::forms.button tag="a" link="javascript:void(0);" data-post-field="remove" data-post-value="1" class="delete" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('links.remove_access') !!}</x-global::forms.button>
             @endif
         </div>
     </div>

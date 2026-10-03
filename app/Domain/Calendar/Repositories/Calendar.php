@@ -285,7 +285,6 @@ class Calendar extends RepositoryCore
         session([
             'usersettings.timezone' => $settingService->getSetting('usersettings.'.$user['id'].'.timezone') ?: $this->config->defaultTimezone,
         ]);
-        date_default_timezone_set(session('usersettings.timezone'));
 
         if ($hash !== false && $calHash == $hash) {
             return $this->getCalendar($user['id']);

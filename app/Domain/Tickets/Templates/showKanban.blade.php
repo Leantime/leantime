@@ -163,7 +163,7 @@
                                                     @if ($row['dependingTicketId'] > 0)
                                                         <small><a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}" class="form-modal">{{ $row['parentHeadline'] }}</a></small> //
                                                     @endif
-                                                    <small><i class="fa {{ $todoTypeIcons[strtolower($row['type'])] }}"></i> {!! __('label.'.strtolower($row['type'])) !!}</small>
+                                                    <small><i class="fa {{ $todoTypeIcons[strtolower($row['type'])] }}"></i> {{ __('label.'.strtolower($row['type'])) }}</small>
                                                     <small>#{{ $row['id'] }}</small>
                                                     <div class="kanbanCardContent">
                                                         <h4><a href="#/tickets/showTicket/{{ $row['id'] }}" data-hx-get="{{ BASE_URL }}/tickets/showTicket/{{ $row['id'] }}" hx-swap="none" preload="mouseover">{{ $row['headline'] }}</a></h4>
@@ -313,7 +313,7 @@
                                                             <li class="nav-header border">{!! __('dropdown.choose_status') !!}</li>
                                                             @php
                                                             foreach ($rowProjectStatuses as $statusKey => $statusOption) {
-                                                                echo "<li class='dropdown-item'><a href='javascript:void(0);' class='".$statusOption['class']."' data-label='".$tpl->escape($statusOption['name'])."' data-value='".$row['id'].'_'.$statusKey.'_'.$statusOption['class']."' id='ticketStatusChange".$row['id'].$statusKey."'>".$tpl->escape($statusOption['name']).'</a></li>';
+                                                                echo "<li class='dropdown-item'><a href='javascript:void(0);' class='".$tpl->escape($statusOption['class'])."' data-label='".$tpl->escape($statusOption['name'])."' data-value='".$row['id'].'_'.$statusKey.'_'.$statusOption['class']."' id='ticketStatusChange".$row['id'].$statusKey."'>".$tpl->escape($statusOption['name']).'</a></li>';
                                                             }
                                                             @endphp
                                                         </ul>

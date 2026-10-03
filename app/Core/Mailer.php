@@ -60,8 +60,7 @@ class Mailer
         if ($config->email != '') {
             $this->emailDomain = $config->email;
         } else {
-            $host = $_SERVER['HTTP_HOST'] ?? 'leantime';
-            $this->emailDomain = 'no-reply@'.$host;
+            $this->emailDomain = 'no-reply@'.self::fallbackSenderHost((string) $config->appUrl);
         }
 
         $this->emailDomain = self::dispatch_filter('fromEmail', $this->emailDomain, $this);
@@ -115,6 +114,32 @@ class Mailer
         $this->companyColor = ! session()->has('companysettings.primarycolor') ? '#006c9e' : session('companysettings.primarycolor');
 
         $this->language = $language;
+    }
+
+    /**
+     * fallbackSenderHost - host for the no-reply sender when LEAN_EMAIL_RETURN is not configured.
+     *
+     * Uses the configured application URL. Only when that is missing too does it fall back to the
+     * request host, and then only if it is a syntactically valid hostname — the raw Host header is
+     * client controlled and must not be copied into mail headers as is.
+     *
+     * @param  string  $appUrl  the configured LEAN_APP_URL (may be empty)
+     */
+    public static function fallbackSenderHost(string $appUrl): string
+    {
+        $configuredHost = $appUrl !== '' ? parse_url($appUrl, PHP_URL_HOST) : null;
+
+        if (is_string($configuredHost) && $configuredHost !== '') {
+            return strtolower($configuredHost);
+        }
+
+        $requestHost = strtolower(preg_replace('/:\d+$/', '', (string) ($_SERVER['HTTP_HOST'] ?? '')));
+
+        if ($requestHost !== '' && filter_var($requestHost, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false) {
+            return $requestHost;
+        }
+
+        return 'localhost';
     }
 
     /**
@@ -203,10 +228,18 @@ class Mailer
     /**
      * sendMail - send the mail with mail()
      *
+     * Send failures (bad SMTP credentials, unreachable host…) are logged, not thrown, so
+     * one bad recipient doesn't stop the others. The return value says whether EVERY recipient
+     * was sent, so callers can stop reporting success for mail that never left (#1795).
+     *
+     * @return bool True when every recipient was sent successfully.
+     *
      * @throws Exception
      */
-    public function sendMail(array $to, $from): void
+    public function sendMail(array $to, $from): bool
     {
+        $allSent = true;
+
         $this->dispatchMailerEvent('beforeSendMail', []);
 
         $to = $this->dispatchMailerFilter('sendMailTo', $to, []);
@@ -313,8 +346,15 @@ class Mailer
             foreach ($to as $recip) {
                 try {
                     $this->mailAgent->addAddress($recip);
-                    $this->mailAgent->send();
+
+                    // PHPMailer runs with exceptions off, so most SMTP failures return false
+                    // instead of throwing.
+                    if (! $this->mailAgent->send()) {
+                        $allSent = false;
+                        Log::error($this->mailAgent->ErrorInfo);
+                    }
                 } catch (Exception $e) {
+                    $allSent = false;
                     Log::error($this->mailAgent->ErrorInfo);
                     Log::error($e);
                 }
@@ -324,5 +364,7 @@ class Mailer
         }
 
         $this->dispatchMailerEvent('afterSendMail', $to);
+
+        return $allSent;
     }
 }

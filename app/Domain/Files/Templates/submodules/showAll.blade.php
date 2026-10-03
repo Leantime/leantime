@@ -61,7 +61,7 @@
                             @else
                                 <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/doc.png' />
                             @endif
-                            <span class="filename" title="{{ $file['realName'] }}.{{ $file['extension'] }}">{{ $file['realName'] }}.{{ $file['extension'] }}</span>
+                            <x-files::fileName :file="$file" />
                         </a>
                     </li>
                 @endforeach
@@ -148,6 +148,13 @@
 
 
 <script>
+    // Same rule as FileManager::displayName(): append the extension only when the name lacks it.
+    function uploadedFileDisplayName(file) {
+        var name = String(file.realName || '');
+        var ext = String(file.extension || '');
+        return (ext === '' || name.toLowerCase().endsWith('.' + ext.toLowerCase())) ? name : name + '.' + ext;
+    }
+
 
     if (typeof uppy === 'undefined') {
 
@@ -245,7 +252,7 @@
                             '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
                                 '<img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'" alt="" />'+
 
-                                '<span class="filename" title="'+response.realName+'.'+response.extension+'">'+response.realName+'.'+response.extension+'</span>'+
+                                '<span class="filename" title="'+uploadedFileDisplayName(response)+'">'+uploadedFileDisplayName(response)+'</span>'+
                             '</a>'+
                         '</li>';
 

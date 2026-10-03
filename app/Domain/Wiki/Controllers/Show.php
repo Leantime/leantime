@@ -112,15 +112,6 @@ class Show extends Controller
             return Frontcontroller::redirect(BASE_URL.'/errors/error404');
         }
 
-        // Delete comment
-        if (isset($_GET['delComment']) === true) {
-            $commentId = (int) ($_GET['delComment']);
-
-            $this->commentService->deleteComment($commentId);
-
-            $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'wikicomment_deleted');
-        }
-
         if (isset($currentArticle->id)) {
             $comment = $this->commentService->getComments('article', $currentArticle->id, 0);
         } else {
@@ -151,6 +142,16 @@ class Show extends Controller
     #[RequiresPermission(WikiPermissions::VIEW)]
     public function post(array $params): Response
     {
+        // Delete comment (POST only: it changes data)
+        if (isset($_POST['delComment']) === true) {
+            if ($this->commentService->deleteComment((int) $_POST['delComment'])) {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'wikicomment_deleted');
+            }
+
+            $redirectId = isset($_GET['id']) ? '/'.(int) $_GET['id'] : '';
+
+            return Frontcontroller::redirect(BASE_URL.'/wiki/show'.$redirectId);
+        }
 
         if (isset($_GET['id']) === true) {
             $id = (int) ($_GET['id']);

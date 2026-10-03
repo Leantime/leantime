@@ -12,6 +12,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Domain\Auth\Guards\WebGuard;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,6 +58,13 @@ class AuthCheck
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+        // API, cron and MCP endpoints must be addressed by their canonical path. A path that only
+        // resolves to them after decoding/normalization (e.g. /%61pi/jsonrpc, /api//jsonrpc) is
+        // rejected outright so classification and routing can never disagree. Static assets are
+        // exempt: they are plain files whose names may legitimately be percent-encoded.
+        if ($this->mustUseCanonicalPath($request) && $request->hasNonCanonicalPath()) {
+            return new Response(json_encode(['error' => 'Invalid request path']), Response::HTTP_BAD_REQUEST);
+        }
 
         if ($this->isPublicController($request->getCurrentRoute())) {
             return $next($request);
@@ -113,7 +121,7 @@ class AuthCheck
                 $this->auth->shouldUse($guard);
 
                 // Check two-factor authentication
-                if (session('userdata.twoFAEnabled') && ! session('userdata.twoFAVerified')) {
+                if (! $this->sessionTwoFASatisfied()) {
                     $response = $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
                 } else {
                     $authenticated = true;
@@ -135,12 +143,39 @@ class AuthCheck
         return $authenticated ? true : $response;
     }
 
-    protected function authenticateApi($request, array $guards)
+    /**
+     * Authenticate a token-authenticated request (JSON-RPC, cron, MCP).
+     *
+     * The stateful web session guard is only honoured for same-origin XHR calls (the app's own
+     * JavaScript) whose session has completed two-factor verification. Anything else — a top-level
+     * navigation or cross-site form riding the session cookie, or a session still waiting on 2FA —
+     * must authenticate with an API key or Bearer token.
+     *
+     * @return true|Response True when authenticated, otherwise the 401 response.
+     */
+    protected function authenticateApi(IncomingRequest $request, array $guards): bool|Response
     {
+        $sessionAwaitingTwoFA = false;
+
         foreach ($guards as $guard) {
             try {
-                if ($this->auth->guard($guard)->check()) {
+                $guardInstance = $this->auth->guard($guard);
+
+                if ($guardInstance instanceof WebGuard) {
+                    if (! $request->ajax()) {
+                        continue;
+                    }
+
+                    if (! $this->sessionTwoFASatisfied()) {
+                        $sessionAwaitingTwoFA = $sessionAwaitingTwoFA || $guardInstance->check();
+
+                        continue;
+                    }
+                }
+
+                if ($guardInstance->check()) {
                     $this->auth->shouldUse($guard);
+                    $request->attributes->set(AuthenticateSession::TOKEN_AUTHENTICATED, $guard !== 'leantime');
 
                     $this->establishApiUserSession($request);
 
@@ -179,14 +214,63 @@ class AuthCheck
                 // resolver: leaving $request->user() null lets AuthenticateSession bail instead of
                 // calling viaRemember() on the non-session WebGuard, matching the x-api-key path.
                 app(\Leantime\Domain\Api\Services\Api::class)->setApiUserSession($user, true);
+                $request->attributes->set(AuthenticateSession::TOKEN_AUTHENTICATED, true);
 
                 return true;
             }
         }
 
+        // A logged-in browser session that has not finished 2FA, and that presented no API key or
+        // Bearer token, is not a credential-guessing attempt; reject it without counting against
+        // the per-IP failed-auth budget. Any attempted token is always counted.
+        if ($sessionAwaitingTwoFA && ! $this->presentedApiCredential($request)) {
+            return new Response(json_encode(['error' => 'Two-factor authentication required']), 401);
+        }
+
         $this->hitFailedAuthLimiter($request);
 
         return new Response(json_encode(['error' => 'Unauthorized']), 401);
+    }
+
+    /**
+     * Whether $request targets an endpoint that must be addressed by its canonical path: any API
+     * path (except static assets), cron, or MCP.
+     */
+    protected function mustUseCanonicalPath(IncomingRequest $request): bool
+    {
+        if ($request->isApiOrCronRequest() || $request->isMcpRequest()) {
+            return true;
+        }
+
+        if (! $request->isApiRequest()) {
+            return false;
+        }
+
+        return ($request->normalizedSegments()[1] ?? '') !== 'static-asset';
+    }
+
+    /**
+     * Whether the request carries an explicit API credential (API key or Bearer token).
+     */
+    protected function presentedApiCredential(IncomingRequest $request): bool
+    {
+        if ($request->headers->has('x-api-key')) {
+            return true;
+        }
+
+        $bearer = method_exists($request, 'getBearerToken') ? $request->getBearerToken() : $request->bearerToken();
+
+        return ! empty($bearer);
+    }
+
+    /**
+     * Whether the current session satisfies two-factor authentication: either 2FA is not enabled
+     * for the user, or the code has been verified in this session. Mirrors the web check in
+     * {@see self::authenticateWeb()}.
+     */
+    protected function sessionTwoFASatisfied(): bool
+    {
+        return ! session('userdata.twoFAEnabled') || (bool) session('userdata.twoFAVerified');
     }
 
     /**

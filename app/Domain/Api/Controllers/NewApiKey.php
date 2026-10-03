@@ -4,6 +4,7 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -52,7 +53,7 @@ class NewApiKey extends Controller
 
         $this->tpl->assign('values', $values);
         $this->tpl->assign('allProjects', $this->APIService->getAllProjects());
-        $this->tpl->assign('roles', Roles::getRoles());
+        $this->tpl->assign('roles', $this->APIService->getAssignableRoles());
         $this->tpl->assign('relations', []);
 
         return $this->tpl->displayPartial('api.newAPIKey');
@@ -89,7 +90,7 @@ class NewApiKey extends Controller
             $values = [
                 'firstname' => ($_POST['firstname']),
                 'user' => '',
-                'role' => ($_POST['role']),
+                'role' => ($_POST['role'] ?? ''),
                 'password' => '',
                 'pwReset' => '',
                 'status' => '',
@@ -98,15 +99,19 @@ class NewApiKey extends Controller
 
             $projectRelation = (isset($_POST['projects']) && is_array($_POST['projects'])) ? $_POST['projects'] : [];
 
-            $apiKeyValues = $this->APIService->createApiKeyWithProjects($values, $_POST['projects'] ?? null);
+            try {
+                $apiKeyValues = $this->APIService->createApiKeyWithProjects($values, $_POST['projects'] ?? null);
 
-            $this->tpl->setNotification('notifications.key_created', 'success', 'apikey_created');
-            $this->tpl->assign('apiKeyValues', $apiKeyValues);
+                $this->tpl->setNotification('notifications.key_created', 'success', 'apikey_created');
+                $this->tpl->assign('apiKeyValues', $apiKeyValues);
+            } catch (AuthorizationException $e) {
+                $this->tpl->setNotification($this->language->__('notification.role_not_allowed'), 'error');
+            }
         }
 
         $this->tpl->assign('values', $values);
         $this->tpl->assign('allProjects', $this->APIService->getAllProjects());
-        $this->tpl->assign('roles', Roles::getRoles());
+        $this->tpl->assign('roles', $this->APIService->getAssignableRoles());
         $this->tpl->assign('relations', $projectRelation);
 
         return $this->tpl->displayPartial('api.newAPIKey');

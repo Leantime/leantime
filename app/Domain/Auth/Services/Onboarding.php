@@ -84,7 +84,7 @@ class Onboarding
 
         $timezone = $this->settingService->getSetting('usersettings.'.$userId.'.timezone');
         if (! $timezone) {
-            $timezone = date_default_timezone_get();
+            $timezone = app()->make(\Leantime\Core\Configuration\Environment::class)->defaultTimezone;
         }
 
         $workdays = $this->settingService->getSetting('usersettings.'.$userId.'.workdays');

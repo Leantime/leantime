@@ -451,11 +451,189 @@ class TimesheetsServiceTest extends TestCase
             },
         ]);
 
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+
         // Editor (no manage) tries to log for user 2 → pinned to self (user 1).
-        $this->makeService(timesheetsRepo: $repo, perms: $this->permissionsGranting(self::EDITOR_KEYS))
-            ->addTime(['userId' => 2, 'hours' => 1]);
+        $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting([...self::EDITOR_KEYS, 'tickets.view']))
+            ->addTime(['userId' => 2, 'hours' => 1, 'ticket' => 3]);
 
         $this->assertSame(1, $captured['userId'], 'A non-manager must be pinned to their own userId');
+    }
+
+    /**
+     * Timesheet capabilities are company-wide, so the WRITE paths must additionally fence the
+     * ticket the time is booked on to a project the caller can view — otherwise any editor could
+     * log/punch time onto another project's tickets by id.
+     */
+    public function test_time_writes_deny_a_ticket_outside_the_callers_projects(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            'addTime' => function () {
+                $this->fail('time must not be added to a ticket the caller cannot view');
+            },
+            'upsertTimesheetEntry' => function () {
+                $this->fail('time must not be upserted on a ticket the caller cannot view');
+            },
+            'updateTime' => function () {
+                $this->fail('an entry must not be moved onto a ticket the caller cannot view');
+            },
+            'punchIn' => function () {
+                $this->fail('the timer must not start on a ticket the caller cannot view');
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 9]),
+        ]);
+        // Editor verbs only — no tickets.view, i.e. not a member of project 9.
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting(self::EDITOR_KEYS));
+
+        $calls = [
+            'logTime' => fn () => $service->logTime(3, ['date' => '2026-01-01', 'hours' => 1, 'kind' => 'GENERAL_BILLABLE']),
+            'upsertTime' => fn () => $service->upsertTime(3, ['date' => '2026-01-01', 'hours' => 1, 'kind' => 'GENERAL_BILLABLE']),
+            'addTime' => fn () => $service->addTime(['ticket' => 3, 'hours' => 1]),
+            'updateTime' => fn () => $service->updateTime(['ticket' => 3, 'hours' => 1]),
+            'punchIn' => fn () => $service->punchIn(3),
+        ];
+
+        foreach ($calls as $method => $call) {
+            try {
+                $call();
+                $this->fail("$method must throw for a ticket outside the caller's projects");
+            } catch (AuthorizationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    public function test_stopping_a_timer_on_an_inaccessible_ticket_discards_it_without_booking(): void
+    {
+        $discarded = [];
+        $repo = $this->make(TimesheetRepository::class, [
+            'isClocked' => fn () => ['id' => 3],
+            'punchOut' => function () {
+                $this->fail('no time may be booked on a ticket the caller can no longer view');
+            },
+            'discardPunch' => function ($ticketId) use (&$discarded) {
+                $discarded[] = $ticketId;
+
+                return true;
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 9]),
+        ]);
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting(self::EDITOR_KEYS));
+
+        $this->assertFalse($service->punchOut(3));
+        $this->assertFalse($service->stopActiveTimer());
+        $this->assertSame([3, 3], $discarded);
+    }
+
+    public function test_stopping_a_timer_on_an_accessible_ticket_books_time(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            'punchOut' => fn () => 1.5,
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting([...self::EDITOR_KEYS, 'tickets.view']));
+
+        $this->assertSame(1.5, $service->punchOut(3));
+    }
+
+    public function test_stopping_a_timer_without_the_create_capability_discards_it(): void
+    {
+        $discarded = 0;
+        $repo = $this->make(TimesheetRepository::class, [
+            'punchOut' => function () {
+                $this->fail('no time may be booked once timesheets.create is revoked');
+            },
+            'discardPunch' => function () use (&$discarded) {
+                $discarded++;
+
+                return true;
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+        // Ticket still viewable, but timesheets.create was revoked.
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting([TimesheetsPermissions::VIEW, 'tickets.view']));
+
+        $this->assertFalse($service->punchOut(3));
+        $this->assertSame(1, $discarded);
+    }
+
+    public function test_update_time_denies_an_existing_entry_on_an_inaccessible_ticket(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            // Entry 50 is the caller's own, but booked on ticket 8 in a project they cannot view.
+            'getTimesheet' => fn () => ['id' => 50, 'userId' => 1, 'ticketId' => 8],
+            'updateTime' => function () {
+                $this->fail('a foreign-project entry must not be rewritten');
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn ($id) => new TicketModel(['id' => (int) $id, 'projectId' => (int) $id === 8 ? 9 : 1]),
+        ]);
+        $perms = $this->make(PermissionService::class, [
+            'authorize' => function (string $key, ?int $projectId = null): void {
+                if ($key === 'tickets.view' && $projectId !== 1) {
+                    throw new AuthorizationException;
+                }
+            },
+            'currentUserCan' => fn () => true,
+        ]);
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $perms);
+
+        $this->expectException(AuthorizationException::class);
+
+        // Destination ticket 3 is accessible; the entry's current ticket 8 is not.
+        $service->updateTime(['id' => 50, 'ticket' => 3, 'hours' => 1]);
+    }
+
+    public function test_weekly_save_skips_malformed_ticket_keys(): void
+    {
+        $upserted = [];
+        $repo = $this->make(TimesheetRepository::class, [
+            'upsertTimesheetEntry' => function ($values) use (&$upserted) {
+                $upserted[] = $values['ticket'];
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn ($id) => new TicketModel(['id' => (int) $id, 'projectId' => 1]),
+        ]);
+        $userRepo = $this->make(UserRepository::class, ['getUser' => fn () => ['wage' => 0]]);
+        $service = $this->makeService(timesheetsRepo: $repo, userRepo: $userRepo, ticketRepo: $ticketRepo);
+
+        $service->saveWeeklyTimesheetEntries([
+            '12abc|GENERAL_BILLABLE|2026-01-05|1767571200' => '2',
+            ' 12|GENERAL_BILLABLE|2026-01-05|1767571200' => '2',
+            '+12|GENERAL_BILLABLE|2026-01-05|1767571200' => '2',
+            '12|GENERAL_BILLABLE|2026-01-05|1767571200' => '2',
+        ]);
+
+        $this->assertSame([12], $upserted, 'Only the canonical integer key may be logged');
+    }
+
+    public function test_time_writes_reject_a_missing_or_malformed_ticket(): void
+    {
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => false,
+        ]);
+        $service = $this->makeService(ticketRepo: $ticketRepo);
+
+        foreach ([['ticket' => 404], ['ticket' => [3]], []] as $values) {
+            try {
+                $service->addTime($values + ['hours' => 1]);
+                $this->fail('addTime must reject an unknown or non-scalar ticket id');
+            } catch (AuthorizationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     // ---- Weekly grid bucketing across DST (#3310: Monday entry echoed on previous week's Sunday) ----

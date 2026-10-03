@@ -56,7 +56,11 @@
 
 .tiptap-editor {
     position: relative;
-    background: var(--main-background, #fff);
+    /* Theme tokens before the hard-coded fallbacks (#3790): --main-* are defined by no theme, so
+       the editor was always #333 text on #fff, and on the Wiki (transparent background) that was
+       dark text on the dark page. Light themes define these tokens as #fff / #333, so light mode
+       is unchanged. */
+    background: var(--main-background, var(--secondary-background, #fff));
     border: 1px solid var(--main-border-color, #ddd);
     border-radius: 15px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -82,7 +86,7 @@
     font-family: var(--main-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
     font-size: var(--base-font-size, 14px);
     line-height: 1.6;
-    color: var(--main-text-color, #333);
+    color: var(--main-text-color, var(--primary-font-color, #333));
     cursor: text;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -708,8 +712,10 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-toolbar__group {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 2px;
+    min-width: 0;
 }
 
 .tiptap-toolbar__separator {

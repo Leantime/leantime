@@ -21,12 +21,28 @@ class Myapps extends Controller
     }
 
     /**
+     * Lists new and installed plugins.
+     *
      * @throws BindingResolutionException
      */
     public function get(): Response
     {
+        $this->tpl->assign('newPlugins', $this->pluginService->discoverNewPlugins());
+        $this->tpl->assign('installedPlugins', $this->pluginService->getAllPlugins());
+
+        return $this->tpl->display('plugins.myapps');
+    }
+
+    /**
+     * Installs, enables, disables or removes a plugin. These change the installation, so they
+     * are only accepted as POST.
+     *
+     * @param  array  $params  Request parameters; one of install/enable/disable/remove => plugin id.
+     */
+    public function post($params): Response
+    {
         foreach (['install', 'enable', 'disable', 'remove'] as $action) {
-            $id = $this->incomingRequest->query->get($action);
+            $id = $this->incomingRequest->request->get($action);
 
             if (empty($id)) {
                 continue;
@@ -38,17 +54,9 @@ class Myapps extends Controller
                 $this->tpl->setNotification($e->getMessage(), 'error');
             }
 
-            return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
+            break;
         }
 
-        $this->tpl->assign('newPlugins', $this->pluginService->discoverNewPlugins());
-        $this->tpl->assign('installedPlugins', $this->pluginService->getAllPlugins());
-
-        return $this->tpl->display('plugins.myapps');
-    }
-
-    public function post($params): Response
-    {
         return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
     }
 }

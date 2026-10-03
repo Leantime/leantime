@@ -285,7 +285,7 @@ leantime.projectsController = (function () {
 
         function htmlEntities(str)
         {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
         jQuery(document).ready(
@@ -323,7 +323,7 @@ leantime.projectsController = (function () {
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (project.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
+                                    popUpHTML +=  '<h3><b>' + htmlEntities(project.name) + '</b></h3>';
                                 }
 
                                 popUpHTML += '<h4>' + htmlEntities(project.name) + '</a></h4><br /> ';
@@ -421,7 +421,7 @@ leantime.projectsController = (function () {
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (project.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
+                                    popUpHTML +=  '<h3><b>' + htmlEntities(project.name) + '</b></h3>';
                                 }
 
                                 popUpHTML += '<h4>' + htmlEntities(project.name) + '</a></h4><br /> ';

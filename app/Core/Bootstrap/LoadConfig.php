@@ -11,6 +11,7 @@ use Leantime\Core\Configuration\Attributes\LaravelConfig;
 use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Middleware\TrustProxies;
 
 class LoadConfig extends LoadConfiguration
 {
@@ -103,7 +104,11 @@ class LoadConfig extends LoadConfiguration
         // the environment in a web context where an "--env" switch is not present.
         $app->detectEnvironment(fn () => $config->get('app.env', 'production'));
 
-        date_default_timezone_set($config->get('app.timezone', 'UTC'));
+        // The PHP process always runs in UTC: every DB datetime is UTC by convention, and date()/
+        // now()/strtotime() must agree with that. app.timezone (LEAN_DEFAULT_TIMEZONE) is the
+        // default *user* timezone, applied explicitly via DateTimeHelper/format(), never to the
+        // process. Using it here made cron, queue and logged-out requests write local time.
+        date_default_timezone_set('UTC');
 
         mb_internal_encoding('UTF-8');
 
@@ -128,9 +133,8 @@ class LoadConfig extends LoadConfiguration
 
         $appUrl = $config->get('appUrl');
 
-        // Set trusted prozies as early as possible to ensure schema is identified correctly
-        $proxies = explode(',', ($config->trustedProxies ?? '127.0.0.1,REMOTE_ADDR'));
-        Request::setTrustedProxies($proxies, $this->headers);
+        // Set trusted proxies as early as possible to ensure schema is identified correctly
+        Request::setTrustedProxies(TrustProxies::resolveTrustedProxies($config->trustedProxies ?? ''), $this->headers);
 
         if (! defined('BASE_URL')) {
             if (isset($appUrl) && ! empty($appUrl)) {

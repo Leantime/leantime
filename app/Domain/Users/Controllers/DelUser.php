@@ -5,6 +5,7 @@ namespace Leantime\Domain\Users\Controllers;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Services\Users;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,13 +61,17 @@ class DelUser extends Controller
 
         if (isset($_POST['del'])) {
             if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
-                $this->userService->deleteUser($id);
-                $this->tpl->setNotification($this->language->__('notifications.user_deleted'), 'success', 'user_deleted');
+                try {
+                    $this->userService->deleteUser($id);
+                    $this->tpl->setNotification($this->language->__('notifications.user_deleted'), 'success', 'user_deleted');
 
-                return Frontcontroller::redirect(BASE_URL.'/users/showAll');
+                    return Frontcontroller::redirect(BASE_URL.'/users/showAll');
+                } catch (AuthorizationException $e) {
+                    $this->tpl->setNotification($this->language->__('notification.role_not_allowed'), 'error');
+                }
+            } else {
+                $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
             }
-
-            $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
         }
 
         $this->generateFormTokens();
@@ -81,8 +86,7 @@ class DelUser extends Controller
      */
     private function generateFormTokens(): void
     {
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
+        session(['formTokenName' => bin2hex(random_bytes(16))]);
+        session(['formTokenValue' => bin2hex(random_bytes(16))]);
     }
 }

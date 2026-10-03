@@ -57,6 +57,16 @@ class Comments extends BaseService
 
                 return $projectService->getProject($entityId) ?: null;
             }
+
+            // Canvas-family targets (wiki articles, ideas, *canvasitem). The notification path for
+            // these only needs the item's project, so a minimal record is enough; without it the
+            // comment was permission-checked and then silently discarded (#3756). A missing item
+            // resolves to no project and stays null.
+            if ($module === 'article' || $module === 'idea' || str_ends_with($module, 'canvasitem')) {
+                $projectId = $this->commentRepository->resolveModuleProjectId($module, $entityId);
+
+                return $projectId !== null ? ['id' => $entityId, 'projectId' => $projectId] : null;
+            }
         } catch (\Throwable $e) {
             return null;
         }
@@ -91,7 +101,17 @@ class Comments extends BaseService
         // RPC callers (mobile) typically don't pre-load the entity — they
         // just know module + entityId. Load it server-side so they don't
         // have to ship a whole ticket payload over the wire just to comment.
-        if ($entity === null && $module && $entityId) {
+        // JSON-RPC decodes a caller-supplied entity as an array (or a string), but the ticket
+        // notification path dereferences an object and the project path an array (#3067, #2164).
+        // Load the real entity server-side whenever the supplied one has the wrong shape.
+        // Canvas-family entities are always resolved server-side, so the item's existence and canvas
+        // type are enforced rather than taken from the caller.
+        $isCanvasFamilyModule = $module === 'article' || $module === 'idea' || str_ends_with((string) $module, 'canvasitem');
+        $entityHasWrongShape = ($module === 'ticket' && ! is_object($entity))
+            || ($module === 'project' && ! is_array($entity))
+            || $isCanvasFamilyModule;
+
+        if (($entity === null || $entityHasWrongShape) && $module && $entityId) {
             $entity = $this->loadEntityForComment($module, (int) $entityId);
         }
 
@@ -155,25 +175,25 @@ class Comments extends BaseService
 
                 $notification = app()->make(Notification::class);
 
+                // Notify the project the comment was AUTHORIZED against (resolved from the host
+                // entity above), not the ambient session project: an RPC call from a browser whose
+                // current project is A, commenting on an item in B, must not send B's comment to
+                // A's members or webhooks. The session project is only a last-resort fallback.
+                $entityProjectId = is_object($entity)
+                    ? ($entity->projectId ?? 0)
+                    : (is_array($entity) ? ($entity['projectId'] ?? $entity['id'] ?? 0) : 0);
+                $notificationProjectId = (int) ($projectId ?? ($entityProjectId ?: session('currentProject')));
+
                 $urlQueryParameter = str_contains($currentUrl, '?') ? '&' : '?';
                 $notification->url = [
-                    'url' => $currentUrl.$urlQueryParameter.'projectId='.session('currentProject'),
+                    'url' => $currentUrl.$urlQueryParameter.'projectId='.$notificationProjectId,
                     'text' => $linkLabel,
                 ];
 
                 $notification->entity = $mapper;
                 $notification->module = 'comments';
                 $notification->action = 'commented';
-                // session('currentProject') is set when a user is browsing
-                // a project on web; RPC callers (mobile) don't have that
-                // session key populated, and the Notification model types
-                // projectId as `int` (rejects null). Fall back to the
-                // commented-on entity's project so we always have a real
-                // integer.
-                $entityProjectId = is_object($entity)
-                    ? ($entity->projectId ?? 0)
-                    : (is_array($entity) ? ($entity['projectId'] ?? $entity['id'] ?? 0) : 0);
-                $notification->projectId = (int) (session('currentProject') ?? $entityProjectId);
+                $notification->projectId = $notificationProjectId;
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');
                 $notification->message = $message;

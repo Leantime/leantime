@@ -12,7 +12,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\OutboundUrlGuard;
+use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -42,16 +42,20 @@ class Calendar extends BaseService
 
     private Environment $config;
 
+    private OutboundHttpClient $outboundHttpClient;
+
     public function __construct(
         CalendarRepository $calendarRepo,
         LanguageCore $language,
         Setting $settingsRepo,
         Environment $config,
+        OutboundHttpClient $outboundHttpClient,
     ) {
         $this->calendarRepo = $calendarRepo;
         $this->language = $language;
         $this->settingsRepo = $settingsRepo;
         $this->config = $config;
+        $this->outboundHttpClient = $outboundHttpClient;
     }
 
     /**
@@ -69,10 +73,16 @@ class Calendar extends BaseService
     }
 
     /**
+     * Columns of a calendar event a patch may change. Everything else (id, userId, ...) is
+     * dropped, so a patch can neither re-target another row nor reassign the event's owner.
+     */
+    private const PATCHABLE_EVENT_COLUMNS = ['dateFrom', 'dateTo', 'description', 'allDay'];
+
+    /**
      * Patches calendar event.
      *
      * @param  int  $id  Id of the event to update (only events; tickets are updated via the ticket API).
-     * @param  array  $params  Key/value array of columns to update.
+     * @param  array  $params  Key/value array of columns to update (limited to PATCHABLE_EVENT_COLUMNS).
      * @return bool true on success, false on failure
      *
      * @api
@@ -80,6 +90,12 @@ class Calendar extends BaseService
     #[RequiresPermission(CalendarPermissions::EDIT)]
     public function patch(int $id, array $params): bool
     {
+        $params = array_intersect_key($params, array_flip(self::PATCHABLE_EVENT_COLUMNS));
+
+        if ($params === []) {
+            return false;
+        }
+
         // The event's owner can always change it; a cross-user override needs calendar.manage (admin+).
         if ($this->userIsAllowedToUpdate($id)) {
             return $this->calendarRepo->patch($id, $params);
@@ -457,10 +473,10 @@ class Calendar extends BaseService
     {
         // Convert date parameters to Carbon instances if they're strings
         if (is_string($from)) {
-            $from = CarbonImmutable::parse($from);
+            $from = CarbonImmutable::parse($from, dtHelper()->userNow()->getTimezone());
         }
         if (is_string($until)) {
-            $until = CarbonImmutable::parse($until);
+            $until = CarbonImmutable::parse($until, dtHelper()->userNow()->getTimezone());
         }
 
         // Get tickets and filter by date range
@@ -761,10 +777,10 @@ class Calendar extends BaseService
         // Convert date parameters to Carbon instances if they're strings
         try {
             if (is_string($from)) {
-                $from = CarbonImmutable::parse($from);
+                $from = CarbonImmutable::parse($from, dtHelper()->userNow()->getTimezone());
             }
             if (is_string($until)) {
-                $until = CarbonImmutable::parse($until);
+                $until = CarbonImmutable::parse($until, dtHelper()->userNow()->getTimezone());
             }
         } catch (\Exception $e) {
             Log::error('Error converting date parameters to Carbon instances: '.$e->getMessage());
@@ -786,9 +802,10 @@ class Calendar extends BaseService
 
                 // Filter events by date range if specified
                 if ($from || $until) {
-                    $events = array_filter($events, function ($event) use ($from, $until) {
-                        $eventStart = CarbonImmutable::parse($event->dtstart);
-                        $eventEnd = isset($event->dtend) ? CarbonImmutable::parse($event->dtend) : $eventStart;
+                    $userTimezone = dtHelper()->userNow()->getTimezone(); // floating (no TZ) iCal times are local
+                    $events = array_filter($events, function ($event) use ($from, $until, $userTimezone) {
+                        $eventStart = CarbonImmutable::parse($event->dtstart, $userTimezone);
+                        $eventEnd = isset($event->dtend) ? CarbonImmutable::parse($event->dtend, $userTimezone) : $eventStart;
 
                         if ($from && $eventEnd < $from) {
                             return false;
@@ -849,7 +866,9 @@ class Calendar extends BaseService
     /**
      * Load an iCal URL and return its contents.
      *
-     * Validates the URL against SSRF attacks before making the request.
+     * The fetch goes through {@see OutboundHttpClient}: the URL (and every redirect hop) is checked
+     * by the SSRF guard, the connection is pinned to the validated address so the host can't be
+     * re-resolved to an internal one, and connect/total timeouts bound the request.
      *
      * @param  string  $url  The URL of the iCal feed.
      * @return string The iCal content.
@@ -862,29 +881,24 @@ class Calendar extends BaseService
             $url = str_replace('webcal://', 'https://', $url);
         }
 
-        if (! OutboundUrlGuard::isAllowedUrl($url)) {
-            throw new \Exception('Refused to fetch iCal feed: URL failed SSRF safety check');
-        }
-
-        $client = new \GuzzleHttp\Client;
-
         try {
-            $response = $client->get($url, [
-                'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+            $response = $this->outboundHttpClient->get($url, [
                 'headers' => [
                     'Accept' => 'text/calendar',
                     'User-Agent' => 'Leantime Calendar Integration v'.$this->config->appVersion,
                 ],
             ]);
-
-            if ($response->getStatusCode() == 200) {
-                return (string) $response->getBody();
-            }
-
-            throw new \Exception('Failed to load iCal feed: HTTP '.$response->getStatusCode());
-        } catch (\Exception $e) {
+        } catch (\InvalidArgumentException) {
+            throw new \Exception('Refused to fetch iCal feed: URL failed SSRF safety check');
+        } catch (\Throwable $e) {
             throw new \Exception('Error loading iCal feed: '.$e->getMessage());
         }
+
+        if ($response->getStatusCode() == 200) {
+            return (string) $response->getBody();
+        }
+
+        throw new \Exception('Failed to load iCal feed: HTTP '.$response->getStatusCode());
     }
 
     public function generateIcalHash()

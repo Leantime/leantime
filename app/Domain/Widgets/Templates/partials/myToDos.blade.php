@@ -195,7 +195,7 @@
                                     <input type="hidden" name="priority"
                                            value=""/>
                                     <input type="hidden" name="dateToFinish"
-                                           value="{{ date('Y-m-d', strtotime('next friday'))}}"/>
+                                           value="{{ dtHelper()->userNow()->next(\Carbon\CarbonInterface::FRIDAY)->format('Y-m-d') }}"/>
                                     <x-global::forms.textarea name="description" class="description-input" style="display:none;"
                                               placeholder="{{ __('input.placeholders.description') }}"></x-global::forms.textarea>
                                 </div>

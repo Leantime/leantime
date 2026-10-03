@@ -121,7 +121,7 @@ class Tickets
     public function getStateLabels($projectId = null): array
     {
         if (Cache::has('projectsettings.'.$projectId.'.ticketlabels')) {
-            return Cache::get('projectsettings.'.$projectId.'.ticketlabels');
+            return self::withSafeLabelClasses((array) Cache::get('projectsettings.'.$projectId.'.ticketlabels'));
         }
 
         if ($projectId == null) {
@@ -174,7 +174,35 @@ class Tickets
             return $a['sortKey'] <=> $b['sortKey'];
         });
 
+        // Label settings saved before class validation existed may hold arbitrary strings.
+        $statusList = self::withSafeLabelClasses($statusList);
+
         Cache::put('projectsettings.'.$projectId.'.ticketlabels', $statusList, 3600);
+
+        return $statusList;
+    }
+
+    /**
+     * Whether a status label css class is safe to render: a plain label-* class.
+     */
+    public static function isValidLabelClass(mixed $labelClass): bool
+    {
+        return is_string($labelClass) && preg_match('/^label-[a-z0-9-]+$/', $labelClass) === 1;
+    }
+
+    /**
+     * Replace any status label class that is not a plain label-* class with label-default.
+     *
+     * @param  array<int|string, mixed>  $statusList
+     * @return array<int|string, mixed>
+     */
+    private static function withSafeLabelClasses(array $statusList): array
+    {
+        foreach ($statusList as $key => $status) {
+            if (is_array($status) && isset($status['class']) && ! self::isValidLabelClass($status['class'])) {
+                $statusList[$key]['class'] = 'label-default';
+            }
+        }
 
         return $statusList;
     }
@@ -375,8 +403,10 @@ class Tickets
     public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', ?int $limit = null, $includeCounts = true, ?int $offset = null): bool|array
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
-        $userId = $searchCriteria['currentUser'] ?? session('userdata.id') ?? '-1';
-        $clientId = $searchCriteria['currentClient'] ?? session('userdata.clientId') ?? '-1';
+        // The project-membership scope is ALWAYS the session user/client. Search criteria can
+        // arrive from JSON-RPC, so a caller-supplied currentUser/currentClient must never widen it.
+        $userId = session('userdata.id') ?? '-1';
+        $clientId = session('userdata.clientId') ?? '-1';
 
         $query = $this->connection->table('zp_tickets')
             ->select([
@@ -1193,11 +1223,18 @@ class Tickets
                 $join->on('zp_tickets.editorId', '=', $this->connection->raw($this->dbHelper->castAs($this->dbHelper->wrapColumn('t3.id'), 'text')));
             })
             ->where('zp_tickets.id', '<>', $ticket->id ?? 0)
-            ->where('zp_tickets.type', '<>', 'milestone')
-            ->where(function ($q) use ($ticket) {
-                $q->where('zp_tickets.dependingTicketId', '<>', $ticket->id ?? 0)
+            ->where('zp_tickets.type', '<>', 'milestone');
+
+        // Exclude this ticket's own children (they can't also be its parent). Only meaningful for a
+        // saved ticket: for a new one the id is empty, and comparing against 0 dropped every
+        // top-level ticket (dependingTicketId = 0), so stories were missing from "Related to"
+        // until the ticket was saved once (#3147).
+        if (! empty($ticket->id)) {
+            $query->where(function ($q) use ($ticket) {
+                $q->where('zp_tickets.dependingTicketId', '<>', $ticket->id)
                     ->orWhereNull('zp_tickets.dependingTicketId');
             });
+        }
 
         if ($projectId !== 0) {
             $query->where('zp_tickets.projectId', $projectId);
@@ -1228,8 +1265,9 @@ class Tickets
         $statusGroups = $this->getStatusListGroupedByType($searchCriteria['currentProject'] ?? session('currentProject'));
 
         $requestorId = session('userdata.id') ?? '-1';
-        $userId = $searchCriteria['currentUser'] ?? session('userdata.id') ?? '-1';
-        $clientId = $searchCriteria['currentClient'] ?? session('userdata.clientId') ?? '-1';
+        // Membership scope is ALWAYS the session user/client — never caller-supplied criteria.
+        $userId = session('userdata.id') ?? '-1';
+        $clientId = session('userdata.clientId') ?? '-1';
 
         $query = $this->connection->table('zp_tickets')
             ->select([
@@ -1709,7 +1747,7 @@ class Tickets
             'tags' => $values['tags'],
             'sprint' => $values['sprint'],
             'storypoints' => $values['storypoints'],
-            'priority' => $values['priority'],
+            'priority' => self::normalizePriority($values['priority'] ?? '') ?? '',
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'acceptanceCriteria' => $values['acceptanceCriteria'],
@@ -1768,6 +1806,30 @@ class Tickets
     ];
 
     /**
+     * Canonical stored form of a priority, or null when the value is not a valid priority.
+     *
+     * Accepts only '' / null (no priority), an int 0-5, or a single digit string '0'-'5'.
+     * Priority is rendered into css class names and used as a lookup key, so every
+     * create/update/patch path stores the value returned here.
+     */
+    public static function normalizePriority(mixed $priority): ?string
+    {
+        if ($priority === '' || $priority === null) {
+            return '';
+        }
+
+        if (is_int($priority)) {
+            return ($priority >= 0 && $priority <= 5) ? (string) $priority : null;
+        }
+
+        if (is_string($priority) && preg_match('/^[0-5]$/', $priority) === 1) {
+            return $priority;
+        }
+
+        return null;
+    }
+
+    /**
      * Patch specific fields on a ticket.
      *
      * Only fields present in PATCHABLE_COLUMNS are included in the update.
@@ -1779,6 +1841,20 @@ class Tickets
      */
     public function patchTicket($id, array $params): bool
     {
+        // Drop invalid priorities before anything is recorded, so history matches what is written.
+        foreach ($params as $key => $value) {
+            if (strtolower(DbCore::sanitizeToColumnString($key)) !== 'priority') {
+                continue;
+            }
+
+            $normalizedPriority = self::normalizePriority($value);
+            if ($normalizedPriority === null) {
+                unset($params[$key]);
+            } else {
+                $params[$key] = $normalizedPriority;
+            }
+        }
+
         $this->addTicketChange(session('userdata.id'), $id, $params);
 
         // Match field names case-insensitively, then write the CANONICAL column name.
@@ -1823,6 +1899,11 @@ class Tickets
      */
     public function updateTicket(array $values, $id): bool
     {
+        // Normalize before recording history so the audit row matches the stored value.
+        if (array_key_exists('priority', $values)) {
+            $values['priority'] = self::normalizePriority($values['priority']) ?? '';
+        }
+
         $this->addTicketChange(session('userdata.id'), $id, $values);
 
         $updates = [
@@ -1835,7 +1916,7 @@ class Tickets
             'dateToFinish' => $values['dateToFinish'],
             'sprint' => $values['sprint'],
             'storypoints' => $values['storypoints'],
-            'priority' => $values['priority'],
+            'priority' => $values['priority'] ?? '',
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'tags' => $values['tags'],
@@ -1932,7 +2013,7 @@ class Tickets
         }
 
         $oldValues = (array) $oldValues;
-        $now = date('Y-m-d H:i:s');
+        $now = dtHelper()->dbNow()->formatDateTimeForDb();
         $historyRows = [];
 
         // Compare tracked fields
@@ -2174,7 +2255,7 @@ class Tickets
             return true;
         }
 
-        $now = now();
+        $now = dtHelper()->dbNow()->formatDateTimeForDb(); // UTC, not the request user's tz
         $rows = array_map(fn ($userId) => [
             'entityA' => $ticketId,
             'entityAType' => 'Ticket',

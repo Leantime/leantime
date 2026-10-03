@@ -6,10 +6,12 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Core\Files\Exceptions\FileValidationException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -44,6 +46,10 @@ class FileManager implements FileManagerInterface
         // Remove any directory paths
         $filename = basename($filename);
 
+        // The pattern below is Unicode-aware (/u), which makes preg_replace() return null on
+        // invalid UTF-8 input. Scrub first so a malformed name degrades instead of vanishing.
+        $filename = mb_scrub($filename, 'UTF-8');
+
         // sanitize filename
         $filename = preg_replace(
             '~
@@ -52,7 +58,7 @@ class FileManager implements FileManagerInterface
         [\x7F\xA0\xAD]|          # non-printing characters DEL, NO-BREAK SPACE, SOFT HYPHEN
         [#\[\]@!$&\'()+,;=]|     # URI reserved https://www.rfc-editor.org/rfc/rfc3986#section-2.2
         [{}^\~`]                 # URL unsafe characters https://www.ietf.org/rfc/rfc1738.txt
-        ~x',
+        ~xu',
             '-', $filename);
         // avoids ".", ".." or ".hiddenFiles"
         $filename = ltrim($filename, '.-');
@@ -177,7 +183,10 @@ class FileManager implements FileManagerInterface
 
             $newName = pathinfo($fileName, PATHINFO_FILENAME);
             if (config('filesystems.disks.'.$disk.'.renameFiles')) {
-                $newName = md5(session('userdata.id').time());
+                // Random, not md5(userId.time()): time() has one-second resolution, so files one user
+                // uploaded within the same second (Uppy sends a multi-select at once) got the SAME
+                // stored name and overwrote each other on disk (#3783). Same 32-hex shape as before.
+                $newName = bin2hex(random_bytes(16));
                 $fileName = $newName.'.'.$extension;
             }
 
@@ -211,6 +220,49 @@ class FileManager implements FileManagerInterface
 
             return false;
         }
+    }
+
+    /**
+     * The name to show or download a stored file under: the original name, with the extension
+     * appended only when it isn't already there. Uploads since v3.5.4 store the full original
+     * name ("report.pdf"); older ones stored it without the extension, so blindly appending it
+     * showed "report.pdf.pdf" for every new file.
+     *
+     * @param  string  $realName  The stored original name.
+     * @param  string  $extension  The stored extension (may be empty).
+     * @return string The display/download name.
+     */
+    public static function displayName(string $realName, string $extension): string
+    {
+        if ($extension === '' || str_ends_with(mb_strtolower($realName), '.'.mb_strtolower($extension))) {
+            return $realName;
+        }
+
+        return $realName.'.'.$extension;
+    }
+
+    /**
+     * Builds a Content-Disposition header that survives non-ASCII names.
+     *
+     * A raw UTF-8 name in filename="…" is read as Latin-1 by browsers, so "Πρόγραμμα.txt" was
+     * saved as "Î ÏÏ…". This sends the RFC 6266 form: an ASCII fallback in filename= plus the
+     * exact name in filename*=UTF-8''….
+     *
+     * @param  string  $disposition  "inline" or "attachment".
+     * @param  string  $realName  The original file name.
+     * @return string The header value.
+     */
+    public static function contentDisposition(string $disposition, string $realName): string
+    {
+        // Path separators are invalid in either form and could not come from a real upload.
+        $filename = str_replace(['/', '\\'], '_', $realName);
+
+        $asciiFallback = preg_replace('/[^\x20-\x7E]|[%"\/\\\\]/', '_', Str::ascii($filename));
+        if (trim((string) $asciiFallback, '_. ') === '') {
+            $asciiFallback = 'download';
+        }
+
+        return HeaderUtils::makeDisposition($disposition, $filename, $asciiFallback);
     }
 
     /**
@@ -251,7 +303,7 @@ class FileManager implements FileManagerInterface
             $response = new Response($content);
             $response->headers->set('Content-Type', $mimeType);
             $response->headers->set('Content-Length', (string) $storage->size($fileName));
-            $response->headers->set('Content-Disposition', 'inline; filename="'.$realName.'"');
+            $response->headers->set('Content-Disposition', self::contentDisposition('inline', $realName));
 
             // Sandbox all user-uploaded files to prevent script execution
             $response->headers->set('Content-Security-Policy', 'sandbox');
@@ -267,7 +319,7 @@ class FileManager implements FileManagerInterface
             ];
 
             if (in_array(strtolower($mimeType), $dangerousMimeTypes, true)) {
-                $response->headers->set('Content-Disposition', 'attachment; filename="'.$realName.'"');
+                $response->headers->set('Content-Disposition', self::contentDisposition('attachment', $realName));
                 $response->headers->set('X-Content-Type-Options', 'nosniff');
             }
 

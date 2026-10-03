@@ -43,35 +43,9 @@
     @if (trim((string) ($canvasItem['description'] ?? '')) !== '')
         <div class="gv-mb-metric">{{ $canvasItem['description'] }}</div>
     @endif
-    <div class="gv-mb-top">
-        @if ($roEditable && $roLive)
-            <input class="gv-mb-input" type="number" step="0.01" name="currentValue"
-                   value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}"
-                   aria-label="{{ __('goalcanvas.update_current') }}"
-                   data-tippy-content="{{ __('goalcanvas.update_current') }}"
-                   hx-post="{{ BASE_URL }}/hx/goalcanvas/goalProgress/updateValue"
-                   hx-vals='{"itemId": {{ (int) $canvasItem['id'] }}}'
-                   hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
-                   hx-trigger="blur changed"
-                   hx-target="#gvReadout"
-                   hx-swap="outerHTML">
-        @elseif ($roEditable)
-            {{-- New goal: same editable number, no HTMX — the value rides the
-                 create form's own submit. --}}
-            <input class="gv-mb-input" type="number" step="0.01" name="currentValue"
-                   value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}"
-                   aria-label="{{ __('goalcanvas.update_current') }}"
-                   data-tippy-content="{{ __('goalcanvas.update_current') }}">
-        @else
-            <span class="gv-mb-now" @if (($canvasItem['setting'] ?? '') === 'linkAndReport') data-tippy-content="{{ __('text.current_value_calculated_from_children') }}" @endif>{{ $roFmt($roCur) }}</span>
-            {{-- Static readout (linkAndReport / viewer) submits no currentValue,
-                 and EditCanvasItem defaults an absent one to '' — which would
-                 blank the stored metric when the user saves other fields. Round
-                 the stored value back through the form to preserve it. --}}
-            <input type="hidden" name="currentValue" value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}">
-        @endif
-        {{-- How far away it ISN'T — the missing half of every progress bar. --}}
-        @if ($roHasRange)
+    {{-- How far away it ISN'T — the missing half of every progress bar. --}}
+    @if ($roHasRange)
+        <div class="gv-mb-top">
             <span class="gv-mb-togo">
                 @if ($roReached)
                     {{ __('goalcanvas.goal_reached') }}
@@ -79,8 +53,8 @@
                     {{ sprintf(__('goalcanvas.to_go'), $roFmt($roRemaining)) }}
                 @endif
             </span>
-        @endif
-    </div>
+        </div>
+    @endif
     {{-- Scored track (RA planbar language) + resolved % — the % column
          width/gap matches the milestone rows so both right edges align. --}}
     <div class="gv-mb-barrow">
@@ -94,9 +68,54 @@
                     <span class="gv-marker" style="left:{{ $roPct }}%"></span>
                 @endif
             </div>
-            {{-- The totals live where they ARE on the scale: start under the
-                 left end, the goal under the right end. --}}
-            <div class="gv-scale"><span>{{ $roFmt($roStart) }}</span><span>{{ $roFmt($roGoal) }}</span></div>
+            {{-- Start / Now / Goal, each with its label. The current value used to
+                 sit alone above the bar with no visible label at all — only an
+                 aria-label and a tooltip — so a bare "99" gave the reader nothing
+                 to anchor it to. It now sits centred under the bar between the two
+                 anchors it lives between, and all three are named. The label
+                 strings (v_start / v_now / v_goal) already existed. --}}
+            <div class="gv-scale">
+                <span class="gv-scale-col">
+                    <span class="gv-scale-lbl">{{ __('goalcanvas.v_start') }}</span>
+                    <span class="gv-scale-val">{{ $roFmt($roStart) }}</span>
+                </span>
+
+                <span class="gv-scale-col gv-scale-col--now">
+                    <span class="gv-scale-lbl">{{ __('goalcanvas.v_now') }}</span>
+                    @if ($roEditable && $roLive)
+                        <input class="gv-mb-input" type="number" step="0.01" name="currentValue"
+                               value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}"
+                               aria-label="{{ __('goalcanvas.update_current') }}"
+                               data-tippy-content="{{ __('goalcanvas.update_current') }}"
+                               hx-post="{{ BASE_URL }}/hx/goalcanvas/goalProgress/updateValue"
+                               hx-vals='{"itemId": {{ (int) $canvasItem['id'] }}}'
+                               hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                               hx-trigger="blur changed"
+                               hx-target="#gvReadout"
+                               hx-swap="outerHTML">
+                    @elseif ($roEditable)
+                        {{-- New goal: same editable number, no HTMX — the value rides
+                             the create form's own submit. --}}
+                        <input class="gv-mb-input" type="number" step="0.01" name="currentValue"
+                               value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}"
+                               aria-label="{{ __('goalcanvas.update_current') }}"
+                               data-tippy-content="{{ __('goalcanvas.update_current') }}">
+                    @else
+                        <span class="gv-mb-now" @if (($canvasItem['setting'] ?? '') === 'linkAndReport') data-tippy-content="{{ __('text.current_value_calculated_from_children') }}" @endif>{{ $roFmt($roCur) }}</span>
+                        {{-- Static readout (linkAndReport / viewer) submits no
+                             currentValue, and EditCanvasItem defaults an absent one to
+                             '' — which would blank the stored metric when the user saves
+                             other fields. Round the stored value back through the form
+                             to preserve it. --}}
+                        <input type="hidden" name="currentValue" value="{{ $roCur == floor($roCur) ? (int) $roCur : $roCur }}">
+                    @endif
+                </span>
+
+                <span class="gv-scale-col gv-scale-col--goal">
+                    <span class="gv-scale-lbl">{{ __('goalcanvas.v_goal') }}</span>
+                    <span class="gv-scale-val">{{ $roFmt($roGoal) }}</span>
+                </span>
+            </div>
         </div>
         <span class="gv-mb-pct">{{ (int) round($roPct) }}%</span>
     </div>

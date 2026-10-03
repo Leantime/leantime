@@ -12,6 +12,7 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
@@ -63,20 +64,6 @@ class EditCanvasItem extends Controller
             $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
             if (! $canvasItem) {
                 return $this->tpl->displayPartial('errors.error404');
-            }
-
-            // Delete comment — only when it belongs to THIS gated item (module + moduleId);
-            // deleteComment() filters on the comment id alone, so the bind prevents deleting a
-            // foreign item's / project's comment.
-            if (isset($params['delComment'])) {
-                $commentId = (int) ($params['delComment']);
-                $comment = $this->commentsRepo->getComment($commentId);
-                if ($comment !== false
-                    && (string) $comment['module'] === 'goalcanvasitem'
-                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                    $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-                }
             }
 
             $comments = $this->commentsRepo->getComments('goalcanvasitem', $canvasItem['id']);
@@ -152,9 +139,9 @@ class EditCanvasItem extends Controller
         // view-only user is denied). Returns the re-rendered milestones section
         // (hx-target="#goalMsSection" outerHTML) so the summary counts and
         // scroll arrow update with the removed chip, not just the chip node.
-        if (isset($params['removeMilestone']) && isset($params['id'])) {
+        if (isset($_POST['removeMilestone']) && isset($params['id'])) {
             $itemId = (int) $params['id'];
-            $this->goalService->removeMilestoneFromGoal($itemId, (int) $params['removeMilestone']);
+            $this->goalService->removeMilestoneFromGoal($itemId, (int) $_POST['removeMilestone']);
 
             // getGoalItem() always stamps the goal's REAL projectId on success;
             // false only for a missing/foreign/unauthorized goal — fail closed
@@ -177,6 +164,29 @@ class EditCanvasItem extends Controller
             return $this->tpl->displayPartial('goalcanvas::partials.milestonesSection');
         }
 
+        // Delete comment (POST only: it changes data) — only when it belongs to THIS gated item
+        // (module + moduleId); deleteComment() filters on the comment id alone, so the bind
+        // prevents deleting a foreign item's / project's comment.
+        if (isset($_POST['delComment']) && isset($params['id'])) {
+            $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
+            $commentId = (int) ($_POST['delComment']);
+            $comment = $this->commentsRepo->getComment($commentId);
+            if ($comment !== false
+                && (string) $comment['module'] === 'goalcanvasitem'
+                && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                // Through the service: author-or-moderator check on top of the item binding.
+                if (app()->make(CommentService::class)->deleteComment($commentId)) {
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+                }
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $canvasItem['id']);
+        }
+
         if (isset($params['comment']) && isset($params['id'])) {
             $itemId = (int) $params['id'];
 
@@ -187,7 +197,7 @@ class EditCanvasItem extends Controller
 
             $values = [
                 'text' => $params['text'],
-                'date' => date('Y-m-d H:i:s'),
+                'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'userId' => (session('userdata.id')),
                 'moduleId' => $itemId,
                 'commentParent' => ($params['father']),

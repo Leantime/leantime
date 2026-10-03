@@ -65,34 +65,69 @@ class Setting
         }
     }
 
+    /**
+     * Writes a setting and keeps the cache in step with what the database confirmed.
+     *
+     * The new value is cached only when the write reports success. On a false result the
+     * cached copy is dropped instead, so the next getSetting() reads the stored row:
+     * updateOrInsert() also returns false when an existing row matched but nothing changed
+     * (drivers that count changed rather than matched rows), and only the database can tell
+     * that benign no-op apart from a lost write.
+     *
+     * @param  string  $type  The setting key.
+     * @param  mixed  $value  The value to store.
+     * @return bool True when the write reported success; false when Leantime is not installed or the write reported nothing written.
+     */
     public function saveSetting(string $type, mixed $value): bool
     {
         if ($this->checkIfInstalled() === false) {
             return false;
         }
 
-        $return = $this->db->table('zp_settings')
+        $saved = $this->db->table('zp_settings')
             ->updateOrInsert(
                 ['key' => $type],
                 ['value' => $value]
             );
 
-        // Update cache
+        if (! $saved) {
+            $this->cache->forget($type);
+
+            return false;
+        }
+
         $this->cache->set($type, $value);
 
-        return $return;
+        return true;
     }
 
     /**
      * Retrieves multiple settings in a single query.
      *
      * @param  array<string>  $keys  The setting keys to fetch.
+     * @param  bool  $useCache  False reads every key from the database, neither reading nor
+     *                          writing the cache — for long-running callers (queue workers)
+     *                          whose in-memory copy may predate another process's save. The
+     *                          cache is left alone so this read can never overwrite a newer save.
      * @return array<string, mixed> Map of key => value for found settings.
      */
-    public function getSettingsForKeys(array $keys): array
+    public function getSettingsForKeys(array $keys, bool $useCache = true): array
     {
         if (empty($keys) || $this->checkIfInstalled() === false) {
             return [];
+        }
+
+        if (! $useCache) {
+            try {
+                return $this->db->table('zp_settings')
+                    ->whereIn('key', $keys)
+                    ->pluck('value', 'key')
+                    ->all();
+            } catch (Exception $e) {
+                report($e);
+
+                return [];
+            }
         }
 
         $results = [];

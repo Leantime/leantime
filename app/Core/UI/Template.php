@@ -743,31 +743,139 @@ class Template
     }
 
     /**
-     * escapeMinimal - escapes content
+     * Content longer than this is not run through the HTML sanitizer at all; it is rendered
+     * as fully escaped plain text instead. Far above any real description or wiki page.
+     */
+    private const ESCAPE_MINIMAL_MAX_LENGTH = 1048576;
+
+    /**
+     * Any single tag longer than this is neutralized (rendered as text) before sanitizing.
+     * htmLawed's attribute parser is quadratic in the length of one tag, so one huge tag
+     * would otherwise cost seconds per render.
+     */
+    private const ESCAPE_MINIMAL_MAX_TAG_LENGTH = 4096;
+
+    /** How many sanitized results are memoized per process. */
+    private const ESCAPE_MINIMAL_CACHE_SIZE = 500;
+
+    /** Total bytes of memoized output kept per process before the cache is reset. */
+    private const ESCAPE_MINIMAL_CACHE_MAX_BYTES = 8388608;
+
+    /** Results larger than this are not memoized (they would crowd out everything else). */
+    private const ESCAPE_MINIMAL_CACHE_MAX_ENTRY_BYTES = 262144;
+
+    /** @var array<string, string> sanitized output keyed by a hash of the raw input */
+    private static array $escapeMinimalCache = [];
+
+    /** Bytes currently held in $escapeMinimalCache. */
+    private static int $escapeMinimalCacheBytes = 0;
+
+    /**
+     * escapeMinimal - sanitizes rich text (HTML) for output.
+     *
+     * Keeps formatting markup but strips scripts, event handlers, htmx attributes and
+     * unsafe embed sources. Results are memoized because boards render the same stored
+     * fields many times per request.
      */
     public function escapeMinimal(?string $content): string
     {
-        $content = $this->convertRelativePaths($content);
-        $config = [
-            'safe' => 1,
-            'style_pass' => 1,
-            'cdata' => 1,
-            'comment' => 1,
-            'deny_attribute' => '* -href -style',
-            'keep_bad' => 0,
-        ];
-
-        if (! is_null($content)) {
-            return htmLawed($content, [
-                'comments' => 0,
-                'cdata' => 0,
-                'deny_attribute' => 'on*',
-                'elements' => '* -applet -canvas -embed -object -script -svg -math -iframe -form -input -textarea -button -select -base -meta -link -style',
-                'schemes' => 'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, tel, telnet; style: !; *:file, http, https',
-            ]);
+        if (is_null($content)) {
+            return '';
         }
 
-        return '';
+        $content = $this->convertRelativePaths($content);
+
+        if (strlen($content) > self::ESCAPE_MINIMAL_MAX_LENGTH) {
+            return htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        }
+
+        $cacheKey = hash('xxh128', $content);
+        if (isset(self::$escapeMinimalCache[$cacheKey])) {
+            return self::$escapeMinimalCache[$cacheKey];
+        }
+
+        $contentWithoutOversizedTags = preg_replace(
+            '/<([^<>]{'.self::ESCAPE_MINIMAL_MAX_TAG_LENGTH.',}+)/',
+            '&lt;$1',
+            $content
+        ) ?? htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+        $sanitized = htmLawed($contentWithoutOversizedTags, [
+            'comments' => 0,
+            'cdata' => 0,
+            'deny_attribute' => 'on*',
+            'elements' => '* -applet -canvas -embed -object -script -svg -math -iframe -form -input -textarea -button -select -base -meta -link -style',
+            'schemes' => 'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, tel, telnet; style: !; *:file, http, https',
+            'hook_tag' => [self::class, 'filterSanitizedTag'],
+        ]);
+
+        $sanitizedBytes = strlen($sanitized);
+        if ($sanitizedBytes > self::ESCAPE_MINIMAL_CACHE_MAX_ENTRY_BYTES) {
+            return $sanitized;
+        }
+
+        $cacheIsFull = count(self::$escapeMinimalCache) >= self::ESCAPE_MINIMAL_CACHE_SIZE
+            || self::$escapeMinimalCacheBytes + $sanitizedBytes > self::ESCAPE_MINIMAL_CACHE_MAX_BYTES;
+        if ($cacheIsFull) {
+            self::$escapeMinimalCache = [];
+            self::$escapeMinimalCacheBytes = 0;
+        }
+
+        self::$escapeMinimalCache[$cacheKey] = $sanitized;
+        self::$escapeMinimalCacheBytes += $sanitizedBytes;
+
+        return $sanitized;
+    }
+
+    /**
+     * htmLawed tag hook used by escapeMinimal().
+     *
+     * Runs after htmLawed's own attribute filtering and drops what htmLawed lets through
+     * but the browser would still act on:
+     * - htmx attributes (hx-* and data-hx-*): htmx evaluates hx-on / js: values as script.
+     * - data-src on embed containers unless it is an https URL: the editor turns it into an iframe src.
+     *
+     * @param  string  $element  Lower-case element name
+     * @param  array<string, string>|int  $attributes  Filtered attributes (already entity-encoded), or 0 for a closing tag
+     * @return string The tag to emit
+     */
+    public static function filterSanitizedTag(string $element, array|int $attributes = 0): string
+    {
+        if (! is_array($attributes)) {
+            return '</'.$element.'>';
+        }
+
+        $isEmbedContainer = array_key_exists('data-embed', $attributes);
+
+        $attributeString = '';
+        foreach ($attributes as $name => $value) {
+            $lowerName = strtolower((string) $name);
+
+            if (str_starts_with($lowerName, 'hx-') || str_starts_with($lowerName, 'data-hx-')) {
+                continue;
+            }
+
+            if ($isEmbedContainer && $lowerName === 'data-src' && ! self::isHttpsUrl((string) $value)) {
+                continue;
+            }
+
+            $attributeString .= ' '.$name.'="'.$value.'"';
+        }
+
+        $voidElements = ['area', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'isindex', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+        $selfClosing = in_array($element, $voidElements, true) ? ' /' : '';
+
+        return '<'.$element.$attributeString.$selfClosing.'>';
+    }
+
+    /**
+     * Whether an (entity-encoded) attribute value is an absolute https URL once the browser decodes it.
+     */
+    private static function isHttpsUrl(string $encodedValue): bool
+    {
+        $decodedValue = html_entity_decode($encodedValue, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return preg_match('#^https://[^\s/]#i', $decodedValue) === 1;
     }
 
     /**

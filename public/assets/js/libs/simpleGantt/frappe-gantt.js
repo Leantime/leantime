@@ -242,6 +242,9 @@ var Gantt = (function () {
                 parent.appendChild(elem);
             } else if (attr === 'innerHTML') {
                 elem.innerHTML = attrs.innerHTML;
+            } else if (attr === 'textContent') {
+                // Use for any user-provided text (task names) so it is never parsed as markup.
+                elem.textContent = attrs.textContent;
             } else if (attr === 'clipPath') {
                 elem.setAttribute('clip-path', 'url(#' + attrs[attr] + ')');
             } else {
@@ -504,7 +507,7 @@ var Gantt = (function () {
             createSVG('text', {
                 x: x_coord,
                 y: this.y + this.height / 2,
-                innerHTML: this.task.name,
+                textContent: this.task.name,
                 class: 'bar-label',
                 append_to: this.bar_group,
             });
@@ -880,7 +883,12 @@ var Gantt = (function () {
             const x_offset_label_img = this.image_size + 10;
             const y_offset_label_img = (bar.getHeight() - this.image_size) / 2;
 
-            if (label.getBBox().width > bar.getWidth()) {
+            // The label sits inside the bar after the image (or padding), so only that remaining
+            // width is available. Comparing against the full bar width let 45+ character labels
+            // spill out of the bar (#3188; fix suggested in the issue thread).
+            const availableLabelWidth = bar.getWidth() - (img ? this.image_size + 10 : 10);
+
+            if (label.getBBox().width > availableLabelWidth) {
                 label.classList.add('big');
 
                 if (img) {
@@ -1073,8 +1081,8 @@ var Gantt = (function () {
                 this.pointer = this.parent.querySelector('.pointer');
             } else {
                 // set data
-                this.title.innerHTML = options.title;
-                this.subtitle.innerHTML = options.subtitle;
+                this.title.textContent = options.title;
+                this.subtitle.textContent = options.subtitle;
                 this.parent.style.width = this.parent.clientWidth + 'px';
             }
 

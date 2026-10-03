@@ -53,7 +53,7 @@
                                                | <a href="{{ $newplugin->homepage }}"> {{ $tpl->__("text.visit_site") }} </a>
                                             </div>
                                             <div class="col-md-4" style="padding-top:5px;">
-                                                <x-global::forms.button tag="a" link="{{ BASE_URL }}/plugins/myapps?install={{ $newplugin->foldername }}" contentRole="default" class="pull-right">{{ $tpl->__('buttons.activate') }}</x-global::forms.button>
+                                                <x-global::forms.button tag="a" link="javascript:void(0);" data-post-url="{{ BASE_URL }}/plugins/myapps" data-post-field="install" data-post-value="{{ $newplugin->foldername }}" contentRole="default" class="pull-right">{{ $tpl->__('buttons.activate') }}</x-global::forms.button>
 
                                             </div>
 

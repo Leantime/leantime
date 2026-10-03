@@ -5,7 +5,7 @@ namespace Leantime\Domain\Users\Controllers;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
@@ -112,8 +112,13 @@ class EditUser extends Controller
         }
 
         if ($edit) {
-            $this->userService->updateUser($values, $id, $_POST['projects'] ?? null);
-            $this->tpl->setNotification($this->language->__('notifications.user_edited'), 'success');
+            try {
+                $this->userService->updateUser($values, $id, $_POST['projects'] ?? null);
+                $this->tpl->setNotification($this->language->__('notifications.user_edited'), 'success');
+            } catch (AuthorizationException $e) {
+                $values = $this->buildValuesFromUser($row);
+                $this->tpl->setNotification($this->language->__('notification.role_not_allowed'), 'error');
+            }
         }
 
         $projectrelation = $this->userService->getUserProjectIds($id);
@@ -139,6 +144,8 @@ class EditUser extends Controller
             $this->tpl->setNotification($this->language->__('notification.invite_too_soon'), 'error');
         } elseif ($result === 'too_many_invites') {
             $this->tpl->setNotification($this->language->__('notification.too_many_invites'), 'error');
+        } elseif ($result === 'invite_email_failed') {
+            $this->tpl->setNotification($this->language->__('notification.invite_email_failed'), 'error');
         } else {
             $this->tpl->setNotification($this->language->__('notification.invitation_sent'), 'success', 'userinvitation_sent');
         }
@@ -232,9 +239,8 @@ class EditUser extends Controller
      */
     private function generateFormTokens(): void
     {
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
+        session(['formTokenName' => bin2hex(random_bytes(16))]);
+        session(['formTokenValue' => bin2hex(random_bytes(16))]);
     }
 
     /**
@@ -243,7 +249,7 @@ class EditUser extends Controller
     private function assignTemplateVars(): void
     {
         $this->tpl->assign('allProjects', $this->projectService->getAll(true));
-        $this->tpl->assign('roles', Roles::getRoles());
+        $this->tpl->assign('roles', $this->userService->getAssignableRoles());
         $this->tpl->assign('clients', $this->clientService->getAll());
         $this->tpl->assign('status', $this->userService->getUserStatuses());
     }

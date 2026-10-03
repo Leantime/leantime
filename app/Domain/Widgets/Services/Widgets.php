@@ -163,6 +163,29 @@ class Widgets
     }
 
     /**
+     * Restores any always-visible widget missing from a grid and returns it sorted by position.
+     *
+     * The Welcome widget carries the only link to the Widget Manager; the mobile layout drops it
+     * from the grid engine and a later saveGrid persisted that, leaving hidden widgets
+     * unrestorable (#3791).
+     *
+     * @param  array  $widgets  Widgets keyed by id.
+     * @return array The widgets with always-visible ones restored, sorted by gridY then gridX.
+     */
+    private function withAlwaysVisibleWidgets(array $widgets): array
+    {
+        foreach ($this->defaultWidgets as $widgetId => $defaultWidget) {
+            $isAlwaysVisible = $this->availableWidgets[$widgetId]->alwaysVisible ?? false;
+
+            if ($isAlwaysVisible && ! isset($widgets[$widgetId])) {
+                $widgets[$widgetId] = $defaultWidget;
+            }
+        }
+
+        return array_sort($widgets, [['gridY', 'asc'], ['gridX', 'asc']]);
+    }
+
+    /**
      * Retrieves the active widgets for a specific user.
      *
      * @param  int  $userId  The ID of the user.
@@ -178,7 +201,9 @@ class Widgets
         $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
 
         if (Cache::has($activeWidgetKey) && is_array(Cache::get($activeWidgetKey)) && count(Cache::get($activeWidgetKey)) > 0) {
-            return Cache::get($activeWidgetKey);
+            // A cached grid can predate the always-visible restore below (30-day TTL), so it gets
+            // the same treatment before being returned (#3791).
+            return $this->withAlwaysVisibleWidgets(Cache::get($activeWidgetKey));
         }
 
         $activeWidgets = $this->settingRepo->getSetting($activeWidgetKey);
@@ -216,8 +241,7 @@ class Widgets
             }
         }
 
-        // Sort Widgets
-        $widgets = array_sort($widgets, [['gridY', 'asc'], ['gridX', 'asc']]);
+        $widgets = $this->withAlwaysVisibleWidgets($widgets);
 
         Cache::set($activeWidgetKey, $widgets, new \DateInterval('P30D'));
 

@@ -5,6 +5,7 @@ namespace Unit\app\Domain\Calendar\Services;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language;
+use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -56,7 +57,8 @@ class CalendarServiceTest extends TestCase
             calendarRepo: $this->calendarRepository,
             language: $this->language,
             settingsRepo: $this->settingsRepository,
-            config: $this->config
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
 
         );
 
@@ -128,7 +130,8 @@ class CalendarServiceTest extends TestCase
             calendarRepo: $calendarRepo,
             language: $this->language,
             settingsRepo: $this->settingsRepository,
-            config: $this->config
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
         );
 
         // Token format is {icalHash}_{userHash}.
@@ -173,7 +176,8 @@ class CalendarServiceTest extends TestCase
             calendarRepo: $calendarRepo,
             language: $this->language,
             settingsRepo: $this->settingsRepository,
-            config: $this->config
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
         );
 
         // act = calendar.ical.{icalHash}_{userHash}; id token is ignored.
@@ -197,7 +201,8 @@ class CalendarServiceTest extends TestCase
             calendarRepo: $repo,
             language: $this->language,
             settingsRepo: $this->settingsRepository,
-            config: $this->config
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
         );
         $service->setPermissionService($perms);
 
@@ -211,6 +216,23 @@ class CalendarServiceTest extends TestCase
             'currentUserCan' => fn () => $allow,
             'authorize' => fn () => null,
         ]);
+    }
+
+    public function test_patch_only_forwards_allowlisted_event_columns(): void
+    {
+        $patched = null;
+        $repo = $this->make(CalendarRepository::class, [
+            'getEvent' => fn () => ['id' => 5, 'userId' => 1],
+            'patch' => function ($id, $params) use (&$patched) {
+                $patched = [$id, $params];
+
+                return true;
+            },
+        ]);
+        $service = $this->makeServiceWithPermissions($repo, $this->permissions(false));
+
+        $this->assertTrue($service->patch(5, ['id' => 99, 'userId' => 2, 'dateFrom' => '2026-01-01 10:00:00', 'act' => 'x']));
+        $this->assertSame([5, ['dateFrom' => '2026-01-01 10:00:00']], $patched, 'id/userId must never reach the repository');
     }
 
     public function test_get_event_returns_own_event(): void
@@ -351,7 +373,8 @@ class CalendarServiceTest extends TestCase
             calendarRepo: $repo,
             language: $this->language,
             settingsRepo: $this->settingsRepository,
-            config: $this->config
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
         );
 
         $events = $service->getCalendar(1);
@@ -368,5 +391,86 @@ class CalendarServiceTest extends TestCase
             $editEvents[0]['dateTo'],
             'editTo should fall back to editFrom when empty'
         );
+    }
+
+    /**
+     * Builds a Calendar service whose outbound client records each request it would send.
+     *
+     * @param  \ArrayObject  $sentRequests  Collects [url, options] pairs.
+     */
+    private function calendarWithOutboundClient(\ArrayObject $sentRequests, ?\Closure $answer = null): \Leantime\Domain\Calendar\Services\Calendar
+    {
+        $outboundClient = $this->make(OutboundHttpClient::class, [
+            'get' => function (string $url, array $options) use ($sentRequests, $answer) {
+                $sentRequests->append([$url, $options]);
+
+                return $answer !== null ? $answer($url) : new \GuzzleHttp\Psr7\Response(200, [], 'BEGIN:VCALENDAR');
+            },
+        ]);
+
+        return new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->calendarRepository,
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: $outboundClient,
+        );
+    }
+
+    public function test_load_ical_url_fetches_through_the_pinned_outbound_client(): void
+    {
+        $sentRequests = new \ArrayObject;
+
+        $content = $this->calendarWithOutboundClient($sentRequests)->loadIcalUrl('webcal://cal.example.test/feed.ics');
+
+        $this->assertSame('BEGIN:VCALENDAR', $content);
+        $this->assertCount(1, $sentRequests);
+        $this->assertSame('https://cal.example.test/feed.ics', $sentRequests[0][0]);
+        $this->assertSame('text/calendar', $sentRequests[0][1]['headers']['Accept']);
+    }
+
+    public function test_load_ical_url_reports_a_refused_url(): void
+    {
+        $sentRequests = new \ArrayObject;
+        $calendar = $this->calendarWithOutboundClient($sentRequests, function () {
+            throw new \InvalidArgumentException('refused');
+        });
+
+        $this->expectExceptionMessage('Refused to fetch iCal feed: URL failed SSRF safety check');
+
+        $calendar->loadIcalUrl('http://169.254.169.254/latest/meta-data/');
+    }
+
+    public function test_load_ical_url_refuses_internal_address_with_the_real_client(): void
+    {
+        $handlerCalls = new \ArrayObject;
+        $handler = new class($handlerCalls) extends \GuzzleHttp\Handler\CurlHandler
+        {
+            public function __construct(private \ArrayObject $calls) {}
+
+            public function __invoke($request, array $options): never
+            {
+                $this->calls->append($request);
+
+                throw new \LogicException('No request may be sent to a refused URL');
+            }
+        };
+
+        $calendar = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->calendarRepository,
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: new OutboundHttpClient($handler),
+        );
+
+        try {
+            $calendar->loadIcalUrl('http://127.0.0.1:8080/admin.ics');
+            $this->fail('An internal address must be refused');
+        } catch (\Exception $e) {
+            $this->assertStringContainsString('SSRF safety check', $e->getMessage());
+        }
+
+        $this->assertCount(0, $handlerCalls);
     }
 }

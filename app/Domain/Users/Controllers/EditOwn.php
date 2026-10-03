@@ -4,6 +4,8 @@ namespace Leantime\Domain\Users\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Exceptions\ValidationException;
+use Leantime\Domain\Users\Exceptions\WebhookSettingNotSavedException;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,9 +30,8 @@ class EditOwn extends Controller
      */
     public function get(): Response
     {
-        $permitted_chars = '123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
+        session(['formTokenName' => bin2hex(random_bytes(16))]);
+        session(['formTokenValue' => bin2hex(random_bytes(16))]);
 
         $profileSettings = $this->userService->getOwnProfileSettings($this->userId);
         array_map([$this->tpl, 'assign'], array_keys($profileSettings), array_values($profileSettings));
@@ -42,6 +43,10 @@ class EditOwn extends Controller
     }
 
     /**
+     * Saves the submitted section of the own-profile form (profile, password,
+     * theme, locale or notifications) and redirects back to its tab with a
+     * success or error notification.
+     *
      * @throws \Exception
      */
     public function post(): Response
@@ -115,9 +120,17 @@ class EditOwn extends Controller
             if (isset($_POST['savenotifications'])) {
                 $tab = '#notifications';
 
-                $this->userService->saveOwnNotificationPreferences($this->userId, $_POST);
+                try {
+                    $this->userService->saveOwnNotificationPreferences($this->userId, $_POST);
 
-                $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
+                    $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
+                } catch (ValidationException $e) {
+                    // The only validated field is the personal webhook URL; nothing was saved.
+                    $this->tpl->setNotification($this->language->__('notification.invalid_webhook_url'), 'error');
+                } catch (WebhookSettingNotSavedException $e) {
+                    // Already logged without the URL; nothing was saved.
+                    $this->tpl->setNotification($this->language->__('short_notifications.not_saved'), 'error');
+                }
             }
         } else {
             $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');

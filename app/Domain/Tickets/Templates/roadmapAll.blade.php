@@ -136,20 +136,25 @@
                     $dependencyList[] = $mlst->dependingTicketId;
                 }
 
-                echo "{
-                    projectName :'".$mlst->projectName."',
-                    id :'".$mlst->id."',
-                    name :".json_encode($headline).",
-                    start :'".(($mlst->editFrom != '0000-00-00 00:00:00' && ! str_starts_with($mlst->editFrom, '1969-12-31')) ? $mlst->editFrom : date('Y-m-d', strtotime('+1 day', time())))."',
-                    end :'".(($mlst->editTo != '0000-00-00 00:00:00' && ! str_starts_with($mlst->editTo, '1969-12-31')) ? $mlst->editTo : date('Y-m-d', strtotime('+1 week', time())))."',
-                    progress :'".$mlst->percentDone."',
-                    dependencies :'".implode(',', $dependencyList)."',
-                    custom_class :'',
-                    type: '".strtolower($mlst->type)."',
-                    bg_color: '".$color."',
-                    thumbnail: '".BASE_URL.'/api/users?profileImage='.$mlst->editorId."',
-                    sortIndex: ".$sortIndex.'
+                // Every value goes through json_encode with the HEX flags so names and colors can
+                // neither break out of the JS string nor close the surrounding <script> element.
+                $jsFlags = JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP;
+                $startDate = ($mlst->editFrom != '0000-00-00 00:00:00' && ! str_starts_with((string) $mlst->editFrom, '1969-12-31')) ? $mlst->editFrom : dtHelper()->userNow()->addDay()->format('Y-m-d');
+                $endDate = ($mlst->editTo != '0000-00-00 00:00:00' && ! str_starts_with((string) $mlst->editTo, '1969-12-31')) ? $mlst->editTo : dtHelper()->userNow()->addWeek()->format('Y-m-d');
 
+                echo '{
+                    projectName: '.json_encode((string) $mlst->projectName, $jsFlags).',
+                    id: '.json_encode((string) $mlst->id, $jsFlags).',
+                    name: '.json_encode($headline, $jsFlags).',
+                    start: '.json_encode((string) $startDate, $jsFlags).',
+                    end: '.json_encode((string) $endDate, $jsFlags).',
+                    progress: '.json_encode((string) $mlst->percentDone, $jsFlags).',
+                    dependencies: '.json_encode(implode(',', $dependencyList), $jsFlags).",
+                    custom_class: '',
+                    type: ".json_encode(strtolower((string) $mlst->type), $jsFlags).',
+                    bg_color: '.json_encode((string) $color, $jsFlags).',
+                    thumbnail: '.json_encode(BASE_URL.'/api/users?profileImage='.$mlst->editorId, $jsFlags).',
+                    sortIndex: '.$sortIndex.'
                 },';
             }
             @endphp

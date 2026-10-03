@@ -8,6 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
+use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
@@ -258,6 +259,15 @@ class Auth implements Authenticatable
     }
 
     /**
+     * setUserSession - establishes the web session for an authenticated user.
+     *
+     * When the session does not already belong to this user (a fresh login) the session id is
+     * regenerated first, so an id planted before authentication can never be carried into the
+     * authenticated session. The session is also pinned to the user's current password hash
+     * (see {@see PasswordFingerprint}) so a later password change logs it out.
+     *
+     * @param  mixed  $user  the zp_user row
+     * @param  bool  $isExternalAuth  true when an external identity provider authenticated the user
      * @return false|void
      *
      * @throws BindingResolutionException
@@ -268,6 +278,10 @@ class Auth implements Authenticatable
             return false;
         }
 
+        if ((int) session('userdata.id') !== (int) $user['id']) {
+            session()->regenerate(true);
+        }
+
         // Web-login session. twoFAVerified: false — the web flow enforces interactive 2FA via the
         // AuthCheck gate. Built via the shared factory (role NAME string + consistent fields), with
         // the web-only globalUserId added on top.
@@ -275,6 +289,13 @@ class Auth implements Authenticatable
         $currentUser['globalUserId'] = Uuid::uuid5(Uuid::NAMESPACE_DNS, strtolower($user['username']));
 
         $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
+
+        // Set after the filter so plugins can't drop it. The row may come from a stripped source
+        // without the hash; fall back to the repository so the fingerprint is always real.
+        $passwordHash = array_key_exists('password', $user)
+            ? $user['password']
+            : ($this->userRepo->getUser((int) $user['id'], false)['password'] ?? '');
+        $currentUser['pwfp'] = PasswordFingerprint::of($passwordHash);
 
         session(['userdata' => $currentUser]);
         session(['usersettings' => $currentUser['settings']]);
@@ -347,6 +368,11 @@ class Auth implements Authenticatable
             session()->forget($key);
         }
 
+        // Drop the whole session and issue a new id + CSRF token so nothing from the
+        // authenticated session (including its id) survives the logout.
+        session()->invalidate();
+        session()->regenerateToken();
+
         self::dispatch_event('afterSessionDestroy', ['authService' => app()->make(self::class)]);
 
     }
@@ -354,12 +380,32 @@ class Auth implements Authenticatable
     /**
      * validateResetLink - validates that the password reset link belongs to a user account in the database
      *
-     * @param  string  $hash  invite link hash
+     * Only a hash of the reset token is stored, so the token from the link is hashed
+     * before it is looked up.
+     *
+     * @param  string  $token  the reset token from the password reset link
      */
-    public function validateResetLink(string $hash): bool
+    public function validateResetLink(string $token): bool
     {
+        if ($token === '') {
+            return false;
+        }
 
-        return $this->authRepo->validateResetLink($hash);
+        return $this->authRepo->validateResetLink($this->hashResetToken($token));
+    }
+
+    /**
+     * hashResetToken - one-way hash of a password reset token as it is stored in the database.
+     *
+     * The token itself is only ever sent to the user by email; a database read therefore
+     * never yields a usable reset link.
+     *
+     * @param  string  $token  the plain reset token
+     * @return string the sha256 hex digest stored in zp_user.pwReset
+     */
+    private function hashResetToken(string $token): string
+    {
+        return hash('sha256', $token);
     }
 
     /**
@@ -387,17 +433,23 @@ class Auth implements Authenticatable
 
         if ($userFromDB !== false && count($userFromDB) > 0) {
             if ($userFromDB['pwResetCount'] < $this->pwResetLimit) {
-                $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-                $resetLink = substr(str_shuffle($permitted_chars), 0, 32);
+                // 256 bits from the CSPRNG. Only the hash is persisted; the plain token
+                // exists solely in the emailed link.
+                $resetToken = bin2hex(random_bytes(32));
 
-                $result = $this->authRepo->setPWResetLink($username, $resetLink);
+                $result = $this->authRepo->setPWResetLink($username, $this->hashResetToken($resetToken));
 
                 if ($result) {
+                    if (empty($this->config->appUrl)) {
+                        // Without LEAN_APP_URL the link's host is derived from the request.
+                        Log::warning('Password reset link built from the request host because LEAN_APP_URL is not set. Set LEAN_APP_URL to your public URL so emailed links always point to your installation.');
+                    }
+
                     // Don't queue, send right away
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('password_reset');
                     $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
-                    $actual_link = ''.BASE_URL.'/auth/resetPw/'.$resetLink;
+                    $actual_link = ''.BASE_URL.'/auth/resetPw/'.$resetToken;
                     $mailer->setHtml(sprintf($this->language->__('email_notifications.password_reset_message'), $actual_link));
                     $to = [$username];
                     $mailer->sendMail($to, 'Leantime System');
@@ -413,9 +465,20 @@ class Auth implements Authenticatable
         return false;
     }
 
-    public function changePw(string $password, string $hash): bool
+    /**
+     * changePw - sets a new password for the account the reset token belongs to.
+     *
+     * @param  string  $password  the new plain password
+     * @param  string  $token  the reset token from the password reset link
+     * @return bool true when a matching, unexpired reset request was found and updated
+     */
+    public function changePw(string $password, string $token): bool
     {
-        return $this->authRepo->changePW($password, $hash);
+        if ($token === '') {
+            return false;
+        }
+
+        return $this->authRepo->changePW($password, $this->hashResetToken($token));
     }
 
     /**
@@ -672,8 +735,14 @@ class Auth implements Authenticatable
         return session('userdata.twoFAVerified');
     }
 
+    /**
+     * set2FAVerified - marks the session as having passed the second factor.
+     *
+     * The session id is regenerated because the session gains privileges at this point.
+     */
     public function set2FAVerified(): void
     {
+        session()->regenerate(true);
         session(['userdata.twoFAVerified' => true]);
     }
 
