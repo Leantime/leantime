@@ -34,7 +34,10 @@ class TrustedAppUrlTest extends TestCase
 
         $settingsRepo = $this->make(SettingRepository::class, [
             'getSetting' => fn (string $key, mixed $default = false) => $this->settings[$key] ?? $default,
-            'saveSetting' => function (string $key, mixed $value) {
+            'addSettingIfAbsent' => function (string $key, mixed $value) {
+                if (array_key_exists($key, $this->settings)) {
+                    return false;
+                }
                 $this->settings[$key] = $value;
 
                 return true;
@@ -137,6 +140,25 @@ class TrustedAppUrlTest extends TestCase
         $this->makeTrustedAppUrl()->learnFromAdminLogin('owner', $request);
 
         $this->assertArrayNotHasKey(TrustedAppUrl::SETTING_KEY, $this->settings);
+    }
+
+    public function test_a_concurrently_recorded_url_is_kept(): void
+    {
+        // Another request recorded a URL between our read and our insert.
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn (string $key, mixed $default = false) => $this->settings[$key] ?? $default,
+            'addSettingIfAbsent' => function (string $key, mixed $value) {
+                $this->settings[$key] = 'https://first.example.com';
+
+                return false;
+            },
+        ]);
+        $config = $this->make(Environment::class, ['get' => fn ($key, $default = null) => $key === 'appUrl' ? '' : $default]);
+        $trustedAppUrl = new TrustedAppUrl($config, $settingsRepo);
+
+        $trustedAppUrl->learnFromAdminLogin('owner', $this->requestFor('https://second.example.com/auth/login'));
+
+        $this->assertSame('https://first.example.com', $trustedAppUrl->get());
     }
 
     public function test_install_records_the_url_once(): void

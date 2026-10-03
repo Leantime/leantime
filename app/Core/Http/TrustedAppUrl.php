@@ -226,16 +226,15 @@ class TrustedAppUrl
             return;
         }
 
-        $storedUrl = $this->getStored();
-
-        if ($storedUrl === null) {
-            $this->settingsRepo->saveSetting(self::SETTING_KEY, $requestUrl);
+        // Insert-if-absent is atomic, so concurrent first logins can't overwrite each other.
+        if ($this->getStored() === null && $this->settingsRepo->addSettingIfAbsent(self::SETTING_KEY, $requestUrl)) {
             Log::info('Recorded '.$requestUrl.' as the application URL for links in emails ('.$reason.'). Set LEAN_APP_URL to change it.');
 
             return;
         }
 
-        if ($storedUrl !== $requestUrl) {
+        $storedUrl = $this->getStored();
+        if ($storedUrl !== null && $storedUrl !== $requestUrl) {
             Log::info('Signed in on '.$requestUrl.' but email links use the recorded application URL '.$storedUrl.'. Set LEAN_APP_URL if the public URL has changed.');
         }
     }
