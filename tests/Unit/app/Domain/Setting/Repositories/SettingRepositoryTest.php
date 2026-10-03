@@ -140,6 +140,18 @@ class SettingRepositoryTest extends TestCase
                 return (object) ['key' => $this->key, 'value' => $this->database->rows[$this->key]];
             }
 
+            /** Stands in for an INSERT IGNORE on the zp_settings primary key. */
+            public function insertOrIgnore(array $values): int
+            {
+                if (array_key_exists($values['key'], $this->database->rows)) {
+                    return 0;
+                }
+
+                $this->database->rows[$values['key']] = $values['value'];
+
+                return 1;
+            }
+
             public function updateOrInsert(array $attributes, array $values): bool
             {
                 if ($this->database->writeResult instanceof \Throwable) {
@@ -237,5 +249,32 @@ class SettingRepositoryTest extends TestCase
         $this->assertSame([self::KEY], $this->database->reads, 'the uncached read comes from the database');
         // Were it written back, a read racing a concurrent save could put the pre-save value over the saved one.
         $this->assertSame('old', $this->cache->entries[self::KEY], 'an uncached read never writes the cache');
+    }
+
+    public function test_add_if_absent_inserts_when_the_key_is_missing_and_evicts_a_cached_miss(): void
+    {
+        // An earlier read cached the miss.
+        $this->cache->set(self::KEY, false);
+        $repository = $this->repository();
+
+        $this->assertTrue($repository->addSettingIfAbsent(self::KEY, 'first'));
+
+        $this->assertSame('first', $this->database->rows[self::KEY]);
+        $this->assertArrayNotHasKey(self::KEY, $this->cache->entries, 'the cached miss must be dropped');
+        $this->assertSame('first', $repository->getSetting(self::KEY));
+    }
+
+    public function test_add_if_absent_keeps_the_existing_value_and_evicts_a_cached_miss(): void
+    {
+        // Another process stored a value after this one cached the miss.
+        $this->database->rows[self::KEY] = 'first';
+        $this->cache->set(self::KEY, false);
+        $repository = $this->repository();
+
+        $this->assertFalse($repository->addSettingIfAbsent(self::KEY, 'second'));
+
+        $this->assertSame('first', $this->database->rows[self::KEY], 'an existing row is never overwritten');
+        $this->assertArrayNotHasKey(self::KEY, $this->cache->entries, 'the cached miss must be dropped');
+        $this->assertSame('first', $repository->getSetting(self::KEY));
     }
 }
