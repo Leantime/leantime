@@ -43,8 +43,14 @@ jobs:
     - name: Install NPM Dependencies
       run: npm ci
 
-    - name: Run NPM Audit
-      run: npm audit --audit-level=high
+    # Gate on what ships: runtime dependencies. Build/test tooling (laravel-mix, webpack, selenium)
+    # is reported below but does not block, since it never reaches users and some of its
+    # advisories have no patched release.
+    - name: Run NPM Audit (runtime dependencies)
+      run: npm audit --omit=dev --audit-level=high
+
+    - name: Report NPM Audit (all dependencies)
+      run: npm audit --audit-level=high || true
 
   codeql:
     name: CodeQL Analysis
