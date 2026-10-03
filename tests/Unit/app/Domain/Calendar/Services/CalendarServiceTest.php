@@ -527,6 +527,15 @@ class CalendarServiceTest extends TestCase
         $this->assertSame('BEGIN:VCALENDAR', $normalized);
     }
 
+    public function test_only_complete_calendars_are_accepted(): void
+    {
+        $calendar = \Leantime\Domain\Calendar\Services\Calendar::class;
+
+        $this->assertTrue($calendar::looksLikeIcalCalendar("BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n"));
+        $this->assertFalse($calendar::looksLikeIcalCalendar('<html>BEGIN:VCALENDAR</html>'));
+        $this->assertFalse($calendar::looksLikeIcalCalendar("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\n"), 'a truncated download is rejected');
+    }
+
     public function test_external_calendar_that_is_not_ical_resolves_to_an_empty_calendar(): void
     {
         session(['userdata' => ['id' => 1], 'calendarCache' => []]);

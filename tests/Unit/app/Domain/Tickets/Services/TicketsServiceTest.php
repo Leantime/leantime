@@ -646,6 +646,7 @@ class TicketsServiceTest extends TestCase
         return $this->buildAuthzService([
             'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
             'patchTicket' => fn () => true,
+            'updateTicketStatus' => fn () => true,
             'getStateLabels' => fn () => [
                 0 => ['name' => 'Done', 'statusType' => 'DONE'],
                 3 => ['name' => 'New', 'statusType' => 'NEW'],
@@ -682,6 +683,16 @@ class TicketsServiceTest extends TestCase
         $this->buildTimerService(99, $punchedOut)->patch(5, ['status' => 0]);
 
         $this->assertSame([], $punchedOut, 'only a timer on the completed ticket is stopped');
+    }
+
+    public function test_kanban_batch_without_handler_stops_the_timer_of_a_ticket_moved_to_done(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->assertTrue($this->buildTimerService(5, $punchedOut)->updateTicketStatusAndSorting(['4' => 'ticket[]=6', '0' => 'ticket[]=5'], null));
+
+        $this->assertSame([5], $punchedOut, 'every ticket in the batch counts, not only the optional handler');
     }
 
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void

@@ -2378,6 +2378,33 @@ class Tickets extends BaseService
     }
 
     /**
+     * Batch variant of {@see stopTimerWhenTicketIsDone()}: stops the current user's timer when its
+     * ticket is among the tickets that just received a new status.
+     *
+     * @param  array<int, int|string>  $newStatusByTicket  Ticket id => new status key.
+     */
+    private function stopTimerForTicketsMarkedDone(array $newStatusByTicket): void
+    {
+        $currentUserId = (int) session('userdata.id');
+        if ($currentUserId === 0 || $newStatusByTicket === []) {
+            return;
+        }
+
+        $onTheClock = $this->timesheetService->isClocked($currentUserId);
+        $clockedTicketId = $onTheClock === false ? 0 : (int) ($onTheClock['id'] ?? 0);
+        if (! isset($newStatusByTicket[$clockedTicketId])) {
+            return;
+        }
+
+        $clockedTicket = $this->getTicket($clockedTicketId);
+        if (! $clockedTicket) {
+            return;
+        }
+
+        $this->stopTimerWhenTicketIsDone($clockedTicketId, $newStatusByTicket[$clockedTicketId], (int) $clockedTicket->projectId);
+    }
+
+    /**
      * Stop the current user's running timer on a ticket that was just moved to a DONE-type status
      * and book the elapsed time (#415). Work on a finished To-Do is over, and a timer left running
      * blocks starting one on the next task.
@@ -3789,6 +3816,8 @@ class Tickets extends BaseService
             }
         }
 
+        $newStatusByTicket = [];
+
         // Jquery sortable serializes the array for kanban in format
         // statusKey: ticket[]=X&ticket[]=X2...,
         // statusKey2: ticket[]=X&ticket[]=X2...,
@@ -3804,10 +3833,16 @@ class Tickets extends BaseService
                         if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
                             return false;
                         }
+
+                        $newStatusByTicket[(int) $id] = $status;
                     }
                 }
             }
         }
+
+        // Every ticket in the batch got a status, not only the dragged one ($handler is optional
+        // for RPC callers). The user has at most one running timer, so look it up once.
+        $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
         if ($handler) {
             // Assumes format ticket_ID
@@ -3816,8 +3851,6 @@ class Tickets extends BaseService
             $ticket = $this->getTicket($id);
 
             if ($ticket) {
-                $this->stopTimerWhenTicketIsDone((int) $id, $ticket->status, (int) $ticket->projectId);
-
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
                 $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));

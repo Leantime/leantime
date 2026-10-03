@@ -346,14 +346,15 @@ class Calendar extends BaseService
             // loadIcalUrl includes SSRF protection.
             $content = self::normalizeIcalContent($this->loadIcalUrl($cal['url']));
         } catch (\Exception $e) {
-            Log::warning('External calendar '.$calId.' could not be loaded: '.$e->getMessage());
+            // The message can carry the feed URL, and private iCal URLs embed an access token.
+            Log::warning('External calendar '.$calId.' could not be loaded ('.$e::class.').');
 
             return self::EMPTY_ICAL_CALENDAR;
         }
 
         // A feed that isn't iCal (an HTML login/error page, e.g. a non-public Google Calendar
         // address) crashed the browser's iCal parser and hid every event without any log (#3165).
-        if (! str_contains($content, 'BEGIN:VCALENDAR')) {
+        if (! self::looksLikeIcalCalendar($content)) {
             Log::warning('External calendar '.$calId.' did not return iCal data (check that the address is the public/secret iCal address).');
 
             return self::EMPTY_ICAL_CALENDAR;
@@ -363,6 +364,19 @@ class Calendar extends BaseService
         session(['calendarCache.'.$calId.'.content' => $content]);
 
         return $content;
+    }
+
+    /**
+     * Whether a (normalized) feed body is a complete iCal calendar: it must start with
+     * BEGIN:VCALENDAR and end with END:VCALENDAR, so HTML pages and truncated downloads are
+     * rejected instead of being cached and handed to the browser parser.
+     *
+     * @param  string  $content  Feed body after {@see normalizeIcalContent()}.
+     */
+    public static function looksLikeIcalCalendar(string $content): bool
+    {
+        return str_starts_with($content, 'BEGIN:VCALENDAR')
+            && str_ends_with(rtrim($content), 'END:VCALENDAR');
     }
 
     /**
