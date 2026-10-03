@@ -192,7 +192,7 @@ class Plugins
          *
          * @var array $allPlugins
          */
-        $allPlugins = self::dispatch_filter('beforeReturnAllPlugins', $installedPluginsById, ['enabledOnly' => $enabledOnly]);
+        $allPlugins = self::dispatch_filter('beforeReturnAllPlugins', $installedPluginsById, ['enabledOnly' => $enabledOnly], 'getAllPlugins');
 
         return $allPlugins;
     }
