@@ -14,6 +14,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\EventDispatcher as EventCore;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
@@ -335,6 +336,12 @@ class Projects extends BaseService implements ChecksProjectAccess
         // Filter notifications (dispatch_filter returns mixed; the filter preserves the entity)
         /** @var Notification $notification */
         $notification = EventCore::dispatch_filter('notificationFilter', $notification);
+
+        // The link goes out by email, messenger and push: point it at the trusted app URL
+        // rather than the host of the request that triggered the notification.
+        if (is_array($notification->url) && isset($notification->url['url']) && is_string($notification->url['url'])) {
+            $notification->url['url'] = app()->make(TrustedAppUrl::class)->rebase($notification->url['url']);
+        }
 
         // Email
         $users = $this->getUsersToNotify($notification->projectId);

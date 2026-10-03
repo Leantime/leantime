@@ -505,7 +505,7 @@ class TicketsServiceTest extends TestCase
      *
      * @param  array<string, mixed>  $ticketRepoStubs
      */
-    private function buildAuthzService(array $ticketRepoStubs, PermissionService $permissions): TicketsService
+    private function buildAuthzService(array $ticketRepoStubs, PermissionService $permissions, ?TimesheetService $timesheetService = null): TicketsService
     {
         $service = new TicketsService(
             language: $this->make(LanguageCore::class, ['__' => fn ($key) => $key]),
@@ -516,7 +516,7 @@ class TicketsServiceTest extends TestCase
                 'isUserAssignedToProject' => fn () => true,
                 'notifyProjectUsers' => fn () => null,
             ]),
-            timesheetService: $this->make(TimesheetService::class),
+            timesheetService: $timesheetService ?? $this->make(TimesheetService::class),
             sprintService: $this->make(SprintService::class),
             ticketHistoryRepo: $this->make(TicketHistory::class),
             goalcanvasService: $this->make(Goalcanvas::class),
@@ -627,6 +627,124 @@ class TicketsServiceTest extends TestCase
         }
     }
 
+    /**
+     * Service whose ticket 5 (project 7) is patchable, with the session user's timer on $clockedTicketId.
+     *
+     * @param  array<int, int>  $punchedOut  Collects the ticket ids punchOut() was called with.
+     */
+    private function buildTimerService(int $clockedTicketId, array &$punchedOut): TicketsService
+    {
+        $timesheetService = $this->make(TimesheetService::class, [
+            'isClocked' => fn () => ['id' => $clockedTicketId],
+            'punchOut' => function (int $ticketId) use (&$punchedOut) {
+                $punchedOut[] = $ticketId;
+
+                return 1.5;
+            },
+        ]);
+
+        return $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            'patchTicket' => fn () => true,
+            'updateTicketStatus' => fn () => true,
+            'getStateLabels' => fn () => [
+                0 => ['name' => 'Done', 'statusType' => 'DONE'],
+                3 => ['name' => 'New', 'statusType' => 'NEW'],
+                4 => ['name' => 'In Progress', 'statusType' => 'INPROGRESS'],
+            ],
+        ], $this->permissionsForProjects([7]), $timesheetService);
+    }
+
+    public function test_moving_a_ticket_to_done_stops_the_users_timer_on_it(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->assertTrue($this->buildTimerService(5, $punchedOut)->patch(5, ['status' => 0]));
+
+        $this->assertSame([5], $punchedOut, 'a DONE status must stop the timer running on the ticket (#415)');
+    }
+
+    public function test_a_non_done_status_keeps_the_timer_running(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->buildTimerService(5, $punchedOut)->patch(5, ['status' => 4]);
+
+        $this->assertSame([], $punchedOut);
+    }
+
+    public function test_done_on_another_ticket_keeps_the_timer_running(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->buildTimerService(99, $punchedOut)->patch(5, ['status' => 0]);
+
+        $this->assertSame([], $punchedOut, 'only a timer on the completed ticket is stopped');
+    }
+
+    public function test_kanban_batch_without_handler_stops_the_timer_of_a_ticket_moved_to_done(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->assertTrue($this->buildTimerService(5, $punchedOut)->updateTicketStatusAndSorting(['4' => 'ticket[]=6', '0' => 'ticket[]=5'], null));
+
+        $this->assertSame([5], $punchedOut, 'every ticket in the batch counts, not only the optional handler');
+    }
+
+    public function test_kanban_batch_failing_later_still_stops_the_timer_of_a_persisted_done_ticket(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $timesheetService = $this->make(TimesheetService::class, [
+            'isClocked' => fn () => ['id' => 5],
+            'punchOut' => function (int $ticketId) use (&$punchedOut) {
+                $punchedOut[] = $ticketId;
+
+                return 1.0;
+            },
+        ]);
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            // Ticket 5 is written; ticket 6 reports false (e.g. 0 rows changed).
+            'updateTicketStatus' => fn ($id) => (int) $id === 5,
+            'getStateLabels' => fn () => [0 => ['name' => 'Done', 'statusType' => 'DONE']],
+        ], $this->permissionsForProjects([7]), $timesheetService);
+
+        $this->assertFalse($service->updateTicketStatusAndSorting(['0' => 'ticket[]=5&ticket[]=6'], null));
+
+        $this->assertSame([5], $punchedOut, 'a status that was persisted before the failure still stops the timer');
+    }
+
+    public function test_kanban_batch_does_not_stop_the_timer_of_a_ticket_that_was_already_done(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $timesheetService = $this->make(TimesheetService::class, [
+            'isClocked' => fn () => ['id' => 5],
+            'punchOut' => function (int $ticketId) use (&$punchedOut) {
+                $punchedOut[] = $ticketId;
+
+                return 1.0;
+            },
+        ]);
+        $service = $this->buildAuthzService([
+            // Ticket 5 already sits in Done; ticket 6 is the card being dragged into Done.
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => (int) $id === 5 ? 0 : 4]),
+            'updateTicketStatus' => fn () => true,
+            'getStateLabels' => fn () => [0 => ['name' => 'Done', 'statusType' => 'DONE'], 4 => ['name' => 'Doing', 'statusType' => 'INPROGRESS']],
+        ], $this->permissionsForProjects([7]), $timesheetService);
+
+        $this->assertTrue($service->updateTicketStatusAndSorting(['0' => 'ticket[]=5&ticket[]=6'], 'ticket_6'));
+
+        $this->assertSame([], $punchedOut, 're-sorting a ticket that was already Done must not stop its timer');
+    }
+
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor']]);
@@ -683,6 +801,7 @@ class TicketsServiceTest extends TestCase
                 12 => $this->ticketIn(12, 9, ['dependingTicketId' => 5]),
                 default => false,
             },
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
             'updateTicket' => function ($values, $id) use (&$updatedId) {
                 $updatedId = $id;
 
@@ -1143,5 +1262,103 @@ class TicketsServiceTest extends TestCase
         // Due 24 March (LA) = 2026-03-25 06:59:59 UTC: six days out, so still this week. Read on the
         // UTC calendar it landed 6.7 days out and was bucketed as next week.
         $this->assertSame('due-this-week', $bucket->invoke($this->ticketsService, '2026-03-25 06:59:59', $todayLa));
+    }
+
+    /**
+     * #1798: the parent's "including subtasks" figures sum each direct subtask's planned hours
+     * and, in one aggregate query, the hours logged against those subtask ids.
+     */
+    public function test_get_subtask_hour_totals_sums_plan_and_logged_hours(): void
+    {
+        $summedIds = new \ArrayObject;
+        $service = $this->subtaskHoursService(
+            [
+                ['id' => 11, 'projectId' => 5, 'planHours' => '2'],
+                ['id' => 12, 'projectId' => 5, 'planHours' => null],
+                ['id' => 13, 'projectId' => 5, 'planHours' => '0.5'],
+            ],
+            [5],
+            $summedIds,
+            3.75
+        );
+
+        $this->assertSame(
+            ['subtaskCount' => 3, 'planHours' => 2.5, 'loggedHours' => 3.75],
+            $service->getSubtaskHourTotals(10)
+        );
+        $this->assertSame([[11, 12, 13]], $summedIds->getArrayCopy(), 'one SUM query over all included ids');
+    }
+
+    /**
+     * A subtask left in a project the viewer can't access (parent moved elsewhere) is skipped
+     * instead of failing the whole parent view; the count reflects what was actually included.
+     */
+    public function test_get_subtask_hour_totals_skips_subtasks_in_inaccessible_projects(): void
+    {
+        $summedIds = new \ArrayObject;
+        $service = $this->subtaskHoursService(
+            [
+                ['id' => 11, 'projectId' => 5, 'planHours' => '2'],
+                ['id' => 12, 'projectId' => 9, 'planHours' => '7'],
+            ],
+            [5],
+            $summedIds,
+            1.0
+        );
+
+        $this->assertSame(
+            ['subtaskCount' => 1, 'planHours' => 2.0, 'loggedHours' => 1.0],
+            $service->getSubtaskHourTotals(10)
+        );
+        $this->assertSame([[11]], $summedIds->getArrayCopy());
+    }
+
+    public function test_get_subtask_hour_totals_without_subtasks_is_zero(): void
+    {
+        $service = $this->subtaskHoursService(false, [5], new \ArrayObject, 0.0);
+
+        $this->assertSame(
+            ['subtaskCount' => 0, 'planHours' => 0.0, 'loggedHours' => 0.0],
+            $service->getSubtaskHourTotals(10)
+        );
+    }
+
+    /**
+     * @param  false|array<int, array<string, mixed>>  $subtasks
+     * @param  array<int, int>  $viewableProjects  Projects the user may view
+     * @param  \ArrayObject  $summedIds  Records the id lists passed to the SUM query
+     */
+    private function subtaskHoursService(false|array $subtasks, array $viewableProjects, \ArrayObject $summedIds, float $loggedSum): TicketsService
+    {
+        session(['userdata.id' => 1]);
+
+        $service = new TicketsService(
+            language: $this->make(LanguageCore::class),
+            ticketRepository: $this->make(TicketRepository::class, [
+                // getAllSubtasks() is fenced on the parent being visible to the caller.
+                'getTicket' => fn ($id) => $this->make(TicketModel::class, ['id' => (int) $id, 'projectId' => 5]),
+                'getAllSubtasks' => fn () => $subtasks,
+                'sumLoggedHoursForTickets' => function (array $ticketIds) use ($summedIds, $loggedSum) {
+                    $summedIds->append($ticketIds);
+
+                    return $ticketIds === [] ? 0.0 : $loggedSum;
+                },
+            ]),
+            timesheetsRepo: $this->make(TimesheetRepository::class),
+            settingsRepo: $this->make(SettingRepository::class),
+            projectService: $this->make(ProjectService::class, ['isUserAssignedToProject' => fn () => true]),
+            timesheetService: $this->make(TimesheetService::class),
+            sprintService: $this->make(SprintService::class),
+            ticketHistoryRepo: $this->make(TicketHistory::class),
+            goalcanvasService: $this->make(Goalcanvas::class),
+            dateTimeHelper: $this->make(DateTimeHelper::class),
+            commentService: $this->make(CommentService::class),
+            clientService: $this->make(ClientService::class)
+        );
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $key, ?int $projectId = null) => in_array($projectId, $viewableProjects, true),
+        ]));
+
+        return $service;
     }
 }

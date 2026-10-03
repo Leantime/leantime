@@ -69,5 +69,86 @@ class FormatTest extends TestCase
 
     }
 
-    // Similarly you can add tests for other 'Format' class methods.
+    /**
+     * @return array<string, array{0: mixed, 1: string}>
+     */
+    public static function hoursMinutesCases(): array
+    {
+        return [
+            'quarter hour' => [1.25, '1h 15m'],
+            'numeric string from db' => ['1.25', '1h 15m'],
+            'looks like minutes but is not' => ['0.26', '0h 16m'],
+            'whole hours' => [8, '8h 00m'],
+            'zero' => [0, '0h 00m'],
+            'rounds to the next hour' => [1.999, '2h 00m'],
+            'negative difference' => [-0.5, '-0h 30m'],
+            'empty' => ['', ''],
+            'null' => [null, ''],
+            'not a number' => ['abc', ''],
+        ];
+    }
+
+    /**
+     * @dataProvider hoursMinutesCases
+     */
+    public function test_hours_minutes(mixed $decimalHours, string $expected): void
+    {
+        $this->assertSame($expected, Format::hoursMinutes($decimalHours));
+    }
+
+    /**
+     * @return array<string, array{0: ?string, 1: string}>
+     */
+    public static function plainTextCases(): array
+    {
+        return [
+            'null' => [null, ''],
+            'empty' => ['', ''],
+            'plain text untouched' => ['Just text', 'Just text'],
+            'paragraphs keep a separator' => ['<p>First</p><p>Second</p>', 'First Second'],
+            'line breaks and lists' => ['<ul><li>One</li><li>Two</li></ul>Line<br/>Break', 'One Two Line Break'],
+            'inline markup does not split words' => ['<p>A <strong>bold</strong>ly <a href="x">link</a></p>', 'A boldly link'],
+            'entities decoded' => ['<p>Fish &amp; chips&nbsp;&lt;3 &quot;q&quot;</p>', 'Fish & chips <3 "q"'],
+            'whitespace collapsed' => ["  <p>a\n\n   b</p>\t", 'a b'],
+            'scripts lose their tags' => ['<script>alert(1)</script>ok', 'alert(1)ok'],
+        ];
+    }
+
+    /**
+     * @dataProvider plainTextCases
+     */
+    public function test_plain_text(?string $html, string $expected): void
+    {
+        $this->assertSame($expected, Format::plainText($html));
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function spreadsheetSafeCases(): array
+    {
+        return [
+            'empty' => ['', ''],
+            'plain text' => ['Fix the login', 'Fix the login'],
+            'formula' => ['=HYPERLINK("http://x","y")', "'=HYPERLINK(\"http://x\",\"y\")"],
+            'plus' => ['+1+1', "'+1+1"],
+            'minus' => ['-2+3', "'-2+3"],
+            'at' => ['@SUM(A1)', "'@SUM(A1)"],
+            'tab' => ["\t=1", "'\t=1"],
+            'formula char later is fine' => ['a=b', 'a=b'],
+        ];
+    }
+
+    /**
+     * @dataProvider spreadsheetSafeCases
+     */
+    public function test_spreadsheet_safe(string $value, string $expected): void
+    {
+        $this->assertSame($expected, Format::spreadsheetSafe($value));
+    }
+
+    public function test_hours_minutes_uses_translated_pattern(): void
+    {
+        $this->assertSame('1 Std. 15 Min.', Format::hoursMinutes(1.25, '%s Std. %s Min.'));
+    }
 }

@@ -42,6 +42,7 @@
             </div>
             <div class="rightpanel {{ $section }}">
                 <div class="primaryContent">
+                    @include('global::sections.appUrlWarning')
                     @isset($action, $module)
                         @include("$module::$action")
                     @else

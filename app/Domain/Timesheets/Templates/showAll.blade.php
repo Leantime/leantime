@@ -284,7 +284,7 @@
                         <td data-order="{{ $row['workDate'] }}">
                                 {{ format($row['workDate'])->date() }}
                         </td>
-                        <td data-order="{{ $row['hours'] }}">{{ $row['hours'] }}</td>
+                        <td data-order="{{ $row['hours'] }}">{{ $row['hours'] }} <small class="tw-opacity-60 tw-whitespace-nowrap">({{ \Leantime\Core\Support\Format::hoursMinutes($row['hours'], __('text.hours_minutes_short')) }})</small></td>
                         <td data-order="{{ $row['planHours'] }}">{{ $row['planHours'] }}</td>
                             @php $diff = $row['planHours'] - $row['hours']; @endphp
                         <td data-order="{{ $diff }}">{{ $diff }}</td>
@@ -336,7 +336,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="2"><strong>{!! __('label.total_hours') !!}</strong></td>
-                        <td colspan="10"><strong>{{ $sum }}</strong></td>
+                        <td colspan="10"><strong>{{ $sum }}</strong> <small class="tw-opacity-60 tw-whitespace-nowrap">({{ \Leantime\Core\Support\Format::hoursMinutes($sum, __('text.hours_minutes_short')) }})</small></td>
 
                         <td>
                             @if ($login::userIsAtLeast($roles::$manager))

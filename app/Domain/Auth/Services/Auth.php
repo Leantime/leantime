@@ -12,6 +12,7 @@ use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\UI\Theme;
@@ -210,6 +211,7 @@ class Auth implements Authenticatable
 
                 if ($user !== false && is_array($user)) {
                     $this->setUserSession($user, true);
+                    $this->learnTrustedAppUrl($user);
 
                     return true;
                 } else {
@@ -234,6 +236,7 @@ class Auth implements Authenticatable
 
         if ($user !== false && is_array($user)) {
             $this->setUserSession($user);
+            $this->learnTrustedAppUrl($user);
 
             self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
@@ -243,6 +246,58 @@ class Auth implements Authenticatable
             self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return false;
+        }
+    }
+
+    /**
+     * learnTrustedAppUrl - records the URL of this sign-in as the trusted app URL for email links
+     * when the user is an owner/admin and no URL is known yet (see {@see TrustedAppUrl}).
+     *
+     * Accounts with two-factor authentication are skipped here: their sign-in is not complete
+     * until the second factor is verified, so the URL is learned then instead
+     * ({@see self::learnTrustedAppUrlAfter2FA()}). A password alone never teaches the URL.
+     *
+     * Never interrupts the login: a failure is logged and ignored.
+     *
+     * @internal Not exposed over JSON-RPC; called by the interactive login flows only.
+     *
+     * @param  array  $user  the zp_user row that just signed in
+     */
+    public function learnTrustedAppUrl(array $user): void
+    {
+        if (! empty($user['twoFAEnabled'])) {
+            return;
+        }
+
+        $this->recordTrustedAppUrl($user['role'] ?? null);
+    }
+
+    /**
+     * learnTrustedAppUrlAfter2FA - records the trusted app URL once the current session has
+     * passed its second factor (same rules as {@see self::learnTrustedAppUrl()}).
+     *
+     * @internal Not exposed over JSON-RPC; called by the 2FA verification flow only.
+     */
+    public function learnTrustedAppUrlAfter2FA(): void
+    {
+        if (! session('userdata.twoFAVerified')) {
+            return;
+        }
+
+        $this->recordTrustedAppUrl(session('userdata.role'));
+    }
+
+    /**
+     * Hands the role and current request to {@see TrustedAppUrl::learnFromAdminLogin()}; never throws.
+     *
+     * @param  mixed  $role  the signed-in user's role (numeric key or role name)
+     */
+    private function recordTrustedAppUrl(mixed $role): void
+    {
+        try {
+            app()->make(TrustedAppUrl::class)->learnFromAdminLogin($role, request());
+        } catch (\Throwable $e) {
+            Log::warning('Could not record the application URL at login: '.$e->getMessage());
         }
     }
 
@@ -419,15 +474,28 @@ class Auth implements Authenticatable
     }
 
     /**
-     * generateLinkAndSendEmail - generates an invitation link (hash) and sends email to user
+     * generateLinkAndSendEmail - generates a password reset link and emails it to the user
      *
-     * @param  string  $username  new user to be invited (email)
+     * The link is built from the trusted application URL ({@see TrustedAppUrl}), never from the
+     * request host. When no trusted URL is known no email is sent and a warning is logged.
+     *
+     * @param  string  $username  the account's email address
      * @return bool returns true on success, false on failure
      *
      * @throws BindingResolutionException
      */
     public function generateLinkAndSendEmail(string $username): bool
     {
+
+        // The emailed link carries the reset token, so it must point at a URL we trust. Without
+        // one, the only other source is the request's Host header, which the (unauthenticated)
+        // caller controls. The caller sees the same response either way.
+        $trustedAppUrl = app()->make(TrustedAppUrl::class)->get();
+        if ($trustedAppUrl === null) {
+            Log::warning('Password reset email not sent: the application URL is unknown. Set LEAN_APP_URL to your public URL (e.g. https://pm.example.com), or sign in once as an administrator on that URL.');
+
+            return false;
+        }
 
         $userFromDB = $this->userRepo->getUserByEmail($username);
 
@@ -440,16 +508,11 @@ class Auth implements Authenticatable
                 $result = $this->authRepo->setPWResetLink($username, $this->hashResetToken($resetToken));
 
                 if ($result) {
-                    if (empty($this->config->appUrl)) {
-                        // Without LEAN_APP_URL the link's host is derived from the request.
-                        Log::warning('Password reset link built from the request host because LEAN_APP_URL is not set. Set LEAN_APP_URL to your public URL so emailed links always point to your installation.');
-                    }
-
                     // Don't queue, send right away
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('password_reset');
                     $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
-                    $actual_link = ''.BASE_URL.'/auth/resetPw/'.$resetToken;
+                    $actual_link = $trustedAppUrl.'/auth/resetPw/'.$resetToken;
                     $mailer->setHtml(sprintf($this->language->__('email_notifications.password_reset_message'), $actual_link));
                     $to = [$username];
                     $mailer->sendMail($to, 'Leantime System');

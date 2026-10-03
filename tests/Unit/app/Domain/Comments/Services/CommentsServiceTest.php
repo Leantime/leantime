@@ -485,4 +485,25 @@ class CommentsServiceTest extends TestCase
 
         $this->makeService($this->noopReactions())->addComment(['text' => 'hi'], 'ticket', 404);
     }
+
+    public function test_get_comments_accepts_the_same_module_aliases_as_add_comment(): void
+    {
+        $seen = [];
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => function ($module) use (&$seen) {
+                $seen[] = $module;
+
+                return 9;
+            },
+            'getComments' => function ($module) use (&$seen) {
+                $seen[] = $module;
+
+                return [];
+            },
+        ]);
+
+        $this->makeService($this->noopReactions(), $repo)->getComments('tickets', 1);
+
+        $this->assertSame(['ticket', 'ticket'], $seen);
+    }
 }

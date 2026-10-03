@@ -62,14 +62,14 @@ class TicketsApiContractTest extends TestCase
     {
         $service = new TicketsService(
             language: $this->make(LanguageCore::class, ['__' => fn ($key) => $key]),
-            ticketRepository: $this->make(TicketRepository::class, $ticketRepoStubs),
+            ticketRepository: $this->make(TicketRepository::class, $ticketRepoStubs + ['getStateLabels' => fn () => $this->seedLabels()]),
             timesheetsRepo: $this->make(TimesheetRepository::class),
             settingsRepo: $this->make(SettingRepository::class),
             projectService: $this->make(ProjectService::class, [
                 'isUserAssignedToProject' => fn () => true,
                 'notifyProjectUsers' => fn () => null,
             ]),
-            timesheetService: $this->make(TimesheetService::class),
+            timesheetService: $this->make(TimesheetService::class, ['isClocked' => fn () => false]),
             sprintService: $this->make(SprintService::class),
             ticketHistoryRepo: $this->make(TicketHistory::class),
             goalcanvasService: $this->make(Goalcanvas::class),
@@ -459,17 +459,23 @@ class TicketsApiContractTest extends TestCase
 
     public function test_status_summary_counts_per_project_type_and_lists_active_tickets(): void
     {
-        $criteria = null;
+        $activeCall = null;
         $service = $this->service([
-            'getAllBySearchCriteria' => function ($searchCriteria) use (&$criteria) {
-                $criteria = $searchCriteria;
+            'countTicketsByProjectAndStatus' => fn () => [
+                ['projectId' => 9, 'status' => 4, 'count' => 2],
+                ['projectId' => 9, 'status' => 0, 'count' => 1],
+                // In project 8 status 4 is a DONE status.
+                ['projectId' => 8, 'status' => 4, 'count' => 1],
+            ],
+            'getActiveTicketSummaries' => function (...$args) use (&$activeCall) {
+                $activeCall = $args;
 
                 return [
-                    ['id' => 1, 'headline' => 'A', 'type' => 'task', 'projectId' => 9, 'status' => 4, 'editorId' => '2', 'dependingTicketId' => 0, 'milestoneid' => null, 'modified' => '2026-07-27 10:00:00', 'commentCount' => 3],
-                    ['id' => 2, 'headline' => 'B', 'type' => 'subtask', 'projectId' => 9, 'status' => 4, 'editorId' => '', 'dependingTicketId' => 1, 'milestoneid' => null, 'modified' => '2026-07-28 10:00:00', 'commentCount' => 0],
-                    ['id' => 3, 'headline' => 'C', 'type' => 'task', 'projectId' => 9, 'status' => 0, 'editorId' => '2', 'dependingTicketId' => 0, 'milestoneid' => null, 'modified' => '2026-07-20 10:00:00', 'commentCount' => 1],
-                    // In project 8 status 4 is a DONE status.
-                    ['id' => 4, 'headline' => 'D', 'type' => 'task', 'projectId' => 8, 'status' => 4, 'editorId' => '2', 'dependingTicketId' => 0, 'milestoneid' => null, 'modified' => '2026-07-29 10:00:00', 'commentCount' => 0],
+                    'rows' => [
+                        ['id' => 2, 'headline' => 'B', 'type' => 'subtask', 'projectId' => 9, 'projectName' => 'P', 'status' => 4, 'editorId' => '', 'dependingTicketId' => 1, 'milestoneid' => null, 'dateToFinish' => null, 'lastModified' => '2026-07-28 10:00:00', 'commentCount' => 0],
+                        ['id' => 1, 'headline' => 'A', 'type' => '', 'projectId' => 9, 'projectName' => 'P', 'status' => 4, 'editorId' => '2', 'dependingTicketId' => 0, 'milestoneid' => null, 'dateToFinish' => null, 'lastModified' => '2026-07-27 10:00:00', 'commentCount' => 3],
+                    ],
+                    'total' => 5,
                 ];
             },
             'getStateLabels' => fn ($projectId) => (int) $projectId === 8
@@ -477,21 +483,20 @@ class TicketsApiContractTest extends TestCase
                 : $this->seedLabels(),
         ]);
 
-        $summary = $service->getStatusSummary();
+        $summary = $service->getStatusSummary(modifiedAfter: '2026-07-01T00:00:00Z', includeSubtasks: false, activeLimit: 2);
 
-        $this->assertSame('', $criteria['currentProject']);
-        $this->assertSame('milestone', $criteria['excludeType']);
+        // Filtering, ordering and the limit are pushed down to the repository queries.
+        $this->assertSame([null, '2026-07-01 00:00:00', false, 'INPROGRESS', 2], $activeCall);
         $this->assertSame(4, $summary['total']);
         $this->assertSame(['NEW' => 0, 'INPROGRESS' => 2, 'DONE' => 2], $summary['countsByType']);
-        $this->assertSame([2, 1], array_column($summary['active'], 'id'), 'active = INPROGRESS only, newest first');
+        $this->assertSame('DONE', $summary['countsByStatus'][2]['statusType']);
+        $this->assertSame([2, 1], array_column($summary['active'], 'id'));
         $this->assertSame(1, $summary['active'][0]['dependingTicketId'], 'the subtask carries its parent link');
         $this->assertNull($summary['active'][0]['editorId'], 'an unassigned ticket has a null editorId');
+        $this->assertSame('task', $summary['active'][1]['type']);
         $this->assertSame(3, $summary['active'][1]['commentCount']);
-        $this->assertFalse($summary['activeTruncated']);
-
-        $withoutSubtasks = $service->getStatusSummary(includeSubtasks: false, activeLimit: 1);
-        $this->assertSame(3, $withoutSubtasks['total']);
-        $this->assertSame([1], array_column($withoutSubtasks['active'], 'id'));
+        $this->assertSame(5, $summary['activeTotal']);
+        $this->assertTrue($summary['activeTruncated']);
     }
 
     public function test_status_summary_authorizes_an_explicit_project(): void
@@ -503,7 +508,7 @@ class TicketsApiContractTest extends TestCase
             },
         ]);
         $service = $this->service([
-            'getAllBySearchCriteria' => function () {
+            'countTicketsByProjectAndStatus' => function () {
                 throw new \RuntimeException('must not query a project the caller cannot view');
             },
         ], $denying);
@@ -511,5 +516,22 @@ class TicketsApiContractTest extends TestCase
         $this->expectException(\Leantime\Core\Exceptions\AuthorizationException::class);
 
         $service->getStatusSummary(projectId: 7);
+    }
+
+    public function test_numeric_status_ids_must_exist_in_the_project(): void
+    {
+        [$service, $created] = $this->creatingService();
+
+        $service->addTicket(['headline' => 'A', 'projectId' => 9, 'status' => 4.0]);
+        $this->assertSame(4, $created()['status']);
+
+        foreach ([999, '999', 3.9, '3.9', true] as $invalidStatus) {
+            try {
+                $service->addTicket(['headline' => 'A', 'projectId' => 9, 'status' => $invalidStatus]);
+                $this->fail('status '.var_export($invalidStatus, true).' must be rejected');
+            } catch (ValidationException $e) {
+                $this->assertArrayHasKey('status', $e->getErrorData());
+            }
+        }
     }
 }

@@ -102,6 +102,30 @@ class Setting
     }
 
     /**
+     * Inserts a setting only when the key does not exist yet, atomically.
+     *
+     * Relies on the primary key on zp_settings.key (INSERT IGNORE / ON CONFLICT DO NOTHING), so
+     * concurrent callers can never overwrite each other: exactly one insert wins.
+     *
+     * @param  string  $type  The setting key.
+     * @param  mixed  $value  The value to store.
+     * @return bool True when this call inserted the row; false when the key already existed or Leantime is not installed.
+     */
+    public function addSettingIfAbsent(string $type, mixed $value): bool
+    {
+        if ($this->checkIfInstalled() === false) {
+            return false;
+        }
+
+        $inserted = $this->db->table('zp_settings')->insertOrIgnore(['key' => $type, 'value' => $value]) > 0;
+
+        // Either way the stored row is now authoritative; drop any cached copy (including a cached miss).
+        $this->cache->forget($type);
+
+        return $inserted;
+    }
+
+    /**
      * Retrieves multiple settings in a single query.
      *
      * @param  array<string>  $keys  The setting keys to fetch.

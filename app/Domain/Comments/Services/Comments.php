@@ -77,11 +77,24 @@ class Comments extends BaseService
     }
 
     /**
+     * Get the comments of an entity.
+     *
+     * Accepts the same module aliases as addComment() (e.g. "tickets"), so a comment written
+     * through an alias can be read back through it.
+     *
+     * @param  string  $module  ticket, project, article, idea, {type}canvasitem (or an alias).
+     * @param  int  $entityId  The entity id.
+     * @param  int  $commentOrder  Sort order flag passed to the repository.
+     * @param  int  $parent  Parent comment id (0 = top level).
+     * @return false|array The comments.
+     *
      * @api
      */
     #[RequiresPermission(CommentsPermissions::VIEW, entityScoped: true)]
     public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
     {
+        $module = $this->normalizeCommentModule($module);
+
         // IDOR fence: comments are read by (module, entityId) with no project scoping in the repo,
         // so authorize VIEW against the host entity's REAL project — a foreign id can no longer leak
         // another project's comment thread over RPC. A null project (client/company-scoped target or

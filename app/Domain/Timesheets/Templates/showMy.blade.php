@@ -171,7 +171,10 @@ jQuery(document).ready(function(){
         var finalSum = colSum1 + colSum2 + colSum3 + colSum4 + colSum5 + colSum6 + colSum7;
         var roundedSum = Math.round((finalSum)*100)/100;
         jQuery("#finalSum").text(roundedSum);
+        leantime.timesheetsController.refreshHoursMinutesTitles(".timesheetTable");
     });
+
+    leantime.timesheetsController.refreshHoursMinutesTitles(".timesheetTable");
  });
 </script>
 @endpush

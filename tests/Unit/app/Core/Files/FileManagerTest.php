@@ -191,6 +191,40 @@ class FileManagerTest extends TestCase
         $this->assertStringContainsString('original-name.txt', $result->headers->get('Content-Disposition'));
     }
 
+    public function test_get_file_serves_pdfs_inline_without_the_sandbox(): void
+    {
+        $this->filesystemManager->method('getDefaultDriver')->willReturn('local');
+        $this->filesystemManager->method('disk')->with('local')->willReturn($this->storage);
+        $this->storage->method('exists')->willReturn(true);
+        $this->storage->method('mimeType')->willReturn('application/pdf');
+        $this->storage->method('get')->willReturn('%PDF-1.7');
+        $this->storage->method('size')->willReturn(8);
+        $this->storage->method('lastModified')->willReturn(1700000000);
+
+        $result = $this->fileManager->getFile('abc.pdf', 'report.pdf');
+
+        $this->assertStringStartsWith('inline', $result->headers->get('Content-Disposition'));
+        $this->assertNull($result->headers->get('Content-Security-Policy'), 'a sandboxed PDF cannot open in the browser viewer (#2338)');
+        $this->assertSame('nosniff', $result->headers->get('X-Content-Type-Options'));
+    }
+
+    public function test_get_file_keeps_scriptable_types_sandboxed_and_downloaded(): void
+    {
+        $this->filesystemManager->method('getDefaultDriver')->willReturn('local');
+        $this->filesystemManager->method('disk')->with('local')->willReturn($this->storage);
+        $this->storage->method('exists')->willReturn(true);
+        $this->storage->method('mimeType')->willReturn('image/svg+xml');
+        $this->storage->method('get')->willReturn('<svg/>');
+        $this->storage->method('size')->willReturn(6);
+        $this->storage->method('lastModified')->willReturn(1700000000);
+
+        $result = $this->fileManager->getFile('abc.svg', 'logo.svg');
+
+        $this->assertStringStartsWith('attachment', $result->headers->get('Content-Disposition'));
+        $this->assertSame('sandbox', $result->headers->get('Content-Security-Policy'));
+        $this->assertSame('nosniff', $result->headers->get('X-Content-Type-Options'));
+    }
+
     public function test_get_file_not_found()
     {
         // Setup filesystem manager to return our mocked storage

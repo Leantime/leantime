@@ -521,80 +521,70 @@ class Tickets extends BaseService
             'modifiedAfter' => $modifiedAfter ?? '',
             'statusType' => ($statusType === null || $statusType === '') ? 'INPROGRESS' : $statusType,
         ]);
-        $activeTypes = explode(',', $filters['statusType']);
         $activeLimit = max(1, min(500, $activeLimit));
 
-        $tickets = $this->ticketRepository->getAllBySearchCriteria(
-            searchCriteria: [
-                'currentProject' => ($projectId !== null && $projectId > 0) ? $projectId : '',
-                'modifiedAfter' => $filters['modifiedAfter'],
-                'excludeType' => 'milestone',
-            ],
-            sort: 'standard',
-            includeCounts: true
-        );
+        $scopedProjectId = ($projectId !== null && $projectId > 0) ? $projectId : null;
+
+        // Both queries run in the database: grouped counts, and a separately ordered + limited
+        // slim list, so cost does not grow with every ticket in scope.
+        $statusCounts = $this->ticketRepository->countTicketsByProjectAndStatus($scopedProjectId, $filters['modifiedAfter'], $includeSubtasks);
+        $activeTickets = $this->ticketRepository->getActiveTicketSummaries($scopedProjectId, $filters['modifiedAfter'], $includeSubtasks, $filters['statusType'], $activeLimit);
 
         $countsByType = ['NEW' => 0, 'INPROGRESS' => 0, 'DONE' => 0];
         $countsByStatus = [];
-        $active = [];
         $labelsByProject = [];
         $total = 0;
 
-        foreach (is_array($tickets) ? $tickets : [] as $ticket) {
-            if (! $includeSubtasks && ($ticket['type'] ?? '') === 'subtask') {
-                continue;
-            }
-
-            $ticketProjectId = (int) $ticket['projectId'];
+        $statusTypeOf = function (int $ticketProjectId, int $status) use (&$labelsByProject): array {
             $labelsByProject[$ticketProjectId] ??= $this->ticketRepository->getStateLabels($ticketProjectId);
-            $label = $labelsByProject[$ticketProjectId][$ticket['status']] ?? null;
-            $ticketStatusType = strtoupper((string) ($label['statusType'] ?? 'NONE'));
+            $label = $labelsByProject[$ticketProjectId][$status] ?? null;
 
-            $total++;
-            $countsByType[$ticketStatusType] = ($countsByType[$ticketStatusType] ?? 0) + 1;
+            return [strtoupper((string) ($label['statusType'] ?? 'NONE')), $label];
+        };
 
-            $statusKey = $ticketProjectId.':'.$ticket['status'];
-            $countsByStatus[$statusKey] ??= [
-                'projectId' => $ticketProjectId,
-                'status' => (int) $ticket['status'],
-                'statusType' => $ticketStatusType,
+        foreach ($statusCounts as $statusCount) {
+            [$statusTypeName, $label] = $statusTypeOf($statusCount['projectId'], $statusCount['status']);
+
+            $total += $statusCount['count'];
+            $countsByType[$statusTypeName] = ($countsByType[$statusTypeName] ?? 0) + $statusCount['count'];
+            $countsByStatus[] = [
+                'projectId' => $statusCount['projectId'],
+                'status' => $statusCount['status'],
+                'statusType' => $statusTypeName,
                 'label' => $label !== null ? $this->language->__((string) ($label['name'] ?? '')) : '',
-                'count' => 0,
+                'count' => $statusCount['count'],
             ];
-            $countsByStatus[$statusKey]['count']++;
-
-            $isActive = in_array($ticketStatusType, $activeTypes, true)
-                || (in_array('NOT_DONE', $activeTypes, true) && $ticketStatusType !== 'DONE');
-
-            if ($isActive) {
-                $active[] = [
-                    'id' => (int) $ticket['id'],
-                    'headline' => $ticket['headline'],
-                    'type' => $ticket['type'],
-                    'projectId' => $ticketProjectId,
-                    'projectName' => $ticket['projectName'] ?? '',
-                    'status' => (int) $ticket['status'],
-                    'statusType' => $ticketStatusType,
-                    'editorId' => $ticket['editorId'] !== null && $ticket['editorId'] !== '' ? (int) $ticket['editorId'] : null,
-                    'dependingTicketId' => (int) ($ticket['dependingTicketId'] ?? 0) > 0 ? (int) $ticket['dependingTicketId'] : null,
-                    'milestoneid' => (int) ($ticket['milestoneid'] ?? 0) > 0 ? (int) $ticket['milestoneid'] : null,
-                    'dateToFinish' => $ticket['dateToFinish'] ?? null,
-                    'modified' => $ticket['modified'] ?? $ticket['date'] ?? null,
-                    'commentCount' => (int) ($ticket['commentCount'] ?? 0),
-                ];
-            }
         }
 
-        // Most recently changed first; the watcher cares about what moved.
-        usort($active, fn ($a, $b) => strcmp((string) $b['modified'], (string) $a['modified']));
+        $active = [];
+        foreach ($activeTickets['rows'] as $ticket) {
+            $ticketProjectId = (int) $ticket['projectId'];
+            [$statusTypeName] = $statusTypeOf($ticketProjectId, (int) $ticket['status']);
+
+            $active[] = [
+                'id' => (int) $ticket['id'],
+                'headline' => $ticket['headline'],
+                'type' => ($ticket['type'] ?? '') !== '' ? $ticket['type'] : 'task',
+                'projectId' => $ticketProjectId,
+                'projectName' => $ticket['projectName'] ?? '',
+                'status' => (int) $ticket['status'],
+                'statusType' => $statusTypeName,
+                'editorId' => $ticket['editorId'] !== null && $ticket['editorId'] !== '' ? (int) $ticket['editorId'] : null,
+                'dependingTicketId' => (int) ($ticket['dependingTicketId'] ?? 0) > 0 ? (int) $ticket['dependingTicketId'] : null,
+                'milestoneid' => (int) ($ticket['milestoneid'] ?? 0) > 0 ? (int) $ticket['milestoneid'] : null,
+                'dateToFinish' => $ticket['dateToFinish'] ?? null,
+                'modified' => $ticket['lastModified'] ?? null,
+                'commentCount' => (int) ($ticket['commentCount'] ?? 0),
+            ];
+        }
 
         return [
             'total' => $total,
             'countsByType' => $countsByType,
-            'countsByStatus' => array_values($countsByStatus),
-            'active' => array_slice($active, 0, $activeLimit),
-            'activeTotal' => count($active),
-            'activeTruncated' => count($active) > $activeLimit,
+            'countsByStatus' => $countsByStatus,
+            'active' => $active,
+            'activeTotal' => $activeTickets['total'],
+            'activeTruncated' => $activeTickets['total'] > count($active),
         ];
     }
 
@@ -2127,6 +2117,46 @@ class Tickets extends BaseService
     }
 
     /**
+     * Planned and logged hours of a To-Do's direct subtasks, so the parent can show totals
+     * "including subtasks" (#1798). Time logged on a subtask is booked against the subtask's own
+     * id, never the parent's, so adding these to the parent's own figures cannot double count.
+     *
+     * Only subtasks the current user may view are counted (a subtask can live in another project
+     * than its parent, e.g. after the parent was moved); subtaskCount is the number actually
+     * included. Logged hours come from one SUM query over the included ids.
+     *
+     * Internal (no RPC exposure): callers have already loaded and authorized the parent.
+     *
+     * @param  int  $ticketId  Parent To-Do id
+     * @return array{subtaskCount: int, planHours: float, loggedHours: float}
+     */
+    public function getSubtaskHourTotals(int $ticketId): array
+    {
+        $subtasks = $this->getAllSubtasks($ticketId) ?: [];
+
+        $canViewProject = [];
+        $includedIds = [];
+        $planHours = 0.0;
+        foreach ($subtasks as $subtask) {
+            $projectId = (int) ($subtask['projectId'] ?? 0);
+            $canViewProject[$projectId] ??= $this->can(TicketsPermissions::VIEW, $projectId);
+
+            if (! $canViewProject[$projectId]) {
+                continue;
+            }
+
+            $includedIds[] = (int) $subtask['id'];
+            $planHours += (float) ($subtask['planHours'] ?? 0);
+        }
+
+        return [
+            'subtaskCount' => count($includedIds),
+            'planHours' => $planHours,
+            'loggedHours' => $this->ticketRepository->sumLoggedHoursForTickets($includedIds),
+        ];
+    }
+
+    /**
      * Adds a new ticket quickly based on the provided parameters.
      *
      * @param  array  $params  An associative array of ticket details which may include:
@@ -2552,6 +2582,11 @@ class Tickets extends BaseService
 
             TicketUpdated::dispatch(ticketId: (int) $values['id'], legacyHook: __FUNCTION__);
 
+            // Only a status change can stop the timer; an omitted status is the stored one (#3701).
+            if (array_key_exists('status', $submittedValues)) {
+                $this->stopTimerWhenTicketIsDone((int) $values['id'], $values['status'], (int) $values['projectId']);
+            }
+
             return true;
         }
 
@@ -2559,9 +2594,77 @@ class Tickets extends BaseService
     }
 
     /**
+     * Batch variant of {@see stopTimerWhenTicketIsDone()}: stops the current user's timer when its
+     * ticket is among the tickets that just received a new status.
+     *
+     * @param  array<int, int|string>  $newStatusByTicket  Ticket id => new status key.
+     */
+    private function stopTimerForTicketsMarkedDone(array $newStatusByTicket): void
+    {
+        $currentUserId = (int) session('userdata.id');
+        if ($currentUserId === 0 || $newStatusByTicket === []) {
+            return;
+        }
+
+        $onTheClock = $this->timesheetService->isClocked($currentUserId);
+        $clockedTicketId = $onTheClock === false ? 0 : (int) ($onTheClock['id'] ?? 0);
+        if (! isset($newStatusByTicket[$clockedTicketId])) {
+            return;
+        }
+
+        $clockedTicket = $this->getTicket($clockedTicketId);
+        if (! $clockedTicket) {
+            return;
+        }
+
+        $this->stopTimerWhenTicketIsDone($clockedTicketId, $newStatusByTicket[$clockedTicketId], (int) $clockedTicket->projectId);
+    }
+
+    /**
+     * Stop the current user's running timer on a ticket that was just moved to a DONE-type status
+     * and book the elapsed time (#415). Work on a finished To-Do is over, and a timer left running
+     * blocks starting one on the next task.
+     *
+     * Only the session user's own timer is touched, and only when it runs on this ticket. A
+     * failure to book never fails the status change itself.
+     *
+     * @param  int  $ticketId  The ticket whose status changed.
+     * @param  int|string|null  $newStatus  The status key the ticket now has.
+     * @param  int  $projectId  The ticket's project (status keys are project-specific).
+     */
+    private function stopTimerWhenTicketIsDone(int $ticketId, int|string|null $newStatus, int $projectId): void
+    {
+        if ($newStatus === null || $newStatus === '' || ! is_numeric($newStatus)) {
+            return;
+        }
+
+        $currentUserId = (int) session('userdata.id');
+        if ($currentUserId === 0) {
+            return;
+        }
+
+        $statusLabels = $this->ticketRepository->getStateLabels($projectId);
+        $newStatusType = $statusLabels[(int) $newStatus]['statusType'] ?? '';
+        if ($newStatusType !== 'DONE') {
+            return;
+        }
+
+        $onTheClock = $this->timesheetService->isClocked($currentUserId);
+        if ($onTheClock === false || (int) ($onTheClock['id'] ?? 0) !== $ticketId) {
+            return;
+        }
+
+        try {
+            $this->timesheetService->punchOut($ticketId);
+        } catch (\Throwable $e) {
+            Log::error($e);
+        }
+    }
+
+    /**
      * Resolve a caller-supplied ticket status to a status id of the given project (#3702).
      *
-     * Accepts a status id (int or numeric string), a status label name as shown in the project
+     * Accepts a status id defined in the project (int or integer string), a status label name as shown in the project
      * ("New", "In Progress", a custom label, or the raw language key "status.new"), or a status
      * type ("new", "inprogress", "done"). Previously any non-numeric string was cast to 0, which is
      * the Done status, so "New" silently completed new work.
@@ -2578,48 +2681,67 @@ class Tickets extends BaseService
             return null;
         }
 
-        if (is_int($status)) {
-            return $status;
+        $labels = $this->ticketRepository->getStateLabels($projectId);
+
+        // Numeric input must be a whole number AND a status that exists in this project; an id
+        // from another project's custom set (or 3.5, true, ...) is rejected, not stored (#3702).
+        $statusId = match (true) {
+            is_int($status) => $status,
+            is_float($status) && floor($status) === $status => (int) $status,
+            is_string($status) && preg_match('/^\s*-?\d+\s*$/', $status) === 1 => (int) trim($status),
+            default => null,
+        };
+
+        if ($statusId !== null) {
+            if (array_key_exists($statusId, $labels)) {
+                return $statusId;
+            }
+
+            $this->throwUnknownStatus((string) $statusId, $labels);
         }
 
-        if (is_float($status)) {
-            return (int) $status;
-        }
-
-        if (! is_string($status)) {
-            $message = 'The status must be a status id, a status name or a status type.';
+        if (! is_string($status) || is_numeric(trim($status))) {
+            $message = 'The status must be a whole-number status id, a status name or a status type.';
 
             throw new ValidationException(['status' => [$message]], $message);
         }
 
         $status = trim($status);
-        if (preg_match('/^-?\d+$/', $status) === 1) {
-            return (int) $status;
-        }
-
         $normalize = fn (string $value): string => (string) preg_replace('/[\s_\-]+/', '', strtolower(trim($value)));
         $wanted = $normalize($status);
-        $labels = $this->ticketRepository->getStateLabels($projectId);
 
-        foreach ($labels as $statusId => $label) {
+        foreach ($labels as $labelStatusId => $label) {
             $name = (string) ($label['name'] ?? '');
             $candidates = [$name, $this->language->__($name), (string) preg_replace('/^status\./', '', $name)];
 
             foreach ($candidates as $candidate) {
                 if ($candidate !== '' && $normalize($candidate) === $wanted) {
-                    return (int) $statusId;
+                    return (int) $labelStatusId;
                 }
             }
         }
 
         $statusTypes = ['new' => 'NEW', 'inprogress' => 'INPROGRESS', 'done' => 'DONE'];
         if (isset($statusTypes[$wanted])) {
-            $statusId = $this->resolveProjectStatusKeyForType($projectId, $statusTypes[$wanted]);
-            if ($statusId !== null) {
-                return $statusId;
+            $typeStatusId = $this->resolveProjectStatusKeyForType($projectId, $statusTypes[$wanted]);
+            if ($typeStatusId !== null) {
+                return $typeStatusId;
             }
         }
 
+        $this->throwUnknownStatus($status, $labels);
+    }
+
+    /**
+     * Reject a status that is not defined for the project, listing the valid ones.
+     *
+     * @param  string  $status  The submitted status (for the message).
+     * @param  array<int, array<string, mixed>>  $labels  The project's status labels.
+     *
+     * @throws ValidationException Always.
+     */
+    private function throwUnknownStatus(string $status, array $labels): never
+    {
         $knownStatuses = [];
         foreach ($labels as $statusId => $label) {
             $knownStatuses[] = $statusId.' ('.$this->language->__((string) ($label['name'] ?? '')).')';
@@ -3301,6 +3423,12 @@ class Tickets extends BaseService
         // Todo: create events and move notification logic to notification module
         if (isset($params['status'])) {
             $ticket = $this->getTicket($id);
+            if (! $ticket) {
+                return true;
+            }
+
+            $this->stopTimerWhenTicketIsDone((int) $id, $params['status'], (int) $ticket->projectId);
+
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
             $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
@@ -4137,11 +4265,15 @@ class Tickets extends BaseService
         // Verify tickets.edit in the real project of every ticket in the batch (project-scoped
         // role + membership via the permission engine — not the session role).
         $checkedProjects = [];
+        // Statuses before the write, so only real status changes can stop a timer below.
+        $previousStatusByTicket = [];
         foreach ($allTicketIds as $ticketId) {
             $ticket = $this->getTicket($ticketId);
             if (! $ticket) {
                 return false;
             }
+
+            $previousStatusByTicket[(int) $ticketId] = $ticket->status === null ? null : (string) $ticket->status;
 
             $projectId = (int) $ticket->projectId;
             // Cache per-project decisions to avoid redundant lookups
@@ -4153,6 +4285,8 @@ class Tickets extends BaseService
                 return false;
             }
         }
+
+        $newStatusByTicket = [];
 
         // Jquery sortable serializes the array for kanban in format
         // statusKey: ticket[]=X&ticket[]=X2...,
@@ -4167,12 +4301,28 @@ class Tickets extends BaseService
                         $id = substr($ticketString, 9);
 
                         if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
+                            // Earlier tickets in the batch were already written (the repository
+                            // also reports false for "0 rows changed"), so their timers must still stop.
+                            $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
+
                             return false;
+                        }
+
+                        // Every ticket of the swimlane is re-posted with its column's status; only
+                        // tickets whose status actually changed count, so a timer on a ticket that
+                        // was already Done is not stopped by dragging some other card.
+                        $statusChanged = ($previousStatusByTicket[(int) $id] ?? null) !== (string) $status;
+                        if ($statusChanged) {
+                            $newStatusByTicket[(int) $id] = $status;
                         }
                     }
                 }
             }
         }
+
+        // Any ticket in the batch may have changed status, not only the dragged one ($handler is
+        // optional for RPC callers). The user has at most one running timer, so look it up once.
+        $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
         if ($handler) {
             // Assumes format ticket_ID
