@@ -59,15 +59,15 @@ class IdeaDialog extends Controller
     #[RequiresPermission(IdeasPermissions::VIEW)]
     public function post($params)
     {
-        if (isset($params['id']) && (isset($params['delComment']) || isset($params['removeMilestone']))) {
+        if (isset($params['id']) && (isset($_POST['delComment']) || isset($_POST['removeMilestone']))) {
             // Delete comment
-            if (isset($params['delComment']) === true) {
-                $this->ideaService->removeIdeaComment((int) $params['delComment']);
+            if (isset($_POST['delComment']) === true) {
+                $this->ideaService->removeIdeaComment((int) $_POST['delComment']);
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'ideacomment_deleted');
             }
 
             // Delete milestone relationship
-            if (isset($params['removeMilestone']) === true) {
+            if (isset($_POST['removeMilestone']) === true) {
                 $this->ideaService->removeMilestone((int) $params['id']);
                 $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
             }

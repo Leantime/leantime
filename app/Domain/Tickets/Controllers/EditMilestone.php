@@ -80,8 +80,8 @@ class EditMilestone extends Controller
             $params['id'] = (int) $_GET['id'];
 
             // Delete comment (POST only: it changes data)
-            if (isset($params['delComment']) === true) {
-                if ($this->commentsService->deleteComment((int) $params['delComment'])) {
+            if (isset($_POST['delComment']) === true) {
+                if ($this->commentsService->deleteComment((int) $_POST['delComment'])) {
                     $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
                 }
 

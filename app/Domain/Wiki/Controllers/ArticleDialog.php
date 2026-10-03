@@ -64,7 +64,7 @@ class ArticleDialog extends Controller
     public function post($params): Response
     {
         // Delete milestone relationship (POST only: it changes data)
-        if (isset($params['removeMilestone']) === true && isset($_GET['id'])) {
+        if (isset($_POST['removeMilestone']) === true && isset($_GET['id'])) {
             $article = $this->wikiService->getArticle((int) $_GET['id'], session('currentProject'));
 
             if (is_object($article)) {

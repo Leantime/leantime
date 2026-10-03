@@ -57,8 +57,8 @@ class ShowAll extends Controller
     public function post($params): Response
     {
         // Delete comment (POST only: it changes data)
-        if (isset($params['delComment']) === true) {
-            if ($this->commentService->deleteComment((int) $params['delComment'])) {
+        if (isset($_POST['delComment']) === true) {
+            if ($this->commentService->deleteComment((int) $_POST['delComment'])) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');

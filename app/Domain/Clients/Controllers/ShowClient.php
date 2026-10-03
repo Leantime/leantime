@@ -91,8 +91,8 @@ class ShowClient extends Controller
         }
 
         // Handle file deletion (POST only: it changes data)
-        if (isset($params['delFile'])) {
-            if ($this->fileService->deleteFile($params['delFile']) === true) {
+        if (isset($_POST['delFile'])) {
+            if ($this->fileService->deleteFile($_POST['delFile']) === true) {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'clientfile_deleted');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
@@ -102,8 +102,8 @@ class ShowClient extends Controller
         }
 
         // Handle comment deletion
-        if (isset($params['delComment'])) {
-            if ($this->commentService->deleteComment((int) $params['delComment'])) {
+        if (isset($_POST['delComment'])) {
+            if ($this->commentService->deleteComment((int) $_POST['delComment'])) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');

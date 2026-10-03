@@ -139,9 +139,9 @@ class EditCanvasItem extends Controller
         // view-only user is denied). Returns the re-rendered milestones section
         // (hx-target="#goalMsSection" outerHTML) so the summary counts and
         // scroll arrow update with the removed chip, not just the chip node.
-        if (isset($params['removeMilestone']) && isset($params['id'])) {
+        if (isset($_POST['removeMilestone']) && isset($params['id'])) {
             $itemId = (int) $params['id'];
-            $this->goalService->removeMilestoneFromGoal($itemId, (int) $params['removeMilestone']);
+            $this->goalService->removeMilestoneFromGoal($itemId, (int) $_POST['removeMilestone']);
 
             // getGoalItem() always stamps the goal's REAL projectId on success;
             // false only for a missing/foreign/unauthorized goal — fail closed
@@ -167,13 +167,13 @@ class EditCanvasItem extends Controller
         // Delete comment (POST only: it changes data) — only when it belongs to THIS gated item
         // (module + moduleId); deleteComment() filters on the comment id alone, so the bind
         // prevents deleting a foreign item's / project's comment.
-        if (isset($params['delComment']) && isset($params['id'])) {
+        if (isset($_POST['delComment']) && isset($params['id'])) {
             $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
             if (! $canvasItem) {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
-            $commentId = (int) ($params['delComment']);
+            $commentId = (int) ($_POST['delComment']);
             $comment = $this->commentsRepo->getComment($commentId);
             if ($comment !== false
                 && (string) $comment['module'] === 'goalcanvasitem'

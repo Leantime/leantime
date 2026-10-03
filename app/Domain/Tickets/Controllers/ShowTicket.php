@@ -159,8 +159,8 @@ class ShowTicket extends Controller
         }
 
         // Delete file
-        if (isset($params['delFile']) === true) {
-            if ($this->fileService->deleteFile($params['delFile'])) {
+        if (isset($_POST['delFile']) === true) {
+            if ($this->fileService->deleteFile($_POST['delFile'])) {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
@@ -170,8 +170,8 @@ class ShowTicket extends Controller
         }
 
         // Delete comment
-        if (isset($params['delComment']) === true) {
-            if ($this->commentService->deleteComment((int) $params['delComment'])) {
+        if (isset($_POST['delComment']) === true) {
+            if ($this->commentService->deleteComment((int) $_POST['delComment'])) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');

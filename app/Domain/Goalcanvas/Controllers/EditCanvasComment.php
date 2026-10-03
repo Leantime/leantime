@@ -103,13 +103,13 @@ class EditCanvasComment extends Controller
     {
         // Delete comment (POST only: it changes data) — only when it belongs to THIS gated
         // item (module + moduleId).
-        if (isset($params['delComment']) && isset($params['id'])) {
+        if (isset($_POST['delComment']) && isset($params['id'])) {
             $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
             if (! $canvasItem) {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
-            $commentId = (int) ($params['delComment']);
+            $commentId = (int) ($_POST['delComment']);
             $comment = $this->commentsRepo->getComment($commentId);
             if ($comment !== false
                 && (string) $comment['module'] === static::CANVAS_NAME.'canvasitem'

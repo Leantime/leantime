@@ -120,8 +120,8 @@ class Show extends Controller
     public function post($params): Response
     {
         // Delete comment (only confirm success when the auth-checked delete actually ran)
-        if (isset($params['delComment']) === true) {
-            if ($this->dashboardService->deleteProjectComment((int) $params['delComment'])) {
+        if (isset($_POST['delComment']) === true) {
+            if ($this->dashboardService->deleteProjectComment((int) $_POST['delComment'])) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'projectcomment_deleted');
             }
 

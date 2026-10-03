@@ -132,7 +132,7 @@ class EditCanvasItem extends Controller
         $commentModule = static::CANVAS_NAME.'canvas'.'item';
 
         // Comment delete / milestone detach (POST only: both change data).
-        if (isset($params['id']) && (isset($params['delComment']) || isset($params['removeMilestone']))) {
+        if (isset($params['id']) && (isset($_POST['delComment']) || isset($_POST['removeMilestone']))) {
             // Resolve + authorize the item against its real project BEFORE any mutation.
             $canvasItem = $this->blueprintsService->getCanvasItem((int) $params['id'], $canvasType);
             if (! $canvasItem) {
@@ -142,8 +142,8 @@ class EditCanvasItem extends Controller
             // Delete comment — only when it belongs to THIS gated item (module + moduleId);
             // deleteComment() filters on the comment id alone, so the bind prevents deleting a
             // foreign item's / project's comment.
-            if (isset($params['delComment'])) {
-                $commentId = (int) ($params['delComment']);
+            if (isset($_POST['delComment'])) {
+                $commentId = (int) ($_POST['delComment']);
                 $comment = $this->commentsRepo->getComment($commentId);
                 if ($comment !== false
                     && (string) $comment['module'] === $commentModule
@@ -156,7 +156,7 @@ class EditCanvasItem extends Controller
             }
 
             // Delete milestone relationship — authorized by the service.
-            if (isset($params['removeMilestone'])) {
+            if (isset($_POST['removeMilestone'])) {
                 $this->blueprintsService->patchCanvasItem((int) $params['id'], ['milestoneId' => ''], $canvasType);
                 $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
             }

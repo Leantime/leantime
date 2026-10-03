@@ -149,7 +149,7 @@ class EditCanvasComment
         $basePath = '/blueprints/'.$this->canvasSlug;
 
         // Comment delete (POST only: it changes data).
-        if (isset($data['id']) && isset($data['delComment'])) {
+        if (isset($data['id']) && isset($_POST['delComment'])) {
             // Resolve + authorize the item against its real project before anything else.
             $canvasItem = $this->blueprintsService->getCanvasItem((int) $data['id'], $canvasType);
             if (! $canvasItem) {
@@ -159,7 +159,7 @@ class EditCanvasComment
             // Delete comment — ONLY when it belongs to THIS gated item (module + moduleId).
             // deleteComment() filters on the comment id alone, so without this bind a viewable
             // item would let any global comment id be deleted (cross-item / cross-project).
-            $commentId = (int) ($data['delComment']);
+            $commentId = (int) ($_POST['delComment']);
             $comment = $this->commentsRepo->getComment($commentId);
             if ($comment !== false
                 && (string) $comment['module'] === $commentModule
