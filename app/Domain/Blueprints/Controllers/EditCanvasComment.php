@@ -14,6 +14,7 @@ use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
@@ -163,12 +164,14 @@ class EditCanvasComment
             if ($comment !== false
                 && (string) $comment['module'] === $commentModule
                 && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                $this->commentsRepo->deleteComment($commentId);
-                $this->tpl->setNotification(
-                    $this->language->__('notifications.comment_deleted'),
-                    'success',
-                    strtoupper($this->canvasSlug).'canvascomment_deleted'
-                );
+                // Through the service: author-or-moderator check on top of the item binding.
+                if (app()->make(CommentService::class)->deleteComment($commentId)) {
+                    $this->tpl->setNotification(
+                        $this->language->__('notifications.comment_deleted'),
+                        'success',
+                        strtoupper($this->canvasSlug).'canvascomment_deleted'
+                    );
+                }
             }
 
             return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasComment/'.(int) $data['id']);

@@ -12,6 +12,7 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
@@ -177,8 +178,10 @@ class EditCanvasItem extends Controller
             if ($comment !== false
                 && (string) $comment['module'] === 'goalcanvasitem'
                 && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                $this->commentsRepo->deleteComment($commentId);
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+                // Through the service: author-or-moderator check on top of the item binding.
+                if (app()->make(CommentService::class)->deleteComment($commentId)) {
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+                }
             }
 
             return Frontcontroller::redirect(BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $canvasItem['id']);

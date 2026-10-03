@@ -163,6 +163,13 @@ class VerifyRequestOriginTest extends TestCase
         $this->assertTrue($this->passes($request));
     }
 
+    public function test_insecure_origin_cannot_post_to_https_app(): void
+    {
+        // Content on http://same-host must not submit to the https app with its cookies.
+        $this->assertFalse($this->passes($this->request('POST', ['Origin' => 'http://'.self::APP_HOST])));
+        $this->assertFalse($this->passes($this->request('POST', ['Referer' => 'http://'.self::APP_HOST.'/page'])));
+    }
+
     public function test_api_key_and_bearer_requests_are_exempt(): void
     {
         $this->assertTrue($this->passes($this->request('POST', ['Sec-Fetch-Site' => 'cross-site', 'x-api-key' => 'lt_user_key'], '/api/jsonrpc')));

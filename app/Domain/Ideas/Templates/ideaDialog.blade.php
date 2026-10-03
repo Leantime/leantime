@@ -14,7 +14,7 @@
 
 {!! $tpl->displayNotification() !!}
 
-<form class="formModal" method="post" action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
+<form class="formModal" method="post" action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}" id="ideaItemForm">
 
 <div class="row">
 
@@ -121,7 +121,8 @@
                                 {!! __('label.loading_milestone') !!}
                             </div>
                         </div>
-                        <a href="javascript:void(0);" data-post-field="removeMilestone" data-post-value="{{ $canvasItem['milestoneId'] }}" class="delete"><i class="fa fa-close"></i> {!! __('links.remove') !!}</a>
+                        {{-- The comment form above closes this form early in the browser, so target it by id. --}}
+                        <a href="javascript:void(0);" data-post-form="ideaItemForm" data-post-field="removeMilestone" data-post-value="{{ $canvasItem['milestoneId'] }}" class="delete"><i class="fa fa-close"></i> {!! __('links.remove') !!}</a>
 
                     </li>
                 @endif

@@ -188,10 +188,10 @@ window.addEventListener("HTMX.ShowNotification", leantime.showNotification);
 
 // Links that change data (delete a comment, remove a file, enable a plugin…) must be sent as
 // POST: a GET can be fired by any other site through a plain link or image. Such links carry
-// data-post-field / data-post-value instead of a query string:
-//   - with data-post-url, a one-off form is posted to that URL (full page submit);
-//   - without it, the field is added to the surrounding <form> and that form is submitted,
-//     so forms that live in a modal keep posting through the modal.
+// data-post-field / data-post-value instead of a query string, and the form that gets posted is:
+//   - data-post-url: a one-off form posted to that same-origin URL (full page submit);
+//   - data-post-form: the form with that id (for links rendered outside their form);
+//   - otherwise the surrounding <form>, so forms that live in a modal keep posting through it.
 // Optional data-post-confirm asks before submitting.
 jQuery(document).on('click', '[data-post-field]', function (event) {
     event.preventDefault();
@@ -200,35 +200,58 @@ jQuery(document).on('click', '[data-post-field]', function (event) {
     var fieldName = link.attr('data-post-field');
     var fieldValue = link.attr('data-post-value') || '';
     var postUrl = link.attr('data-post-url');
+    var postFormId = link.attr('data-post-form');
     var confirmText = link.attr('data-post-confirm');
 
     if (confirmText && !window.confirm(confirmText)) {
         return;
     }
 
-    var form;
+    var formElement = null;
     if (postUrl) {
-        form = jQuery('<form method="post" style="display:none;"></form>').attr('action', postUrl);
-        var csrfToken = jQuery('meta[name=csrf-token]').attr('content');
-        if (csrfToken) {
-            form.append(jQuery('<input type="hidden" name="_token">').val(csrfToken));
-        }
-        jQuery('body').append(form);
-    } else {
-        form = link.closest('form');
-        if (form.length === 0) {
+        // Only ever post to this app: resolve the URL and refuse other origins / schemes.
+        var target;
+        try {
+            target = new URL(postUrl, window.location.href);
+        } catch (e) {
             return;
         }
-        form.find('input[type=hidden]').filter(function () {
+        if (target.origin !== window.location.origin) {
+            return;
+        }
+
+        formElement = document.createElement('form');
+        formElement.method = 'post';
+        formElement.action = target.href;
+        formElement.style.display = 'none';
+
+        var csrfToken = jQuery('meta[name=csrf-token]').attr('content');
+        if (csrfToken) {
+            var tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = '_token';
+            tokenInput.value = csrfToken;
+            formElement.appendChild(tokenInput);
+        }
+        document.body.appendChild(formElement);
+    } else {
+        formElement = postFormId ? document.getElementById(postFormId) : this.closest('form');
+        if (!formElement || formElement.tagName !== 'FORM') {
+            return;
+        }
+        jQuery(formElement).find('input[type=hidden]').filter(function () {
             return this.name === fieldName;
         }).remove();
     }
 
-    form.append(jQuery('<input type="hidden">').attr('name', fieldName).val(fieldValue));
+    var fieldInput = document.createElement('input');
+    fieldInput.type = 'hidden';
+    fieldInput.name = fieldName;
+    fieldInput.value = fieldValue;
+    formElement.appendChild(fieldInput);
 
     // Fire a real submit event so modal (nyroModal) and htmx handlers can take over; fall back
     // to a native submit when nobody intercepted it. No field validation — this is not a save.
-    var formElement = form[0];
     var submitEvent = new Event('submit', { bubbles: true, cancelable: true });
     if (formElement.dispatchEvent(submitEvent)) {
         HTMLFormElement.prototype.submit.call(formElement);

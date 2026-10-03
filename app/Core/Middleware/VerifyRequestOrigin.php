@@ -193,23 +193,28 @@ class VerifyRequestOrigin
     }
 
     /**
-     * Whether the host (and explicit port) of the given URL belongs to this app.
+     * Whether the given URL is an origin of this app (scheme, host and explicit port).
      *
-     * Accepts the host the request was made to (after trusted-proxy resolution) and the host of
-     * the configured app URL (LEAN_APP_URL / BASE_URL), so installs behind a reverse proxy that
+     * Accepts the origin the request was made to (after trusted-proxy resolution) and the origin
+     * of the configured app URL (LEAN_APP_URL / BASE_URL), so installs behind a reverse proxy that
      * rewrites the Host header keep working.
+     *
+     * Schemes must match, with one allowance: an https origin is accepted where the app sees
+     * http, because a TLS-terminating proxy without trusted-proxy config makes the app see http
+     * while the browser reports https. The reverse (an http page posting to an https app) is
+     * rejected — content on the insecure origin must not be able to submit to the secure one.
      *
      * @param  string  $url  An Origin or Referer value.
      */
     protected function urlMatchesApp(string $url, IncomingRequest $request): bool
     {
-        $candidate = $this->authorityOf($url);
+        $candidate = $this->originOf($url);
 
         if ($candidate === null) {
             return false;
         }
 
-        $allowedAuthorities = [strtolower($request->getHttpHost())];
+        $allowedOrigins = [$this->originOf($request->getSchemeAndHttpHost())];
 
         $appUrls = [(string) $this->config->get('appUrl', '')];
         if (defined('BASE_URL')) {
@@ -217,25 +222,32 @@ class VerifyRequestOrigin
         }
 
         foreach ($appUrls as $appUrl) {
-            $appAuthority = $appUrl !== '' ? $this->authorityOf($appUrl) : null;
+            $allowedOrigins[] = $appUrl !== '' ? $this->originOf($appUrl) : null;
+        }
 
-            if ($appAuthority !== null) {
-                $allowedAuthorities[] = $appAuthority;
+        foreach ($allowedOrigins as $allowed) {
+            if ($allowed === null || $allowed['authority'] !== $candidate['authority']) {
+                continue;
+            }
+
+            $sameScheme = $allowed['scheme'] === $candidate['scheme'];
+            $upgradedScheme = $allowed['scheme'] === 'http' && $candidate['scheme'] === 'https';
+
+            if ($sameScheme || $upgradedScheme) {
+                return true;
             }
         }
 
-        return in_array($candidate, $allowedAuthorities, true);
+        return false;
     }
 
     /**
-     * Reduces a URL to `host` or `host:port`, omitting the port when it is the scheme default.
+     * Splits a URL into its scheme and `host` / `host:port` authority (default ports omitted).
      *
-     * The scheme itself is ignored on purpose: a TLS-terminating proxy without trusted-proxy
-     * config makes the app see http while the browser reports https.
-     *
-     * @return string|null Null when the URL has no host (e.g. the literal Origin `null`).
+     * @return array{scheme: string, authority: string}|null Null when the URL has no host
+     *                                                       (e.g. the literal Origin `null`).
      */
-    protected function authorityOf(string $url): ?string
+    protected function originOf(string $url): ?array
     {
         $parts = parse_url(trim($url));
 
@@ -250,6 +262,9 @@ class VerifyRequestOrigin
         $defaultPorts = ['http' => 80, 'https' => 443];
         $isDefaultPort = $port === null || ($defaultPorts[$scheme] ?? null) === $port;
 
-        return $isDefaultPort ? $host : $host.':'.$port;
+        return [
+            'scheme' => $scheme,
+            'authority' => $isDefaultPort ? $host : $host.':'.$port,
+        ];
     }
 }

@@ -13,6 +13,7 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
@@ -117,8 +118,10 @@ class EditCanvasComment extends Controller
             if ($comment !== false
                 && (string) $comment['module'] === static::CANVAS_NAME.'canvasitem'
                 && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                $this->commentsRepo->deleteComment($commentId);
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvascomment_deleted');
+                // Through the service: author-or-moderator check on top of the item binding.
+                if (app()->make(CommentService::class)->deleteComment($commentId)) {
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvascomment_deleted');
+                }
             }
 
             return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/editCanvasComment/'.(int) $canvasItem['id']);
