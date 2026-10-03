@@ -164,4 +164,42 @@ class SessionMergeTest extends TestCase
         $this->assertTrue($isRetired->invoke($middleware, $oldId));
         $this->assertFalse($isRetired->invoke($middleware, str_repeat('b', 40)));
     }
+
+    public function test_write_that_races_the_retirement_is_wiped_after_the_fact(): void
+    {
+        $handler = new ArraySessionHandler(120);
+        $oldId = str_repeat('c', 40);
+
+        $stale = new Store('leantime', $handler, $oldId);
+        $stale->start();
+
+        // Simulate the interleaving: the writer passed its pre-check, then the id got retired
+        // (tombstone + destroy) before the writer's save landed.
+        $middleware = new class(app('session')) extends StartSession
+        {
+            public bool $retireDuringWrite = true;
+
+            public string $idToRetire = '';
+
+            protected function isRetiredSessionId(?string $sessionId): bool
+            {
+                if ($this->retireDuringWrite) {
+                    $this->retireDuringWrite = false;
+
+                    \Illuminate\Support\Facades\Cache::put('session-retired:'.$this->idToRetire, true, 60);
+
+                    return false;
+                }
+
+                return parent::isRetiredSessionId($sessionId);
+            }
+        };
+        $middleware->idToRetire = $oldId;
+
+        $merge = new ReflectionMethod(StartSession::class, 'mergeSessionChanges');
+        $merge->setAccessible(true);
+        $merge->invoke($middleware, $stale, ['userdata' => ['id' => 5]], []);
+
+        $this->assertSame('', $handler->read($oldId), 'the post-write check removes a write that raced the retirement');
+    }
 }

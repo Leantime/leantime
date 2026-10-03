@@ -220,13 +220,25 @@ class StartSession
         }
 
         $merged->save();
+
+        // Re-check after writing: if the id was retired while this write was in flight, remove
+        // what we just wrote. Together with retireSessionId() (tombstone first, then destroy) this
+        // holds regardless of lock timing — any write either precedes the destroy or is followed
+        // by this check, which then sees the tombstone.
+        if ($this->isRetiredSessionId($session->getId())) {
+            $session->getHandler()->destroy($session->getId());
+        }
     }
 
     /**
      * Mark a session id that was rotated away (login, 2FA, logout) as retired and destroy its
-     * stored data. Runs under the OLD id's lock, the same lock {@see mergeSessionChanges()} holds,
-     * so a concurrent request still on the old id either wrote before (and is destroyed here) or
-     * writes after and sees the tombstone.
+     * stored data.
+     *
+     * Correctness does not depend on the lock: the tombstone is written BEFORE the data is
+     * destroyed, and {@see mergeSessionChanges()} checks the tombstone both before and after its
+     * write. A concurrent writer on the old id therefore either lands before the destroy (and is
+     * wiped by it) or re-checks after writing, sees the tombstone and wipes its own write. The
+     * old id's lock only reduces contention.
      *
      * @param  \Illuminate\Contracts\Session\Session  $session
      */
@@ -236,19 +248,23 @@ class StartSession
             return;
         }
 
-        $this->withSessionLock($request, $session, function () use ($session, $retiredId) {
-            $this->cache($this->manager->blockDriver())->put(
-                self::RETIRED_ID_PREFIX.$retiredId,
-                true,
-                max(60, (int) $this->getSessionLifetimeInSeconds())
-            );
+        $this->cache($this->manager->blockDriver())->put(
+            self::RETIRED_ID_PREFIX.$retiredId,
+            true,
+            max(60, (int) $this->getSessionLifetimeInSeconds())
+        );
 
-            $session->getHandler()->destroy($retiredId);
-        }, $retiredId);
+        $this->withSessionLock($request, $session, fn () => $session->getHandler()->destroy($retiredId), $retiredId);
+
+        // Destroy is idempotent; repeat it in case the locked attempt above fell back to an
+        // unlocked retry that interleaved with a concurrent writer.
+        $session->getHandler()->destroy($retiredId);
     }
 
     /**
      * Whether a session id was rotated away and must no longer be used or written.
+     *
+     * @phpstan-impure Reads shared cache state that other requests change concurrently.
      */
     protected function isRetiredSessionId(?string $sessionId): bool
     {
