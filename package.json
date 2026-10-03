@@ -13,7 +13,6 @@
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
     "@sentry/browser": "^7.119.1",
-    "@sentry/webpack-plugin": "^2.16.1",
     "@tiptap/core": "^2.11.5",
     "@tiptap/extension-bubble-menu": "^2.11.5",
     "@tiptap/extension-character-count": "^2.27.2",
