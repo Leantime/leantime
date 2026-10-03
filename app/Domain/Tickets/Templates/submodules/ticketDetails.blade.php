@@ -83,6 +83,9 @@
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]">{!! __('label.collaborators') !!}</label>
                     <div class="">
+                        {{-- An empty multi-select posts nothing; this keeps "collaborators" in the
+                             request so clearing them all still clears them (omitted = preserved). --}}
+                        <input type="hidden" name="collaborators[]" value="" />
                         <select data-placeholder="{{ __('label.filter_by_user') }}"
                                 style="width:175px;"
                                 name="collaborators[]"

@@ -2267,6 +2267,8 @@ class Tickets extends BaseService
      *                         - 'timeTo': string|null, End time for ticket editing (optional).
      *                         - 'dependingTicketId': int|null, A ticket ID this ticket depends on (optional).
      *                         - 'milestoneid': int|null, The ID of the milestone associated with this ticket (optional).
+     *                         Fields that are not sent keep their stored value (partial update, #3701);
+     *                         send a field with an empty value to clear it.
      * @return array|bool Returns true if the ticket is successfully updated.
      *                    If an error occurs, an array with keys 'msg' and 'type' is returned. Returns false if the update operation fails.
      *
@@ -2305,12 +2307,16 @@ class Tickets extends BaseService
         $hasOutcomeImpact = array_key_exists('outcomeImpact', $values);
         $outcomeImpact = $values['outcomeImpact'] ?? null;
 
+        // Remember exactly which fields the caller sent: anything absent keeps its stored value
+        // below (partial-update semantics, #3701).
+        $submittedValues = $values;
+
         $values = [
             'id' => $values['id'],
             'headline' => $values['headline'] ?? '',
             'type' => $values['type'] ?? '',
             'description' => $values['description'] ?? '',
-            'projectId' => $values['projectId'] ?? session('currentProject'),
+            'projectId' => $values['projectId'] ?? $currentTicket->projectId,
             'editorId' => $values['editorId'] ?? '',
             'date' => dtHelper()->userNow()->formatDateTimeForDb(),
             'dateToFinish' => $values['dateToFinish'] ?? '',
@@ -2346,6 +2352,8 @@ class Tickets extends BaseService
 
         $values = $this->prepareTicketDates($values);
 
+        $values = $this->keepStoredValuesForOmittedFields($values, $submittedValues, $currentTicket);
+
         // Update Ticket
         if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], strip_tags($values['headline']));
@@ -2373,6 +2381,46 @@ class Tickets extends BaseService
         }
 
         return false;
+    }
+
+    /**
+     * Partial-update semantics for full-row ticket writes (#3701).
+     *
+     * updateTicket() and the upsertSubtask() update branch rebuild the whole zp_tickets row, so a
+     * field the caller did not send used to be written back as '' — clearing descriptions, tags and
+     * dates, resetting the type to "task" and severing a subtask from its parent
+     * (dependingTicketId). Every field that was NOT submitted now keeps the value currently stored
+     * on the ticket. Applied after prepareTicketDates() so stored (DB-format, UTC) dates are copied
+     * verbatim instead of being re-parsed as user input.
+     *
+     * @param  array<string, mixed>  $values  The prepared row about to be written.
+     * @param  array<string, mixed>  $submittedValues  The raw values the caller sent.
+     * @param  TicketModel  $currentTicket  The ticket as currently stored.
+     * @return array<string, mixed> The row with omitted fields restored from the stored ticket.
+     */
+    private function keepStoredValuesForOmittedFields(array $values, array $submittedValues, TicketModel $currentTicket): array
+    {
+        $rowFields = [
+            'headline', 'type', 'description', 'projectId', 'editorId', 'dateToFinish', 'status',
+            'planHours', 'tags', 'sprint', 'storypoints', 'hourRemaining', 'priority',
+            'acceptanceCriteria', 'editFrom', 'editTo', 'dependingTicketId', 'milestoneid',
+        ];
+
+        foreach ($rowFields as $field) {
+            if (array_key_exists($field, $submittedValues)) {
+                continue;
+            }
+
+            $values[$field] = $currentTicket->$field;
+        }
+
+        // Collaborators live in a relation table that the repository rewrites on every update, so
+        // an omitted list must carry the current collaborators rather than clear them.
+        if (! array_key_exists('collaborators', $submittedValues)) {
+            $values['collaborators'] = is_array($currentTicket->collaborators ?? null) ? $currentTicket->collaborators : [];
+        }
+
+        return $values;
     }
 
     /**
@@ -3461,6 +3509,8 @@ class Tickets extends BaseService
 
         $subtaskId = $values['subtaskId'] ?? 'new';
         $isNewSubtask = $subtaskId === 'new' || $subtaskId === '';
+        $existingSubtask = null;
+        $submittedValues = $values;
 
         if ($isNewSubtask) {
             $this->authorize(TicketsPermissions::CREATE, $parentProjectId);
@@ -3484,7 +3534,7 @@ class Tickets extends BaseService
         }
 
         $values = [
-            'headline' => $values['headline'],
+            'headline' => $values['headline'] ?? '',
             'type' => 'subtask',
             'description' => $values['description'] ?? '',
             'projectId' => $parentTicket->projectId,
@@ -3507,6 +3557,13 @@ class Tickets extends BaseService
         ];
 
         $values = $this->prepareTicketDates($values);
+
+        // Updating an existing subtask only changes the fields the caller sent (#3701). The
+        // parent link, project and subtask type are always set from the parent, never preserved.
+        if (! $isNewSubtask && $existingSubtask instanceof TicketModel) {
+            $forcedFields = ['type' => true, 'projectId' => true, 'dependingTicketId' => true];
+            $values = $this->keepStoredValuesForOmittedFields($values, $submittedValues + $forcedFields, $existingSubtask);
+        }
 
         if ($isNewSubtask) {
             // New Ticket
