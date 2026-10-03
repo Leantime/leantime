@@ -266,4 +266,38 @@ class MessengersServiceTest extends TestCase
         $this->assertFalse($reflectedMethod->invoke($messengers, $notification));
         $this->assertCount(0, $handlerCalls, 'The refused URL must never reach the HTTP handler');
     }
+
+    /**
+     * Runs one private messenger method against a client that answers every POST with $status.
+     */
+    private function deliverWithStatus(string $method, string $settingKey, int $status): bool
+    {
+        $client = $this->make(OutboundHttpClient::class, [
+            'post' => fn () => new Response($status, $status >= 300 && $status < 400 ? ['Location' => 'https://elsewhere.example.test/'] : []),
+        ]);
+        $settingRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn ($key) => $key === $settingKey ? 'https://1.1.1.1/hooks/abc' : false,
+        ]);
+        $language = $this->make(LanguageCore::class, ['__' => fn ($key) => $key]);
+        $this->app->instance(Tickets::class, $this->make(Tickets::class, ['getStatusLabels' => fn () => []]));
+
+        $notification = $this->makeNotification();
+        $notification->entity = ['headline' => 'Test Todo', 'status' => 3];
+
+        $messengers = new Messengers($client, $settingRepo, $language);
+
+        return (new \ReflectionMethod($messengers, $method))->invoke($messengers, $notification);
+    }
+
+    public function test_messenger_webhooks_succeed_only_on_2xx(): void
+    {
+        $this->assertTrue($this->deliverWithStatus('slackWebhook', 'projectsettings.1.slackWebhookURL', 200));
+        $this->assertFalse($this->deliverWithStatus('slackWebhook', 'projectsettings.1.slackWebhookURL', 302));
+
+        $this->assertTrue($this->deliverWithStatus('mattermostWebhook', 'projectsettings.1.mattermostWebhookURL', 201));
+        $this->assertFalse($this->deliverWithStatus('mattermostWebhook', 'projectsettings.1.mattermostWebhookURL', 307));
+
+        $this->assertTrue($this->deliverWithStatus('discordWebhook', 'projectsettings.1.discordWebhookURL1', 204));
+        $this->assertFalse($this->deliverWithStatus('discordWebhook', 'projectsettings.1.discordWebhookURL1', 301));
+    }
 }

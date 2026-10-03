@@ -9,6 +9,7 @@ use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Posts project notifications to the messenger webhooks a project has configured (Slack,
@@ -94,12 +95,12 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                $this->httpClient->post($slackWebhookURL, [
+                $response = $this->httpClient->post($slackWebhookURL, [
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                 ]);
 
-                return true;
+                return $this->isDelivered($response, 'Slack');
             } catch (\Throwable $e) {
                 report($e);
 
@@ -134,12 +135,12 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                $this->httpClient->post($mattermostWebhookURL, [
+                $response = $this->httpClient->post($mattermostWebhookURL, [
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                 ]);
 
-                return true;
+                return $this->isDelivered($response, 'Mattermost');
             } catch (Exception $e) {
                 report($e);
 
@@ -184,7 +185,7 @@ class Messengers
             $data_string = json_encode($data);
 
             try {
-                $this->httpClient->post($curlUrl, [
+                $response = $this->httpClient->post($curlUrl, [
                     'body' => $data_string,
                     'headers' => ['Content-Type' => 'application/json'],
                     'auth' => [
@@ -193,7 +194,7 @@ class Messengers
                     ],
                 ]);
 
-                return true;
+                return $this->isDelivered($response, 'Zulip');
             } catch (\Throwable $e) {
                 report($e);
 
@@ -464,10 +465,14 @@ class Messengers
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
                 try {
-                    $this->httpClient->post($discordWebhookURL, [
+                    $response = $this->httpClient->post($discordWebhookURL, [
                         'body' => $data_string,
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);
+
+                    if (! $this->isDelivered($response, 'Discord')) {
+                        return false;
+                    }
                 } catch (\Throwable $e) {
                     report($e);
 
@@ -477,6 +482,26 @@ class Messengers
         }
 
         return true;
+    }
+
+    /**
+     * Whether a messenger accepted the notification: only a 2xx answer counts. The outbound
+     * client never follows a redirect for a POST, so a 3xx means the payload was not delivered.
+     * Logs the messenger and status only — never the webhook URL, which carries its secret.
+     *
+     * @param  ResponseInterface  $response  The messenger's answer.
+     * @param  string  $messenger  The messenger name, for the log.
+     */
+    private function isDelivered(ResponseInterface $response, string $messenger): bool
+    {
+        $status = $response->getStatusCode();
+        if ($status >= 200 && $status < 300) {
+            return true;
+        }
+
+        Log::warning('Messenger notification was not delivered', ['messenger' => $messenger, 'status' => $status]);
+
+        return false;
     }
 
     /**
