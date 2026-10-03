@@ -5,6 +5,7 @@ namespace Leantime\Domain\Widgets\Hxcontrollers;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
+use Symfony\Component\HttpFoundation\Response;
 
 class Calendar extends HtmxController
 {
@@ -44,13 +45,24 @@ class Calendar extends HtmxController
 
     /**
      * Flip the "hide done To-Dos" preference and re-render the widget.
+     *
+     * POST only: the Frontcontroller also dispatches GET to custom actions and the origin check
+     * skips GET, so a GET (link, prefetch, cross-site image) must never change the preference.
+     *
+     * @return Response|null 405 for any other method; null renders the widget view
      */
-    public function toggleDone(): void
+    public function toggleDone(): ?Response
     {
+        if (! $this->incomingRequest->isMethod('POST')) {
+            return $this->tpl->emptyResponse(Response::HTTP_METHOD_NOT_ALLOWED);
+        }
+
         $newState = $this->hideDoneTickets() ? 'show' : 'hide';
         $this->apiService->setSubmenuState(self::HIDE_DONE_TOGGLE, $newState);
 
         $this->get();
+
+        return null;
     }
 
     /**
