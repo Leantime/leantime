@@ -5,6 +5,7 @@ namespace Unit\app\Domain\Users\Services;
 use Illuminate\Support\Facades\RateLimiter;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\UI\Theme as ThemeCore;
@@ -139,6 +140,38 @@ class UserRoleCeilingTest extends TestCase
 
         $this->assertSame(77, $service->addUser(['username' => 'a@example.com', 'role' => 40, 'password' => 'Known!Pass1', 'status' => 'a']));
         $this->assertSame('a', $stored['status']);
+    }
+
+    public function test_admin_add_user_without_password_creates_an_invite(): void
+    {
+        $this->actAs('admin');
+        $stored = null;
+        $service = $this->makeService([
+            'addUser' => function (array $values) use (&$stored) {
+                $stored = $values;
+
+                return '78';
+            },
+        ]);
+
+        $this->assertSame(78, $service->addUser(['username' => 'nopw@example.com', 'role' => 20]));
+        $this->assertSame('i', $stored['status'], 'a user without a password is invited, not activated');
+        $this->assertNotEmpty($stored['password'], 'a random temporary password is generated');
+        $this->assertNotEmpty($stored['pwReset']);
+    }
+
+    public function test_add_user_without_username_is_a_validation_error(): void
+    {
+        $this->actAs('admin');
+        $service = $this->makeService([
+            'addUser' => function () {
+                $this->fail('no account may be created without a username');
+            },
+        ]);
+
+        $this->expectException(ValidationException::class);
+
+        $service->addUser(['role' => 20, 'password' => 'Known!Pass1']);
     }
 
     public function test_invite_new_user_reports_a_role_above_the_inviter(): void
