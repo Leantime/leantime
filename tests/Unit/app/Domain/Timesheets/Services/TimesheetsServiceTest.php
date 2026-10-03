@@ -507,6 +507,43 @@ class TimesheetsServiceTest extends TestCase
         }
     }
 
+    public function test_stopping_a_timer_on_an_inaccessible_ticket_discards_it_without_booking(): void
+    {
+        $discarded = [];
+        $repo = $this->make(TimesheetRepository::class, [
+            'isClocked' => fn () => ['id' => 3],
+            'punchOut' => function () {
+                $this->fail('no time may be booked on a ticket the caller can no longer view');
+            },
+            'discardPunch' => function ($ticketId) use (&$discarded) {
+                $discarded[] = $ticketId;
+
+                return true;
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 9]),
+        ]);
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting(self::EDITOR_KEYS));
+
+        $this->assertFalse($service->punchOut(3));
+        $this->assertFalse($service->stopActiveTimer());
+        $this->assertSame([3, 3], $discarded);
+    }
+
+    public function test_stopping_a_timer_on_an_accessible_ticket_books_time(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            'punchOut' => fn () => 1.5,
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo, perms: $this->permissionsGranting([...self::EDITOR_KEYS, 'tickets.view']));
+
+        $this->assertSame(1.5, $service->punchOut(3));
+    }
+
     public function test_time_writes_reject_a_missing_or_malformed_ticket(): void
     {
         $ticketRepo = $this->make(TicketRepository::class, [

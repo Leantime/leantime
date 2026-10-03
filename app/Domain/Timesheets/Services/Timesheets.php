@@ -118,12 +118,43 @@ class Timesheets extends BaseService
     }
 
     /**
+     * Stop the session user's timer on a ticket and book the elapsed time.
+     *
+     * The ticket's project is re-checked at stop time: if the caller can no longer access the
+     * ticket (access revoked while the timer ran, or a timer started before the start-time check
+     * existed), the timer is discarded and no time is booked.
+     *
+     * @param  int  $ticketId  The ticket the timer runs on.
+     * @return float|false|int Hours booked, or false when nothing was booked.
+     *
      * @api
      */
     #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
     public function punchOut(int $ticketId): float|false|int
     {
+        if (! $this->canBookTimeOnTicket($ticketId)) {
+            $this->timesheetsRepo->discardPunch($ticketId);
+
+            return false;
+        }
+
         return $this->timesheetsRepo->punchOut($ticketId);
+    }
+
+    /**
+     * Non-throwing variant of {@see authorizeTicketForTimeEntry()} for stop-timer paths.
+     *
+     * @param  int  $ticketId  The ticket the time would be booked on.
+     */
+    private function canBookTimeOnTicket(int $ticketId): bool
+    {
+        try {
+            $this->authorizeTicketForTimeEntry($ticketId);
+        } catch (AuthorizationException) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -144,7 +175,7 @@ class Timesheets extends BaseService
             return false;
         }
 
-        return $this->timesheetsRepo->punchOut($clockedStatus['id']);
+        return $this->punchOut((int) $clockedStatus['id']);
     }
 
     /**
