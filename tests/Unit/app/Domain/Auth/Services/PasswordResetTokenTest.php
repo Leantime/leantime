@@ -2,8 +2,10 @@
 
 namespace Unit\app\Domain\Auth\Services;
 
+use Illuminate\Http\Request;
 use Illuminate\Session\SessionManager;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
@@ -21,6 +23,23 @@ use Unit\TestCase;
 class PasswordResetTokenTest extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
+
+    private function trustAppUrl(?string $trustedUrl): void
+    {
+        app()->instance(TrustedAppUrl::class, $this->make(TrustedAppUrl::class, ['get' => fn () => $trustedUrl]));
+    }
+
+    private function captureMail(array &$sentHtml): void
+    {
+        app()->instance(MailerCore::class, $this->make(MailerCore::class, [
+            'setContext' => fn () => null,
+            'setSubject' => fn () => null,
+            'setHtml' => function ($html) use (&$sentHtml) {
+                $sentHtml[] = $html;
+            },
+            'sendMail' => fn () => true,
+        ]));
+    }
 
     private function makeService(AuthRepository $authRepo, ?UserRepository $userRepo = null): AuthService
     {
@@ -50,15 +69,8 @@ class PasswordResetTokenTest extends TestCase
         ]);
 
         $sentHtml = [];
-        $mailer = $this->make(MailerCore::class, [
-            'setContext' => fn () => null,
-            'setSubject' => fn () => null,
-            'setHtml' => function ($html) use (&$sentHtml) {
-                $sentHtml[] = $html;
-            },
-            'sendMail' => fn () => true,
-        ]);
-        app()->instance(MailerCore::class, $mailer);
+        $this->captureMail($sentHtml);
+        $this->trustAppUrl('https://pm.example.com');
 
         $service = $this->makeService($authRepo, $userRepo);
 
@@ -66,7 +78,7 @@ class PasswordResetTokenTest extends TestCase
         $this->assertTrue($service->generateLinkAndSendEmail('jane@example.com'));
 
         $tokens = array_map(function (string $html) {
-            $this->assertMatchesRegularExpression('#/auth/resetPw/([0-9a-f]{64})$#', $html);
+            $this->assertMatchesRegularExpression('#https://pm\.example\.com/auth/resetPw/([0-9a-f]{64})$#', $html);
             preg_match('#/auth/resetPw/([0-9a-f]{64})$#', $html, $match);
 
             return $match[1];
@@ -78,6 +90,47 @@ class PasswordResetTokenTest extends TestCase
             $this->assertSame(hash('sha256', $token), $storedHashes[$i], 'the database only ever sees the hash');
             $this->assertNotSame($token, $storedHashes[$i]);
         }
+    }
+
+    public function test_reset_link_uses_the_trusted_url_even_when_the_request_host_differs(): void
+    {
+        app()->instance('request', Request::create('http://evil.attacker.test/auth/resetPw', 'POST'));
+
+        $sentHtml = [];
+        $this->captureMail($sentHtml);
+        $this->trustAppUrl('https://pm.example.com');
+
+        $authRepo = $this->make(AuthRepository::class, ['setPWResetLink' => fn () => true]);
+        $userRepo = $this->make(UserRepository::class, [
+            'getUserByEmail' => fn () => ['id' => 3, 'username' => 'jane@example.com', 'pwResetCount' => 0],
+        ]);
+
+        $this->assertTrue($this->makeService($authRepo, $userRepo)->generateLinkAndSendEmail('jane@example.com'));
+
+        $this->assertCount(1, $sentHtml);
+        $this->assertStringContainsString('https://pm.example.com/auth/resetPw/', $sentHtml[0]);
+        $this->assertStringNotContainsString('evil.attacker.test', $sentHtml[0]);
+    }
+
+    public function test_no_reset_email_and_no_token_without_a_trusted_url(): void
+    {
+        app()->instance('request', Request::create('http://evil.attacker.test/auth/resetPw', 'POST'));
+
+        $sentHtml = [];
+        $this->captureMail($sentHtml);
+        $this->trustAppUrl(null);
+
+        $authRepo = $this->make(AuthRepository::class, [
+            'setPWResetLink' => function () {
+                $this->fail('no reset token may be minted when the link cannot be trusted');
+            },
+        ]);
+        $userRepo = $this->make(UserRepository::class, [
+            'getUserByEmail' => fn () => ['id' => 3, 'username' => 'jane@example.com', 'pwResetCount' => 0],
+        ]);
+
+        $this->assertFalse($this->makeService($authRepo, $userRepo)->generateLinkAndSendEmail('jane@example.com'));
+        $this->assertSame([], $sentHtml);
     }
 
     public function test_validate_and_change_look_up_the_hash_of_the_token(): void

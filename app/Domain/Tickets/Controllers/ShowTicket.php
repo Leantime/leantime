@@ -103,6 +103,7 @@ class ShowTicket extends Controller
         $this->tpl->assign('userHours', $this->timesheetService->getUsersTicketHours($id, session('userdata.id')));
 
         $this->tpl->assign('timesheetsAllHours', $this->timesheetService->getSumLoggedHoursForTicket($id));
+        $this->tpl->assign('subtaskHours', $this->ticketService->getSubtaskHourTotals($id));
         $this->tpl->assign('remainingHours', $this->timesheetService->getRemainingHours($ticket));
 
         $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));

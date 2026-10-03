@@ -320,6 +320,7 @@ class Oidc
         }
 
         $this->authService->setUserSession($user, false);
+        $this->authService->learnTrustedAppUrl($user);
 
         // Mobile-brokered SSO: instead of landing on the web dashboard, mint a
         // single-use one-time code bound to this user and hand it to the app via

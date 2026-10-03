@@ -792,6 +792,29 @@ leantime.ticketsController = (function () {
         });
     };
 
+    /**
+     * A status change to a done status stops the user's timer on that To-Do server-side (#415).
+     * When the header stopwatch shows the timer running on this ticket, ask every timer control
+     * to refresh so the header and the other cards' Start buttons reflect it.
+     */
+    var refreshTimerIfRunningOn = function (ticketId) {
+        var stopTimerLink = document.querySelector('#timerHeadMenu .punchOut');
+        if (!stopTimerLink) {
+            return;
+        }
+
+        var runningTimer = {};
+        try {
+            runningTimer = JSON.parse(stopTimerLink.getAttribute('hx-vals') || '{}');
+        } catch (e) {
+            return;
+        }
+
+        if (String(runningTimer.ticketId) === String(ticketId)) {
+            htmx.trigger(document.body, 'timerUpdate');
+        }
+    };
+
     var initStatusDropdown = function () {
 
         jQuery(".statusDropdown .dropdown-menu a").unbind().on("click", function () {
@@ -810,6 +833,7 @@ leantime.ticketsController = (function () {
                         jQuery("#statusDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                         jQuery("#statusDropdownMenuLink" + ticketId).removeClass().addClass(className + " dropdown-toggle f-left status ");
                         jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
+                        refreshTimerIfRunningOn(ticketId);
 
                     }
                 ).catch(function (error) {
@@ -1498,6 +1522,9 @@ leantime.ticketsController = (function () {
                     }
 
                     leantime.rpc('Tickets.Tickets.updateTicketStatusAndSorting', { params: sortPayload, handler: sortHandler })
+                        .then(function () {
+                            refreshTimerIfRunningOn(String(sortHandler).replace('ticket_', ''));
+                        })
                         .catch(function (error) {
                             console.error('Could not update ticket status and sorting', error);
                         });
@@ -1598,6 +1625,8 @@ leantime.ticketsController = (function () {
                         { "visible": false, "targets": 10 },
                         { "visible": false, "targets": 11 },
                         { "target": "no-sort", "orderable": false},
+                        // Plain-text description: never shown in the table, only exported to CSV (#786).
+                        { "visible": false, "orderable": false, "targets": "description-col" },
                     ],
                 "footerCallback": function ( row, data, start, end, display ) {
                     var api = this.api(), data;
@@ -1689,9 +1718,11 @@ leantime.ticketsController = (function () {
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    // data-export: readable value when the sort key is numeric (priority, effort).
-                                    if ( typeof jQuery(node).data('export') !== 'undefined') {
-                                        return jQuery(node).data('export');
+                                    // data-export: readable value when the sort key is numeric (priority, effort),
+                                    // or a formula-safe value (description). attr(), not data(): data() would
+                                    // JSON-parse text that looks like an object/array/number.
+                                    if ( typeof jQuery(node).attr('data-export') !== 'undefined') {
+                                        return jQuery(node).attr('data-export');
                                     }
                                     if ( typeof jQuery(node).data('order') !== 'undefined') {
                                         return jQuery(node).data('order');
@@ -1867,9 +1898,11 @@ leantime.ticketsController = (function () {
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    // data-export: readable value when the sort key is numeric (priority, effort).
-                                    if ( typeof jQuery(node).data('export') !== 'undefined') {
-                                        return jQuery(node).data('export');
+                                    // data-export: readable value when the sort key is numeric (priority, effort),
+                                    // or a formula-safe value (description). attr(), not data(): data() would
+                                    // JSON-parse text that looks like an object/array/number.
+                                    if ( typeof jQuery(node).attr('data-export') !== 'undefined') {
+                                        return jQuery(node).attr('data-export');
                                     }
                                     if ( typeof jQuery(node).data('order') !== 'undefined') {
                                         return jQuery(node).data('order');

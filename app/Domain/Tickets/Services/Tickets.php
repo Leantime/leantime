@@ -1953,6 +1953,46 @@ class Tickets extends BaseService
     }
 
     /**
+     * Planned and logged hours of a To-Do's direct subtasks, so the parent can show totals
+     * "including subtasks" (#1798). Time logged on a subtask is booked against the subtask's own
+     * id, never the parent's, so adding these to the parent's own figures cannot double count.
+     *
+     * Only subtasks the current user may view are counted (a subtask can live in another project
+     * than its parent, e.g. after the parent was moved); subtaskCount is the number actually
+     * included. Logged hours come from one SUM query over the included ids.
+     *
+     * Internal (no RPC exposure): callers have already loaded and authorized the parent.
+     *
+     * @param  int  $ticketId  Parent To-Do id
+     * @return array{subtaskCount: int, planHours: float, loggedHours: float}
+     */
+    public function getSubtaskHourTotals(int $ticketId): array
+    {
+        $subtasks = $this->getAllSubtasks($ticketId) ?: [];
+
+        $canViewProject = [];
+        $includedIds = [];
+        $planHours = 0.0;
+        foreach ($subtasks as $subtask) {
+            $projectId = (int) ($subtask['projectId'] ?? 0);
+            $canViewProject[$projectId] ??= $this->can(TicketsPermissions::VIEW, $projectId);
+
+            if (! $canViewProject[$projectId]) {
+                continue;
+            }
+
+            $includedIds[] = (int) $subtask['id'];
+            $planHours += (float) ($subtask['planHours'] ?? 0);
+        }
+
+        return [
+            'subtaskCount' => count($includedIds),
+            'planHours' => $planHours,
+            'loggedHours' => $this->ticketRepository->sumLoggedHoursForTickets($includedIds),
+        ];
+    }
+
+    /**
      * Adds a new ticket quickly based on the provided parameters.
      *
      * @param  array  $params  An associative array of ticket details which may include:
@@ -2369,10 +2409,80 @@ class Tickets extends BaseService
 
             TicketUpdated::dispatch(ticketId: (int) $values['id'], legacyHook: __FUNCTION__);
 
+            $this->stopTimerWhenTicketIsDone((int) $values['id'], $values['status'], (int) $values['projectId']);
+
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Batch variant of {@see stopTimerWhenTicketIsDone()}: stops the current user's timer when its
+     * ticket is among the tickets that just received a new status.
+     *
+     * @param  array<int, int|string>  $newStatusByTicket  Ticket id => new status key.
+     */
+    private function stopTimerForTicketsMarkedDone(array $newStatusByTicket): void
+    {
+        $currentUserId = (int) session('userdata.id');
+        if ($currentUserId === 0 || $newStatusByTicket === []) {
+            return;
+        }
+
+        $onTheClock = $this->timesheetService->isClocked($currentUserId);
+        $clockedTicketId = $onTheClock === false ? 0 : (int) ($onTheClock['id'] ?? 0);
+        if (! isset($newStatusByTicket[$clockedTicketId])) {
+            return;
+        }
+
+        $clockedTicket = $this->getTicket($clockedTicketId);
+        if (! $clockedTicket) {
+            return;
+        }
+
+        $this->stopTimerWhenTicketIsDone($clockedTicketId, $newStatusByTicket[$clockedTicketId], (int) $clockedTicket->projectId);
+    }
+
+    /**
+     * Stop the current user's running timer on a ticket that was just moved to a DONE-type status
+     * and book the elapsed time (#415). Work on a finished To-Do is over, and a timer left running
+     * blocks starting one on the next task.
+     *
+     * Only the session user's own timer is touched, and only when it runs on this ticket. A
+     * failure to book never fails the status change itself.
+     *
+     * @param  int  $ticketId  The ticket whose status changed.
+     * @param  int|string|null  $newStatus  The status key the ticket now has.
+     * @param  int  $projectId  The ticket's project (status keys are project-specific).
+     */
+    private function stopTimerWhenTicketIsDone(int $ticketId, int|string|null $newStatus, int $projectId): void
+    {
+        if ($newStatus === null || $newStatus === '' || ! is_numeric($newStatus)) {
+            return;
+        }
+
+        $currentUserId = (int) session('userdata.id');
+        if ($currentUserId === 0) {
+            return;
+        }
+
+        $statusLabels = $this->ticketRepository->getStateLabels($projectId);
+        $newStatusType = $statusLabels[(int) $newStatus]['statusType'] ?? '';
+        if ($newStatusType !== 'DONE') {
+            return;
+        }
+
+        $onTheClock = $this->timesheetService->isClocked($currentUserId);
+        if ($onTheClock === false || (int) ($onTheClock['id'] ?? 0) !== $ticketId) {
+            return;
+        }
+
+        try {
+            $this->timesheetService->punchOut($ticketId);
+        } catch (\Throwable $e) {
+            Log::error($e);
+        }
     }
 
     /**
@@ -2905,6 +3015,12 @@ class Tickets extends BaseService
         // Todo: create events and move notification logic to notification module
         if (isset($params['status'])) {
             $ticket = $this->getTicket($id);
+            if (! $ticket) {
+                return true;
+            }
+
+            $this->stopTimerWhenTicketIsDone((int) $id, $params['status'], (int) $ticket->projectId);
+
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
             $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
@@ -3723,11 +3839,15 @@ class Tickets extends BaseService
         // Verify tickets.edit in the real project of every ticket in the batch (project-scoped
         // role + membership via the permission engine — not the session role).
         $checkedProjects = [];
+        // Statuses before the write, so only real status changes can stop a timer below.
+        $previousStatusByTicket = [];
         foreach ($allTicketIds as $ticketId) {
             $ticket = $this->getTicket($ticketId);
             if (! $ticket) {
                 return false;
             }
+
+            $previousStatusByTicket[(int) $ticketId] = $ticket->status === null ? null : (string) $ticket->status;
 
             $projectId = (int) $ticket->projectId;
             // Cache per-project decisions to avoid redundant lookups
@@ -3739,6 +3859,8 @@ class Tickets extends BaseService
                 return false;
             }
         }
+
+        $newStatusByTicket = [];
 
         // Jquery sortable serializes the array for kanban in format
         // statusKey: ticket[]=X&ticket[]=X2...,
@@ -3753,12 +3875,28 @@ class Tickets extends BaseService
                         $id = substr($ticketString, 9);
 
                         if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
+                            // Earlier tickets in the batch were already written (the repository
+                            // also reports false for "0 rows changed"), so their timers must still stop.
+                            $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
+
                             return false;
+                        }
+
+                        // Every ticket of the swimlane is re-posted with its column's status; only
+                        // tickets whose status actually changed count, so a timer on a ticket that
+                        // was already Done is not stopped by dragging some other card.
+                        $statusChanged = ($previousStatusByTicket[(int) $id] ?? null) !== (string) $status;
+                        if ($statusChanged) {
+                            $newStatusByTicket[(int) $id] = $status;
                         }
                     }
                 }
             }
         }
+
+        // Any ticket in the batch may have changed status, not only the dragged one ($handler is
+        // optional for RPC callers). The user has at most one running timer, so look it up once.
+        $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
         if ($handler) {
             // Assumes format ticket_ID

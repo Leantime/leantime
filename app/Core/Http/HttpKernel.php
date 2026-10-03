@@ -134,6 +134,13 @@ class HttpKernel extends Kernel
         return $response;
     }
 
+    /**
+     * Send the request through the core and plugin middleware pipelines to the router.
+     * The /health probe bypasses both pipelines (see isHealthCheck()).
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     protected function sendRequestThroughRouter($request)
     {
         $this->app->instance('request', $request);
@@ -145,6 +152,12 @@ class HttpKernel extends Kernel
         // Events are discovered and available as part of bootstrapping the providers.
         // Can savely assume events are available here.
         self::dispatch_event('request_started', ['request' => $request]);
+
+        // Container/uptime probes skip the middleware pipeline entirely: no session cookie per
+        // probe, no install/update redirect, no auth, no rate limiting. See Status\Controllers\Health.
+        if (self::isHealthCheck($request)) {
+            return $this->router->dispatch($request);
+        }
 
         //        if ($request instanceof ApiRequest) {
         //
@@ -175,6 +188,15 @@ class HttpKernel extends Kernel
             );
 
         return $response;
+    }
+
+    /**
+     * Whether the request targets the public /health probe (GET/HEAD only).
+     */
+    public static function isHealthCheck(\Symfony\Component\HttpFoundation\Request $request): bool
+    {
+        return $request->getPathInfo() === '/health'
+            && in_array($request->getMethod(), ['GET', 'HEAD'], true);
     }
 
     public function terminate($request, $response)

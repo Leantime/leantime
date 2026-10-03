@@ -26,6 +26,20 @@
         </li>
         <li><a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
                data-value="listWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'listWeek') selected='selected' @endif>List</a></li>
+        <li class="divider"></li>
+        {{-- Per-user preference: hide To-Dos in a done status (#3236). Re-renders this widget. --}}
+        <li>
+            <a href="javascript:void(0);"
+               hx-post="{{ BASE_URL }}/widgets/calendar/toggleDone"
+               hx-target="#calendar"
+               hx-swap="innerHTML">
+                @if ($hideDoneTickets ?? false)
+                    <i class="fa-regular fa-eye"></i> {{ __('text.show_done_todos') }}
+                @else
+                    <i class="fa-regular fa-eye-slash"></i> {{ __('text.hide_done_todos') }}
+                @endif
+            </a>
+        </li>
     </ul>
 
 </div>

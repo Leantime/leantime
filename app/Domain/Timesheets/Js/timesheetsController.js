@@ -100,9 +100,47 @@ leantime.timesheetsController = (function () {
         jQuery(".editTimeModal").nyroModal(canvasoptions);
     };
 
+    /**
+     * Decimal hours as "1h 15m" (display only, #2004). Mirrors Format::hoursMinutes() in PHP.
+     */
+    var formatHoursMinutes = function (decimalHours) {
+        var hours = parseFloat(decimalHours);
+        if (isNaN(hours)) {
+            return '';
+        }
+
+        var totalMinutes = Math.round(Math.abs(hours) * 60);
+        var sign = (hours < 0 && totalMinutes > 0) ? '-' : '';
+        var wholeHours = Math.floor(totalMinutes / 60);
+        var minutes = String(totalMinutes % 60).padStart(2, '0');
+        var pattern = leantime.i18n.__("text.hours_minutes_short") || '%sh %sm';
+
+        return sign + pattern.replace('%s', wholeHours).replace('%s', minutes);
+    };
+
+    /**
+     * Hover hint on the weekly grid: each hour input and row total shows its value as hours +
+     * minutes. Uses the native title attribute so it follows live edits without re-initialising
+     * tooltips. The footer total <td>s are deliberately left untouched (their markup is asserted
+     * by acceptance tests).
+     */
+    var refreshHoursMinutesTitles = function (tableSelector) {
+        var table = jQuery(tableSelector);
+
+        table.find("input.hourCell").each(function () {
+            jQuery(this).attr("title", formatHoursMinutes(jQuery(this).val()));
+        });
+
+        table.find(".rowSum strong").each(function () {
+            jQuery(this).attr("title", formatHoursMinutes(jQuery(this).text()));
+        });
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         initTimesheetsTable:initTimesheetsTable,
         initEditTimeModal:initEditTimeModal,
+        formatHoursMinutes:formatHoursMinutes,
+        refreshHoursMinutesTitles:refreshHoursMinutesTitles,
     };
 })();

@@ -394,6 +394,37 @@ class CalendarServiceTest extends TestCase
     }
 
     /**
+     * #3236: the dashboard calendar widget can hide done To-Dos. getCalendar() forwards the flag
+     * to the ticket query and keeps including them by default (existing callers unchanged).
+     */
+    public function test_get_calendar_forwards_include_done_tickets_flag(): void
+    {
+        $includeDoneArgs = new \ArrayObject;
+
+        $tickets = $this->make(Tickets::class, [
+            'getOpenUserTicketsThisWeekAndLater' => function ($userId, $projectId = null, bool $includeDoneTickets = false) use ($includeDoneArgs) {
+                $includeDoneArgs->append($includeDoneTickets);
+
+                return [];
+            },
+        ]);
+        app()->instance(Tickets::class, $tickets);
+
+        $service = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->make(CalendarRepository::class, ['getAll' => fn () => []]),
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
+        );
+
+        $service->getCalendar(1);
+        $service->getCalendar(1, includeDoneTickets: false);
+
+        $this->assertSame([true, false], $includeDoneArgs->getArrayCopy());
+    }
+
+    /**
      * Builds a Calendar service whose outbound client records each request it would send.
      *
      * @param  \ArrayObject  $sentRequests  Collects [url, options] pairs.
@@ -472,5 +503,93 @@ class CalendarServiceTest extends TestCase
         }
 
         $this->assertCount(0, $handlerCalls);
+    }
+
+    /**
+     * A calendar service whose repository returns $events for the feed owner.
+     *
+     * @param  array<int, array<string, mixed>>  $events
+     */
+    private function calendarWithFeedEvents(array $events): \Leantime\Domain\Calendar\Services\Calendar
+    {
+        return new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->make(CalendarRepository::class, ['getCalendarBySecretHash' => fn () => $events]),
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: $this->make(OutboundHttpClient::class)
+        );
+    }
+
+    public function test_ical_feed_emits_timed_events_in_utc(): void
+    {
+        // The feed owner's zone; a TZID-qualified local time would be read as floating (#3114).
+        session(['usersettings.timezone' => 'Europe/Zurich']);
+
+        $ics = $this->calendarWithFeedEvents([[
+            'id' => 1, 'title' => 'Meeting', 'description' => '', 'url' => '',
+            'dateFrom' => '2025-04-16 08:00:00', 'dateTo' => '2025-04-16 09:00:00',
+            'allDay' => false, 'eventType' => 'calendar', 'dateContext' => 'plan',
+        ]])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertStringContainsString('DTSTART:20250416T080000Z', $ics);
+        $this->assertStringContainsString('DTEND:20250416T090000Z', $ics);
+        $this->assertStringNotContainsString('DTSTART;TZID', $ics);
+    }
+
+    public function test_ical_feed_keeps_all_day_events_on_the_owners_date(): void
+    {
+        session(['usersettings.timezone' => 'Europe/Zurich']);
+
+        // Midnight 17 April in Zurich is 22:00 UTC on the 16th.
+        $ics = $this->calendarWithFeedEvents([[
+            'id' => 2, 'title' => 'Offsite', 'description' => '', 'url' => '',
+            'dateFrom' => '2025-04-16 22:00:00', 'dateTo' => '2025-04-17 21:59:00',
+            'allDay' => true, 'eventType' => 'calendar', 'dateContext' => 'plan',
+        ]])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertMatchesRegularExpression('/DTSTART[^:\\r\\n]*VALUE=DATE:20250417/', $ics);
+    }
+
+    public function test_normalize_ical_content_strips_bom_and_leading_whitespace(): void
+    {
+        $normalized = \Leantime\Domain\Calendar\Services\Calendar::normalizeIcalContent("\xEF\xBB\xBF\r\n BEGIN:VCALENDAR");
+
+        $this->assertSame('BEGIN:VCALENDAR', $normalized);
+    }
+
+    public function test_only_complete_calendars_are_accepted(): void
+    {
+        $calendar = \Leantime\Domain\Calendar\Services\Calendar::class;
+
+        $this->assertTrue($calendar::looksLikeIcalCalendar("BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n"));
+        $this->assertTrue($calendar::looksLikeIcalCalendar("begin:vcalendar\r\nend:VCalendar\r\n"), 'RFC 5545 names are case-insensitive');
+        $this->assertFalse($calendar::looksLikeIcalCalendar('<html>BEGIN:VCALENDAR</html>'));
+        $this->assertFalse($calendar::looksLikeIcalCalendar("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\n"), 'a truncated download is rejected');
+    }
+
+    public function test_external_calendar_that_is_not_ical_resolves_to_an_empty_calendar(): void
+    {
+        session(['userdata' => ['id' => 1], 'calendarCache' => []]);
+
+        $calendarRepo = $this->make(CalendarRepository::class, [
+            'getExternalCalendar' => fn () => ['id' => 9, 'url' => 'https://calendar.example.test/basic.ics'],
+        ]);
+        $outboundClient = $this->make(OutboundHttpClient::class, [
+            'get' => fn () => new \GuzzleHttp\Psr7\Response(200, [], '<html>Sign in</html>'),
+        ]);
+
+        $calendar = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $calendarRepo,
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: $outboundClient,
+        );
+
+        $content = $calendar->getCachedExternalCalendarContent(9, 1);
+
+        $this->assertSame(\Leantime\Domain\Calendar\Services\Calendar::EMPTY_ICAL_CALENDAR, $content, 'an HTML page must never reach the browser iCal parser (#3165)');
+        $this->assertFalse(session()->exists('calendarCache.9.content'), 'a failed fetch must not be cached');
     }
 }

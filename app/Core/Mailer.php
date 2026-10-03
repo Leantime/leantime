@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Support\NameSanitizer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -278,6 +279,9 @@ class Mailer
             $inlineLogoContent = 'cid:companylogo';
         }
 
+        // Emails leave the request, so the profile link uses the trusted app URL when one is known.
+        $profileUrl = app()->make(TrustedAppUrl::class)->forLinks().'/users/editOwn/';
+
         $mailBody = $this->hideWrapper ? $this->html : app('blade.compiler')::render(
             $this->dispatchMailerFilter('bodyTemplate', '<table width="100%" style="background:#fefefe; padding:15px; ">
                 <tr>
@@ -311,7 +315,7 @@ class Mailer
                     'inlineLogoContent' => $inlineLogoContent,
                     'headline' => $this->language->__('email_notifications.hi'),
                     'content' => $this->nl2br ? nl2br($this->html) : $this->html,
-                    'unsub_link' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/'),
+                    'unsub_link' => sprintf($this->language->__('email_notifications.unsubscribe'), $profileUrl),
                 ]
             )
         );
@@ -325,7 +329,7 @@ class Mailer
                     'logoUrl' => $inlineLogoContent,
                     'languageHiText' => $this->language->__('email_notifications.hi'),
                     'emailContentsHtml' => nl2br($this->html),
-                    'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/'),
+                    'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), $profileUrl),
                 ],
             ]
         );

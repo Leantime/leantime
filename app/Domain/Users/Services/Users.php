@@ -11,6 +11,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\ValidationException;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Support\Avatarcreator;
@@ -453,6 +454,9 @@ class Users extends BaseService
     /**
      * Sends the invitation email with the account-setup link to a user.
      *
+     * The link uses the trusted application URL ({@see TrustedAppUrl}); when none is known the
+     * email is not sent and false is returned.
+     *
      * @param  string  $inviteCode  The invite/password-reset code for the setup link.
      * @param  string  $user  The recipient's email address (username).
      * @return bool True when the email was sent, false when delivery failed.
@@ -461,12 +465,20 @@ class Users extends BaseService
      */
     public function sendUserInvite(string $inviteCode, string $user): bool
     {
+        // The invite link sets the account's password, so it is only ever built from a trusted
+        // app URL, never from the request host.
+        $trustedAppUrl = app()->make(TrustedAppUrl::class)->get();
+        if ($trustedAppUrl === null) {
+            Log::warning('Invitation email not sent: the application URL is unknown. Set LEAN_APP_URL to your public URL (e.g. https://pm.example.com).');
+
+            return false;
+        }
 
         $mailer = app()->make(MailerCore::class);
         $mailer->setContext('new_user');
 
         $mailer->setSubject($this->language->__('email_notifications.new_user_subject'));
-        $actual_link = BASE_URL.'/auth/userInvite/'.$inviteCode;
+        $actual_link = $trustedAppUrl.'/auth/userInvite/'.$inviteCode;
 
         // The inviter identifies themselves in the body only (sanitized name + verified email);
         // the From header stays a fixed 'Leantime' so user content never reaches mail headers.
@@ -548,7 +560,9 @@ class Users extends BaseService
      * Role ceiling: the requested role may not exceed the caller's own role. Callers below admin
      * (e.g. managers, who hold users.create) cannot create active accounts with a password they
      * chose: their request is turned into an invitation, scoped to their own client. The reserved
-     * 'api' source is never accepted here (see allowedAccountSource()).
+     * 'api' source is never accepted here (see allowedAccountSource()). A request without a
+     * password is also turned into an invitation: the user sets their own password from the
+     * invite link.
      *
      * TODO: Should accept userModel
      *
@@ -556,21 +570,29 @@ class Users extends BaseService
      * @return bool|int returns new user id on success, false on failure
      *
      * @throws AuthorizationException When the requested role is above the caller's role.
+     * @throws ValidationException When no username (email) is given.
      *
      * @api
      */
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function addUser(array $values): bool|int
     {
+        $username = trim((string) ($values['username'] ?? $values['user'] ?? ''));
+        if ($username === '') {
+            throw ValidationException::withMessages(['username' => ['A username (email) is required to create a user.']]);
+        }
+
+        $password = (string) ($values['password'] ?? '');
+
         $values = [
             'firstname' => NameSanitizer::clean($values['firstname'] ?? ''),
             'lastname' => NameSanitizer::clean($values['lastname'] ?? ''),
             'phone' => $values['phone'] ?? '',
-            'user' => $values['username'] ?? $values['user'],
+            'user' => $username,
             'role' => $values['role'] ?? '',
             'notifications' => $values['notifications'] ?? 1,
             'clientId' => $values['clientId'] ?? '',
-            'password' => $values['password'],
+            'password' => $password,
             'source' => $this->allowedAccountSource($values['source'] ?? ''),
             'pwReset' => $values['pwReset'] ?? '',
             'status' => $values['status'] ?? '',
@@ -582,7 +604,8 @@ class Users extends BaseService
 
         $this->assertRoleAssignable($values['role']);
 
-        if ($this->callerIsBelowAdmin()) {
+        $mustInvite = $this->callerIsBelowAdmin() || $password === '';
+        if ($mustInvite) {
             $invite = $this->createUserInviteWithStatus($values);
 
             return $invite === false ? false : (int) $invite['userId'];

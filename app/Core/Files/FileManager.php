@@ -305,8 +305,17 @@ class FileManager implements FileManagerInterface
             $response->headers->set('Content-Length', (string) $storage->size($fileName));
             $response->headers->set('Content-Disposition', self::contentDisposition('inline', $realName));
 
-            // Sandbox all user-uploaded files to prevent script execution
-            $response->headers->set('Content-Security-Policy', 'sandbox');
+            // Sandbox user-uploaded files to prevent script execution. PDFs are the exception:
+            // browsers refuse to run their built-in PDF viewer in a sandboxed document (Chrome
+            // blocks the page, Firefox falls back to download/raw text), so a PDF could never be
+            // viewed inline (#2338). The viewer runs PDF content in its own isolated context, so
+            // a PDF keeps the app's regular CSP plus nosniff (so nothing else can pose as one).
+            $isPdf = strtolower($mimeType) === 'application/pdf';
+            if ($isPdf) {
+                $response->headers->set('X-Content-Type-Options', 'nosniff');
+            } else {
+                $response->headers->set('Content-Security-Policy', 'sandbox');
+            }
 
             // Force download for content types that can execute scripts (HTML, SVG, XML)
             // to prevent inline rendering of potentially malicious content

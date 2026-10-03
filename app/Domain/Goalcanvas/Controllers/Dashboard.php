@@ -5,6 +5,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Mailer;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
@@ -438,7 +439,7 @@ class Dashboard extends Controller
         $message = sprintf(
             $this->language->__($messageKey),
             session('userdata.name'),
-            "<a href='".CURRENT_URL."'>".strip_tags($title).'</a>'
+            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($title).'</a>'
         );
         $mailer->setHtml($message);
 

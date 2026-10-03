@@ -53,7 +53,7 @@
 
         @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
 
-            <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
+            <table id="allTicketsTable" class="table table-bordered display ticketTable" style="width:100%">
                 <colgroup>
                     <col class="con1" >
                     <col class="con0">
@@ -241,8 +241,6 @@
 
     jQuery(document).ready(function(){
     });
-
-    leantime.ticketsController.initTicketSearchSubmit("{{ BASE_URL }}/tickets/showAll");
 
     @if ($login::userIsAtLeast($roles::$editor))
     leantime.ticketsController.initUserDropdown();
