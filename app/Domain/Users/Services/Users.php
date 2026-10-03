@@ -1699,7 +1699,7 @@ class Users extends BaseService
      * Imports/updates the LDAP users selected from the staged member list.
      *
      * @param  array<int, array<string, mixed>>  $stagedUsers  The full staged member list.
-     * @param  array<int, string>  $selectedUsernames  The usernames the admin selected for import.
+     * @param  array<int, string>  $selectedUsernames  The `user` values (emails) the admin selected for import.
      *
      * @throws AuthorizationException When a selected user's role, or the role of the existing
      *                                account it would update, is above the caller's role.
@@ -1711,7 +1711,9 @@ class Users extends BaseService
     {
         $users = [];
         foreach ($stagedUsers as $user) {
-            if (in_array($user['username'] ?? null, $selectedUsernames, true)) {
+            // Staged rows come from Ldap::getSingleUser(); the import dialog posts each row's `user`
+            // (the email) as the selection value.
+            if (in_array($user['user'], $selectedUsernames, true)) {
                 $users[] = $user;
             }
         }

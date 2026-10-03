@@ -229,6 +229,25 @@ class UserRoleCeilingTest extends TestCase
         $service->createUserInviteWithStatus(['user' => 'peer@example.com', 'role' => '20']);
     }
 
+    /**
+     * A staged LDAP row in the exact shape Ldap::getSingleUser() returns.
+     *
+     * @return array<string, mixed>
+     */
+    private function ldapRow(string $email, int $role): array
+    {
+        return [
+            'user' => $email,
+            'firstname' => 'First',
+            'lastname' => 'Last',
+            'role' => $role,
+            'phone' => '',
+            'jobTitle' => '',
+            'jobLevel' => '',
+            'department' => '',
+        ];
+    }
+
     public function test_ldap_import_cannot_grant_a_role_above_the_caller(): void
     {
         $this->actAs('admin');
@@ -240,12 +259,12 @@ class UserRoleCeilingTest extends TestCase
         $service = $this->makeService(['getUserByEmail' => fn () => false]);
 
         $staged = [
-            ['username' => 'boss', 'user' => 'boss@example.com', 'role' => 50],
+            $this->ldapRow('boss@example.com', 50),
         ];
 
         $this->expectException(AuthorizationException::class);
 
-        $service->importSelectedLdapUsers($staged, ['boss']);
+        $service->importSelectedLdapUsers($staged, ['boss@example.com']);
     }
 
     public function test_ldap_import_cannot_update_an_account_above_the_caller(): void
@@ -259,12 +278,12 @@ class UserRoleCeilingTest extends TestCase
         $service = $this->makeService(['getUserByEmail' => fn () => ['id' => 1, 'role' => 50]]);
 
         $staged = [
-            ['username' => 'owner', 'user' => 'owner@example.com', 'role' => 5],
+            $this->ldapRow('owner@example.com', 5),
         ];
 
         $this->expectException(AuthorizationException::class);
 
-        $service->importSelectedLdapUsers($staged, ['owner']);
+        $service->importSelectedLdapUsers($staged, ['owner@example.com']);
     }
 
     public function test_ldap_import_within_the_ceiling_is_passed_on(): void
@@ -281,8 +300,8 @@ class UserRoleCeilingTest extends TestCase
         $service = $this->makeService(['getUserByEmail' => fn () => ['id' => 8, 'role' => 20]]);
 
         $service->importSelectedLdapUsers([
-            ['username' => 'dev', 'user' => 'dev@example.com', 'role' => 40],
-        ], ['dev']);
+            $this->ldapRow('dev@example.com', 40),
+        ], ['dev@example.com']);
 
         $this->assertSame('dev@example.com', $imported[0]['user'] ?? null);
     }
@@ -342,10 +361,10 @@ class UserRoleCeilingTest extends TestCase
         $service = $this->makeService(['getUserByEmail' => fn () => false]);
 
         $service->importSelectedLdapUsers([
-            ['username' => 'first', 'user' => 'first@example.com', 'role' => 20],
-            ['username' => 'second', 'user' => 'second@example.com', 'role' => 20],
-            ['username' => 'unselected', 'user' => 'unselected@example.com', 'role' => 20],
-        ], ['first', 'second']);
+            $this->ldapRow('first@example.com', 20),
+            $this->ldapRow('second@example.com', 20),
+            $this->ldapRow('unselected@example.com', 20),
+        ], ['first@example.com', 'second@example.com']);
 
         $this->assertSame(['first@example.com', 'second@example.com'], array_column($imported, 'user'));
     }
