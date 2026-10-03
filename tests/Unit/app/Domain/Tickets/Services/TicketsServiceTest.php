@@ -505,7 +505,7 @@ class TicketsServiceTest extends TestCase
      *
      * @param  array<string, mixed>  $ticketRepoStubs
      */
-    private function buildAuthzService(array $ticketRepoStubs, PermissionService $permissions): TicketsService
+    private function buildAuthzService(array $ticketRepoStubs, PermissionService $permissions, ?TimesheetService $timesheetService = null): TicketsService
     {
         $service = new TicketsService(
             language: $this->make(LanguageCore::class, ['__' => fn ($key) => $key]),
@@ -516,7 +516,7 @@ class TicketsServiceTest extends TestCase
                 'isUserAssignedToProject' => fn () => true,
                 'notifyProjectUsers' => fn () => null,
             ]),
-            timesheetService: $this->make(TimesheetService::class),
+            timesheetService: $timesheetService ?? $this->make(TimesheetService::class),
             sprintService: $this->make(SprintService::class),
             ticketHistoryRepo: $this->make(TicketHistory::class),
             goalcanvasService: $this->make(Goalcanvas::class),
@@ -625,6 +625,124 @@ class TicketsServiceTest extends TestCase
         } catch (AuthorizationException) {
             $this->assertContains(['tickets.edit', 7], $checks);
         }
+    }
+
+    /**
+     * Service whose ticket 5 (project 7) is patchable, with the session user's timer on $clockedTicketId.
+     *
+     * @param  array<int, int>  $punchedOut  Collects the ticket ids punchOut() was called with.
+     */
+    private function buildTimerService(int $clockedTicketId, array &$punchedOut): TicketsService
+    {
+        $timesheetService = $this->make(TimesheetService::class, [
+            'isClocked' => fn () => ['id' => $clockedTicketId],
+            'punchOut' => function (int $ticketId) use (&$punchedOut) {
+                $punchedOut[] = $ticketId;
+
+                return 1.5;
+            },
+        ]);
+
+        return $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            'patchTicket' => fn () => true,
+            'updateTicketStatus' => fn () => true,
+            'getStateLabels' => fn () => [
+                0 => ['name' => 'Done', 'statusType' => 'DONE'],
+                3 => ['name' => 'New', 'statusType' => 'NEW'],
+                4 => ['name' => 'In Progress', 'statusType' => 'INPROGRESS'],
+            ],
+        ], $this->permissionsForProjects([7]), $timesheetService);
+    }
+
+    public function test_moving_a_ticket_to_done_stops_the_users_timer_on_it(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->assertTrue($this->buildTimerService(5, $punchedOut)->patch(5, ['status' => 0]));
+
+        $this->assertSame([5], $punchedOut, 'a DONE status must stop the timer running on the ticket (#415)');
+    }
+
+    public function test_a_non_done_status_keeps_the_timer_running(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->buildTimerService(5, $punchedOut)->patch(5, ['status' => 4]);
+
+        $this->assertSame([], $punchedOut);
+    }
+
+    public function test_done_on_another_ticket_keeps_the_timer_running(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->buildTimerService(99, $punchedOut)->patch(5, ['status' => 0]);
+
+        $this->assertSame([], $punchedOut, 'only a timer on the completed ticket is stopped');
+    }
+
+    public function test_kanban_batch_without_handler_stops_the_timer_of_a_ticket_moved_to_done(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $this->assertTrue($this->buildTimerService(5, $punchedOut)->updateTicketStatusAndSorting(['4' => 'ticket[]=6', '0' => 'ticket[]=5'], null));
+
+        $this->assertSame([5], $punchedOut, 'every ticket in the batch counts, not only the optional handler');
+    }
+
+    public function test_kanban_batch_failing_later_still_stops_the_timer_of_a_persisted_done_ticket(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $timesheetService = $this->make(TimesheetService::class, [
+            'isClocked' => fn () => ['id' => 5],
+            'punchOut' => function (int $ticketId) use (&$punchedOut) {
+                $punchedOut[] = $ticketId;
+
+                return 1.0;
+            },
+        ]);
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            // Ticket 5 is written; ticket 6 reports false (e.g. 0 rows changed).
+            'updateTicketStatus' => fn ($id) => (int) $id === 5,
+            'getStateLabels' => fn () => [0 => ['name' => 'Done', 'statusType' => 'DONE']],
+        ], $this->permissionsForProjects([7]), $timesheetService);
+
+        $this->assertFalse($service->updateTicketStatusAndSorting(['0' => 'ticket[]=5&ticket[]=6'], null));
+
+        $this->assertSame([5], $punchedOut, 'a status that was persisted before the failure still stops the timer');
+    }
+
+    public function test_kanban_batch_does_not_stop_the_timer_of_a_ticket_that_was_already_done(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $timesheetService = $this->make(TimesheetService::class, [
+            'isClocked' => fn () => ['id' => 5],
+            'punchOut' => function (int $ticketId) use (&$punchedOut) {
+                $punchedOut[] = $ticketId;
+
+                return 1.0;
+            },
+        ]);
+        $service = $this->buildAuthzService([
+            // Ticket 5 already sits in Done; ticket 6 is the card being dragged into Done.
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => (int) $id === 5 ? 0 : 4]),
+            'updateTicketStatus' => fn () => true,
+            'getStateLabels' => fn () => [0 => ['name' => 'Done', 'statusType' => 'DONE'], 4 => ['name' => 'Doing', 'statusType' => 'INPROGRESS']],
+        ], $this->permissionsForProjects([7]), $timesheetService);
+
+        $this->assertTrue($service->updateTicketStatusAndSorting(['0' => 'ticket[]=5&ticket[]=6'], 'ticket_6'));
+
+        $this->assertSame([], $punchedOut, 're-sorting a ticket that was already Done must not stop its timer');
     }
 
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void

@@ -560,7 +560,9 @@ class Users extends BaseService
      * Role ceiling: the requested role may not exceed the caller's own role. Callers below admin
      * (e.g. managers, who hold users.create) cannot create active accounts with a password they
      * chose: their request is turned into an invitation, scoped to their own client. The reserved
-     * 'api' source is never accepted here (see allowedAccountSource()).
+     * 'api' source is never accepted here (see allowedAccountSource()). A request without a
+     * password is also turned into an invitation: the user sets their own password from the
+     * invite link.
      *
      * TODO: Should accept userModel
      *
@@ -568,21 +570,29 @@ class Users extends BaseService
      * @return bool|int returns new user id on success, false on failure
      *
      * @throws AuthorizationException When the requested role is above the caller's role.
+     * @throws ValidationException When no username (email) is given.
      *
      * @api
      */
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
     public function addUser(array $values): bool|int
     {
+        $username = trim((string) ($values['username'] ?? $values['user'] ?? ''));
+        if ($username === '') {
+            throw ValidationException::withMessages(['username' => ['A username (email) is required to create a user.']]);
+        }
+
+        $password = (string) ($values['password'] ?? '');
+
         $values = [
             'firstname' => NameSanitizer::clean($values['firstname'] ?? ''),
             'lastname' => NameSanitizer::clean($values['lastname'] ?? ''),
             'phone' => $values['phone'] ?? '',
-            'user' => $values['username'] ?? $values['user'],
+            'user' => $username,
             'role' => $values['role'] ?? '',
             'notifications' => $values['notifications'] ?? 1,
             'clientId' => $values['clientId'] ?? '',
-            'password' => $values['password'],
+            'password' => $password,
             'source' => $this->allowedAccountSource($values['source'] ?? ''),
             'pwReset' => $values['pwReset'] ?? '',
             'status' => $values['status'] ?? '',
@@ -594,7 +604,8 @@ class Users extends BaseService
 
         $this->assertRoleAssignable($values['role']);
 
-        if ($this->callerIsBelowAdmin()) {
+        $mustInvite = $this->callerIsBelowAdmin() || $password === '';
+        if ($mustInvite) {
             $invite = $this->createUserInviteWithStatus($values);
 
             return $invite === false ? false : (int) $invite['userId'];
