@@ -403,7 +403,7 @@ class Auth implements Authenticatable
      * @param  string  $token  the plain reset token
      * @return string the sha256 hex digest stored in zp_user.pwReset
      */
-    public function hashResetToken(string $token): string
+    private function hashResetToken(string $token): string
     {
         return hash('sha256', $token);
     }

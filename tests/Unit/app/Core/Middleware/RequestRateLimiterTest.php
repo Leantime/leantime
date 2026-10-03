@@ -80,6 +80,22 @@ class RequestRateLimiterTest extends \Unit\TestCase
         $this->assertSame(429, $this->send($limiter, '/auth//login'), 'all variants hit the same login limit');
     }
 
+    public function test_login_budget_is_per_ip_regardless_of_session_user(): void
+    {
+        $limiter = $this->limiter();
+
+        session(['userdata' => ['id' => 1]]);
+        $this->assertSame(200, $this->send($limiter, '/auth/login'));
+        session(['userdata' => ['id' => 2]]);
+        $this->assertSame(200, $this->send($limiter, '/auth/login'));
+        session()->forget('userdata');
+        $this->assertSame(200, $this->send($limiter, '/auth/login'));
+        session(['userdata' => ['id' => 3]]);
+        $this->assertSame(429, $this->send($limiter, '/auth/login'), 'rotating sessions must not widen the login budget');
+
+        $this->assertSame(200, $this->send($limiter, '/auth/login', 'GET', [], '198.51.100.99'), 'another IP has its own budget');
+    }
+
     public function test_login_is_also_limited_per_username_across_ips(): void
     {
         $limiter = $this->limiter();

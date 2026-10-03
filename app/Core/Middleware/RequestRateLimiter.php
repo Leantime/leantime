@@ -141,7 +141,9 @@ class RequestRateLimiter
 
         if ($isLoginRoute) {
             $limit = $rateLimitAuth;
-            $key = $key.':loginAttempts';
+            // Per IP only: a session (user id) suffix would let a client widen its budget by
+            // rotating sessions.
+            $key = 'ratelimit-'.$clientIp.':loginAttempts';
 
             // Per-account budget so a distributed guessing run against one user is throttled too.
             $username = $request->input('username');
