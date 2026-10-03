@@ -720,6 +720,31 @@ class TicketsServiceTest extends TestCase
         $this->assertSame([5], $punchedOut, 'a status that was persisted before the failure still stops the timer');
     }
 
+    public function test_kanban_batch_does_not_stop_the_timer_of_a_ticket_that_was_already_done(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+        $punchedOut = [];
+
+        $timesheetService = $this->make(TimesheetService::class, [
+            'isClocked' => fn () => ['id' => 5],
+            'punchOut' => function (int $ticketId) use (&$punchedOut) {
+                $punchedOut[] = $ticketId;
+
+                return 1.0;
+            },
+        ]);
+        $service = $this->buildAuthzService([
+            // Ticket 5 already sits in Done; ticket 6 is the card being dragged into Done.
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => (int) $id === 5 ? 0 : 4]),
+            'updateTicketStatus' => fn () => true,
+            'getStateLabels' => fn () => [0 => ['name' => 'Done', 'statusType' => 'DONE'], 4 => ['name' => 'Doing', 'statusType' => 'INPROGRESS']],
+        ], $this->permissionsForProjects([7]), $timesheetService);
+
+        $this->assertTrue($service->updateTicketStatusAndSorting(['0' => 'ticket[]=5&ticket[]=6'], 'ticket_6'));
+
+        $this->assertSame([], $punchedOut, 're-sorting a ticket that was already Done must not stop its timer');
+    }
+
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor']]);

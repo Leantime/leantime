@@ -3799,11 +3799,15 @@ class Tickets extends BaseService
         // Verify tickets.edit in the real project of every ticket in the batch (project-scoped
         // role + membership via the permission engine — not the session role).
         $checkedProjects = [];
+        // Statuses before the write, so only real status changes can stop a timer below.
+        $previousStatusByTicket = [];
         foreach ($allTicketIds as $ticketId) {
             $ticket = $this->getTicket($ticketId);
             if (! $ticket) {
                 return false;
             }
+
+            $previousStatusByTicket[(int) $ticketId] = $ticket->status === null ? null : (string) $ticket->status;
 
             $projectId = (int) $ticket->projectId;
             // Cache per-project decisions to avoid redundant lookups
@@ -3838,14 +3842,20 @@ class Tickets extends BaseService
                             return false;
                         }
 
-                        $newStatusByTicket[(int) $id] = $status;
+                        // Every ticket of the swimlane is re-posted with its column's status; only
+                        // tickets whose status actually changed count, so a timer on a ticket that
+                        // was already Done is not stopped by dragging some other card.
+                        $statusChanged = ($previousStatusByTicket[(int) $id] ?? null) !== (string) $status;
+                        if ($statusChanged) {
+                            $newStatusByTicket[(int) $id] = $status;
+                        }
                     }
                 }
             }
         }
 
-        // Every ticket in the batch got a status, not only the dragged one ($handler is optional
-        // for RPC callers). The user has at most one running timer, so look it up once.
+        // Any ticket in the batch may have changed status, not only the dragged one ($handler is
+        // optional for RPC callers). The user has at most one running timer, so look it up once.
         $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
         if ($handler) {
