@@ -452,4 +452,64 @@ class TicketsApiContractTest extends TestCase
 
         $service->getAll(['statusType' => 'WAITING']);
     }
+
+    // ---------------------------------------------------------------------
+    // #3703: compact status summary
+    // ---------------------------------------------------------------------
+
+    public function test_status_summary_counts_per_project_type_and_lists_active_tickets(): void
+    {
+        $criteria = null;
+        $service = $this->service([
+            'getAllBySearchCriteria' => function ($searchCriteria) use (&$criteria) {
+                $criteria = $searchCriteria;
+
+                return [
+                    ['id' => 1, 'headline' => 'A', 'type' => 'task', 'projectId' => 9, 'status' => 4, 'editorId' => '2', 'dependingTicketId' => 0, 'milestoneid' => null, 'modified' => '2026-07-27 10:00:00', 'commentCount' => 3],
+                    ['id' => 2, 'headline' => 'B', 'type' => 'subtask', 'projectId' => 9, 'status' => 4, 'editorId' => '', 'dependingTicketId' => 1, 'milestoneid' => null, 'modified' => '2026-07-28 10:00:00', 'commentCount' => 0],
+                    ['id' => 3, 'headline' => 'C', 'type' => 'task', 'projectId' => 9, 'status' => 0, 'editorId' => '2', 'dependingTicketId' => 0, 'milestoneid' => null, 'modified' => '2026-07-20 10:00:00', 'commentCount' => 1],
+                    // In project 8 status 4 is a DONE status.
+                    ['id' => 4, 'headline' => 'D', 'type' => 'task', 'projectId' => 8, 'status' => 4, 'editorId' => '2', 'dependingTicketId' => 0, 'milestoneid' => null, 'modified' => '2026-07-29 10:00:00', 'commentCount' => 0],
+                ];
+            },
+            'getStateLabels' => fn ($projectId) => (int) $projectId === 8
+                ? [3 => ['name' => 'Open', 'statusType' => 'NEW'], 4 => ['name' => 'Shipped', 'statusType' => 'DONE']]
+                : $this->seedLabels(),
+        ]);
+
+        $summary = $service->getStatusSummary();
+
+        $this->assertSame('', $criteria['currentProject']);
+        $this->assertSame('milestone', $criteria['excludeType']);
+        $this->assertSame(4, $summary['total']);
+        $this->assertSame(['NEW' => 0, 'INPROGRESS' => 2, 'DONE' => 2], $summary['countsByType']);
+        $this->assertSame([2, 1], array_column($summary['active'], 'id'), 'active = INPROGRESS only, newest first');
+        $this->assertSame(1, $summary['active'][0]['dependingTicketId'], 'the subtask carries its parent link');
+        $this->assertNull($summary['active'][0]['editorId'], 'an unassigned ticket has a null editorId');
+        $this->assertSame(3, $summary['active'][1]['commentCount']);
+        $this->assertFalse($summary['activeTruncated']);
+
+        $withoutSubtasks = $service->getStatusSummary(includeSubtasks: false, activeLimit: 1);
+        $this->assertSame(3, $withoutSubtasks['total']);
+        $this->assertSame([1], array_column($withoutSubtasks['active'], 'id'));
+    }
+
+    public function test_status_summary_authorizes_an_explicit_project(): void
+    {
+        $denying = $this->make(PermissionService::class, [
+            'currentUserCan' => fn () => false,
+            'authorize' => function () {
+                throw new \Leantime\Core\Exceptions\AuthorizationException;
+            },
+        ]);
+        $service = $this->service([
+            'getAllBySearchCriteria' => function () {
+                throw new \RuntimeException('must not query a project the caller cannot view');
+            },
+        ], $denying);
+
+        $this->expectException(\Leantime\Core\Exceptions\AuthorizationException::class);
+
+        $service->getStatusSummary(projectId: 7);
+    }
 }

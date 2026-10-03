@@ -491,6 +491,114 @@ class Tickets extends BaseService
     }
 
     /**
+     * Compact ticket discovery for API/agent watchers (#3703).
+     *
+     * Returns status counts for every ticket in scope plus a slim list of the "active" tickets
+     * (by default everything in an INPROGRESS-type status), so a watcher does not have to pull and
+     * filter the full getAll() payload. Only projects the caller can access are counted.
+     *
+     * @param  int|null  $projectId  Limit to one project (null = every accessible, non-closed project).
+     * @param  string|null  $statusType  Which tickets to list as active: NEW, INPROGRESS, DONE, NOT_DONE (comma list). Default INPROGRESS.
+     * @param  string|null  $modifiedAfter  ISO 8601 datetime; only count/list tickets changed since then.
+     * @param  bool  $includeSubtasks  Include subtasks (default true). Milestones are never included.
+     * @param  int  $activeLimit  Maximum active tickets returned, most recently modified first (1-500, default 50).
+     * @return array{total: int, countsByType: array<string, int>, countsByStatus: array<int, array<string, mixed>>, active: array<int, array<string, mixed>>, activeTotal: int, activeTruncated: bool}
+     *
+     * @throws ValidationException When a filter value is invalid.
+     * @throws \Leantime\Core\Exceptions\AuthorizationException When the caller may not view the project.
+     *
+     * @api
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
+    public function getStatusSummary(?int $projectId = null, ?string $statusType = 'INPROGRESS', ?string $modifiedAfter = null, bool $includeSubtasks = true, int $activeLimit = 50): array
+    {
+        // MCP tools call services directly, so authorize in-body as well.
+        if ($projectId !== null && $projectId > 0) {
+            $this->authorize(TicketsPermissions::VIEW, $projectId);
+        }
+
+        $filters = $this->normalizeApiTicketFilters([
+            'modifiedAfter' => $modifiedAfter ?? '',
+            'statusType' => ($statusType === null || $statusType === '') ? 'INPROGRESS' : $statusType,
+        ]);
+        $activeTypes = explode(',', $filters['statusType']);
+        $activeLimit = max(1, min(500, $activeLimit));
+
+        $tickets = $this->ticketRepository->getAllBySearchCriteria(
+            searchCriteria: [
+                'currentProject' => ($projectId !== null && $projectId > 0) ? $projectId : '',
+                'modifiedAfter' => $filters['modifiedAfter'],
+                'excludeType' => 'milestone',
+            ],
+            sort: 'standard',
+            includeCounts: true
+        );
+
+        $countsByType = ['NEW' => 0, 'INPROGRESS' => 0, 'DONE' => 0];
+        $countsByStatus = [];
+        $active = [];
+        $labelsByProject = [];
+        $total = 0;
+
+        foreach (is_array($tickets) ? $tickets : [] as $ticket) {
+            if (! $includeSubtasks && ($ticket['type'] ?? '') === 'subtask') {
+                continue;
+            }
+
+            $ticketProjectId = (int) $ticket['projectId'];
+            $labelsByProject[$ticketProjectId] ??= $this->ticketRepository->getStateLabels($ticketProjectId);
+            $label = $labelsByProject[$ticketProjectId][$ticket['status']] ?? null;
+            $ticketStatusType = strtoupper((string) ($label['statusType'] ?? 'NONE'));
+
+            $total++;
+            $countsByType[$ticketStatusType] = ($countsByType[$ticketStatusType] ?? 0) + 1;
+
+            $statusKey = $ticketProjectId.':'.$ticket['status'];
+            $countsByStatus[$statusKey] ??= [
+                'projectId' => $ticketProjectId,
+                'status' => (int) $ticket['status'],
+                'statusType' => $ticketStatusType,
+                'label' => $label !== null ? $this->language->__((string) ($label['name'] ?? '')) : '',
+                'count' => 0,
+            ];
+            $countsByStatus[$statusKey]['count']++;
+
+            $isActive = in_array($ticketStatusType, $activeTypes, true)
+                || (in_array('NOT_DONE', $activeTypes, true) && $ticketStatusType !== 'DONE');
+
+            if ($isActive) {
+                $active[] = [
+                    'id' => (int) $ticket['id'],
+                    'headline' => $ticket['headline'],
+                    'type' => $ticket['type'],
+                    'projectId' => $ticketProjectId,
+                    'projectName' => $ticket['projectName'] ?? '',
+                    'status' => (int) $ticket['status'],
+                    'statusType' => $ticketStatusType,
+                    'editorId' => $ticket['editorId'] !== null && $ticket['editorId'] !== '' ? (int) $ticket['editorId'] : null,
+                    'dependingTicketId' => (int) ($ticket['dependingTicketId'] ?? 0) > 0 ? (int) $ticket['dependingTicketId'] : null,
+                    'milestoneid' => (int) ($ticket['milestoneid'] ?? 0) > 0 ? (int) $ticket['milestoneid'] : null,
+                    'dateToFinish' => $ticket['dateToFinish'] ?? null,
+                    'modified' => $ticket['modified'] ?? $ticket['date'] ?? null,
+                    'commentCount' => (int) ($ticket['commentCount'] ?? 0),
+                ];
+            }
+        }
+
+        // Most recently changed first; the watcher cares about what moved.
+        usort($active, fn ($a, $b) => strcmp((string) $b['modified'], (string) $a['modified']));
+
+        return [
+            'total' => $total,
+            'countsByType' => $countsByType,
+            'countsByStatus' => array_values($countsByStatus),
+            'active' => array_slice($active, 0, $activeLimit),
+            'activeTotal' => count($active),
+            'activeTruncated' => count($active) > $activeLimit,
+        ];
+    }
+
+    /**
      * Validate and normalize the API watcher filters of a ticket search (#3700).
      *
      * modifiedAfter/modifiedBefore are parsed (ISO 8601, or the user's date format) and converted
