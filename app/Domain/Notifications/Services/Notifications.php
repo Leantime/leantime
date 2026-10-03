@@ -4,6 +4,7 @@ namespace Leantime\Domain\Notifications\Services;
 
 use DOMDocument;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Support\NameSanitizer;
@@ -347,6 +348,8 @@ class Notifications
      */
     public function processMentions(string $content, string $module, int $moduleId, int $authorId, string $url): void
     {
+        // The url is emailed: point it at the trusted app URL, not the request host.
+        $url = app()->make(TrustedAppUrl::class)->rebase($url);
 
         $dom = new DOMDocument;
 

@@ -4,6 +4,7 @@ namespace Leantime\Domain\Ideas\Services;
 
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Domain\Comments\Permissions\CommentsPermissions;
@@ -461,7 +462,7 @@ class Ideas extends BaseService
         $message = sprintf(
             $this->language->__('email_notifications.idea_board_created_message'),
             session('userdata.name'),
-            "<a href='".CURRENT_URL."'>".strip_tags($title).'</a>.<br />'
+            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($title).'</a>.<br />'
         );
         $mailer->setHtml($message);
 
@@ -489,7 +490,7 @@ class Ideas extends BaseService
         $message = sprintf(
             $this->language->__('email_notifications.canvas_created_message'),
             session('userdata.name'),
-            "<a href='".CURRENT_URL."'>".strip_tags($title).'</a>'
+            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($title).'</a>'
         );
         $mailer->setHtml($message);
 
