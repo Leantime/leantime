@@ -1744,7 +1744,7 @@ class Tickets
             'tags' => $values['tags'],
             'sprint' => $values['sprint'],
             'storypoints' => $values['storypoints'],
-            'priority' => self::isValidPriority($values['priority'] ?? '') ? ($values['priority'] ?? '') : '',
+            'priority' => self::normalizePriority($values['priority'] ?? '') ?? '',
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'acceptanceCriteria' => $values['acceptanceCriteria'],
@@ -1803,18 +1803,27 @@ class Tickets
     ];
 
     /**
-     * Whether a priority value may be stored: empty, or an integer 0-5.
+     * Canonical stored form of a priority, or null when the value is not a valid priority.
      *
+     * Accepts only '' / null (no priority), an int 0-5, or a single digit string '0'-'5'.
      * Priority is rendered into css class names and used as a lookup key, so every
-     * create/update/patch path checks it here.
+     * create/update/patch path stores the value returned here.
      */
-    public static function isValidPriority(mixed $priority): bool
+    public static function normalizePriority(mixed $priority): ?string
     {
         if ($priority === '' || $priority === null) {
-            return true;
+            return '';
         }
 
-        return filter_var($priority, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 5]]) !== false;
+        if (is_int($priority)) {
+            return ($priority >= 0 && $priority <= 5) ? (string) $priority : null;
+        }
+
+        if (is_string($priority) && preg_match('/^[0-5]$/', $priority) === 1) {
+            return $priority;
+        }
+
+        return null;
     }
 
     /**
@@ -1831,8 +1840,15 @@ class Tickets
     {
         // Drop invalid priorities before anything is recorded, so history matches what is written.
         foreach ($params as $key => $value) {
-            if (strtolower(DbCore::sanitizeToColumnString($key)) === 'priority' && ! self::isValidPriority($value)) {
+            if (strtolower(DbCore::sanitizeToColumnString($key)) !== 'priority') {
+                continue;
+            }
+
+            $normalizedPriority = self::normalizePriority($value);
+            if ($normalizedPriority === null) {
                 unset($params[$key]);
+            } else {
+                $params[$key] = $normalizedPriority;
             }
         }
 
@@ -1881,8 +1897,8 @@ class Tickets
     public function updateTicket(array $values, $id): bool
     {
         // Normalize before recording history so the audit row matches the stored value.
-        if (array_key_exists('priority', $values) && ! self::isValidPriority($values['priority'])) {
-            $values['priority'] = '';
+        if (array_key_exists('priority', $values)) {
+            $values['priority'] = self::normalizePriority($values['priority']) ?? '';
         }
 
         $this->addTicketChange(session('userdata.id'), $id, $values);
