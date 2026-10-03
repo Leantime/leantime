@@ -1829,6 +1829,13 @@ class Tickets
      */
     public function patchTicket($id, array $params): bool
     {
+        // Drop invalid priorities before anything is recorded, so history matches what is written.
+        foreach ($params as $key => $value) {
+            if (strtolower(DbCore::sanitizeToColumnString($key)) === 'priority' && ! self::isValidPriority($value)) {
+                unset($params[$key]);
+            }
+        }
+
         $this->addTicketChange(session('userdata.id'), $id, $params);
 
         // Match field names case-insensitively, then write the CANONICAL column name.
@@ -1847,10 +1854,6 @@ class Tickets
             $sanitizedKey = strtolower(DbCore::sanitizeToColumnString($key));
 
             if (! isset($canonicalColumns[$sanitizedKey])) {
-                continue;
-            }
-
-            if ($sanitizedKey === 'priority' && ! self::isValidPriority($value)) {
                 continue;
             }
 
@@ -1877,6 +1880,11 @@ class Tickets
      */
     public function updateTicket(array $values, $id): bool
     {
+        // Normalize before recording history so the audit row matches the stored value.
+        if (array_key_exists('priority', $values) && ! self::isValidPriority($values['priority'])) {
+            $values['priority'] = '';
+        }
+
         $this->addTicketChange(session('userdata.id'), $id, $values);
 
         $updates = [
@@ -1889,7 +1897,7 @@ class Tickets
             'dateToFinish' => $values['dateToFinish'],
             'sprint' => $values['sprint'],
             'storypoints' => $values['storypoints'],
-            'priority' => self::isValidPriority($values['priority'] ?? '') ? ($values['priority'] ?? '') : '',
+            'priority' => $values['priority'] ?? '',
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'tags' => $values['tags'],
