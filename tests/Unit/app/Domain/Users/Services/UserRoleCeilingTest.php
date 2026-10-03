@@ -228,4 +228,106 @@ class UserRoleCeilingTest extends TestCase
 
         $service->createUserInviteWithStatus(['user' => 'peer@example.com', 'role' => '20']);
     }
+
+    public function test_ldap_import_cannot_grant_a_role_above_the_caller(): void
+    {
+        $this->actAs('admin');
+        app()->instance(\Leantime\Domain\Ldap\Services\Ldap::class, $this->make(\Leantime\Domain\Ldap\Services\Ldap::class, [
+            'upsertUsers' => function () {
+                $this->fail('nothing may be imported');
+            },
+        ]));
+        $service = $this->makeService(['getUserByEmail' => fn () => false]);
+
+        $staged = [
+            ['username' => 'skip', 'user' => 'skip@example.com', 'role' => 20],
+            ['username' => 'boss', 'user' => 'boss@example.com', 'role' => 50],
+        ];
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->importSelectedLdapUsers($staged, ['skip', 'boss']);
+    }
+
+    public function test_ldap_import_cannot_update_an_account_above_the_caller(): void
+    {
+        $this->actAs('admin');
+        app()->instance(\Leantime\Domain\Ldap\Services\Ldap::class, $this->make(\Leantime\Domain\Ldap\Services\Ldap::class, [
+            'upsertUsers' => function () {
+                $this->fail('the owner account must not be modified');
+            },
+        ]));
+        $service = $this->makeService(['getUserByEmail' => fn () => ['id' => 1, 'role' => 50]]);
+
+        $staged = [
+            ['username' => 'skip', 'user' => 'skip@example.com', 'role' => 20],
+            ['username' => 'owner', 'user' => 'owner@example.com', 'role' => 5],
+        ];
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->importSelectedLdapUsers($staged, ['skip', 'owner']);
+    }
+
+    public function test_ldap_import_within_the_ceiling_is_passed_on(): void
+    {
+        $this->actAs('admin');
+        $imported = null;
+        app()->instance(\Leantime\Domain\Ldap\Services\Ldap::class, $this->make(\Leantime\Domain\Ldap\Services\Ldap::class, [
+            'upsertUsers' => function (array $users) use (&$imported) {
+                $imported = $users;
+
+                return true;
+            },
+        ]));
+        $service = $this->makeService(['getUserByEmail' => fn () => ['id' => 8, 'role' => 20]]);
+
+        $service->importSelectedLdapUsers([
+            ['username' => 'skip', 'user' => 'skip@example.com', 'role' => 20],
+            ['username' => 'dev', 'user' => 'dev@example.com', 'role' => 40],
+        ], ['skip', 'dev']);
+
+        $this->assertSame('dev@example.com', $imported[0]['user'] ?? null);
+    }
+
+    public function test_api_source_cannot_be_set_through_user_creation(): void
+    {
+        foreach (['manager', 'owner'] as $role) {
+            $this->actAs($role);
+            RateLimiter::clear('invites:'.BASE_URL.':user:'.self::CALLER_ID);
+            $stored = [];
+            $service = $this->makeService([
+                'addUser' => function (array $values) use (&$stored) {
+                    $stored[] = $values['source'] ?? '';
+
+                    return '9';
+                },
+            ]);
+
+            $service->createUserInvite(['user' => 'svc@example.com', 'role' => 20, 'source' => 'api']);
+            $service->addUser(['username' => 'svc2@example.com', 'role' => 20, 'password' => 'x', 'source' => 'API']);
+
+            $this->assertSame(['', ''], $stored, $role.' must not create an api-source account');
+        }
+    }
+
+    public function test_only_admins_may_set_a_non_api_source(): void
+    {
+        $this->actAs('admin');
+        $stored = null;
+        $service = $this->makeService([
+            'addUser' => function (array $values) use (&$stored) {
+                $stored = $values['source'];
+
+                return '9';
+            },
+        ]);
+        $service->addUser(['username' => 'csv@example.com', 'role' => 20, 'password' => 'x', 'source' => 'csvImport']);
+        $this->assertSame('csvImport', $stored);
+
+        $this->actAs('manager');
+        RateLimiter::clear('invites:'.BASE_URL.':user:'.self::CALLER_ID);
+        $service->addUser(['username' => 'csv2@example.com', 'role' => 20, 'password' => 'x', 'source' => 'ldap']);
+        $this->assertSame('', $stored);
+    }
 }

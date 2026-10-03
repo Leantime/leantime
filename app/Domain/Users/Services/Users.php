@@ -422,6 +422,8 @@ class Users extends BaseService
             $values['clientId'] = session('userdata.clientId') ?? '';
         }
 
+        $values['source'] = $this->allowedAccountSource($values['source'] ?? '');
+
         if ($this->invitesRateLimited()) {
             return false;
         }
@@ -545,7 +547,8 @@ class Users extends BaseService
      *
      * Role ceiling: the requested role may not exceed the caller's own role. Callers below admin
      * (e.g. managers, who hold users.create) cannot create active accounts with a password they
-     * chose: their request is turned into an invitation, scoped to their own client.
+     * chose: their request is turned into an invitation, scoped to their own client. The reserved
+     * 'api' source is never accepted here (see allowedAccountSource()).
      *
      * TODO: Should accept userModel
      *
@@ -568,7 +571,7 @@ class Users extends BaseService
             'notifications' => $values['notifications'] ?? 1,
             'clientId' => $values['clientId'] ?? '',
             'password' => $values['password'],
-            'source' => $values['source'] ?? '',
+            'source' => $this->allowedAccountSource($values['source'] ?? ''),
             'pwReset' => $values['pwReset'] ?? '',
             'status' => $values['status'] ?? '',
             'createdOn' => $values['createdOn'] ?? '',
@@ -1693,6 +1696,9 @@ class Users extends BaseService
      * @param  array<int, array<string, mixed>>  $stagedUsers  The full staged member list.
      * @param  array<int, string>  $selectedUsernames  The usernames the admin selected for import.
      *
+     * @throws AuthorizationException When a selected user's role, or the role of the existing
+     *                                account it would update, is above the caller's role.
+     *
      * @api
      */
     #[RequiresPermission(UsersPermissions::IMPORT, global: true)]
@@ -1702,6 +1708,17 @@ class Users extends BaseService
         foreach ($stagedUsers as $user) {
             if (array_search($user['username'], $selectedUsernames)) {
                 $users[] = $user;
+            }
+        }
+
+        // Role ceiling, checked for the whole batch before anything is written: the imported role
+        // and the existing account it would update (matched the same way upsertUsers() does).
+        foreach ($users as $user) {
+            $this->assertRoleAssignable($user['role'] ?? '');
+
+            $existingUser = $this->userRepo->getUserByEmail((string) ($user['user'] ?? ''));
+            if (is_array($existingUser)) {
+                $this->assertRoleAssignable($existingUser['role'] ?? '');
             }
         }
 
@@ -1758,6 +1775,27 @@ class Users extends BaseService
         }
 
         throw new AuthorizationException('You cannot edit a user with a higher role than your own.');
+    }
+
+    /**
+     * The account `source` a caller may set when creating a user. 'api' is reserved for API keys
+     * (created through the Api service only) because it makes the account authenticate as a
+     * service account. Callers below admin cannot set a source at all.
+     *
+     * @param  mixed  $requestedSource  Caller-supplied source.
+     * @return string The source to store.
+     */
+    private function allowedAccountSource(mixed $requestedSource): string
+    {
+        if (! is_string($requestedSource) || strtolower(trim($requestedSource)) === 'api') {
+            return '';
+        }
+
+        if ($this->callerIsBelowAdmin()) {
+            return '';
+        }
+
+        return $requestedSource;
     }
 
     /**
