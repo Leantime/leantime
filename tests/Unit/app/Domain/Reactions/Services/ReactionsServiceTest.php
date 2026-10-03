@@ -141,4 +141,26 @@ class ReactionsServiceTest extends TestCase
         $this->assertNotSame([], $service->getEntityReactionsWithUsers('comment', 11));
         $this->assertSame([], $service->getEntityReactionsWithUsers('comment', 12));
     }
+
+    public function test_project_favorite_requires_access_to_the_project(): void
+    {
+        session(['userdata' => ['id' => 42]]);
+
+        $added = [];
+        $repo = $this->make(ReactionsRepository::class, [
+            'getUserReactions' => fn (...$args) => [],
+            'addReaction' => function ($userId, $module, $moduleId) use (&$added) {
+                $added[] = $moduleId;
+
+                return true;
+            },
+        ]);
+
+        // Project 5 is viewable, project 6 is not.
+        $service = $this->makeService($repo, ['project:5' => 5, 'project:6' => 6], [5]);
+
+        $this->assertTrue($service->react('project', 5, 'favorite'));
+        $this->assertFalse($service->react('project', 6, 'favorite'));
+        $this->assertSame([5], $added);
+    }
 }

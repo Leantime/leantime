@@ -1674,7 +1674,7 @@ class Projects extends BaseService implements ChecksProjectAccess
     {
         // A project may only be nested under a CONTAINER project (a program or a strategy),
         // never under another regular project. Validated here (not just in the controller)
-        // because this method is also reachable via JSON-RPC.
+        // because addProject() — reachable via JSON-RPC — delegates to this method.
         $parent = null;
         if (! empty($values['parent'])) {
             $parentProject = $this->projectRepository->getProject((int) $values['parent']);
