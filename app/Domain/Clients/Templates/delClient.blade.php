@@ -7,7 +7,7 @@
     <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
     <div class="pagetitle">
         <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! sprintf(__('headline.delete_client'), $client['name']) !!}</h1>
+        <h1>{!! sprintf(__('headline.delete_client'), e($client['name'])) !!}</h1>
     </div>
     @dispatchEvent('beforePageHeaderClose')
 </div><!--pageheader-->

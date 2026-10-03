@@ -235,7 +235,7 @@ leantime.ticketsController = (function () {
 
         function htmlEntities(str)
         {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
         jQuery(document).ready(
@@ -275,19 +275,19 @@ leantime.ticketsController = (function () {
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (task.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                    popUpHTML +=  '<h3><b>' + htmlEntities(task.projectName) + '</b></h3>';
                                 }
-                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
+                                popUpHTML += '<small>' + htmlEntities(task.type) + ' #' + htmlEntities(task.id) + ' </small>';
 
                                 if (task.type === 'milestone') {
-                                    popUpHTML += '<h4><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                    popUpHTML += '<h4><a href="#/tickets/editMilestone/' + htmlEntities(task.id) + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                      '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                      '' + Math.round(task.progress) + '%</p> ' +
-                                     '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                     '<a href="#/tickets/editMilestone/' + htmlEntities(task.id) + '" ><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + htmlEntities(task.id) + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
-                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                     '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + htmlEntities(task.id) + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                     '<a href="#/tickets/showTicket/' + htmlEntities(task.id) + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                  popUpHTML += '</div>';
@@ -353,18 +353,18 @@ leantime.ticketsController = (function () {
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (task.projectName !== undefined) {
-                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                    popUpHTML +=  '<h3><b>' + htmlEntities(task.projectName) + '</b></h3>';
                                 }
-                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
+                                popUpHTML += '<small>' + htmlEntities(task.type) + ' #' + htmlEntities(task.id) + ' </small>';
 
                                 if (task.type === 'milestone') {
                                     popUpHTML += '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                         '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                         '' + Math.round(task.progress) + '%</p> ' +
-                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + htmlEntities(task.id) + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
-                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                        '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + htmlEntities(task.id) + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                        '<a href="#/tickets/showTicket/' + htmlEntities(task.id) + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                 popUpHTML += '</div>';

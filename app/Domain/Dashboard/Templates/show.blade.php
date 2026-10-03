@@ -112,10 +112,10 @@
                     @endif
 
                     @foreach($tickets as $row)
-                        <li class="ui-state-default" id="ticket_{!! $row['id'] !!}">
-                            <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
+                        <li class="ui-state-default" id="ticket_{{ $row['id'] }}">
+                            <div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
                                 <div class="row">
-                                    <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
+                                    <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{{ $row['id'] }}">
                                         @if($row['dependingTicketId'] > 0)
                                         <a href="#/tickets/showTicket/{{  $row['dependingTicketId'] }}">
                                             {{ $row['parentHeadline'] }}
@@ -209,7 +209,7 @@
                                                             <a
                                                                 href="javascript:void(0);"
                                                                 data-label="{{ $milestone->headline }}"
-                                                                data-value="{{ $row['id'] }}_{!! $milestone->id !!}_{{ $milestone->tags }}"
+                                                                data-value="{{ $row['id'] }}_{{ $milestone->id }}_{{ $milestone->tags }}"
                                                                 id="ticketMilestoneChange_{{ $row['id'] . $milestone->id }}"
                                                                 style="background-color:{{ $milestone->tags }}"
                                                             >{{ $milestone->headline }}</a>
@@ -220,24 +220,24 @@
 
                                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                                 <a
-                                                    class="dropdown-toggle f-left status {!! $statusLabels[$row['status']]['class'] !!}"
+                                                    class="dropdown-toggle f-left status {{ $statusLabels[$row['status']]['class'] }}"
                                                     href="javascript:void(0);"
                                                     role="button"
                                                     id="statusDropdownMenuLink{{ $row['id'] }}"
                                                     data-toggle="dropdown"
                                                     aria-haspopup="true"
                                                     aria-expanded="false"
-                                                ><span class="text">{!! $statusLabels[$row['status']]['name'] !!}</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                                ><span class="text">{{ $statusLabels[$row['status']]['name'] }}</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
 
-                                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{!! $row['id'] !!}">
+                                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                                                     <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
                                                     @foreach ($statusLabels as $key => $label)
                                                         <li class="dropdown-item">
                                                             <a
                                                                 href="javascript:void(0);"
-                                                                class="{!! $label['class'] !!}"
+                                                                class="{{ $label['class'] }}"
                                                                 data-label="{{ $label['name'] }}"
-                                                                data-value="{{ $row['id'] }}_{{ $key }}_{!! $label['class'] !!}"
+                                                                data-value="{{ $row['id'] }}_{{ $key }}_{{ $label['class'] }}"
                                                                 id="ticketStatusChange{{ $row['id'] . $key }}"
                                                             >{{ $label['name'] }}</a>
                                                         </li>
@@ -390,7 +390,7 @@
                                                                 <li>
                                                                     <a
                                                                         href="javascript:void(0);"
-                                                                        onclick="leantime.ticketsController.addCommentTimesheetContent({!! $row['id'] !!}, {!! $ticket->id !!})"
+                                                                        onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $ticket->id }})"
                                                                     >{{ __('links.add_to_timesheets') }}</a>
                                                                 </li>
                                                             @endif
@@ -415,7 +415,7 @@
                                             @if ($login::userIsAtLeast($roles::$commenter))
                                                 <a
                                                     href="javascript:void(0);"
-                                                    onclick="leantime.commentsController.toggleCommentBoxes({!! $row['id'] !!});"
+                                                    onclick="leantime.commentsController.toggleCommentBoxes({{ $row['id'] }});"
                                                 ><span class="fa fa-reply"></span> {{ __('links.reply') }}
                                                 </a>
                                             @endif
@@ -480,7 +480,7 @@
                                     @break
                                 @endif
 
-                                <li class="ui-state-default" id="milestone_{!! $row->id !!}">
+                                <li class="ui-state-default" id="milestone_{{ $row->id }}">
 
                                     <div hx-trigger="load"
                                          hx-indicator=".htmx-indicator"

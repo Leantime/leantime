@@ -121,7 +121,7 @@ class Tickets
     public function getStateLabels($projectId = null): array
     {
         if (Cache::has('projectsettings.'.$projectId.'.ticketlabels')) {
-            return Cache::get('projectsettings.'.$projectId.'.ticketlabels');
+            return self::withSafeLabelClasses((array) Cache::get('projectsettings.'.$projectId.'.ticketlabels'));
         }
 
         if ($projectId == null) {
@@ -174,7 +174,35 @@ class Tickets
             return $a['sortKey'] <=> $b['sortKey'];
         });
 
+        // Label settings saved before class validation existed may hold arbitrary strings.
+        $statusList = self::withSafeLabelClasses($statusList);
+
         Cache::put('projectsettings.'.$projectId.'.ticketlabels', $statusList, 3600);
+
+        return $statusList;
+    }
+
+    /**
+     * Whether a status label css class is safe to render: a plain label-* class.
+     */
+    public static function isValidLabelClass(mixed $labelClass): bool
+    {
+        return is_string($labelClass) && preg_match('/^label-[a-z0-9-]+$/', $labelClass) === 1;
+    }
+
+    /**
+     * Replace any status label class that is not a plain label-* class with label-default.
+     *
+     * @param  array<int|string, mixed>  $statusList
+     * @return array<int|string, mixed>
+     */
+    private static function withSafeLabelClasses(array $statusList): array
+    {
+        foreach ($statusList as $key => $status) {
+            if (is_array($status) && isset($status['class']) && ! self::isValidLabelClass($status['class'])) {
+                $statusList[$key]['class'] = 'label-default';
+            }
+        }
 
         return $statusList;
     }
@@ -1719,7 +1747,7 @@ class Tickets
             'tags' => $values['tags'],
             'sprint' => $values['sprint'],
             'storypoints' => $values['storypoints'],
-            'priority' => $values['priority'],
+            'priority' => self::normalizePriority($values['priority'] ?? '') ?? '',
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'acceptanceCriteria' => $values['acceptanceCriteria'],
@@ -1778,6 +1806,30 @@ class Tickets
     ];
 
     /**
+     * Canonical stored form of a priority, or null when the value is not a valid priority.
+     *
+     * Accepts only '' / null (no priority), an int 0-5, or a single digit string '0'-'5'.
+     * Priority is rendered into css class names and used as a lookup key, so every
+     * create/update/patch path stores the value returned here.
+     */
+    public static function normalizePriority(mixed $priority): ?string
+    {
+        if ($priority === '' || $priority === null) {
+            return '';
+        }
+
+        if (is_int($priority)) {
+            return ($priority >= 0 && $priority <= 5) ? (string) $priority : null;
+        }
+
+        if (is_string($priority) && preg_match('/^[0-5]$/', $priority) === 1) {
+            return $priority;
+        }
+
+        return null;
+    }
+
+    /**
      * Patch specific fields on a ticket.
      *
      * Only fields present in PATCHABLE_COLUMNS are included in the update.
@@ -1789,6 +1841,20 @@ class Tickets
      */
     public function patchTicket($id, array $params): bool
     {
+        // Drop invalid priorities before anything is recorded, so history matches what is written.
+        foreach ($params as $key => $value) {
+            if (strtolower(DbCore::sanitizeToColumnString($key)) !== 'priority') {
+                continue;
+            }
+
+            $normalizedPriority = self::normalizePriority($value);
+            if ($normalizedPriority === null) {
+                unset($params[$key]);
+            } else {
+                $params[$key] = $normalizedPriority;
+            }
+        }
+
         $this->addTicketChange(session('userdata.id'), $id, $params);
 
         // Match field names case-insensitively, then write the CANONICAL column name.
@@ -1833,6 +1899,11 @@ class Tickets
      */
     public function updateTicket(array $values, $id): bool
     {
+        // Normalize before recording history so the audit row matches the stored value.
+        if (array_key_exists('priority', $values)) {
+            $values['priority'] = self::normalizePriority($values['priority']) ?? '';
+        }
+
         $this->addTicketChange(session('userdata.id'), $id, $values);
 
         $updates = [
@@ -1845,7 +1916,7 @@ class Tickets
             'dateToFinish' => $values['dateToFinish'],
             'sprint' => $values['sprint'],
             'storypoints' => $values['storypoints'],
-            'priority' => $values['priority'],
+            'priority' => $values['priority'] ?? '',
             'hourRemaining' => $values['hourRemaining'],
             'planHours' => $values['planHours'],
             'tags' => $values['tags'],
