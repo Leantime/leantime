@@ -595,6 +595,30 @@ class TimesheetsServiceTest extends TestCase
         $service->updateTime(['id' => 50, 'ticket' => 3, 'hours' => 1]);
     }
 
+    public function test_weekly_save_skips_malformed_ticket_keys(): void
+    {
+        $upserted = [];
+        $repo = $this->make(TimesheetRepository::class, [
+            'upsertTimesheetEntry' => function ($values) use (&$upserted) {
+                $upserted[] = $values['ticket'];
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn ($id) => new TicketModel(['id' => (int) $id, 'projectId' => 1]),
+        ]);
+        $userRepo = $this->make(UserRepository::class, ['getUser' => fn () => ['wage' => 0]]);
+        $service = $this->makeService(timesheetsRepo: $repo, userRepo: $userRepo, ticketRepo: $ticketRepo);
+
+        $service->saveWeeklyTimesheetEntries([
+            '12abc|GENERAL_BILLABLE|2026-01-05|1767571200' => '2',
+            ' 12|GENERAL_BILLABLE|2026-01-05|1767571200' => '2',
+            '+12|GENERAL_BILLABLE|2026-01-05|1767571200' => '2',
+            '12|GENERAL_BILLABLE|2026-01-05|1767571200' => '2',
+        ]);
+
+        $this->assertSame([12], $upserted, 'Only the canonical integer key may be logged');
+    }
+
     public function test_time_writes_reject_a_missing_or_malformed_ticket(): void
     {
         $ticketRepo = $this->make(TicketRepository::class, [

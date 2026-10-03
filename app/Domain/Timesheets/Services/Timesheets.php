@@ -498,7 +498,11 @@ class Timesheets extends BaseService
             }
 
             if ($isNewEntryRow) {
-                $ticketId = (int) $postData['ticketId'];
+                // Only a canonical integer id counts; anything else ('12abc', ' 12', '+12') is "no ticket".
+                $rawNewTicketId = $postData['ticketId'] ?? '';
+                $ticketId = (is_int($rawNewTicketId) || is_string($rawNewTicketId)) && ctype_digit((string) $rawNewTicketId)
+                    ? (int) $rawNewTicketId
+                    : 0;
                 $kind = $postData['kindId'];
 
                 if ($ticketId == 0 && $hours > 0) {
@@ -521,8 +525,9 @@ class Timesheets extends BaseService
                 continue;
             }
 
-            // A placeholder row without a real ticket has nothing to log (and no ticket to authorize).
-            if ((int) $ticketId <= 0) {
+            // Only canonical positive integer ticket ids are logged: a malformed key such as
+            // '12abc' must not be silently cast onto ticket 12. Placeholder rows have nothing to log.
+            if (! ctype_digit((string) $ticketId) || (int) $ticketId <= 0) {
                 continue;
             }
 
