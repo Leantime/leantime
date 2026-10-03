@@ -218,6 +218,23 @@ class CalendarServiceTest extends TestCase
         ]);
     }
 
+    public function test_patch_only_forwards_allowlisted_event_columns(): void
+    {
+        $patched = null;
+        $repo = $this->make(CalendarRepository::class, [
+            'getEvent' => fn () => ['id' => 5, 'userId' => 1],
+            'patch' => function ($id, $params) use (&$patched) {
+                $patched = [$id, $params];
+
+                return true;
+            },
+        ]);
+        $service = $this->makeServiceWithPermissions($repo, $this->permissions(false));
+
+        $this->assertTrue($service->patch(5, ['id' => 99, 'userId' => 2, 'dateFrom' => '2026-01-01 10:00:00', 'act' => 'x']));
+        $this->assertSame([5, ['dateFrom' => '2026-01-01 10:00:00']], $patched, 'id/userId must never reach the repository');
+    }
+
     public function test_get_event_returns_own_event(): void
     {
         $repo = $this->make(CalendarRepository::class, [

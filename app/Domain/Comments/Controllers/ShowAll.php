@@ -48,19 +48,6 @@ class ShowAll extends Controller
         $this->tpl->assign('numComments', count($comments));
         $this->tpl->assign('comments', $comments);
 
-        // Delete comment
-        if (isset($params['delComment']) === true) {
-            $commentId = (int) ($params['delComment']);
-
-            if ($this->commentService->deleteComment($commentId)) {
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-
-                return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$this->id);
-            } else {
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');
-            }
-        }
-
         return $this->tpl->displayPartial('comments.showAll');
     }
 
@@ -69,6 +56,17 @@ class ShowAll extends Controller
      */
     public function post($params): Response
     {
+        // Delete comment (POST only: it changes data)
+        if (isset($_POST['delComment']) === true) {
+            if ($this->commentService->deleteComment((int) $_POST['delComment'])) {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.(int) ($params['entitiyId'] ?? 0));
+        }
+
         if (isset($params['comment']) === true) {
             if ($this->commentService->addComment($_POST, $this->module, $this->id, $this->entity)) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
