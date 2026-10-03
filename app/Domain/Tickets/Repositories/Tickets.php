@@ -121,7 +121,7 @@ class Tickets
     public function getStateLabels($projectId = null): array
     {
         if (Cache::has('projectsettings.'.$projectId.'.ticketlabels')) {
-            return Cache::get('projectsettings.'.$projectId.'.ticketlabels');
+            return self::withSafeLabelClasses((array) Cache::get('projectsettings.'.$projectId.'.ticketlabels'));
         }
 
         if ($projectId == null) {
@@ -174,7 +174,35 @@ class Tickets
             return $a['sortKey'] <=> $b['sortKey'];
         });
 
+        // Label settings saved before class validation existed may hold arbitrary strings.
+        $statusList = self::withSafeLabelClasses($statusList);
+
         Cache::put('projectsettings.'.$projectId.'.ticketlabels', $statusList, 3600);
+
+        return $statusList;
+    }
+
+    /**
+     * Whether a status label css class is safe to render: a plain label-* class.
+     */
+    public static function isValidLabelClass(mixed $labelClass): bool
+    {
+        return is_string($labelClass) && preg_match('/^label-[a-z0-9-]+$/', $labelClass) === 1;
+    }
+
+    /**
+     * Replace any status label class that is not a plain label-* class with label-default.
+     *
+     * @param  array<int|string, mixed>  $statusList
+     * @return array<int|string, mixed>
+     */
+    private static function withSafeLabelClasses(array $statusList): array
+    {
+        foreach ($statusList as $key => $status) {
+            if (is_array($status) && isset($status['class']) && ! self::isValidLabelClass($status['class'])) {
+                $statusList[$key]['class'] = 'label-default';
+            }
+        }
 
         return $statusList;
     }

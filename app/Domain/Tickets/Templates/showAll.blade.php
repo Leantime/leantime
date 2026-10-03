@@ -157,7 +157,7 @@
                                         @php
                                         foreach ($rowStatusLabels as $key => $label) {
                                             echo "<li class='dropdown-item'>
-                                                <a href='javascript:void(0);' class='".$label['class']."' data-label='".$tpl->escape($label['name'])."' data-value='".$row['id'].'_'.$key.'_'.$label['class']."' id='ticketStatusChange".$row['id'].$key."' >".$tpl->escape($label['name']).'</a>';
+                                                <a href='javascript:void(0);' class='".$tpl->escape($label['class'])."' data-label='".$tpl->escape($label['name'])."' data-value='".$row['id'].'_'.$key.'_'.$label['class']."' id='ticketStatusChange".$row['id'].$key."' >".$tpl->escape($label['name']).'</a>';
                                             echo '</li>';
                                         }
                                         @endphp

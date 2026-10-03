@@ -167,7 +167,7 @@ class Tickets extends BaseService
 
                 // The class is rendered into class attributes; only accept a plain label-* css class.
                 $labelClass = (string) ($params['labelClass-'.$labelKey] ?? '');
-                if (preg_match('/^label-[a-z0-9-]+$/', $labelClass) !== 1) {
+                if (! TicketRepository::isValidLabelClass($labelClass)) {
                     $labelClass = 'label-default';
                 }
 

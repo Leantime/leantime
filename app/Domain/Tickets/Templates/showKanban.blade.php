@@ -313,7 +313,7 @@
                                                             <li class="nav-header border">{!! __('dropdown.choose_status') !!}</li>
                                                             @php
                                                             foreach ($rowProjectStatuses as $statusKey => $statusOption) {
-                                                                echo "<li class='dropdown-item'><a href='javascript:void(0);' class='".$statusOption['class']."' data-label='".$tpl->escape($statusOption['name'])."' data-value='".$row['id'].'_'.$statusKey.'_'.$statusOption['class']."' id='ticketStatusChange".$row['id'].$statusKey."'>".$tpl->escape($statusOption['name']).'</a></li>';
+                                                                echo "<li class='dropdown-item'><a href='javascript:void(0);' class='".$tpl->escape($statusOption['class'])."' data-label='".$tpl->escape($statusOption['name'])."' data-value='".$row['id'].'_'.$statusKey.'_'.$statusOption['class']."' id='ticketStatusChange".$row['id'].$statusKey."'>".$tpl->escape($statusOption['name']).'</a></li>';
                                                             }
                                                             @endphp
                                                         </ul>
