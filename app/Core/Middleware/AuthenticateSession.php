@@ -20,7 +20,8 @@ use Symfony\Component\HttpFoundation\Response;
  * Login pins the session to a fingerprint of the user's password hash
  * ({@see PasswordFingerprint}). Each request compares it with the hash in the database; after a
  * password reset or change every other session of that user no longer matches and is logged
- * out. Costs one primary-key lookup per authenticated web request.
+ * out. Web sessions without a fingerprint (created before it existed) must sign in again.
+ * Costs one primary-key lookup per authenticated web request.
  */
 class AuthenticateSession implements AuthenticatesSessions
 {
@@ -48,7 +49,9 @@ class AuthenticateSession implements AuthenticatesSessions
 
         // Token-authenticated requests (x-api-key / Bearer) rebuild userdata from the credential on
         // every request and never carry a fingerprint — the token is checked instead.
-        if ($storedFingerprint === null && $request instanceof ApiRequest) {
+        $isTokenEndpoint = $request instanceof ApiRequest || $request->isApiOrCronRequest() || $request->isMcpRequest();
+
+        if ($storedFingerprint === null && $isTokenEndpoint) {
             return $next($request);
         }
 
@@ -60,11 +63,10 @@ class AuthenticateSession implements AuthenticatesSessions
 
         $currentPasswordHash = $user['password'] ?? '';
 
-        // Sessions created before fingerprints existed: pin them to the current password now.
+        // A web session without a fingerprint predates it (or was built outside the login flow).
+        // Its password state can't be verified, so it has to sign in again.
         if (! is_string($storedFingerprint) || $storedFingerprint === '') {
-            $session->put(PasswordFingerprint::SESSION_KEY, PasswordFingerprint::of($currentPasswordHash));
-
-            return $next($request);
+            return $this->endSession($request, 'session has no password fingerprint');
         }
 
         if (! PasswordFingerprint::matches($storedFingerprint, $currentPasswordHash)) {

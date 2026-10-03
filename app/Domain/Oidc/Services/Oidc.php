@@ -502,7 +502,13 @@ class Oidc
             return 'audience mismatch';
         }
 
-        if (count($audiences) > 1 && isset($claims['azp']) && $claims['azp'] !== $this->clientId) {
+        // azp identifies the party the token was issued to: required when there are several
+        // audiences, and must name this client whenever it is present.
+        if (count($audiences) > 1 && ! isset($claims['azp'])) {
+            return 'missing authorized party';
+        }
+
+        if (isset($claims['azp']) && $claims['azp'] !== $this->clientId) {
             return 'authorized party mismatch';
         }
 

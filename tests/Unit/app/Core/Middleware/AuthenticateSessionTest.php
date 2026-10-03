@@ -117,15 +117,16 @@ class AuthenticateSessionTest extends \Unit\TestCase
         $this->assertSame(1, $this->logoutCalls);
     }
 
-    public function test_legacy_session_without_fingerprint_is_pinned_to_current_password(): void
+    public function test_legacy_session_without_fingerprint_must_sign_in_again(): void
     {
         session(['userdata' => ['id' => 7]]);
 
         $reached = false;
-        $this->runMiddleware($this->middlewareWithPasswordHash('$2y$hash-current'), $this->attachSession(IncomingRequest::create('/dashboard/home')), $reached);
+        $response = $this->runMiddleware($this->middlewareWithPasswordHash('$2y$hash-current'), $this->attachSession(IncomingRequest::create('/dashboard/home')), $reached);
 
-        $this->assertTrue($reached);
-        $this->assertSame(PasswordFingerprint::of('$2y$hash-current'), session(PasswordFingerprint::SESSION_KEY));
+        $this->assertFalse($reached, 'a session whose password state cannot be verified must not be trusted');
+        $this->assertSame(1, $this->logoutCalls);
+        $this->assertTrue($response->isRedirect(BASE_URL.'/auth/login'));
     }
 
     public function test_token_authenticated_api_request_is_not_checked(): void

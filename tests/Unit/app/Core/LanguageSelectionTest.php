@@ -15,11 +15,14 @@ class LanguageSelectionTest extends \Unit\TestCase
 
     private array $cookieBackup;
 
+    private array $serverBackup;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->cookieBackup = $_COOKIE;
+        $this->serverBackup = $_SERVER;
         session()->forget(['usersettings.language', 'companysettings.language']);
         unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
     }
@@ -27,6 +30,7 @@ class LanguageSelectionTest extends \Unit\TestCase
     protected function tearDown(): void
     {
         $_COOKIE = $this->cookieBackup;
+        $_SERVER = $this->serverBackup;
 
         parent::tearDown();
     }

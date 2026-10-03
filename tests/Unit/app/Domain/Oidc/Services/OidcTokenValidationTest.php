@@ -112,6 +112,8 @@ class OidcTokenValidationTest extends \Unit\TestCase
         return [
             'token for another client' => [['aud' => 'some-other-client'], 'expected-nonce'],
             'azp of another client' => [['aud' => [self::CLIENT_ID, 'x'], 'azp' => 'x'], 'expected-nonce'],
+            'several audiences without azp' => [['aud' => [self::CLIENT_ID, 'x']], 'expected-nonce'],
+            'single audience with foreign azp' => [['azp' => 'x'], 'expected-nonce'],
             'expired token' => [['exp' => time() - 3600], 'expected-nonce'],
             'missing expiry' => [['exp' => null], 'expected-nonce'],
             'not yet valid' => [['nbf' => time() + 3600], 'expected-nonce'],
