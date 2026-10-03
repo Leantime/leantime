@@ -69,5 +69,35 @@ class FormatTest extends TestCase
 
     }
 
-    // Similarly you can add tests for other 'Format' class methods.
+    /**
+     * @return array<string, array{0: mixed, 1: string}>
+     */
+    public static function hoursMinutesCases(): array
+    {
+        return [
+            'quarter hour' => [1.25, '1h 15m'],
+            'numeric string from db' => ['1.25', '1h 15m'],
+            'looks like minutes but is not' => ['0.26', '0h 16m'],
+            'whole hours' => [8, '8h 00m'],
+            'zero' => [0, '0h 00m'],
+            'rounds to the next hour' => [1.999, '2h 00m'],
+            'negative difference' => [-0.5, '-0h 30m'],
+            'empty' => ['', ''],
+            'null' => [null, ''],
+            'not a number' => ['abc', ''],
+        ];
+    }
+
+    /**
+     * @dataProvider hoursMinutesCases
+     */
+    public function test_hours_minutes(mixed $decimalHours, string $expected): void
+    {
+        $this->assertSame($expected, Format::hoursMinutes($decimalHours));
+    }
+
+    public function test_hours_minutes_uses_translated_pattern(): void
+    {
+        $this->assertSame('1 Std. 15 Min.', Format::hoursMinutes(1.25, '%s Std. %s Min.'));
+    }
 }

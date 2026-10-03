@@ -303,6 +303,30 @@ class Format
         return number_format((float) $this->value, 2);
     }
 
+    /**
+     * Render decimal hours as hours and minutes, e.g. 1.25 -> "1h 15m", 0.26 -> "0h 16m" (#2004).
+     *
+     * Static on purpose: the Format constructor tries to parse its value as a date first, which a
+     * decimal like "1.25" must never go through. Minutes are rounded; non-numeric input yields ''.
+     *
+     * @param  mixed  $decimalHours  Hours as stored (float, int or numeric string)
+     * @param  string  $pattern  sprintf pattern receiving (hours, zero-padded minutes)
+     * @return string The formatted duration, or '' when the input is not numeric
+     */
+    public static function hoursMinutes(mixed $decimalHours, string $pattern = '%sh %sm'): string
+    {
+        if (! is_numeric($decimalHours)) {
+            return '';
+        }
+
+        $totalMinutes = (int) round(abs((float) $decimalHours) * 60);
+        $sign = (float) $decimalHours < 0 && $totalMinutes > 0 ? '-' : '';
+        $hours = intdiv($totalMinutes, 60);
+        $minutes = str_pad((string) ($totalMinutes % 60), 2, '0', STR_PAD_LEFT);
+
+        return $sign.sprintf($pattern, $hours, $minutes);
+    }
+
     public function diffForHumans(): string
     {
         if ($this->value->isToday()) {

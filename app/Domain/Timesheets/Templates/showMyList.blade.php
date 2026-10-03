@@ -119,6 +119,7 @@
                         </td>
                         <td data-order="{{ $row['hours'] }}">
                             {{ $row['hours'] ?: 0 }}
+                            <small class="tw-opacity-60 tw-whitespace-nowrap">({{ \Leantime\Core\Support\Format::hoursMinutes($row['hours'] ?: 0, __('text.hours_minutes_short')) }})</small>
                         </td>
                         <td data-order="{{ $row['planHours'] }}">
                             {{ $row['planHours'] ?: 0 }}
@@ -170,7 +171,7 @@
                     <tr>
                         <td></td>
                         <td colspan="1"><strong>{!! __('label.total_hours') !!}</strong></td>
-                        <td colspan="11"><strong>{{ $sum }}</strong></td>
+                        <td colspan="11"><strong>{{ $sum }}</strong> <small class="tw-opacity-60 tw-whitespace-nowrap">({{ \Leantime\Core\Support\Format::hoursMinutes($sum, __('text.hours_minutes_short')) }})</small></td>
                     </tr>
                 </tfoot>
             </table>
