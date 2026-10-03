@@ -1234,6 +1234,30 @@ body .maincontent .priority-text-5 a:link {
     transition: margin-left 300ms ease-out;
 }
 
+/* Desktop (>=1200px, matching mobile.css): header gets its own horizontal scroller, synced to the
+   board body via JS (see showKanban.blade.php). On mobile, #1364's fix
+   makes .kanban-board-wrapper the single scroller instead, so this must
+   not apply there or the two scroll mechanisms fight each other. */
+@media (min-width: 1200px) {
+    .kanban-column-headers {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+    }
+
+    /* When grouped, the header is shifted right by the sidebar width, so
+       its own width must shrink by the same amount to match the actual
+       scrollport of .kanban-swimlane-content -- otherwise their max
+       scrollLeft values differ and the sync script clamps short of the
+       true right edge. */
+    .kanban-column-headers.groupby-active {
+        width: calc(100% - 158px);
+        max-width: calc(100% - 158px);
+    }
+}
+
 /* Mobile: Always expanded, stack vertically */
 @media (max-width: 768px) {
     .kanban-swimlane-row {

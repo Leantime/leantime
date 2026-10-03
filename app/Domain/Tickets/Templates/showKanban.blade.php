@@ -410,6 +410,116 @@
 
     leantime.ticketsController.setUpKanbanColumns();
 
+
+    (function initKanbanHorizontalScrollSync() {
+        var header = document.querySelector('.kanban-column-headers');
+        var rows = document.querySelectorAll('.sortableTicketList.kanbanBoard .row-fluid');
+        var syncTargets = [];
+        if (header) { syncTargets.push(header); }
+        rows.forEach(function (r) { syncTargets.push(r); });
+
+        // Batch via requestAnimationFrame and skip no-op writes: setting
+        // scrollLeft on the other containers fires their own async scroll
+        // events, which can arrive after a simple boolean guard has already
+        // reset, causing a feedback loop that jitters during momentum
+        // scrolling. Comparing against the target's current scrollLeft
+        // before writing, and coalescing all pending syncs into a single
+        // rAF tick, makes this deterministic regardless of event ordering.
+        var pendingScrollLeft = null;
+        var pendingSource = null;
+        var rafScheduled = false;
+
+        function flushSync() {
+            rafScheduled = false;
+            var scrollLeft = pendingScrollLeft;
+            var source = pendingSource;
+            syncTargets.forEach(function (el) {
+                if (el !== source && el.scrollLeft !== scrollLeft) {
+                    el.scrollLeft = scrollLeft;
+                }
+            });
+        }
+
+        syncTargets.forEach(function (el) {
+            el.addEventListener('scroll', function () {
+                if (!window.matchMedia('(min-width: 1200px)').matches) { return; }
+                pendingScrollLeft = el.scrollLeft;
+                pendingSource = el;
+                if (!rafScheduled) {
+                    rafScheduled = true;
+                    window.requestAnimationFrame(flushSync);
+                }
+            });
+        });
+    })();
+
+    // Copilot review fix: the desktop-only overflow on .kanban-column-headers
+    // (needed for the scroll-sync above) also clips each column's
+    // "Edit label / Add column" dropdown menu, since Bootstrap 2's dropdown
+    // plugin just toggles an "open" class and positions the menu with
+    // ordinary `position: absolute` relative to the header -- which this
+    // element now clips. Watch for that class toggle and, only while open,
+    // switch the menu to `position: fixed` with live coordinates so it
+    // escapes the clipping scrollport; revert on close so normal layout
+    // (and the mobile/no-overflow case) is unaffected.
+    (function initKanbanHeaderDropdownEscape() {
+        var header = document.querySelector('.kanban-column-headers');
+        if (!header) return;
+
+        var containers = header.querySelectorAll('.inlineDropDownContainer');
+        containers.forEach(function (container) {
+            var menu = container.querySelector('.dropdown-menu');
+            if (!menu) return;
+
+            // position: fixed escapes the header's clipping scrollport, but
+            // its coordinates are only correct at the instant it is applied.
+            // If the page or the kanban board scrolls (or the window is
+            // resized) while the menu is open, it would otherwise stay
+            // frozen at its original spot instead of following the toggle
+            // button. Reposition on every scroll (capture: true, so it also
+            // catches scrolling on the header/row containers themselves,
+            // which don't bubble a window scroll event) and on resize while
+            // open, and stop listening as soon as it closes.
+            function reposition() {
+                var rect = container.getBoundingClientRect();
+                menu.style.position = 'fixed';
+                menu.style.top = rect.bottom + 'px';
+                menu.style.left = 'auto';
+                menu.style.right = (window.innerWidth - rect.right) + 'px';
+                menu.style.zIndex = '1051';
+            }
+
+            function reset() {
+                menu.style.position = '';
+                menu.style.top = '';
+                menu.style.left = '';
+                menu.style.right = '';
+                menu.style.zIndex = '';
+            }
+
+            function syncMenu() {
+                if (window.matchMedia('(min-width: 1200px)').matches) {
+                    reposition();
+                } else {
+                    reset();
+                }
+            }
+
+            var observer = new MutationObserver(function () {
+                if (container.classList.contains('open')) {
+                    syncMenu();
+                    window.addEventListener('scroll', syncMenu, true);
+                    window.addEventListener('resize', syncMenu);
+                } else {
+                    reset();
+                    window.removeEventListener('scroll', syncMenu, true);
+                    window.removeEventListener('resize', syncMenu);
+                }
+            });
+            observer.observe(container, { attributes: true, attributeFilter: ['class'] });
+        });
+    })();
+
         @if (isset($_GET['showTicketModal']))
             @php
                 $modalUrl = $_GET['showTicketModal'] == '' ? '' : '/'.(int) $_GET['showTicketModal'];
