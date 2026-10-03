@@ -66,6 +66,11 @@ class ShowAllMilestonesOverview extends Controller
         ]));
         $this->tpl->assign('types', $this->ticketService->getTicketTypes());
 
+        // The shared ticket filter + "New" button expect these option lists.
+        $this->tpl->assign('groupByOptions', $this->ticketService->getGroupByFieldOptions());
+        $this->tpl->assign('sortOptions', $this->ticketService->getSortByFieldOptions());
+        $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
+
         return $this->tpl->display('tickets.showAllMilestonesOverview');
     }
 }

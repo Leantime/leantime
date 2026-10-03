@@ -455,3 +455,22 @@
 .fc-scrollgrid .fc-scrollgrid-section:first-child .fc-scroller-harness {
     box-shadow: var(--regular-shadow);
 }
+
+/* Dashboard calendar widget, Month view (#2333): FullCalendar's multiMonth view
+   sizes each month from an aspect ratio and writes that height inline on the
+   table, so a single month left the bottom half of the widget empty. Stretch
+   the one month to the widget's height instead; rows still grow (and the view
+   scrolls) when a day holds more events than fit. */
+.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-month {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-daygrid {
+    flex: 1 1 auto;
+}
+
+.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-daygrid-table {
+    height: 100% !important;
+}
