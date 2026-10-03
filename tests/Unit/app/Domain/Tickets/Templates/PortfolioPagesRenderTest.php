@@ -106,6 +106,9 @@ class PortfolioPagesRenderTest extends TestCase
 
         $this->assertStringContainsString('/tickets/roadmapAll', $html);
         $this->assertStringContainsString('allTicketsTable', $html);
+        // initMilestoneTable() binds DataTables + Buttons to .ticketTable; without the
+        // class it ran on an empty set and threw "reading '_buttons'".
+        $this->assertMatchesRegularExpression('/<table id="allTicketsTable" class="[^"]*\\bticketTable\\b/', $html);
     }
 
     /**
