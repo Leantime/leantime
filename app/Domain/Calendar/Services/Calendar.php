@@ -417,6 +417,10 @@ class Calendar extends BaseService
             throw new \Exception('Calendar could not be retrieved');
         }
 
+        // The feed is fetched without a login, so the owner's timezone comes from the session
+        // value the repository sets for the feed owner — not the request's (default) timezone.
+        $ownerTimezone = (string) (session('usersettings.timezone') ?: 'UTC');
+
         $eventObjects = [];
         // Create array of event objects for ical generator
         foreach ($calendarEvents as $event) {
@@ -425,16 +429,26 @@ class Calendar extends BaseService
 
                 $description = str_replace("\r\n", '\\n', strip_tags($event['description']));
 
+                // Timed events go out in UTC ("...Z"). A TZID-qualified local time is read as a
+                // floating wall-clock time by consumers that don't resolve VTIMEZONE (including
+                // Leantime's own calendar import), which shifted events by the zone offset
+                // (#3114). All-day events need the owner's calendar date, so they keep the
+                // owner's timezone.
+                $isAllDay = $event['allDay'] === true;
+                $eventTimezone = $isAllDay ? $ownerTimezone : 'UTC';
+                $startsAt = dtHelper()->parseDbDateTime($event['dateFrom'])->setTimezone($eventTimezone);
+                $endsAt = dtHelper()->parseDbDateTime($event['dateTo'])->setTimezone($eventTimezone);
+
                 $currentEvent = IcalEvent::create()
                     ->image(BASE_URL.'/dist/images/favicon.png', 'image/png', Display::badge())
-                    ->startsAt(dtHelper()->parseDbDateTime($event['dateFrom'])->setToUserTimezone())
-                    ->endsAt(dtHelper()->parseDbDateTime($event['dateTo'])->setToUserTimezone())
+                    ->startsAt($startsAt)
+                    ->endsAt($endsAt)
                     ->name($event['title'])
                     ->description($description)
                     ->uniqueIdentifier($event['id'])
                     ->url($event['url'] ?? '');
 
-                if ($event['allDay'] === true) {
+                if ($isAllDay) {
                     $currentEvent->fullDay();
                 }
 

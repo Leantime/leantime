@@ -473,4 +473,50 @@ class CalendarServiceTest extends TestCase
 
         $this->assertCount(0, $handlerCalls);
     }
+
+    /**
+     * A calendar service whose repository returns $events for the feed owner.
+     *
+     * @param  array<int, array<string, mixed>>  $events
+     */
+    private function calendarWithFeedEvents(array $events): \Leantime\Domain\Calendar\Services\Calendar
+    {
+        return new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->make(CalendarRepository::class, ['getCalendarBySecretHash' => fn () => $events]),
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: $this->make(OutboundHttpClient::class)
+        );
+    }
+
+    public function test_ical_feed_emits_timed_events_in_utc(): void
+    {
+        // The feed owner's zone; a TZID-qualified local time would be read as floating (#3114).
+        session(['usersettings.timezone' => 'Europe/Zurich']);
+
+        $ics = $this->calendarWithFeedEvents([[
+            'id' => 1, 'title' => 'Meeting', 'description' => '', 'url' => '',
+            'dateFrom' => '2025-04-16 08:00:00', 'dateTo' => '2025-04-16 09:00:00',
+            'allDay' => false, 'eventType' => 'calendar', 'dateContext' => 'plan',
+        ]])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertStringContainsString('DTSTART:20250416T080000Z', $ics);
+        $this->assertStringContainsString('DTEND:20250416T090000Z', $ics);
+        $this->assertStringNotContainsString('DTSTART;TZID', $ics);
+    }
+
+    public function test_ical_feed_keeps_all_day_events_on_the_owners_date(): void
+    {
+        session(['usersettings.timezone' => 'Europe/Zurich']);
+
+        // Midnight 17 April in Zurich is 22:00 UTC on the 16th.
+        $ics = $this->calendarWithFeedEvents([[
+            'id' => 2, 'title' => 'Offsite', 'description' => '', 'url' => '',
+            'dateFrom' => '2025-04-16 22:00:00', 'dateTo' => '2025-04-17 21:59:00',
+            'allDay' => true, 'eventType' => 'calendar', 'dateContext' => 'plan',
+        ]])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertMatchesRegularExpression('/DTSTART[^:\\r\\n]*VALUE=DATE:20250417/', $ics);
+    }
 }
