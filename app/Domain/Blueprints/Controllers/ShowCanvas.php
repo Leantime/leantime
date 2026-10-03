@@ -7,6 +7,7 @@ namespace Leantime\Domain\Blueprints\Controllers;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\UI\Template;
@@ -374,7 +375,7 @@ class ShowCanvas
         $message = sprintf(
             $this->language->__($messageKey),
             session('userdata.name'),
-            "<a href='".CURRENT_URL."'>".strip_tags($boardTitle).'</a>'
+            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($boardTitle).'</a>'
         );
         $mailer->setHtml($message);
 

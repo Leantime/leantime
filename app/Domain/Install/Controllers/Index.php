@@ -5,6 +5,7 @@ namespace Leantime\Domain\Install\Controllers;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Domain\Install\Services\Install as InstallService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -60,6 +61,9 @@ class Index extends Controller
             }
 
             if ($this->installService->runInstall($values)) {
+                // The installer is the first trustworthy moment to learn the URL email links use.
+                app()->make(TrustedAppUrl::class)->learnFromInstall($this->incomingRequest);
+
                 $this->tpl->setNotification(sprintf($this->language->__('notifications.installation_success_setup_account'), BASE_URL), 'success');
 
                 if (session()->has('pwReset')) {
