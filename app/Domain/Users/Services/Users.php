@@ -403,16 +403,19 @@ class Users extends BaseService
      * The user exists even when the email fails (e.g. bad SMTP settings); the admin can fix the
      * mail settings and resend, so the caller must be able to tell them (#1795).
      *
-     * Role ceiling: the requested role may not exceed the caller's own role. Callers below admin
-     * can only invite into their own client.
+     * Requires users.create here, not only at the entry points, because other services (e.g. the
+     * onboarding invite step) call it directly. Role ceiling: the requested role may not exceed the
+     * caller's own role. Callers below admin can only invite into their own client.
      *
      * @param  array  $values  The new user's values.
      * @return false|array{userId: string, emailSent: bool} False when the user wasn't created.
      *
-     * @throws AuthorizationException When the requested role is above the caller's role.
+     * @throws AuthorizationException When the caller may not create users or the requested role
+     *                                is above the caller's role.
      */
     public function createUserInviteWithStatus(array $values): false|array
     {
+        $this->authorize(UsersPermissions::CREATE, forceGlobal: true);
         $this->assertRoleAssignable($values['role'] ?? '');
 
         if ($this->callerIsBelowAdmin()) {

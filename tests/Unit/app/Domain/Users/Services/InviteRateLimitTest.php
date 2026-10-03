@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Users\Services;
 
 use Illuminate\Support\Facades\RateLimiter;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\UI\Theme as ThemeCore;
@@ -71,6 +72,9 @@ class InviteRateLimitTest extends TestCase
             $this->createMock(ThemeCore::class),
             $this->createMock(ProjectService::class),
         );
+        $permissions = $this->createMock(PermissionService::class);
+        $permissions->method('currentUserCan')->willReturn(true);
+        $service->setPermissionService($permissions);
 
         $result = $service->createUserInvite([
             'user' => 'newuser@example.com',

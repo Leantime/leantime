@@ -208,4 +208,24 @@ class UserRoleCeilingTest extends TestCase
         $this->assertTrue($service->editUser(['firstname' => 'Ann', 'role' => 40], 12));
         $this->assertTrue($edited);
     }
+
+    public function test_invites_require_users_create_even_when_called_from_another_service(): void
+    {
+        $this->actAs('editor');
+        $service = $this->makeService([
+            'addUser' => function () {
+                $this->fail('no account may be created without users.create');
+            },
+        ]);
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'currentUserCan' => fn () => false,
+            'authorize' => function (): void {
+                throw new AuthorizationException;
+            },
+        ]));
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->createUserInviteWithStatus(['user' => 'peer@example.com', 'role' => '20']);
+    }
 }
