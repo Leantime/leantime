@@ -394,6 +394,37 @@ class CalendarServiceTest extends TestCase
     }
 
     /**
+     * #3236: the dashboard calendar widget can hide done To-Dos. getCalendar() forwards the flag
+     * to the ticket query and keeps including them by default (existing callers unchanged).
+     */
+    public function test_get_calendar_forwards_include_done_tickets_flag(): void
+    {
+        $includeDoneArgs = new \ArrayObject;
+
+        $tickets = $this->make(Tickets::class, [
+            'getOpenUserTicketsThisWeekAndLater' => function ($userId, $projectId = null, bool $includeDoneTickets = false) use ($includeDoneArgs) {
+                $includeDoneArgs->append($includeDoneTickets);
+
+                return [];
+            },
+        ]);
+        app()->instance(Tickets::class, $tickets);
+
+        $service = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->make(CalendarRepository::class, ['getAll' => fn () => []]),
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
+        );
+
+        $service->getCalendar(1);
+        $service->getCalendar(1, includeDoneTickets: false);
+
+        $this->assertSame([true, false], $includeDoneArgs->getArrayCopy());
+    }
+
+    /**
      * Builds a Calendar service whose outbound client records each request it would send.
      *
      * @param  \ArrayObject  $sentRequests  Collects [url, options] pairs.
