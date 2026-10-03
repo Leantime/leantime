@@ -497,15 +497,23 @@
                 menu.style.zIndex = '';
             }
 
-            var observer = new MutationObserver(function () {
-                if (container.classList.contains('open') && window.matchMedia('(min-width: 1200px)').matches) {
+            function syncMenu() {
+                if (window.matchMedia('(min-width: 1200px)').matches) {
                     reposition();
-                    window.addEventListener('scroll', reposition, true);
-                    window.addEventListener('resize', reposition);
                 } else {
                     reset();
-                    window.removeEventListener('scroll', reposition, true);
-                    window.removeEventListener('resize', reposition);
+                }
+            }
+
+            var observer = new MutationObserver(function () {
+                if (container.classList.contains('open')) {
+                    syncMenu();
+                    window.addEventListener('scroll', syncMenu, true);
+                    window.addEventListener('resize', syncMenu);
+                } else {
+                    reset();
+                    window.removeEventListener('scroll', syncMenu, true);
+                    window.removeEventListener('resize', syncMenu);
                 }
             });
             observer.observe(container, { attributes: true, attributeFilter: ['class'] });
