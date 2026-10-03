@@ -77,7 +77,7 @@
 @once @push('scripts')
 <script type="text/javascript">
 
-    jQuery(window).load(function () {
+    jQuery(function () {
         leantime.ticketsController.initTicketTabs();
 
         jQuery(window).resize();
