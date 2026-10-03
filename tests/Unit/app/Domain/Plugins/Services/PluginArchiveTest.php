@@ -85,6 +85,29 @@ class PluginArchiveTest extends TestCase
         $this->assertSame($publicKey, file_get_contents($pluginDir.'/Notes.phar.pubkey'));
     }
 
+    public function test_install_swaps_in_place_and_leaves_no_staging_directories(): void
+    {
+        [$phar, $publicKey] = $this->opensslSignedPhar();
+        $pluginDir = $this->existingPluginDir();
+        file_put_contents($pluginDir.'/stale-file.php', 'from the old version');
+
+        (new PluginArchive)->install($this->makeZip(['Notes.phar' => $phar, 'Notes.phar.pubkey' => $publicKey]), 'Notes', $pluginDir);
+
+        $this->assertFileDoesNotExist($pluginDir.'/stale-file.php');
+        $this->assertSame(['Notes'], array_values(array_diff(scandir(dirname($pluginDir)), ['.', '..'])));
+    }
+
+    public function test_installs_when_no_previous_version_exists(): void
+    {
+        [$phar, $publicKey] = $this->opensslSignedPhar();
+        $pluginDir = $this->workDir.'/plugins/Fresh';
+        mkdir(dirname($pluginDir), 0700, true);
+
+        (new PluginArchive)->install($this->makeZip(['Fresh.phar' => $phar, 'Fresh.phar.pubkey' => $publicKey]), 'Fresh', $pluginDir);
+
+        $this->assertSame($phar, file_get_contents($pluginDir.'/Fresh.phar'));
+    }
+
     public function test_refuses_a_tampered_phar_and_keeps_the_installed_version(): void
     {
         [$phar, $publicKey] = $this->opensslSignedPhar();

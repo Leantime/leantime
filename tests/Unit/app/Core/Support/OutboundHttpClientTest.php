@@ -229,6 +229,56 @@ namespace Unit\app\Core\Support {
             $this->assertSame('', $this->handledRequests[1]['request']->getHeaderLine('Authorization'));
         }
 
+        public function test_redirect_to_another_origin_on_the_same_host_drops_credentials(): void
+        {
+            $this->fakeDns(['chat.example.test' => [self::PUBLIC_V4]]);
+
+            // Same host, but https -> http and a different port: a different origin.
+            $this->makeClient([
+                new Response(302, ['Location' => 'http://chat.example.test:8080/other']),
+                new Response(200),
+            ])->get('https://chat.example.test/api', ['auth' => ['bot', 'secret']]);
+
+            $this->assertNotSame('', $this->handledRequests[0]['request']->getHeaderLine('Authorization'));
+            $this->assertSame('', $this->handledRequests[1]['request']->getHeaderLine('Authorization'));
+        }
+
+        public function test_redirect_to_another_host_drops_credential_headers(): void
+        {
+            $this->fakeDns([
+                'chat.example.test' => [self::PUBLIC_V4],
+                'other.example.test' => [self::OTHER_PUBLIC_V4],
+            ]);
+
+            $this->makeClient([
+                new Response(302, ['Location' => 'https://other.example.test/']),
+                new Response(200),
+            ])->get('https://chat.example.test/api', ['headers' => [
+                'authorization' => 'Bearer secret',
+                'Proxy-Authorization' => 'Basic x',
+                'Cookie' => 'session=1',
+                'Accept' => 'text/calendar',
+            ]]);
+
+            $second = $this->handledRequests[1]['request'];
+            $this->assertSame('', $second->getHeaderLine('Authorization'));
+            $this->assertSame('', $second->getHeaderLine('Proxy-Authorization'));
+            $this->assertSame('', $second->getHeaderLine('Cookie'));
+            $this->assertSame('text/calendar', $second->getHeaderLine('Accept'));
+        }
+
+        public function test_same_origin_redirect_keeps_credentials(): void
+        {
+            $this->fakeDns(['chat.example.test' => [self::PUBLIC_V4]]);
+
+            $this->makeClient([
+                new Response(302, ['Location' => '/v2/api']),
+                new Response(200),
+            ])->get('https://chat.example.test/api', ['auth' => ['bot', 'secret']]);
+
+            $this->assertNotSame('', $this->handledRequests[1]['request']->getHeaderLine('Authorization'));
+        }
+
         public function test_post_does_not_follow_redirects(): void
         {
             $this->fakeDns(['hooks.example.test' => [self::PUBLIC_V4]]);

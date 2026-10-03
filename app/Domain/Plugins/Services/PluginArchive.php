@@ -46,8 +46,9 @@ class PluginArchive
     /**
      * Verifies $zipPath and installs its content into $pluginDir, replacing what was there.
      *
-     * The existing plugin directory is only removed once the new archive has been fully verified,
-     * so a bad download leaves the installed version untouched.
+     * The existing plugin directory is only replaced once the new archive has been fully verified,
+     * and the replacement is a rename swap, so a bad download or a failed copy leaves the installed
+     * version untouched.
      *
      * @param  string  $zipPath  The downloaded archive.
      * @param  string  $folderName  The plugin folder name; the archive must hold `{folderName}.phar`.
@@ -62,17 +63,56 @@ class PluginArchive
 
         try {
             $this->extractVerified($zipPath, $folderName, $stagingDir);
-
-            if (is_dir($pluginDir) && ! File::deleteDirectory($pluginDir)) {
-                throw new \RuntimeException(__('notification.plugin_cant_remove'));
-            }
-
-            if (! File::copyDirectory($stagingDir, $pluginDir)) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
-            }
+            $this->swapInto($stagingDir, $pluginDir);
         } finally {
             if (is_dir($stagingDir)) {
                 File::deleteDirectory($stagingDir);
+            }
+        }
+    }
+
+    /**
+     * Replaces $pluginDir with the verified content of $stagingDir without ever leaving it
+     * missing or half-written: the content is first copied next to the plugin directory (same
+     * filesystem), then the old directory is renamed aside and the new one renamed into place.
+     * If the swap fails the previous version is restored.
+     *
+     * @param  string  $stagingDir  The verified, extracted archive.
+     * @param  string  $pluginDir  The target plugin directory.
+     *
+     * @throws \RuntimeException When the new version can't be put in place.
+     */
+    private function swapInto(string $stagingDir, string $pluginDir): void
+    {
+        $pluginDir = rtrim($pluginDir, '/\\');
+        $parentDir = dirname($pluginDir);
+        $suffix = bin2hex(random_bytes(8));
+        $incomingDir = $parentDir.DIRECTORY_SEPARATOR.'.'.basename($pluginDir).'.incoming-'.$suffix;
+        $backupDir = $parentDir.DIRECTORY_SEPARATOR.'.'.basename($pluginDir).'.previous-'.$suffix;
+
+        try {
+            if (! File::copyDirectory($stagingDir, $incomingDir)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
+            }
+
+            $hadPreviousVersion = is_dir($pluginDir);
+            if ($hadPreviousVersion && ! @rename($pluginDir, $backupDir)) {
+                throw new \RuntimeException(__('notification.plugin_cant_remove'));
+            }
+
+            if (! @rename($incomingDir, $pluginDir)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
+            }
+        } finally {
+            // A failed swap puts the previous version back before anything is cleaned up.
+            if (! is_dir($pluginDir) && is_dir($backupDir)) {
+                @rename($backupDir, $pluginDir);
+            }
+
+            foreach ([$incomingDir, $backupDir] as $leftover) {
+                if (is_dir($leftover)) {
+                    File::deleteDirectory($leftover);
+                }
             }
         }
     }

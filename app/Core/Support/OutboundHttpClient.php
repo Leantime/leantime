@@ -28,7 +28,8 @@ use Psr\Http\Message\UriInterface;
  * Always cURL (a stream handler can't honour the pin), never a proxy (it would resolve the host
  * itself), TLS verification always on, and bounded by a connect and a total timeout. Redirects are
  * followed only for GET/HEAD, by this class rather than Guzzle, so every hop is validated and
- * pinned again; any other method treats a 3xx as the final response.
+ * pinned again; any other method treats a 3xx as the final response. A redirect to another
+ * origin (scheme, host or port) drops every credential option and header.
  *
  * Throws {@see \InvalidArgumentException} when a URL (or a redirect target) is not allowed, and
  * Guzzle's exceptions for transfer failures.
@@ -199,13 +200,44 @@ class OutboundHttpClient
 
             $nextUri = UriResolver::resolve($uri, new Uri($location));
 
-            // Credentials are for the original host only; never forward them to another one.
-            if ($nextUri->getHost() !== $uri->getHost()) {
-                unset($options['auth']);
+            // Credentials are for the original origin only; never forward them to another one.
+            if (self::origin($nextUri) !== self::origin($uri)) {
+                $options = self::withoutCredentials($options);
             }
 
             $uri = $nextUri;
         }
+    }
+
+    /**
+     * The origin (scheme, host, effective port) of a URI.
+     */
+    private static function origin(UriInterface $uri): string
+    {
+        $port = $uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80);
+
+        return $uri->getScheme().'://'.$uri->getHost().':'.$port;
+    }
+
+    /**
+     * Request options with every credential-bearing option and header removed.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private static function withoutCredentials(array $options): array
+    {
+        unset($options['auth'], $options['cookies'], $options['cert'], $options['ssl_key']);
+
+        if (isset($options['headers']) && is_array($options['headers'])) {
+            $options['headers'] = array_filter(
+                $options['headers'],
+                fn ($name) => ! in_array(strtolower((string) $name), ['authorization', 'proxy-authorization', 'cookie'], true),
+                ARRAY_FILTER_USE_KEY
+            );
+        }
+
+        return $options;
     }
 
     /**

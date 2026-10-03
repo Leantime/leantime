@@ -695,9 +695,16 @@ class Plugins
 
         $this->clearCache();
 
-        // The archive is code this server will run, so its download always verifies TLS (unlike
-        // the other marketplace calls made through httpClient()).
-        $response = Http::timeout($this->timeout)->withHeaders([
+        // The archive is code this server will run, so it is only ever fetched over verified
+        // HTTPS (unlike the other marketplace calls made through httpClient()): the marketplace
+        // URL must be https and redirects may not leave https.
+        if (strtolower((string) parse_url($this->marketplaceUrl, PHP_URL_SCHEME)) !== 'https') {
+            throw new \Exception(__('notification.plugin_cant_download'));
+        }
+
+        $response = Http::timeout($this->timeout)->withOptions([
+            'allow_redirects' => ['max' => 5, 'strict' => true, 'referer' => false, 'protocols' => ['https']],
+        ])->withHeaders([
             'X-License-Key' => $plugin->license,
             'X-Instance-Id' => $this->settingsService->getCompanyId(),
             'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
