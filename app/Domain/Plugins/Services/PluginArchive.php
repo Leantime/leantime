@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Plugins\Services;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Verifies and unpacks a downloaded marketplace plugin archive.
@@ -75,7 +76,8 @@ class PluginArchive
      * Replaces $pluginDir with the verified content of $stagingDir without ever leaving it
      * missing or half-written: the content is first copied next to the plugin directory (same
      * filesystem), then the old directory is renamed aside and the new one renamed into place.
-     * If the swap fails the previous version is restored.
+     * If the swap fails the previous version is restored; if even that fails, the backup is kept
+     * (never deleted) and the error names it.
      *
      * @param  string  $stagingDir  The verified, extracted archive.
      * @param  string  $pluginDir  The target plugin directory.
@@ -90,30 +92,43 @@ class PluginArchive
         $incomingDir = $parentDir.DIRECTORY_SEPARATOR.'.'.basename($pluginDir).'.incoming-'.$suffix;
         $backupDir = $parentDir.DIRECTORY_SEPARATOR.'.'.basename($pluginDir).'.previous-'.$suffix;
 
-        try {
-            if (! File::copyDirectory($stagingDir, $incomingDir)) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
+        if (! File::copyDirectory($stagingDir, $incomingDir)) {
+            self::removeDirectory($incomingDir);
+
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
+        }
+
+        $hadPreviousVersion = is_dir($pluginDir);
+        if ($hadPreviousVersion && ! @rename($pluginDir, $backupDir)) {
+            self::removeDirectory($incomingDir);
+
+            throw new \RuntimeException(__('notification.plugin_cant_remove'));
+        }
+
+        if (! @rename($incomingDir, $pluginDir)) {
+            self::removeDirectory($incomingDir);
+
+            if ($hadPreviousVersion && ! @rename($backupDir, $pluginDir)) {
+                // Keep the backup: it is the only intact copy of the previous version.
+                Log::error('Plugin install could not restore the previous version', ['backup' => $backupDir]);
+
+                throw new \RuntimeException(sprintf('Plugin update failed; the previous version was kept at "%s"', $backupDir));
             }
 
-            $hadPreviousVersion = is_dir($pluginDir);
-            if ($hadPreviousVersion && ! @rename($pluginDir, $backupDir)) {
-                throw new \RuntimeException(__('notification.plugin_cant_remove'));
-            }
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
+        }
 
-            if (! @rename($incomingDir, $pluginDir)) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
-            }
-        } finally {
-            // A failed swap puts the previous version back before anything is cleaned up.
-            if (! is_dir($pluginDir) && is_dir($backupDir)) {
-                @rename($backupDir, $pluginDir);
-            }
+        // The new version is in place; only now is the previous one discarded.
+        self::removeDirectory($backupDir);
+    }
 
-            foreach ([$incomingDir, $backupDir] as $leftover) {
-                if (is_dir($leftover)) {
-                    File::deleteDirectory($leftover);
-                }
-            }
+    /**
+     * Deletes a directory if it exists.
+     */
+    private static function removeDirectory(string $directory): void
+    {
+        if (is_dir($directory)) {
+            File::deleteDirectory($directory);
         }
     }
 
