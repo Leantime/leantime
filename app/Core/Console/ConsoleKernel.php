@@ -11,6 +11,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
@@ -20,6 +21,11 @@ use Symfony\Component\Finder\Finder;
 class ConsoleKernel extends Kernel implements ConsoleKernelContract
 {
     use DispatchesEvents;
+
+    /**
+     * Whether enabled user plugins were already loaded for this console run.
+     */
+    private bool $pluginsLoaded = false;
 
     protected $app;
 
@@ -55,6 +61,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         $this->app->loadDeferredProviders();
 
+        $this->loadEnabledPlugins();
+
         if (! $this->commandsLoaded) {
             $this->commands();
 
@@ -63,6 +71,29 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             }
 
             $this->commandsLoaded = true;
+        }
+    }
+
+    /**
+     * Loads enabled user plugins for console runs.
+     *
+     * Web requests load them in the LoadPlugins middleware, which never runs here, so without this
+     * scheduled jobs, listeners and language strings registered by plugins were missing from
+     * schedule:run, queue workers and commands. Skipped quietly before install (no database yet).
+     */
+    private function loadEnabledPlugins(): void
+    {
+        if ($this->pluginsLoaded) {
+            return;
+        }
+
+        $this->pluginsLoaded = true;
+
+        try {
+            EventDispatcher::loadEnabledPluginRegisterFiles();
+            self::dispatchEvent('pluginsEvents', [], 'leantime.core.middleware.loadplugins.handle');
+        } catch (\Throwable $e) {
+            Log::warning('Plugins were not loaded for this console run: '.$e->getMessage());
         }
     }
 
