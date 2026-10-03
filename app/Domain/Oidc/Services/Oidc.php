@@ -524,7 +524,11 @@ class Oidc
             return 'token not yet valid';
         }
 
-        if (isset($claims['iat']) && (! is_numeric($claims['iat']) || (int) $claims['iat'] - self::CLOCK_LEEWAY_SECONDS > $now)) {
+        if (! isset($claims['iat']) || ! is_numeric($claims['iat'])) {
+            return 'missing issue time';
+        }
+
+        if ((int) $claims['iat'] - self::CLOCK_LEEWAY_SECONDS > $now) {
             return 'token issued in the future';
         }
 

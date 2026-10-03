@@ -118,6 +118,8 @@ class OidcTokenValidationTest extends \Unit\TestCase
             'missing expiry' => [['exp' => null], 'expected-nonce'],
             'not yet valid' => [['nbf' => time() + 3600], 'expected-nonce'],
             'issued in the future' => [['iat' => time() + 3600], 'expected-nonce'],
+            'missing issue time' => [['iat' => null], 'expected-nonce'],
+            'non-numeric issue time' => [['iat' => 'yesterday'], 'expected-nonce'],
             'nonce from another login' => [['nonce' => 'replayed'], 'expected-nonce'],
             'missing nonce' => [['nonce' => null], 'expected-nonce'],
             'no nonce stored in session' => [[], ''],
