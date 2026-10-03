@@ -58,10 +58,11 @@ class AuthCheck
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-        // Token-authenticated endpoints must be addressed by their canonical path. A path that only
-        // resolves to the API after decoding/normalization (e.g. /%61pi/jsonrpc, /api//jsonrpc) is
-        // rejected outright so classification and routing can never disagree.
-        if (($request->isApiOrCronRequest() || $request->isMcpRequest()) && $request->hasNonCanonicalPath()) {
+        // API, cron and MCP endpoints must be addressed by their canonical path. A path that only
+        // resolves to them after decoding/normalization (e.g. /%61pi/jsonrpc, /api//jsonrpc) is
+        // rejected outright so classification and routing can never disagree. Static assets are
+        // exempt: they are plain files whose names may legitimately be percent-encoded.
+        if ($this->mustUseCanonicalPath($request) && $request->hasNonCanonicalPath()) {
             return new Response(json_encode(['error' => 'Invalid request path']), Response::HTTP_BAD_REQUEST);
         }
 
@@ -217,15 +218,47 @@ class AuthCheck
             }
         }
 
-        // A logged-in browser session that has not finished 2FA is not a credential-guessing
-        // attempt; reject it without counting against the per-IP failed-auth budget.
-        if ($sessionAwaitingTwoFA) {
+        // A logged-in browser session that has not finished 2FA, and that presented no API key or
+        // Bearer token, is not a credential-guessing attempt; reject it without counting against
+        // the per-IP failed-auth budget. Any attempted token is always counted.
+        if ($sessionAwaitingTwoFA && ! $this->presentedApiCredential($request)) {
             return new Response(json_encode(['error' => 'Two-factor authentication required']), 401);
         }
 
         $this->hitFailedAuthLimiter($request);
 
         return new Response(json_encode(['error' => 'Unauthorized']), 401);
+    }
+
+    /**
+     * Whether $request targets an endpoint that must be addressed by its canonical path: any API
+     * path (except static assets), cron, or MCP.
+     */
+    protected function mustUseCanonicalPath(IncomingRequest $request): bool
+    {
+        if ($request->isApiOrCronRequest() || $request->isMcpRequest()) {
+            return true;
+        }
+
+        if (! $request->isApiRequest()) {
+            return false;
+        }
+
+        return ($request->normalizedSegments()[1] ?? '') !== 'static-asset';
+    }
+
+    /**
+     * Whether the request carries an explicit API credential (API key or Bearer token).
+     */
+    protected function presentedApiCredential(IncomingRequest $request): bool
+    {
+        if ($request->headers->has('x-api-key')) {
+            return true;
+        }
+
+        $bearer = method_exists($request, 'getBearerToken') ? $request->getBearerToken() : $request->bearerToken();
+
+        return ! empty($bearer);
     }
 
     /**

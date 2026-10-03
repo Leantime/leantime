@@ -81,7 +81,7 @@ class ApiKey extends Controller
 
                     $this->tpl->setNotification($this->language->__('notifications.key_updated'), 'success', 'apikey_updated');
                 } catch (AuthorizationException $e) {
-                    $this->tpl->setNotification($this->language->__('notification.role_not_allowed'), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.apikey_update_not_allowed'), 'error');
                 }
             } else {
                 $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');

@@ -243,7 +243,11 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function hasNonCanonicalPath(): bool
     {
-        $rawPath = strtolower(trim($this->getPathInfo(), '/'));
+        // Strip at most ONE leading and ONE trailing slash, so duplicated edge slashes
+        // (//api/jsonrpc, /api/jsonrpc//) are flagged as well.
+        $rawPath = strtolower($this->getPathInfo());
+        $rawPath = str_starts_with($rawPath, '/') ? substr($rawPath, 1) : $rawPath;
+        $rawPath = str_ends_with($rawPath, '/') ? substr($rawPath, 0, -1) : $rawPath;
         $canonicalPath = implode('/', $this->normalizedSegments());
 
         return $rawPath !== $canonicalPath;

@@ -94,7 +94,7 @@ class IncomingRequestClassificationTest extends \Unit\TestCase
 
     public function test_non_canonical_paths_are_flagged(): void
     {
-        foreach (['/%61pi/jsonrpc', '/api//jsonrpc', '/api%2Fjsonrpc', '/api/jsonrpc//x'] as $uri) {
+        foreach (['/%61pi/jsonrpc', '/api//jsonrpc', '/api%2Fjsonrpc', '/api/jsonrpc//x', '//api/jsonrpc', '/api/jsonrpc//'] as $uri) {
             $this->assertTrue($this->requestFor($uri)->hasNonCanonicalPath(), $uri);
         }
 

@@ -230,4 +230,47 @@ class AuthCheckTest extends \Unit\TestCase
 
         $this->assertSame(400, $response->getStatusCode());
     }
+
+    public function test_pending_two_factor_session_does_not_waive_the_limiter_for_token_guesses(): void
+    {
+        session(['userdata' => ['id' => 3, 'role' => 'editor', 'twoFAEnabled' => true, 'twoFAVerified' => false]]);
+        $limiterHits = 0;
+        $authCheck = $this->authCheckWithGuards(['leantime' => $this->loggedInSessionGuard()], $limiterHits);
+
+        app()->instance(\Leantime\Domain\Auth\Services\Auth::class, $this->make(\Leantime\Domain\Auth\Services\Auth::class, [
+            'getUserByToken' => fn () => false,
+        ]));
+
+        $request = ApiRequest::create('/api/jsonrpc', 'POST', server: [
+            'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest',
+            'HTTP_AUTHORIZATION' => 'Bearer guessed-token',
+        ]);
+
+        $result = $this->authenticateApi($authCheck, $request, ['leantime']);
+
+        $this->assertSame(401, $result->getStatusCode());
+        $this->assertSame(1, $limiterHits, 'an attempted token must always count as a failed attempt');
+    }
+
+    public function test_canonical_path_is_required_on_every_api_path_except_static_assets(): void
+    {
+        $authCheck = $this->make(AuthCheck::class);
+        $mustUseCanonicalPath = fn (string $uri) => (fn () => $this->mustUseCanonicalPath(
+            new IncomingRequest([], [], [], [], [], [
+                'REQUEST_URI' => $uri,
+                'REQUEST_METHOD' => 'GET',
+                'SCRIPT_NAME' => '/index.php',
+                'PHP_SELF' => '/index.php',
+                'HTTP_HOST' => 'localhost',
+            ])
+        ))->call($authCheck);
+
+        $this->assertTrue($mustUseCanonicalPath('/api/files'));
+        $this->assertTrue($mustUseCanonicalPath('/api/blueprints/swot'));
+        $this->assertTrue($mustUseCanonicalPath('/api/jsonrpc'));
+        $this->assertTrue($mustUseCanonicalPath('/mcp'));
+        $this->assertTrue($mustUseCanonicalPath('/cron/run'));
+        $this->assertFalse($mustUseCanonicalPath('/api/static-asset/Domain/Some%20File.js'));
+        $this->assertFalse($mustUseCanonicalPath('/tickets/showAll'));
+    }
 }
