@@ -1,3 +1,35 @@
+# Version: 3.10.2
+
+This is a security release. All self-hosted installations should upgrade.
+
+## Security
+- **Authentication** - Password-reset tokens are now generated with a cryptographically secure generator and stored hashed; the session id rotates on login, 2FA and logout; other sessions end after a password change or reset; login, password-reset and 2FA-code attempts are rate limited. (#3810)
+- **OIDC** - ID tokens are now fully validated (audience, authorized party, expiry, issued-at, nonce), unverified email addresses are rejected and TLS certificates are verified. (#3810)
+- **API** - Stricter API request handling, 2FA enforced for browser sessions using the API, and users can no longer assign roles above their own (user creation, invites, edits, API keys, LDAP import). (#3808)
+- **Access Control** - Ticket, subtask, timesheet, sprint, reaction, program board and project operations are authorized against the project they belong to; read-only members can no longer edit. (#3809)
+- **Files & Outbound Requests** - Stricter file module authorization; outbound webhook and calendar requests pin the validated address, use timeouts and re-validate redirects; marketplace plugin archives are validated before installation. (#3812)
+- **CSRF Protection** - State-changing browser requests now verify their origin, and delete actions moved from links (GET) to POST. (#3811)
+- **Output Escaping** - Remaining raw template output is escaped and the HTML sanitizer strips htmx attributes and unsafe embeds. (#3813)
+
+## Bug Fixes
+- **LDAP** - Importing selected LDAP users works again. (#3808)
+- **Webhooks** - Slack, Mattermost, Zulip and Discord deliveries are only reported as sent on a successful response. (#3812)
+
+## Upgrade Notes
+- **Everyone is signed out once** after upgrading, and password-reset links issued before the upgrade stop working.
+- **Set `LEAN_APP_URL`** to your public URL. It is now strongly recommended, and required if a reverse proxy rewrites the Host header (otherwise browser form submissions are rejected by the new origin check).
+- **Trusted proxies** now default to private networks only (loopback, 10/8, 172.16/12, 192.168/16). If your proxy or CDN connects from a public address, list it in `LEAN_TRUSTED_PROXIES`.
+- **OIDC** now requires `email_verified` not to be false and verifies TLS. Use `LEAN_OIDC_REQUIRE_VERIFIED_EMAIL=false` for providers that mark users unverified, and `LEAN_OIDC_SKIP_TLS_VERIFY=true` only for self-signed test providers.
+- **Origin check** can be switched off in an emergency with `LEAN_CSRF_ORIGIN_CHECK=false`. Plugins that receive cross-site POST callbacks can register exempt paths.
+- **Roles**: admins can no longer edit or delete owner accounts, and users created by managers through the API are created as inactive invites.
+- **Plugins** that create or attach projects (e.g. ProjectWizard, StrategyPro, PgmPro) now require the user to have project create/edit rights.
+- New rate limits: `LEAN_RATELIMIT_PASSWORD_RESET` (default 5 per 10 minutes) and `LEAN_RATELIMIT_TWOFA` (default 5 per 5 minutes).
+
+## Dependency Updates
+- Dropped the unused Sentry webpack plugin and scoped the blocking npm audit to runtime dependencies. (#3815)
+
+---
+
 # Version: 3.10.1
 
 ## New Features
