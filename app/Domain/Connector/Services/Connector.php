@@ -193,11 +193,10 @@ class Connector
         if ($matchingStatusField) {
             foreach ($values as &$row) {
                 $getStatus = $this->ticketRepository->getStatusIdByName($row[$matchingStatusField], $row['projectId'] ?? null);
-                if ($getStatus !== false) {
-                    $row['status'] = $getStatus;
-                } else {
-                    $row['status'] = 3;
-                }
+                // An unresolved status stays null: a new ticket then gets its project's NEW status
+                // and an existing ticket keeps its stored status (instead of being forced to 3,
+                // which may not exist in a project with a custom status set).
+                $row['status'] = $getStatus !== false ? $getStatus : null;
             }
         }
 
@@ -641,7 +640,13 @@ class Connector
             }
             $ticket['editorId'] = $row['editorId'] ?? '';
             $ticket['projectId'] = $row['projectId'] ?? '';
-            $ticket['status'] = $row['status'] ?? 3;
+            // Only send a status that was resolved to an id of the ticket's project. Without one,
+            // addTicket() uses the project's NEW status and updateTicket() keeps the stored status
+            // (omitted fields are preserved), so a re-import never fails on a default id.
+            unset($ticket['status']);
+            if (isset($row['status']) && $row['status'] !== '') {
+                $ticket['status'] = $row['status'];
+            }
             $ticket['type'] = $row['type'] ?? 'task';
 
             try {
@@ -796,9 +801,8 @@ class Connector
             }
             $ticket['editorId'] = $row['editorId'];
             $ticket['projectId'] = $row['projectId'];
-            if (! isset($ticket['status'])) {
-                $ticket['status'] = 3;
-            }
+            // No status column: leave it out so a new milestone gets the project's NEW status and an
+            // existing one keeps its stored status.
             $ticket['type'] = 'milestone';
             if (isset($ticket['id'])) {
                 $this->ticketService->updateTicket($ticket);
