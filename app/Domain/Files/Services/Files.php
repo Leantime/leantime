@@ -11,6 +11,7 @@ use Leantime\Core\Files\FileManager;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Files\Permissions\FilesPermissions;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
@@ -37,13 +38,35 @@ class Files extends BaseService
     private const OWNER_RESTRICTED_MODULES = ['private', 'user', 'lead', 'export'];
 
     /**
+     * Owner-restricted modules whose moduleId is the owning user's id; uploads there are only
+     * allowed into the current user's own id.
+     *
+     * @var array<int, string>
+     */
+    private const USER_OWNED_UPLOAD_MODULES = ['user', 'private'];
+
+    /**
      * Module types whose files belong to a project (resolved by getProjectIdForFile). For these,
      * an unresolvable project id — an invalid or deleted entity — must FAIL CLOSED rather than
      * fall through to the non-project "allow upload" / "serve file" path.
      *
      * @var array<int, string>
      */
-    private const PROJECT_SCOPED_MODULES = ['project', 'ticket'];
+    private const PROJECT_SCOPED_MODULES = ['project', 'ticket', 'wiki'];
+
+    /**
+     * Module the editor uses for images pasted into a wiki article. zp_file.module is an enum
+     * without it on MySQL, so wiki uploads are stored against the article's project instead
+     * (see resolveUploadTarget()).
+     */
+    private const WIKI_MODULE = 'wiki';
+
+    /**
+     * Module whose files belong to a client (company account). Clients are a company-wide
+     * resource, so access is gated by the GLOBAL clients.* permissions: clients.view to list or
+     * download, clients.edit to upload or delete.
+     */
+    private const CLIENT_MODULE = 'client';
 
     public function __construct(
         protected FileRepository $fileRepository,
@@ -54,37 +77,19 @@ class Files extends BaseService
     /**
      * Lists files for a module/entity, fail-closed against the entity's owning project.
      *
-     * Without this gate the @api method let any authenticated caller enumerate every project's
-     * files by guessing ids over JSON-RPC. We resolve the target's real project and require
-     * files.view in it (readonly+); owner-restricted listings (private/user/lead/export) are
-     * limited to the owner; an empty/unknown module returns [] rather than dumping the whole
-     * table. The 'client' module has no project mapping and stays a Clients-domain concern
-     * (ShowClient is admin-gated) — tracked as a follow-up with the Clients rollout; it requires
-     * a specific client id here so the @api method can't be called with no id to dump every
-     * client's files.
+     * We resolve the target's real project and require files.view in it (readonly+);
+     * owner-restricted listings (private/user/lead/export) are limited to the owner; client
+     * listings need clients.view and a specific client id; an empty/unknown module returns []
+     * rather than dumping the whole table. The module name is normalized (lowercased) first so a
+     * differently-cased name can't side-step the checks.
      *
      * @api
      */
     public function getFilesByModule(string $module = '', $entityId = null, $userId = null): false|array
     {
-        $projectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $entityId]);
+        $module = self::normalizeModule($module);
 
-        if ($projectId !== null) {
-            if (! $this->can(FilesPermissions::VIEW, $projectId)) {
-                return [];
-            }
-        } elseif (in_array($module, self::OWNER_RESTRICTED_MODULES, true)) {
-            // Owner-restricted listing: only the owner may enumerate their own files.
-            if ((int) $entityId !== $this->currentUserId()) {
-                return [];
-            }
-        } elseif ($module === 'client' && (int) $entityId > 0) {
-            // Client files have no project mapping; their authz is a Clients-domain concern
-            // (ShowClient is admin-gated) tracked as a follow-up. Require a SPECIFIC client id so
-            // this @api method can't be called with no id to dump every client's files at once.
-        } else {
-            // No project context (empty/unknown module, or 'client' with no id): refuse rather
-            // than dump rows.
+        if (! $this->canListModule($module, $entityId)) {
             return [];
         }
 
@@ -92,12 +97,96 @@ class Files extends BaseService
     }
 
     /**
+     * Normalizes a module name: trimmed, lowercased and with the legacy plural aliases folded
+     * into their singular form. Every entry point (upload, list, download, delete) runs module
+     * names through this so the authorization checks always see the canonical spelling.
+     *
+     * @param  string|null  $module  The raw module name.
+     * @return string The canonical module name ('' when empty).
+     */
+    public static function normalizeModule(?string $module): string
+    {
+        $module = strtolower(trim((string) $module));
+
+        return match ($module) {
+            'projects' => 'project',
+            'tickets' => 'ticket',
+            'clients' => 'client',
+            default => $module,
+        };
+    }
+
+    /**
+     * The module/moduleId an upload is actually stored against.
+     *
+     * Normalizes the module name. A wiki upload (the editor sends module=wiki with the article id)
+     * is retargeted to its project: the article id is resolved through its wiki board to the real
+     * project — an id that isn't a wiki article resolves to 0 and fails closed. Only when no
+     * article id is given does it fall back to the session project, the editor's own fallback.
+     *
+     * @param  string  $module  The requested module.
+     * @param  int  $moduleId  The requested entity id.
+     * @return array{0: string, 1: int} The normalized [module, moduleId] to authorize and store.
+     */
+    private function resolveUploadTarget(string $module, int $moduleId): array
+    {
+        $module = self::normalizeModule($module);
+
+        if ($module !== self::WIKI_MODULE) {
+            return [$module, $moduleId];
+        }
+
+        $projectId = $moduleId > 0
+            ? $this->fileRepository->getProjectIdForWikiArticle($moduleId)
+            : (int) session('currentProject');
+
+        return ['project', (int) $projectId];
+    }
+
+    /**
+     * Whether the current user may list the files of a module/entity.
+     *
+     * @param  string  $module  The normalized module name.
+     * @param  mixed  $entityId  The entity id within the module.
+     */
+    private function canListModule(string $module, mixed $entityId): bool
+    {
+        if (in_array($module, self::PROJECT_SCOPED_MODULES, true)) {
+            $projectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $entityId]);
+
+            return $projectId !== null && $this->can(FilesPermissions::VIEW, $projectId);
+        }
+
+        if (in_array($module, self::OWNER_RESTRICTED_MODULES, true)) {
+            // Owner-restricted listing: only the owner may enumerate their own files.
+            return (int) $entityId === $this->currentUserId();
+        }
+
+        if ($module === self::CLIENT_MODULE) {
+            // A specific client id is required so the call can't dump every client's files.
+            return (int) $entityId > 0 && $this->can(ClientsPermissions::VIEW);
+        }
+
+        // Empty or unknown module: refuse rather than dump rows.
+        return false;
+    }
+
+    /**
+     * Stores an uploaded file against a module/moduleId after authorizing the target via
+     * userCanUploadToModule() (empty or unknown modules are denied).
+     *
      * @throws BindingResolutionException
+     * @throws AuthorizationException When the current user may not upload to the target.
      *
      * @api
      */
     public function upload($file, $module, $moduleId, $entity = null, $disk = 'default'): array|string|false
     {
+        // Normalize module names (case + legacy plurals) and retarget wiki uploads onto the
+        // article's project, so the checks below see the canonical target and the stored row
+        // matches it.
+        [$module, $moduleId] = $this->resolveUploadTarget((string) $module, (int) $moduleId);
+
         try {
             // Validate input parameters
             if (empty($module) || empty($moduleId)) {
@@ -117,29 +206,12 @@ class Files extends BaseService
             return $e->getUserMessage();
         }
 
-        // Normalize module names for consistency
-        if ($module === 'projects') {
-            $module = 'project';
+        // Authorize against the target before writing anything. This guards the JSON-RPC path,
+        // which reaches the @api upload() directly, without the Upload controller's
+        // userCanUploadToModule pre-check.
+        if (! $this->userCanUploadToModule($module, (int) $moduleId)) {
+            throw new AuthorizationException;
         }
-        if ($module === 'tickets') {
-            $module = 'ticket';
-        }
-
-        // Authorize against the target's owning project before writing anything (commenter+;
-        // admin/owner bypass). This guards the JSON-RPC path, which reaches the @api upload()
-        // directly, without the Upload controller's userCanUploadToModule pre-check.
-        $targetProjectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $moduleId]);
-        if (in_array($module, self::PROJECT_SCOPED_MODULES, true)) {
-            // Project-scoped target: an unresolvable project (invalid/deleted entity) fails closed,
-            // so a bogus id can't create an orphan file that bypasses files.upload.
-            if ($targetProjectId === null) {
-                throw new AuthorizationException;
-            }
-
-            $this->authorize(FilesPermissions::UPLOAD, $targetProjectId);
-        }
-        // Non-project modules (user avatar, private, ...) have no project context and preserve prior
-        // behavior; their flows pin moduleId server-side (e.g. ProfileImage forces the session user's id).
 
         try {
             // Validate file type with the enhanced validator
@@ -222,12 +294,26 @@ class Files extends BaseService
             return false;
         }
 
+        $module = self::normalizeModule($file['module'] ?? '');
+
+        // Client files are a company resource: deleting one needs clients.edit, even for the
+        // uploader (who may since have lost access to client management).
+        if ($module === self::CLIENT_MODULE) {
+            if (! $this->can(ClientsPermissions::EDIT)) {
+                return false;
+            }
+
+            return $this->fileRepository->deleteFile((int) $fileId);
+        }
+
         // The uploader may always delete their own file, regardless of role.
         if ((int) $file['userId'] === $this->currentUserId()) {
             return $this->fileRepository->deleteFile((int) $fileId);
         }
 
-        $projectId = $this->resolveProjectId($file);
+        $projectId = in_array($module, self::PROJECT_SCOPED_MODULES, true)
+            ? $this->resolveProjectId(['module' => $module, 'moduleId' => $file['moduleId'] ?? null])
+            : null;
 
         // Non-owner delete of a project-scoped file requires files.delete in THAT project.
         if ($projectId !== null) {
@@ -238,7 +324,7 @@ class Files extends BaseService
             return $this->fileRepository->deleteFile((int) $fileId);
         }
 
-        // Owner-restricted / no-project file and the caller is not the uploader: deny.
+        // Owner-restricted / no-project / unknown-module file and the caller is not the uploader: deny.
         return false;
     }
 
@@ -285,7 +371,7 @@ class Files extends BaseService
      */
     public function isOwnerRestrictedModule(array $fileRecord): bool
     {
-        return in_array($fileRecord['module'] ?? '', self::OWNER_RESTRICTED_MODULES, true);
+        return in_array(self::normalizeModule($fileRecord['module'] ?? ''), self::OWNER_RESTRICTED_MODULES, true);
     }
 
     /**
@@ -306,34 +392,46 @@ class Files extends BaseService
     /**
      * Authorizes the current user to upload a file against a target module/moduleId.
      *
-     * The /api/files (now /files/upload) endpoint takes module + moduleId straight from
-     * the request, and Files::upload() does no access control — so without this gate a
-     * logged-in user could attach files to another project/ticket by tampering with the
-     * query string. Mirrors the read-path model in getFileForUser(): admins/owners bypass,
-     * project-scoped targets (project/ticket) require access to the owning project, and
-     * targets with no project mapping fall back to that path's (unrestricted) behaviour.
+     * The /files/upload (alias /api/files) endpoint takes module + moduleId straight from the
+     * request, so every target is checked here and upload() enforces the same verdict in-body:
+     *  - project-scoped targets (project/ticket) need files.upload in the owning project
+     *    (admin/owner bypass membership); an unresolvable id fails closed
+     *  - wiki targets resolve to the article's project (see resolveUploadTarget()) and need
+     *    files.upload there
+     *  - client targets need the global clients.edit permission
+     *  - user/private targets are keyed by a user id and only accept the current user's own id
+     *    (ProfileImage passes the session user's id)
+     *  - lead/export (no upload flow, ids are not user ids) and empty/unknown modules are denied
      *
      * Not @api: internal authorization helper for the upload controller, not a JSON-RPC method.
-     * Returns the same verdict the @api upload() enforces in-body, so the controller can render a
-     * clean 403 before invoking it.
      *
-     * @param  string  $module  The target module (e.g. project, ticket, wiki)
+     * @param  string  $module  The target module (e.g. project, ticket, client); normalized here
      * @param  int  $moduleId  The target entity id within that module
      * @return bool True if the current user may upload to the target
      */
     public function userCanUploadToModule(string $module, int $moduleId): bool
     {
-        $projectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $moduleId]);
+        [$module, $moduleId] = $this->resolveUploadTarget($module, $moduleId);
 
         if (in_array($module, self::PROJECT_SCOPED_MODULES, true)) {
-            // Project-scoped: needs files.upload (commenter+) in the owning project; admin/owner
-            // bypass membership. An unresolvable id (invalid/deleted entity) fails closed.
+            $projectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $moduleId]);
+
             return $projectId !== null && $this->can(FilesPermissions::UPLOAD, $projectId);
         }
 
-        // Non-project modules (user avatar, private, ...) keep prior behavior; their flows pin
-        // moduleId server-side.
-        return true;
+        if ($module === self::CLIENT_MODULE) {
+            return $moduleId > 0 && $this->can(ClientsPermissions::EDIT);
+        }
+
+        // user/private files are keyed by their owner's user id: only the owner may upload there.
+        if (in_array($module, self::USER_OWNED_UPLOAD_MODULES, true)) {
+            $currentUserId = $this->currentUserId();
+
+            return $currentUserId !== null && $moduleId === $currentUserId;
+        }
+
+        // lead/export (no in-app upload flow; their ids are not user ids), empty or unknown: deny.
+        return false;
     }
 
     /**
@@ -367,39 +465,16 @@ class Files extends BaseService
         $realName = FileManager::displayName((string) $fileRecord['realName'], (string) $ext);
 
         $currentUserId = $this->currentUserId();
-        $projectId = $this->resolveProjectId($fileRecord);
+        $module = self::normalizeModule($fileRecord['module'] ?? '');
 
-        if ($projectId !== null) {
-            if (! $this->can(FilesPermissions::VIEW, $projectId)) {
-                Log::warning('Unauthorized file access attempt', [
-                    'userId' => $currentUserId,
-                    'fileId' => $fileRecord['id'],
-                    'projectId' => $projectId,
-                ]);
-
-                return new Response('', 403);
-            }
-        } elseif (in_array($fileRecord['module'] ?? '', self::PROJECT_SCOPED_MODULES, true)) {
-            // Project-scoped file whose project can't be resolved (e.g. a deleted ticket) → deny,
-            // rather than fall through to the non-project serve path (fail closed).
-            Log::warning('Unauthorized file access attempt on orphaned project file', [
+        if (! $this->canViewFile($module, $fileRecord, $currentUserId)) {
+            Log::warning('Unauthorized file access attempt', [
                 'userId' => $currentUserId,
                 'fileId' => $fileRecord['id'],
-                'module' => $fileRecord['module'],
+                'module' => $module,
             ]);
 
             return new Response('', 403);
-        } elseif ($this->isOwnerRestrictedModule($fileRecord)) {
-            // For private/user files, only the file owner can access.
-            if ((int) ($fileRecord['userId'] ?? 0) !== $currentUserId) {
-                Log::warning('Unauthorized file access attempt on private file', [
-                    'userId' => $currentUserId,
-                    'fileId' => $fileRecord['id'],
-                    'module' => $fileRecord['module'] ?? '',
-                ]);
-
-                return new Response('', 403);
-            }
         }
 
         // Construct the file name from trusted DB values
@@ -412,6 +487,44 @@ class Files extends BaseService
         }
 
         return $response;
+    }
+
+    /**
+     * Whether the current user may view/download a stored file.
+     *
+     *  - project-scoped files need files.view in the owning project; an unresolvable project
+     *    (e.g. a deleted ticket) is denied
+     *  - client files need the global clients.view permission
+     *  - owner-restricted files are limited to their uploader
+     *  - legacy files with an empty module stay readable by any authenticated user
+     *  - files with any other unknown module are limited to their uploader (fail closed)
+     *
+     * @param  string  $module  The normalized module of the file.
+     * @param  array  $fileRecord  The file record from the database.
+     * @param  int|null  $currentUserId  The session user id.
+     */
+    private function canViewFile(string $module, array $fileRecord, ?int $currentUserId): bool
+    {
+        if (in_array($module, self::PROJECT_SCOPED_MODULES, true)) {
+            $projectId = $this->resolveProjectId(['module' => $module, 'moduleId' => $fileRecord['moduleId'] ?? null]);
+
+            return $projectId !== null && $this->can(FilesPermissions::VIEW, $projectId);
+        }
+
+        if ($module === self::CLIENT_MODULE) {
+            return $this->can(ClientsPermissions::VIEW);
+        }
+
+        // Legacy rows with an empty module: MySQL stored '' for module values outside the column's
+        // enum (earlier editor uploads to wiki articles). They carry no context to authorize
+        // against and are embedded in content other users read, so downloads keep their prior
+        // behaviour: any authenticated user. Listing, uploading and deleting stay strict.
+        if ($module === '') {
+            return $currentUserId !== null;
+        }
+
+        // Owner-restricted and unknown modules: only the uploader.
+        return $currentUserId !== null && (int) ($fileRecord['userId'] ?? 0) === $currentUserId;
     }
 
     /**
@@ -446,7 +559,6 @@ class Files extends BaseService
             if (isset($files['file'])) {
                 try {
                     $result = $this->upload($files, $module, $moduleId);
-                    // @phpstan-ignore-next-line catch.neverThrown — upload() throws AuthorizationException (Files.php:136); PHPStan can't track it through the call.
                 } catch (AuthorizationException) {
                     // A denied upload becomes a clean "upload failed" notification, not a 403 page.
                     return ['action' => 'upload', 'success' => false];

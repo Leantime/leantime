@@ -3,8 +3,11 @@
 namespace Leantime\Domain\Plugins\Services;
 
 use Exception;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -82,6 +85,9 @@ class Plugins
 
     private int $timeout = 60;
 
+    /** Redirect hops followed when downloading a marketplace archive. */
+    private const MAX_DOWNLOAD_REDIRECTS = 5;
+
     /**
      * @return void
      *
@@ -93,6 +99,7 @@ class Plugins
         private SettingsService $settingsService,
         private UsersService $usersService,
         private AppSettings $appSettings,
+        private PluginArchive $pluginArchive,
     ) {
         $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         // $this->marketplaceUrl = 'https://marketplace.leantime.test';
@@ -679,6 +686,9 @@ class Plugins
     /**
      * Installs a marketplace plugin by downloading, extracting, and registering it in the plugin repository.
      *
+     * The archive is downloaded over verified TLS and checked by {@see PluginArchive} (safe entries,
+     * then the phar signature in a staging directory) before it replaces the installed version.
+     *
      * @param  MarketplacePlugin  $plugin  The marketplace plugin to be installed, including its identifier and license key.
      * @param  string  $version  The version of the plugin to be installed.
      *
@@ -691,12 +701,22 @@ class Plugins
 
         $this->clearCache();
 
-        $response = $this->httpClient()->withHeaders([
-            'X-License-Key' => $plugin->license,
-            'X-Instance-Id' => $this->settingsService->getCompanyId(),
-            'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
-            'X-Leantime-Version' => $this->appSettings->appVersion,
-        ])->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
+        // The archive is code this server will run, so it is only ever fetched over verified
+        // HTTPS (unlike the other marketplace calls made through httpClient()): the marketplace
+        // URL must be https and redirects may not leave https (downloadMarketplaceArchive()).
+        if (strtolower((string) parse_url($this->marketplaceUrl, PHP_URL_SCHEME)) !== 'https') {
+            throw new \Exception(__('notification.plugin_cant_download'));
+        }
+
+        $response = $this->downloadMarketplaceArchive(
+            "{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}",
+            [
+                'X-License-Key' => $plugin->license,
+                'X-Instance-Id' => $this->settingsService->getCompanyId(),
+                'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
+                'X-Leantime-Version' => $this->appSettings->appVersion,
+            ]
+        );
 
         if (! $response->ok()) {
             throw new RequestException($response);
@@ -707,53 +727,30 @@ class Plugins
         }
 
         $filename = $response->header('Content-Disposition');
-        $filename = substr($filename, strpos($filename, 'filename=') + 9);
+        $filename = trim(substr($filename, strpos($filename, 'filename=') + 9), " \"'");
         $foldername = Str::studly(basename($filename, '.zip'));
-        $filename = Str::finish($foldername, '.zip');
 
-        if (
-            ! file_put_contents(
-                $temporaryFile = Str::finish(sys_get_temp_dir(), '/').$filename,
-                $response->body()
-            )
-        ) {
+        // The folder name ends up in filesystem paths; only accept a plain identifier.
+        if (preg_match('/^[A-Za-z0-9_-]+$/', $foldername) !== 1) {
             throw new \Exception(__('notification.plugin_cant_download'));
         }
 
-        if (
-            is_dir($pluginDir = "{$this->pluginDirectory}{$foldername}")
-            && ! File::deleteDirectory($pluginDir)
-        ) {
-            throw new \Exception(__('notification.plugin_cant_remove'));
+        // A private, unpredictable temp path for the download, always removed afterwards.
+        $temporaryFile = Str::finish(sys_get_temp_dir(), '/').'leantime-plugin-'.bin2hex(random_bytes(16)).'.zip';
+
+        try {
+            if (! file_put_contents($temporaryFile, $response->body())) {
+                throw new \Exception(__('notification.plugin_cant_download'));
+            }
+
+            // Verifies the archive (entries, then the phar signature in a staging directory) before
+            // anything reaches the plugin directory; the installed version is only replaced after.
+            $this->pluginArchive->install($temporaryFile, $foldername, "{$this->pluginDirectory}{$foldername}");
+        } finally {
+            if (is_file($temporaryFile)) {
+                @unlink($temporaryFile);
+            }
         }
-
-        if (! mkdir($pluginDir) && ! is_dir($pluginDir)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
-        }
-
-        $zip = new \ZipArchive;
-
-        match ($zip->open($temporaryFile)) {
-            \ZipArchive::ER_EXISTS => throw new \Exception(__('notification.plugin_zip_exists')),
-            \ZipArchive::ER_INCONS => throw new \Exception(__('notification.plugin_zip_inconsistent')),
-            \ZipArchive::ER_INVAL => throw new \Exception(__('notification.plugin_zip_invalid_arg')),
-            \ZipArchive::ER_MEMORY => throw new \Exception(__('notification.plugin_zip_malloc')),
-            \ZipArchive::ER_NOENT => throw new \Exception(__('notification.plugin_zip_no_file')),
-            \ZipArchive::ER_NOZIP => throw new \Exception(__('notification.plugin_zip_not_zip')),
-            \ZipArchive::ER_OPEN => throw new \Exception(__('notification.plugin_zip_cant_open')),
-            \ZipArchive::ER_READ => throw new \Exception(__('notification.plugin_zip_read_err')),
-            \ZipArchive::ER_SEEK => throw new \Exception(__('notification.plugin_zip_seek_err')),
-            default => throw new \Exception(__('notification.plugin_zip_unknown_err')),
-            true => null,
-        };
-
-        if (! $zip->extractTo($pluginDir)) {
-            throw new \Exception(__('notification.plugin_zip_cant_extract'));
-        }
-
-        $zip->close();
-
-        unlink($temporaryFile);
 
         // read the composer.json content from the plugin phar file
         $pluginModel = $this->createPluginFromComposer($foldername, $plugin->license);
@@ -761,6 +758,57 @@ class Plugins
         if (! $this->pluginRepository->addPlugin($pluginModel)) {
             throw new \Exception(__('notification_cant_add_to_db'));
         }
+    }
+
+    /**
+     * Downloads a marketplace archive over verified HTTPS, following at most
+     * MAX_DOWNLOAD_REDIRECTS https redirects itself. The marketplace headers (license key,
+     * instance id, user count) are sent only to the configured marketplace origin and are never
+     * forwarded to a redirect target on another origin.
+     *
+     * @param  string  $url  The marketplace download URL.
+     * @param  array<string, mixed>  $marketplaceHeaders  Headers meant for the marketplace only.
+     *
+     * @throws \Exception When a redirect leaves https or the redirect limit is exceeded.
+     */
+    private function downloadMarketplaceArchive(string $url, array $marketplaceHeaders): Response
+    {
+        $marketplaceOrigin = self::urlOrigin($this->marketplaceUrl);
+
+        for ($hop = 0; ; $hop++) {
+            if (strtolower((string) parse_url($url, PHP_URL_SCHEME)) !== 'https') {
+                throw new \Exception(__('notification.plugin_cant_download'));
+            }
+
+            $headers = self::urlOrigin($url) === $marketplaceOrigin ? $marketplaceHeaders : [];
+
+            $response = Http::timeout($this->timeout)
+                ->withOptions(['allow_redirects' => false])
+                ->withHeaders($headers)
+                ->get($url);
+
+            if (! $response->redirect()) {
+                return $response;
+            }
+
+            $location = (string) $response->header('Location');
+            if ($location === '' || $hop >= self::MAX_DOWNLOAD_REDIRECTS) {
+                throw new \Exception(__('notification.plugin_cant_download'));
+            }
+
+            $url = (string) UriResolver::resolve(new Uri($url), new Uri($location));
+        }
+    }
+
+    /**
+     * The origin (scheme, host, effective port) of a URL, lower-cased.
+     */
+    private static function urlOrigin(string $url): string
+    {
+        $uri = new Uri($url);
+        $port = $uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80);
+
+        return $uri->getScheme().'://'.$uri->getHost().':'.$port;
     }
 
     /**

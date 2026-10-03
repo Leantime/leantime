@@ -12,7 +12,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\OutboundUrlGuard;
+use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -42,16 +42,20 @@ class Calendar extends BaseService
 
     private Environment $config;
 
+    private OutboundHttpClient $outboundHttpClient;
+
     public function __construct(
         CalendarRepository $calendarRepo,
         LanguageCore $language,
         Setting $settingsRepo,
         Environment $config,
+        OutboundHttpClient $outboundHttpClient,
     ) {
         $this->calendarRepo = $calendarRepo;
         $this->language = $language;
         $this->settingsRepo = $settingsRepo;
         $this->config = $config;
+        $this->outboundHttpClient = $outboundHttpClient;
     }
 
     /**
@@ -862,7 +866,9 @@ class Calendar extends BaseService
     /**
      * Load an iCal URL and return its contents.
      *
-     * Validates the URL against SSRF attacks before making the request.
+     * The fetch goes through {@see OutboundHttpClient}: the URL (and every redirect hop) is checked
+     * by the SSRF guard, the connection is pinned to the validated address so the host can't be
+     * re-resolved to an internal one, and connect/total timeouts bound the request.
      *
      * @param  string  $url  The URL of the iCal feed.
      * @return string The iCal content.
@@ -875,29 +881,24 @@ class Calendar extends BaseService
             $url = str_replace('webcal://', 'https://', $url);
         }
 
-        if (! OutboundUrlGuard::isAllowedUrl($url)) {
-            throw new \Exception('Refused to fetch iCal feed: URL failed SSRF safety check');
-        }
-
-        $client = new \GuzzleHttp\Client;
-
         try {
-            $response = $client->get($url, [
-                'allow_redirects' => OutboundUrlGuard::redirectOptions(),
+            $response = $this->outboundHttpClient->get($url, [
                 'headers' => [
                     'Accept' => 'text/calendar',
                     'User-Agent' => 'Leantime Calendar Integration v'.$this->config->appVersion,
                 ],
             ]);
-
-            if ($response->getStatusCode() == 200) {
-                return (string) $response->getBody();
-            }
-
-            throw new \Exception('Failed to load iCal feed: HTTP '.$response->getStatusCode());
-        } catch (\Exception $e) {
+        } catch (\InvalidArgumentException) {
+            throw new \Exception('Refused to fetch iCal feed: URL failed SSRF safety check');
+        } catch (\Throwable $e) {
             throw new \Exception('Error loading iCal feed: '.$e->getMessage());
         }
+
+        if ($response->getStatusCode() == 200) {
+            return (string) $response->getBody();
+        }
+
+        throw new \Exception('Failed to load iCal feed: HTTP '.$response->getStatusCode());
     }
 
     public function generateIcalHash()

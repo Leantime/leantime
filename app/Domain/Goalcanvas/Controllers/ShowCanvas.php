@@ -311,23 +311,31 @@ class ShowCanvas extends Controller
             return null;
         }
 
-        $uploadfile = tempnam(sys_get_temp_dir(), 'leantime.').'.xml';
+        // One unpredictable temp path carrying the .xml extension the importer requires (no
+        // tempnam(): it would create a second, never-deleted file). Always removed afterwards,
+        // even when the import throws.
+        $uploadfile = sys_get_temp_dir().DIRECTORY_SEPARATOR.'leantime.'.bin2hex(random_bytes(16)).'.xml';
 
-        if (! move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile)) {
-            $this->tpl->setNotification($this->language->__('notification.board_import_failed'), 'error');
+        try {
+            if (! move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile)) {
+                $this->tpl->setNotification($this->language->__('notification.board_import_failed'), 'error');
 
-            return null;
+                return null;
+            }
+
+            $services = app()->make(BlueprintsService::class);
+            // Blueprints service expects the canvas slug (e.g. "goal"), not the full type ("goalcanvas").
+            $importCanvasId = $services->import(
+                $uploadfile,
+                static::CANVAS_NAME,
+                projectId: session('currentProject'),
+                authorId: session('userdata.id')
+            );
+        } finally {
+            if (is_file($uploadfile)) {
+                @unlink($uploadfile);
+            }
         }
-
-        $services = app()->make(BlueprintsService::class);
-        // Blueprints service expects the canvas slug (e.g. "goal"), not the full type ("goalcanvas").
-        $importCanvasId = $services->import(
-            $uploadfile,
-            static::CANVAS_NAME,
-            projectId: session('currentProject'),
-            authorId: session('userdata.id')
-        );
-        unlink($uploadfile);
 
         if ($importCanvasId === false) {
             $this->tpl->setNotification($this->language->__('notification.board_import_failed'), 'error');

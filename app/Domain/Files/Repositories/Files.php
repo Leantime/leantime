@@ -30,7 +30,7 @@ class Files
             'encName' => $values['encName'],
             'realName' => $values['realName'],
             'extension' => $values['extension'],
-            'module' => $module,
+            'module' => strtolower(trim($module)),
             'moduleId' => $values['moduleId'],
             'userId' => $values['userId'],
             'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
@@ -91,14 +91,16 @@ class Files
      *
      * For 'project' module files the moduleId is the project id directly.
      * For 'ticket' module files the owning ticket is looked up to find its project.
-     * All other module types have no project context and return null.
+     * For 'wiki' module files the moduleId is a wiki article; its board's project is returned.
+     * All other module types have no project context and return null. The module name is
+     * compared case-insensitively so an odd-cased stored module still resolves.
      *
      * @param  array  $fileRecord  The file record as returned by getFileByEncName().
      * @return int|null The owning project id, or null when no project context applies.
      */
     public function getProjectIdForFile(array $fileRecord): ?int
     {
-        $module = $fileRecord['module'] ?? '';
+        $module = strtolower(trim((string) ($fileRecord['module'] ?? '')));
         $moduleId = (int) ($fileRecord['moduleId'] ?? 0);
 
         if ($moduleId <= 0) {
@@ -120,7 +122,37 @@ class Files
             }
         }
 
+        if ($module === 'wiki') {
+            return $this->getProjectIdForWikiArticle($moduleId);
+        }
+
         return null;
+    }
+
+    /**
+     * Resolves the project a wiki article belongs to.
+     *
+     * zp_canvas_items is shared by every canvas type, so the row must be an article ('article'
+     * box) on a wiki board; any other id resolves to null (fail closed).
+     *
+     * @param  int  $articleId  The wiki article id (zp_canvas_items.id).
+     * @return int|null The article's project id, or null when it is not a wiki article.
+     */
+    public function getProjectIdForWikiArticle(int $articleId): ?int
+    {
+        if ($articleId <= 0) {
+            return null;
+        }
+
+        $article = $this->db->table('zp_canvas_items')
+            ->join('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
+            ->select('zp_canvas.projectId')
+            ->where('zp_canvas_items.id', $articleId)
+            ->where('zp_canvas_items.box', 'article')
+            ->where('zp_canvas.type', 'wiki')
+            ->first();
+
+        return $article ? (int) $article->projectId : null;
     }
 
     public function getFiles(int $userId = 0): false|array
@@ -208,6 +240,7 @@ class Files
             ->addSelect('file.date AS rawDate')
             ->join('zp_user as user', 'file.userId', '=', 'user.id');
 
+        $module = strtolower(trim($module));
         if ($module !== '') {
             $query->where('file.module', $module);
         } else {
@@ -255,6 +288,7 @@ class Files
     public function upload(array $file, string $module, int $moduleId): false|string|array
     {
         // Clean module mess
+        $module = strtolower(trim($module));
         if ($module === 'projects') {
             $module = 'project';
         }

@@ -215,31 +215,40 @@ class ShowCanvas
 
         // Import board
         if (isset($data['importCanvas']) && isset($_FILES['canvasfile']) && $_FILES['canvasfile']['error'] === 0) {
-            $uploadfile = tempnam(sys_get_temp_dir(), 'leantime.').'.xml';
+            // One unpredictable temp path carrying the .xml extension the importer requires (no
+            // tempnam(): it would create a second, never-deleted file). Always removed afterwards,
+            // even when the import throws.
+            $uploadfile = sys_get_temp_dir().DIRECTORY_SEPARATOR.'leantime.'.bin2hex(random_bytes(16)).'.xml';
+            $importCanvasId = false;
 
-            if (move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile)) {
-                $importCanvasId = $this->blueprintsService->import(
-                    $uploadfile,
-                    $this->canvasSlug,
-                    projectId: session('currentProject'),
-                    authorId: session('userdata.id')
-                );
-                unlink($uploadfile);
-
-                if ($importCanvasId !== false) {
-                    session([$sessionKey => $importCanvasId]);
-                    $canvas = $this->blueprintsService->getBoard((int) $importCanvasId, $canvasType);
-
-                    $this->notifyBoardChange(
-                        'email_notifications.canvas_imported_message',
-                        'notification.board_imported',
-                        $canvas !== false ? ($canvas[0]['title'] ?? '') : ''
+            try {
+                if (move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile)) {
+                    $importCanvasId = $this->blueprintsService->import(
+                        $uploadfile,
+                        $this->canvasSlug,
+                        projectId: session('currentProject'),
+                        authorId: session('userdata.id')
                     );
-
-                    $this->tpl->setNotification($this->language->__('notification.board_imported'), 'success');
-
-                    return Frontcontroller::redirect(BASE_URL.'/blueprints/'.$this->canvasSlug.'/showCanvas/');
                 }
+            } finally {
+                if (is_file($uploadfile)) {
+                    @unlink($uploadfile);
+                }
+            }
+
+            if ($importCanvasId !== false) {
+                session([$sessionKey => $importCanvasId]);
+                $canvas = $this->blueprintsService->getBoard((int) $importCanvasId, $canvasType);
+
+                $this->notifyBoardChange(
+                    'email_notifications.canvas_imported_message',
+                    'notification.board_imported',
+                    $canvas !== false ? ($canvas[0]['title'] ?? '') : ''
+                );
+
+                $this->tpl->setNotification($this->language->__('notification.board_imported'), 'success');
+
+                return Frontcontroller::redirect(BASE_URL.'/blueprints/'.$this->canvasSlug.'/showCanvas/');
             }
 
             $this->tpl->setNotification($this->language->__('notification.board_import_failed'), 'error');
