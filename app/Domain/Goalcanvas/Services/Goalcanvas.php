@@ -749,16 +749,29 @@ class Goalcanvas extends BaseService
      *
      * @param  array<string, mixed>  $values  Item values (must include `itemId` or `id`)
      *
-     * @throws AuthorizationException When the item is unknown/foreign or EDIT is denied.
+     * The id is validated strictly (an array such as `itemId[]=N` is rejected rather than cast)
+     * and the SAME authorized id is written back into the payload, so the row that is written is
+     * always the row that was authorized.
+     *
+     * @throws AuthorizationException When the item id is invalid, the item is unknown/foreign or EDIT is denied.
      */
     public function updateGoalItem(array $values): void
     {
-        $itemId = (int) ($values['itemId'] ?? $values['id'] ?? 0);
+        $rawItemId = $values['itemId'] ?? $values['id'] ?? null;
+        $itemId = is_int($rawItemId) || is_string($rawItemId) ? filter_var($rawItemId, FILTER_VALIDATE_INT) : false;
+        if ($itemId === false || $itemId <= 0) {
+            throw new AuthorizationException;
+        }
+
         $projectId = $this->goalRepository->getCanvasItemProjectId($itemId, self::CANVAS_TYPE);
         if ($projectId === null) {
             throw new AuthorizationException;
         }
         $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
+
+        // Write exactly the id that was authorized.
+        $values['itemId'] = $itemId;
+        $values['id'] = $itemId;
 
         $this->goalRepository->editCanvasItem($values);
 

@@ -12,6 +12,7 @@ use Leantime\Core\UI\Template;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\Blueprints as BlueprintsService;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -78,27 +79,6 @@ class EditCanvasItem extends Controller
                 return $this->tpl->displayPartial('errors.error404');
             }
 
-            // Delete comment — only when it belongs to THIS gated item (module + moduleId);
-            // deleteComment() filters on the comment id alone, so the bind prevents deleting a
-            // foreign item's / project's comment.
-            if (isset($params['delComment'])) {
-                $commentId = (int) ($params['delComment']);
-                $comment = $this->commentsRepo->getComment($commentId);
-                if ($comment !== false
-                    && (string) $comment['module'] === $commentModule
-                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                    $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-                }
-            }
-
-            // Delete milestone relationship — an EDIT, authorized by the service.
-            if (isset($params['removeMilestone'])) {
-                $this->blueprintsService->patchCanvasItem((int) $params['id'], ['milestoneId' => ''], $canvasType);
-                $canvasItem = $this->blueprintsService->getCanvasItem((int) $params['id'], $canvasType);
-                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
-            }
-
             $comments = $this->commentsRepo->getComments($commentModule, $canvasItem['id']);
             $this->tpl->assign(
                 'numComments',
@@ -149,6 +129,40 @@ class EditCanvasItem extends Controller
     public function post($params)
     {
         $canvasType = static::CANVAS_NAME.'canvas';
+        $commentModule = static::CANVAS_NAME.'canvas'.'item';
+
+        // Comment delete / milestone detach (POST only: both change data).
+        if (isset($params['id']) && (isset($_POST['delComment']) || isset($_POST['removeMilestone']))) {
+            // Resolve + authorize the item against its real project BEFORE any mutation.
+            $canvasItem = $this->blueprintsService->getCanvasItem((int) $params['id'], $canvasType);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
+            // Delete comment — only when it belongs to THIS gated item (module + moduleId);
+            // deleteComment() filters on the comment id alone, so the bind prevents deleting a
+            // foreign item's / project's comment.
+            if (isset($_POST['delComment'])) {
+                $commentId = (int) ($_POST['delComment']);
+                $comment = $this->commentsRepo->getComment($commentId);
+                if ($comment !== false
+                    && (string) $comment['module'] === $commentModule
+                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                    // Through the service: author-or-moderator check on top of the item binding.
+                    if (app()->make(CommentService::class)->deleteComment($commentId)) {
+                        $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+                    }
+                }
+            }
+
+            // Delete milestone relationship — authorized by the service.
+            if (isset($_POST['removeMilestone'])) {
+                $this->blueprintsService->patchCanvasItem((int) $params['id'], ['milestoneId' => ''], $canvasType);
+                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/editCanvasItem/'.(int) $params['id']);
+        }
 
         if (isset($params['changeItem'])) {
 

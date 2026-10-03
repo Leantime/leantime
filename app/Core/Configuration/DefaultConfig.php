@@ -586,6 +586,13 @@ class DefaultConfig
     public int $ratelimitTwofa = 5;
 
     /**
+     * @var bool reject state-changing browser requests (POST/PUT/PATCH/DELETE) whose
+     *           Sec-Fetch-Site / Origin / Referer headers show they came from another site.
+     *           See Core/Middleware/VerifyRequestOrigin. Disable only as an emergency switch.
+     */
+    public bool $csrfOriginCheck = true;
+
+    /**
      * @var int rate limit on MCP endpoint requests (per user+IP per minute). Higher than the API
      *          limit because agentic LLM clients burst many parallel tool calls per turn.
      */

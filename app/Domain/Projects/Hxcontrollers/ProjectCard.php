@@ -44,23 +44,14 @@ class ProjectCard extends HtmxController
     {
         $projectData = $this->incomingRequest->request->all();
 
-        $projectId = $projectData['projectId'];
-        $isFavorite = $projectData['isFavorite'];
+        $projectId = (int) ($projectData['projectId'] ?? 0);
+        $isFavorite = $projectData['isFavorite'] ?? false;
 
+        // react()/unreact() act as the session user and require access to the project.
         if ($isFavorite) {
-            $this->reactionService->removeReaction(
-                userId: session('userdata.id'),
-                module: 'project',
-                moduleId: $projectId,
-                reaction: 'favorite'
-            );
+            $this->reactionService->unreact('project', $projectId, 'favorite');
         } else {
-            $this->reactionService->addReaction(
-                userId: session('userdata.id'),
-                module: 'project',
-                moduleId: $projectId,
-                reaction: 'favorite'
-            );
+            $this->reactionService->react('project', $projectId, 'favorite');
         }
 
         $this->tpl->setHTMXEvent('HTMX.updateProjectList');

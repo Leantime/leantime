@@ -2,10 +2,20 @@
 
 namespace Leantime\Domain\Reactions\Services;
 
+use Leantime\Core\Domains\BaseService;
+use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
+
 /**
+ * Reactions service.
+ *
+ * Reactions are keyed by (module, moduleId) with no project column, so every @api entry point
+ * resolves the reacted-on entity's REAL project server-side (project, ticket, comment, canvas
+ * item) and requires the caller to be able to view it. Unknown modules fail closed.
+ *
  * @api
  */
-class Reactions
+class Reactions extends BaseService
 {
     /**
      * @var \Leantime\Domain\Reactions\Repositories\Reactions reactions repository
@@ -14,9 +24,66 @@ class Reactions
      */
     private \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo;
 
-    public function __construct(\Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo)
-    {
+    private CommentRepository $commentRepo;
+
+    public function __construct(
+        \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo,
+        CommentRepository $commentRepo
+    ) {
         $this->reactionsRepo = $reactionsRepo;
+        $this->commentRepo = $commentRepo;
+    }
+
+    /**
+     * Resolve the project that owns the entity a reaction targets.
+     *
+     * Supports projects, tickets, comments (via the comment's own host entity) and the
+     * canvas-family modules the comment repository knows (articles, ideas, *canvasitem).
+     * Returns null for an unknown module or a missing entity — callers treat that as a denial.
+     *
+     * @param  string  $module  The reaction module.
+     * @param  int  $moduleId  The entity id.
+     * @return int|null The owning project id, or null when it cannot be resolved.
+     */
+    private function resolveProjectId(string $module, int $moduleId): ?int
+    {
+        if ($moduleId <= 0) {
+            return null;
+        }
+
+        if ($module === 'comment') {
+            $comment = $this->commentRepo->getComment($moduleId);
+            if (! $comment) {
+                return null;
+            }
+
+            $module = (string) ($comment['module'] ?? '');
+            $moduleId = (int) ($comment['moduleId'] ?? 0);
+        }
+
+        if ($module === 'tickets') {
+            $module = 'ticket';
+        }
+
+        return $this->commentRepo->resolveModuleProjectId($module, $moduleId);
+    }
+
+    /**
+     * Whether the current user may see (and react to) the entity identified by module/id.
+     * Fails closed when the owning project cannot be resolved.
+     *
+     * @param  string  $module  The reaction module.
+     * @param  int  $moduleId  The entity id.
+     */
+    private function canAccessEntity(string $module, int $moduleId): bool
+    {
+        $projectId = $this->resolveProjectId($module, $moduleId);
+
+        if ($projectId === null || $projectId <= 0) {
+            return false;
+        }
+
+        return $this->can(ProjectsPermissions::VIEW, $projectId);
     }
 
     /**
@@ -34,6 +101,10 @@ class Reactions
      */
     public function react(string $module, int $moduleId, string $reaction): bool
     {
+        if (! $this->canAccessEntity($module, $moduleId)) {
+            return false;
+        }
+
         return $this->addReaction((int) session('userdata.id'), $module, $moduleId, $reaction);
     }
 
@@ -52,6 +123,10 @@ class Reactions
      */
     public function unreact(string $module, int $moduleId, string $reaction): bool
     {
+        if (! $this->canAccessEntity($module, $moduleId)) {
+            return false;
+        }
+
         return $this->removeReaction((int) session('userdata.id'), $module, $moduleId, $reaction);
     }
 
@@ -106,12 +181,18 @@ class Reactions
      * getGroupedEntityReactions - gets all reactions for a given entity grouped and counted by reactions
      *
      *
+     * The caller must be able to view the entity's project; otherwise an empty list.
+     *
      * @return array|false returns the array on success or false on failure
      *
      * @api
      */
     public function getGroupedEntityReactions(string $module, int $moduleId): array|false
     {
+        if (! $this->canAccessEntity($module, $moduleId)) {
+            return [];
+        }
+
         return $this->reactionsRepo->getGroupedEntityReactions($module, $moduleId);
     }
 
@@ -142,12 +223,19 @@ class Reactions
     /**
      * getEntityReactionsWithUsers - gets all reactions for an entity with user names
      *
+     * The caller must be able to view the entity's project; otherwise an empty list (reactor
+     * names are not exposed across projects).
+     *
      * @return array returns array grouped by reaction with user info
      *
      * @api
      */
     public function getEntityReactionsWithUsers(string $module, int $moduleId): array
     {
+        if (! $this->canAccessEntity($module, $moduleId)) {
+            return [];
+        }
+
         return $this->reactionsRepo->getEntityReactionsWithUsers($module, $moduleId);
     }
 }

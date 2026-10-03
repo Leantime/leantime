@@ -186,13 +186,18 @@ abstract class Repository
     /**
      * patch - updates a record in the database
      *
+     * The record is always addressed by $id: the primary key can never be changed through the
+     * payload, and payload values are bound under a `p_` prefixed placeholder namespace that
+     * cannot collide with the WHERE binding (a payload key `id` previously re-bound `:id` and
+     * redirected the update to another row).
+     *
      * @param  int  $id  - the id of the record to update
      * @param  array  $params  - the parameters to update
      */
     public function patch(int $id, array $params): bool
     {
 
-        unset($params['act']);
+        unset($params['act'], $params['id']);
 
         if ($this->entity == '') {
             report('Patch not implemented for this entity');
@@ -200,22 +205,32 @@ abstract class Repository
             return false;
         }
 
-        $sql = 'UPDATE zp_'.$this->entity.' SET ';
-
+        // Sanitize once; the sanitized column name is both the SET target and the placeholder suffix.
+        $columns = [];
         foreach ($params as $key => $value) {
-            $sql .= ''.Db::sanitizeToColumnString($key).'=:'.Db::sanitizeToColumnString($key).', ';
+            $column = Db::sanitizeToColumnString((string) $key);
+            if ($column === '' || strtolower($column) === 'id') {
+                continue;
+            }
+            $columns[$column] = $value;
         }
 
-        $sql .= 'id=:id WHERE id=:id LIMIT 1';
+        $sql = 'UPDATE zp_'.$this->entity.' SET ';
+
+        foreach (array_keys($columns) as $column) {
+            $sql .= $column.'=:p_'.$column.', ';
+        }
+
+        $sql .= 'id=:patch_where_id WHERE id=:patch_where_id LIMIT 1';
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($sql);
 
-        $call->bindValue(':id', $id, PDO::PARAM_STR);
+        $call->bindValue(':patch_where_id', $id, PDO::PARAM_STR);
 
-        foreach ($params as $key => $value) {
-            $call->bindValue(':'.Db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+        foreach ($columns as $column => $value) {
+            $call->bindValue(':p_'.$column, $value, PDO::PARAM_STR);
         }
 
         return $call->execute();
