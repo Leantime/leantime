@@ -525,10 +525,65 @@ class TicketsApiContractTest extends TestCase
         $service->addTicket(['headline' => 'A', 'projectId' => 9, 'status' => 4.0]);
         $this->assertSame(4, $created()['status']);
 
-        foreach ([999, '999', 3.9, '3.9', true] as $invalidStatus) {
+        // Non-integer values are rejected even on create (unknown whole ids fall back, see below).
+        foreach ([3.9, '3.9', true] as $invalidStatus) {
             try {
                 $service->addTicket(['headline' => 'A', 'projectId' => 9, 'status' => $invalidStatus]);
                 $this->fail('status '.var_export($invalidStatus, true).' must be rejected');
+            } catch (ValidationException $e) {
+                $this->assertArrayHasKey('status', $e->getErrorData());
+            }
+        }
+    }
+
+    public function test_create_paths_fall_back_to_new_for_an_unknown_numeric_status_id(): void
+    {
+        // A project with a custom status set that has no status 3 (CSV/connector imports send 3).
+        $customLabels = [
+            10 => ['name' => 'Inbox', 'statusType' => 'NEW', 'sortKey' => 1],
+            11 => ['name' => 'Doing', 'statusType' => 'INPROGRESS', 'sortKey' => 2],
+            12 => ['name' => 'Shipped', 'statusType' => 'DONE', 'sortKey' => 3],
+        ];
+        $created = [];
+        $service = $this->service([
+            'getStateLabels' => fn () => $customLabels,
+            'getTicket' => fn () => false,
+            'addTicket' => function ($values) use (&$created) {
+                $created[] = $values['status'];
+
+                return 101;
+            },
+        ]);
+
+        \Illuminate\Support\Facades\Log::spy();
+
+        $this->assertSame(101, $service->addTicket(['headline' => 'Imported', 'projectId' => 9, 'status' => 3]));
+        $this->assertSame(101, $service->quickAddTicket(['headline' => 'Imported', 'projectId' => 9, 'status' => '3']));
+        $this->assertSame([10, 10], $created, 'unknown ids on create use the project NEW status');
+
+        \Illuminate\Support\Facades\Log::shouldHaveReceived('warning')->twice();
+
+        // Names and non-integer values are still caller errors on create.
+        $this->expectException(ValidationException::class);
+        $service->addTicket(['headline' => 'Imported', 'projectId' => 9, 'status' => 'Nonexistent']);
+    }
+
+    public function test_update_paths_reject_an_unknown_numeric_status_id(): void
+    {
+        $service = $this->service([
+            'getTicket' => fn () => $this->storedSubtask(),
+            'updateTicket' => function () {
+                throw new \RuntimeException('must not write a status the project does not define');
+            },
+            'patchTicket' => function () {
+                throw new \RuntimeException('must not write a status the project does not define');
+            },
+        ]);
+
+        foreach ([fn () => $service->updateTicket(['id' => 977, 'status' => 99]), fn () => $service->patch(977, ['status' => 99])] as $call) {
+            try {
+                $call();
+                $this->fail('an explicit change to a non-existent status must fail');
             } catch (ValidationException $e) {
                 $this->assertArrayHasKey('status', $e->getErrorData());
             }

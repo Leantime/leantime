@@ -2188,7 +2188,7 @@ class Tickets extends BaseService
 
         // Status ids, label names ("New") and status types ("inprogress") are all accepted;
         // anything unknown is rejected instead of being cast to 0 (= Done) (#3702).
-        $status = $this->resolveStatusInput($params['status'] ?? null, (int) $projectId)
+        $status = $this->resolveStatusInput($params['status'] ?? null, (int) $projectId, fallBackOnUnknownId: true)
             ?? $this->defaultNewStatus((int) $projectId);
 
         $values = [
@@ -2392,7 +2392,7 @@ class Tickets extends BaseService
 
         // New work defaults to the project's NEW status; label names and status types are
         // resolved, unknown strings are rejected instead of becoming 0 (= Done) (#3702).
-        $values['status'] = $this->resolveStatusInput($values['status'], (int) $values['projectId'])
+        $values['status'] = $this->resolveStatusInput($values['status'], (int) $values['projectId'], fallBackOnUnknownId: true)
             ?? $this->defaultNewStatus((int) $values['projectId']);
 
         if ($values['headline'] === '') {
@@ -2669,13 +2669,19 @@ class Tickets extends BaseService
      * type ("new", "inprogress", "done"). Previously any non-numeric string was cast to 0, which is
      * the Done status, so "New" silently completed new work.
      *
+     * On create paths ($fallBackOnUnknownId) an unknown NUMERIC id resolves to null so the caller
+     * uses the project's NEW status, with a warning logged: CSV/connector imports send default ids
+     * (e.g. 3) into projects with custom status sets and must keep working. Updates stay strict —
+     * an explicit change to a status that does not exist fails.
+     *
      * @param  mixed  $status  The submitted status.
      * @param  int  $projectId  The project whose status labels apply.
-     * @return int|null The status id, or null when no status was submitted (null or '').
+     * @param  bool  $fallBackOnUnknownId  Create path: unknown numeric ids resolve to null instead of failing.
+     * @return int|null The status id, or null when no status was submitted (null or '') or an unknown id falls back.
      *
      * @throws ValidationException When the status does not name a status of the project.
      */
-    private function resolveStatusInput(mixed $status, int $projectId): ?int
+    private function resolveStatusInput(mixed $status, int $projectId, bool $fallBackOnUnknownId = false): ?int
     {
         if ($status === null || $status === '') {
             return null;
@@ -2695,6 +2701,12 @@ class Tickets extends BaseService
         if ($statusId !== null) {
             if (array_key_exists($statusId, $labels)) {
                 return $statusId;
+            }
+
+            if ($fallBackOnUnknownId) {
+                Log::warning("Ticket status {$statusId} does not exist in project {$projectId}; using the project's NEW status instead.");
+
+                return null;
             }
 
             $this->throwUnknownStatus((string) $statusId, $labels);
@@ -4019,7 +4031,7 @@ class Tickets extends BaseService
             'date' => $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
             'dateToFinish' => $values['dateToFinish'] ?? '',
             'priority' => $values['priority'] ?? 3,
-            'status' => $this->resolveStatusInput($values['status'] ?? null, $parentProjectId),
+            'status' => $this->resolveStatusInput($values['status'] ?? null, $parentProjectId, fallBackOnUnknownId: $isNewSubtask),
             'storypoints' => $values['storypoints'] ?? '',
             'hourRemaining' => $values['hourRemaining'] ?? 0,
             'planHours' => $values['planHours'] ?? 0,
