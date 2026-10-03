@@ -86,20 +86,45 @@ class Comments extends BaseService
      * @param  int  $entityId  The entity id.
      * @param  int  $commentOrder  Sort order flag passed to the repository.
      * @param  int  $parent  Parent comment id (0 = top level).
+     * @param  bool  $strict  Reject modules other than ticket, project, article, idea and {type}canvasitem
+     *                        (API/MCP callers); web callers also read client and plugin modules.
      * @return false|array The comments.
+     *
+     * @throws ValidationException When $strict and the module is unknown, or the entity id is invalid.
+     * @throws NotFoundException When a ticket/article/idea/canvas item with that id does not exist.
      *
      * @api
      */
     #[RequiresPermission(CommentsPermissions::VIEW, entityScoped: true)]
-    public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
+    public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0, bool $strict = false): false|array
     {
         $module = $this->normalizeCommentModule($module);
+        $isKnownModule = is_string($module) && $this->isResolvableCommentModule($module);
+
+        if ($strict && ! $isKnownModule) {
+            $message = "Unknown comment module '{$module}'. Expected one of: ticket, project, article, idea, {type}canvasitem.";
+
+            throw new ValidationException(['module' => [$message]], $message);
+        }
+
+        if ($strict && (int) $entityId <= 0) {
+            $message = 'entityId must be a positive id.';
+
+            throw new ValidationException(['entityId' => [$message]], $message);
+        }
 
         // IDOR fence: comments are read by (module, entityId) with no project scoping in the repo,
         // so authorize VIEW against the host entity's REAL project — a foreign id can no longer leak
         // another project's comment thread over RPC. A null project (client/company-scoped target or
         // an unknown module) falls back to a session-scoped capability check (unchanged behavior).
         $projectId = $this->commentRepository->resolveModuleProjectId((string) $module, (int) $entityId);
+
+        // A known entity type whose id does not resolve does not exist (or is another canvas type):
+        // report that instead of an empty thread (#3704).
+        if ($isKnownModule && $module !== 'project' && (int) $entityId > 0 && $projectId === null) {
+            throw new NotFoundException("Could not find {$module} #{$entityId}, or you do not have access to it.");
+        }
+
         $this->authorize(CommentsPermissions::VIEW, $projectId);
 
         return $this->commentRepository->getComments($module, $entityId, $parent, $commentOrder);

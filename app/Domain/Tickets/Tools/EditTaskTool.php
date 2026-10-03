@@ -30,7 +30,7 @@ class EditTaskTool extends Tool
      */
     public function description(): string
     {
-        return 'Updates an existing task as defined by the `id` parameter and using an array `params` where they key is the column name and the value is the value that it should be updated to. Dates need to be provided as iso8601 strings (example: 2024-04-30T15:00:00-04:00). Commonly updated fields are: headline, type, description, projectId, status (a status id from the getStatusLabels tool, a status name, or a status type: new, inprogress, done), dependingTicketId (parent task; omitted fields are never changed), storypoints (often called effort), dateToFinish (due date), planHours. Due dates should not be used as a form of timeboxing since they may represent client due dates. Instead use editFrom and editTo dates to schedule a task for a specific user.';
+        return 'Updates an existing task as defined by the `id` parameter and using an array `params` where the key is the column name and the value is the value that it should be updated to. Dates need to be provided as iso8601 strings (example: 2024-04-30T15:00:00-04:00). Commonly updated fields are: headline, type, description, projectId, status (a status id from the getStatusLabels tool, a status name, or a status type: new, inprogress, done), dependingTicketId (parent task; omitted fields are never changed), storypoints (often called effort), dateToFinish (due date), planHours. Due dates should not be used as a form of timeboxing since they may represent client due dates. Instead use editFrom and editTo dates to schedule a task for a specific user.';
     }
 
     /**

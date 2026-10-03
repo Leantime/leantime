@@ -2547,6 +2547,19 @@ class Tickets extends BaseService
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
+        // Moving the ticket needs edit rights in the TARGET project, not just membership there
+        // (mirrors patch()); otherwise a reader could push tickets into that project.
+        if ((int) $values['projectId'] !== (int) $currentTicket->projectId
+            && ! $this->can(TicketsPermissions::EDIT, (int) $values['projectId'])) {
+            return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
+        }
+
+        // A newly set parent must be a ticket the caller can see, like on create (#3702).
+        if (array_key_exists('dependingTicketId', $submittedValues)
+            && (int) $submittedValues['dependingTicketId'] !== (int) $currentTicket->dependingTicketId) {
+            $this->assertParentTicketIsVisible($submittedValues['dependingTicketId']);
+        }
+
         // An empty status means "unchanged"; names/types are resolved, unknown strings rejected (#3702).
         if (array_key_exists('status', $submittedValues)) {
             $values['status'] = $this->resolveStatusInput($submittedValues['status'], (int) $values['projectId']);
@@ -3400,6 +3413,11 @@ class Tickets extends BaseService
         // could move/inject a ticket into a project they have no access to.
         if (isset($params['projectId']) && (int) $params['projectId'] !== (int) $ticket->projectId) {
             $this->authorize(TicketsPermissions::EDIT, (int) $params['projectId']);
+        }
+
+        // A newly set parent must be a ticket the caller can see, like on create (#3702).
+        if (array_key_exists('dependingTicketId', $params) && (int) $params['dependingTicketId'] !== (int) $ticket->dependingTicketId) {
+            $this->assertParentTicketIsVisible($params['dependingTicketId']);
         }
 
         // Resolve a status name/type to the project's status id; an empty status is dropped rather

@@ -72,7 +72,11 @@ class BulkAddTasksTool extends Tool
 
                 $result = $this->ticketsService->quickAddTicket($params);
 
-                if ($result) {
+                // quickAddTicket() reports a validation failure (e.g. missing headline) as an array.
+                if (is_array($result)) {
+                    $failureCount++;
+                    $results[] = ['headline' => $taskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => (string) ($result['message'] ?? $result['msg'] ?? 'Failed to create task')];
+                } elseif ($result) {
                     $successCount++;
                     $results[] = ['headline' => $taskData['headline'], 'status' => 'success', 'id' => $result];
                 } else {

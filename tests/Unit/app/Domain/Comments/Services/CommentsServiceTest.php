@@ -506,4 +506,35 @@ class CommentsServiceTest extends TestCase
 
         $this->assertSame(['ticket', 'ticket'], $seen);
     }
+
+    public function test_get_comments_reports_a_missing_entity_instead_of_an_empty_thread(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => null,
+            'getComments' => function () {
+                throw new \RuntimeException('must not query comments of a missing entity');
+            },
+        ]);
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $this->makeService($this->noopReactions(), $repo)->getComments('ticket', 404);
+    }
+
+    public function test_get_comments_strict_mode_rejects_an_unknown_module(): void
+    {
+        $this->expectException(\Leantime\Core\Exceptions\ValidationException::class);
+
+        $this->makeService($this->noopReactions())->getComments('bogus', 1, strict: true);
+    }
+
+    public function test_get_comments_still_reads_client_and_plugin_modules_for_web_callers(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => null,
+            'getComments' => fn () => [['id' => 1]],
+        ]);
+
+        $this->assertSame([['id' => 1]], $this->makeService($this->noopReactions(), $repo)->getComments('client', 3));
+    }
 }

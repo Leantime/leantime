@@ -7,6 +7,7 @@ use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Comments\Services\Comments;
 
 /**
@@ -48,7 +49,12 @@ class GetCommentsTool extends Tool
         $entityId = (int) ($arguments['entityId'] ?? 0);
         $commentOrder = (int) ($arguments['commentOrder'] ?? 0);
 
-        $comments = $this->commentsService->getComments($module, $entityId, $commentOrder);
+        // Strict: an unknown module or a missing entity is an error, not "no comments".
+        try {
+            $comments = $this->commentsService->getComments($module, $entityId, $commentOrder, strict: true);
+        } catch (LeantimeExceptionInterface $e) {
+            return ToolResult::error($e->getClientMessage());
+        }
 
         if (empty($comments)) {
             return ToolResult::text("No comments found for {$module} ID: {$entityId}");

@@ -589,4 +589,65 @@ class TicketsApiContractTest extends TestCase
             }
         }
     }
+
+    // ---------------------------------------------------------------------
+    // Review follow-ups: moves and parent links on update
+    // ---------------------------------------------------------------------
+
+    public function test_update_ticket_requires_edit_on_the_target_project_when_moving(): void
+    {
+        $editOnlyInProject9 = $this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $key, ?int $projectId = null) => $projectId === 9,
+            'authorize' => fn () => null,
+        ]);
+        $service = $this->service([
+            'getTicket' => fn () => $this->storedSubtask(),
+            'updateTicket' => function () {
+                throw new \RuntimeException('must not move a ticket into a project without edit rights');
+            },
+        ], $editOnlyInProject9);
+
+        $result = $service->updateTicket(['id' => 977, 'projectId' => 12]);
+
+        $this->assertSame('error', $result['type']);
+    }
+
+    public function test_update_and_patch_reject_a_new_parent_the_caller_cannot_see(): void
+    {
+        $service = $this->service([
+            'getTicket' => fn ($id) => (int) $id === 977 ? $this->storedSubtask() : false,
+            'updateTicket' => function () {
+                throw new \RuntimeException('must not link under an invisible parent');
+            },
+            'patchTicket' => function () {
+                throw new \RuntimeException('must not link under an invisible parent');
+            },
+        ]);
+
+        foreach ([fn () => $service->updateTicket(['id' => 977, 'dependingTicketId' => 5555]), fn () => $service->patch(977, ['dependingTicketId' => 5555])] as $call) {
+            try {
+                $call();
+                $this->fail('a new parent must be visible to the caller');
+            } catch (ValidationException $e) {
+                $this->assertArrayHasKey('dependingTicketId', $e->getErrorData());
+            }
+        }
+    }
+
+    public function test_update_keeps_an_unchanged_parent_without_rechecking_it(): void
+    {
+        $written = null;
+        $service = $this->service([
+            // The stored parent (974) is not visible, but it is not being changed.
+            'getTicket' => fn ($id) => (int) $id === 977 ? $this->storedSubtask() : false,
+            'updateTicket' => function ($values) use (&$written) {
+                $written = $values;
+
+                return true;
+            },
+        ]);
+
+        $this->assertTrue($service->updateTicket(['id' => 977, 'dependingTicketId' => 974, 'headline' => 'x']));
+        $this->assertSame(974, $written['dependingTicketId']);
+    }
 }
