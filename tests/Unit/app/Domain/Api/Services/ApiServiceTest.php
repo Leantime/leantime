@@ -290,4 +290,21 @@ class ApiServiceTest extends TestCase
         $this->assertTrue($service->deleteApiKey(3));
         $this->assertSame([3], $deleted);
     }
+
+    public function test_create_api_key_always_stores_the_api_source(): void
+    {
+        session(['userdata' => ['id' => 4, 'role' => 'admin']]);
+        $storedSource = null;
+        $userRepo = $this->make(UserRepository::class, [
+            'addUser' => function (array $values) use (&$storedSource) {
+                $storedSource = $values['source'] ?? null;
+
+                return '31';
+            },
+        ]);
+
+        $this->makeService(userRepo: $userRepo)->createAPIKey(['firstname' => 'key', 'role' => '20', 'source' => 'ldap']);
+
+        $this->assertSame('api', $storedSource);
+    }
 }

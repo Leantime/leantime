@@ -143,6 +143,8 @@ class Api
         $values['status'] = 'a';
         $values['clientId'] = '';
         $values['phone'] = '';
+        // Always an API-key account, whatever the caller passed in.
+        $values['source'] = 'api';
         $values['id'] = $this->userRepo->addUser($values);
 
         return $values['id'] ? $values : false;
