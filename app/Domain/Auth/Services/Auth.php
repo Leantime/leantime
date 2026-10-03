@@ -253,6 +253,10 @@ class Auth implements Authenticatable
      * learnTrustedAppUrl - records the URL of this sign-in as the trusted app URL for email links
      * when the user is an owner/admin and no URL is known yet (see {@see TrustedAppUrl}).
      *
+     * Accounts with two-factor authentication are skipped here: their sign-in is not complete
+     * until the second factor is verified, so the URL is learned then instead
+     * ({@see self::learnTrustedAppUrlAfter2FA()}). A password alone never teaches the URL.
+     *
      * Never interrupts the login: a failure is logged and ignored.
      *
      * @internal Not exposed over JSON-RPC; called by the interactive login flows only.
@@ -261,8 +265,37 @@ class Auth implements Authenticatable
      */
     public function learnTrustedAppUrl(array $user): void
     {
+        if (! empty($user['twoFAEnabled'])) {
+            return;
+        }
+
+        $this->recordTrustedAppUrl($user['role'] ?? null);
+    }
+
+    /**
+     * learnTrustedAppUrlAfter2FA - records the trusted app URL once the current session has
+     * passed its second factor (same rules as {@see self::learnTrustedAppUrl()}).
+     *
+     * @internal Not exposed over JSON-RPC; called by the 2FA verification flow only.
+     */
+    public function learnTrustedAppUrlAfter2FA(): void
+    {
+        if (! session('userdata.twoFAVerified')) {
+            return;
+        }
+
+        $this->recordTrustedAppUrl(session('userdata.role'));
+    }
+
+    /**
+     * Hands the role and current request to {@see TrustedAppUrl::learnFromAdminLogin()}; never throws.
+     *
+     * @param  mixed  $role  the signed-in user's role (numeric key or role name)
+     */
+    private function recordTrustedAppUrl(mixed $role): void
+    {
         try {
-            app()->make(TrustedAppUrl::class)->learnFromAdminLogin($user['role'] ?? null, request());
+            app()->make(TrustedAppUrl::class)->learnFromAdminLogin($role, request());
         } catch (\Throwable $e) {
             Log::warning('Could not record the application URL at login: '.$e->getMessage());
         }

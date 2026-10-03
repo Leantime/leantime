@@ -54,6 +54,7 @@ class Verify extends Controller
 
                 if ($this->authService->verify2FA($params['twoFA_code'])) {
                     $this->authService->set2FAVerified();
+                    $this->authService->learnTrustedAppUrlAfter2FA();
 
                     return FrontcontrollerCore::redirect($redirectUrl);
                 } else {
