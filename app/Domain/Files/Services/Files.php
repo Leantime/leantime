@@ -38,6 +38,14 @@ class Files extends BaseService
     private const OWNER_RESTRICTED_MODULES = ['private', 'user', 'lead', 'export'];
 
     /**
+     * Owner-restricted modules whose moduleId is the owning user's id; uploads there are only
+     * allowed into the current user's own id.
+     *
+     * @var array<int, string>
+     */
+    private const USER_OWNED_UPLOAD_MODULES = ['user', 'private'];
+
+    /**
      * Module types whose files belong to a project (resolved by getProjectIdForFile). For these,
      * an unresolvable project id — an invalid or deleted entity — must FAIL CLOSED rather than
      * fall through to the non-project "allow upload" / "serve file" path.
@@ -391,9 +399,9 @@ class Files extends BaseService
      *  - wiki targets resolve to the article's project (see resolveUploadTarget()) and need
      *    files.upload there
      *  - client targets need the global clients.edit permission
-     *  - owner-restricted targets (user/private/lead/export) keep prior behavior; their flows pin
-     *    moduleId server-side (e.g. ProfileImage forces the session user's id)
-     *  - anything else (empty or unknown module) is denied
+     *  - user/private targets are keyed by a user id and only accept the current user's own id
+     *    (ProfileImage passes the session user's id)
+     *  - lead/export (no upload flow, ids are not user ids) and empty/unknown modules are denied
      *
      * Not @api: internal authorization helper for the upload controller, not a JSON-RPC method.
      *
@@ -415,11 +423,14 @@ class Files extends BaseService
             return $moduleId > 0 && $this->can(ClientsPermissions::EDIT);
         }
 
-        if (in_array($module, self::OWNER_RESTRICTED_MODULES, true)) {
-            return true;
+        // user/private files are keyed by their owner's user id: only the owner may upload there.
+        if (in_array($module, self::USER_OWNED_UPLOAD_MODULES, true)) {
+            $currentUserId = $this->currentUserId();
+
+            return $currentUserId !== null && $moduleId === $currentUserId;
         }
 
-        // Empty or unknown module: deny.
+        // lead/export (no in-app upload flow; their ids are not user ids), empty or unknown: deny.
         return false;
     }
 

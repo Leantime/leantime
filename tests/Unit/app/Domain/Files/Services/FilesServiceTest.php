@@ -449,13 +449,32 @@ class FilesServiceTest extends TestCase
         );
     }
 
-    public function test_user_can_upload_to_module_nonproject_preserved(): void
+    public function test_user_owned_uploads_only_accept_the_current_users_id(): void
     {
-        // Owner-restricted modules (user avatar, ...) have no project context; preserved as allowed
-        // even under deny-all (their flows pin moduleId server-side).
+        // Session user is 1. user/private targets are keyed by a user id and need no project role.
         $service = $this->makeService(null, null, $this->denyingPermissions());
 
-        $this->assertTrue($service->userCanUploadToModule('user', 9));
+        $this->assertTrue($service->userCanUploadToModule('user', 1));
+        $this->assertTrue($service->userCanUploadToModule('Private', 1));
+        $this->assertFalse($service->userCanUploadToModule('user', 9));
+        $this->assertFalse($service->userCanUploadToModule('private', 9));
+    }
+
+    public function test_lead_and_export_uploads_are_denied(): void
+    {
+        $service = $this->makeService(null, null, $this->allowingPermissions());
+
+        $this->assertFalse($service->userCanUploadToModule('lead', 1));
+        $this->assertFalse($service->userCanUploadToModule('export', 1));
+    }
+
+    public function test_upload_into_another_users_files_throws(): void
+    {
+        $service = $this->makeService(null, null, $this->allowingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->upload(['file' => []], 'user', 9);
     }
 
     public function test_user_can_upload_to_module_denies_unknown_modules(): void
