@@ -139,36 +139,34 @@ class Language
     /**
      * Get the currently selected language.
      *
+     * Candidates are tried in order (user setting, language cookie, company setting, browser
+     * language) and only a code from the list of available languages is accepted. The value
+     * ends up in a file path when the language files are read, so anything else — e.g. a
+     * tampered cookie — is ignored and the configured default language is used instead.
+     *
      * @return string The currently selected language.
      */
     public function getCurrentLanguage(): string
     {
+        $browserLanguage = str_replace('_', '-', substr((string) ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''), 0, 2));
 
-        if (session()->has('usersettings.language')) {
-            $this->language = session('usersettings.language');
+        $candidates = [
+            session('usersettings.language'),
+            $_COOKIE['language'] ?? null,
+            session('companysettings.language'),
+            $browserLanguage,
+        ];
 
-            return $this->language;
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && $candidate !== '' && $this->isValidLanguage($candidate)) {
+                $this->language = $candidate;
+
+                return $this->language;
+            }
         }
 
-        if (isset($_COOKIE['language'])) {
-            $this->language = $_COOKIE['language'];
-
-            return $this->language;
-        }
-
-        if (session('companysettings.language')) {
-            $this->language = session('companysettings.language');
-
-            return $this->language;
-        }
-
-        $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US', 0, 2);
-        $language = str_replace('_', '-', $language);
-        if ($language && $this->isValidLanguage($language)) {
-            return $this->language;
-        }
-
-        $this->language = $this->config->language;
+        $configuredLanguage = (string) $this->config->language;
+        $this->language = $this->isValidLanguage($configuredLanguage) ? $configuredLanguage : 'en-US';
 
         return $this->language;
     }
@@ -181,7 +179,7 @@ class Language
      */
     public function isValidLanguage(string $langCode): bool
     {
-        return isset($this->langlist[$langCode]);
+        return is_array($this->langlist) && isset($this->langlist[$langCode]);
     }
 
     /**

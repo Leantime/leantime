@@ -175,6 +175,7 @@ class AuthCheck
 
                 if ($guardInstance->check()) {
                     $this->auth->shouldUse($guard);
+                    $request->attributes->set(AuthenticateSession::TOKEN_AUTHENTICATED, $guard !== 'leantime');
 
                     $this->establishApiUserSession($request);
 
@@ -213,6 +214,7 @@ class AuthCheck
                 // resolver: leaving $request->user() null lets AuthenticateSession bail instead of
                 // calling viaRemember() on the non-session WebGuard, matching the x-api-key path.
                 app(\Leantime\Domain\Api\Services\Api::class)->setApiUserSession($user, true);
+                $request->attributes->set(AuthenticateSession::TOKEN_AUTHENTICATED, true);
 
                 return true;
             }

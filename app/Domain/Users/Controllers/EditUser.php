@@ -239,9 +239,8 @@ class EditUser extends Controller
      */
     private function generateFormTokens(): void
     {
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
-        session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
+        session(['formTokenName' => bin2hex(random_bytes(16))]);
+        session(['formTokenValue' => bin2hex(random_bytes(16))]);
     }
 
     /**

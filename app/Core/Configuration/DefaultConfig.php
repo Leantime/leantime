@@ -494,6 +494,19 @@ class DefaultConfig
      */
     public string $oidcFieldDepartment = '';
 
+    /**
+     * @var bool Reject logins whose identity token / userinfo carries email_verified=false. Providers
+     *           that omit the claim (e.g. Microsoft Entra ID, GitHub) are not affected. Only disable if
+     *           your provider marks admin-managed accounts as unverified (e.g. some Keycloak setups).
+     */
+    public bool $oidcRequireVerifiedEmail = true;
+
+    /**
+     * @var bool Skip TLS certificate verification for requests to the OIDC provider. Only for
+     *           providers with self-signed certificates on a trusted network — never in production.
+     */
+    public bool $oidcSkipTlsVerify = false;
+
     // Redis Settings ===============================================================================
     /**
      * @var bool Set to true if you want to use Redis
@@ -537,9 +550,13 @@ class DefaultConfig
 
     // Security/Rate Limiting Settings ===============================================================================
     /**
-     * @var string trusted Proxies
+     * @var string Comma separated IPs / CIDR ranges of reverse proxies whose X-Forwarded-* headers
+     *             (client IP, scheme, host) are honoured. Empty = loopback and private networks
+     *             only (PRIVATE_SUBNETS). When set explicitly, requests that do not come from one of
+     *             these addresses are rejected. 'REMOTE_ADDR' trusts every client and lets anyone
+     *             spoof their IP — only use it if Leantime is never reachable without the proxy.
      */
-    public string $trustedProxies = '127.0.0.1,REMOTE_ADDR';
+    public string $trustedProxies = '';
 
     /**
      * @var int rate limit on all requests
@@ -557,6 +574,16 @@ class DefaultConfig
      * @var int rate limit on auth requests
      */
     public int $ratelimitAuth = 20;
+
+    /**
+     * @var int password reset POSTs (reset email requests + new password submissions) per IP per 10 minutes
+     */
+    public int $ratelimitPasswordReset = 5;
+
+    /**
+     * @var int two-factor code submissions per user per 5 minutes
+     */
+    public int $ratelimitTwofa = 5;
 
     /**
      * @var bool reject state-changing browser requests (POST/PUT/PATCH/DELETE) whose

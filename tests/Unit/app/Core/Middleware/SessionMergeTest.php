@@ -134,4 +134,72 @@ class SessionMergeTest extends TestCase
         $this->assertFalse($verify->has('currentIdeaCanvas'), 'removed key should not be persisted');
         $this->assertSame(3, $verify->get('currentProject'));
     }
+
+    public function test_rotated_session_id_is_not_resurrected_by_a_late_writer(): void
+    {
+        $handler = new ArraySessionHandler(120);
+        $oldId = str_repeat('a', 40);
+
+        $stale = new Store('leantime', $handler, $oldId);
+        $stale->start();
+        $stale->put('userdata', ['id' => 5]);
+        $stale->save();
+
+        $middleware = $this->middleware();
+        $request = \Leantime\Core\Http\IncomingRequest::create('/auth/logout');
+
+        $retire = new ReflectionMethod(StartSession::class, 'retireSessionId');
+        $retire->setAccessible(true);
+        $retire->invoke($middleware, $request, $stale, $oldId);
+
+        $this->assertSame('', $handler->read($oldId), 'retiring destroys the stored data');
+
+        // A concurrent request that began on the old id finishes after the rotation.
+        $this->invokeMerge($stale, ['userdata' => ['id' => 5, 'name' => 'late']], []);
+
+        $this->assertSame('', $handler->read($oldId), 'a late writer must not recreate the retired session');
+
+        $isRetired = new ReflectionMethod(StartSession::class, 'isRetiredSessionId');
+        $isRetired->setAccessible(true);
+        $this->assertTrue($isRetired->invoke($middleware, $oldId));
+        $this->assertFalse($isRetired->invoke($middleware, str_repeat('b', 40)));
+    }
+
+    public function test_write_that_races_the_retirement_is_wiped_after_the_fact(): void
+    {
+        $handler = new ArraySessionHandler(120);
+        $oldId = str_repeat('c', 40);
+
+        $stale = new Store('leantime', $handler, $oldId);
+        $stale->start();
+
+        // Simulate the interleaving: the writer passed its pre-check, then the id got retired
+        // (tombstone + destroy) before the writer's save landed.
+        $middleware = new class(app('session')) extends StartSession
+        {
+            public bool $retireDuringWrite = true;
+
+            public string $idToRetire = '';
+
+            protected function isRetiredSessionId(?string $sessionId): bool
+            {
+                if ($this->retireDuringWrite) {
+                    $this->retireDuringWrite = false;
+
+                    \Illuminate\Support\Facades\Cache::put('session-retired:'.$this->idToRetire, true, 60);
+
+                    return false;
+                }
+
+                return parent::isRetiredSessionId($sessionId);
+            }
+        };
+        $middleware->idToRetire = $oldId;
+
+        $merge = new ReflectionMethod(StartSession::class, 'mergeSessionChanges');
+        $merge->setAccessible(true);
+        $merge->invoke($middleware, $stale, ['userdata' => ['id' => 5]], []);
+
+        $this->assertSame('', $handler->read($oldId), 'the post-write check removes a write that raced the retirement');
+    }
 }

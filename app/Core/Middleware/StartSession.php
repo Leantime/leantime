@@ -39,6 +39,11 @@ class StartSession
      *
      * @return void
      */
+    /**
+     * Cache key prefix marking session ids that were rotated away.
+     */
+    private const RETIRED_ID_PREFIX = 'session-retired:';
+
     public function __construct(SessionManager $manager, ?callable $cacheFactoryResolver = null)
     {
         $this->manager = $manager;
@@ -158,6 +163,7 @@ class StartSession
         // Keys can't be safely merged onto a different id, so fall back to a full,
         // locked save of the live session.
         if ($session->getId() !== $initialId) {
+            $this->retireSessionId($request, $session, $initialId);
             $this->withSessionLock($request, $session, fn () => $session->save());
 
             return;
@@ -185,6 +191,12 @@ class StartSession
      */
     protected function mergeSessionChanges($session, array $changed, array $removed): void
     {
+        // A request that started on an id which was rotated away meanwhile (logout/login on
+        // another request) must not write it back into existence.
+        if ($this->isRetiredSessionId($session->getId())) {
+            return;
+        }
+
         $merged = new Store(
             $session->getName(),
             $session->getHandler(),
@@ -208,6 +220,59 @@ class StartSession
         }
 
         $merged->save();
+
+        // Re-check after writing: if the id was retired while this write was in flight, remove
+        // what we just wrote. Together with retireSessionId() (tombstone first, then destroy) this
+        // holds regardless of lock timing — any write either precedes the destroy or is followed
+        // by this check, which then sees the tombstone.
+        if ($this->isRetiredSessionId($session->getId())) {
+            $session->getHandler()->destroy($session->getId());
+        }
+    }
+
+    /**
+     * Mark a session id that was rotated away (login, 2FA, logout) as retired and destroy its
+     * stored data.
+     *
+     * Correctness does not depend on the lock: the tombstone is written BEFORE the data is
+     * destroyed, and {@see mergeSessionChanges()} checks the tombstone both before and after its
+     * write. A concurrent writer on the old id therefore either lands before the destroy (and is
+     * wiped by it) or re-checks after writing, sees the tombstone and wipes its own write. The
+     * old id's lock only reduces contention.
+     *
+     * @param  \Illuminate\Contracts\Session\Session  $session
+     */
+    protected function retireSessionId(IncomingRequest $request, $session, string $retiredId): void
+    {
+        if ($retiredId === '') {
+            return;
+        }
+
+        $this->cache($this->manager->blockDriver())->put(
+            self::RETIRED_ID_PREFIX.$retiredId,
+            true,
+            max(60, (int) $this->getSessionLifetimeInSeconds())
+        );
+
+        $this->withSessionLock($request, $session, fn () => $session->getHandler()->destroy($retiredId), $retiredId);
+
+        // Destroy is idempotent; repeat it in case the locked attempt above fell back to an
+        // unlocked retry that interleaved with a concurrent writer.
+        $session->getHandler()->destroy($retiredId);
+    }
+
+    /**
+     * Whether a session id was rotated away and must no longer be used or written.
+     *
+     * @phpstan-impure Reads shared cache state that other requests change concurrently.
+     */
+    protected function isRetiredSessionId(?string $sessionId): bool
+    {
+        if ($sessionId === null || $sessionId === '') {
+            return false;
+        }
+
+        return (bool) $this->cache($this->manager->blockDriver())->get(self::RETIRED_ID_PREFIX.$sessionId, false);
     }
 
     /**
@@ -238,7 +303,7 @@ class StartSession
      *
      * @param  \Illuminate\Contracts\Session\Session  $session
      */
-    protected function withSessionLock(IncomingRequest $request, $session, Closure $callback): void
+    protected function withSessionLock(IncomingRequest $request, $session, Closure $callback, ?string $lockSessionId = null): void
     {
         // Dynamic lock period for different request types
         $holdLockFor = $this->calculateLockDuration($request); // Hold lock for x seconds after acquiring
@@ -247,7 +312,7 @@ class StartSession
         $maxWaitForLock = 5; // Wait for up to y seconds to acquire the lock
 
         $lock = $this->cache($this->manager->blockDriver())
-            ->lock('session:'.$session->getId(), $holdLockFor)
+            ->lock('session:'.($lockSessionId ?? $session->getId()), $holdLockFor)
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
@@ -332,7 +397,10 @@ class StartSession
     public function getSession(IncomingRequest $request)
     {
         return tap($this->manager->driver(), function ($session) use ($request) {
-            $session->setId($request->cookies->get($session->getName()));
+            $cookieId = $request->cookies->get($session->getName());
+
+            // A retired id (rotated away at login/logout) is never resumed: start a fresh one.
+            $session->setId($this->isRetiredSessionId(is_string($cookieId) ? $cookieId : null) ? null : $cookieId);
         });
     }
 
