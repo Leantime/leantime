@@ -67,7 +67,7 @@ leantime.canvasController = (function () {
             },
             afterShowCont: function () {
                 window.htmx.process('.nyroModalCont');
-                jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+                jQuery("." + canvasName + "CanvasModal, #commentForm, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
 
             },
             beforeClose: function () {
@@ -81,7 +81,7 @@ leantime.canvasController = (function () {
     //Functions
 
     var _initModals = function () {
-        jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+        jQuery("." + canvasName + "CanvasModal, #commentForm, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
     };
 
     var openModalManually = function (url) {

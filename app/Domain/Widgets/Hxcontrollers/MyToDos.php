@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -112,7 +114,7 @@ class MyToDos extends HtmxController
         $params = $this->incomingRequest->request->all();
 
         if (isset($params['id']) && isset($params['status'])) {
-            $result = $this->ticketsService->patch($params['id'], ['status' => $params['status']]);
+            $result = $this->patchTask($params['id'], ['status' => $params['status']]);
 
             if ($result) {
                 $this->tpl->setNotification($this->language->__('short_notifications.status_updated'), 'success');
@@ -130,7 +132,7 @@ class MyToDos extends HtmxController
         $params = $this->incomingRequest->request->all();
 
         if (isset($params['id']) && isset($params['milestoneId'])) {
-            $result = $this->ticketsService->patch($params['id'], ['milestoneid' => $params['milestoneId']]);
+            $result = $this->patchTask($params['id'], ['milestoneid' => $params['milestoneId']]);
 
             if ($result) {
                 $this->tpl->setNotification($this->language->__('short_notifications.milestone_updated'), 'success');
@@ -148,7 +150,7 @@ class MyToDos extends HtmxController
         $params = $this->incomingRequest->request->all();
 
         if (isset($params['id']) && isset($params['date'])) {
-            $result = $this->ticketsService->patch($params['id'], ['dateToFinish' => $params['date']]);
+            $result = $this->patchTask($params['id'], ['dateToFinish' => $params['date']]);
 
             if ($result) {
                 $this->tpl->setNotification($this->language->__('short_notifications.date_updated'), 'success');
@@ -166,10 +168,10 @@ class MyToDos extends HtmxController
      */
     public function updateTitle($params)
     {
-        if (isset($params['id']) && isset($params['headline'])) {
-            $headline = $params['headline'];
+        if (isset($params['id']) && isset($params['headline']) && is_scalar($params['headline'])) {
+            $headline = (string) $params['headline'];
 
-            $result = $this->ticketsService->patch($params['id'], ['headline' => $headline]);
+            $result = $this->patchTask($params['id'], ['headline' => $headline]);
 
             if ($result) {
                 $this->tpl->setNotification($this->language->__('short_notifications.title_updated'), 'success');
@@ -177,7 +179,32 @@ class MyToDos extends HtmxController
                 $this->tpl->setNotification($this->language->__('short_notifications.title_update_error'), 'error');
             }
 
-            return $this->tpl->displayRaw("{$headline}");
+            // The response is swapped into the page as HTML, so the echoed headline must be escaped.
+            return $this->tpl->displayRaw(e($headline));
+        }
+    }
+
+    /**
+     * Patch a task through the authorized service entry point.
+     *
+     * patchTicket() resolves the ticket's real project and requires tickets.edit there, so a
+     * read-only member (or a caller with a foreign ticket id) gets a failed update instead of
+     * a write. Denials are mapped to false so the widget shows its normal error notification.
+     *
+     * @param  mixed  $ticketId  The ticket id from the request.
+     * @param  array<string, mixed>  $values  The fields to update.
+     * @return bool True when the ticket was updated.
+     */
+    private function patchTask(mixed $ticketId, array $values): bool
+    {
+        if (! is_numeric($ticketId) || (int) $ticketId <= 0) {
+            return false;
+        }
+
+        try {
+            return $this->ticketsService->patchTicket((int) $ticketId, $values);
+        } catch (AuthorizationException|NotFoundException) {
+            return false;
         }
     }
 

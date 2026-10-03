@@ -214,6 +214,10 @@ class Frontcontroller
     public function getValidControllerCall(string $moduleName, string $actionName, string $methodName, string $controllerType): array
     {
 
+        // Must run before the route cache lookup: a cached POST resolution would otherwise be
+        // returned for a GET that names the verb in the URL.
+        $this->assertVerbSegmentMatchesRequestMethod($methodName);
+
         $moduleName = Str::studly($moduleName);
         $actionName = Str::studly($actionName);
         $methodNameLower = Str::lower($methodName);
@@ -350,6 +354,8 @@ class Frontcontroller
      */
     public function getValidControllerMethod(string $controllerClass, string $method): string
     {
+        $this->assertVerbSegmentMatchesRequestMethod($method);
+
         $methodFormatted = Str::camel($method);
         $httpMethod = Str::lower($this->incomingRequest->getMethod());
 
@@ -375,6 +381,41 @@ class Frontcontroller
         }
 
         throw new NotFoundHttpException("Can't find valid method for ".strip_tags($method).' in '.strip_tags($controllerClass));
+    }
+
+    /**
+     * Refuses a URL segment that names an HTTP verb other than the one actually used.
+     *
+     * `/module/action/{method}` lets the URL pick a controller method. Custom action names
+     * keep working, but a segment like `post` or `delete` must not run that handler on a
+     * GET request: browsers treat GET as safe (it is sent cross-site with SameSite=Lax
+     * cookies), so a state-changing handler reached that way could be triggered by a link.
+     *
+     * @param  string  $methodName  The method segment taken from the URL (or the request verb).
+     *
+     * @throws NotFoundHttpException When the segment is a verb that differs from the request method.
+     */
+    private function assertVerbSegmentMatchesRequestMethod(string $methodName): void
+    {
+        $httpVerbs = ['get', 'post', 'put', 'patch', 'delete'];
+        $requestedVerb = Str::lower($methodName);
+
+        if (! in_array($requestedVerb, $httpVerbs, true)) {
+            return;
+        }
+
+        $actualVerb = Str::lower($this->incomingRequest->getMethod());
+
+        // HEAD is answered by the GET handler.
+        if ($actualVerb === 'head') {
+            $actualVerb = 'get';
+        }
+
+        if ($requestedVerb === $actualVerb) {
+            return;
+        }
+
+        throw new NotFoundHttpException('Method '.strip_tags($methodName).' does not match the request method');
     }
 
     /**

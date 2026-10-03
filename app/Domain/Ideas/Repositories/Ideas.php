@@ -182,7 +182,7 @@ class Ideas
     public function editCanvasItem(array $values): void
     {
         $this->db->table('zp_canvas_items')
-            ->where('id', $values['itemId'])
+            ->where('id', (int) $values['itemId'])
             ->update([
                 'description' => $values['description'],
                 'assumptions' => $values['assumptions'],

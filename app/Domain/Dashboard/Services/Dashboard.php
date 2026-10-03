@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Dashboard\Services;
 
+use Leantime\Core\Domains\BaseService;
+use Leantime\Domain\Comments\Permissions\CommentsPermissions;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Reactions\Models\Reactions;
@@ -15,7 +17,7 @@ use Leantime\Domain\Reactions\Services\Reactions as ReactionService;
  *
  * @api
  */
-class Dashboard
+class Dashboard extends BaseService
 {
     /**
      * @param  CommentService  $commentService  Comment business logic (authorization-aware deletes)
@@ -61,8 +63,12 @@ class Dashboard
     /**
      * Counts all comments attached to a project.
      *
+     * The caller must be able to view comments in that project (role + membership).
+     *
      * @param  int  $projectId  The project to count comments for
      * @return int The number of comments
+     *
+     * @throws \Leantime\Core\Exceptions\AuthorizationException When the caller may not view the project's comments.
      *
      * @api
      */
@@ -71,6 +77,8 @@ class Dashboard
         if ($projectId <= 0) {
             throw new \InvalidArgumentException('A valid project id is required to count comments.');
         }
+
+        $this->authorize(CommentsPermissions::VIEW, $projectId);
 
         return (int) $this->commentRepository->countComments('project', $projectId);
     }
@@ -122,21 +130,5 @@ class Dashboard
         $userReaction = $this->reactionsService->getUserReactions($userId, 'project', $projectId, Reactions::$favorite);
 
         return $userReaction && is_array($userReaction);
-    }
-
-    /**
-     * Builds the base URL used to delete a dashboard comment.
-     *
-     * Derives scheme/host/path from the current request URL and appends the
-     * delComment query parameter, leaving the caller to suffix the comment id.
-     *
-     * @return string The delete-comment URL base (ends with 'delComment=')
-     *
-     * @api
-     */
-    public function buildDeleteCommentUrlBase(): string
-    {
-        // Current URL up to (but excluding) any existing query string, plus the delComment flag.
-        return strtok(CURRENT_URL, '?').'?delComment=';
     }
 }

@@ -403,8 +403,10 @@ class Tickets
     public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', ?int $limit = null, $includeCounts = true, ?int $offset = null): bool|array
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
-        $userId = $searchCriteria['currentUser'] ?? session('userdata.id') ?? '-1';
-        $clientId = $searchCriteria['currentClient'] ?? session('userdata.clientId') ?? '-1';
+        // The project-membership scope is ALWAYS the session user/client. Search criteria can
+        // arrive from JSON-RPC, so a caller-supplied currentUser/currentClient must never widen it.
+        $userId = session('userdata.id') ?? '-1';
+        $clientId = session('userdata.clientId') ?? '-1';
 
         $query = $this->connection->table('zp_tickets')
             ->select([
@@ -1263,8 +1265,9 @@ class Tickets
         $statusGroups = $this->getStatusListGroupedByType($searchCriteria['currentProject'] ?? session('currentProject'));
 
         $requestorId = session('userdata.id') ?? '-1';
-        $userId = $searchCriteria['currentUser'] ?? session('userdata.id') ?? '-1';
-        $clientId = $searchCriteria['currentClient'] ?? session('userdata.clientId') ?? '-1';
+        // Membership scope is ALWAYS the session user/client — never caller-supplied criteria.
+        $userId = session('userdata.id') ?? '-1';
+        $clientId = session('userdata.clientId') ?? '-1';
 
         $query = $this->connection->table('zp_tickets')
             ->select([

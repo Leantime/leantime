@@ -91,7 +91,7 @@ leantime.blueprintsController = (function () {
                 },
                 afterShowCont: function () {
                     window.htmx.process('.nyroModalCont');
-                    jQuery(".blueprintsCanvasModal, #commentForm, #commentForm .deleteComment, .blueprintsCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
+                    jQuery(".blueprintsCanvasModal, #commentForm, .blueprintsCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
                 },
                 beforeClose: function () {
                     location.reload();
@@ -104,7 +104,7 @@ leantime.blueprintsController = (function () {
     //Functions
 
     var _initModals = function () {
-        jQuery(".blueprintsCanvasModal, #commentForm, #commentForm .deleteComment, .blueprintsCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
+        jQuery(".blueprintsCanvasModal, #commentForm, .blueprintsCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
     };
 
     var openModalManually = function (url) {

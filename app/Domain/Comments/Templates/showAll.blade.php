@@ -5,14 +5,6 @@
 @php
     $comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
     $formUrl = CURRENT_URL;
-
-    // Controller may not redirect. Make sure delComment is only added once
-    if (str_contains($formUrl, '?delComment=')) {
-        $urlParts = explode('?delComment=', $formUrl);
-        $deleteUrlBase = $urlParts[0] . '?delComment=';
-    } else {
-        $deleteUrlBase = $formUrl . '?delComment=';
-    }
 @endphp
 
 <h4 class="widgettitle title-light"><span
@@ -57,8 +49,8 @@
                         </a>
 
                         @if ($row['userId'] == session('userdata.id'))
-                            <a href="{{ $deleteUrlBase . $row['id'] }}"
-                               class="deleteComment">
+                            <a href="javascript:void(0);"
+                               class="deleteComment" data-post-field="delComment" data-post-value="{{ $row['id'] }}">
                                 <span class="fa fa-trash"></span> {!! __('links.delete') !!}
                             </a>
                         @endif
@@ -95,8 +87,8 @@
 
                                 <div style="padding-left:60px" class="commentLinks">
                                     @if ($comment['userId'] == session('userdata.id'))
-                                        <a href="{{ $deleteUrlBase . $comment['id'] }}"
-                                           class="deleteComment">
+                                        <a href="javascript:void(0);"
+                                           class="deleteComment" data-post-field="delComment" data-post-value="{{ $comment['id'] }}">
                                             <span class="fa fa-trash"></span> {!! __('links.delete') !!}
                                         </a>
                                     @endif

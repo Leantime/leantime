@@ -69,10 +69,16 @@ class Calendar extends BaseService
     }
 
     /**
+     * Columns of a calendar event a patch may change. Everything else (id, userId, ...) is
+     * dropped, so a patch can neither re-target another row nor reassign the event's owner.
+     */
+    private const PATCHABLE_EVENT_COLUMNS = ['dateFrom', 'dateTo', 'description', 'allDay'];
+
+    /**
      * Patches calendar event.
      *
      * @param  int  $id  Id of the event to update (only events; tickets are updated via the ticket API).
-     * @param  array  $params  Key/value array of columns to update.
+     * @param  array  $params  Key/value array of columns to update (limited to PATCHABLE_EVENT_COLUMNS).
      * @return bool true on success, false on failure
      *
      * @api
@@ -80,6 +86,12 @@ class Calendar extends BaseService
     #[RequiresPermission(CalendarPermissions::EDIT)]
     public function patch(int $id, array $params): bool
     {
+        $params = array_intersect_key($params, array_flip(self::PATCHABLE_EVENT_COLUMNS));
+
+        if ($params === []) {
+            return false;
+        }
+
         // The event's owner can always change it; a cross-user override needs calendar.manage (admin+).
         if ($this->userIsAllowedToUpdate($id)) {
             return $this->calendarRepo->patch($id, $params);

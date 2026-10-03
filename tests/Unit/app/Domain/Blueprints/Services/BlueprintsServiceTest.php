@@ -392,6 +392,30 @@ class BlueprintsServiceTest extends TestCase
         $this->assertSame(1, $wrote);
     }
 
+    public function test_update_canvas_item_rejects_an_array_item_id_and_writes_the_authorized_id(): void
+    {
+        // Type-confusion fence: `itemId[]=N` must not be cast to 1 for authorization while the
+        // repository writes row N. Arrays are rejected; scalar ids are written back as the int.
+        $writtenIds = [];
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'editCanvasItem' => function ($values) use (&$writtenIds) {
+                $writtenIds[] = [$values['itemId'], $values['id']];
+            },
+        ]);
+        $service = $this->securedService($repo, $this->allowingPermissions());
+
+        try {
+            $service->updateCanvasItem(['itemId' => [77], 'description' => 'x'], 'swotcanvas');
+            $this->fail('An array item id must be rejected');
+        } catch (AuthorizationException) {
+            $this->assertSame([], $writtenIds);
+        }
+
+        $service->updateCanvasItem(['itemId' => '42', 'id' => 77, 'description' => 'x'], 'swotcanvas');
+        $this->assertSame([[42, 42]], $writtenIds, 'The write must target exactly the authorized id');
+    }
+
     public function test_create_canvas_item_throws_and_never_inserts_for_unknown_board(): void
     {
         $inserted = 0;
