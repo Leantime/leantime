@@ -38,18 +38,6 @@ class ArticleDialog extends Controller
             $article = $this->wikiService->getArticle($params['id'], session('currentProject'));
         }
 
-        // Delete milestone relationship
-        if (isset($params['removeMilestone']) === true) {
-            $article->milestoneId = '';
-            $results = $this->wikiService->updateArticle($article);
-
-            if ($results) {
-                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success', 'articlemilestone_unlinked');
-
-                return Frontcontroller::redirect(BASE_URL.'/wiki/articleDialog/'.$article->id);
-            }
-        }
-
         if (session('currentWiki') != '') {
             $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session('currentWiki'), session('userdata.id'));
         } else {
@@ -75,6 +63,20 @@ class ArticleDialog extends Controller
     #[RequiresPermission(WikiPermissions::VIEW)]
     public function post($params): Response
     {
+        // Delete milestone relationship (POST only: it changes data)
+        if (isset($_POST['removeMilestone']) === true && isset($_GET['id'])) {
+            $article = $this->wikiService->getArticle((int) $_GET['id'], session('currentProject'));
+
+            if (is_object($article)) {
+                $article->milestoneId = '';
+
+                if ($this->wikiService->updateArticle($article)) {
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success', 'articlemilestone_unlinked');
+                }
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/wiki/articleDialog/'.(int) $_GET['id']);
+        }
 
         $article = app()->make(Article::class);
 

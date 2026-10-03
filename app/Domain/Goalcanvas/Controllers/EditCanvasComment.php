@@ -10,6 +10,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
@@ -61,18 +62,6 @@ class EditCanvasComment extends Controller
                 return $this->tpl->displayPartial('errors.error404');
             }
 
-            // Delete comment — only when it belongs to THIS gated item (module + moduleId).
-            if (isset($params['delComment']) === true) {
-                $commentId = (int) ($params['delComment']);
-                $comment = $this->commentsRepo->getComment($commentId);
-                if ($comment !== false
-                    && (string) $comment['module'] === static::CANVAS_NAME.'canvasitem'
-                    && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
-                    $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvascomment_deleted');
-                }
-            }
-
             $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']);
             $this->tpl->assign('numComments', $this->commentsRepo->countComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']));
         } else {
@@ -112,6 +101,27 @@ class EditCanvasComment extends Controller
     #[RequiresPermission(GoalcanvasPermissions::EDIT, entityScoped: true)]
     public function post($params)
     {
+        // Delete comment (POST only: it changes data) — only when it belongs to THIS gated
+        // item (module + moduleId).
+        if (isset($_POST['delComment']) && isset($params['id'])) {
+            $canvasItem = $this->goalService->getGoalItem((int) $params['id']);
+            if (! $canvasItem) {
+                return $this->tpl->displayPartial('errors.error404');
+            }
+
+            $commentId = (int) ($_POST['delComment']);
+            $comment = $this->commentsRepo->getComment($commentId);
+            if ($comment !== false
+                && (string) $comment['module'] === static::CANVAS_NAME.'canvasitem'
+                && (int) $comment['moduleId'] === (int) $canvasItem['id']) {
+                // Through the service: author-or-moderator check on top of the item binding.
+                if (app()->make(CommentService::class)->deleteComment($commentId)) {
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvascomment_deleted');
+                }
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/editCanvasComment/'.(int) $canvasItem['id']);
+        }
 
         if (isset($params['changeItem'])) {
             if (isset($params['itemId']) && $params['itemId'] != '') {

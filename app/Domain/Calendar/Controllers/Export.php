@@ -34,11 +34,6 @@ class Export extends Controller
     #[RequiresPermission(CalendarPermissions::VIEW)]
     public function get(array $params): Response
     {
-        if (isset($_GET['remove'])) {
-            $this->settingService->deleteSetting('usersettings.'.session('userdata.id').'.icalSecret');
-            $this->tpl->setNotification('notifications.ical_removed_success', 'success');
-        }
-
         $this->assignUrl();
 
         return $this->tpl->displayPartial('calendar.export');
@@ -52,7 +47,10 @@ class Export extends Controller
     #[RequiresPermission(CalendarPermissions::VIEW)]
     public function post(array $params): Response
     {
-        if (isset($_POST['generateUrl'])) {
+        if (isset($_POST['remove'])) {
+            $this->settingService->deleteSetting('usersettings.'.session('userdata.id').'.icalSecret');
+            $this->tpl->setNotification('notifications.ical_removed_success', 'success');
+        } elseif (isset($_POST['generateUrl'])) {
             try {
                 $this->calendarService->generateIcalHash();
                 $this->tpl->setNotification('notifications.ical_success', 'success');
