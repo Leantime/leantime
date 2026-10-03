@@ -554,12 +554,15 @@ class EventDispatcher implements Dispatcher
      * workers, commands) call it from the console kernel, so plugin scheduled jobs and listeners
      * exist there too. Each plugin is isolated: one failing register.php is logged and skipped
      * instead of stopping the others.
+     *
+     * @param  bool  $failOnDatabaseError  Throw when the plugin table cannot be read instead of
+     *                                     continuing without user plugins (used by the console).
      */
-    public static function loadEnabledPluginRegisterFiles(): void
+    public static function loadEnabledPluginRegisterFiles(bool $failOnDatabaseError = false): void
     {
         $pluginPath = APP_ROOT.'/app/Plugins/';
         $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
-        $enabledPlugins = $pluginService->getEnabledPlugins();
+        $enabledPlugins = $pluginService->getEnabledPlugins($failOnDatabaseError);
 
         foreach ($enabledPlugins as $plugin) {
 

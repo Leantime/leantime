@@ -123,13 +123,25 @@ class Plugins
     #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function getAllPlugins(bool $enabledOnly = false): false|array
     {
-        $installedPluginsById = [];
-
         try {
             $installedPlugins = $this->pluginRepository->getAllPlugins($enabledOnly);
         } catch (\Exception $e) {
             $installedPlugins = [];
         }
+
+        return $this->buildPluginList($installedPlugins, $enabledOnly);
+    }
+
+    /**
+     * Decorates installed plugins with marketplace data and adds the system plugins from config.
+     *
+     * @param  array<InstalledPlugin>  $installedPlugins  Plugins read from the database.
+     * @param  bool  $enabledOnly  Whether only enabled plugins were requested (passed to the filter).
+     * @return array<InstalledPlugin> Plugins keyed by folder name.
+     */
+    private function buildPluginList(array $installedPlugins, bool $enabledOnly): array
+    {
+        $installedPluginsById = [];
 
         // Build array with pluginId as $key
         foreach ($installedPlugins as &$plugin) {
@@ -204,14 +216,22 @@ class Plugins
     }
 
     /**
+     * Returns the enabled plugins (database plus system plugins from config), cached.
+     *
+     * A failing plugin-table query is never cached as "no plugins": the next call retries. Web
+     * requests keep running without user plugins in that case; callers that must not silently run
+     * without them (the console scheduler) pass $failOnDatabaseError to get the exception instead.
+     *
+     * @param  bool  $failOnDatabaseError  Rethrow a failing plugin-table query instead of falling back.
      * @return array|false|mixed
      *
      * @throws BindingResolutionException
+     * @throws \Exception When the plugin table cannot be read and $failOnDatabaseError is true.
      *
      * @api
      */
     #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
-    public function getEnabledPlugins(): mixed
+    public function getEnabledPlugins(bool $failOnDatabaseError = false): mixed
     {
 
         if (Cache::store('installation')->has('plugins.enabledPlugins') && $this->config->debug === false) {
@@ -220,7 +240,22 @@ class Plugins
             return $enabledPlugins;
         }
 
-        Cache::store('installation')->set('plugins.enabledPlugins', $this->getAllPlugins(enabledOnly: true));
+        try {
+            $installedPlugins = $this->pluginRepository->getAllPlugins(true);
+        } catch (\Exception $e) {
+            if ($failOnDatabaseError) {
+                throw $e;
+            }
+
+            Log::error('Could not read enabled plugins, continuing without user plugins: '.$e->getMessage());
+
+            return self::dispatch_filter(
+                hook: 'beforeReturnCachedPlugins',
+                payload: $this->buildPluginList([], true),
+                available_params: ['enabledOnly' => true]);
+        }
+
+        Cache::store('installation')->set('plugins.enabledPlugins', $this->buildPluginList($installedPlugins, true));
 
         /**
          * Filters session array of enabled plugins before returning

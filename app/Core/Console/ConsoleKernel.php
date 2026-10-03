@@ -109,7 +109,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         }
 
         try {
-            EventDispatcher::loadEnabledPluginRegisterFiles();
+            EventDispatcher::loadEnabledPluginRegisterFiles(failOnDatabaseError: true);
             $this->initializeLanguage();
             self::dispatchEvent('pluginsEvents', [], 'leantime.core.middleware.loadplugins.handle');
         } catch (\Throwable $e) {
