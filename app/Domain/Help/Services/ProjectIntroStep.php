@@ -56,8 +56,9 @@ class ProjectIntroStep implements OnboardingSteps
     public function handle($params): bool
     {
 
-        if (isset($params['projectname'])) {
-            $this->projectService->patch(session('currentProject'), ['name' => $_POST['projectname']]);
+        if (isset($params['projectname']) && is_string($params['projectname'])) {
+            // Onboarding-scoped patch: only the user's own onboarding project (or a project editor).
+            $this->projectService->patchOnboardingProject((int) session('currentProject'), ['name' => $params['projectname']]);
             $this->projectService->changeCurrentSessionProject(session('currentProject'));
         }
 

@@ -21,7 +21,7 @@ leantime.ideasController = (function () {
                 },
                 afterShowCont: function () {
 
-                    jQuery(".ideaModal, #commentForm, #commentForm .deleteComment, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
+                    jQuery(".ideaModal, #commentForm, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
 
                 }
             }
@@ -31,7 +31,7 @@ leantime.ideasController = (function () {
     //Functions
 
     var _initModals = function () {
-        jQuery(".ideaModal, #commentForm, #commentForm .deleteComment, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
+        jQuery(".ideaModal, #commentForm, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
     };
 
     var openModalManually = function (url) {

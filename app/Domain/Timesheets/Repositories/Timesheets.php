@@ -689,6 +689,20 @@ class Timesheets extends Repository
     }
 
     /**
+     * Remove the session user's running timer on a ticket without booking any time.
+     *
+     * @param  int  $ticketId  The ticket the timer runs on.
+     * @return bool True when a timer row was removed.
+     */
+    public function discardPunch(int $ticketId): bool
+    {
+        return $this->db->table('zp_punch_clock')
+            ->where('userId', session('userdata.id'))
+            ->where('id', $ticketId)
+            ->delete() > 0;
+    }
+
+    /**
      * punchOut - clock out on whatever ticket is open for the user
      *
      * @throws BindingResolutionException

@@ -29,8 +29,8 @@
                     <span class="fa fa-reply"></span> {{ __('links.reply') }}
                 </a>
                 @if($comment['userId'] == session("userdata.id"))
-                    <a href="{{ CURRENT_URL }}?delComment={{ $comment['id'] }}"
-                       class="deleteComment">
+                    <a href="javascript:void(0);"
+                       class="deleteComment" data-post-field="delComment" data-post-value="{{ $comment['id'] }}">
                         <span class="fa fa-trash"></span> {{ __('links.delete') }}
                     </a>
                 @endif

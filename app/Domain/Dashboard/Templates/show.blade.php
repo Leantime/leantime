@@ -380,7 +380,7 @@
                                                         <ul class="dropdown-menu">
                                                             @if ($row['userId'] == session("userdata.id"))
                                                                 <li>
-                                                                    <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
+                                                                    <a href="javascript:void(0);" class="deleteComment" data-post-field="delComment" data-post-value="{{ $row['id'] }}">
                                                                         <span class="fa fa-trash"></span> {{ __('links.delete') }}
                                                                     </a>
                                                                 </li>

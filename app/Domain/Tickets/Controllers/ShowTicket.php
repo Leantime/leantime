@@ -77,31 +77,6 @@ class ShowTicket extends Controller
             return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
         }
 
-        // Delete file
-        if (isset($params['delFile']) === true) {
-            if ($result = $this->fileService->deleteFile($params['delFile'])) {
-                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success');
-
-                return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'#files');
-            }
-
-            $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
-        }
-
-        // Delete comment
-        if (isset($params['delComment']) === true) {
-            $commentId = (int) ($params['delComment']);
-
-            if ($this->commentService->deleteComment($commentId)) {
-                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-                $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
-                $response->headers->set('HX-Trigger', 'ticketUpdate');
-
-                return $response;
-            }
-
-            $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');
-        }
         // Delete Subtask
         if (isset($params['delSubtask']) === true) {
 
@@ -181,6 +156,31 @@ class ShowTicket extends Controller
 
         if ($ticket === false) {
             return $this->tpl->display('errors.error500', responseCode: 500);
+        }
+
+        // Delete file
+        if (isset($_POST['delFile']) === true) {
+            if ($this->fileService->deleteFile($_POST['delFile'])) {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success');
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'#files');
+        }
+
+        // Delete comment
+        if (isset($_POST['delComment']) === true) {
+            if ($this->commentService->deleteComment((int) $_POST['delComment'])) {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+            } else {
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');
+            }
+
+            $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
+            $response->headers->set('HX-Trigger', 'ticketUpdate');
+
+            return $response;
         }
 
         // Upload File
