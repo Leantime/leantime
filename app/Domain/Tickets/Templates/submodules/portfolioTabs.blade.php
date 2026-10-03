@@ -16,8 +16,11 @@
     <nav class="lt-tabs-group" aria-label="{{ trim(strip_tags(__('headlines.my_projects'))) }}">
     <ul>
         @foreach ($portfolioTabs as $tabRoute => $tabUrl)
-            <li class="{{ str_contains($currentRoute, $tabRoute) ? 'active' : '' }}">
-                <a href="{{ $tabUrl }}" preload="mouseover">
+            @php $isActiveTab = str_contains($currentRoute, $tabRoute); @endphp
+            <li class="{{ $isActiveTab ? 'active' : '' }}">
+                <a href="{{ $tabUrl }}"
+                   @if ($isActiveTab) aria-current="page" @endif
+                   preload="mouseover">
                     {!! $portfolioTabLabels[$tabRoute] !!}
                 </a>
             </li>

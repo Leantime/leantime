@@ -3,8 +3,16 @@
 namespace Unit\app\Domain\Tickets\Templates;
 
 use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
 use Leantime\Core\Plugins\Plugins;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Leantime\Domain\Tickets\Controllers\ShowAllMilestonesOverview;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Users\Services\Users as UserService;
+use Symfony\Component\HttpFoundation\Response;
 use Unit\TestCase;
 
 /**
@@ -64,45 +72,71 @@ class PortfolioPagesRenderTest extends TestCase
         $this->assertStringContainsString('/projects/showMy', $html);
     }
 
-    public function test_milestones_overview_renders_with_ticket_filter(): void
+    /**
+     * Drives the real ShowAllMilestonesOverview controller (services mocked) and
+     * renders exactly what it assigns, so dropping an assignment the template or
+     * the shared ticket filter needs fails here instead of 500ing in production.
+     */
+    public function test_milestones_overview_controller_renders_with_ticket_filter(): void
     {
-        $html = view('tickets::showAllMilestonesOverview', $this->sharedData() + [
-            'allTickets' => [(object) [
-                'id' => 5,
-                'headline' => 'Launch',
-                'projectName' => 'Project A',
-                'status' => 3,
-                'milestoneid' => 0,
-                'milestoneHeadline' => '',
-                'milestoneColor' => '#1b75bb',
-                'editorId' => 1,
-                'editorFirstname' => 'Ada',
-                'editFrom' => '2026-01-01 00:00:00',
-                'editTo' => '2026-02-01 00:00:00',
-                'percentDone' => 10,
-                'planHours' => 2,
-                'hourRemaining' => 1,
-                'bookedHours' => 1,
-            ]],
-            'allTicketStates' => [
-                3 => ['name' => 'New', 'class' => 'label-info', 'statusType' => 'NEW'],
-                0 => ['name' => 'Done', 'class' => 'label-success', 'statusType' => 'DONE'],
-            ],
-            'efforts' => [],
-            'priorities' => [],
-            'ticketTypeIcons' => [],
-            'searchCriteria' => ['groupBy' => '', 'users' => '', 'status' => 'not_done', 'term' => '', 'milestone' => '', 'type' => '', 'priority' => ''],
-            'numOfFilters' => 0,
-            'clients' => [],
-            'currentClientName' => '',
-            'currentClient' => 0,
-            'users' => [],
-            'milestones' => [],
-            'types' => ['task'],
-            'groupByOptions' => [['id' => 'all', 'field' => 'all', 'class' => '', 'label' => 'no_group']],
-            'sortOptions' => [['id' => 'date', 'field' => 'date', 'class' => '', 'label' => 'date']],
-            'newField' => [],
-        ])->render();
+        if (! defined('CURRENT_URL')) {
+            define('CURRENT_URL', 'http://localhost/tickets/showAllMilestonesOverview');
+        }
+        session(['userdata.id' => 1]);
+
+        $tickets = $this->createMock(TicketService::class);
+        $tickets->method('getMilestonesOverviewSearchCriteria')->willReturn([
+            'groupBy' => '', 'users' => '', 'status' => 'not_done', 'term' => '',
+            'milestone' => '', 'type' => '', 'priority' => '',
+        ]);
+        $tickets->method('getAllMilestonesOverview')->willReturn([(object) [
+            'id' => 5,
+            'headline' => 'Launch',
+            'projectName' => 'Project A',
+            'status' => 3,
+            'milestoneid' => 0,
+            'milestoneHeadline' => '',
+            'milestoneColor' => '#1b75bb',
+            'editorId' => 1,
+            'editorFirstname' => 'Ada',
+            'editFrom' => '2026-01-01 00:00:00',
+            'editTo' => '2026-02-01 00:00:00',
+            'percentDone' => 10,
+            'planHours' => 2,
+            'hourRemaining' => 1,
+            'bookedHours' => 1,
+        ]]);
+        $tickets->method('getStatusLabels')->willReturn([
+            3 => ['name' => 'New', 'class' => 'label-info', 'statusType' => 'NEW'],
+            0 => ['name' => 'Done', 'class' => 'label-success', 'statusType' => 'DONE'],
+        ]);
+        $tickets->method('getTicketTypes')->willReturn(['task']);
+        $tickets->method('getGroupByFieldOptions')->willReturn([['id' => 'all', 'field' => 'all', 'class' => '', 'label' => 'no_group']]);
+        $tickets->method('getSortByFieldOptions')->willReturn([['id' => 'date', 'field' => 'date', 'class' => '', 'label' => 'date']]);
+        app()->instance(TicketService::class, $tickets);
+        $users = $this->createMock(UserService::class);
+        $users->method('getAll')->willReturn([]);
+        app()->instance(UserService::class, $users);
+        app()->instance(ClientService::class, $this->createMock(ClientService::class));
+
+        // Capture what the controller assigns and render the page from exactly that.
+        $assigned = [];
+        $tpl = $this->createMock(Template::class);
+        $tpl->method('assign')->willReturnCallback(function (string $name, mixed $value) use (&$assigned): void {
+            $assigned[$name] = $value;
+        });
+        $tpl->method('display')->willReturnCallback(function (string $template) use (&$assigned): Response {
+            $view = 'tickets::'.substr($template, strlen('tickets.'));
+
+            return new Response(view($view, $this->sharedData() + $assigned)->render());
+        });
+
+        $controller = new ShowAllMilestonesOverview(
+            $this->createMock(IncomingRequest::class),
+            $tpl,
+            $this->createMock(Language::class),
+        );
+        $html = (string) $controller->get([])->getContent();
 
         $this->assertStringContainsString('/tickets/roadmapAll', $html);
         $this->assertStringContainsString('allTicketsTable', $html);
