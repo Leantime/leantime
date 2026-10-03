@@ -327,6 +327,28 @@ class Format
         return $sign.sprintf($pattern, $hours, $minutes);
     }
 
+    /**
+     * Rich-text (editor HTML) to a single line of plain text, e.g. for CSV export (#786).
+     *
+     * Block-level boundaries and <br> become spaces so "<p>a</p><p>b</p>" reads "a b", entities
+     * are decoded, and all whitespace (including non-breaking spaces) collapses to single spaces.
+     *
+     * @param  string|null  $html  Stored description markup
+     * @return string Plain text without markup
+     */
+    public static function plainText(?string $html): string
+    {
+        if ($html === null || $html === '') {
+            return '';
+        }
+
+        $blockBoundary = '/<\/?(p|div|br|li|ul|ol|h[1-6]|tr|td|th|table|blockquote|pre)\b[^>]*>/i';
+        $withBoundaries = preg_replace($blockBoundary, ' ', $html) ?? $html;
+        $text = html_entity_decode(strip_tags($withBoundaries), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $text) ?? $text);
+    }
+
     public function diffForHumans(): string
     {
         if ($this->value->isToday()) {

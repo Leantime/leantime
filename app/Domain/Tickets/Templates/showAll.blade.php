@@ -90,6 +90,7 @@
                     <col class="con0">
                     <col class="con1">
                     <col class="con0">
+                    <col class="con1">
                 </colgroup>
                 @dispatchEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets])
                 <thead>
@@ -109,6 +110,8 @@
                         <th class="remaining-hours-col">{!! __('label.estimated_hours_remaining') !!}</th>
                         <th class="booked-hours-col">{!! __('label.booked_hours') !!}</th>
                         <th class="no-sort"></th>
+                        {{-- Hidden in the table, included in the CSV export as plain text (#786). --}}
+                        <th class="description-col noVis">{!! __('label.description') !!}</th>
                     </tr>
                     @dispatchEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets])
                 </thead>
@@ -337,6 +340,7 @@
                             <td>
                                 @include('tickets::partials.ticketsubmenu', ['ticket' => $row, 'onTheClock' => $onTheClock])
                             </td>
+                            <td>{{ \Leantime\Core\Support\Format::plainText($row['description'] ?? '') }}</td>
                             @dispatchEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum])
                         </tr>
                     @endforeach
@@ -344,7 +348,7 @@
                 </tbody>
                 @dispatchEvent('allTicketsTable.afterBody', ['tickets' => $allTickets])
                     <tfoot align="right">
-                        <tr><td colspan="9"></td><td></td><td></td><td></td><td></td><td></td></tr>
+                        <tr><td colspan="9"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     </tfoot>
 
                 </table>

@@ -1598,6 +1598,8 @@ leantime.ticketsController = (function () {
                         { "visible": false, "targets": 10 },
                         { "visible": false, "targets": 11 },
                         { "target": "no-sort", "orderable": false},
+                        // Plain-text description: never shown in the table, only exported to CSV (#786).
+                        { "visible": false, "orderable": false, "targets": "description-col" },
                     ],
                 "footerCallback": function ( row, data, start, end, display ) {
                     var api = this.api(), data;

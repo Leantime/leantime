@@ -96,6 +96,32 @@ class FormatTest extends TestCase
         $this->assertSame($expected, Format::hoursMinutes($decimalHours));
     }
 
+    /**
+     * @return array<string, array{0: ?string, 1: string}>
+     */
+    public static function plainTextCases(): array
+    {
+        return [
+            'null' => [null, ''],
+            'empty' => ['', ''],
+            'plain text untouched' => ['Just text', 'Just text'],
+            'paragraphs keep a separator' => ['<p>First</p><p>Second</p>', 'First Second'],
+            'line breaks and lists' => ['<ul><li>One</li><li>Two</li></ul>Line<br/>Break', 'One Two Line Break'],
+            'inline markup does not split words' => ['<p>A <strong>bold</strong>ly <a href="x">link</a></p>', 'A boldly link'],
+            'entities decoded' => ['<p>Fish &amp; chips&nbsp;&lt;3 &quot;q&quot;</p>', 'Fish & chips <3 "q"'],
+            'whitespace collapsed' => ["  <p>a\n\n   b</p>\t", 'a b'],
+            'scripts lose their tags' => ['<script>alert(1)</script>ok', 'alert(1)ok'],
+        ];
+    }
+
+    /**
+     * @dataProvider plainTextCases
+     */
+    public function test_plain_text(?string $html, string $expected): void
+    {
+        $this->assertSame($expected, Format::plainText($html));
+    }
+
     public function test_hours_minutes_uses_translated_pattern(): void
     {
         $this->assertSame('1 Std. 15 Min.', Format::hoursMinutes(1.25, '%s Std. %s Min.'));
