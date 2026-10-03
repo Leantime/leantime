@@ -48,10 +48,9 @@ class AuthenticateSession implements AuthenticatesSessions
         $storedFingerprint = $session->get(PasswordFingerprint::SESSION_KEY);
 
         // Token-authenticated requests (x-api-key / Bearer) rebuild userdata from the credential on
-        // every request and never carry a fingerprint — the token is checked instead.
-        $isTokenEndpoint = $request instanceof ApiRequest || $request->isApiOrCronRequest() || $request->isMcpRequest();
-
-        if ($storedFingerprint === null && $isTokenEndpoint) {
+        // every request and never carry a fingerprint — the token is checked instead. Decided by the
+        // credential on the request, not the endpoint: browser JSON-RPC calls ride the web session.
+        if ($storedFingerprint === null && $this->carriesTokenCredential($request)) {
             return $next($request);
         }
 
@@ -74,6 +73,18 @@ class AuthenticateSession implements AuthenticatesSessions
         }
 
         return $next($request);
+    }
+
+    /**
+     * Whether the request authenticates with an API key or Bearer token rather than the web session.
+     */
+    private function carriesTokenCredential(IncomingRequest $request): bool
+    {
+        if ($request instanceof ApiRequest) {
+            return $request->getAPIKey() !== '' || ! empty($request->getBearerToken());
+        }
+
+        return $request->headers->has('x-api-key') || ! empty($request->bearerToken());
     }
 
     /**

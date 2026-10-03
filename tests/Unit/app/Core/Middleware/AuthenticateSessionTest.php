@@ -135,10 +135,26 @@ class AuthenticateSessionTest extends \Unit\TestCase
 
         $lookups = 0;
         $reached = false;
-        $this->runMiddleware($this->middlewareWithPasswordHash('$2y$x', $lookups), $this->attachSession(ApiRequest::create('/api/jsonrpc', 'POST')), $reached);
+        $this->runMiddleware(
+            $this->middlewareWithPasswordHash('$2y$x', $lookups),
+            $this->attachSession(ApiRequest::create('/api/jsonrpc', 'POST', [], [], [], ['HTTP_X_API_KEY' => 'lt_key_secret'])),
+            $reached
+        );
 
         $this->assertTrue($reached);
         $this->assertSame(0, $lookups, 'API key / Bearer sessions carry no fingerprint and need no lookup');
+    }
+
+    public function test_browser_jsonrpc_call_without_credential_is_checked_like_the_web_session(): void
+    {
+        session(['userdata' => ['id' => 7]]);
+
+        $lookups = 0;
+        $reached = false;
+        $this->runMiddleware($this->middlewareWithPasswordHash('$2y$x', $lookups), $this->attachSession(ApiRequest::create('/api/jsonrpc', 'POST')), $reached);
+
+        $this->assertSame(1, $lookups, 'a session-authenticated API call goes through the fingerprint check');
+        $this->assertFalse($reached);
     }
 
     public function test_guest_request_is_not_checked(): void

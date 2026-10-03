@@ -39,6 +39,11 @@ class StartSession
      *
      * @return void
      */
+    /**
+     * Cache key prefix marking session ids that were rotated away.
+     */
+    private const RETIRED_ID_PREFIX = 'session-retired:';
+
     public function __construct(SessionManager $manager, ?callable $cacheFactoryResolver = null)
     {
         $this->manager = $manager;
@@ -158,6 +163,7 @@ class StartSession
         // Keys can't be safely merged onto a different id, so fall back to a full,
         // locked save of the live session.
         if ($session->getId() !== $initialId) {
+            $this->retireSessionId($request, $session, $initialId);
             $this->withSessionLock($request, $session, fn () => $session->save());
 
             return;
@@ -185,6 +191,12 @@ class StartSession
      */
     protected function mergeSessionChanges($session, array $changed, array $removed): void
     {
+        // A request that started on an id which was rotated away meanwhile (logout/login on
+        // another request) must not write it back into existence.
+        if ($this->isRetiredSessionId($session->getId())) {
+            return;
+        }
+
         $merged = new Store(
             $session->getName(),
             $session->getHandler(),
@@ -208,6 +220,43 @@ class StartSession
         }
 
         $merged->save();
+    }
+
+    /**
+     * Mark a session id that was rotated away (login, 2FA, logout) as retired and destroy its
+     * stored data. Runs under the OLD id's lock, the same lock {@see mergeSessionChanges()} holds,
+     * so a concurrent request still on the old id either wrote before (and is destroyed here) or
+     * writes after and sees the tombstone.
+     *
+     * @param  \Illuminate\Contracts\Session\Session  $session
+     */
+    protected function retireSessionId(IncomingRequest $request, $session, string $retiredId): void
+    {
+        if ($retiredId === '') {
+            return;
+        }
+
+        $this->withSessionLock($request, $session, function () use ($session, $retiredId) {
+            $this->cache($this->manager->blockDriver())->put(
+                self::RETIRED_ID_PREFIX.$retiredId,
+                true,
+                max(60, (int) $this->getSessionLifetimeInSeconds())
+            );
+
+            $session->getHandler()->destroy($retiredId);
+        }, $retiredId);
+    }
+
+    /**
+     * Whether a session id was rotated away and must no longer be used or written.
+     */
+    protected function isRetiredSessionId(?string $sessionId): bool
+    {
+        if ($sessionId === null || $sessionId === '') {
+            return false;
+        }
+
+        return (bool) $this->cache($this->manager->blockDriver())->get(self::RETIRED_ID_PREFIX.$sessionId, false);
     }
 
     /**
@@ -238,7 +287,7 @@ class StartSession
      *
      * @param  \Illuminate\Contracts\Session\Session  $session
      */
-    protected function withSessionLock(IncomingRequest $request, $session, Closure $callback): void
+    protected function withSessionLock(IncomingRequest $request, $session, Closure $callback, ?string $lockSessionId = null): void
     {
         // Dynamic lock period for different request types
         $holdLockFor = $this->calculateLockDuration($request); // Hold lock for x seconds after acquiring
@@ -247,7 +296,7 @@ class StartSession
         $maxWaitForLock = 5; // Wait for up to y seconds to acquire the lock
 
         $lock = $this->cache($this->manager->blockDriver())
-            ->lock('session:'.$session->getId(), $holdLockFor)
+            ->lock('session:'.($lockSessionId ?? $session->getId()), $holdLockFor)
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
@@ -332,7 +381,10 @@ class StartSession
     public function getSession(IncomingRequest $request)
     {
         return tap($this->manager->driver(), function ($session) use ($request) {
-            $session->setId($request->cookies->get($session->getName()));
+            $cookieId = $request->cookies->get($session->getName());
+
+            // A retired id (rotated away at login/logout) is never resumed: start a fresh one.
+            $session->setId($this->isRetiredSessionId(is_string($cookieId) ? $cookieId : null) ? null : $cookieId);
         });
     }
 
