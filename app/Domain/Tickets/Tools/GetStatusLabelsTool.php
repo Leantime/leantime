@@ -7,6 +7,7 @@ use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -17,6 +18,7 @@ class GetStatusLabelsTool extends Tool
 {
     public function __construct(
         private Tickets $ticketsService,
+        private Projects $projectService,
     ) {}
 
     /**
@@ -50,6 +52,13 @@ class GetStatusLabelsTool extends Tool
     public function handle(array $arguments): ToolResult
     {
         $projectId = (int) ($arguments['projectId'] ?? 0);
+
+        // Only for a project the caller can view: getProject() returns false otherwise, so a
+        // foreign project id must not expose its status configuration.
+        if ($projectId <= 0 || ! $this->projectService->getProject($projectId)) {
+            return ToolResult::error("Project {$projectId} was not found or you do not have access to it.");
+        }
+
         $status = $this->ticketsService->getStatusLabels($projectId);
 
         $statusAIString = '## Status Labels';

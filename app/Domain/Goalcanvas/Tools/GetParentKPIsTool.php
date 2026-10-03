@@ -8,6 +8,7 @@ use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
+use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Get all available parent KPIs (goals) that can be linked to other goals.
@@ -17,6 +18,7 @@ class GetParentKPIsTool extends Tool
 {
     public function __construct(
         private Goalcanvas $goalcanvasService,
+        private Projects $projectService,
     ) {}
 
     public function schema(ToolInputSchema $schema): ToolInputSchema
@@ -42,6 +44,13 @@ class GetParentKPIsTool extends Tool
     public function handle(array $arguments): ToolResult
     {
         $projectId = (int) ($arguments['projectId'] ?? 0);
+
+        // Only for a project the caller can view: getProject() returns false otherwise, so a
+        // foreign project id must not expose its KPIs.
+        if ($projectId <= 0 || ! $this->projectService->getProject($projectId)) {
+            return ToolResult::error("Project {$projectId} was not found or you do not have access to it.");
+        }
+
         $parentKPIs = $this->goalcanvasService->getParentKPIs($projectId);
 
         if (empty($parentKPIs)) {

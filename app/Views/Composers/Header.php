@@ -89,8 +89,31 @@ class Header extends Composer
                 false,  // accent4 uses CSS default
             ],
             'themeBg' => $this->themeCore->getBackgroundImage(),
+            'themeBgCss' => self::toCssString((string) $this->themeCore->getBackgroundImage()),
             'themeOpacity' => $backgroundOpacity,
             'themeType' => $this->themeCore->getBackgroundType(),
         ];
+    }
+
+    /**
+     * Encode a value as a double-quoted CSS string literal safe to print inside a <style> element.
+     *
+     * The background image URL is user/admin controlled and printed into raw <style> text, where
+     * HTML escaping does not apply and FILTER_SANITIZE_URL keeps quotes, parentheses, ";" and "<".
+     * Every character outside a conservative URL-safe set is emitted as a CSS hex escape, so the
+     * value can neither close the url("...") string nor the <style> element.
+     *
+     * @param  string  $value  The raw value (e.g. a URL).
+     * @return string The quoted CSS string, e.g. "https://x/bg.png".
+     */
+    public static function toCssString(string $value): string
+    {
+        $escaped = preg_replace_callback(
+            '/[^A-Za-z0-9\/:._\-~?&=%#+,@!$*]/u',
+            fn (array $match) => '\\'.dechex((int) mb_ord($match[0], 'UTF-8')).' ',
+            $value
+        );
+
+        return '"'.($escaped ?? '').'"';
     }
 }

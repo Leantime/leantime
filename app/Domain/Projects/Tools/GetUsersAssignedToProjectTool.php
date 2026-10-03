@@ -45,6 +45,12 @@ class GetUsersAssignedToProjectTool extends Tool
         $projectId = (int) ($arguments['projectId'] ?? 0);
         $teamOnly = $arguments['teamOnly'] ?? false;
 
+        // Only for a project the caller can view: getProject() returns false otherwise, so a
+        // foreign project id must not expose its member list (names, emails, roles).
+        if ($projectId <= 0 || ! $this->projectService->getProject($projectId)) {
+            return ToolResult::error("Project {$projectId} was not found or you do not have access to it.");
+        }
+
         $users = $this->projectService->getUsersAssignedToProject($projectId, $teamOnly);
 
         if (empty($users)) {
