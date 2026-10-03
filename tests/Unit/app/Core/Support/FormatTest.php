@@ -122,6 +122,31 @@ class FormatTest extends TestCase
         $this->assertSame($expected, Format::plainText($html));
     }
 
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function spreadsheetSafeCases(): array
+    {
+        return [
+            'empty' => ['', ''],
+            'plain text' => ['Fix the login', 'Fix the login'],
+            'formula' => ['=HYPERLINK("http://x","y")', "'=HYPERLINK(\"http://x\",\"y\")"],
+            'plus' => ['+1+1', "'+1+1"],
+            'minus' => ['-2+3', "'-2+3"],
+            'at' => ['@SUM(A1)', "'@SUM(A1)"],
+            'tab' => ["\t=1", "'\t=1"],
+            'formula char later is fine' => ['a=b', 'a=b'],
+        ];
+    }
+
+    /**
+     * @dataProvider spreadsheetSafeCases
+     */
+    public function test_spreadsheet_safe(string $value, string $expected): void
+    {
+        $this->assertSame($expected, Format::spreadsheetSafe($value));
+    }
+
     public function test_hours_minutes_uses_translated_pattern(): void
     {
         $this->assertSame('1 Std. 15 Min.', Format::hoursMinutes(1.25, '%s Std. %s Min.'));

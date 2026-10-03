@@ -1957,8 +1957,11 @@ class Tickets extends BaseService
      * "including subtasks" (#1798). Time logged on a subtask is booked against the subtask's own
      * id, never the parent's, so adding these to the parent's own figures cannot double count.
      *
-     * Internal (no RPC exposure): callers have already loaded and authorized the parent; each
-     * subtask's logged hours go through the authorizing timesheet lookup anyway.
+     * Only subtasks the current user may view are counted (a subtask can live in another project
+     * than its parent, e.g. after the parent was moved); subtaskCount is the number actually
+     * included. Logged hours come from one SUM query over the included ids.
+     *
+     * Internal (no RPC exposure): callers have already loaded and authorized the parent.
      *
      * @param  int  $ticketId  Parent To-Do id
      * @return array{subtaskCount: int, planHours: float, loggedHours: float}
@@ -1967,17 +1970,25 @@ class Tickets extends BaseService
     {
         $subtasks = $this->getAllSubtasks($ticketId) ?: [];
 
+        $canViewProject = [];
+        $includedIds = [];
         $planHours = 0.0;
-        $loggedHours = 0.0;
         foreach ($subtasks as $subtask) {
+            $projectId = (int) ($subtask['projectId'] ?? 0);
+            $canViewProject[$projectId] ??= $this->can(TicketsPermissions::VIEW, $projectId);
+
+            if (! $canViewProject[$projectId]) {
+                continue;
+            }
+
+            $includedIds[] = (int) $subtask['id'];
             $planHours += (float) ($subtask['planHours'] ?? 0);
-            $loggedHours += (float) $this->timesheetService->getSumLoggedHoursForTicket((int) $subtask['id']);
         }
 
         return [
-            'subtaskCount' => count($subtasks),
+            'subtaskCount' => count($includedIds),
             'planHours' => $planHours,
-            'loggedHours' => $loggedHours,
+            'loggedHours' => $this->ticketRepository->sumLoggedHoursForTickets($includedIds),
         ];
     }
 

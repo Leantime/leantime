@@ -340,7 +340,8 @@
                             <td>
                                 @include('tickets::partials.ticketsubmenu', ['ticket' => $row, 'onTheClock' => $onTheClock])
                             </td>
-                            <td>{{ \Leantime\Core\Support\Format::plainText($row['description'] ?? '') }}</td>
+                            @php $descriptionText = \Leantime\Core\Support\Format::plainText($row['description'] ?? ''); @endphp
+                            <td data-export="{{ \Leantime\Core\Support\Format::spreadsheetSafe($descriptionText) }}">{{ $descriptionText }}</td>
                             @dispatchEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum])
                         </tr>
                     @endforeach

@@ -349,6 +349,23 @@ class Format
         return trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $text) ?? $text);
     }
 
+    /**
+     * Neutralize spreadsheet formulas in an exported cell value (CSV injection): a value starting
+     * with =, +, -, @, tab or carriage return is prefixed with a single quote so Excel/Sheets/Calc
+     * treat it as text. Other values are returned unchanged.
+     *
+     * @param  string  $value  Cell value as it would be exported
+     * @return string Formula-safe cell value
+     */
+    public static function spreadsheetSafe(string $value): string
+    {
+        if ($value !== '' && str_contains("=+-@\t\r", $value[0])) {
+            return "'".$value;
+        }
+
+        return $value;
+    }
+
     public function diffForHumans(): string
     {
         if ($this->value->isToday()) {

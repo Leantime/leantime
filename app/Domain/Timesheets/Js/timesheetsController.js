@@ -119,8 +119,10 @@ leantime.timesheetsController = (function () {
     };
 
     /**
-     * Hover hint on the weekly grid: each hour cell and total shows its value as hours + minutes.
-     * Uses the native title attribute so it follows live edits without re-initialising tooltips.
+     * Hover hint on the weekly grid: each hour input and row total shows its value as hours +
+     * minutes. Uses the native title attribute so it follows live edits without re-initialising
+     * tooltips. The footer total <td>s are deliberately left untouched (their markup is asserted
+     * by acceptance tests).
      */
     var refreshHoursMinutesTitles = function (tableSelector) {
         var table = jQuery(tableSelector);
@@ -129,7 +131,7 @@ leantime.timesheetsController = (function () {
             jQuery(this).attr("title", formatHoursMinutes(jQuery(this).val()));
         });
 
-        table.find(".rowSum strong, tfoot td[id^='day'], #finalSum").each(function () {
+        table.find(".rowSum strong").each(function () {
             jQuery(this).attr("title", formatHoursMinutes(jQuery(this).text()));
         });
     };

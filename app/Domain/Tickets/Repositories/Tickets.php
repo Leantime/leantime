@@ -1118,6 +1118,23 @@ class Tickets
         return $values;
     }
 
+    /**
+     * Total hours logged against the given To-Dos, in one aggregate query.
+     *
+     * @param  array<int, int>  $ticketIds  To-Do ids (callers authorize them first)
+     * @return float Sum of zp_timesheets.hours, 0 for an empty list
+     */
+    public function sumLoggedHoursForTickets(array $ticketIds): float
+    {
+        if ($ticketIds === []) {
+            return 0.0;
+        }
+
+        return (float) $this->connection->table('zp_timesheets')
+            ->whereIn('ticketId', $ticketIds)
+            ->sum('hours');
+    }
+
     public function getAllSubtasks($id): false|array
     {
         $dateFormatSql = match ($this->dbHelper->getDriverName()) {

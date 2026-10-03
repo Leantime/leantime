@@ -1147,29 +1147,56 @@ class TicketsServiceTest extends TestCase
 
     /**
      * #1798: the parent's "including subtasks" figures sum each direct subtask's planned hours
-     * and the hours logged against that subtask's own id.
+     * and, in one aggregate query, the hours logged against those subtask ids.
      */
     public function test_get_subtask_hour_totals_sums_plan_and_logged_hours(): void
     {
-        $loggedBySubtask = [11 => '1.5', 12 => 0, 13 => '2.25'];
+        $summedIds = new \ArrayObject;
         $service = $this->subtaskHoursService(
             [
-                ['id' => 11, 'planHours' => '2'],
-                ['id' => 12, 'planHours' => null],
-                ['id' => 13, 'planHours' => '0.5'],
+                ['id' => 11, 'projectId' => 5, 'planHours' => '2'],
+                ['id' => 12, 'projectId' => 5, 'planHours' => null],
+                ['id' => 13, 'projectId' => 5, 'planHours' => '0.5'],
             ],
-            $loggedBySubtask
+            [5],
+            $summedIds,
+            3.75
         );
 
         $this->assertSame(
             ['subtaskCount' => 3, 'planHours' => 2.5, 'loggedHours' => 3.75],
             $service->getSubtaskHourTotals(10)
         );
+        $this->assertSame([[11, 12, 13]], $summedIds->getArrayCopy(), 'one SUM query over all included ids');
+    }
+
+    /**
+     * A subtask left in a project the viewer can't access (parent moved elsewhere) is skipped
+     * instead of failing the whole parent view; the count reflects what was actually included.
+     */
+    public function test_get_subtask_hour_totals_skips_subtasks_in_inaccessible_projects(): void
+    {
+        $summedIds = new \ArrayObject;
+        $service = $this->subtaskHoursService(
+            [
+                ['id' => 11, 'projectId' => 5, 'planHours' => '2'],
+                ['id' => 12, 'projectId' => 9, 'planHours' => '7'],
+            ],
+            [5],
+            $summedIds,
+            1.0
+        );
+
+        $this->assertSame(
+            ['subtaskCount' => 1, 'planHours' => 2.0, 'loggedHours' => 1.0],
+            $service->getSubtaskHourTotals(10)
+        );
+        $this->assertSame([[11]], $summedIds->getArrayCopy());
     }
 
     public function test_get_subtask_hour_totals_without_subtasks_is_zero(): void
     {
-        $service = $this->subtaskHoursService(false, []);
+        $service = $this->subtaskHoursService(false, [5], new \ArrayObject, 0.0);
 
         $this->assertSame(
             ['subtaskCount' => 0, 'planHours' => 0.0, 'loggedHours' => 0.0],
@@ -1179,19 +1206,25 @@ class TicketsServiceTest extends TestCase
 
     /**
      * @param  false|array<int, array<string, mixed>>  $subtasks
-     * @param  array<int, mixed>  $loggedBySubtask
+     * @param  array<int, int>  $viewableProjects  Projects the user may view
+     * @param  \ArrayObject  $summedIds  Records the id lists passed to the SUM query
      */
-    private function subtaskHoursService(false|array $subtasks, array $loggedBySubtask): TicketsService
+    private function subtaskHoursService(false|array $subtasks, array $viewableProjects, \ArrayObject $summedIds, float $loggedSum): TicketsService
     {
-        return new TicketsService(
+        $service = new TicketsService(
             language: $this->make(LanguageCore::class),
-            ticketRepository: $this->make(TicketRepository::class, ['getAllSubtasks' => fn () => $subtasks]),
+            ticketRepository: $this->make(TicketRepository::class, [
+                'getAllSubtasks' => fn () => $subtasks,
+                'sumLoggedHoursForTickets' => function (array $ticketIds) use ($summedIds, $loggedSum) {
+                    $summedIds->append($ticketIds);
+
+                    return $ticketIds === [] ? 0.0 : $loggedSum;
+                },
+            ]),
             timesheetsRepo: $this->make(TimesheetRepository::class),
             settingsRepo: $this->make(SettingRepository::class),
             projectService: $this->make(ProjectService::class),
-            timesheetService: $this->make(TimesheetService::class, [
-                'getSumLoggedHoursForTicket' => fn (int $ticketId) => $loggedBySubtask[$ticketId],
-            ]),
+            timesheetService: $this->make(TimesheetService::class),
             sprintService: $this->make(SprintService::class),
             ticketHistoryRepo: $this->make(TicketHistory::class),
             goalcanvasService: $this->make(Goalcanvas::class),
@@ -1199,5 +1232,10 @@ class TicketsServiceTest extends TestCase
             commentService: $this->make(CommentService::class),
             clientService: $this->make(ClientService::class)
         );
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $key, ?int $projectId = null) => in_array($projectId, $viewableProjects, true),
+        ]));
+
+        return $service;
     }
 }

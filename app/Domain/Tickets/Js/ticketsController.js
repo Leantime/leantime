@@ -1691,9 +1691,11 @@ leantime.ticketsController = (function () {
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    // data-export: readable value when the sort key is numeric (priority, effort).
-                                    if ( typeof jQuery(node).data('export') !== 'undefined') {
-                                        return jQuery(node).data('export');
+                                    // data-export: readable value when the sort key is numeric (priority, effort),
+                                    // or a formula-safe value (description). attr(), not data(): data() would
+                                    // JSON-parse text that looks like an object/array/number.
+                                    if ( typeof jQuery(node).attr('data-export') !== 'undefined') {
+                                        return jQuery(node).attr('data-export');
                                     }
                                     if ( typeof jQuery(node).data('order') !== 'undefined') {
                                         return jQuery(node).data('order');
@@ -1869,9 +1871,11 @@ leantime.ticketsController = (function () {
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    // data-export: readable value when the sort key is numeric (priority, effort).
-                                    if ( typeof jQuery(node).data('export') !== 'undefined') {
-                                        return jQuery(node).data('export');
+                                    // data-export: readable value when the sort key is numeric (priority, effort),
+                                    // or a formula-safe value (description). attr(), not data(): data() would
+                                    // JSON-parse text that looks like an object/array/number.
+                                    if ( typeof jQuery(node).attr('data-export') !== 'undefined') {
+                                        return jQuery(node).attr('data-export');
                                     }
                                     if ( typeof jQuery(node).data('order') !== 'undefined') {
                                         return jQuery(node).data('order');
