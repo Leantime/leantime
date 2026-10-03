@@ -2369,10 +2369,53 @@ class Tickets extends BaseService
 
             TicketUpdated::dispatch(ticketId: (int) $values['id'], legacyHook: __FUNCTION__);
 
+            $this->stopTimerWhenTicketIsDone((int) $values['id'], $values['status'], (int) $values['projectId']);
+
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Stop the current user's running timer on a ticket that was just moved to a DONE-type status
+     * and book the elapsed time (#415). Work on a finished To-Do is over, and a timer left running
+     * blocks starting one on the next task.
+     *
+     * Only the session user's own timer is touched, and only when it runs on this ticket. A
+     * failure to book never fails the status change itself.
+     *
+     * @param  int  $ticketId  The ticket whose status changed.
+     * @param  int|string|null  $newStatus  The status key the ticket now has.
+     * @param  int  $projectId  The ticket's project (status keys are project-specific).
+     */
+    private function stopTimerWhenTicketIsDone(int $ticketId, int|string|null $newStatus, int $projectId): void
+    {
+        if ($newStatus === null || $newStatus === '' || ! is_numeric($newStatus)) {
+            return;
+        }
+
+        $currentUserId = (int) session('userdata.id');
+        if ($currentUserId === 0) {
+            return;
+        }
+
+        $statusLabels = $this->ticketRepository->getStateLabels($projectId);
+        $newStatusType = $statusLabels[(int) $newStatus]['statusType'] ?? '';
+        if ($newStatusType !== 'DONE') {
+            return;
+        }
+
+        $onTheClock = $this->timesheetService->isClocked($currentUserId);
+        if ($onTheClock === false || (int) ($onTheClock['id'] ?? 0) !== $ticketId) {
+            return;
+        }
+
+        try {
+            $this->timesheetService->punchOut($ticketId);
+        } catch (\Throwable $e) {
+            Log::error($e);
+        }
     }
 
     /**
@@ -2905,6 +2948,12 @@ class Tickets extends BaseService
         // Todo: create events and move notification logic to notification module
         if (isset($params['status'])) {
             $ticket = $this->getTicket($id);
+            if (! $ticket) {
+                return true;
+            }
+
+            $this->stopTimerWhenTicketIsDone((int) $id, $params['status'], (int) $ticket->projectId);
+
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
             $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
@@ -3767,6 +3816,8 @@ class Tickets extends BaseService
             $ticket = $this->getTicket($id);
 
             if ($ticket) {
+                $this->stopTimerWhenTicketIsDone((int) $id, $ticket->status, (int) $ticket->projectId);
+
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
                 $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
