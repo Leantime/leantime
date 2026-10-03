@@ -129,20 +129,34 @@ class AuthenticateSessionTest extends \Unit\TestCase
         $this->assertTrue($response->isRedirect(BASE_URL.'/auth/login'));
     }
 
-    public function test_token_authenticated_api_request_is_not_checked(): void
+    public function test_request_authenticated_by_validated_token_is_not_checked(): void
     {
         session(['userdata' => ['id' => 7]]);
 
+        $request = ApiRequest::create('/api/jsonrpc', 'POST', [], [], [], ['HTTP_X_API_KEY' => 'lt_key_secret']);
+        $request->attributes->set(AuthenticateSession::TOKEN_AUTHENTICATED, true);
+
         $lookups = 0;
         $reached = false;
-        $this->runMiddleware(
-            $this->middlewareWithPasswordHash('$2y$x', $lookups),
-            $this->attachSession(ApiRequest::create('/api/jsonrpc', 'POST', [], [], [], ['HTTP_X_API_KEY' => 'lt_key_secret'])),
-            $reached
-        );
+        $this->runMiddleware($this->middlewareWithPasswordHash('$2y$x', $lookups), $this->attachSession($request), $reached);
 
         $this->assertTrue($reached);
         $this->assertSame(0, $lookups, 'API key / Bearer sessions carry no fingerprint and need no lookup');
+    }
+
+    public function test_bogus_api_key_header_does_not_exempt_a_session_without_fingerprint(): void
+    {
+        session(['userdata' => ['id' => 7]]);
+
+        // Header present, but AuthCheck authenticated the request through the web session guard.
+        $request = ApiRequest::create('/api/jsonrpc', 'POST', [], [], [], ['HTTP_X_API_KEY' => 'bogus']);
+        $request->attributes->set(AuthenticateSession::TOKEN_AUTHENTICATED, false);
+
+        $reached = false;
+        $this->runMiddleware($this->middlewareWithPasswordHash('$2y$x'), $this->attachSession($request), $reached);
+
+        $this->assertFalse($reached);
+        $this->assertSame(1, $this->logoutCalls);
     }
 
     public function test_browser_jsonrpc_call_without_credential_is_checked_like_the_web_session(): void

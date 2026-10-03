@@ -25,6 +25,12 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AuthenticateSession implements AuthenticatesSessions
 {
+    /**
+     * Request attribute set by AuthCheck when the request was authenticated by a validated API key
+     * or Bearer token (rather than the web session).
+     */
+    public const TOKEN_AUTHENTICATED = 'leantime.tokenAuthenticated';
+
     public function __construct(
         private readonly UserRepository $userRepo,
     ) {}
@@ -47,10 +53,10 @@ class AuthenticateSession implements AuthenticatesSessions
 
         $storedFingerprint = $session->get(PasswordFingerprint::SESSION_KEY);
 
-        // Token-authenticated requests (x-api-key / Bearer) rebuild userdata from the credential on
-        // every request and never carry a fingerprint — the token is checked instead. Decided by the
-        // credential on the request, not the endpoint: browser JSON-RPC calls ride the web session.
-        if ($storedFingerprint === null && $this->carriesTokenCredential($request)) {
+        // Requests authenticated by a validated API key / Bearer token rebuild userdata from that
+        // credential and never carry a fingerprint. Only AuthCheck's verdict counts — a credential
+        // header that is merely present proves nothing.
+        if ($storedFingerprint === null && $request->attributes->get(self::TOKEN_AUTHENTICATED) === true) {
             return $next($request);
         }
 
@@ -73,18 +79,6 @@ class AuthenticateSession implements AuthenticatesSessions
         }
 
         return $next($request);
-    }
-
-    /**
-     * Whether the request authenticates with an API key or Bearer token rather than the web session.
-     */
-    private function carriesTokenCredential(IncomingRequest $request): bool
-    {
-        if ($request instanceof ApiRequest) {
-            return $request->getAPIKey() !== '' || ! empty($request->getBearerToken());
-        }
-
-        return $request->headers->has('x-api-key') || ! empty($request->bearerToken());
     }
 
     /**
