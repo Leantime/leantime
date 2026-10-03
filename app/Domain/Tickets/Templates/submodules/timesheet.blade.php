@@ -53,6 +53,14 @@ $currentPay = $userHours * $userInfo['wage'];
                     {!! __('label.booked_hours') !!}: {{ $timesheetsAllHours }}<br />
                     {!! __('label.actual_hours_remaining') !!}: {{ $remainingHours }}<br />
                 </p>
+                {{-- Parent + direct subtasks (#1798). Subtask time is logged on the subtask, so no double counting. --}}
+                @if (! empty($subtaskHours['subtaskCount']))
+                    <p>
+                        <strong>{{ sprintf(__('label.including_subtasks'), $subtaskHours['subtaskCount']) }}</strong><br />
+                        {!! __('label.planned_hours') !!}: {{ round((float) $ticket->planHours + $subtaskHours['planHours'], 2) }}<br />
+                        {!! __('label.booked_hours') !!}: {{ round((float) $timesheetsAllHours + $subtaskHours['loggedHours'], 2) }}<br />
+                    </p>
+                @endif
             </div>
         </div>
 

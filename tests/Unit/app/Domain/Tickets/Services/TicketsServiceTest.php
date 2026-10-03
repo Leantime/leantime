@@ -1144,4 +1144,60 @@ class TicketsServiceTest extends TestCase
         // UTC calendar it landed 6.7 days out and was bucketed as next week.
         $this->assertSame('due-this-week', $bucket->invoke($this->ticketsService, '2026-03-25 06:59:59', $todayLa));
     }
+
+    /**
+     * #1798: the parent's "including subtasks" figures sum each direct subtask's planned hours
+     * and the hours logged against that subtask's own id.
+     */
+    public function test_get_subtask_hour_totals_sums_plan_and_logged_hours(): void
+    {
+        $loggedBySubtask = [11 => '1.5', 12 => 0, 13 => '2.25'];
+        $service = $this->subtaskHoursService(
+            [
+                ['id' => 11, 'planHours' => '2'],
+                ['id' => 12, 'planHours' => null],
+                ['id' => 13, 'planHours' => '0.5'],
+            ],
+            $loggedBySubtask
+        );
+
+        $this->assertSame(
+            ['subtaskCount' => 3, 'planHours' => 2.5, 'loggedHours' => 3.75],
+            $service->getSubtaskHourTotals(10)
+        );
+    }
+
+    public function test_get_subtask_hour_totals_without_subtasks_is_zero(): void
+    {
+        $service = $this->subtaskHoursService(false, []);
+
+        $this->assertSame(
+            ['subtaskCount' => 0, 'planHours' => 0.0, 'loggedHours' => 0.0],
+            $service->getSubtaskHourTotals(10)
+        );
+    }
+
+    /**
+     * @param  false|array<int, array<string, mixed>>  $subtasks
+     * @param  array<int, mixed>  $loggedBySubtask
+     */
+    private function subtaskHoursService(false|array $subtasks, array $loggedBySubtask): TicketsService
+    {
+        return new TicketsService(
+            language: $this->make(LanguageCore::class),
+            ticketRepository: $this->make(TicketRepository::class, ['getAllSubtasks' => fn () => $subtasks]),
+            timesheetsRepo: $this->make(TimesheetRepository::class),
+            settingsRepo: $this->make(SettingRepository::class),
+            projectService: $this->make(ProjectService::class),
+            timesheetService: $this->make(TimesheetService::class, [
+                'getSumLoggedHoursForTicket' => fn (int $ticketId) => $loggedBySubtask[$ticketId],
+            ]),
+            sprintService: $this->make(SprintService::class),
+            ticketHistoryRepo: $this->make(TicketHistory::class),
+            goalcanvasService: $this->make(Goalcanvas::class),
+            dateTimeHelper: $this->make(DateTimeHelper::class),
+            commentService: $this->make(CommentService::class),
+            clientService: $this->make(ClientService::class)
+        );
+    }
 }

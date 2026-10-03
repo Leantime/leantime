@@ -1953,6 +1953,35 @@ class Tickets extends BaseService
     }
 
     /**
+     * Planned and logged hours of a To-Do's direct subtasks, so the parent can show totals
+     * "including subtasks" (#1798). Time logged on a subtask is booked against the subtask's own
+     * id, never the parent's, so adding these to the parent's own figures cannot double count.
+     *
+     * Internal (no RPC exposure): callers have already loaded and authorized the parent; each
+     * subtask's logged hours go through the authorizing timesheet lookup anyway.
+     *
+     * @param  int  $ticketId  Parent To-Do id
+     * @return array{subtaskCount: int, planHours: float, loggedHours: float}
+     */
+    public function getSubtaskHourTotals(int $ticketId): array
+    {
+        $subtasks = $this->getAllSubtasks($ticketId) ?: [];
+
+        $planHours = 0.0;
+        $loggedHours = 0.0;
+        foreach ($subtasks as $subtask) {
+            $planHours += (float) ($subtask['planHours'] ?? 0);
+            $loggedHours += (float) $this->timesheetService->getSumLoggedHoursForTicket((int) $subtask['id']);
+        }
+
+        return [
+            'subtaskCount' => count($subtasks),
+            'planHours' => $planHours,
+            'loggedHours' => $loggedHours,
+        ];
+    }
+
+    /**
      * Adds a new ticket quickly based on the provided parameters.
      *
      * @param  array  $params  An associative array of ticket details which may include:
