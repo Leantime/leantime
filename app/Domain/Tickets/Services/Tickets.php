@@ -2909,17 +2909,24 @@ class Tickets extends BaseService
      * editor or above AND be assigned to the ticket's project (prevents
      * cross-project IDOR via a smuggled ticket id).
      *
+     * Field names the ticket does not have are never written. When NONE of the submitted fields
+     * can be applied the call fails with a ValidationException instead of reporting a silent
+     * no-op; with $strict any unknown field fails the call (#3704). Unknown fields are listed in
+     * the error data under `ignoredFields`.
+     *
      * @param  int  $id  The ticket id to update
      * @param  array  $values  The fields to update
+     * @param  bool  $strict  Reject the whole patch when any field is unknown (default false).
      * @return bool True on success (false only if the underlying write fails)
      *
      * @throws AuthorizationException If the caller is not an editor, or is not assigned to the ticket's project
      * @throws NotFoundException If the ticket does not exist
+     * @throws ValidationException If no field can be applied, or (strict) any field is unknown
      *
      * @api
      */
     #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
-    public function patchTicket(int $id, array $values): bool
+    public function patchTicket(int $id, array $values, bool $strict = false): bool
     {
         // getTicket() returns false when the user can't access the ticket's project.
         $ticket = $this->getTicket($id);
@@ -2931,7 +2938,44 @@ class Tickets extends BaseService
         // access to it. Replaces the prior session-scoped userIsAtLeast + assignment checks.
         $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
+        $ignoredFields = $this->getIgnoredPatchFields($values);
+        $nothingApplies = count($ignoredFields) === count($values);
+
+        if ($nothingApplies || ($strict && $ignoredFields !== [])) {
+            $message = $values === []
+                ? 'No fields to update were provided.'
+                : 'Unknown ticket field(s): '.implode(', ', $ignoredFields).'. Updatable fields include headline, description, status, type, priority, tags, editorId, projectId, milestoneid, dependingTicketId, sprint, storypoints, planHours, hourRemaining, dateToFinish, editFrom, editTo, acceptanceCriteria, collaborators.';
+
+            throw new ValidationException(['ignoredFields' => $ignoredFields], $message);
+        }
+
         return $this->patch($id, $values);
+    }
+
+    /**
+     * The submitted patch fields that do not exist on a ticket and would be silently dropped.
+     *
+     * Not an @api method: MCP tools use it to tell the caller which fields were ignored (#3704).
+     *
+     * @param  array<string, mixed>  $values  The submitted field => value pairs.
+     * @return array<int, string> The ignored field names, in submission order.
+     */
+    public function getIgnoredPatchFields(array $values): array
+    {
+        // Consumed by patch() itself rather than written as columns.
+        $handledFields = ['collaborators', 'timetofinish', 'timefrom', 'timeto'];
+
+        $ignoredFields = [];
+        foreach (array_keys($values) as $field) {
+            $field = (string) $field;
+            if (in_array(strtolower($field), $handledFields, true) || TicketRepository::isPatchableField($field)) {
+                continue;
+            }
+
+            $ignoredFields[] = $field;
+        }
+
+        return $ignoredFields;
     }
 
     /**

@@ -1806,6 +1806,26 @@ class Tickets
     ];
 
     /**
+     * Whether a patch field name maps to a patchable zp_tickets column (case-insensitive, same
+     * matching as patchTicket()). Lets the service tell callers which fields would be ignored.
+     *
+     * @param  string  $field  The submitted field name.
+     * @return bool True when patchTicket() would write the field.
+     */
+    public static function isPatchableField(string $field): bool
+    {
+        $wanted = strtolower(DbCore::sanitizeToColumnString($field));
+
+        foreach (array_keys(self::PATCHABLE_COLUMNS) as $column) {
+            if (strtolower($column) === $wanted) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Canonical stored form of a priority, or null when the value is not a valid priority.
      *
      * Accepts only '' / null (no priority), an int 0-5, or a single digit string '0'-'5'.

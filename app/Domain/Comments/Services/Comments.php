@@ -5,6 +5,8 @@ namespace Leantime\Domain\Comments\Services;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\NotFoundException;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Comments\Permissions\CommentsPermissions;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
@@ -91,13 +93,65 @@ class Comments extends BaseService
     }
 
     /**
+     * Map common plural/alias spellings of a comment module to the stored module name.
+     *
+     * API clients naturally guess "tickets" or "projects"; those used to fail silently (#3704).
+     * Goal comments are stored on the goal canvas item.
+     */
+    private function normalizeCommentModule(mixed $module): mixed
+    {
+        if (! is_string($module)) {
+            return $module;
+        }
+
+        $aliases = [
+            'tickets' => 'ticket',
+            'task' => 'ticket',
+            'tasks' => 'ticket',
+            'projects' => 'project',
+            'articles' => 'article',
+            'ideas' => 'idea',
+            'goal' => 'goalcanvasitem',
+            'goals' => 'goalcanvasitem',
+        ];
+
+        $lowerModule = strtolower(trim($module));
+
+        return $aliases[$lowerModule] ?? $module;
+    }
+
+    /**
+     * Whether comments can be attached to this module without the caller supplying the entity.
+     */
+    private function isResolvableCommentModule(string $module): bool
+    {
+        return in_array($module, ['ticket', 'project', 'article', 'idea'], true) || str_ends_with($module, 'canvasitem');
+    }
+
+    /**
+     * Add a comment to an entity.
+     *
+     * When no entity is passed it is loaded server-side from (module, entityId). An unknown module
+     * or a missing/inaccessible entity raises a ValidationException / NotFoundException (JSON-RPC
+     * -32602 / -32002) instead of returning a silent false (#3704).
+     *
+     * @param  array  $values  Comment values: text (required), father/parentId, status.
+     * @param  string  $module  ticket, project, article, idea, {type}canvasitem (aliases such as "tickets" are accepted).
+     * @param  int  $entityId  The id of the entity being commented on.
+     * @param  mixed  $entity  The loaded entity (optional; loaded when omitted).
+     * @return bool True when the comment was stored; false when the comment text is empty or the write fails.
+     *
      * @throws BindingResolutionException
+     * @throws ValidationException When the module is unknown and no entity was supplied.
+     * @throws NotFoundException When the entity does not exist or is not accessible.
      *
      * @api
      */
     #[RequiresPermission(CommentsPermissions::CREATE, entityScoped: true)]
     public function addComment($values, $module, $entityId, $entity = null): bool
     {
+        $module = $this->normalizeCommentModule($module);
+
         // RPC callers (mobile) typically don't pre-load the entity — they
         // just know module + entityId. Load it server-side so they don't
         // have to ship a whole ticket payload over the wire just to comment.
@@ -112,7 +166,17 @@ class Comments extends BaseService
             || $isCanvasFamilyModule;
 
         if (($entity === null || $entityHasWrongShape) && $module && $entityId) {
+            if (! $this->isResolvableCommentModule((string) $module)) {
+                $message = "Unknown comment module '{$module}'. Expected one of: ticket, project, article, idea, {type}canvasitem.";
+
+                throw new ValidationException(['module' => [$message]], $message);
+            }
+
             $entity = $this->loadEntityForComment($module, (int) $entityId);
+
+            if ($entity === null) {
+                throw new NotFoundException("Could not find {$module} #{$entityId}, or you do not have access to it.");
+            }
         }
 
         // Commenting is a commenter+ capability. Resolve the host entity's project so the
@@ -137,7 +201,7 @@ class Comments extends BaseService
             $values['father'] = $values['parentId'] ?? 0;
         }
 
-        if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) && isset($entityId) && isset($entity)) {
+        if (isset($values['text']) && $values['text'] != '' && isset($module) && isset($entity)) {
             $mapper = [
                 'text' => $values['text'],
                 'date' => dtHelper()->dbNow()->formatDateTimeForDb(),

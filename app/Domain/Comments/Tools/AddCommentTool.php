@@ -5,10 +5,8 @@ namespace Leantime\Domain\Comments\Tools;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Comments\Services\Comments;
-use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
-use Leantime\Domain\Projects\Services\Projects;
-use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Add a new comment to a specific entity.
@@ -17,9 +15,6 @@ class AddCommentTool extends Tool
 {
     public function __construct(
         private Comments $commentsService,
-        private Projects $projectService,
-        private Tickets $ticketService,
-        private Goalcanvas $goalcanvasService,
     ) {}
 
     public function schema(ToolInputSchema $schema): ToolInputSchema
@@ -27,7 +22,7 @@ class AddCommentTool extends Tool
         return $schema
             ->string('text')->description('Comment text.')
             ->required()
-            ->string('module')->description('Module type (ticket, project, goal, etc.).')
+            ->string('module')->description('Module type: ticket, project, article (wiki), idea, goal or {type}canvasitem.')
             ->required()
             ->integer('entityId')->description('ID of the entity to add comment to.')
             ->required()
@@ -49,12 +44,11 @@ class AddCommentTool extends Tool
      */
     public function handle(array $arguments): ToolResult
     {
-        $module = $arguments['module'];
+        $module = (string) ($arguments['module'] ?? '');
         $entityId = (int) ($arguments['entityId'] ?? 0);
 
-        $entity = $this->getEntity($module, $entityId);
-        if (! $entity) {
-            return ToolResult::error("Entity not found: {$module} ID {$entityId}");
+        if (trim((string) ($arguments['text'] ?? '')) === '') {
+            return ToolResult::error('The comment text is empty.');
         }
 
         $values = [
@@ -63,25 +57,20 @@ class AddCommentTool extends Tool
             'status' => ($arguments['status'] ?? ''),
         ];
 
-        $result = $this->commentsService->addComment($values, $module, $entityId, $entity);
+        // The service resolves (and access-checks) the entity from module + id, normalizes module
+        // aliases such as "tickets"/"goal", and reports unknown modules or missing entities as
+        // errors. A placeholder entity used to be passed for unknown modules, which stored
+        // comments under modules nothing reads (#3704).
+        try {
+            $result = $this->commentsService->addComment($values, $module, $entityId);
+        } catch (LeantimeExceptionInterface $e) {
+            return ToolResult::error($e->getClientMessage());
+        }
 
         if ($result) {
             return ToolResult::text("Comment added successfully to {$module} #{$entityId}");
         }
 
         return ToolResult::error('Failed to add comment. Please check the provided information.');
-    }
-
-    /**
-     * Helper method to get an entity based on module type and ID.
-     */
-    private function getEntity(string $module, int $entityId): mixed
-    {
-        return match ($module) {
-            'ticket' => $this->ticketService->getTicket($entityId),
-            'project' => $this->projectService->getProject($entityId),
-            'goal', 'goalcanvas', 'goalcanvasitem' => $this->goalcanvasService->getSingleCanvas($entityId),
-            default => ['id' => $entityId],
-        };
     }
 }

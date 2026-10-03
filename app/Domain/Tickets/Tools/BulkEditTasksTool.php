@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -63,9 +64,23 @@ class BulkEditTasksTool extends Tool
             $id = $update['id'];
             unset($update['id']);
 
-            if ($this->ticketsService->patch($id, $update)) {
+            try {
+                $ignoredFields = $this->ticketsService->getIgnoredPatchFields($update);
+                $updated = $this->ticketsService->patchTicket((int) $id, $update);
+            } catch (LeantimeExceptionInterface $e) {
+                $failureCount++;
+                $results[] = ['id' => $id, 'status' => 'error', 'message' => $e->getClientMessage()];
+
+                continue;
+            }
+
+            if ($updated) {
                 $successCount++;
-                $results[] = ['id' => $id, 'status' => 'success'];
+                $result = ['id' => $id, 'status' => 'success'];
+                if ($ignoredFields !== []) {
+                    $result['message'] = 'Ignored unknown fields: '.implode(', ', $ignoredFields);
+                }
+                $results[] = $result;
             } else {
                 $failureCount++;
                 $results[] = ['id' => $id, 'status' => 'error', 'message' => 'Failed to update task'];

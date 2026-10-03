@@ -172,11 +172,17 @@ class CommentsServiceTest extends TestCase
             },
         ]);
 
-        $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404));
-
-        // A caller-supplied entity must not stand in for an item that doesn't resolve (or belongs to
+        // A missing item is reported as not found (#3704) rather than a silent false. A
+        // caller-supplied entity must not stand in for an item that doesn't resolve (or belongs to
         // a different canvas type): canvas-family entities are always resolved server-side.
-        $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404, ['id' => 404, 'projectId' => 9]));
+        foreach ([null, ['id' => 404, 'projectId' => 9]] as $suppliedEntity) {
+            try {
+                $this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404, $suppliedEntity);
+                $this->fail('a comment on a missing item must raise NotFoundException');
+            } catch (\Leantime\Core\Exceptions\NotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     public function test_toggle_rejects_unknown_reaction_type(): void
@@ -422,5 +428,61 @@ class CommentsServiceTest extends TestCase
         $service = $this->makeService($this->noopReactions(), $repo, $this->denyingPermissions());
 
         $this->assertSame(['reactions' => [], 'userReactions' => []], $service->getCommentReactions(404, self::SESSION_USER));
+    }
+
+    // ---------------------------------------------------------------------
+    // #3704: structured errors instead of a silent false
+    // ---------------------------------------------------------------------
+
+    public function test_add_comment_accepts_the_plural_ticket_module(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        $ticket = new \Leantime\Domain\Tickets\Models\Tickets(['id' => 1, 'projectId' => 9, 'type' => 'task', 'headline' => 'H']);
+        $this->app->instance(\Leantime\Domain\Tickets\Services\Tickets::class, $this->make(\Leantime\Domain\Tickets\Services\Tickets::class, [
+            'getTicket' => fn () => $ticket,
+        ]));
+
+        $writtenModule = null;
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => 9,
+            'addComment' => function ($mapper, $module) use (&$writtenModule) {
+                $writtenModule = $module;
+
+                return '503';
+            },
+        ]);
+        $projects = $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]);
+
+        $this->assertTrue($this->makeService($this->noopReactions(), $repo, null, $projects)->addComment(['text' => 'hi'], 'tickets', 1));
+        $this->assertSame('ticket', $writtenModule);
+    }
+
+    public function test_add_comment_rejects_an_unknown_module_with_a_validation_error(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'addComment' => function () {
+                throw new \RuntimeException('must not write a comment for an unknown module');
+            },
+        ]);
+
+        try {
+            $this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hi'], 'bogus', 1);
+            $this->fail('an unknown module must not fail silently');
+        } catch (\Leantime\Core\Exceptions\ValidationException $e) {
+            $this->assertArrayHasKey('module', $e->getErrorData());
+            $this->assertStringContainsString('bogus', $e->getClientMessage());
+        }
+    }
+
+    public function test_add_comment_on_a_missing_ticket_is_not_found(): void
+    {
+        $this->app->instance(\Leantime\Domain\Tickets\Services\Tickets::class, $this->make(\Leantime\Domain\Tickets\Services\Tickets::class, [
+            'getTicket' => fn () => false,
+        ]));
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $this->makeService($this->noopReactions())->addComment(['text' => 'hi'], 'ticket', 404);
     }
 }

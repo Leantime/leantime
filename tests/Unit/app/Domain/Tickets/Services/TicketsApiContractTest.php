@@ -349,4 +349,68 @@ class TicketsApiContractTest extends TestCase
 
         $this->assertSame([], $service->getAllSubtasks(974));
     }
+
+    // ---------------------------------------------------------------------
+    // #3704: no silent no-op patches
+    // ---------------------------------------------------------------------
+
+    public function test_patch_ticket_with_only_unknown_fields_is_a_validation_error(): void
+    {
+        $service = $this->service([
+            'getTicket' => fn () => $this->storedSubtask(),
+            'patchTicket' => function () {
+                throw new \RuntimeException('nothing should be written');
+            },
+        ]);
+
+        try {
+            $service->patchTicket(977, ['stauts' => 4]);
+            $this->fail('a patch that applies no field must not report a silent false');
+        } catch (ValidationException $e) {
+            $this->assertSame(['stauts'], $e->getErrorData()['ignoredFields']);
+            $this->assertStringContainsString('stauts', $e->getClientMessage());
+        }
+    }
+
+    public function test_patch_ticket_strict_mode_rejects_any_unknown_field(): void
+    {
+        $service = $this->service([
+            'getTicket' => fn () => $this->storedSubtask(),
+            'patchTicket' => function () {
+                throw new \RuntimeException('strict mode must not write a partially unknown patch');
+            },
+        ]);
+
+        $this->expectException(ValidationException::class);
+
+        $service->patchTicket(977, ['headline' => 'x', 'colour' => 'red'], strict: true);
+    }
+
+    public function test_patch_ticket_applies_known_fields_and_reports_ignored_ones(): void
+    {
+        $patched = null;
+        $service = $this->service([
+            'getTicket' => fn () => $this->storedSubtask(),
+            'patchTicket' => function ($id, $params) use (&$patched) {
+                $patched = $params;
+
+                return true;
+            },
+        ]);
+
+        $values = ['headline' => 'x', 'milestoneId' => 5, 'timeToFinish' => '10:00', 'colour' => 'red'];
+
+        $this->assertSame(['colour'], $service->getIgnoredPatchFields($values));
+        $this->assertTrue($service->patchTicket(977, ['headline' => 'x', 'colour' => 'red']));
+        $this->assertSame('x', $patched['headline']);
+    }
+
+    public function test_patch_ticket_on_a_missing_ticket_is_not_found(): void
+    {
+        $service = $this->service(['getTicket' => fn () => false]);
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $service->patchTicket(404, ['headline' => 'x']);
+    }
 }
