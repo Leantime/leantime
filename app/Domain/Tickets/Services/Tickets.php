@@ -440,13 +440,25 @@ class Tickets extends BaseService
      *                                      'effort', 'excludeType', 'type', 'milestone', 'groupBy',
      *                                      'orderBy', 'orderDirection', 'priority', 'clients', and 'sprint'.
      *                                      These values are used to filter the search results.
+     *                                      Server-side filters for API watchers (#3700), all optional and
+     *                                      usable without a project (results stay limited to projects
+     *                                      the caller can access):
+     *                                      - 'modifiedAfter' / 'modifiedBefore': ISO 8601 datetime; matches
+     *                                      the ticket's last modification (creation date if never modified).
+     *                                      - 'statusType': comma list of NEW, INPROGRESS, DONE, NOT_DONE,
+     *                                      resolved against each ticket's own project status labels.
      * @return array|false An array of tickets matching the search criteria, or false on failure.
+     *
+     * @throws ValidationException When modifiedAfter/modifiedBefore is not a date or statusType is unknown.
      *
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAll(?array $searchCriteria = null, ?int $limit = null): array|false
     {
+        if ($searchCriteria !== null) {
+            $searchCriteria = $this->normalizeApiTicketFilters($searchCriteria);
+        }
 
         if (isset($searchCriteria['dateFrom'])) {
             try {
@@ -476,6 +488,54 @@ class Tickets extends BaseService
         }
 
         return $tickets;
+    }
+
+    /**
+     * Validate and normalize the API watcher filters of a ticket search (#3700).
+     *
+     * modifiedAfter/modifiedBefore are parsed (ISO 8601, or the user's date format) and converted
+     * to UTC database datetimes; statusType is upper-cased and checked against the known types.
+     *
+     * @param  array<string, mixed>  $searchCriteria  The raw search criteria.
+     * @return array<string, mixed> The criteria with normalized filter values.
+     *
+     * @throws ValidationException When a filter value is invalid.
+     */
+    private function normalizeApiTicketFilters(array $searchCriteria): array
+    {
+        foreach (['modifiedAfter', 'modifiedBefore'] as $dateFilter) {
+            if (! isset($searchCriteria[$dateFilter]) || $searchCriteria[$dateFilter] === '') {
+                continue;
+            }
+
+            try {
+                $searchCriteria[$dateFilter] = dtHelper()->parseUserDateTime((string) $searchCriteria[$dateFilter])->formatDateTimeForDb();
+            } catch (\Throwable $e) {
+                $message = "{$dateFilter} must be an ISO 8601 datetime (e.g. 2026-07-27T00:00:00Z).";
+
+                throw new ValidationException([$dateFilter => [$message]], $message);
+            }
+        }
+
+        if (isset($searchCriteria['statusType']) && $searchCriteria['statusType'] !== '') {
+            $allowedTypes = ['NEW' => 'NEW', 'INPROGRESS' => 'INPROGRESS', 'DONE' => 'DONE', 'NOTDONE' => 'NOT_DONE'];
+            $statusTypes = [];
+            foreach (explode(',', (string) $searchCriteria['statusType']) as $statusType) {
+                $compactType = strtoupper(str_replace([' ', '_', '-'], '', trim($statusType)));
+
+                if (! isset($allowedTypes[$compactType])) {
+                    $message = 'statusType must be a comma separated list of: NEW, INPROGRESS, DONE, NOT_DONE.';
+
+                    throw new ValidationException(['statusType' => [$message]], $message);
+                }
+
+                $statusTypes[] = $allowedTypes[$compactType];
+            }
+
+            $searchCriteria['statusType'] = implode(',', array_unique($statusTypes));
+        }
+
+        return $searchCriteria;
     }
 
     private function decorateWithFriendlyStatusLabels(array $tickets): array

@@ -413,4 +413,43 @@ class TicketsApiContractTest extends TestCase
 
         $service->patchTicket(404, ['headline' => 'x']);
     }
+
+    // ---------------------------------------------------------------------
+    // #3700: server-side modifiedAfter / statusType filters
+    // ---------------------------------------------------------------------
+
+    public function test_get_all_normalizes_the_watcher_filters(): void
+    {
+        $criteria = null;
+        $service = $this->service([
+            'getAllBySearchCriteria' => function ($searchCriteria) use (&$criteria) {
+                $criteria = $searchCriteria;
+
+                return [];
+            },
+        ]);
+
+        $service->getAll(['modifiedAfter' => '2026-07-27T02:00:00+02:00', 'statusType' => 'inprogress, not done'], 10);
+
+        $this->assertSame('2026-07-27 00:00:00', $criteria['modifiedAfter'], 'ISO input is converted to a UTC database datetime');
+        $this->assertSame('INPROGRESS,NOT_DONE', $criteria['statusType']);
+    }
+
+    public function test_get_all_rejects_an_unparseable_modified_after(): void
+    {
+        $service = $this->service(['getAllBySearchCriteria' => fn () => []]);
+
+        $this->expectException(ValidationException::class);
+
+        $service->getAll(['modifiedAfter' => 'yesterday-ish']);
+    }
+
+    public function test_get_all_rejects_an_unknown_status_type(): void
+    {
+        $service = $this->service(['getAllBySearchCriteria' => fn () => []]);
+
+        $this->expectException(ValidationException::class);
+
+        $service->getAll(['statusType' => 'WAITING']);
+    }
 }

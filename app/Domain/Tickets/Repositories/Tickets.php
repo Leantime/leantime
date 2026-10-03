@@ -318,6 +318,64 @@ class Tickets
     }
 
     /**
+     * Restrict a ticket query to the status types requested, per project.
+     *
+     * Every project in scope contributes "(projectId = p AND status IN (keys of p with that
+     * type))". Without an explicit project scope the projects are taken from the query itself
+     * (i.e. the projects the caller can see that have matching tickets).
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query  The ticket query (access scope already applied).
+     * @param  int[]  $scopedProjectIds  Explicit project scope, or [] for "all visible projects".
+     * @param  string  $statusTypes  Comma-separated NEW, INPROGRESS, DONE and/or NOT_DONE.
+     */
+    private function applyStatusTypeFilter($query, array $scopedProjectIds, string $statusTypes): void
+    {
+        $wantedTypes = array_values(array_filter(array_map(
+            fn ($type) => strtoupper(str_replace([' ', '_', '-'], '', trim($type))),
+            explode(',', $statusTypes)
+        )));
+        $includeNotDone = in_array('NOTDONE', $wantedTypes, true);
+
+        $projectIds = $scopedProjectIds;
+        if ($projectIds === []) {
+            $projectIds = (clone $query)
+                ->select('zp_tickets.projectId')
+                ->distinct()
+                ->pluck('projectId')
+                ->map(fn ($projectId) => (int) $projectId)
+                ->all();
+        }
+
+        $statusKeysByProject = [];
+        foreach ($projectIds as $projectId) {
+            foreach ($this->getStateLabels($projectId) as $statusKey => $label) {
+                $statusType = strtoupper((string) ($label['statusType'] ?? ''));
+                $matches = in_array($statusType, $wantedTypes, true)
+                    || ($includeNotDone && $statusType !== 'DONE');
+
+                if ($matches) {
+                    $statusKeysByProject[$projectId][] = (int) $statusKey;
+                }
+            }
+        }
+
+        if ($statusKeysByProject === []) {
+            $query->whereRaw('1 = 0');
+
+            return;
+        }
+
+        $query->where(function ($statusQuery) use ($statusKeysByProject) {
+            foreach ($statusKeysByProject as $projectId => $statusKeys) {
+                $statusQuery->orWhere(function ($projectQuery) use ($projectId, $statusKeys) {
+                    $projectQuery->where('zp_tickets.projectId', $projectId)
+                        ->whereIn('zp_tickets.status', $statusKeys);
+                });
+            }
+        });
+    }
+
+    /**
      * getAll - get all Tickets, depending on userrole
      *
      * @throws BindingResolutionException
@@ -633,6 +691,24 @@ class Tickets
             }
         } else {
             $query->where('zp_tickets.status', '<>', -1);
+        }
+
+        // Semantic status filter (NEW / INPROGRESS / DONE / NOT_DONE). Status ids mean different
+        // things in different projects, so each project's own label config is applied to its own
+        // tickets — which also makes it work without a project scope (#3700).
+        if (isset($searchCriteria['statusType']) && $searchCriteria['statusType'] != '') {
+            $this->applyStatusTypeFilter($query, $scopedProjectIds, (string) $searchCriteria['statusType']);
+        }
+
+        // Change-feed filters for API watchers: modified (falling back to the creation date for
+        // rows never modified) within the given UTC range (#3700).
+        $lastChangedSql = 'COALESCE('.$this->dbHelper->wrapColumn('zp_tickets.modified').', '.$this->dbHelper->wrapColumn('zp_tickets.date').')';
+        if (isset($searchCriteria['modifiedAfter']) && $searchCriteria['modifiedAfter'] != '') {
+            $query->whereRaw($lastChangedSql.' >= ?', [(string) $searchCriteria['modifiedAfter']]);
+        }
+
+        if (isset($searchCriteria['modifiedBefore']) && $searchCriteria['modifiedBefore'] != '') {
+            $query->whereRaw($lastChangedSql.' <= ?', [(string) $searchCriteria['modifiedBefore']]);
         }
 
         if (isset($searchCriteria['type']) && $searchCriteria['type'] != '') {
