@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\File;
  *
  * A marketplace download is a ZIP holding the plugin's `{Folder}.phar` (OpenSSL-signed) and its
  * `{Folder}.phar.pubkey`. Nothing from it reaches the plugin directory until it has passed every
- * check: the entries are inspected BEFORE extraction (safe relative paths only, bounded count and
- * size, the expected phar present), the archive is extracted into a private staging directory
+ * check: the entries are inspected BEFORE extraction (only the phar and its public key, bounded
+ * size — any other file would be installed unsigned beside the phar), the archive is extracted into a private staging directory
  * outside the plugin directory, and the phar's signature is verified there. Only then is the
  * staged content copied into place.
  *
@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\File;
  */
 class PluginArchive
 {
-    /** Most entries a plugin archive may contain. */
-    public const MAX_ENTRIES = 100;
+    /** Most entries a plugin archive may contain: the phar and its public key. */
+    public const MAX_ENTRIES = 2;
 
     /** Largest total uncompressed size a plugin archive may unpack to (bytes). */
     public const MAX_UNCOMPRESSED_BYTES = 200 * 1024 * 1024;
@@ -154,8 +154,9 @@ class PluginArchive
     }
 
     /**
-     * Refuses an archive with an unsafe entry (absolute path, `..` segment, backslash, NUL), too
-     * many entries, too large an uncompressed size, or without the expected phar at its root.
+     * Refuses an archive that holds anything but `{pharName}` and optionally `{pharName}.pubkey`
+     * at its root (any other entry would be installed without being covered by the phar
+     * signature), has an unsafe entry name, is too large uncompressed, or lacks the phar.
      *
      * @param  \ZipArchive  $zip  The opened archive.
      * @param  string  $pharName  The phar file the archive must contain at its root.
@@ -180,6 +181,10 @@ class PluginArchive
             $entryName = (string) $stat['name'];
             if (! self::isSafeEntryName($entryName)) {
                 throw new \RuntimeException('Plugin archive contains an unsafe path');
+            }
+
+            if ($entryName !== $pharName && $entryName !== $pharName.'.pubkey') {
+                throw new \RuntimeException('Plugin archive contains an unexpected file');
             }
 
             $totalBytes += (int) $stat['size'];

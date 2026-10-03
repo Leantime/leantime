@@ -144,6 +144,27 @@ class PluginArchiveTest extends TestCase
         $this->assertFileDoesNotExist(dirname($this->workDir).DIRECTORY_SEPARATOR.'escaped.php');
     }
 
+    public function test_refuses_unsigned_files_beside_the_signed_phar(): void
+    {
+        [$phar, $publicKey] = $this->opensslSignedPhar();
+        $zipPath = $this->makeZip([
+            'Notes.phar' => $phar,
+            'Notes.phar.pubkey' => $publicKey,
+            'composer.json' => '{"name":"notes"}',
+            'register.php' => '<?php',
+        ]);
+        $pluginDir = $this->existingPluginDir();
+
+        try {
+            (new PluginArchive)->install($zipPath, 'Notes', $pluginDir);
+            $this->fail('Files not covered by the phar signature must be refused');
+        } catch (\RuntimeException) {
+        }
+
+        $this->assertSame('installed-version', file_get_contents($pluginDir.'/Notes.phar'));
+        $this->assertFileDoesNotExist($pluginDir.'/register.php');
+    }
+
     public function test_refuses_an_archive_without_the_expected_phar(): void
     {
         $zipPath = $this->makeZip(['Other.phar' => 'x', 'index.php' => '<?php']);
