@@ -53,7 +53,11 @@ class Browse extends Controller
             if ($result['success'] === true) {
                 $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
 
-                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.(($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : ''));
+                // Back to the page the file was deleted from (#3780): this is the project file browser,
+                // not the files/showAll attachment modal. Keep the popup mode when it was opened as one.
+                $openedAsPopup = filter_var($params['modalPopUp'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+                return Frontcontroller::redirect(BASE_URL.'/files/browse'.($openedAsPopup ? '?modalPopUp=true' : ''));
             }
 
             $this->tpl->setNotification($this->language->__('notifications.file_deleted_error'), 'error');
