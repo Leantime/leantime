@@ -2219,24 +2219,52 @@ class Tickets
             $updates['kanbanSortIndex'] = $ticketSorting;
         }
 
-        $query = $this->connection->table('zp_tickets')->where('id', $ticketId);
+        // Check the expected status, record history and write in one transaction: history compares
+        // against the row's pre-update values, and the row lock makes the compare-and-set atomic
+        // against an overlapping kanban request that is moving the same card (#3099).
+        $written = $this->connection->transaction(function () use ($ticketId, $status, $updates, $expectedStatus): bool {
+            $current = $this->connection->table('zp_tickets')
+                ->where('id', $ticketId)
+                ->lockForUpdate()
+                ->first(['status']);
 
-        if ($expectedStatus !== false) {
-            // Compare-and-set: a concurrent request that already moved the ticket wins (#3099).
-            $expectedStatus === null ? $query->whereNull('status') : $query->where('status', $expectedStatus);
-        }
+            if ($current === null) {
+                return false;
+            }
 
-        $written = $query->update($updates) > 0;
+            if ($expectedStatus !== false && ! $this->statusMatches($current->status, $expectedStatus)) {
+                return false;
+            }
+
+            $this->addTicketChange(session('userdata.id'), $ticketId, ['status' => $status]);
+
+            return $this->connection->table('zp_tickets')
+                ->where('id', $ticketId)
+                ->update($updates) > 0;
+        });
 
         if (! $written) {
             return false;
         }
 
-        $this->addTicketChange(session('userdata.id'), $ticketId, ['status' => $status]);
-
         TicketStatusUpdated::dispatch(ticketId: (int) $ticketId, status: $status, handler: $handler, legacyHook: __FUNCTION__);
 
         return true;
+    }
+
+    /**
+     * Whether a stored status equals the status a caller expects (null means "no status").
+     *
+     * @param  mixed  $storedStatus  The status column value as read from the database.
+     * @param  string|null  $expectedStatus  The status the caller read earlier.
+     */
+    private function statusMatches(mixed $storedStatus, ?string $expectedStatus): bool
+    {
+        if ($expectedStatus === null || $storedStatus === null) {
+            return $expectedStatus === null && $storedStatus === null;
+        }
+
+        return (string) $storedStatus === $expectedStatus;
     }
 
     /**
