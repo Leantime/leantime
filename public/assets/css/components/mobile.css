@@ -2673,6 +2673,19 @@ min-width: 1200px
     .ticketBox {
         overflow: hidden;
     }
+    /* Subtask collapse arrow (#3276): on desktop it hangs outside the card's
+       left edge (left:-24px), which the overflow:hidden above clips away. Move
+       it inside the card as a 32px tap target and make room for it. */
+    .ticketBox.has-children {
+        padding-left: 40px;
+    }
+    .ticketBox.has-children > .task-collapse-toggle {
+        left: 4px;
+        top: 6px;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+    }
     /* Show essentials only on mobile (title + status + actions menu). The
        timer, due date, recurring and scheduler icons cram the ~240px card, and
        the floated status pill ends up overlapping the title/date. All of this
