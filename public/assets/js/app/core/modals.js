@@ -177,7 +177,7 @@ leantime.modals = (function () {
     };
 
     // Release widgets that register outside the content they belong to, so removed content can be
-    // garbage collected: htmx triggers, Chosen (document handlers), tippy. For page content we own
+    // garbage collected: htmx triggers, rich-text editors, Chosen (document handlers), tippy. For page content we own
     // the whole subtree, so jQuery.cleanData also runs jQuery UI's remove hooks (sortable, datepicker).
     var releaseContent = function (root, withJqueryData) {
         if (!root) {
@@ -185,6 +185,11 @@ leantime.modals = (function () {
         }
         cleanUpHtmx(root);
         try {
+            // Rich-text editors: the registry and editor plugins otherwise keep the removed DOM.
+            if (leantime.tiptapController && leantime.tiptapController.registry
+                && typeof leantime.tiptapController.registry.destroyWithin === 'function') {
+                leantime.tiptapController.registry.destroyWithin(root);
+            }
             jQuery(root).find('select').each(function () {
                 var select = jQuery(this);
                 if (select.data('chosen')) {
