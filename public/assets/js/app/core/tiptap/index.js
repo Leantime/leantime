@@ -42,6 +42,118 @@ const { createTableOfContentsExtension } = require('./extensions/tableOfContents
 const { createColumnsExtension } = require('./extensions/columns');
 
 /**
+ * Read a table cell's column widths.
+ *
+ * Tiptap stores widths in a `colwidth` cell attribute, but the server-side HTML
+ * sanitizer strips that non-standard attribute. The `<colgroup>` Tiptap writes
+ * alongside the table survives sanitizing, so fall back to the matching
+ * `<col style="width: …px">` entries to keep resized columns across save/reload.
+ *
+ * @param {HTMLElement} cellElement - The td/th element being parsed
+ * @returns {number[]|null} One width per spanned column, or null when unknown
+ */
+function parseCellColwidth(cellElement) {
+    var colwidthAttribute = cellElement.getAttribute('colwidth');
+    if (colwidthAttribute) {
+        return colwidthAttribute.split(',').map(function(width) { return parseInt(width, 10); });
+    }
+
+    var table = cellElement.closest('table');
+    if (!table) {
+        return null;
+    }
+
+    var colgroup = table.querySelector(':scope > colgroup');
+    if (!colgroup) {
+        return null;
+    }
+
+    var cols = colgroup.querySelectorAll('col');
+
+    var columnIndex = findLogicalColumnIndex(table, cellElement);
+    if (columnIndex === -1) {
+        return null;
+    }
+
+    var colspan = parseInt(cellElement.getAttribute('colspan') || '1', 10);
+    var widths = [];
+    var hasAnyWidth = false;
+    for (var offset = 0; offset < colspan; offset++) {
+        var col = cols[columnIndex + offset];
+        // Only pixel widths map onto Tiptap's colwidth (legacy TinyMCE percentages are ignored)
+        var width = col && /px$/.test(col.style.width) ? parseInt(col.style.width, 10) : 0;
+        if (width > 0) {
+            hasAnyWidth = true;
+        }
+        widths.push(width > 0 ? width : 0);
+    }
+
+    return hasAnyWidth ? widths : null;
+}
+
+/**
+ * Logical (grid) column of a cell, accounting for rowspans from earlier rows and
+ * colspans of earlier cells - the column its <col> entry is found at.
+ *
+ * @param {HTMLTableElement} table
+ * @param {HTMLElement} cellElement
+ * @returns {number} Column index, or -1 when the cell is not part of the table's rows
+ */
+function findLogicalColumnIndex(table, cellElement) {
+    // occupiedColumns[rowIndex] = { columnIndex: true } for slots taken by rowspans above
+    var occupiedColumns = [];
+    var rows = table.rows;
+
+    for (var rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        occupiedColumns[rowIndex] = occupiedColumns[rowIndex] || {};
+        var columnIndex = 0;
+        var cells = rows[rowIndex].cells;
+
+        for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+            var cell = cells[cellIndex];
+
+            while (occupiedColumns[rowIndex][columnIndex]) {
+                columnIndex++;
+            }
+
+            if (cell === cellElement) {
+                return columnIndex;
+            }
+
+            var colspan = Math.max(1, parseInt(cell.getAttribute('colspan') || '1', 10) || 1);
+            var rowspan = Math.max(1, parseInt(cell.getAttribute('rowspan') || '1', 10) || 1);
+
+            for (var spannedRow = rowIndex; spannedRow < rowIndex + rowspan; spannedRow++) {
+                occupiedColumns[spannedRow] = occupiedColumns[spannedRow] || {};
+                for (var spannedColumn = columnIndex; spannedColumn < columnIndex + colspan; spannedColumn++) {
+                    occupiedColumns[spannedRow][spannedColumn] = true;
+                }
+            }
+
+            columnIndex += colspan;
+        }
+    }
+
+    return -1;
+}
+
+var ColwidthAwareTableCell = TableCell.extend({
+    addAttributes: function() {
+        var attributes = this.parent ? this.parent() : {};
+        attributes.colwidth = Object.assign({}, attributes.colwidth, { parseHTML: parseCellColwidth });
+        return attributes;
+    }
+});
+
+var ColwidthAwareTableHeader = TableHeader.extend({
+    addAttributes: function() {
+        var attributes = this.parent ? this.parent() : {};
+        attributes.colwidth = Object.assign({}, attributes.colwidth, { parseHTML: parseCellColwidth });
+        return attributes;
+    }
+});
+
+/**
  * EditorRegistry - Manages Tiptap editor instances
  */
 var EditorRegistry = (function() {
@@ -388,8 +500,8 @@ function createTiptapEditor(elementOrSelector, options) {
                 resizable: true,
             }),
             TableRow,
-            TableCell,
-            TableHeader
+            ColwidthAwareTableCell,
+            ColwidthAwareTableHeader
         );
     }
 

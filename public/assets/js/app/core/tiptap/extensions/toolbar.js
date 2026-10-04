@@ -175,7 +175,12 @@
         table: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>',
             title: 'Table',
-            command: function(editor) {
+            command: function(editor, button) {
+                // Inside a table the button opens the row/column/cell actions instead of nesting a new table
+                if (editor.isActive('table')) {
+                    showTablePopover(editor, button);
+                    return;
+                }
                 editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
             },
             isActive: function(editor) { return editor.isActive('table'); }
@@ -709,6 +714,10 @@
         if (existingHeadingPopover) {
             existingHeadingPopover.remove();
         }
+        var existingTablePopover = document.querySelector('.tiptap-table-popover');
+        if (existingTablePopover) {
+            existingTablePopover.remove();
+        }
     }
 
     /**
@@ -792,6 +801,92 @@
                 }
             });
         }, 0);
+    }
+
+    /**
+     * Show table manipulation popover (rows, columns, cells, delete table).
+     * Only opened while the cursor is inside a table.
+     */
+    function showTablePopover(editor, button) {
+        closeFontPopover();
+
+        var tableActions = [
+            { label: 'Add row above', run: function(chain) { return chain.addRowBefore(); } },
+            { label: 'Add row below', run: function(chain) { return chain.addRowAfter(); } },
+            { label: 'Delete row', run: function(chain) { return chain.deleteRow(); } },
+            { separator: true },
+            { label: 'Add column left', run: function(chain) { return chain.addColumnBefore(); } },
+            { label: 'Add column right', run: function(chain) { return chain.addColumnAfter(); } },
+            { label: 'Delete column', run: function(chain) { return chain.deleteColumn(); } },
+            { separator: true },
+            { label: 'Merge cells', run: function(chain) { return chain.mergeCells(); } },
+            { label: 'Split cell', run: function(chain) { return chain.splitCell(); } },
+            { label: 'Toggle header row', run: function(chain) { return chain.toggleHeaderRow(); } },
+            { separator: true },
+            { label: 'Delete table', run: function(chain) { return chain.deleteTable(); } }
+        ];
+
+        var popover = document.createElement('div');
+        popover.className = 'tiptap-table-popover tiptap-font-popover';
+
+        var list = document.createElement('div');
+        list.className = 'tiptap-font-popover__list';
+
+        tableActions.forEach(function(action) {
+            if (action.separator) {
+                var separator = document.createElement('div');
+                separator.className = 'tiptap-table-popover__separator';
+                list.appendChild(separator);
+                return;
+            }
+
+            var actionButton = document.createElement('button');
+            actionButton.type = 'button';
+            actionButton.className = 'tiptap-font-popover__btn';
+            actionButton.textContent = action.label;
+
+            // Grey out actions that do not apply to the current selection (e.g. merge with a single cell)
+            var canRun = action.run(editor.can().chain().focus()).run();
+            if (!canRun) {
+                actionButton.disabled = true;
+            }
+
+            actionButton.addEventListener('click', function() {
+                action.run(editor.chain().focus()).run();
+                closeFontPopover();
+            });
+
+            list.appendChild(actionButton);
+        });
+
+        popover.appendChild(list);
+
+        var buttonRect = button.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        popover.style.position = 'absolute';
+        popover.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+        popover.style.left = (buttonRect.left + scrollLeft) + 'px';
+        popover.style.zIndex = '10001';
+
+        document.body.appendChild(popover);
+
+        setTimeout(function() {
+            document.addEventListener('click', function closeHandler(e) {
+                if (!popover.contains(e.target) && e.target !== button) {
+                    closeFontPopover();
+                    document.removeEventListener('click', closeHandler);
+                }
+            });
+        }, 0);
+
+        document.addEventListener('keydown', function closeOnEscape(e) {
+            if (e.key === 'Escape') {
+                closeFontPopover();
+                document.removeEventListener('keydown', closeOnEscape);
+            }
+        });
     }
 
     /**
