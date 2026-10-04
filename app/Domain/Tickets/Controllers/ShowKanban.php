@@ -5,6 +5,7 @@ namespace Leantime\Domain\Tickets\Controllers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Tickets\Services\KanbanViewSettings;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,10 +13,14 @@ class ShowKanban extends Controller
 {
     private TicketService $ticketService;
 
+    private KanbanViewSettings $kanbanViewSettings;
+
     public function init(
-        TicketService $ticketService
+        TicketService $ticketService,
+        KanbanViewSettings $kanbanViewSettings
     ): void {
         $this->ticketService = $ticketService;
+        $this->kanbanViewSettings = $kanbanViewSettings;
 
         session(['lastPage' => CURRENT_URL]);
         session(['lastTicketView' => 'kanban']);
@@ -33,6 +38,9 @@ class ShowKanban extends Controller
             $params['groupBy'] = 'all';
         }
 
+        // The user's card-field choice (#1859) for this board.
+        $kanbanView = $this->kanbanViewSettings->getForCurrentUser((int) session('currentProject'));
+
         $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
         $allKanbanColumns = $this->ticketService->getKanbanColumns();
 
@@ -45,6 +53,7 @@ class ShowKanban extends Controller
         array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
         $this->tpl->assign('allKanbanColumns', $allKanbanColumns);
         $this->tpl->assign('statusBreakdown', $statusBreakdown);
+        $this->tpl->assign('kanbanView', $kanbanView);
 
         return $this->tpl->display('tickets.showKanban');
     }
