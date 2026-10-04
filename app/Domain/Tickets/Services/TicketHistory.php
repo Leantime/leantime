@@ -148,6 +148,10 @@ class TicketHistory extends BaseService
 
         $statusLabelsByProject = [];
         $projectInEffect = $this->projectAtWindowStart($rows, $predecessors, $projectId);
+        // Status ids are project-specific. The previous status value belongs to the project that was
+        // in effect when it was recorded, which differs from the new value's project when one update
+        // moved the ticket and changed its status together (the project row is recorded first).
+        $projectOfPreviousStatus = $projectInEffect;
         $editorNames = $this->ticketHistoryRepo->getUserNames(
             $this->collectEditorIds(array_merge(array_values($predecessors), $rows))
         );
@@ -170,17 +174,21 @@ class TicketHistory extends BaseService
                 $projectInEffect = $movedToProjectId > 0 ? $movedToProjectId : null;
             }
 
-            $statusLabels = $field === 'status'
-                ? $this->statusLabelsFor($projectInEffect, $projectId, $statusLabelsByProject)
-                : [];
+            $newStatusLabels = [];
+            $oldStatusLabels = [];
+            if ($field === 'status') {
+                $newStatusLabels = $this->statusLabelsFor($projectInEffect, $projectId, $statusLabelsByProject);
+                $oldStatusLabels = $this->statusLabelsFor($projectOfPreviousStatus, $projectId, $statusLabelsByProject);
+                $projectOfPreviousStatus = $projectInEffect;
+            }
 
             $isDescriptionChange = $field === 'description';
 
             $oldValue = null;
             $newValue = null;
             if (! $isDescriptionChange) {
-                $oldValue = $this->formatValue($field, $rawOldValue, $statusLabels, $editorNames, $projectNames);
-                $newValue = $this->formatValue($field, $rawNewValue, $statusLabels, $editorNames, $projectNames);
+                $oldValue = $this->formatValue($field, $rawOldValue, $oldStatusLabels, $editorNames, $projectNames);
+                $newValue = $this->formatValue($field, $rawNewValue, $newStatusLabels, $editorNames, $projectNames);
             }
 
             $entries[] = new TicketHistoryEntry(

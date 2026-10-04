@@ -187,12 +187,35 @@ class TicketHistoryServiceTest extends TestCase
 
         // Before the first recorded move the origin project is unknown -> raw id.
         $this->assertSame('3', $byId[1]->newValue);
-        // While in project 9, project 9's labels apply.
-        $this->assertSame('Backlog (P9)', $byId[3]->oldValue);
+        // Each side uses the project its value was recorded in: the previous status (row 1) was
+        // recorded before any known project -> raw id; the new one in project 9 -> project 9's label.
+        $this->assertSame('3', $byId[3]->oldValue);
         $this->assertSame('Shipped (P9)', $byId[3]->newValue);
-        // After moving to project 7, project 7's labels apply.
-        $this->assertSame('Done', $byId[5]->oldValue);
+        // After moving back to project 7: the previous value was recorded in project 9.
+        $this->assertSame('Shipped (P9)', $byId[5]->oldValue);
         $this->assertSame('New', $byId[5]->newValue);
+    }
+
+    /**
+     * One update that moves the ticket and changes its status records the project row first; the
+     * old status still belongs to the source project and must use its labels.
+     */
+    public function test_combined_move_and_status_change_labels_each_side_with_its_own_project(): void
+    {
+        $service = $this->buildService(ticket: $this->ticketIn(9), allowedProjects: [7, 9], rows: [
+            $this->row(1, 'project', '7', '2026-01-01 09:00:00'),
+            $this->row(2, 'status', '3', '2026-01-01 10:00:00'),
+            $this->row(3, 'project', '9', '2026-01-02 10:00:00'),
+            $this->row(4, 'status', '0', '2026-01-02 10:00:00'),
+        ]);
+
+        $byId = [];
+        foreach ($service->getTicketHistory(5) as $entry) {
+            $byId[$entry->id] = $entry;
+        }
+
+        $this->assertSame('New', $byId[4]->oldValue);
+        $this->assertSame('Shipped (P9)', $byId[4]->newValue);
     }
 
     public function test_status_rows_in_a_project_the_user_cannot_view_show_the_raw_id(): void
