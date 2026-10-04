@@ -176,6 +176,34 @@ leantime.modals = (function () {
         });
     };
 
+    // Release widgets that register outside the content they belong to, so removed content can be
+    // garbage collected: htmx triggers, Chosen (document handlers), tippy. For page content we own
+    // the whole subtree, so jQuery.cleanData also runs jQuery UI's remove hooks (sortable, datepicker).
+    var releaseContent = function (root, withJqueryData) {
+        if (!root) {
+            return;
+        }
+        cleanUpHtmx(root);
+        try {
+            jQuery(root).find('select').each(function () {
+                var select = jQuery(this);
+                if (select.data('chosen')) {
+                    select.chosen('destroy');
+                }
+            });
+            root.querySelectorAll('*').forEach(function (element) {
+                if (element._tippy) {
+                    element._tippy.destroy();
+                }
+            });
+            if (withJqueryData) {
+                jQuery.cleanData([root].concat(Array.prototype.slice.call(root.querySelectorAll('*'))));
+            }
+        } catch (error) {
+            console.warn('[Modal] Could not release removed content', error);
+        }
+    };
+
     // Chart.js keeps every chart in Chart.instances until destroy(); a chart whose canvas left the
     // page would keep that whole removed content alive.
     var destroyDetachedCharts = function () {
@@ -283,14 +311,14 @@ leantime.modals = (function () {
 
                 var newContent = document.importNode(freshContent, true);
                 var oldContent = document.querySelector('.primaryContent');
-                cleanUpHtmx(oldContent);
+                releaseContent(oldContent, true);
                 oldContent.replaceWith(newContent);
 
                 var currentScripts = document.getElementById('lt-page-scripts');
                 var freshScripts = fetched.getElementById('lt-page-scripts');
                 var newScripts = freshScripts ? document.importNode(freshScripts, true) : null;
                 if (currentScripts && newScripts) {
-                    cleanUpHtmx(currentScripts);
+                    releaseContent(currentScripts, true);
                     currentScripts.replaceWith(newScripts);
                 }
                 destroyDetachedCharts();
@@ -410,7 +438,7 @@ leantime.modals = (function () {
                 beforeClose: function () {
                     currentModalUrl = null;
                     closeUppyInstances('modal');
-                    cleanUpHtmx(document.querySelector('.nyroModalCont'));
+                    releaseContent(document.querySelector('.nyroModalCont'), false);
                     // The modal content is removed after the close animation.
                     setTimeout(destroyDetachedCharts, 1000);
                     try{

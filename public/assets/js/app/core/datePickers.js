@@ -1,3 +1,12 @@
+// Defined once here, not inside the date picker inits: a function created inside an init keeps
+// that init's scope (and its date inputs) alive, so every opened modal stayed in memory.
+if (typeof Date.prototype.addDays !== 'function') {
+    Date.prototype.addDays = function (days) {
+        this.setDate(this.getDate() + days);
+        return this;
+    };
+}
+
 leantime.dateController = (function () {
 
     function getBaseDatePickerConfig(callback)
@@ -41,11 +50,6 @@ leantime.dateController = (function () {
     }
 
     var initDateRangePicker = function (fromElement, toElement, minDistance) {
-
-        Date.prototype.addDays = function (days) {
-            this.setDate(this.getDate() + days);
-            return this;
-        };
 
         //Check for readonly status and disable datepicker if readonly
         jQuery.datepicker.setDefaults({
