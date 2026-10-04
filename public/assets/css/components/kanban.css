@@ -317,35 +317,6 @@
     color: var(--grey);
 }
 
-/* ============================================
-   COLUMN COUNT HOVER REVEAL
-   Progressive disclosure - reduce visual noise
-   ============================================ */
-
-/* Hide column counts by default - show on hover */
-.widgettitle .count {
-    opacity: 0;
-    transition: opacity 200ms ease-out;
-}
-
-/* Show on hover/focus */
-.widgettitle:hover .count,
-.widgettitle:focus-within .count {
-    opacity: 1;
-}
-
-/* Mobile: Count visible when header is tapped (toggled class) */
-.widgettitle.count-visible .count {
-    opacity: 1;
-}
-
-/* Mobile: Visual indicator that header is interactive */
-@media (max-width: 768px) {
-    .widgettitle {
-        cursor: pointer;
-    }
-}
-
 .sortableTicketList li{
     list-style:none;
 }

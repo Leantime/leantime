@@ -299,25 +299,6 @@ leantime.kanbanController = (function () {
     };
 
     /**
-     * Initialize tap-to-reveal column counts on mobile/touch devices
-     * Toggles .count-visible class on .widgettitle elements
-     */
-    var initMobileColumnCountToggle = function() {
-        // Only on touch devices
-        if (!('ontouchstart' in window)) return;
-
-        document.querySelectorAll('.widgettitle').forEach(function(header) {
-            header.addEventListener('click', function(e) {
-                // Don't interfere with dropdown clicks
-                if (e.target.closest('.dropdown-toggle, .dropdown-menu')) return;
-
-                // Toggle visibility
-                this.classList.toggle('count-visible');
-            });
-        });
-    };
-
-    /**
      * Initialize column heights for all collapsed swimlanes on page load
      * Equalize heights so columns visually align even when collapsed
      */
@@ -386,7 +367,6 @@ leantime.kanbanController = (function () {
             initSwimlaneKeyboard();
             initProgressBarTooltips();
             initStickySwimlaneSidebars();
-            initMobileColumnCountToggle();
             initCollapsedColumnHeights();
             initExpandedColumnHeights();
         });
@@ -396,7 +376,6 @@ leantime.kanbanController = (function () {
         initSwimlaneKeyboard();
         initProgressBarTooltips();
         initStickySwimlaneSidebars();
-        initMobileColumnCountToggle();
         initCollapsedColumnHeights();
         initExpandedColumnHeights();
     }
@@ -413,8 +392,7 @@ leantime.kanbanController = (function () {
         resetColumnHeights: resetColumnHeights,
         initCollapsedColumnHeights: initCollapsedColumnHeights,
         initExpandedColumnHeights: initExpandedColumnHeights,
-        initStickySwimlaneSidebars: initStickySwimlaneSidebars,
-        initMobileColumnCountToggle: initMobileColumnCountToggle
+        initStickySwimlaneSidebars: initStickySwimlaneSidebars
     };
 
 })();
