@@ -31,6 +31,12 @@ persistence:
 
 # Application-specific environment variables
 app:
+  # -- Public base URL, e.g. https://pm.example.com (LEAN_APP_URL). Set it when Leantime runs behind an
+  # -- ingress/proxy that terminates TLS, otherwise generated links can fall back to http://
+  url: ""
+  # -- Proxies allowed to set X-Forwarded-* headers (LEAN_TRUSTED_PROXIES). Empty trusts loopback and
+  # -- private subnets, which covers most in-cluster ingress controllers
+  trustedProxies: ""
   # -- Sets the name for the instance
   sitename: "Leantime"
   # -- Sets the cookie flag to only allow HTTPS transfer.
@@ -43,7 +49,7 @@ app:
     # -- Set to true if you want to use S3 instead of local files
     enabled: false
     # -- S3 endpoint
-    enpoint: ""
+    endpoint: ""
     # -- S3 key
     key: ""
     # -- S3 secret
@@ -107,6 +113,12 @@ app:
 
 mariadb:
   enabled: true
+  # The pinned bitnami/mariadb subchart defaults to docker.io/bitnami/mariadb:10.6.12-debian-11-r9,
+  # which Bitnami removed from docker.io/bitnami (versioned tags now live in bitnamilegacy).
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/mariadb
+    tag: 10.6.12-debian-11-r9
   auth:
     # -- Database root password
     rootPassword: "changeme"

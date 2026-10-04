@@ -173,6 +173,23 @@
                                                         {!! $row['commentCount'] == 0 ? 'style="color: grey;"' : '' !!}>
                                                         <span class="fas fa-comments"></span></a> <small>{{ $row['commentCount'] }}</small>
 
+                                                        @php $ideaTags = array_filter(array_map('trim', explode(',', (string) ($row['tags'] ?? '')))); @endphp
+                                                        @if (count($ideaTags) > 0)
+                                                            &nbsp;
+                                                            <span class="dropdown">
+                                                                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                                                                    <i class="fa fa-tags" aria-hidden="true"></i> <small>{{ count($ideaTags) }}</small>
+                                                                </a>
+                                                                <ul class="dropdown-menu pull-right">
+                                                                    <li style="padding:10px"><div class="tagsinput readonly">
+                                                                        @foreach ($ideaTags as $tag)
+                                                                            <span class="tag"><span>{{ $tag }}</span></span>
+                                                                        @endforeach
+                                                                    </div></li>
+                                                                </ul>
+                                                            </span>
+                                                        @endif
+
                                                 </div>
 
                                             </div>
