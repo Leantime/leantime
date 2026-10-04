@@ -4,7 +4,6 @@ namespace Leantime\Command;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Language;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -53,7 +52,7 @@ class ClearLanguage extends Command
 
         if ($langList) {
             foreach ($langList as $key => $lang) {
-                $result = Cache::store('installation')->forget('languages.lang_'.$key);
+                $result = Language::forgetCachedLanguage($key);
                 if ($result) {
                     $this->components->info('Cleared: '.$key);
                 } else {

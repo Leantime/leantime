@@ -191,7 +191,34 @@ class Language
      */
     private function languageCacheKey(): string
     {
-        return 'languages.lang_'.$this->language.'_'.app(\Leantime\Core\Configuration\AppSettings::class)->appVersion;
+        return self::cacheKeyFor($this->language);
+    }
+
+    /**
+     * Cache key of a language's merged strings for the running app version.
+     *
+     * @param  string  $languageCode  e.g. "en-US"
+     */
+    public static function cacheKeyFor(string $languageCode): string
+    {
+        return 'languages.lang_'.$languageCode.'_'.app(\Leantime\Core\Configuration\AppSettings::class)->appVersion;
+    }
+
+    /**
+     * Remove a language's cached strings: the key of the running app version plus the legacy
+     * unversioned key used before the version was part of the key.
+     *
+     * Keys of other (older) versions are not removed: the installation store cannot list its keys
+     * cheaply, and they are never read again once the version changed.
+     *
+     * @param  string  $languageCode  e.g. "en-US"
+     * @return bool true when the current version's key was removed
+     */
+    public static function forgetCachedLanguage(string $languageCode): bool
+    {
+        Cache::store('installation')->forget('languages.lang_'.$languageCode);
+
+        return Cache::store('installation')->forget(self::cacheKeyFor($languageCode));
     }
 
     /**
