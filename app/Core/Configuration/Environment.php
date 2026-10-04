@@ -64,7 +64,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
      */
     public function __construct(array $items = [])
     {
-        if (! empty($items) && is_array($items)) {
+        if (! empty($items)) {
             $this->items = $items;
         }
 
@@ -72,7 +72,10 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
         /* PHP */
         $this->phpConfig = null;
-        if (file_exists($phpConfigFile = APP_ROOT.'/config/configuration.php')) {
+        // The legacy PHP config file is optional. Fully qualified so static analysis recognises
+        // the existence guard around the require below.
+        $phpConfigFile = APP_ROOT.'/config/configuration.php';
+        if (\file_exists($phpConfigFile)) {
 
             require_once $phpConfigFile;
 

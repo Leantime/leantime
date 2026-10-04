@@ -556,7 +556,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         // Check new format first
         $newKey = 'usersettings.'.$userId.'.projectNotificationLevels';
         $newSetting = $preloadedSettings[$newKey] ?? false;
-        if (! empty($newSetting) && $newSetting !== false) {
+        if (! empty($newSetting)) {
             $levels = json_decode($newSetting, true);
             if (is_array($levels) && isset($levels[$projectId])) {
                 $level = $levels[$projectId];
@@ -569,7 +569,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         // Lazy migration: check old muted-projects format
         $oldKey = 'usersettings.'.$userId.'.projectMutedNotifications';
         $oldSetting = $preloadedSettings[$oldKey] ?? false;
-        if (! empty($oldSetting) && $oldSetting !== false) {
+        if (! empty($oldSetting)) {
             $mutedIds = json_decode($oldSetting, true);
             if (is_array($mutedIds) && in_array($projectId, $mutedIds)) {
                 return Notification::RELEVANCE_MUTED;
@@ -648,7 +648,7 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $companyDefault = $preloadedSettings['companysettings.defaultNotificationEventTypes'] ?? false;
         $companyEnabledTypes = null;
-        if (! empty($companyDefault) && $companyDefault !== false) {
+        if (! empty($companyDefault)) {
             $companyEnabledTypes = json_decode($companyDefault, true);
             if (! is_array($companyEnabledTypes)) {
                 $companyEnabledTypes = null;
@@ -659,7 +659,7 @@ class Projects extends BaseService implements ChecksProjectAccess
             $key = 'usersettings.'.$userId.'.notificationEventTypes';
             $setting = $preloadedSettings[$key] ?? false;
 
-            if (! empty($setting) && $setting !== false) {
+            if (! empty($setting)) {
                 $enabledTypes = json_decode($setting, true);
                 if (is_array($enabledTypes)) {
                     return in_array($category, $enabledTypes);
@@ -2840,12 +2840,10 @@ class Projects extends BaseService implements ChecksProjectAccess
             if (is_numeric($status) && ! empty($projectList)) {
                 $projects = explode('&', $projectList);
 
-                if (is_array($projects) === true) {
-                    foreach ($projects as $key => $projectString) {
-                        $id = substr($projectString, 7);
+                foreach ($projects as $key => $projectString) {
+                    $id = substr($projectString, 7);
 
-                        $this->projectRepository->patch($id, ['sortIndex' => $key * 100, 'state' => $status]);
-                    }
+                    $this->projectRepository->patch($id, ['sortIndex' => $key * 100, 'state' => $status]);
                 }
             }
         }
@@ -3259,16 +3257,14 @@ class Projects extends BaseService implements ChecksProjectAccess
         $projectResults = [];
         $i = 0;
 
-        if (is_array($allProjects)) {
-            foreach ($allProjects as $project) {
-                if (! array_key_exists($project['clientId'], $clients)) {
-                    $clients[$project['clientId']] = ['name' => $project['clientName'], 'id' => $project['clientId']];
-                }
+        foreach ($allProjects as $project) {
+            if (! array_key_exists($project['clientId'], $clients)) {
+                $clients[$project['clientId']] = ['name' => $project['clientName'], 'id' => $project['clientId']];
+            }
 
-                if (empty($clientId) || $project['clientId'] == $clientId) {
-                    $projectResults[$i] = $project;
-                    $i++;
-                }
+            if (empty($clientId) || $project['clientId'] == $clientId) {
+                $projectResults[$i] = $project;
+                $i++;
             }
         }
 

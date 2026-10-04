@@ -20,11 +20,8 @@ class TicketHistory
     public function getRecentTicketHistory(\DateTime $startingFrom, int $ticketId): array
     {
         $query = $this->db->table('zp_tickethistory')
-            ->where('dateModified', '>=', $startingFrom->format('Y-m-d'));
-
-        if ($ticketId !== null) {
-            $query->where('ticketId', $ticketId);
-        }
+            ->where('dateModified', '>=', $startingFrom->format('Y-m-d'))
+            ->where('ticketId', $ticketId);
 
         $results = $query->orderBy('dateModified', 'desc')->get();
 

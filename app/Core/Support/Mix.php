@@ -20,11 +20,8 @@ class Mix
         // $this->manifest[$manifestDir] = Cache::store('installation')->get('manifest://' . $manifestDir);
         $this->manifest[$manifestDir = APP_ROOT.'/public/dist'] = json_decode(file_get_contents("$manifestDir/mix-manifest.json"), true);
 
-        /**
-         * WARNING: All files in the manifest directories will be exposed to public queries!
-         *
-         * @var string[] $manifestDirectories
-         **/
+        // WARNING: All files in the manifest directories will be exposed to public queries!
+        // The filter result comes from plugins, so its shape is validated below.
         $manifestDirectories = self::dispatchFilter('mix_manifest_directories', []);
 
         if (empty($manifestDirectories) || ! is_array($manifestDirectories)) {

@@ -138,7 +138,7 @@ class Reactions extends BaseService
      */
     public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
     {
-        if ($module == '' || $moduleId == '' || $userId == '' || $reaction == '') {
+        if ($module === '' || $moduleId <= 0 || $userId <= 0 || $reaction === '') {
             return false;
         }
 

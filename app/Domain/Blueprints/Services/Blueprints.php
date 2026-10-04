@@ -509,7 +509,7 @@ class Blueprints extends BaseService
      * @param  string  $canvasSlug  Canvas type slug (e.g., "swot", "lean")
      * @param  int  $projectId  Project identifier
      * @param  int  $authorId  Author user identifier
-     * @return bool|int False on failure, or the new canvas board ID on success
+     * @return false|int False on failure, or the new canvas board ID on success
      *
      * @throws BindingResolutionException
      * @throws AuthorizationException When the user cannot create canvases in $projectId.
@@ -517,7 +517,7 @@ class Blueprints extends BaseService
      * @api
      */
     #[RequiresPermission(BlueprintsPermissions::CREATE, entityScoped: true)]
-    public function import(string $filename, string $canvasSlug, int $projectId, int $authorId): bool|int
+    public function import(string $filename, string $canvasSlug, int $projectId, int $authorId): false|int
     {
         // Authorize CREATE against the TARGET project (the destination of the import), not the
         // session project — import is reachable via RPC with an arbitrary projectId.
@@ -720,7 +720,7 @@ class Blueprints extends BaseService
      * Counts items per box type for each canvas and calculates what fraction
      * of box types have at least one item.
      *
-     * @param  string  $projectId  Project identifier (empty string for all)
+     * @param  string  $projectId  Project identifier (empty string for the current project)
      * @param  array<int, string>  $boards  Array of database canvas types to check
      * @return array<string, float> Map of canvas type to max progress (0.0 to 1.0)
      *
@@ -731,7 +731,10 @@ class Blueprints extends BaseService
     #[RequiresPermission(BlueprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getBoardProgress(string $projectId = '', array $boards = []): array
     {
-        $values = $this->blueprintsRepo->getCanvasProgressCount((int) $projectId, $boards);
+        // An omitted project means the current one, which is also what the permission check authorized.
+        $resolvedProjectId = $projectId !== '' ? (int) $projectId : (int) session('currentProject');
+
+        $values = $this->blueprintsRepo->getCanvasProgressCount($resolvedProjectId, $boards);
 
         $results = [];
 

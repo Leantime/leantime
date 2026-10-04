@@ -639,23 +639,20 @@ class Tickets extends BaseService
     private function decorateWithFriendlyStatusLabels(array $tickets): array
     {
 
-        if (is_array($tickets)) {
+        $ticketCounter = 0;
+        $projectStatusLabels = [];
 
-            $ticketCounter = 0;
-            $projectStatusLabels = [];
+        foreach ($tickets as &$ticket) {
 
-            foreach ($tickets as &$ticket) {
-
-                if (! isset($projectStatusLabels[$ticket['projectId']])) {
-                    $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
-                }
-
-                if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
-                    $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
-                    $ticket['statusLabel'] = $projectStatusLabels[$ticket['projectId']][$ticket['status']]['name'];
-                }
-
+            if (! isset($projectStatusLabels[$ticket['projectId']])) {
+                $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
             }
+
+            if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
+                $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
+                $ticket['statusLabel'] = $projectStatusLabels[$ticket['projectId']][$ticket['status']]['name'];
+            }
+
         }
 
         return $tickets;
@@ -1698,7 +1695,7 @@ class Tickets extends BaseService
     /**
      * Retrieves all milestones based on the provided search criteria and sort option.
      *
-     * @param  array  $searchCriteria  Search parameters. Must be scoped to a project — either a single
+     * @param  mixed  $searchCriteria  Search parameters (array). Must be scoped to a project — either a single
      *                                 'currentProject' id (> 0) or a non-empty comma-separated 'projects'
      *                                 set (used by program/cross-project boards).
      * @param  string  $sortBy  The sorting option for the milestones. Defaults to 'standard'.
@@ -3261,7 +3258,7 @@ class Tickets extends BaseService
             $out[] = $ticket;
         }
 
-        return array_values($out);
+        return $out;
     }
 
     /**
@@ -3283,9 +3280,6 @@ class Tickets extends BaseService
         $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
-        if (! is_array($statusLabels)) {
-            return false;
-        }
 
         $newStatusId = null;
         foreach ($statusLabels as $statusId => $config) {
@@ -3323,9 +3317,6 @@ class Tickets extends BaseService
         $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         $statusLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
-        if (! is_array($statusLabels)) {
-            return false;
-        }
 
         $doneStatusId = null;
         foreach ($statusLabels as $statusId => $config) {
@@ -3506,7 +3497,7 @@ class Tickets extends BaseService
      * patch moves the ticket.
      *
      * @param  int|string  $id  The ticket id.
-     * @param  array  $params  Field => value pairs to update.
+     * @param  mixed  $params  Field => value pairs to update (any non-array is rejected).
      * @return bool True on success, false when the ticket is not visible or the write fails.
      *
      * @throws AuthorizationException When the caller may not edit the ticket (or the target project).
@@ -4126,7 +4117,7 @@ class Tickets extends BaseService
      * requires that the target really is a subtask of that parent in the same project, so a
      * caller cannot overwrite an arbitrary ticket by id or move it into another project.
      *
-     * @param  array  $values  Subtask fields (headline, status, ...); `subtaskId` selects an update.
+     * @param  mixed  $values  Subtask fields (headline, status, ...); `subtaskId` selects an update. Any non-array is rejected.
      * @param  TicketModel|array|int|string|false|null  $parentTicket  The parent ticket (or its id).
      * @return bool True on success, false when the parent/subtask cannot be resolved or the write fails.
      *
@@ -4475,38 +4466,36 @@ class Tickets extends BaseService
             if (is_numeric($status) && ! empty($ticketList)) {
                 $tickets = explode('&', $ticketList);
 
-                if (is_array($tickets) === true) {
-                    foreach ($tickets as $key => $ticketString) {
-                        $id = substr($ticketString, 9);
+                foreach ($tickets as $key => $ticketString) {
+                    $id = substr($ticketString, 9);
 
-                        $previousStatus = $previousStatusByTicket[(int) $id] ?? null;
-                        $statusChanged = $previousStatus !== (string) $status;
-                        $isOtherCard = $draggedTicketId !== null && (int) $id !== $draggedTicketId;
+                    $previousStatus = $previousStatusByTicket[(int) $id] ?? null;
+                    $statusChanged = $previousStatus !== (string) $status;
+                    $isOtherCard = $draggedTicketId !== null && (int) $id !== $draggedTicketId;
 
-                        if ($isOtherCard) {
-                            // Only re-sort it, and only while its status is still the one we read: a
-                            // card moved meanwhile (stale tab, or an overlapping drag) is left alone.
-                            if (! $statusChanged) {
-                                $this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler, $previousStatus);
-                            }
-
-                            continue;
+                    if ($isOtherCard) {
+                        // Only re-sort it, and only while its status is still the one we read: a
+                        // card moved meanwhile (stale tab, or an overlapping drag) is left alone.
+                        if (! $statusChanged) {
+                            $this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler, $previousStatus);
                         }
 
-                        if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
-                            // Earlier tickets in the batch were already written (the repository
-                            // also reports false for "0 rows changed"), so their timers must still stop.
-                            $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
+                        continue;
+                    }
 
-                            return false;
-                        }
+                    if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
+                        // Earlier tickets in the batch were already written (the repository
+                        // also reports false for "0 rows changed"), so their timers must still stop.
+                        $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
-                        // Every ticket of the swimlane is re-posted with its column's status; only
-                        // tickets whose status actually changed count, so a timer on a ticket that
-                        // was already Done is not stopped by dragging some other card.
-                        if ($statusChanged) {
-                            $newStatusByTicket[(int) $id] = $status;
-                        }
+                        return false;
+                    }
+
+                    // Every ticket of the swimlane is re-posted with its column's status; only
+                    // tickets whose status actually changed count, so a timer on a ticket that
+                    // was already Done is not stopped by dragging some other card.
+                    if ($statusChanged) {
+                        $newStatusByTicket[(int) $id] = $status;
                     }
                 }
             }

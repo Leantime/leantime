@@ -94,7 +94,7 @@ class Updated
     private function getVersionInt($version)
     {
         $versionArray = explode('.', $version);
-        if (is_array($versionArray) && count($versionArray) == 3) {
+        if (count($versionArray) == 3) {
             $major = $versionArray[0];
             $minor = str_pad($versionArray[1], 2, '0', STR_PAD_LEFT);
             $patch = str_pad($versionArray[2], 2, '0', STR_PAD_LEFT);

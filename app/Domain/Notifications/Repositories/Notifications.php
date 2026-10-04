@@ -42,7 +42,7 @@ class Notifications
             $query->where('read', 0);
         }
 
-        if (is_array($filterOptions) && count($filterOptions) > 0) {
+        if (count($filterOptions) > 0) {
             foreach ($filterOptions as $key => $value) {
                 $query->where($key, $value);
             }

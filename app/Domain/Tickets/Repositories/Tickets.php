@@ -1988,15 +1988,12 @@ class Tickets
             'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
         ]);
 
-        if ($ticketId !== false) {
-            $ticketId = intval($ticketId);
-            $collaborators = $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null);
-            if (! empty($collaborators)) {
-                $this->addCollaborators($ticketId, $collaborators, $values['userId']);
-            }
-
-            return $ticketId;
+        $collaborators = $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null);
+        if (! empty($collaborators)) {
+            $this->addCollaborators($ticketId, $collaborators, $values['userId']);
         }
+
+        return $ticketId;
     }
 
     /**
@@ -2181,7 +2178,8 @@ class Tickets
             $updates['outcomeImpact'] = $values['outcomeImpact'];
         }
 
-        $result = $this->connection->table('zp_tickets')
+        // update() throws on failure; zero affected rows (nothing changed) is still a success.
+        $this->connection->table('zp_tickets')
             ->where('id', $id)
             ->update($updates);
 
@@ -2194,7 +2192,7 @@ class Tickets
             session('userdata.id')
         );
 
-        return $result !== false;
+        return true;
     }
 
     /**
@@ -2323,7 +2321,8 @@ class Tickets
                 // status 0 (Done). That silently kept ticket-closures out of
                 // zp_tickethistory, so burndown/throughput and the mobile
                 // Progress "closed on date" reflection never saw them.
-                ($values[$dbTable] !== '' && $values[$dbTable] !== null)
+                // (isset() above already excludes null.)
+                $values[$dbTable] !== ''
             ) {
                 $historyRows[] = [
                     'userId' => $userId,

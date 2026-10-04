@@ -34,8 +34,6 @@ class Api
 
     private MenuRepository $menuRepo;
 
-    private ?array $error = null;
-
     /**
      * @api
      */
@@ -63,7 +61,7 @@ class Api
         // Split apiKey into parts
         $apiKeyParts = explode('_', $apiKey);
 
-        if (! is_array($apiKeyParts) || count($apiKeyParts) != 3) {
+        if (count($apiKeyParts) != 3) {
             return false;
         }
 
@@ -441,9 +439,7 @@ class Api
 
         header('Content-Type: application/json; charset=utf-8');
 
-        if ($this->error != null) {
-            $jsonRPCArray['error'] = $this->error;
-        } elseif ($result !== null) {
+        if ($result !== null) {
             $jsonRPCArray['result'] = $result;
         }
 

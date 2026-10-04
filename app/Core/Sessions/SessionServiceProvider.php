@@ -41,7 +41,7 @@ class SessionServiceProvider extends LaravelSessionServiceProvider
         $this->app->singleton('session', function ($app) {
 
             // Switch to redis as session store when setting useRedis is set
-            if (! empty($app['config']['useRedis']) && (bool) $app['config']['useRedis'] === true) {
+            if (! empty($app['config']['useRedis'])) {
 
                 $app['config']->set('session.driver', 'redis');
                 $app['config']->set('session.connection', 'sessions');

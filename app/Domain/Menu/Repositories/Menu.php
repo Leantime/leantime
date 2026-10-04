@@ -174,7 +174,7 @@ class Menu
     public function setSubmenuState(string $submenu, string $state): void
     {
 
-        if (session()->exists('usersettings.submenuToggle') && is_array(session('usersettings.submenuToggle')) && $submenu !== false) {
+        if (session()->exists('usersettings.submenuToggle') && is_array(session('usersettings.submenuToggle'))) {
             session(['usersettings.submenuToggle.'.$submenu => $state]);
         }
 

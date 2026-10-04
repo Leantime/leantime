@@ -272,17 +272,13 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Get the default context variables for logging.
      *
-     * @return array
+     * Leantime intentionally adds no default context (Laravel's parent adds the auth user id).
+     *
+     * @return array<string, mixed>
      */
     protected function context()
     {
-        try {
-            return array_filter([
-
-            ]);
-        } catch (Throwable $e) {
-            return [];
-        }
+        return [];
     }
 
     /**

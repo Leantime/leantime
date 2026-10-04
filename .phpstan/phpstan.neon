@@ -36,6 +36,11 @@ parameters:
                     - ../app/Domain/*/Templates/*
                     - ../app/Views/*
                     - ../app/Plugins/*/Templates/*
+    # BASE_URL / CURRENT_URL are defined at runtime from the request and app config (LoadConfig),
+    # so the value the PHPStan bootstrap happens to define must not be treated as a constant fact.
+    dynamicConstantNames:
+        - BASE_URL
+        - CURRENT_URL
     universalObjectCratesClasses:
         - Leantime\Core\Configuration\Environment
     earlyTerminatingMethodCalls:

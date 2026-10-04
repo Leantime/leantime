@@ -120,7 +120,7 @@
         "phpcsstandards/phpcsextra": "^1.2.1",
         "zebra-north/phpcs-short-types": "^1.0",
         "laravel/pint": "^1.17",
-        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan": "^2.1",
         "leantime/leantime-documentor": "dev-main",
         "mockery/mockery": "^1.6"
     },

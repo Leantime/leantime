@@ -652,11 +652,8 @@ class Blueprints extends Repository
                 'zp_canvas_items.box',
             ])
             ->selectRaw('COUNT(zp_canvas_items.id) AS '.$this->dbHelper->wrapColumn('boxItems'))
-            ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId');
-
-        if ($projectId != '') {
-            $query->where('projectId', $projectId);
-        }
+            ->leftJoin('zp_canvas_items', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
+            ->where('projectId', $projectId);
 
         if (count($boards) > 0) {
             $query->whereIn('type', $boards);

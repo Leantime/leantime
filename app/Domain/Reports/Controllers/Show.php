@@ -67,7 +67,7 @@ class Show extends Controller
 
         $this->tpl->assign('sprintBurndown', $sprintBurndown['chart']);
 
-        if ($allSprints !== false && count($allSprints) > 0) {
+        if (count($allSprints) > 0) {
             $this->tpl->assign('currentSprint', $sprintBurndown['currentSprintId']);
         }
 

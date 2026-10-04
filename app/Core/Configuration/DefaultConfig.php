@@ -210,7 +210,7 @@ class DefaultConfig
     public int $sessionExpiration = 480;
 
     /**
-     * @var bool. Sets whether the cookie should only be served via https
+     * @var bool Sets whether the cookie should only be served via https
      */
     #[LaravelConfig('session.secure')]
     public bool $sessionSecure = false;

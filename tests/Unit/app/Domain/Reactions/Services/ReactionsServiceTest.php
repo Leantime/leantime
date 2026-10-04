@@ -163,4 +163,42 @@ class ReactionsServiceTest extends TestCase
         $this->assertFalse($service->react('project', 6, 'favorite'));
         $this->assertSame([5], $added);
     }
+
+    /**
+     * Non-positive user or entity ids are invalid and must be rejected before the repository is touched.
+     *
+     * @dataProvider invalidReactionIds
+     */
+    public function test_add_reaction_rejects_non_positive_ids(int $userId, int $moduleId): void
+    {
+        $repoCalled = false;
+        $repo = $this->make(ReactionsRepository::class, [
+            'addReaction' => function () use (&$repoCalled) {
+                $repoCalled = true;
+
+                return true;
+            },
+            'getUserReactions' => function () use (&$repoCalled) {
+                $repoCalled = true;
+
+                return [];
+            },
+        ]);
+
+        $this->assertFalse($this->makeService($repo)->addReaction($userId, 'ticket', $moduleId, 'like'));
+        $this->assertFalse($repoCalled);
+    }
+
+    /**
+     * @return array<string, array{int, int}>
+     */
+    public static function invalidReactionIds(): array
+    {
+        return [
+            'zero user' => [0, 5],
+            'negative user' => [-1, 5],
+            'zero entity' => [42, 0],
+            'negative entity' => [42, -3],
+        ];
+    }
 }

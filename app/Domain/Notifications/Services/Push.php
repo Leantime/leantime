@@ -219,7 +219,7 @@ class Push
             if (
                 str_contains($bodyText, 'UNREGISTERED')
                 || str_contains($bodyText, 'INVALID_ARGUMENT')
-                || ($response !== null && $response->getStatusCode() === 404)
+                || $response->getStatusCode() === 404
             ) {
                 $this->invalidateToken((int) $row->id);
 
