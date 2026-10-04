@@ -509,7 +509,7 @@ class Blueprints extends BaseService
      * @param  string  $canvasSlug  Canvas type slug (e.g., "swot", "lean")
      * @param  int  $projectId  Project identifier
      * @param  int  $authorId  Author user identifier
-     * @return bool|int False on failure, or the new canvas board ID on success
+     * @return false|int False on failure, or the new canvas board ID on success
      *
      * @throws BindingResolutionException
      * @throws AuthorizationException When the user cannot create canvases in $projectId.
@@ -517,7 +517,7 @@ class Blueprints extends BaseService
      * @api
      */
     #[RequiresPermission(BlueprintsPermissions::CREATE, entityScoped: true)]
-    public function import(string $filename, string $canvasSlug, int $projectId, int $authorId): bool|int
+    public function import(string $filename, string $canvasSlug, int $projectId, int $authorId): false|int
     {
         // Authorize CREATE against the TARGET project (the destination of the import), not the
         // session project — import is reachable via RPC with an arbitrary projectId.

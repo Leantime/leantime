@@ -125,8 +125,6 @@ class Jsonrpc extends Controller
 
         if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST'
             && empty($_POST)
-            && $this->incomingRequest->getContent() !== null
-            && $this->incomingRequest->getContent() !== false
             && $this->incomingRequest->getContent() !== '') {
 
             $bodyContent = json_decode(
@@ -334,14 +332,11 @@ class Jsonrpc extends Controller
             ];
         }
 
-        if (count($methodStringPieces) === 5) {
-            return [
-                'module' => $methodStringPieces[2],
-                'service' => $methodStringPieces[3],
-                'method' => $methodStringPieces[4],
-            ];
-        }
-
+        return [
+            'module' => $methodStringPieces[2],
+            'service' => $methodStringPieces[3],
+            'method' => $methodStringPieces[4],
+        ];
     }
 
     /**

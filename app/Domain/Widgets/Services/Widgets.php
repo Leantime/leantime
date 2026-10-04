@@ -367,10 +367,6 @@ class Widgets
         $clients = [];
         $projects = [];
 
-        if (! is_array($assignedProjects)) {
-            return ['projects' => $projects, 'clients' => $clients];
-        }
-
         foreach ($assignedProjects as $project) {
             // Build the client map from every assigned project, regardless of filter.
             if (! array_key_exists($project['clientId'], $clients)) {

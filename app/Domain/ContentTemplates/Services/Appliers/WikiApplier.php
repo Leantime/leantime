@@ -66,7 +66,7 @@ class WikiApplier implements Applier
     /**
      * Insert a list of articles under a given parent, recursing into children.
      *
-     * @param  list<array<string, mixed>>  $articles
+     * @param  list<mixed>  $articles  Raw template payload; entries that are not arrays are skipped.
      * @param  int  $parent  Parent article id (0 for top-level).
      * @return int Total articles created (this level + all descendants).
      */

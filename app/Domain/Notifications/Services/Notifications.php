@@ -377,7 +377,7 @@ class Notifications
                     ['type' => 'mention', 'module' => $module, 'moduleId' => $moduleId]
                 );
 
-                if ($userMentions === false || (is_array($userMentions) && count($userMentions) == 0)) {
+                if ($userMentions === false || count($userMentions) == 0) {
                     $notification = [
                         'userId' => $taggedUser,
                         'read' => '0',

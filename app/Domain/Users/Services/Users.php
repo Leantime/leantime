@@ -113,7 +113,7 @@ class Users extends BaseService
     {
         $this->assertUserManageable((int) $id);
 
-        if (is_array($values) && array_key_exists('role', $values)) {
+        if (array_key_exists('role', $values)) {
             $this->assertRoleAssignable($values['role']);
         }
 

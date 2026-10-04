@@ -105,12 +105,12 @@ class Install
     /**
      * config object, passed into constructor
      */
-    private Environment|string $config;
+    private Environment $config;
 
     /**
      * appSettings object, passed into constructor
      */
-    private string|AppSettingCore $settings;
+    private AppSettingCore $settings;
 
     /**
      * __construct - get database connection using Laravel's database manager
@@ -304,7 +304,7 @@ class Install
         $this->selectDatabase($this->config->dbDatabase);
 
         $versionArray = explode('.', $this->settings->dbVersion);
-        if (is_array($versionArray) && count($versionArray) == 3) {
+        if (count($versionArray) == 3) {
             $major = $versionArray[0];
             $minor = str_pad($versionArray[1], 2, '0', STR_PAD_LEFT);
             $patch = str_pad($versionArray[2], 2, '0', STR_PAD_LEFT);
@@ -320,7 +320,7 @@ class Install
         $currentDBVersion = 0;
         if ($dbVersion) {
             $versionArray = explode('.', $dbVersion);
-            if (is_array($versionArray) && count($versionArray) == 3) {
+            if (count($versionArray) == 3) {
                 $major = $versionArray[0];
                 $minor = str_pad($versionArray[1], 2, '0', STR_PAD_LEFT);
                 $patch = str_pad($versionArray[2], 2, '0', STR_PAD_LEFT);

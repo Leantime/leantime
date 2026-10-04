@@ -153,7 +153,7 @@ class ShowCanvas
         }
 
         // Edit board
-        if (isset($data['editCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
+        if (isset($data['editCanvas']) && $currentCanvasId > 0) {
             if (isset($data['canvastitle']) && ! empty($data['canvastitle'])) {
                 if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $data['canvastitle'], $canvasType)) {
                     // renameBoard authorizes EDIT against the board's real project.
@@ -171,7 +171,7 @@ class ShowCanvas
         }
 
         // Clone board
-        if (isset($data['cloneCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
+        if (isset($data['cloneCanvas']) && $currentCanvasId > 0) {
             if (isset($data['canvastitle']) && ! empty($data['canvastitle'])) {
                 if (! $this->blueprintsRepo->existCanvas(session('currentProject'), $data['canvastitle'], $canvasType)) {
                     // copyBoard authorizes VIEW on the source board's real project and CREATE
@@ -198,7 +198,7 @@ class ShowCanvas
         }
 
         // Merge board
-        if (isset($data['mergeCanvas']) && is_int($currentCanvasId) && $currentCanvasId > 0) {
+        if (isset($data['mergeCanvas']) && $currentCanvasId > 0) {
             if (isset($data['canvasid']) && $data['canvasid'] > 0) {
                 // mergeBoard authorizes EDIT on the target board's project and VIEW on the
                 // source board's project — both resolved by id, so neither can cross projects.

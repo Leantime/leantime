@@ -29,13 +29,6 @@ class Auth implements Authenticatable
 {
     use DispatchesEvents, HasApiTokens, \Illuminate\Auth\Authenticatable;
 
-    /**
-     * @var int|null user id from DB
-     */
-    private ?int $userId = null;
-
-    private ?string $password = null;
-
     private ?SessionManager $session = null;
 
     /**
@@ -209,7 +202,7 @@ class Auth implements Authenticatable
                     $this->userRepo->editUser($user, $user['id']);
                 }
 
-                if ($user !== false && is_array($user)) {
+                if ($user !== false) {
                     $this->setUserSession($user, true);
                     $this->learnTrustedAppUrl($user);
 
@@ -234,7 +227,7 @@ class Auth implements Authenticatable
         // Check even if ldap is turned on to allow contractors and clients to have an account
         $user = $this->authRepo->getUserByLogin($username, $password);
 
-        if ($user !== false && is_array($user)) {
+        if ($user !== false) {
             $this->setUserSession($user);
             $this->learnTrustedAppUrl($user);
 
@@ -826,14 +819,23 @@ class Auth implements Authenticatable
         return 'id';
     }
 
+    /**
+     * Not implemented yet: the Auth service is never used as the authenticated user object.
+     *
+     * @return null
+     */
     public function getAuthIdentifier()
     {
-        return $this->userId;
+        return null;
     }
 
+    /**
+     * Not implemented yet: the Auth service is never used as the authenticated user object.
+     * Authenticatable::getAuthPassword is contractually a string.
+     */
     public function getAuthPassword()
     {
-        return $this->password;
+        return '';
     }
 
     public function getAuthPasswordName()

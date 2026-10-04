@@ -101,11 +101,7 @@ class Dashboard extends BaseService
             types: ['task', 'story', 'bug']
         );
 
-        $closedTicketsCount = 0;
-        $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser($userId, null);
-        if (is_array($closedTickets)) {
-            $closedTicketsCount = count($closedTickets);
-        }
+        $closedTicketsCount = count($this->ticketsService->getRecentlyCompletedTicketsByUser($userId, null));
 
         $ticketsInGoals = 0;
         $goalTickets = $this->ticketsService->goalsRelatedToWork($userId, null);
@@ -120,9 +116,6 @@ class Dashboard extends BaseService
         $doneToday = count($todaysTasks['doneTasks'] ?? []);
 
         $allAssignedProjects = $this->projectsService->getProjectsAssignedToUser($userId, 'open');
-        if (! is_array($allAssignedProjects)) {
-            $allAssignedProjects = [];
-        }
 
         return [
             'currentUser' => $currentUser,
@@ -595,7 +588,7 @@ class Dashboard extends BaseService
         // Create a map of ticket IDs to their parent IDs
         $parentMap = [];
         foreach ($sorting as $item) {
-            if (isset($item['id']) && isset($item['parentId']) && $item['parentId'] !== null) {
+            if (isset($item['id']) && isset($item['parentId'])) {
                 $parentMap[$item['id']]['parentId'] = $item['parentId'];
                 $parentMap[$item['id']]['parentType'] = $item['parentType'];
             } elseif (isset($item['id'])) {

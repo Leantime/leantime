@@ -129,6 +129,6 @@ class Dashboard extends BaseService
         $userId = (int) session('userdata.id');
         $userReaction = $this->reactionsService->getUserReactions($userId, 'project', $projectId, Reactions::$favorite);
 
-        return $userReaction && is_array($userReaction);
+        return ! empty($userReaction);
     }
 }

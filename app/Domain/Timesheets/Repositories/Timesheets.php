@@ -96,7 +96,7 @@ class Timesheets extends Repository
             $query->where('zp_timesheets.kind', $kind);
         }
 
-        if ($userId != 'all' && $userId != null) {
+        if ($userId != null) {
             $query->where('zp_timesheets.userId', $userId);
         }
 

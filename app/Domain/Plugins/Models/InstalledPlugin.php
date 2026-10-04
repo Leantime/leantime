@@ -159,7 +159,7 @@ class InstalledPlugin implements PluginDisplayStrategy
 
     public function getIdentifier(): string
     {
-        if (isset($this->identifier) && $this->identifier !== null && $this->identifier !== '') {
+        if (isset($this->identifier) && $this->identifier !== '') {
             return $this->identifier;
         }
 

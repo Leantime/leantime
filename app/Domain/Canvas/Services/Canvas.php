@@ -27,14 +27,14 @@ class Canvas
      * @param  string  $canvasName  Legacy canvas type (e.g. "swotcanvas") or slug
      * @param  int  $projectId  Project identifier
      * @param  int  $authorId  Author identifier
-     * @return bool|int False if import failed, otherwise the new canvas id
+     * @return false|int False if import failed, otherwise the new canvas id
      *
      * @deprecated use Blueprints service
      *
      * @api
      */
     #[RequiresPermission(BlueprintsPermissions::CREATE, projectIdParam: 'projectId')]
-    public function import(string $filename, string $canvasName, int $projectId, int $authorId): bool|int
+    public function import(string $filename, string $canvasName, int $projectId, int $authorId): false|int
     {
         // Old callers pass the full type ("swotcanvas"); Blueprints works on the slug ("swot").
         $canvasSlug = str_ends_with($canvasName, 'canvas')
