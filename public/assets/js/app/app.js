@@ -44,25 +44,6 @@ leantime.handleAsyncResponse = function (response) {
 
 jQuery.noConflict();
 
-// On touch devices, require a brief long-press + a few px of movement before a
-// jQuery-UI sortable/draggable starts dragging. Without this the whole card is a
-// drag target, so a tap "grabs" it instead of opening it and a swipe drags it
-// instead of scrolling. Set on the widget prototypes so it applies to every
-// sortable/draggable (dashboard to-dos, kanban cards, ideas cards) without
-// touching each init. Touch-only, so mouse drag on desktop is unaffected.
-// Fixes #1357 (can't tap cards), #3350 (scrolling moves tasks), #1465 (tablet drag).
-leantime.applyTouchDragGuards = function () {
-    if (!(('ontouchstart' in window || navigator.maxTouchPoints > 0) && jQuery.ui)) {
-        return;
-    }
-    if (jQuery.ui.sortable) {
-        jQuery.extend(jQuery.ui.sortable.prototype.options, { delay: 200, distance: 8 });
-    }
-    if (jQuery.ui.draggable) {
-        jQuery.extend(jQuery.ui.draggable.prototype.options, { delay: 200, distance: 8 });
-    }
-};
-
 // Initialise Tippy tooltips idempotently. Calling tippy('[data-tippy-content]')
 // on every document.ready AND every htmx.onLoad re-instanced ALL tooltips on
 // each HTMX swap, piling up dozens of duplicate "Notifications" tooltips (one of
@@ -95,8 +76,6 @@ leantime.initTooltips = function (root) {
 
 jQuery(document).ready(function () {
 
-    leantime.applyTouchDragGuards();
-
     leantime.replaceSVGColors();
 
     jQuery(".confetti").click(function () {
@@ -117,11 +96,6 @@ jQuery(document).ready(function () {
 
 htmx.onLoad(function(element){
     leantime.initTooltips(element);
-    // Re-assert touch drag guards before HTMX-loaded sortables (e.g. the
-    // dashboard to-do list) initialise.
-    if (leantime.applyTouchDragGuards) {
-        leantime.applyTouchDragGuards();
-    }
 });
 
 // --- Singleton HTMX progress bar -------------------------------------------------
