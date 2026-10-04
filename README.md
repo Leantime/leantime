@@ -191,9 +191,12 @@ this will start the development server on port 5080.
 The dev environment provides a MySQL server, mail server, s3 server, and should be good to go for your needs out of the box. The basic configuration of the development environment is already defined in the composer file. You can create .env file inside of `config/.env` to augment the base configuration by setting some of the configs out of sample.env). **Important: Don't update the database information as this will disconnect the app from the docker database**. The applications you get are as follows
 
 * [http://localhost:5080](http://localhost:5080) : leantime
-* [http://localhost:8081](http://localhost:8081) : maildev - to check emails sent
-* [http://localhost:8082](http://localhost:8082) : phpMyAdmin(authentication ``leantime:leantime``) to check the DB schema and data
-* [http://localhost:8083](http://localhost:8083) : s3ninja - to check s3 uploads. You need to enable this in the ``.dev/.env`` file by enabling s3
+* maildev - to check emails sent (web UI on container port 8081)
+* s3ninja - to check s3 uploads (container port 8083). You need to enable this in the ``config/.env`` file by enabling s3
+* MySQL (``leantime-db``, credentials ``leantime:leantime``, database ``leantime``)
+
+maildev, s3ninja and MySQL are published on random free host ports. Look them up with e.g.
+``docker compose --file .dev/docker-compose.yaml port maildev 8081``.
 
 Additionally, Xdebug is enabled, but you will have to modify your 
 IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connections
