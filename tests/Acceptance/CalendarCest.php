@@ -5,6 +5,7 @@ namespace Acceptance;
 use Carbon\CarbonImmutable;
 use Codeception\Attribute\Depends;
 use Codeception\Attribute\Group;
+use PHPUnit\Framework\Assert;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
@@ -45,7 +46,7 @@ class CalendarCest
             return values;
         JS);
 
-        $I->assertSame(
+        Assert::assertSame(
             ['editFrom' => '2026-10-04', 'timeFrom' => '08:00', 'editTo' => '2026-10-04', 'timeTo' => '09:00'],
             $values
         );
@@ -75,7 +76,7 @@ class CalendarCest
             return titles;
         JS);
 
-        $I->assertSame(['dropped', 'other ticket'], $remaining);
+        Assert::assertSame(['dropped', 'other ticket'], $remaining);
     }
 
     #[Group('calendar', 'ticket')]
@@ -121,8 +122,8 @@ class CalendarCest
                 .catch(function (error) { done({ saved: false, error: String(error), timeZone: timeZone }); });
         JS, [$ticketId]);
 
-        $I->assertTrue($result['saved'] === true, 'patchTicket did not save: '.json_encode($result));
-        $I->assertNotSame('local', $result['timeZone'], 'Calendars must use the user timezone, not the browser zone');
+        Assert::assertTrue($result['saved'] === true, 'patchTicket did not save: '.json_encode($result));
+        Assert::assertNotSame('local', $result['timeZone'], 'Calendars must use the user timezone, not the browser zone');
 
         $expectedFromUtc = CarbonImmutable::parse('2026-10-05 10:00:00', $result['timeZone'])->utc()->format('Y-m-d H:i:s');
         $expectedToUtc = CarbonImmutable::parse('2026-10-05 11:00:00', $result['timeZone'])->utc()->format('Y-m-d H:i:s');
