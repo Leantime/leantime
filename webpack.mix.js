@@ -78,7 +78,8 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     ], `public/dist/js/compiled-frameworks.${version}.min.js`)
     .combine([
         "./node_modules/jquery-ui-dist/jquery-ui.js",
-        "./node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
+        // Touch drag support for jQuery UI (long-press to drag, tap/scroll stay native)
+        "./public/assets/js/app/core/touchDrag.js",
         "./node_modules/chosen-js/chosen.jquery.js",
         "./public/assets/js/libs/jquery.growl.js",
         "./public/assets/js/libs/jquery.form.js",

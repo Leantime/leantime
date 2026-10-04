@@ -2883,3 +2883,12 @@ min-width: 1200px
 
 
 
+
+/* Touch drag (see public/assets/js/app/core/touchDrag.js): cards start dragging
+   after a long-press. Stop the long-press from also opening the iOS link
+   callout on the card. */
+@media (pointer: coarse) {
+    .ui-sortable-handle {
+        -webkit-touch-callout: none;
+    }
+}
