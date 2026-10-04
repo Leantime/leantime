@@ -46,7 +46,8 @@ class CalendarCest
             return values;
         JS);
 
-        Assert::assertSame(
+        // assertEquals: WebDriver doesn't preserve the JS object's key order.
+        Assert::assertEquals(
             ['editFrom' => '2026-10-04', 'timeFrom' => '08:00', 'editTo' => '2026-10-04', 'timeTo' => '09:00'],
             $values
         );
