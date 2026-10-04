@@ -1571,6 +1571,39 @@ leantime.ticketsController = (function () {
 
     };
 
+    /**
+     * Grouped table views render one DataTable per group, but only the first table drives the
+     * column picker. Each table also state-saves its own column visibility, so on load copy the
+     * first table's visibility to the other groups and keep them in sync afterwards (#2235).
+     */
+    var syncGroupedColumnVisibility = function (allTickets) {
+
+        var tableCount = allTickets.tables().context.length;
+
+        if (tableCount < 2) {
+            return;
+        }
+
+        var applyToOtherTables = function (colIdx, visibility) {
+            for (var i = 1; i < tableCount; i++) {
+                allTickets.table(i).column(colIdx).visible(visibility, false);
+            }
+        };
+
+        allTickets.table(0).columns().every(function (colIdx) {
+            applyToOtherTables(colIdx, this.visible());
+        });
+        allTickets.columns.adjust().draw(false);
+
+        allTickets.table(0).on(
+            'column-visibility',
+            function ( e, settings, colIdx, visibility ) {
+                applyToOtherTables(colIdx, visibility);
+                allTickets.columns.adjust().draw(false);
+            }
+        );
+    };
+
     var initTicketsTable = function (groupBy) {
 
         function isNumeric(n)
@@ -1741,20 +1774,7 @@ leantime.ticketsController = (function () {
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 
-            // When the column visibility changes on the firs table, also change it on // the others tables.
-            allTickets.table(0).on(
-                'column-visibility',
-                function ( e, settings, colIdx, visibility ) {
-
-                    // Toggle the visibility
-                    for (var i = 1; i < allTickets.tables().context.length; i++) {
-                        allTickets.tables(i).column(colIdx).visible(visibility);
-                    }
-
-                    allTickets.draw();
-
-                }
-            );
+            syncGroupedColumnVisibility(allTickets);
 
             jQuery('.ticketTable input').on('change', function ( e, settings, column, state ) {
 
@@ -1921,20 +1941,7 @@ leantime.ticketsController = (function () {
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 
-            // When the column visibility changes on the firs table, also change it on // the others tables.
-            allTickets.table(0).on(
-                'column-visibility',
-                function ( e, settings, colIdx, visibility ) {
-
-                    // Toggle the visibility
-                    for (var i = 1; i < allTickets.tables().context.length; i++) {
-                        allTickets.tables(i).column(colIdx).visible(visibility);
-                    }
-
-                    allTickets.draw();
-
-                }
-            );
+            syncGroupedColumnVisibility(allTickets);
 
             jQuery('.ticketTable input').on('change', function ( e, settings, column, state ) {
 

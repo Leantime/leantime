@@ -2197,10 +2197,19 @@ class Tickets
         return $result !== false;
     }
 
-    public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null): bool
+    /**
+     * Sets a ticket's status (and optionally its kanban sort index).
+     *
+     * @param  int|string  $ticketId  The ticket id.
+     * @param  int|string  $status  The new status key.
+     * @param  int  $ticketSorting  Kanban sort index, or -1 to leave it unchanged.
+     * @param  string|null  $handler  The kanban card handler (ticket_ID) that triggered the change.
+     * @param  string|null  $expectedStatus  When given, the row is only written while its stored status
+     *                                       still equals this value (compare-and-set). Pass false to skip the check.
+     * @return bool True when a row was written; false when nothing changed or the expected status no longer matched.
+     */
+    public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null, string|null|false $expectedStatus = false): bool
     {
-        $this->addTicketChange(session('userdata.id'), $ticketId, ['status' => $status]);
-
         $updates = [
             'status' => $status,
             'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
@@ -2210,11 +2219,52 @@ class Tickets
             $updates['kanbanSortIndex'] = $ticketSorting;
         }
 
+        // Check the expected status, record history and write in one transaction: history compares
+        // against the row's pre-update values, and the row lock makes the compare-and-set atomic
+        // against an overlapping kanban request that is moving the same card (#3099).
+        $written = $this->connection->transaction(function () use ($ticketId, $status, $updates, $expectedStatus): bool {
+            $current = $this->connection->table('zp_tickets')
+                ->where('id', $ticketId)
+                ->lockForUpdate()
+                ->first(['status']);
+
+            if ($current === null) {
+                return false;
+            }
+
+            if ($expectedStatus !== false && ! $this->statusMatches($current->status, $expectedStatus)) {
+                return false;
+            }
+
+            $this->addTicketChange(session('userdata.id'), $ticketId, ['status' => $status]);
+
+            return $this->connection->table('zp_tickets')
+                ->where('id', $ticketId)
+                ->update($updates) > 0;
+        });
+
+        if (! $written) {
+            return false;
+        }
+
         TicketStatusUpdated::dispatch(ticketId: (int) $ticketId, status: $status, handler: $handler, legacyHook: __FUNCTION__);
 
-        return $this->connection->table('zp_tickets')
-            ->where('id', $ticketId)
-            ->update($updates) > 0;
+        return true;
+    }
+
+    /**
+     * Whether a stored status equals the status a caller expects (null means "no status").
+     *
+     * @param  mixed  $storedStatus  The status column value as read from the database.
+     * @param  string|null  $expectedStatus  The status the caller read earlier.
+     */
+    private function statusMatches(mixed $storedStatus, ?string $expectedStatus): bool
+    {
+        if ($expectedStatus === null || $storedStatus === null) {
+            return $expectedStatus === null && $storedStatus === null;
+        }
+
+        return (string) $storedStatus === $expectedStatus;
     }
 
     /**
