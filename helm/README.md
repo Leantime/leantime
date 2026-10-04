@@ -51,7 +51,7 @@ helm install leantime -f values.yaml ./leantime/helm
 | app.ldap.userDomain | string | `""` | Domain after ldap, example @example.com |
 | app.s3.bucket | string | `""` | S3 bucket |
 | app.s3.enabled | bool | `false` | Set to true if you want to use S3 instead of local files |
-| app.s3.enpoint | string | `""` | S3 endpoint |
+| app.s3.endpoint | string | `""` | S3 endpoint |
 | app.s3.folderName | string | `""` | Sets the foldername within S3 (can be empty) |
 | app.s3.key | string | `""` | S3 key |
 | app.s3.region | string | `""` | S3 region |
@@ -60,6 +60,8 @@ helm install leantime -f values.yaml ./leantime/helm
 | app.session.expiration | int | `28800` | Session expiration |
 | app.session.password | string | `"changeme"` | Salting sessions. Replace with a strong password |
 | app.sitename | string | `"Leantime"` | Sets the name for the instance |
+| app.trustedProxies | string | `""` | Proxies allowed to set X-Forwarded-* headers (`LEAN_TRUSTED_PROXIES`). Empty trusts loopback and private subnets |
+| app.url | string | `""` | Public base URL, e.g. `https://pm.example.com` (`LEAN_APP_URL`). Set it when TLS terminates at an ingress/proxy |
 | autoscaling.enabled | bool | `false` |  |
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
@@ -81,6 +83,9 @@ helm install leantime -f values.yaml ./leantime/helm
 | mariadb.auth.rootPassword | string | `"changeme"` | Database root password |
 | mariadb.auth.username | string | `"leantime"` | Database username |
 | mariadb.enabled | bool | `true` |  |
+| mariadb.image.registry | string | `"docker.io"` | MariaDB image registry |
+| mariadb.image.repository | string | `"bitnamilegacy/mariadb"` | MariaDB image (Bitnami moved versioned tags out of `bitnami/mariadb`) |
+| mariadb.image.tag | string | `"10.6.12-debian-11-r9"` | MariaDB image tag |
 | nameOverride | string | `""` | Overrides the name of the chart |
 | nodeSelector | object | `{}` |  |
 | persistence.enabled | bool | `true` | Enables or disables the persistence |

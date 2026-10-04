@@ -121,7 +121,7 @@
                              </div>
 
 
-                `           <div class="row">
+                            <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="widgettitle title-light">
                                         <span class="fa fa-user-friends "></span>{!! __('headlines.assign_users_to_project') !!}
