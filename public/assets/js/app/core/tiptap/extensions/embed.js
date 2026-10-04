@@ -324,6 +324,96 @@ function getAspectRatio(type) {
 }
 
 /**
+ * Iframe attributes for an embed. Shared by the editor node and the read-only hydration
+ * so both render the same sandboxed iframe.
+ */
+function buildIframeAttributes(type, embedSrc, title) {
+    // Trusted embeds are services that require same-origin cookie access or
+    // postMessage with origin validation to authenticate and render correctly.
+    // Without allow-same-origin their internal scripts receive a null origin,
+    // auth cookies are inaccessible, and the embed fails with a 400 error.
+    //
+    // NOTE: allow-scripts + allow-same-origin together allow sandboxed content
+    // to remove its own sandbox via script — this is acceptable for these
+    // known first-party services but should NOT be added for arbitrary URLs.
+    var trustedEmbeds = {
+        googleDocs: true,
+        googleSheets: true,
+        googleSlides: true,
+        googleForms: true,
+        figma: true,
+        miro: true,
+        oneDrive: true,
+        office365: true,
+    };
+
+    var sandboxValue = trustedEmbeds[type]
+        ? 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation allow-downloads allow-modals'
+        : 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals';
+
+    return {
+        src: embedSrc,
+        frameborder: '0',
+        allowfullscreen: 'true',
+        // Allow all permissions needed for editable embeds
+        allow: 'accelerometer; autoplay; clipboard-read; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen; camera; microphone',
+        sandbox: sandboxValue,
+        title: title || getTypeName(type) + ' embed',
+        loading: 'lazy',
+    };
+}
+
+/**
+ * Re-create embed iframes in read-only content.
+ *
+ * Saved HTML goes through the server sanitizer, which strips <iframe>, so outside the
+ * editor an embed is only its data-embed container. Rebuild the iframe from the stored
+ * data attributes, validated exactly like the editor does when it parses stored HTML.
+ *
+ * @param {ParentNode} root - Element (or document) to search for embed containers
+ */
+function hydrateEmbeds(root) {
+    if (!root || !root.querySelectorAll) return;
+
+    root.querySelectorAll('div[data-embed]').forEach(function(container) {
+        // The editor renders its own iframes
+        if (container.closest('.ProseMirror')) return;
+        if (container.querySelector('iframe')) return;
+
+        var safeAttrs = buildSafeEmbedAttrs(
+            container.getAttribute('data-src'),
+            container.getAttribute('data-type'),
+            container.getAttribute('data-original-url'),
+            container.getAttribute('data-title')
+        );
+        if (!safeAttrs) return;
+
+        var wrapper = container.querySelector('.tiptap-embed__wrapper');
+        if (!wrapper) {
+            wrapper = document.createElement('div');
+            wrapper.className = 'tiptap-embed__wrapper';
+            container.appendChild(wrapper);
+        }
+
+        var iframe = document.createElement('iframe');
+        var iframeAttributes = buildIframeAttributes(safeAttrs.type, safeAttrs.src, safeAttrs.title);
+        Object.keys(iframeAttributes).forEach(function(name) {
+            iframe.setAttribute(name, iframeAttributes[name]);
+        });
+        wrapper.appendChild(iframe);
+    });
+}
+
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        hydrateEmbeds(document);
+    });
+    document.addEventListener('htmx:afterSettle', function(event) {
+        hydrateEmbeds(event.target);
+    });
+}
+
+/**
  * Create the Embed node extension
  */
 var EmbedNode = Node.create({
@@ -402,29 +492,6 @@ var EmbedNode = Node.create({
         var embedSrc = isAllowedEmbedSrc(attrs.src, type) ? attrs.src : 'about:blank';
         var aspectRatio = getAspectRatio(type);
 
-        // Trusted embeds are services that require same-origin cookie access or
-        // postMessage with origin validation to authenticate and render correctly.
-        // Without allow-same-origin their internal scripts receive a null origin,
-        // auth cookies are inaccessible, and the embed fails with a 400 error.
-        //
-        // NOTE: allow-scripts + allow-same-origin together allow sandboxed content
-        // to remove its own sandbox via script — this is acceptable for these
-        // known first-party services but should NOT be added for arbitrary URLs.
-        var trustedEmbeds = {
-            googleDocs: true,
-            googleSheets: true,
-            googleSlides: true,
-            googleForms: true,
-            figma: true,
-            miro: true,
-            oneDrive: true,
-            office365: true,
-        };
-
-        var sandboxValue = trustedEmbeds[type]
-            ? 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation allow-downloads allow-modals'
-            : 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals';
-
         return ['div', mergeAttributes({
             class: 'tiptap-embed tiptap-embed--' + type + ' tiptap-embed--' + aspectRatio,
             'data-embed': '',
@@ -435,16 +502,7 @@ var EmbedNode = Node.create({
             'data-title': attrs.title || '',
         }), [
             'div', { class: 'tiptap-embed__wrapper' }, [
-                'iframe', {
-                    src: embedSrc,
-                    frameborder: '0',
-                    allowfullscreen: 'true',
-                    // Allow all permissions needed for editable embeds
-                    allow: 'accelerometer; autoplay; clipboard-read; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen; camera; microphone',
-                    sandbox: sandboxValue,
-                    title: attrs.title || getTypeName(type) + ' embed',
-                    loading: 'lazy',
-                }
+                'iframe', buildIframeAttributes(type, embedSrc, attrs.title)
             ]
         ]];
     },
@@ -654,6 +712,7 @@ window.leantime.tiptapEmbed = {
     detectType: detectEmbedType,
     getEmbedUrl: getEmbedUrl,
     getTypeName: getTypeName,
+    hydrate: hydrateEmbeds,
     patterns: patterns,
 };
 
