@@ -19,6 +19,7 @@ RUN apk add --no-cache --virtual .build-deps \
     freetype-dev \
     libpng-dev \
     libjpeg-turbo-dev \
+    icu-dev \
     postgresql-dev
 
 # Set cross-compilation flags if needed
@@ -42,6 +43,7 @@ RUN set -ex; \
     docker-php-ext-install opcache && \
     docker-php-ext-install ldap && \
     docker-php-ext-install zip && \
+    docker-php-ext-install intl && \
     pecl install redis && docker-php-ext-enable redis && \
     docker-php-ext-install gd && \
     rm -rf /tmp/* /var/cache/apk/*

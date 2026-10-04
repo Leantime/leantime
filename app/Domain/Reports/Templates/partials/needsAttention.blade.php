@@ -44,7 +44,7 @@
                     <i class="fa fa-fw fa-bullseye" style="color: var(--yellow);"></i>
                     <strong>{{ $tpl->escape($goal->title) }}</strong>
                     {{ $goal->status === 'status_miss' ? __('text.attention_goal_missed') : __('text.attention_goal_at_risk') }}
-                    <span class="tw-opacity-60">({{ \Illuminate\Support\Number::format((float) $goal->currentValue, maxPrecision: 1) }} of {{ \Illuminate\Support\Number::format((float) $goal->endValue, maxPrecision: 1) }} {{ $tpl->escape($goal->metricType ?? '') }})</span>
+                    <span class="tw-opacity-60">({{ \Leantime\Core\Support\Format::number((float) $goal->currentValue, 1) }} of {{ \Leantime\Core\Support\Format::number((float) $goal->endValue, 1) }} {{ $tpl->escape($goal->metricType ?? '') }})</span>
                 </li>
             @endforeach
 
