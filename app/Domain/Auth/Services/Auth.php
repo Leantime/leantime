@@ -814,7 +814,9 @@ class Auth implements Authenticatable
         $date = new \DateTime;
         $date = $date->format('y:m:d h:i:s');
 
-        $ip = $_SERVER['REMOTE_ADDR'];
+        // The client's address, honouring the trusted-proxy configuration (LEAN_TRUSTED_PROXIES); behind
+        // a reverse proxy REMOTE_ADDR is always the proxy, so every failed login looked like one host.
+        $ip = request()->getClientIp() ?? 'unknown';
         $msg = '['.$date.']['.$ip.'] Login failed for user: '.$user;
 
         Log::info($msg);
