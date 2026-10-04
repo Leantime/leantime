@@ -1341,6 +1341,9 @@ leantime.ticketsController = (function () {
                         }
                     });
 
+                    // Every write triggered by this drop; a field-sorted board reloads once all settled.
+                    var pendingWrites = [];
+
                     // Detect cross-swimlane movement and update groupBy field
                     var $newSwimlane = ui.item.closest('.sortableTicketList.kanbanBoard');
                     var newSwimlaneId = $newSwimlane.attr('id');
@@ -1514,7 +1517,9 @@ leantime.ticketsController = (function () {
                             swimlaneValues[fieldName] = newGroupValue;
 
                             // PATCH the ticket with the new swimlane value (confirmation happens in background)
-                            leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: swimlaneValues })
+                            var swimlaneWrite = leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: swimlaneValues });
+                            pendingWrites.push(swimlaneWrite);
+                            swimlaneWrite
                                 .catch(function() {
                                     jQuery.growl({message: leantime.i18n.__("short_notifications.not_saved") || "Error updating ticket", style: "error"});
                                     // Reload on failure to restore correct state
@@ -1539,13 +1544,24 @@ leantime.ticketsController = (function () {
                         }
                     }
 
-                    leantime.rpc('Tickets.Tickets.updateTicketStatusAndSorting', { params: sortPayload, handler: sortHandler, preserveSortIndex: !manualSort })
+                    var statusWrite = leantime.rpc('Tickets.Tickets.updateTicketStatusAndSorting', { params: sortPayload, handler: sortHandler, preserveSortIndex: !manualSort });
+                    pendingWrites.push(statusWrite);
+                    statusWrite
                         .then(function () {
                             refreshTimerIfRunningOn(String(sortHandler).replace('ticket_', ''));
                         })
                         .catch(function (error) {
                             console.error('Could not update ticket status and sorting', error);
                         });
+
+                    // Field-sorted board (#1536): the card sits where it was dropped, not at its sorted
+                    // position. Once the status (and any swimlane) write has settled, reload so every
+                    // column follows the sort again (a failed write also needs the reload to recover).
+                    if (!manualSort) {
+                        Promise.allSettled(pendingWrites).then(function () {
+                            location.reload();
+                        });
+                    }
 
                 }
             });
