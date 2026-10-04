@@ -70,12 +70,9 @@ function parseCellColwidth(cellElement) {
 
     var cols = colgroup.querySelectorAll('col');
 
-    // Column index = sum of colspans of the cells before this one in the row
-    var columnIndex = 0;
-    var previousCell = cellElement.previousElementSibling;
-    while (previousCell) {
-        columnIndex += parseInt(previousCell.getAttribute('colspan') || '1', 10);
-        previousCell = previousCell.previousElementSibling;
+    var columnIndex = findLogicalColumnIndex(table, cellElement);
+    if (columnIndex === -1) {
+        return null;
     }
 
     var colspan = parseInt(cellElement.getAttribute('colspan') || '1', 10);
@@ -92,6 +89,52 @@ function parseCellColwidth(cellElement) {
     }
 
     return hasAnyWidth ? widths : null;
+}
+
+/**
+ * Logical (grid) column of a cell, accounting for rowspans from earlier rows and
+ * colspans of earlier cells - the column its <col> entry is found at.
+ *
+ * @param {HTMLTableElement} table
+ * @param {HTMLElement} cellElement
+ * @returns {number} Column index, or -1 when the cell is not part of the table's rows
+ */
+function findLogicalColumnIndex(table, cellElement) {
+    // occupiedColumns[rowIndex] = { columnIndex: true } for slots taken by rowspans above
+    var occupiedColumns = [];
+    var rows = table.rows;
+
+    for (var rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        occupiedColumns[rowIndex] = occupiedColumns[rowIndex] || {};
+        var columnIndex = 0;
+        var cells = rows[rowIndex].cells;
+
+        for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+            var cell = cells[cellIndex];
+
+            while (occupiedColumns[rowIndex][columnIndex]) {
+                columnIndex++;
+            }
+
+            if (cell === cellElement) {
+                return columnIndex;
+            }
+
+            var colspan = Math.max(1, parseInt(cell.getAttribute('colspan') || '1', 10) || 1);
+            var rowspan = Math.max(1, parseInt(cell.getAttribute('rowspan') || '1', 10) || 1);
+
+            for (var spannedRow = rowIndex; spannedRow < rowIndex + rowspan; spannedRow++) {
+                occupiedColumns[spannedRow] = occupiedColumns[spannedRow] || {};
+                for (var spannedColumn = columnIndex; spannedColumn < columnIndex + colspan; spannedColumn++) {
+                    occupiedColumns[spannedRow][spannedColumn] = true;
+                }
+            }
+
+            columnIndex += colspan;
+        }
+    }
+
+    return -1;
 }
 
 var ColwidthAwareTableCell = TableCell.extend({
