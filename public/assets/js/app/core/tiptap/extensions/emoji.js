@@ -370,8 +370,9 @@ function createEmojiExtension() {
                                     return { active: false, query: '', range: null, selectedIndex: 0 };
                                 }
 
-                                // Cursor moved away from the :query (click, arrow keys, etc.)
-                                if (state.range && (selection.from < state.range.from || selection.from > state.range.to)) {
+                                // Cursor moved away from the :query (click, arrow keys, etc.).
+                                // range.from is the position before the colon, so it counts as outside.
+                                if (state.range && (selection.from <= state.range.from || selection.from > state.range.to)) {
                                     return { active: false, query: '', range: null, selectedIndex: 0 };
                                 }
                             }
