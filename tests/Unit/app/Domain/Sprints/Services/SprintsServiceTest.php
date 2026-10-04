@@ -303,6 +303,9 @@ class SprintsServiceTest extends TestCase
             'empty' => ['', false],
             'null' => [null, false],
             'zero' => ['0', false],
+            'decimal' => ['1.5', false],
+            'exponent' => ['1e3', false],
+            'negative' => ['-4', false],
         ];
     }
 }

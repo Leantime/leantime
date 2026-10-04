@@ -83,8 +83,11 @@ class Sprints extends BaseService
             return false;
         }
 
-        if (is_numeric($currentSprint) && (int) $currentSprint > 0) {
-            return (int) $currentSprint;
+        // The value comes from a request filter: accept only a plain positive integer, so input such
+        // as "1.5" or "1e3" cannot be cast into a different, valid sprint id.
+        $sprintId = filter_var($currentSprint, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        if ($sprintId !== false) {
+            return $sprintId;
         }
 
         return false;

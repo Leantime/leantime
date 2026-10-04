@@ -89,6 +89,25 @@ class BlueprintsServiceTest extends TestCase
         $this->assertEqualsWithDelta(0.5, $progress['swotcanvas'], 0.001);
     }
 
+    public function test_board_progress_without_project_uses_the_current_project(): void
+    {
+        session(['currentProject' => 17]);
+
+        $queriedProjectIds = [];
+        $repo = $this->make(BlueprintsRepository::class, [
+            'getCanvasProgressCount' => function (int $projectId) use (&$queriedProjectIds) {
+                $queriedProjectIds[] = $projectId;
+
+                return [];
+            },
+        ]);
+
+        $this->service($repo)->getBoardProgress();
+        $this->service($repo)->getBoardProgress('5');
+
+        $this->assertSame([17, 5], $queriedProjectIds);
+    }
+
     public function test_board_progress_takes_max_across_boards(): void
     {
         // Board 2 has all 4 SWOT boxes filled -> max progress 1.0.

@@ -720,7 +720,7 @@ class Blueprints extends BaseService
      * Counts items per box type for each canvas and calculates what fraction
      * of box types have at least one item.
      *
-     * @param  string  $projectId  Project identifier (empty string for all)
+     * @param  string  $projectId  Project identifier (empty string for the current project)
      * @param  array<int, string>  $boards  Array of database canvas types to check
      * @return array<string, float> Map of canvas type to max progress (0.0 to 1.0)
      *
@@ -731,7 +731,10 @@ class Blueprints extends BaseService
     #[RequiresPermission(BlueprintsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getBoardProgress(string $projectId = '', array $boards = []): array
     {
-        $values = $this->blueprintsRepo->getCanvasProgressCount((int) $projectId, $boards);
+        // An omitted project means the current one, which is also what the permission check authorized.
+        $resolvedProjectId = $projectId !== '' ? (int) $projectId : (int) session('currentProject');
+
+        $values = $this->blueprintsRepo->getCanvasProgressCount($resolvedProjectId, $boards);
 
         $results = [];
 
