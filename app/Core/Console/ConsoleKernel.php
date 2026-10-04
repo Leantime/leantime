@@ -11,15 +11,29 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Language;
+use Leantime\Core\Support\Installation;
+use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Symfony\Component\Finder\Finder;
 
 class ConsoleKernel extends Kernel implements ConsoleKernelContract
 {
     use DispatchesEvents;
+
+    /**
+     * Whether enabled user plugins were already loaded for this console run.
+     */
+    private bool $pluginsLoaded = false;
+
+    /**
+     * Name of the command being run, used to decide how plugin loading failures are handled.
+     */
+    private ?string $currentCommand = null;
 
     protected $app;
 
@@ -55,6 +69,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         $this->app->loadDeferredProviders();
 
+        $this->loadEnabledPlugins();
+
         if (! $this->commandsLoaded) {
             $this->commands();
 
@@ -64,6 +80,82 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
             $this->commandsLoaded = true;
         }
+    }
+
+    /**
+     * Loads enabled user plugins for console runs.
+     *
+     * Web requests load them in the LoadPlugins middleware, which never runs here, so without this
+     * scheduled jobs, listeners and language strings registered by plugins were missing from
+     * schedule:run, queue workers and commands.
+     *
+     * Before install there is no database yet, so this is skipped quietly. On an installed
+     * instance a failure is logged and the plugins stay marked as not loaded so a later bootstrap
+     * retries. Scheduler commands rethrow it: silently running cron without the plugin jobs while
+     * reporting success is worse than a failed run that shows up in the cron logs. Other commands
+     * keep working (system:update must still run when the plugin table is not migrated yet).
+     * A single plugin's failing register.php is isolated inside loadEnabledPluginRegisterFiles().
+     *
+     * @throws \Throwable When loading fails for a scheduler command on an installed instance.
+     */
+    private function loadEnabledPlugins(): void
+    {
+        if ($this->pluginsLoaded) {
+            return;
+        }
+
+        if (! Installation::isInstalled()) {
+            return;
+        }
+
+        try {
+            EventDispatcher::loadEnabledPluginRegisterFiles(failOnDatabaseError: true);
+            $this->initializeLanguage();
+            self::dispatchEvent('pluginsEvents', [], 'leantime.core.middleware.loadplugins.handle');
+        } catch (\Throwable $e) {
+            Log::error('Plugins could not be loaded for this console run: '.$e->getMessage(), ['exception' => $e]);
+
+            if ($this->isSchedulerCommand($this->currentCommand)) {
+                throw $e;
+            }
+
+            return;
+        }
+
+        $this->pluginsLoaded = true;
+    }
+
+    /**
+     * Sets the effective language for this console run before plugins register their language files.
+     *
+     * Web requests get it from the Localization middleware; console runs never pass through it, so
+     * plugins (which pick their translation from session('usersettings.language')) only loaded their
+     * English strings. Resolves it the way Language does: company setting, else the configured default.
+     */
+    private function initializeLanguage(): void
+    {
+        if (session('usersettings.language')) {
+            return;
+        }
+
+        $companyLanguage = app()->make(SettingRepository::class)->getSetting('companysettings.language');
+        if (is_string($companyLanguage) && $companyLanguage !== '') {
+            session(['companysettings.language' => $companyLanguage]);
+        }
+
+        $language = app()->make(Language::class);
+        $effectiveLanguage = $language->getCurrentLanguage();
+
+        session(['usersettings.language' => $effectiveLanguage]);
+        $language->readIni();
+    }
+
+    /**
+     * Whether the given command runs the scheduler, where missing plugin jobs must fail loudly.
+     */
+    private function isSchedulerCommand(?string $command): bool
+    {
+        return in_array($command, ['schedule:run', 'schedule:work', 'schedule:test'], true);
     }
 
     /**
@@ -79,6 +171,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             if (in_array($input->getFirstArgument(), ['env:encrypt', 'env:decrypt'], true)) {
                 $this->bootstrapWithoutBootingProviders();
             }
+
+            $this->currentCommand = $input->getFirstArgument();
 
             if ($domain = $input->getParameterOption('--domain')) {
                 $this->setDomain($domain);
@@ -162,6 +256,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         if (array_key_exists('--domain', $parameters)) {
             $this->setDomain($parameters['--domain']);
         }
+
+        $this->currentCommand = $command;
 
         if (in_array($command, ['env:encrypt', 'env:decrypt'], true)) {
             $this->bootstrapWithoutBootingProviders();
