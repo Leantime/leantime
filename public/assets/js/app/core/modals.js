@@ -50,6 +50,53 @@ leantime.modals = (function () {
         }
     }, true);
 
+    // Listeners a page registers on document/window outlive its content. Record the ones page
+    // scripts add (from inline scripts in the page content on the first load, and everything added
+    // while an in-place refresh runs the page scripts) and remove them before the next refresh,
+    // so refreshing does not stack up handlers (SlimSelect, Uppy, page inits, ...).
+    var pageScopedListeners = [];
+    var pageScriptRunDepth = 0;
+
+    var isRunningPageScript = function () {
+        if (pageScriptRunDepth > 0) {
+            return true;
+        }
+        var script = document.currentScript;
+        return !!(script && !script.src && script.closest
+            && (script.closest('.primaryContent') || script.closest('#lt-page-scripts')));
+    };
+
+    [document, window].forEach(function (target) {
+        var originalAdd = target.addEventListener;
+        target.addEventListener = function (type, listener, options) {
+            if (listener && isRunningPageScript()) {
+                pageScopedListeners.push({ kind: 'dom', target: target, type: type, listener: listener, options: options });
+            }
+            return originalAdd.call(this, type, listener, options);
+        };
+    });
+
+    if (jQuery && jQuery.event && typeof jQuery.event.add === 'function') {
+        var originalJqueryAdd = jQuery.event.add;
+        jQuery.event.add = function (elem, types, handler, data, selector) {
+            if ((elem === document || elem === window) && isRunningPageScript()) {
+                pageScopedListeners.push({ kind: 'jquery', target: elem, types: types, handler: handler, selector: selector });
+            }
+            return originalJqueryAdd.apply(this, arguments);
+        };
+    }
+
+    var removePageScopedListeners = function () {
+        pageScopedListeners.forEach(function (entry) {
+            if (entry.kind === 'dom') {
+                entry.target.removeEventListener(entry.type, entry.listener, entry.options);
+            } else if (typeof entry.types === 'string' || (entry.types && typeof entry.types === 'object')) {
+                jQuery(entry.target).off(entry.types, entry.selector || null, entry.handler);
+            }
+        });
+        pageScopedListeners = [];
+    };
+
     var scrollSnapshot = function (root) {
         var positions = [];
         root.querySelectorAll('*').forEach(function (element) {
@@ -147,11 +194,33 @@ leantime.modals = (function () {
                     currentScripts.replaceWith(newScripts);
                 }
 
+                removePageScopedListeners();
                 htmx.process(newContent);
-                runInlineScripts(newContent);
-                runInlineScripts(newScripts);
-                // Page inits that wait for DOMContentLoaded (e.g. calendars) run again.
-                document.dispatchEvent(new Event('DOMContentLoaded'));
+
+                // Keep tracking until jQuery's (asynchronous) ready callbacks of these scripts ran.
+                pageScriptRunDepth++;
+                var listenerCountBefore = pageScopedListeners.length;
+                try {
+                    runInlineScripts(newContent);
+                    runInlineScripts(newScripts);
+                    // Page inits that wait for DOMContentLoaded (e.g. calendars) run again. Only the
+                    // handlers these page scripts registered: re-dispatching the event globally would
+                    // re-run every bundle's DOMContentLoaded init and stack their listeners.
+                    pageScopedListeners.slice(listenerCountBefore).forEach(function (entry) {
+                        if (entry.kind === 'dom' && entry.target === document && entry.type === 'DOMContentLoaded') {
+                            try {
+                                var handler = entry.listener;
+                                (typeof handler === 'function' ? handler : handler.handleEvent).call(document, new Event('DOMContentLoaded'));
+                            } catch (initError) {
+                                console.error('[Modal] Page init failed after in-place refresh', initError);
+                            }
+                        }
+                    });
+                } finally {
+                    setTimeout(function () {
+                        setTimeout(function () { pageScriptRunDepth--; }, 0);
+                    }, 0);
+                }
 
                 window.scrollTo(windowScroll.x, windowScroll.y);
                 restoreScroll(newContent, innerScroll);
