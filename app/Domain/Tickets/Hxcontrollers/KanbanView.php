@@ -11,7 +11,7 @@ use Leantime\Domain\Tickets\Services\KanbanViewSettings;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Saves the per-user kanban board view preferences ("Card fields" menu, #1859).
+ * Saves the per-user kanban board view preferences: card fields (#1859) and sort (#1536).
  *
  * Cards are rendered server-side, so a successful save asks HTMX to reload the board.
  */
@@ -30,7 +30,7 @@ class KanbanView extends HtmxController
     }
 
     /**
-     * Stores the submitted card field choice for the current user and project.
+     * Stores the submitted card fields and sort for the current user and project.
      *
      * @return Response Empty response that refreshes the board (or shows an error toast).
      */
@@ -39,8 +39,9 @@ class KanbanView extends HtmxController
     {
         $projectId = (int) session('currentProject');
         $visibleFieldNames = $this->incomingRequest->input('fields', []);
+        $sort = $this->incomingRequest->input('sort', KanbanViewSettings::DEFAULT_SORT);
 
-        $saved = $this->kanbanViewSettings->saveForCurrentUser($projectId, $visibleFieldNames);
+        $saved = $this->kanbanViewSettings->saveForCurrentUser($projectId, $visibleFieldNames, $sort);
 
         if (! $saved) {
             $this->tpl->setNotification($this->language->__('notifications.kanban_view_not_saved'), 'error');

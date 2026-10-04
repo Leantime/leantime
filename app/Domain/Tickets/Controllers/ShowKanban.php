@@ -38,10 +38,10 @@ class ShowKanban extends Controller
             $params['groupBy'] = 'all';
         }
 
-        // The user's card-field choice (#1859) for this board.
+        // The user's card fields (#1859) and card sort (#1536) for this board.
         $kanbanView = $this->kanbanViewSettings->getForCurrentUser((int) session('currentProject'));
 
-        $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+        $template_assignments = $this->ticketService->getTicketTemplateAssignments($params, $kanbanView['sort']);
         $allKanbanColumns = $this->ticketService->getKanbanColumns();
 
         // NEW: Calculate status breakdown for swimlane visualizations

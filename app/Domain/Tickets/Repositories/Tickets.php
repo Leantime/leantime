@@ -598,6 +598,7 @@ class Tickets
     /**
      * getAllBySearchCriteria - get Tickets by search criteria array
      *
+     * @param  string  $sort  One of standard, kanbansort, duedate, priority, date, effort, title.
      * @param  null  $limit
      */
     public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', ?int $limit = null, $includeCounts = true, ?int $offset = null): bool|array
@@ -923,13 +924,26 @@ class Tickets
                 ->orderBy('zp_tickets.sortindex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'priority') {
-            $query->orderBy('zp_tickets.priority', 'ASC')
+            // Highest priority (1) first; tickets without a priority go last, not first.
+            $priorityColumn = $this->dbHelper->wrapColumn('zp_tickets.priority');
+            $query->orderByRaw('(CASE WHEN '.$priorityColumn.' IS NULL OR '.$priorityColumn." = '' OR ".$priorityColumn." = '0' THEN 1 ELSE 0 END)")
+                ->orderBy('zp_tickets.priority', 'ASC')
                 ->orderBy('zp_tickets.dateToFinish', 'ASC')
                 ->orderBy('zp_tickets.sortindex', 'ASC')
                 ->orderByDesc('zp_tickets.id');
         } elseif ($sort == 'date') {
             $query->orderByDesc('zp_tickets.date')
                 ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        } elseif ($sort == 'effort') {
+            // Largest effort first; tickets without an estimate go last.
+            $effortColumn = $this->dbHelper->wrapColumn('zp_tickets.storypoints');
+            $query->orderByRaw('(CASE WHEN '.$effortColumn.' IS NULL OR '.$effortColumn.' <= 0 THEN 1 ELSE 0 END)')
+                ->orderByDesc('zp_tickets.storypoints')
+                ->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        } elseif ($sort == 'title') {
+            $query->orderBy('zp_tickets.headline', 'ASC')
                 ->orderByDesc('zp_tickets.id');
         }
 

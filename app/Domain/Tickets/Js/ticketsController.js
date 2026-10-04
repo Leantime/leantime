@@ -1263,9 +1263,16 @@ leantime.ticketsController = (function () {
 
     }
 
-    var initTicketKanban = function (ticketStatusListParameter) {
+    /**
+     * @param {string[]} ticketStatusListParameter status keys of the board columns
+     * @param {Object} [options]
+     * @param {boolean} [options.manualSort=true] false when the board is sorted by a field (#1536):
+     *        dragging then only changes status, never the stored manual order.
+     */
+    var initTicketKanban = function (ticketStatusListParameter, options) {
 
         var ticketStatusList = ticketStatusListParameter;
+        var manualSort = !options || options.manualSort !== false;
 
         jQuery(".sortableTicketList.kanbanBoard .ticketBox").hover(function () {
             jQuery(this).css("background", "var(--kanban-card-hover)");
@@ -1295,11 +1302,22 @@ leantime.ticketsController = (function () {
                     // Store original swimlane for cross-swimlane detection
                     var $originalSwimlane = ui.item.closest('.sortableTicketList.kanbanBoard');
                     ui.item.data('originalSwimlaneId', $originalSwimlane.attr('id'));
+                    ui.item.data('originalColumn', ui.item.parent()[0]);
                 },
                 stop: function (event, ui) {
                     ui.item.removeClass("tilt");
                     jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
                     ui.item.removeData("move_handler");
+
+                    // Sorted by a field: the order inside a column follows that field, so a drop
+                    // back into the same column is undone instead of saved (#1536).
+                    var droppedInSameColumn = ui.item.parent()[0] === ui.item.data('originalColumn');
+                    ui.item.removeData('originalColumn');
+                    if (!manualSort && droppedInSameColumn) {
+                        jQuery(this).sortable('cancel');
+                        ui.item.removeData('originalSwimlaneId');
+                        return;
+                    }
 
                     countTickets();
                     updateSwimlaneCounts();
@@ -1521,7 +1539,7 @@ leantime.ticketsController = (function () {
                         }
                     }
 
-                    leantime.rpc('Tickets.Tickets.updateTicketStatusAndSorting', { params: sortPayload, handler: sortHandler })
+                    leantime.rpc('Tickets.Tickets.updateTicketStatusAndSorting', { params: sortPayload, handler: sortHandler, preserveSortIndex: !manualSort })
                         .then(function () {
                             refreshTimerIfRunningOn(String(sortHandler).replace('ticket_', ''));
                         })

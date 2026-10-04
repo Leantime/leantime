@@ -4395,12 +4395,19 @@ class Tickets extends BaseService
     }
 
     /**
+     * Applies a kanban drag: sets the status of the posted cards and their manual kanban order.
+     *
+     * @param  array  $params  statusKey => serialized card list ("ticket[]=1&ticket[]=2").
+     * @param  string|null  $handler  The dragged card (ticket_ID); only it may change status.
+     * @param  bool  $preserveSortIndex  True when the board is sorted by a field rather than the
+     *                                   manual order: statuses change but kanbanSortIndex is kept.
+     *
      * @throws BindingResolutionException
      *
      * @api
      */
     #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
-    public function updateTicketStatusAndSorting($params, $handler = null): bool
+    public function updateTicketStatusAndSorting($params, $handler = null, bool $preserveSortIndex = false): bool
     {
         if (! is_array($params)) {
             return false;
@@ -4476,14 +4483,19 @@ class Tickets extends BaseService
                     if ($isOtherCard) {
                         // Only re-sort it, and only while its status is still the one we read: a
                         // card moved meanwhile (stale tab, or an overlapping drag) is left alone.
-                        if (! $statusChanged) {
+                        // With the board sorted by a field there is nothing to re-sort (#1536).
+                        if (! $statusChanged && ! $preserveSortIndex) {
                             $this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler, $previousStatus);
                         }
 
                         continue;
                     }
 
-                    if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
+                    // A board sorted by a field (not manual order) shows cards in that order, so the
+                    // on-screen position must not overwrite the manual kanbanSortIndex (#1536).
+                    $kanbanSortIndex = $preserveSortIndex ? -1 : ($key * 100);
+
+                    if ($this->ticketRepository->updateTicketStatus($id, $status, $kanbanSortIndex, $handler) === false) {
                         // Earlier tickets in the batch were already written (the repository
                         // also reports false for "0 rows changed"), so their timers must still stop.
                         $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
@@ -4929,13 +4941,20 @@ class Tickets extends BaseService
         return $summary;
     }
 
-    public function getTicketTemplateAssignments($params): array
+    /**
+     * Builds the shared template variables for the project to-do views (kanban, table, list, …).
+     *
+     * @param  array  $params  Incoming request/search parameters.
+     * @param  string  $kanbanSort  Card order (a KanbanViewSettings::SORT_OPTIONS key); defaults to
+     *                              the manual kanban order. Unknown values fall back to manual.
+     */
+    public function getTicketTemplateAssignments($params, string $kanbanSort = KanbanViewSettings::DEFAULT_SORT): array
     {
 
         $currentSprint = $this->sprintService->getCurrentSprintId((int) session('currentProject'));
 
         $searchCriteria = $this->prepareTicketSearchArray($params);
-        $searchCriteria['orderBy'] = 'kanbansort';
+        $searchCriteria['orderBy'] = KanbanViewSettings::repositorySortKey($kanbanSort);
 
         $allTickets = $this->getAllGrouped($searchCriteria);
         $allTicketStates = $this->getStatusLabels();

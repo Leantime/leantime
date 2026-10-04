@@ -7,7 +7,7 @@ use Leantime\Domain\Tickets\Services\KanbanViewSettings;
 use Unit\TestCase;
 
 /**
- * Preference resolution for the kanban "Card fields" menu (#1859).
+ * Preference resolution for the kanban board view menu: card fields (#1859) and sort (#1536).
  */
 class KanbanViewSettingsTest extends TestCase
 {
@@ -66,6 +66,35 @@ class KanbanViewSettingsTest extends TestCase
         $this->assertNotContains(true, KanbanViewSettings::fieldsFromVisibleList(null), 'Nothing checked hides every optional field');
     }
 
+    public function test_sort_defaults_to_manual_and_rejects_unknown_options(): void
+    {
+        $this->assertSame('manual', KanbanViewSettings::resolve(false)['sort']);
+        $this->assertSame('priority', KanbanViewSettings::resolve(json_encode(['sort' => 'priority']))['sort']);
+        $this->assertSame('manual', KanbanViewSettings::resolve(json_encode(['sort' => 'zp_tickets.id; DROP']))['sort']);
+        $this->assertSame('manual', KanbanViewSettings::normalizeSort(['priority']));
+        $this->assertSame('manual', KanbanViewSettings::normalizeSort('kanbansort'), 'repository keys are not sort options');
+    }
+
+    public function test_sort_options_map_to_repository_sort_keys(): void
+    {
+        $this->assertSame('kanbansort', KanbanViewSettings::repositorySortKey('manual'));
+        $this->assertSame('priority', KanbanViewSettings::repositorySortKey('priority'));
+        $this->assertSame('duedate', KanbanViewSettings::repositorySortKey('dueDate'));
+        $this->assertSame('date', KanbanViewSettings::repositorySortKey('created'));
+        $this->assertSame('effort', KanbanViewSettings::repositorySortKey('effort'));
+        $this->assertSame('title', KanbanViewSettings::repositorySortKey('title'));
+        $this->assertSame('kanbansort', KanbanViewSettings::repositorySortKey('bogus'), 'unknown options keep the manual order');
+        $this->assertSame('kanbansort', KanbanViewSettings::repositorySortKey(null));
+    }
+
+    public function test_only_manual_sort_lets_dragging_rewrite_the_order(): void
+    {
+        $this->assertTrue(KanbanViewSettings::isManualSort('manual'));
+        $this->assertTrue(KanbanViewSettings::isManualSort('bogus'));
+        $this->assertFalse(KanbanViewSettings::isManualSort('priority'));
+        $this->assertFalse(KanbanViewSettings::isManualSort('title'));
+    }
+
     public function test_project_preference_wins_then_user_fallback_then_defaults(): void
     {
         $projectValue = json_encode(['fields' => ['milestone' => false]]);
@@ -96,9 +125,10 @@ class KanbanViewSettingsTest extends TestCase
             },
         ]);
 
-        $result = (new KanbanViewSettings($settingService))->saveForCurrentUser(3, ['priority']);
+        $result = (new KanbanViewSettings($settingService))->saveForCurrentUser(3, ['priority'], 'dueDate');
 
         $this->assertTrue($result);
+        $this->assertSame('dueDate', KanbanViewSettings::resolve($saved['usersettings.7.kanbanView'])['sort']);
         $this->assertSame(['usersettings.7.kanbanView', 'usersettings.7.kanbanView.3'], array_keys($saved));
         $this->assertTrue(KanbanViewSettings::resolve($saved['usersettings.7.kanbanView.3'])['fields']['priority']);
         $this->assertFalse(KanbanViewSettings::resolve($saved['usersettings.7.kanbanView.3'])['fields']['milestone']);

@@ -7,7 +7,8 @@ namespace Leantime\Domain\Tickets\Services;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 /**
- * Per-user kanban board view preferences: which optional fields the cards show (#1859).
+ * Per-user kanban board view preferences: which optional fields the cards show (#1859) and how
+ * cards are sorted inside each column (#1536).
  *
  * Stored as JSON in zp_settings under `usersettings.{userId}.kanbanView.{projectId}` (the board
  * the user configured) plus `usersettings.{userId}.kanbanView` (their latest choice, used as the
@@ -35,6 +36,23 @@ class KanbanViewSettings
         'comments' => true,
     ];
 
+    /**
+     * Sort options for cards within a column => the ticket repository sort key that implements it.
+     * "manual" is the drag-and-drop order (kanbanSortIndex) and the default.
+     *
+     * @var array<string, string>
+     */
+    public const SORT_OPTIONS = [
+        'manual' => 'kanbansort',
+        'priority' => 'priority',
+        'dueDate' => 'duedate',
+        'created' => 'date',
+        'effort' => 'effort',
+        'title' => 'title',
+    ];
+
+    public const DEFAULT_SORT = 'manual';
+
     public function __construct(
         private SettingService $settingService,
     ) {}
@@ -42,11 +60,11 @@ class KanbanViewSettings
     /**
      * The built-in preferences used when the user saved nothing.
      *
-     * @return array{fields: array<string, bool>}
+     * @return array{fields: array<string, bool>, sort: string}
      */
     public static function defaults(): array
     {
-        return ['fields' => self::FIELD_DEFAULTS];
+        return ['fields' => self::FIELD_DEFAULTS, 'sort' => self::DEFAULT_SORT];
     }
 
     /**
@@ -55,7 +73,7 @@ class KanbanViewSettings
      * their default, so fields added later appear with their default visibility.
      *
      * @param  mixed  $stored  The raw value read from the settings table.
-     * @return array{fields: array<string, bool>}
+     * @return array{fields: array<string, bool>, sort: string}
      */
     public static function resolve(mixed $stored): array
     {
@@ -63,7 +81,42 @@ class KanbanViewSettings
 
         return [
             'fields' => self::resolveFields($preferences['fields'] ?? null),
+            'sort' => self::normalizeSort($preferences['sort'] ?? null),
         ];
+    }
+
+    /**
+     * Returns the sort option if it is a known one, otherwise the default (manual) sort.
+     *
+     * @param  mixed  $sort  A submitted or stored sort option.
+     */
+    public static function normalizeSort(mixed $sort): string
+    {
+        if (is_string($sort) && array_key_exists($sort, self::SORT_OPTIONS)) {
+            return $sort;
+        }
+
+        return self::DEFAULT_SORT;
+    }
+
+    /**
+     * Maps a sort option to the sort key understood by the ticket repository.
+     *
+     * @param  mixed  $sort  A sort option; unknown values fall back to the manual order.
+     */
+    public static function repositorySortKey(mixed $sort): string
+    {
+        return self::SORT_OPTIONS[self::normalizeSort($sort)];
+    }
+
+    /**
+     * Whether cards follow the user's drag-and-drop order (so dragging may rewrite it).
+     *
+     * @param  mixed  $sort  A sort option.
+     */
+    public static function isManualSort(mixed $sort): bool
+    {
+        return self::normalizeSort($sort) === self::DEFAULT_SORT;
     }
 
     /**
@@ -116,7 +169,7 @@ class KanbanViewSettings
      * Falls back to the user's latest saved choice, then to the built-in defaults.
      *
      * @param  int  $projectId  The project whose board is being viewed.
-     * @return array{fields: array<string, bool>}
+     * @return array{fields: array<string, bool>, sort: string}
      */
     public function getForCurrentUser(int $projectId): array
     {
@@ -134,14 +187,15 @@ class KanbanViewSettings
     }
 
     /**
-     * Saves the current user's kanban card fields for a project (and as their default for
-     * boards they have not configured yet).
+     * Saves the current user's kanban card fields and sort for a project (and as their default
+     * for boards they have not configured yet).
      *
      * @param  int  $projectId  The project whose board was configured.
-     * @param  mixed  $visibleFieldNames  The checked field names from the "Card fields" menu.
+     * @param  mixed  $visibleFieldNames  The checked field names from the board view menu.
+     * @param  mixed  $sort  The chosen sort option; unknown values fall back to manual.
      * @return bool False when there is no logged-in user to save for.
      */
-    public function saveForCurrentUser(int $projectId, mixed $visibleFieldNames): bool
+    public function saveForCurrentUser(int $projectId, mixed $visibleFieldNames, mixed $sort = self::DEFAULT_SORT): bool
     {
         $userId = (int) session('userdata.id');
         if ($userId <= 0) {
@@ -150,6 +204,7 @@ class KanbanViewSettings
 
         $preferences = [
             'fields' => self::fieldsFromVisibleList($visibleFieldNames),
+            'sort' => self::normalizeSort($sort),
         ];
 
         $encodedPreferences = (string) json_encode($preferences);

@@ -16,6 +16,9 @@
     // (e.g. the program board) render the default card.
     $cardFields = ($kanbanView ?? \Leantime\Domain\Tickets\Services\KanbanViewSettings::defaults())['fields'];
     $showCardDropdowns = $cardFields['milestone'] || $cardFields['effort'] || $cardFields['priority'] || $cardFields['assignee'];
+    // Card order inside a column (#1536). Anything but "manual" means dragging only changes status.
+    $cardSort = \Leantime\Domain\Tickets\Services\KanbanViewSettings::normalizeSort($kanbanView['sort'] ?? null);
+    $isManualSort = \Leantime\Domain\Tickets\Services\KanbanViewSettings::isManualSort($cardSort);
 @endphp
 
 {!! $tpl->displayNotification() !!}
@@ -40,6 +43,13 @@
             <p class="tw-text-[var(--secondary-font-color)]" style="margin-bottom:15px;">
                 <i class="fa fa-circle-info" aria-hidden="true"></i>
                 {{ __('text.program_status_rollup') }}
+            </p>
+        @endif
+
+        @if (! $isManualSort)
+            <p class="tw-text-[var(--secondary-font-color)]" style="margin-bottom:15px;">
+                <i class="fa fa-arrow-down-wide-short" aria-hidden="true"></i>
+                {{ sprintf(__('text.kanban_sorted_by'), __('label.kanban_sort_'.$cardSort)) }}
             </p>
         @endif
 
@@ -423,7 +433,7 @@
             }
         @else
             var ticketStatusList = [@foreach ($allTicketStates as $key => $statusRow)'{{ $key }}',@endforeach];
-            leantime.ticketsController.initTicketKanban(ticketStatusList);
+            leantime.ticketsController.initTicketKanban(ticketStatusList, { manualSort: {{ $isManualSort ? 'true' : 'false' }} });
         @endif
 
     @else
