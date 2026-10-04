@@ -369,17 +369,37 @@ function createEmojiExtension() {
                                 if (!selection.empty) {
                                     return { active: false, query: '', range: null, selectedIndex: 0 };
                                 }
+
+                                // Cursor moved away from the :query (click, arrow keys, etc.)
+                                if (state.range && (selection.from < state.range.from || selection.from > state.range.to)) {
+                                    return { active: false, query: '', range: null, selectedIndex: 0 };
+                                }
                             }
 
                             return state;
                         },
                     },
+                    view: function() {
+                        return {
+                            // Remove the popup whenever the suggestion was deactivated by state alone
+                            update: function(view) {
+                                var state = emojiPluginKey.getState(view.state);
+                                if (!state.active) {
+                                    hideEmojiPopup();
+                                }
+                            },
+                            destroy: function() {
+                                hideEmojiPopup();
+                            },
+                        };
+                    },
                     props: {
                         handleTextInput: function(view, from, to, text) {
                             var state = emojiPluginKey.getState(view.state);
 
-                            // Check for : to start emoji suggestion
-                            if (text === ':' && !state.active) {
+                            // Check for : to start emoji suggestion. Only after whitespace or at the
+                            // start of a block, so a literal colon ("Header:", "10:30") is left alone.
+                            if (text === ':' && !state.active && isSuggestionBoundary(view.state, from)) {
                                 view.dispatch(view.state.tr.setMeta(emojiPluginKey, {
                                     active: true,
                                     query: '',
@@ -410,7 +430,7 @@ function createEmojiExtension() {
                                     var emoji = findExactEmoji(state.query);
                                     if (emoji) {
                                         // Insert emoji and close popup
-                                        var tr = view.state.tr.delete(state.range.from - 1, to).insertText(emoji.emoji);
+                                        var tr = view.state.tr.delete(state.range.from, to).insertText(emoji.emoji);
                                         view.dispatch(tr.setMeta(emojiPluginKey, {
                                             active: false,
                                             query: '',
@@ -452,6 +472,19 @@ function createEmojiExtension() {
                                 hideEmojiPopup();
                                 event.stopPropagation();
                                 return true;
+                            }
+
+                            // Nothing typed after the colon yet: let navigation/newline keys behave normally
+                            var isNavigationKey = ['ArrowDown', 'ArrowUp', 'Enter', 'Tab'].indexOf(event.key) !== -1;
+                            if (isNavigationKey && state.query.length === 0) {
+                                view.dispatch(view.state.tr.setMeta(emojiPluginKey, {
+                                    active: false,
+                                    query: '',
+                                    range: null,
+                                    selectedIndex: 0,
+                                }));
+                                hideEmojiPopup();
+                                return false;
                             }
 
                             if (event.key === 'ArrowDown') {
@@ -519,6 +552,21 @@ function createEmojiExtension() {
 var emojiPopup = null;
 var currentResults = [];
 var currentSelectedIndex = 0;
+
+/**
+ * Whether a colon typed at `pos` may open the emoji suggestion:
+ * at the start of a text block or right after whitespace.
+ */
+function isSuggestionBoundary(editorState, pos) {
+    var $pos = editorState.doc.resolve(pos);
+    if ($pos.parentOffset === 0) {
+        return true;
+    }
+
+    var charBefore = $pos.parent.textBetween($pos.parentOffset - 1, $pos.parentOffset, null, '\ufffc');
+
+    return /\s/.test(charBefore);
+}
 
 /**
  * Find exact emoji match
@@ -695,7 +743,7 @@ function insertEmoji(editor, view, emojiItem) {
 
     if (state && state.range) {
         // Delete the :query and insert emoji
-        var tr = view.state.tr.delete(state.range.from - 1, view.state.selection.from).insertText(emojiItem.emoji);
+        var tr = view.state.tr.delete(state.range.from, view.state.selection.from).insertText(emojiItem.emoji);
         view.dispatch(tr.setMeta(emojiPluginKey, {
             active: false,
             query: '',
