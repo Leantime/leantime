@@ -1,5 +1,62 @@
 leantime.calendarController = (function () {
 
+    /**
+     * Ticket dates (in the user's date/time formats) for a moved, resized or received calendar event.
+     *
+     * Read from FullCalendar's startStr/endStr, which carry the calendar's own timezone offset, so the
+     * values are the wall-clock time the user dropped the event on. Reading the JS Date with
+     * luxon.DateTime.fromJSDate() used the browser's timezone instead and shifted every time by the
+     * difference whenever the calendar's zone (the user's setting) and the browser's differ.
+     *
+     * FullCalendar leaves `end` null for single-point events (a task with only a due date, or a to-do
+     * dragged in); fall back to the start: same day for all-day events, one hour later for timed ones
+     * (#3139, #3733).
+     *
+     * @param {Object} fcEvent    FullCalendar EventApi
+     * @param {string} dateFormat Luxon date format
+     * @param {string} timeFormat Luxon time format
+     * @returns {{editFrom: string, timeFrom: string, editTo: string, timeTo: string}}
+     */
+    /**
+     * Removes every other calendar event of the same ticket, keeping keptEvent.
+     *
+     * FullCalendar's getEvents() returns new EventApi wrappers on each call, so comparing them with
+     * keptEvent by identity never matched and the kept event removed itself too: a to-do dropped on
+     * the calendar was saved but vanished until the page was reloaded. The kept event is tagged with
+     * a unique marker instead and recognised by that.
+     *
+     * @param {Object} calendar  FullCalendar Calendar
+     * @param {Object} keptEvent FullCalendar EventApi to keep (enitityId = ticket id)
+     */
+    var removeStaleTicketCopies = function (calendar, keptEvent) {
+        var ticketId = String(keptEvent.extendedProps.enitityId);
+        var keepMarker = 'keep-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+
+        keptEvent.setExtendedProp('keepMarker', keepMarker);
+
+        calendar.getEvents().forEach(function (otherEvent) {
+            if (otherEvent.extendedProps.keepMarker !== keepMarker
+                && otherEvent.extendedProps.enitityType == 'ticket'
+                && String(otherEvent.extendedProps.enitityId) === ticketId) {
+                otherEvent.remove();
+            }
+        });
+    };
+
+    var buildTicketDateValues = function (fcEvent, dateFormat, timeFormat) {
+        var start = luxon.DateTime.fromISO(fcEvent.startStr, { setZone: true });
+        var end = fcEvent.endStr
+            ? luxon.DateTime.fromISO(fcEvent.endStr, { setZone: true })
+            : (fcEvent.allDay ? start : start.plus({ hours: 1 }));
+
+        return {
+            editFrom: start.toFormat(dateFormat),
+            timeFrom: start.toFormat(timeFormat),
+            editTo: end.toFormat(dateFormat),
+            timeTo: end.toFormat(timeFormat),
+        };
+    };
+
     var closeModal = false;
 
     // Latest todo-draggable initializer, refreshed on each initWidgetCalendar() call. The single
@@ -195,22 +252,8 @@ leantime.calendarController = (function () {
         let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
         let userTimeFormat = leantime.dateHelper.getFormatFromSettings("timeformat", "luxon");
 
-        // Ticket dates for a moved/resized/received calendar event. FullCalendar leaves `end` null
-        // for single-point events (a task with only a due date, or a to-do dragged in), and
-        // formatting null produced "Invalid DateTime", which 500'd the PATCH (#3139, #3733).
-        // Fall back to the start: same day for all-day events, one hour later for timed ones.
         let ticketDateValues = function (fcEvent) {
-            let start = luxon.DateTime.fromJSDate(fcEvent.start);
-            let end = fcEvent.end
-                ? luxon.DateTime.fromJSDate(fcEvent.end)
-                : (fcEvent.allDay ? start : start.plus({ hours: 1 }));
-
-            return {
-                editFrom: start.toFormat(userDateFormat),
-                timeFrom: start.toFormat(userTimeFormat),
-                editTo: end.toFormat(userDateFormat),
-                timeTo: end.toFormat(userTimeFormat),
-            };
+            return buildTicketDateValues(fcEvent, userDateFormat, userTimeFormat);
         };
 
 
@@ -333,16 +376,9 @@ leantime.calendarController = (function () {
                     // is a server-rendered snapshot). Make it behave like a scheduled ticket, and drop
                     // any stale copy of the same ticket still shown at its old slot, so it appears
                     // once (#3733).
-                    var ticketId = event.event.id;
                     event.event.setExtendedProp('enitityType', 'ticket');
-                    event.event.setExtendedProp('enitityId', ticketId);
-                    calendar.getEvents().forEach(function (otherEvent) {
-                        if (otherEvent !== event.event
-                            && otherEvent.extendedProps.enitityType == 'ticket'
-                            && String(otherEvent.extendedProps.enitityId) === String(ticketId)) {
-                            otherEvent.remove();
-                        }
-                    });
+                    event.event.setExtendedProp('enitityId', event.event.id);
+                    removeStaleTicketCopies(calendar, event.event);
                 }).catch(function (error) {
                         jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
                         event.revert();
@@ -517,6 +553,8 @@ leantime.calendarController = (function () {
 
     // Make public what you want to have public, everything else is private
     return {
+        buildTicketDateValues: buildTicketDateValues,
+        removeStaleTicketCopies: removeStaleTicketCopies,
         initCalendar:initCalendar,
         initEventDatepickers:initEventDatepickers,
         initExportModal:initExportModal,

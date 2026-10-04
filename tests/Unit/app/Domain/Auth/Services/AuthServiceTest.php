@@ -313,4 +313,33 @@ class AuthServiceTest extends TestCase
             $this->makeService($noLdapConfig)->getLoginInputPlaceholder()
         );
     }
+
+    /**
+     * The login page caches the logged-out localization (server default timezone and formats) in the
+     * session. Logging in must drop that cache so the user's own timezone is loaded; otherwise
+     * calendars and the server disagree on the timezone and dropped events land hours off.
+     */
+    public function test_set_user_session_clears_the_logged_out_localization_cache(): void
+    {
+        session(['localization.cached' => true, 'usersettings.timezone' => null]);
+
+        $authRepo = $this->make(AuthRepository::class, ['updateUserSession' => fn () => true]);
+
+        $this->makeService(authRepo: $authRepo)->setUserSession([
+            'id' => 1,
+            'firstname' => 'Test',
+            'username' => 'test@leantime.io',
+            'password' => 'hash',
+            'profileId' => 0,
+            'clientId' => 0,
+            'role' => 20,
+            'settings' => '',
+            'twoFAEnabled' => false,
+            'twoFASecret' => '',
+            'createdOn' => '2026-01-01 00:00:00',
+            'modified' => '2026-01-01 00:00:00',
+        ]);
+
+        $this->assertFalse(session()->has('localization.cached'));
+    }
 }
