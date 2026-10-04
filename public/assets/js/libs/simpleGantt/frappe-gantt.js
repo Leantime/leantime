@@ -1448,7 +1448,8 @@ var Gantt = (function () {
 
         setup_layers() {
             this.layers = {};
-            const layers = ['grid', 'date', 'arrow', 'progress', 'bar', 'details'];
+            // date is drawn above the bars so the sticky header covers them while scrolling
+            const layers = ['grid', 'arrow', 'progress', 'bar', 'date', 'details'];
             // make group layers
             for (let layer of layers) {
                 this.layers[layer] = createSVG('g', {
@@ -1545,7 +1546,7 @@ var Gantt = (function () {
                 width: header_width,
                 height: header_height,
                 class: 'grid-header',
-                append_to: this.layers.grid,
+                append_to: this.layers.date,
             });
 
             createSVG('rect', {
@@ -1554,7 +1555,7 @@ var Gantt = (function () {
                 width: header_width,
                 height: 1,
                 class: 'grid-header-line',
-                append_to: this.layers.grid,
+                append_to: this.layers.date,
             });
         }
 
