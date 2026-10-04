@@ -4194,7 +4194,8 @@ class Tickets extends BaseService
             'storypoints' => $values['storypoints'] ?? '',
             'hourRemaining' => $values['hourRemaining'] ?? 0,
             'planHours' => $values['planHours'] ?? 0,
-            'sprint' => '',
+            // A new subtask lives in its parent's sprint (#2078); updates keep the stored sprint.
+            'sprint' => $isNewSubtask ? ($parentTicket->sprint ?? '') : '',
             'acceptanceCriteria' => '',
             'tags' => '',
             'editFrom' => $values['editFrom'] ?? '',
@@ -4217,6 +4218,7 @@ class Tickets extends BaseService
         // Updating an existing subtask only changes the fields the caller sent (#3701). The
         // parent link, project and subtask type are always set from the parent, never preserved.
         if (! $isNewSubtask && $existingSubtask instanceof TicketModel) {
+            unset($submittedValues['sprint']);
             $forcedFields = ['type' => true, 'projectId' => true, 'dependingTicketId' => true];
             $values = $this->keepStoredValuesForOmittedFields($values, $submittedValues + $forcedFields, $existingSubtask);
         }
@@ -4459,6 +4461,12 @@ class Tickets extends BaseService
 
         $newStatusByTicket = [];
 
+        // The kanban posts every card of the swimlane from the browser's (possibly stale) view.
+        // When the dragged card is known, only that card may change status; a card whose stored
+        // status differs was moved by someone else since this page loaded, so leave it alone
+        // instead of moving it back (#3099). RPC callers without a handler keep full control.
+        $draggedTicketId = $handler ? (int) substr($handler, 7) : null;
+
         // Jquery sortable serializes the array for kanban in format
         // statusKey: ticket[]=X&ticket[]=X2...,
         // statusKey2: ticket[]=X&ticket[]=X2...,
@@ -4471,6 +4479,20 @@ class Tickets extends BaseService
                     foreach ($tickets as $key => $ticketString) {
                         $id = substr($ticketString, 9);
 
+                        $previousStatus = $previousStatusByTicket[(int) $id] ?? null;
+                        $statusChanged = $previousStatus !== (string) $status;
+                        $isOtherCard = $draggedTicketId !== null && (int) $id !== $draggedTicketId;
+
+                        if ($isOtherCard) {
+                            // Only re-sort it, and only while its status is still the one we read: a
+                            // card moved meanwhile (stale tab, or an overlapping drag) is left alone.
+                            if (! $statusChanged) {
+                                $this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler, $previousStatus);
+                            }
+
+                            continue;
+                        }
+
                         if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
                             // Earlier tickets in the batch were already written (the repository
                             // also reports false for "0 rows changed"), so their timers must still stop.
@@ -4482,7 +4504,6 @@ class Tickets extends BaseService
                         // Every ticket of the swimlane is re-posted with its column's status; only
                         // tickets whose status actually changed count, so a timer on a ticket that
                         // was already Done is not stopped by dragging some other card.
-                        $statusChanged = ($previousStatusByTicket[(int) $id] ?? null) !== (string) $status;
                         if ($statusChanged) {
                             $newStatusByTicket[(int) $id] = $status;
                         }

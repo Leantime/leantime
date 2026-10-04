@@ -745,6 +745,47 @@ class TicketsServiceTest extends TestCase
         $this->assertSame([], $punchedOut, 're-sorting a ticket that was already Done must not stop its timer');
     }
 
+    public function test_kanban_drag_does_not_revert_a_card_moved_in_another_tab(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+
+        $writtenStatuses = [];
+        $expectedStatuses = [];
+        $service = $this->buildAuthzService([
+            // Ticket 5 was moved to In Progress (4) elsewhere; this stale tab still shows it in New (3).
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => (int) $id === 5 ? 4 : 3]),
+            'updateTicketStatus' => function ($id, $status, $sorting = -1, $handler = null, $expectedStatus = false) use (&$writtenStatuses, &$expectedStatuses) {
+                $writtenStatuses[(int) $id] = (int) $status;
+                $expectedStatuses[(int) $id] = $expectedStatus;
+
+                return true;
+            },
+            'getStateLabels' => fn () => [3 => ['name' => 'New', 'statusType' => 'NEW'], 0 => ['name' => 'Done', 'statusType' => 'DONE']],
+        ], $this->permissionsForProjects([7]), $this->make(TimesheetService::class, ['isClocked' => fn () => false]));
+
+        // Ticket 6 is dragged to Done; the stale payload still lists ticket 5 under New.
+        $this->assertTrue($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5&ticket[]=7', '0' => 'ticket[]=6'], 'ticket_6'));
+
+        $this->assertSame([7 => 3, 6 => 0], $writtenStatuses, 'only the dragged card may change status (#3099)');
+        // Other cards are only written while their status is still the one read (compare-and-set),
+        // the dragged card unconditionally.
+        $this->assertSame([7 => '3', 6 => false], $expectedStatuses);
+    }
+
+    public function test_kanban_drag_tolerates_a_card_moved_by_an_overlapping_request(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => 3]),
+            // Ticket 5 was moved by an overlapping request after we read it: the conditional write misses.
+            'updateTicketStatus' => fn ($id, $status, $sorting = -1, $handler = null, $expectedStatus = false) => $expectedStatus === false,
+            'getStateLabels' => fn () => [3 => ['name' => 'New', 'statusType' => 'NEW'], 0 => ['name' => 'Done', 'statusType' => 'DONE']],
+        ], $this->permissionsForProjects([7]), $this->make(TimesheetService::class, ['isClocked' => fn () => false]));
+
+        $this->assertTrue($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5', '0' => 'ticket[]=6'], 'ticket_6'));
+    }
+
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor']]);
@@ -811,6 +852,49 @@ class TicketsServiceTest extends TestCase
 
         $this->assertTrue($service->upsertSubtask(['headline' => 'Sub', 'status' => 3, 'subtaskId' => '12'], $this->ticketIn(5, 9)));
         $this->assertSame(12, $updatedId);
+    }
+
+    public function test_upsert_subtask_new_subtask_inherits_the_parent_sprint(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor'], 'currentSprint' => 99]);
+
+        $addedValues = null;
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => (int) $id === 5 ? $this->ticketIn(5, 9, ['sprint' => 42]) : false,
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
+            'addTicket' => function ($values) use (&$addedValues) {
+                $addedValues = $values;
+
+                return 123;
+            },
+        ], $this->permissionsForProjects([9]));
+
+        // The quick-add form posts the session sprint; the parent's sprint must win (#2078).
+        $this->assertTrue($service->upsertSubtask(['headline' => 'Sub', 'status' => 3, 'sprint' => 99], $this->ticketIn(5, 9)));
+        $this->assertSame(42, $addedValues['sprint']);
+    }
+
+    public function test_upsert_subtask_update_keeps_the_stored_sprint(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $updatedValues = null;
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => match ((int) $id) {
+                5 => $this->ticketIn(5, 9, ['sprint' => 42]),
+                12 => $this->ticketIn(12, 9, ['dependingTicketId' => 5, 'sprint' => 7]),
+                default => false,
+            },
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
+            'updateTicket' => function ($values) use (&$updatedValues) {
+                $updatedValues = $values;
+
+                return true;
+            },
+        ], $this->permissionsForProjects([9]));
+
+        $this->assertTrue($service->upsertSubtask(['headline' => 'Sub', 'status' => 3, 'subtaskId' => '12', 'sprint' => ''], $this->ticketIn(5, 9)));
+        $this->assertSame(7, $updatedValues['sprint']);
     }
 
     public function test_get_all_possible_parents_is_empty_for_a_project_the_caller_cannot_view(): void
