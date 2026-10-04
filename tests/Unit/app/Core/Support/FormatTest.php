@@ -151,4 +151,45 @@ class FormatTest extends TestCase
     {
         $this->assertSame('1 Std. 15 Min.', Format::hoursMinutes(1.25, '%s Std. %s Min.'));
     }
+
+    /**
+     * @return array<string, array{0: mixed, 1: string}>
+     */
+    public static function numberCases(): array
+    {
+        return [
+            'integer value drops decimals' => [3.0, '3'],
+            'rounds to one decimal' => [2.56, '2.6'],
+            'thousands separator' => [1234.5, '1,234.5'],
+            'numeric string' => ['42.04', '42'],
+            'zero' => [0, '0'],
+            'negative' => [-7.26, '-7.3'],
+            'tie rounds to even like intl' => [7.25, '7.2'],
+        ];
+    }
+
+    /**
+     * The report pages must render without the intl extension (#3838): the fallback has to match
+     * Number::format() for the default locale.
+     *
+     * @dataProvider numberCases
+     */
+    public function test_number_without_intl(mixed $value, string $expected): void
+    {
+        $this->assertSame($expected, Format::numberWithoutIntl((float) $value, 1));
+    }
+
+    /**
+     * @dataProvider numberCases
+     */
+    public function test_number_matches_the_fallback_for_the_default_locale(mixed $value, string $expected): void
+    {
+        $this->assertSame($expected, Format::number($value, 1));
+    }
+
+    public function test_number_returns_empty_string_for_non_numeric_input(): void
+    {
+        $this->assertSame('', Format::number('n/a'));
+        $this->assertSame('', Format::number(null));
+    }
 }
