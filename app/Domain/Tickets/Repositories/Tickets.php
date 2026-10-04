@@ -5,6 +5,7 @@ namespace Leantime\Domain\Tickets\Repositories;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
@@ -591,6 +592,54 @@ class Tickets
     }
 
     /**
+     * Applies the ORDER BY for a getAllBySearchCriteria() sort key. Unknown keys add no order.
+     *
+     * @param  Builder  $query  The ticket query.
+     * @param  string  $sort  One of standard, kanbansort, duedate, priority, date, effort, title.
+     */
+    private function applySearchSort(Builder $query, string $sort): void
+    {
+        if ($sort == 'standard') {
+            $query->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        } elseif ($sort == 'kanbansort') {
+            $query->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        } elseif ($sort == 'duedate') {
+            // Soonest first; no due date goes last. "No date" is NULL or one of the legacy
+            // sentinels (0000-00-00 00:00:00, 1969-12-31 00:00:00) — both sort before 1970-01-02,
+            // and comparing against that literal is valid on MySQL, PostgreSQL and SQL Server.
+            $dueDateColumn = $this->dbHelper->wrapColumn('zp_tickets.dateToFinish');
+            $query->orderByRaw('(CASE WHEN '.$dueDateColumn.' IS NULL OR '.$dueDateColumn." < '1970-01-02' THEN 1 ELSE 0 END)")
+                ->orderBy('zp_tickets.dateToFinish', 'ASC')
+                ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        } elseif ($sort == 'priority') {
+            // Highest priority (1) first; tickets without a priority go last, not first.
+            $priorityColumn = $this->dbHelper->wrapColumn('zp_tickets.priority');
+            $query->orderByRaw('(CASE WHEN '.$priorityColumn.' IS NULL OR '.$priorityColumn." = '' OR ".$priorityColumn." = '0' THEN 1 ELSE 0 END)")
+                ->orderBy('zp_tickets.priority', 'ASC')
+                ->orderBy('zp_tickets.dateToFinish', 'ASC')
+                ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        } elseif ($sort == 'date') {
+            $query->orderByDesc('zp_tickets.date')
+                ->orderBy('zp_tickets.sortindex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        } elseif ($sort == 'effort') {
+            // Largest effort first; tickets without an estimate go last.
+            $effortColumn = $this->dbHelper->wrapColumn('zp_tickets.storypoints');
+            $query->orderByRaw('(CASE WHEN '.$effortColumn.' IS NULL OR '.$effortColumn.' <= 0 THEN 1 ELSE 0 END)')
+                ->orderByDesc('zp_tickets.storypoints')
+                ->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        } elseif ($sort == 'title') {
+            $query->orderBy('zp_tickets.headline', 'ASC')
+                ->orderByDesc('zp_tickets.id');
+        }
+    }
+
+    /**
      * getAllBySearchCriteria - get Tickets by search criteria array
      *
      * @param  null  $limit
@@ -911,41 +960,7 @@ class Tickets
 
         $query->groupBy($groupByColumns);
 
-        // Apply sorting
-        if ($sort == 'standard') {
-            $query->orderBy('zp_tickets.sortindex', 'ASC')
-                ->orderByDesc('zp_tickets.id');
-        } elseif ($sort == 'kanbansort') {
-            $query->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
-                ->orderByDesc('zp_tickets.id');
-        } elseif ($sort == 'duedate') {
-            $query->orderByRaw('('.$this->dbHelper->wrapColumn('zp_tickets.dateToFinish').' IS NULL)')
-                ->orderBy('zp_tickets.dateToFinish', 'ASC')
-                ->orderBy('zp_tickets.sortindex', 'ASC')
-                ->orderByDesc('zp_tickets.id');
-        } elseif ($sort == 'priority') {
-            // Highest priority (1) first; tickets without a priority go last, not first.
-            $priorityColumn = $this->dbHelper->wrapColumn('zp_tickets.priority');
-            $query->orderByRaw('(CASE WHEN '.$priorityColumn.' IS NULL OR '.$priorityColumn." = '' OR ".$priorityColumn." = '0' THEN 1 ELSE 0 END)")
-                ->orderBy('zp_tickets.priority', 'ASC')
-                ->orderBy('zp_tickets.dateToFinish', 'ASC')
-                ->orderBy('zp_tickets.sortindex', 'ASC')
-                ->orderByDesc('zp_tickets.id');
-        } elseif ($sort == 'date') {
-            $query->orderByDesc('zp_tickets.date')
-                ->orderBy('zp_tickets.sortindex', 'ASC')
-                ->orderByDesc('zp_tickets.id');
-        } elseif ($sort == 'effort') {
-            // Largest effort first; tickets without an estimate go last.
-            $effortColumn = $this->dbHelper->wrapColumn('zp_tickets.storypoints');
-            $query->orderByRaw('(CASE WHEN '.$effortColumn.' IS NULL OR '.$effortColumn.' <= 0 THEN 1 ELSE 0 END)')
-                ->orderByDesc('zp_tickets.storypoints')
-                ->orderBy('zp_tickets.kanbanSortIndex', 'ASC')
-                ->orderByDesc('zp_tickets.id');
-        } elseif ($sort == 'title') {
-            $query->orderBy('zp_tickets.headline', 'ASC')
-                ->orderByDesc('zp_tickets.id');
-        }
+        $this->applySearchSort($query, $sort);
 
         if ($limit !== null && $limit > 0) {
             $query->limit($limit);
