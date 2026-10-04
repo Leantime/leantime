@@ -191,8 +191,8 @@ class TicketHistoryServiceTest extends TestCase
         // in project 9 from then on; the new value too.
         $this->assertSame('Backlog (P9)', $byId[3]->oldValue);
         $this->assertSame('Shipped (P9)', $byId[3]->newValue);
-        // After moving back to project 7: the previous value was recorded in project 9.
-        $this->assertSame('Shipped (P9)', $byId[5]->oldValue);
+        // The move back to project 7 (row 4) also kept the status, so it is read in project 7.
+        $this->assertSame('Done', $byId[5]->oldValue);
         $this->assertSame('New', $byId[5]->newValue);
     }
 
