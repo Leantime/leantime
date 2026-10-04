@@ -2794,6 +2794,9 @@ min-width: 1200px
         width: min(85vw, 300px);
         max-width: 300px;
         height: calc(100vh - 50px);
+        /* iOS Safari: 100vh includes the area behind the browser toolbar, which
+           hid the bottom of the drawer; dvh tracks the visible viewport (#2878) */
+        height: calc(100dvh - 50px);
         border-radius: 0;
         z-index: 1001;
         display: flex;
