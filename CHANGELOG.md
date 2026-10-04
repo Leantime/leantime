@@ -1,31 +1,42 @@
 # Version: 3.10.3
 
+## Upgrade Notes
+- **Set `LEAN_APP_URL`** - Password reset and invite emails now link only to a trusted app URL. If `LEAN_APP_URL` is not set, Leantime learns the URL the first time an owner or admin signs in (after 2FA). Until then, reset and invite emails are not sent, and admins see a banner explaining why. Setting `LEAN_APP_URL` is recommended. (#3826)
+- **Plugin cron jobs now run** - Console runs (`schedule:run`, `bin/leantime`) now load enabled plugins. Scheduled jobs from RecurringTasks, CalDAV, GoogleCalendar and others now actually run. Expect a catch-up on the first scheduler run after upgrading. (#3831)
+- **Moving tickets between projects** now clears a parent, milestone or sprint that belongs to the old project, and maps the status to the new project's equivalent. (#3832)
+- **API status validation** - When creating tickets via API/MCP, an unknown numeric status falls back to "New". Updates and patches with an unknown status are rejected. (#3832)
+
 ## New Features
-- **API & MCP** - More reliable partial updates, new status filters, a status summary endpoint and structured error responses for the API and MCP. (#3832)
-- **Health Endpoint** - Added a health endpoint for monitoring deployments. (#3829)
-- **Calendar Widget Filter** - The calendar widget can now be filtered. (#3829)
-- **Subtask Hour Totals** - Subtask hours now roll up into totals. (#3829)
+- **Health endpoint** - `GET /health` for load balancers and uptime monitoring; it bypasses session and auth. (#3829)
+- **Calendar widget: hide completed** - Toggle to hide done tasks in the dashboard calendar widget. (#3829)
+- **Subtask hour totals** - Ticket subtask lists show logged-hour totals. (#3829)
+- **Task status summary** - New `tickets.getStatusSummary` JSON-RPC method and MCP tool. (#3832)
+- **API filters** - `tickets.getAll` supports `modifiedAfter`, `modifiedBefore` and `statusType`. (#3832)
 
 ## Improvements
-- **Time Entry** - Hours can now be entered and displayed as minutes. (#3829)
-- **CSV Export** - Ticket descriptions are now included in CSV exports. (#3829)
+- **Hours display** - Short durations are shown as hours and minutes (e.g. `1h 30m`). (#3829)
+- **CSV export** - Ticket descriptions are included, with spreadsheet formula injection neutralised. (#3829)
+- **API/MCP partial updates** - Fields left out of an update are preserved, including dates. Comment creation is validated server-side, with structured errors. (#3832)
+- **Inline PDFs** - PDF attachments open in the browser instead of downloading. (#3828)
 
 ## Bug Fixes
-- **Plugin Scheduled Jobs** - Enabled plugins now load during console runs so their scheduled jobs execute. (#3831)
-- **User Invites** - Fixed adding users so invites are sent correctly. (#3828)
-- **Timers** - Running timers now stop when a ticket is moved to Done. (#3828)
-- **PDF Attachments** - PDFs now open inline as expected. (#3828)
-- **Calendar Times** - Corrected iCal event times. (#3828, #3829)
-- **Ticket Tabs** - Fixed ticket tab display. (#3827)
-- **Portfolio Pages** - Resolved issues on portfolio pages. (#3827)
-- **Delete Confirmation** - Fixed the delete confirmation dialog. (#3827)
-- **Calendar Widget** - Fixed the month view in the calendar widget. (#3827)
+- Users added via the API/CLI without a password now receive an invite (#3822)
+- Timer stops when a ticket is moved to Done (#415)
+- iCal feed times are exported in UTC (#3114); calendar import is more tolerant, and feed URLs no longer appear in logs (#3165)
+- Ticket detail tabs work again (#3807)
+- Portfolio pages render again (#3819)
+- Delete confirmation text was missing (#3821)
+- Calendar widget month view (#2333)
+- Plugin scheduled jobs never ran from cron (#3831)
+- Assorted API/MCP fixes: parent tickets must be visible and in the same project; MCP tools check project access; Connector imports handle unknown statuses (#3832)
 
 ## Security
-- **Email Links** - Links in emails are now built from a trusted app URL. (#3826)
+- Email links (password reset, invites) are built from a trusted app URL and no longer from the request's Host header (#3826)
+- Header theme CSS values are escaped (#3832)
 
-## Dependency Updates
-- Updated the bundled plugins for 3.10.3. (#3833)
+## Plugins
+Marketplace plugin updates released alongside 3.10.3 (compatibility and bug fixes, including recurring-task scheduling): RecurringTasks 1.3.1, AdvancedAuth 1.3.1, CustomFields 1.4.1, McpServer 1.1.1, Notes 1.4.5, PgmPro 1.5.1, StrategyPro 1.5.1, Whiteboardscanvas 1.4.1.
+Behaviour notes: CalDAV sync refuses accounts with 2FA enabled; the GoogleCalendar OAuth callback must be on the app domain; CustomFields management is admin-only.
 
 ---
 
