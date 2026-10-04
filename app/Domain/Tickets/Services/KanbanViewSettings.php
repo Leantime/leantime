@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Tickets\Services;
 
+use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 
 /**
  * Per-user kanban board view preferences: which optional fields the cards show (#1859) and how
@@ -15,7 +19,7 @@ use Leantime\Domain\Setting\Services\Setting as SettingService;
  * starting point on boards they never configured). The defaults reproduce the card exactly as it
  * looked before the setting existed, so users who never touch it see no change.
  */
-class KanbanViewSettings
+class KanbanViewSettings extends BaseService
 {
     /**
      * Optional card fields and whether each is shown by default. Order = order in the menu.
@@ -190,10 +194,16 @@ class KanbanViewSettings
      * Saves the current user's kanban card fields and sort for a project (and as their default
      * for boards they have not configured yet).
      *
+     * The project is the board the menu was rendered for (posted with the form), never the
+     * session project: another tab may have switched the session to a different project.
+     *
      * @param  int  $projectId  The project whose board was configured.
      * @param  mixed  $visibleFieldNames  The checked field names from the board view menu.
      * @param  mixed  $sort  The chosen sort option; unknown values fall back to manual.
      * @return bool False when there is no logged-in user to save for.
+     *
+     * @throws ValidationException When the project id is not a positive integer.
+     * @throws AuthorizationException When the user may not view that project's to-dos.
      */
     public function saveForCurrentUser(int $projectId, mixed $visibleFieldNames, mixed $sort = self::DEFAULT_SORT): bool
     {
@@ -201,6 +211,12 @@ class KanbanViewSettings
         if ($userId <= 0) {
             return false;
         }
+
+        if ($projectId <= 0) {
+            throw new ValidationException(['projectId' => ['A valid project is required.']]);
+        }
+
+        $this->authorize(TicketsPermissions::VIEW, $projectId);
 
         $preferences = [
             'fields' => self::fieldsFromVisibleList($visibleFieldNames),
@@ -212,9 +228,7 @@ class KanbanViewSettings
         // saveSetting() reports false when the stored value did not change (0 affected rows),
         // so its result is not a failure signal here; re-saving the same choice is fine.
         $this->settingService->saveSetting($this->userKey($userId), $encodedPreferences);
-        if ($projectId > 0) {
-            $this->settingService->saveSetting($this->projectKey($userId, $projectId), $encodedPreferences);
-        }
+        $this->settingService->saveSetting($this->projectKey($userId, $projectId), $encodedPreferences);
 
         return true;
     }

@@ -39,7 +39,8 @@ class ShowKanban extends Controller
         }
 
         // The user's card fields (#1859) and card sort (#1536) for this board.
-        $kanbanView = $this->kanbanViewSettings->getForCurrentUser((int) session('currentProject'));
+        $kanbanViewProjectId = (int) session('currentProject');
+        $kanbanView = $this->kanbanViewSettings->getForCurrentUser($kanbanViewProjectId);
 
         $template_assignments = $this->ticketService->getTicketTemplateAssignments($params, $kanbanView['sort']);
         $allKanbanColumns = $this->ticketService->getKanbanColumns();
@@ -54,6 +55,7 @@ class ShowKanban extends Controller
         $this->tpl->assign('allKanbanColumns', $allKanbanColumns);
         $this->tpl->assign('statusBreakdown', $statusBreakdown);
         $this->tpl->assign('kanbanView', $kanbanView);
+        $this->tpl->assign('kanbanViewProjectId', $kanbanViewProjectId);
 
         return $this->tpl->display('tickets.showKanban');
     }

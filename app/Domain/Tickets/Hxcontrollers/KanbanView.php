@@ -30,14 +30,22 @@ class KanbanView extends HtmxController
     }
 
     /**
-     * Stores the submitted card fields and sort for the current user and project.
+     * Stores the submitted card fields and sort for the current user and the board's project.
+     *
+     * The project comes from the form (the board it was rendered for), not the session, which
+     * another tab may have switched; the service validates it and authorizes against it.
      *
      * @return Response Empty response that refreshes the board (or shows an error toast).
      */
-    #[RequiresPermission(TicketsPermissions::VIEW)]
+    #[RequiresPermission(TicketsPermissions::VIEW, entityScoped: true)]
     public function save(): Response
     {
-        $projectId = (int) session('currentProject');
+        $projectId = filter_var($this->incomingRequest->input('projectId'), FILTER_VALIDATE_INT);
+        if ($projectId === false || $projectId <= 0) {
+            $this->tpl->setNotification($this->language->__('notifications.kanban_view_not_saved'), 'error');
+
+            return $this->tpl->emptyResponse();
+        }
         $visibleFieldNames = $this->incomingRequest->input('fields', []);
         $sort = $this->incomingRequest->input('sort', KanbanViewSettings::DEFAULT_SORT);
 

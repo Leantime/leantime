@@ -2,6 +2,9 @@
 
 namespace Unit\app\Domain\Tickets\Services;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Tickets\Services\KanbanViewSettings;
 use Unit\TestCase;
@@ -125,13 +128,48 @@ class KanbanViewSettingsTest extends TestCase
             },
         ]);
 
-        $result = (new KanbanViewSettings($settingService))->saveForCurrentUser(3, ['priority'], 'dueDate');
+        $checks = [];
+        $service = new KanbanViewSettings($settingService);
+        $service->setPermissionService($this->permissionsForProjects([3], $checks));
+
+        $result = $service->saveForCurrentUser(3, ['priority'], 'dueDate');
 
         $this->assertTrue($result);
         $this->assertSame('dueDate', KanbanViewSettings::resolve($saved['usersettings.7.kanbanView'])['sort']);
         $this->assertSame(['usersettings.7.kanbanView', 'usersettings.7.kanbanView.3'], array_keys($saved));
         $this->assertTrue(KanbanViewSettings::resolve($saved['usersettings.7.kanbanView.3'])['fields']['priority']);
         $this->assertFalse(KanbanViewSettings::resolve($saved['usersettings.7.kanbanView.3'])['fields']['milestone']);
+        $this->assertSame([['tickets.view', 3]], $checks, 'authorized against the posted board project');
+    }
+
+    public function test_save_fails_closed_for_a_project_the_user_cannot_view(): void
+    {
+        $settingService = $this->make(SettingService::class, [
+            'saveSetting' => function () {
+                throw new \RuntimeException('must not save a preference for a forbidden project');
+            },
+        ]);
+
+        // Session says project 3 (another tab), the form posted project 9 which the user cannot view.
+        session(['currentProject' => 3]);
+        $service = new KanbanViewSettings($settingService);
+        $service->setPermissionService($this->permissionsForProjects([3]));
+
+        $this->expectException(AuthorizationException::class);
+        $service->saveForCurrentUser(9, ['priority']);
+    }
+
+    public function test_save_rejects_a_missing_project(): void
+    {
+        $service = new KanbanViewSettings($this->make(SettingService::class, [
+            'saveSetting' => function () {
+                throw new \RuntimeException('must not save without a project');
+            },
+        ]));
+        $service->setPermissionService($this->permissionsForProjects([3]));
+
+        $this->expectException(ValidationException::class);
+        $service->saveForCurrentUser(0, ['priority']);
     }
 
     public function test_guests_get_defaults_and_cannot_save(): void
@@ -142,6 +180,30 @@ class KanbanViewSettingsTest extends TestCase
 
         $this->assertSame(KanbanViewSettings::defaults(), $service->getForCurrentUser(3));
         $this->assertFalse($service->saveForCurrentUser(3, []));
+    }
+
+    /**
+     * Permission engine that grants tickets.* only in the given projects and records each check.
+     *
+     * @param  int[]  $allowedProjects
+     * @param  array<int, array{0: string, 1: int|null}>  $checks
+     */
+    private function permissionsForProjects(array $allowedProjects, array &$checks = []): PermissionService
+    {
+        $decide = function (string $key, ?int $projectId = null) use ($allowedProjects, &$checks): bool {
+            $checks[] = [$key, $projectId];
+
+            return in_array($projectId, $allowedProjects, true);
+        };
+
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => $decide,
+            'authorize' => function (string $key, ?int $projectId = null) use ($decide): void {
+                if (! $decide($key, $projectId)) {
+                    throw new AuthorizationException('denied');
+                }
+            },
+        ]);
     }
 
     /**

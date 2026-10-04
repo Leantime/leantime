@@ -19,6 +19,8 @@
          close the menu after every checkbox. --}}
     <div class="dropdown-menu tw-p-3" style="min-width:220px;" onclick="event.stopPropagation();">
         <form hx-post="{{ BASE_URL }}/hx/tickets/kanbanView/save" hx-swap="none">
+            {{-- The board's own project: the session project can change in another tab. --}}
+            <input type="hidden" name="projectId" value="{{ (int) ($kanbanViewProjectId ?? 0) }}" />
             <div class="tw-font-bold tw-mb-1">{{ __('label.kanban_card_fields') }}</div>
             @foreach ($kanbanFields as $fieldName => $isVisible)
                 <span class="checkbox tw-block">
