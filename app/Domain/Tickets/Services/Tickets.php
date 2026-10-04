@@ -2505,8 +2505,10 @@ class Tickets extends BaseService
         $outcomeImpact = $values['outcomeImpact'] ?? null;
 
         // Remember exactly which fields the caller sent: anything absent keeps its stored value
-        // below (partial-update semantics, #3701).
+        // below (partial-update semantics, #3701). The creation timestamp ("date") is never taken
+        // from an update payload, so it is always preserved.
         $submittedValues = $values;
+        unset($submittedValues['date']);
 
         $values = [
             'id' => $values['id'],
@@ -2566,6 +2568,13 @@ class Tickets extends BaseService
             if ($values['status'] === null) {
                 unset($submittedValues['status']);
             }
+        }
+
+        // Moving without a status: status ids are project-specific, so map the current status to
+        // the target project's status of the same type instead of carrying the source id over.
+        if (! array_key_exists('status', $submittedValues) && (int) $values['projectId'] !== (int) $currentTicket->projectId) {
+            $values['status'] = $this->mapStatusToProject($currentTicket, (int) $values['projectId']);
+            $submittedValues['status'] = $values['status'];
         }
 
         $values = $this->prepareTicketDates($values);
@@ -2778,6 +2787,32 @@ class Tickets extends BaseService
     }
 
     /**
+     * The target project's status for a ticket that moves there without an explicit status.
+     *
+     * Status ids are project-specific (4 may be "In Progress" in one project and "Done" in
+     * another), so the ticket's current status TYPE is mapped to the target project's status of
+     * that type; when the type is unknown or missing there, the target's NEW status is used.
+     *
+     * @param  TicketModel  $ticket  The ticket as currently stored.
+     * @param  int  $targetProjectId  The project the ticket moves to.
+     * @return int A status id that exists in the target project.
+     */
+    private function mapStatusToProject(TicketModel $ticket, int $targetProjectId): int
+    {
+        $sourceLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
+        $statusType = (string) ($sourceLabels[(int) $ticket->status]['statusType'] ?? '');
+
+        if (in_array($statusType, ['NEW', 'INPROGRESS', 'DONE'], true)) {
+            $mappedStatus = $this->resolveProjectStatusKeyForType($targetProjectId, $statusType);
+            if ($mappedStatus !== null) {
+                return $mappedStatus;
+            }
+        }
+
+        return $this->defaultNewStatus($targetProjectId);
+    }
+
+    /**
      * The status new work starts in: the project's first NEW-type status, falling back to 3.
      *
      * Custom projects can repurpose status 3, so the default comes from the project's status
@@ -2842,7 +2877,7 @@ class Tickets extends BaseService
     private function keepStoredValuesForOmittedFields(array $values, array $submittedValues, TicketModel $currentTicket): array
     {
         $rowFields = [
-            'headline', 'type', 'description', 'projectId', 'editorId', 'dateToFinish', 'status',
+            'headline', 'type', 'description', 'projectId', 'editorId', 'date', 'dateToFinish', 'status',
             'planHours', 'tags', 'sprint', 'storypoints', 'hourRemaining', 'priority',
             'acceptanceCriteria', 'editFrom', 'editTo', 'dependingTicketId', 'milestoneid',
         ];
@@ -3418,6 +3453,12 @@ class Tickets extends BaseService
         // A newly set parent must be a ticket the caller can see, like on create (#3702).
         if (array_key_exists('dependingTicketId', $params) && (int) $params['dependingTicketId'] !== (int) $ticket->dependingTicketId) {
             $this->assertParentTicketIsVisible($params['dependingTicketId']);
+        }
+
+        // Moving without a status: map the current status to the target project's equivalent type.
+        $isMove = isset($params['projectId']) && (int) $params['projectId'] !== (int) $ticket->projectId;
+        if ($isMove && (! array_key_exists('status', $params) || $params['status'] === null || $params['status'] === '')) {
+            $params['status'] = $this->mapStatusToProject($ticket, (int) $params['projectId']);
         }
 
         // Resolve a status name/type to the project's status id; an empty status is dropped rather

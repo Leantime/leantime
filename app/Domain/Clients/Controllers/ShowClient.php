@@ -124,7 +124,7 @@ class ShowClient extends Controller
 
         // Handle comment
         if (isset($_POST['comment'])) {
-            if ($this->commentService->addComment($_POST, 'client', $id, $client)) {
+            if ($this->commentService->addCommentToLoadedEntity($_POST, 'client', (int) $id, $client)) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');

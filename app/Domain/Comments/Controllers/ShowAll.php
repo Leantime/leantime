@@ -68,7 +68,7 @@ class ShowAll extends Controller
         }
 
         if (isset($params['comment']) === true) {
-            if ($this->commentService->addComment($_POST, $this->module, $this->id, $this->entity)) {
+            if ($this->commentService->addCommentToLoadedEntity($_POST, (string) $this->module, (int) $this->id, $this->entity)) {
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');

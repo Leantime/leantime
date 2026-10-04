@@ -650,4 +650,51 @@ class TicketsApiContractTest extends TestCase
         $this->assertTrue($service->updateTicket(['id' => 977, 'dependingTicketId' => 974, 'headline' => 'x']));
         $this->assertSame(974, $written['dependingTicketId']);
     }
+
+    public function test_moving_without_a_status_maps_it_by_type_to_the_target_project(): void
+    {
+        $written = null;
+        $targetLabels = [
+            20 => ['name' => 'Inbox', 'statusType' => 'NEW', 'sortKey' => 1],
+            21 => ['name' => 'Doing', 'statusType' => 'INPROGRESS', 'sortKey' => 2],
+            22 => ['name' => 'Shipped', 'statusType' => 'DONE', 'sortKey' => 3],
+        ];
+        $stored = $this->storedSubtask();
+        $stored->status = 4; // In Progress in project 9
+        $stored->dependingTicketId = 0;
+
+        $service = $this->service([
+            'getStateLabels' => fn ($projectId) => (int) $projectId === 12 ? $targetLabels : $this->seedLabels(),
+            'getTicket' => fn () => $stored,
+            'updateTicket' => function ($values) use (&$written) {
+                $written = $values;
+
+                return true;
+            },
+        ]);
+
+        $this->assertTrue($service->updateTicket(['id' => 977, 'projectId' => 12]));
+        $this->assertSame(12, (int) $written['projectId']);
+        $this->assertSame(21, $written['status'], 'In Progress maps to the target project In Progress status');
+    }
+
+    public function test_update_ticket_preserves_the_creation_date(): void
+    {
+        $written = null;
+        $stored = $this->storedSubtask();
+        $stored->date = '2026-01-02 03:04:05';
+
+        $service = $this->service([
+            'getTicket' => fn () => $stored,
+            'updateTicket' => function ($values) use (&$written) {
+                $written = $values;
+
+                return true;
+            },
+        ]);
+
+        $service->updateTicket(['id' => 977, 'headline' => 'x', 'date' => '10/03/2026']);
+
+        $this->assertSame('2026-01-02 03:04:05', $written['date']);
+    }
 }

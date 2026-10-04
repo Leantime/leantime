@@ -113,6 +113,11 @@ class Comments extends BaseService
             throw new ValidationException(['entityId' => [$message]], $message);
         }
 
+        // A project id always "resolves" to itself, so check it really exists and is visible.
+        if ($strict && $module === 'project' && ! $this->projectService->getProject((int) $entityId)) {
+            throw new NotFoundException("Could not find project #{$entityId}, or you do not have access to it.");
+        }
+
         // IDOR fence: comments are read by (module, entityId) with no project scoping in the repo,
         // so authorize VIEW against the host entity's REAL project — a foreign id can no longer leak
         // another project's comment thread over RPC. A null project (client/company-scoped target or
@@ -167,20 +172,22 @@ class Comments extends BaseService
     }
 
     /**
-     * Add a comment to an entity.
+     * Add a comment to an entity (API entry point).
      *
-     * When no entity is passed it is loaded server-side from (module, entityId). An unknown module
-     * or a missing/inaccessible entity raises a ValidationException / NotFoundException (JSON-RPC
+     * The module is validated and the entity is ALWAYS loaded (and access-checked) server-side from
+     * (module, entityId); a caller-supplied entity is ignored, so an RPC/MCP caller cannot attach a
+     * comment to an arbitrary module/id by shipping a fake entity. An unknown module or a
+     * missing/inaccessible entity raises a ValidationException / NotFoundException (JSON-RPC
      * -32602 / -32002) instead of returning a silent false (#3704).
      *
      * @param  array  $values  Comment values: text (required), father/parentId, status.
      * @param  string  $module  ticket, project, article, idea, {type}canvasitem (aliases such as "tickets" are accepted).
      * @param  int  $entityId  The id of the entity being commented on.
-     * @param  mixed  $entity  The loaded entity (optional; loaded when omitted).
+     * @param  mixed  $entity  Ignored; kept for backwards compatibility of the RPC signature.
      * @return bool True when the comment was stored; false when the comment text is empty or the write fails.
      *
      * @throws BindingResolutionException
-     * @throws ValidationException When the module is unknown and no entity was supplied.
+     * @throws ValidationException When the module is unknown or the entity id is invalid.
      * @throws NotFoundException When the entity does not exist or is not accessible.
      *
      * @api
@@ -190,33 +197,71 @@ class Comments extends BaseService
     {
         $module = $this->normalizeCommentModule($module);
 
-        // RPC callers (mobile) typically don't pre-load the entity — they
-        // just know module + entityId. Load it server-side so they don't
-        // have to ship a whole ticket payload over the wire just to comment.
-        // JSON-RPC decodes a caller-supplied entity as an array (or a string), but the ticket
-        // notification path dereferences an object and the project path an array (#3067, #2164).
-        // Load the real entity server-side whenever the supplied one has the wrong shape.
-        // Canvas-family entities are always resolved server-side, so the item's existence and canvas
-        // type are enforced rather than taken from the caller.
-        $isCanvasFamilyModule = $module === 'article' || $module === 'idea' || str_ends_with((string) $module, 'canvasitem');
-        $entityHasWrongShape = ($module === 'ticket' && ! is_object($entity))
-            || ($module === 'project' && ! is_array($entity))
-            || $isCanvasFamilyModule;
+        if (! is_string($module) || ! $this->isResolvableCommentModule($module)) {
+            $message = "Unknown comment module '".(is_scalar($module) ? $module : '')."'. Expected one of: ticket, project, article, idea, {type}canvasitem.";
 
-        if (($entity === null || $entityHasWrongShape) && $module && $entityId) {
-            if (! $this->isResolvableCommentModule((string) $module)) {
-                $message = "Unknown comment module '{$module}'. Expected one of: ticket, project, article, idea, {type}canvasitem.";
-
-                throw new ValidationException(['module' => [$message]], $message);
-            }
-
-            $entity = $this->loadEntityForComment($module, (int) $entityId);
-
-            if ($entity === null) {
-                throw new NotFoundException("Could not find {$module} #{$entityId}, or you do not have access to it.");
-            }
+            throw new ValidationException(['module' => [$message]], $message);
         }
 
+        if ((int) $entityId <= 0) {
+            $message = 'entityId must be a positive id.';
+
+            throw new ValidationException(['entityId' => [$message]], $message);
+        }
+
+        $loadedEntity = $this->loadEntityForComment($module, (int) $entityId);
+        if ($loadedEntity === null) {
+            throw new NotFoundException("Could not find {$module} #{$entityId}, or you do not have access to it.");
+        }
+
+        return $this->storeComment($values, $module, (int) $entityId, $loadedEntity);
+    }
+
+    /**
+     * Add a comment to an entity the calling controller has already loaded and authorized.
+     *
+     * Internal only (no @api, so not reachable over JSON-RPC): web controllers use it for modules
+     * the API path does not resolve itself, such as client comments and plugin modules. Modules the
+     * API path can resolve are still loaded server-side.
+     *
+     * @internal
+     *
+     * @param  array  $values  Comment values: text (required), father/parentId, status.
+     * @param  string  $module  The comment module.
+     * @param  int  $entityId  The id of the entity being commented on.
+     * @param  mixed  $entity  The entity the controller loaded.
+     * @return bool True when the comment was stored.
+     *
+     * @throws BindingResolutionException
+     */
+    public function addCommentToLoadedEntity(array $values, string $module, int $entityId, mixed $entity): bool
+    {
+        $module = (string) $this->normalizeCommentModule($module);
+
+        if ($this->isResolvableCommentModule($module)) {
+            return $this->addComment($values, $module, $entityId);
+        }
+
+        if ($entity === null || $entityId <= 0) {
+            return false;
+        }
+
+        return $this->storeComment($values, $module, $entityId, $entity);
+    }
+
+    /**
+     * Authorize against the entity's project and write the comment plus its notification.
+     *
+     * @param  array  $values  Comment values.
+     * @param  string  $module  The (normalized) comment module.
+     * @param  int  $entityId  The entity id.
+     * @param  mixed  $entity  The trusted, loaded entity.
+     * @return bool True when the comment was stored.
+     *
+     * @throws BindingResolutionException
+     */
+    private function storeComment(array $values, string $module, int $entityId, mixed $entity): bool
+    {
         // Commenting is a commenter+ capability. Resolve the host entity's project so the
         // check is scoped to it (ticket -> projectId; project -> its own id), then authorize.
         $projectId = is_object($entity) && isset($entity->projectId)
@@ -239,7 +284,7 @@ class Comments extends BaseService
             $values['father'] = $values['parentId'] ?? 0;
         }
 
-        if (isset($values['text']) && $values['text'] != '' && isset($module) && isset($entity)) {
+        if (isset($values['text']) && $values['text'] != '' && isset($entity)) {
             $mapper = [
                 'text' => $values['text'],
                 'date' => dtHelper()->dbNow()->formatDateTimeForDb(),

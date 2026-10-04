@@ -537,4 +537,51 @@ class CommentsServiceTest extends TestCase
 
         $this->assertSame([['id' => 1]], $this->makeService($this->noopReactions(), $repo)->getComments('client', 3));
     }
+
+    public function test_add_comment_ignores_a_caller_supplied_entity_for_an_unknown_module(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'addComment' => function () {
+                throw new \RuntimeException('a fake entity must not unlock writes to an arbitrary module');
+            },
+        ]);
+
+        $this->expectException(\Leantime\Core\Exceptions\ValidationException::class);
+
+        $this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hi'], 'secretmodule', 5, ['id' => 5, 'projectId' => 9]);
+    }
+
+    public function test_add_comment_to_loaded_entity_keeps_client_comments_working(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        $written = null;
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => null,
+            'addComment' => function ($mapper, $module) use (&$written) {
+                $written = [$module, $mapper['moduleId']];
+
+                return '504';
+            },
+        ]);
+        $projects = $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]);
+
+        $this->assertTrue($this->makeService($this->noopReactions(), $repo, null, $projects)
+            ->addCommentToLoadedEntity(['text' => 'hi'], 'client', 3, ['id' => 3, 'name' => 'ACME']));
+        $this->assertSame(['client', 3], $written);
+    }
+
+    public function test_strict_get_comments_checks_that_the_project_exists(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'getComments' => function () {
+                throw new \RuntimeException('must not query comments of a missing project');
+            },
+        ]);
+        $projects = $this->make(ProjectService::class, ['getProject' => fn () => false]);
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $this->makeService($this->noopReactions(), $repo, null, $projects)->getComments('project', 404, strict: true);
+    }
 }
