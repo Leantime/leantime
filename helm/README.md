@@ -60,6 +60,8 @@ helm install leantime -f values.yaml ./leantime/helm
 | app.session.expiration | int | `28800` | Session expiration |
 | app.session.password | string | `"changeme"` | Salting sessions. Replace with a strong password |
 | app.sitename | string | `"Leantime"` | Sets the name for the instance |
+| app.trustedProxies | string | `""` | Proxies allowed to set X-Forwarded-* headers (`LEAN_TRUSTED_PROXIES`). Empty trusts loopback and private subnets |
+| app.url | string | `""` | Public base URL, e.g. `https://pm.example.com` (`LEAN_APP_URL`). Set it when TLS terminates at an ingress/proxy |
 | autoscaling.enabled | bool | `false` |  |
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |

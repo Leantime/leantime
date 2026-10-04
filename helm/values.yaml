@@ -31,6 +31,12 @@ persistence:
 
 # Application-specific environment variables
 app:
+  # -- Public base URL, e.g. https://pm.example.com (LEAN_APP_URL). Set it when Leantime runs behind an
+  # -- ingress/proxy that terminates TLS, otherwise generated links can fall back to http://
+  url: ""
+  # -- Proxies allowed to set X-Forwarded-* headers (LEAN_TRUSTED_PROXIES). Empty trusts loopback and
+  # -- private subnets, which covers most in-cluster ingress controllers
+  trustedProxies: ""
   # -- Sets the name for the instance
   sitename: "Leantime"
   # -- Sets the cookie flag to only allow HTTPS transfer.

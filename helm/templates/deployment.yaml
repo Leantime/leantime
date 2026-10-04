@@ -49,6 +49,14 @@ spec:
             value: {{ .Values.mariadb.auth.password }}
           - name: LEAN_DB_DATABASE
             value: {{ .Values.mariadb.auth.database }}
+          {{- if .Values.app.url }}
+          - name: LEAN_APP_URL
+            value: {{ .Values.app.url | quote }}
+          {{- end }}
+          {{- if .Values.app.trustedProxies }}
+          - name: LEAN_TRUSTED_PROXIES
+            value: {{ .Values.app.trustedProxies | quote }}
+          {{- end }}
           - name: LEAN_SITENAME
             value: {{ .Values.app.sitename }}
           - name: LEAN_LANGUAGE
