@@ -42,6 +42,75 @@ const { createTableOfContentsExtension } = require('./extensions/tableOfContents
 const { createColumnsExtension } = require('./extensions/columns');
 
 /**
+ * Read a table cell's column widths.
+ *
+ * Tiptap stores widths in a `colwidth` cell attribute, but the server-side HTML
+ * sanitizer strips that non-standard attribute. The `<colgroup>` Tiptap writes
+ * alongside the table survives sanitizing, so fall back to the matching
+ * `<col style="width: …px">` entries to keep resized columns across save/reload.
+ *
+ * @param {HTMLElement} cellElement - The td/th element being parsed
+ * @returns {number[]|null} One width per spanned column, or null when unknown
+ */
+function parseCellColwidth(cellElement) {
+    var colwidthAttribute = cellElement.getAttribute('colwidth');
+    if (colwidthAttribute) {
+        return colwidthAttribute.split(',').map(function(width) { return parseInt(width, 10); });
+    }
+
+    var table = cellElement.closest('table');
+    if (!table) {
+        return null;
+    }
+
+    var colgroup = table.querySelector(':scope > colgroup');
+    if (!colgroup) {
+        return null;
+    }
+
+    var cols = colgroup.querySelectorAll('col');
+
+    // Column index = sum of colspans of the cells before this one in the row
+    var columnIndex = 0;
+    var previousCell = cellElement.previousElementSibling;
+    while (previousCell) {
+        columnIndex += parseInt(previousCell.getAttribute('colspan') || '1', 10);
+        previousCell = previousCell.previousElementSibling;
+    }
+
+    var colspan = parseInt(cellElement.getAttribute('colspan') || '1', 10);
+    var widths = [];
+    var hasAnyWidth = false;
+    for (var offset = 0; offset < colspan; offset++) {
+        var col = cols[columnIndex + offset];
+        // Only pixel widths map onto Tiptap's colwidth (legacy TinyMCE percentages are ignored)
+        var width = col && /px$/.test(col.style.width) ? parseInt(col.style.width, 10) : 0;
+        if (width > 0) {
+            hasAnyWidth = true;
+        }
+        widths.push(width > 0 ? width : 0);
+    }
+
+    return hasAnyWidth ? widths : null;
+}
+
+var ColwidthAwareTableCell = TableCell.extend({
+    addAttributes: function() {
+        var attributes = this.parent ? this.parent() : {};
+        attributes.colwidth = Object.assign({}, attributes.colwidth, { parseHTML: parseCellColwidth });
+        return attributes;
+    }
+});
+
+var ColwidthAwareTableHeader = TableHeader.extend({
+    addAttributes: function() {
+        var attributes = this.parent ? this.parent() : {};
+        attributes.colwidth = Object.assign({}, attributes.colwidth, { parseHTML: parseCellColwidth });
+        return attributes;
+    }
+});
+
+/**
  * EditorRegistry - Manages Tiptap editor instances
  */
 var EditorRegistry = (function() {
@@ -388,8 +457,8 @@ function createTiptapEditor(elementOrSelector, options) {
                 resizable: true,
             }),
             TableRow,
-            TableCell,
-            TableHeader
+            ColwidthAwareTableCell,
+            ColwidthAwareTableHeader
         );
     }
 

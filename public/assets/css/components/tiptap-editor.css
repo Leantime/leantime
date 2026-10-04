@@ -3540,6 +3540,18 @@ div[id^="comments-"] > div > .clearall {
     background: var(--primary-color-15, rgba(90, 103, 216, 0.15));
 }
 
+.tiptap-font-popover__btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+    background: none;
+}
+
+.tiptap-table-popover__separator {
+    height: 1px;
+    margin: 4px 0;
+    background: var(--main-border-color, #e2e8f0);
+}
+
 /* ==========================================================================
    More Menu Dropdown
    ========================================================================== */
