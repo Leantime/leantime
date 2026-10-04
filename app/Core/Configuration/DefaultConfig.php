@@ -222,6 +222,11 @@ class DefaultConfig
     public string $email = '';
 
     /**
+     * @var string Sender display name of outgoing emails (defaults to "Leantime" when empty)
+     */
+    public string $emailFromName = '';
+
+    /**
      * @var bool Use SMTP? If set to false, the default php mail() function will be used
      */
     public bool $useSMTP = false;

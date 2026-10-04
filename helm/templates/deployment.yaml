@@ -90,6 +90,8 @@ spec:
             value: {{ .Values.app.email.enabled | quote }}
           - name: LEAN_EMAIL_RETURN
             value: {{ .Values.app.email.return }}
+          - name: LEAN_EMAIL_FROM_NAME
+            value: {{ .Values.app.email.fromName | default "" | quote }}
           - name: LEAN_EMAIL_SMTP_HOSTS
             value: {{ .Values.app.email.smtp.hosts }}
           - name: LEAN_EMAIL_SMTP_USERNAME

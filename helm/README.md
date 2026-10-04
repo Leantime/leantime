@@ -30,6 +30,7 @@ helm install leantime -f values.yaml ./leantime/helm
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | app.defaultTimezone | string | `"America/Los_Angeles"` | Sets the default Timezone |
+| app.email.fromName | string | `""` | Sender display name of outgoing emails (defaults to "Leantime" when empty) |
 | app.email.enabled | bool | `false` | Set to true if you want to use SMTP. If set to false, the default php mail() function will be used |
 | app.email.return | string | `"leantime@cluster.local"` | Sets the email address to use for notifications and registrations |
 | app.email.smtp.autoTLS | bool | `true` | Set autoTLS? |

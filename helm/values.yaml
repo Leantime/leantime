@@ -76,6 +76,8 @@ app:
     enabled: false
     # -- Sets the email address to use for notifications and registrations
     return: "leantime@cluster.local"
+    # -- Sender display name of outgoing emails (defaults to "Leantime" when empty)
+    fromName: ""
     smtp:
       # -- SMTP host
       hosts: ""

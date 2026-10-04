@@ -47,6 +47,16 @@ class Mailer
 
     private string $html;
 
+    /**
+     * Sender display name (brand) shown in the From header, from LEAN_EMAIL_FROM_NAME.
+     */
+    private string $fromBrandName = self::DEFAULT_FROM_NAME;
+
+    /**
+     * Sender display name used when LEAN_EMAIL_FROM_NAME is not configured.
+     */
+    public const DEFAULT_FROM_NAME = 'Leantime';
+
     private bool $hideWrapper = false;
 
     public bool $nl2br = true;
@@ -65,6 +75,8 @@ class Mailer
         }
 
         $this->emailDomain = self::dispatch_filter('fromEmail', $this->emailDomain, $this);
+
+        $this->fromBrandName = self::resolveFromBrandName((string) ($config->emailFromName ?? ''));
 
         // PHPMailer
         $this->mailAgent = new PHPMailer(false);
@@ -141,6 +153,51 @@ class Mailer
         }
 
         return 'localhost';
+    }
+
+    /**
+     * resolveFromBrandName - the brand part of the From display name.
+     *
+     * Admins can set it via LEAN_EMAIL_FROM_NAME; when unset (or empty after sanitizing) the
+     * historical "Leantime" default is kept.
+     *
+     * @param  string  $configuredName  the configured LEAN_EMAIL_FROM_NAME (may be empty)
+     */
+    public static function resolveFromBrandName(string $configuredName): string
+    {
+        $brandName = NameSanitizer::clean($configuredName);
+
+        if ($brandName === '') {
+            return self::DEFAULT_FROM_NAME;
+        }
+
+        return $brandName;
+    }
+
+    /**
+     * buildFromDisplayName - the full From display name for an outgoing email.
+     *
+     * Callers pass a fixed label (e.g. a project name or "Leantime"). A label equal to the
+     * brand (or the legacy "Leantime" default) collapses to just the brand; anything else
+     * is shown as "Label (Brand)". The label is sanitized because the From display name must
+     * never carry user-controlled content (invite-spam abuse used attacker firstnames here).
+     *
+     * @param  mixed  $callerLabel  the from label passed to sendMail()
+     * @param  string  $brandName  the resolved brand name, see resolveFromBrandName()
+     */
+    public static function buildFromDisplayName(mixed $callerLabel, string $brandName): string
+    {
+        $label = NameSanitizer::clean($callerLabel);
+
+        $labelIsJustTheBrand = $label === ''
+            || strcasecmp($label, $brandName) === 0
+            || strcasecmp($label, self::DEFAULT_FROM_NAME) === 0;
+
+        if ($labelIsJustTheBrand) {
+            return $brandName;
+        }
+
+        return $label.' ('.$brandName.')';
     }
 
     /**
@@ -248,12 +305,7 @@ class Mailer
 
         $this->mailAgent->isHTML(true); // Set email format to HTML
 
-        // The From display name must never carry user-controlled content (invite-spam abuse
-        // used attacker firstnames here). Callers pass fixed labels; sanitize regardless.
-        $fromName = NameSanitizer::clean($from);
-        $fromDisplay = ($fromName === '' || strcasecmp($fromName, 'Leantime') === 0)
-            ? 'Leantime'
-            : $fromName.' (Leantime)';
+        $fromDisplay = self::buildFromDisplayName($from, $this->fromBrandName);
 
         $this->mailAgent->setFrom($this->emailDomain, $fromDisplay);
 
