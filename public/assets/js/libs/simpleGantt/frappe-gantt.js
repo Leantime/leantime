@@ -693,36 +693,31 @@ var Gantt = (function () {
         }
 
         update_label_position_on_horizontal_scroll(_ref2) {
-            var x = _ref2.x,
-                sx = _ref2.sx;
+            var sx = _ref2.sx;
 
-
-            var container = this.gantt.$container.parentElement || this.gantt.$container;
             var label = this.group.querySelector('.bar-label');
             var img = this.group.querySelector('.bar-img') || '';
             var img_mask = this.bar_group.querySelector('.img_mask') || '';
 
-            var barWidthLimit = this.$bar.getX() + this.$bar.getWidth();
-            var newLabelX = label.getX() + x;
-            var newImgX = img && img.getX() + x || 0;
-            var imgWidth = img && img.getBBox().width + 7 || 7;
-            var labelEndX = newLabelX + label.getBBox().width + 7;
-            var viewportCentral = sx + container.clientWidth / 2;
-
+            // Labels too long for their bar are drawn outside it and never move.
             if (label.classList.contains('big')) return;
 
-            if (labelEndX < barWidthLimit && x > 0 && labelEndX < viewportCentral) {
-                label.setAttribute('x', newLabelX);
-                if (img) {
-                    img.setAttribute('x', newImgX);
-                    img_mask.setAttribute('x', newImgX);
-                }
-            } else if (newLabelX - imgWidth > this.$bar.getX() && x < 0 && labelEndX > viewportCentral) {
-                label.setAttribute('x', newLabelX);
-                if (img) {
-                    img.setAttribute('x', newImgX);
-                    img_mask.setAttribute('x', newImgX);
-                }
+            // Resting positions mirror update_label_position(): avatar after a 5px padding, label
+            // after the avatar. Scrolling shifts both together, so they never overlap.
+            var padding = 5;
+            var barX = this.$bar.getX();
+            var barEnd = barX + this.$bar.getWidth();
+            var restingImgX = barX + padding;
+            var restingLabelX = barX + (img ? this.image_size + 10 : padding);
+
+            // Keep the label at the left edge of the viewport, but never past the end of its bar.
+            var maxShift = Math.max(0, barEnd - 7 - (restingLabelX + label.getBBox().width));
+            var shift = Math.min(maxShift, Math.max(0, sx - barX));
+
+            label.setAttribute('x', restingLabelX + shift);
+            if (img) {
+                img.setAttribute('x', restingImgX + shift);
+                img_mask.setAttribute('x', restingImgX + shift);
             }
         }
 
@@ -2076,9 +2071,6 @@ var Gantt = (function () {
             // The SVG overflows .gantt-container; the element that actually
             // scrolls (both axes) is its parent (.gantt-wrapper).
             const scroll_container = this.$container.parentElement || this.$container;
-            // null until the first scroll event (usually the programmatic
-            // jump to "today"), which only establishes the baseline.
-            let x_on_scroll_start = null;
 
             $.on(scroll_container, 'scroll', (e) => {
                 const scroll_left = e.currentTarget.scrollLeft;
@@ -2087,15 +2079,14 @@ var Gantt = (function () {
                 // Keep the date header pinned to the top while scrolling vertically
                 this.layers.date.setAttribute('transform', 'translate(0,' + scroll_top + ')');
 
-                const dx = x_on_scroll_start === null ? 0 : scroll_left - x_on_scroll_start;
-                x_on_scroll_start = scroll_left;
-
-                if (!dx || !this.bars) {
+                if (!this.bars) {
                     return;
                 }
 
+                // Labels are positioned absolutely from the scroll offset, so every event
+                // (including the initial jump to "today") can update them.
                 this.bars.forEach((bar) => {
-                    bar.update_label_position_on_horizontal_scroll({ x: dx, sx: scroll_left });
+                    bar.update_label_position_on_horizontal_scroll({ sx: scroll_left });
                 });
             });
 
