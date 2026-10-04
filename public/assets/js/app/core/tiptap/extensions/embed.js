@@ -220,15 +220,18 @@ function buildSafeEmbedAttrs(storedSrc, storedType, originalUrl, title) {
     var embedSrc = null;
 
     if (originalUrl) {
+        // An original URL is always rebuilt, never bypassed: if it is not a recognised
+        // service URL the embed is rejected rather than falling back to the stored src.
+        // (The embed dialog only inserts URLs detectEmbedType() recognises.)
         type = detectEmbedType(originalUrl);
-        if (type) {
-            embedId = extractId(originalUrl, type);
-            embedSrc = getEmbedUrl(originalUrl, type, embedId);
+        if (!type) {
+            return false;
         }
-    }
-
-    // Older content may lack the original URL; accept the stored src only if it checks out.
-    if (!embedSrc && storedType && patterns[storedType]) {
+        embedId = extractId(originalUrl, type);
+        embedSrc = getEmbedUrl(originalUrl, type, embedId);
+    } else if (storedType && patterns[storedType]) {
+        // Older content (and legacy <iframe> markup) has no original URL; accept the
+        // stored src only if it checks out against the stored type's allowed hosts.
         type = storedType;
         embedSrc = storedSrc;
     }
