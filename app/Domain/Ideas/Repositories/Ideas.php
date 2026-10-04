@@ -240,6 +240,7 @@ class Ideas
                 'zp_canvas_items.modified',
                 'zp_canvas_items.canvasId',
                 'zp_canvas_items.sortindex',
+                'zp_canvas_items.tags',
                 'zp_canvas_items.milestoneId',
                 't1.firstname AS authorFirstname',
                 't1.lastname AS authorLastname',
