@@ -129,13 +129,15 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          # Liveness only checks that the web server answers: a database outage must not make
+          # Kubernetes restart every pod. Readiness uses /health (Leantime 3.10.3+), which also
+          # checks the database, so pods leave the Service while the DB is unreachable.
           livenessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
