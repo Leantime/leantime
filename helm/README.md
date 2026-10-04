@@ -51,7 +51,7 @@ helm install leantime -f values.yaml ./leantime/helm
 | app.ldap.userDomain | string | `""` | Domain after ldap, example @example.com |
 | app.s3.bucket | string | `""` | S3 bucket |
 | app.s3.enabled | bool | `false` | Set to true if you want to use S3 instead of local files |
-| app.s3.enpoint | string | `""` | S3 endpoint |
+| app.s3.endpoint | string | `""` | S3 endpoint |
 | app.s3.folderName | string | `""` | Sets the foldername within S3 (can be empty) |
 | app.s3.key | string | `""` | S3 key |
 | app.s3.region | string | `""` | S3 region |

@@ -65,21 +65,21 @@ spec:
             value: {{ .Values.app.defaultTimezone }}
           {{- if .Values.app.s3.enabled }}
           - name: LEAN_USE_S3
-            value: {{ .Values.app.s3.enabled }}
+            value: {{ .Values.app.s3.enabled | quote }}
           - name: LEAN_S3_END_POINT
-            value: {{ .Values.app.s3.endpoint }}
+            value: {{ .Values.app.s3.endpoint | quote }}
           - name: LEAN_S3_KEY
-            value: {{ .Values.app.s3.key }}
+            value: {{ .Values.app.s3.key | quote }}
           - name: LEAN_S3_SECRET
-            value: {{ .Values.app.s3.secret }}
+            value: {{ .Values.app.s3.secret | quote }}
           - name: LEAN_S3_BUCKET
-            value: {{ .Values.app.s3.bucket }}
+            value: {{ .Values.app.s3.bucket | quote }}
           - name: LEAN_S3_USE_PATH_STYLE_ENDPOINT
-            value: {{ .Values.app.s3.usePathStyleEndpoint }}
+            value: {{ .Values.app.s3.usePathStyleEndpoint | quote }}
           - name: LEAN_S3_REGION
-            value: {{ .Values.app.s3.region }}
+            value: {{ .Values.app.s3.region | quote }}
           - name: LEAN_S3_FOLDER_NAME
-            value: {{ .Values.app.s3.folderName }}
+            value: {{ .Values.app.s3.folderName | quote }}
           {{- end }}
           - name: LEAN_SESSION_PASSWORD
             value: {{ .Values.app.session.password }}

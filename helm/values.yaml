@@ -49,7 +49,7 @@ app:
     # -- Set to true if you want to use S3 instead of local files
     enabled: false
     # -- S3 endpoint
-    enpoint: ""
+    endpoint: ""
     # -- S3 key
     key: ""
     # -- S3 secret
