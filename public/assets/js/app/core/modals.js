@@ -97,6 +97,45 @@ leantime.modals = (function () {
         pageScopedListeners = [];
     };
 
+    // Uppy instances register window listeners (online/offline) that only close() removes. The
+    // to-do modal's file tab and the file pages create one each time they render, so close the
+    // ones a modal created when it closes, and the page's ones before an in-place refresh.
+    var uppyInstances = [];
+
+    if (window.Uppy && typeof window.Uppy.Uppy === 'function') {
+        var uppyNamespace = window.Uppy;
+        var OriginalUppy = uppyNamespace.Uppy;
+        var trackedNamespace = {};
+        Object.keys(uppyNamespace).forEach(function (name) {
+            trackedNamespace[name] = uppyNamespace[name];
+        });
+        trackedNamespace.Uppy = class extends OriginalUppy {
+            constructor(options) {
+                super(options);
+                uppyInstances.push({ instance: this, scope: isModalOpen() ? 'modal' : 'page' });
+            }
+        };
+        window.Uppy = trackedNamespace;
+    }
+
+    var closeUppyInstances = function (scope) {
+        uppyInstances = uppyInstances.filter(function (entry) {
+            if (entry.scope !== scope) {
+                return true;
+            }
+            try {
+                if (typeof entry.instance.close === 'function') {
+                    entry.instance.close();
+                } else if (typeof entry.instance.destroy === 'function') {
+                    entry.instance.destroy();
+                }
+            } catch (error) {
+                console.warn('[Modal] Could not close an uploader', error);
+            }
+            return false;
+        });
+    };
+
     var scrollSnapshot = function (root) {
         var positions = [];
         root.querySelectorAll('*').forEach(function (element) {
@@ -195,6 +234,7 @@ leantime.modals = (function () {
                 }
 
                 removePageScopedListeners();
+                closeUppyInstances('page');
                 htmx.process(newContent);
 
                 // Keep tracking until jQuery's (asynchronous) ready callbacks of these scripts ran.
@@ -307,6 +347,7 @@ leantime.modals = (function () {
                 },
                 beforeClose: function () {
                     currentModalUrl = null;
+                    closeUppyInstances('modal');
                     try{
                         history.pushState("", document.title, window.location.pathname + window.location.search);
 
