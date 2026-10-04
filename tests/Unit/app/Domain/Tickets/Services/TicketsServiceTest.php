@@ -745,6 +745,28 @@ class TicketsServiceTest extends TestCase
         $this->assertSame([], $punchedOut, 're-sorting a ticket that was already Done must not stop its timer');
     }
 
+    public function test_kanban_drag_does_not_revert_a_card_moved_in_another_tab(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+
+        $writtenStatuses = [];
+        $service = $this->buildAuthzService([
+            // Ticket 5 was moved to In Progress (4) elsewhere; this stale tab still shows it in New (3).
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => (int) $id === 5 ? 4 : 3]),
+            'updateTicketStatus' => function ($id, $status) use (&$writtenStatuses) {
+                $writtenStatuses[(int) $id] = (int) $status;
+
+                return true;
+            },
+            'getStateLabels' => fn () => [3 => ['name' => 'New', 'statusType' => 'NEW'], 0 => ['name' => 'Done', 'statusType' => 'DONE']],
+        ], $this->permissionsForProjects([7]), $this->make(TimesheetService::class, ['isClocked' => fn () => false]));
+
+        // Ticket 6 is dragged to Done; the stale payload still lists ticket 5 under New.
+        $this->assertTrue($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5&ticket[]=7', '0' => 'ticket[]=6'], 'ticket_6'));
+
+        $this->assertSame([7 => 3, 6 => 0], $writtenStatuses, 'only the dragged card may change status (#3099)');
+    }
+
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor']]);
