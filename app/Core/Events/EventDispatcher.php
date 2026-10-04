@@ -541,24 +541,44 @@ class EventDispatcher implements Dispatcher
                 return;
             }
 
-            $pluginPath = APP_ROOT.'/app/Plugins/';
-            $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
-            $enabledPlugins = $pluginService->getEnabledPlugins();
+            self::loadEnabledPluginRegisterFiles();
+        });
 
-            foreach ($enabledPlugins as $plugin) {
+        $discovered = true;
+    }
 
-                // Catch issue when plugins are cached on load but autoloader is not quite done loading.
-                // Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
-                // Clearing session cache in that case.
-                // @TODO: Check on callstack to make sure autoload loads before sessions
-                if (is_a($plugin, '__PHP_Incomplete_Class')) {
-                    continue;
-                }
+    /**
+     * Includes the register.php of every enabled (non-system) plugin.
+     *
+     * Web requests call this from the LoadPlugins middleware. Console runs (schedule:run, queue
+     * workers, commands) call it from the console kernel, so plugin scheduled jobs and listeners
+     * exist there too. Each plugin is isolated: one failing register.php is logged and skipped
+     * instead of stopping the others.
+     *
+     * @param  bool  $failOnDatabaseError  Throw when the plugin table cannot be read instead of
+     *                                     continuing without user plugins (used by the console).
+     */
+    public static function loadEnabledPluginRegisterFiles(bool $failOnDatabaseError = false): void
+    {
+        $pluginPath = APP_ROOT.'/app/Plugins/';
+        $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
+        $enabledPlugins = $pluginService->getEnabledPlugins($failOnDatabaseError);
 
-                if ($plugin == null) {
-                    continue;
-                }
+        foreach ($enabledPlugins as $plugin) {
 
+            // Catch issue when plugins are cached on load but autoloader is not quite done loading.
+            // Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
+            // Clearing session cache in that case.
+            // @TODO: Check on callstack to make sure autoload loads before sessions
+            if (is_a($plugin, '__PHP_Incomplete_Class')) {
+                continue;
+            }
+
+            if ($plugin == null) {
+                continue;
+            }
+
+            try {
                 if ($plugin->format == 'phar') {
                     $pharPath = "phar://{$pluginPath}{$plugin->foldername}/{$plugin->foldername}.phar";
 
@@ -582,10 +602,10 @@ class EventDispatcher implements Dispatcher
                 }
 
                 include_once $registerPath;
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Could not load plugin '.$plugin->foldername.': '.$e->getMessage());
             }
-        });
-
-        $discovered = true;
+        }
     }
 
     public static function getDomainPaths()

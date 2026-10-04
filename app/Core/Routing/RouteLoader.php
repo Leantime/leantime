@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Leantime\Core\Auth\Permissions\CheckPermissions;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Support\Installation;
 
 class RouteLoader
 {
@@ -79,11 +80,14 @@ class RouteLoader
     }
 
     /**
-     * Load routes.php files from user-enabled plugins
+     * Load routes.php files from user-enabled plugins.
+     *
+     * Skipped before install (no plugin table yet). The installed check works without a web
+     * session so console runs (route:list, scheduled jobs generating named routes) get them too.
      */
     private static function loadUserPluginRoutes(): void
     {
-        if (! session('isInstalled')) {
+        if (! Installation::isInstalled()) {
             return;
         }
 
