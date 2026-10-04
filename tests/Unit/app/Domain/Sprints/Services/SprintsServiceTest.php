@@ -276,4 +276,33 @@ class SprintsServiceTest extends TestCase
             $this->assertSame(4, $authorizedProject);
         }
     }
+
+    /**
+     * The session sprint filter can hold a sprint id or a non-id selection such as "all" or
+     * "backlog"; only a positive numeric id is a current sprint (report burndown relied on this).
+     *
+     * @dataProvider currentSprintSessionValues
+     */
+    public function test_get_current_sprint_id_returns_only_real_sprint_ids(mixed $sessionValue, int|false $expected): void
+    {
+        session(['currentSprint' => $sessionValue]);
+
+        $this->assertSame($expected, $this->makeService()->getCurrentSprintId(9));
+    }
+
+    /**
+     * @return array<string, array{mixed, int|false}>
+     */
+    public static function currentSprintSessionValues(): array
+    {
+        return [
+            'numeric string id' => ['12', 12],
+            'integer id' => [7, 7],
+            'all' => ['all', false],
+            'backlog' => ['backlog', false],
+            'empty' => ['', false],
+            'null' => [null, false],
+            'zero' => ['0', false],
+        ];
+    }
 }
