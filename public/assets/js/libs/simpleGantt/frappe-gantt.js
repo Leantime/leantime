@@ -1430,6 +1430,7 @@ var Gantt = (function () {
         }
 
         render() {
+            this.last_label_scroll_left = null;
             this.clear();
             this.setup_layers();
             this.make_grid();
@@ -2079,9 +2080,12 @@ var Gantt = (function () {
                 // Keep the date header pinned to the top while scrolling vertically
                 this.layers.date.setAttribute('transform', 'translate(0,' + scroll_top + ')');
 
-                if (!this.bars) {
+                // Vertical-only scrolls leave the labels where they are. null (reset on every
+                // render) makes the first event after a render position the new labels.
+                if (!this.bars || scroll_left === this.last_label_scroll_left) {
                     return;
                 }
+                this.last_label_scroll_left = scroll_left;
 
                 // Labels are positioned absolutely from the scroll offset, so every event
                 // (including the initial jump to "today") can update them.
