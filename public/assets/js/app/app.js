@@ -16,6 +16,9 @@ leantime.appUrl = appURL;
 var leantimeVersion = jQuery('meta[name=leantime-version]').attr("content");
 leantime.version = leantimeVersion;
 
+// LEAN_SOFT_RELOAD: refresh page content in place after a modal changed data (see modals.js)
+leantime.softReloadEnabled = jQuery('meta[name=soft-reload]').attr("content") !== 'false';
+
 leantime.replaceSVGColors = function () {
 
     jQuery(document).ready(function () {

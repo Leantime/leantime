@@ -628,3 +628,13 @@ body.lt-doc-page .maincontentinner {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 }
+
+/* In-place page refresh after a modal changed data (modals.js softReload) */
+.primaryContent {
+    transition: opacity 120ms ease-out;
+}
+
+.primaryContent.lt-soft-reloading {
+    opacity: 0.6;
+    pointer-events: none;
+}

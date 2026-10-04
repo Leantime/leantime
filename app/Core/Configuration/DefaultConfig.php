@@ -117,6 +117,12 @@ class DefaultConfig
      */
     public bool $disableLoginForm = false;
 
+    /**
+     * @var bool Refresh the page content in place (instead of a full page reload) after a modal
+     *           that changed data is closed. Set LEAN_SOFT_RELOAD=false to always do a full reload.
+     */
+    public bool $softReload = true;
+
     // Database ====================================================================================
     /**
      * @var string Database host

@@ -6,6 +6,182 @@ leantime.modals = (function () {
     // .nyroModalCont, destroying any field the user is typing into (focus loss).
     var currentModalUrl = null;
 
+    // Closing a modal used to always do location.reload() (#1809, #2969): slow, and it lost scroll
+    // and board state. Now a modal that changed nothing closes without any refresh, and one that
+    // did change data refreshes the page content in place (softReload). Anything unexpected falls
+    // back to the full reload, as does LEAN_SOFT_RELOAD=false or a page marked data-full-reload.
+    var modalChangedData = false;
+    var softReloadInFlight = false;
+
+    var isWriteMethod = function (method) {
+        var verb = String(method || 'GET').toUpperCase();
+        return verb !== 'GET' && verb !== 'HEAD' && verb !== 'OPTIONS';
+    };
+
+    var isModalOpen = function () {
+        return typeof jQuery.nmTop === 'function' && !!jQuery.nmTop();
+    };
+
+    var noteWriteWhileModalOpen = function (method) {
+        if (isWriteMethod(method) && isModalOpen()) {
+            modalChangedData = true;
+        }
+    };
+
+    // Every way the app writes data from inside a modal: htmx requests, jQuery ajax (which also
+    // carries nyroModal's form posts), fetch (leantime.rpc / JSON-RPC) and plain form submits.
+    document.addEventListener('htmx:beforeRequest', function (event) {
+        noteWriteWhileModalOpen(event.detail && event.detail.requestConfig ? event.detail.requestConfig.verb : 'GET');
+    });
+    jQuery(document).ajaxSend(function (event, xhr, settings) {
+        noteWriteWhileModalOpen(settings && settings.type);
+    });
+    if (typeof window.fetch === 'function') {
+        var originalFetch = window.fetch;
+        window.fetch = function (input, init) {
+            var method = (init && init.method) || (input && typeof input === 'object' && input.method) || 'GET';
+            noteWriteWhileModalOpen(method);
+            return originalFetch.apply(this, arguments);
+        };
+    }
+    document.addEventListener('submit', function (event) {
+        if (event.target && event.target.closest && event.target.closest('.nyroModalCont')) {
+            noteWriteWhileModalOpen(event.target.getAttribute('method') || 'GET');
+        }
+    }, true);
+
+    var scrollSnapshot = function (root) {
+        var positions = [];
+        root.querySelectorAll('*').forEach(function (element) {
+            if (element.scrollTop > 0 || element.scrollLeft > 0) {
+                var key = element.id
+                    ? '#' + CSS.escape(element.id)
+                    : (typeof element.className === 'string' && element.className.trim() !== ''
+                        ? '.' + element.className.trim().split(/\s+/).map(function (name) { return CSS.escape(name); }).join('.')
+                        : null);
+                if (key) {
+                    positions.push({ key: key, top: element.scrollTop, left: element.scrollLeft });
+                }
+            }
+        });
+        return positions;
+    };
+
+    var restoreScroll = function (root, positions) {
+        positions.forEach(function (position) {
+            var element = root.querySelector(position.key);
+            if (element) {
+                element.scrollTop = position.top;
+                element.scrollLeft = position.left;
+            }
+        });
+    };
+
+    var runInlineScripts = function (container) {
+        if (!container) {
+            return;
+        }
+        container.querySelectorAll('script:not([src])').forEach(function (original) {
+            var type = original.getAttribute('type');
+            if (type && type !== 'text/javascript' && type !== 'module') {
+                return; // templates, JSON data blocks, ...
+            }
+            var script = document.createElement('script');
+            if (type) {
+                script.type = type;
+            }
+            script.text = original.textContent;
+            document.body.appendChild(script);
+            script.remove();
+        });
+    };
+
+    /**
+     * Re-render the page content in place: fetch the current page, swap .primaryContent and the
+     * page's init scripts (#lt-page-scripts), let htmx process the new content and re-run the
+     * page's inline init scripts. Header, menu and the loaded bundles stay untouched.
+     */
+    var softReload = function () {
+        var content = document.querySelector('.primaryContent');
+        var canSoftReload = leantime.softReloadEnabled !== false
+            && content
+            && !document.querySelector('[data-full-reload]')
+            && typeof window.fetch === 'function'
+            && typeof window.DOMParser === 'function'
+            && typeof htmx !== 'undefined';
+
+        if (!canSoftReload) {
+            location.reload();
+            return;
+        }
+        if (softReloadInFlight) {
+            return;
+        }
+        softReloadInFlight = true;
+
+        var windowScroll = { x: window.scrollX, y: window.scrollY };
+        var innerScroll = scrollSnapshot(content);
+        content.classList.add('lt-soft-reloading');
+
+        fetch(window.location.pathname + window.location.search, { credentials: 'same-origin' })
+            .then(function (response) {
+                if (!response.ok || response.redirected) {
+                    throw new Error('HTTP ' + response.status + (response.redirected ? ' (redirected)' : ''));
+                }
+                return response.text();
+            })
+            .then(function (html) {
+                var fetched = new DOMParser().parseFromString(html, 'text/html');
+                var freshContent = fetched.querySelector('.primaryContent');
+                if (!freshContent || fetched.querySelector('[data-full-reload]')) {
+                    throw new Error('page cannot be refreshed in place');
+                }
+
+                var newContent = document.importNode(freshContent, true);
+                document.querySelector('.primaryContent').replaceWith(newContent);
+
+                var currentScripts = document.getElementById('lt-page-scripts');
+                var freshScripts = fetched.getElementById('lt-page-scripts');
+                var newScripts = freshScripts ? document.importNode(freshScripts, true) : null;
+                if (currentScripts && newScripts) {
+                    currentScripts.replaceWith(newScripts);
+                }
+
+                htmx.process(newContent);
+                runInlineScripts(newContent);
+                runInlineScripts(newScripts);
+                // Page inits that wait for DOMContentLoaded (e.g. calendars) run again.
+                document.dispatchEvent(new Event('DOMContentLoaded'));
+
+                window.scrollTo(windowScroll.x, windowScroll.y);
+                restoreScroll(newContent, innerScroll);
+                // Boards that size/scroll themselves after init get restored once more.
+                setTimeout(function () { restoreScroll(newContent, innerScroll); }, 300);
+
+                document.dispatchEvent(new CustomEvent('lt:ui:page.refreshed'));
+            })
+            .catch(function (error) {
+                console.warn('[Modal] In-place refresh failed, reloading the page', error);
+                location.reload();
+            })
+            .finally(function () {
+                softReloadInFlight = false;
+                var current = document.querySelector('.primaryContent');
+                if (current) {
+                    current.classList.remove('lt-soft-reloading');
+                }
+            });
+    };
+
+    // After a modal closed: nothing changed -> no refresh; data changed -> refresh in place.
+    var refreshAfterModalClose = function () {
+        if (!modalChangedData) {
+            return;
+        }
+        modalChangedData = false;
+        softReload();
+    };
+
     var setCustomModalCallback = function(callback) {
         if(typeof callback === 'function') {
             window.globalModalCallback = callback;
@@ -71,9 +247,10 @@ leantime.modals = (function () {
                     }
 
                     if(typeof window.globalModalCallback === 'function') {
+                        modalChangedData = false;
                         window.globalModalCallback();
                     }else{
-                        location.reload();
+                        refreshAfterModalClose();
                     }
                 }
             },
@@ -141,7 +318,8 @@ leantime.modals = (function () {
     return {
         openModal:openModal,
         setCustomModalCallback:setCustomModalCallback,
-        closeModal:closeModal
+        closeModal:closeModal,
+        softReload:softReload
 
     };
 
