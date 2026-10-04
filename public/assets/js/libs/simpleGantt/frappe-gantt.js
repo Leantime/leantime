@@ -697,7 +697,7 @@ var Gantt = (function () {
                 sx = _ref2.sx;
 
 
-            var container = document.querySelector('.gantt-container');
+            var container = this.gantt.$container.parentElement || this.gantt.$container;
             var label = this.group.querySelector('.bar-label');
             var img = this.group.querySelector('.bar-img') || '';
             var img_mask = this.bar_group.querySelector('.img_mask') || '';
@@ -2072,34 +2072,30 @@ var Gantt = (function () {
                 is_resizing_right = false;
             });
 
-            $.on(this.$container, 'scroll', function (e) {
+            // The SVG overflows .gantt-container; the element that actually
+            // scrolls (both axes) is its parent (.gantt-wrapper).
+            const scroll_container = this.$container.parentElement || this.$container;
+            // null until the first scroll event (usually the programmatic
+            // jump to "today"), which only establishes the baseline.
+            let x_on_scroll_start = null;
 
-                var elements = document.querySelectorAll('.bar-wrapper');
-                var localBars = [];
-                var ids = [];
-                var dx = void 0;
+            $.on(scroll_container, 'scroll', (e) => {
+                const scroll_left = e.currentTarget.scrollLeft;
+                const scroll_top = e.currentTarget.scrollTop;
 
-                _this6.layers.date.setAttribute('transform', 'translate(0,' + e.currentTarget.scrollTop + ')');
+                // Keep the date header pinned to the top while scrolling vertically
+                this.layers.date.setAttribute('transform', 'translate(0,' + scroll_top + ')');
 
-                if (x_on_scroll_start) {
-                    dx = e.currentTarget.scrollLeft - x_on_scroll_start;
+                const dx = x_on_scroll_start === null ? 0 : scroll_left - x_on_scroll_start;
+                x_on_scroll_start = scroll_left;
+
+                if (!dx || !this.bars) {
+                    return;
                 }
 
-                Array.prototype.forEach.call(elements, function (el, i) {
-                    ids.push(el.getAttribute('data-id'));
+                this.bars.forEach((bar) => {
+                    bar.update_label_position_on_horizontal_scroll({ x: dx, sx: scroll_left });
                 });
-
-                if (dx) {
-                    localBars = ids.map(function (id) {
-                        return _this6.get_bar(id);
-                    });
-
-                    localBars.forEach(function (bar) {
-                        bar.update_label_position_on_horizontal_scroll({ x: dx, sx: e.currentTarget.scrollLeft });
-                    });
-                }
-
-                x_on_scroll_start = e.currentTarget.scrollLeft;
             });
 
             this.bind_bar_progress();
