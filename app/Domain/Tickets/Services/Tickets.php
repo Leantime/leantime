@@ -4194,7 +4194,8 @@ class Tickets extends BaseService
             'storypoints' => $values['storypoints'] ?? '',
             'hourRemaining' => $values['hourRemaining'] ?? 0,
             'planHours' => $values['planHours'] ?? 0,
-            'sprint' => '',
+            // A new subtask lives in its parent's sprint (#2078); updates keep the stored sprint.
+            'sprint' => $isNewSubtask ? ($parentTicket->sprint ?? '') : '',
             'acceptanceCriteria' => '',
             'tags' => '',
             'editFrom' => $values['editFrom'] ?? '',
@@ -4217,6 +4218,7 @@ class Tickets extends BaseService
         // Updating an existing subtask only changes the fields the caller sent (#3701). The
         // parent link, project and subtask type are always set from the parent, never preserved.
         if (! $isNewSubtask && $existingSubtask instanceof TicketModel) {
+            unset($submittedValues['sprint']);
             $forcedFields = ['type' => true, 'projectId' => true, 'dependingTicketId' => true];
             $values = $this->keepStoredValuesForOmittedFields($values, $submittedValues + $forcedFields, $existingSubtask);
         }

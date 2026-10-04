@@ -813,6 +813,49 @@ class TicketsServiceTest extends TestCase
         $this->assertSame(12, $updatedId);
     }
 
+    public function test_upsert_subtask_new_subtask_inherits_the_parent_sprint(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor'], 'currentSprint' => 99]);
+
+        $addedValues = null;
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => (int) $id === 5 ? $this->ticketIn(5, 9, ['sprint' => 42]) : false,
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
+            'addTicket' => function ($values) use (&$addedValues) {
+                $addedValues = $values;
+
+                return 123;
+            },
+        ], $this->permissionsForProjects([9]));
+
+        // The quick-add form posts the session sprint; the parent's sprint must win (#2078).
+        $this->assertTrue($service->upsertSubtask(['headline' => 'Sub', 'status' => 3, 'sprint' => 99], $this->ticketIn(5, 9)));
+        $this->assertSame(42, $addedValues['sprint']);
+    }
+
+    public function test_upsert_subtask_update_keeps_the_stored_sprint(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+
+        $updatedValues = null;
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => match ((int) $id) {
+                5 => $this->ticketIn(5, 9, ['sprint' => 42]),
+                12 => $this->ticketIn(12, 9, ['dependingTicketId' => 5, 'sprint' => 7]),
+                default => false,
+            },
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
+            'updateTicket' => function ($values) use (&$updatedValues) {
+                $updatedValues = $values;
+
+                return true;
+            },
+        ], $this->permissionsForProjects([9]));
+
+        $this->assertTrue($service->upsertSubtask(['headline' => 'Sub', 'status' => 3, 'subtaskId' => '12', 'sprint' => ''], $this->ticketIn(5, 9)));
+        $this->assertSame(7, $updatedValues['sprint']);
+    }
+
     public function test_get_all_possible_parents_is_empty_for_a_project_the_caller_cannot_view(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor'], 'currentProject' => 9]);
