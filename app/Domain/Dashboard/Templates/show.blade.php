@@ -37,14 +37,14 @@
                                 <a
                                     href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
 
-                                ><i class="fa fa-edit"></i> Edit Project</a>
+                                ><i class="fa fa-edit"></i> {{ __('label.edit_project', 'Edit Project') }}</a>
                             </li>
                             <li class="dropdown-item">
                                 <a
                                     href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}"
                                     class="delete"
 
-                                ><i class="fa fa-trash"></i> Delete Project</a>
+                                ><i class="fa fa-trash"></i> {{ __('label.deleteProject', 'Delete Project') }}</a>
                             </li>
 
                         </ul>

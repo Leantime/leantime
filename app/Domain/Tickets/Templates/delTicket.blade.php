@@ -15,6 +15,6 @@
         </form>
 
     @else
-        <p>Ticket not found</p>
+        <p>{{ __('label.ticketNotFound', 'Ticket not found') }}</p>
     @endif
 @endif

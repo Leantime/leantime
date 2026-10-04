@@ -193,7 +193,7 @@
                     {!! __("menu.contact_us") !!}
                 </a>
             </li>
-            <li class="nav-header border">System</li>
+            <li class="nav-header border">{{ __('label.system', 'System') }}</li>
             <li><a href="https://github.com/Leantime/leantime/releases" target="_blank">Leantime V{{ app(\Leantime\Core\Configuration\AppSettings::class)->appVersion }}</a></li>
         </ul>
     </li>

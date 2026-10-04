@@ -240,8 +240,8 @@ leantime.widgetController = (function () {
             '                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>\n' +
             '                </a>\n' +
             '                <ul class="dropdown-menu">\n' +
-            '                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>\n' +
-            '                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>\n' +
+            '                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> ' + (leantime.i18n.__('label.resizeToFitContent') || 'Resize to fit content') + '</a></li>\n' +
+            '                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> ' + (leantime.i18n.__('label.hide') || 'Hide') + '</a></li>\n' +
             '                </ul>\n' +
             '            </div>\n' +
             '\n' +
