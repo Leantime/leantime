@@ -81,6 +81,9 @@ helm install leantime -f values.yaml ./leantime/helm
 | mariadb.auth.rootPassword | string | `"changeme"` | Database root password |
 | mariadb.auth.username | string | `"leantime"` | Database username |
 | mariadb.enabled | bool | `true` |  |
+| mariadb.image.registry | string | `"docker.io"` | MariaDB image registry |
+| mariadb.image.repository | string | `"bitnamilegacy/mariadb"` | MariaDB image (Bitnami moved versioned tags out of `bitnami/mariadb`) |
+| mariadb.image.tag | string | `"10.6.12-debian-11-r9"` | MariaDB image tag |
 | nameOverride | string | `""` | Overrides the name of the chart |
 | nodeSelector | object | `{}` |  |
 | persistence.enabled | bool | `true` | Enables or disables the persistence |

@@ -107,6 +107,12 @@ app:
 
 mariadb:
   enabled: true
+  # The pinned bitnami/mariadb subchart defaults to docker.io/bitnami/mariadb:10.6.12-debian-11-r9,
+  # which Bitnami removed from docker.io/bitnami (versioned tags now live in bitnamilegacy).
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/mariadb
+    tag: 10.6.12-debian-11-r9
   auth:
     # -- Database root password
     rootPassword: "changeme"
