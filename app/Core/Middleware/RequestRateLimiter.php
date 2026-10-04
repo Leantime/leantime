@@ -31,7 +31,7 @@ class RequestRateLimiter
      * Constructor method for the class.
      *
      * @param  RateLimiter  $limiter  The RateLimiter object to be initialized.
-     * @return void.
+     * @return void
      */
     public function __construct(Environment $config, RateLimiter $limiter)
     {

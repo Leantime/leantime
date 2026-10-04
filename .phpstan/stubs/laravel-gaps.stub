@@ -10,6 +10,10 @@
  *
  * These @method tags merge onto the real interfaces/classes; native members are unaffected.
  * Each entry is documented with the concrete class that actually provides the method.
+ *
+ * PHPStan validates stub files in isolation (only classes declared in stub files are known
+ * there), so every non-internal class referenced by a tag below is also declared here as an
+ * empty shell. The shells add no members; PHPStan still reflects the real vendor classes.
  */
 
 namespace Illuminate\Database;
@@ -24,6 +28,10 @@ namespace Illuminate\Database;
  */
 interface ConnectionInterface {}
 
+namespace Illuminate\Database\Query\Grammars;
+
+class Grammar {}
+
 namespace Illuminate\Contracts\Cache;
 
 /**
@@ -35,6 +43,10 @@ namespace Illuminate\Contracts\Cache;
  */
 interface Repository {}
 
+namespace Illuminate\Cache;
+
+abstract class Lock {}
+
 namespace Illuminate\Contracts\Filesystem;
 
 /**
@@ -42,7 +54,7 @@ namespace Illuminate\Contracts\Filesystem;
  * for url()/temporaryUrl()). Storage::disk() returns that adapter.
  *
  * @method string url(string $path)
- * @method string temporaryUrl(string $path, \DateTimeInterface $expiration, array $options = [])
+ * @method string temporaryUrl(string $path, \DateTimeInterface $expiration, array<string, mixed> $options = [])
  * @method string|false mimeType(string $path)
  */
 interface Filesystem {}
@@ -88,6 +100,8 @@ interface Factory {}
  */
 interface Guard {}
 
+interface Authenticatable {}
+
 namespace Illuminate\Support;
 
 /**
@@ -103,6 +117,6 @@ namespace Laravel\Socialite\Contracts;
 /**
  * setScopes() is provided by the concrete Laravel\Socialite\Two\AbstractProvider.
  *
- * @method \Laravel\Socialite\Contracts\Provider setScopes(array|string $scopes)
+ * @method \Laravel\Socialite\Contracts\Provider setScopes(array<int, string>|string $scopes)
  */
 interface Provider {}
