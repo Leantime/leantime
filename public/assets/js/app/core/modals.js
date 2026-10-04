@@ -136,6 +136,64 @@ leantime.modals = (function () {
         });
     };
 
+    // htmx registers "from:body"/"from:document" triggers on body/document; their closures keep the
+    // element (and its whole removed tree) alive until the event fires again. htmx cleans these up
+    // when it swaps content itself, but not when content is removed otherwise (modal close, our
+    // refresh), so do the same cleanup htmx does (deInitNode) before removing content.
+    var cleanUpHtmx = function (root) {
+        if (!root) {
+            return;
+        }
+        var elements = [root].concat(Array.prototype.slice.call(root.querySelectorAll('*')));
+        elements.forEach(function (element) {
+            var internalData = element['htmx-internal-data'];
+            if (!internalData) {
+                return;
+            }
+            if (typeof htmx !== 'undefined') {
+                htmx.trigger(element, 'htmx:beforeCleanupElement');
+            }
+            if (internalData.timeout) {
+                clearTimeout(internalData.timeout);
+            }
+            if (internalData.webSocket) {
+                internalData.webSocket.close();
+            }
+            if (internalData.sseEventSource) {
+                internalData.sseEventSource.close();
+            }
+            (internalData.listenerInfos || []).forEach(function (info) {
+                if (info.on) {
+                    info.on.removeEventListener(info.trigger, info.listener);
+                }
+            });
+            (internalData.onHandlers || []).forEach(function (handlerInfo) {
+                element.removeEventListener(handlerInfo.event, handlerInfo.listener);
+            });
+            Object.keys(internalData).forEach(function (key) {
+                delete internalData[key];
+            });
+        });
+    };
+
+    // Chart.js keeps every chart in Chart.instances until destroy(); a chart whose canvas left the
+    // page would keep that whole removed content alive.
+    var destroyDetachedCharts = function () {
+        if (!window.Chart || !window.Chart.instances) {
+            return;
+        }
+        Object.keys(window.Chart.instances).forEach(function (key) {
+            var chart = window.Chart.instances[key];
+            if (chart && (!chart.canvas || !chart.canvas.isConnected)) {
+                try {
+                    chart.destroy();
+                } catch (error) {
+                    console.warn('[Modal] Could not destroy a chart', error);
+                }
+            }
+        });
+    };
+
     var scrollSnapshot = function (root) {
         var positions = [];
         root.querySelectorAll('*').forEach(function (element) {
@@ -224,14 +282,18 @@ leantime.modals = (function () {
                 }
 
                 var newContent = document.importNode(freshContent, true);
-                document.querySelector('.primaryContent').replaceWith(newContent);
+                var oldContent = document.querySelector('.primaryContent');
+                cleanUpHtmx(oldContent);
+                oldContent.replaceWith(newContent);
 
                 var currentScripts = document.getElementById('lt-page-scripts');
                 var freshScripts = fetched.getElementById('lt-page-scripts');
                 var newScripts = freshScripts ? document.importNode(freshScripts, true) : null;
                 if (currentScripts && newScripts) {
+                    cleanUpHtmx(currentScripts);
                     currentScripts.replaceWith(newScripts);
                 }
+                destroyDetachedCharts();
 
                 removePageScopedListeners();
                 closeUppyInstances('page');
@@ -348,6 +410,9 @@ leantime.modals = (function () {
                 beforeClose: function () {
                     currentModalUrl = null;
                     closeUppyInstances('modal');
+                    cleanUpHtmx(document.querySelector('.nyroModalCont'));
+                    // The modal content is removed after the close animation.
+                    setTimeout(destroyDetachedCharts, 1000);
                     try{
                         history.pushState("", document.title, window.location.pathname + window.location.search);
 
