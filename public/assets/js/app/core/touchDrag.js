@@ -42,6 +42,21 @@
         };
     }
 
+    // The finger that started the sequence; other fingers must not move or drop the card
+    function findTrackedTouch(touchList) {
+        if (!activeTouch || !touchList) {
+            return null;
+        }
+
+        for (var i = 0; i < touchList.length; i++) {
+            if (touchList[i].identifier === activeTouch.touchId) {
+                return touchList[i];
+            }
+        }
+
+        return null;
+    }
+
     function dispatchMouseEvent(target, type, point) {
         var mouseEvent = new MouseEvent(type, {
             bubbles: true,
@@ -107,6 +122,7 @@
 
         activeTouch = {
             widget: widget,
+            touchId: touch.identifier,
             target: event.target,
             startPoint: startPoint,
             lastPoint: startPoint,
@@ -138,7 +154,12 @@
             return;
         }
 
-        var currentPoint = pointFromTouch(event.originalEvent.changedTouches[0]);
+        var trackedTouch = findTrackedTouch(event.originalEvent.changedTouches);
+        if (!trackedTouch) {
+            return;
+        }
+
+        var currentPoint = pointFromTouch(trackedTouch);
         activeTouch.lastPoint = currentPoint;
 
         if (!activeTouch.isDragging) {
@@ -160,6 +181,11 @@
 
     mouseProto._touchEnd = function (event) {
         if (!activeTouch || activeTouch.widget !== this) {
+            return;
+        }
+
+        // Lifting a second finger must not drop a card the first finger is still holding
+        if (!findTrackedTouch(event.originalEvent.changedTouches)) {
             return;
         }
 
