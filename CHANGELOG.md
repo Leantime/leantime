@@ -1,3 +1,34 @@
+# Version: 3.10.3
+
+## New Features
+- **API & MCP** - More reliable partial updates, new status filters, a status summary endpoint and structured error responses for the API and MCP. (#3832)
+- **Health Endpoint** - Added a health endpoint for monitoring deployments. (#3829)
+- **Calendar Widget Filter** - The calendar widget can now be filtered. (#3829)
+- **Subtask Hour Totals** - Subtask hours now roll up into totals. (#3829)
+
+## Improvements
+- **Time Entry** - Hours can now be entered and displayed as minutes. (#3829)
+- **CSV Export** - Ticket descriptions are now included in CSV exports. (#3829)
+
+## Bug Fixes
+- **Plugin Scheduled Jobs** - Enabled plugins now load during console runs so their scheduled jobs execute. (#3831)
+- **User Invites** - Fixed adding users so invites are sent correctly. (#3828)
+- **Timers** - Running timers now stop when a ticket is moved to Done. (#3828)
+- **PDF Attachments** - PDFs now open inline as expected. (#3828)
+- **Calendar Times** - Corrected iCal event times. (#3828, #3829)
+- **Ticket Tabs** - Fixed ticket tab display. (#3827)
+- **Portfolio Pages** - Resolved issues on portfolio pages. (#3827)
+- **Delete Confirmation** - Fixed the delete confirmation dialog. (#3827)
+- **Calendar Widget** - Fixed the month view in the calendar widget. (#3827)
+
+## Security
+- **Email Links** - Links in emails are now built from a trusted app URL. (#3826)
+
+## Dependency Updates
+- Updated the bundled plugins for 3.10.3. (#3833)
+
+---
+
 # Version: 3.10.2
 
 This is a security release. All self-hosted installations should upgrade.
