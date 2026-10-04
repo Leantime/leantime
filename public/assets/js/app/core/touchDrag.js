@@ -66,10 +66,28 @@
         activeTouch = null;
     }
 
+    // A second finger (pinch/zoom, two-finger scroll) is never a drag: drop a
+    // pending long-press so its timer cannot start a drag mid-gesture.
+    function cancelPendingTouchOnMultiTouch(touches) {
+        if (touches.length > 1 && activeTouch && !activeTouch.isDragging) {
+            resetActiveTouch();
+        }
+    }
+
+    // The second finger may land outside any sortable, so watch the whole document
+    document.addEventListener('touchstart', function (event) {
+        cancelPendingTouchOnMultiTouch(event.touches);
+    }, { capture: true, passive: true });
+
     mouseProto._touchStart = function (event) {
         var touches = event.originalEvent.touches;
 
-        if (activeTouch || touches.length > 1) {
+        if (touches.length > 1) {
+            cancelPendingTouchOnMultiTouch(touches);
+            return;
+        }
+
+        if (activeTouch) {
             return;
         }
 
@@ -112,6 +130,11 @@
 
     mouseProto._touchMove = function (event) {
         if (!activeTouch || activeTouch.widget !== this) {
+            return;
+        }
+
+        cancelPendingTouchOnMultiTouch(event.originalEvent.touches);
+        if (!activeTouch) {
             return;
         }
 
