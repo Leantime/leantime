@@ -4397,7 +4397,8 @@ class Tickets extends BaseService
     /**
      * Applies a kanban drag: sets the status of the posted cards and their manual kanban order.
      *
-     * @param  array  $params  statusKey => serialized card list ("ticket[]=1&ticket[]=2").
+     * @param  mixed  $params  statusKey => serialized card list ("ticket[]=1&ticket[]=2"); anything
+     *                         but an array (e.g. a malformed RPC call) is rejected.
      * @param  string|null  $handler  The dragged card (ticket_ID); only it may change status.
      * @param  bool  $preserveSortIndex  True when the board is sorted by a field rather than the
      *                                   manual order: statuses change but kanbanSortIndex is kept.
