@@ -121,8 +121,8 @@ class Reports extends BaseService
 
         $currentSprint = $this->sprintService->getCurrentSprintId($projectId);
 
-        if ($currentSprint !== false && $currentSprint !== 'all') {
-            $sprintObject = $this->sprintService->getSprint((int) $currentSprint);
+        if ($currentSprint !== false) {
+            $sprintObject = $this->sprintService->getSprint($currentSprint);
             if ($sprintObject) {
                 $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
 
@@ -251,7 +251,7 @@ class Reports extends BaseService
         self::dispatch_event('beforeTelemetrySend', ['companyId' => $companyId]);
 
         $companyLang = $this->settings->getSetting('companysettings.language');
-        if ($companyLang != '' && $companyLang !== false) {
+        if ($companyLang != '') {
             $currentLanguage = $companyLang;
         } else {
             $currentLanguage = $this->config->language;

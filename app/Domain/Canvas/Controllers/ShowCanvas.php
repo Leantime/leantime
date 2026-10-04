@@ -206,7 +206,13 @@ class ShowCanvas extends Controller
             'projectId' => session('currentProject'),
         ];
         // createBoard authorizes CREATE against the target (current) project.
-        $currentCanvasId = $this->blueprintsService->createBoard($values, static::CANVAS_NAME.'canvas');
+        $newCanvasId = $this->blueprintsService->createBoard($values, static::CANVAS_NAME.'canvas');
+        if ($newCanvasId === false) {
+            $this->tpl->setNotification($this->language->__('notification.board_create_failed'), 'error');
+
+            return null;
+        }
+        $currentCanvasId = (int) $newCanvasId;
         $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
         $this->notifyBoardCreated($values['title'], 'notification.board_created', 'email_notifications.canvas_created_message');

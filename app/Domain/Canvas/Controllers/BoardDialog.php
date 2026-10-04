@@ -139,7 +139,13 @@ class BoardDialog extends Controller
             'projectId' => session('currentProject'),
         ];
         // createBoard authorizes CREATE against the target (current) project.
-        $currentCanvasId = $this->blueprintsService->createBoard($values, static::CANVAS_NAME.'canvas');
+        $newCanvasId = $this->blueprintsService->createBoard($values, static::CANVAS_NAME.'canvas');
+        if ($newCanvasId === false) {
+            $this->tpl->setNotification($this->language->__('notification.board_create_failed'), 'error');
+
+            return null;
+        }
+        $currentCanvasId = $newCanvasId;
 
         $this->notifyBoardCreated($values['title']);
 

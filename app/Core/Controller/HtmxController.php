@@ -58,7 +58,7 @@ abstract class HtmxController
             app()->call([$this, 'init']);
         }
 
-        if (! property_exists($this, 'view')) {
+        if (! isset(static::$view)) {
             throw new LogicException('HTMX Controllers must include the "$view" static property');
         }
 

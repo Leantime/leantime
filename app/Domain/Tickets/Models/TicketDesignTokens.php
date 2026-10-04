@@ -51,9 +51,12 @@ class TicketDesignTokens
 
     /**
      * Effort/Story points with labels and size mappings
+     *
+     * Keyed by the string form of the points value: PHP truncates float array keys to int,
+     * so a 0.5 key would silently become 0.
      */
     public const EFFORTS = [
-        0.5 => ['label' => '< 2min', 'size' => 'xxs', 'tshirtLabel' => 'XXS'],
+        '0.5' => ['label' => '< 2min', 'size' => 'xxs', 'tshirtLabel' => 'XXS'],
         1 => ['label' => 'XS', 'size' => 'xs', 'tshirtLabel' => 'XS'],
         2 => ['label' => 'S', 'size' => 'sm', 'tshirtLabel' => 'S'],
         3 => ['label' => 'M', 'size' => 'md', 'tshirtLabel' => 'M'],
@@ -96,7 +99,7 @@ class TicketDesignTokens
      */
     public static function getEffort(float $points): ?array
     {
-        return self::EFFORTS[$points] ?? null;
+        return self::EFFORTS[(string) $points] ?? null;
     }
 
     /**

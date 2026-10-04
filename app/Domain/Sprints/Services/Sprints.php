@@ -65,17 +65,27 @@ class Sprints extends BaseService
     /**
      * getCurrentSprintId returns the ID of the current sprint in the project provided
      *
+     * The session value is the task-view sprint filter, which can also hold non-id selections
+     * such as "all" or "backlog"; those yield false just like an unset filter.
+     *
+     * @return false|int The selected sprint id, or false when no single sprint is selected
+     *
      * @api
      */
     #[RequiresPermission(SprintsPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getCurrentSprintId(int $projectId): bool|int
+    public function getCurrentSprintId(int $projectId): false|int
     {
+        $currentSprint = session('currentSprint', '');
 
-        if (session('currentSprint', '') !== '') {
-            return session('currentSprint');
+        if ($currentSprint === '') {
+            session(['currentSprint' => '']);
+
+            return false;
         }
 
-        session(['currentSprint' => '']);
+        if (is_numeric($currentSprint) && (int) $currentSprint > 0) {
+            return (int) $currentSprint;
+        }
 
         return false;
     }
@@ -421,64 +431,52 @@ class Sprints extends BaseService
                 dtHelper()->userNow()
             );
 
+            // Each day is built as one complete row so every row has the same shape.
             $i = 0;
-            foreach ($period as $key => $value) {
-                $burnDown[$i]['date'] = $value->format('Y-m-d');
-
+            foreach ($period as $value) {
                 $dateKey = $value->format('Y-m-d').' 00:00:00';
+
                 if (isset($sprintData[$dateKey])) {
-                    $burnDown[$i]['open']['actualHours'] = $sprintData[$dateKey]->sum_estremaining_hours;
-                    $burnDown[$i]['open']['actualNum'] = $sprintData[$dateKey]->sum_open_todos;
-                    $burnDown[$i]['open']['actualEffort'] = $sprintData[$dateKey]->sum_points_open;
-
-                    $burnDown[$i]['progress']['actualHours'] = 0;
-                    $burnDown[$i]['progress']['actualNum'] = $sprintData[$dateKey]->sum_progres_todos;
-                    $burnDown[$i]['progress']['actualEffort'] = $sprintData[$dateKey]->sum_points_progress;
-
-                    $burnDown[$i]['done']['actualHours'] = $sprintData[$dateKey]->sum_logged_hours;
-                    $burnDown[$i]['done']['actualNum'] = $sprintData[$dateKey]->sum_closed_todos;
-                    $burnDown[$i]['done']['actualEffort'] = $sprintData[$dateKey]->sum_points_done;
+                    $open = [
+                        'actualHours' => $sprintData[$dateKey]->sum_estremaining_hours,
+                        'actualNum' => $sprintData[$dateKey]->sum_open_todos,
+                        'actualEffort' => $sprintData[$dateKey]->sum_points_open,
+                    ];
+                    $progress = [
+                        'actualHours' => 0,
+                        'actualNum' => $sprintData[$dateKey]->sum_progres_todos,
+                        'actualEffort' => $sprintData[$dateKey]->sum_points_progress,
+                    ];
+                    $done = [
+                        'actualHours' => $sprintData[$dateKey]->sum_logged_hours,
+                        'actualNum' => $sprintData[$dateKey]->sum_closed_todos,
+                        'actualEffort' => $sprintData[$dateKey]->sum_points_done,
+                    ];
                 } elseif ($i === 0) {
-                    $burnDown[$i]['open']['actualHours'] = 0;
-                    $burnDown[$i]['open']['actualNum'] = 0;
-                    $burnDown[$i]['open']['actualEffort'] = 0;
-
-                    $burnDown[$i]['progress']['actualHours'] = 0;
-                    $burnDown[$i]['progress']['actualNum'] = 0;
-                    $burnDown[$i]['progress']['actualEffort'] = 0;
-
-                    $burnDown[$i]['done']['actualHours'] = 0;
-                    $burnDown[$i]['done']['actualNum'] = 0;
-                    $burnDown[$i]['done']['actualEffort'] = 0;
+                    $zeroValues = ['actualHours' => 0, 'actualNum' => 0, 'actualEffort' => 0];
+                    $open = $zeroValues;
+                    $progress = $zeroValues;
+                    $done = $zeroValues;
+                } elseif ($value->format('Ymd') < dtHelper()->userNow()->format('Ymd')) {
+                    // A past day without a report row carries the previous day forward
+                    // (the user's today, not the process (UTC) day).
+                    $open = $burnDown[$i - 1]['open'];
+                    $progress = $burnDown[$i - 1]['progress'];
+                    $done = $burnDown[$i - 1]['done'];
                 } else {
-                    // If the date is in the future. Set to 0
-                    $today = dtHelper()->userNow(); // the user's today, not the process (UTC) day
-                    if ($value->format('Ymd') < $today->format('Ymd')) {
-                        $burnDown[$i]['open']['actualHours'] = $burnDown[$i - 1]['open']['actualHours'];
-                        $burnDown[$i]['open']['actualNum'] = $burnDown[$i - 1]['open']['actualNum'];
-                        $burnDown[$i]['open']['actualEffort'] = $burnDown[$i - 1]['open']['actualEffort'];
-
-                        $burnDown[$i]['progress']['actualHours'] = $burnDown[$i - 1]['progress']['actualHours'];
-                        $burnDown[$i]['progress']['actualNum'] = $burnDown[$i - 1]['progress']['actualNum'];
-                        $burnDown[$i]['progress']['actualEffort'] = $burnDown[$i - 1]['progress']['actualEffort'];
-
-                        $burnDown[$i]['done']['actualHours'] = $burnDown[$i - 1]['done']['actualHours'];
-                        $burnDown[$i]['done']['actualNum'] = $burnDown[$i - 1]['done']['actualNum'];
-                        $burnDown[$i]['done']['actualEffort'] = $burnDown[$i - 1]['done']['actualEffort'];
-                    } else {
-                        $burnDown[$i]['open']['actualHours'] = '';
-                        $burnDown[$i]['open']['actualNum'] = '';
-                        $burnDown[$i]['open']['actualEffort'] = '';
-
-                        $burnDown[$i]['progress']['actualHours'] = '';
-                        $burnDown[$i]['progress']['actualNum'] = '';
-                        $burnDown[$i]['progress']['actualEffort'] = '';
-
-                        $burnDown[$i]['done']['actualHours'] = '';
-                        $burnDown[$i]['done']['actualNum'] = '';
-                        $burnDown[$i]['done']['actualEffort'] = '';
-                    }
+                    // Today and future days stay empty
+                    $emptyValues = ['actualHours' => '', 'actualNum' => '', 'actualEffort' => ''];
+                    $open = $emptyValues;
+                    $progress = $emptyValues;
+                    $done = $emptyValues;
                 }
+
+                $burnDown[$i] = [
+                    'date' => $value->format('Y-m-d'),
+                    'open' => $open,
+                    'progress' => $progress,
+                    'done' => $done,
+                ];
 
                 $i++;
             }
