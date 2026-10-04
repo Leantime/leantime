@@ -39,10 +39,11 @@
                                 <em>{{ __('text.ticket_history_description_changed') }}</em>
                             @else
                                 @if ($entry->oldValue !== null)
-                                    <span style="text-decoration:line-through; opacity:0.7;">{{ $entry->oldValue }}</span>
+                                    <del style="opacity:0.7;">{{ $entry->oldValue }}</del>
                                     <i class="fa fa-arrow-right tw-mx-xs" aria-hidden="true"></i>
+                                    <span class="tw-sr-only">{{ __('text.ticket_history_changed_to') }}</span>
                                 @endif
-                                <span>{{ $entry->newValue ?? '' }}</span>
+                                <ins style="text-decoration:none;">{{ $entry->newValue ?? '' }}</ins>
                             @endif
                         </div>
                     </div>

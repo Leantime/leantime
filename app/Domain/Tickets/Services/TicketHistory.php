@@ -163,7 +163,7 @@ class TicketHistory extends BaseService
             $lastRawValueByField[$field] = isset($predecessor['changeValue']) ? (string) $predecessor['changeValue'] : null;
         }
 
-        foreach ($rows as $row) {
+        foreach ($rows as $rowIndex => $row) {
             $field = (string) ($row['changeType'] ?? '');
             $rawNewValue = isset($row['changeValue']) ? (string) $row['changeValue'] : null;
             $rawOldValue = $lastRawValueByField[$field] ?? null;
@@ -172,6 +172,13 @@ class TicketHistory extends BaseService
             if ($field === 'project') {
                 $movedToProjectId = (int) $rawNewValue;
                 $projectInEffect = $movedToProjectId > 0 ? $movedToProjectId : null;
+
+                // A move that kept the same numeric status records no status row; the current status
+                // then belongs to the destination project from here on. When the same update also
+                // changed the status, that row still needs the source project for its old value.
+                if (! $this->isFollowedBySameUpdateStatusChange($rows, $rowIndex)) {
+                    $projectOfPreviousStatus = $projectInEffect;
+                }
             }
 
             $newStatusLabels = [];
@@ -205,6 +212,32 @@ class TicketHistory extends BaseService
         }
 
         return array_reverse($entries);
+    }
+
+    /**
+     * Whether the change after $rows[$index] is a status change recorded by the same update.
+     *
+     * addTicketChange() writes one row per changed field with the same timestamp, the project row
+     * before the status row.
+     *
+     * @param  array<int, array<string, mixed>>  $rows  History rows, oldest first
+     * @param  int  $index  Index of a project row in $rows
+     */
+    private function isFollowedBySameUpdateStatusChange(array $rows, int $index): bool
+    {
+        $current = $rows[$index] ?? null;
+
+        for ($next = $index + 1; isset($rows[$next]); $next++) {
+            if (($rows[$next]['dateModified'] ?? null) !== ($current['dateModified'] ?? null)) {
+                return false;
+            }
+
+            if (($rows[$next]['changeType'] ?? '') === 'status') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

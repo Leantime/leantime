@@ -187,9 +187,9 @@ class TicketHistoryServiceTest extends TestCase
 
         // Before the first recorded move the origin project is unknown -> raw id.
         $this->assertSame('3', $byId[1]->newValue);
-        // Each side uses the project its value was recorded in: the previous status (row 1) was
-        // recorded before any known project -> raw id; the new one in project 9 -> project 9's label.
-        $this->assertSame('3', $byId[3]->oldValue);
+        // The move to project 9 (row 2) recorded no status change, so the status it kept is read
+        // in project 9 from then on; the new value too.
+        $this->assertSame('Backlog (P9)', $byId[3]->oldValue);
         $this->assertSame('Shipped (P9)', $byId[3]->newValue);
         // After moving back to project 7: the previous value was recorded in project 9.
         $this->assertSame('Shipped (P9)', $byId[5]->oldValue);
@@ -215,6 +215,28 @@ class TicketHistoryServiceTest extends TestCase
         }
 
         $this->assertSame('New', $byId[4]->oldValue);
+        $this->assertSame('Shipped (P9)', $byId[4]->newValue);
+    }
+
+    /**
+     * A move that keeps the same numeric status records only the project row; the following status
+     * change's old value then belongs to the destination project.
+     */
+    public function test_move_without_status_change_labels_the_next_old_status_with_the_destination(): void
+    {
+        $service = $this->buildService(ticket: $this->ticketIn(9), allowedProjects: [7, 9], rows: [
+            $this->row(1, 'project', '7', '2026-01-01 09:00:00'),
+            $this->row(2, 'status', '3', '2026-01-01 10:00:00'),
+            $this->row(3, 'project', '9', '2026-01-02 10:00:00'),
+            $this->row(4, 'status', '0', '2026-01-03 10:00:00'),
+        ]);
+
+        $byId = [];
+        foreach ($service->getTicketHistory(5) as $entry) {
+            $byId[$entry->id] = $entry;
+        }
+
+        $this->assertSame('Backlog (P9)', $byId[4]->oldValue);
         $this->assertSame('Shipped (P9)', $byId[4]->newValue);
     }
 
