@@ -145,7 +145,7 @@
 <style id="backgroundImageSetter">
     @if(!empty($themeBg))
             .rightpanel {
-                background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});
+                background-image: url({!! $themeBgCss ?? '""' !!});
                 opacity: {{ $themeOpacity }};
                 mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
                 background-size: var(--background-size, cover);

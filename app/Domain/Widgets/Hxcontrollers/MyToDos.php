@@ -5,6 +5,7 @@ namespace Leantime\Domain\Widgets\Hxcontrollers;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -189,7 +190,7 @@ class MyToDos extends HtmxController
      *
      * patchTicket() resolves the ticket's real project and requires tickets.edit there, so a
      * read-only member (or a caller with a foreign ticket id) gets a failed update instead of
-     * a write. Denials are mapped to false so the widget shows its normal error notification.
+     * a write. Denials and invalid input are mapped to false so the widget shows its normal error notification.
      *
      * @param  mixed  $ticketId  The ticket id from the request.
      * @param  array<string, mixed>  $values  The fields to update.
@@ -203,7 +204,7 @@ class MyToDos extends HtmxController
 
         try {
             return $this->ticketsService->patchTicket((int) $ticketId, $values);
-        } catch (AuthorizationException|NotFoundException) {
+        } catch (AuthorizationException|NotFoundException|ValidationException) {
             return false;
         }
     }

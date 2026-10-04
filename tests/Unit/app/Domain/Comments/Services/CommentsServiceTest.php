@@ -172,11 +172,17 @@ class CommentsServiceTest extends TestCase
             },
         ]);
 
-        $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404));
-
-        // A caller-supplied entity must not stand in for an item that doesn't resolve (or belongs to
+        // A missing item is reported as not found (#3704) rather than a silent false. A
+        // caller-supplied entity must not stand in for an item that doesn't resolve (or belongs to
         // a different canvas type): canvas-family entities are always resolved server-side.
-        $this->assertFalse($this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404, ['id' => 404, 'projectId' => 9]));
+        foreach ([null, ['id' => 404, 'projectId' => 9]] as $suppliedEntity) {
+            try {
+                $this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 404, $suppliedEntity);
+                $this->fail('a comment on a missing item must raise NotFoundException');
+            } catch (\Leantime\Core\Exceptions\NotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     public function test_toggle_rejects_unknown_reaction_type(): void
@@ -422,5 +428,177 @@ class CommentsServiceTest extends TestCase
         $service = $this->makeService($this->noopReactions(), $repo, $this->denyingPermissions());
 
         $this->assertSame(['reactions' => [], 'userReactions' => []], $service->getCommentReactions(404, self::SESSION_USER));
+    }
+
+    // ---------------------------------------------------------------------
+    // #3704: structured errors instead of a silent false
+    // ---------------------------------------------------------------------
+
+    public function test_add_comment_accepts_the_plural_ticket_module(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        $ticket = new \Leantime\Domain\Tickets\Models\Tickets(['id' => 1, 'projectId' => 9, 'type' => 'task', 'headline' => 'H']);
+        $this->app->instance(\Leantime\Domain\Tickets\Services\Tickets::class, $this->make(\Leantime\Domain\Tickets\Services\Tickets::class, [
+            'getTicket' => fn () => $ticket,
+        ]));
+
+        $writtenModule = null;
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => 9,
+            'addComment' => function ($mapper, $module) use (&$writtenModule) {
+                $writtenModule = $module;
+
+                return '503';
+            },
+        ]);
+        $projects = $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]);
+
+        $this->assertTrue($this->makeService($this->noopReactions(), $repo, null, $projects)->addComment(['text' => 'hi'], 'tickets', 1));
+        $this->assertSame('ticket', $writtenModule);
+    }
+
+    public function test_add_comment_rejects_an_unknown_module_with_a_validation_error(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'addComment' => function () {
+                throw new \RuntimeException('must not write a comment for an unknown module');
+            },
+        ]);
+
+        try {
+            $this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hi'], 'bogus', 1);
+            $this->fail('an unknown module must not fail silently');
+        } catch (\Leantime\Core\Exceptions\ValidationException $e) {
+            $this->assertArrayHasKey('module', $e->getErrorData());
+            $this->assertStringContainsString('bogus', $e->getClientMessage());
+        }
+    }
+
+    public function test_add_comment_on_a_missing_ticket_is_not_found(): void
+    {
+        $this->app->instance(\Leantime\Domain\Tickets\Services\Tickets::class, $this->make(\Leantime\Domain\Tickets\Services\Tickets::class, [
+            'getTicket' => fn () => false,
+        ]));
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $this->makeService($this->noopReactions())->addComment(['text' => 'hi'], 'ticket', 404);
+    }
+
+    public function test_get_comments_accepts_the_same_module_aliases_as_add_comment(): void
+    {
+        $seen = [];
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => function ($module) use (&$seen) {
+                $seen[] = $module;
+
+                return 9;
+            },
+            'getComments' => function ($module) use (&$seen) {
+                $seen[] = $module;
+
+                return [];
+            },
+        ]);
+
+        $this->makeService($this->noopReactions(), $repo)->getComments('tickets', 1);
+
+        $this->assertSame(['ticket', 'ticket'], $seen);
+    }
+
+    public function test_get_comments_reports_a_missing_entity_instead_of_an_empty_thread(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => null,
+            'getComments' => function () {
+                throw new \RuntimeException('must not query comments of a missing entity');
+            },
+        ]);
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $this->makeService($this->noopReactions(), $repo)->getComments('ticket', 404);
+    }
+
+    public function test_get_comments_strict_mode_rejects_an_unknown_module(): void
+    {
+        $this->expectException(\Leantime\Core\Exceptions\ValidationException::class);
+
+        $this->makeService($this->noopReactions())->getComments('bogus', 1, strict: true);
+    }
+
+    public function test_get_comments_still_reads_client_and_plugin_modules_for_web_callers(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => null,
+            'getComments' => fn () => [['id' => 1]],
+        ]);
+
+        $this->assertSame([['id' => 1]], $this->makeService($this->noopReactions(), $repo)->getComments('client', 3));
+    }
+
+    public function test_add_comment_ignores_a_caller_supplied_entity_for_an_unknown_module(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'addComment' => function () {
+                throw new \RuntimeException('a fake entity must not unlock writes to an arbitrary module');
+            },
+        ]);
+
+        $this->expectException(\Leantime\Core\Exceptions\ValidationException::class);
+
+        $this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hi'], 'secretmodule', 5, ['id' => 5, 'projectId' => 9]);
+    }
+
+    public function test_add_comment_to_loaded_entity_keeps_client_comments_working(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        $written = null;
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => null,
+            'addComment' => function ($mapper, $module) use (&$written) {
+                $written = [$module, $mapper['moduleId']];
+
+                return '504';
+            },
+        ]);
+        $projects = $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]);
+
+        $this->assertTrue($this->makeService($this->noopReactions(), $repo, null, $projects)
+            ->addCommentToLoadedEntity(['text' => 'hi'], 'client', 3, ['id' => 3, 'name' => 'ACME']));
+        $this->assertSame(['client', 3], $written);
+    }
+
+    public function test_strict_get_comments_checks_that_the_project_exists(): void
+    {
+        $repo = $this->make(CommentRepository::class, [
+            'getComments' => function () {
+                throw new \RuntimeException('must not query comments of a missing project');
+            },
+        ]);
+        $projects = $this->make(ProjectService::class, ['getProject' => fn () => false]);
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $this->makeService($this->noopReactions(), $repo, null, $projects)->getComments('project', 404, strict: true);
+    }
+
+    public function test_goalcanvas_module_alias_maps_to_goal_canvas_items(): void
+    {
+        $seen = [];
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => function ($module) use (&$seen) {
+                $seen[] = $module;
+
+                return 9;
+            },
+            'getComments' => fn () => [],
+        ]);
+
+        $this->makeService($this->noopReactions(), $repo)->getComments('goalcanvas', 1);
+
+        $this->assertSame(['goalcanvasitem'], $seen);
     }
 }

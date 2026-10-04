@@ -15,6 +15,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Auth\Models\Roles;
@@ -439,13 +440,25 @@ class Tickets extends BaseService
      *                                      'effort', 'excludeType', 'type', 'milestone', 'groupBy',
      *                                      'orderBy', 'orderDirection', 'priority', 'clients', and 'sprint'.
      *                                      These values are used to filter the search results.
+     *                                      Server-side filters for API watchers (#3700), all optional and
+     *                                      usable without a project (results stay limited to projects
+     *                                      the caller can access):
+     *                                      - 'modifiedAfter' / 'modifiedBefore': ISO 8601 datetime; matches
+     *                                      the ticket's last modification (creation date if never modified).
+     *                                      - 'statusType': comma list of NEW, INPROGRESS, DONE, NOT_DONE,
+     *                                      resolved against each ticket's own project status labels.
      * @return array|false An array of tickets matching the search criteria, or false on failure.
+     *
+     * @throws ValidationException When modifiedAfter/modifiedBefore is not a date or statusType is unknown.
      *
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAll(?array $searchCriteria = null, ?int $limit = null): array|false
     {
+        if ($searchCriteria !== null) {
+            $searchCriteria = $this->normalizeApiTicketFilters($searchCriteria);
+        }
 
         if (isset($searchCriteria['dateFrom'])) {
             try {
@@ -475,6 +488,152 @@ class Tickets extends BaseService
         }
 
         return $tickets;
+    }
+
+    /**
+     * Compact ticket discovery for API/agent watchers (#3703).
+     *
+     * Returns status counts for every ticket in scope plus a slim list of the "active" tickets
+     * (by default everything in an INPROGRESS-type status), so a watcher does not have to pull and
+     * filter the full getAll() payload. Only projects the caller can access are counted.
+     *
+     * @param  int|null  $projectId  Limit to one project (null = every accessible, non-closed project).
+     * @param  string|null  $statusType  Which tickets to list as active: NEW, INPROGRESS, DONE, NOT_DONE (comma list). Default INPROGRESS.
+     * @param  string|null  $modifiedAfter  ISO 8601 datetime; only count/list tickets changed since then.
+     * @param  bool  $includeSubtasks  Include subtasks (default true). Milestones are never included.
+     * @param  int  $activeLimit  Maximum active tickets returned, most recently modified first (1-500, default 50).
+     * @return array{total: int, countsByType: array<string, int>, countsByStatus: array<int, array<string, mixed>>, active: array<int, array<string, mixed>>, activeTotal: int, activeTruncated: bool}
+     *
+     * @throws ValidationException When a filter value is invalid.
+     * @throws \Leantime\Core\Exceptions\AuthorizationException When the caller may not view the project.
+     *
+     * @api
+     */
+    #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
+    public function getStatusSummary(?int $projectId = null, ?string $statusType = 'INPROGRESS', ?string $modifiedAfter = null, bool $includeSubtasks = true, int $activeLimit = 50): array
+    {
+        // MCP tools call services directly, so authorize in-body as well.
+        if ($projectId !== null && $projectId > 0) {
+            $this->authorize(TicketsPermissions::VIEW, $projectId);
+        }
+
+        $filters = $this->normalizeApiTicketFilters([
+            'modifiedAfter' => $modifiedAfter ?? '',
+            'statusType' => ($statusType === null || $statusType === '') ? 'INPROGRESS' : $statusType,
+        ]);
+        $activeLimit = max(1, min(500, $activeLimit));
+
+        $scopedProjectId = ($projectId !== null && $projectId > 0) ? $projectId : null;
+
+        // Both queries run in the database: grouped counts, and a separately ordered + limited
+        // slim list, so cost does not grow with every ticket in scope.
+        $statusCounts = $this->ticketRepository->countTicketsByProjectAndStatus($scopedProjectId, $filters['modifiedAfter'], $includeSubtasks);
+        $activeTickets = $this->ticketRepository->getActiveTicketSummaries($scopedProjectId, $filters['modifiedAfter'], $includeSubtasks, $filters['statusType'], $activeLimit);
+
+        $countsByType = ['NEW' => 0, 'INPROGRESS' => 0, 'DONE' => 0];
+        $countsByStatus = [];
+        $labelsByProject = [];
+        $total = 0;
+
+        $statusTypeOf = function (int $ticketProjectId, int $status) use (&$labelsByProject): array {
+            $labelsByProject[$ticketProjectId] ??= $this->ticketRepository->getStateLabels($ticketProjectId);
+            $label = $labelsByProject[$ticketProjectId][$status] ?? null;
+
+            return [strtoupper((string) ($label['statusType'] ?? 'NONE')), $label];
+        };
+
+        foreach ($statusCounts as $statusCount) {
+            [$statusTypeName, $label] = $statusTypeOf($statusCount['projectId'], $statusCount['status']);
+
+            $total += $statusCount['count'];
+            $countsByType[$statusTypeName] = ($countsByType[$statusTypeName] ?? 0) + $statusCount['count'];
+            $countsByStatus[] = [
+                'projectId' => $statusCount['projectId'],
+                'status' => $statusCount['status'],
+                'statusType' => $statusTypeName,
+                'label' => $label !== null ? $this->language->__((string) ($label['name'] ?? '')) : '',
+                'count' => $statusCount['count'],
+            ];
+        }
+
+        $active = [];
+        foreach ($activeTickets['rows'] as $ticket) {
+            $ticketProjectId = (int) $ticket['projectId'];
+            [$statusTypeName] = $statusTypeOf($ticketProjectId, (int) $ticket['status']);
+
+            $active[] = [
+                'id' => (int) $ticket['id'],
+                'headline' => $ticket['headline'],
+                'type' => ($ticket['type'] ?? '') !== '' ? $ticket['type'] : 'task',
+                'projectId' => $ticketProjectId,
+                'projectName' => $ticket['projectName'] ?? '',
+                'status' => (int) $ticket['status'],
+                'statusType' => $statusTypeName,
+                'editorId' => $ticket['editorId'] !== null && $ticket['editorId'] !== '' ? (int) $ticket['editorId'] : null,
+                'dependingTicketId' => (int) ($ticket['dependingTicketId'] ?? 0) > 0 ? (int) $ticket['dependingTicketId'] : null,
+                'milestoneid' => (int) ($ticket['milestoneid'] ?? 0) > 0 ? (int) $ticket['milestoneid'] : null,
+                'dateToFinish' => $ticket['dateToFinish'] ?? null,
+                'modified' => $ticket['lastModified'] ?? null,
+                'commentCount' => (int) ($ticket['commentCount'] ?? 0),
+            ];
+        }
+
+        return [
+            'total' => $total,
+            'countsByType' => $countsByType,
+            'countsByStatus' => $countsByStatus,
+            'active' => $active,
+            'activeTotal' => $activeTickets['total'],
+            'activeTruncated' => $activeTickets['total'] > count($active),
+        ];
+    }
+
+    /**
+     * Validate and normalize the API watcher filters of a ticket search (#3700).
+     *
+     * modifiedAfter/modifiedBefore are parsed (ISO 8601, or the user's date format) and converted
+     * to UTC database datetimes; statusType is upper-cased and checked against the known types.
+     *
+     * @param  array<string, mixed>  $searchCriteria  The raw search criteria.
+     * @return array<string, mixed> The criteria with normalized filter values.
+     *
+     * @throws ValidationException When a filter value is invalid.
+     */
+    private function normalizeApiTicketFilters(array $searchCriteria): array
+    {
+        foreach (['modifiedAfter', 'modifiedBefore'] as $dateFilter) {
+            if (! isset($searchCriteria[$dateFilter]) || $searchCriteria[$dateFilter] === '') {
+                continue;
+            }
+
+            try {
+                $searchCriteria[$dateFilter] = dtHelper()->parseUserDateTime((string) $searchCriteria[$dateFilter])->formatDateTimeForDb();
+            } catch (\Throwable $e) {
+                $message = "{$dateFilter} must be an ISO 8601 datetime (e.g. 2026-07-27T00:00:00Z).";
+
+                throw new ValidationException([$dateFilter => [$message]], $message);
+            }
+        }
+
+        if (isset($searchCriteria['statusType']) && $searchCriteria['statusType'] !== '') {
+            $allowedTypes = ['NEW' => 'NEW', 'INPROGRESS' => 'INPROGRESS', 'DONE' => 'DONE', 'NOTDONE' => 'NOT_DONE'];
+            $statusTypes = [];
+            foreach (explode(',', (string) $searchCriteria['statusType']) as $statusType) {
+                $compactType = strtoupper(str_replace([' ', '_', '-'], '', trim($statusType)));
+
+                if (! isset($allowedTypes[$compactType])) {
+                    $message = 'statusType must be a comma separated list of: NEW, INPROGRESS, DONE, NOT_DONE.';
+
+                    throw new ValidationException(['statusType' => [$message]], $message);
+                }
+
+                $statusTypes[] = $allowedTypes[$compactType];
+            }
+
+            $searchCriteria['statusType'] = implode(',', array_unique($statusTypes));
+        }
+
+        return $searchCriteria;
     }
 
     private function decorateWithFriendlyStatusLabels(array $tickets): array
@@ -1947,6 +2106,11 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getAllSubtasks(int $ticketId): false|array
     {
+        // Subtasks are read by parent id only, so fence on the parent: a caller who cannot see the
+        // parent ticket (or whose id names nothing) gets no children from another project.
+        if (! $this->getTicket($ticketId)) {
+            return [];
+        }
 
         // TODO: Refactor to be recursive
         return $this->ticketRepository->getAllSubtasks($ticketId);
@@ -2020,26 +2184,12 @@ class Tickets extends BaseService
 
         $this->authorize(TicketsPermissions::CREATE, $projectId !== null ? (int) $projectId : null);
 
-        // Resolve the default status from the PROJECT's status config
-        // rather than hardcoding `3`. The hardcoded `3` was the "New"
-        // status for the default Leantime install, but custom projects
-        // can have status `3` mean "Done", "Blocked", or anything else,
-        // and we don't want to silently create new tasks in those
-        // statuses. Fall back to `3` only if the project has no
-        // NEW-statusType status configured (which would itself be a
-        // misconfiguration but shouldn't break task creation).
-        $defaultStatus = 3;
-        if ($projectId) {
-            $statusLabels = $this->ticketRepository->getStateLabels((int) $projectId);
-            if (is_array($statusLabels)) {
-                foreach ($statusLabels as $statusId => $config) {
-                    if (($config['statusType'] ?? '') === 'NEW') {
-                        $defaultStatus = (int) $statusId;
-                        break;
-                    }
-                }
-            }
-        }
+        $this->assertParentTicketIsVisible($params['dependingTicketId'] ?? null, (int) $projectId);
+
+        // Status ids, label names ("New") and status types ("inprogress") are all accepted;
+        // anything unknown is rejected instead of being cast to 0 (= Done) (#3702).
+        $status = $this->resolveStatusInput($params['status'] ?? null, (int) $projectId, fallBackOnUnknownId: true)
+            ?? $this->defaultNewStatus((int) $projectId);
 
         $values = [
             'headline' => $params['headline'],
@@ -2050,7 +2200,7 @@ class Tickets extends BaseService
             'userId' => session('userdata.id') ?? $params['userId'] ?? null,
             'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
-            'status' => isset($params['status']) ? (int) $params['status'] : $defaultStatus,
+            'status' => $status,
             'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',
             'hourRemaining' => '',
             'planHours' => isset($params['planHours']) ? (int) $params['planHours'] : '',
@@ -2215,7 +2365,7 @@ class Tickets extends BaseService
             'date' => gmdate('Y-m-d H:i:s'),
             'dateToFinish' => $values['dateToFinish'] ?? '',
             'timeToFinish' => $values['timeToFinish'] ?? '',
-            'status' => $values['status'] ?? 3,
+            'status' => $values['status'] ?? null,
             'planHours' => $values['planHours'] ?? '',
             'tags' => $values['tags'] ?? '',
             'sprint' => $values['sprint'] ?? '',
@@ -2237,6 +2387,13 @@ class Tickets extends BaseService
         // project membership). Replaces the previous access-only check, which let any
         // assigned role create via RPC.
         $this->authorize(TicketsPermissions::CREATE, (int) $values['projectId']);
+
+        $this->assertParentTicketIsVisible($values['dependingTicketId'], (int) $values['projectId']);
+
+        // New work defaults to the project's NEW status; label names and status types are
+        // resolved, unknown strings are rejected instead of becoming 0 (= Done) (#3702).
+        $values['status'] = $this->resolveStatusInput($values['status'], (int) $values['projectId'], fallBackOnUnknownId: true)
+            ?? $this->defaultNewStatus((int) $values['projectId']);
 
         if ($values['headline'] === '') {
             return ['msg' => 'notifications.ticket_save_error_no_headline', 'type' => 'error'];
@@ -2307,6 +2464,8 @@ class Tickets extends BaseService
      *                         - 'timeTo': string|null, End time for ticket editing (optional).
      *                         - 'dependingTicketId': int|null, A ticket ID this ticket depends on (optional).
      *                         - 'milestoneid': int|null, The ID of the milestone associated with this ticket (optional).
+     *                         Fields that are not sent keep their stored value (partial update, #3701);
+     *                         send a field with an empty value to clear it.
      * @return array|bool Returns true if the ticket is successfully updated.
      *                    If an error occurs, an array with keys 'msg' and 'type' is returned. Returns false if the update operation fails.
      *
@@ -2345,12 +2504,18 @@ class Tickets extends BaseService
         $hasOutcomeImpact = array_key_exists('outcomeImpact', $values);
         $outcomeImpact = $values['outcomeImpact'] ?? null;
 
+        // Remember exactly which fields the caller sent: anything absent keeps its stored value
+        // below (partial-update semantics, #3701). The creation timestamp ("date") is never taken
+        // from an update payload, so it is always preserved.
+        $submittedValues = $values;
+        unset($submittedValues['date']);
+
         $values = [
             'id' => $values['id'],
             'headline' => $values['headline'] ?? '',
             'type' => $values['type'] ?? '',
             'description' => $values['description'] ?? '',
-            'projectId' => $values['projectId'] ?? session('currentProject'),
+            'projectId' => $values['projectId'] ?? $currentTicket->projectId,
             'editorId' => $values['editorId'] ?? '',
             'date' => dtHelper()->userNow()->formatDateTimeForDb(),
             'dateToFinish' => $values['dateToFinish'] ?? '',
@@ -2384,7 +2549,44 @@ class Tickets extends BaseService
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
+        // Moving the ticket needs edit rights in the TARGET project, not just membership there
+        // (mirrors patch()); otherwise a reader could push tickets into that project.
+        if ((int) $values['projectId'] !== (int) $currentTicket->projectId
+            && ! $this->can(TicketsPermissions::EDIT, (int) $values['projectId'])) {
+            return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
+        }
+
+        // A newly set parent must be a ticket the caller can see, like on create (#3702).
+        if (array_key_exists('dependingTicketId', $submittedValues)
+            && (int) $submittedValues['dependingTicketId'] !== (int) $currentTicket->dependingTicketId) {
+            $this->assertParentTicketIsVisible($submittedValues['dependingTicketId'], (int) $values['projectId']);
+        }
+
+        // On a move, links that belong to the old project (parent, milestone, sprint) are cleared
+        // unless the caller set them; explicitly set milestone/sprint must belong to the target.
+        foreach ($this->clearForeignProjectLinksOnMove($currentTicket, (int) $values['projectId'], $submittedValues) as $field => $clearedValue) {
+            $values[$field] = $clearedValue;
+            $submittedValues[$field] = $clearedValue;
+        }
+
+        // An empty status means "unchanged"; names/types are resolved, unknown strings rejected (#3702).
+        if (array_key_exists('status', $submittedValues)) {
+            $values['status'] = $this->resolveStatusInput($submittedValues['status'], (int) $values['projectId']);
+            if ($values['status'] === null) {
+                unset($submittedValues['status']);
+            }
+        }
+
+        // Moving without a status: status ids are project-specific, so map the current status to
+        // the target project's status of the same type instead of carrying the source id over.
+        if (! array_key_exists('status', $submittedValues) && (int) $values['projectId'] !== (int) $currentTicket->projectId) {
+            $values['status'] = $this->mapStatusToProject($currentTicket, (int) $values['projectId']);
+            $submittedValues['status'] = $values['status'];
+        }
+
         $values = $this->prepareTicketDates($values);
+
+        $values = $this->keepStoredValuesForOmittedFields($values, $submittedValues, $currentTicket);
 
         // Update Ticket
         if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
@@ -2409,7 +2611,10 @@ class Tickets extends BaseService
 
             TicketUpdated::dispatch(ticketId: (int) $values['id'], legacyHook: __FUNCTION__);
 
-            $this->stopTimerWhenTicketIsDone((int) $values['id'], $values['status'], (int) $values['projectId']);
+            // Only a status change can stop the timer; an omitted status is the stored one (#3701).
+            if (array_key_exists('status', $submittedValues)) {
+                $this->stopTimerWhenTicketIsDone((int) $values['id'], $values['status'], (int) $values['projectId']);
+            }
 
             return true;
         }
@@ -2483,6 +2688,306 @@ class Tickets extends BaseService
         } catch (\Throwable $e) {
             Log::error($e);
         }
+    }
+
+    /**
+     * Resolve a caller-supplied ticket status to a status id of the given project (#3702).
+     *
+     * Accepts a status id defined in the project (int or integer string), a status label name as shown in the project
+     * ("New", "In Progress", a custom label, or the raw language key "status.new"), or a status
+     * type ("new", "inprogress", "done"). Previously any non-numeric string was cast to 0, which is
+     * the Done status, so "New" silently completed new work.
+     *
+     * On create paths ($fallBackOnUnknownId) an unknown NUMERIC id resolves to null so the caller
+     * uses the project's NEW status, with a warning logged: CSV/connector imports send default ids
+     * (e.g. 3) into projects with custom status sets and must keep working. Updates stay strict —
+     * an explicit change to a status that does not exist fails.
+     *
+     * @param  mixed  $status  The submitted status.
+     * @param  int  $projectId  The project whose status labels apply.
+     * @param  bool  $fallBackOnUnknownId  Create path: unknown numeric ids resolve to null instead of failing.
+     * @return int|null The status id, or null when no status was submitted (null or '') or an unknown id falls back.
+     *
+     * @throws ValidationException When the status does not name a status of the project.
+     */
+    private function resolveStatusInput(mixed $status, int $projectId, bool $fallBackOnUnknownId = false): ?int
+    {
+        if ($status === null || $status === '') {
+            return null;
+        }
+
+        $labels = $this->ticketRepository->getStateLabels($projectId);
+
+        // Numeric input must be a whole number AND a status that exists in this project; an id
+        // from another project's custom set (or 3.5, true, ...) is rejected, not stored (#3702).
+        $statusId = match (true) {
+            is_int($status) => $status,
+            is_float($status) && floor($status) === $status => (int) $status,
+            is_string($status) && preg_match('/^\s*-?\d+\s*$/', $status) === 1 => (int) trim($status),
+            default => null,
+        };
+
+        if ($statusId !== null) {
+            if (array_key_exists($statusId, $labels)) {
+                return $statusId;
+            }
+
+            if ($fallBackOnUnknownId) {
+                Log::warning("Ticket status {$statusId} does not exist in project {$projectId}; using the project's NEW status instead.");
+
+                return null;
+            }
+
+            $this->throwUnknownStatus((string) $statusId, $labels);
+        }
+
+        if (! is_string($status) || is_numeric(trim($status))) {
+            $message = 'The status must be a whole-number status id, a status name or a status type.';
+
+            throw new ValidationException(['status' => [$message]], $message);
+        }
+
+        $status = trim($status);
+        $normalize = fn (string $value): string => (string) preg_replace('/[\s_\-]+/', '', strtolower(trim($value)));
+        $wanted = $normalize($status);
+
+        foreach ($labels as $labelStatusId => $label) {
+            $name = (string) ($label['name'] ?? '');
+            $candidates = [$name, $this->language->__($name), (string) preg_replace('/^status\./', '', $name)];
+
+            foreach ($candidates as $candidate) {
+                if ($candidate !== '' && $normalize($candidate) === $wanted) {
+                    return (int) $labelStatusId;
+                }
+            }
+        }
+
+        $statusTypes = ['new' => 'NEW', 'inprogress' => 'INPROGRESS', 'done' => 'DONE'];
+        if (isset($statusTypes[$wanted])) {
+            $typeStatusId = $this->resolveProjectStatusKeyForType($projectId, $statusTypes[$wanted]);
+            if ($typeStatusId !== null) {
+                return $typeStatusId;
+            }
+        }
+
+        $this->throwUnknownStatus($status, $labels);
+    }
+
+    /**
+     * Reject a status that is not defined for the project, listing the valid ones.
+     *
+     * @param  string  $status  The submitted status (for the message).
+     * @param  array<int, array<string, mixed>>  $labels  The project's status labels.
+     *
+     * @throws ValidationException Always.
+     */
+    private function throwUnknownStatus(string $status, array $labels): never
+    {
+        $knownStatuses = [];
+        foreach ($labels as $statusId => $label) {
+            $knownStatuses[] = $statusId.' ('.$this->language->__((string) ($label['name'] ?? '')).')';
+        }
+
+        $message = "Unknown status '{$status}'. Use a status id of this project (".implode(', ', $knownStatuses).') or a status type: new, inprogress, done.';
+
+        throw new ValidationException(['status' => [$message]], $message);
+    }
+
+    /**
+     * The target project's status for a ticket that moves there without an explicit status.
+     *
+     * Status ids are project-specific (4 may be "In Progress" in one project and "Done" in
+     * another), so the ticket's current status TYPE is mapped to the target project's status of
+     * that type; when the type is unknown or missing there, the target's NEW status is used.
+     *
+     * @param  TicketModel  $ticket  The ticket as currently stored.
+     * @param  int  $targetProjectId  The project the ticket moves to.
+     * @return int A status id that exists in the target project.
+     */
+    private function mapStatusToProject(TicketModel $ticket, int $targetProjectId): int
+    {
+        $sourceLabels = $this->ticketRepository->getStateLabels((int) $ticket->projectId);
+        $statusType = (string) ($sourceLabels[(int) $ticket->status]['statusType'] ?? '');
+
+        if (in_array($statusType, ['NEW', 'INPROGRESS', 'DONE'], true)) {
+            $mappedStatus = $this->resolveProjectStatusKeyForType($targetProjectId, $statusType);
+            if ($mappedStatus !== null) {
+                return $mappedStatus;
+            }
+        }
+
+        return $this->defaultNewStatus($targetProjectId);
+    }
+
+    /**
+     * The status new work starts in: the project's first NEW-type status, falling back to 3.
+     *
+     * Custom projects can repurpose status 3, so the default comes from the project's status
+     * configuration rather than being hardcoded.
+     *
+     * @param  int  $projectId  The project the ticket is created in.
+     * @return int The default status id.
+     */
+    private function defaultNewStatus(int $projectId): int
+    {
+        if ($projectId <= 0) {
+            return 3;
+        }
+
+        foreach ($this->ticketRepository->getStateLabels($projectId) as $statusId => $config) {
+            if (($config['statusType'] ?? '') === 'NEW') {
+                return (int) $statusId;
+            }
+        }
+
+        return 3;
+    }
+
+    /**
+     * Project-scoped links to clear when a ticket moves to another project.
+     *
+     * Parent (dependingTicketId), milestone and sprint ids point at entities of a single project.
+     * When the ticket moves and the caller did not set one of them in the same call, a link that
+     * is not valid in the target project is cleared (logged) so it neither exposes the old
+     * project's entities nor dangles. A milestone or sprint the caller sets explicitly during the
+     * move must belong to the target project (sprints include ones the project inherits).
+     *
+     * @param  TicketModel  $ticket  The ticket as currently stored.
+     * @param  int  $targetProjectId  The project the ticket ends up in.
+     * @param  array<string, mixed>  $submittedValues  The fields the caller sent.
+     * @return array<string, string> Field => '' for each link to clear.
+     *
+     * @throws ValidationException When an explicitly set milestone or sprint is not in the target project.
+     */
+    private function clearForeignProjectLinksOnMove(TicketModel $ticket, int $targetProjectId, array $submittedValues): array
+    {
+        if ((int) $ticket->projectId === $targetProjectId) {
+            return [];
+        }
+
+        $isLinkValidInTarget = [
+            'dependingTicketId' => function (int $parentId) use ($targetProjectId): bool {
+                $parentTicket = $this->ticketRepository->getTicket($parentId);
+
+                return $parentTicket && (int) $parentTicket->projectId === $targetProjectId;
+            },
+            'milestoneid' => function (int $milestoneId) use ($targetProjectId): bool {
+                $milestone = $this->ticketRepository->getTicket($milestoneId);
+
+                return $milestone && $milestone->type === 'milestone' && (int) $milestone->projectId === $targetProjectId;
+            },
+            'sprint' => function (int $sprintId) use ($targetProjectId): bool {
+                foreach ($this->sprintService->getAllSprints($targetProjectId) as $sprint) {
+                    if ((int) $sprint->id === $sprintId) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+        ];
+
+        $cleared = [];
+        foreach ($isLinkValidInTarget as $field => $isValid) {
+            $isSubmitted = array_key_exists($field, $submittedValues)
+                && (int) $submittedValues[$field] !== (int) $ticket->$field;
+
+            if ($isSubmitted) {
+                // The parent has its own check (assertParentTicketIsVisible); a milestone or sprint
+                // set during the move must exist in the target project.
+                $submittedId = (int) $submittedValues[$field];
+                if ($field !== 'dependingTicketId' && $submittedId > 0 && ! $isValid($submittedId)) {
+                    $message = "The {$field} {$submittedId} does not belong to project {$targetProjectId}.";
+
+                    throw new ValidationException([$field => [$message]], $message);
+                }
+
+                continue;
+            }
+
+            $currentId = (int) $ticket->$field;
+            if ($currentId <= 0 || $isValid($currentId)) {
+                continue;
+            }
+
+            Log::info("Ticket {$ticket->id} moved to project {$targetProjectId}; cleared {$field} {$currentId}, which is not in that project.");
+            $cleared[$field] = '';
+        }
+
+        return $cleared;
+    }
+
+    /**
+     * A ticket may only be linked under a visible parent in its own project (#3702).
+     *
+     * Subtasks are listed by parent id and listings expose the parent's headline to everyone who
+     * can see the child, so the parent must exist, be accessible to the caller, and live in the
+     * same project as the child; otherwise a parent from another project would leak to that
+     * project's members.
+     *
+     * @param  mixed  $parentTicketId  The submitted dependingTicketId (empty = no parent).
+     * @param  int  $childProjectId  The project the child ticket is (or will be) in.
+     *
+     * @throws ValidationException When the parent is missing, not visible, or in another project.
+     */
+    private function assertParentTicketIsVisible(mixed $parentTicketId, int $childProjectId): void
+    {
+        if ($parentTicketId === null || $parentTicketId === '' || (int) $parentTicketId <= 0) {
+            return;
+        }
+
+        $parentTicket = $this->getTicket((int) $parentTicketId);
+        if (! $parentTicket) {
+            $message = "Parent ticket {$parentTicketId} does not exist or is not accessible.";
+
+            throw new ValidationException(['dependingTicketId' => [$message]], $message);
+        }
+
+        if ((int) $parentTicket->projectId !== $childProjectId) {
+            $message = "Parent ticket {$parentTicketId} belongs to another project; a parent must be in the same project as its subtask.";
+
+            throw new ValidationException(['dependingTicketId' => [$message]], $message);
+        }
+    }
+
+    /**
+     * Partial-update semantics for full-row ticket writes (#3701).
+     *
+     * updateTicket() and the upsertSubtask() update branch rebuild the whole zp_tickets row, so a
+     * field the caller did not send used to be written back as '' — clearing descriptions, tags and
+     * dates, resetting the type to "task" and severing a subtask from its parent
+     * (dependingTicketId). Every field that was NOT submitted now keeps the value currently stored
+     * on the ticket. Applied after prepareTicketDates() so stored (DB-format, UTC) dates are copied
+     * verbatim instead of being re-parsed as user input.
+     *
+     * @param  array<string, mixed>  $values  The prepared row about to be written.
+     * @param  array<string, mixed>  $submittedValues  The raw values the caller sent.
+     * @param  TicketModel  $currentTicket  The ticket as currently stored.
+     * @return array<string, mixed> The row with omitted fields restored from the stored ticket.
+     */
+    private function keepStoredValuesForOmittedFields(array $values, array $submittedValues, TicketModel $currentTicket): array
+    {
+        $rowFields = [
+            'headline', 'type', 'description', 'projectId', 'editorId', 'date', 'dateToFinish', 'status',
+            'planHours', 'tags', 'sprint', 'storypoints', 'hourRemaining', 'priority',
+            'acceptanceCriteria', 'editFrom', 'editTo', 'dependingTicketId', 'milestoneid',
+        ];
+
+        foreach ($rowFields as $field) {
+            if (array_key_exists($field, $submittedValues)) {
+                continue;
+            }
+
+            $values[$field] = $currentTicket->$field;
+        }
+
+        // Collaborators live in a relation table that the repository rewrites on every update, so
+        // an omitted list must carry the current collaborators rather than clear them.
+        if (! array_key_exists('collaborators', $submittedValues)) {
+            $values['collaborators'] = is_array($currentTicket->collaborators ?? null) ? $currentTicket->collaborators : [];
+        }
+
+        return $values;
     }
 
     /**
@@ -2845,17 +3350,24 @@ class Tickets extends BaseService
      * editor or above AND be assigned to the ticket's project (prevents
      * cross-project IDOR via a smuggled ticket id).
      *
+     * Field names the ticket does not have are never written. When NONE of the submitted fields
+     * can be applied the call fails with a ValidationException instead of reporting a silent
+     * no-op; with $strict any unknown field fails the call (#3704). Unknown fields are listed in
+     * the error data under `ignoredFields`.
+     *
      * @param  int  $id  The ticket id to update
      * @param  array  $values  The fields to update
+     * @param  bool  $strict  Reject the whole patch when any field is unknown (default false).
      * @return bool True on success (false only if the underlying write fails)
      *
      * @throws AuthorizationException If the caller is not an editor, or is not assigned to the ticket's project
      * @throws NotFoundException If the ticket does not exist
+     * @throws ValidationException If no field can be applied, or (strict) any field is unknown
      *
      * @api
      */
     #[RequiresPermission(TicketsPermissions::EDIT, entityScoped: true)]
-    public function patchTicket(int $id, array $values): bool
+    public function patchTicket(int $id, array $values, bool $strict = false): bool
     {
         // getTicket() returns false when the user can't access the ticket's project.
         $ticket = $this->getTicket($id);
@@ -2867,7 +3379,44 @@ class Tickets extends BaseService
         // access to it. Replaces the prior session-scoped userIsAtLeast + assignment checks.
         $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
+        $ignoredFields = $this->getIgnoredPatchFields($values);
+        $nothingApplies = count($ignoredFields) === count($values);
+
+        if ($nothingApplies || ($strict && $ignoredFields !== [])) {
+            $message = $values === []
+                ? 'No fields to update were provided.'
+                : 'Unknown ticket field(s): '.implode(', ', $ignoredFields).'. Updatable fields include headline, description, status, type, priority, tags, editorId, projectId, milestoneid, dependingTicketId, sprint, storypoints, planHours, hourRemaining, dateToFinish, editFrom, editTo, acceptanceCriteria, collaborators.';
+
+            throw new ValidationException(['ignoredFields' => $ignoredFields], $message);
+        }
+
         return $this->patch($id, $values);
+    }
+
+    /**
+     * The submitted patch fields that do not exist on a ticket and would be silently dropped.
+     *
+     * Not an @api method: MCP tools use it to tell the caller which fields were ignored (#3704).
+     *
+     * @param  array<string, mixed>  $values  The submitted field => value pairs.
+     * @return array<int, string> The ignored field names, in submission order.
+     */
+    public function getIgnoredPatchFields(array $values): array
+    {
+        // Consumed by patch() itself rather than written as columns.
+        $handledFields = ['collaborators', 'timetofinish', 'timefrom', 'timeto'];
+
+        $ignoredFields = [];
+        foreach (array_keys($values) as $field) {
+            $field = (string) $field;
+            if (in_array(strtolower($field), $handledFields, true) || TicketRepository::isPatchableField($field)) {
+                continue;
+            }
+
+            $ignoredFields[] = $field;
+        }
+
+        return $ignoredFields;
     }
 
     /**
@@ -2961,6 +3510,7 @@ class Tickets extends BaseService
      * @return bool True on success, false when the ticket is not visible or the write fails.
      *
      * @throws AuthorizationException When the caller may not edit the ticket (or the target project).
+     * @throws ValidationException When the status is unknown or the new parent is missing, hidden or in another project.
      */
     public function patch($id, $params): bool
     {
@@ -2990,6 +3540,35 @@ class Tickets extends BaseService
         // could move/inject a ticket into a project they have no access to.
         if (isset($params['projectId']) && (int) $params['projectId'] !== (int) $ticket->projectId) {
             $this->authorize(TicketsPermissions::EDIT, (int) $params['projectId']);
+        }
+
+        // A newly set parent must be a ticket the caller can see, like on create (#3702).
+        if (array_key_exists('dependingTicketId', $params) && (int) $params['dependingTicketId'] !== (int) $ticket->dependingTicketId) {
+            $this->assertParentTicketIsVisible($params['dependingTicketId'], (int) ($params['projectId'] ?? $ticket->projectId));
+        }
+
+        // On a move, links that belong to the old project (parent, milestone, sprint) are cleared
+        // unless the caller set them; explicitly set milestone/sprint must belong to the target.
+        if (isset($params['projectId'])) {
+            foreach ($this->clearForeignProjectLinksOnMove($ticket, (int) $params['projectId'], $params) as $field => $clearedValue) {
+                $params[$field] = $clearedValue;
+            }
+        }
+
+        // Moving without a status: map the current status to the target project's equivalent type.
+        $isMove = isset($params['projectId']) && (int) $params['projectId'] !== (int) $ticket->projectId;
+        if ($isMove && (! array_key_exists('status', $params) || $params['status'] === null || $params['status'] === '')) {
+            $params['status'] = $this->mapStatusToProject($ticket, (int) $params['projectId']);
+        }
+
+        // Resolve a status name/type to the project's status id; an empty status is dropped rather
+        // than written as '' (which the int column stores as 0 = Done) (#3702).
+        if (array_key_exists('status', $params)) {
+            $statusProjectId = (int) ($params['projectId'] ?? $ticket->projectId);
+            $params['status'] = $this->resolveStatusInput($params['status'], $statusProjectId);
+            if ($params['status'] === null) {
+                unset($params['status']);
+            }
         }
 
         // Handle collaborators separately since they live in the relationship table, not on zp_tickets
@@ -3577,6 +4156,8 @@ class Tickets extends BaseService
 
         $subtaskId = $values['subtaskId'] ?? 'new';
         $isNewSubtask = $subtaskId === 'new' || $subtaskId === '';
+        $existingSubtask = null;
+        $submittedValues = $values;
 
         if ($isNewSubtask) {
             $this->authorize(TicketsPermissions::CREATE, $parentProjectId);
@@ -3600,7 +4181,7 @@ class Tickets extends BaseService
         }
 
         $values = [
-            'headline' => $values['headline'],
+            'headline' => $values['headline'] ?? '',
             'type' => 'subtask',
             'description' => $values['description'] ?? '',
             'projectId' => $parentTicket->projectId,
@@ -3609,7 +4190,7 @@ class Tickets extends BaseService
             'date' => $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
             'dateToFinish' => $values['dateToFinish'] ?? '',
             'priority' => $values['priority'] ?? 3,
-            'status' => $values['status'],
+            'status' => $this->resolveStatusInput($values['status'] ?? null, $parentProjectId, fallBackOnUnknownId: $isNewSubtask),
             'storypoints' => $values['storypoints'] ?? '',
             'hourRemaining' => $values['hourRemaining'] ?? 0,
             'planHours' => $values['planHours'] ?? 0,
@@ -3622,7 +4203,23 @@ class Tickets extends BaseService
             'milestoneid' => $parentTicket->milestoneid,
         ];
 
+        // An omitted/empty status keeps the stored one on update and is the project's NEW status
+        // on create (it used to be written as null/'' = Done) (#3702).
+        if ($values['status'] === null) {
+            unset($submittedValues['status']);
+            if ($isNewSubtask) {
+                $values['status'] = $this->defaultNewStatus($parentProjectId);
+            }
+        }
+
         $values = $this->prepareTicketDates($values);
+
+        // Updating an existing subtask only changes the fields the caller sent (#3701). The
+        // parent link, project and subtask type are always set from the parent, never preserved.
+        if (! $isNewSubtask && $existingSubtask instanceof TicketModel) {
+            $forcedFields = ['type' => true, 'projectId' => true, 'dependingTicketId' => true];
+            $values = $this->keepStoredValuesForOmittedFields($values, $submittedValues + $forcedFields, $existingSubtask);
+        }
 
         if ($isNewSubtask) {
             // New Ticket

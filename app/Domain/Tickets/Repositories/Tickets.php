@@ -318,6 +318,206 @@ class Tickets
     }
 
     /**
+     * Limit a ticket query to projects the user may see: assigned projects, projects open to
+     * everyone, projects open to the user's client, or every project for manager+ (role >= 40).
+     *
+     * The query must already join zp_projects and the requesting user as "requestor".
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query  The zp_tickets query.
+     * @param  mixed  $userId  The session user id.
+     * @param  mixed  $clientId  The session user's client id.
+     */
+    private function applyProjectAccessScope($query, mixed $userId, mixed $clientId): void
+    {
+        $query->leftJoin('zp_relationuserproject as rup', function ($join) use ($userId) {
+            $join->on('zp_tickets.projectId', '=', 'rup.projectId')
+                ->where('rup.userId', '=', $userId);
+        })
+            ->where(function ($q) use ($clientId) {
+                $q->whereNotNull('rup.projectId')
+                    ->orWhere('zp_projects.psettings', 'all')
+                    ->orWhere(function ($q2) use ($clientId) {
+                        $q2->where('zp_projects.psettings', 'clients')
+                            ->where('zp_projects.clientId', $clientId);
+                    })
+                    ->orWhere('requestor.role', '>=', 40);
+            });
+    }
+
+    /**
+     * Base query for the compact status summary (#3703): non-milestone, non-archived tickets the
+     * session user can access, optionally limited to one project, changed since a time, and
+     * without subtasks. Closed projects are skipped unless a project is given explicitly.
+     *
+     * @param  int|null  $projectId  One project, or null for all accessible projects.
+     * @param  string  $modifiedAfter  UTC database datetime, or '' for no limit.
+     * @param  bool  $includeSubtasks  Whether subtasks are included.
+     * @return \Illuminate\Database\Query\Builder
+     */
+    private function statusSummaryBaseQuery(?int $projectId, string $modifiedAfter, bool $includeSubtasks)
+    {
+        $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
+
+        $query = $this->connection->table('zp_tickets')
+            ->leftJoin('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->leftJoin('zp_user as requestor', function ($join) use ($requestorId) {
+                $join->on('requestor.id', '=', $this->connection->raw((int) $requestorId));
+            });
+
+        $this->applyProjectAccessScope($query, session('userdata.id') ?? '-1', session('userdata.clientId') ?? '-1');
+
+        $query->where('zp_tickets.type', '<>', 'milestone')
+            ->where('zp_tickets.status', '<>', -1);
+
+        if (! $includeSubtasks) {
+            $query->where('zp_tickets.type', '<>', 'subtask');
+        }
+
+        if ($projectId !== null) {
+            $query->where('zp_tickets.projectId', $projectId);
+        } else {
+            $query->where(function ($q) {
+                $q->where('zp_projects.state', '<>', -1)
+                    ->orWhereNull('zp_projects.state');
+            });
+        }
+
+        if ($modifiedAfter !== '') {
+            $lastChangedSql = 'COALESCE('.$this->dbHelper->wrapColumn('zp_tickets.modified').', '.$this->dbHelper->wrapColumn('zp_tickets.date').')';
+            $query->whereRaw($lastChangedSql.' >= ?', [$modifiedAfter]);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Ticket counts grouped by project and status for the status summary (#3703).
+     *
+     * @param  int|null  $projectId  One project, or null for all accessible projects.
+     * @param  string  $modifiedAfter  UTC database datetime, or '' for no limit.
+     * @param  bool  $includeSubtasks  Whether subtasks are counted.
+     * @return array<int, array{projectId: int, status: int, count: int}>
+     */
+    public function countTicketsByProjectAndStatus(?int $projectId, string $modifiedAfter, bool $includeSubtasks): array
+    {
+        $rows = $this->statusSummaryBaseQuery($projectId, $modifiedAfter, $includeSubtasks)
+            ->select('zp_tickets.projectId', 'zp_tickets.status')
+            ->selectRaw('COUNT(DISTINCT zp_tickets.id) AS '.$this->dbHelper->wrapColumn('ticketCount'))
+            ->groupBy('zp_tickets.projectId', 'zp_tickets.status')
+            ->get();
+
+        return $rows->map(fn ($row) => [
+            'projectId' => (int) $row->projectId,
+            'status' => (int) $row->status,
+            'count' => (int) $row->ticketCount,
+        ])->all();
+    }
+
+    /**
+     * The most recently changed tickets of the given status types, as slim rows (#3703).
+     *
+     * @param  int|null  $projectId  One project, or null for all accessible projects.
+     * @param  string  $modifiedAfter  UTC database datetime, or '' for no limit.
+     * @param  bool  $includeSubtasks  Whether subtasks are included.
+     * @param  string  $statusTypes  Comma-separated NEW, INPROGRESS, DONE, NOT_DONE.
+     * @param  int  $limit  Maximum rows returned.
+     * @return array{rows: array<int, array<string, mixed>>, total: int}
+     */
+    public function getActiveTicketSummaries(?int $projectId, string $modifiedAfter, bool $includeSubtasks, string $statusTypes, int $limit): array
+    {
+        $query = $this->statusSummaryBaseQuery($projectId, $modifiedAfter, $includeSubtasks);
+        $this->applyStatusTypeFilter($query, $projectId !== null ? [$projectId] : [], $statusTypes);
+
+        $total = (int) (clone $query)->distinct()->count('zp_tickets.id');
+
+        $lastChangedSql = 'COALESCE('.$this->dbHelper->wrapColumn('zp_tickets.modified').', '.$this->dbHelper->wrapColumn('zp_tickets.date').')';
+        $commentCountSql = '(SELECT COUNT(*) FROM zp_comment WHERE zp_comment.module = ? AND '.$this->dbHelper->wrapColumn('zp_comment.moduleId').' = zp_tickets.id)';
+
+        $rows = $query
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.type',
+                'zp_tickets.projectId',
+                'zp_projects.name as projectName',
+                'zp_tickets.status',
+                'zp_tickets.editorId',
+                'zp_tickets.dependingTicketId',
+                'zp_tickets.milestoneid',
+                'zp_tickets.dateToFinish',
+            ])
+            ->selectRaw($lastChangedSql.' AS '.$this->dbHelper->wrapColumn('lastModified'))
+            ->selectRaw($commentCountSql.' AS '.$this->dbHelper->wrapColumn('commentCount'), ['ticket'])
+            ->orderByRaw($lastChangedSql.' DESC')
+            ->orderByDesc('zp_tickets.id')
+            ->limit($limit)
+            ->get();
+
+        return [
+            'rows' => array_map(fn ($row) => (array) $row, $rows->all()),
+            'total' => $total,
+        ];
+    }
+
+    /**
+     * Restrict a ticket query to the status types requested, per project.
+     *
+     * Every project in scope contributes "(projectId = p AND status IN (keys of p with that
+     * type))". Without an explicit project scope the projects are taken from the query itself
+     * (i.e. the projects the caller can see that have matching tickets).
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query  The ticket query (access scope already applied).
+     * @param  int[]  $scopedProjectIds  Explicit project scope, or [] for "all visible projects".
+     * @param  string  $statusTypes  Comma-separated NEW, INPROGRESS, DONE and/or NOT_DONE.
+     */
+    private function applyStatusTypeFilter($query, array $scopedProjectIds, string $statusTypes): void
+    {
+        $wantedTypes = array_values(array_filter(array_map(
+            fn ($type) => strtoupper(str_replace([' ', '_', '-'], '', trim($type))),
+            explode(',', $statusTypes)
+        )));
+        $includeNotDone = in_array('NOTDONE', $wantedTypes, true);
+
+        $projectIds = $scopedProjectIds;
+        if ($projectIds === []) {
+            $projectIds = (clone $query)
+                ->select('zp_tickets.projectId')
+                ->distinct()
+                ->pluck('projectId')
+                ->map(fn ($projectId) => (int) $projectId)
+                ->all();
+        }
+
+        $statusKeysByProject = [];
+        foreach ($projectIds as $projectId) {
+            foreach ($this->getStateLabels($projectId) as $statusKey => $label) {
+                $statusType = strtoupper((string) ($label['statusType'] ?? ''));
+                $matches = in_array($statusType, $wantedTypes, true)
+                    || ($includeNotDone && $statusType !== 'DONE');
+
+                if ($matches) {
+                    $statusKeysByProject[$projectId][] = (int) $statusKey;
+                }
+            }
+        }
+
+        if ($statusKeysByProject === []) {
+            $query->whereRaw('1 = 0');
+
+            return;
+        }
+
+        $query->where(function ($statusQuery) use ($statusKeysByProject) {
+            foreach ($statusKeysByProject as $projectId => $statusKeys) {
+                $statusQuery->orWhere(function ($projectQuery) use ($projectId, $statusKeys) {
+                    $projectQuery->where('zp_tickets.projectId', $projectId)
+                        ->whereIn('zp_tickets.status', $statusKeys);
+                });
+            }
+        });
+    }
+
+    /**
      * getAll - get all Tickets, depending on userrole
      *
      * @throws BindingResolutionException
@@ -521,19 +721,7 @@ class Tickets
                 );
         }
 
-        $query->leftJoin('zp_relationuserproject as rup', function ($join) use ($userId) {
-            $join->on('zp_tickets.projectId', '=', 'rup.projectId')
-                ->where('rup.userId', '=', $userId);
-        })
-            ->where(function ($q) use ($clientId) {
-                $q->whereNotNull('rup.projectId')
-                    ->orWhere('zp_projects.psettings', 'all')
-                    ->orWhere(function ($q2) use ($clientId) {
-                        $q2->where('zp_projects.psettings', 'clients')
-                            ->where('zp_projects.clientId', $clientId);
-                    })
-                    ->orWhere('requestor.role', '>=', 40);
-            });
+        $this->applyProjectAccessScope($query, $userId, $clientId);
 
         // Apply search criteria filters
         if (isset($searchCriteria['dateFrom']) && $searchCriteria['dateFrom'] != '') {
@@ -633,6 +821,24 @@ class Tickets
             }
         } else {
             $query->where('zp_tickets.status', '<>', -1);
+        }
+
+        // Semantic status filter (NEW / INPROGRESS / DONE / NOT_DONE). Status ids mean different
+        // things in different projects, so each project's own label config is applied to its own
+        // tickets — which also makes it work without a project scope (#3700).
+        if (isset($searchCriteria['statusType']) && $searchCriteria['statusType'] != '') {
+            $this->applyStatusTypeFilter($query, $scopedProjectIds, (string) $searchCriteria['statusType']);
+        }
+
+        // Change-feed filters for API watchers: modified (falling back to the creation date for
+        // rows never modified) within the given UTC range (#3700).
+        $lastChangedSql = 'COALESCE('.$this->dbHelper->wrapColumn('zp_tickets.modified').', '.$this->dbHelper->wrapColumn('zp_tickets.date').')';
+        if (isset($searchCriteria['modifiedAfter']) && $searchCriteria['modifiedAfter'] != '') {
+            $query->whereRaw($lastChangedSql.' >= ?', [(string) $searchCriteria['modifiedAfter']]);
+        }
+
+        if (isset($searchCriteria['modifiedBefore']) && $searchCriteria['modifiedBefore'] != '') {
+            $query->whereRaw($lastChangedSql.' <= ?', [(string) $searchCriteria['modifiedBefore']]);
         }
 
         if (isset($searchCriteria['type']) && $searchCriteria['type'] != '') {
@@ -1824,6 +2030,26 @@ class Tickets
         'sortIndex' => true,
         'kanbanSortIndex' => true,
     ];
+
+    /**
+     * Whether a patch field name maps to a patchable zp_tickets column (case-insensitive, same
+     * matching as patchTicket()). Lets the service tell callers which fields would be ignored.
+     *
+     * @param  string  $field  The submitted field name.
+     * @return bool True when patchTicket() would write the field.
+     */
+    public static function isPatchableField(string $field): bool
+    {
+        $wanted = strtolower(DbCore::sanitizeToColumnString($field));
+
+        foreach (array_keys(self::PATCHABLE_COLUMNS) as $column) {
+            if (strtolower($column) === $wanted) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Canonical stored form of a priority, or null when the value is not a valid priority.

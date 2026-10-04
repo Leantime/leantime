@@ -801,6 +801,7 @@ class TicketsServiceTest extends TestCase
                 12 => $this->ticketIn(12, 9, ['dependingTicketId' => 5]),
                 default => false,
             },
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
             'updateTicket' => function ($values, $id) use (&$updatedId) {
                 $updatedId = $id;
 
@@ -1329,9 +1330,13 @@ class TicketsServiceTest extends TestCase
      */
     private function subtaskHoursService(false|array $subtasks, array $viewableProjects, \ArrayObject $summedIds, float $loggedSum): TicketsService
     {
+        session(['userdata.id' => 1]);
+
         $service = new TicketsService(
             language: $this->make(LanguageCore::class),
             ticketRepository: $this->make(TicketRepository::class, [
+                // getAllSubtasks() is fenced on the parent being visible to the caller.
+                'getTicket' => fn ($id) => $this->make(TicketModel::class, ['id' => (int) $id, 'projectId' => 5]),
                 'getAllSubtasks' => fn () => $subtasks,
                 'sumLoggedHoursForTickets' => function (array $ticketIds) use ($summedIds, $loggedSum) {
                     $summedIds->append($ticketIds);
@@ -1341,7 +1346,7 @@ class TicketsServiceTest extends TestCase
             ]),
             timesheetsRepo: $this->make(TimesheetRepository::class),
             settingsRepo: $this->make(SettingRepository::class),
-            projectService: $this->make(ProjectService::class),
+            projectService: $this->make(ProjectService::class, ['isUserAssignedToProject' => fn () => true]),
             timesheetService: $this->make(TimesheetService::class),
             sprintService: $this->make(SprintService::class),
             ticketHistoryRepo: $this->make(TicketHistory::class),

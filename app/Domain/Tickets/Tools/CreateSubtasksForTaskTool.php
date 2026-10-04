@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -40,7 +41,7 @@ class CreateSubtasksForTaskTool extends Tool
     {
         return $schema
             ->integer('parentTaskId')->description('ID of the parent task.')->required()
-            ->raw('subtasks', ['type' => 'array', 'description' => 'Array of subtask objects. Each needs headline. Optional: description, userId, editFrom, editTo, dateToFinish (all ISO8601), priority (1=Critical to 5=Lowest), planHours, effort (1=XS to 13=XXL).'])->required()
+            ->raw('subtasks', ['type' => 'array', 'description' => 'Array of subtask objects. Each needs headline. Optional: description, status (id, name or type: new/inprogress/done; defaults to the project NEW status), userId, editFrom, editTo, dateToFinish (all ISO8601), priority (1=Critical to 5=Lowest), planHours, effort (1=XS to 13=XXL).'])->required()
             ->integer('projectId')->description('Project ID (defaults to parent task\'s project).');
     }
 
@@ -74,7 +75,7 @@ class CreateSubtasksForTaskTool extends Tool
                 'editorId' => null,
                 'userId' => $subtaskData['userId'] ?? session('userdata.id'),
                 'dateToFinish' => $subtaskData['dateToFinish'] ?? null,
-                'status' => $subtaskData['status'] ?? 3,
+                'status' => $subtaskData['status'] ?? null,
                 'sprint' => null,
                 'editFrom' => $subtaskData['editFrom'] ?? null,
                 'editTo' => $subtaskData['editTo'] ?? null,
@@ -86,9 +87,16 @@ class CreateSubtasksForTaskTool extends Tool
                 'planHours' => $subtaskData['planHours'] ?? 1,
             ];
 
-            $result = $this->ticketsService->quickAddTicket($params);
+            try {
+                $result = $this->ticketsService->quickAddTicket($params);
+            } catch (LeantimeExceptionInterface $e) {
+                $failureCount++;
+                $results[] = ['headline' => $subtaskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => $e->getClientMessage()];
 
-            if ($result) {
+                continue;
+            }
+
+            if ($result && ! is_array($result)) {
                 $successCount++;
                 $results[] = ['headline' => $subtaskData['headline'], 'status' => 'success', 'id' => $result];
             } else {

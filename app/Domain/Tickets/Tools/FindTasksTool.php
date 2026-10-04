@@ -6,6 +6,7 @@ use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Tickets\Support\TicketFormatter;
@@ -33,7 +34,7 @@ class FindTasksTool extends Tool
      */
     public function description(): string
     {
-        return 'Search for tasks across multiple projects efficiently. This is the primary tool for task discovery and should be used for ALL task searches, whether for single projects or multiple projects. Use this instead of separate project queries. Supports filtering by user, status, and date ranges. Important: Execute this tool only ONCE. Ensure you have all project ids you want to query ready and in this array.';
+        return 'Search for tasks across multiple projects efficiently. This is the primary tool for task discovery and should be used for ALL task searches, whether for single projects or multiple projects. Use this instead of separate project queries. Supports filtering by user, status, status type and last-modified time. Omit projectIds to search every project you can access (useful with modifiedAfter for "what changed since" checks). Important: Execute this tool only ONCE. Ensure you have all project ids you want to query ready and in this array.';
     }
 
     /**
@@ -42,12 +43,15 @@ class FindTasksTool extends Tool
     public function schema(ToolInputSchema $schema): ToolInputSchema
     {
         return $schema
-            ->raw('projectIds', ['type' => 'array', 'description' => 'Array of project IDs (numbers) to search. For multiple projects use [1,3,4,5]. This is more efficient than separate calls.'])->required()
-            ->string('dateRangeFrom')->description('Modified date range from filter. ISO8601 format (e.g. 2024-04-30T15:00:00-04:00).')
-            ->string('dateRangeTo')->description('Modified date range to filter. ISO8601 format.')
+            ->raw('projectIds', ['type' => 'array', 'description' => 'Array of project IDs (numbers) to search. For multiple projects use [1,3,4,5]. This is more efficient than separate calls. Omit to search all accessible projects.'])
+            ->string('modifiedAfter')->description('Only tasks modified (or created, if never modified) at or after this time. ISO8601 format (e.g. 2024-04-30T15:00:00-04:00).')
+            ->string('modifiedBefore')->description('Only tasks modified at or before this time. ISO8601 format.')
+            ->string('dateRangeFrom')->description('Alias of modifiedAfter.')
+            ->string('dateRangeTo')->description('Alias of modifiedBefore.')
             ->integer('userId')->description('User ID to filter by. Empty for all users. 0 for current user.')
             ->string('status')->description('Status filter: open (not completed), done (completed), all (everything). Default is all.')
-            ->integer('limit')->description('Maximum tasks per project. Default 20.');
+            ->string('statusType')->description('Status type filter, comma separated: NEW, INPROGRESS, DONE, NOT_DONE. Resolved per project, e.g. INPROGRESS for everything in progress.')
+            ->integer('limit')->description('Maximum tasks per project (or in total when projectIds is omitted). Default 20.');
     }
 
     /**
@@ -55,39 +59,55 @@ class FindTasksTool extends Tool
      */
     public function handle(array $arguments): ToolResult
     {
-        $projectIds = ($arguments['projectIds'] ?? []);
+        $projectIds = is_array($arguments['projectIds'] ?? null) ? $arguments['projectIds'] : [];
         $userId = ($arguments['userId'] ?? null);
         $status = ($arguments['status'] ?? 'all');
         $limit = (int) ($arguments['limit'] ?? 20);
 
+        $effectiveUserId = $userId;
+        if ($effectiveUserId === null) {
+            $effectiveUserId = '';
+        }
+        if ($effectiveUserId === 0) {
+            $effectiveUserId = session('userdata.id') ?? '';
+        }
+
+        $baseCriteria = [
+            'users' => $effectiveUserId,
+            'modifiedAfter' => $arguments['modifiedAfter'] ?? $arguments['dateRangeFrom'] ?? '',
+            'modifiedBefore' => $arguments['modifiedBefore'] ?? $arguments['dateRangeTo'] ?? '',
+            'statusType' => $arguments['statusType'] ?? '',
+        ];
+
+        // status=open/done is resolved per project, so map it to the equivalent status type; that
+        // also works when no project is given (the legacy not_done/done filter needs a project).
+        if ($status === 'open' && $baseCriteria['statusType'] === '') {
+            $baseCriteria['statusType'] = 'NOT_DONE';
+        } elseif ($status === 'done' && $baseCriteria['statusType'] === '') {
+            $baseCriteria['statusType'] = 'DONE';
+        }
+
+        // No projects: one search across every project the caller can access.
+        $projectScopes = $projectIds === [] ? [null] : $projectIds;
+
         $allResults = [];
         $totalTasks = 0;
 
-        foreach ($projectIds as $projectId) {
-            $effectiveUserId = $userId;
-            if ($effectiveUserId === null) {
-                $effectiveUserId = '';
-            }
-            if ($effectiveUserId === 0) {
-                $effectiveUserId = session('userdata.id') ?? '';
+        foreach ($projectScopes as $projectId) {
+            $searchCriteria = $baseCriteria;
+            if ($projectId !== null) {
+                $searchCriteria['currentProject'] = $projectId;
             }
 
-            $searchCriteria = [
-                'users' => $effectiveUserId,
-                'currentProject' => $projectId,
-            ];
-
-            if ($status === 'open') {
-                $searchCriteria['status'] = 'not_done';
-            } elseif ($status === 'done') {
-                $searchCriteria['status'] = 'done';
+            try {
+                $tickets = $this->ticketsService->getAll($searchCriteria, $limit);
+            } catch (LeantimeExceptionInterface $e) {
+                return ToolResult::error($e->getClientMessage());
             }
 
-            $tickets = $this->ticketsService->getAll($searchCriteria, $limit);
-
-            if (! empty($tickets)) {
-                $allResults[$projectId] = $tickets;
-                $totalTasks += count($tickets);
+            foreach ($tickets ?: [] as $ticket) {
+                $allResults[$ticket['projectId']][] = $ticket;
+                $totalTasks++;
             }
         }
 
@@ -96,7 +116,7 @@ class FindTasksTool extends Tool
         }
 
         $response = "## TASK RESULTS ACROSS PROJECTS\n";
-        if ($totalTasks >= ($limit * count($projectIds))) {
+        if ($totalTasks >= ($limit * count($projectScopes))) {
             $response .= "**Showing first {$limit} results per project. Use more specific filters to reduce results.**\n\n";
         }
 
