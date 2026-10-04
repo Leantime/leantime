@@ -584,4 +584,21 @@ class CommentsServiceTest extends TestCase
 
         $this->makeService($this->noopReactions(), $repo, null, $projects)->getComments('project', 404, strict: true);
     }
+
+    public function test_goalcanvas_module_alias_maps_to_goal_canvas_items(): void
+    {
+        $seen = [];
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => function ($module) use (&$seen) {
+                $seen[] = $module;
+
+                return 9;
+            },
+            'getComments' => fn () => [],
+        ]);
+
+        $this->makeService($this->noopReactions(), $repo)->getComments('goalcanvas', 1);
+
+        $this->assertSame(['goalcanvasitem'], $seen);
+    }
 }

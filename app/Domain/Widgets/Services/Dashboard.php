@@ -4,6 +4,7 @@ namespace Leantime\Domain\Widgets\Services;
 
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
@@ -625,11 +626,17 @@ class Dashboard extends BaseService
                 continue;
             }
 
-            // For tickets with parents, set the dependingTicketId
+            // For tickets with parents, set the dependingTicketId. A parent in another project (the
+            // widget lists tickets of every project) is rejected by the ticket service; skip that
+            // nesting instead of aborting the rest of the hierarchy update.
             if ($parentId > 0) {
-                $this->ticketsService->patch($ticketId, [
-                    'dependingTicketId' => $parentId,
-                ]);
+                try {
+                    $this->ticketsService->patch($ticketId, [
+                        'dependingTicketId' => $parentId,
+                    ]);
+                } catch (ValidationException) {
+                    continue;
+                }
             } else {
                 // For tickets without parents, clear the dependingTicketId
                 $this->ticketsService->patch($ticketId, [

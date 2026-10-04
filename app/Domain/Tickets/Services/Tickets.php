@@ -2184,7 +2184,7 @@ class Tickets extends BaseService
 
         $this->authorize(TicketsPermissions::CREATE, $projectId !== null ? (int) $projectId : null);
 
-        $this->assertParentTicketIsVisible($params['dependingTicketId'] ?? null);
+        $this->assertParentTicketIsVisible($params['dependingTicketId'] ?? null, (int) $projectId);
 
         // Status ids, label names ("New") and status types ("inprogress") are all accepted;
         // anything unknown is rejected instead of being cast to 0 (= Done) (#3702).
@@ -2388,7 +2388,7 @@ class Tickets extends BaseService
         // assigned role create via RPC.
         $this->authorize(TicketsPermissions::CREATE, (int) $values['projectId']);
 
-        $this->assertParentTicketIsVisible($values['dependingTicketId']);
+        $this->assertParentTicketIsVisible($values['dependingTicketId'], (int) $values['projectId']);
 
         // New work defaults to the project's NEW status; label names and status types are
         // resolved, unknown strings are rejected instead of becoming 0 (= Done) (#3702).
@@ -2559,7 +2559,7 @@ class Tickets extends BaseService
         // A newly set parent must be a ticket the caller can see, like on create (#3702).
         if (array_key_exists('dependingTicketId', $submittedValues)
             && (int) $submittedValues['dependingTicketId'] !== (int) $currentTicket->dependingTicketId) {
-            $this->assertParentTicketIsVisible($submittedValues['dependingTicketId']);
+            $this->assertParentTicketIsVisible($submittedValues['dependingTicketId'], (int) $values['projectId']);
         }
 
         // An empty status means "unchanged"; names/types are resolved, unknown strings rejected (#3702).
@@ -2837,23 +2837,33 @@ class Tickets extends BaseService
     }
 
     /**
-     * A new ticket may only be linked under a parent the caller can see (#3702).
+     * A ticket may only be linked under a visible parent in its own project (#3702).
      *
-     * Subtasks are listed by parent id and listings expose the parent's headline, so linking to a
-     * ticket the caller cannot access (or one that does not exist) is rejected.
+     * Subtasks are listed by parent id and listings expose the parent's headline to everyone who
+     * can see the child, so the parent must exist, be accessible to the caller, and live in the
+     * same project as the child; otherwise a parent from another project would leak to that
+     * project's members.
      *
      * @param  mixed  $parentTicketId  The submitted dependingTicketId (empty = no parent).
+     * @param  int  $childProjectId  The project the child ticket is (or will be) in.
      *
-     * @throws ValidationException When the parent does not exist or is not visible to the caller.
+     * @throws ValidationException When the parent is missing, not visible, or in another project.
      */
-    private function assertParentTicketIsVisible(mixed $parentTicketId): void
+    private function assertParentTicketIsVisible(mixed $parentTicketId, int $childProjectId): void
     {
         if ($parentTicketId === null || $parentTicketId === '' || (int) $parentTicketId <= 0) {
             return;
         }
 
-        if (! $this->getTicket((int) $parentTicketId)) {
+        $parentTicket = $this->getTicket((int) $parentTicketId);
+        if (! $parentTicket) {
             $message = "Parent ticket {$parentTicketId} does not exist or is not accessible.";
+
+            throw new ValidationException(['dependingTicketId' => [$message]], $message);
+        }
+
+        if ((int) $parentTicket->projectId !== $childProjectId) {
+            $message = "Parent ticket {$parentTicketId} belongs to another project; a parent must be in the same project as its subtask.";
 
             throw new ValidationException(['dependingTicketId' => [$message]], $message);
         }
@@ -3419,6 +3429,7 @@ class Tickets extends BaseService
      * @return bool True on success, false when the ticket is not visible or the write fails.
      *
      * @throws AuthorizationException When the caller may not edit the ticket (or the target project).
+     * @throws ValidationException When the status is unknown or the new parent is missing, hidden or in another project.
      */
     public function patch($id, $params): bool
     {
@@ -3452,7 +3463,7 @@ class Tickets extends BaseService
 
         // A newly set parent must be a ticket the caller can see, like on create (#3702).
         if (array_key_exists('dependingTicketId', $params) && (int) $params['dependingTicketId'] !== (int) $ticket->dependingTicketId) {
-            $this->assertParentTicketIsVisible($params['dependingTicketId']);
+            $this->assertParentTicketIsVisible($params['dependingTicketId'], (int) ($params['projectId'] ?? $ticket->projectId));
         }
 
         // Moving without a status: map the current status to the target project's equivalent type.

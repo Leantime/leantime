@@ -697,4 +697,37 @@ class TicketsApiContractTest extends TestCase
 
         $this->assertSame('2026-01-02 03:04:05', $written['date']);
     }
+
+    public function test_a_parent_from_another_project_is_rejected(): void
+    {
+        $service = $this->service([
+            'getStateLabels' => fn () => $this->seedLabels(),
+            // Ticket 500 is visible to the caller but lives in project 12.
+            'getTicket' => fn ($id) => match ((int) $id) {
+                977 => $this->storedSubtask(),
+                500 => $this->make(TicketModel::class, ['id' => 500, 'projectId' => 12, 'headline' => 'Foreign']),
+                default => false,
+            },
+            'addTicket' => function () {
+                throw new \RuntimeException('must not create a subtask under a foreign-project parent');
+            },
+            'patchTicket' => function () {
+                throw new \RuntimeException('must not re-parent under a foreign-project parent');
+            },
+        ]);
+
+        $calls = [
+            fn () => $service->addTicket(['headline' => 'Sub', 'projectId' => 9, 'dependingTicketId' => 500]),
+            fn () => $service->patch(977, ['dependingTicketId' => 500]),
+        ];
+
+        foreach ($calls as $call) {
+            try {
+                $call();
+                $this->fail('a parent must be in the same project as the child');
+            } catch (ValidationException $e) {
+                $this->assertStringContainsString('another project', $e->getClientMessage());
+            }
+        }
+    }
 }

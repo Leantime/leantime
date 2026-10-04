@@ -155,6 +155,7 @@ class Comments extends BaseService
             'articles' => 'article',
             'ideas' => 'idea',
             'goal' => 'goalcanvasitem',
+            'goalcanvas' => 'goalcanvasitem',
             'goals' => 'goalcanvasitem',
         ];
 
