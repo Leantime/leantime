@@ -30,7 +30,7 @@ class CheckPermissions
 
             // Skip closure routes (no controller) and invokable/closure actions where the
             // "method" resolves to the class name itself.
-            if (is_string($controller) && $controller !== '' && is_string($method) && $method !== $controller) {
+            if (is_string($controller) && $controller !== '' && $method !== $controller) {
                 $this->enforcer->enforce($controller, $method, $request->all());
             }
         }

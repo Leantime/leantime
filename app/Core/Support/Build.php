@@ -66,11 +66,7 @@ class Build
         foreach ($properties as &$property) {
             $isset = false;
             foreach ([$property, lcfirst($property)] as $propName) {
-                if (
-                    in_array(true, [
-                        is_object($currentElement) && ! property_exists($currentElement, $propName),
-                    ])
-                ) {
+                if (! property_exists($currentElement, $propName)) {
                     continue;
                 }
 

@@ -696,7 +696,7 @@ class Theme
                     INI_SCANNER_RAW
                 );
 
-                if (isset($iniData['general']['name']) && $iniData['general']['name'] !== null) {
+                if (isset($iniData['general']['name'])) {
                     $themes[$themeDir] = $iniData['general'];
                 }
             }

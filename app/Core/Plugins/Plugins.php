@@ -124,18 +124,16 @@ class Plugins
             }
         } catch (\Exception $e) {
             // Fall back to system plugins if service unavailable
-            if (isset($this->enabledPlugins)) {
-                foreach ($this->enabledPlugins as $pluginName => $enabled) {
-                    if ($enabled) {
-                        $pluginPath = $pluginDirectory.$pluginName;
-                        if (is_dir($pluginPath)) {
-                            $pluginPaths[] = [
-                                'path' => $pluginPath,
-                                'foldername' => $pluginName,
-                                'format' => 'folder',
-                                'namespace' => "Leantime\\Plugins\\{$pluginName}\\",
-                            ];
-                        }
+            foreach ($this->enabledPlugins as $pluginName => $enabled) {
+                if ($enabled) {
+                    $pluginPath = $pluginDirectory.$pluginName;
+                    if (is_dir($pluginPath)) {
+                        $pluginPaths[] = [
+                            'path' => $pluginPath,
+                            'foldername' => $pluginName,
+                            'format' => 'folder',
+                            'namespace' => "Leantime\\Plugins\\{$pluginName}\\",
+                        ];
                     }
                 }
             }

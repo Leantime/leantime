@@ -154,9 +154,7 @@ class Cast
      **/
     public static function castDateTime(string $value)
     {
-        if (is_string($value)) {
-            return dtHelper()->parseDbDateTime($value);
-        }
+        return dtHelper()->parseDbDateTime($value);
     }
 
     protected function handleIterator(iterable $iterator, array $mappings = []): array|object

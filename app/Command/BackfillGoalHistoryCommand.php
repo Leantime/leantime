@@ -90,7 +90,7 @@ class BackfillGoalHistoryCommand extends Command
         $lineNo = 1;
         while (($record = fgetcsv($handle)) !== false) {
             $lineNo++;
-            if ($record === [null] || $record === []) {
+            if ($record === [null]) {
                 continue;
             }
 

@@ -113,7 +113,7 @@ class RoutingFormatter extends AbstractEntityFormatter
     protected function hasFeedback(): bool
     {
         foreach ($this->conversationHistory as $exchange) {
-            if (isset($exchange['feedback']) && $exchange['feedback'] !== null) {
+            if (isset($exchange['feedback'])) {
                 return true;
             }
         }

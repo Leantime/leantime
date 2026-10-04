@@ -342,9 +342,7 @@ class IncomingRequest extends \Illuminate\Http\Request
         $completeName ??= $this->getCurrentRoute();
         $actionParts = explode('.', empty($completeName) ? $this->currentRoute : $completeName);
 
-        if (is_array($actionParts)) {
-            return $actionParts[0];
-        }
+        return $actionParts[0];
     }
 
     /**
@@ -361,11 +359,11 @@ class IncomingRequest extends \Illuminate\Http\Request
         $actionName = '';
 
         // If no action name was given, call index controller
-        if (is_array($actionParts) && count($actionParts) === 1) {
+        if (count($actionParts) === 1) {
             $actionName = 'index';
         }
 
-        if (is_array($actionParts) && count($actionParts) === 2) {
+        if (count($actionParts) === 2) {
             $actionName = $actionParts[1];
         }
 

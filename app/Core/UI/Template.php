@@ -197,7 +197,7 @@ class Template
      **/
     public function getAll(): array
     {
-        return $this->vars ?? [];
+        return $this->vars;
     }
 
     /**
@@ -435,7 +435,7 @@ class Template
         $path = $view->getPath();
         $viewPathExplode = explode('::', $viewPath);
 
-        $this->setHookContext(['module' => $viewPathExplode[0] ?? '', 'path' => $viewPathExplode[1] ?? ''], $path);
+        $this->setHookContext(['module' => $viewPathExplode[0], 'path' => $viewPathExplode[1] ?? ''], $path);
 
         return new Response($view->fragmentIf(! empty($fragment), $fragment));
     }
@@ -1048,7 +1048,7 @@ class Template
      */
     private function dispatchTplHook(string $type, string $hookName, mixed $payload, array $available_params = []): mixed
     {
-        if (! is_string($type) || ! in_array($type, ['event', 'filter'])) {
+        if (! in_array($type, ['event', 'filter'])) {
             return null;
         }
 

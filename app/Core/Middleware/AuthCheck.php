@@ -366,7 +366,7 @@ class AuthCheck
             default => $pathSegments[0].'.'.$pathSegments[1],
         };
 
-        return $routeToCheck !== null && in_array($routeToCheck, $this->publicActions, true);
+        return in_array($routeToCheck, $this->publicActions, true);
 
     }
 }

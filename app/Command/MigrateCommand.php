@@ -100,7 +100,7 @@ class MigrateCommand extends Command
                 // Turning this off for console installs
                 $usersRepo = app()->make(Users::class);
                 $getAdminUser = $usersRepo->getUserByEmail($adminEmail, '');
-                if ($getAdminUser !== false && is_array($getAdminUser)) {
+                if ($getAdminUser !== false) {
                     $userId = $getAdminUser['id'];
                     $usersRepo->patchUser($userId, ['password' => $setupConfig['password'], 'status' => 'a']);
 

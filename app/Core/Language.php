@@ -63,7 +63,7 @@ class Language
     public array $ini_array_fallback;
 
     /**
-     * @var array
+     * @var array|bool Language list keyed by code, or false when no languagelist.ini could be read
      *
      * @static
      *
@@ -72,13 +72,13 @@ class Language
     public mixed $langlist;
 
     /**
-     * @var array|bool - debug value. Will highlight untranslated text
+     * @var bool - debug value. Will highlight untranslated text
      *
      * @static
      *
      * @final
      */
-    private array|bool $alert = false;
+    private bool $alert = false;
 
     public Environment $config;
 

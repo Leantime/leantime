@@ -429,9 +429,9 @@ class Frontcontroller
         $actionParts = explode('.', empty($completeName) ? currentRoute() : $completeName);
 
         // If not action name was given, call index controller
-        if (is_array($actionParts) && count($actionParts) == 1) {
+        if (count($actionParts) == 1) {
             return 'index';
-        } elseif (is_array($actionParts) && count($actionParts) >= 2) {
+        } elseif (count($actionParts) >= 2) {
             return $actionParts[1];
         }
 
@@ -453,9 +453,9 @@ class Frontcontroller
         $actionParts = explode('.', empty($completeName) ? currentRoute() : $completeName);
 
         // If not action name was given, call index controller
-        if (is_array($actionParts) && count($actionParts) == 2) {
+        if (count($actionParts) == 2) {
             return strtolower(app('request')->getMethod());
-        } elseif (is_array($actionParts) && count($actionParts) == 3) {
+        } elseif (count($actionParts) == 3) {
             return $actionParts[2];
         }
 
@@ -472,9 +472,7 @@ class Frontcontroller
         $completeName ??= currentRoute();
         $actionParts = explode('.', empty($completeName) ? currentRoute() : $completeName);
 
-        if (is_array($actionParts)) {
-            return $actionParts[0];
-        }
+        return $actionParts[0];
     }
 
     /**
