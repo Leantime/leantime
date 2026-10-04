@@ -183,6 +183,18 @@ class Language
     }
 
     /**
+     * Cache key for a language's merged strings.
+     *
+     * Includes the app version: the installation cache is only flushed by database updates, so a
+     * release that adds strings without a migration kept serving the old cached file and new keys
+     * rendered raw (e.g. "tabs.history") until the cache was cleared by hand.
+     */
+    private function languageCacheKey(): string
+    {
+        return 'languages.lang_'.$this->language.'_'.app(\Leantime\Core\Configuration\AppSettings::class)->appVersion;
+    }
+
+    /**
      * Read and load the language resources from the ini files.
      *
      * @return array The array of language resources loaded from the ini files.
@@ -191,16 +203,16 @@ class Language
      */
     public function readIni(): array
     {
-        if (@Cache::store('installation')->has('languages.lang_'.$this->language)) {
+        if (@Cache::store('installation')->has($this->languageCacheKey())) {
             $this->ini_array = self::dispatchFilter(
                 'language_resources',
-                Cache::store('installation')->get('languages.lang_'.$this->language),
+                Cache::store('installation')->get($this->languageCacheKey()),
                 [
                     'language' => $this->language,
                 ]
-            ) ?? Cache::store('installation')->get('languages.lang_'.$this->language);
+            ) ?? Cache::store('installation')->get($this->languageCacheKey());
 
-            Cache::store('installation')->set('languages.lang_'.$this->language, $this->ini_array);
+            Cache::store('installation')->set($this->languageCacheKey(), $this->ini_array);
 
             return $this->ini_array;
         }
@@ -235,7 +247,7 @@ class Language
             ]
         );
 
-        Cache::store('installation')->set('languages.lang_'.$this->language, $this->ini_array);
+        Cache::store('installation')->set($this->languageCacheKey(), $this->ini_array);
 
         return $this->ini_array;
     }
