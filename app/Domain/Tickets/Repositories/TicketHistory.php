@@ -63,6 +63,47 @@ class TicketHistory
     }
 
     /**
+     * The latest change of one field recorded before a given history row (ordered like
+     * getTicketChanges(): by dateModified, then id).
+     *
+     * Access-agnostic: callers must authorize the ticket before calling this.
+     *
+     * @param  int  $ticketId  The ticket id
+     * @param  string  $changeType  The field (changeType)
+     * @param  string  $beforeDate  dateModified of the reference row
+     * @param  int  $beforeId  id of the reference row
+     * @return array<string, mixed>|null The row (same columns as getTicketChanges()), null if none
+     */
+    public function getLatestChangeBefore(int $ticketId, string $changeType, string $beforeDate, int $beforeId): ?array
+    {
+        $row = $this->db->table('zp_tickethistory')
+            ->leftJoin('zp_user', 'zp_user.id', '=', 'zp_tickethistory.userId')
+            ->select(
+                'zp_tickethistory.id',
+                'zp_tickethistory.userId',
+                'zp_tickethistory.changeType',
+                'zp_tickethistory.changeValue',
+                'zp_tickethistory.dateModified',
+                'zp_user.firstname',
+                'zp_user.lastname'
+            )
+            ->where('zp_tickethistory.ticketId', $ticketId)
+            ->where('zp_tickethistory.changeType', $changeType)
+            ->where(function ($query) use ($beforeDate, $beforeId) {
+                $query->where('zp_tickethistory.dateModified', '<', $beforeDate)
+                    ->orWhere(function ($sameTime) use ($beforeDate, $beforeId) {
+                        $sameTime->where('zp_tickethistory.dateModified', '=', $beforeDate)
+                            ->where('zp_tickethistory.id', '<', $beforeId);
+                    });
+            })
+            ->orderBy('zp_tickethistory.dateModified', 'desc')
+            ->orderBy('zp_tickethistory.id', 'desc')
+            ->first();
+
+        return $row === null ? null : (array) $row;
+    }
+
+    /**
      * Display names for a set of user ids, keyed by user id.
      *
      * @param  array<int, int>  $userIds  The user ids to look up

@@ -128,6 +128,48 @@ class TicketHistoryServiceTest extends TestCase
         $this->assertSame('Not assigned', $byId[6]->newValue);
     }
 
+    public function test_truncated_history_keeps_the_previous_value_of_the_first_retained_change(): void
+    {
+        // Exactly MAX_ENTRIES rows: the oldest retained change of each field has an older,
+        // non-retained predecessor that must still provide its "from" value.
+        $rows = [$this->row(101, 'status', '0', '2026-01-01 09:00:00')];
+        for ($i = 1; $i < TicketHistoryService::MAX_ENTRIES; $i++) {
+            $rows[] = $this->row(101 + $i, 'headline', 'Title '.$i, '2026-01-02 10:00:00');
+        }
+
+        $lookups = [];
+        $service = $this->buildService(
+            ticket: $this->ticketIn(7),
+            rows: $rows,
+            getLatestChangeBefore: function (int $ticketId, string $field, string $beforeDate, int $beforeId) use (&$lookups): ?array {
+                $lookups[] = [$ticketId, $field, $beforeDate, $beforeId];
+
+                return match ($field) {
+                    'status' => $this->row(50, 'status', '3', '2025-12-01 10:00:00'),
+                    'headline' => $this->row(60, 'headline', 'Original title', '2025-12-02 10:00:00'),
+                    default => null,
+                };
+            },
+        );
+
+        $entries = $service->getTicketHistory(5);
+
+        $this->assertCount(TicketHistoryService::MAX_ENTRIES, $entries);
+
+        // Predecessors are looked up relative to the oldest retained row.
+        $this->assertContains([5, 'status', '2026-01-01 09:00:00', 101], $lookups);
+        $this->assertContains([5, 'headline', '2026-01-01 09:00:00', 101], $lookups);
+
+        $oldestEntry = $entries[count($entries) - 1];
+        $this->assertSame('status', $oldestEntry->field);
+        $this->assertSame('New', $oldestEntry->oldValue);
+        $this->assertSame('Done', $oldestEntry->newValue);
+
+        $firstHeadlineEntry = $entries[count($entries) - 2];
+        $this->assertSame('Original title', $firstHeadlineEntry->oldValue);
+        $this->assertSame('Title 1', $firstHeadlineEntry->newValue);
+    }
+
     public function test_dates_are_formatted_for_the_user(): void
     {
         $service = $this->buildService(ticket: $this->ticketIn(7), rows: [
@@ -193,6 +235,7 @@ class TicketHistoryServiceTest extends TestCase
         array &$checks = [],
         ?\Closure $getTicket = null,
         ?\Closure $getTicketChanges = null,
+        ?\Closure $getLatestChangeBefore = null,
     ): TicketHistoryService {
         $ticketRepository = $this->make(TicketRepository::class, [
             'getTicket' => $getTicket ?? fn () => $ticket,
@@ -205,6 +248,9 @@ class TicketHistoryServiceTest extends TestCase
 
         $historyRepository = $this->make(TicketHistoryRepository::class, [
             'getTicketChanges' => $getTicketChanges ?? fn () => $rows,
+            'getLatestChangeBefore' => $getLatestChangeBefore ?? function () {
+                throw new \RuntimeException('must not look up older changes for an untruncated history');
+            },
             'getUserNames' => fn (array $ids) => array_intersect_key([42 => 'Bob Builder'], array_flip($ids)),
         ]);
 

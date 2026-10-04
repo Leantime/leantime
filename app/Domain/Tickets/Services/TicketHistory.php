@@ -78,34 +78,77 @@ class TicketHistory extends BaseService
         }
 
         $rows = $this->ticketHistoryRepo->getTicketChanges($ticketId, self::MAX_ENTRIES);
+        $predecessors = $this->findPredecessors($ticketId, $rows);
 
-        return $this->buildEntries($rows, $projectId);
+        return $this->buildEntries($rows, $predecessors, $projectId);
+    }
+
+    /**
+     * For a truncated history (more than MAX_ENTRIES rows), the latest change of each field that
+     * happened before the retained window, so the first retained change of a field still gets its
+     * "from" value. When the history was not truncated there is nothing older to look up.
+     *
+     * @param  int  $ticketId  The ticket id
+     * @param  array<int, array<string, mixed>>  $rows  The retained rows, oldest first
+     * @return array<string, array<string, mixed>> Preceding rows keyed by changeType
+     */
+    private function findPredecessors(int $ticketId, array $rows): array
+    {
+        if (count($rows) < self::MAX_ENTRIES) {
+            return [];
+        }
+
+        $oldestRetainedRow = $rows[0];
+        $fields = array_unique(array_map(fn (array $row) => (string) ($row['changeType'] ?? ''), $rows));
+
+        $predecessors = [];
+        foreach ($fields as $field) {
+            $predecessor = $this->ticketHistoryRepo->getLatestChangeBefore(
+                $ticketId,
+                $field,
+                (string) $oldestRetainedRow['dateModified'],
+                (int) $oldestRetainedRow['id']
+            );
+
+            if ($predecessor !== null) {
+                $predecessors[$field] = $predecessor;
+            }
+        }
+
+        return $predecessors;
     }
 
     /**
      * Turns raw history rows (oldest first) into display entries (newest first).
      *
      * The history table stores only the new value of each change, so the previous value of a field
-     * is taken from the preceding change of the same field; the first recorded change has none.
+     * is taken from the preceding change of the same field (or from $predecessors for the first
+     * retained change); the first change ever recorded has none.
      * Private on purpose: public service methods are JSON-RPC callable, and this one trusts its
      * input (it would resolve labels/names for arbitrary ids).
      *
      * @param  array<int, array<string, mixed>>  $rows  Rows from TicketHistoryRepository::getTicketChanges()
+     * @param  array<string, array<string, mixed>>  $predecessors  Changes before $rows, keyed by changeType
      * @param  int  $projectId  The ticket's project (for status labels)
      * @return array<int, TicketHistoryEntry>
      */
-    private function buildEntries(array $rows, int $projectId): array
+    private function buildEntries(array $rows, array $predecessors, int $projectId): array
     {
         if (empty($rows)) {
             return [];
         }
 
         $statusLabels = $this->ticketRepository->getStateLabels($projectId);
-        $editorNames = $this->ticketHistoryRepo->getUserNames($this->collectEditorIds($rows));
+        $editorNames = $this->ticketHistoryRepo->getUserNames(
+            $this->collectEditorIds(array_merge(array_values($predecessors), $rows))
+        );
         $projectNames = [];
 
         $entries = [];
         $lastRawValueByField = [];
+        foreach ($predecessors as $field => $predecessor) {
+            $lastRawValueByField[$field] = isset($predecessor['changeValue']) ? (string) $predecessor['changeValue'] : null;
+        }
 
         foreach ($rows as $row) {
             $field = (string) ($row['changeType'] ?? '');
