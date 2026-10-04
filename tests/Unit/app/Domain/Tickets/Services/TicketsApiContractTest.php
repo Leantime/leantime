@@ -730,4 +730,54 @@ class TicketsApiContractTest extends TestCase
             }
         }
     }
+
+    public function test_moving_a_subtask_detaches_a_parent_that_stays_in_the_old_project(): void
+    {
+        $written = null;
+        $patched = null;
+        $service = $this->service([
+            'getStateLabels' => fn () => $this->seedLabels(),
+            // The subtask (977) and its parent (974) are both in project 9.
+            'getTicket' => fn ($id) => (int) $id === 974
+                ? $this->make(TicketModel::class, ['id' => 974, 'projectId' => 9])
+                : $this->storedSubtask(),
+            'updateTicket' => function ($values) use (&$written) {
+                $written = $values;
+
+                return true;
+            },
+            'patchTicket' => function ($id, $params) use (&$patched) {
+                $patched = $params;
+
+                return true;
+            },
+        ]);
+
+        \Illuminate\Support\Facades\Log::spy();
+
+        $this->assertTrue($service->updateTicket(['id' => 977, 'projectId' => 12]));
+        $this->assertSame('', $written['dependingTicketId'], 'the move succeeds and the foreign parent is detached');
+
+        $this->assertTrue($service->patch(977, ['projectId' => 12]));
+        $this->assertSame('', $patched['dependingTicketId']);
+
+        \Illuminate\Support\Facades\Log::shouldHaveReceived('info')->twice();
+    }
+
+    public function test_an_edit_without_a_move_keeps_the_parent(): void
+    {
+        $written = null;
+        $service = $this->service([
+            'getTicket' => fn () => $this->storedSubtask(),
+            'updateTicket' => function ($values) use (&$written) {
+                $written = $values;
+
+                return true;
+            },
+        ]);
+
+        $service->updateTicket(['id' => 977, 'projectId' => 9, 'headline' => 'x']);
+
+        $this->assertSame(974, $written['dependingTicketId']);
+    }
 }

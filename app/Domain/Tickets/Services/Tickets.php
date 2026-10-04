@@ -2562,6 +2562,15 @@ class Tickets extends BaseService
             $this->assertParentTicketIsVisible($submittedValues['dependingTicketId'], (int) $values['projectId']);
         }
 
+        // Moving a subtask whose (unchanged) parent stays behind in the old project detaches it,
+        // so the parent's headline does not surface in the target project.
+        $keepsCurrentParent = ! array_key_exists('dependingTicketId', $submittedValues)
+            || (int) $submittedValues['dependingTicketId'] === (int) $currentTicket->dependingTicketId;
+        if ($keepsCurrentParent && $this->mustDetachParentOnMove($currentTicket, (int) $values['projectId'])) {
+            $values['dependingTicketId'] = '';
+            $submittedValues['dependingTicketId'] = '';
+        }
+
         // An empty status means "unchanged"; names/types are resolved, unknown strings rejected (#3702).
         if (array_key_exists('status', $submittedValues)) {
             $values['status'] = $this->resolveStatusInput($submittedValues['status'], (int) $values['projectId']);
@@ -2834,6 +2843,33 @@ class Tickets extends BaseService
         }
 
         return 3;
+    }
+
+    /**
+     * Whether a ticket moving to another project must drop its parent link.
+     *
+     * A parent that is not in the target project (or no longer exists) would otherwise expose its
+     * headline to the target project's members, so the move detaches it (logged) instead of failing.
+     *
+     * @param  TicketModel  $ticket  The ticket as currently stored.
+     * @param  int  $targetProjectId  The project the ticket ends up in.
+     * @return bool True when the current parent link has to be removed.
+     */
+    private function mustDetachParentOnMove(TicketModel $ticket, int $targetProjectId): bool
+    {
+        $parentId = (int) $ticket->dependingTicketId;
+        if ($parentId <= 0 || (int) $ticket->projectId === $targetProjectId) {
+            return false;
+        }
+
+        $parentTicket = $this->ticketRepository->getTicket($parentId);
+        if ($parentTicket && (int) $parentTicket->projectId === $targetProjectId) {
+            return false;
+        }
+
+        Log::info("Ticket {$ticket->id} moved to project {$targetProjectId}; detached from parent ticket {$parentId}, which is not in that project.");
+
+        return true;
     }
 
     /**
@@ -3464,6 +3500,13 @@ class Tickets extends BaseService
         // A newly set parent must be a ticket the caller can see, like on create (#3702).
         if (array_key_exists('dependingTicketId', $params) && (int) $params['dependingTicketId'] !== (int) $ticket->dependingTicketId) {
             $this->assertParentTicketIsVisible($params['dependingTicketId'], (int) ($params['projectId'] ?? $ticket->projectId));
+        }
+
+        // Moving a subtask whose (unchanged) parent stays behind in the old project detaches it.
+        $keepsCurrentParent = ! array_key_exists('dependingTicketId', $params)
+            || (int) $params['dependingTicketId'] === (int) $ticket->dependingTicketId;
+        if (isset($params['projectId']) && $keepsCurrentParent && $this->mustDetachParentOnMove($ticket, (int) $params['projectId'])) {
+            $params['dependingTicketId'] = '';
         }
 
         // Moving without a status: map the current status to the target project's equivalent type.
