@@ -99,7 +99,10 @@ class TicketHistory extends BaseService
         }
 
         $oldestRetainedRow = $rows[0];
-        $fields = array_unique(array_map(fn (array $row) => (string) ($row['changeType'] ?? ''), $rows));
+        $fields = array_map(fn (array $row) => (string) ($row['changeType'] ?? ''), $rows);
+        // The project in effect at the start of the window decides which status labels apply.
+        $fields[] = 'project';
+        $fields = array_unique($fields);
 
         $predecessors = [];
         foreach ($fields as $field) {
@@ -124,6 +127,11 @@ class TicketHistory extends BaseService
      * The history table stores only the new value of each change, so the previous value of a field
      * is taken from the preceding change of the same field (or from $predecessors for the first
      * retained change); the first change ever recorded has none.
+     *
+     * Status ids are project specific, so each status change is labelled with the labels of the
+     * project the ticket was in at that time (tracked through the recorded 'project' changes).
+     * When that project is unknown (before the first recorded move) or not viewable by the user,
+     * the raw status id is shown.
      * Private on purpose: public service methods are JSON-RPC callable, and this one trusts its
      * input (it would resolve labels/names for arbitrary ids).
      *
@@ -138,7 +146,8 @@ class TicketHistory extends BaseService
             return [];
         }
 
-        $statusLabels = $this->ticketRepository->getStateLabels($projectId);
+        $statusLabelsByProject = [];
+        $projectInEffect = $this->projectAtWindowStart($rows, $predecessors, $projectId);
         $editorNames = $this->ticketHistoryRepo->getUserNames(
             $this->collectEditorIds(array_merge(array_values($predecessors), $rows))
         );
@@ -155,6 +164,15 @@ class TicketHistory extends BaseService
             $rawNewValue = isset($row['changeValue']) ? (string) $row['changeValue'] : null;
             $rawOldValue = $lastRawValueByField[$field] ?? null;
             $lastRawValueByField[$field] = $rawNewValue;
+
+            if ($field === 'project') {
+                $movedToProjectId = (int) $rawNewValue;
+                $projectInEffect = $movedToProjectId > 0 ? $movedToProjectId : null;
+            }
+
+            $statusLabels = $field === 'status'
+                ? $this->statusLabelsFor($projectInEffect, $projectId, $statusLabelsByProject)
+                : [];
 
             $isDescriptionChange = $field === 'description';
 
@@ -182,6 +200,61 @@ class TicketHistory extends BaseService
     }
 
     /**
+     * The project a ticket was in at the start of the history window.
+     *
+     * The latest move before the window wins. Without one, a window that contains no moves means
+     * the ticket never moved, so it is the current project; a window that does contain moves starts
+     * in an unknown project (the first move's origin is not recorded).
+     *
+     * @param  array<int, array<string, mixed>>  $rows  History rows, oldest first
+     * @param  array<string, array<string, mixed>>  $predecessors  Changes before $rows, keyed by changeType
+     * @param  int  $currentProjectId  The ticket's current project
+     * @return int|null The project id, null when unknown
+     */
+    private function projectAtWindowStart(array $rows, array $predecessors, int $currentProjectId): ?int
+    {
+        if (isset($predecessors['project'])) {
+            $predecessorProjectId = (int) ($predecessors['project']['changeValue'] ?? 0);
+
+            return $predecessorProjectId > 0 ? $predecessorProjectId : null;
+        }
+
+        foreach ($rows as $row) {
+            if (($row['changeType'] ?? '') === 'project') {
+                return null;
+            }
+        }
+
+        return $currentProjectId;
+    }
+
+    /**
+     * Status labels of a project, memoized. The ticket's current project was authorized already;
+     * any other project is only used if the user may view its tickets. Unknown or not viewable
+     * projects give no labels, so the raw status id is shown.
+     *
+     * @param  int|null  $projectId  The project in effect, null when unknown
+     * @param  int  $currentProjectId  The ticket's current (authorized) project
+     * @param  array<int, array<int|string, mixed>>  $statusLabelsByProject  Memo (by reference)
+     * @return array<int|string, mixed>
+     */
+    private function statusLabelsFor(?int $projectId, int $currentProjectId, array &$statusLabelsByProject): array
+    {
+        if ($projectId === null) {
+            return [];
+        }
+
+        if (! isset($statusLabelsByProject[$projectId])) {
+            $mayViewProject = $projectId === $currentProjectId || $this->can(TicketsPermissions::VIEW, $projectId);
+            $statusLabelsByProject[$projectId] = $mayViewProject
+                ? $this->ticketRepository->getStateLabels($projectId)
+                : [];
+        }
+
+        return $statusLabelsByProject[$projectId];
+    }
+
+    /**
      * Translated label of a recorded field. Unknown fields fall back to the raw changeType.
      *
      * @param  string  $field  The recorded changeType
@@ -200,7 +273,7 @@ class TicketHistory extends BaseService
      *
      * @param  string  $field  The recorded changeType
      * @param  string|null  $rawValue  The stored value
-     * @param  array<int|string, mixed>  $statusLabels  Status labels of the ticket's project
+     * @param  array<int|string, mixed>  $statusLabels  Status labels of the project in effect for this change
      * @param  array<int, string>  $editorNames  User names keyed by user id
      * @param  array<int, string>  $projectNames  Memo of resolved project names (by reference)
      * @return string|null The display value, null when there is no value

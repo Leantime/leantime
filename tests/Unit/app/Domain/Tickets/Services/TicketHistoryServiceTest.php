@@ -170,6 +170,49 @@ class TicketHistoryServiceTest extends TestCase
         $this->assertSame('Title 1', $firstHeadlineEntry->newValue);
     }
 
+    public function test_status_rows_use_the_labels_of_the_project_in_effect_at_the_time(): void
+    {
+        $service = $this->buildService(ticket: $this->ticketIn(7), allowedProjects: [7, 9], rows: [
+            $this->row(1, 'status', '3', '2026-01-01 10:00:00'),
+            $this->row(2, 'project', '9', '2026-01-02 10:00:00'),
+            $this->row(3, 'status', '0', '2026-01-03 10:00:00'),
+            $this->row(4, 'project', '7', '2026-01-04 10:00:00'),
+            $this->row(5, 'status', '3', '2026-01-05 10:00:00'),
+        ]);
+
+        $byId = [];
+        foreach ($service->getTicketHistory(5) as $entry) {
+            $byId[$entry->id] = $entry;
+        }
+
+        // Before the first recorded move the origin project is unknown -> raw id.
+        $this->assertSame('3', $byId[1]->newValue);
+        // While in project 9, project 9's labels apply.
+        $this->assertSame('Backlog (P9)', $byId[3]->oldValue);
+        $this->assertSame('Shipped (P9)', $byId[3]->newValue);
+        // After moving to project 7, project 7's labels apply.
+        $this->assertSame('Done', $byId[5]->oldValue);
+        $this->assertSame('New', $byId[5]->newValue);
+    }
+
+    public function test_status_rows_in_a_project_the_user_cannot_view_show_the_raw_id(): void
+    {
+        $service = $this->buildService(ticket: $this->ticketIn(7), allowedProjects: [7], rows: [
+            $this->row(1, 'project', '11', '2026-01-01 10:00:00'),
+            $this->row(2, 'status', '3', '2026-01-02 10:00:00'),
+            $this->row(3, 'project', '7', '2026-01-03 10:00:00'),
+            $this->row(4, 'status', '0', '2026-01-04 10:00:00'),
+        ]);
+
+        $byId = [];
+        foreach ($service->getTicketHistory(5) as $entry) {
+            $byId[$entry->id] = $entry;
+        }
+
+        $this->assertSame('3', $byId[2]->newValue);
+        $this->assertSame('Done', $byId[4]->newValue);
+    }
+
     public function test_dates_are_formatted_for_the_user(): void
     {
         $service = $this->buildService(ticket: $this->ticketIn(7), rows: [
@@ -239,11 +282,11 @@ class TicketHistoryServiceTest extends TestCase
     ): TicketHistoryService {
         $ticketRepository = $this->make(TicketRepository::class, [
             'getTicket' => $getTicket ?? fn () => $ticket,
-            'getStateLabels' => fn () => [
-                3 => ['name' => 'New'],
-                4 => ['name' => 'In Progress'],
-                0 => ['name' => 'Done'],
-            ],
+            'getStateLabels' => fn ($projectId = null) => match ((int) $projectId) {
+                7 => [3 => ['name' => 'New'], 4 => ['name' => 'In Progress'], 0 => ['name' => 'Done']],
+                9 => [3 => ['name' => 'Backlog (P9)'], 0 => ['name' => 'Shipped (P9)']],
+                default => [3 => ['name' => 'Foreign label'], 0 => ['name' => 'Foreign done']],
+            },
         ]);
 
         $historyRepository = $this->make(TicketHistoryRepository::class, [
