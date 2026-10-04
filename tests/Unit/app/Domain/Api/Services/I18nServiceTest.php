@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Api\Services;
 
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Language;
 use Leantime\Domain\Api\Services\I18n as I18nService;
 use Unit\TestCase;
@@ -25,7 +26,7 @@ class I18nServiceTest extends TestCase
             '__' => fn (string $index) => $index === 'language.dateformat' ? 'm/d/Y' : 'H:i',
         ]);
 
-        $payload = (new I18nService($language))->buildJsDictionary();
+        $payload = (new I18nService($language, $this->config('Europe/Berlin')))->buildJsDictionary();
 
         // The JS wrapper is present.
         $this->assertStringContainsString('leantime', $payload);
@@ -41,5 +42,44 @@ class I18nServiceTest extends TestCase
         $this->assertSame('m/d/Y', $decoded['language.dateformat']);
         $this->assertSame('H:i', $decoded['language.timeformat']);
         $this->assertArrayHasKey('usersettings.timezone', $decoded);
+    }
+
+    public function test_timezone_is_the_users_setting(): void
+    {
+        session(['usersettings.timezone' => 'America/New_York']);
+
+        $this->assertSame('America/New_York', $this->exportedTimezone('Europe/Berlin'));
+    }
+
+    /**
+     * Without a user timezone in the session the dictionary must carry the zone the server falls back
+     * to, never "local": calendars lay out their grid in it, and the browser's zone would shift every
+     * dropped or moved event by the difference to the server.
+     */
+    public function test_timezone_falls_back_to_the_server_default_not_the_browser(): void
+    {
+        session()->forget('usersettings.timezone');
+
+        $this->assertSame('Europe/Berlin', $this->exportedTimezone('Europe/Berlin'));
+    }
+
+    private function exportedTimezone(string $defaultTimezone): string
+    {
+        $language = $this->make(Language::class, [
+            'ini_array' => [],
+            '__' => fn (string $index) => $index,
+        ]);
+
+        $payload = (new I18nService($language, $this->config($defaultTimezone)))->buildJsDictionary();
+        preg_match('/dictionary: (\{.*\}),/', $payload, $matches);
+
+        return json_decode($matches[1], true)['usersettings.timezone'];
+    }
+
+    private function config(string $defaultTimezone): Environment
+    {
+        return $this->make(Environment::class, [
+            'get' => fn ($key, $default = null) => $key === 'defaultTimezone' ? $defaultTimezone : $default,
+        ]);
     }
 }

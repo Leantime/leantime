@@ -348,6 +348,12 @@ class Auth implements Authenticatable
         session(['userdata' => $currentUser]);
         session(['usersettings' => $currentUser['settings']]);
 
+        // The login page itself ran the Localization middleware without a user and cached that,
+        // so drop the flag: the next request then loads this user's timezone, language and date/time
+        // formats. Without it the session kept the server defaults, and calendars ran in the browser's
+        // zone while the server read dates in the default one.
+        session()->forget('localization.cached');
+
         $this->updateUserSessionDB($currentUser['id'], session()->getId());
 
         // Clear user theme cache on login
