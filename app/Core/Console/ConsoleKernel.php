@@ -287,10 +287,18 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         return $this->artisan;
     }
 
-    protected function schedule(Schedule $schedule)
+    /**
+     * Registers the scheduled jobs of all domains and plugins.
+     *
+     * Every scheduled job needs the database. Before install (a fresh container whose cron starts
+     * before anyone has run /install) they would all FAIL on every run, filling the logs with
+     * missing-table errors (#3134), so nothing is scheduled until Leantime is installed.
+     */
+    protected function schedule(Schedule $schedule): void
     {
-        // Set default timezone
-        // config(['app.timezone' => config('defaultTimezone')]);
+        if (! Installation::isInstalled()) {
+            return;
+        }
 
         config(['schedule_timezone' => 'UTC']);
 
