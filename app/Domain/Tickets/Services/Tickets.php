@@ -2562,13 +2562,11 @@ class Tickets extends BaseService
             $this->assertParentTicketIsVisible($submittedValues['dependingTicketId'], (int) $values['projectId']);
         }
 
-        // Moving a subtask whose (unchanged) parent stays behind in the old project detaches it,
-        // so the parent's headline does not surface in the target project.
-        $keepsCurrentParent = ! array_key_exists('dependingTicketId', $submittedValues)
-            || (int) $submittedValues['dependingTicketId'] === (int) $currentTicket->dependingTicketId;
-        if ($keepsCurrentParent && $this->mustDetachParentOnMove($currentTicket, (int) $values['projectId'])) {
-            $values['dependingTicketId'] = '';
-            $submittedValues['dependingTicketId'] = '';
+        // On a move, links that belong to the old project (parent, milestone, sprint) are cleared
+        // unless the caller set them; explicitly set milestone/sprint must belong to the target.
+        foreach ($this->clearForeignProjectLinksOnMove($currentTicket, (int) $values['projectId'], $submittedValues) as $field => $clearedValue) {
+            $values[$field] = $clearedValue;
+            $submittedValues[$field] = $clearedValue;
         }
 
         // An empty status means "unchanged"; names/types are resolved, unknown strings rejected (#3702).
@@ -2846,30 +2844,77 @@ class Tickets extends BaseService
     }
 
     /**
-     * Whether a ticket moving to another project must drop its parent link.
+     * Project-scoped links to clear when a ticket moves to another project.
      *
-     * A parent that is not in the target project (or no longer exists) would otherwise expose its
-     * headline to the target project's members, so the move detaches it (logged) instead of failing.
+     * Parent (dependingTicketId), milestone and sprint ids point at entities of a single project.
+     * When the ticket moves and the caller did not set one of them in the same call, a link that
+     * is not valid in the target project is cleared (logged) so it neither exposes the old
+     * project's entities nor dangles. A milestone or sprint the caller sets explicitly during the
+     * move must belong to the target project (sprints include ones the project inherits).
      *
      * @param  TicketModel  $ticket  The ticket as currently stored.
      * @param  int  $targetProjectId  The project the ticket ends up in.
-     * @return bool True when the current parent link has to be removed.
+     * @param  array<string, mixed>  $submittedValues  The fields the caller sent.
+     * @return array<string, string> Field => '' for each link to clear.
+     *
+     * @throws ValidationException When an explicitly set milestone or sprint is not in the target project.
      */
-    private function mustDetachParentOnMove(TicketModel $ticket, int $targetProjectId): bool
+    private function clearForeignProjectLinksOnMove(TicketModel $ticket, int $targetProjectId, array $submittedValues): array
     {
-        $parentId = (int) $ticket->dependingTicketId;
-        if ($parentId <= 0 || (int) $ticket->projectId === $targetProjectId) {
-            return false;
+        if ((int) $ticket->projectId === $targetProjectId) {
+            return [];
         }
 
-        $parentTicket = $this->ticketRepository->getTicket($parentId);
-        if ($parentTicket && (int) $parentTicket->projectId === $targetProjectId) {
-            return false;
+        $isLinkValidInTarget = [
+            'dependingTicketId' => function (int $parentId) use ($targetProjectId): bool {
+                $parentTicket = $this->ticketRepository->getTicket($parentId);
+
+                return $parentTicket && (int) $parentTicket->projectId === $targetProjectId;
+            },
+            'milestoneid' => function (int $milestoneId) use ($targetProjectId): bool {
+                $milestone = $this->ticketRepository->getTicket($milestoneId);
+
+                return $milestone && $milestone->type === 'milestone' && (int) $milestone->projectId === $targetProjectId;
+            },
+            'sprint' => function (int $sprintId) use ($targetProjectId): bool {
+                foreach ($this->sprintService->getAllSprints($targetProjectId) as $sprint) {
+                    if ((int) $sprint->id === $sprintId) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+        ];
+
+        $cleared = [];
+        foreach ($isLinkValidInTarget as $field => $isValid) {
+            $isSubmitted = array_key_exists($field, $submittedValues)
+                && (int) $submittedValues[$field] !== (int) $ticket->$field;
+
+            if ($isSubmitted) {
+                // The parent has its own check (assertParentTicketIsVisible); a milestone or sprint
+                // set during the move must exist in the target project.
+                $submittedId = (int) $submittedValues[$field];
+                if ($field !== 'dependingTicketId' && $submittedId > 0 && ! $isValid($submittedId)) {
+                    $message = "The {$field} {$submittedId} does not belong to project {$targetProjectId}.";
+
+                    throw new ValidationException([$field => [$message]], $message);
+                }
+
+                continue;
+            }
+
+            $currentId = (int) $ticket->$field;
+            if ($currentId <= 0 || $isValid($currentId)) {
+                continue;
+            }
+
+            Log::info("Ticket {$ticket->id} moved to project {$targetProjectId}; cleared {$field} {$currentId}, which is not in that project.");
+            $cleared[$field] = '';
         }
 
-        Log::info("Ticket {$ticket->id} moved to project {$targetProjectId}; detached from parent ticket {$parentId}, which is not in that project.");
-
-        return true;
+        return $cleared;
     }
 
     /**
@@ -3502,11 +3547,12 @@ class Tickets extends BaseService
             $this->assertParentTicketIsVisible($params['dependingTicketId'], (int) ($params['projectId'] ?? $ticket->projectId));
         }
 
-        // Moving a subtask whose (unchanged) parent stays behind in the old project detaches it.
-        $keepsCurrentParent = ! array_key_exists('dependingTicketId', $params)
-            || (int) $params['dependingTicketId'] === (int) $ticket->dependingTicketId;
-        if (isset($params['projectId']) && $keepsCurrentParent && $this->mustDetachParentOnMove($ticket, (int) $params['projectId'])) {
-            $params['dependingTicketId'] = '';
+        // On a move, links that belong to the old project (parent, milestone, sprint) are cleared
+        // unless the caller set them; explicitly set milestone/sprint must belong to the target.
+        if (isset($params['projectId'])) {
+            foreach ($this->clearForeignProjectLinksOnMove($ticket, (int) $params['projectId'], $params) as $field => $clearedValue) {
+                $params[$field] = $clearedValue;
+            }
         }
 
         // Moving without a status: map the current status to the target project's equivalent type.

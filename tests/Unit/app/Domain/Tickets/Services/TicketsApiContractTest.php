@@ -58,7 +58,7 @@ class TicketsApiContractTest extends TestCase
      *
      * @param  array<string, mixed>  $ticketRepoStubs
      */
-    private function service(array $ticketRepoStubs, ?PermissionService $permissions = null): TicketsService
+    private function service(array $ticketRepoStubs, ?PermissionService $permissions = null, array $sprintsByProject = []): TicketsService
     {
         $service = new TicketsService(
             language: $this->make(LanguageCore::class, ['__' => fn ($key) => $key]),
@@ -70,7 +70,9 @@ class TicketsApiContractTest extends TestCase
                 'notifyProjectUsers' => fn () => null,
             ]),
             timesheetService: $this->make(TimesheetService::class, ['isClocked' => fn () => false]),
-            sprintService: $this->make(SprintService::class),
+            sprintService: $this->make(SprintService::class, [
+                'getAllSprints' => fn ($projectId = null) => $sprintsByProject[(int) $projectId] ?? [],
+            ]),
             ticketHistoryRepo: $this->make(TicketHistory::class),
             goalcanvasService: $this->make(Goalcanvas::class),
             dateTimeHelper: $this->make(DateTimeHelper::class, ['userNow' => fn () => CarbonImmutable::now('UTC')]),
@@ -761,7 +763,7 @@ class TicketsApiContractTest extends TestCase
         $this->assertTrue($service->patch(977, ['projectId' => 12]));
         $this->assertSame('', $patched['dependingTicketId']);
 
-        \Illuminate\Support\Facades\Log::shouldHaveReceived('info')->twice();
+        \Illuminate\Support\Facades\Log::shouldHaveReceived('info')->with(\Mockery::pattern('/cleared dependingTicketId 974/'))->twice();
     }
 
     public function test_an_edit_without_a_move_keeps_the_parent(): void
@@ -779,5 +781,77 @@ class TicketsApiContractTest extends TestCase
         $service->updateTicket(['id' => 977, 'projectId' => 9, 'headline' => 'x']);
 
         $this->assertSame(974, $written['dependingTicketId']);
+    }
+
+    public function test_a_move_clears_milestone_and_sprint_of_the_old_project(): void
+    {
+        $written = null;
+        $service = $this->service([
+            // Parent 974 and milestone 12 are in project 9; the ticket moves to 12.
+            'getTicket' => fn ($id) => match ((int) $id) {
+                974 => $this->make(TicketModel::class, ['id' => 974, 'projectId' => 9]),
+                12 => $this->make(TicketModel::class, ['id' => 12, 'projectId' => 9, 'type' => 'milestone']),
+                default => $this->storedSubtask(),
+            },
+            'updateTicket' => function ($values) use (&$written) {
+                $written = $values;
+
+                return true;
+            },
+        ], null, [12 => [$this->make(\Leantime\Domain\Sprints\Models\Sprints::class, ['id' => 40])]]);
+
+        \Illuminate\Support\Facades\Log::spy();
+
+        // The edit form re-posts the stored sprint/milestone unchanged: those are cleared, not rejected.
+        $this->assertTrue($service->updateTicket(['id' => 977, 'projectId' => 12, 'sprint' => 3, 'milestoneid' => 12]));
+        $this->assertSame('', $written['milestoneid']);
+        $this->assertSame('', $written['sprint']);
+        $this->assertSame('', $written['dependingTicketId']);
+
+        \Illuminate\Support\Facades\Log::shouldHaveReceived('info')->times(3);
+    }
+
+    public function test_a_move_keeps_links_that_are_valid_in_the_target_and_accepts_a_target_sprint(): void
+    {
+        $patched = null;
+        $service = $this->service([
+            'getTicket' => fn ($id) => match ((int) $id) {
+                974 => $this->make(TicketModel::class, ['id' => 974, 'projectId' => 12]),
+                12 => $this->make(TicketModel::class, ['id' => 12, 'projectId' => 12, 'type' => 'milestone']),
+                default => $this->storedSubtask(),
+            },
+            'patchTicket' => function ($id, $params) use (&$patched) {
+                $patched = $params;
+
+                return true;
+            },
+        ], null, [12 => [$this->make(\Leantime\Domain\Sprints\Models\Sprints::class, ['id' => 40])]]);
+
+        $this->assertTrue($service->patch(977, ['projectId' => 12, 'sprint' => 40]));
+        $this->assertSame(40, $patched['sprint']);
+        $this->assertArrayNotHasKey('milestoneid', $patched, 'a milestone already in the target project is kept');
+        $this->assertArrayNotHasKey('dependingTicketId', $patched);
+    }
+
+    public function test_a_move_rejects_an_explicit_milestone_or_sprint_from_another_project(): void
+    {
+        $service = $this->service([
+            'getTicket' => fn ($id) => match ((int) $id) {
+                55 => $this->make(TicketModel::class, ['id' => 55, 'projectId' => 9, 'type' => 'milestone']),
+                default => $this->storedSubtask(),
+            },
+            'patchTicket' => function () {
+                throw new \RuntimeException('must not move with links from another project');
+            },
+        ], null, [12 => [$this->make(\Leantime\Domain\Sprints\Models\Sprints::class, ['id' => 40])]]);
+
+        foreach ([['milestoneid' => 55], ['sprint' => 41]] as $link) {
+            try {
+                $service->patch(977, ['projectId' => 12] + $link);
+                $this->fail('an explicit link from another project must be rejected on a move');
+            } catch (ValidationException $e) {
+                $this->assertArrayHasKey(array_key_first($link), $e->getErrorData());
+            }
+        }
     }
 }
