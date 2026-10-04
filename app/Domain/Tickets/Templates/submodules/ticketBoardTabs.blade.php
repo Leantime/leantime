@@ -50,6 +50,9 @@
             @dispatchEvent('filters.afterLefthandSectionOpen')
             @include('tickets::submodules.ticketNewBtn')
             @include('tickets::submodules.ticketFilter')
+            @isset($kanbanView)
+                @include('tickets::partials.kanbanViewMenu')
+            @endisset
             @dispatchEvent('filters.beforeLefthandSectionClose')
         </div>
     @endisset

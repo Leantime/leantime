@@ -786,6 +786,41 @@ class TicketsServiceTest extends TestCase
         $this->assertTrue($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5', '0' => 'ticket[]=6'], 'ticket_6'));
     }
 
+    public function test_kanban_drag_on_a_field_sorted_board_keeps_the_manual_order(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+
+        $writes = [];
+        $repoStubs = [
+            // Ticket 8 already sits in Doing (4); tickets 5 and 6 start in New (3).
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => (int) $id === 8 ? 4 : 3]),
+            'updateTicketStatus' => function ($id, $status, $sorting = -1) use (&$writes) {
+                $writes[(int) $id] = ['status' => (int) $status, 'sorting' => $sorting];
+
+                return true;
+            },
+            'getStateLabels' => fn () => [3 => ['name' => 'New', 'statusType' => 'NEW'], 4 => ['name' => 'Doing', 'statusType' => 'INPROGRESS']],
+        ];
+        $timesheets = $this->make(TimesheetService::class, ['isClocked' => fn () => false]);
+
+        // Board sorted by e.g. priority (#1536): ticket 6 is dragged from New to Doing.
+        $service = $this->buildAuthzService($repoStubs, $this->permissionsForProjects([7]), $timesheets);
+        $this->assertTrue($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5', '4' => 'ticket[]=8&ticket[]=6'], 'ticket_6', true));
+
+        $this->assertSame([6 => ['status' => 4, 'sorting' => -1]], $writes, 'only the dragged card is written, and its kanbanSortIndex is left alone');
+
+        // Manual order (default): the on-screen position becomes the stored order.
+        $writes = [];
+        $service = $this->buildAuthzService($repoStubs, $this->permissionsForProjects([7]), $timesheets);
+        $this->assertTrue($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5', '4' => 'ticket[]=8&ticket[]=6'], 'ticket_6'));
+
+        $this->assertSame([
+            5 => ['status' => 3, 'sorting' => 0],
+            8 => ['status' => 4, 'sorting' => 0],
+            6 => ['status' => 4, 'sorting' => 100],
+        ], $writes);
+    }
+
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor']]);

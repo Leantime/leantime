@@ -12,6 +12,13 @@
     // by their computed statusType (resolved from each project) instead of the raw status key.
     $programBoard = $programBoard ?? false;
     $placementField = $programBoard ? 'statusType' : 'status';
+    // Which optional fields the cards show (#1859). Boards that don't pass a preference
+    // (e.g. the program board) render the default card.
+    $cardFields = ($kanbanView ?? \Leantime\Domain\Tickets\Services\KanbanViewSettings::defaults())['fields'];
+    $showCardDropdowns = $cardFields['milestone'] || $cardFields['effort'] || $cardFields['priority'] || $cardFields['assignee'];
+    // Card order inside a column (#1536). Anything but "manual" means dragging only changes status.
+    $cardSort = \Leantime\Domain\Tickets\Services\KanbanViewSettings::normalizeSort($kanbanView['sort'] ?? null);
+    $isManualSort = \Leantime\Domain\Tickets\Services\KanbanViewSettings::isManualSort($cardSort);
 @endphp
 
 {!! $tpl->displayNotification() !!}
@@ -36,6 +43,13 @@
             <p class="tw-text-[var(--secondary-font-color)]" style="margin-bottom:15px;">
                 <i class="fa fa-circle-info" aria-hidden="true"></i>
                 {{ __('text.program_status_rollup') }}
+            </p>
+        @endif
+
+        @if (! $isManualSort)
+            <p class="tw-text-[var(--secondary-font-color)]" style="margin-bottom:15px;">
+                <i class="fa fa-arrow-down-wide-short" aria-hidden="true"></i>
+                {{ sprintf(__('text.kanban_sorted_by'), __('label.kanban_sort_'.$cardSort)) }}
             </p>
         @endif
 
@@ -173,7 +187,7 @@
                                                              without a description carried 20px of dead space above its
                                                              meta row — which is why cards in the same column sat at
                                                              visibly different densities. --}}
-                                                        @if (trim(strip_tags((string) $row['description'])) !== '')
+                                                        @if ($cardFields['description'] && trim(strip_tags((string) $row['description'])) !== '')
                                                         <div class="kanbanContent">
                                                             {!! $tpl->escapeMinimal($row['description']) !!}
                                                         </div>
@@ -181,7 +195,7 @@
 
                                                     </div>
                                                     <div class="tw-flex">
-                                                    @if ($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00')
+                                                    @if ($cardFields['dueDate'] && $row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00')
                                                         <div>
                                                             {!! __('label.due_icon') !!}
                                                             <input type="text" title="{{ __('label.due') }}" value="{{ format($row['dateToFinish'])->date() }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
@@ -196,8 +210,10 @@
 
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
 
+                                            @if ($showCardDropdowns)
                                             <div class="timerContainer " id="timerContainer-{{ $row['id'] }}" >
 
+                                                    @if ($cardFields['milestone'])
                                                     <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
                                                         <a style="background-color:{{ $tpl->escape($row['milestoneColor']) }}" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text">@if ($row['milestoneid'] != '' && $row['milestoneid'] != 0){{ $row['milestoneHeadline'] }}@else{!! __('label.no_milestone') !!}@endif</span>
@@ -216,9 +232,10 @@
                                                             @endphp
                                                         </ul>
                                                     </div>
+                                                    @endif
 
 
-                                                @if ($row['storypoints'] != '' && $row['storypoints'] > 0)
+                                                @if ($cardFields['effort'] && $row['storypoints'] != '' && $row['storypoints'] > 0)
                                                     <div class="dropdown ticketDropdown effortDropdown show">
                                                     <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text">{{ $efforts[''.$row['storypoints']] ?? $row['storypoints'] }}</span>
@@ -238,6 +255,7 @@
                                                 @endif
 
 
+                                                @if ($cardFields['priority'])
                                                 <div class="dropdown ticketDropdown priorityDropdown show">
                                                     <a class="dropdown-toggle f-left  label-default priority priority-bg-{{ $row['priority'] }}" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text">@php if ($row['priority'] != '' && $row['priority'] > 0) { echo $priorities[$row['priority']] ?? __('label.priority_unkown'); } else { echo __('label.priority_unkown'); } @endphp</span>
@@ -254,8 +272,10 @@
                                                         @endphp
                                                     </ul>
                                                 </div>
+                                                @endif
 
 
+                                                @if ($cardFields['assignee'])
                                                 <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text" style="display:inline-flex; align-items:center;">
@@ -293,9 +313,11 @@
                                                         @endphp
                                                     </ul>
                                                 </div>
+                                                @endif
 
                                             </div>
                                             <div class="clearfix"></div>
+                                            @endif
 
                                             @if ($programBoard)
                                                 {{-- Cross-project board: columns are semantic stages, so give each card a
@@ -322,17 +344,27 @@
                                                 </div>
                                             @endif
 
-                                            @if ($row['commentCount'] > 0 || $row['subtaskCount'] > 0 || $row['tags'] != '')
+                                            @php
+                                                $showComments = $cardFields['comments'] && $row['commentCount'] > 0;
+                                                $showSubtasks = $cardFields['subtasks'] && $row['subtaskCount'] > 0;
+                                                $showTags = $cardFields['tags'] && $row['tags'] != '';
+                                                $showSprint = $cardFields['sprint'] && ! empty($row['sprintName']);
+                                            @endphp
+                                            @if ($showComments || $showSubtasks || $showTags || $showSprint)
                                             <div class="row">
                                                 <div class="col-md-12 border-top" style="white-space: nowrap;">
-                                                    @if ($row['commentCount'] > 0)
+                                                    @if ($showSprint)
+                                                        <span title="{{ __('label.sprint') }}"><i class="fa fa-bars-progress" aria-hidden="true"></i> {{ $row['sprintName'] }}</span>&nbsp;
+                                                    @endif
+
+                                                    @if ($showComments)
                                                         <a href="#/tickets/showTicket/{{ $row['id'] }}"><span class="fa-regular fa-comments"></span> {{ $row['commentCount'] }}</a>&nbsp;
                                                     @endif
 
-                                                    @if ($row['subtaskCount'] > 0)
+                                                    @if ($showSubtasks)
                                                         <a id="subtaskLink_{{ $row['id'] }}" href="#/tickets/showTicket/{{ $row['id'] }}" class="subtaskLineLink"> <span class="fa fa-diagram-successor"></span> {{ $row['subtaskCount'] }}</a>&nbsp;
                                                     @endif
-                                                    @if ($row['tags'] != '')
+                                                    @if ($showTags)
                                                         @php $tagsArray = explode(',', $row['tags']); @endphp
                                                         <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
                                                             <i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}
@@ -401,7 +433,7 @@
             }
         @else
             var ticketStatusList = [@foreach ($allTicketStates as $key => $statusRow)'{{ $key }}',@endforeach];
-            leantime.ticketsController.initTicketKanban(ticketStatusList);
+            leantime.ticketsController.initTicketKanban(ticketStatusList, { manualSort: {{ $isManualSort ? 'true' : 'false' }} });
         @endif
 
     @else
