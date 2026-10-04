@@ -85,6 +85,10 @@ spec:
             value: {{ .Values.app.session.password }}
           - name: LEAN_SESSION_EXPIRATION
             value: {{ .Values.app.session.expiration | quote }}
+          {{- if .Values.app.email.fromName }}
+          - name: LEAN_EMAIL_FROM_NAME
+            value: {{ .Values.app.email.fromName | quote }}
+          {{- end }}
           {{- if .Values.app.email.enabled }}
           - name: LEAN_EMAIL_USE_SMTP
             value: {{ .Values.app.email.enabled | quote }}

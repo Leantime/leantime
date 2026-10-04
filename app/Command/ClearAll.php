@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Language;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,7 +52,11 @@ class ClearAll extends Command
         $this->call('view:clear');
 
         $io->text('Clear Installation Cache');
-        Cache::store('installation')->forget('languages.lang_en-US');
+        $languageList = app()->make(Language::class)->getLanguageList();
+        $languageCodes = is_array($languageList) ? array_keys($languageList) : ['en-US'];
+        foreach ($languageCodes as $languageCode) {
+            Language::forgetCachedLanguage((string) $languageCode);
+        }
         $this->components->info('cleared language file cache');
 
         // $this->call("cache:clear", ["installation"]);

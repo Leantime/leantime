@@ -35,6 +35,7 @@
                 @if (session('userdata.role') != 'client')
                     <li><a href="#timesheet" id="timesheetTab">{!! __('tabs.time_tracking') !!}</a></li>
                 @endif
+                <li><a href="#history">{!! __('tabs.history') !!}</a></li>
             </ul>
 
             <div id="ticketdetails">
@@ -61,6 +62,10 @@
                     @include('tickets::submodules.timesheet')
                 </div>
             @endif
+
+            <div id="history">
+                <x-global::hx :for="\Leantime\Domain\Tickets\Hxcontrollers\TicketHistory::class" :id="$ticket->id" trigger="intersect once" loaderCount="3" />
+            </div>
         </div>
 
     </div>

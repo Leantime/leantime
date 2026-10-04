@@ -183,6 +183,45 @@ class Language
     }
 
     /**
+     * Cache key for a language's merged strings.
+     *
+     * Includes the app version: the installation cache is only flushed by database updates, so a
+     * release that adds strings without a migration kept serving the old cached file and new keys
+     * rendered raw (e.g. "tabs.history") until the cache was cleared by hand.
+     */
+    private function languageCacheKey(): string
+    {
+        return self::cacheKeyFor($this->language);
+    }
+
+    /**
+     * Cache key of a language's merged strings for the running app version.
+     *
+     * @param  string  $languageCode  e.g. "en-US"
+     */
+    public static function cacheKeyFor(string $languageCode): string
+    {
+        return 'languages.lang_'.$languageCode.'_'.app(\Leantime\Core\Configuration\AppSettings::class)->appVersion;
+    }
+
+    /**
+     * Remove a language's cached strings: the key of the running app version plus the legacy
+     * unversioned key used before the version was part of the key.
+     *
+     * Keys of other (older) versions are not removed: the installation store cannot list its keys
+     * cheaply, and they are never read again once the version changed.
+     *
+     * @param  string  $languageCode  e.g. "en-US"
+     * @return bool true when the current version's key was removed
+     */
+    public static function forgetCachedLanguage(string $languageCode): bool
+    {
+        Cache::store('installation')->forget('languages.lang_'.$languageCode);
+
+        return Cache::store('installation')->forget(self::cacheKeyFor($languageCode));
+    }
+
+    /**
      * Read and load the language resources from the ini files.
      *
      * @return array The array of language resources loaded from the ini files.
@@ -191,16 +230,16 @@ class Language
      */
     public function readIni(): array
     {
-        if (@Cache::store('installation')->has('languages.lang_'.$this->language)) {
+        if (@Cache::store('installation')->has($this->languageCacheKey())) {
             $this->ini_array = self::dispatchFilter(
                 'language_resources',
-                Cache::store('installation')->get('languages.lang_'.$this->language),
+                Cache::store('installation')->get($this->languageCacheKey()),
                 [
                     'language' => $this->language,
                 ]
-            ) ?? Cache::store('installation')->get('languages.lang_'.$this->language);
+            ) ?? Cache::store('installation')->get($this->languageCacheKey());
 
-            Cache::store('installation')->set('languages.lang_'.$this->language, $this->ini_array);
+            Cache::store('installation')->set($this->languageCacheKey(), $this->ini_array);
 
             return $this->ini_array;
         }
@@ -235,7 +274,7 @@ class Language
             ]
         );
 
-        Cache::store('installation')->set('languages.lang_'.$this->language, $this->ini_array);
+        Cache::store('installation')->set($this->languageCacheKey(), $this->ini_array);
 
         return $this->ini_array;
     }

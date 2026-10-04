@@ -88,6 +88,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
                 <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
             <?php } ?>
+            <li><a href="#history"><span class="fa fa-clock-rotate-left"></span> <?php echo $tpl->__('tabs.history') ?></a></li>
             <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
         </ul>
 
@@ -106,6 +107,11 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                 @include('tickets::submodules.timesheet')
             </div>
         @endif
+
+        <div id="history">
+            {{-- Fetched only when the tab is first shown, so the modal does not load the history up front. --}}
+            <x-global::hx :for="\Leantime\Domain\Tickets\Hxcontrollers\TicketHistory::class" :id="$ticket->id" trigger="intersect once" loaderCount="3" />
+        </div>
 
         @dispatchEvent('ticketTabsContent', ['ticket' => $ticket])
 
