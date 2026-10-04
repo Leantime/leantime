@@ -2197,10 +2197,19 @@ class Tickets
         return $result !== false;
     }
 
-    public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null): bool
+    /**
+     * Sets a ticket's status (and optionally its kanban sort index).
+     *
+     * @param  int|string  $ticketId  The ticket id.
+     * @param  int|string  $status  The new status key.
+     * @param  int  $ticketSorting  Kanban sort index, or -1 to leave it unchanged.
+     * @param  string|null  $handler  The kanban card handler (ticket_ID) that triggered the change.
+     * @param  string|null  $expectedStatus  When given, the row is only written while its stored status
+     *                                       still equals this value (compare-and-set). Pass false to skip the check.
+     * @return bool True when a row was written; false when nothing changed or the expected status no longer matched.
+     */
+    public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null, string|null|false $expectedStatus = false): bool
     {
-        $this->addTicketChange(session('userdata.id'), $ticketId, ['status' => $status]);
-
         $updates = [
             'status' => $status,
             'modified' => dtHelper()->userNow()->formatDateTimeForDb(),
@@ -2210,11 +2219,24 @@ class Tickets
             $updates['kanbanSortIndex'] = $ticketSorting;
         }
 
+        $query = $this->connection->table('zp_tickets')->where('id', $ticketId);
+
+        if ($expectedStatus !== false) {
+            // Compare-and-set: a concurrent request that already moved the ticket wins (#3099).
+            $expectedStatus === null ? $query->whereNull('status') : $query->where('status', $expectedStatus);
+        }
+
+        $written = $query->update($updates) > 0;
+
+        if (! $written) {
+            return false;
+        }
+
+        $this->addTicketChange(session('userdata.id'), $ticketId, ['status' => $status]);
+
         TicketStatusUpdated::dispatch(ticketId: (int) $ticketId, status: $status, handler: $handler, legacyHook: __FUNCTION__);
 
-        return $this->connection->table('zp_tickets')
-            ->where('id', $ticketId)
-            ->update($updates) > 0;
+        return true;
     }
 
     /**

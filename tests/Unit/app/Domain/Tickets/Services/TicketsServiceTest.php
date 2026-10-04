@@ -750,11 +750,13 @@ class TicketsServiceTest extends TestCase
         session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
 
         $writtenStatuses = [];
+        $expectedStatuses = [];
         $service = $this->buildAuthzService([
             // Ticket 5 was moved to In Progress (4) elsewhere; this stale tab still shows it in New (3).
             'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => (int) $id === 5 ? 4 : 3]),
-            'updateTicketStatus' => function ($id, $status) use (&$writtenStatuses) {
+            'updateTicketStatus' => function ($id, $status, $sorting = -1, $handler = null, $expectedStatus = false) use (&$writtenStatuses, &$expectedStatuses) {
                 $writtenStatuses[(int) $id] = (int) $status;
+                $expectedStatuses[(int) $id] = $expectedStatus;
 
                 return true;
             },
@@ -765,6 +767,23 @@ class TicketsServiceTest extends TestCase
         $this->assertTrue($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5&ticket[]=7', '0' => 'ticket[]=6'], 'ticket_6'));
 
         $this->assertSame([7 => 3, 6 => 0], $writtenStatuses, 'only the dragged card may change status (#3099)');
+        // Other cards are only written while their status is still the one read (compare-and-set),
+        // the dragged card unconditionally.
+        $this->assertSame([7 => '3', 6 => false], $expectedStatuses);
+    }
+
+    public function test_kanban_drag_tolerates_a_card_moved_by_an_overlapping_request(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['status' => 3]),
+            // Ticket 5 was moved by an overlapping request after we read it: the conditional write misses.
+            'updateTicketStatus' => fn ($id, $status, $sorting = -1, $handler = null, $expectedStatus = false) => $expectedStatus === false,
+            'getStateLabels' => fn () => [3 => ['name' => 'New', 'statusType' => 'NEW'], 0 => ['name' => 'Done', 'statusType' => 'DONE']],
+        ], $this->permissionsForProjects([7]), $this->make(TimesheetService::class, ['isClocked' => fn () => false]));
+
+        $this->assertTrue($service->updateTicketStatusAndSorting(['3' => 'ticket[]=5', '0' => 'ticket[]=6'], 'ticket_6'));
     }
 
     public function test_upsert_subtask_reloads_the_parent_and_ignores_a_forged_project(): void

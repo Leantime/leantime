@@ -4479,9 +4479,17 @@ class Tickets extends BaseService
                     foreach ($tickets as $key => $ticketString) {
                         $id = substr($ticketString, 9);
 
-                        $statusChanged = ($previousStatusByTicket[(int) $id] ?? null) !== (string) $status;
-                        $isStaleCard = $draggedTicketId !== null && (int) $id !== $draggedTicketId && $statusChanged;
-                        if ($isStaleCard) {
+                        $previousStatus = $previousStatusByTicket[(int) $id] ?? null;
+                        $statusChanged = $previousStatus !== (string) $status;
+                        $isOtherCard = $draggedTicketId !== null && (int) $id !== $draggedTicketId;
+
+                        if ($isOtherCard) {
+                            // Only re-sort it, and only while its status is still the one we read: a
+                            // card moved meanwhile (stale tab, or an overlapping drag) is left alone.
+                            if (! $statusChanged) {
+                                $this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler, $previousStatus);
+                            }
+
                             continue;
                         }
 
