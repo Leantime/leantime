@@ -342,4 +342,32 @@ class AuthServiceTest extends TestCase
 
         $this->assertFalse(session()->has('localization.cached'));
     }
+
+    /**
+     * Behind a reverse proxy REMOTE_ADDR is the proxy; the failed-login log must carry the client's
+     * address from the trusted X-Forwarded-For header instead (#3779).
+     */
+    public function test_failed_login_log_records_the_client_ip_behind_a_trusted_proxy(): void
+    {
+        $previousProxies = \Illuminate\Http\Request::getTrustedProxies();
+        $previousHeaders = \Illuminate\Http\Request::getTrustedHeaderSet();
+
+        try {
+            \Illuminate\Http\Request::setTrustedProxies(['10.0.0.0/8'], \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR);
+            $request = \Illuminate\Http\Request::create('/auth/login', 'POST', [], [], [], [
+                'REMOTE_ADDR' => '10.0.0.5',
+                'HTTP_X_FORWARDED_FOR' => '203.0.113.7',
+            ]);
+            app()->instance('request', $request);
+
+            \Illuminate\Support\Facades\Log::shouldReceive('info')
+                ->once()
+                ->with(\Mockery::on(fn (string $message) => str_contains($message, '[203.0.113.7]') && str_contains($message, 'someone@example.com')));
+
+            $logFailedLogin = new \ReflectionMethod(AuthService::class, 'logFailedLogin');
+            $logFailedLogin->invoke($this->makeService(), 'someone@example.com');
+        } finally {
+            \Illuminate\Http\Request::setTrustedProxies($previousProxies, $previousHeaders);
+        }
+    }
 }

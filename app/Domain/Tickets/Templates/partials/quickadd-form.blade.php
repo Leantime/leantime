@@ -53,12 +53,12 @@ $hasError = $isActive && !empty($reopenState['error']);
         @endif
 
         <div class="form-group">
-            <label for="headline-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}" class="sr-only">Task name</label>
+            <label for="headline-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}" class="sr-only">{{ __('label.taskName', 'Task name') }}</label>
             <input type="text"
                    name="headline"
                    id="headline-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}"
                    class="form-control quickAddInput {{ $hasError ? 'error' : '' }}"
-                   placeholder="What are you working on? ↵"
+                   placeholder="{{ __('label.quickAddPlaceholder', 'What are you working on? ↵') }}"
                    value="{{ htmlspecialchars($savedHeadline) }}"
                    {{ $isActive ? 'autofocus' : '' }}
                    data-quickadd-input />
@@ -68,20 +68,20 @@ $hasError = $isActive && !empty($reopenState['error']);
             @endif
 
             <div id="quick-add-help-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}" class="sr-only">
-                Press Enter to save and close. Press Shift plus Enter to save and add another task. Press Escape to cancel.
+                {{ __('label.quickAddHelp', 'Press Enter to save and close. Press Shift plus Enter to save and add another task. Press Escape to cancel.') }}
             </div>
         </div>
 
         <div class="formButtonContainer">
-            <x-global::forms.button inputType="submit" contentRole="primary" onclick="this.closest('form').dataset.submitting = 'true'; this.closest('form').querySelector('[data-stay-open-input]').value = '0';">Save</x-global::forms.button>
+            <x-global::forms.button inputType="submit" contentRole="primary" onclick="this.closest('form').dataset.submitting = 'true'; this.closest('form').querySelector('[data-stay-open-input]').value = '0';">{{ __('buttons.save', 'Save') }}</x-global::forms.button>
             <x-global::forms.button inputType="button" contentRole="secondary"
                     onclick="leantime.kanbanController.toggleQuickAdd(this.closest('.quickaddContainer').querySelector('.quickAddLink'))">
-                Cancel
+                {{ __('buttons.cancel', 'Cancel') }}
             </x-global::forms.button>
             <i class="fa fa-circle-question"
-               data-tippy-content="<strong>Keyboard Shortcuts:</strong><br>Enter: Save and close<br>Shift+Enter: Save and add another<br>Esc: Cancel"
+               data-tippy-content="{{ __('label.quickAddShortcuts', '<strong>Keyboard Shortcuts:</strong><br>Enter: Save and close<br>Shift+Enter: Save and add another<br>Esc: Cancel') }}"
                tabindex="0"
-               aria-label="Keyboard shortcuts help"></i>
+               aria-label="{{ __('label.keyboardShortcutsHelp', 'Keyboard shortcuts help') }}"></i>
         </div>
     </form>
 </div>

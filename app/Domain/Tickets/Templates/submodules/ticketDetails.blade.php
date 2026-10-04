@@ -163,7 +163,7 @@
                 indicator=".subtaskIndicator"
             />
             <div class="htmx-indicator subtaskIndicator">
-                Loading Subtasks ...<br /><br />
+                {{ __('label.loadingSubtasks', 'Loading Subtasks ...') }}<br /><br />
             </div>
 
         <h4 class="widgettitle title-light"><span

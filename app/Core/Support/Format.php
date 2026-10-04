@@ -328,6 +328,51 @@ class Format
     }
 
     /**
+     * Format a number with up to $maxPrecision decimals and thousands separators, e.g. 1234.5 -> "1,234.5",
+     * 3.0 -> "3".
+     *
+     * Uses Laravel's locale-aware Number::format() when the intl extension is available. intl is not a
+     * hard requirement of Leantime, and Number::format() throws without it (the report pages 500'd in
+     * images built without intl, #3838), so fall back to number_format() and trim trailing zeros.
+     * Static for the same reason as hoursMinutes(): the value must not go through date parsing.
+     *
+     * @param  mixed  $value  Number (float, int or numeric string); non-numeric input yields ''
+     * @param  int  $maxPrecision  Maximum number of decimals
+     */
+    public static function number(mixed $value, int $maxPrecision = 1): string
+    {
+        if (! is_numeric($value)) {
+            return '';
+        }
+
+        if (extension_loaded('intl')) {
+            return (string) \Illuminate\Support\Number::format((float) $value, maxPrecision: $maxPrecision);
+        }
+
+        return self::numberWithoutIntl((float) $value, $maxPrecision);
+    }
+
+    /**
+     * number() without the intl extension, matching Number::format() for the default locale: ties
+     * round to even, and trailing zeros (and a dangling decimal point) are removed so 3.0 reads "3".
+     *
+     * @param  float  $value  Number to format
+     * @param  int  $maxPrecision  Maximum number of decimals
+     */
+    public static function numberWithoutIntl(float $value, int $maxPrecision = 1): string
+    {
+        // intl rounds ties to even (7.25 -> 7.2); number_format() alone rounds them away from zero.
+        $precision = max(0, $maxPrecision);
+        $formatted = number_format(round($value, $precision, PHP_ROUND_HALF_EVEN), $precision);
+
+        if ($maxPrecision > 0 && str_contains($formatted, '.')) {
+            $formatted = rtrim(rtrim($formatted, '0'), '.');
+        }
+
+        return $formatted === '-0' ? '0' : $formatted;
+    }
+
+    /**
      * Rich-text (editor HTML) to a single line of plain text, e.g. for CSV export (#786).
      *
      * Block-level boundaries and <br> become spaces so "<p>a</p><p>b</p>" reads "a b", entities

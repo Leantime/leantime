@@ -5,6 +5,7 @@ namespace Leantime\Domain\Tickets\Controllers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Tickets\Services\KanbanViewSettings;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,10 +13,14 @@ class ShowKanban extends Controller
 {
     private TicketService $ticketService;
 
+    private KanbanViewSettings $kanbanViewSettings;
+
     public function init(
-        TicketService $ticketService
+        TicketService $ticketService,
+        KanbanViewSettings $kanbanViewSettings
     ): void {
         $this->ticketService = $ticketService;
+        $this->kanbanViewSettings = $kanbanViewSettings;
 
         session(['lastPage' => CURRENT_URL]);
         session(['lastTicketView' => 'kanban']);
@@ -33,7 +38,11 @@ class ShowKanban extends Controller
             $params['groupBy'] = 'all';
         }
 
-        $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+        // The user's card fields (#1859) and card sort (#1536) for this board.
+        $kanbanViewProjectId = (int) session('currentProject');
+        $kanbanView = $this->kanbanViewSettings->getForCurrentUser($kanbanViewProjectId);
+
+        $template_assignments = $this->ticketService->getTicketTemplateAssignments($params, $kanbanView['sort']);
         $allKanbanColumns = $this->ticketService->getKanbanColumns();
 
         // NEW: Calculate status breakdown for swimlane visualizations
@@ -45,6 +54,8 @@ class ShowKanban extends Controller
         array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
         $this->tpl->assign('allKanbanColumns', $allKanbanColumns);
         $this->tpl->assign('statusBreakdown', $statusBreakdown);
+        $this->tpl->assign('kanbanView', $kanbanView);
+        $this->tpl->assign('kanbanViewProjectId', $kanbanViewProjectId);
 
         return $this->tpl->display('tickets.showKanban');
     }

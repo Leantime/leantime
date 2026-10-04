@@ -20,6 +20,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     libjpeg62-turbo-dev \
     libpng-dev \
     libpq-dev \
+    libicu-dev \
     apt-utils \
     vim \
     curl \
@@ -47,6 +48,7 @@ RUN docker-php-ext-install \
     bcmath \
     opcache \
     ldap \
+    intl \
     zip
 # zip is always installed above; xdebug/redis only if pecl was reachable. Enable each one
 # independently and best-effort, so a missing extension (partial pecl outage) doesn't prevent

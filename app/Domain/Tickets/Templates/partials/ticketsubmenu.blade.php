@@ -20,7 +20,7 @@
             @if($allowSubtaskCreation)
             <li><a  href="javascript:void(0);" onclick="jQuery('#subtask-form-{{$ticket['id']}}').toggle();"
                     class="add-subtask-link">
-                  <i class="fa-solid fa-diagram-predecessor"></i> Add Subtask</a></li>
+                  <i class="fa-solid fa-diagram-predecessor"></i> {{ __('label.addSubtask', 'Add Subtask') }}</a></li>
             @endif
             @dispatchEvent("beforeDeleteTicket", ["ticket"=>$ticket])
             <li><a href="#/tickets/delTicket/{{ $ticket["id"] }}" class="delete"><i class="fa fa-trash"></i> {{  __("links.delete_todo") }}</a></li>

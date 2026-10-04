@@ -51,7 +51,7 @@
                             </span>
                         @endif
                         @if (!empty($effortByMilestone[$milestone->id]))
-                            · {{ \Illuminate\Support\Number::format($effortByMilestone[$milestone->id], maxPrecision: 1) }} {{ __('label.hours_short') }}
+                            · {{ \Leantime\Core\Support\Format::number($effortByMilestone[$milestone->id], 1) }} {{ __('label.hours_short') }}
                         @endif
                     </span>
                 </div>

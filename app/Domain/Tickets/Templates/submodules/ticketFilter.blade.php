@@ -91,7 +91,7 @@
                     <label class="inline">{!! __('label.user') !!}</label>
                     <div class="form-group">
                         <select data-placeholder="{{ __('input.placeholders.filter_by_user') }}"  title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
-                            <option value="" data-placeholder="true">All Users</option>
+                            <option value="" data-placeholder="true">{{ __('label.allUsers', 'All Users') }}</option>
                             @foreach ($users as $userRow)
                                 <option value="{{ $userRow['id'] }}"
                                     @if ($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow['id'], explode(',', $searchCriteria['users'])) !== false) selected='selected' @endif
@@ -150,7 +150,7 @@
                     <label class="inline">{!! __('label.todo_status') !!}</label>
                     <div class="form-group">
                         <select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status"  multiple="multiple" class="status-select" id="statusSelect">
-                            <option value="" data-placeholder="true">All Statuses</option>
+                            <option value="" data-placeholder="true">{{ __('label.allStatuses', 'All Statuses') }}</option>
                             <option value="not_done" @if ($searchCriteria['status'] !== false && str_contains($searchCriteria['status'], 'not_done')) selected='selected' @endif>{!! __('label.not_done') !!}</option>
                             @foreach ($statusLabels as $key => $label)
                                 <option value="{{ $key }}"
@@ -182,7 +182,7 @@
         @if (isset($taskToggle) && $taskToggle === true)
             <div class="" style="float:right; margin-left:5px; ">
                 <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" {{ ($showTasks === 'true') ? 'checked="checked"' : '' }} style="margin-right:5px;" />
-                <label style="text-wrap: nowrap; float:right;">Show Tasks</label>
+                <label style="text-wrap: nowrap; float:right;">{{ __('label.showTasks', 'Show Tasks') }}</label>
             </div>
         @endif
 

@@ -11,7 +11,7 @@
                 hx-swap="outerHTML"
                 hx-indicator=".htmx-indicator, .htmx-loaded-content"
                 name="client">
-            <option value="" data-placeholder="true">All Clients</option>
+            <option value="" data-placeholder="true">{{ __('label.allClients', 'All Clients') }}</option>
             @foreach ($clients as $client)
                 @if($client['id'] > 0)
                     <option value='{{ $client['id'] }}'
