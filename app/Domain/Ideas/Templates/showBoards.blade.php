@@ -71,8 +71,8 @@
                     <div class="btn-group viewDropDown">
                         <button class="btn dropdown-toggle" data-toggle="dropdown">{!! __('buttons.idea_wall') !!} {!! __('links.view') !!}</button>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ BASE_URL }}/ideas/showBoards" class="active">{!! __('buttons.idea_wall') !!}</a></li>
-                            <li><a href="{{ BASE_URL }}/ideas/advancedBoards" class="">{!! __('buttons.idea_kanban') !!}</a></li>
+                            <li><a href="{{ BASE_URL }}/ideas/showBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}" class="active">{!! __('buttons.idea_wall') !!}</a></li>
+                            <li><a href="{{ BASE_URL }}/ideas/advancedBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}" class="">{!! __('buttons.idea_kanban') !!}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -295,7 +295,7 @@
             @endphp
 
         leantime.ideasController.openModalManually("{{ BASE_URL }}/ideas/ideaDialog{{ $modalUrl }}");
-        window.history.pushState({}, document.title, '{{ BASE_URL }}/ideas/showBoards');
+        window.history.pushState({}, document.title, '{{ BASE_URL }}/ideas/showBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}');
 
         @endif
     });
