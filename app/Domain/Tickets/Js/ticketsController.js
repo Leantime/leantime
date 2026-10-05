@@ -419,10 +419,6 @@ leantime.ticketsController = (function () {
 
     var initSprintDates = function () {
 
-        Date.prototype.addDays = function (days) {
-            this.setDate(this.getDate() + days);
-            return this;
-        };
         jQuery.datepicker.setDefaults(
             { beforeShow: function (i) {
                 if (jQuery(i).attr('readonly')) {

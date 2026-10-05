@@ -12,6 +12,7 @@
 <meta name="theme" content="{{ $theme }}">
 <meta name="identifier-URL" content="{!! BASE_URL !!}">
 <meta name="leantime-version" content="{{ $version }}">
+<meta name="soft-reload" content="{{ $softReload ? 'true' : 'false' }}">
 
 @dispatchEvent('afterMetaTags')
 

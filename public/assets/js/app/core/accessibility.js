@@ -196,7 +196,7 @@ leantime.accessibilityController = (function () {
         });
 
         // Enhance datepicker widget when it opens
-        jQuery(document).on('focus', 'input.hasDatepicker', function() {
+        jQuery(document).off('.ltDatepickerA11y').on('focus.ltDatepickerA11y', 'input.hasDatepicker', function() {
             setTimeout(function() {
                 var $widget = jQuery('#ui-datepicker-div');
                 if ($widget.is(':visible')) {

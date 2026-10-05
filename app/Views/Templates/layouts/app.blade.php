@@ -61,7 +61,11 @@
     </div><!-- mainwrapper -->
 
     @include('global::sections.pageBottom')
-    @stack('scripts')
+    {{-- Page init scripts. Kept in a container so the in-place refresh after a modal (modals.js
+         softReload) can re-run them without re-running the layout's own scripts. --}}
+    <div id="lt-page-scripts">
+        @stack('scripts')
+    </div>
     @include('help::helpermodal')
 </body>
 
