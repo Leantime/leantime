@@ -297,7 +297,8 @@ class Setting
             'secondarycolor' => session('companysettings.secondarycolor') ?? '',
             'name' => session('companysettings.sitename'),
             'language' => session('companysettings.language'),
-            'telemetryActive' => true,
+            'telemetryActive' => $this->settingsRepo->getSetting('companysettings.telemetry.optOut') !== 'true',
+            'telemetryAllowedByConfig' => (app('config')->allowTelemetry ?? true) === true,
             'messageFrequency' => '',
         ];
 
@@ -424,13 +425,19 @@ class Setting
             session(['companysettings.sitename' => htmlspecialchars(addslashes($params['name']))]);
             session(['companysettings.language' => htmlentities(addslashes($params['language']))]);
 
-            if (! empty($params['telemetryActive'])) {
-                $this->settingsRepo->saveSetting('companysettings.telemetry.active', 'true');
-            } else {
-                // Set remote telemetry to false.
-                // Resolved lazily to avoid a circular service dependency
-                // (ReportService depends on this Setting service).
-                app()->make(ReportService::class)->optOutTelemetry();
+            // Resolved lazily to avoid a circular service dependency
+            // (ReportService depends on this Setting service).
+            // Callers that don't send the toggle (API, forms without it) leave telemetry untouched.
+            if (array_key_exists('telemetryActive', $params)) {
+                $wasOptedOut = $this->settingsRepo->getSetting('companysettings.telemetry.optOut') === 'true';
+                if (! empty($params['telemetryActive'])) {
+                    if ($wasOptedOut) {
+                        app()->make(ReportService::class)->optInTelemetry();
+                    }
+                } elseif (! $wasOptedOut) {
+                    // Only on the transition, so the opt-out notice goes out once.
+                    app()->make(ReportService::class)->optOutTelemetry();
+                }
             }
 
             $saved = true;

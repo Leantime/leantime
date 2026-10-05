@@ -65,6 +65,8 @@ class ReportsServiceTest extends TestCase
             'getAnonymousTelemetry',
             'sendAnonymousTelemetry',
             'optOutTelemetry',
+            'optInTelemetry',
+            'isTelemetryEnabled',
             'getProjectStatusReport',
             'generateTicketReactionsReport',
         ] as $method) {
@@ -89,6 +91,75 @@ class ReportsServiceTest extends TestCase
             $this->make(TicketRepository::class),
             $sprintService,
         );
+    }
+
+    /**
+     * Builds the Reports service with a Settings service that answers getSetting() from $settings.
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    private function makeServiceWithSettings(array $settings): Reports
+    {
+        return new Reports(
+            $this->make(AppSettingCore::class),
+            $this->make(EnvironmentCore::class),
+            $this->make(ProjectRepository::class),
+            $this->make(SprintRepository::class),
+            $this->make(ReportRepository::class),
+            $this->make(SettingsService::class, [
+                'getSetting' => fn ($key) => $settings[$key] ?? false,
+            ]),
+            $this->make(TicketRepository::class),
+            $this->make(SprintService::class),
+        );
+    }
+
+    /**
+     * Runs $callback with the allowTelemetry config flag temporarily set to $allowTelemetry.
+     */
+    private function withAllowTelemetry(bool $allowTelemetry, callable $callback): void
+    {
+        $config = app('config');
+        $previous = $config->allowTelemetry ?? true;
+        $config->allowTelemetry = $allowTelemetry;
+
+        try {
+            $callback();
+        } finally {
+            $config->allowTelemetry = $previous;
+        }
+    }
+
+    public function test_telemetry_is_enabled_by_default(): void
+    {
+        $this->withAllowTelemetry(true, function () {
+            $this->assertTrue($this->makeServiceWithSettings([])->isTelemetryEnabled());
+        });
+    }
+
+    public function test_admin_opt_out_disables_telemetry(): void
+    {
+        $this->withAllowTelemetry(true, function () {
+            $service = $this->makeServiceWithSettings(['companysettings.telemetry.optOut' => 'true']);
+            $this->assertFalse($service->isTelemetryEnabled());
+        });
+    }
+
+    public function test_legacy_active_flag_is_ignored(): void
+    {
+        // While the settings toggle was missing, every company-settings save wrote active=false
+        // without an admin deciding anything — that value must not silence telemetry.
+        $this->withAllowTelemetry(true, function () {
+            $service = $this->makeServiceWithSettings(['companysettings.telemetry.active' => false]);
+            $this->assertTrue($service->isTelemetryEnabled());
+        });
+    }
+
+    public function test_config_flag_disables_telemetry(): void
+    {
+        $this->withAllowTelemetry(false, function () {
+            $this->assertFalse($this->makeServiceWithSettings([])->isTelemetryEnabled());
+        });
     }
 
     /**

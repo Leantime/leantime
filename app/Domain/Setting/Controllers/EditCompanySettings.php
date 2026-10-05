@@ -75,8 +75,11 @@ class EditCompanySettings extends Controller
     #[RequiresPermission(SettingPermissions::COMPANY_EDIT, global: true)]
     public function post($params)
     {
-        // The telemetry opt-out path keys off the raw POST flag; mirror it into params.
-        $params['telemetryActive'] = isset($_POST['telemetryActive']);
+        // An unchecked checkbox posts nothing, so the form sends a marker when the telemetry
+        // toggle was rendered; only then does a missing value mean "opted out".
+        if (isset($_POST['telemetryToggleShown'])) {
+            $params['telemetryActive'] = isset($_POST['telemetryActive']);
+        }
 
         $saved = $this->settingsSvc->saveCompanySettings($params);
 

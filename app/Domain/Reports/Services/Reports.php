@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Reports\Services;
 
-use DateTime;
-use DateTimeZone;
+use Carbon\CarbonImmutable;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\PromiseInterface;
@@ -18,6 +17,7 @@ use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Reactions\Repositories\Reactions;
 use Leantime\Domain\Reports\Permissions\ReportsPermissions;
@@ -242,7 +242,8 @@ class Reports extends BaseService
         ClientRepository $clientRepository,
         CommentRepository $commentsRepository,
         TimesheetRepository $timesheetRepo,
-        BlueprintsRepository $blueprintsRepo
+        BlueprintsRepository $blueprintsRepo,
+        PluginRepository $pluginRepository
     ): array {
 
         // Get anonymous company guid
@@ -268,7 +269,10 @@ class Reports extends BaseService
             'version' => $this->appSettings->appVersion,
             'language' => $currentLanguage,
             'numUsers' => $userRepository->getNumberOfUsers(),
-            'lastUserLogin' => $userRepository->getLastLogin(),
+            // Day precision only: the exact timestamp of the last login is more than we need.
+            'lastUserLogin' => substr((string) $userRepository->getLastLogin(), 0, 10),
+            'activeUsers7d' => $userRepository->countActiveUsersSince(CarbonImmutable::now('UTC')->subDays(7)),
+            'activeUsers30d' => $userRepository->countActiveUsersSince(CarbonImmutable::now('UTC')->subDays(30)),
 
             'numProjects' => $this->projectRepository->getNumberOfProjects(null, 'project'),
             'numProjectsGreen' => $projectStatusCount['green'] ?? 0,
@@ -333,11 +337,15 @@ class Reports extends BaseService
             'numTaskSentimenUnicorn' => $taskSentiment['🦄'] ?? 0,
 
             'serverSoftware' => $_SERVER['SERVER_SOFTWARE'] ?? 'unknown',
-            'phpUname' => php_uname(),
             'isDocker' => $this->isRunningInDocker(),
             'phpSapiName' => php_sapi_name(),
             'phpOs' => PHP_OS,
-
+            'phpVersion' => PHP_VERSION,
+            'dbDriver' => (string) config('database.default'),
+            'cacheDriver' => (string) config('cache.default'),
+            'sessionDriver' => (string) config('session.driver'),
+            'queueDriver' => (string) config('queue.default'),
+            'plugins' => $this->getEnabledPluginNames($pluginRepository),
         ];
 
         $telemetry = self::dispatch_filter('beforeReturnTelemetry', $telemetry);
@@ -356,160 +364,144 @@ class Reports extends BaseService
      */
     public function sendAnonymousTelemetry(): bool|PromiseInterface
     {
-
-        // Only send once a day
-
-        $allowTelemetry = app('config')->allowTelemetry ?? true;
-
-        if ($allowTelemetry === true) {
-            $date_utc = new DateTime('now', new DateTimeZone('UTC'));
-            $today = $date_utc->format('Y-m-d');
-            $lastUpdate = $this->settings->getSetting('companysettings.telemetry.lastUpdate');
-
-            if ($lastUpdate != $today) {
-                $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
-                $telemetry['date'] = $today;
-
-                // Do the curl
-                $httpClient = new Client;
-
-                try {
-
-                    $data_string = json_encode($telemetry);
-
-                    $promise = $httpClient->postAsync('https://telemetry.leantime.io', [
-                        'form_params' => [
-                            'telemetry' => $data_string,
-                        ],
-                        // Short connect timeout so an offline/air-gapped server (or a
-                        // CI runner with no egress) fails fast instead of blocking the
-                        // dashboard's Welcome widget — and saturating PHP-FPM workers —
-                        // for minutes. The previous 480s total timeout hung the page
-                        // when telemetry was unreachable. (#3372/#3373)
-                        'connect_timeout' => 2,
-                        'timeout' => 5,
-                    ])->then(function ($response) use ($today) {
-                        $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
-                    });
-
-                    return $promise;
-
-                } catch (\Exception $e) {
-                    Log::error($e);
-
-                    return false;
-                }
-            }
+        if (! $this->isTelemetryEnabled()) {
+            return false;
         }
 
-        return false;
+        $today = CarbonImmutable::now('UTC')->format('Y-m-d');
+        $lastUpdate = $this->settings->getSetting('companysettings.telemetry.lastUpdate');
+
+        if ($lastUpdate == $today) {
+            return false;
+        }
+
+        $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
+        $telemetry['date'] = $today;
+
+        try {
+            return $this->postTelemetry($telemetry)->then(function () use ($today) {
+                $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
+            });
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            return false;
+        }
     }
 
     /**
-     * Opts the whole instance out of telemetry (writes companysettings.telemetry.active=false).
+     * Whether this instance may send telemetry.
+     *
+     * Two switches, both must allow it: the LEAN_ALLOW_TELEMETRY config flag and the admin's
+     * company-settings toggle (companysettings.telemetry.optOut). The older
+     * companysettings.telemetry.active key is deliberately ignored: while the settings toggle
+     * was missing (Nov 2024 – Oct 2026) every company-settings save wrote it to false, so it
+     * does not reflect an admin decision.
+     *
+     * Not @api: system-level check used by sendAnonymousTelemetry() and the settings screen.
+     */
+    public function isTelemetryEnabled(): bool
+    {
+        $allowTelemetry = app('config')->allowTelemetry ?? true;
+        if ($allowTelemetry !== true) {
+            return false;
+        }
+
+        return $this->settings->getSetting('companysettings.telemetry.optOut') !== 'true';
+    }
+
+    /**
+     * Opts the whole instance out of telemetry and tells the telemetry server once.
+     *
+     * Sends a single opt-out notice (company id, version, optOut flag — no usage data) so the
+     * instance can be marked as opted out instead of looking abandoned, then stores the opt-out.
      *
      * Not @api: an instance-wide settings MUTATION. It is invoked internally by the admin-gated
      * company-settings save (Setting::saveCompanySettings) — over JSON-RPC it previously let ANY
      * authenticated user flip the company-wide telemetry setting.
-     *
-     * @return false|void
-     *
-     * @throws Exception
      */
-    public function optOutTelemetry()
+    public function optOutTelemetry(): void
     {
-        $date_utc = new DateTime('now', new DateTimeZone('UTC'));
-        $today = $date_utc->format('Y-m-d');
+        $this->settings->saveSetting('companysettings.telemetry.optOut', 'true');
 
-        $companyId = $this->settings->getCompanyId();
+        $allowTelemetry = app('config')->allowTelemetry ?? true;
+        if ($allowTelemetry !== true) {
+            return;
+        }
 
-        $telemetry = [
-            'date' => '',
-            'companyId' => $companyId,
+        $optOutNotice = [
+            'date' => CarbonImmutable::now('UTC')->format('Y-m-d'),
+            'companyId' => $this->settings->getCompanyId(),
+            'env' => 'oss',
             'version' => $this->appSettings->appVersion,
-            'language' => '',
-            'numUsers' => 0,
-            'lastUserLogin' => 0,
-            'numProjects' => 0,
-            'numClients' => 0,
-            'numComments' => 0,
-            'numMilestones' => 0,
-            'numTickets' => 0,
-
-            'numBoards' => 0,
-
-            'numIdeaItems' => 0,
-            'numHoursBooked' => 0,
-
-            'numResearchBoards' => 0,
-            'numResearchItems' => 0,
-
-            'numRetroBoards' => 0,
-            'numRetroItems' => 0,
-
-            'numGoalBoards' => 0,
-            'numGoalItems' => 0,
-
-            'numValueCanvasBoards' => 0,
-            'numValueCanvasItems' => 0,
-
-            'numMinEmpathyBoards' => 0,
-            'numMinEmpathyItems' => 0,
-
-            'numOBMBoards' => 0,
-            'numOBMItems' => 0,
-
-            'numSWOTBoards' => 0,
-            'numSWOTItems' => 0,
-
-            'numSBBoards' => 0,
-            'numSBItems' => 0,
-
-            'numRISKSBoards' => 0,
-            'numRISKSItems' => 0,
-
-            'numEABoards' => 0,
-            'numEAItems' => 0,
-
-            'numINSIGHTSBoards' => 0,
+            'optOut' => true,
         ];
 
-        $telemetry['date'] = $today;
+        try {
+            $this->postTelemetry($optOutNotice)->wait();
+        } catch (\Exception $e) {
+            Log::warning('Could not send telemetry opt-out notice: '.$e->getMessage());
+        }
+    }
 
-        // Do the curl
+    /**
+     * Re-enables telemetry after an admin opted out.
+     *
+     * Not @api: instance-wide settings mutation, only called from the admin-gated settings save.
+     */
+    public function optInTelemetry(): void
+    {
+        $this->settings->saveSetting('companysettings.telemetry.optOut', 'false');
+    }
+
+    /**
+     * Posts a telemetry payload to the Leantime telemetry server.
+     *
+     * The payload travels as JSON inside the `telemetry` form field — the contract every
+     * released Leantime version uses, so the server accepts old and new clients alike.
+     */
+    private function postTelemetry(array $payload): PromiseInterface
+    {
         $httpClient = new Client;
 
+        return $httpClient->postAsync('https://telemetry.leantime.io', [
+            'form_params' => [
+                'telemetry' => json_encode($payload),
+            ],
+            // Short connect timeout so an offline/air-gapped server (or a
+            // CI runner with no egress) fails fast instead of blocking the
+            // dashboard's Welcome widget — and saturating PHP-FPM workers —
+            // for minutes. The previous 480s total timeout hung the page
+            // when telemetry was unreachable. (#3372/#3373)
+            'connect_timeout' => 2,
+            'timeout' => 5,
+        ]);
+    }
+
+    /**
+     * Folder names of the enabled plugins (names only, no license data).
+     *
+     * Reads the repository directly: telemetry runs from cron without a session user, so the
+     * permission-gated Plugins service is not usable here.
+     *
+     * @return array<int, string>
+     */
+    private function getEnabledPluginNames(PluginRepository $pluginRepository): array
+    {
         try {
-            $data_string = json_encode($telemetry);
-
-            $promise = $httpClient->postAsync('https://telemetry.leantime.io', [
-                'form_params' => [
-                    'telemetry' => $data_string,
-                ],
-                'timeout' => 5,
-            ])->then(function ($response) use ($today) {
-
-                $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
-                session(['skipTelemetry' => true]);
-            });
+            $enabledPlugins = $pluginRepository->getAllPlugins(true);
         } catch (\Exception $e) {
-            report($e);
-
-            session(['skipTelemetry' => true]);
-
-            return false;
+            return [];
         }
 
-        $this->settings->saveSetting('companysettings.telemetry.active', false);
-
-        session(['skipTelemetry' => true]);
-
-        try {
-            $promise->wait();
-        } catch (\Exception $e) {
-            report($e);
+        if (! is_array($enabledPlugins)) {
+            return [];
         }
 
+        $pluginNames = array_map(fn ($plugin) => (string) $plugin->foldername, $enabledPlugins);
+        sort($pluginNames);
+
+        return array_values(array_unique($pluginNames));
     }
 
     /**

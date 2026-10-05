@@ -64,6 +64,22 @@
                                             <small>{!! __('text.company_name_helper') !!}</small>
                                         </div>
                                     </div>
+
+                                    @dispatchEvent('beforeTelemetrySettings')
+
+                                    @if ($companySettings['telemetryAllowedByConfig'])
+                                        <div class="row" id="telemetryContainer">
+                                            <div class="col-md-2">
+                                                <label for="telemetryActive">{!! __('label.send_telemetry') !!}</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="hidden" name="telemetryToggleShown" value="1" />
+                                                <input type="checkbox" class="toggle" name="telemetryActive" id="telemetryActive" @if ($companySettings['telemetryActive']) checked="checked" @endif />
+                                                <br />
+                                                <small>{!! __('label.telemetry_background') !!}</small>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <br />
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-cog"></span>{!! __('subtitles.defaults') !!}
