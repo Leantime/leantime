@@ -5,7 +5,7 @@
 - **Customisable kanban cards** - Choose which fields appear on kanban cards and sort cards within columns. (#3846)
 
 ## Improvements
-- **Smoother modals** - Closing a modal refreshes the page in place instead of doing a full reload. (#3848)
+- **Smoother modals** - Closing a modal no longer reloads the whole page. If nothing changed it simply closes; if you saved something, the page content refreshes in place and keeps your scroll position. Set `LEAN_SOFT_RELOAD=false` to restore the old full reload. (#3848, #1809, #2969)
 - **Kanban column counts** - Column counts are always visible instead of only on hover. (#3840)
 
 ## Bug Fixes
