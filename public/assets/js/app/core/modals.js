@@ -66,23 +66,64 @@ leantime.modals = (function () {
             && (script.closest('.primaryContent') || script.closest('#lt-page-scripts')));
     };
 
+    // Page scripts mostly do their work in ready/DOMContentLoaded callbacks, which run after the
+    // script itself finished (document.currentScript is gone by then). Run those callbacks as page
+    // script too, so what they bind is recorded on the first page load as well.
+    var asPageScriptCallback = function (callback) {
+        return function () {
+            pageScriptRunDepth++;
+            try {
+                return callback.apply(this, arguments);
+            } finally {
+                pageScriptRunDepth--;
+            }
+        };
+    };
+
+    var isInitEvent = function (type) {
+        return type === 'DOMContentLoaded' || type === 'load';
+    };
+
     [document, window].forEach(function (target) {
         var originalAdd = target.addEventListener;
         target.addEventListener = function (type, listener, options) {
             if (listener && isRunningPageScript()) {
+                if (typeof listener === 'function' && isInitEvent(type)) {
+                    listener = asPageScriptCallback(listener);
+                }
                 pageScopedListeners.push({ kind: 'dom', target: target, type: type, listener: listener, options: options });
             }
             return originalAdd.call(this, type, listener, options);
         };
     });
 
+    // Handlers on elements inside .primaryContent go away with the content. Handlers on anything
+    // else (document, window, the header and menus that layout components init from the scripts
+    // stack) outlive a refresh, so the ones page scripts bind there are recorded for removal.
+    var outlivesPageContent = function (elem) {
+        if (elem === document || elem === window) {
+            return true;
+        }
+        return !!(elem && elem.nodeType === 1 && elem.isConnected && !elem.closest('.primaryContent'));
+    };
+
     if (jQuery && jQuery.event && typeof jQuery.event.add === 'function') {
         var originalJqueryAdd = jQuery.event.add;
         jQuery.event.add = function (elem, types, handler, data, selector) {
-            if ((elem === document || elem === window) && isRunningPageScript()) {
+            if (isRunningPageScript() && outlivesPageContent(elem)) {
                 pageScopedListeners.push({ kind: 'jquery', target: elem, types: types, handler: handler, selector: selector });
             }
             return originalJqueryAdd.apply(this, arguments);
+        };
+    }
+
+    if (jQuery && jQuery.fn && typeof jQuery.fn.ready === 'function') {
+        var originalReady = jQuery.fn.ready;
+        jQuery.fn.ready = function (callback) {
+            if (typeof callback === 'function' && isRunningPageScript()) {
+                return originalReady.call(this, asPageScriptCallback(callback));
+            }
+            return originalReady.apply(this, arguments);
         };
     }
 
@@ -455,8 +496,12 @@ leantime.modals = (function () {
                     }
 
                     if(typeof window.globalModalCallback === 'function') {
+                        // A custom callback belongs to the modal it was set for, later modals
+                        // close normally again.
+                        var customCallback = window.globalModalCallback;
+                        window.globalModalCallback = undefined;
                         modalChangedData = false;
-                        window.globalModalCallback();
+                        customCallback();
                     }else{
                         refreshAfterModalClose();
                     }
