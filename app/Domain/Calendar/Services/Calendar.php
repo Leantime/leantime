@@ -13,6 +13,8 @@ use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\OutboundHttpClient;
+use Leantime\Domain\Calendar\Events\CalendarConnected;
+use Leantime\Domain\Calendar\Events\CalendarEventCreated;
 use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -170,6 +172,13 @@ class Calendar extends BaseService
 
             // Trigger event for plugins
             EventDispatcher::dispatch_event('afterCalendarSave', ['eventId' => $result, 'values' => $values]);
+
+            if ($result !== false && (int) $result > 0) {
+                CalendarEventCreated::dispatch(
+                    eventId: (int) $result,
+                    allDay: filter_var($values['allDay'], FILTER_VALIDATE_BOOLEAN),
+                );
+            }
 
             return $result;
         } else {
@@ -436,6 +445,8 @@ class Calendar extends BaseService
     public function addExternalCalendarUrl(array $values): void
     {
         $this->calendarRepo->addGUrl($values);
+
+        CalendarConnected::dispatch(kind: 'external_calendar');
     }
 
     /**
@@ -974,6 +985,8 @@ class Calendar extends BaseService
         $icalHash = $uuid->toString();
 
         $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.icalSecret', $icalHash);
+
+        CalendarConnected::dispatch(kind: 'ical_feed');
 
     }
 

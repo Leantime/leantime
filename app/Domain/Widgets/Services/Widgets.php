@@ -8,6 +8,7 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Services\Users;
+use Leantime\Domain\Widgets\Events\DashboardWidgetAdded;
 use Leantime\Domain\Widgets\Models\Widget;
 
 class Widgets
@@ -340,11 +341,60 @@ class Widgets
     {
         // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
         $userId = (int) session('userdata.id');
+
+        $previousWidgetIds = $this->storedGridWidgetIds($userId);
+
         $this->saveGrid($data, $userId);
 
         if ($visibilityData !== null && ! empty($visibilityData['visible'])) {
             $this->markWidgetAsSeen($userId, $visibilityData['widgetId']);
         }
+
+        // Only widgets that were not on the grid before count as added; drags and resizes re-post
+        // the same set of widgets.
+        foreach (array_diff($this->gridWidgetIds($data), $previousWidgetIds) as $addedWidgetId) {
+            DashboardWidgetAdded::dispatch(widgetId: $addedWidgetId);
+        }
+    }
+
+    /**
+     * The ids of the widgets on the user's stored grid; the default widgets when the user never
+     * saved a grid.
+     *
+     * @param  int  $userId  The user.
+     * @return array<int, string>
+     */
+    private function storedGridWidgetIds(int $userId): array
+    {
+        $storedGrid = $this->settingRepo->getSetting(sprintf(self::ACTIVE_WIDGETS_KEY, $userId));
+
+        if (! $storedGrid) {
+            return array_map('strval', array_keys($this->defaultWidgets));
+        }
+
+        return $this->gridWidgetIds(safe_unserialize($storedGrid, []));
+    }
+
+    /**
+     * The widget ids in a grid layout payload (a list of items carrying an `id`).
+     *
+     * @param  mixed  $grid  The grid layout.
+     * @return array<int, string>
+     */
+    private function gridWidgetIds(mixed $grid): array
+    {
+        if (! is_array($grid)) {
+            return [];
+        }
+
+        $widgetIds = [];
+        foreach ($grid as $item) {
+            if (is_array($item) && isset($item['id']) && is_scalar($item['id']) && (string) $item['id'] !== '') {
+                $widgetIds[] = (string) $item['id'];
+            }
+        }
+
+        return array_values(array_unique($widgetIds));
     }
 
     /**

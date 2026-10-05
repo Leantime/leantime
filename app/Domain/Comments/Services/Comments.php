@@ -12,6 +12,7 @@ use Leantime\Domain\Comments\Events\CommentAdded;
 use Leantime\Domain\Comments\Permissions\CommentsPermissions;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification;
+use Leantime\Domain\Projects\Events\ProjectStatusUpdatePosted;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
 
@@ -306,7 +307,15 @@ class Comments extends BaseService
                     module: $module,
                     moduleId: $entityId,
                     projectId: $projectId !== null && $projectId > 0 ? (int) $projectId : null,
+                    isReply: (int) $values['father'] > 0,
+                    hasMention: str_contains((string) $values['text'], 'data-tagged-user-id'),
                 );
+
+                // A project comment with a status is a project status update.
+                $postedStatus = (string) ($values['status'] ?? '');
+                if ($module === 'project' && $postedStatus !== '') {
+                    ProjectStatusUpdatePosted::dispatch(projectId: $entityId, commentId: (int) $comment, status: $postedStatus);
+                }
 
                 $currentUrl = CURRENT_URL;
 

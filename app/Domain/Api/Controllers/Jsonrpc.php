@@ -17,7 +17,9 @@ use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Http\Responses\JsonRpcErrorResponse;
 use Leantime\Core\Http\Responses\JsonRpcResponse;
+use Leantime\Core\Middleware\AuthenticateSession;
 use Leantime\Core\Plugins\Attributes\RequiresPlugin;
+use Leantime\Domain\Api\Events\ApiMethodCalled;
 use Leantime\Domain\Plugins\Services\Plugins as PluginsService;
 use ReflectionClass;
 use ReflectionMethod;
@@ -295,7 +297,33 @@ class Jsonrpc extends Controller
             $method_response = (array) $method_response;
         }
 
+        $this->dispatchApiMethodCalled($methodparts);
+
         return $this->returnResponse($method_response, $id);
+    }
+
+    /**
+     * Report a successful call by a non-session caller as {@see ApiMethodCalled}.
+     *
+     * Only requests authenticated by an API key or Bearer token (AuthCheck marks them with
+     * AuthenticateSession::TOKEN_AUTHENTICATED) count; the web UI's own RPC calls ride the
+     * browser session and are not reported. The channel is 'mcp' for requests on the /mcp
+     * endpoint, 'api' otherwise.
+     *
+     * @param  array{module: string, service: string, method: string}  $methodparts  The parsed method string.
+     */
+    private function dispatchApiMethodCalled(array $methodparts): void
+    {
+        if ($this->incomingRequest->attributes->get(AuthenticateSession::TOKEN_AUTHENTICATED) !== true) {
+            return;
+        }
+
+        $channel = str_starts_with(ltrim($this->incomingRequest->path(), '/'), 'mcp') ? 'mcp' : 'api';
+
+        ApiMethodCalled::dispatch(
+            method: strtolower($methodparts['module']).'.'.strtolower($methodparts['service']).'.'.$methodparts['method'],
+            channel: $channel,
+        );
     }
 
     /**

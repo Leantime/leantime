@@ -7,6 +7,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Blueprints\Events\CanvasCreated;
 use Leantime\Domain\Blueprints\Events\CanvasItemCreated;
+use Leantime\Domain\Goalcanvas\Events\GoalProgressUpdated;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -795,7 +796,13 @@ class Goalcanvas extends BaseService
         $values['itemId'] = $itemId;
         $values['id'] = $itemId;
 
+        $goalBefore = array_key_exists('currentValue', $values) ? $this->goalRepository->getSingleCanvasItem($itemId) : null;
+
         $this->goalRepository->editCanvasItem($values);
+
+        if (is_array($goalBefore)) {
+            $this->dispatchGoalProgressOnChange($itemId, $projectId, $goalBefore, $values);
+        }
 
         if (array_key_exists('milestoneId', $values)) {
             $this->syncGoalMilestoneEdges($itemId, $values['milestoneId'], (int) session('userdata.id'));
@@ -854,7 +861,13 @@ class Goalcanvas extends BaseService
         }
         $this->authorize(GoalcanvasPermissions::EDIT, $projectId);
 
+        $goalBefore = array_key_exists('currentValue', $params) ? $this->goalRepository->getSingleCanvasItem($id) : null;
+
         $result = $this->goalRepository->patchCanvasItem($id, $params);
+
+        if ($result && is_array($goalBefore)) {
+            $this->dispatchGoalProgressOnChange($id, $projectId, $goalBefore, $params);
+        }
 
         // Only mirror the milestoneId change into the tracked_by edges when the
         // column patch actually persisted — otherwise the edges would drift from
@@ -864,6 +877,51 @@ class Goalcanvas extends BaseService
         }
 
         return $result;
+    }
+
+    /**
+     * Fire {@see GoalProgressUpdated} when a write changed a goal's current value.
+     *
+     * The target counts as reached at >= endValue, or at <= endValue for a decreasing goal (one
+     * whose endValue is below its startValue); `targetReached` is true only when this write
+     * crossed into that state.
+     *
+     * @param  int  $goalId  The goal item id.
+     * @param  int  $projectId  The goal's project.
+     * @param  array<string, mixed>  $goalBefore  The stored goal read before the write.
+     * @param  array<string, mixed>  $written  The fields written (must contain currentValue).
+     */
+    private function dispatchGoalProgressOnChange(int $goalId, int $projectId, array $goalBefore, array $written): void
+    {
+        $toFloat = static fn (mixed $value): ?float => is_numeric($value) ? (float) $value : null;
+
+        $previousValue = $toFloat($goalBefore['currentValue'] ?? null);
+        $currentValue = $toFloat($written['currentValue'] ?? null);
+
+        if ($previousValue === $currentValue) {
+            return;
+        }
+
+        $startValue = $toFloat(array_key_exists('startValue', $written) ? $written['startValue'] : ($goalBefore['startValue'] ?? null));
+        $endValue = $toFloat(array_key_exists('endValue', $written) ? $written['endValue'] : ($goalBefore['endValue'] ?? null));
+
+        $isDecreasing = $startValue !== null && $endValue !== null && $endValue < $startValue;
+        $hasReached = static function (?float $value) use ($endValue, $isDecreasing): bool {
+            if ($value === null || $endValue === null) {
+                return false;
+            }
+
+            return $isDecreasing ? $value <= $endValue : $value >= $endValue;
+        };
+
+        GoalProgressUpdated::dispatch(
+            goalId: $goalId,
+            projectId: $projectId,
+            previousValue: $previousValue,
+            currentValue: $currentValue,
+            endValue: $endValue,
+            targetReached: $hasReached($currentValue) && ! $hasReached($previousValue),
+        );
     }
 
     /**
