@@ -228,7 +228,8 @@ class Sprints extends BaseService
             return null;
         }
 
-        return (int) round(abs($end->getTimestamp() - $start->getTimestamp()) / 86400);
+        // Inclusive, like the burndown: a same-day sprint is 1 day, Oct 1–14 is 14 days.
+        return (int) round(abs($end->getTimestamp() - $start->getTimestamp()) / 86400) + 1;
     }
 
     /**

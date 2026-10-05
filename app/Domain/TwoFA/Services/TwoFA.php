@@ -96,10 +96,14 @@ class TwoFA
             return false;
         }
 
-        $this->userRepo->patchUser($userId, [
+        $saved = $this->userRepo->patchUser($userId, [
             'twoFAEnabled' => 1,
             'twoFASecret' => $secret,
         ]);
+
+        if (! $saved) {
+            return false;
+        }
 
         TwoFactorEnabled::dispatch(userId: $userId);
 

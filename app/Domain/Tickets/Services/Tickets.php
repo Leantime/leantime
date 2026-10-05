@@ -2891,6 +2891,10 @@ class Tickets extends BaseService
     private function dispatchTicketCreated(mixed $result, array $values, string $origin, string $legacyHook): void
     {
         $ticketId = is_int($result) && $result > 0 ? $result : null;
+        if ($ticketId === null) {
+            return; // the write failed: nothing was created
+        }
+
         $assigneeId = is_numeric($values['editorId'] ?? null) ? (int) $values['editorId'] : 0;
 
         TicketCreated::dispatch(

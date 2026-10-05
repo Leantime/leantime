@@ -2063,14 +2063,16 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $params = $this->rejectCyclicParent((int) $id, $params);
 
-        $previousState = array_key_exists('state', $params)
-            ? ($this->projectRepository->getProject((int) $id)['state'] ?? null)
-            : null;
+        // The repository reports success for zero affected rows, so only a project that
+        // existed before the write can transition into archived.
+        $previousProject = array_key_exists('state', $params)
+            ? $this->projectRepository->getProject((int) $id)
+            : false;
 
         $patched = $this->projectRepository->patch($id, $params);
 
-        if ($patched && array_key_exists('state', $params)) {
-            $this->dispatchArchivedOnTransition((int) $id, $previousState, $params['state']);
+        if ($patched && is_array($previousProject)) {
+            $this->dispatchArchivedOnTransition((int) $id, $previousProject['state'] ?? null, $params['state']);
         }
 
         return $patched;
