@@ -375,7 +375,7 @@ class ShowCanvas
         $message = sprintf(
             $this->language->__($messageKey),
             session('userdata.name'),
-            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($boardTitle).'</a>'
+            "<a href='".\Leantime\Core\Mailer::notificationEmailUrl(app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL), 'board_created')."'>".strip_tags($boardTitle).'</a>'
         );
         $mailer->setHtml($message);
 

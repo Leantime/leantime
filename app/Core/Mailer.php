@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Support\NameSanitizer;
 use PHPMailer\PHPMailer\Exception;
@@ -201,6 +202,23 @@ class Mailer
     }
 
     /**
+     * Pass an app URL that goes into a notification email through the `notificationEmailUrl`
+     * filter (full name: leantime.core.mailer.notificationEmailUrl), so plugins can rewrite email
+     * links — e.g. append campaign parameters. Listeners receive the URL and ['type' => $type];
+     * without listeners (or on an empty result) the URL is returned unchanged.
+     *
+     * @param  string  $url  The app URL put into the email.
+     * @param  string  $type  The notification type/module (tickets, comments, mention, ...).
+     * @return string The URL to put into the email.
+     */
+    public static function notificationEmailUrl(string $url, string $type): string
+    {
+        $filteredUrl = EventDispatcher::dispatch_filter('notificationEmailUrl', $url, ['type' => $type], 'leantime.core.mailer');
+
+        return is_string($filteredUrl) && $filteredUrl !== '' ? $filteredUrl : $url;
+    }
+
+    /**
      * setContext - sets the context for the mailing
      * (used for filters & events)
      */
@@ -332,7 +350,10 @@ class Mailer
         }
 
         // Emails leave the request, so the profile link uses the trusted app URL when one is known.
-        $profileUrl = app()->make(TrustedAppUrl::class)->forLinks().'/users/editOwn/';
+        $profileUrl = self::notificationEmailUrl(
+            app()->make(TrustedAppUrl::class)->forLinks().'/users/editOwn/',
+            (string) ($this->context ?? 'email')
+        );
 
         $mailBody = $this->hideWrapper ? $this->html : app('blade.compiler')::render(
             $this->dispatchMailerFilter('bodyTemplate', '<table width="100%" style="background:#fefefe; padding:15px; ">

@@ -473,7 +473,7 @@ class Ideas extends BaseService
         $message = sprintf(
             $this->language->__('email_notifications.idea_board_created_message'),
             session('userdata.name'),
-            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($title).'</a>.<br />'
+            "<a href='".\Leantime\Core\Mailer::notificationEmailUrl(app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL), 'idea_board_created')."'>".strip_tags($title).'</a>.<br />'
         );
         $mailer->setHtml($message);
 
@@ -501,7 +501,7 @@ class Ideas extends BaseService
         $message = sprintf(
             $this->language->__('email_notifications.canvas_created_message'),
             session('userdata.name'),
-            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($title).'</a>'
+            "<a href='".\Leantime\Core\Mailer::notificationEmailUrl(app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL), 'idea_board_created')."'>".strip_tags($title).'</a>'
         );
         $mailer->setHtml($message);
 
@@ -858,7 +858,14 @@ class Ideas extends BaseService
         $values['id'] = $commentId;
 
         if ($commentId) {
-            CommentAdded::dispatch(commentId: (int) $commentId, module: 'idea', moduleId: $ideaItemId, projectId: $projectId);
+            CommentAdded::dispatch(
+                commentId: (int) $commentId,
+                module: 'idea',
+                moduleId: $ideaItemId,
+                projectId: $projectId,
+                isReply: (int) $parentCommentId > 0,
+                hasMention: str_contains($text, 'data-tagged-user-id'),
+            );
         }
 
         $subject = $this->language->__('email_notifications.new_comment_idea_subject');

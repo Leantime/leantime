@@ -16,6 +16,7 @@ use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Mailer;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\OutboundUrlGuard;
@@ -381,7 +382,8 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $emailMessage = $notification->message;
         if ($notification->url !== false) {
-            $emailMessage .= " <a href='".$notification->url['url']."'>".$notification->url['text'].'</a>';
+            $emailUrl = Mailer::notificationEmailUrl((string) $notification->url['url'], (string) $notification->module);
+            $emailMessage .= " <a href='".$emailUrl."'>".$notification->url['text'].'</a>';
         }
 
         // NEW Queuing messaging system
@@ -451,7 +453,8 @@ class Projects extends BaseService implements ChecksProjectAccess
                 $notification->module,
                 (int) $entityId,
                 $notification->authorId,
-                $notification->url['url']
+                $notification->url['url'],
+                (int) $notification->projectId
             );
         }
 
