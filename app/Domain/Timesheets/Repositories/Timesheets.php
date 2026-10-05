@@ -614,11 +614,15 @@ class Timesheets extends Repository
     }
 
     /**
-     * addTime - add user-specific time entry
+     * addTime - add user-specific time entry. Hours are added onto the day's existing entry for
+     * the same user/ticket/kind when there is one.
+     *
+     * @param  array  $values  The entry values (userId, ticket, date, kind, hours, ...).
+     * @return bool True when a NEW entry row was inserted, false when hours were added to an existing row.
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function addTime(array $values): void
+    public function addTime(array $values): bool
     {
         $now = date('Y-m-d H:i:s');
 
@@ -629,7 +633,7 @@ class Timesheets extends Repository
             $this->accumulateAddTimeRow($values, $now);
             $this->cleanUpEmptyTimesheets();
 
-            return;
+            return false;
         }
 
         try {
@@ -657,9 +661,14 @@ class Timesheets extends Repository
             }
 
             $this->accumulateAddTimeRow($values, $now);
+            $this->cleanUpEmptyTimesheets();
+
+            return false;
         }
 
         $this->cleanUpEmptyTimesheets();
+
+        return true;
     }
 
     /**
@@ -761,12 +770,18 @@ class Timesheets extends Repository
     }
 
     /**
-     * addTime - add user-specific time entry
+     * upsertTimesheetEntry - set the hours of the user's entry for a ticket/day/kind, creating the
+     * entry when it does not exist yet.
+     *
+     * @param  array  $values  The entry values (userId, ticket, date, kind, hours, ...).
+     * @return bool True when the entry did not exist before (a new row), false when an existing row was overwritten.
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function upsertTimesheetEntry(array $values): void
+    public function upsertTimesheetEntry(array $values): bool
     {
+        $existedBefore = $this->findTimesheetRow((int) $values['userId'], (int) $values['ticket'], $values['date'], $values['kind']) !== null;
+
         // Cross-DB upsert on the (userId, ticketId, workDate, kind) unique key. Laravel's upsert()
         // emits the correct dialect per driver (MySQL ON DUPLICATE KEY, PostgreSQL ON CONFLICT).
         // On conflict only `hours` is overwritten, matching the previous behaviour.
@@ -791,6 +806,8 @@ class Timesheets extends Repository
         );
 
         $this->cleanUpEmptyTimesheets();
+
+        return ! $existedBefore;
     }
 
     /**

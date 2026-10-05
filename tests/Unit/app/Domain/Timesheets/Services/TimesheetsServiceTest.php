@@ -5,11 +5,14 @@ namespace Unit\app\Domain\Timesheets\Services;
 use Carbon\CarbonImmutable;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Events\TimeEntryCreated;
+use Leantime\Domain\Timesheets\Events\TimerStarted;
 use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -140,6 +143,8 @@ class TimesheetsServiceTest extends TestCase
         $repo = $this->make(TimesheetRepository::class, [
             'addTime' => function () use (&$addCalls) {
                 $addCalls++;
+
+                return true;
             },
         ]);
 
@@ -448,6 +453,8 @@ class TimesheetsServiceTest extends TestCase
         $repo = $this->make(TimesheetRepository::class, [
             'addTime' => function ($values) use (&$captured) {
                 $captured = $values;
+
+                return true;
             },
         ]);
 
@@ -601,6 +608,8 @@ class TimesheetsServiceTest extends TestCase
         $repo = $this->make(TimesheetRepository::class, [
             'upsertTimesheetEntry' => function ($values) use (&$upserted) {
                 $upserted[] = $values['ticket'];
+
+                return true;
             },
         ]);
         $ticketRepo = $this->make(TicketRepository::class, [
@@ -729,5 +738,95 @@ class TimesheetsServiceTest extends TestCase
 
         $group = array_values($groups)[0];
         $this->assertSame(1.0, (float) $group['day1']['hours'], 'Offset-drifted Monday entry must stay in the Monday column');
+    }
+
+    /**
+     * Runs $action with a listener collecting the given class events, restoring the dispatcher's
+     * static registry afterwards so the listener does not leak into other tests.
+     *
+     * @param  class-string  $eventClass
+     * @return array<int, object> The dispatched events.
+     */
+    private function collectEvents(string $eventClass, callable $action): array
+    {
+        $reflection = new \ReflectionClass(EventDispatcher::class);
+        $snapshot = [];
+        foreach (['eventRegistry', 'available_hooks', 'patternMatchCache', 'compiledPatternCache', 'eventRegistryVersion'] as $prop) {
+            $snapshot[$prop] = $reflection->getProperty($prop)->getValue();
+        }
+
+        $events = [];
+        EventDispatcher::add_event_listener($eventClass, function ($event) use (&$events) {
+            $events[] = $event;
+        });
+
+        try {
+            $action();
+        } finally {
+            foreach ($snapshot as $prop => $value) {
+                $reflection->getProperty($prop)->setValue(null, $value);
+            }
+        }
+
+        return $events;
+    }
+
+    /** Service whose ticket 3 lives in project 1 and whose repository reports $insertsNewRow. */
+    private function timeEntryService(bool $insertsNewRow): TimesheetService
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            'addTime' => fn () => $insertsNewRow,
+            'upsertTimesheetEntry' => fn () => $insertsNewRow,
+            'punchIn' => fn () => true,
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+        $userRepo = $this->make(UserRepository::class, ['getUser' => fn () => ['wage' => 0]]);
+
+        return $this->makeService(timesheetsRepo: $repo, userRepo: $userRepo, ticketRepo: $ticketRepo);
+    }
+
+    public function test_logging_time_into_a_new_row_fires_time_entry_created(): void
+    {
+        $service = $this->timeEntryService(insertsNewRow: true);
+
+        $events = $this->collectEvents(TimeEntryCreated::class, fn () => $service->logTime(3, ['date' => '2026-01-01', 'hours' => 1.5, 'kind' => 'GENERAL_BILLABLE']));
+
+        $this->assertCount(1, $events);
+        $this->assertSame(3, $events[0]->ticketId);
+        $this->assertSame(1.5, $events[0]->hours);
+        $this->assertSame(1, $events[0]->projectId);
+    }
+
+    public function test_time_added_to_an_existing_row_does_not_fire_time_entry_created(): void
+    {
+        $service = $this->timeEntryService(insertsNewRow: false);
+
+        $events = $this->collectEvents(TimeEntryCreated::class, function () use ($service) {
+            $service->logTime(3, ['date' => '2026-01-01', 'hours' => 1, 'kind' => 'GENERAL_BILLABLE']);
+            $service->upsertTime(3, ['date' => '2026-01-01', 'hours' => 2, 'kind' => 'GENERAL_BILLABLE']);
+        });
+
+        $this->assertSame([], $events);
+    }
+
+    public function test_an_empty_weekly_cell_does_not_fire_time_entry_created(): void
+    {
+        $service = $this->timeEntryService(insertsNewRow: true);
+
+        $events = $this->collectEvents(TimeEntryCreated::class, fn () => $service->upsertTime(3, ['date' => '2026-01-01', 'hours' => '', 'kind' => 'GENERAL_BILLABLE']));
+
+        $this->assertSame([], $events);
+    }
+
+    public function test_punch_in_fires_timer_started(): void
+    {
+        $service = $this->timeEntryService(insertsNewRow: true);
+
+        $events = $this->collectEvents(TimerStarted::class, fn () => $service->punchIn(3));
+
+        $this->assertCount(1, $events);
+        $this->assertSame(3, $events[0]->ticketId);
     }
 }
