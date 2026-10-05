@@ -345,8 +345,7 @@ class Reports extends BaseService
             'cacheDriver' => (string) config('cache.default'),
             'sessionDriver' => (string) config('session.driver'),
             'queueDriver' => (string) config('queue.default'),
-            'plugins' => $this->getEnabledPluginNames($pluginRepository),
-        ];
+        ] + $this->getEnabledPluginSummary($pluginRepository);
 
         $telemetry = self::dispatch_filter('beforeReturnTelemetry', $telemetry);
 
@@ -479,29 +478,46 @@ class Reports extends BaseService
     }
 
     /**
-     * Folder names of the enabled plugins (names only, no license data).
+     * Enabled plugins, privacy-safe: names of marketplace plugins only (published package
+     * names, phar format) plus a count of locally installed folder plugins, whose directory
+     * names are chosen locally and may identify the organisation.
      *
      * Reads the repository directly: telemetry runs from cron without a session user, so the
-     * permission-gated Plugins service is not usable here.
+     * permission-gated Plugins service is not usable here. System plugins from LEAN_PLUGINS
+     * are counted as folder plugins.
      *
-     * @return array<int, string>
+     * @return array{plugins: array<int, string>, numFolderPlugins: int}
      */
-    private function getEnabledPluginNames(PluginRepository $pluginRepository): array
+    private function getEnabledPluginSummary(PluginRepository $pluginRepository): array
     {
+        $marketplacePlugins = [];
+        $folderPlugins = [];
+
         try {
             $enabledPlugins = $pluginRepository->getAllPlugins(true);
         } catch (\Exception $e) {
-            return [];
+            $enabledPlugins = [];
         }
 
-        if (! is_array($enabledPlugins)) {
-            return [];
+        foreach (is_array($enabledPlugins) ? $enabledPlugins : [] as $plugin) {
+            if (($plugin->format ?? '') === 'phar') {
+                $marketplacePlugins[] = (string) $plugin->foldername;
+            } else {
+                $folderPlugins[] = strtolower((string) $plugin->foldername);
+            }
         }
 
-        $pluginNames = array_map(fn ($plugin) => (string) $plugin->foldername, $enabledPlugins);
-        sort($pluginNames);
+        $systemPlugins = array_filter(array_map('trim', explode(',', (string) ($this->config->plugins ?? ''))));
+        foreach ($systemPlugins as $systemPlugin) {
+            $folderPlugins[] = strtolower($systemPlugin);
+        }
 
-        return array_values(array_unique($pluginNames));
+        sort($marketplacePlugins);
+
+        return [
+            'plugins' => array_values(array_unique($marketplacePlugins)),
+            'numFolderPlugins' => count(array_unique($folderPlugins)),
+        ];
     }
 
     /**

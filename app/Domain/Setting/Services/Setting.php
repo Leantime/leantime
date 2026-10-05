@@ -425,22 +425,25 @@ class Setting
             session(['companysettings.sitename' => htmlspecialchars(addslashes($params['name']))]);
             session(['companysettings.language' => htmlentities(addslashes($params['language']))]);
 
-            // Resolved lazily to avoid a circular service dependency
-            // (ReportService depends on this Setting service).
-            // Callers that don't send the toggle (API, forms without it) leave telemetry untouched.
-            if (array_key_exists('telemetryActive', $params)) {
-                $wasOptedOut = $this->settingsRepo->getSetting('companysettings.telemetry.optOut') === 'true';
-                if (! empty($params['telemetryActive'])) {
-                    if ($wasOptedOut) {
-                        app()->make(ReportService::class)->optInTelemetry();
-                    }
-                } elseif (! $wasOptedOut) {
-                    // Only on the transition, so the opt-out notice goes out once.
-                    app()->make(ReportService::class)->optOutTelemetry();
-                }
-            }
-
             $saved = true;
+        }
+
+        // Telemetry toggle. Independent of the main details so an opt-out is never lost to an
+        // unrelated validation. Callers that don't send the toggle (API, forms without it)
+        // leave telemetry untouched. ReportService is resolved lazily to avoid a circular
+        // service dependency (it depends on this Setting service).
+        if (array_key_exists('telemetryActive', $params)) {
+            $wasOptedOut = $this->settingsRepo->getSetting('companysettings.telemetry.optOut') === 'true';
+            if (! empty($params['telemetryActive'])) {
+                if ($wasOptedOut) {
+                    app()->make(ReportService::class)->optInTelemetry();
+                    $saved = true;
+                }
+            } elseif (! $wasOptedOut) {
+                // Only on the transition, so the opt-out notice goes out once.
+                app()->make(ReportService::class)->optOutTelemetry();
+                $saved = true;
+            }
         }
 
         return $saved;
