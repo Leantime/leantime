@@ -2906,10 +2906,8 @@ class Tickets extends BaseService
             legacyHook: $legacyHook
         );
 
-        if ($ticketId !== null) {
-            $projectId = (int) ($values['projectId'] ?? 0);
-            $this->dispatchTicketAssignedOnChange($ticketId, $projectId > 0 ? $projectId : null, null, $assigneeId);
-        }
+        $projectId = (int) ($values['projectId'] ?? 0);
+        $this->dispatchTicketAssignedOnChange($ticketId, $projectId > 0 ? $projectId : null, null, $assigneeId);
     }
 
     /**
