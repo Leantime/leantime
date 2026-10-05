@@ -79,6 +79,7 @@ class AddSubtaskTool extends Tool
         ];
 
         try {
+            $params['origin'] = 'mcp';
             $result = $this->ticketsService->quickAddTicket($params);
         } catch (LeantimeExceptionInterface $e) {
             return ToolResult::error($e->getClientMessage());

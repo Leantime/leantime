@@ -88,6 +88,7 @@ class CreateSubtasksForTaskTool extends Tool
             ];
 
             try {
+                $params['origin'] = 'mcp';
                 $result = $this->ticketsService->quickAddTicket($params);
             } catch (LeantimeExceptionInterface $e) {
                 $failureCount++;

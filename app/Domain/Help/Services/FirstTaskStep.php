@@ -70,7 +70,7 @@ class FirstTaskStep implements OnboardingSteps
 
         if ($headline !== '') {
             try {
-                $this->ticketService->quickAddTicket(['headline' => $headline]);
+                $this->ticketService->quickAddTicket(['headline' => $headline, 'origin' => 'onboarding']);
             } catch (AuthorizationException $e) {
                 // Expected: the readonly role has no TicketsPermissions::CREATE. This is
                 // a normal outcome, not an incident, so it is not reported — otherwise

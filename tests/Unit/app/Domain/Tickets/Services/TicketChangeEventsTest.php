@@ -15,7 +15,10 @@ use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+use Leantime\Domain\Tickets\Events\TicketAssigned;
 use Leantime\Domain\Tickets\Events\TicketCompleted;
+use Leantime\Domain\Tickets\Events\TicketCreated;
+use Leantime\Domain\Tickets\Events\TicketScheduled;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\TicketHistory;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
@@ -25,15 +28,25 @@ use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Unit\TestCase;
 
 /**
- * TicketCompleted fires only on a persisted transition INTO a DONE-type status from a status that
- * was not DONE — never on re-saves of a done ticket or moves between non-done statuses.
+ * Ticket change events derived from the stored ticket read before a write: TicketCompleted fires
+ * only on a persisted transition INTO a DONE-type status from a status that was not DONE;
+ * TicketScheduled / TicketAssigned only when the work window / assignee actually changed.
  */
-class TicketCompletedTest extends TestCase
+class TicketChangeEventsTest extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
 
     /** @var array<int, TicketCompleted> */
     private array $completed = [];
+
+    /** @var array<int, TicketScheduled> */
+    private array $scheduled = [];
+
+    /** @var array<int, TicketAssigned> */
+    private array $assigned = [];
+
+    /** @var array<int, TicketCreated> */
+    private array $created = [];
 
     private array $dispatcherSnapshot = [];
 
@@ -71,8 +84,20 @@ class TicketCompletedTest extends TestCase
         }
 
         $this->completed = [];
+        $this->scheduled = [];
+        $this->assigned = [];
+        $this->created = [];
         EventDispatcher::add_event_listener(TicketCompleted::class, function (TicketCompleted $event) {
             $this->completed[] = $event;
+        });
+        EventDispatcher::add_event_listener(TicketScheduled::class, function (TicketScheduled $event) {
+            $this->scheduled[] = $event;
+        });
+        EventDispatcher::add_event_listener(TicketAssigned::class, function (TicketAssigned $event) {
+            $this->assigned[] = $event;
+        });
+        EventDispatcher::add_event_listener(TicketCreated::class, function (TicketCreated $event) {
+            $this->created[] = $event;
         });
     }
 
@@ -92,17 +117,19 @@ class TicketCompletedTest extends TestCase
      * DONE-type status.
      *
      * @param  array<int, int>  $storedStatusByTicket  Ticket id => stored status.
+     * @param  array<string, mixed>  $storedFields  Further stored fields of every ticket (editFrom, editorId, ...).
      */
-    private function buildService(array $storedStatusByTicket): TicketsService
+    private function buildService(array $storedStatusByTicket, array $storedFields = []): TicketsService
     {
         $ticketRepository = $this->make(TicketRepository::class, [
-            'getTicket' => fn ($id) => $this->make(TicketModel::class, [
+            'getTicket' => fn ($id) => $this->make(TicketModel::class, array_merge([
                 'id' => (int) $id,
                 'projectId' => 7,
                 'headline' => 'T'.$id,
                 'status' => $storedStatusByTicket[(int) $id] ?? 3,
-            ]),
+            ], $storedFields)),
             'patchTicket' => fn () => true,
+            'addTicket' => fn () => 42,
             'updateTicketStatus' => fn () => true,
             'getStateLabels' => fn () => [
                 0 => ['name' => 'Done', 'statusType' => 'DONE'],
@@ -187,5 +214,106 @@ class TicketCompletedTest extends TestCase
         $this->assertCount(1, $this->completed);
         $this->assertSame(5, $this->completed[0]->ticketId);
         $this->assertSame(7, $this->completed[0]->projectId);
+    }
+
+    public function test_completion_carries_the_tickets_context(): void
+    {
+        $this->buildService([5 => 3], [
+            'type' => 'task',
+            'dependingTicketId' => 4,
+            'editorId' => 1,
+            'date' => CarbonImmutable::now('UTC')->subDays(3)->format('Y-m-d H:i:s'),
+            'dateToFinish' => CarbonImmutable::now('UTC')->subDay()->format('Y-m-d H:i:s'),
+            'editFrom' => CarbonImmutable::now('UTC')->format('Y-m-d H:i:s'),
+        ])->patch(5, ['status' => 0]);
+
+        $this->assertCount(1, $this->completed);
+        $event = $this->completed[0];
+        $this->assertSame('subtask', $event->type, 'a task with a parent counts as a subtask');
+        $this->assertTrue($event->completedByAssignee);
+        $this->assertSame(3, $event->daysToComplete);
+        $this->assertTrue($event->hadDueDate);
+        $this->assertTrue($event->wasOverdue);
+        $this->assertTrue($event->wasScheduledToday);
+    }
+
+    public function test_scheduling_an_unscheduled_ticket_fires_ticket_scheduled(): void
+    {
+        $start = CarbonImmutable::create(2026, 10, 6, 9, 0, 0, 'UTC');
+
+        $this->buildService([5 => 3])->patch(5, ['editFrom' => $start, 'editTo' => $start->addHour()]);
+
+        $this->assertCount(1, $this->scheduled);
+        $this->assertSame(5, $this->scheduled[0]->ticketId);
+        $this->assertSame(7, $this->scheduled[0]->projectId);
+        $this->assertSame('2026-10-06 09:00:00', $this->scheduled[0]->editFrom);
+        $this->assertSame('2026-10-06 10:00:00', $this->scheduled[0]->editTo);
+        $this->assertFalse($this->scheduled[0]->rescheduled);
+    }
+
+    public function test_moving_a_scheduled_ticket_fires_as_rescheduled(): void
+    {
+        $this->buildService([5 => 3], ['editFrom' => '2026-10-06 09:00:00', 'editTo' => '2026-10-06 10:00:00'])
+            ->patch(5, ['editFrom' => CarbonImmutable::create(2026, 10, 7, 9, 0, 0, 'UTC')]);
+
+        $this->assertCount(1, $this->scheduled);
+        $this->assertSame('2026-10-07 09:00:00', $this->scheduled[0]->editFrom);
+        $this->assertSame('2026-10-06 10:00:00', $this->scheduled[0]->editTo, 'an untouched end keeps its stored value');
+        $this->assertTrue($this->scheduled[0]->rescheduled);
+    }
+
+    public function test_an_unchanged_or_cleared_schedule_does_not_fire(): void
+    {
+        $service = $this->buildService([5 => 3], ['editFrom' => '2026-10-06 09:00:00', 'editTo' => '2026-10-06 10:00:00']);
+
+        $service->patch(5, ['editFrom' => CarbonImmutable::create(2026, 10, 6, 9, 0, 0, 'UTC')]);
+        $service->patch(5, ['editFrom' => '', 'editTo' => '']);
+
+        $this->assertSame([], $this->scheduled);
+    }
+
+    public function test_reassigning_a_ticket_fires_ticket_assigned_once(): void
+    {
+        $service = $this->buildService([5 => 3], ['editorId' => 2]);
+
+        $service->patch(5, ['editorId' => 3]);
+        $service->patch(5, ['editorId' => 3]);
+
+        $this->assertCount(1, $this->assigned, 'the same change written twice in a request is reported once');
+        $this->assertSame(3, $this->assigned[0]->assigneeId);
+        $this->assertSame(2, $this->assigned[0]->previousAssigneeId);
+        $this->assertFalse($this->assigned[0]->assignedToSelf);
+    }
+
+    public function test_same_or_empty_assignee_does_not_fire(): void
+    {
+        $service = $this->buildService([5 => 3], ['editorId' => 2]);
+
+        $service->patch(5, ['editorId' => 2]);
+        $service->patch(5, ['editorId' => '']);
+
+        $this->assertSame([], $this->assigned);
+    }
+
+    public function test_creating_an_assigned_ticket_fires_created_with_context_and_assigned(): void
+    {
+        $this->buildService([])->quickAddTicket([
+            'headline' => 'New',
+            'projectId' => 7,
+            'editorId' => 1,
+            'dateToFinish' => CarbonImmutable::create(2026, 10, 9, 0, 0, 0, 'UTC'),
+            'origin' => 'mcp',
+        ]);
+
+        $this->assertCount(1, $this->created);
+        $this->assertSame(42, $this->created[0]->ticketId);
+        $this->assertSame('mcp', $this->created[0]->origin);
+        $this->assertSame('task', $this->created[0]->type);
+        $this->assertTrue($this->created[0]->hasDueDate);
+        $this->assertFalse($this->created[0]->assignedToOther);
+
+        $this->assertCount(1, $this->assigned);
+        $this->assertTrue($this->assigned[0]->assignedToSelf);
+        $this->assertNull($this->assigned[0]->previousAssigneeId);
     }
 }

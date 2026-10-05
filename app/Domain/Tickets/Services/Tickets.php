@@ -31,10 +31,12 @@ use Leantime\Domain\Tickets\Events\MilestoneCreated;
 use Leantime\Domain\Tickets\Events\MilestoneDeleted;
 use Leantime\Domain\Tickets\Events\MilestoneUpdated;
 use Leantime\Domain\Tickets\Events\StatusLabelsUpdated;
+use Leantime\Domain\Tickets\Events\TicketAssigned;
 use Leantime\Domain\Tickets\Events\TicketCompleted;
 use Leantime\Domain\Tickets\Events\TicketCreated;
 use Leantime\Domain\Tickets\Events\TicketDeleted;
 use Leantime\Domain\Tickets\Events\TicketListFilter;
+use Leantime\Domain\Tickets\Events\TicketScheduled;
 use Leantime\Domain\Tickets\Events\TicketUpdated;
 use Leantime\Domain\Tickets\Events\TodoWidgetTasksFilter;
 use Leantime\Domain\Tickets\Models\BoardSummary;
@@ -66,6 +68,17 @@ class Tickets extends BaseService
      * @var array<int, true>
      */
     private array $completedTicketIds = [];
+
+    /**
+     * Ticket id => the scheduling window / assignee already reported through this service
+     * instance, so a request that persists the same change twice reports it once.
+     *
+     * @var array<int, string>
+     */
+    private array $reportedSchedules = [];
+
+    /** @var array<int, int> */
+    private array $reportedAssignees = [];
 
     /**
      * Constructor method for the class.
@@ -2230,10 +2243,7 @@ class Tickets extends BaseService
 
         $result = $this->ticketRepository->addTicket($values);
 
-        TicketCreated::dispatch(
-            ticketId: is_int($result) && $result > 0 ? $result : null,
-            legacyHook: __FUNCTION__
-        );
+        $this->dispatchTicketCreated($result, $values, $this->resolveTicketOrigin($params['origin'] ?? null, 'quickadd'), __FUNCTION__);
 
         if ($result > 0) {
             $values['id'] = $result;
@@ -2365,6 +2375,8 @@ class Tickets extends BaseService
     #[RequiresPermission(TicketsPermissions::CREATE, entityScoped: true)]
     public function addTicket($values): array|int|bool
     {
+        $origin = $this->resolveTicketOrigin($values['origin'] ?? null, 'modal');
+
         $values = [
             'id' => '',
             'headline' => $values['headline'] ?? '',
@@ -2414,10 +2426,7 @@ class Tickets extends BaseService
             // Update Ticket
             $addTicketResponse = $this->ticketRepository->addTicket($values);
 
-            TicketCreated::dispatch(
-                ticketId: is_int($addTicketResponse) && $addTicketResponse > 0 ? $addTicketResponse : null,
-                legacyHook: __FUNCTION__
-            );
+            $this->dispatchTicketCreated($addTicketResponse, $values, $origin, __FUNCTION__);
 
             if ($addTicketResponse !== false) {
                 $values['id'] = $addTicketResponse;
@@ -2622,6 +2631,8 @@ class Tickets extends BaseService
 
             TicketUpdated::dispatch(ticketId: (int) $values['id'], legacyHook: __FUNCTION__);
 
+            $this->dispatchTicketChangeEvents((int) $values['id'], $currentTicket, $values);
+
             // Only a status change can stop the timer; an omitted status is the stored one (#3701).
             if (array_key_exists('status', $submittedValues)) {
                 $this->dispatchTicketCompletedOnTransition(
@@ -2629,7 +2640,8 @@ class Tickets extends BaseService
                     $currentTicket->status,
                     (int) $currentTicket->projectId,
                     $values['status'],
-                    (int) $values['projectId']
+                    (int) $values['projectId'],
+                    $currentTicket
                 );
                 $this->stopTimerWhenTicketIsDone((int) $values['id'], $values['status'], (int) $values['projectId']);
             }
@@ -2646,8 +2658,9 @@ class Tickets extends BaseService
      * @param  array<int, int|string>  $newStatusByTicket  Ticket id => new status key (changed tickets only).
      * @param  array<int, string|null>  $previousStatusByTicket  Ticket id => status key before the write.
      * @param  array<int, int>  $projectIdByTicket  Ticket id => project id (a kanban move keeps the project).
+     * @param  array<int, TicketModel>  $ticketsBefore  Ticket id => the ticket as read before the write.
      */
-    private function dispatchTicketCompletedForStatusChanges(array $newStatusByTicket, array $previousStatusByTicket, array $projectIdByTicket): void
+    private function dispatchTicketCompletedForStatusChanges(array $newStatusByTicket, array $previousStatusByTicket, array $projectIdByTicket, array $ticketsBefore = []): void
     {
         foreach ($newStatusByTicket as $ticketId => $newStatus) {
             $projectId = $projectIdByTicket[$ticketId] ?? 0;
@@ -2657,7 +2670,8 @@ class Tickets extends BaseService
                 $previousStatusByTicket[$ticketId] ?? null,
                 $projectId,
                 $newStatus,
-                $projectId
+                $projectId,
+                $ticketsBefore[$ticketId] ?? null
             );
         }
     }
@@ -2675,13 +2689,16 @@ class Tickets extends BaseService
      * @param  int  $previousProjectId  The ticket's project before the write.
      * @param  int|string|null  $newStatus  The status key that was written.
      * @param  int  $newProjectId  The ticket's project after the write.
+     * @param  TicketModel|null  $ticketBefore  The ticket as read before the write, for the event's context
+     *                                          (type, assignee, dates); without it those keep their defaults.
      */
     private function dispatchTicketCompletedOnTransition(
         int $ticketId,
         int|string|null $previousStatus,
         int $previousProjectId,
         int|string|null $newStatus,
-        int $newProjectId
+        int $newProjectId,
+        ?TicketModel $ticketBefore = null
     ): void {
         if (isset($this->completedTicketIds[$ticketId])) {
             return;
@@ -2697,7 +2714,214 @@ class Tickets extends BaseService
 
         $this->completedTicketIds[$ticketId] = true;
 
-        TicketCompleted::dispatch(ticketId: $ticketId, projectId: $newProjectId > 0 ? $newProjectId : null);
+        $projectId = $newProjectId > 0 ? $newProjectId : null;
+
+        if (! $ticketBefore instanceof TicketModel) {
+            TicketCompleted::dispatch(ticketId: $ticketId, projectId: $projectId);
+
+            return;
+        }
+
+        $type = strtolower((string) ($ticketBefore->type ?: 'task'));
+        if ($type === 'task' && (int) $ticketBefore->dependingTicketId > 0) {
+            $type = 'subtask';
+        }
+
+        $now = CarbonImmutable::now('UTC');
+        $createdAt = $this->parseDbDateTimeOrNull($ticketBefore->date);
+        $dueAt = $this->parseDbDateTimeOrNull($ticketBefore->dateToFinish);
+        $plannedStart = $this->parseDbDateTimeOrNull($ticketBefore->editFrom);
+
+        $wasScheduledToday = false;
+        if ($plannedStart !== null) {
+            $userTimezone = (string) (session('usersettings.timezone') ?: 'UTC');
+            $wasScheduledToday = $plannedStart->setTimezone($userTimezone)->toDateString() === $now->setTimezone($userTimezone)->toDateString();
+        }
+
+        TicketCompleted::dispatch(
+            ticketId: $ticketId,
+            projectId: $projectId,
+            type: $type,
+            completedByAssignee: (int) $ticketBefore->editorId > 0 && (int) $ticketBefore->editorId === (int) session('userdata.id'),
+            daysToComplete: $createdAt !== null ? (int) floor(abs($now->getTimestamp() - $createdAt->getTimestamp()) / 86400) : null,
+            hadDueDate: $dueAt !== null,
+            wasOverdue: $dueAt !== null && $dueAt->lessThan($now),
+            wasScheduledToday: $wasScheduledToday,
+        );
+    }
+
+    /**
+     * A stored UTC datetime ('Y-m-d H:i:s') as a CarbonImmutable, or null for empty, zero
+     * ('0000-00-00 ...') or unparseable values.
+     *
+     * @param  mixed  $value  The stored value.
+     */
+    private function parseDbDateTimeOrNull(mixed $value): ?CarbonImmutable
+    {
+        if ($value instanceof CarbonInterface) {
+            return CarbonImmutable::instance($value)->setTimezone('UTC');
+        }
+
+        if (! is_string($value) || trim($value) === '' || str_starts_with($value, '0000-00-00')) {
+            return null;
+        }
+
+        try {
+            return CarbonImmutable::parse($value, 'UTC');
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Report scheduling and assignment changes of a persisted ticket write by diffing the stored
+     * ticket read before the write against the values written ({@see TicketScheduled},
+     * {@see TicketAssigned}). Only fields present in $written are compared, so partial patches
+     * report only what they touched.
+     *
+     * @param  int  $ticketId  The written ticket.
+     * @param  TicketModel  $ticketBefore  The ticket as read before the write.
+     * @param  array<string, mixed>  $written  The field => value pairs that were written (DB format).
+     */
+    private function dispatchTicketChangeEvents(int $ticketId, TicketModel $ticketBefore, array $written): void
+    {
+        $projectId = (int) ($written['projectId'] ?? $ticketBefore->projectId);
+        $projectId = $projectId > 0 ? $projectId : null;
+
+        if (array_key_exists('editFrom', $written) || array_key_exists('editTo', $written)) {
+            $previousFrom = $this->normalizedDbDateTime($ticketBefore->editFrom);
+            $previousTo = $this->normalizedDbDateTime($ticketBefore->editTo);
+            $newFrom = array_key_exists('editFrom', $written) ? $this->normalizedDbDateTime($written['editFrom']) : $previousFrom;
+            $newTo = array_key_exists('editTo', $written) ? $this->normalizedDbDateTime($written['editTo']) : $previousTo;
+
+            $this->dispatchTicketScheduledOnChange($ticketId, $projectId, $previousFrom, $previousTo, $newFrom, $newTo);
+        }
+
+        if (array_key_exists('editorId', $written)) {
+            $this->dispatchTicketAssignedOnChange($ticketId, $projectId, $ticketBefore->editorId, $written['editorId']);
+        }
+    }
+
+    /**
+     * Fire {@see TicketScheduled} when the work window changed to a value with a start or end.
+     * Clearing the window does not fire.
+     *
+     * @param  int  $ticketId  The ticket.
+     * @param  int|null  $projectId  Its project.
+     * @param  string|null  $previousFrom  Start before the write (normalised).
+     * @param  string|null  $previousTo  End before the write (normalised).
+     * @param  string|null  $newFrom  Start after the write (normalised).
+     * @param  string|null  $newTo  End after the write (normalised).
+     */
+    private function dispatchTicketScheduledOnChange(int $ticketId, ?int $projectId, ?string $previousFrom, ?string $previousTo, ?string $newFrom, ?string $newTo): void
+    {
+        if ($newFrom === null && $newTo === null) {
+            return;
+        }
+
+        if ($newFrom === $previousFrom && $newTo === $previousTo) {
+            return;
+        }
+
+        $scheduleKey = ($newFrom ?? '').'|'.($newTo ?? '');
+        if (($this->reportedSchedules[$ticketId] ?? null) === $scheduleKey) {
+            return;
+        }
+        $this->reportedSchedules[$ticketId] = $scheduleKey;
+
+        TicketScheduled::dispatch(
+            ticketId: $ticketId,
+            projectId: $projectId,
+            editFrom: $newFrom,
+            editTo: $newTo,
+            rescheduled: $previousFrom !== null || $previousTo !== null,
+        );
+    }
+
+    /**
+     * Fire {@see TicketAssigned} when the assignee changed to a different, non-empty user.
+     *
+     * @param  int  $ticketId  The ticket.
+     * @param  int|null  $projectId  Its project.
+     * @param  mixed  $previousAssignee  The editorId before the write (null/'' on creation).
+     * @param  mixed  $newAssignee  The editorId that was written.
+     */
+    private function dispatchTicketAssignedOnChange(int $ticketId, ?int $projectId, mixed $previousAssignee, mixed $newAssignee): void
+    {
+        $assigneeId = is_numeric($newAssignee) ? (int) $newAssignee : 0;
+        $previousAssigneeId = is_numeric($previousAssignee) && (int) $previousAssignee > 0 ? (int) $previousAssignee : null;
+
+        if ($assigneeId <= 0 || $assigneeId === $previousAssigneeId) {
+            return;
+        }
+
+        if (($this->reportedAssignees[$ticketId] ?? null) === $assigneeId) {
+            return;
+        }
+        $this->reportedAssignees[$ticketId] = $assigneeId;
+
+        TicketAssigned::dispatch(
+            ticketId: $ticketId,
+            projectId: $projectId,
+            assigneeId: $assigneeId,
+            previousAssigneeId: $previousAssigneeId,
+            assignedToSelf: $assigneeId === (int) session('userdata.id'),
+        );
+    }
+
+    /**
+     * A stored datetime normalised for comparison ('Y-m-d H:i:s'), or null when empty/zero.
+     *
+     * @param  mixed  $value  The stored or written value.
+     */
+    private function normalizedDbDateTime(mixed $value): ?string
+    {
+        return $this->parseDbDateTimeOrNull($value)?->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * Report a ticket creation: {@see TicketCreated} (with its context) and, when the ticket was
+     * created with an assignee, {@see TicketAssigned}.
+     *
+     * @param  mixed  $result  The repository result (the new id, or false).
+     * @param  array<string, mixed>  $values  The values the ticket was created with.
+     * @param  string  $origin  Where the ticket was created ({@see resolveTicketOrigin()}).
+     * @param  string  $legacyHook  The emitting method (for the legacy string name).
+     */
+    private function dispatchTicketCreated(mixed $result, array $values, string $origin, string $legacyHook): void
+    {
+        $ticketId = is_int($result) && $result > 0 ? $result : null;
+        $assigneeId = is_numeric($values['editorId'] ?? null) ? (int) $values['editorId'] : 0;
+
+        TicketCreated::dispatch(
+            ticketId: $ticketId,
+            origin: $origin,
+            type: (string) (($values['type'] ?? '') ?: 'task'),
+            hasDueDate: $this->parseDbDateTimeOrNull($values['dateToFinish'] ?? null) !== null,
+            assignedToOther: $assigneeId > 0 && $assigneeId !== (int) session('userdata.id'),
+            legacyHook: $legacyHook
+        );
+
+        if ($ticketId !== null) {
+            $projectId = (int) ($values['projectId'] ?? 0);
+            $this->dispatchTicketAssignedOnChange($ticketId, $projectId > 0 ? $projectId : null, null, $assigneeId);
+        }
+    }
+
+    /**
+     * The origin a caller declared for a ticket creation (a short lowercase key such as 'mcp',
+     * 'import' or 'todo_widget'), or the service method's default.
+     *
+     * @param  mixed  $declaredOrigin  The caller-supplied `origin` value, if any.
+     * @param  string  $default  The origin of the service entry point.
+     */
+    private function resolveTicketOrigin(mixed $declaredOrigin, string $default): string
+    {
+        if (is_string($declaredOrigin) && preg_match('/^[a-z_]{1,32}$/', $declaredOrigin) === 1) {
+            return $declaredOrigin;
+        }
+
+        return $default;
     }
 
     /**
@@ -2780,7 +3004,7 @@ class Tickets extends BaseService
         }
 
         try {
-            $this->timesheetService->punchOut($ticketId);
+            $this->timesheetService->punchOut($ticketId, automatic: true);
         } catch (\Throwable $e) {
             Log::error($e);
         }
@@ -3626,6 +3850,7 @@ class Tickets extends BaseService
         $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
         // Read before the write so a status change can be told apart from a re-save.
+        $ticketBefore = $ticket;
         $previousStatus = $ticket->status;
         $previousProjectId = (int) $ticket->projectId;
 
@@ -3685,6 +3910,10 @@ class Tickets extends BaseService
 
         TicketUpdated::dispatch(ticketId: (int) $id, legacyHook: __FUNCTION__);
 
+        if ($return) {
+            $this->dispatchTicketChangeEvents((int) $id, $ticketBefore, $params);
+        }
+
         // Todo: create events and move notification logic to notification module
         if (isset($params['status'])) {
             $this->dispatchTicketCompletedOnTransition(
@@ -3692,7 +3921,8 @@ class Tickets extends BaseService
                 $previousStatus,
                 $previousProjectId,
                 $params['status'],
-                (int) ($params['projectId'] ?? $previousProjectId)
+                (int) ($params['projectId'] ?? $previousProjectId),
+                $ticketBefore
             );
 
             $ticket = $this->getTicket($id);
@@ -3861,7 +4091,8 @@ class Tickets extends BaseService
                 $existingMilestone->status,
                 $currentProjectId,
                 $values['status'],
-                $targetProjectId
+                $targetProjectId,
+                $existingMilestone
             );
         }
 
@@ -4344,10 +4575,7 @@ class Tickets extends BaseService
                 return false;
             }
 
-            TicketCreated::dispatch(
-                ticketId: is_int($newSubtaskId) ? $newSubtaskId : null,
-                legacyHook: __FUNCTION__
-            );
+            $this->dispatchTicketCreated($newSubtaskId, $values, 'subtask', __FUNCTION__);
 
         } else {
             // Update Ticket
@@ -4358,13 +4586,18 @@ class Tickets extends BaseService
 
             TicketUpdated::dispatch(ticketId: (int) $subtaskId, legacyHook: __FUNCTION__);
 
+            if ($existingSubtask instanceof TicketModel) {
+                $this->dispatchTicketChangeEvents((int) $subtaskId, $existingSubtask, $values);
+            }
+
             if (array_key_exists('status', $submittedValues) && $existingSubtask instanceof TicketModel) {
                 $this->dispatchTicketCompletedOnTransition(
                     (int) $subtaskId,
                     $existingSubtask->status,
                     $parentProjectId,
                     $values['status'],
-                    $parentProjectId
+                    $parentProjectId,
+                    $existingSubtask
                 );
             }
         }
@@ -4578,6 +4811,7 @@ class Tickets extends BaseService
         // or report a completion below.
         $previousStatusByTicket = [];
         $projectIdByTicket = [];
+        $ticketsBefore = [];
         foreach ($allTicketIds as $ticketId) {
             $ticket = $this->getTicket($ticketId);
             if (! $ticket) {
@@ -4588,6 +4822,7 @@ class Tickets extends BaseService
 
             $projectId = (int) $ticket->projectId;
             $projectIdByTicket[(int) $ticketId] = $projectId;
+            $ticketsBefore[(int) $ticketId] = $ticket;
             // Cache per-project decisions to avoid redundant lookups
             if (! isset($checkedProjects[$projectId])) {
                 $checkedProjects[$projectId] = $this->can(TicketsPermissions::EDIT, $projectId);
@@ -4639,7 +4874,7 @@ class Tickets extends BaseService
                     if ($this->ticketRepository->updateTicketStatus($id, $status, $kanbanSortIndex, $handler) === false) {
                         // Earlier tickets in the batch were already written (the repository
                         // also reports false for "0 rows changed"), so their timers must still stop.
-                        $this->dispatchTicketCompletedForStatusChanges($newStatusByTicket, $previousStatusByTicket, $projectIdByTicket);
+                        $this->dispatchTicketCompletedForStatusChanges($newStatusByTicket, $previousStatusByTicket, $projectIdByTicket, $ticketsBefore);
                         $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
                         return false;
@@ -4657,7 +4892,7 @@ class Tickets extends BaseService
 
         // Any ticket in the batch may have changed status, not only the dragged one ($handler is
         // optional for RPC callers). The user has at most one running timer, so look it up once.
-        $this->dispatchTicketCompletedForStatusChanges($newStatusByTicket, $previousStatusByTicket, $projectIdByTicket);
+        $this->dispatchTicketCompletedForStatusChanges($newStatusByTicket, $previousStatusByTicket, $projectIdByTicket, $ticketsBefore);
         $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
         if ($handler) {
