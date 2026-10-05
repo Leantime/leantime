@@ -145,9 +145,15 @@ class Setting
     }
 
     /**
-     * Gets the company id (Sets if it's not set)
+     * The instance's anonymous company id (setting companysettings.telemetry.anonymousId),
+     * created on first read. A random UUID, not sensitive: analytics clients (the mobile app)
+     * scope their PostHog distinct ids with it as `{companyId}:{userId}`, matching the web.
      *
-     **/
+     * Intentionally no #[RequiresPermission]: any authenticated user may read it. JSON-RPC
+     * still requires an authenticated caller (AuthCheck).
+     *
+     * @api
+     */
     public function getCompanyId(): string
     {
         $companyId = $this->getSetting('companysettings.telemetry.anonymousId');
