@@ -1244,7 +1244,6 @@ body .maincontent .priority-text-5 a:link {
         max-width: 100%;
         overflow-x: auto;
         overflow-y: hidden;
-        scrollbar-width: none;
     }
 
     /* When grouped, the header is shifted right by the sidebar width, so

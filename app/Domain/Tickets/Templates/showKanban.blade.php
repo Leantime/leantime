@@ -428,6 +428,7 @@
         var pendingScrollLeft = null;
         var pendingSource = null;
         var rafScheduled = false;
+        var expected = new Map();
 
         function flushSync() {
             rafScheduled = false;
@@ -436,6 +437,7 @@
             syncTargets.forEach(function (el) {
                 if (el !== source && el.scrollLeft !== scrollLeft) {
                     el.scrollLeft = scrollLeft;
+                    expected.set(el, el.scrollLeft);
                 }
             });
         }
@@ -443,6 +445,7 @@
         syncTargets.forEach(function (el) {
             el.addEventListener('scroll', function () {
                 if (!window.matchMedia('(min-width: 1200px)').matches) { return; }
+                if (expected.has(el) && expected.get(el) === el.scrollLeft) { expected.delete(el); return; }
                 pendingScrollLeft = el.scrollLeft;
                 pendingSource = el;
                 if (!rafScheduled) {
