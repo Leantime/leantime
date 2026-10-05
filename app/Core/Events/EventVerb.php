@@ -33,4 +33,7 @@ enum EventVerb: string
     case Notified = 'notified';
     case Registered = 'registered';
     case Initialized = 'initialized';
+    case Installed = 'installed';
+    case Enabled = 'enabled';
+    case Disabled = 'disabled';
 }
