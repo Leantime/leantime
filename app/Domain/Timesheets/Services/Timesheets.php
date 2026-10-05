@@ -16,6 +16,7 @@ use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Events\TimeEntryCreated;
 use Leantime\Domain\Timesheets\Events\TimerStarted;
+use Leantime\Domain\Timesheets\Events\TimerStopped;
 use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
@@ -133,12 +134,14 @@ class Timesheets extends BaseService
      * existed), the timer is discarded and no time is booked.
      *
      * @param  int  $ticketId  The ticket the timer runs on.
+     * @param  bool  $automatic  True when the timer is stopped by the system (the ticket was completed),
+     *                           not by the user; reported on {@see TimerStopped}.
      * @return float|false|int Hours booked, or false when nothing was booked.
      *
      * @api
      */
     #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
-    public function punchOut(int $ticketId): float|false|int
+    public function punchOut(int $ticketId, bool $automatic = false): float|false|int
     {
         if (! $this->canBookTimeOnTicket($ticketId)) {
             $this->timesheetsRepo->discardPunch($ticketId);
@@ -146,7 +149,13 @@ class Timesheets extends BaseService
             return false;
         }
 
-        return $this->timesheetsRepo->punchOut($ticketId);
+        $hoursBooked = $this->timesheetsRepo->punchOut($ticketId);
+
+        if ($hoursBooked !== false) {
+            TimerStopped::dispatch(ticketId: $ticketId, hours: (float) $hoursBooked, automatic: $automatic);
+        }
+
+        return $hoursBooked;
     }
 
     /**

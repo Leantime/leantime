@@ -13,6 +13,7 @@ use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Events\TimeEntryCreated;
 use Leantime\Domain\Timesheets\Events\TimerStarted;
+use Leantime\Domain\Timesheets\Events\TimerStopped;
 use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -828,5 +829,36 @@ class TimesheetsServiceTest extends TestCase
 
         $this->assertCount(1, $events);
         $this->assertSame(3, $events[0]->ticketId);
+    }
+
+    public function test_punch_out_fires_timer_stopped_with_the_booked_hours(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, ['punchOut' => fn () => 1.25]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo);
+
+        $events = $this->collectEvents(TimerStopped::class, function () use ($service) {
+            $service->punchOut(3);
+            $service->punchOut(3, automatic: true);
+        });
+
+        $this->assertCount(2, $events);
+        $this->assertSame(3, $events[0]->ticketId);
+        $this->assertSame(1.25, $events[0]->hours);
+        $this->assertFalse($events[0]->automatic);
+        $this->assertTrue($events[1]->automatic, 'a stop caused by completing the task is automatic');
+    }
+
+    public function test_a_punch_out_that_booked_nothing_does_not_fire_timer_stopped(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, ['punchOut' => fn () => false]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 1]),
+        ]);
+        $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo);
+
+        $this->assertSame([], $this->collectEvents(TimerStopped::class, fn () => $service->punchOut(3)));
     }
 }
