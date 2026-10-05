@@ -8,6 +8,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Comments\Events\CommentAdded;
 use Leantime\Domain\Comments\Permissions\CommentsPermissions;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification;
@@ -299,6 +300,13 @@ class Comments extends BaseService
 
             if ($comment) {
                 $mapper['id'] = $comment;
+
+                CommentAdded::dispatch(
+                    commentId: (int) $comment,
+                    module: $module,
+                    moduleId: $entityId,
+                    projectId: $projectId !== null && $projectId > 0 ? (int) $projectId : null,
+                );
 
                 $currentUrl = CURRENT_URL;
 

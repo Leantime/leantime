@@ -5,6 +5,8 @@ namespace Leantime\Domain\Goalcanvas\Services;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Domain\Blueprints\Events\CanvasCreated;
+use Leantime\Domain\Blueprints\Events\CanvasItemCreated;
 use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -606,7 +608,13 @@ class Goalcanvas extends BaseService
         // Reachable over JSON-RPC: the author is the authenticated user, never a caller-supplied id.
         $values['author'] = (int) session('userdata.id');
 
-        return $this->goalRepository->addCanvas($values);
+        $newId = $this->goalRepository->addCanvas($values);
+
+        if ($newId !== false && (int) $newId > 0) {
+            CanvasCreated::dispatch(canvasId: (int) $newId, type: self::CANVAS_TYPE, projectId: $projectId);
+        }
+
+        return $newId;
     }
 
     /**
@@ -642,7 +650,13 @@ class Goalcanvas extends BaseService
         $this->authorize(GoalcanvasPermissions::VIEW, $sourceProjectId);
         $this->authorize(GoalcanvasPermissions::CREATE, $targetProjectId);
 
-        return $this->goalRepository->copyCanvas($targetProjectId, $sourceCanvasId, $authorId, $title);
+        $newCanvasId = $this->goalRepository->copyCanvas($targetProjectId, $sourceCanvasId, $authorId, $title);
+
+        if ($newCanvasId > 0) {
+            CanvasCreated::dispatch(canvasId: $newCanvasId, type: self::CANVAS_TYPE, projectId: $targetProjectId);
+        }
+
+        return $newCanvasId;
     }
 
     /**
@@ -701,6 +715,10 @@ class Goalcanvas extends BaseService
 
         $newId = $this->goalRepository->createGoal($values);
 
+        if ($newId !== false && (int) $newId > 0) {
+            CanvasItemCreated::dispatch(canvasItemId: (int) $newId, type: self::CANVAS_TYPE, projectId: $projectId);
+        }
+
         if ($newId !== false && array_key_exists('milestoneId', $values)) {
             $this->syncGoalMilestoneEdges((int) $newId, $values['milestoneId'], (int) session('userdata.id'));
         }
@@ -726,6 +744,10 @@ class Goalcanvas extends BaseService
         $this->authorize(GoalcanvasPermissions::CREATE, $projectId);
 
         $newId = $this->goalRepository->addCanvasItem($values);
+
+        if ($newId !== false && (int) $newId > 0) {
+            CanvasItemCreated::dispatch(canvasItemId: (int) $newId, type: self::CANVAS_TYPE, projectId: $projectId);
+        }
 
         // Only reconcile edges when a real milestone id is supplied. A brand-new
         // item has no edges to clear, so an empty milestoneId — controllers post

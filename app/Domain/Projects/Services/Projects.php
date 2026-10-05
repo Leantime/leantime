@@ -32,6 +32,9 @@ use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Notifications\Services\Webhooks;
+use Leantime\Domain\Projects\Events\ProjectArchived;
+use Leantime\Domain\Projects\Events\ProjectCreated;
+use Leantime\Domain\Projects\Events\ProjectMemberAdded;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
@@ -1710,7 +1713,13 @@ class Projects extends BaseService implements ChecksProjectAccess
             $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
         }
 
-        return $this->projectRepository->addProject($values);
+        $projectId = $this->projectRepository->addProject($values);
+
+        if ($projectId !== false && $projectId > 0) {
+            ProjectCreated::dispatch(projectId: $projectId, type: $values['type']);
+        }
+
+        return $projectId;
     }
 
     /**
@@ -2051,7 +2060,17 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $params = $this->rejectCyclicParent((int) $id, $params);
 
-        return $this->projectRepository->patch($id, $params);
+        $previousState = array_key_exists('state', $params)
+            ? ($this->projectRepository->getProject((int) $id)['state'] ?? null)
+            : null;
+
+        $patched = $this->projectRepository->patch($id, $params);
+
+        if ($patched && array_key_exists('state', $params)) {
+            $this->dispatchArchivedOnTransition((int) $id, $previousState, $params['state']);
+        }
+
+        return $patched;
     }
 
     /** Settings key recording the onboarding default project created for a user. */
@@ -2528,7 +2547,20 @@ class Projects extends BaseService implements ChecksProjectAccess
     #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function editUserProjectRelations($id, $projects): bool
     {
-        return $this->projectRepository->editUserProjectRelations($id, $projects);
+        $previousProjectIds = array_map(
+            static fn (array $relation): int => (int) $relation['projectId'],
+            $this->projectRepository->getUserProjectRelation((int) $id)
+        );
+
+        $result = $this->projectRepository->editUserProjectRelations($id, $projects);
+
+        foreach (array_unique(array_map('intval', (array) $projects)) as $projectId) {
+            if ($projectId > 0 && ! in_array($projectId, $previousProjectIds, true)) {
+                ProjectMemberAdded::dispatch(projectId: $projectId, userId: (int) $id);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -2596,6 +2628,8 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         $this->projectRepository->addProjectRelation($userId, $projectId, $projectRole);
+
+        ProjectMemberAdded::dispatch(projectId: $projectId, userId: $userId);
 
         return true;
     }
@@ -2726,17 +2760,39 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $values = $this->rejectCyclicParent((int) $id, $values);
 
+        $previousProject = $this->projectRepository->getProject((int) $id);
+
         // Preserve existing type if not provided
         if (! isset($values['type'])) {
-            $currentProject = $this->getProject($id);
-            if ($currentProject) {
-                $values['type'] = $currentProject['type'] ?? 'project';
-            } else {
-                $values['type'] = 'project';
-            }
+            $values['type'] = is_array($previousProject) ? ($previousProject['type'] ?? 'project') : 'project';
         }
 
         $this->projectRepository->editProject($values, $id);
+
+        $this->dispatchArchivedOnTransition(
+            (int) $id,
+            is_array($previousProject) ? ($previousProject['state'] ?? null) : null,
+            $values['state'] ?? null
+        );
+    }
+
+    /**
+     * Fire {@see ProjectArchived} when a write moved a project INTO the closed/archived state (-1)
+     * from any other state. Re-saving an already closed project does not fire.
+     *
+     * @param  int  $projectId  The project that was written.
+     * @param  mixed  $previousState  The state before the write.
+     * @param  mixed  $newState  The state that was written.
+     */
+    private function dispatchArchivedOnTransition(int $projectId, mixed $previousState, mixed $newState): void
+    {
+        $isClosedState = static fn (mixed $state): bool => is_numeric($state) && (int) $state === -1;
+
+        if (! $isClosedState($newState) || $isClosedState($previousState)) {
+            return;
+        }
+
+        ProjectArchived::dispatch(projectId: $projectId);
     }
 
     /**
@@ -2818,7 +2874,18 @@ class Projects extends BaseService implements ChecksProjectAccess
             'projectRoles' => $projectRoles,
         ];
 
+        $previousMembers = $this->projectRepository->getUsersAssignedToProject($projectId, true);
+        $previousUserIds = is_array($previousMembers)
+            ? array_map(static fn (array $member): int => (int) $member['id'], $previousMembers)
+            : [];
+
         $this->projectRepository->editProjectRelations($values, $projectId);
+
+        foreach (array_unique(array_map('intval', $assignedUsers)) as $userId) {
+            if ($userId > 0 && ! in_array($userId, $previousUserIds, true)) {
+                ProjectMemberAdded::dispatch(projectId: $projectId, userId: $userId);
+            }
+        }
     }
 
     /**
@@ -2843,7 +2910,16 @@ class Projects extends BaseService implements ChecksProjectAccess
                 foreach ($projects as $key => $projectString) {
                     $id = substr($projectString, 7);
 
+                    // Only a move into the closed column can archive; skip the lookup otherwise.
+                    $previousState = (int) $status === -1
+                        ? ($this->projectRepository->getProject((int) $id)['state'] ?? null)
+                        : null;
+
                     $this->projectRepository->patch($id, ['sortIndex' => $key * 100, 'state' => $status]);
+
+                    if ((int) $status === -1) {
+                        $this->dispatchArchivedOnTransition((int) $id, $previousState, $status);
+                    }
                 }
             }
         }
