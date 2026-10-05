@@ -31,6 +31,7 @@ use Leantime\Domain\Tickets\Events\MilestoneCreated;
 use Leantime\Domain\Tickets\Events\MilestoneDeleted;
 use Leantime\Domain\Tickets\Events\MilestoneUpdated;
 use Leantime\Domain\Tickets\Events\StatusLabelsUpdated;
+use Leantime\Domain\Tickets\Events\TicketCompleted;
 use Leantime\Domain\Tickets\Events\TicketCreated;
 use Leantime\Domain\Tickets\Events\TicketDeleted;
 use Leantime\Domain\Tickets\Events\TicketListFilter;
@@ -57,6 +58,14 @@ class Tickets extends BaseService
      * @var array<string, array>
      */
     private array $statusLabelsByUserMemo = [];
+
+    /**
+     * Tickets that already fired TicketCompleted through this service instance, so one request
+     * that writes the same status change twice (e.g. a wrapper calling patch()) reports it once.
+     *
+     * @var array<int, true>
+     */
+    private array $completedTicketIds = [];
 
     /**
      * Constructor method for the class.
@@ -2308,10 +2317,15 @@ class Tickets extends BaseService
             return $error;
         }
 
-        MilestoneCreated::dispatch(legacyHook: __FUNCTION__);
-
         // $params is an array of field names. Exclude id
-        return $this->ticketRepository->addTicket($values);
+        $result = $this->ticketRepository->addTicket($values);
+
+        MilestoneCreated::dispatch(
+            milestoneId: is_int($result) && $result > 0 ? $result : null,
+            legacyHook: __FUNCTION__
+        );
+
+        return $result;
     }
 
     /**
@@ -2610,6 +2624,13 @@ class Tickets extends BaseService
 
             // Only a status change can stop the timer; an omitted status is the stored one (#3701).
             if (array_key_exists('status', $submittedValues)) {
+                $this->dispatchTicketCompletedOnTransition(
+                    (int) $values['id'],
+                    $currentTicket->status,
+                    (int) $currentTicket->projectId,
+                    $values['status'],
+                    (int) $values['projectId']
+                );
                 $this->stopTimerWhenTicketIsDone((int) $values['id'], $values['status'], (int) $values['projectId']);
             }
 
@@ -2617,6 +2638,84 @@ class Tickets extends BaseService
         }
 
         return false;
+    }
+
+    /**
+     * Batch variant of {@see dispatchTicketCompletedOnTransition()} for a kanban write.
+     *
+     * @param  array<int, int|string>  $newStatusByTicket  Ticket id => new status key (changed tickets only).
+     * @param  array<int, string|null>  $previousStatusByTicket  Ticket id => status key before the write.
+     * @param  array<int, int>  $projectIdByTicket  Ticket id => project id (a kanban move keeps the project).
+     */
+    private function dispatchTicketCompletedForStatusChanges(array $newStatusByTicket, array $previousStatusByTicket, array $projectIdByTicket): void
+    {
+        foreach ($newStatusByTicket as $ticketId => $newStatus) {
+            $projectId = $projectIdByTicket[$ticketId] ?? 0;
+
+            $this->dispatchTicketCompletedOnTransition(
+                (int) $ticketId,
+                $previousStatusByTicket[$ticketId] ?? null,
+                $projectId,
+                $newStatus,
+                $projectId
+            );
+        }
+    }
+
+    /**
+     * Fire {@see TicketCompleted} when a persisted status change moved a ticket INTO a status of
+     * type DONE from a status that was not DONE. Status keys are project-specific, so each side is
+     * looked up in its own project's labels (a move can change the project in the same write).
+     *
+     * Fires at most once per ticket per service instance, so a request that persists the same
+     * transition twice does not report two completions.
+     *
+     * @param  int  $ticketId  The ticket whose status was written.
+     * @param  int|string|null  $previousStatus  The status key before the write.
+     * @param  int  $previousProjectId  The ticket's project before the write.
+     * @param  int|string|null  $newStatus  The status key that was written.
+     * @param  int  $newProjectId  The ticket's project after the write.
+     */
+    private function dispatchTicketCompletedOnTransition(
+        int $ticketId,
+        int|string|null $previousStatus,
+        int $previousProjectId,
+        int|string|null $newStatus,
+        int $newProjectId
+    ): void {
+        if (isset($this->completedTicketIds[$ticketId])) {
+            return;
+        }
+
+        if ($this->statusTypeOf($newStatus, $newProjectId) !== 'DONE') {
+            return;
+        }
+
+        if ($this->statusTypeOf($previousStatus, $previousProjectId) === 'DONE') {
+            return;
+        }
+
+        $this->completedTicketIds[$ticketId] = true;
+
+        TicketCompleted::dispatch(ticketId: $ticketId, projectId: $newProjectId > 0 ? $newProjectId : null);
+    }
+
+    /**
+     * The statusType (NEW, INPROGRESS, DONE, ...) of a status key in a project, or '' when the key
+     * is empty, non-numeric or not defined in the project.
+     *
+     * @param  int|string|null  $status  The status key.
+     * @param  int  $projectId  The project whose status labels apply.
+     */
+    private function statusTypeOf(int|string|null $status, int $projectId): string
+    {
+        if ($status === null || $status === '' || ! is_numeric($status)) {
+            return '';
+        }
+
+        $statusLabels = $this->ticketRepository->getStateLabels($projectId);
+
+        return (string) ($statusLabels[(int) $status]['statusType'] ?? '');
     }
 
     /**
@@ -3526,6 +3625,10 @@ class Tickets extends BaseService
 
         $this->authorize(TicketsPermissions::EDIT, (int) $ticket->projectId);
 
+        // Read before the write so a status change can be told apart from a re-save.
+        $previousStatus = $ticket->status;
+        $previousProjectId = (int) $ticket->projectId;
+
         // Reassigning a ticket to a different project requires edit rights in the TARGET project,
         // not just the source (which the @api callers already authorized). Without this a user
         // could move/inject a ticket into a project they have no access to.
@@ -3584,6 +3687,14 @@ class Tickets extends BaseService
 
         // Todo: create events and move notification logic to notification module
         if (isset($params['status'])) {
+            $this->dispatchTicketCompletedOnTransition(
+                (int) $id,
+                $previousStatus,
+                $previousProjectId,
+                $params['status'],
+                (int) ($params['projectId'] ?? $previousProjectId)
+            );
+
             $ticket = $this->getTicket($id);
             if (! $ticket) {
                 return true;
@@ -3742,7 +3853,19 @@ class Tickets extends BaseService
         MilestoneUpdated::dispatch(milestoneId: $milestoneId, legacyHook: __FUNCTION__);
 
         // $params is an array of field names. Exclude id
-        return $this->ticketRepository->updateTicket($values, $milestoneId);
+        $updated = $this->ticketRepository->updateTicket($values, $milestoneId);
+
+        if ($updated) {
+            $this->dispatchTicketCompletedOnTransition(
+                $milestoneId,
+                $existingMilestone->status,
+                $currentProjectId,
+                $values['status'],
+                $targetProjectId
+            );
+        }
+
+        return $updated;
     }
 
     /**
@@ -4216,11 +4339,15 @@ class Tickets extends BaseService
 
         if ($isNewSubtask) {
             // New Ticket
-            if (! $this->ticketRepository->addTicket($values)) {
+            $newSubtaskId = $this->ticketRepository->addTicket($values);
+            if (! $newSubtaskId) {
                 return false;
             }
 
-            TicketCreated::dispatch(legacyHook: __FUNCTION__);
+            TicketCreated::dispatch(
+                ticketId: is_int($newSubtaskId) ? $newSubtaskId : null,
+                legacyHook: __FUNCTION__
+            );
 
         } else {
             // Update Ticket
@@ -4230,6 +4357,16 @@ class Tickets extends BaseService
             }
 
             TicketUpdated::dispatch(ticketId: (int) $subtaskId, legacyHook: __FUNCTION__);
+
+            if (array_key_exists('status', $submittedValues) && $existingSubtask instanceof TicketModel) {
+                $this->dispatchTicketCompletedOnTransition(
+                    (int) $subtaskId,
+                    $existingSubtask->status,
+                    $parentProjectId,
+                    $values['status'],
+                    $parentProjectId
+                );
+            }
         }
 
         return true;
@@ -4437,8 +4574,10 @@ class Tickets extends BaseService
         // Verify tickets.edit in the real project of every ticket in the batch (project-scoped
         // role + membership via the permission engine — not the session role).
         $checkedProjects = [];
-        // Statuses before the write, so only real status changes can stop a timer below.
+        // Statuses (and projects) before the write, so only real status changes can stop a timer
+        // or report a completion below.
         $previousStatusByTicket = [];
+        $projectIdByTicket = [];
         foreach ($allTicketIds as $ticketId) {
             $ticket = $this->getTicket($ticketId);
             if (! $ticket) {
@@ -4448,6 +4587,7 @@ class Tickets extends BaseService
             $previousStatusByTicket[(int) $ticketId] = $ticket->status === null ? null : (string) $ticket->status;
 
             $projectId = (int) $ticket->projectId;
+            $projectIdByTicket[(int) $ticketId] = $projectId;
             // Cache per-project decisions to avoid redundant lookups
             if (! isset($checkedProjects[$projectId])) {
                 $checkedProjects[$projectId] = $this->can(TicketsPermissions::EDIT, $projectId);
@@ -4499,6 +4639,7 @@ class Tickets extends BaseService
                     if ($this->ticketRepository->updateTicketStatus($id, $status, $kanbanSortIndex, $handler) === false) {
                         // Earlier tickets in the batch were already written (the repository
                         // also reports false for "0 rows changed"), so their timers must still stop.
+                        $this->dispatchTicketCompletedForStatusChanges($newStatusByTicket, $previousStatusByTicket, $projectIdByTicket);
                         $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
                         return false;
@@ -4516,6 +4657,7 @@ class Tickets extends BaseService
 
         // Any ticket in the batch may have changed status, not only the dragged one ($handler is
         // optional for RPC callers). The user has at most one running timer, so look it up once.
+        $this->dispatchTicketCompletedForStatusChanges($newStatusByTicket, $previousStatusByTicket, $projectIdByTicket);
         $this->stopTimerForTicketsMarkedDone($newStatusByTicket);
 
         if ($handler) {
@@ -4546,7 +4688,7 @@ class Tickets extends BaseService
             }
         }
 
-        TicketUpdated::dispatch(legacyHook: __FUNCTION__);
+        TicketUpdated::dispatch(ticketId: $draggedTicketId ?: null, legacyHook: __FUNCTION__);
 
         return true;
     }
