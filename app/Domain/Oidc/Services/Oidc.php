@@ -12,6 +12,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Users\Events\UserCreated;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
 use phpseclib3\Crypt\PublicKeyLoader;
@@ -288,6 +289,8 @@ class Oidc
                 $userId = $this->userRepo->addUser($userArray);
 
                 if ($userId !== false) {
+                    UserCreated::dispatch(userId: (int) $userId, role: (int) $userArray['role'], source: 'oidc');
+
                     $user = $this->userRepo->getUserByEmail($userName);
                 } else {
                     throw new \Exception('OIDC user creation failed.');
@@ -321,6 +324,9 @@ class Oidc
 
         $this->authService->setUserSession($user, false);
         $this->authService->learnTrustedAppUrl($user);
+        if (is_array($user)) {
+            $this->authService->dispatchLoginSucceeded($user, 'oidc');
+        }
 
         // Mobile-brokered SSO: instead of landing on the web dashboard, mint a
         // single-use one-time code bound to this user and hand it to the app via

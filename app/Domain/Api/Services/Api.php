@@ -11,12 +11,15 @@ use Leantime\Core\Auth\RoleCeiling;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Domain\Api\Contracts\StaticAssetType;
+use Leantime\Domain\Api\Events\ApiKeyCreated;
 use Leantime\Domain\Api\Permissions\ApiPermissions;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\UserSessionBuilder;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Users\Events\UserCreated;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -145,7 +148,14 @@ class Api
         $values['source'] = 'api';
         $values['id'] = $this->userRepo->addUser($values);
 
-        return $values['id'] ? $values : false;
+        if (! $values['id']) {
+            return false;
+        }
+
+        UserCreated::dispatch(userId: (int) $values['id'], role: (int) Roles::getRoleLevel($values['role'] ?? ''), source: 'api');
+        ApiKeyCreated::dispatch(apiUserId: (int) $values['id']);
+
+        return $values;
     }
 
     /**

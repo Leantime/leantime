@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use Laravel\Sanctum\HasApiTokens;
 use Leantime\Domain\Auth\Models\AuthenticatableUser;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Users\Events\UserCreated;
 
 class AuthUser implements UserProvider
 {
@@ -100,7 +101,11 @@ class AuthUser implements UserProvider
                 'status' => 'a',
             ];
 
-            $this->userRepo->addUser($userArray);
+            $newUserId = $this->userRepo->addUser($userArray);
+            if ($newUserId !== false) {
+                UserCreated::dispatch(userId: (int) $newUserId, role: (int) $userArray['role'], source: (string) $source);
+            }
+
             $existingUser = $this->authRepo->getUserByEmail($user['email']);
         }
 

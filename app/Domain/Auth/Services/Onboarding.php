@@ -6,6 +6,8 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\UI\Theme;
+use Leantime\Domain\Auth\Events\OnboardingCompleted;
+use Leantime\Domain\Auth\Events\UserRegistered;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Users\Services\Users as UserService;
@@ -371,12 +373,14 @@ class Onboarding
         $this->userService->editUser($userInvite, $userInvite['id']);
 
         self::dispatchEvent('onboarding_finished', [], self::EVENT_CONTEXT);
+        OnboardingCompleted::dispatch(userId: (int) $userInvite['id']);
 
         $loggedIn = $this->authService->login($userInvite['username'], session('tempPassword'));
 
         session()->forget('tempPassword');
 
         self::dispatch_event('userSignUpSuccess', ['user' => $userInvite], self::EVENT_CONTEXT);
+        UserRegistered::dispatch(userId: (int) $userInvite['id']);
 
         return $loggedIn;
     }

@@ -6,6 +6,7 @@ use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use Leantime\Domain\TwoFA\Events\TwoFactorEnabled;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
 use RobThree\Auth\TwoFactorAuth;
@@ -99,6 +100,8 @@ class TwoFA
             'twoFAEnabled' => 1,
             'twoFASecret' => $secret,
         ]);
+
+        TwoFactorEnabled::dispatch(userId: $userId);
 
         return true;
     }

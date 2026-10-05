@@ -16,11 +16,13 @@ use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\UI\Theme;
+use Leantime\Domain\Auth\Events\LoginSucceeded;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
 use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Domain\Users\Events\UserCreated;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Ramsey\Uuid\Uuid;
 use RobThree\Auth\TwoFactorAuth;
@@ -181,6 +183,8 @@ class Auth implements Authenticatable
                     $userId = $this->userRepo->addUser($userArray);
 
                     if ($userId !== false) {
+                        UserCreated::dispatch(userId: (int) $userId, role: (int) $userArray['role'], source: 'ldap');
+
                         $user = $this->userRepo->getUserByEmail($usernameWDomain);
                     } else {
 
@@ -205,6 +209,7 @@ class Auth implements Authenticatable
                 if ($user !== false) {
                     $this->setUserSession($user, true);
                     $this->learnTrustedAppUrl($user);
+                    $this->dispatchLoginSucceeded($user, 'ldap');
 
                     return true;
                 } else {
@@ -230,6 +235,7 @@ class Auth implements Authenticatable
         if ($user !== false) {
             $this->setUserSession($user);
             $this->learnTrustedAppUrl($user);
+            $this->dispatchLoginSucceeded($user, 'password');
 
             self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
@@ -240,6 +246,32 @@ class Auth implements Authenticatable
 
             return false;
         }
+    }
+
+    /**
+     * dispatchLoginSucceeded - reports a completed sign-in as {@see LoginSucceeded}.
+     *
+     * Accounts with two-factor authentication have not finished signing in after the first factor,
+     * so for them the method is parked in the session and the event fires from
+     * {@see self::set2FAVerified()} once the second factor passed. Otherwise it fires right away
+     * (and any method parked by an abandoned 2FA sign-in is dropped).
+     *
+     * @internal Not exposed over JSON-RPC; called by the interactive login flows only.
+     *
+     * @param  array  $user  the zp_user row that just signed in
+     * @param  string  $method  how the user authenticated ('password', 'ldap', 'oidc', 'token', ...)
+     */
+    public function dispatchLoginSucceeded(array $user, string $method): void
+    {
+        if (! empty($user['twoFAEnabled'])) {
+            session(['auth.pendingLoginMethod' => $method]);
+
+            return;
+        }
+
+        session()->forget('auth.pendingLoginMethod');
+
+        LoginSucceeded::dispatch(userId: (int) $user['id'], method: $method);
     }
 
     /**
@@ -806,6 +838,14 @@ class Auth implements Authenticatable
     {
         session()->regenerate(true);
         session(['userdata.twoFAVerified' => true]);
+
+        // The sign-in is complete now: report it with the first factor's method (parked by
+        // dispatchLoginSucceeded()).
+        $pendingLoginMethod = session()->pull('auth.pendingLoginMethod');
+        $userId = (int) session('userdata.id');
+        if (is_string($pendingLoginMethod) && $userId > 0) {
+            LoginSucceeded::dispatch(userId: $userId, method: $pendingLoginMethod);
+        }
     }
 
     private function logFailedLogin(string $user): void
@@ -877,6 +917,7 @@ class Auth implements Authenticatable
 
         if ($user) {
             $this->setUserSession($user);
+            $this->dispatchLoginSucceeded($user, 'token');
 
             // Turn off 2FA for token verification
             $this->set2FAVerified();
