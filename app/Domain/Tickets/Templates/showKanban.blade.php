@@ -445,7 +445,9 @@
         syncTargets.forEach(function (el) {
             el.addEventListener('scroll', function () {
                 if (!window.matchMedia('(min-width: 1200px)').matches) { return; }
-                if (expected.has(el) && expected.get(el) === el.scrollLeft) { expected.delete(el); return; }
+                var wasEcho = expected.has(el) && expected.get(el) === el.scrollLeft;
+                expected.delete(el);
+                if (wasEcho) { return; }
                 pendingScrollLeft = el.scrollLeft;
                 pendingSource = el;
                 if (!rafScheduled) {
