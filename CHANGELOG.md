@@ -1,3 +1,27 @@
+# Version: 3.10.4
+
+## New Features
+- **Task History tab** - Tasks have a History tab, and the email sender name is now configurable. (#3845)
+- **Customisable kanban cards** - Choose which fields appear on kanban cards and sort cards within columns. (#3846)
+
+## Improvements
+- **Smoother modals** - Closing a modal refreshes the page in place instead of doing a full reload. (#3848)
+- **Kanban column counts** - Column counts are always visible instead of only on hover. (#3840)
+
+## Bug Fixes
+- Report numbers render correctly without the PHP `intl` extension, which is now included in the Docker images (#3838, #3843)
+- Dropped to-dos land at the time they were dropped and stay visible in the calendar (#3842)
+- File browser redirects correctly after deleting a file, and failed-login logs record the client IP (#3844)
+- Idea tags, running the scheduler before install, Helm chart and documentation fixes (#3837)
+- Editor, embeds and touch/mobile fixes (#3836)
+- Kanban, task table and timeline fixes (#3835)
+
+## Localization
+- **French translation** - French is now complete and in sync with en-US (#3847)
+- Previously hardcoded English strings in widgets, tickets and the dashboard are now translatable (#3839)
+
+---
+
 # Version: 3.10.3
 
 ## Upgrade Notes
