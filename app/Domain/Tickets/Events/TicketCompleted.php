@@ -17,9 +17,21 @@ final class TicketCompleted implements LeantimeEvent
     /**
      * @param  int  $ticketId  The completed ticket id.
      * @param  int|null  $projectId  The ticket's project id, when known.
+     * @param  string  $type  The ticket type ('task', 'bug', 'milestone', ...; 'subtask' for a task with a parent).
+     * @param  bool  $completedByAssignee  True when the acting user is the ticket's assignee.
+     * @param  int|null  $daysToComplete  Whole days from the ticket's creation to now (null when unknown).
+     * @param  bool  $hadDueDate  Whether the ticket had a due date.
+     * @param  bool  $wasOverdue  Whether the due date had already passed.
+     * @param  bool  $wasScheduledToday  Whether the ticket's planned start (editFrom) is today in the user's timezone.
      */
     public function __construct(
         public readonly int $ticketId,
         public readonly ?int $projectId,
+        public readonly string $type = 'task',
+        public readonly bool $completedByAssignee = false,
+        public readonly ?int $daysToComplete = null,
+        public readonly bool $hadDueDate = false,
+        public readonly bool $wasOverdue = false,
+        public readonly bool $wasScheduledToday = false,
     ) {}
 }

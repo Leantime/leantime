@@ -19,11 +19,15 @@ final class CommentAdded implements LeantimeEvent
      * @param  string  $module  The comment module (ticket, project, idea, {type}canvasitem, ...).
      * @param  int  $moduleId  The id of the commented entity.
      * @param  int|null  $projectId  The project the comment was authorized against, when known.
+     * @param  bool  $isReply  Whether the comment replies to another comment.
+     * @param  bool  $hasMention  Whether the comment @mentions a user.
      */
     public function __construct(
         public readonly int $commentId,
         public readonly string $module,
         public readonly int $moduleId,
         public readonly ?int $projectId,
+        public readonly bool $isReply = false,
+        public readonly bool $hasMention = false,
     ) {}
 }

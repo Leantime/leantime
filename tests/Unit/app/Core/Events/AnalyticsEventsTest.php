@@ -5,25 +5,38 @@ namespace Unit\app\Core\Events;
 use Leantime\Core\Events\Contracts\LeantimeEvent;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Domain\Api\Events\ApiKeyCreated;
+use Leantime\Domain\Api\Events\ApiMethodCalled;
 use Leantime\Domain\Auth\Events\LoginSucceeded;
 use Leantime\Domain\Auth\Events\OnboardingCompleted;
 use Leantime\Domain\Auth\Events\UserRegistered;
 use Leantime\Domain\Blueprints\Events\CanvasCreated;
 use Leantime\Domain\Blueprints\Events\CanvasItemCreated;
+use Leantime\Domain\Calendar\Events\CalendarConnected;
+use Leantime\Domain\Calendar\Events\CalendarEventCreated;
 use Leantime\Domain\Comments\Events\CommentAdded;
 use Leantime\Domain\Files\Events\FileUploaded;
+use Leantime\Domain\Goalcanvas\Events\GoalProgressUpdated;
+use Leantime\Domain\Notifications\Events\PushDeviceRegistered;
+use Leantime\Domain\Notifications\Events\UserMentioned;
 use Leantime\Domain\Plugins\Events\PluginDisabled;
 use Leantime\Domain\Plugins\Events\PluginEnabled;
 use Leantime\Domain\Plugins\Events\PluginInstalled;
 use Leantime\Domain\Projects\Events\ProjectArchived;
 use Leantime\Domain\Projects\Events\ProjectCreated;
 use Leantime\Domain\Projects\Events\ProjectMemberAdded;
+use Leantime\Domain\Projects\Events\ProjectStatusUpdatePosted;
+use Leantime\Domain\Sprints\Events\SprintCreated;
+use Leantime\Domain\Tickets\Events\TicketAssigned;
 use Leantime\Domain\Tickets\Events\TicketCompleted;
+use Leantime\Domain\Tickets\Events\TicketScheduled;
 use Leantime\Domain\Timesheets\Events\TimeEntryCreated;
 use Leantime\Domain\Timesheets\Events\TimerStarted;
+use Leantime\Domain\Timesheets\Events\TimerStopped;
 use Leantime\Domain\TwoFA\Events\TwoFactorEnabled;
+use Leantime\Domain\Users\Events\AppearanceUpdated;
 use Leantime\Domain\Users\Events\InviteSent;
 use Leantime\Domain\Users\Events\UserCreated;
+use Leantime\Domain\Widgets\Events\DashboardWidgetAdded;
 use Leantime\Domain\Wiki\Events\WikiArticleCreated;
 use Unit\TestCase;
 
@@ -82,8 +95,16 @@ class AnalyticsEventsTest extends TestCase
             'ProjectCreated' => [ProjectCreated::class, ['projectId' => 3, 'type' => 'project'], ['projectId' => 'int', 'type' => 'string']],
             'ProjectArchived' => [ProjectArchived::class, ['projectId' => 3], ['projectId' => 'int']],
             'ProjectMemberAdded' => [ProjectMemberAdded::class, ['projectId' => 3, 'userId' => 1], ['projectId' => 'int', 'userId' => 'int']],
-            'TicketCompleted' => [TicketCompleted::class, ['ticketId' => 5, 'projectId' => null], ['ticketId' => 'int', 'projectId' => '?int']],
-            'CommentAdded' => [CommentAdded::class, ['commentId' => 9, 'module' => 'ticket', 'moduleId' => 5, 'projectId' => 3], ['commentId' => 'int', 'module' => 'string', 'moduleId' => 'int', 'projectId' => '?int']],
+            'TicketCompleted' => [
+                TicketCompleted::class,
+                ['ticketId' => 5, 'projectId' => null, 'type' => 'subtask', 'completedByAssignee' => true, 'daysToComplete' => 3, 'hadDueDate' => true, 'wasOverdue' => false, 'wasScheduledToday' => true],
+                ['ticketId' => 'int', 'projectId' => '?int', 'type' => 'string', 'completedByAssignee' => 'bool', 'daysToComplete' => '?int', 'hadDueDate' => 'bool', 'wasOverdue' => 'bool', 'wasScheduledToday' => 'bool'],
+            ],
+            'CommentAdded' => [
+                CommentAdded::class,
+                ['commentId' => 9, 'module' => 'ticket', 'moduleId' => 5, 'projectId' => 3, 'isReply' => true, 'hasMention' => false],
+                ['commentId' => 'int', 'module' => 'string', 'moduleId' => 'int', 'projectId' => '?int', 'isReply' => 'bool', 'hasMention' => 'bool'],
+            ],
             'TimeEntryCreated' => [TimeEntryCreated::class, ['ticketId' => 5, 'hours' => 1.5, 'projectId' => 3], ['ticketId' => '?int', 'hours' => 'float', 'projectId' => '?int']],
             'TimerStarted' => [TimerStarted::class, ['ticketId' => 5], ['ticketId' => 'int']],
             'CanvasCreated' => [CanvasCreated::class, ['canvasId' => 7, 'type' => 'swotcanvas', 'projectId' => 3], ['canvasId' => 'int', 'type' => 'string', 'projectId' => '?int']],
@@ -95,6 +116,43 @@ class AnalyticsEventsTest extends TestCase
             'PluginDisabled' => [PluginDisabled::class, ['plugin' => 'PostHog'], ['plugin' => 'string']],
             'TwoFactorEnabled' => [TwoFactorEnabled::class, ['userId' => 1], ['userId' => 'int']],
             'ApiKeyCreated' => [ApiKeyCreated::class, ['apiUserId' => 12], ['apiUserId' => 'int']],
+            'TicketScheduled' => [
+                TicketScheduled::class,
+                ['ticketId' => 5, 'projectId' => 3, 'editFrom' => '2026-10-05 09:00:00', 'editTo' => null, 'rescheduled' => false],
+                ['ticketId' => 'int', 'projectId' => '?int', 'editFrom' => '?string', 'editTo' => '?string', 'rescheduled' => 'bool'],
+            ],
+            'TicketAssigned' => [
+                TicketAssigned::class,
+                ['ticketId' => 5, 'projectId' => 3, 'assigneeId' => 2, 'previousAssigneeId' => null, 'assignedToSelf' => false],
+                ['ticketId' => 'int', 'projectId' => '?int', 'assigneeId' => 'int', 'previousAssigneeId' => '?int', 'assignedToSelf' => 'bool'],
+            ],
+            'UserMentioned' => [
+                UserMentioned::class,
+                ['mentionedUserId' => 2, 'module' => 'comments', 'moduleId' => 9, 'projectId' => 3],
+                ['mentionedUserId' => 'int', 'module' => 'string', 'moduleId' => '?int', 'projectId' => '?int'],
+            ],
+            'GoalProgressUpdated' => [
+                GoalProgressUpdated::class,
+                ['goalId' => 8, 'projectId' => 3, 'previousValue' => 4.0, 'currentValue' => 10.0, 'endValue' => 10.0, 'targetReached' => true],
+                ['goalId' => 'int', 'projectId' => '?int', 'previousValue' => '?float', 'currentValue' => '?float', 'endValue' => '?float', 'targetReached' => 'bool'],
+            ],
+            'ProjectStatusUpdatePosted' => [
+                ProjectStatusUpdatePosted::class,
+                ['projectId' => 3, 'commentId' => 9, 'status' => 'green'],
+                ['projectId' => 'int', 'commentId' => 'int', 'status' => 'string'],
+            ],
+            'TimerStopped' => [TimerStopped::class, ['ticketId' => 5, 'hours' => 0.5, 'automatic' => true], ['ticketId' => 'int', 'hours' => 'float', 'automatic' => 'bool']],
+            'CalendarConnected' => [CalendarConnected::class, ['kind' => 'ical_feed'], ['kind' => 'string']],
+            'CalendarEventCreated' => [CalendarEventCreated::class, ['eventId' => 4, 'allDay' => false], ['eventId' => 'int', 'allDay' => 'bool']],
+            'DashboardWidgetAdded' => [DashboardWidgetAdded::class, ['widgetId' => 'myToDos'], ['widgetId' => 'string']],
+            'AppearanceUpdated' => [
+                AppearanceUpdated::class,
+                ['userId' => 1, 'theme' => 'default', 'colorMode' => 'dark', 'colorScheme' => 'themeDefault', 'font' => 'roboto'],
+                ['userId' => 'int', 'theme' => '?string', 'colorMode' => '?string', 'colorScheme' => '?string', 'font' => '?string'],
+            ],
+            'SprintCreated' => [SprintCreated::class, ['sprintId' => 6, 'projectId' => 3, 'lengthDays' => 14], ['sprintId' => 'int', 'projectId' => '?int', 'lengthDays' => '?int']],
+            'PushDeviceRegistered' => [PushDeviceRegistered::class, ['userId' => 1, 'platform' => 'ios'], ['userId' => 'int', 'platform' => 'string']],
+            'ApiMethodCalled' => [ApiMethodCalled::class, ['method' => 'tickets.tickets.patch', 'channel' => 'api'], ['method' => 'string', 'channel' => 'string']],
         ];
     }
 
@@ -162,5 +220,31 @@ class AnalyticsEventsTest extends TestCase
 
         $this->assertCount(1, $received);
         $this->assertInstanceOf(TicketCompleted::class, $received[0]);
+    }
+
+    /**
+     * The enriched events keep their original constructor working: the added context has
+     * defaults, so existing call sites (and legacy-hook events) construct unchanged.
+     */
+    public function test_enriched_events_default_their_new_context(): void
+    {
+        $completed = new TicketCompleted(ticketId: 5, projectId: 3);
+        $this->assertSame('task', $completed->type);
+        $this->assertFalse($completed->completedByAssignee);
+        $this->assertNull($completed->daysToComplete);
+        $this->assertFalse($completed->hadDueDate);
+        $this->assertFalse($completed->wasOverdue);
+        $this->assertFalse($completed->wasScheduledToday);
+
+        $comment = new CommentAdded(commentId: 9, module: 'ticket', moduleId: 5, projectId: 3);
+        $this->assertFalse($comment->isReply);
+        $this->assertFalse($comment->hasMention);
+
+        $created = new \Leantime\Domain\Tickets\Events\TicketCreated(ticketId: 1, legacyHook: 'addTicket');
+        $this->assertNull($created->origin);
+        $this->assertNull($created->type);
+        $this->assertFalse($created->hasDueDate);
+        $this->assertFalse($created->assignedToOther);
+        $this->assertSame(['leantime.domain.tickets.services.tickets.addTicket.ticket_created'], $created->legacyHooks());
     }
 }
