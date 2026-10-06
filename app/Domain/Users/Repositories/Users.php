@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Users\Repositories;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Auth\PasswordFingerprint;
@@ -105,6 +106,18 @@ class Users
             ->first();
 
         return $result->lastlogin ?? null;
+    }
+
+    /**
+     * Counts users whose last login is at or after the given point in time.
+     *
+     * @param  CarbonImmutable  $since  Lower bound for lastlogin (UTC).
+     */
+    public function countActiveUsersSince(CarbonImmutable $since): int
+    {
+        return $this->connection->table('zp_user')
+            ->where('lastlogin', '>=', $since->format('Y-m-d H:i:s'))
+            ->count();
     }
 
     /**
