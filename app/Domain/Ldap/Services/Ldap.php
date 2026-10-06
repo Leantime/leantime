@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use LDAP\Connection;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Domain\Users\Events\UserCreated;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 class Ldap
@@ -356,7 +357,10 @@ class Ldap
                     'source' => 'ldap',
                 ];
 
-                $userRepo->addUser($userArray);
+                $newUserId = $userRepo->addUser($userArray);
+                if ($newUserId !== false) {
+                    UserCreated::dispatch(userId: (int) $newUserId, role: (int) $userArray['role'], source: 'ldap');
+                }
             }
         }
 

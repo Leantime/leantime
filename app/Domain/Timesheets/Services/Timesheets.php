@@ -14,6 +14,9 @@ use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Events\TimeEntryCreated;
+use Leantime\Domain\Timesheets\Events\TimerStarted;
+use Leantime\Domain\Timesheets\Events\TimerStopped;
 use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
@@ -114,7 +117,13 @@ class Timesheets extends BaseService
         $this->authorize(TimesheetsPermissions::CREATE);
         $this->authorizeTicketForTimeEntry($ticketId);
 
-        return $this->timesheetsRepo->punchIn($ticketId);
+        $started = $this->timesheetsRepo->punchIn($ticketId);
+
+        if ($started) {
+            TimerStarted::dispatch(ticketId: $ticketId);
+        }
+
+        return $started;
     }
 
     /**
@@ -125,12 +134,14 @@ class Timesheets extends BaseService
      * existed), the timer is discarded and no time is booked.
      *
      * @param  int  $ticketId  The ticket the timer runs on.
+     * @param  bool  $automatic  True when the timer is stopped by the system (the ticket was completed),
+     *                           not by the user; reported on {@see TimerStopped}.
      * @return float|false|int Hours booked, or false when nothing was booked.
      *
      * @api
      */
     #[RequiresPermission(TimesheetsPermissions::CREATE, global: true)]
-    public function punchOut(int $ticketId): float|false|int
+    public function punchOut(int $ticketId, bool $automatic = false): float|false|int
     {
         if (! $this->canBookTimeOnTicket($ticketId)) {
             $this->timesheetsRepo->discardPunch($ticketId);
@@ -138,7 +149,13 @@ class Timesheets extends BaseService
             return false;
         }
 
-        return $this->timesheetsRepo->punchOut($ticketId);
+        $hoursBooked = $this->timesheetsRepo->punchOut($ticketId);
+
+        if ($hoursBooked !== false) {
+            TimerStopped::dispatch(ticketId: $ticketId, hours: (float) $hoursBooked, automatic: $automatic);
+        }
+
+        return $hoursBooked;
     }
 
     /**
@@ -201,7 +218,7 @@ class Timesheets extends BaseService
         // Editor+ to log any time; non-managers are pinned to their own account (cannot log for
         // another user — that needs timesheets.manage).
         $this->authorize(TimesheetsPermissions::CREATE);
-        $this->authorizeTicketForTimeEntry($ticketId);
+        $projectId = $this->authorizeTicketForTimeEntry($ticketId);
         if (! $this->can(TimesheetsPermissions::MANAGE)) {
             $params['userId'] = $this->currentUserId();
         }
@@ -248,7 +265,8 @@ class Timesheets extends BaseService
         $loggingUser = $this->userRepo->getUser($values['userId']);
         $values['rate'] = $loggingUser['wage'];
 
-        $this->timesheetsRepo->addTime($values);
+        $isNewEntry = $this->timesheetsRepo->addTime($values);
+        $this->dispatchTimeEntryCreated($isNewEntry, $ticketId, $values['hours'], $projectId);
 
         return true;
     }
@@ -274,7 +292,7 @@ class Timesheets extends BaseService
     {
         // Editor+ to log any time; non-managers are pinned to their own account.
         $this->authorize(TimesheetsPermissions::CREATE);
-        $this->authorizeTicketForTimeEntry($ticketId);
+        $projectId = $this->authorizeTicketForTimeEntry($ticketId);
         if (! $this->can(TimesheetsPermissions::MANAGE)) {
             $params['userId'] = $this->currentUserId();
         }
@@ -320,9 +338,28 @@ class Timesheets extends BaseService
         $loggingUser = $this->userRepo->getUser($values['userId']);
         $values['rate'] = $loggingUser['wage'];
 
-        $this->timesheetsRepo->upsertTimesheetEntry($values);
+        $isNewEntry = $this->timesheetsRepo->upsertTimesheetEntry($values);
+        $this->dispatchTimeEntryCreated($isNewEntry, $ticketId, $values['hours'], $projectId);
 
         return true;
+    }
+
+    /**
+     * Fire {@see TimeEntryCreated} for a write that inserted a NEW timesheet row with hours.
+     * Hours added onto (or overwriting) an existing row, and empty entries, do not fire.
+     *
+     * @param  bool  $isNewEntry  Whether the repository inserted a new row.
+     * @param  int|null  $ticketId  The ticket the time was booked on.
+     * @param  mixed  $hours  The booked hours (as submitted).
+     * @param  int|null  $projectId  The ticket's project.
+     */
+    private function dispatchTimeEntryCreated(bool $isNewEntry, ?int $ticketId, mixed $hours, ?int $projectId): void
+    {
+        if (! $isNewEntry || ! is_numeric($hours) || (float) $hours <= 0) {
+            return;
+        }
+
+        TimeEntryCreated::dispatch(ticketId: $ticketId, hours: (float) $hours, projectId: $projectId);
     }
 
     /**
@@ -399,14 +436,15 @@ class Timesheets extends BaseService
     public function addTime(array $values): void
     {
         $this->authorize(TimesheetsPermissions::CREATE);
-        $this->authorizeTicketForTimeEntry($values['ticket'] ?? null);
+        $projectId = $this->authorizeTicketForTimeEntry($values['ticket'] ?? null);
 
         // Non-managers can only add time entries for themselves.
         if (! $this->can(TimesheetsPermissions::MANAGE)) {
             $values['userId'] = $this->currentUserId();
         }
 
-        $this->timesheetsRepo->addTime($values);
+        $isNewEntry = $this->timesheetsRepo->addTime($values);
+        $this->dispatchTimeEntryCreated($isNewEntry, (int) $values['ticket'], $values['hours'] ?? null, $projectId);
     }
 
     /**
@@ -561,10 +599,11 @@ class Timesheets extends BaseService
      * ticket server-side and requires tickets.view (role + membership) in ITS project.
      *
      * @param  mixed  $ticketId  The ticket id from the payload.
+     * @return int The ticket's project id.
      *
      * @throws AuthorizationException When the id is invalid, the ticket is unknown, or not accessible.
      */
-    private function authorizeTicketForTimeEntry(mixed $ticketId): void
+    private function authorizeTicketForTimeEntry(mixed $ticketId): int
     {
         $ticketId = is_int($ticketId) || is_string($ticketId) ? filter_var($ticketId, FILTER_VALIDATE_INT) : false;
         if ($ticketId === false || $ticketId <= 0) {
@@ -577,6 +616,8 @@ class Timesheets extends BaseService
         }
 
         $this->authorize(TicketsPermissions::VIEW, (int) $ticket->projectId);
+
+        return (int) $ticket->projectId;
     }
 
     /**

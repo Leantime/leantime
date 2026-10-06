@@ -18,6 +18,9 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Notifications\Services\Notifications;
+use Leantime\Domain\Plugins\Events\PluginDisabled;
+use Leantime\Domain\Plugins\Events\PluginEnabled;
+use Leantime\Domain\Plugins\Events\PluginInstalled;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Permissions\PluginsPermissions;
@@ -363,7 +366,13 @@ class Plugins
             }
         }
 
-        return $this->pluginRepository->addPlugin($plugin);
+        $added = $this->pluginRepository->addPlugin($plugin);
+
+        if ($added !== false) {
+            PluginInstalled::dispatch(plugin: (string) $plugin->foldername, format: (string) $plugin->format);
+        }
+
+        return $added;
     }
 
     /**
@@ -376,15 +385,17 @@ class Plugins
 
         $pluginModel = $this->pluginRepository->getPlugin($id);
 
-        if ($pluginModel->format !== 'phar') {
-            return $this->pluginRepository->enablePlugin($id);
+        if ($pluginModel->format === 'phar' && ! $this->validLicense($pluginModel)) {
+            return false;
         }
 
-        if ($this->validLicense($pluginModel)) {
-            return $this->pluginRepository->enablePlugin($id);
+        $enabled = $this->pluginRepository->enablePlugin($id);
+
+        if ($enabled) {
+            PluginEnabled::dispatch(plugin: (string) $pluginModel->foldername);
         }
 
-        return false;
+        return $enabled;
 
     }
 
@@ -404,6 +415,10 @@ class Plugins
 
             $this->deactivate($pluginModel);
 
+        }
+
+        if ($result) {
+            PluginDisabled::dispatch(plugin: (string) $pluginModel->foldername);
         }
 
         return $result;
@@ -793,6 +808,8 @@ class Plugins
         if (! $this->pluginRepository->addPlugin($pluginModel)) {
             throw new \Exception(__('notification_cant_add_to_db'));
         }
+
+        PluginInstalled::dispatch(plugin: (string) $pluginModel->foldername, format: (string) $pluginModel->format);
     }
 
     /**

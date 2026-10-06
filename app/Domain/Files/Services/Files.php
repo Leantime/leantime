@@ -12,6 +12,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Permissions\ClientsPermissions;
+use Leantime\Domain\Files\Events\FileUploaded;
 use Leantime\Domain\Files\Permissions\FilesPermissions;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
@@ -256,6 +257,14 @@ class Files extends BaseService
 
             if ($fileAddResults) {
                 $leantimeFile['fileId'] = $fileAddResults;
+
+                FileUploaded::dispatch(
+                    fileId: (int) $fileAddResults,
+                    module: (string) $module,
+                    moduleId: (int) $moduleId > 0 ? (int) $moduleId : null,
+                    extension: (string) ($leantimeFile['extension'] ?? ''),
+                    size: (int) ($file['file']['size'] ?? 0),
+                );
 
                 return $leantimeFile;
             }

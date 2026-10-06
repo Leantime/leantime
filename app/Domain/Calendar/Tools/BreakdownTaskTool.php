@@ -73,6 +73,7 @@ class BreakdownTaskTool extends Tool
                 'status' => 3,
             ];
 
+            $params['origin'] = 'mcp';
             $result = $this->ticketService->quickAddTicket($params);
 
             if ($result) {

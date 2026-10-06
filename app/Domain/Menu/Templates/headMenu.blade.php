@@ -104,7 +104,7 @@
                             data-url="{{ $notif['url'] }}"
                             data-id="{{ $notif['id'] }}"
                         >
-                            <a href="{{ $notif['url'] }}">
+                            <a href="{{ $notif['url'] }}" data-notification-type="{{ $notif['type'] ?? '' }}" data-notification-module="{{ $notif['module'] ?? '' }}">
                                 <span class="notificationProfileImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
@@ -135,7 +135,7 @@
                             data-url="{{ $notif['url'] }}"
                             data-id="{{ $notif['id'] }}"
                         >
-                            <a href="{{ $notif['url'] }}">
+                            <a href="{{ $notif['url'] }}" data-notification-type="{{ $notif['type'] ?? '' }}" data-notification-module="{{ $notif['module'] ?? '' }}">
                                 <span class="notificationProfileImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
@@ -280,7 +280,7 @@
                     e.stopPropagation();
                 });
 
-                jQuery('notificationsDropdown li').click(function () {
+                jQuery('#notificationsDropdown li').click(function () {
                     const url = jQuery(this).data('url');
                     const id = jQuery(this).data('id');
 

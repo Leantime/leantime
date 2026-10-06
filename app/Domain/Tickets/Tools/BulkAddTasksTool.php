@@ -70,6 +70,7 @@ class BulkAddTasksTool extends Tool
                     'type' => 'task',
                 ];
 
+                $params['origin'] = 'mcp';
                 $result = $this->ticketsService->quickAddTicket($params);
 
                 // quickAddTicket() reports a validation failure (e.g. missing headline) as an array.

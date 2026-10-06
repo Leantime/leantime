@@ -326,6 +326,8 @@ class Dashboard extends BaseService
     {
         $params['dateToFinish'] = $this->resolveQuickAddDueDate($params);
 
+        $params['origin'] = 'todo_widget';
+
         return $this->ticketsService->quickAddTicket($params);
     }
 

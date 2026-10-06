@@ -6,6 +6,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Language;
 use Leantime\Domain\Audit\Repositories\Audit as AuditRepository;
+use Leantime\Domain\Wiki\Events\WikiArticleCreated;
 use Leantime\Domain\Wiki\Models\Article;
 use Leantime\Domain\Wiki\Permissions\WikiPermissions;
 use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
@@ -196,6 +197,8 @@ class Wiki extends BaseService
         $id = $this->wikiRepository->createArticle($article);
 
         if ($id !== false) {
+            WikiArticleCreated::dispatch(articleId: (int) $id, projectId: $projectId);
+
             $this->auditRepo->storeEvent(
                 action: 'article.create',
                 values: json_encode(['title' => $article->title], JSON_THROW_ON_ERROR),

@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Sprints\Services;
 
+use Carbon\CarbonImmutable;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -9,6 +10,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
+use Leantime\Domain\Sprints\Events\SprintCreated;
 use Leantime\Domain\Sprints\Models;
 use Leantime\Domain\Sprints\Permissions\SprintsPermissions;
 use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
@@ -195,10 +197,39 @@ class Sprints extends BaseService
         $result = $this->sprintRepository->addSprint($sprint);
 
         if ($result !== false) {
+            SprintCreated::dispatch(
+                sprintId: (int) $result,
+                projectId: $projectId > 0 ? $projectId : null,
+                lengthDays: $this->sprintLengthInDays($sprint->startDate ?? null, $sprint->endDate ?? null),
+            );
+
             return $result;
         }
 
         return false;
+    }
+
+    /**
+     * Calendar days from a sprint's start date to its end date, or null when either is missing.
+     *
+     * @param  mixed  $startDate  The stored start (UTC 'Y-m-d H:i:s').
+     * @param  mixed  $endDate  The stored end (UTC 'Y-m-d H:i:s').
+     */
+    private function sprintLengthInDays(mixed $startDate, mixed $endDate): ?int
+    {
+        if (! is_string($startDate) || ! is_string($endDate) || $startDate === '' || $endDate === '') {
+            return null;
+        }
+
+        try {
+            $start = CarbonImmutable::parse(substr($startDate, 0, 10), 'UTC');
+            $end = CarbonImmutable::parse(substr($endDate, 0, 10), 'UTC');
+        } catch (\Throwable) {
+            return null;
+        }
+
+        // Inclusive, like the burndown: a same-day sprint is 1 day, Oct 1–14 is 14 days.
+        return (int) round(abs($end->getTimestamp() - $start->getTimestamp()) / 86400) + 1;
     }
 
     /**

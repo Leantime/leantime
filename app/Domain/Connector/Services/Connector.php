@@ -677,6 +677,7 @@ class Connector
                 if (isset($ticket['id']) && is_numeric($ticket['id'])) {
                     $this->ticketService->updateTicket($ticket);
                 } else {
+                    $ticket['origin'] = 'import';
                     $this->ticketService->addTicket($ticket);
                 }
             } catch (\Exception $e) {
@@ -807,6 +808,7 @@ class Connector
             if (isset($ticket['id'])) {
                 $this->ticketService->updateTicket($ticket);
             } else {
+                $ticket['origin'] = 'import';
                 $this->ticketService->addTicket($ticket);
             }
         }

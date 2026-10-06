@@ -11,6 +11,8 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Blueprints\Events\CanvasCreated;
+use Leantime\Domain\Blueprints\Events\CanvasItemCreated;
 use Leantime\Domain\Blueprints\Events\CanvasItemUpdated;
 use Leantime\Domain\Blueprints\Models\CanvasTemplate;
 use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
@@ -144,7 +146,13 @@ class Blueprints extends BaseService
         }
         $this->authorize(BlueprintsPermissions::CREATE, $projectId);
 
-        return $this->blueprintsRepo->addCanvasItem($values);
+        $newId = $this->blueprintsRepo->addCanvasItem($values);
+
+        if ($newId !== false && (int) $newId > 0) {
+            CanvasItemCreated::dispatch(canvasItemId: (int) $newId, type: $canvasType, projectId: $projectId);
+        }
+
+        return $newId;
     }
 
     /**
@@ -277,6 +285,8 @@ class Blueprints extends BaseService
 
         if ($newId !== false) {
             $this->applyStartContent((int) $newId, $canvasType);
+
+            CanvasCreated::dispatch(canvasId: (int) $newId, type: $canvasType, projectId: $projectId);
         }
 
         return $newId;
@@ -378,7 +388,13 @@ class Blueprints extends BaseService
         $this->authorize(BlueprintsPermissions::VIEW, $sourceProjectId);
         $this->authorize(BlueprintsPermissions::CREATE, $targetProjectId);
 
-        return $this->blueprintsRepo->copyCanvas($targetProjectId, $sourceCanvasId, $authorId, $title, $canvasType);
+        $newCanvasId = $this->blueprintsRepo->copyCanvas($targetProjectId, $sourceCanvasId, $authorId, $title, $canvasType);
+
+        if ($newCanvasId > 0) {
+            CanvasCreated::dispatch(canvasId: $newCanvasId, type: $canvasType, projectId: $targetProjectId);
+        }
+
+        return $newCanvasId;
     }
 
     /**
@@ -710,6 +726,8 @@ class Blueprints extends BaseService
             $record['canvasId'] = $canvasId;
             $this->blueprintsRepo->addCanvasItem($record);
         }
+
+        CanvasCreated::dispatch(canvasId: (int) $canvasId, type: $canvasType, projectId: $projectId);
 
         return (int) $canvasId;
     }

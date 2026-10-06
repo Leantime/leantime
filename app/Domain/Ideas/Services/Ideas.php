@@ -7,6 +7,9 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Domain\Blueprints\Events\CanvasCreated;
+use Leantime\Domain\Blueprints\Events\CanvasItemCreated;
+use Leantime\Domain\Comments\Events\CommentAdded;
 use Leantime\Domain\Comments\Permissions\CommentsPermissions;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Ideas\Permissions\IdeasPermissions;
@@ -354,6 +357,10 @@ class Ideas extends BaseService
 
         $boardId = (int) $this->ideasRepository->addCanvas($values);
 
+        if ($boardId > 0) {
+            CanvasCreated::dispatch(canvasId: $boardId, type: 'idea', projectId: $projectId);
+        }
+
         $this->notifyBoardCreated($title, $projectId);
 
         return $boardId;
@@ -386,6 +393,10 @@ class Ideas extends BaseService
         ];
 
         $boardId = (int) $this->ideasRepository->addCanvas($values);
+
+        if ($boardId > 0) {
+            CanvasCreated::dispatch(canvasId: $boardId, type: 'idea', projectId: $projectId);
+        }
 
         $this->notifyBoardCreatedFromDialog($title, $projectId);
 
@@ -462,7 +473,7 @@ class Ideas extends BaseService
         $message = sprintf(
             $this->language->__('email_notifications.idea_board_created_message'),
             session('userdata.name'),
-            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($title).'</a>.<br />'
+            "<a href='".\Leantime\Core\Mailer::notificationEmailUrl(app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL), 'idea_board_created')."'>".strip_tags($title).'</a>.<br />'
         );
         $mailer->setHtml($message);
 
@@ -490,7 +501,7 @@ class Ideas extends BaseService
         $message = sprintf(
             $this->language->__('email_notifications.canvas_created_message'),
             session('userdata.name'),
-            "<a href='".app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL)."'>".strip_tags($title).'</a>'
+            "<a href='".\Leantime\Core\Mailer::notificationEmailUrl(app()->make(TrustedAppUrl::class)->rebase(CURRENT_URL), 'idea_board_created')."'>".strip_tags($title).'</a>'
         );
         $mailer->setHtml($message);
 
@@ -633,6 +644,10 @@ class Ideas extends BaseService
 
         $id = (int) $this->ideasRepository->addCanvasItem($canvasItem);
         $canvasItem['id'] = $id;
+
+        if ($id > 0) {
+            CanvasItemCreated::dispatch(canvasItemId: $id, type: 'idea', projectId: $projectId);
+        }
 
         $subject = $this->language->__('email_notifications.idea_created_subject');
         $actualLink = BASE_URL.'#/ideas/ideaDialog/'.$id;
@@ -841,6 +856,17 @@ class Ideas extends BaseService
 
         $commentId = $this->commentsRepository->addComment($values, 'idea');
         $values['id'] = $commentId;
+
+        if ($commentId) {
+            CommentAdded::dispatch(
+                commentId: (int) $commentId,
+                module: 'idea',
+                moduleId: $ideaItemId,
+                projectId: $projectId,
+                isReply: (int) $parentCommentId > 0,
+                hasMention: str_contains($text, 'data-tagged-user-id'),
+            );
+        }
 
         $subject = $this->language->__('email_notifications.new_comment_idea_subject');
         $actualLink = BASE_URL.'#/ideas/ideaDialog/'.$ideaItemId;

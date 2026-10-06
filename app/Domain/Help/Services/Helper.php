@@ -464,6 +464,7 @@ class Helper
             'userId' => $userId,
             'dateToFinish' => dtHelper()->userNow()->addDays(3)->formatDateTimeForDb(),
             'milestone' => $milestoneId,
+            'origin' => 'onboarding',
         ];
 
         $values['headline'] = '💬 Join our community chat';

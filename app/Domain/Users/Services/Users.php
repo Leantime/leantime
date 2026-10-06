@@ -28,6 +28,9 @@ use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Users\Events\AppearanceUpdated;
+use Leantime\Domain\Users\Events\InviteSent;
+use Leantime\Domain\Users\Events\UserCreated;
 use Leantime\Domain\Users\Exceptions\WebhookSettingNotSavedException;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -446,7 +449,13 @@ class Users extends BaseService
             return false;
         }
 
+        UserCreated::dispatch(userId: (int) $result, role: (int) Roles::getRoleLevel($values['role'] ?? ''), source: 'invite');
+
         $emailSent = $this->sendUserInvite($inviteCode, $values['user']);
+
+        if ($emailSent) {
+            InviteSent::dispatch(userId: (int) $result);
+        }
 
         return ['userId' => $result, 'emailSent' => $emailSent];
     }
@@ -611,7 +620,13 @@ class Users extends BaseService
             return $invite === false ? false : (int) $invite['userId'];
         }
 
-        return $this->userRepo->addUser($values);
+        $newUserId = $this->userRepo->addUser($values);
+
+        if ($newUserId !== false) {
+            UserCreated::dispatch(userId: (int) $newUserId, role: (int) Roles::getRoleLevel($values['role']), source: 'admin');
+        }
+
+        return $newUserId;
     }
 
     /**
@@ -1222,6 +1237,13 @@ class Users extends BaseService
         $postColorScheme = htmlentities($post['colorscheme'] ?? 'themeDefault');
         $themeFont = htmlentities($post['themeFont'] ?? '');
 
+        $previousAppearance = [
+            (string) $this->settingsService->getSetting('usersettings.'.$userId.'.theme', ''),
+            (string) $this->settingsService->getSetting('usersettings.'.$userId.'.colorMode', ''),
+            (string) $this->settingsService->getSetting('usersettings.'.$userId.'.colorScheme', ''),
+            (string) $this->settingsService->getSetting('usersettings.'.$userId.'.themeFont', ''),
+        ];
+
         $this->settingsService->saveSetting('usersettings.'.$userId.'.theme', $postTheme);
         $this->settingsService->saveSetting('usersettings.'.$userId.'.colorMode', $postColorMode);
         $this->settingsService->saveSetting('usersettings.'.$userId.'.colorScheme', $postColorScheme);
@@ -1232,6 +1254,16 @@ class Users extends BaseService
         $this->themeCore->setColorMode($postColorMode);
         $this->themeCore->setColorScheme($postColorScheme);
         $this->themeCore->setFont($themeFont);
+
+        if ($previousAppearance !== [$postTheme, $postColorMode, $postColorScheme, $themeFont]) {
+            AppearanceUpdated::dispatch(
+                userId: $userId,
+                theme: $postTheme,
+                colorMode: $postColorMode,
+                colorScheme: $postColorScheme,
+                font: $themeFont,
+            );
+        }
     }
 
     /**
@@ -1614,6 +1646,10 @@ class Users extends BaseService
             inviteCode: $pwReset,
             user: $row['username']
         );
+
+        if ($emailSent) {
+            InviteSent::dispatch(userId: $id);
+        }
 
         return $emailSent ? 'sent' : 'invite_email_failed';
     }
