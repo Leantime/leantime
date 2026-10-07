@@ -15,6 +15,8 @@ use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+use Leantime\Domain\Tickets\Events\MilestoneCreated;
+use Leantime\Domain\Tickets\Events\MilestoneUpdated;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
 use Leantime\Domain\Tickets\Events\TicketCompleted;
 use Leantime\Domain\Tickets\Events\TicketCreated;
@@ -47,6 +49,13 @@ class TicketChangeEventsTest extends TestCase
 
     /** @var array<int, TicketCreated> */
     private array $created = [];
+
+    private array $milestonesCreated = [];
+
+    private array $milestonesUpdated = [];
+
+    /** What the stubbed repository's updateTicket() returns. */
+    private bool $updateTicketResult = true;
 
     private array $dispatcherSnapshot = [];
 
@@ -87,6 +96,9 @@ class TicketChangeEventsTest extends TestCase
         $this->scheduled = [];
         $this->assigned = [];
         $this->created = [];
+        $this->milestonesCreated = [];
+        $this->milestonesUpdated = [];
+        $this->updateTicketResult = true;
         EventDispatcher::add_event_listener(TicketCompleted::class, function (TicketCompleted $event) {
             $this->completed[] = $event;
         });
@@ -98,6 +110,12 @@ class TicketChangeEventsTest extends TestCase
         });
         EventDispatcher::add_event_listener(TicketCreated::class, function (TicketCreated $event) {
             $this->created[] = $event;
+        });
+        EventDispatcher::add_event_listener(MilestoneCreated::class, function (MilestoneCreated $event) {
+            $this->milestonesCreated[] = $event;
+        });
+        EventDispatcher::add_event_listener(MilestoneUpdated::class, function (MilestoneUpdated $event) {
+            $this->milestonesUpdated[] = $event;
         });
     }
 
@@ -130,6 +148,7 @@ class TicketChangeEventsTest extends TestCase
             ], $storedFields)),
             'patchTicket' => fn () => true,
             'addTicket' => fn () => 42,
+            'updateTicket' => fn () => $this->updateTicketResult,
             'updateTicketStatus' => fn () => true,
             'getStateLabels' => fn () => [
                 0 => ['name' => 'Done', 'statusType' => 'DONE'],
@@ -311,9 +330,54 @@ class TicketChangeEventsTest extends TestCase
         $this->assertSame('task', $this->created[0]->type);
         $this->assertTrue($this->created[0]->hasDueDate);
         $this->assertFalse($this->created[0]->assignedToOther);
+        $this->assertSame(7, $this->created[0]->projectId);
 
         $this->assertCount(1, $this->assigned);
         $this->assertTrue($this->assigned[0]->assignedToSelf);
         $this->assertNull($this->assigned[0]->previousAssigneeId);
+    }
+
+    public function test_creating_a_milestone_carries_its_origin_and_project(): void
+    {
+        $service = $this->buildService([]);
+
+        $service->quickAddMilestone(['headline' => 'Getting Started', 'projectId' => 7, 'origin' => 'onboarding_seed']);
+        $service->quickAddMilestone(['headline' => 'Q4 launch', 'projectId' => 7]);
+
+        $this->assertCount(2, $this->milestonesCreated);
+        $this->assertSame(42, $this->milestonesCreated[0]->milestoneId);
+        $this->assertSame('onboarding_seed', $this->milestonesCreated[0]->origin, 'generated milestones are tagged');
+        $this->assertSame('quickadd', $this->milestonesCreated[1]->origin, 'user-made milestones default to quickadd');
+        $this->assertSame(7, $this->milestonesCreated[1]->projectId);
+    }
+
+    /**
+     * Owner session: manager+ keep their global role, so no project-role lookup is needed.
+     *
+     * @return array<string, mixed>
+     */
+    private function milestoneEdit(): array
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'owner', 'name' => 'Caller']]);
+
+        return ['id' => 9, 'headline' => 'Getting Started', 'editorId' => 1, 'status' => 3, 'dependentMilestone' => '', 'tags' => '#124F7D', 'editFrom' => '', 'editTo' => ''];
+    }
+
+    public function test_updating_a_milestone_fires_milestone_updated_with_its_project(): void
+    {
+        $this->buildService([], ['type' => 'milestone'])->quickUpdateMilestone($this->milestoneEdit());
+
+        $this->assertCount(1, $this->milestonesUpdated);
+        $this->assertSame(9, $this->milestonesUpdated[0]->milestoneId);
+        $this->assertSame(7, $this->milestonesUpdated[0]->projectId);
+    }
+
+    public function test_a_failed_milestone_update_fires_nothing(): void
+    {
+        $this->updateTicketResult = false;
+
+        $this->buildService([], ['type' => 'milestone'])->quickUpdateMilestone($this->milestoneEdit());
+
+        $this->assertSame([], $this->milestonesUpdated, 'MilestoneUpdated means the write happened');
     }
 }

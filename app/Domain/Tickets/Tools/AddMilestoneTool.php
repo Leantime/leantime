@@ -60,6 +60,7 @@ class AddMilestoneTool extends Tool
             'tags' => $arguments['color'],
             'editFrom' => $arguments['editFrom'],
             'editTo' => $arguments['editTo'],
+            'origin' => 'mcp',
         ];
 
         $result = $this->ticketsService->quickAddMilestone($params);

@@ -452,6 +452,7 @@ class Helper
             'editFrom' => dtHelper()->userNow()->formatDateTimeForDb(),
             'editTo' => dtHelper()->userNow()->addDays(14)->formatDateTimeForDb(),
             'tags' => '#124F7D',
+            'origin' => 'onboarding_seed',
         ];
         $milestoneId = $ticketService->quickAddMilestone($values);
 
@@ -464,7 +465,8 @@ class Helper
             'userId' => $userId,
             'dateToFinish' => dtHelper()->userNow()->addDays(3)->formatDateTimeForDb(),
             'milestone' => $milestoneId,
-            'origin' => 'onboarding',
+            // Generated for the user, not typed by them: analytics excludes it from "real work".
+            'origin' => 'onboarding_seed',
         ];
 
         $values['headline'] = '💬 Join our community chat';
