@@ -2332,6 +2332,8 @@ class Tickets extends BaseService
 
         MilestoneCreated::dispatch(
             milestoneId: is_int($result) && $result > 0 ? $result : null,
+            origin: $this->resolveTicketOrigin($params['origin'] ?? null, 'quickadd'),
+            projectId: is_numeric($projectId) ? (int) $projectId : null,
             legacyHook: __FUNCTION__
         );
 
@@ -2896,6 +2898,7 @@ class Tickets extends BaseService
         }
 
         $assigneeId = is_numeric($values['editorId'] ?? null) ? (int) $values['editorId'] : 0;
+        $projectId = (int) ($values['projectId'] ?? 0);
 
         TicketCreated::dispatch(
             ticketId: $ticketId,
@@ -2903,10 +2906,10 @@ class Tickets extends BaseService
             type: (string) (($values['type'] ?? '') ?: 'task'),
             hasDueDate: $this->parseDbDateTimeOrNull($values['dateToFinish'] ?? null) !== null,
             assignedToOther: $assigneeId > 0 && $assigneeId !== (int) session('userdata.id'),
+            projectId: $projectId > 0 ? $projectId : null,
             legacyHook: $legacyHook
         );
 
-        $projectId = (int) ($values['projectId'] ?? 0);
         $this->dispatchTicketAssignedOnChange($ticketId, $projectId > 0 ? $projectId : null, null, $assigneeId);
     }
 
@@ -4082,7 +4085,7 @@ class Tickets extends BaseService
 
         $values = $this->prepareTicketDates($values);
 
-        MilestoneUpdated::dispatch(milestoneId: $milestoneId, legacyHook: __FUNCTION__);
+        MilestoneUpdated::dispatch(milestoneId: $milestoneId, projectId: $targetProjectId, legacyHook: __FUNCTION__);
 
         // $params is an array of field names. Exclude id
         $updated = $this->ticketRepository->updateTicket($values, $milestoneId);

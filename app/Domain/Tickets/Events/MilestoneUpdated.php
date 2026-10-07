@@ -18,8 +18,14 @@ final class MilestoneUpdated implements LeantimeEvent
      *                                   pass __FUNCTION__ — used to rebuild the exact historical
      *                                   string name this site fired under for plugin listeners.
      */
+    /**
+     * @param  int  $milestoneId  The updated milestone id.
+     * @param  int|null  $projectId  The project the milestone belongs to after the update.
+     * @param  string|null  $legacyHook  TEMPORARY (migration window): the emitting method name.
+     */
     public function __construct(
         public readonly int $milestoneId,
+        public readonly ?int $projectId = null,
         private readonly ?string $legacyHook = null,
     ) {}
 

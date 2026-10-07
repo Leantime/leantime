@@ -15,6 +15,7 @@ use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+use Leantime\Domain\Tickets\Events\MilestoneCreated;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
 use Leantime\Domain\Tickets\Events\TicketCompleted;
 use Leantime\Domain\Tickets\Events\TicketCreated;
@@ -47,6 +48,8 @@ class TicketChangeEventsTest extends TestCase
 
     /** @var array<int, TicketCreated> */
     private array $created = [];
+
+    private array $milestonesCreated = [];
 
     private array $dispatcherSnapshot = [];
 
@@ -87,6 +90,7 @@ class TicketChangeEventsTest extends TestCase
         $this->scheduled = [];
         $this->assigned = [];
         $this->created = [];
+        $this->milestonesCreated = [];
         EventDispatcher::add_event_listener(TicketCompleted::class, function (TicketCompleted $event) {
             $this->completed[] = $event;
         });
@@ -98,6 +102,9 @@ class TicketChangeEventsTest extends TestCase
         });
         EventDispatcher::add_event_listener(TicketCreated::class, function (TicketCreated $event) {
             $this->created[] = $event;
+        });
+        EventDispatcher::add_event_listener(MilestoneCreated::class, function (MilestoneCreated $event) {
+            $this->milestonesCreated[] = $event;
         });
     }
 
@@ -311,9 +318,24 @@ class TicketChangeEventsTest extends TestCase
         $this->assertSame('task', $this->created[0]->type);
         $this->assertTrue($this->created[0]->hasDueDate);
         $this->assertFalse($this->created[0]->assignedToOther);
+        $this->assertSame(7, $this->created[0]->projectId);
 
         $this->assertCount(1, $this->assigned);
         $this->assertTrue($this->assigned[0]->assignedToSelf);
         $this->assertNull($this->assigned[0]->previousAssigneeId);
+    }
+
+    public function test_creating_a_milestone_carries_its_origin_and_project(): void
+    {
+        $service = $this->buildService([]);
+
+        $service->quickAddMilestone(['headline' => 'Getting Started', 'projectId' => 7, 'origin' => 'onboarding_seed']);
+        $service->quickAddMilestone(['headline' => 'Q4 launch', 'projectId' => 7]);
+
+        $this->assertCount(2, $this->milestonesCreated);
+        $this->assertSame(42, $this->milestonesCreated[0]->milestoneId);
+        $this->assertSame('onboarding_seed', $this->milestonesCreated[0]->origin, 'generated milestones are tagged');
+        $this->assertSame('quickadd', $this->milestonesCreated[1]->origin, 'user-made milestones default to quickadd');
+        $this->assertSame(7, $this->milestonesCreated[1]->projectId);
     }
 }
