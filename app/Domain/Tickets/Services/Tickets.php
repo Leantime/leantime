@@ -4085,12 +4085,13 @@ class Tickets extends BaseService
 
         $values = $this->prepareTicketDates($values);
 
-        MilestoneUpdated::dispatch(milestoneId: $milestoneId, projectId: $targetProjectId, legacyHook: __FUNCTION__);
-
         // $params is an array of field names. Exclude id
         $updated = $this->ticketRepository->updateTicket($values, $milestoneId);
 
         if ($updated) {
+            // Only after a successful write: the event means "fired after a milestone was updated".
+            MilestoneUpdated::dispatch(milestoneId: $milestoneId, projectId: $targetProjectId, legacyHook: __FUNCTION__);
+
             $this->dispatchTicketCompletedOnTransition(
                 $milestoneId,
                 $existingMilestone->status,
