@@ -100,6 +100,7 @@ class Install
         30525,
         30526,
         30527,
+        30528,
     ];
 
     /**
@@ -3328,6 +3329,54 @@ class Install
             Log::error('Migration 30527: '.$e->getMessage());
 
             return ['Migration 30527 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30528 — database update for v3.5.28.
+     *
+     * Re-seeds the permission engine on installs whose role tables ended up empty. 30518 marks
+     * itself done once its tables exist, but on at least one cloud workspace the built-in roles
+     * and grants never stuck, leaving zp_roles/zp_role_permissions empty — which makes every
+     * permission check deny, owners included. Re-running the seed there restores the defaults.
+     *
+     * Installs that already have roles AND grants are left untouched, so operator role edits and
+     * revocations survive. The seed itself is additive (upsert roles, grant defaults).
+     *
+     * @return bool|array<int, string> true on success or skip, otherwise the error messages
+     */
+    public function update_sql_30528(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_roles') || ! $schema->hasTable('zp_role_permissions') || ! $schema->hasTable('zp_permissions')) {
+                Log::info('Migration 30528 skipped: permission tables missing (30518 not applied?)');
+
+                return true;
+            }
+
+            $roleCount = $connection->table('zp_roles')->count();
+            $grantCount = $connection->table('zp_role_permissions')->count();
+
+            if ($roleCount > 0 && $grantCount > 0) {
+                return true;
+            }
+
+            Log::warning('Migration 30528: permission tables unseeded (roles: '.$roleCount.', grants: '.$grantCount.') — re-seeding built-in roles.');
+
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30528: '.$e->getMessage());
+
+            return ['Migration 30528 failed: '.$e->getMessage()];
         }
 
         return true;
