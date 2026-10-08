@@ -5,15 +5,8 @@
             <div style='width:50%' class='svgContainer'>
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
             </div>
-            <h1>Define your projects with ease</h1><br />
-            <p>Blueprints are your chance to make sense of all the data. Leantime has a variety of tools and canvases to define your project background via Business Model Canvases, SWOT Analysis or Empathy Maps.<br /><br />
-            If you don't know where to start we suggest you create a "Project Value Canvas". This canvas will answer the most important questions of your project:
-
-                Who is your customer? <br />
-                What problem are you solving?<br />
-                What is your solution?<br />
-                What benefit does your solution offer over your competitors<br />
-            </p>
+            <h1>{{ __('headlines.define_your_projects_with_ease') }}</h1><br />
+            <p>{!! __('text.blueprints_intro') !!}</p>
             <br /><br />
         </div>
     </div>
@@ -22,7 +15,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            <x-global::forms.button tag="a" link="{{ BASE_URL }}/valuecanvas/showCanvas" contentRole="primary">Create a Project Value Canvas</x-global::forms.button><br />
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/valuecanvas/showCanvas" contentRole="primary">{{ __('buttons.create_project_value_canvas') }}</x-global::forms.button><br />
 
         </div>
     </div>

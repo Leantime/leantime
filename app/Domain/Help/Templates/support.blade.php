@@ -9,133 +9,133 @@
 
             <div class="col-md-12" style="font-size:var(--font-size-l);">
                 <center>
-                    <h1 class="fancyLink">Help us build a future where all minds thrive!</h1>
-                    <p>Most productivity tools assume everyone thinks the same way: linearly, with perfect focus, motivated by arbitrary deadlines. Whether you have ADHD and need dopamine hits from completed tasks, are autistic and crave consistent structure, have dyslexia and think spatially, or you're just tired of tools that don't match how your brain actually works—you've probably given up on project management entirely.</p>
+                    <h1 class="fancyLink">{{ __('support.headline_help_us_build') }}</h1>
+                    <p>{{ __('support.intro_text_1') }}</p>
                     <br />
-                    <p>We're building Leantime for minds that work differently. That includes neurodivergent brains, but also anyone who's ever felt like existing tools fight against their natural thinking patterns.</p>
+                    <p>{{ __('support.intro_text_2') }}</p>
                     <br /> <br />
                 </center>
 
-                <h1 class="fancyLink">Why Leantime won't disappear</h1>
+                <h1 class="fancyLink">{{ __('support.headline_why_wont_disappear') }}</h1>
                 <div class="tw-flex tw-w-full tw-justify-evenly tw-gap-5">
                     <div class="tw-flex-1" style="border: 1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius);">
-                        <strong style="margin-bottom:5px; display:block;">6+ years</strong>
-                        With consistent full time development since 2021.
+                        <strong style="margin-bottom:5px; display:block;">{{ __('support.years_label') }}</strong>
+                        {{ __('support.years_desc') }}
                     </div>
                     <div class="tw-flex-1" style="border: 1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius);">
-                        <strong style="margin-bottom:5px; display:block;">Self-funded/Community-funded</strong>
-                        No VC pressure to pivot or monetize aggressively
+                        <strong style="margin-bottom:5px; display:block;">{{ __('support.funding_model_label') }}</strong>
+                        {{ __('support.funding_model_desc') }}
                     </div>
                     <div class="tw-flex-1" style="border: 1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius);">
-                        <strong style="margin-bottom:5px; display:block;">AGPL-3.0</strong>
-                        Core will always remain open source by license
+                        <strong style="margin-bottom:5px; display:block;">{{ __('support.license_label') }}</strong>
+                        {{ __('support.license_desc') }}
                     </div>
                 </div>
 
                 <br /><br /><br />
-                <h1 class="fancyLink">How can you help?</h1>
+                <h1 class="fancyLink">{{ __('support.headline_how_can_you_help') }}</h1>
                 <div class="tw-flex tw-w-full tw-justify-evenly tw-gap-5">
                     <div class="tw-flex-1" style="background:var(--header-gradient); color:var(--main-titles-color); padding:15px; border-radius:var(--box-radius);">
-                        <strong style="margin-bottom:5px;  display:block; color:var(--main-titles-color);">Direct Sponsorship through Github</strong>
-                        Fund open source development that benefits everyone<br /><br />
-                        <x-global::forms.button tag="a" link="https://github.com/sponsors/Leantime" contentRole="primary" target="_blank" style="background:var(--main-titles-color); color:var(--accent1);">Sponsor Leantime</x-global::forms.button>
+                        <strong style="margin-bottom:5px;  display:block; color:var(--main-titles-color);">{{ __('support.direct_sponsorship_label') }}</strong>
+                        {{ __('support.direct_sponsorship_desc') }}<br /><br />
+                        <x-global::forms.button tag="a" link="https://github.com/sponsors/Leantime" contentRole="primary" target="_blank" style="background:var(--main-titles-color); color:var(--accent1);">{{ __('support.sponsor_button') }}</x-global::forms.button>
                     </div>
                     <div class="tw-flex-1" style="background:var(--header-gradient); color:var(--main-titles-color); padding:15px; border-radius:var(--box-radius);">
-                        <strong style="margin-bottom:5px;  display:block; color:var(--main-titles-color);">Purchase Plugins</strong>
-                        Get advanced features while supporting development<br /><br />
-                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/plugins/marketplace" contentRole="primary" style="background:var(--main-titles-color); color:var(--accent1);" target="_blank">Browse Marketplace</x-global::forms.button>
+                        <strong style="margin-bottom:5px;  display:block; color:var(--main-titles-color);">{{ __('support.purchase_plugins_label') }}</strong>
+                        {{ __('support.purchase_plugins_desc') }}<br /><br />
+                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/plugins/marketplace" contentRole="primary" style="background:var(--main-titles-color); color:var(--accent1);" target="_blank">{{ __('support.browse_marketplace_button') }}</x-global::forms.button>
                     </div>
                 </div>
 
                 <br /><br /><br />
-                <h1 class="fancyLink">How does your money help?</h1>
+                <h1 class="fancyLink">{{ __('support.headline_how_money_helps') }}</h1>
                 <div class="tw-flex tw-w-full tw-justify-evenly tw-gap-5">
                     <div class="tw-flex-1" >
                         <div style="background:var(--dropdown-link-hover-bg); padding:15px; border-radius:var(--box-radius);">
-                            <small>Funds from</small><br /><strong style="margin-bottom:5px; display:block;">Github Sponsorships</strong>
+                            <small>{{ __('support.funds_from_label') }}</small><br /><strong style="margin-bottom:5px; display:block;">{{ __('support.github_sponsorships_label') }}</strong>
                             <ul style="margin-left:15px;">
-                                <li>New open source features</li>
-                                <li>Accessibility improvements</li>
-                                <li>Community-requested enhancements</li>
-                                <li>Translation support</li>
+                                <li>{{ __('support.github_benefit_1') }}</li>
+                                <li>{{ __('support.github_benefit_2') }}</li>
+                                <li>{{ __('support.github_benefit_3') }}</li>
+                                <li>{{ __('support.github_benefit_4') }}</li>
                             </ul>
                         </div>
                         <div style="padding:5px 10px;">
-                            <strong><em>Recent impact:<br/>Your sponsorships funded our new docker image improvements</em></strong>
+                            <strong><em>{{ __('support.recent_impact_label') }}<br/>{{ __('support.github_impact_text') }}</em></strong>
                         </div>
                     </div>
                     <div class="tw-flex-1" >
                         <div style="background:var(--dropdown-link-hover-bg); padding:15px; border-radius:var(--box-radius);">
-                            <small>Funds from</small><br /> <strong style="margin-bottom:5px;  display:block;">Plugin Sales</strong>
+                            <small>{{ __('support.funds_from_label') }}</small><br /> <strong style="margin-bottom:5px;  display:block;">{{ __('support.plugin_sales_label') }}</strong>
                             <ul style="margin-left:15px;">
-                                <li>Bug fixes and stability</li>
-                                <li>Plugin development & maintenance</li>
-                                <li>Testing and quality assurance</li>
-                                <li>Documentation improvements</li>
+                                <li>{{ __('support.plugin_benefit_1') }}</li>
+                                <li>{{ __('support.plugin_benefit_2') }}</li>
+                                <li>{{ __('support.plugin_benefit_3') }}</li>
+                                <li>{{ __('support.plugin_benefit_4') }}</li>
                             </ul>
                         </div>
                         <div style="padding:5px 10px;">
-                            <strong><em>Recent impact:<br/>Funded the My Work dashboard Updates</em></strong>
+                            <strong><em>{{ __('support.recent_impact_label') }}<br/>{{ __('support.plugin_impact_text') }}</em></strong>
                         </div>
                     </div>
                     <div class="tw-flex-1" >
                         <div style="background:var(--dropdown-link-hover-bg); padding:15px; border-radius:var(--box-radius);">
-                            <small>Funds from</small><br /><strong style="margin-bottom:5px;  display:block;">SaaS Revenue</strong>
+                            <small>{{ __('support.funds_from_label') }}</small><br /><strong style="margin-bottom:5px;  display:block;">{{ __('support.saas_revenue_label') }}</strong>
                             <ul style="margin-left:15px;">
-                                <li>Server infrastructure</li>
-                                <li>Website hosting</li>
-                                <li>Development tools</li>
-                                <li>Administrative costs</li>
+                                <li>{{ __('support.saas_benefit_1') }}</li>
+                                <li>{{ __('support.saas_benefit_2') }}</li>
+                                <li>{{ __('support.saas_benefit_3') }}</li>
+                                <li>{{ __('support.saas_benefit_4') }}</li>
                             </ul>
                         </div>
                         <div style="padding:5px 10px;">
-                            <strong><em>Recent impact:<br/>Covers our server cost to host website, cloud and marketplace</em></strong>
+                            <strong><em>{{ __('support.recent_impact_label') }}<br/>{{ __('support.saas_impact_text') }}</em></strong>
                         </div>
                     </div>
                 </div>
 
                 <br /><br /><br />
-                <h1 class="fancyLink">Your impact in numbers</h1>
+                <h1 class="fancyLink">{{ __('support.headline_impact_numbers') }}</h1>
                 <div class="tw-flex tw-w-full tw-justify-center tw-gap-4">
                     <div class="tw-text-center tw-flex-1" style="background:#D6F3FF; padding:15px; border-radius:var(--box-radius); ">
                         <span style="color:var(--accent1); font-weight:bold; font-size:var(--font-size-xl);">50,000+</span>
-                        <p>Installations you're supporting</p>
+                        <p>{{ __('support.installations_label') }}</p>
                     </div>
                     <div class="tw-text-center tw-flex-1" style="background:#EBF9FF; padding:15px; border-radius:var(--box-radius); ">
                         <span style="color:var(--accent1); font-weight:bold; font-size:var(--font-size-xl);">200+</span>
-                        <p>Closed Bugs in 2024</p>
+                        <p>{{ __('support.bugs_closed_label') }}</p>
                     </div>
                     <div class="tw-text-center tw-flex-1" style="background:#FEEBF3; padding:15px; border-radius:var(--box-radius); ">
                         <span style="color:var(--accent1); font-weight:bold; font-size:var(--font-size-xl);">40+</span>
-                        <p>Languages translated by the community</p>
+                        <p>{{ __('support.languages_translated_label') }}</p>
                     </div>
                     <div class="tw-text-center tw-flex-1" style="background:#FBFDED; padding:15px; border-radius:var(--box-radius); ">
                         <span style="color:var(--accent1); font-weight:bold; font-size:var(--font-size-xl);">100%</span>
-                        <p>Of sponsorship goes to development</p>
+                        <p>{{ __('support.sponsorship_dev_label') }}</p>
                     </div>
                 </div>
 
                 <br /><br /><br />
 
 
-                <h1 class="fancyLink">Who's behind Leantime?</h1>
+                <h1 class="fancyLink">{{ __('support.headline_whos_behind') }}</h1>
 
                 <div class="tw-flex tw-w-full tw-justify-evenly tw-gap-5">
                     <div class="tw-flex-1" style="background:var(--dropdown-link-hover-bg); padding:15px; border-radius:var(--box-radius);">
                         <img src="{{ BASE_URL }}/dist/images/marcel.png" style="float:right; width:100px; border:none; box-shadow:none; margin-left:10px; margin-bottom:10px;"/>
-                        <p><strong style="margin-bottom:5px;  display:block;">👋 I'm Marcel</strong>German immigrant, dad to an autistic daughter, and living with ADHD myself.</p>
+                        <p><strong style="margin-bottom:5px;  display:block;">{{ __('support.marcel_name') }}</strong>{{ __('support.marcel_tagline') }}</p>
                         <br />
-                        <p>Traditional project management tools never clicked for me. They felt like they were built by neurotypical minds for neurotypical minds. When I was freelancing and struggling to keep client projects organized, I started building something that worked with my brain instead of against it.</p>
+                        <p>{{ __('support.marcel_bio_1') }}</p>
 
-                        <p>What started as a personal solution became Leantime when I realized millions of others needed the same thing.</p><br />
+                        <p>{{ __('support.marcel_bio_2') }}</p><br />
                         <a href="https://www.linkedin.com/in/marcelfolaron/" target="_blank" ><i class="fa fa-linkedin"></i></a>
                     </div>
 
                     <div class="tw-flex-1" style="background:var(--dropdown-link-hover-bg); padding:15px; border-radius:var(--box-radius);">
                         <img src="{{ BASE_URL }}/dist/images/gloria.png" style="float:right; width:100px; border:none; box-shadow:none; margin-left:10px; margin-bottom:10px;"/>
-                        <p><strong style="margin-bottom:5px;  display:block;">👋 And I'm Gloria</strong>Former ER nurse turned product manager, first-generation Hispanic entrepreneur.</p>
-                        <br /><p>I spent years in high-pressure medical environments where organization literally saves lives. But when I started my own business, traditional project tools felt overwhelming and disconnected from how I actually think and work.</p>
-                        <p>My background in behavioral science and motivation research drives how we build features that don't just organize tasks—they help you actually want to complete them.</p><br />
+                        <p><strong style="margin-bottom:5px;  display:block;">{{ __('support.gloria_name') }}</strong>{{ __('support.gloria_tagline') }}</p>
+                        <br /><p>{{ __('support.gloria_bio_1') }}</p>
+                        <p>{{ __('support.gloria_bio_2') }}</p><br />
                         <a href="https://www.linkedin.com/in/gloriafolaron/" target="_blank" ><i class="fa fa-linkedin"></i></a>
                     </div>
                 </div>
@@ -143,11 +143,11 @@
                 <br /><br />
                 <div>
                     <center>
-                        <p>We can create a world where no one has to fight their tools to do great work. Your sponsorship funds a future where software adapts to human diversity, not the other way around.</p><br /> <br />
-                        <h1 class="fancyLink">Ready to make a direct impact?</h1><p>Every contribution—from $1 to $100—goes directly to making Leantime better for everyone.</p>
+                        <p>{{ __('support.closing_text') }}</p><br /> <br />
+                        <h1 class="fancyLink">{{ __('support.headline_ready_to_impact') }}</h1><p>{{ __('support.contribution_text') }}</p>
                         <br />
                         <div class="tw-text-center">
-                            <x-global::forms.button tag="a" contentRole="primary" class="btn-lg" link="https://github.com/sponsors/Leantime" target="_blank" rel="noopener noreferrer">Start Sponsoring Today</x-global::forms.button>
+                            <x-global::forms.button tag="a" contentRole="primary" class="btn-lg" link="https://github.com/sponsors/Leantime" target="_blank" rel="noopener noreferrer">{{ __('support.start_sponsoring_button') }}</x-global::forms.button>
                         </div>
                     </center>
                 </div>
