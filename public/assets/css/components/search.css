@@ -1,0 +1,408 @@
+/* =========================================================================
+   Global search — header bar, quick-results dropdown, results page
+   ------------------------------------------------------------------------- */
+
+/* --- Header bar (shared by all widths) --------------------------------- */
+
+.headmenu > li.globalSearch {
+    position: relative;
+}
+
+.headmenu > li.globalSearch > a.globalSearch__toggle {
+    display: none;
+}
+
+.globalSearch__form {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    margin: 0;
+}
+
+.globalSearch__icon {
+    position: absolute;
+    z-index: 1;
+    left: 13px;
+    color: var(--header-nav-link-color);
+    opacity: 0.75;
+    font-size: var(--font-size-s);
+    pointer-events: none;
+}
+
+.globalSearch__form input.globalSearch__input,
+.globalSearch__form input.globalSearch__input:focus {
+    width: 100%;
+    height: 34px;
+    margin: 0;
+    padding: 0 60px 0 36px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 17px;
+    background: rgba(255, 255, 255, 0.16);
+    color: var(--header-nav-link-color);
+    font-family: var(--primary-font-family);
+    font-size: var(--base-font-size);
+    line-height: 32px;
+    box-shadow: none;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.globalSearch__form input.globalSearch__input::placeholder {
+    color: var(--header-nav-link-color);
+    opacity: 0.7;
+}
+
+.globalSearch__form input.globalSearch__input:focus {
+    background: rgba(255, 255, 255, 0.26);
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+.globalSearch__form input.globalSearch__input::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+.globalSearch__kbd {
+    position: absolute;
+    z-index: 1;
+    right: 12px;
+    padding: 1px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 5px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--header-nav-link-color);
+    font-family: var(--primary-font-family);
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+.globalSearch__form:focus-within .globalSearch__kbd {
+    display: none;
+}
+
+.globalSearch__spinner {
+    position: absolute;
+    z-index: 1;
+    right: 14px;
+    color: var(--header-nav-link-color);
+    font-size: var(--font-size-s);
+    pointer-events: none;
+}
+
+/* --- Quick results dropdown ------------------------------------------- */
+
+.headmenu > li.globalSearch > .globalSearch__results {
+    display: none;
+    position: absolute;
+    top: 46px;
+    left: 0;
+    right: 0;
+    min-width: 0;
+    max-height: min(70vh, 560px);
+    overflow-y: auto;
+    padding: 6px 0;
+    text-align: left;
+    line-height: 1.4;
+}
+
+.headmenu > li.globalSearch.open > .globalSearch__results {
+    display: block;
+}
+
+.headmenu > li.globalSearch > .dropdown-menu::after {
+    left: 24px;
+    border-bottom-color: var(--secondary-background);
+}
+
+.globalSearch__hint,
+.searchPage__empty {
+    padding: 12px 16px;
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-s);
+}
+
+.globalSearch__group + .globalSearch__group {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid var(--main-border-color);
+}
+
+.globalSearch__groupTitle {
+    padding: 6px 16px 2px;
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.globalSearch__groupTitle > span {
+    margin-right: 6px;
+}
+
+.globalSearch__footer {
+    margin-top: 4px;
+    border-top: 1px solid var(--main-border-color);
+    color: var(--accent1);
+    font-size: var(--font-size-s);
+}
+
+/* --- Result rows (dropdown + page) ------------------------------------- */
+
+.searchResult {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 7px 16px;
+    color: var(--primary-font-color);
+    text-decoration: none;
+    line-height: 1.35;
+}
+
+.searchResult:hover,
+.searchResult:focus,
+.searchResult.active {
+    background: var(--light-layered-background);
+    color: var(--primary-font-color);
+    text-decoration: none;
+    outline: none;
+}
+
+.searchResult__icon {
+    flex: 0 0 18px;
+    margin-top: 2px;
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-s);
+    text-align: center;
+}
+
+.searchResult__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.searchResult__title {
+    overflow: hidden;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.searchResult__snippet {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-s);
+}
+
+.searchResult--compact .searchResult__snippet {
+    -webkit-line-clamp: 1;
+}
+
+.searchResult__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-xs);
+}
+
+.searchResult__badge {
+    padding: 0 6px;
+    border-radius: var(--box-radius-small);
+    background: var(--light-layered-background);
+}
+
+.searchResult mark {
+    padding: 0 1px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--accent1) 18%, transparent);
+    color: inherit;
+}
+
+/* --- Results page ------------------------------------------------------ */
+
+.searchPage__form {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    max-width: 640px;
+    margin: 0 0 24px;
+}
+
+.searchPage__formIcon {
+    position: absolute;
+    z-index: 1;
+    left: 14px;
+    color: var(--secondary-font-color);
+    pointer-events: none;
+}
+
+.searchPage__form input.searchPage__input,
+.searchPage__form input.searchPage__input:focus {
+    flex: 1;
+    height: 38px;
+    margin: 0;
+    padding: 0 14px 0 38px;
+    font-size: var(--font-size-l);
+}
+
+.searchPage__panels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 992px) {
+    .searchPage__panels {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.searchPage__panelTitle {
+    margin: 0 0 6px;
+    padding: 0 16px;
+}
+
+.searchPage__panelTitle > span {
+    margin-right: 8px;
+    color: var(--secondary-font-color);
+}
+
+.searchPage__list {
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--box-radius);
+    overflow: hidden;
+}
+
+.searchPage__list .searchResult + .searchResult {
+    border-top: 1px solid var(--main-border-color);
+}
+
+.searchPage__more {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-top: 1px solid var(--main-border-color);
+    text-align: center;
+}
+
+/* --- Desktop: centred between the two header lists --------------------- */
+
+@media (min-width: 1201px) {
+    .headerinner {
+        position: relative;
+    }
+
+    .headmenu > li.globalSearch {
+        position: absolute;
+        top: 0;
+        /* Fallback until searchController.js measures the two lists. */
+        left: 50%;
+        right: auto;
+        width: 420px;
+        margin-left: -210px;
+        float: none;
+        display: block;
+        z-index: 1;
+    }
+
+    .headmenu > li.globalSearch[style*="left"] {
+        width: auto;
+        margin-left: 0;
+    }
+
+    .headmenu > li.globalSearch > .globalSearch__form {
+        max-width: 520px;
+        margin: 0 auto;
+    }
+
+    .headmenu > li.globalSearch > .globalSearch__results {
+        left: 50%;
+        right: auto;
+        width: min(520px, 100%);
+        transform: translateX(-50%);
+    }
+}
+
+/* --- Below desktop: icon in the right list, panel under the header ------ */
+
+@media (max-width: 1200px) {
+    .headmenu > li.globalSearch > a.globalSearch__toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+        min-width: 40px;
+    }
+
+    .headmenu > li.globalSearch > .globalSearch__form {
+        display: none;
+    }
+
+    .headmenu > li.globalSearch.expanded > .globalSearch__form {
+        display: flex;
+        position: fixed;
+        top: 50px;
+        left: 0;
+        right: 0;
+        z-index: 95;
+        height: 56px;
+        padding: 0 10px;
+        background: var(--secondary-background);
+        box-shadow: var(--regular-shadow);
+    }
+
+    .headmenu > li.globalSearch.expanded .globalSearch__icon,
+    .headmenu > li.globalSearch.expanded .globalSearch__spinner {
+        color: var(--secondary-font-color);
+    }
+
+    .headmenu > li.globalSearch.expanded .globalSearch__icon {
+        left: 24px;
+    }
+
+    .headmenu > li.globalSearch.expanded .globalSearch__form input.globalSearch__input,
+    .headmenu > li.globalSearch.expanded .globalSearch__form input.globalSearch__input:focus {
+        height: 38px;
+        padding-right: 14px;
+        border-color: var(--main-border-color);
+        background: var(--primary-background);
+        color: var(--primary-font-color);
+    }
+
+    .headmenu > li.globalSearch.expanded .globalSearch__form input.globalSearch__input::placeholder {
+        color: var(--secondary-font-color);
+    }
+
+    .headmenu > li.globalSearch .globalSearch__kbd {
+        display: none;
+    }
+
+    /* Same fixed full-width panel mobile.css gives the other header dropdowns, but
+       below the expanded input instead of directly under the header. */
+    .header .headmenu > li.globalSearch > .globalSearch__results {
+        position: fixed;
+        top: 106px;
+        left: 5px;
+        right: 5px;
+        width: auto;
+        max-width: calc(100vw - 10px);
+        max-height: calc(100vh - 116px);
+    }
+
+    .headmenu > li.globalSearch > .dropdown-menu::after {
+        display: none;
+    }
+}

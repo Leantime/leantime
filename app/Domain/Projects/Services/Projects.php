@@ -1220,6 +1220,30 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
+     * Ids of the projects a user can access, for scoping other queries.
+     *
+     * Same access rule as getProjectsUserHasAccessTo() (direct assignment, public project,
+     * client-shared project, or admin/owner) but returns only ids and, by default, only open
+     * projects. Non-admin callers are always pinned to the session user.
+     *
+     * @param  int|null  $userId  Optional. If omitted or 0, resolves to the session user.
+     * @param  string  $projectStatus  'open' (default), 'closed' or 'all'.
+     * @return int[] Accessible project ids; empty when the user can access nothing.
+     *
+     * @api
+     */
+    public function getAccessibleProjectIds(?int $userId = null, string $projectStatus = 'open'): array
+    {
+        $userId = $this->resolveScopedUserId($userId);
+
+        if ($userId === 0) {
+            return [];
+        }
+
+        return $this->projectRepository->getAccessibleProjectIds($userId, $projectStatus);
+    }
+
+    /**
      * Gets the projects that a user has access to.
      *
      * The $userId parameter is preserved for backwards compatibility with

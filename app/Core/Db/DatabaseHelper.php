@@ -276,6 +276,22 @@ class DatabaseHelper
     }
 
     /**
+     * Case-insensitive LIKE operator for the current driver.
+     *
+     * MySQL compares with the column collation (utf8mb4_unicode_ci, so LIKE is already
+     * case-insensitive); PostgreSQL's LIKE is case-sensitive and needs ILIKE. The returned
+     * operator can be passed straight to the query builder's where() or used in raw SQL.
+     *
+     * @return string 'LIKE' or 'ILIKE'
+     *
+     * @api
+     */
+    public function likeOperator(): string
+    {
+        return $this->db->getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+    }
+
+    /**
      * Generate cross-database SQL for current timestamp
      *
      * Generates the appropriate SQL for the current date and time:
