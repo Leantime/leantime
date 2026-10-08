@@ -114,6 +114,20 @@ class UpdateSql30527Test extends TestCase
     }
 
     /**
+     * The db-version writes up to and including 3.5.27. Migrations added after 30527 also run in
+     * updateDB() and record their own versions; they are not what these tests are about.
+     *
+     * @return array<int, array{0: string, 1: string}>
+     */
+    private function savedVersionsThrough3527(): array
+    {
+        return array_values(array_filter(
+            $this->savedSettings,
+            fn (array $setting) => version_compare($setting[1], '3.5.27', '<=')
+        ));
+    }
+
+    /**
      * @return array<int, array<int, string>> the column lists of zp_queue's indexes
      */
     private function queueIndexColumns(Connection $connection): array
@@ -177,7 +191,7 @@ class UpdateSql30527Test extends TestCase
 
         $this->assertSame(true, $this->updateFrom3526($connection));
 
-        $this->assertSame([['db-version', '3.5.27']], $this->savedSettings, 'Only the one new migration runs, and its version is recorded');
+        $this->assertSame([['db-version', '3.5.27']], $this->savedVersionsThrough3527(), 'Only the one new migration runs, and its version is recorded');
         $this->assertTrue($connection->getSchemaBuilder()->hasIndex('zp_queue', 'idx_queue_channel_thedate_msghash'));
         $this->assertSame(['a-hash', 'b-hash'], $connection->table('zp_queue')->orderBy('msghash')->pluck('msghash')->all(), 'Queued messages survive the migration');
         $this->assertTheBatchReadWalksTheChannelIndex($connection);
@@ -192,7 +206,7 @@ class UpdateSql30527Test extends TestCase
         $this->assertSame(true, $this->updateFrom3526($connection));
         $this->assertSame(true, $this->updateFrom3526($connection));
 
-        $this->assertSame([['db-version', '3.5.27'], ['db-version', '3.5.27']], $this->savedSettings);
+        $this->assertSame([['db-version', '3.5.27'], ['db-version', '3.5.27']], $this->savedVersionsThrough3527());
         $channelIndexes = array_filter($this->queueIndexColumns($connection), fn (array $columns) => $columns === ['channel', 'thedate', 'msghash']);
         $this->assertCount(1, $channelIndexes, 'The rerun finds the index and adds no second one');
         $this->assertSame(2, $connection->table('zp_queue')->count());
@@ -206,7 +220,7 @@ class UpdateSql30527Test extends TestCase
 
         $this->assertSame(true, $this->updateFrom3526($connection));
 
-        $this->assertSame([['db-version', '3.5.27']], $this->savedSettings);
+        $this->assertSame([['db-version', '3.5.27']], $this->savedVersionsThrough3527());
         $this->assertFalse($connection->getSchemaBuilder()->hasIndex('zp_queue', 'idx_queue_channel_thedate_msghash'));
         $this->assertTrue($connection->getSchemaBuilder()->hasIndex('zp_queue', 'dba_queue_batch'));
     }
@@ -223,7 +237,7 @@ class UpdateSql30527Test extends TestCase
 
         $this->assertIsArray($result);
         $this->assertStringStartsWith('Migration 30527 failed: ', $result[0]);
-        $this->assertSame([], $this->savedSettings, 'db-version is not advanced past a failed migration');
+        $this->assertSame([], $this->savedVersionsThrough3527(), 'db-version is not advanced past a failed migration');
         $this->assertSame(2, $connection->table('zp_queue')->count());
     }
 
@@ -233,7 +247,7 @@ class UpdateSql30527Test extends TestCase
 
         $this->assertSame(true, $this->updateFrom3526($connection));
 
-        $this->assertSame([['db-version', '3.5.27']], $this->savedSettings);
+        $this->assertSame([['db-version', '3.5.27']], $this->savedVersionsThrough3527());
         $this->assertFalse($connection->getSchemaBuilder()->hasTable('zp_queue'), 'The migration adds an index; it does not create the table');
     }
 
@@ -261,7 +275,7 @@ class UpdateSql30527Test extends TestCase
 
         $this->assertSame(true, $this->updateFrom3526($connection));
 
-        $this->assertSame([['db-version', '3.5.27']], $this->savedSettings);
+        $this->assertSame([['db-version', '3.5.27']], $this->savedVersionsThrough3527());
         $this->assertCount(1, $connection->informationSchemaReads);
         $this->assertSame(['leantime', 'lt_zp_queue'], $connection->informationSchemaReads[0]['bindings'], 'Schema and prefixed table name are bound, not interpolated');
         $this->assertStringNotContainsString('zp_queue', $connection->informationSchemaReads[0]['query']);
@@ -301,7 +315,7 @@ class UpdateSql30527Test extends TestCase
 
         $this->assertSame(true, $this->updateFrom3526($connection));
 
-        $this->assertSame([['db-version', '3.5.27']], $this->savedSettings);
+        $this->assertSame([['db-version', '3.5.27']], $this->savedVersionsThrough3527());
         $this->assertSame(
             ['alter table "lt_zp_queue" engine = InnoDB, row_format = dynamic', 'create index "idx_queue_channel_thedate_msghash" on "lt_zp_queue" ("channel", "thedate", "msghash")'],
             $connection->statementsRun,
@@ -332,7 +346,7 @@ class UpdateSql30527Test extends TestCase
 
         $this->assertSame(true, $this->updateFrom3526($connection));
 
-        $this->assertSame([['db-version', '3.5.27']], $this->savedSettings);
+        $this->assertSame([['db-version', '3.5.27']], $this->savedVersionsThrough3527());
         $this->assertCount(1, $connection->informationSchemaReads, 'The row format is looked up');
         $this->assertSame([], $this->rowFormatChanges($connection), 'The table is not rebuilt');
         $this->assertTrue($connection->getSchemaBuilder()->hasIndex('zp_queue', 'idx_queue_channel_thedate_msghash'));
@@ -389,7 +403,7 @@ class UpdateSql30527Test extends TestCase
         $this->assertIsArray($result);
         $this->assertStringStartsWith('Migration 30527 failed: ', $result[0]);
         $this->assertStringContainsString('row_format = dynamic', $result[0], 'The error names the statement that failed');
-        $this->assertSame([], $this->savedSettings, 'db-version is not advanced past a failed migration');
+        $this->assertSame([], $this->savedVersionsThrough3527(), 'db-version is not advanced past a failed migration');
         $this->assertFalse($connection->getSchemaBuilder()->hasIndex('zp_queue', 'idx_queue_channel_thedate_msghash'), 'No index is attempted on a table that could not hold it');
         $this->assertSame(2, $connection->table('zp_queue')->count());
     }

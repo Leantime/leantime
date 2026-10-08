@@ -113,8 +113,8 @@ class PermissionService
     /** Forget the cached grant map + vocabulary meta. Call after any role/permission write. */
     public function flushCache(): void
     {
-        Cache::store('installation')->forget(self::MAP_CACHE_KEY);
-        Cache::store('installation')->forget(self::META_CACHE_KEY);
+        Cache::store()->forget(self::MAP_CACHE_KEY);
+        Cache::store()->forget(self::META_CACHE_KEY);
     }
 
     /**
@@ -129,14 +129,35 @@ class PermissionService
     }
 
     /**
-     * The role -> [permissionKey, ...] grant map, cached on the shared installation store
-     * (file/Redis) so all workers share it; busted via {@see flushCache()}.
+     * The role -> [permissionKey, ...] grant map, cached on the default (instance-scoped) store;
+     * busted via {@see flushCache()}.
+     *
+     * Grants live in each instance's own database, so the map must never sit on the shared
+     * installation store: on a multi-tenant host that one key would serve every tenant whatever
+     * grant map was rebuilt last. An empty map is not cached either — it means the role tables
+     * are unseeded (every check denies), and caching it would pin that state until the next flush.
      *
      * @return array<string, array<int, string>>
      */
     private function map(): array
     {
-        return Cache::store('installation')->rememberForever(self::MAP_CACHE_KEY, fn () => $this->repo->getRolePermissionMap());
+        $cachedMap = Cache::store()->get(self::MAP_CACHE_KEY);
+
+        if (is_array($cachedMap)) {
+            return $cachedMap;
+        }
+
+        $map = $this->repo->getRolePermissionMap();
+
+        if ($map === []) {
+            Log::error('Permission grant map is empty — zp_roles/zp_role_permissions are unseeded, so every permission check denies. Run `php bin/leantime permissions:sync --seed`.');
+
+            return $map;
+        }
+
+        Cache::store()->forever(self::MAP_CACHE_KEY, $map);
+
+        return $map;
     }
 
     /**
@@ -146,7 +167,7 @@ class PermissionService
      */
     private function meta(): array
     {
-        return Cache::store('installation')->rememberForever(self::META_CACHE_KEY, function () {
+        return Cache::store()->rememberForever(self::META_CACHE_KEY, function () {
             $meta = [];
             foreach ($this->repo->getAllPermissions() as $permission) {
                 $meta[$permission['permissionKey']] = ['projectScoped' => (bool) $permission['isProjectScoped']];
