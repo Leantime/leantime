@@ -5940,6 +5940,11 @@ class Tickets extends BaseService
                 continue;
             }
 
+            // Always the canonical due-date rule (#3863), regardless of the widget's
+            // current $groupBy — a ticket grouped by project/priority must still be
+            // able to show an overdue signal in the due-date cell.
+            $row['isOverdue'] = $this->getGroupKeyForTicket($row, 'time') === 'overdue';
+
             $groupKey = $this->getGroupKeyForTicket($row, $groupBy);
             $groupLabel = $this->getGroupLabelForTicket($row, $groupBy, $groupKey);
 

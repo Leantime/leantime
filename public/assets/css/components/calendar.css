@@ -456,21 +456,41 @@
     box-shadow: var(--regular-shadow);
 }
 
-/* Dashboard calendar widget, Month view (#2333): FullCalendar's multiMonth view
-   sizes each month from an aspect ratio and writes that height inline on the
-   table, so a single month left the bottom half of the widget empty. Stretch
-   the one month to the widget's height instead; rows still grow (and the view
-   scrolls) when a day holds more events than fit. */
-.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-month {
+/* Dashboard calendar widget, Month view (#2333, #3863): FullCalendar's
+   multiMonth view sizes each month from an aspect ratio and writes that
+   height inline on the table, so a single month left the bottom half of the
+   widget empty. Stretch the one month to the widget's height instead; rows
+   still grow (and the view scrolls) when a day holds more events than fit.
+   FullCalendar picks fc-multimonth-singlecol or fc-multimonth-multicol for
+   this view depending on how much width the widget actually has, so both
+   variants need the fix (verified on the dev widget: it renders multicol at
+   the widget's own width, not singlecol, which is why a singlecol-only rule
+   had no visible effect here). */
+.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-month,
+.minCalendarWrapper .fc-multimonth-multicol .fc-multimonth-month {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-daygrid {
+.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-daygrid,
+.minCalendarWrapper .fc-multimonth-multicol .fc-multimonth-daygrid {
     flex: 1 1 auto;
 }
 
-.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-daygrid-table {
+.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-daygrid-table,
+.minCalendarWrapper .fc-multimonth-multicol .fc-multimonth-daygrid-table {
     height: 100% !important;
+}
+
+/* The #2333 fix above stretches the multiMonth table to the widget height,
+   but the percentage/flex-grow chain between the view harness and the
+   actual day-grid table does not fully resolve to a definite height, so
+   every week row still collapses to just the day-number height and every
+   event (even a single one) is hidden behind "+N more". Give each day cell
+   an explicit pixel floor instead of relying on that chain, so there is
+   always room for a couple of events before the overflow link kicks in. */
+.minCalendarWrapper .fc-multimonth-singlecol td.fc-daygrid-day,
+.minCalendarWrapper .fc-multimonth-multicol td.fc-daygrid-day {
+    min-height: 90px !important;
 }

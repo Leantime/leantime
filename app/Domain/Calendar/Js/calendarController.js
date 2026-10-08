@@ -269,6 +269,14 @@ leantime.calendarController = (function () {
                     duration: {months: 1},
                     multiMonthTitleFormat: {month: 'long', year: 'numeric'},
                     dayHeaderFormat: {weekday: 'short'},
+                    // #3863: with the calendar's non-'auto' height, FullCalendar implicitly
+                    // caps events per day and collapses the rest behind "+N more", based on
+                    // its own internal height estimate rather than this view's actual CSS
+                    // (confirmed: our min-height fix in calendar.css grew the day cells, but
+                    // events stayed capped). Disable that cap for this view only so every
+                    // event renders directly in the cell, which calendar.css already sizes
+                    // to have room for a few.
+                    dayMaxEvents: false,
                 },
                 timeGridDay: {
                     dayHeaders: false
