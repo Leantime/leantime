@@ -15,6 +15,11 @@ final class SearchQuery
     public const MAX_LIMIT = 50;
 
     /**
+     * InnoDB's default innodb_ft_min_token_size; shorter words are not in the index.
+     */
+    public const FULLTEXT_MIN_TOKEN_LENGTH = 3;
+
+    /**
      * The whitespace-normalized term as the user typed it.
      */
     public readonly string $term;
@@ -109,6 +114,38 @@ final class SearchQuery
     public function prefixPattern(string $token): string
     {
         return self::escapeLike($token).'%';
+    }
+
+    /**
+     * Tokens usable in a boolean-mode full-text query, or null when the query must use LIKE:
+     * boolean operator characters are stripped, and any token shorter than the index minimum
+     * afterwards cannot be matched by the index at all.
+     *
+     * @return string[]|null
+     */
+    public function fullTextTokens(): ?array
+    {
+        $clean = [];
+
+        foreach ($this->tokens as $token) {
+            $stripped = (string) preg_replace('/[+\-<>()~*"@]+/u', '', $token);
+
+            if (mb_strlen($stripped) < self::FULLTEXT_MIN_TOKEN_LENGTH) {
+                return null;
+            }
+
+            $clean[] = $stripped;
+        }
+
+        return $clean === [] ? null : $clean;
+    }
+
+    /**
+     * Boolean-mode search string: every token required, matched as a prefix ("+sprint* +rele*").
+     */
+    public function booleanModeQuery(): string
+    {
+        return implode(' ', array_map(fn (string $token) => '+'.$token.'*', $this->fullTextTokens() ?? []));
     }
 
     /**

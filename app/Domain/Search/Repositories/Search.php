@@ -5,6 +5,8 @@ namespace Leantime\Domain\Search\Repositories;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Search\Models\SearchQuery;
@@ -13,14 +15,33 @@ use Leantime\Domain\Search\Models\SearchQuery;
  * Narrow, purpose-built queries for global search: one per entity type, selecting only
  * what a result row needs, always limited, and all applying the same project scope.
  *
- * Keeping every search query in this file is deliberate. The access predicate cannot drift
- * between entity types, and swapping LIKE for a full-text index later is a one-file change.
+ * Keeping every search query in this file is deliberate: the access predicate cannot drift
+ * between entity types and the matching strategy lives in one place.
+ *
+ * Text matching has two paths (see applyTextMatch):
+ *  - Full-text (MySQL/MariaDB): boolean-mode MATCH ... AGAINST on the indexed columns,
+ *    ordered by relevance so InnoDB can stop at the LIMIT. Measured on 500k to-dos this is
+ *    1–100 ms where a LIKE scan took ~600 ms. Used when the driver supports it and every
+ *    token is long enough for the index; falls back to LIKE if the index is missing.
+ *  - LIKE (other drivers, short tokens): every token must match one of the columns; title
+ *    prefix hits first, then title hits, then newest first.
  *
  * Shared filters every query honours (see applyCommonFilters): a project, a modified-date
  * range (UTC bounds prepared by the service) and "only mine" (author/owner columns).
  */
 class Search
 {
+    /**
+     * MySQL/MariaDB error 1191: "Can't find FULLTEXT index matching the column list".
+     */
+    private const ERROR_FULLTEXT_INDEX_MISSING = 1191;
+
+    /**
+     * Set once a full-text query failed for lack of an index, so the request does not keep
+     * retrying it for every entity type.
+     */
+    private static bool $fullTextUnavailable = false;
+
     private ConnectionInterface $connection;
 
     public function __construct(DbCore $db, private DatabaseHelper $dbHelper)
@@ -29,42 +50,38 @@ class Search
     }
 
     /**
-     * Search tasks, subtasks and milestones by headline, description or exact id.
+     * Search tasks, subtasks and milestones by headline or description. A purely numeric
+     * term additionally matches the ticket id exactly (first result of the first page).
      *
      * @return array<int, array<string, mixed>>
      */
     public function searchTickets(SearchQuery $query): array
     {
-        $builder = $this->connection->table('zp_tickets')
-            ->select([
-                'zp_tickets.id',
+        $results = $this->runTextSearch($query, function (bool $fullText) use ($query): Builder {
+            $builder = $this->ticketBaseQuery($query);
+
+            $this->applyTextMatch(
+                $builder,
+                $fullText,
+                ['zp_tickets.headline', 'zp_tickets.description'],
                 'zp_tickets.headline',
-                'zp_tickets.description',
-                'zp_tickets.projectId',
-                'zp_tickets.type',
                 'zp_tickets.modified',
-                'zp_projects.name as projectName',
-            ])
-            ->join('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
-            ->where('zp_tickets.status', '<>', -1);
+                $query
+            );
 
-        $this->applyProjectScope($builder, 'zp_projects', 'zp_tickets.projectId', $query);
-        $this->applyCommonFilters($builder, 'zp_tickets.projectId', 'zp_tickets.modified', ['zp_tickets.editorId', 'zp_tickets.userId'], $query);
+            return $builder;
+        });
 
-        foreach ($query->tokens as $token) {
-            $builder->where(function (Builder $group) use ($token, $query) {
-                $this->whereAnyLike($group, ['zp_tickets.headline', 'zp_tickets.description'], $token, $query);
+        if ($query->offset === 0 && ctype_digit($query->term)) {
+            $exact = $this->ticketBaseQuery($query)->where('zp_tickets.id', (int) $query->term)->first();
 
-                if (ctype_digit($token)) {
-                    $group->orWhere('zp_tickets.id', (int) $token);
-                }
-            });
+            if ($exact !== null) {
+                $results = array_values(array_filter($results, fn (array $row) => (int) $row['id'] !== (int) $exact->id));
+                array_unshift($results, (array) $exact);
+            }
         }
 
-        $this->orderByRelevance($builder, 'zp_tickets.headline', $query);
-        $builder->orderBy('zp_tickets.modified', 'desc');
-
-        return $this->fetch($builder, $query);
+        return $results;
     }
 
     /**
@@ -126,9 +143,13 @@ class Search
      * The canvas type join is mandatory: zp_canvas_items shares one id sequence across every
      * canvas kind, so a type-less read could surface another kind's rows.
      *
+     * The full-text index covers title, description and data. $textColumns only widens the
+     * LIKE path (tags, assumptions, conclusion); the full-text path always matches the three
+     * indexed columns.
+     *
      * @param  string[]  $canvasTypes  Allowed zp_canvas.type values.
      * @param  string|null  $box  Required zp_canvas_items.box value, or null for any box.
-     * @param  string[]  $textColumns  Item columns to match tokens against (unqualified).
+     * @param  string[]  $textColumns  Item columns to match tokens against on the LIKE path (unqualified).
      * @param  bool  $publishedOrOwnDrafts  Wiki rule: published items, or the user's own drafts.
      * @return array<int, array<string, mixed>>
      */
@@ -136,53 +157,55 @@ class Search
     {
         $lastChange = 'COALESCE(item.modified, item.created)';
 
-        $builder = $this->connection->table('zp_canvas_items as item')
-            ->select([
-                'item.id',
-                'item.title',
-                'item.description',
-                'item.data',
-                'item.box',
-                'item.status',
-                'item.author',
-                'item.canvasId',
-                'canvas.type as canvasType',
-                'canvas.title as canvasTitle',
-                'canvas.projectId',
-                'project.name as projectName',
-            ])
-            ->selectRaw($lastChange.' as '.$this->dbHelper->wrapColumn('modified'))
-            ->join('zp_canvas as canvas', 'item.canvasId', '=', 'canvas.id')
-            ->join('zp_projects as project', 'canvas.projectId', '=', 'project.id')
-            ->whereIn('canvas.type', $canvasTypes);
+        return $this->runTextSearch($query, function (bool $fullText) use ($query, $canvasTypes, $box, $textColumns, $publishedOrOwnDrafts, $lastChange): Builder {
+            $builder = $this->connection->table('zp_canvas_items as item')
+                ->select([
+                    'item.id',
+                    'item.title',
+                    'item.description',
+                    'item.data',
+                    'item.box',
+                    'item.status',
+                    'item.author',
+                    'item.canvasId',
+                    'canvas.type as canvasType',
+                    'canvas.title as canvasTitle',
+                    'canvas.projectId',
+                    'project.name as projectName',
+                ])
+                ->selectRaw($lastChange.' as '.$this->dbHelper->wrapColumn('modified'))
+                ->join('zp_canvas as canvas', 'item.canvasId', '=', 'canvas.id')
+                ->join('zp_projects as project', 'canvas.projectId', '=', 'project.id')
+                ->whereIn('canvas.type', $canvasTypes);
 
-        if ($box !== null) {
-            $builder->where('item.box', $box);
-        }
+            if ($box !== null) {
+                $builder->where('item.box', $box);
+            }
 
-        if ($publishedOrOwnDrafts) {
-            $builder->where(function (Builder $group) use ($query) {
-                $group->where('item.status', 'published')
-                    ->orWhere(function (Builder $own) use ($query) {
-                        $own->where('item.status', 'draft')->where('item.author', $query->userId);
-                    });
-            });
-        }
+            if ($publishedOrOwnDrafts) {
+                $builder->where(function (Builder $group) use ($query) {
+                    $group->where('item.status', 'published')
+                        ->orWhere(function (Builder $own) use ($query) {
+                            $own->where('item.status', 'draft')->where('item.author', $query->userId);
+                        });
+                });
+            }
 
-        $this->applyProjectScope($builder, 'project', 'canvas.projectId', $query);
-        $this->applyCommonFilters($builder, 'canvas.projectId', $lastChange, ['item.author'], $query);
+            $this->applyProjectScope($builder, 'project', 'canvas.projectId', $query);
+            $this->applyCommonFilters($builder, 'canvas.projectId', $lastChange, ['item.author'], $query);
 
-        $qualified = array_map(fn (string $column) => 'item.'.$column, $textColumns);
-        foreach ($query->tokens as $token) {
-            $builder->where(function (Builder $group) use ($qualified, $token, $query) {
-                $this->whereAnyLike($group, $qualified, $token, $query);
-            });
-        }
+            $this->applyTextMatch(
+                $builder,
+                $fullText,
+                ['item.title', 'item.description', 'item.data'],
+                'item.'.$textColumns[0],
+                $lastChange,
+                $query,
+                likeColumns: array_map(fn (string $column) => 'item.'.$column, $textColumns)
+            );
 
-        $this->orderByRelevance($builder, 'item.'.$textColumns[0], $query);
-        $builder->orderByRaw($lastChange.' desc');
-
-        return $this->fetch($builder, $query);
+            return $builder;
+        });
     }
 
     /**
@@ -214,6 +237,7 @@ class Search
 
     /**
      * Search canvas boards themselves (title and description), e.g. strategy blueprints.
+     * Boards are few, so this is LIKE only.
      *
      * @param  string[]  $canvasTypes
      * @return array<int, array<string, mixed>>
@@ -238,14 +262,7 @@ class Search
         $this->applyProjectScope($builder, 'project', 'canvas.projectId', $query);
         $this->applyCommonFilters($builder, 'canvas.projectId', $lastChange, ['canvas.author'], $query);
 
-        foreach ($query->tokens as $token) {
-            $builder->where(function (Builder $group) use ($token, $query) {
-                $this->whereAnyLike($group, ['canvas.title', 'canvas.description'], $token, $query);
-            });
-        }
-
-        $this->orderByRelevance($builder, 'canvas.title', $query);
-        $builder->orderByRaw($lastChange.' desc');
+        $this->applyTextMatch($builder, false, ['canvas.title', 'canvas.description'], 'canvas.title', $lastChange, $query);
 
         return $this->fetch($builder, $query);
     }
@@ -282,42 +299,39 @@ class Search
      */
     public function searchComments(SearchQuery $query): array
     {
-        $projectIdExpression = $this->commentProjectIdExpression();
+        return $this->runTextSearch($query, function (bool $fullText) use ($query): Builder {
+            $projectIdExpression = $this->commentProjectIdExpression();
 
-        $builder = $this->connection->table('zp_comment as comment')
-            ->select([
-                'comment.id',
-                'comment.text',
-                'comment.module',
-                'comment.moduleId',
-                'comment.userId',
-                'comment.date as modified',
-                'project.name as projectName',
-                'author.firstname as authorFirstname',
-                'author.lastname as authorLastname',
-            ])
-            ->selectRaw($projectIdExpression.' as '.$this->dbHelper->wrapColumn('projectId'))
-            ->selectRaw('COALESCE(ticket.headline, NULLIF(item.title, \'\'), item.description, hostProject.name) as '.$this->dbHelper->wrapColumn('hostTitle'));
+            $builder = $this->connection->table('zp_comment as comment')
+                ->select([
+                    'comment.id',
+                    'comment.text',
+                    'comment.module',
+                    'comment.moduleId',
+                    'comment.userId',
+                    'comment.date as modified',
+                    'project.name as projectName',
+                    'author.firstname as authorFirstname',
+                    'author.lastname as authorLastname',
+                ])
+                ->selectRaw($projectIdExpression.' as '.$this->dbHelper->wrapColumn('projectId'))
+                ->selectRaw('COALESCE(ticket.headline, NULLIF(item.title, \'\'), item.description, hostProject.name) as '.$this->dbHelper->wrapColumn('hostTitle'));
 
-        $this->joinCommentHosts($builder);
+            $this->joinCommentHosts($builder);
 
-        $builder->join('zp_projects as project', function (JoinClause $join) use ($projectIdExpression) {
-            $join->on('project.id', '=', $this->connection->raw($projectIdExpression));
-        })
-            ->leftJoin('zp_user as author', 'comment.userId', '=', 'author.id');
+            $builder->join('zp_projects as project', function (JoinClause $join) use ($projectIdExpression) {
+                $join->on('project.id', '=', $this->connection->raw($projectIdExpression));
+            })
+                ->leftJoin('zp_user as author', 'comment.userId', '=', 'author.id');
 
-        $this->applyProjectScope($builder, 'project', 'project.id', $query);
-        $this->applyCommonFilters($builder, 'project.id', 'comment.date', ['comment.userId'], $query);
+            $this->applyProjectScope($builder, 'project', 'project.id', $query);
+            $this->applyCommonFilters($builder, 'project.id', 'comment.date', ['comment.userId'], $query);
 
-        foreach ($query->tokens as $token) {
-            $builder->where(function (Builder $group) use ($token, $query) {
-                $this->whereAnyLike($group, ['comment.text'], $token, $query);
-            });
-        }
+            // Comments have no title to rank by; the LIKE path is newest first.
+            $this->applyTextMatch($builder, $fullText, ['comment.text'], null, 'comment.date', $query);
 
-        $builder->orderBy('comment.date', 'desc');
-
-        return $this->fetch($builder, $query);
+            return $builder;
+        });
     }
 
     /**
@@ -469,6 +483,118 @@ class Search
             ->where('id', $id)
             ->whereRaw('LOWER(status) = ?', ['a'])
             ->exists();
+    }
+
+    /**
+     * Ticket rows with the project join, scope and shared filters applied; the text match
+     * (or the exact-id lookup) is added by the caller.
+     */
+    private function ticketBaseQuery(SearchQuery $query): Builder
+    {
+        $builder = $this->connection->table('zp_tickets')
+            ->select([
+                'zp_tickets.id',
+                'zp_tickets.headline',
+                'zp_tickets.description',
+                'zp_tickets.projectId',
+                'zp_tickets.type',
+                'zp_tickets.modified',
+                'zp_projects.name as projectName',
+            ])
+            ->join('zp_projects', 'zp_tickets.projectId', '=', 'zp_projects.id')
+            ->where('zp_tickets.status', '<>', -1);
+
+        $this->applyProjectScope($builder, 'zp_projects', 'zp_tickets.projectId', $query);
+        $this->applyCommonFilters($builder, 'zp_tickets.projectId', 'zp_tickets.modified', ['zp_tickets.editorId', 'zp_tickets.userId'], $query);
+
+        return $builder;
+    }
+
+    /**
+     * Run a text search on the full-text path when possible, falling back to LIKE when the
+     * index turns out to be missing (database update not run yet).
+     *
+     * @param  callable(bool): Builder  $buildQuery  Builds the query for the given path.
+     * @return array<int, array<string, mixed>>
+     */
+    private function runTextSearch(SearchQuery $query, callable $buildQuery): array
+    {
+        if ($this->useFullText($query)) {
+            try {
+                return $this->fetch($buildQuery(true), $query);
+            } catch (QueryException $exception) {
+                if ((int) ($exception->errorInfo[1] ?? 0) !== self::ERROR_FULLTEXT_INDEX_MISSING) {
+                    throw $exception;
+                }
+
+                self::$fullTextUnavailable = true;
+                Log::warning('Global search: full-text index missing, using LIKE for this request. Run the database update (migration 30529) to restore fast search. '.$exception->getMessage());
+            }
+        }
+
+        return $this->fetch($buildQuery(false), $query);
+    }
+
+    /**
+     * Full-text applies when the driver supports it and every token is long enough to be
+     * in the index; otherwise the index could never match and LIKE is the only option.
+     */
+    private function useFullText(SearchQuery $query): bool
+    {
+        return ! self::$fullTextUnavailable
+            && $this->dbHelper->supportsFullTextSearch()
+            && $query->fullTextTokens() !== null;
+    }
+
+    /**
+     * Match the query's tokens against text columns and order the result.
+     *
+     * Full-text path: MATCH ... AGAINST in boolean mode on $fullTextColumns (which must be
+     * exactly one index's column list) ordered by relevance only — any other ORDER BY makes
+     * InnoDB materialize every hit before the LIMIT (measured 42 ms vs 325 ms on 78k hits).
+     * LIKE path: every token must match one of the columns; title prefix hits first, then
+     * title hits, then newest first.
+     *
+     * @param  string[]  $fullTextColumns  Indexed columns, qualified.
+     * @param  string|null  $titleColumn  Column for the LIKE-path relevance ranking; null for date order only.
+     * @param  string  $dateExpression  Column or raw expression for the LIKE-path recency order.
+     * @param  string[]|null  $likeColumns  Columns for the LIKE path; defaults to $fullTextColumns.
+     */
+    private function applyTextMatch(Builder $builder, bool $fullText, array $fullTextColumns, ?string $titleColumn, string $dateExpression, SearchQuery $query, ?array $likeColumns = null): void
+    {
+        if ($fullText) {
+            $match = $this->matchExpression($fullTextColumns);
+            $against = $query->booleanModeQuery();
+
+            $builder->whereRaw($match, [$against])
+                ->orderByRaw($match.' DESC', [$against]);
+
+            return;
+        }
+
+        foreach ($query->tokens as $token) {
+            $builder->where(function (Builder $group) use ($likeColumns, $fullTextColumns, $token, $query) {
+                $this->whereAnyLike($group, $likeColumns ?? $fullTextColumns, $token, $query);
+            });
+        }
+
+        if ($titleColumn !== null) {
+            $this->orderByRelevance($builder, $titleColumn, $query);
+        }
+
+        $builder->orderByRaw($this->wrapIfColumn($dateExpression).' desc');
+    }
+
+    /**
+     * "MATCH(a, b) AGAINST(? IN BOOLEAN MODE)" for the given columns.
+     *
+     * @param  string[]  $columns
+     */
+    private function matchExpression(array $columns): string
+    {
+        $wrapped = implode(', ', array_map(fn (string $column) => $this->dbHelper->wrapColumn($column), $columns));
+
+        return "MATCH({$wrapped}) AGAINST(? IN BOOLEAN MODE)";
     }
 
     /**

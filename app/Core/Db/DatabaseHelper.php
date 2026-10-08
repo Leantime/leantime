@@ -292,6 +292,19 @@ class DatabaseHelper
     }
 
     /**
+     * Whether MATCH ... AGAINST full-text search is available (MySQL and MariaDB).
+     *
+     * PostgreSQL has its own tsvector search with a different index expression; it is not
+     * wired up yet, so callers keep using LIKE there.
+     *
+     * @api
+     */
+    public function supportsFullTextSearch(): bool
+    {
+        return in_array($this->db->getDriverName(), ['mysql', 'mariadb'], true);
+    }
+
+    /**
      * Generate cross-database SQL for current timestamp
      *
      * Generates the appropriate SQL for the current date and time:

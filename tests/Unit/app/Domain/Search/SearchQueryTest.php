@@ -55,6 +55,22 @@ class SearchQueryTest extends \Unit\TestCase
         $this->assertSame(1, (new SearchQuery('term', userId: 1, accessibleProjectIds: null, limit: 0))->limit);
     }
 
+    public function test_full_text_tokens_strip_operators_and_require_prefix_match(): void
+    {
+        $query = new SearchQuery('sprint+ "release" @v2x', userId: 1, accessibleProjectIds: null);
+
+        $this->assertSame(['sprint', 'release', 'v2x'], $query->fullTextTokens());
+        $this->assertSame('+sprint* +release* +v2x*', $query->booleanModeQuery());
+    }
+
+    public function test_short_tokens_force_the_like_path(): void
+    {
+        $this->assertNull((new SearchQuery('go live', userId: 1, accessibleProjectIds: null))->fullTextTokens());
+        $this->assertNull((new SearchQuery('c++', userId: 1, accessibleProjectIds: null))->fullTextTokens());
+        $this->assertSame('', (new SearchQuery('c++', userId: 1, accessibleProjectIds: null))->booleanModeQuery());
+        $this->assertSame(['abc'], (new SearchQuery('abc', userId: 1, accessibleProjectIds: null))->fullTextTokens());
+    }
+
     public function test_filters_are_readable_with_default(): void
     {
         $query = new SearchQuery('term', userId: 1, accessibleProjectIds: null, filters: ['projectId' => 7]);
