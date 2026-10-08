@@ -64,15 +64,22 @@ class PermissionServiceCacheTest extends \Unit\TestCase
         $this->assertNull(Cache::store('installation')->get('leantime.permissionMap'), 'Never on the store shared by every tenant');
     }
 
-    public function test_an_empty_grant_map_is_not_cached(): void
+    public function test_an_empty_grant_map_is_read_once_per_request_and_not_cached(): void
     {
         $service = $this->service([]);
 
         $this->assertFalse($service->roleHasPermission('owner', 'users.view'));
         $this->assertFalse($service->roleHasPermission('owner', 'users.view'));
 
-        $this->assertSame(2, $this->mapReads, 'An unseeded install is re-read each time so a reseed takes effect at once');
-        $this->assertNull(Cache::store()->get('leantime.permissionMap'));
+        $this->assertSame(1, $this->mapReads, 'A page full of checks reads (and logs) an unseeded map once');
+        $this->assertNull(Cache::store()->get('leantime.permissionMap'), 'Not cached across requests, so a reseed takes effect on the next one');
+
+        $service->flushCache();
+        $service->roleHasPermission('owner', 'users.view');
+        $this->assertSame(2, $this->mapReads, 'A seed in this request (which flushes) is picked up at once');
+
+        $this->service([])->roleHasPermission('owner', 'users.view');
+        $this->assertSame(3, $this->mapReads, 'The next request reads the tables again');
     }
 
     public function test_flush_cache_forgets_the_instance_copy(): void

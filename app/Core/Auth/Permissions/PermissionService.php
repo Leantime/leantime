@@ -30,6 +30,9 @@ class PermissionService
 
     private const META_CACHE_KEY = 'leantime.permissionMeta';
 
+    /** Set once this request found the role tables unseeded, see {@see map()}. */
+    private bool $grantMapIsEmpty = false;
+
     public function __construct(
         private PermissionRepository $repo,
         private RoleResolver $roles,
@@ -113,6 +116,7 @@ class PermissionService
     /** Forget the cached grant map + vocabulary meta. Call after any role/permission write. */
     public function flushCache(): void
     {
+        $this->grantMapIsEmpty = false;
         Cache::store()->forget(self::MAP_CACHE_KEY);
         Cache::store()->forget(self::META_CACHE_KEY);
     }
@@ -136,11 +140,18 @@ class PermissionService
      * installation store: on a multi-tenant host that one key would serve every tenant whatever
      * grant map was rebuilt last. An empty map is not cached either — it means the role tables
      * are unseeded (every check denies), and caching it would pin that state until the next flush.
+     * The empty result is remembered on this instance instead, so a page full of checks reads and
+     * logs it once per request. A non-empty map is not held in memory: long-running workers must
+     * keep seeing role edits flushed by other processes.
      *
      * @return array<string, array<int, string>>
      */
     private function map(): array
     {
+        if ($this->grantMapIsEmpty) {
+            return [];
+        }
+
         $cachedMap = Cache::store()->get(self::MAP_CACHE_KEY);
 
         if (is_array($cachedMap)) {
@@ -150,6 +161,7 @@ class PermissionService
         $map = $this->repo->getRolePermissionMap();
 
         if ($map === []) {
+            $this->grantMapIsEmpty = true;
             Log::error('Permission grant map is empty — zp_roles/zp_role_permissions are unseeded, so every permission check denies. Run `php bin/leantime permissions:sync --seed`.');
 
             return $map;
