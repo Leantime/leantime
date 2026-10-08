@@ -74,7 +74,8 @@ class WikiProvider implements SearchProvider
 
     public function resolveTarget(int $id): ?SearchTarget
     {
-        $article = $this->searchRepository->getCanvasItemTarget($id, self::CANVAS_TYPES, self::BOX);
+        // Same visibility as the search itself, so a draft id is not an existence oracle.
+        $article = $this->searchRepository->getCanvasItemTarget($id, self::CANVAS_TYPES, self::BOX, publishedOrOwnDraftsFor: (int) session('userdata.id'));
 
         if ($article === null) {
             return null;

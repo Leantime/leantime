@@ -24,11 +24,14 @@
     $href = $opensInModal
         ? '#'.$result->modalPath
         : BASE_URL.'/search/open?type='.urlencode($result->type).'&id='.$result->id;
+
+    // The dropdown is a combobox listbox (options); the results page is a plain list.
+    $role = $variant === 'compact' ? 'option' : 'listitem';
 @endphp
 
 <a
     class="searchResult searchResult--{{ $variant }}"
-    role="option"
+    role="{{ $role }}"
     href="{{ $href }}"
     data-search-type="{{ $result->type }}"
     data-search-id="{{ $result->id }}"

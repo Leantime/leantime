@@ -49,8 +49,9 @@ class BlueprintsProvider implements SearchProvider
     }
 
     /**
-     * Items are paged normally; matching boards are appended to the first page only, so
-     * "load more" keeps paging items without duplicates.
+     * Boards (at most BOARD_HITS) lead the first page and items fill the rest of the limit;
+     * later pages are items only, with the offset shifted by the boards that took slots on
+     * page one, so "load more" never skips or repeats an item.
      *
      * @return SearchResult[]
      */
@@ -61,9 +62,36 @@ class BlueprintsProvider implements SearchProvider
             return [];
         }
 
+        $boardQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, min(self::BOARD_HITS, $query->limit), 0, $query->filters);
+        $boardRows = $this->searchRepository->searchCanvasBoards($boardQuery, $types);
+        $boardCount = count($boardRows);
+
         $results = [];
 
-        foreach ($this->searchRepository->searchCanvasItems($query, $types, null, ['description', 'title', 'assumptions', 'data', 'conclusion', 'tags']) as $row) {
+        if ($query->offset === 0) {
+            foreach ($boardRows as $row) {
+                $results[] = new SearchResult(
+                    type: $this->key(),
+                    id: self::idFor('board', (int) $row['id']),
+                    title: (string) ($row['title'] ?: __('search.untitled')),
+                    snippet: Highlighter::snippet($row['description'] ?? null, $query->tokens),
+                    icon: $this->icon(),
+                    badge: $this->typeLabel((string) $row['canvasType']),
+                    projectId: (int) $row['projectId'],
+                    projectName: (string) ($row['projectName'] ?? ''),
+                    modified: $row['modified'] ?? null,
+                );
+            }
+        }
+
+        $itemLimit = $query->offset === 0 ? $query->limit - $boardCount : $query->limit;
+        if ($itemLimit <= 0) {
+            return $results;
+        }
+
+        $itemQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, $itemLimit, max(0, $query->offset - $boardCount), $query->filters);
+
+        foreach ($this->searchRepository->searchCanvasItems($itemQuery, $types, null, ['description', 'title', 'assumptions', 'data', 'conclusion', 'tags']) as $row) {
             $title = (string) ($row['title'] ?: Highlighter::snippet($row['description'] ?? null, [], 120));
 
             $results[] = new SearchResult(
@@ -73,26 +101,6 @@ class BlueprintsProvider implements SearchProvider
                 snippet: Highlighter::snippet($row['description'] ?? null, $query->tokens),
                 icon: 'fa-regular fa-note-sticky',
                 badge: $this->typeLabel((string) $row['canvasType']).' · '.$row['canvasTitle'],
-                projectId: (int) $row['projectId'],
-                projectName: (string) ($row['projectName'] ?? ''),
-                modified: $row['modified'] ?? null,
-            );
-        }
-
-        if ($query->offset > 0) {
-            return $results;
-        }
-
-        $boardQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, self::BOARD_HITS, 0, $query->filters);
-
-        foreach ($this->searchRepository->searchCanvasBoards($boardQuery, $types) as $row) {
-            $results[] = new SearchResult(
-                type: $this->key(),
-                id: self::idFor('board', (int) $row['id']),
-                title: (string) ($row['title'] ?: __('search.untitled')),
-                snippet: Highlighter::snippet($row['description'] ?? null, $query->tokens),
-                icon: $this->icon(),
-                badge: $this->typeLabel((string) $row['canvasType']),
                 projectId: (int) $row['projectId'],
                 projectName: (string) ($row['projectName'] ?? ''),
                 modified: $row['modified'] ?? null,

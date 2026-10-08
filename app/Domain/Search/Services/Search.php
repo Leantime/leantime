@@ -105,7 +105,7 @@ class Search
     {
         $query = $this->buildQuery($term, $perType);
 
-        if (! $query->isSearchable() || ! $query->hasProjectAccess()) {
+        if (! $query->isSearchable()) {
             return [];
         }
 
@@ -140,7 +140,7 @@ class Search
 
         $query = $this->buildQuery($term, $limit, $offset, self::normalizeFilters($filters));
 
-        if (! $query->isSearchable() || ! $query->hasProjectAccess()) {
+        if (! $query->isSearchable()) {
             return [];
         }
 
@@ -149,6 +149,9 @@ class Search
 
     /**
      * Where a result opens; null when the type is unknown or the entity does not exist.
+     *
+     * Not an @api method, so JSON-RPC never dispatches it; the Open controller is its only
+     * caller and authorizes against the returned project before revealing anything.
      */
     public function resolveTarget(string $type, int $id): ?SearchTarget
     {

@@ -35,7 +35,8 @@ class Open extends Controller
         $type = (string) ($params['type'] ?? '');
         $id = (int) ($params['id'] ?? 0);
 
-        $target = ($type !== '' && $id > 0) ? $this->searchService->resolveTarget($type, $id) : null;
+        // Zero is the only invalid id: blueprint boards are encoded as negative ids (see BlueprintsProvider).
+        $target = ($type !== '' && $id !== 0) ? $this->searchService->resolveTarget($type, $id) : null;
 
         if ($target === null) {
             return Frontcontroller::redirect(BASE_URL.'/errors/error404');

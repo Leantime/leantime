@@ -67,7 +67,7 @@ class CommentsProvider implements SearchProvider
 
     public function resolveTarget(int $id): ?SearchTarget
     {
-        $comment = $this->searchRepository->getCommentTarget($id);
+        $comment = $this->searchRepository->getCommentTarget($id, (int) session('userdata.id'));
 
         if ($comment === null) {
             return null;

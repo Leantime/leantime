@@ -37,7 +37,9 @@ final class SearchQuery
 
     /**
      * @param  int  $userId  The searching user (always the session user).
-     * @param  int[]|null  $accessibleProjectIds  Projects the user may see; null means unrestricted (admin/owner).
+     * @param  int[]|null  $accessibleProjectIds  Projects the user may see; null means unrestricted (admin/owner),
+     *                                            an empty list means no project-backed results (owner-scoped
+     *                                            entities such as private files are still searched).
      * @param  array<string, mixed>  $filters  Optional provider filters (projectId, …).
      */
     public function __construct(
@@ -89,15 +91,6 @@ final class SearchQuery
     public function isSearchable(): bool
     {
         return mb_strlen($this->term) >= self::MIN_TERM_LENGTH && $this->tokens !== [];
-    }
-
-    /**
-     * False when the user is restricted to an empty project list, so providers can
-     * return nothing without querying.
-     */
-    public function hasProjectAccess(): bool
-    {
-        return $this->accessibleProjectIds === null || $this->accessibleProjectIds !== [];
     }
 
     /**

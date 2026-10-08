@@ -78,6 +78,7 @@ class Search
             if ($exact !== null) {
                 $results = array_values(array_filter($results, fn (array $row) => (int) $row['id'] !== (int) $exact->id));
                 array_unshift($results, (array) $exact);
+                $results = array_slice($results, 0, $query->limit);
             }
         }
 
@@ -183,12 +184,7 @@ class Search
             }
 
             if ($publishedOrOwnDrafts) {
-                $builder->where(function (Builder $group) use ($query) {
-                    $group->where('item.status', 'published')
-                        ->orWhere(function (Builder $own) use ($query) {
-                            $own->where('item.status', 'draft')->where('item.author', $query->userId);
-                        });
-                });
+                $this->wherePublishedOrOwnDraft($builder, $query->userId);
             }
 
             $this->applyProjectScope($builder, 'project', 'canvas.projectId', $query);
@@ -212,9 +208,10 @@ class Search
      * Owning canvas and project of a canvas item, restricted to the given canvas types.
      *
      * @param  string[]  $canvasTypes
+     * @param  int|null  $publishedOrOwnDraftsFor  Apply the wiki rule (published, or this user's own draft).
      * @return array{projectId: int, canvasId: int, canvasType: string}|null
      */
-    public function getCanvasItemTarget(int $id, array $canvasTypes, ?string $box = null): ?array
+    public function getCanvasItemTarget(int $id, array $canvasTypes, ?string $box = null, ?int $publishedOrOwnDraftsFor = null): ?array
     {
         $builder = $this->connection->table('zp_canvas_items as item')
             ->select(['canvas.projectId', 'canvas.id as canvasId', 'canvas.type as canvasType'])
@@ -224,6 +221,10 @@ class Search
 
         if ($box !== null) {
             $builder->where('item.box', $box);
+        }
+
+        if ($publishedOrOwnDraftsFor !== null) {
+            $this->wherePublishedOrOwnDraft($builder, $publishedOrOwnDraftsFor);
         }
 
         $row = $builder->first();
@@ -325,6 +326,7 @@ class Search
                 ->leftJoin('zp_user as author', 'comment.userId', '=', 'author.id');
 
             $this->applyProjectScope($builder, 'project', 'project.id', $query);
+            $this->whereCommentHostVisible($builder, $query->userId);
             $this->applyCommonFilters($builder, 'project.id', 'comment.date', ['comment.userId'], $query);
 
             // Comments have no title to rank by; the LIKE path is newest first.
@@ -335,11 +337,12 @@ class Search
     }
 
     /**
-     * Module, host id and resolved project of a comment, or null when unresolvable.
+     * Module, host id and resolved project of a comment, or null when unresolvable or when
+     * the host is another user's draft article.
      *
      * @return array{module: string, moduleId: int, projectId: int}|null
      */
-    public function getCommentTarget(int $id): ?array
+    public function getCommentTarget(int $id, int $userId): ?array
     {
         $projectIdExpression = $this->commentProjectIdExpression();
 
@@ -349,6 +352,7 @@ class Search
             ->where('comment.id', $id);
 
         $this->joinCommentHosts($builder);
+        $this->whereCommentHostVisible($builder, $userId);
 
         $row = $builder->first();
 
@@ -738,6 +742,34 @@ class Search
                         "CASE comment.module WHEN 'article' THEN 'wiki' WHEN 'idea' THEN 'idea' ELSE REPLACE(comment.module, 'canvasitem', 'canvas') END"
                     ));
             });
+    }
+
+    /**
+     * Wiki visibility rule: published items, or the user's own drafts.
+     */
+    private function wherePublishedOrOwnDraft(Builder $builder, int $userId): void
+    {
+        $builder->where(function (Builder $group) use ($userId) {
+            $group->where('item.status', 'published')
+                ->orWhere(function (Builder $own) use ($userId) {
+                    $own->where('item.status', 'draft')->where('item.author', $userId);
+                });
+        });
+    }
+
+    /**
+     * A comment on a wiki article inherits the article's visibility: another user's draft
+     * must not leak its comments (or title) through search.
+     */
+    private function whereCommentHostVisible(Builder $builder, int $userId): void
+    {
+        $builder->where(function (Builder $group) use ($userId) {
+            $group->where('comment.module', '<>', 'article')
+                ->orWhere('item.status', 'published')
+                ->orWhere(function (Builder $own) use ($userId) {
+                    $own->where('item.status', 'draft')->where('item.author', $userId);
+                });
+        });
     }
 
     /**

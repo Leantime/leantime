@@ -39,13 +39,6 @@ class SearchQueryTest extends \Unit\TestCase
         $this->assertSame('100\\%\\_done\\\\%', $query->prefixPattern($query->tokens[0]));
     }
 
-    public function test_project_access_flags(): void
-    {
-        $this->assertTrue((new SearchQuery('term', userId: 1, accessibleProjectIds: null))->hasProjectAccess());
-        $this->assertTrue((new SearchQuery('term', userId: 1, accessibleProjectIds: [3, 4]))->hasProjectAccess());
-        $this->assertFalse((new SearchQuery('term', userId: 1, accessibleProjectIds: []))->hasProjectAccess());
-    }
-
     public function test_limit_and_offset_are_clamped(): void
     {
         $query = new SearchQuery('term', userId: 1, accessibleProjectIds: null, limit: 500, offset: -10);

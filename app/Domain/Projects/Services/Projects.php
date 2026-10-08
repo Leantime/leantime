@@ -1234,6 +1234,10 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function getAccessibleProjectIds(?int $userId = null, string $projectStatus = 'open'): array
     {
+        if ($userId === null || $userId === 0) {
+            $userId = (int) session('userdata.id');
+        }
+
         $userId = $this->resolveScopedUserId($userId);
 
         if ($userId === 0) {
