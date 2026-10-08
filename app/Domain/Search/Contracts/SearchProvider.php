@@ -34,6 +34,12 @@ interface SearchProvider
     public function icon(): string;
 
     /**
+     * Whether the session user may use this provider at all (e.g. users are admin-only).
+     * Unavailable providers are left out of the dropdown, the results page and the API.
+     */
+    public function available(): bool;
+
+    /**
      * Run the search for this entity type.
      *
      * @return SearchResult[]

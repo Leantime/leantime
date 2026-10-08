@@ -233,12 +233,18 @@
 /* --- Results page ------------------------------------------------------ */
 
 .searchPage__form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0 0 24px;
+}
+
+.searchPage__termRow {
     position: relative;
     display: flex;
     gap: 10px;
     align-items: center;
     max-width: 640px;
-    margin: 0 0 24px;
 }
 
 .searchPage__formIcon {
@@ -256,6 +262,93 @@
     margin: 0;
     padding: 0 14px 0 38px;
     font-size: var(--font-size-l);
+}
+
+.searchPage__filters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.searchPage__types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.searchPage__typeChip {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    margin: 0;
+    padding: 4px 12px;
+    border: 1px solid var(--main-border-color);
+    border-radius: 999px;
+    background: var(--secondary-background);
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-s);
+    cursor: pointer;
+    user-select: none;
+}
+
+.searchPage__typeChip:has(input:checked) {
+    border-color: var(--accent1);
+    background: color-mix(in srgb, var(--accent1) 12%, transparent);
+    color: var(--primary-font-color);
+}
+
+.searchPage__typeChip input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.searchPage__filterRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    align-items: flex-end;
+}
+
+.searchPage__filter {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0;
+    font-size: var(--font-size-s);
+}
+
+.searchPage__filter select,
+.searchPage__filter input[type="date"] {
+    margin: 0;
+    min-width: 160px;
+}
+
+.searchPage__filter--check {
+    flex-direction: row;
+    gap: 6px;
+    align-items: center;
+    padding-bottom: 8px;
+}
+
+.searchPage__filter--check input {
+    margin: 0;
+}
+
+.searchPage__filterLabel {
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-xs);
+}
+
+.searchPage__reset {
+    padding-bottom: 8px;
+    font-size: var(--font-size-s);
 }
 
 .searchPage__panels {

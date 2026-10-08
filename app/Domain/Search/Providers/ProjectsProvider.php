@@ -31,6 +31,11 @@ class ProjectsProvider implements SearchProvider
         return 'fa-solid fa-diagram-project';
     }
 
+    public function available(): bool
+    {
+        return true;
+    }
+
     /**
      * @return SearchResult[]
      */

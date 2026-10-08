@@ -31,6 +31,11 @@ class TicketsProvider implements SearchProvider
         return 'fa-solid fa-list-check';
     }
 
+    public function available(): bool
+    {
+        return true;
+    }
+
     /**
      * @return SearchResult[]
      */
