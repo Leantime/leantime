@@ -20,6 +20,16 @@ final class SearchQuery
     public const FULLTEXT_MIN_TOKEN_LENGTH = 3;
 
     /**
+     * InnoDB's default full-text stopword list (INFORMATION_SCHEMA.INNODB_FT_DEFAULT_STOPWORD).
+     * These words are never indexed, so requiring them in a boolean query can only fail.
+     */
+    private const FULLTEXT_STOPWORDS = [
+        'a', 'about', 'an', 'are', 'as', 'at', 'be', 'by', 'com', 'de', 'en', 'for', 'from', 'how', 'i',
+        'in', 'is', 'it', 'la', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'what', 'when',
+        'where', 'who', 'will', 'with', 'und', 'www',
+    ];
+
+    /**
      * The whitespace-normalized term as the user typed it.
      */
     public readonly string $term;
@@ -110,9 +120,12 @@ final class SearchQuery
     }
 
     /**
-     * Tokens usable in a boolean-mode full-text query, or null when the query must use LIKE:
-     * boolean operator characters are stripped, and any token shorter than the index minimum
-     * afterwards cannot be matched by the index at all.
+     * Tokens usable in a boolean-mode full-text query, or null when the query must use LIKE.
+     *
+     * Boolean operator characters are stripped. A token shorter than the index minimum can
+     * never be matched by the index, so it forces the LIKE path. Default stopwords are not
+     * indexed either, but they are simply left out of the query (a user typing "the roadmap"
+     * wants "roadmap"); only a term made of stopwords alone falls back to LIKE.
      *
      * @return string[]|null
      */
@@ -122,6 +135,10 @@ final class SearchQuery
 
         foreach ($this->tokens as $token) {
             $stripped = (string) preg_replace('/[+\-<>()~*"@]+/u', '', $token);
+
+            if (in_array(mb_strtolower($stripped), self::FULLTEXT_STOPWORDS, true)) {
+                continue;
+            }
 
             if (mb_strlen($stripped) < self::FULLTEXT_MIN_TOKEN_LENGTH) {
                 return null;

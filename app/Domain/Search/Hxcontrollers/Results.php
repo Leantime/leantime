@@ -50,7 +50,11 @@ class Results extends HtmxController
             'mine' => (string) ($params['mine'] ?? ''),
         ], fn (string $value) => $value !== '');
 
-        $results = $this->searchService->search($term, $type, self::PAGE_SIZE, $offset, $rawFilters);
+        // One row beyond the page tells us whether a next page exists, independent of how a
+        // provider fills its slots (exact-id hits, blueprint boards, de-duplication).
+        $results = $this->searchService->search($term, $type, self::PAGE_SIZE + 1, $offset, $rawFilters);
+        $hasMore = count($results) > self::PAGE_SIZE;
+        $results = array_slice($results, 0, self::PAGE_SIZE);
 
         $this->tpl->assign('provider', $provider);
         $this->tpl->assign('term', $term);
@@ -58,7 +62,7 @@ class Results extends HtmxController
         $this->tpl->assign('results', $results);
         $this->tpl->assign('offset', $offset);
         $this->tpl->assign('nextOffset', $offset + self::PAGE_SIZE);
-        $this->tpl->assign('hasMore', count($results) >= self::PAGE_SIZE);
+        $this->tpl->assign('hasMore', $hasMore);
         $this->tpl->assign('filters', $rawFilters);
 
         return $offset > 0 ? 'rows' : null;

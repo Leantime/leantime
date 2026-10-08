@@ -56,6 +56,15 @@ class SearchQueryTest extends \Unit\TestCase
         $this->assertSame('+sprint* +release* +v2x*', $query->booleanModeQuery());
     }
 
+    public function test_default_stopwords_are_dropped_from_the_full_text_query(): void
+    {
+        $query = new SearchQuery('the roadmap for Q4x', userId: 1, accessibleProjectIds: null);
+
+        $this->assertSame(['roadmap', 'Q4x'], $query->fullTextTokens());
+        $this->assertSame('+roadmap* +Q4x*', $query->booleanModeQuery());
+        $this->assertNull((new SearchQuery('the with', userId: 1, accessibleProjectIds: null))->fullTextTokens());
+    }
+
     public function test_short_tokens_force_the_like_path(): void
     {
         $this->assertNull((new SearchQuery('go live', userId: 1, accessibleProjectIds: null))->fullTextTokens());

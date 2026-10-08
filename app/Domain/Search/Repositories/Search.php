@@ -51,34 +51,46 @@ class Search
 
     /**
      * Search tasks, subtasks and milestones by headline or description. A purely numeric
-     * term additionally matches the ticket id exactly (first result of the first page).
+     * term additionally matches the ticket id exactly: that hit leads the first page and
+     * takes one of its slots, and later pages shift their offset by that slot, so paging
+     * never skips or repeats a text hit.
      *
      * @return array<int, array<string, mixed>>
      */
     public function searchTickets(SearchQuery $query): array
     {
-        $results = $this->runTextSearch($query, function (bool $fullText) use ($query): Builder {
-            $builder = $this->ticketBaseQuery($query);
+        $exact = ctype_digit($query->term)
+            ? $this->ticketBaseQuery($query)->where('zp_tickets.id', (int) $query->term)->first()
+            : null;
+        $reservedSlots = $exact !== null ? 1 : 0;
 
-            $this->applyTextMatch(
-                $builder,
-                $fullText,
-                ['zp_tickets.headline', 'zp_tickets.description'],
-                'zp_tickets.headline',
-                'zp_tickets.modified',
-                $query
-            );
+        $textLimit = $query->offset === 0 ? $query->limit - $reservedSlots : $query->limit;
+        $results = [];
 
-            return $builder;
-        });
+        if ($textLimit > 0) {
+            $textQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, $textLimit, max(0, $query->offset - $reservedSlots), $query->filters);
 
-        if ($query->offset === 0 && ctype_digit($query->term)) {
-            $exact = $this->ticketBaseQuery($query)->where('zp_tickets.id', (int) $query->term)->first();
+            $results = $this->runTextSearch($textQuery, function (bool $fullText) use ($textQuery): Builder {
+                $builder = $this->ticketBaseQuery($textQuery);
 
-            if ($exact !== null) {
-                $results = array_values(array_filter($results, fn (array $row) => (int) $row['id'] !== (int) $exact->id));
+                $this->applyTextMatch(
+                    $builder,
+                    $fullText,
+                    ['zp_tickets.headline', 'zp_tickets.description'],
+                    'zp_tickets.headline',
+                    'zp_tickets.modified',
+                    $textQuery
+                );
+
+                return $builder;
+            });
+        }
+
+        if ($exact !== null) {
+            $results = array_values(array_filter($results, fn (array $row) => (int) $row['id'] !== (int) $exact->id));
+
+            if ($query->offset === 0) {
                 array_unshift($results, (array) $exact);
-                $results = array_slice($results, 0, $query->limit);
             }
         }
 
