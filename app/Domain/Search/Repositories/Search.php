@@ -352,14 +352,14 @@ class Search
      * Module, host id and resolved project of a comment, or null when unresolvable or when
      * the host is another user's draft article.
      *
-     * @return array{module: string, moduleId: int, projectId: int}|null
+     * @return array{module: string, moduleId: int, projectId: int, canvasId: int|null}|null
      */
     public function getCommentTarget(int $id, int $userId): ?array
     {
         $projectIdExpression = $this->commentProjectIdExpression();
 
         $builder = $this->connection->table('zp_comment as comment')
-            ->select(['comment.module', 'comment.moduleId'])
+            ->select(['comment.module', 'comment.moduleId', 'canvas.id as canvasId'])
             ->selectRaw($projectIdExpression.' as '.$this->dbHelper->wrapColumn('projectId'))
             ->where('comment.id', $id);
 
@@ -372,7 +372,12 @@ class Search
             return null;
         }
 
-        return ['module' => (string) $row->module, 'moduleId' => (int) $row->moduleId, 'projectId' => (int) $row->projectId];
+        return [
+            'module' => (string) $row->module,
+            'moduleId' => (int) $row->moduleId,
+            'projectId' => (int) $row->projectId,
+            'canvasId' => $row->canvasId !== null ? (int) $row->canvasId : null,
+        ];
     }
 
     /**

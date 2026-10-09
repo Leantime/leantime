@@ -82,14 +82,17 @@ class CommentsProvider implements SearchProvider
             return null;
         }
 
-        $modalPath = $this->modalPathFor($comment['module'], $comment['moduleId']);
+        $module = $comment['module'];
+        $modalPath = $this->modalPathFor($module, $comment['moduleId']);
 
         $url = match (true) {
-            $comment['module'] === 'ticket' => '/dashboard/home#'.$modalPath,
-            $comment['module'] === 'project' => '/dashboard/show',
-            $comment['module'] === 'article' => '/wiki/show/'.$comment['moduleId'],
-            $comment['module'] === 'idea' => '/ideas/showBoards#'.$modalPath,
-            $comment['module'] === 'goalcanvasitem' => '/goalcanvas/dashboard#'.$modalPath,
+            $module === 'ticket' => '/dashboard/home#'.$modalPath,
+            $module === 'project' => '/dashboard/show',
+            $module === 'article' => '/wiki/show/'.$comment['moduleId'],
+            $module === 'idea' => '/ideas/showBoards#'.$modalPath,
+            $module === 'goalcanvasitem' => '/goalcanvas/dashboard#'.$modalPath,
+            // Any other {slug}canvasitem is a strategy blueprint item: open its board with the item modal.
+            $this->blueprintSlug($module) !== null && $comment['canvasId'] !== null => '/blueprints/'.$this->blueprintSlug($module).'/showCanvas/'.$comment['canvasId'].'#'.$modalPath,
             default => '/dashboard/show',
         };
 
@@ -101,11 +104,29 @@ class CommentsProvider implements SearchProvider
      */
     private function modalPathFor(string $module, int $moduleId): ?string
     {
-        return match ($module) {
-            'ticket' => '/tickets/showTicket/'.$moduleId,
-            'idea' => '/ideas/ideaDialog/'.$moduleId,
-            'goalcanvasitem' => '/goalcanvas/editCanvasItem/'.$moduleId,
+        $slug = $this->blueprintSlug($module);
+
+        return match (true) {
+            $module === 'ticket' => '/tickets/showTicket/'.$moduleId,
+            $module === 'idea' => '/ideas/ideaDialog/'.$moduleId,
+            $module === 'goalcanvasitem' => '/goalcanvas/editCanvasItem/'.$moduleId,
+            $slug !== null => '/blueprints/'.$slug.'/editCanvasItem/'.$moduleId,
             default => null,
         };
+    }
+
+    /**
+     * Blueprint slug for a "{slug}canvasitem" comment module (e.g. "swotcanvasitem" → "swot"),
+     * null for every other module including goals, which have their own pages.
+     */
+    private function blueprintSlug(string $module): ?string
+    {
+        $suffix = 'canvasitem';
+
+        if ($module === 'goalcanvasitem' || ! str_ends_with($module, $suffix) || strlen($module) <= strlen($suffix)) {
+            return null;
+        }
+
+        return substr($module, 0, -strlen($suffix));
     }
 }
