@@ -234,6 +234,10 @@ class SchemaBuilder
             $table->index(['canvasId', 'box'], 'CanvasLookUp');
             $table->index(['box', 'milestoneId'], 'idx_canvas_items_box_milestoneId');
             $table->index(['box', 'status', 'author'], 'idx_canvas_items_box_status_author');
+
+            if ($this->supportsFullText()) {
+                $table->fullText(['title', 'description', 'data', 'assumptions', 'conclusion', 'tags'], 'zp_canvas_items_search_ft');
+            }
             $table->index(['parent', 'title'], 'idx_canvas_items_parent_title');
         });
     }
@@ -295,6 +299,10 @@ class SchemaBuilder
             $table->index(['moduleId', 'module', 'commentParent'], 'idx_comment_moduleId_module_commentParent');
             $table->index(['userId', 'module'], 'idx_comment_userId_module');
             $table->index(['moduleId', 'module', 'date'], 'idx_comment_moduleId_module_date');
+
+            if ($this->supportsFullText()) {
+                $table->fullText(['text'], 'zp_comment_search_ft');
+            }
         });
     }
 
@@ -525,6 +533,10 @@ class SchemaBuilder
             $table->index(['projectId', 'type'], 'idx_tickets_projectId_type');
             $table->index(['status', 'type'], 'idx_tickets_status_type');
             $table->index(['dependingTicketId'], 'idx_tickets_dependingTicketId');
+
+            if ($this->supportsFullText()) {
+                $table->fullText(['headline', 'description', 'tags'], 'zp_tickets_search_ft');
+            }
         });
     }
 
@@ -1013,5 +1025,13 @@ class SchemaBuilder
             // for the same source element → target structure.
             $table->unique(['source_structure_id', 'source_element_id', 'target_structure_id'], 'idx_wsm_unique_mapping');
         });
+    }
+
+    /**
+     * Full-text indexes (global search) exist on MySQL/MariaDB only; see Install::update_sql_30529().
+     */
+    private function supportsFullText(): bool
+    {
+        return in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb'], true);
     }
 }

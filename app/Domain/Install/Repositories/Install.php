@@ -100,6 +100,8 @@ class Install
         30525,
         30526,
         30527,
+        30528,
+        30529,
     ];
 
     /**
@@ -3328,6 +3330,98 @@ class Install
             Log::error('Migration 30527: '.$e->getMessage());
 
             return ['Migration 30527 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30528 — database update for v3.5.28.
+     *
+     * Re-seeds the permission engine on installs whose role tables ended up empty. 30518 marks
+     * itself done once its tables exist, but on at least one cloud workspace the built-in roles
+     * and grants never stuck, leaving zp_roles/zp_role_permissions empty — which makes every
+     * permission check deny, owners included. Re-running the seed there restores the defaults.
+     *
+     * Installs that already have roles AND grants are left untouched, so operator role edits and
+     * revocations survive. The seed itself is additive (upsert roles, grant defaults).
+     *
+     * @return bool|array<int, string> true on success or skip, otherwise the error messages
+     */
+    public function update_sql_30528(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+            if (! $schema->hasTable('zp_roles') || ! $schema->hasTable('zp_role_permissions') || ! $schema->hasTable('zp_permissions')) {
+                Log::info('Migration 30528 skipped: permission tables missing (30518 not applied?)');
+
+                return true;
+            }
+
+            $roleCount = $connection->table('zp_roles')->count();
+            $grantCount = $connection->table('zp_role_permissions')->count();
+
+            if ($roleCount > 0 && $grantCount > 0) {
+                return true;
+            }
+
+            Log::warning('Migration 30528: permission tables unseeded (roles: '.$roleCount.', grants: '.$grantCount.') — re-seeding built-in roles.');
+
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
+            $seeder->syncDiscoveredPermissions();
+            $seeder->seedBuiltInRoles();
+        } catch (\Exception $e) {
+            Log::error('Migration 30528: '.$e->getMessage());
+
+            return ['Migration 30528 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Full-text indexes for global search on MySQL/MariaDB.
+     *
+     * Measured on 500k to-dos / 300k comments: LIKE '%term%' scans took ~600 ms and ~300 ms per
+     * query, a boolean-mode MATCH ordered by relevance 1–100 ms. Other drivers keep the LIKE
+     * path (see Search repository), so this is a no-op there. Fresh installs get the same
+     * indexes from SchemaBuilder. Building the indexes takes about 30 s per million rows.
+     */
+    public function update_sql_30529(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+
+            if (! in_array($connection->getDriverName(), ['mysql', 'mariadb'], true)) {
+                return true;
+            }
+
+            $schema = $connection->getSchemaBuilder();
+
+            $fullTextIndexes = [
+                'zp_tickets' => ['zp_tickets_search_ft', ['headline', 'description', 'tags']],
+                'zp_canvas_items' => ['zp_canvas_items_search_ft', ['title', 'description', 'data', 'assumptions', 'conclusion', 'tags']],
+                'zp_comment' => ['zp_comment_search_ft', ['text']],
+            ];
+
+            foreach ($fullTextIndexes as $tableName => [$indexName, $columns]) {
+                if (! $schema->hasTable($tableName) || $schema->hasIndex($tableName, $indexName)) {
+                    continue;
+                }
+
+                $schema->table($tableName, function (Blueprint $table) use ($columns, $indexName): void {
+                    $table->fullText($columns, $indexName);
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30529: '.$e->getMessage());
+
+            return ['Migration 30529 failed: '.$e->getMessage()];
         }
 
         return true;

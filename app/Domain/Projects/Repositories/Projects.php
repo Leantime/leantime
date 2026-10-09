@@ -352,6 +352,48 @@ class Projects
             ->orWhere('requestingUser.role', '>=', 40);
     }
 
+    /**
+     * Ids of every project the user may access (same rule as getUserProjects with
+     * accessStatus 'all'), without the joins and grouping the full project rows need.
+     * Built for callers that only scope another query, such as global search.
+     *
+     * @param  int  $userId  The user whose access is evaluated.
+     * @param  string  $projectStatus  'open' (default), 'closed' or 'all'.
+     * @return int[] Project ids; empty when the user can access nothing.
+     */
+    public function getAccessibleProjectIds(int $userId, string $projectStatus = 'open'): array
+    {
+        $query = $this->connection->table('zp_projects as project')
+            ->leftJoin('zp_relationuserproject as relation', function ($join) use ($userId) {
+                $join->on('project.id', '=', 'relation.projectId')
+                    ->where('relation.userId', $userId);
+            })
+            ->leftJoin('zp_user as requestingUser', function ($join) use ($userId) {
+                $join->on('requestingUser.id', '=', $this->connection->raw((int) $userId));
+            })
+            ->where(function ($q) {
+                $q->where('project.active', '>', -1)
+                    ->orWhereNull('project.active');
+            })
+            ->where(function ($q) use ($userId) {
+                $this->accessibleProjectPredicate($q, $userId, function ($q2) {
+                    $q2->where('project.psettings', 'clients')
+                        ->whereColumn('project.clientId', 'requestingUser.clientId');
+                });
+            });
+
+        if ($projectStatus === 'open') {
+            $query->where(function ($q) {
+                $q->where('project.state', '<>', -1)
+                    ->orWhereNull('project.state');
+            });
+        } elseif ($projectStatus === 'closed') {
+            $query->where('project.state', -1);
+        }
+
+        return array_map('intval', $query->distinct()->pluck('project.id')->all());
+    }
+
     public function getUserProjects(int $userId, string $projectStatus = 'all', ?int $clientId = null, string $accessStatus = 'assigned', string $projectTypes = 'all'): false|array
     {
         $query = $this->connection->table('zp_projects as project')
