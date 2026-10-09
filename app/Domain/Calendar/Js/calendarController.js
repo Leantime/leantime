@@ -57,12 +57,52 @@ leantime.calendarController = (function () {
         };
     };
 
+    // Stacks the title under the time instead of FullCalendar's default single-line dot+time+title,
+    // which left ~0px for the title in this widget's narrow columns. Builds DOM nodes with textContent
+    // only, never HTML, so a title can't be parsed as markup. Reuses FullCalendar's own
+    // fc-daygrid-event-dot/fc-event-time/fc-event-title classes for the existing color/theme CSS.
+    var monthEventContent = function (info) {
+        // info.event can be missing while an external item is being dragged over the calendar.
+        if (!info || !info.event) {
+            return {domNodes: []};
+        }
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'dashboard-month-event';
+
+        var dot = document.createElement('span');
+        dot.className = 'fc-daygrid-event-dot';
+        wrapper.appendChild(dot);
+
+        if (info.timeText) {
+            var time = document.createElement('span');
+            time.className = 'fc-event-time';
+            time.textContent = info.timeText;
+            wrapper.appendChild(time);
+        }
+
+        var title = document.createElement('span');
+        title.className = 'fc-event-title';
+        title.textContent = info.event.title || '';
+        wrapper.appendChild(title);
+
+        return {domNodes: [wrapper]};
+    };
+
     var closeModal = false;
 
     // Latest todo-draggable initializer, refreshed on each initWidgetCalendar() call. The single
     // global htmx.onLoad handler (registered once) calls THIS, so reloading the calendar widget
     // rewires drag/drop to the current calendar instance instead of a stale closure.
     var latestTodoDraggableInit = null;
+
+    // Same reload problem as latestTodoDraggableInit above: disconnected and replaced on each
+    // init so a widget reload doesn't stack a second observer reacting to the same popovers.
+    var activePopoverObserver = null;
+
+    // Lets a poll loop started by a previous init recognize it's stale and stop, since
+    // disconnecting the observer above doesn't cancel an already-scheduled setTimeout.
+    var activePopoverGeneration = null;
 
     //Functions
     var initCalendar = function (userEvents) {
@@ -263,20 +303,31 @@ leantime.calendarController = (function () {
             eventTimeFormat: userTimeFormat,
             slotLabelFormat: userTimeFormat,
             firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+            // closeHint has no entry in FullCalendar's fr locale pack (and several others),
+            // so it silently falls back to English; Leantime already has a string for this.
+            closeHint: leantime.i18n.__("buttons.close"),
+            // fr locale pack's "+N en plus" reads as an awkward double "plus"; French only,
+            // every other locale keeps its own pack's moreLinkText untouched. Spread-in (not
+            // `moreLinkText: ... : undefined`) so other languages' own default isn't overwritten.
+            // Function form (not a plain string) is needed to match singular/plural "autre(s)".
+            ...(leantime.i18n.__("language.code") === 'fr' ? {
+                moreLinkText: function (num) {
+                    return '+' + num + ' ' + (num === 1 ? 'autre' : 'autres');
+                },
+            } : {}),
             views: {
+                // Kept the view id 'multiMonthOneMonth' (referenced by calendar.blade.php's Month
+                // toggle) though the type below is now dayGridMonth, not multiMonth: that component
+                // hardcodes dayMaxEvents/dayMaxEventRows to true internally, ignoring the options
+                // below, which is why #3863's dayMaxEvents: false never fully worked here.
                 multiMonthOneMonth: {
-                    type: 'multiMonth',
-                    duration: {months: 1},
-                    multiMonthTitleFormat: {month: 'long', year: 'numeric'},
+                    type: 'dayGridMonth',
+                    titleFormat: {month: 'long', year: 'numeric'},
                     dayHeaderFormat: {weekday: 'short'},
-                    // #3863: with the calendar's non-'auto' height, FullCalendar implicitly
-                    // caps events per day and collapses the rest behind "+N more", based on
-                    // its own internal height estimate rather than this view's actual CSS
-                    // (confirmed: our min-height fix in calendar.css grew the day cells, but
-                    // events stayed capped). Disable that cap for this view only so every
-                    // event renders directly in the cell, which calendar.css already sizes
-                    // to have room for a few.
-                    dayMaxEvents: false,
+                    fixedWeekCount: false,
+                    dayMaxEvents: 2,
+                    moreLinkClick: 'popover',
+                    eventContent: monthEventContent,
                 },
                 timeGridDay: {
                     dayHeaders: false
@@ -399,6 +450,12 @@ leantime.calendarController = (function () {
                     jQuery(info.el).addClass("locked");
                 }
 
+                // Month view line-clamps long titles visually; title attribute lets sighted
+                // mouse users read the full text on hover (harmless in other views too).
+                if (info.event.title) {
+                    jQuery(info.el).attr('title', info.event.title);
+                }
+
                 if (info.event.extendedProps.location != null
                     && info.event.extendedProps.location != ""
                     && info.event.extendedProps.location.indexOf("http") == 0
@@ -467,9 +524,10 @@ leantime.calendarController = (function () {
                     itemSelector: '.draggable-todo',
                     mirrorClass: 'dragging-mirror',
                     eventDragMinDistance: 10,
-                    mirrorSelector: function (el) {
-                        return el.closest('.ticketBox');
-                    },
+                    // Must be a CSS selector string, not a function: FullCalendar calls
+                    // document.querySelector(this.mirrorSelector) on it directly. Matches
+                    // mirrorClass above (the class FullCalendar itself adds to the mirror).
+                    mirrorSelector: '.dragging-mirror',
                     eventData: function (eventEl) {
 
                         let ticketEventData = jQuery(eventEl).data("event");
@@ -499,6 +557,100 @@ leantime.calendarController = (function () {
             calendar.render();
 
             calendar.scrollToTime(Date.now());
+
+            // FullCalendar positions the "+N more" popover with no regard for whether it fits
+            // the window or a clipping ancestor, and its CSS max-height is a fixed cap even when
+            // less space is actually available. getVisibleLimits finds the tightest top/bottom
+            // bound in viewport coordinates (window + every non-"visible overflow" ancestor);
+            // shrinkPopoverBodyToFit and clampPopoverToVisibleArea below use it to fix both.
+            var getVisibleLimits = function (el, margin) {
+                var top = margin;
+                var bottom = window.innerHeight - margin;
+                var ancestor = el.parentElement;
+                while (ancestor && ancestor !== document.body) {
+                    var ancestorStyle = getComputedStyle(ancestor);
+                    if (ancestorStyle.overflowY !== 'visible' || ancestorStyle.overflowX !== 'visible') {
+                        var ancestorRect = ancestor.getBoundingClientRect();
+                        top = Math.max(top, ancestorRect.top + margin);
+                        bottom = Math.min(bottom, ancestorRect.bottom - margin);
+                    }
+                    ancestor = ancestor.parentElement;
+                }
+
+                return {top: top, bottom: bottom};
+            };
+
+            // Caps the popover body's height to the space actually available (limits minus
+            // header and .fc-popover's own border), never more than calendar.css's min(45vh,
+            // 320px). No minimum floor: a floor could itself push the popover past a clipping
+            // ancestor's edge in the exact cramped case this exists to handle.
+            var shrinkPopoverBodyToFit = function (node, limits) {
+                var body = node.querySelector('.fc-popover-body');
+                if (!body) {
+                    return;
+                }
+                var header = node.querySelector('.fc-popover-header');
+                var headerHeight = header ? header.getBoundingClientRect().height : 0;
+                var popoverStyle = getComputedStyle(node);
+                var borderHeight = parseFloat(popoverStyle.borderTopWidth || 0)
+                    + parseFloat(popoverStyle.borderBottomWidth || 0);
+                var maxAllowed = Math.min(320, window.innerHeight * 0.45);
+                var available = (limits.bottom - limits.top) - headerHeight - borderHeight;
+                body.style.maxHeight = Math.max(0, Math.min(available, maxAllowed)) + 'px';
+            };
+
+            // Translates the popover's CSS `top` by `delta`, a pure viewport-space difference
+            // (rect/limits are re-measured from scratch each call, so delta never accumulates
+            // across repeated calls) -- valid regardless of which coordinate system `top` is
+            // itself expressed in. Checks both edges, not just the bottom.
+            var clampPopoverToVisibleArea = function (node, margin) {
+                var limits = getVisibleLimits(node, margin);
+                shrinkPopoverBodyToFit(node, limits);
+                var rect = node.getBoundingClientRect();
+                var currentTop = parseFloat(node.style.top) || 0;
+                var delta = 0;
+                if (rect.bottom > limits.bottom) {
+                    delta = limits.bottom - rect.bottom;
+                } else if (rect.top < limits.top) {
+                    delta = limits.top - rect.top;
+                }
+                if (delta !== 0) {
+                    node.style.top = (currentTop + delta) + 'px';
+                }
+            };
+
+            // FullCalendar can still be populating the popover after it's inserted, so a single
+            // check right after insertion undershoots. requestAnimationFrame and a ResizeObserver
+            // on the popover both proved unreliable here (confirmed via logging in the deployed
+            // bundle); setTimeout is the one that reliably keeps firing, hence this short,
+            // bounded poll loop (15 checks, 50ms apart). thisGeneration lets a poll loop from a
+            // previous init recognize it's superseded, the same way latestTodoDraggableInit does.
+            if (activePopoverObserver) {
+                activePopoverObserver.disconnect();
+            }
+            var thisGeneration = {};
+            activePopoverGeneration = thisGeneration;
+            activePopoverObserver = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    mutation.addedNodes.forEach(function (node) {
+                        if (node.nodeType !== 1 || !node.classList || !node.classList.contains('fc-popover')) {
+                            return;
+                        }
+                        var margin = 8;
+                        var checksLeft = 15;
+                        var pollOnce = function () {
+                            if (activePopoverGeneration !== thisGeneration || !document.body.contains(node) || checksLeft <= 0) {
+                                return;
+                            }
+                            checksLeft -= 1;
+                            clampPopoverToVisibleArea(node, margin);
+                            setTimeout(pollOnce, 50);
+                        };
+                        pollOnce();
+                    });
+                });
+            });
+            activePopoverObserver.observe(calendarEl, {childList: true, subtree: true});
 
             jQuery('.minCalendar .fc-prev-button').click(function () {
                 calendar.prev();

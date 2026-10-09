@@ -119,6 +119,13 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./node_modules/@fullcalendar/icalendar/index.global.min.js",
         "./node_modules/@fullcalendar/google-calendar/index.global.min.js",
         "./node_modules/@fullcalendar/luxon3/index.global.min.js",
+        // calendarController.js already calls calendar.setOption('locale', ...) with the
+        // app's own language.code, but FullCalendar's own UI strings ("more", "Close",
+        // "today", "All day"...) stay in English without a locale pack loaded -- the
+        // base `fullcalendar` package above bundles the engine, not translations. This
+        // pulls in every locale FullCalendar ships so the existing setOption call (and
+        // any of Leantime's ~49 languages, not just French) actually takes effect.
+        "./node_modules/@fullcalendar/core/locales-all.global.min.js",
 
     ], `public/dist/js/compiled-calendar-component.${version}.min.js`)
     .combine([
