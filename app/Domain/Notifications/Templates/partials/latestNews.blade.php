@@ -1,4 +1,4 @@
-<h1>Latest From Leantime</h1>
+<h1>{{ __('headlines.latest_from_leantime') }}</h1>
 <br />
 <div>
     <ul>

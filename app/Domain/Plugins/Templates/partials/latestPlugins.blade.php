@@ -1,6 +1,6 @@
 
-<h1>Latest Plugin Updates</h1>
-<p>Extend Leantime using our latest plugins.<br /><a href="{{ BASE_URL }}/plugins/marketplace"><i class="fa fa-cogs"></i> Manage Your Apps</a></p><br />
+<h1>{{ __('popover.latest_plugins') }}</h1>
+<p>{{ __('text.extend_leantime_latest_plugins') }}<br /><a href="{{ BASE_URL }}/plugins/marketplace"><i class="fa fa-cogs"></i> {{ __('links.manage_your_apps') }}</a></p><br />
 
 <br />
 <div>

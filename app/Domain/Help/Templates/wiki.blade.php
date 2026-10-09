@@ -5,10 +5,8 @@
             <div style='width:50%' class='svgContainer'>
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_real_time_collaboration_c62i.svg') !!}
             </div>
-            <h3 class="primaryColor">Documentation where you can find it</h3><br />
-            <p>Our docs allow you to write and share documentation with your team. You can create multiple spaces to organize your documentation into teams, areas or document category.<br/>
-                Create documents to share knowledge, processes and procedures. You can also create a document to share a link to a file or a folder in your cloud storage.<br/>
-            </p>
+            <h3 class="primaryColor">{{ __('headlines.documentation_where_you_can_find_it') }}</h3><br />
+            <p>{!! __('text.wiki_tour_intro') !!}</p>
             <br />
         </div>
     </div>
