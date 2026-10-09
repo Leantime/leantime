@@ -36,6 +36,8 @@ class Open extends Controller
         $id = (int) ($params['id'] ?? 0);
 
         // Zero is the only invalid id: blueprint boards are encoded as negative ids (see BlueprintsProvider).
+        // resolveTarget() only consults providers whose available() passed (the domain's view
+        // capability), so a type the user may not search resolves to null here as well.
         $target = ($type !== '' && $id !== 0) ? $this->searchService->resolveTarget($type, $id) : null;
 
         if ($target === null) {
