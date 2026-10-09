@@ -643,8 +643,11 @@ class Search
                     ->orWhereNull($projectAlias.'.active');
             });
 
+        // The ids are already integers (Projects::getAccessibleProjectIds), so they are inlined
+        // rather than bound: a user with thousands of accessible projects would otherwise hit the
+        // driver's bound-parameter limit (2,100 on SQL Server).
         if ($query->accessibleProjectIds !== null) {
-            $builder->whereIn($projectIdColumn, $query->accessibleProjectIds);
+            $builder->whereIntegerInRaw($projectIdColumn, $query->accessibleProjectIds);
         }
     }
 
