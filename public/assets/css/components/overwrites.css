@@ -32,9 +32,8 @@
 .nav-list > .active > a,
 .nav-list > .active > a:hover,
 .nav-list > .active > a:focus,
-.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chosen-container-multi .chosen-choices .search-choice,
-div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
-{ background-color: var(--primary-color) }
+.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last,
+div.tagsinput span.tag{ background-color: var(--primary-color) }
 
 
 
@@ -93,9 +92,6 @@ button:hover {
     color:#fff;
 }
 
-.chosen-container-multi .chosen-choices .search-choice {
-    color:#fff;
-}
 
 .btn-white {
     background:#fff;

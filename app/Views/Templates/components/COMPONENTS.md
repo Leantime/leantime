@@ -88,7 +88,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | button | `forms.button` | forms | ✅ | refactor/table-component | merged #3531: no-op migration + 3-tier role model |
 | text-input | `forms.text-input` | forms | ✅ | refactor/table-component | merged #3558: no-op; 146 call-sites / 56 files; variants `headline`/`large`/`small` (dropped `form`/`legacy` as CSS-redundant); HTML-native `type` prop; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
 | textarea | `forms.textarea` | forms | ✅ | selectsComponentUpdates | merged #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
-| select | `forms.select` (+ `.option`, `.optgroup` in P2) | forms | 🟡 | selectsComponentUpdates | P1 no-op shell: **115 core Blade selects / 43 files** migrated (all of core Blade; Chosen/Slim-enhanced ones too, markup identical so their inits still bind). P2 = `enhanced` (SlimSelect v2) + option/optgroup. See "Select & dropdown phase" |
+| select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
 | card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
 | chip | `forms.chip` (+ `.option`) | forms | ⬜ | selectsComponentUpdates | **renamed from `actions.chip`**: it's a value picker bound to an entity field. Planned P3 |
@@ -400,6 +400,9 @@ Port recipe (P5): create `X.blade.php` and delete `X.tpl.php` in the same commit
 `__()`, `echo "<li…"` → `@foreach`; keep inline scripts for P6 to clean. Both attribute gotchas above apply.
 
 ### Defer rubric (stays raw)
+Selects inside a Bootstrap dropdown panel (`.dropdown-menu`) stay **native** (no `enhanced`): the enhanced
+list mounts on `<body>`, so a pick is an outside click and Bootstrap closes the panel (RecurringTasks'
+recurrence form is the live example).
 Selects with inline handlers beyond `submit()`/`location.href`; option lists built by PHP concat or
 `sprintf` over a `dispatchTplFilter` format (Timesheets `showMy` is a plugin extension point — migrate the
 shell only); radio-item menus (raw slot); `<?php echo` in attributes (modernize first); JS-string menus.
@@ -524,3 +527,32 @@ one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `
   (`/hx/menu/projectSelector/update-menu` 200 → `#mainProjectSelector`). Rendering note: bare boolean attrs come out as
   `multiple="multiple"` / `required="required"` (component attribute bag) — DOM-identical. Duplicate `multiple` on ticketFilter
   `#statusSelect` collapses to one.
+- _select P2 (enhanced + Chosen removed)_: `slim-select@^2.13.1` (npm) replaces the vendored v1 and Chosen
+  (`chosen-js` uninstalled; Chosen JS/CSS/sprites + vendored v1 files deleted; ~90 `.chosen-*`/v1 `.ss-*` CSS
+  selector lines removed — SortableJS's `.sortable-chosen` deliberately kept). New registry `core/selects.js`
+  (`leantime.selectController.{init,get,setValue,destroy,destroyWithin}`): inits `select[data-lt-select]` on
+  `htmx.onLoad` + modal show, destroys on `htmx:beforeCleanupElement` + modal release (v2 mounts its list on
+  `<body>`; verified 5→16→5 panels across a ticket-modal open/close). No inline `new SlimSelect`/`.chosen()` left
+  in core (19 Chosen + 14 live Slim inits + 6 dead `#searchCanvas` + `#themeSelect` removed). `forms.select.option`
+  (`icon`/`color`/`colorClass` → `data-html`, which v2 reads natively): Canvas/Blueprints/Logicmodel/Goalcanvas
+  dialog options now server-rendered instead of JS `data:[{innerHTML}]` arrays; **goal dialog status/relates icons
+  restored** and its Type select enhanced too (consistent look, the #3776 goal). Project status colors: enhanced
+  + `colorClass` options; row template is now a `<template>` (else the registry enhances it before it's cloned);
+  `projectsController.initSelectFields()` kept as a delegate (PgmPro/StrategyPro pages call it). Timesheets
+  project↔to-do sync moved into `timesheetsController.initProjectTicketSync` (shared by showMy + editTime).
+  Theme: `slimselect.leantime.css` maps `--ss-*` to Leantime tokens on the elements (dark mode resolves);
+  label-color rules in dropdowns.css extended to `.ss-values/.ss-list span.label-*`. a11y: v2's own
+  combobox/listbox ARIA replaces accessibility.js's Chosen/Slim patches. TimesheetCest repointed to v2 DOM.
+  **Gotchas found:** (1) v2 copies the select's classes AND inline style onto its control + panel — Bootstrap
+  `span*` grid classes floated/indented it (CSS reset added); an option's class lands on its list row (so color
+  goes in `data-html` only). (2) `setSelected` rewrites `<option>`s from v2's own copy (its MutationObserver is
+  async) → set the value BEFORE hiding/showing options. (3) setting a value fires `change` → guard handlers that
+  set each other (Timesheets). (4) open state is `.ss-open-below`/`.ss-open-above`, not `.ss-open`. (5) jQuery
+  `.trigger('change')` doesn't reach native listeners — use `selectController.setValue`. (6) `$attributes->merge()`
+  rewrites `style` (`width: 220px` → `width: 220px;`) — emit extra attributes directly instead.
+  Verified: view:cache; every `<select>` on 36 pages vs the P1 baseline = 151 identical + 55 differing only by the
+  new `data-lt-select*` attrs + 7 expected (canvas options moved server-side, `<template>`, clock labels); live:
+  filter, ticket modal (mouse + keyboard picks, modal stays open), canvas dialogs, project colors (+ add row),
+  Timesheets sync both pages, editOwn, newProject, moveTicket; light + dark. Companion plugins change: CustomFields
+  select enhanced; StrategyPro goal-dialog KPI select moved from `register.php` echo strings into
+  `partials/goalKpiSelect` (enhanced).

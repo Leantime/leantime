@@ -137,7 +137,60 @@ leantime.timesheetsController = (function () {
     };
 
     // Make public what you want to have public, everything else is private
+    /**
+     * Keeps a project select and a to-do select in step:
+     *  - picking a project narrows the to-do list to that project's to-dos and clears the to-do;
+     *  - picking a to-do selects its project.
+     * To-do options carry `data-value="{projectId}"`. A project value of "" or "all" shows every to-do.
+     */
+    var initProjectTicketSync = function (projectSelect, ticketSelect) {
+        if (!projectSelect || !ticketSelect) {
+            return;
+        }
+
+        // The two handlers set each other's select, and setting a value fires `change`. These flags
+        // stop the echo: a to-do pick sets the project (which must not then clear that to-do), and a
+        // project pick clears the to-do (which must not then set the project from whatever option
+        // the browser falls back to — the edit form's to-do list has no blank option).
+        var settingProjectFromTicket = false;
+        var clearingTicket = false;
+
+        var showTicketsOfProject = function (projectId) {
+            var showAll = projectId === '' || projectId === 'all';
+            Array.prototype.forEach.call(ticketSelect.options, function (option) {
+                var belongsToProject = option.value === '' || option.getAttribute('data-value') === projectId;
+                option.style.display = (showAll || belongsToProject) ? '' : 'none';
+            });
+        };
+
+        projectSelect.addEventListener('change', function () {
+            // Clear first, filter second: setting the value of an enhanced select rewrites its
+            // <option>s from the dropdown's own copy, which would undo a filter applied before it.
+            if (!settingProjectFromTicket) {
+                clearingTicket = true;
+                leantime.selectController.setValue(ticketSelect, '');
+                clearingTicket = false;
+            }
+            showTicketsOfProject(projectSelect.value);
+        });
+
+        ticketSelect.addEventListener('change', function () {
+            if (clearingTicket) {
+                return;
+            }
+            var pickedOption = ticketSelect.options[ticketSelect.selectedIndex];
+            var projectId = pickedOption ? pickedOption.getAttribute('data-value') : null;
+            if (!projectId || projectSelect.value === projectId) {
+                return;
+            }
+            settingProjectFromTicket = true;
+            leantime.selectController.setValue(projectSelect, projectId);
+            settingProjectFromTicket = false;
+        });
+    };
+
     return {
+        initProjectTicketSync:initProjectTicketSync,
         initTimesheetsTable:initTimesheetsTable,
         initEditTimeModal:initEditTimeModal,
         formatHoursMinutes:formatHoursMinutes,

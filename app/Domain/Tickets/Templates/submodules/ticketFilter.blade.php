@@ -75,7 +75,7 @@
                     <div class="">
                         <label class="inline">{!! __('label.project') !!}</label>
                         <div class="form-group">
-                            <x-global::forms.select data-placeholder="{{ __('label.project') }}" title="{{ __('label.project') }}" name="projects" multiple="multiple" class="project-select" id="projectsSelect">
+                            <x-global::forms.select enhanced data-placeholder="{{ __('label.project') }}" title="{{ __('label.project') }}" name="projects" multiple="multiple" class="project-select" id="projectsSelect">
                                 <option value="" data-placeholder="true">{!! __('label.project') !!}</option>
                                 @foreach ($availableProjects as $projectFilterId => $projectFilterName)
                                     <option value="{{ $projectFilterId }}"
@@ -90,7 +90,7 @@
                 <div class="">
                     <label class="inline">{!! __('label.user') !!}</label>
                     <div class="form-group">
-                        <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_user') }}"  title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
+                        <x-global::forms.select enhanced data-placeholder="{{ __('input.placeholders.filter_by_user') }}"  title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
                             <option value="" data-placeholder="true">{{ __('label.allUsers', 'All Users') }}</option>
                             @foreach ($users as $userRow)
                                 <option value="{{ $userRow['id'] }}"
@@ -104,7 +104,7 @@
                 <div class="">
                     <label class="inline">{!! __('label.milestone') !!}</label>
                     <div class="form-group">
-                        <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" multiple="multiple" title="{{ __('input.placeholders.filter_by_milestone') }}" name="milestone" id="milestoneSelect">
+                        <x-global::forms.select enhanced data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" multiple="multiple" title="{{ __('input.placeholders.filter_by_milestone') }}" name="milestone" id="milestoneSelect">
                             <option value="" data-placeholder="true">{!! __('label.all_milestones') !!}</option>
                             <option value="0" @if (isset($searchCriteria['milestone']) && in_array('0', explode(',', (string) $searchCriteria['milestone']), true)) selected='selected' @endif>{!! __('label.not_assigned_to_milestone') !!}</option>
                             @if (is_array($milestones))
@@ -121,7 +121,7 @@
                 <div class="">
                     <label class="inline">{!! __('label.todo_type') !!}</label>
                     <div class="form-group">
-                        <x-global::forms.select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_type') }}" title="{{ __('input.placeholders.filter_by_type') }}" name="type" id="typeSelect">
+                        <x-global::forms.select enhanced multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_type') }}" title="{{ __('input.placeholders.filter_by_type') }}" name="type" id="typeSelect">
                             <option value="" data-placeholder="true">{!! __('label.all_types') !!}</option>
                             @foreach ($types as $type)
                                 <option value="{{ $type }}"
@@ -135,7 +135,7 @@
                 <div class="">
                     <label class="inline">{!! __('label.todo_priority') !!}</label>
                     <div class="form-group">
-                        <x-global::forms.select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_priority') }}" title="{{ __('input.placeholders.filter_by_priority') }}" name="priority" id="prioritySelect">
+                        <x-global::forms.select enhanced multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_priority') }}" title="{{ __('input.placeholders.filter_by_priority') }}" name="priority" id="prioritySelect">
                             <option value="" data-placeholder="true">{!! __('label.all_priorities') !!}</option>
                             @foreach ($priorities as $priorityKey => $priorityValue)
                                 <option value="{{ $priorityKey }}"
@@ -149,7 +149,7 @@
                 <div class="">
                     <label class="inline">{!! __('label.todo_status') !!}</label>
                     <div class="form-group">
-                        <x-global::forms.select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status"  multiple="multiple" class="status-select" id="statusSelect">
+                        <x-global::forms.select enhanced multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status" class="status-select" id="statusSelect">
                             <option value="" data-placeholder="true">{{ __('label.allStatuses', 'All Statuses') }}</option>
                             <option value="not_done" @if ($searchCriteria['status'] !== false && str_contains($searchCriteria['status'], 'not_done')) selected='selected' @endif>{!! __('label.not_done') !!}</option>
                             @foreach ($statusLabels as $key => $label)
@@ -203,45 +203,6 @@
 
 <script>
     jQuery(document).ready(function() {
-
-        new SlimSelect({
-            select: '#userSelect',
-            settings: {
-                placeholderText: 'All Users',
-            },
-        });
-        new SlimSelect({
-            select: '#milestoneSelect',
-            settings: {
-                placeholderText: 'All Milestones',
-            },
-        });
-        new SlimSelect({
-            select: '#prioritySelect',
-            settings: {
-                placeholderText: 'All Priorities',
-            },
-        });
-        new SlimSelect({
-            select: '#typeSelect',
-            settings: {
-                placeholderText: 'All Types',
-            },
-        });
-        new SlimSelect({
-            select: '#statusSelect',
-            settings: {
-                placeholderText: 'All Statuses',
-            },
-        });
-        @if ($showProjectFilter)
-        new SlimSelect({
-            select: '#projectsSelect',
-            settings: {
-                placeholderText: @js(__('label.project')),
-            },
-        });
-        @endif
 
         leantime.ticketsController.initTicketSearchSubmit('{{ $searchFormUrl }}');
 

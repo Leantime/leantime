@@ -30,12 +30,6 @@
 <script type="text/javascript">
   jQuery(document).ready(function() {
 
-      if (jQuery('#searchCanvas').length > 0) {
-          new SlimSelect({
-              select: '#searchCanvas'
-          });
-      }
-
       leantime.goalCanvasController.setRowHeights();
       leantime.canvasController.setCanvasName('goal');
       leantime.canvasController.initFilterBar();

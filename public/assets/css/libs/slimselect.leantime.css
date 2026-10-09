@@ -1,16 +1,116 @@
-span.arrow-up, span.arrow-down {
-	font-family: var(--fa-style-family, "Font Awesome 6 Free");
-	font-weight: var(--fa-style, 900);
-	font-size: 1em;
-	transform: none !important;
-	border-width: 0 !important;
+/*
+ * Leantime theme for SlimSelect v2 (<x-global::forms.select enhanced>).
+ *
+ * SlimSelect is themed through its --ss-* custom properties. They are mapped to Leantime's design
+ * tokens on the elements themselves (not :root) so they resolve against the active theme and dark
+ * mode. The closed select looks like a native input (forms.css); the open list looks like our
+ * dropdown menus (dropdowns.css).
+ */
+
+.ss-main,
+.ss-content {
+    --ss-primary-color: var(--accent1);
+    --ss-bg-color: var(--input-background);
+    --ss-font-color: var(--primary-font-color);
+    --ss-font-placeholder-color: var(--primary-font-color);
+    --ss-disabled-color: var(--neutral-background);
+    --ss-border-color: var(--main-border-color);
+    --ss-highlight-color: var(--accent1);
+    --ss-focus-color: var(--accent1);
+    --ss-border-radius: var(--input-radius);
+    --ss-main-height: 31px;
+    --ss-content-height: 300px;
 }
 
-
-span.arrow-up::before {
-	content: "\f0d8";
+/* SlimSelect copies the <select>'s classes onto its own boxes. Bootstrap grid classes (span11, …)
+   would float and indent them, so they only keep their width meaning: full width. */
+.ss-main[class*="span"],
+.ss-content[class*="span"] {
+    float: none;
+    margin-left: 0;
 }
 
-span.arrow-down::before {
-	content: "\f0d7";
+.ss-main[class*="span"] {
+    width: 100%;
+}
+
+/* Closed state: same box as a native select/input. */
+.ss-main {
+    font-size: var(--base-font-size);
+    line-height: 21px;
+    padding: var(--input-padding);
+    box-shadow: var(--input-shadow);
+    margin-bottom: 5px;
+}
+
+.ss-main:focus {
+    box-shadow: var(--input-shadow);
+}
+
+.ss-main .ss-values .ss-placeholder {
+    opacity: 0.6;
+    padding: 0;
+}
+
+.ss-main .ss-values .ss-single {
+    margin: 0;
+}
+
+/* Multi-select chips: the same pill as the tag input. */
+.ss-main .ss-values .ss-value {
+    background-color: var(--accent1);
+    border-radius: 12px;
+}
+
+.ss-main .ss-values .ss-value .ss-value-text {
+    color: var(--accent1-color);
+    font-size: var(--font-size-s);
+    padding: 1px 4px 1px 10px;
+}
+
+.ss-main .ss-values .ss-value .ss-value-delete {
+    border-left-color: var(--accent1-color);
+}
+
+.ss-main .ss-values .ss-value .ss-value-delete svg path {
+    stroke: var(--accent1-color);
+}
+
+/* Open list: like .dropdown-menu. */
+.ss-content {
+    font-size: var(--base-font-size);
+    background-color: var(--secondary-background);
+    border: 0;
+    border-radius: var(--box-radius-small);
+    box-shadow: var(--regular-shadow);
+    z-index: var(--zlayer-9, 10000);
+}
+
+.ss-content .ss-search input {
+    box-shadow: none;
+    border-radius: var(--input-radius);
+    padding: var(--input-padding);
+}
+
+.ss-content .ss-list .ss-option {
+    color: var(--primary-font-color);
+    padding: 5px 10px;
+}
+
+/* Picked options: a quiet highlight, so they stay distinct from the accent hover row. */
+.ss-content .ss-list .ss-option:not(.ss-disabled).ss-selected:not(:hover) {
+    color: var(--primary-font-color);
+    background-color: var(--dropdown-link-hover-bg);
+    font-weight: bold;
+}
+
+/* Color-swatch options (forms.select.option color-class): show the label as a pill. */
+.ss-main .ss-values .ss-single span[class*="label-"],
+.ss-content .ss-list .ss-option span[class*="label-"] {
+    display: inline-block;
+    color: #fff;
+    margin: 0;
+    padding: 0 10px;
+    border-radius: var(--box-radius-large);
+    line-height: 21px;
 }

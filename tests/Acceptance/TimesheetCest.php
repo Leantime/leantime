@@ -25,16 +25,19 @@ class TimesheetCest
 
         $I->amOnPage('/timesheets/showMy');
         // Select project.
+        // Enhanced selects: the native <select> is hidden, .ss-main is the visible control and the
+        // open list (.ss-content) is mounted on <body>, opening below or above the control.
+        $openOption = '.ss-content.ss-open-below .ss-option:not(.ss-hide), .ss-content.ss-open-above .ss-option:not(.ss-hide)';
         $I->waitForElementNotVisible('.project-select', 120);
-        $I->clickWithRetry('#projectSelect .chosen-single');
-        $I->waitForElementVisible('.chosen-drop', 120);
-        $I->clickWithRetry('#projectSelect .chosen-results .active-result');
+        $I->clickWithRetry('#projectSelect .ss-main');
+        $I->waitForElementVisible($openOption, 120);
+        $I->clickWithRetry($openOption);
 
         // Select ticket.
         $I->waitForElementNotVisible('.ticket-select', 120);
-        $I->clickWithRetry('#ticketSelect .chosen-single');
-        $I->waitForElementVisible('.chosen-drop', 120);
-        $I->clickWithRetry('#ticketSelect .chosen-results .active-result');
+        $I->clickWithRetry('#ticketSelect .ss-main');
+        $I->waitForElementVisible($openOption, 120);
+        $I->clickWithRetry($openOption);
 
         // Select type.
         $I->waitForElementVisible('.kind-select', 120);

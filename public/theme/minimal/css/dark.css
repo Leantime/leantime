@@ -563,7 +563,7 @@ body .ticketDropdown ul::after {
     border-bottom: 7px solid var(--secondary-background);
 }
 
-.ss-main .ss-single-selected, .ss-content {
+.ss-content {
     background-color: var(--secondary-background) !important;
     color:var(--primary-font-color) !important;
     border: 1px solid var(--main-border-color) !important;

@@ -67,7 +67,7 @@
                             @if ($projectTypes && count($projectTypes) > 1)
                                 <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                                 <p>The type of the project. This will determine which features are available.</p>
-                                <x-global::forms.select name="type">
+                                <x-global::forms.select enhanced name="type">
                                     @foreach ($projectTypes as $key => $type)
                                         <option value="{{ $key }}"
                                             @if ($project['type'] == $key) selected='selected' @endif
@@ -104,7 +104,7 @@
                                 <div class="">
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span>{!! __('label.client_product') !!}</h4>
-                                    <x-global::forms.select name="clientId" id="clientId">
+                                    <x-global::forms.select enhanced name="clientId" id="clientId">
 
                                         @foreach ($clients as $row)
                                             <option value="{{ $row['id'] }}"
@@ -128,7 +128,7 @@
                                     {!! __('text.who_can_access') !!}
                                     <br /><br />
 
-                                    <x-global::forms.select name="globalProjectUserAccess" style="max-width:300px;">
+                                    <x-global::forms.select enhanced name="globalProjectUserAccess" style="max-width:300px;">
                                         <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{!! __('labels.only_chose') !!}</option>
                                         <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_client') !!}</option>
                                         <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_org') !!}</option>
@@ -151,7 +151,6 @@
 <script type="text/javascript">
     jQuery(document).ready(function() {
 
-        jQuery("#projectdetails select").chosen();
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
         leantime.projectsController.initProjectTabs();

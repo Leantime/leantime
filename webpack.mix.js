@@ -69,6 +69,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/app/core/datePickers.js",
         "./public/assets/js/app/core/dateHelper.js",
         "./public/assets/js/app/core/accessibility.js",
+        "./public/assets/js/app/core/selects.js",
 
         ...glob.sync("./app/Domain/**/*.js").map(f => `./${f}`)
     ], `public/dist/js/compiled-app.${version}.min.js`)
@@ -80,7 +81,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./node_modules/jquery-ui-dist/jquery-ui.js",
         // Touch drag support for jQuery UI (long-press to drag, tap/scroll stay native)
         "./public/assets/js/app/core/touchDrag.js",
-        "./node_modules/chosen-js/chosen.jquery.js",
         "./public/assets/js/libs/jquery.growl.js",
         "./public/assets/js/libs/jquery.form.js",
         "./public/assets/js/libs/jquery.tagsinput.min.js",
@@ -95,7 +95,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/jquery.form.js",
         "./node_modules/@popperjs/core/dist/umd/popper.js",
         "./node_modules/tippy.js/dist/tippy-bundle.umd.js",
-        "./public/assets/js/libs/slimselect.min.js",
+        "./node_modules/slim-select/dist/slimselect.umd.min.js",
         "./node_modules/canvas-confetti/dist/confetti.browser.js",
         "./public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
         "./public/assets/js/libs/uppy/uppy.js",
