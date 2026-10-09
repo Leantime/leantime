@@ -252,4 +252,24 @@ class QueueRepositoryTest extends TestCase
             }
         }
     }
+
+    /**
+     * An email's msghash is the same message to the same user in the same second, so a second
+     * identical queueing (a double-submitted ticket patch) is the same notification: it is skipped
+     * instead of failing on the primary key and reporting the SQL — subject and body — as an error.
+     */
+    public function test_queueing_the_same_email_twice_in_one_second_keeps_one_row_and_reports_nothing(): void
+    {
+        CarbonImmutable::setTestNow('2026-10-08 12:00:00');
+        $queueRepo = new QueueRepository(
+            $this->make(DbCore::class, ['getConnection' => fn () => $this->connection]),
+            $this->make(UserRepo::class, ['getUser' => fn () => ['id' => 3, 'username' => 'person@example.com']]),
+        );
+        Log::shouldReceive('error')->never();
+
+        $queueRepo->queueMessageToUsers([3], 'Ticket #12 was updated', 'Ticket updated', 5);
+        $queueRepo->queueMessageToUsers([3], 'Ticket #12 was updated', 'Ticket updated', 5);
+
+        $this->assertSame(1, $this->connection->table('zp_queue')->where('channel', Workers::EMAILS->value)->count());
+    }
 }

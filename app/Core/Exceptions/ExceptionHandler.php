@@ -77,6 +77,8 @@ class ExceptionHandler implements ExceptionHandlerContract
      * @var string[]
      */
     protected $internalDontReport = [
+        // Expected 403s. report() still writes an info-level audit entry for them first.
+        AuthorizationException::class,
         HttpException::class,
         HttpResponseException::class,
         SuspiciousOperationException::class,
@@ -202,6 +204,19 @@ class ExceptionHandler implements ExceptionHandlerContract
     public function report(Throwable $e)
     {
         $e = $this->mapException($e);
+
+        // A denied action is an expected 403, not a fault: keep it out of the error log (and
+        // error tracking) but leave an info-level audit entry, since not every denial goes
+        // through PermissionService/PermissionEnforcer, which log their own.
+        if ($e instanceof AuthorizationException) {
+            Log::info('Authorization denied: '.$e->getMessage(), [
+                'exception' => get_class($e),
+                'userId' => session('userdata.id'),
+                'path' => app()->runningInConsole() ? null : request()->path(),
+            ]);
+
+            return;
+        }
 
         if ($this->shouldntReport($e)) {
             return;
