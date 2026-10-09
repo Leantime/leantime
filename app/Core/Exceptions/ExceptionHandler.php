@@ -77,6 +77,8 @@ class ExceptionHandler implements ExceptionHandlerContract
      * @var string[]
      */
     protected $internalDontReport = [
+        // Expected 403s. report() still writes an info-level audit entry for them first.
+        AuthorizationException::class,
         HttpException::class,
         HttpResponseException::class,
         SuspiciousOperationException::class,

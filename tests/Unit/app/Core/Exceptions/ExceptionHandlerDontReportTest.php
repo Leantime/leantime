@@ -29,6 +29,8 @@ class ExceptionHandlerDontReportTest extends TestCase
         $handler->report(new AuthException);
 
         $this->assertCount(2, $infoMessages);
+        $this->assertFalse($handler->shouldReport(new AuthorizationException), 'Integrations consulting shouldReport() agree');
+        $this->assertTrue($handler->shouldReport(new \RuntimeException('a real fault')));
         $this->assertStringContainsString('You cannot assign a role higher than your own.', $infoMessages[0]);
     }
 }
