@@ -2176,8 +2176,6 @@ class Tickets
             $values['priority'] = self::normalizePriority($values['priority']) ?? '';
         }
 
-        $this->addTicketChange(session('userdata.id'), $id, $values);
-
         $updates = [
             'headline' => $values['headline'],
             'type' => $values['type'],
@@ -2207,19 +2205,26 @@ class Tickets
             $updates['outcomeImpact'] = $values['outcomeImpact'];
         }
 
+        // Background jobs (cron, recurring tasks) have no session user; credit the ticket's author.
+        $actingUserId = session('userdata.id') ?? $values['userId'] ?? null;
+        $collaborators = $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null);
+
+        // One transaction: a failure after the update must not leave the ticket changed with its
+        // collaborators deleted, or history rows for a change that never happened (a caller that
+        // retries would then repeat the update every time).
         // update() throws on failure; zero affected rows (nothing changed) is still a success.
-        $this->connection->table('zp_tickets')
-            ->where('id', $id)
-            ->update($updates);
+        $this->connection->transaction(function () use ($id, $values, $updates, $collaborators, $actingUserId) {
+            // History first: it diffs against the row as it was before this update.
+            $this->addTicketChange($actingUserId, $id, $values);
 
-        $this->removeCollaborators($id);
+            $this->connection->table('zp_tickets')
+                ->where('id', $id)
+                ->update($updates);
 
-        // Add new collaborators
-        $this->addCollaborators(
-            $id,
-            $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null),
-            session('userdata.id')
-        );
+            $this->removeCollaborators($id);
+
+            $this->addCollaborators($id, $collaborators, $actingUserId === null ? null : (int) $actingUserId);
+        });
 
         return true;
     }
@@ -2556,22 +2561,14 @@ class Tickets
     }
 
     /**
-     * Adds collaborators to a ticket.
-     *
-     * @param  int  $ticketId  The ID of the ticket.
-     * @param  array  $collaborators  An array of user IDs to add as collaborators.
-     * @param  int  $createdBy  The ID of the user adding the collaborators.
-     * @return bool Returns true if the operation is successful.
-     */
-    /**
      * Adds collaborators to a ticket using a single batch insert.
      *
      * @param  int  $ticketId  The ID of the ticket.
      * @param  array  $collaborators  An array of user IDs to add as collaborators.
-     * @param  int  $createdBy  The ID of the user adding the collaborators.
+     * @param  int|null  $createdBy  The ID of the user adding the collaborators (null when no user is acting, e.g. cron).
      * @return bool Returns true if the operation is successful.
      */
-    public function addCollaborators(int $ticketId, array $collaborators, int $createdBy): bool
+    public function addCollaborators(int $ticketId, array $collaborators, ?int $createdBy): bool
     {
         $collaborators = $this->normalizeCollaborators($collaborators);
 

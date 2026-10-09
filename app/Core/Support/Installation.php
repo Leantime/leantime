@@ -30,4 +30,29 @@ class Installation
             return false;
         }
     }
+
+    /**
+     * Whether the database schema is behind the code (the recorded db-version is older than
+     * AppSettings::$dbVersion), i.e. update_sql_* migrations are still pending.
+     *
+     * Web requests run pending migrations through the Updated middleware; console runs do not, so
+     * anything that queries the schema from the console (the scheduler) must check this first.
+     * An unreadable version counts as behind, so callers fail closed.
+     */
+    public static function isDatabaseBehindCode(): bool
+    {
+        try {
+            $dbVersion = app()->make(SettingRepository::class)->getSetting('db-version');
+        } catch (\Throwable $e) {
+            return true;
+        }
+
+        if (! is_string($dbVersion) || $dbVersion === '') {
+            return true;
+        }
+
+        $codeVersion = app()->make(\Leantime\Core\Configuration\AppSettings::class)->dbVersion;
+
+        return version_compare($dbVersion, $codeVersion, '<');
+    }
 }
