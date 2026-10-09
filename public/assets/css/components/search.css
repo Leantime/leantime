@@ -352,41 +352,73 @@
 }
 
 .searchPage__panels {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-@media (min-width: 992px) {
-    .searchPage__panels {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+.searchPage__panel .accordionTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
 }
 
-.searchPage__panelTitle {
-    margin: 0 0 6px;
-    padding: 0 16px;
-}
-
-.searchPage__panelTitle > span {
-    margin-right: 8px;
+.searchPage__panelIcon {
+    width: 18px;
     color: var(--secondary-font-color);
+    font-size: var(--font-size-s);
+    text-align: center;
+}
+
+.searchPage__count {
+    min-width: 1.5em;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--light-layered-background);
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.searchPage__count:empty {
+    display: none;
+}
+
+.searchPage__panel .simpleAccordionContainer {
+    padding: 0 0 8px;
+}
+
+.searchPage__panel .searchPage__empty {
+    padding: 6px 0 10px 28px;
 }
 
 .searchPage__list {
-    border: 1px solid var(--main-border-color);
-    border-radius: var(--box-radius);
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-.searchPage__list .searchResult + .searchResult {
+.searchPage__list .searchResult {
+    padding: 9px 4px 9px 28px;
     border-top: 1px solid var(--main-border-color);
+}
+
+.searchPage__list .searchResult:first-child {
+    border-top: 0;
+}
+
+.searchPage__list .searchResult:hover,
+.searchPage__list .searchResult.active {
+    background: var(--light-layered-background);
+    border-radius: var(--box-radius-small);
 }
 
 .searchPage__more {
     display: block;
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     border-top: 1px solid var(--main-border-color);
     text-align: center;
 }

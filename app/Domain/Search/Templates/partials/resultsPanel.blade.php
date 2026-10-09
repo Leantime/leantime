@@ -4,6 +4,11 @@
     The first page renders the list; "load more" requests render only the `rows` fragment,
     which swaps itself over the load-more button (hx-target="this", outerHTML).
 --}}
+@if ($offset === 0)
+    {{-- Loaded count for the section header; "+" when another page exists. --}}
+    <span class="searchPage__count" id="searchCount-{{ $provider->key() }}" hx-swap-oob="true">{{ count($results) }}{{ $hasMore ? '+' : '' }}</span>
+@endif
+
 @if ($offset === 0 && $results === [])
     <p class="searchPage__empty">{{ __('search.no_results_type') }}</p>
 @else

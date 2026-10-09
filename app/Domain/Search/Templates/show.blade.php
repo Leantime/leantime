@@ -84,18 +84,21 @@
             <div class="searchPage__panels">
                 @foreach ($selectedTypes as $key)
                     @php $provider = $providers[$key]; @endphp
-                    <section class="searchPage__panel" aria-labelledby="searchPanel-{{ $key }}">
-                        <h4 class="searchPage__panelTitle" id="searchPanel-{{ $key }}">
-                            <span class="{{ $provider->icon() }}" aria-hidden="true"></span>{{ $provider->label() }}
-                        </h4>
-                        <x-global::hx
-                            endpoint="search/results/get"
-                            :vals="$panelVals + ['type' => $key]"
-                            trigger="load"
-                            loader="line"
-                            :loaderCount="4"
-                        />
-                    </section>
+                    <x-global::accordion id="search-{{ $key }}" class="searchPage__panel">
+                        <x-slot name="title" id="searchPanel-{{ $key }}">
+                            <span class="{{ $provider->icon() }} searchPage__panelIcon" aria-hidden="true"></span>{{ $provider->label() }}
+                            <span class="searchPage__count" id="searchCount-{{ $key }}"></span>
+                        </x-slot>
+                        <x-slot name="content">
+                            <x-global::hx
+                                endpoint="search/results/get"
+                                :vals="$panelVals + ['type' => $key]"
+                                trigger="load"
+                                loader="line"
+                                :loaderCount="3"
+                            />
+                        </x-slot>
+                    </x-global::accordion>
                 @endforeach
             </div>
         @endif
