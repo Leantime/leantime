@@ -67,13 +67,13 @@
                             @if ($projectTypes && count($projectTypes) > 1)
                                 <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                                 <p>The type of the project. This will determine which features are available.</p>
-                                <select name="type">
+                                <x-global::forms.select name="type">
                                     @foreach ($projectTypes as $key => $type)
                                         <option value="{{ $key }}"
                                             @if ($project['type'] == $key) selected='selected' @endif
                                         >{!! __($key) !!}</option>
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                                 <br /><br />
                             @endif
 
@@ -104,7 +104,7 @@
                                 <div class="">
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span>{!! __('label.client_product') !!}</h4>
-                                    <select name="clientId" id="clientId">
+                                    <x-global::forms.select name="clientId" id="clientId">
 
                                         @foreach ($clients as $row)
                                             <option value="{{ $row['id'] }}"
@@ -112,7 +112,7 @@
                                             >{{ $row['name'] }}</option>
                                         @endforeach
 
-                                    </select>
+                                    </x-global::forms.select>
                                     @if ($login::userIsAtLeast('manager'))
                                         <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank">{!! __('label.client_not_listed') !!}</a>
                                     @endif
@@ -128,11 +128,11 @@
                                     {!! __('text.who_can_access') !!}
                                     <br /><br />
 
-                                    <select name="globalProjectUserAccess" style="max-width:300px;">
+                                    <x-global::forms.select name="globalProjectUserAccess" style="max-width:300px;">
                                         <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{!! __('labels.only_chose') !!}</option>
                                         <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_client') !!}</option>
                                         <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_org') !!}</option>
-                                    </select>
+                                    </x-global::forms.select>
 
                                 </div>
                             </div>

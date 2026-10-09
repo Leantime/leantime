@@ -75,14 +75,14 @@
                     <div class="">
                         <label class="inline">{!! __('label.project') !!}</label>
                         <div class="form-group">
-                            <select data-placeholder="{{ __('label.project') }}" title="{{ __('label.project') }}" name="projects" multiple="multiple" class="project-select" id="projectsSelect">
+                            <x-global::forms.select data-placeholder="{{ __('label.project') }}" title="{{ __('label.project') }}" name="projects" multiple="multiple" class="project-select" id="projectsSelect">
                                 <option value="" data-placeholder="true">{!! __('label.project') !!}</option>
                                 @foreach ($availableProjects as $projectFilterId => $projectFilterName)
                                     <option value="{{ $projectFilterId }}"
                                         @if (isset($searchCriteria['projects']) && in_array((string) $projectFilterId, explode(',', (string) $searchCriteria['projects']), true)) selected='selected' @endif
                                     >{{ $tpl->escape($projectFilterName) }}</option>
                                 @endforeach
-                            </select>
+                            </x-global::forms.select>
                         </div>
                     </div>
                 @endif
@@ -90,21 +90,21 @@
                 <div class="">
                     <label class="inline">{!! __('label.user') !!}</label>
                     <div class="form-group">
-                        <select data-placeholder="{{ __('input.placeholders.filter_by_user') }}"  title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
+                        <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_user') }}"  title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
                             <option value="" data-placeholder="true">{{ __('label.allUsers', 'All Users') }}</option>
                             @foreach ($users as $userRow)
                                 <option value="{{ $userRow['id'] }}"
                                     @if ($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow['id'], explode(',', $searchCriteria['users'])) !== false) selected='selected' @endif
                                 >{!! sprintf(__('text.full_name'), $tpl->escape($userRow['firstname']), $tpl->escape($userRow['lastname'])) !!}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <label class="inline">{!! __('label.milestone') !!}</label>
                     <div class="form-group">
-                        <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" multiple="multiple" title="{{ __('input.placeholders.filter_by_milestone') }}" name="milestone" id="milestoneSelect">
+                        <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" multiple="multiple" title="{{ __('input.placeholders.filter_by_milestone') }}" name="milestone" id="milestoneSelect">
                             <option value="" data-placeholder="true">{!! __('label.all_milestones') !!}</option>
                             <option value="0" @if (isset($searchCriteria['milestone']) && in_array('0', explode(',', (string) $searchCriteria['milestone']), true)) selected='selected' @endif>{!! __('label.not_assigned_to_milestone') !!}</option>
                             @if (is_array($milestones))
@@ -114,42 +114,42 @@
                                     >{{ $tpl->escape($milestoneRow->headline) }}</option>
                                 @endforeach
                             @endif
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <label class="inline">{!! __('label.todo_type') !!}</label>
                     <div class="form-group">
-                        <select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_type') }}" title="{{ __('input.placeholders.filter_by_type') }}" name="type" id="typeSelect">
+                        <x-global::forms.select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_type') }}" title="{{ __('input.placeholders.filter_by_type') }}" name="type" id="typeSelect">
                             <option value="" data-placeholder="true">{!! __('label.all_types') !!}</option>
                             @foreach ($types as $type)
                                 <option value="{{ $type }}"
                                     @if (isset($searchCriteria['type']) && array_search($type, explode(',', $searchCriteria['type'])) !== false) selected='selected' @endif
                                 >{{ $type }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <label class="inline">{!! __('label.todo_priority') !!}</label>
                     <div class="form-group">
-                        <select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_priority') }}" title="{{ __('input.placeholders.filter_by_priority') }}" name="priority" id="prioritySelect">
+                        <x-global::forms.select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_priority') }}" title="{{ __('input.placeholders.filter_by_priority') }}" name="priority" id="prioritySelect">
                             <option value="" data-placeholder="true">{!! __('label.all_priorities') !!}</option>
                             @foreach ($priorities as $priorityKey => $priorityValue)
                                 <option value="{{ $priorityKey }}"
                                     @if (isset($searchCriteria['priority']) && array_search($priorityKey, explode(',', $searchCriteria['priority'])) !== false) selected='selected' @endif
                                 >{{ $priorityValue }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
                 <div class="">
                     <label class="inline">{!! __('label.todo_status') !!}</label>
                     <div class="form-group">
-                        <select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status"  multiple="multiple" class="status-select" id="statusSelect">
+                        <x-global::forms.select multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status"  multiple="multiple" class="status-select" id="statusSelect">
                             <option value="" data-placeholder="true">{{ __('label.allStatuses', 'All Statuses') }}</option>
                             <option value="not_done" @if ($searchCriteria['status'] !== false && str_contains($searchCriteria['status'], 'not_done')) selected='selected' @endif>{!! __('label.not_done') !!}</option>
                             @foreach ($statusLabels as $key => $label)
@@ -157,7 +157,7 @@
                                     @if ($searchCriteria['status'] !== false && array_search((string) $key, explode(',', $searchCriteria['status'])) !== false) selected='selected' @endif
                                 >{{ $tpl->escape($label['name']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 

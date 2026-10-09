@@ -90,7 +90,7 @@
                                 <br />
                                 <span class="pull-left">
                                 @if (true)
-                                    <select data-placeholder="{{ __('input.placeholders.filter_by_sprint') }}" title="{{ __('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
+                                    <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_sprint') }}" title="{{ __('input.placeholders.filter_by_sprint') }}" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
 
                                         <option value="" >{!! __('input.placeholders.filter_by_sprint') !!}</option>
                                         @php $dates = ''; @endphp
@@ -102,7 +102,7 @@
                                                 @endif
                                             >{{ $tpl->escape($sprintRow->name) }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                 @endif
                             </span>
 

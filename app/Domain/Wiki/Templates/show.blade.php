@@ -267,10 +267,10 @@
                             <label class="control-label">{!! __('label.status') !!}</label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
-                                    <select id="wikiStatusSelect" class="span11">
+                                    <x-global::forms.select id="wikiStatusSelect" class="span11">
                                         <option value="draft" @selected($currentArticle->status === 'draft')>Draft</option>
                                         <option value="published" @selected($currentArticle->status !== 'draft')>Published</option>
-                                    </select>
+                                    </x-global::forms.select>
                                 @else
                                     {{ ucfirst($currentArticle->status) }}
                                 @endif
@@ -300,12 +300,12 @@
                                             return $h->id != $currentArticle->id;
                                         });
                                     @endphp
-                                    <select id="wikiParentSelect" class="span11">
+                                    <x-global::forms.select id="wikiParentSelect" class="span11">
                                         <option value="0" @selected(! $currentArticle->parent || $currentArticle->parent == 0)>None</option>
                                         @foreach($parentOptions as $headline)
                                             <option value="{{ $headline->id }}" @selected($currentArticle->parent == $headline->id)>{{ $headline->title }}@if($headline->status === 'draft') ({!! __('label.draft') !!})@endif</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                 @else
                                     @if($currentArticle->parent && $currentArticle->parent > 0)
                                         <a href="{{ BASE_URL }}/wiki/show/{{ $currentArticle->parent }}">
@@ -323,12 +323,12 @@
                             <label class="control-label">{!! __('label.milestone') !!}</label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
-                                    <select id="wikiMilestoneSelect" class="span11">
+                                    <x-global::forms.select id="wikiMilestoneSelect" class="span11">
                                         <option value="">{!! __('label.not_assigned_to_milestone') !!}</option>
                                         @foreach($milestones as $milestone)
                                             <option value="{{ $milestone->id }}" @selected($currentArticle->milestoneId == $milestone->id)>{{ $milestone->headline }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                 @else
                                     @if(! empty($currentArticle->milestoneHeadline))
                                         <a href="{{ BASE_URL }}/tickets/roadmap#/tickets/editMilestone/{{ $currentArticle->milestoneId }}">

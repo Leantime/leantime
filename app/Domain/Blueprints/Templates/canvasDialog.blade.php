@@ -46,16 +46,16 @@
 
         @if(! empty($statusLabels))
             <label>{!! __('label.status') !!}</label>
-            <select name="status" style="width: 50%" id="statusCanvas">
-            </select><br /><br />
+            <x-global::forms.select name="status" style="width: 50%" id="statusCanvas">
+            </x-global::forms.select><br /><br />
         @else
             <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
         @endif
 
         @if(! empty($relatesLabels))
             <label>{!! __('label.relates') !!}</label>
-            <select name="relates" style="width: 50%" id="relatesCanvas">
-            </select><br />
+            <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas">
+            </x-global::forms.select><br />
         @else
             <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
         @endif
@@ -141,14 +141,14 @@
 
                     <div class="row" id="existingMilestone" style="display:none;">
                         <div class="col-md-12">
-                            <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
+                            <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
                                 <option value=""></option>
                                 @foreach($milestones as $milestoneRow)
                                     <option value="{{ $milestoneRow->id }}"
                                         @if(isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id) selected='selected' @endif
                                     >{{ $milestoneRow->headline }}</option>
                                 @endforeach
-                            </select>
+                            </x-global::forms.select>
                             <input type="hidden" name="type" value="milestone" />
                             <input type="hidden" name="blueprintscanvasitemid" value="{{ $id }} " />
                             <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />

@@ -43,12 +43,12 @@
 
                     <div class="filterBoxLeft">
                         <label for="kind">{!! __('label.type') !!}</label>
-                        <select id="kind" name="kind" onchange="submit();">
+                        <x-global::forms.select id="kind" name="kind" onchange="submit();">
                             <option value="all">{!! __('label.all_types') !!}</option>
                             @foreach($kind as $key => $row)
                                 <option value="{{ $key }}" @selected($key == $actKind)>{!! __($row) !!}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                     <div class="filterBoxLeft">
                         <label>&nbsp;</label>

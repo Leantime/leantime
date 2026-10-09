@@ -326,11 +326,11 @@
                             <div id="comment0" class="commentBox tw-hidden">
                                 <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
 
-                                <select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
+                                <x-global::forms.select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
                                     <option value="green">{{ __('label.project_status_green') }}</option>
                                     <option value="yellow">{{ __('label.project_status_yellow') }}</option>
                                     <option value="red">{{ __('label.project_status_red') }}</option>
-                                </select>
+                                </x-global::forms.select>
 
                                 <div class="commentReply">
                                     <textarea rows="5" cols="50" class="tiptapSimple tw-w-full" name="text"></textarea>

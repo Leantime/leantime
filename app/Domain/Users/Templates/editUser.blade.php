@@ -34,7 +34,7 @@
 
 
                     <label for="role">{!! __('label.role') !!}</label>
-                    <select name="role" id="role">
+                    <x-global::forms.select name="role" id="role">
 
                         @foreach ($roles as $key => $role)
                             {{-- Privilege ceiling (parity with newUser): a manager may never
@@ -51,10 +51,10 @@
                             </option>
                         @endforeach
 
-                    </select> <br />
+                    </x-global::forms.select> <br />
 
                     <label for="status">{!! __('label.status') !!}</label>
-                    <select name="status" id="status" class="pull-left">
+                    <x-global::forms.select name="status" id="status" class="pull-left">
 
                         <option value="a"
                             @if (strtolower($values['status']) == 'a') selected="selected" @endif>
@@ -72,7 +72,7 @@
                         </option>
 
 
-                    </select>
+                    </x-global::forms.select>
                         @if ($values['status'] == 'i')
                         <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
                             <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"><i class="fa fa-link"></i> {!! __('label.copyinviteLink') !!}</a>
@@ -89,14 +89,14 @@
 
 
                     <label for="client">{!! __('label.client') !!}</label>
-                    <select name='client' id="client">
+                    <x-global::forms.select name='client' id="client">
                         @if ($login::userIsAtLeast('manager'))
                             <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
                         @endif
                         @foreach ($clients as $clientItem)
                             <option value="{{ $clientItem['id'] }}" @if ($clientItem['id'] == $values['clientId']) selected="selected" @endif>{{ $clientItem['name'] }}</option>
                         @endforeach
-                    </select><br/>
+                    </x-global::forms.select><br/>
                         <br/>
 
                         <h4 class="widgettitle title-light">{!! __('label.contact_information') !!}</h4>
@@ -144,7 +144,7 @@
                             <span class="hint">{!! __('label.weekly_hours_hint') !!}</span><br /><br />
 
                             <label for="employment_type">{!! __('label.employment_type') !!}</label>
-                            <select name="employment_type" id="employment_type">
+                            <x-global::forms.select name="employment_type" id="employment_type">
                                 <option value="">{!! __('label.employment_type.unset') !!}</option>
                                 @foreach (\Leantime\Domain\Users\Enums\EmploymentType::cases() as $type)
                                     <option value="{{ $type->value }}"
@@ -152,7 +152,7 @@
                                         {!! __($type->langKey()) !!}
                                     </option>
                                 @endforeach
-                            </select><br />
+                            </x-global::forms.select><br />
                             <span class="hint">{!! __('label.employment_type_hint') !!}</span><br /><br />
                         @endif
 

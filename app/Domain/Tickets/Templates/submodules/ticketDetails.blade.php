@@ -12,7 +12,7 @@
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]">{!! __('label.todo_status') !!}</label>
                     <div class="">
-                        <select
+                        <x-global::forms.select
                             id="status-select"
                             class=""
                             name="status"
@@ -23,7 +23,7 @@
                                     @if ($ticket->status == $key) selected='selected' @endif
                                 >{{ $label['name'] }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -31,14 +31,14 @@
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]">{!! __('label.priority') !!}</label>
                     <div class="">
-                        <select id='priority' name='priority' class="">
+                        <x-global::forms.select id='priority' name='priority' class="">
                             <option value="">{!! __('label.priority_not_defined') !!}</option>
                             @foreach ($priorities as $priorityKey => $priorityValue)
                                 <option value="{{ $priorityKey }}"
                                     @if ($priorityKey == $ticket->priority) selected='selected' @endif
                                 >{{ $priorityValue }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -46,14 +46,14 @@
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]">{!! __('label.effort') !!}</label>
                     <div class="">
-                        <select id='storypoints' name='storypoints' class="">
+                        <x-global::forms.select id='storypoints' name='storypoints' class="">
                             <option value="">{!! __('label.effort_not_defined') !!}</option>
                             @foreach ($efforts as $effortKey => $effortValue)
                                 <option value="{{ $effortKey }}"
                                     @if ($effortKey == $ticket->storypoints) selected='selected' @endif
                                 >{{ $effortValue }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -62,7 +62,7 @@
                     <label class="control-label tw-mx-m tw-w-[100px]">{!! __('label.editor') !!}</label>
                     <div class="">
 
-                        <select data-placeholder="{{ __('label.filter_by_user') }}" style="width:175px;"
+                        <x-global::forms.select data-placeholder="{{ __('label.filter_by_user') }}" style="width:175px;"
                                 name="editorId" id="editorId" class="user-select tw-mr-sm">
                             <option value="">{!! __('label.not_assigned_to_user') !!}</option>
                             @foreach ($users as $userRow)
@@ -70,7 +70,7 @@
                                     @if ($ticket->editorId == $userRow['id']) selected='selected' @endif
                                 >{{ $userRow['firstname'] . ' ' . $userRow['lastname'] }}</option>
                             @endforeach
-                        </select>&nbsp;
+                        </x-global::forms.select>&nbsp;
                     </div>
                     <div style="padding-top:6px;">
                         @if ($login::userIsAtLeast($roles::$editor))
@@ -86,7 +86,7 @@
                         {{-- An empty multi-select posts nothing; this keeps "collaborators" in the
                              request so clearing them all still clears them (omitted = preserved). --}}
                         <input type="hidden" name="collaborators[]" value="" />
-                        <select data-placeholder="{{ __('label.filter_by_user') }}"
+                        <x-global::forms.select data-placeholder="{{ __('label.filter_by_user') }}"
                                 style="width:175px;"
                                 name="collaborators[]"
                                 id="collaborators"
@@ -99,7 +99,7 @@
                                     {{ $userRow['firstname'] . ' ' . $userRow['lastname'] }}
                                 </option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
                 </div>
 
@@ -197,20 +197,20 @@
                     <div class="form-group">
                         <label class="control-label">{!! __('label.todo_type') !!}</label>
                         <div class="">
-                            <select id='type' name='type' class="span11">
+                            <x-global::forms.select id='type' name='type' class="span11">
                                 @foreach ($ticketTypes as $types)
                                     <option value="{{ strtolower($types) }}"
                                         @if (strtolower($types) == strtolower($ticket->type ?? '')) selected='selected' @endif
                                     >{!! __('label.' . strtolower($types)) !!}</option>
                                 @endforeach
-                            </select><br/>
+                            </x-global::forms.select><br/>
                         </div>
                     </div>
 
                     <!-- Project -->
                     <div class="form-group">
                         <label class="control-label">{!! __('label.project') !!}</label>
-                        <select name="projectId" class="tw-w-full">
+                        <x-global::forms.select name="projectId" class="tw-w-full">
                             @foreach ($allAssignedprojects as $project)
                                 <option value="{{ $project['id'] }}"
                                     @if ($ticket->projectId == $project['id'])
@@ -220,7 +220,7 @@
                                     @endif
                                 >{{ $tpl->escape($project['name']) }}</option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     </div>
 
                     <!-- Milestones -->
@@ -228,14 +228,14 @@
                         <label class="control-label">{!! __('label.milestone') !!}</label>
                         <div class="">
                             <div class="form-group">
-                                <select  name="milestoneid"  class="span11" >
+                                <x-global::forms.select  name="milestoneid"  class="span11" >
                                     <option value="">{!! __('label.not_assigned_to_milestone') !!}</option>
                                     @foreach ($milestones as $milestoneRow)
                                         <option value="{{ $milestoneRow->id }}"
                                             @if ($ticket->milestoneid == $milestoneRow->id) selected='selected' @endif
                                         >{{ $tpl->escape($milestoneRow->headline) }}</option>
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                             </div>
                         </div>
                     </div>
@@ -245,7 +245,7 @@
                         <label class="control-label">{!! __('label.sprint') !!}</label>
                         <div class="">
 
-                            <select id="sprint-select" class="span11" name="sprint"
+                            <x-global::forms.select id="sprint-select" class="span11" name="sprint"
                                     data-placeholder="{{ $ticket->sprint }}">
                                 <option value="">{!! __('label.backlog') !!}</option>
                                 @if ($sprints)
@@ -255,7 +255,7 @@
                                         >{{ $sprintRow->name }}@if (! empty($sprintRow->isInherited)) — {{ __('label.program_sprint') }} @endif</option>
                                     @endforeach
                                 @endif
-                            </select>
+                            </x-global::forms.select>
                         </div>
                     </div>
 
@@ -264,7 +264,7 @@
                         <label class="control-label">{!! __('label.related_to') !!}</label>
                         <div class="">
                             <div class="form-group">
-                                <select  name="dependingTicketId"  class="span11" >
+                                <x-global::forms.select  name="dependingTicketId"  class="span11" >
                                     <option value="">{!! __('label.not_related') !!}</option>
                                     @if (is_array($ticketParents))
                                         @foreach ($ticketParents as $ticketRow)
@@ -273,7 +273,7 @@
                                             >{{ $tpl->escape($ticketRow->headline) }}</option>
                                         @endforeach
                                     @endif
-                                </select>
+                                </x-global::forms.select>
                             </div>
                         </div>
                     </div>

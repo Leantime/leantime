@@ -24,7 +24,7 @@
                         value="{{ $values['lastname'] }}" /><br />
 
             <label for="role">{!! __('label.role') !!}</label>
-            <select name="role" id="role">
+            <x-global::forms.select name="role" id="role">
 
                 @foreach ($roles as $key => $role)
                     @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30)
@@ -36,10 +36,10 @@
                     </option>
                 @endforeach
 
-            </select> <br />
+            </x-global::forms.select> <br />
 
             <label for="client">{!! __('label.client') !!}</label>
-            <select name='client' id="client">
+            <x-global::forms.select name='client' id="client">
                 @if ($login::userIsAtLeast('admin'))
                     <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
                 @endif
@@ -50,7 +50,7 @@
                     <option value="{{ $clientItem['id'] }}"
                             @if ($clientItem['id'] == $values['clientId'] || $preSelectedClient == $clientItem['id']) selected="selected" @endif>{{ $clientItem['name'] }}</option>
                 @endforeach
-            </select><br/>
+            </x-global::forms.select><br/>
             <br/>
 
 

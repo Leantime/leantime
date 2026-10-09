@@ -51,14 +51,14 @@
                             <tr>
                                 <td class="center">{{ $entity }}</td>
                                 <td class="center">
-                                    <select class="form-control" name="field_{{ md5($entity) }}">
+                                    <x-global::forms.select class="form-control" name="field_{{ md5($entity) }}">
                                         @foreach ($leantimeFields as $key2 => $fields)
                                             <option value="{{ $entity }}|{{ $key2 }}" {{ ($entity == $fields['name'] && !in_array($key2, ['id', 'itemId'])) ? "selected='selected'" : '' }}>
                                                 {{ $fields['name'] }}
                                             </option>
                                         @endforeach
                                         <option value="">Don't map</option>
-                                    </select>
+                                    </x-global::forms.select>
                                 </td>
                             </tr>
                         @endforeach

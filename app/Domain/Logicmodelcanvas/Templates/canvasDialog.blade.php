@@ -184,7 +184,7 @@
                         <div class="lm-details-row">
                             <span class="lm-details-label"><i class="fas fa-fw fa-circle-dot"></i> {{ $tpl->__('label.status') }}</span>
                             <span class="lm-details-value">
-                                <select name="status" id="statusCanvas"></select>
+                                <x-global::forms.select name="status" id="statusCanvas"></x-global::forms.select>
                             </span>
                         </div>
                     @else
@@ -195,7 +195,7 @@
                     <div class="lm-details-row">
                         <span class="lm-details-label"><i class="fas fa-fw fa-flag"></i> {{ $tpl->__('logicmodel.priority.label') }}</span>
                         <span class="lm-details-value">
-                            <select name="impact" id="priorityCanvas"></select>
+                            <x-global::forms.select name="impact" id="priorityCanvas"></x-global::forms.select>
                         </span>
                     </div>
 
@@ -203,7 +203,7 @@
                     <div class="lm-details-row">
                         <span class="lm-details-label"><i class="fas fa-fw fa-layer-group"></i> {{ $tpl->__('logicmodel.stage.label') }}</span>
                         <span class="lm-details-value">
-                            <select name="box" id="stageCanvas"></select>
+                            <x-global::forms.select name="box" id="stageCanvas"></x-global::forms.select>
                         </span>
                     </div>
 
@@ -211,7 +211,7 @@
                         <div class="lm-details-row">
                             <span class="lm-details-label"><i class="fas fa-fw fa-link"></i> {{ $tpl->__('label.relates') }}</span>
                             <span class="lm-details-value">
-                                <select name="relates" id="relatesCanvas"></select>
+                                <x-global::forms.select name="relates" id="relatesCanvas"></x-global::forms.select>
                             </span>
                         </div>
                     @else

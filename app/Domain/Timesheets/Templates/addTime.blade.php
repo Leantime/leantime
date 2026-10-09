@@ -40,14 +40,14 @@ $values = $values ?? [];
                         <div class="widgetcontent" style="min-height: 460px">
 
                             <label for="clients">{!! __('label.client') !!}</label>
-                            <select name="clients" id="clients" onchange="filterProjectsByClient();">
+                            <x-global::forms.select name="clients" id="clients" onchange="filterProjectsByClient();">
                                 <option value="all">{!! __('headline.all_clients') !!}</option>
                                 @foreach ($allClients as $client)
                                     <option value="{{ $client['id'] }}">{{ $client['name'] }}</option>
                                 @endforeach
-                            </select> <br/>
+                            </x-global::forms.select> <br/>
 
-                            <label for="projects">{!! __('PROJECT') !!}</label> <select
+                            <label for="projects">{!! __('PROJECT') !!}</label> <x-global::forms.select
                                     name="projects" id="projects"
                                     onchange="removeOptions($('select#projects option:selected').val());">
 
@@ -71,10 +71,10 @@ $values = $values ?? [];
                                         @php $lastClientName = $row['clientName']; @endphp
                                     @endforeach
                                 </optgroup>
-                            </select> <br/>
+                            </x-global::forms.select> <br/>
 
                             <label for="tickets">{!! __('TICKET') !!}</label>
-                            <select name="tickets" id="tickets">
+                            <x-global::forms.select name="tickets" id="tickets">
 
                                 @foreach ($allTickets as $row)
                                     <option class="{{ $row['projectId'] }}" value="{{ $row['projectId'] }}|{{ $row['id'] }}"
@@ -84,9 +84,9 @@ $values = $values ?? [];
                                     >{{ $row['headline'] }}</option>
                                 @endforeach
 
-                            </select> <br/>
+                            </x-global::forms.select> <br/>
                             <br/>
-                            <label for="kind">{!! __('KIND') !!}</label> <select id="kind"
+                            <label for="kind">{!! __('KIND') !!}</label> <x-global::forms.select id="kind"
                                                                                           name="kind">
                                 @foreach ($kind as $row)
                                     <option value="{{ $row }}"
@@ -96,7 +96,7 @@ $values = $values ?? [];
                                     >{!! __($row) !!}</option>
                                 @endforeach
 
-                            </select><br/>
+                            </x-global::forms.select><br/>
                             <label for="date">{!! __('DATE') !!}</label> <input type="text" autocomplete="off"
                                                                                          id="date" name="date"
                                                                                          value="{{ $values['date'] }}"

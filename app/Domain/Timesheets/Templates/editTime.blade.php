@@ -73,15 +73,15 @@ use Leantime\Core\Support\FromFormat;
 <form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
 
 <label for="clients">{!! __('label.client') !!}</label>
-<select name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">
+<x-global::forms.select name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">
     <option value="all">{!! __('headline.all_clients') !!}</option>
     @foreach ($allClients as $client)
         <option value="{{ $client['id'] }}">{{ $client['name'] }}</option>
     @endforeach
-</select> <br />
+</x-global::forms.select> <br />
 
 <label for="projects">{!! __('label.project') !!}</label>
-<select name="projects" id="projects" class="project-select">
+<x-global::forms.select name="projects" id="projects" class="project-select">
     <option value="all">{!! __('headline.all_projects') !!}</option>
 
     @foreach ($allProjects as $row)
@@ -91,11 +91,11 @@ use Leantime\Core\Support\FromFormat;
             @endif
         >{{ $row['name'] }}</option>
     @endforeach
-</select> <br />
+</x-global::forms.select> <br />
 
 <div id="ticketSelect">
 <label for="tickets">{!! __('label.ticket') !!}</label>
-<select name="tickets" id="tickets" class="ticket-select">
+<x-global::forms.select name="tickets" id="tickets" class="ticket-select">
 
     @foreach ($allTickets as $row)
         <option class="project_{{ $row['projectId'] }}" data-value="{{ $row['projectId'] }}" value="{{ $row['id'] }}"
@@ -105,9 +105,9 @@ use Leantime\Core\Support\FromFormat;
         >{{ $row['headline'] }}</option>
     @endforeach
 
-</select> <br />
+</x-global::forms.select> <br />
 </div>
-    <label for="kind">{!! __('label.kind') !!}</label> <select id="kind"
+    <label for="kind">{!! __('label.kind') !!}</label> <x-global::forms.select id="kind"
     name="kind">
     @foreach ($kind as $key => $row)
         <option value="{{ $key }}"
@@ -117,7 +117,7 @@ use Leantime\Core\Support\FromFormat;
         >{!! __($row) !!}</option>
     @endforeach
 
-</select><br />
+</x-global::forms.select><br />
 <label for="date">{!! __('label.date') !!}</label> <input type="text" autocomplete="off"
     id="datepicker" name="date" value="{{ format(value: $values['date'], fromFormat: FromFormat::DbDate)->date() }}" size="7" />
 <br />

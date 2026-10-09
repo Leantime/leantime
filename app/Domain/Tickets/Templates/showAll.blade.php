@@ -42,12 +42,12 @@
                  project picker, matching the kanban/list add affordance. --}}
             <form action="" method="post" class="tw-mb-m" style="display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap;">
                 <input type="text" name="headline" placeholder="{{ __('input.placeholders.create_task') }}" style="flex:1 1 280px; min-width:240px;" />
-                <select name="quickaddProjectId" class="form-control" required style="width:auto;" aria-label="{{ __('label.project') }}">
+                <x-global::forms.select name="quickaddProjectId" class="form-control" required style="width:auto;" aria-label="{{ __('label.project') }}">
                     <option value="">{{ __('label.project') }}…</option>
                     @foreach ($availableProjects as $quickAddProjectId => $quickAddProjectName)
                         <option value="{{ $quickAddProjectId }}">{{ $tpl->escape($quickAddProjectName) }}</option>
                     @endforeach
-                </select>
+                </x-global::forms.select>
                 <input type="hidden" name="sprint" value="{{ $currentSprint }}" />
                 <input type="hidden" name="milestone" value="{{ htmlspecialchars((string) ($searchCriteria['milestone'] ?? ''), ENT_QUOTES, 'UTF-8') }}" />
                 <input type="hidden" name="quickadd" value="1" />

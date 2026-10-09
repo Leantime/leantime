@@ -87,12 +87,12 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 |---|---|---|---|---|---|
 | button | `forms.button` | forms | ✅ | refactor/table-component | merged #3531: no-op migration + 3-tier role model |
 | text-input | `forms.text-input` | forms | ✅ | refactor/table-component | merged #3558: no-op; 146 call-sites / 56 files; variants `headline`/`large`/`small` (dropped `form`/`legacy` as CSS-redundant); HTML-native `type` prop; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
-| textarea | `forms.textarea` | forms | 🟡 | selectsComponentUpdates | PR #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
-| select (native) | `forms.select` | forms | ⬜ | refactor/table-component | native no-op first; JS-enhanced later |
+| textarea | `forms.textarea` | forms | ✅ | selectsComponentUpdates | merged #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
+| select | `forms.select` (+ `.option`, `.optgroup` in P2) | forms | 🟡 | selectsComponentUpdates | P1 no-op shell: **115 core Blade selects / 43 files** migrated (all of core Blade; Chosen/Slim-enhanced ones too, markup identical so their inits still bind). P2 = `enhanced` (SlimSelect v2) + option/optgroup. See "Select & dropdown phase" |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
 | card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
-| chip | `actions.chip` | actions | ⬜ | selectsComponentUpdates | |
-| dropdown-menu | `actions.dropdown` | actions | ⬜ | refactor/table-component | JS-coupled (Bootstrap dropdown) |
+| chip | `forms.chip` (+ `.option`) | forms | ⬜ | selectsComponentUpdates | **renamed from `actions.chip`**: it's a value picker bound to an entity field. Planned P3 |
+| dropdown-menu | `actions.dropdown` (+ `.item`, `.header`, `.divider`) | actions | ⬜ | refactor/table-component | Planned P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject`; Bootstrap 2 data-api stays the engine |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating; tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
@@ -248,6 +248,181 @@ Only visually-distinct treatments earn a variant. Verdicts:
   - **legacy `<?php echo ?>` / `<?= ?>` in an attribute value** (see gotcha above).
   - **any inline `onchange` / `onblur` / `onkeyup` / `oninput` / `onfocus` handler**.
 
+## Select & dropdown phase — plan
+
+Covers every `<select>`, every colored value-picker "chip", and every Bootstrap menu/nav dropdown in
+`app/Domain/**` **and** `app/Plugins/**`. Inventory last refreshed **2026-10-09**.
+
+### Decisions (made)
+- Enhanced selects standardize on **SlimSelect v2 (npm `slim-select`)**; **Chosen is removed** entirely.
+- The legacy plugin `.tpl.php` pages are **converted to Blade** as part of this phase.
+- Chips persist uniformly over **JSON-RPC** (no more `$.ajax PATCH /api/{x}canvas`, no double writes).
+- **Native by default**: `forms.select` renders a plain `<select>`; enhancement is opt-in (`enhanced`).
+- **Canvas dialog status/relates keep their icons.** #3776 made the Goalcanvas dialog plain native and
+  dropped the icons to stop mismatched side-by-side styling; P2 restores them as server-rendered icon
+  options on an `enhanced` select (consistent look *and* icons). Same treatment for Canvas, Blueprints,
+  Logicmodel and StrategyPro dialogs.
+
+### Inventory (2026-10-09)
+| Thing | Count | Notes |
+|---|---|---|
+| `<select>` | 171 (123 core / 48 plugins; 147 Blade, 20 `.tpl.php`, 3 echoed from `register.php`) | 19 `.chosen(` inits (blanket sweeps `.ticketTabs select`, `#projectdetails select`, global `.project-select` in `menuController.js:35` that also hits ticketFilter's SlimSelect); 15 live `new SlimSelect` (vendored **v1** — ticketFilter's v2 `settings.placeholderText` is silently ignored today); 13 inline `onchange`; 8 option lists built by PHP `echo`/`sprintf` |
+| Chips (status · priority · milestone · user/avatar · sprint · effort · relates) | ~54 in 21 files (4 `.tpl.php`) | 25 build their `<li>`s by PHP string concat; **5 incompatible `data-value` grammars**; 5 copies of `initUserDropdown`, 4 of `initStatusDropdown` (tickets/canvas/blueprints/goalcanvas/ideas controllers); canvas binders `body.on` **stack** on re-init; `initStatusDropdown` does `removeClass()` wholesale; HTMX-rendered `partials/ticketCard` is never re-bound; to-do widget status is **written twice** (`hx-post` + RPC) |
+| Bootstrap menus/nav | 180 `dropdown-toggle` in 74 files (8 `.tpl.php`) | 6 DOM shapes (see variants); 8 files still hand-roll `header-title-dropdown`; 3 menus built as JS strings (Files uppy ×2, `Widgetcontroller.js` duplicating `moveableWidget.blade.php`); no Escape / close-on-swap anywhere |
+| Existing components | — | `dropdownPill` = the chip, **0 call-sites**, duplicate-`class` bug → delete. `inlineSelect` = 3 plugin sites (Implementationintentions), inline non-`htmx.onLoad` script → replace. `subjectSwitcher` (10) = keep. `periodpicker` = the HTMX-correct model. `selectable` = radio tile, out of scope |
+| Dead code | — | `Tickets/submodules/additionalFields.blade.php` (0 refs), 8× `new SlimSelect({select:'#searchCanvas'})` (no such element), `#themeSelect` chosen init, `goalCanvasController` chip binders (never called), `Billing/subscriptions_old.tpl.php` (0 refs) |
+
+### Which component do I use? (the line, drawn once)
+The header sprint/board switcher, the group-by button and the ⋮ menu all share one mechanism (Bootstrap
+`dropdown-toggle` + `dropdown-menu`). They differ only in what the trigger looks like and what picking an
+item **means**. Decide by meaning; the variant follows from the trigger shape and is cosmetic.
+
+| Picking an item… | Component | Examples |
+|---|---|---|
+| is submitted with a form (it is a `<select>`) | `forms.select` | ticket type, client, role, timezone, ticket-filter multi-selects |
+| **persists a field on an entity now**, toggle shows the current value in color | `forms.chip` | status, priority, milestone, assignee, sprint, effort, relates |
+| **navigates to another subject** (page title changes) | `subjectSwitcher` (composes `actions.dropdown variant="subject"`) | sprint switcher, board switcher on canvases/wiki/ideas, "All Notes ▾" |
+| **changes how the current subject is viewed** (one item active) | `actions.dropdown variant="filter"` | group-by, Day/Week/Month, status filter, list/kanban toggle, search type filter |
+| **runs a command** on the thing | `variant="menu"` (row/card ⋮) / `variant="header-menu"` (page-header ⋮) | edit / delete / export / print |
+| **creates something** | `variant="button"` | "New ▾" |
+| opens a **panel** of inputs, not a list | `variant="panel"` | invite link, share URL, recurring-task form, kanban view menu, news/notifications, tags popover |
+
+Tells: `data-value` on items + a `label-*`/color on the toggle → chip. `nav-header` + edit/delete links →
+menu. `btn-group.viewDropDown` → filter. `header-title-dropdown` → subject. Gray areas: the ticketHeader
+sprint switcher navigates *and* writes `#sprintSelect` → stays `subjectSwitcher` (the hidden-input write is
+the item's own `onclick`). `projectHub` uses `header-title-dropdown` but is a client **filter** → `filter`.
+
+### HTMX contract (`forms.select`, `forms.chip`)
+1. **`hx-*` lands on the `<select>` itself** — `$attributes` merge onto the control, no wrapper in between,
+   so `hx-trigger="change"`, `hx-include`, `hx-vals` behave exactly as raw markup.
+2. **Enhanced selects still fire native `change`** on the underlying `<select>` (SlimSelect v2 does this;
+   verify on a test page in P2, and re-dispatch from `afterChange` if it ever doesn't).
+3. **Survives swaps**: the select registry inits on `htmx.onLoad` (first paint, every swap, nyroModal
+   content via `modals.js:47`) and destroys instances inside the target on `htmx:beforeSwap`. No inline
+   `<script>` init anywhere.
+4. **Chips are delegated** (document-level click), so HTMX-rendered chips work without re-init. After a
+   save the chip emits `lt:chip:changed` (bubbles); consumers can `hx-trigger="lt:chip:changed from:body"`.
+   `form` mode fires `htmx.trigger(hiddenInput, 'change')`. `adapter="none"` + `hx-post` on options = pure
+   HTMX persistence — **never both** (that is today's to-do double write).
+5. `hx-*` attribute sets are part of every before/after diff.
+
+### Components
+**`forms.select`** (+ `forms.select.option`, `forms.select.optgroup`) — no-op `<select {attrs}>{slot}</select>`,
+or renders `:options` when there is no slot. Extra classes pass through (`span11`, `tw-w-full`,
+`user-select`; `form-control` too until audited for selects).
+
+| Prop | Default | Renders |
+|---|---|---|
+| `name`, `multiple`, `disabled`, `required` | — | declared so Blade emits exactly one |
+| `value` | null | selected option(s) in `:options` mode |
+| `placeholder` | '' | `data-placeholder` (enhanced) |
+| `enhanced` | false | `data-lt-select` |
+| `search` | auto | `data-search` (auto = >10 options; replaces Chosen `disable_search_threshold:10`) |
+| `allowDeselect` / `closeOnSelect` | false / true | `data-*` |
+| `options` | [] | `[v => label]` or `[v => [label, icon, color, colorClass, image, selected, disabled]]` |
+| `labelText`, `caption`, `validationText/State`, `leadingVisual`, `variant`, `scale` | '' | declared, not rendered (design phase; needs `forms.field-row`) |
+
+`.option`: `value`, `selected`, `disabled`, `icon`, `color`, `colorClass`, `image` → `data-icon/-color/-class/-image`,
+turned into SlimSelect v2 `html` by the registry. Replaces the "empty `<select>` filled by JS
+`data:[{innerHTML}]`" canvas-dialog pattern with server-rendered options. `.optgroup`: `label`.
+
+**`forms.chip`** (+ `forms.chip.option`) — byte-identical to today's chip markup (classes/ids
+`{type}Dropdown`, `{type}DropdownMenuLink{id}`, `.label-*`, `priority-bg-*`, `nav-header border` kept, so
+kanban drag/drop, `colorTicketBoxes()` and `.nyroModalCont .ticketDropdown` CSS keep working), plus
+`data-lt-chip="{adapter}" data-entity-id data-field [data-canvas-type]` on the wrapper and
+`data-current-class` on the toggle.
+
+| Prop | Values |
+|---|---|
+| `type` | status · user · milestone · effort · priority · relates · sprint |
+| `adapter` | ticket · canvas · goal · idea · form · none |
+| `entityId`, `field` | id; column (`status`, `editorId`, `milestoneid`, `storypoints`, `priority`, `sprint`, `relates`, `author`, `box`) |
+| `value`, `label`, `colorClass`, `color`, `image` | current selection + visual |
+| `header`, `align` (end → `pull-right`), `canvasType`, `name` (form mode → hidden input) | |
+
+`.option`: `value` (**raw key only** — retires all 5 grammars), `label`, `colorClass`, `color`, `image`. Admin
+free-text status classes are validated `^[A-Za-z0-9_-]+$` at render (fallback `label-default`).
+Thin domain wrappers hold the option loops copy-pasted ~54×:
+`tickets::chip-{status,priority,effort,milestone,user,sprint}` (effort/priority labels rendered server-side →
+JS label maps go away), `blueprints::chip-{status,relates,user}` (shared by Canvas/Blueprints/Logicmodel/
+Goalcanvas/StrategyPro/Whiteboards via `adapter` + `canvasType`), `ideas::chip-status` (field `box`).
+
+**`actions.dropdown`** (+ `.item`, `.header`, `.divider`) — variant = today's DOM shape:
+
+| `variant` | wrapper → trigger → menu |
+|---|---|
+| `menu` (default) | `div.inlineDropDownContainer` → `a.dropdown-toggle.ticketDropDown > i.fa-ellipsis-v` → `ul.dropdown-menu` |
+| `header-menu` | `span.dropdown.dropdownWrapper.headerEditDropdown` → `a.dropdown-toggle.btn.btn-transparent` → `ul.dropdown-menu.editCanvasDropdown` |
+| `filter` | `div.btn-group.viewDropDown` → `button.btn.dropdown-toggle` → `ul.dropdown-menu` |
+| `button` | `div.btn-group` → `.btn.btn-primary.dropdown-toggle` + caret |
+| `panel` | `div.dropdown` (or `viewDropDown`) → trigger slot → `div.dropdown-menu` (inputs/forms; stopPropagation inside) |
+| `subject` | `span.dropdown.dropdownWrapper` → `a.dropdown-toggle.header-title-dropdown` (used by `subjectSwitcher`) |
+
+Props: `variant`, `trigger` slot (default icon trigger reusing `forms.button`'s role/scale maps), `align`,
+`menuClass`, `id`, `hx-*`/`preload` passthrough. `.item`: `link`, `leadingVisual`, `labelText`, `active`,
+onclick/hx/class passthrough. `.header` → `nav-header [border]`; `.divider` → `<li class="border">`; raw
+slot for radio/checkbox items.
+
+### JS modules (IIFE on `leantime.*`, added to `compiled-app` after `app.js`)
+- **`public/assets/js/app/core/select/index.js`** — Tiptap-style registry: `leantime.select.{init, get,
+  refresh, destroy, destroyWithin}`; `select[data-lt-select]:not([data-lt-select-ready])`; WeakMap; builds
+  v2 `html` from `data-icon/-color/-class/-image`; class swap on `.ss-main` for `colorClass` options
+  (replaces `projectsController.initSelectFields`); `refresh()` for Timesheets project→ticket filtering
+  (native `hidden` options) and project-settings status-row cloning. `htmx.onLoad` + `htmx:beforeSwap` +
+  modal-close teardown in `modals.js`. Lib: `slim-select@^2` replaces `public/assets/js/libs/slimselect.min.js`
+  in `compiled-global-component`; CSS `~slim-select/dist/slimselect.css` in `main.less`.
+- **`public/assets/js/app/core/chip/index.js`** — one delegated click handler on
+  `[data-lt-chip] .dropdown-menu a[data-value]`; adapters (extensible via `leantime.chip.registerAdapter`):
+  `ticket` → `Tickets.Tickets.patchTicket {id, values}`, `canvas` → `Blueprints.Blueprints.patchCanvasItem
+  {id, params, canvasType}`, `goal` → `Goalcanvas.Goalcanvas.patchGoalItem`, `idea` → `Ideas.Ideas.patchIdeaItem`,
+  `form` → hidden input + `change`. Updates text/class (via `data-current-class`)/color/avatar, growls, emits
+  `lt:chip:changed`; `ticketsController` listens once for kanban side effects (`moveCardToSwimlane`,
+  `priority-border-*`).
+- **`public/assets/js/app/core/dropdown/index.js`** — Escape closes `.open`; `htmx:beforeSwap` closes menus
+  inside the target. Nothing else.
+
+### Phases (one PR each)
+| # | Repo | Scope |
+|---|---|---|
+| **P1** native select (no-op) | core | `forms.select` shell only (options stay as the slot — `.option`/`.optgroup` arrive with P2's icon options, when something needs them); migrate **every** core Blade select incl. `hx-*`, inline `onchange`, and the Chosen/Slim-enhanced ones (identical markup → existing inits still bind; P2 then only adds `enhanced`). Option lists built by `@php` echo / `sprintf` stay untouched inside the slot. Plugins + `.tpl.php` + `register.php` wait for P5/P6. Delete `additionalFields.blade.php`. |
+| **P2** enhanced select, drop Chosen (**visual change**, isolated) | core | slim-select v2 + `core/select`; migrate 15 Slim + 19 Chosen sites; **canvas dialogs (incl. Goalcanvas) get server-rendered icon options back**; remove dead `#searchCanvas`/`#themeSelect` inits, `menuController` global `.project-select`, ticketFilter duplicate `multiple`; rewrite `.ss-*` CSS for v2 (`forms.css:144-154,1205-1266`, `slimselect.leantime.css`); delete Chosen from `package.json`, `webpack.mix.js`, `main.less:21,31`, `css/libs/jquery.chosen.css`, forms.css `.chosen-*`, `accessibility.js` chosen block; update `TimesheetCest` selectors. |
+| **P3** chips | core | add `@api` to `Blueprints::patchCanvasItem` + `Goalcanvas::patchGoalItem` (enforced by `Jsonrpc::isApiMethod`); `forms.chip` + wrappers + `core/chip`; migrate the 17 Blade chip files (un-concatenate PHP-echo option lists); drop the to-do `hx-post` double write; delete all 5 controllers' `init*Dropdown` + ~74 template calls + REST-PATCH paths; fix `ticketsController.js:~1377` selector; delete `dropdownPill`. |
+| **P4** menus | core | `actions.dropdown` + `core/dropdown`; migrate core menus (hand-rolled subject switchers → `subjectSwitcher`, ⋮, filters incl. Search + kanbanViewMenu, split buttons, panels, headMenu); server-render the `Widgetcontroller.js` shell; drop vestigial `data-toggle` in `onboardingProgress`. Defer Files uppy JS-string menus, icon-picker, projectSelector inner. |
+| **P5** `.tpl.php` → Blade port (markup-identical) | plugins | StrategyPro, Whiteboardscanvas, PgmPro, Llamadorian pages; `Billing/subscriptions` (check routing); delete `subscriptions_old`; `register.php` selects → rendered partials; fix Whiteboards `canvasName` casing. Core: pointer bump. |
+| **P6** plugin migration | plugins | Apply all four components across `app/Plugins/**` Blade (incl. ported pages, 3 `inlineSelect` sites, PgmPro `resourceAllocation`, colorChosen). Core: pointer bump. |
+| **P7** cleanup | core | delete `inlineSelect`, leftover dead JS, REST `patch` in `Api/Controllers/Canvas.php`/`Goalcanvas.php` if no external callers; final tracker update. |
+
+Order: P1 → P2 → P3; P4 can run in parallel with P2/P3; P5 after P1–P4; P6 after P5; P7 last. Plugin
+PRs branch from the plugins repo's default branch.
+
+Port recipe (P5): create `X.blade.php` and delete `X.tpl.php` in the same commit; `@extends($layout)` /
+`@section('content')`; drop `defined('RESTRICTED')` and `$tpl->get()`; `$tpl->e()` → `{{ }}`, `$tpl->__()` →
+`__()`, `echo "<li…"` → `@foreach`; keep inline scripts for P6 to clean. Both attribute gotchas above apply.
+
+### Defer rubric (stays raw)
+Selects with inline handlers beyond `submit()`/`location.href`; option lists built by PHP concat or
+`sprintf` over a `dispatchTplFilter` format (Timesheets `showMy` is a plugin extension point — migrate the
+shell only); radio-item menus (raw slot); `<?php echo` in attributes (modernize first); JS-string menus.
+
+### Risks
+| Risk | Mitigation |
+|---|---|
+| Kanban drag/drop + `colorTicketBoxes()` read chip classes / `a[data-value^=…]` | classes/ids byte-identical; one selector updated in P3; Playwright kanban drag |
+| Chosen→Slim and Slim v1→v2 restyle (~34 sites) | isolated in P2 with screenshot review |
+| Timesheets project→ticket filter used Chosen DOM | native `hidden` options + `refresh()`; `-g timesheet` |
+| projectsController colorChosen clone/destroy | `refresh()` after clone; add-status-row check |
+| `canvasType` allowlist per board | wrappers pass it explicitly; one status change per board type |
+| Plugin submodule branch state | plugin PRs from default branch; core bumps pointer after merge |
+
+### Verification (per PR)
+`php bin/leantime view:cache` + the quote/`<?php`-in-attr scan; Pint, PHPStan, `npm run build`; Playwright
+before/after `outerHTML` of `select, .ticketDropdown, .dropdown, .btn-group, .inlineDropDownContainer`
+(incl. `hx-*`) on showAll, showKanban, showList, ticket modal, dashboard, roadmap, timesheets/showMy,
+project settings, users/editOwn, goal/lean canvases, ideas, wiki, search, plus StrategyPro/Whiteboards/PgmPro
+pages; no-op PRs must match apart from added `data-lt-*`, P2 gets screenshots. Behavior: one RPC call per chip
+change (showAll, kanban, to-do widget, ticket modal, a canvas board); kanban drag; Escape and swap-close;
+one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `-g user`.
+
 ## Progress log
 
 - _Phase 0_: tracker created; `feature/componentization` branched off master; card-naming resolved.
@@ -337,3 +512,15 @@ Only visually-distinct treatments earn a variant. Verdicts:
   Verified: compile + Pint clean, 0 button-tag problems, diff is tag swaps (multiline tags collapse to 1 line).
   ALSO: TimesheetCest selectors that clicked `.button` repointed to `input[type=submit]`/name (the `.button`
   class is removed by the migration) — see #3563.
+- _select P1 (no-op shell)_: `forms.select` built (thin: `<select {{ $attributes }}>{{ $slot }}</select>`, IDL props
+  declared-not-rendered like text-input/textarea). **115 selects across 43 core Blade files** migrated by a brace/quote/
+  directive-aware converter (opening + closing tag swap only; diff +226/−226, every changed line a tag). Blocked by the
+  component-tag rules: 1 (`__("…")` inside an attr in Goalcanvas `canvasDialog`) → fixed to single quotes, then migrated.
+  Deleted dead `Tickets/submodules/additionalFields.blade.php` (0 refs). Verified: `view:cache` clean; 43 compiled views
+  reference the component; before/after DOM diff of every `<select>` (sorted attrs, boolean attrs normalized, option
+  value/label/selected/disabled/class, optgroups) on 36 pages = **234/235 identical** (the 1 diff is `editOwn` `time_format`,
+  whose option labels are a live clock preview); live: SlimSelect binds the ticket-filter selects, Chosen binds all 11
+  ticket-modal selects, the HTMX `projectListFilter` selects are processed and a `change` round-trips
+  (`/hx/menu/projectSelector/update-menu` 200 → `#mainProjectSelector`). Rendering note: bare boolean attrs come out as
+  `multiple="multiple"` / `required="required"` (component attribute bag) — DOM-identical. Duplicate `multiple` on ticketFilter
+  `#statusSelect` collapses to one.
