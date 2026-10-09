@@ -12,8 +12,8 @@ A single search now spans your whole workspace - to-dos, projects, documents, id
 ## Bug Fixes
 - Kanban column headers now scroll in sync with the board body (#3800)
 - Improved readability of the My Tasks and Calendar dashboard widgets (#3863, #3866)
-- Leantime no longer reports permission denials, skips duplicate queued emails and avoids an avatar directory creation race (#3869)
-- Cron ticket updates run correctly without a session user, and scheduled jobs are skipped while migrations are pending (#3868)
+- Permission denials are logged as audit entries instead of errors, the same notification is no longer queued twice, and a race when creating avatar files is fixed (#3869)
+- Recurring tasks no longer push their due dates far into the future when the scheduler resets them, and scheduled jobs wait until pending database updates have run (#3868)
 - More reliable permissions with a per-instance grant-map cache and reseeding of empty role tables (#3865)
 - The telemetry opt-out toggle works again and your choice now sticks (#3854)
 
