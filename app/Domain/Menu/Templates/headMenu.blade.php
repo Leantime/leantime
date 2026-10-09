@@ -2,6 +2,8 @@
 @dispatchEvent('beforeHeadMenu')
 
 <ul class="headmenu pull-right">
+    <x-search::searchBar />
+
     @dispatchEvent('insideHeadMenu')
 
     @include('timesheets::partials.stopwatch', [

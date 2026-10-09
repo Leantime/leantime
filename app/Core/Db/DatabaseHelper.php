@@ -276,6 +276,49 @@ class DatabaseHelper
     }
 
     /**
+     * Case-insensitive LIKE operator for the current driver.
+     *
+     * MySQL compares with the column collation (utf8mb4_unicode_ci, so LIKE is already
+     * case-insensitive); PostgreSQL's LIKE is case-sensitive and needs ILIKE. The returned
+     * operator can be passed straight to the query builder's where() or used in raw SQL.
+     *
+     * @return string 'LIKE' or 'ILIKE'
+     *
+     * @api
+     */
+    public function likeOperator(): string
+    {
+        return $this->db->getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+    }
+
+    /**
+     * ESCAPE clause that makes a backslash-escaped LIKE pattern (see SearchQuery::escapeLike)
+     * behave the same on every driver. MySQL, MariaDB, PostgreSQL and SQLite already treat a
+     * backslash as the LIKE escape character; SQL Server only does with an explicit clause.
+     *
+     * @return string '' or " ESCAPE '\\'" to append after the LIKE pattern placeholder.
+     *
+     * @api
+     */
+    public function likeEscapeClause(): string
+    {
+        return $this->db->getDriverName() === 'sqlsrv' ? " ESCAPE '\\'" : '';
+    }
+
+    /**
+     * Whether MATCH ... AGAINST full-text search is available (MySQL and MariaDB).
+     *
+     * PostgreSQL has its own tsvector search with a different index expression; it is not
+     * wired up yet, so callers keep using LIKE there.
+     *
+     * @api
+     */
+    public function supportsFullTextSearch(): bool
+    {
+        return in_array($this->db->getDriverName(), ['mysql', 'mariadb'], true);
+    }
+
+    /**
      * Generate cross-database SQL for current timestamp
      *
      * Generates the appropriate SQL for the current date and time:

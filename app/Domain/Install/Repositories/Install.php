@@ -101,6 +101,7 @@ class Install
         30526,
         30527,
         30528,
+        30529,
     ];
 
     /**
@@ -3377,6 +3378,50 @@ class Install
             Log::error('Migration 30528: '.$e->getMessage());
 
             return ['Migration 30528 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Full-text indexes for global search on MySQL/MariaDB.
+     *
+     * Measured on 500k to-dos / 300k comments: LIKE '%term%' scans took ~600 ms and ~300 ms per
+     * query, a boolean-mode MATCH ordered by relevance 1–100 ms. Other drivers keep the LIKE
+     * path (see Search repository), so this is a no-op there. Fresh installs get the same
+     * indexes from SchemaBuilder. Building the indexes takes about 30 s per million rows.
+     */
+    public function update_sql_30529(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+
+            if (! in_array($connection->getDriverName(), ['mysql', 'mariadb'], true)) {
+                return true;
+            }
+
+            $schema = $connection->getSchemaBuilder();
+
+            $fullTextIndexes = [
+                'zp_tickets' => ['zp_tickets_search_ft', ['headline', 'description', 'tags']],
+                'zp_canvas_items' => ['zp_canvas_items_search_ft', ['title', 'description', 'data', 'assumptions', 'conclusion', 'tags']],
+                'zp_comment' => ['zp_comment_search_ft', ['text']],
+            ];
+
+            foreach ($fullTextIndexes as $tableName => [$indexName, $columns]) {
+                if (! $schema->hasTable($tableName) || $schema->hasIndex($tableName, $indexName)) {
+                    continue;
+                }
+
+                $schema->table($tableName, function (Blueprint $table) use ($columns, $indexName): void {
+                    $table->fullText($columns, $indexName);
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30529: '.$e->getMessage());
+
+            return ['Migration 30529 failed: '.$e->getMessage()];
         }
 
         return true;
