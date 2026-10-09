@@ -92,22 +92,19 @@ leantime.searchController = (function () {
         root.classList.remove('expanded');
     }
 
-    // Desktop: centre the bar in the free space between the work-modes list (left) and the
-    // icon list (right). Both lists are floats, so their widths are only known at runtime.
+    // Desktop: dock the bar to the left of the icon list on the right. The list is a float,
+    // so its width is only known at runtime; the CSS width keeps the bar short.
     function positionDesktop() {
         if (window.innerWidth < DESKTOP_MIN_WIDTH) {
-            root.style.left = '';
             root.style.right = '';
             return;
         }
         var headerInner = root.closest('.headerinner');
-        var leftList = headerInner ? headerInner.querySelector('.headmenu.work-modes') : null;
         var rightList = root.parentElement;
-        if (!headerInner || !leftList || !rightList) {
+        if (!headerInner || !rightList) {
             return;
         }
         var headerRect = headerInner.getBoundingClientRect();
-        var leftEdge = leftList.getBoundingClientRect().right - headerRect.left + GAP;
         var rightItems = Array.prototype.filter.call(rightList.children, function (item) { return item !== root; });
         var rightEdge = headerRect.right - GAP;
         rightItems.forEach(function (item) {
@@ -116,7 +113,6 @@ leantime.searchController = (function () {
                 rightEdge = rect.left;
             }
         });
-        root.style.left = Math.round(leftEdge) + 'px';
         root.style.right = Math.round(headerRect.right - rightEdge + GAP) + 'px';
     }
 

@@ -416,7 +416,7 @@
     text-align: center;
 }
 
-/* --- Desktop: centred between the two header lists --------------------- */
+/* --- Desktop: docked to the left of the right-hand icon list ------------ */
 
 @media (min-width: 1201px) {
     .headerinner {
@@ -426,31 +426,28 @@
     .headmenu > li.globalSearch {
         position: absolute;
         top: 0;
-        /* Fallback until searchController.js measures the two lists. */
-        left: 50%;
-        right: auto;
-        width: 420px;
-        margin-left: -210px;
+        /* Fallback until searchController.js measures the icon list; it then sets `right`. */
+        right: 320px;
+        width: 300px;
         float: none;
         display: block;
         z-index: 1;
     }
 
-    .headmenu > li.globalSearch[style*="left"] {
-        width: auto;
-        margin-left: 0;
-    }
-
     .headmenu > li.globalSearch > .globalSearch__form {
-        max-width: 520px;
-        margin: 0 auto;
+        margin: 0;
     }
 
+    /* Wider than the bar so titles and snippets stay readable; opens leftwards. */
     .headmenu > li.globalSearch > .globalSearch__results {
-        left: 50%;
-        right: auto;
-        width: min(520px, 100%);
-        transform: translateX(-50%);
+        left: auto;
+        right: 0;
+        width: 520px;
+    }
+
+    .headmenu > li.globalSearch > .dropdown-menu::after {
+        left: auto;
+        right: 24px;
     }
 }
 
