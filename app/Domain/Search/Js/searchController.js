@@ -29,17 +29,22 @@ leantime.searchController = (function () {
         return Array.prototype.slice.call(results.querySelectorAll('.searchResult'));
     }
 
+    // Focus stays on the input; aria-activedescendant tells assistive tech which option is active.
     function clearActive() {
         options().forEach(function (option) {
             option.classList.remove('active');
             option.removeAttribute('aria-selected');
         });
+        input.removeAttribute('aria-activedescendant');
     }
 
     function setActive(option) {
         clearActive();
         option.classList.add('active');
         option.setAttribute('aria-selected', 'true');
+        if (option.id) {
+            input.setAttribute('aria-activedescendant', option.id);
+        }
         option.scrollIntoView({ block: 'nearest' });
     }
 

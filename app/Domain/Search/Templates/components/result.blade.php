@@ -32,6 +32,7 @@
 <a
     class="searchResult searchResult--{{ $variant }}"
     role="{{ $role }}"
+    @if ($variant === 'compact') id="searchOption-{{ $result->type }}-{{ $result->id < 0 ? 'b'.(-$result->id) : $result->id }}" @endif
     href="{{ $href }}"
     data-search-type="{{ $result->type }}"
     data-search-id="{{ $result->id }}"

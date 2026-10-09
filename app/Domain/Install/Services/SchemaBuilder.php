@@ -236,7 +236,7 @@ class SchemaBuilder
             $table->index(['box', 'status', 'author'], 'idx_canvas_items_box_status_author');
 
             if ($this->supportsFullText()) {
-                $table->fullText(['title', 'description', 'data'], 'zp_canvas_items_search_ft');
+                $table->fullText(['title', 'description', 'data', 'assumptions', 'conclusion', 'tags'], 'zp_canvas_items_search_ft');
             }
             $table->index(['parent', 'title'], 'idx_canvas_items_parent_title');
         });
@@ -535,7 +535,7 @@ class SchemaBuilder
             $table->index(['dependingTicketId'], 'idx_tickets_dependingTicketId');
 
             if ($this->supportsFullText()) {
-                $table->fullText(['headline', 'description'], 'zp_tickets_search_ft');
+                $table->fullText(['headline', 'description', 'tags'], 'zp_tickets_search_ft');
             }
         });
     }

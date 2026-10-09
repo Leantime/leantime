@@ -98,7 +98,7 @@ class BlueprintsProvider implements SearchProvider
 
         $itemQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, $itemLimit, max(0, $query->offset - $boardCount), $query->filters);
 
-        foreach ($this->searchRepository->searchCanvasItems($itemQuery, $types, null, ['description', 'title', 'assumptions', 'data', 'conclusion', 'tags']) as $row) {
+        foreach ($this->searchRepository->searchCanvasItems($itemQuery, $types, null, titleColumn: 'description') as $row) {
             $title = (string) ($row['title'] ?: Highlighter::snippet($row['description'] ?? null, [], 120));
 
             $results[] = new SearchResult(

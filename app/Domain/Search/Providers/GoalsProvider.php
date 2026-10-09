@@ -54,7 +54,7 @@ class GoalsProvider implements SearchProvider
      */
     public function search(SearchQuery $query): array
     {
-        $rows = $this->searchRepository->searchCanvasItems($query, self::CANVAS_TYPES, self::BOX, ['title', 'description', 'assumptions', 'tags']);
+        $rows = $this->searchRepository->searchCanvasItems($query, self::CANVAS_TYPES, self::BOX);
 
         $results = [];
         foreach ($rows as $row) {

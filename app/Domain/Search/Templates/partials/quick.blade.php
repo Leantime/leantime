@@ -20,7 +20,7 @@
         </div>
     @endforeach
 
-    <a class="searchResult globalSearch__footer" role="option" href="{{ BASE_URL }}/search/show?q={{ urlencode($term) }}">
+    <a class="searchResult globalSearch__footer" role="option" id="searchOption-all" href="{{ BASE_URL }}/search/show?q={{ urlencode($term) }}">
         <span class="searchResult__icon fa-solid fa-arrow-right" aria-hidden="true"></span>
         <span class="searchResult__body">{{ __('search.see_all') }}</span>
     </a>

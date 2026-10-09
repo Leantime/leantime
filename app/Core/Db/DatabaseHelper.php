@@ -292,6 +292,20 @@ class DatabaseHelper
     }
 
     /**
+     * ESCAPE clause that makes a backslash-escaped LIKE pattern (see SearchQuery::escapeLike)
+     * behave the same on every driver. MySQL, MariaDB, PostgreSQL and SQLite already treat a
+     * backslash as the LIKE escape character; SQL Server only does with an explicit clause.
+     *
+     * @return string '' or " ESCAPE '\\'" to append after the LIKE pattern placeholder.
+     *
+     * @api
+     */
+    public function likeEscapeClause(): string
+    {
+        return $this->db->getDriverName() === 'sqlsrv' ? " ESCAPE '\\'" : '';
+    }
+
+    /**
      * Whether MATCH ... AGAINST full-text search is available (MySQL and MariaDB).
      *
      * PostgreSQL has its own tsvector search with a different index expression; it is not

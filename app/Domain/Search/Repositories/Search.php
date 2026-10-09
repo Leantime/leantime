@@ -37,6 +37,15 @@ class Search
     private const ERROR_FULLTEXT_INDEX_MISSING = 1191;
 
     /**
+     * Text columns searched per table. Both matching paths use exactly these, and the
+     * full-text indexes (Install::update_sql_30529, SchemaBuilder) cover exactly these, so
+     * results do not depend on the driver.
+     */
+    private const TICKET_TEXT_COLUMNS = ['zp_tickets.headline', 'zp_tickets.description', 'zp_tickets.tags'];
+
+    private const CANVAS_ITEM_TEXT_COLUMNS = ['item.title', 'item.description', 'item.data', 'item.assumptions', 'item.conclusion', 'item.tags'];
+
+    /**
      * Set once a full-text query failed for lack of an index, so the request does not keep
      * retrying it for every entity type.
      */
@@ -70,13 +79,18 @@ class Search
         if ($textLimit > 0) {
             $textQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, $textLimit, max(0, $query->offset - $reservedSlots), $query->filters);
 
-            $results = $this->runTextSearch($textQuery, function (bool $fullText) use ($textQuery): Builder {
+            $results = $this->runTextSearch($textQuery, function (bool $fullText) use ($textQuery, $exact): Builder {
                 $builder = $this->ticketBaseQuery($textQuery);
+
+                // Excluded before the LIMIT, so the exact hit never costs the page a text hit.
+                if ($exact !== null) {
+                    $builder->where('zp_tickets.id', '<>', (int) $exact->id);
+                }
 
                 $this->applyTextMatch(
                     $builder,
                     $fullText,
-                    ['zp_tickets.headline', 'zp_tickets.description'],
+                    self::TICKET_TEXT_COLUMNS,
                     'zp_tickets.headline',
                     'zp_tickets.modified',
                     $textQuery
@@ -86,12 +100,8 @@ class Search
             });
         }
 
-        if ($exact !== null) {
-            $results = array_values(array_filter($results, fn (array $row) => (int) $row['id'] !== (int) $exact->id));
-
-            if ($query->offset === 0) {
-                array_unshift($results, (array) $exact);
-            }
+        if ($exact !== null && $query->offset === 0) {
+            array_unshift($results, (array) $exact);
         }
 
         return $results;
@@ -156,21 +166,20 @@ class Search
      * The canvas type join is mandatory: zp_canvas_items shares one id sequence across every
      * canvas kind, so a type-less read could surface another kind's rows.
      *
-     * The full-text index covers title, description and data. $textColumns only widens the
-     * LIKE path (tags, assumptions, conclusion); the full-text path always matches the three
-     * indexed columns.
+     * Both paths match CANVAS_ITEM_TEXT_COLUMNS; $titleColumn only decides which column the
+     * LIKE path ranks by (ideas keep their headline in `description`).
      *
      * @param  string[]  $canvasTypes  Allowed zp_canvas.type values.
      * @param  string|null  $box  Required zp_canvas_items.box value, or null for any box.
-     * @param  string[]  $textColumns  Item columns to match tokens against on the LIKE path (unqualified).
+     * @param  string  $titleColumn  Unqualified item column holding the title, for LIKE-path ranking.
      * @param  bool  $publishedOrOwnDrafts  Wiki rule: published items, or the user's own drafts.
      * @return array<int, array<string, mixed>>
      */
-    public function searchCanvasItems(SearchQuery $query, array $canvasTypes, ?string $box, array $textColumns, bool $publishedOrOwnDrafts = false): array
+    public function searchCanvasItems(SearchQuery $query, array $canvasTypes, ?string $box, string $titleColumn = 'title', bool $publishedOrOwnDrafts = false): array
     {
         $lastChange = 'COALESCE(item.modified, item.created)';
 
-        return $this->runTextSearch($query, function (bool $fullText) use ($query, $canvasTypes, $box, $textColumns, $publishedOrOwnDrafts, $lastChange): Builder {
+        return $this->runTextSearch($query, function (bool $fullText) use ($query, $canvasTypes, $box, $titleColumn, $publishedOrOwnDrafts, $lastChange): Builder {
             $builder = $this->connection->table('zp_canvas_items as item')
                 ->select([
                     'item.id',
@@ -205,11 +214,10 @@ class Search
             $this->applyTextMatch(
                 $builder,
                 $fullText,
-                ['item.title', 'item.description', 'item.data'],
-                'item.'.$textColumns[0],
+                self::CANVAS_ITEM_TEXT_COLUMNS,
+                'item.'.$titleColumn,
                 $lastChange,
-                $query,
-                likeColumns: array_map(fn (string $column) => 'item.'.$column, $textColumns)
+                $query
             );
 
             return $builder;
@@ -570,21 +578,20 @@ class Search
     /**
      * Match the query's tokens against text columns and order the result.
      *
-     * Full-text path: MATCH ... AGAINST in boolean mode on $fullTextColumns (which must be
-     * exactly one index's column list) ordered by relevance only — any other ORDER BY makes
-     * InnoDB materialize every hit before the LIMIT (measured 42 ms vs 325 ms on 78k hits).
-     * LIKE path: every token must match one of the columns; title prefix hits first, then
-     * title hits, then newest first.
+     * Full-text path: MATCH ... AGAINST in boolean mode on $columns (which must be exactly one
+     * index's column list) ordered by relevance only — any other ORDER BY makes InnoDB
+     * materialize every hit before the LIMIT (measured 42 ms vs 325 ms on 78k hits).
+     * LIKE path: every token must match one of the same columns; title prefix hits first,
+     * then title hits, then newest first.
      *
-     * @param  string[]  $fullTextColumns  Indexed columns, qualified.
+     * @param  string[]  $columns  Searched columns, qualified; on MySQL/MariaDB exactly a full-text index's list.
      * @param  string|null  $titleColumn  Column for the LIKE-path relevance ranking; null for date order only.
      * @param  string  $dateExpression  Column or raw expression for the LIKE-path recency order.
-     * @param  string[]|null  $likeColumns  Columns for the LIKE path; defaults to $fullTextColumns.
      */
-    private function applyTextMatch(Builder $builder, bool $fullText, array $fullTextColumns, ?string $titleColumn, string $dateExpression, SearchQuery $query, ?array $likeColumns = null): void
+    private function applyTextMatch(Builder $builder, bool $fullText, array $columns, ?string $titleColumn, string $dateExpression, SearchQuery $query): void
     {
         if ($fullText) {
-            $match = $this->matchExpression($fullTextColumns);
+            $match = $this->matchExpression($columns);
             $against = $query->booleanModeQuery();
 
             $builder->whereRaw($match, [$against])
@@ -594,8 +601,8 @@ class Search
         }
 
         foreach ($query->tokens as $token) {
-            $builder->where(function (Builder $group) use ($likeColumns, $fullTextColumns, $token, $query) {
-                $this->whereAnyLike($group, $likeColumns ?? $fullTextColumns, $token, $query);
+            $builder->where(function (Builder $group) use ($columns, $token, $query) {
+                $this->whereAnyLike($group, $columns, $token, $query);
             });
         }
 
@@ -676,16 +683,19 @@ class Search
     }
 
     /**
-     * OR together a case-insensitive LIKE on every column for one token.
+     * OR together a case-insensitive LIKE on every column for one token. The pattern is
+     * backslash-escaped (SearchQuery::escapeLike); the driver-aware ESCAPE clause keeps that
+     * meaning on SQL Server too.
      *
      * @param  string[]  $columns
      */
     private function whereAnyLike(Builder $group, array $columns, string $token, SearchQuery $query): void
     {
         $like = $this->dbHelper->likeOperator();
+        $escape = $this->dbHelper->likeEscapeClause();
 
         foreach ($columns as $column) {
-            $group->orWhere($column, $like, $query->containsPattern($token));
+            $group->orWhereRaw($this->dbHelper->wrapColumn($column).' '.$like.' ?'.$escape, [$query->containsPattern($token)]);
         }
     }
 
@@ -701,10 +711,11 @@ class Search
         }
 
         $like = $this->dbHelper->likeOperator();
+        $escape = $this->dbHelper->likeEscapeClause();
         $column = $this->dbHelper->wrapColumn($titleColumn);
 
         $builder->orderByRaw(
-            "CASE WHEN {$column} {$like} ? THEN 0 WHEN {$column} {$like} ? THEN 1 ELSE 2 END",
+            "CASE WHEN {$column} {$like} ?{$escape} THEN 0 WHEN {$column} {$like} ?{$escape} THEN 1 ELSE 2 END",
             [$query->prefixPattern($firstToken), $query->containsPattern($firstToken)]
         );
     }

@@ -3404,8 +3404,8 @@ class Install
             $schema = $connection->getSchemaBuilder();
 
             $fullTextIndexes = [
-                'zp_tickets' => ['zp_tickets_search_ft', ['headline', 'description']],
-                'zp_canvas_items' => ['zp_canvas_items_search_ft', ['title', 'description', 'data']],
+                'zp_tickets' => ['zp_tickets_search_ft', ['headline', 'description', 'tags']],
+                'zp_canvas_items' => ['zp_canvas_items_search_ft', ['title', 'description', 'data', 'assumptions', 'conclusion', 'tags']],
                 'zp_comment' => ['zp_comment_search_ft', ['text']],
             ];
 

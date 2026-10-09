@@ -53,7 +53,7 @@ class IdeasProvider implements SearchProvider
      */
     public function search(SearchQuery $query): array
     {
-        $rows = $this->searchRepository->searchCanvasItems($query, self::CANVAS_TYPES, null, ['description', 'data', 'tags']);
+        $rows = $this->searchRepository->searchCanvasItems($query, self::CANVAS_TYPES, null, titleColumn: 'description');
 
         $results = [];
         foreach ($rows as $row) {

@@ -122,10 +122,12 @@ final class SearchQuery
     /**
      * Tokens usable in a boolean-mode full-text query, or null when the query must use LIKE.
      *
-     * Boolean operator characters are stripped. A token shorter than the index minimum can
-     * never be matched by the index, so it forces the LIKE path. Default stopwords are not
-     * indexed either, but they are simply left out of the query (a user typing "the roadmap"
-     * wants "roadmap"); only a term made of stopwords alone falls back to LIKE.
+     * Boolean operator characters are stripped from the token edges. One left inside a word
+     * ("foo-bar", "c++x") forces the LIKE path: the index stores "foo" and "bar" separately, so
+     * neither "foobar*" nor an operator-laden query would match. A token shorter than the index
+     * minimum can never be matched either. Default stopwords are not indexed, but they are
+     * simply left out of the query (a user typing "the roadmap" wants "roadmap"); only a term
+     * made of stopwords alone falls back to LIKE.
      *
      * @return string[]|null
      */
@@ -134,7 +136,11 @@ final class SearchQuery
         $clean = [];
 
         foreach ($this->tokens as $token) {
-            $stripped = (string) preg_replace('/[+\-<>()~*"@]+/u', '', $token);
+            $stripped = trim($token, '+-<>()~*"@');
+
+            if (preg_match('/[+\-<>()~*"@]/u', $stripped) === 1) {
+                return null;
+            }
 
             if (in_array(mb_strtolower($stripped), self::FULLTEXT_STOPWORDS, true)) {
                 continue;

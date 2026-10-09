@@ -55,13 +55,7 @@ class WikiProvider implements SearchProvider
      */
     public function search(SearchQuery $query): array
     {
-        $rows = $this->searchRepository->searchCanvasItems(
-            $query,
-            self::CANVAS_TYPES,
-            self::BOX,
-            ['title', 'description', 'tags'],
-            publishedOrOwnDrafts: true
-        );
+        $rows = $this->searchRepository->searchCanvasItems($query, self::CANVAS_TYPES, self::BOX, publishedOrOwnDrafts: true);
 
         $results = [];
         foreach ($rows as $row) {

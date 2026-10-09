@@ -69,6 +69,8 @@ class SearchQueryTest extends \Unit\TestCase
     {
         $this->assertNull((new SearchQuery('go live', userId: 1, accessibleProjectIds: null))->fullTextTokens());
         $this->assertNull((new SearchQuery('c++', userId: 1, accessibleProjectIds: null))->fullTextTokens());
+        $this->assertNull((new SearchQuery('foo-bar', userId: 1, accessibleProjectIds: null))->fullTextTokens());
+        $this->assertNull((new SearchQuery('roadmap e-mail', userId: 1, accessibleProjectIds: null))->fullTextTokens());
         $this->assertSame('', (new SearchQuery('c++', userId: 1, accessibleProjectIds: null))->booleanModeQuery());
         $this->assertSame(['abc'], (new SearchQuery('abc', userId: 1, accessibleProjectIds: null))->fullTextTokens());
     }
