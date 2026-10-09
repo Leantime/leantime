@@ -2176,8 +2176,6 @@ class Tickets
             $values['priority'] = self::normalizePriority($values['priority']) ?? '';
         }
 
-        $this->addTicketChange(session('userdata.id'), $id, $values);
-
         $updates = [
             'headline' => $values['headline'],
             'type' => $values['type'],
@@ -2212,9 +2210,13 @@ class Tickets
         $collaborators = $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null);
 
         // One transaction: a failure after the update must not leave the ticket changed with its
-        // collaborators deleted (a caller that retries would then repeat the update every time).
+        // collaborators deleted, or history rows for a change that never happened (a caller that
+        // retries would then repeat the update every time).
         // update() throws on failure; zero affected rows (nothing changed) is still a success.
-        $this->connection->transaction(function () use ($id, $updates, $collaborators, $actingUserId) {
+        $this->connection->transaction(function () use ($id, $values, $updates, $collaborators, $actingUserId) {
+            // History first: it diffs against the row as it was before this update.
+            $this->addTicketChange($actingUserId, $id, $values);
+
             $this->connection->table('zp_tickets')
                 ->where('id', $id)
                 ->update($updates);
