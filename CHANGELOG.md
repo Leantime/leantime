@@ -1,3 +1,35 @@
+# Version: 3.11.0
+
+## Highlights
+
+### Global search
+A single search now spans your whole workspace - to-dos, projects, documents, ideas, goals, blueprints, comments, files and people - so you can jump straight to anything from one place. (#3867)
+
+## New Features
+- **Work analytics tagging** - Generated tickets are tagged so analytics can distinguish automated work from real work. (#3859)
+- **Class-based analytics events** - A new event system provides consistent analytics across the core application. (#3853)
+
+## Bug Fixes
+- Kanban column headers now scroll in sync with the board body (#3800)
+- Improved readability of the My Tasks and Calendar dashboard widgets (#3863, #3866)
+- Leantime no longer reports permission denials, skips duplicate queued emails and avoids an avatar directory creation race (#3869)
+- Cron ticket updates run correctly without a session user, and scheduled jobs are skipped while migrations are pending (#3868)
+- More reliable permissions with a per-instance grant-map cache and reseeding of empty role tables (#3865)
+- The telemetry opt-out toggle works again and your choice now sticks (#3854)
+
+## Localization
+- Onboarding tour modals, plugin and news page headers, and login labels are now translatable (#3862, #3861)
+- Added missing fr-FR translation keys and removed duplicate en-US keys (#3861)
+
+## Dependency Updates
+- Bumped plugins with workspace lookup and StrategyPro schema updates (#3870)
+- Bumped plugins adding notes to global search, a search MCP tool and a recurring-task reset fix (#3871)
+- Bumped plugins with a billing failed-payment fix, origin tagging and ProjectWizard removal (#3860)
+- Bumped plugins for sign-up source attribution and Beta menu flags (#3858)
+- Bumped plugins for PostHog error tracking, signup type and health dedupe (#3857, #3856, #3855)
+
+---
+
 # Version: 3.10.4
 
 ## New Features
