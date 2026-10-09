@@ -2,21 +2,24 @@
 
 namespace Leantime\Domain\Search\Providers;
 
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Domain\Search\Contracts\SearchProvider;
 use Leantime\Domain\Search\Models\SearchQuery;
 use Leantime\Domain\Search\Models\SearchResult;
 use Leantime\Domain\Search\Models\SearchTarget;
 use Leantime\Domain\Search\Repositories\Search as SearchRepository;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 
 /**
- * People directory. Admins and owners only (the users roster needs the global users.view
- * capability); the provider is simply unavailable to everyone else.
+ * People directory. Needs the global users.view capability (admins and owners by default);
+ * the provider is simply unavailable to everyone else.
  */
 class UsersProvider implements SearchProvider
 {
-    public function __construct(private SearchRepository $searchRepository) {}
+    public function __construct(
+        private SearchRepository $searchRepository,
+        private PermissionService $permissions,
+    ) {}
 
     public function key(): string
     {
@@ -33,9 +36,13 @@ class UsersProvider implements SearchProvider
         return 'fa-solid fa-users';
     }
 
+    /**
+     * The domain's view capability, checked against the user's global role: search spans every
+     * accessible project, so a per-project custom role cannot be applied per hit.
+     */
     public function available(): bool
     {
-        return Auth::userIsAtLeast(Roles::$admin, true);
+        return $this->permissions->currentUserCan(UsersPermissions::VIEW, null, true);
     }
 
     /**

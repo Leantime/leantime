@@ -2,19 +2,24 @@
 
 namespace Leantime\Domain\Search\Providers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Domain\Search\Contracts\SearchProvider;
 use Leantime\Domain\Search\Models\SearchQuery;
 use Leantime\Domain\Search\Models\SearchResult;
 use Leantime\Domain\Search\Models\SearchTarget;
 use Leantime\Domain\Search\Repositories\Search as SearchRepository;
 use Leantime\Domain\Search\Support\Highlighter;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 
 /**
  * Tasks, subtasks and milestones from zp_tickets.
  */
 class TicketsProvider implements SearchProvider
 {
-    public function __construct(private SearchRepository $searchRepository) {}
+    public function __construct(
+        private SearchRepository $searchRepository,
+        private PermissionService $permissions,
+    ) {}
 
     public function key(): string
     {
@@ -31,9 +36,13 @@ class TicketsProvider implements SearchProvider
         return 'fa-solid fa-list-check';
     }
 
+    /**
+     * The domain's view capability, checked against the user's global role: search spans every
+     * accessible project, so a per-project custom role cannot be applied per hit.
+     */
     public function available(): bool
     {
-        return true;
+        return $this->permissions->currentUserCan(TicketsPermissions::VIEW, null, true);
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Search\Providers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Domain\Blueprints\Permissions\BlueprintsPermissions;
 use Leantime\Domain\Blueprints\Services\TemplateRegistry;
 use Leantime\Domain\Search\Contracts\SearchProvider;
 use Leantime\Domain\Search\Models\SearchQuery;
@@ -26,6 +28,7 @@ class BlueprintsProvider implements SearchProvider
     public function __construct(
         private SearchRepository $searchRepository,
         private TemplateRegistry $templateRegistry,
+        private PermissionService $permissions,
     ) {}
 
     public function key(): string
@@ -43,9 +46,13 @@ class BlueprintsProvider implements SearchProvider
         return 'fa-solid fa-compass-drafting';
     }
 
+    /**
+     * The domain's view capability, checked against the user's global role: search spans every
+     * accessible project, so a per-project custom role cannot be applied per hit.
+     */
     public function available(): bool
     {
-        return $this->canvasTypes() !== [];
+        return $this->canvasTypes() !== [] && $this->permissions->currentUserCan(BlueprintsPermissions::VIEW, null, true);
     }
 
     /**

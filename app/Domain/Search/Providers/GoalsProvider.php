@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Search\Providers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Domain\Goalcanvas\Permissions\GoalcanvasPermissions;
 use Leantime\Domain\Search\Contracts\SearchProvider;
 use Leantime\Domain\Search\Models\SearchQuery;
 use Leantime\Domain\Search\Models\SearchResult;
@@ -18,7 +20,10 @@ class GoalsProvider implements SearchProvider
 
     private const BOX = 'goal';
 
-    public function __construct(private SearchRepository $searchRepository) {}
+    public function __construct(
+        private SearchRepository $searchRepository,
+        private PermissionService $permissions,
+    ) {}
 
     public function key(): string
     {
@@ -35,9 +40,13 @@ class GoalsProvider implements SearchProvider
         return 'fa-solid fa-bullseye';
     }
 
+    /**
+     * The domain's view capability, checked against the user's global role: search spans every
+     * accessible project, so a per-project custom role cannot be applied per hit.
+     */
     public function available(): bool
     {
-        return true;
+        return $this->permissions->currentUserCan(GoalcanvasPermissions::VIEW, null, true);
     }
 
     /**
