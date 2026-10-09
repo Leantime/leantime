@@ -4,6 +4,7 @@ namespace Leantime\Domain\Queue\Repositories;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Queue\Workers\Workers;
@@ -48,9 +49,10 @@ class Queue
             $msghash = md5($thedate.$subject.$message.$userEmail.$projectId);
 
             // msghash is the same message to the same user in the same second, so a duplicate
-            // is the same notification queued twice (e.g. a double-submitted patch): skip it.
+            // key is the same notification queued twice (e.g. a double-submitted patch): skip it.
+            // Only that error is ignored; anything else (e.g. an oversized value) is logged.
             try {
-                $this->db->table('zp_queue')->insertOrIgnore([
+                $this->db->table('zp_queue')->insert([
                     'msghash' => $msghash,
                     'channel' => Workers::EMAILS->value,
                     'userId' => $userId,
@@ -59,6 +61,8 @@ class Queue
                     'thedate' => $thedate,
                     'projectId' => $projectId,
                 ]);
+            } catch (UniqueConstraintViolationException $e) {
+                continue;
             } catch (\PDOException $e) {
                 // Not report($e): a QueryException's message is the SQL with its bindings filled
                 // in, so it carries the whole email subject and body.
