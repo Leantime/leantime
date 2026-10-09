@@ -79,8 +79,8 @@
                     </div>
                 </div>
 
-                <div class="tw-flex-1 ticket-title ticket-title-wrapper">
-                    <div class="title-text">
+                <div class="tw-flex-1 tw-min-w-0 ticket-title ticket-title-wrapper">
+                    <div class="title-text tw-truncate">
                         <small style="display:inline-block; ">{{ $ticket['projectName'] }}</small> <br/>
                         <strong><a href="#/tickets/showTicket/{{ $ticket['id'] }}" preload="mouseover"
                                    class="ticket-headline-{{ $ticket['id'] }}">{{ $ticket['headline'] }}</a></strong>
@@ -119,11 +119,16 @@
                 </div>
 
                 @dispatchEvent('beforeDueDate', ['ticket' => (object)$ticket])
+                @php $isOverdue = $ticket['isOverdue'] ?? false; @endphp
                 <div
                     class="due-date-container tw-flex-1 tw-justify-right tw-flex tw-flex-row tw-justify-end tw-content-center due-date-wrapper">
                     <div class="tw-content-center">
                         <div class="date-picker-form-control">
+                            @if ($isOverdue)
+                                <span class="sr-only">{{ __("label.overdue") }}</span>
+                            @endif
                             <i class="fa-solid fa-business-time infoIcon"
+                               style="{{ $isOverdue ? 'color:var(--red);' : '' }}"
                                data-tippy-content="{{ __("label.due") }}"></i>
 
                             <input id="due-date-picker-{{ $ticket['id'] }}"
@@ -131,7 +136,7 @@
                                    title="{{ __("label.due") }}"
                                    value="{{ format($ticket['dateToFinish'])->date(__("text.anytime")) }}"
                                    class="duedates secretInput"
-                                   style="margin-left:0px; width:100px;"
+                                   style="margin-left:0px; width:140px;{{ $isOverdue ? ' color:var(--red); font-weight:600;' : '' }}"
                                    data-id="{{ $ticket['id'] }}"
                                    onchange="jQuery('#due-date-picker-trigger-{{ $ticket['id'] }}').text(this.value);"
                                    name="date"

@@ -5837,7 +5837,12 @@ class Tickets extends BaseService
                             // to an array injects an empty "ticket" that later 500s the widget render,
                             // so cache null and skip it instead.
                             $milestone = $this->getTicket($milestoneId);
-                            $milestoneCache[$milestoneId] = $milestone ? (array) $milestone : null;
+                            $milestoneRow = $milestone ? (array) $milestone : null;
+                            if ($milestoneRow !== null) {
+                                // Same canonical overdue rule as the task rows (#3863).
+                                $milestoneRow['isOverdue'] = $this->getGroupKeyForTicket($milestoneRow, 'time') === 'overdue';
+                            }
+                            $milestoneCache[$milestoneId] = $milestoneRow;
                         }
 
                         if ($milestoneCache[$milestoneId] !== null) {
@@ -5939,6 +5944,11 @@ class Tickets extends BaseService
                 $statusLabels[$row['projectId']][$row['status']]['statusType'] === 'DONE') {
                 continue;
             }
+
+            // Always the canonical due-date rule (#3863), regardless of the widget's
+            // current $groupBy — a ticket grouped by project/priority must still be
+            // able to show an overdue signal in the due-date cell.
+            $row['isOverdue'] = $this->getGroupKeyForTicket($row, 'time') === 'overdue';
 
             $groupKey = $this->getGroupKeyForTicket($row, $groupBy);
             $groupLabel = $this->getGroupLabelForTicket($row, $groupBy, $groupKey);
