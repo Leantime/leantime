@@ -293,10 +293,21 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
      * Every scheduled job needs the database. Before install (a fresh container whose cron starts
      * before anyone has run /install) they would all FAIL on every run, filling the logs with
      * missing-table errors (#3134), so nothing is scheduled until Leantime is installed.
+     *
+     * Likewise nothing is scheduled while database migrations are pending: those run on the next
+     * web request, never from the console, so jobs would query columns that don't exist yet. On a
+     * multi-tenant host that is every tenant nobody has visited since a release — their jobs
+     * failed every minute, and a job with side effects before the failing query repeated them.
      */
     protected function schedule(Schedule $schedule): void
     {
         if (! Installation::isInstalled()) {
+            return;
+        }
+
+        if (Installation::isDatabaseBehindCode()) {
+            Log::info('Scheduled jobs skipped: database migrations are pending (they run on the next web request).');
+
             return;
         }
 

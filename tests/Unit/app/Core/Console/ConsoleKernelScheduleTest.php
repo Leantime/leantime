@@ -56,10 +56,13 @@ class ConsoleKernelScheduleTest extends \Unit\TestCase
         parent::tearDown();
     }
 
-    private function runSchedule(bool $installed): Schedule
+    private function runSchedule(bool $installed, ?string $dbVersion = null): Schedule
     {
+        $dbVersion ??= (new \Leantime\Core\Configuration\AppSettings)->dbVersion;
+
         app()->instance(SettingRepository::class, $this->makeEmpty(SettingRepository::class, [
             'checkIfInstalled' => $installed,
+            'getSetting' => fn (string $key) => $key === 'db-version' ? $dbVersion : false,
         ]));
 
         $schedule = new Schedule;
@@ -82,5 +85,17 @@ class ConsoleKernelScheduleTest extends \Unit\TestCase
         $this->runSchedule(installed: true);
 
         $this->assertSame(1, $this->cronEventCount);
+    }
+
+    /**
+     * Migrations only run on a web request. Until then the schema is older than the code, so
+     * jobs would query columns that don't exist yet (and repeat side effects every minute).
+     */
+    public function test_nothing_is_scheduled_while_migrations_are_pending(): void
+    {
+        $schedule = $this->runSchedule(installed: true, dbVersion: '3.5.20');
+
+        $this->assertSame([], $schedule->events());
+        $this->assertSame(0, $this->cronEventCount);
     }
 }

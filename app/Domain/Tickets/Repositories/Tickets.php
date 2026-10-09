@@ -2207,19 +2207,22 @@ class Tickets
             $updates['outcomeImpact'] = $values['outcomeImpact'];
         }
 
+        // Background jobs (cron, recurring tasks) have no session user; credit the ticket's author.
+        $actingUserId = session('userdata.id') ?? $values['userId'] ?? null;
+        $collaborators = $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null);
+
+        // One transaction: a failure after the update must not leave the ticket changed with its
+        // collaborators deleted (a caller that retries would then repeat the update every time).
         // update() throws on failure; zero affected rows (nothing changed) is still a success.
-        $this->connection->table('zp_tickets')
-            ->where('id', $id)
-            ->update($updates);
+        $this->connection->transaction(function () use ($id, $updates, $collaborators, $actingUserId) {
+            $this->connection->table('zp_tickets')
+                ->where('id', $id)
+                ->update($updates);
 
-        $this->removeCollaborators($id);
+            $this->removeCollaborators($id);
 
-        // Add new collaborators
-        $this->addCollaborators(
-            $id,
-            $this->normalizeCollaborators($values['collaborators'] ?? [], $values['editorId'] ?? null),
-            session('userdata.id')
-        );
+            $this->addCollaborators($id, $collaborators, $actingUserId === null ? null : (int) $actingUserId);
+        });
 
         return true;
     }
@@ -2556,22 +2559,14 @@ class Tickets
     }
 
     /**
-     * Adds collaborators to a ticket.
-     *
-     * @param  int  $ticketId  The ID of the ticket.
-     * @param  array  $collaborators  An array of user IDs to add as collaborators.
-     * @param  int  $createdBy  The ID of the user adding the collaborators.
-     * @return bool Returns true if the operation is successful.
-     */
-    /**
      * Adds collaborators to a ticket using a single batch insert.
      *
      * @param  int  $ticketId  The ID of the ticket.
      * @param  array  $collaborators  An array of user IDs to add as collaborators.
-     * @param  int  $createdBy  The ID of the user adding the collaborators.
+     * @param  int|null  $createdBy  The ID of the user adding the collaborators (null when no user is acting, e.g. cron).
      * @return bool Returns true if the operation is successful.
      */
-    public function addCollaborators(int $ticketId, array $collaborators, int $createdBy): bool
+    public function addCollaborators(int $ticketId, array $collaborators, ?int $createdBy): bool
     {
         $collaborators = $this->normalizeCollaborators($collaborators);
 
