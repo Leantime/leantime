@@ -26,7 +26,7 @@ class Queue
         $recipients = array_unique($recipients);
 
         foreach ($recipients as $recipient) {
-            $thedate = date('Y-m-d H:i:s');
+            $thedate = CarbonImmutable::now('UTC')->format('Y-m-d H:i:s');
             // NEW : Allowing recipients to be emails or userIds
             // TODO : Accept a list of \user objects too ?
             if (is_int($recipient)) {
@@ -47,8 +47,10 @@ class Queue
             $userEmail = $theuser['username'];
             $msghash = md5($thedate.$subject.$message.$userEmail.$projectId);
 
+            // msghash is the same message to the same user in the same second, so a duplicate
+            // is the same notification queued twice (e.g. a double-submitted patch): skip it.
             try {
-                $this->db->table('zp_queue')->insert([
+                $this->db->table('zp_queue')->insertOrIgnore([
                     'msghash' => $msghash,
                     'channel' => Workers::EMAILS->value,
                     'userId' => $userId,
@@ -58,7 +60,14 @@ class Queue
                     'projectId' => $projectId,
                 ]);
             } catch (\PDOException $e) {
-                report($e);
+                // Not report($e): a QueryException's message is the SQL with its bindings filled
+                // in, so it carries the whole email subject and body.
+                Log::error('Queue email could not be saved', [
+                    'userId' => $userId,
+                    'projectId' => $projectId,
+                    'exception' => get_class($e),
+                    'sqlState' => $e->getCode(),
+                ]);
             }
         }
     }

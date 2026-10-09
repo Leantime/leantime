@@ -77,6 +77,9 @@ class ExceptionHandler implements ExceptionHandlerContract
      * @var string[]
      */
     protected $internalDontReport = [
+        // A denied action is an expected 403, not a fault. PermissionEnforcer/PermissionService
+        // already log each denial (with the permission key) at info level for audit.
+        AuthorizationException::class,
         HttpException::class,
         HttpResponseException::class,
         SuspiciousOperationException::class,

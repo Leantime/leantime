@@ -77,7 +77,9 @@ class Avatarcreator
     {
 
         if (is_dir(storage_path('framework/cache/avatars')) === false) {
-            if (! mkdir($concurrentDirectory = storage_path('framework/cache/avatars')) && ! is_dir(
+            // @: a concurrent request can create the directory between the is_dir() check and
+            // mkdir(); that "File exists" warning is not an error (the is_dir() re-check decides).
+            if (! @mkdir($concurrentDirectory = storage_path('framework/cache/avatars')) && ! is_dir(
                 $concurrentDirectory
             )) {
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
