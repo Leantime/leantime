@@ -233,6 +233,12 @@
     align-items: center;
     gap: 6px;
 }
+/* Bootstrap's `.btn .caret { margin-top: 8px }` lines the caret up in a 20px
+   inline line box; in the flex button above it just pushes it down. */
+.lt-tabs-actions .btn .caret {
+    margin: 0;
+    vertical-align: middle;
+}
 .lt-tabs-actions .btn .badge {
     line-height: 1;
     padding: 3px 6px;
@@ -293,6 +299,29 @@
     display: inline-flex;
     align-items: center;
 }
+/* An inline range control in the actions (My Timesheets week range): label text and arrows on the
+   page background, fields on one line. */
+.lt-tabs-actions .lt-tabs-range {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+}
+.lt-tabs-actions .lt-tabs-range a {
+    color: #fff;
+    padding: 0 4px;
+}
+.lt-tabs-actions .lt-tabs-range input {
+    margin: 0;
+}
+
+/* A toggle's label in the actions ("Show Tasks") sits on the page background. */
+.lt-tabs-actions input.toggle + label {
+    color: #fff;
+}
+
 /* Right-edge actions: panels/menus open LEFTWARD or they fall off screen. */
 .lt-tabs-actions .filterBar,
 .lt-tabs-actions .dropdown-menu {

@@ -102,19 +102,14 @@
 
 
 <div class="maincontent">
-    <div class="maincontentinner">
-        <form action="{{ BASE_URL }}/timesheets/showAll" method="post" id="form" name="form">
-
-            <div class="pull-right">
-                <div id="tableButtons" style="display:inline-block"></div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="headtitle" style="">
-
-            <div class="filterRow">
-                <div class="filterRow__field">
+    <x-global::navigation.view-tabs>
+        <x-slot:actions>
+            {{-- The filter fields belong to the #form form below (form="…"). --}}
+            <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" menu-style="width:280px;" keep-open class="filterWrapper">
+                <x-slot:trigger class="btn-link"><i class="fas fa-filter"></i> {{ __('popover.filter') }}</x-slot:trigger>
+                <div class="tw-mb-2">
                     <label for="clients">{!! __('label.client') !!}</label>
-                    <x-global::forms.select width="sm" name="clientId">
+                    <x-global::forms.select form="form" name="clientId">
                         <option value="-1">{{ strip_tags(__('menu.all_clients')) }}</option>
                         @foreach ($allClients as $client)
                             <option value="{{ $client['id'] }}"
@@ -125,9 +120,9 @@
                         @endforeach
                     </x-global::forms.select>
                 </div>
-                <div class="filterRow__field">
+                <div class="tw-mb-2">
                     <label for="projects">{!! __('label.project') !!}</label>
-                    <x-global::forms.select width="sm" name="project">
+                    <x-global::forms.select form="form" name="project">
                         <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
                         @foreach ($allProjects as $project)
                             <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
@@ -139,9 +134,9 @@
                     </x-global::forms.select>
                 </div>
                 @if (! empty($allTickets))
-                <div class="filterRow__field">
+                <div class="tw-mb-2">
                     <label for="ticket">{!! __('label.ticket') !!}</label>
-                        <x-global::forms.select width="sm" name="ticket">
+                        <x-global::forms.select form="form" name="ticket">
                             <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
                             @foreach ($allTickets as $ticket)
                                 <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
@@ -154,17 +149,17 @@
                 </div>
                 @endif
 
-                <div class="filterRow__field">
+                <div class="tw-mb-2">
                     <label for="dateFrom">{!! __('label.date_from') !!}</label>
-                    <input type="text" id="dateFrom" class="field-width-sm dateFrom" name="dateFrom" autocomplete="off"
+                    <input form="form" type="text" id="dateFrom" class="dateFrom" name="dateFrom" autocomplete="off"
                     value="{{ format($dateFrom)->date() }}" size="5" style="margin-bottom:10px"/></div>
-                <div class="filterRow__field">
+                <div class="tw-mb-2">
                     <label for="dateTo">{!! __('label.date_to') !!}</label>
-                    <input type="text" id="dateTo" class="field-width-sm dateTo" name="dateTo" autocomplete="off"
+                    <input form="form" type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
                     value="{{ format($dateTo)->date() }}" size="5" style="margin-bottom:10px" /></div>
-                <div class="filterRow__field">
+                <div class="tw-mb-2">
                 <label for="userId">{!! __('label.employee') !!}</label>
-                    <x-global::forms.select width="sm" name="userId" id="userId" onchange="submit();">
+                    <x-global::forms.select form="form" name="userId" id="userId" onchange="this.form.submit();">
                         <option value="all">{!! __('label.all_employees') !!}</option>
 
                         @foreach ($employees as $row)
@@ -176,9 +171,9 @@
                         @endforeach
                     </x-global::forms.select>
                 </div>
-                <div class="filterRow__field">
+                <div class="tw-mb-2">
                     <label for="kind">{!! __('label.type') !!}</label>
-                    <x-global::forms.select width="sm" id="kind" name="kind" onchange="submit();">
+                    <x-global::forms.select form="form" id="kind" name="kind" onchange="this.form.submit();">
                         <option value="all">{!! __('label.all_types') !!}</option>
                         @foreach ($kind as $key => $row)
                             <option value="{{ $key }}"
@@ -190,37 +185,46 @@
 
                     </x-global::forms.select>
                 </div>
-                <div class="filterRow__field">
+                <div class="tw-mb-2">
                     <label for="invEmpl">{!! __('label.invoiced') !!}</label>
-                    <x-global::forms.select width="sm" name="invEmpl" id="invEmpl">
+                    <x-global::forms.select form="form" name="invEmpl" id="invEmpl">
                         <option value="all" @if ($invEmpl == 'all' || ! $invEmpl) selected="selected" @endif>{!! __('label.invoiced_all') !!}</option>
                         <option value="1" @if ($invEmpl == '1') selected="selected" @endif>{!! __('label.invoiced') !!}</option>
                         <option value="0" @if ($invEmpl == '0') selected="selected" @endif>{!! __('label.invoiced_not') !!}</option>
                     </x-global::forms.select>
                 </div>
-                <div class="filterRow__field">
-                    <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
+                <span class="checkbox">
+                    <input form="form" type="checkbox" value="on" name="invComp" id="invComp" onclick="this.form.submit();"
                         @if ($invComp == '1')
                             checked="checked"
                         @endif
                     />
                     <label for="invEmpl">{!! __('label.invoiced_comp') !!}</label>
-                </div>
+                </span>
 
-                <div class="filterRow__field">
-                    <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
+                <span class="checkbox">
+                    <input form="form" type="checkbox" value="on" name="paid" id="paid" onclick="this.form.submit();"
                         @if ($paid == '1')
                             checked="checked"
                         @endif
                     />
                     <label for="paid">{!! __('label.paid') !!}</label>
+                </span>
+                <div class="tw-mb-2">
+                    <input form="form" type="hidden" name='filterSubmit' value="1"/>
+                    <x-global::forms.button form="form" tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
                 </div>
-                <div class="filterRow__field">
-                    <input type="hidden" name='filterSubmit' value="1"/>
-                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
-                </div>
+            </x-global::actions.dropdown>
+        </x-slot:actions>
+    </x-global::navigation.view-tabs>
+
+    <div class="maincontentinner">
+        <form action="{{ BASE_URL }}/timesheets/showAll" method="post" id="form" name="form">
+            {{-- Export / column visibility act on the table, so they stay with it (like the To-Do table). --}}
+            <div class="pull-right">
+                <div id="tableButtons" style="display:inline-block"></div>
             </div>
-            </div>
+            <div class="clearfix"></div>
 
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
                 <colgroup>

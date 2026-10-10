@@ -187,15 +187,6 @@ select.field-width-lg, input.field-width-lg, .ss-main.field-width-lg { width: va
 select.field-width-full, input.field-width-full, .ss-main.field-width-full { width: 100%; }
 select.field-width-auto, input.field-width-auto, .ss-main.field-width-auto { width: auto; }
 
-/* A row of filters above a table (All Timesheets): sm fields that wrap like a toolbar. */
-.filterRow {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 0 15px;
-    margin-bottom: 10px;
-}
-
 /* Filter panels are narrow columns: their fields fill the panel. */
 .filterBar select,
 .filterBar .ss-main,

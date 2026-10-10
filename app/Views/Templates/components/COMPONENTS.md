@@ -95,6 +95,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating; tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
+| view-tabs | `navigation.view-tabs` | navigation | ✅ | feature/page-toolbars | The bar between page header and content box: page VIEWS as link tabs on the left (server-side active), page ACTIONS on the right (`actions` slot: New, Filter, Group By, view settings, ranges). Replaces the hand-rolled bars in tickets (ticketBoardTabs/timelineTabs, `tickets::portfolio-tabs`). See "Page layout" |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
 | date-picker | `forms.date-picker` | forms | ⬜ | selectsComponentUpdates | jQuery-UI datepicker; needs htmx.onLoad re-init |
 
@@ -640,4 +641,21 @@ layout table. Not a prop name: `size` (the native listbox-rows attribute). Appli
 widths, `span11`/`tw-w-full` selects, date/time inputs → `sm`); All Timesheets filter table → `.filterRow`; ticket
 modal labels no longer shrink (fields line up). Plugins (Billing's inline `width:200px` selects, StrategyPro KPI)
 follow in P6.
+
+### Page layout: header → view bar → content box (2026-10-10, Marcel)
+The To-Do board structure is the standard: **page header** (title / subject switcher / header ⋮ menu) →
+**view bar** `navigation.view-tabs` (views left, actions right) → **content box** `.maincontentinner`.
+- View selectors are tabs in the bar, never a "… View ▾" dropdown in the box.
+- Page-level actions and filters (New / Add …, Filter, Group By, status/relates filters, timeframe, week range)
+  go in the bar's actions. Filter-style triggers use `btn-link` (white pills); primary buttons stay primary.
+- Controls that act on ONE table (DataTables Export / Columns, `#tableButtons`) stay above that table in the box.
+- A page without views still gets the bar (actions only, right-aligned).
+- Fields moved out of their `<form>` keep submitting via `form="…"`; inline `submit()` → `this.form.submit()`.
+- Many filters → a Filter panel (`variant="filter" menu-as="div" menu-class="filterBar" keep-open`), not a row.
+
+Applied: Ideas wall/kanban (Wall | Kanban tabs + Add Idea), Goals board, Blueprints + old Canvas boards, Logic
+Model, My Timesheets (Week | List tabs + week range / Filters), All Timesheets (Filter panel), portfolio timeline
+(Client + Timeframe) and portfolio table (New / Filter / Group By; the nested `#ticketSearch` forms are gone), To-Do
+roadmap (Timeframe — shared `tickets::partials.ganttTimeframe`). Not touched: Calendar (FullCalendar's own toolbar),
+Goal dashboard (section-level "Create New Goal"), Wiki/Docs (no view or filter controls in the box).
 

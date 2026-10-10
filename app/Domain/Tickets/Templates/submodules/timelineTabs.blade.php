@@ -1,51 +1,26 @@
 @php
     use Leantime\Core\Controller\Frontcontroller;
 
-    if (!function_exists('findActive')) {
-        function findActive($route): string
-        {
-            if (str_contains(Frontcontroller::getCurrentRoute(), $route)) {
-                return 'active';
-            }
-            return '';
-        }
-    }
+    $currentRoute = Frontcontroller::getCurrentRoute();
+    $tabs = [
+        ['url' => BASE_URL.'/tickets/roadmap'.$searchParams, 'label' => __('links.timeline'), 'active' => str_contains($currentRoute, 'roadmap')],
+        ['url' => BASE_URL.'/tickets/showAllMilestones'.$searchParams, 'label' => __('links.table'), 'active' => str_contains($currentRoute, 'showAllMilestones')],
+        ['url' => BASE_URL.'/tickets/showProjectCalendar'.$searchParams, 'label' => __('links.calendar'), 'active' => str_contains($currentRoute, 'Calendar')],
+    ];
 @endphp
 
-<div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
-    <nav class="lt-tabs-group" aria-label="{{ trim(strip_tags(__('links.timeline'))) }}">
-    <ul>
-        <li class="{{ findActive('roadmap') }}">
-            <a href="{{ BASE_URL }}/tickets/roadmap{{ $searchParams }}" preload="mouseover">
-                {!! __('links.timeline') !!}
-            </a>
-        </li>
-        <li class="{{ findActive('showAllMilestones') }}">
-            <a href="{{ BASE_URL }}/tickets/showAllMilestones{{ $searchParams }}" preload="mouseover">
-                {!! __('links.table') !!}
-            </a>
-        </li>
-        <li class="{{ findActive('Calendar') }}">
-            <a href="{{ BASE_URL }}/tickets/showProjectCalendar{{ $searchParams }}" preload="mouseover">
-                {!! __('links.calendar') !!}
-            </a>
-        </li>
-    </ul>
-    </nav>
-
-    {{-- New / Filter live on the right of the nav bar, exactly like the To-Do
-         board (ticketBoardTabs). They used to sit inside .maincontentinner in a
-         bootstrap .row, which is why the Filter button rendered as flat text
-         here but as a white pill on the boards: the pill styling comes from
-         `.lt-tabs .lt-tabs-actions .btn-link`, and outside the band it never
-         applied. Guarded on $searchCriteria so the nav stays safe if it is ever
-         reused without the filter context. --}}
+{{-- New / Filter sit on the right of the view bar, exactly like the To-Do board (ticketBoardTabs).
+     Guarded on $searchCriteria so the nav stays safe if it is ever reused without the filter context. --}}
+<x-global::navigation.view-tabs :tabs="$tabs" :label="trim(strip_tags(__('links.timeline')))">
     @isset($searchCriteria)
-        <div class="lt-tabs-actions">
+        <x-slot:actions>
             @dispatchEvent('filters.afterLefthandSectionOpen')
             @include('tickets::submodules.ticketNewBtn')
             @include('tickets::submodules.ticketFilter')
+            @isset($roadmapView)
+                @include('tickets::partials.ganttTimeframe')
+            @endisset
             @dispatchEvent('filters.beforeLefthandSectionClose')
-        </div>
+        </x-slot:actions>
     @endisset
-</div>
+</x-global::navigation.view-tabs>

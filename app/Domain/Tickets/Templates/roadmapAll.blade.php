@@ -24,49 +24,22 @@
 @include('tickets::submodules.portfolioHeader')
 
 <div class="maincontent">
-    @include('tickets::submodules.portfolioTabs')
+    <x-tickets::portfolio-tabs>
+        <x-slot:actions>
+            <x-global::actions.dropdown variant="filter">
+                <x-slot:trigger class="btn-link">{!! __('label.roles.client') !!}: <span class="viewText">{{ $clientNameSelected }}</span><span class="caret"></span></x-slot:trigger>
+                <li><a href={{ BASE_URL.'/tickets/roadmapAll' }} {{ empty($labelActive) ? "class='active'" : '' }} > {!! __('headline.all_clients') !!} </a></li>
+                {!! $htmlDropdownClients !!}
+
+            </x-global::actions.dropdown>
+
+            @include('tickets::partials.ganttTimeframe')
+        </x-slot:actions>
+    </x-tickets::portfolio-tabs>
 
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
-
-        <div class="row">
-            <div class="col-md-6">
-            </div>
-            <div class="col-md-6">
-                <div class="pull-right">
-
-                    <x-global::actions.dropdown variant="filter">
-                        <x-slot:trigger>{!! __('label.roles.client') !!}: <span class="viewText">{{ $clientNameSelected }}</span><span class="caret"></span></x-slot:trigger>
-                        <li><a href={{ BASE_URL.'/tickets/roadmapAll' }} {{ empty($labelActive) ? "class='active'" : '' }} > {!! __('headline.all_clients') !!} </a></li>
-                        {!! $htmlDropdownClients !!}
-
-                    </x-global::actions.dropdown>
-
-                    @php
-                        $currentView = '';
-                        if ($roadmapView == 'Day') {
-                            $currentView = __('buttons.day');
-                        } elseif ($roadmapView == 'Week') {
-                            $currentView = __('buttons.week');
-                        } elseif ($roadmapView == 'Month') {
-                            $currentView = __('buttons.month');
-                        }
-                    @endphp
-                    <x-global::actions.dropdown variant="filter" menu-id="ganttTimeControl" class="dropRight">
-                        <x-slot:trigger>
-                            {!! __('buttons.timeframe') !!}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span>
-                        </x-slot:trigger>
-                        <li><a href="javascript:void(0);" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {!! __('buttons.day') !!}</a></li>
-                        <li><a href="javascript:void(0);" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{!! __('buttons.week') !!}</a></li>
-                        <li><a href="javascript:void(0);" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{!! __('buttons.month') !!}</a></li>
-
-                    </x-global::actions.dropdown>
-
-                </div>
-
-            </div>
-        </div>
 
         @php
         if (count($milestones) == 0) {
