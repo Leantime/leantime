@@ -26,6 +26,8 @@
     :align="$align">
     <x-global::forms.chip.option value="0" :label="__('label.no_milestone')" :color="$noMilestoneColor">{{ __('label.no_milestone') }}</x-global::forms.chip.option>
     @foreach ($milestones as $milestone)
+        {{-- On milestone views the row is a milestone itself: it can't be its own parent. --}}
+        @continue((string) $milestone->id === (string) $ticketId)
         <x-global::forms.chip.option :value="$milestone->id" :label="$milestone->headline" :color="$milestone->tags ?? ''" id="ticketMilestoneChange{{ $ticketId }}{{ $milestone->id }}">{{ $milestone->headline }}</x-global::forms.chip.option>
     @endforeach
 </x-global::forms.chip>

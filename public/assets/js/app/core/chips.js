@@ -105,6 +105,12 @@ leantime.chipController = (function () {
             return;
         }
 
+        // Picking the value the chip already has changes nothing — don't save (some adapters report an
+        // unchanged row as a failed save).
+        if (value === wrapper.getAttribute('data-current-value')) {
+            return;
+        }
+
         var toggle = wrapper.querySelector('.dropdown-toggle');
         toggle.classList.add('lt-chip-saving');
 
