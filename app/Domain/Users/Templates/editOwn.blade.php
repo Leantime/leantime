@@ -207,7 +207,7 @@
                                 <div class="form-group">
                                     <label for="language" >{{ __('label.language') }}</label>
                                     <span class='field'>
-                                        <x-global::forms.select enhanced name="language" id="language" style="width: 220px">
+                                        <x-global::forms.select enhanced name="language" id="language">
                                             @foreach ($languageList as $languagKey => $languageValue )
                                                 <option value="{{ $languagKey }}"
                                                         @if ($userLang == $languagKey )
@@ -220,7 +220,7 @@
                                 <div class="form-group">
                                     <label for="date_format" >{{ __('label.date_format') }}</label>
                                     <span>
-                                        <x-global::forms.select name="date_format" id="date_format" style="width: 220px">
+                                        <x-global::forms.select name="date_format" id="date_format">
                                            @php
                                             $dateFormats = $dateTimeValues['dates'];
                                             $dateTimeNow = dtHelper()->userNow();
@@ -239,7 +239,7 @@
                                 <div class="form-group">
                                     <label for="time_format" >{{ __('label.time_format') }}</label>
                                     <span>
-                                        <x-global::forms.select name="time_format" id="time_format" style="width: 220px">
+                                        <x-global::forms.select name="time_format" id="time_format">
                                             @php
                                                 $timeFormats = $dateTimeValues['times'];
                                                 $dateTimeNow = dtHelper()->userNow();
@@ -258,7 +258,7 @@
                                 <div class="form-group">
                                     <label for="timezone" >{{ __('label.timezone') }}</label>
                                     <span>
-                                        <x-global::forms.select name="timezone" id="timezone" style="width: 220px">
+                                        <x-global::forms.select name="timezone" id="timezone">
 
                                             @foreach ($timezoneOptions as $tz)
                                                 <option value="{{ $tz }}"
@@ -371,7 +371,7 @@
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
                                     <span>
-                                        <x-global::forms.select enhanced name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
+                                        <x-global::forms.select enhanced name="messagesfrequency" class="input" id="messagesfrequency">
                                             <option value="">--{{ __('label.choose_option') }}--</option>
                                              <option value="60"
                                                      @if ($values['messagesfrequency'] == "60" )

@@ -45,7 +45,7 @@
                     <div class="col-md-2 right">
                         <h1>From (your integration)</h1>
                         <label for="providerEntities">{{ $provider->name }}</label>
-                        <x-global::forms.select name="providerEntities" id="providerEntities" style="width:100%;">
+                        <x-global::forms.select width="full" name="providerEntities" id="providerEntities">
                             @foreach ($providerEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
                             @endforeach
@@ -58,7 +58,7 @@
                         <h1>To (Leantime)</h1>
 
                         <label for="leantimeEntities">Leantime</label>
-                        <x-global::forms.select name="leantimeEntities" id="leantimeEntities" style="width:100%;">
+                        <x-global::forms.select width="full" name="leantimeEntities" id="leantimeEntities">
                             @foreach ($leantimeEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
                             @endforeach

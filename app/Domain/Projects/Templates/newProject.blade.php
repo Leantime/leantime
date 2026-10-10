@@ -33,7 +33,7 @@
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <x-global::forms.text-input variant="headline" name="name" id="name" style="width:99%" value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
+                                        <x-global::forms.text-input width="full" variant="headline" name="name" id="name" value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
                                     </div>
                                     <input type="hidden" name="projectState"  id="projectState" value="0" />
 
@@ -85,14 +85,14 @@
                                 <div>
                                     <label>{!! __('label.project_start') !!}</label>
                                     <div class="">
-                                        <input type="text" class="dates dateFrom" style="width:100px;" name="start" autocomplete="off"
-                                               value="{{ $project['start'] }}" placeholder="{{ __('language.dateformat') }}"/>
+                                        <input type="text" class="field-width-sm dates dateFrom" name="start" autocomplete="off"
+                                               value="{{ $project['start'] }}" placeholder="{{ __('language.dateformat') }}" />
 
                                     </div>
                                     <label>{!! __('label.project_end') !!}</label>
                                     <div class="">
-                                        <input type="text" class="dates dateTo" style="width:100px;" name="end" autocomplete="off"
-                                               value="{{ $project['end'] }}" placeholder="{{ __('language.dateformat') }}"/>
+                                        <input type="text" class="field-width-sm dates dateTo" name="end" autocomplete="off"
+                                               value="{{ $project['end'] }}" placeholder="{{ __('language.dateformat') }}" />
 
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@
                                     {!! __('text.who_can_access') !!}
                                     <br /><br />
 
-                                    <x-global::forms.select enhanced name="globalProjectUserAccess" style="max-width:300px;" aria-label="{{ __('labels.defaultaccess') }}">
+                                    <x-global::forms.select enhanced name="globalProjectUserAccess" aria-label="{{ __('labels.defaultaccess') }}">
                                         <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{!! __('labels.only_chose') !!}</option>
                                         <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_client') !!}</option>
                                         <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_org') !!}</option>

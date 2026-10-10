@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <x-global::forms.text-input variant="headline" name="name" id="name" style="width:99%"  value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
+                        <x-global::forms.text-input width="full" variant="headline" name="name" id="name" value="{{ $project['name'] }}" placeholder="{{ __('input.placeholders.enter_title_of_project') }}" />
                     </div>
                 </div>
             </div>
@@ -109,13 +109,13 @@
 
                         <label class="control-label">{!! __('label.project_start') !!}</label>
                         <div class="">
-                            <input type="text" class="dates" style="width:100px;" name="start" autocomplete="off"
+                            <input type="text" class="field-width-sm dates" name="start" autocomplete="off"
                                    value="{{ format($project['start'])->date() }}" placeholder="{{ __('language.dateformat') }}"/>
 
                         </div>
                         <label class="control-label">{!! __('label.project_end') !!}</label>
                         <div class="">
-                            <input type="text" class="dates" style="width:100px;" name="end" autocomplete="off"
+                            <input type="text" class="field-width-sm dates" name="end" autocomplete="off"
                                    value="{{ format($project['end'])->date() }}" placeholder="{{ __('language.dateformat') }}"/>
 
                         </div>
@@ -181,7 +181,7 @@
                     {!! __('text.who_can_access') !!}
                     <br /><br />
 
-                    <x-global::forms.select enhanced name="globalProjectUserAccess" style="max-width:300px;" aria-label="{{ __('labels.defaultaccess') }}">
+                    <x-global::forms.select enhanced name="globalProjectUserAccess" aria-label="{{ __('labels.defaultaccess') }}">
                         <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{!! __('labels.only_chose') !!}</option>
                         <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_client') !!}</option>
                         <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_org') !!}</option>
@@ -197,7 +197,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"for="hourBudget">{!! __('label.hourly_budget') !!}</label>
                         <div class="col-md-6">
-                            <x-global::forms.text-input variant="large" name="hourBudget" id="hourBudget" value="{{ $project['hourBudget'] }}" />
+                            <x-global::forms.text-input name="hourBudget" id="hourBudget" value="{{ $project['hourBudget'] }}" />
 
                         </div>
                     </div>
@@ -205,7 +205,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label" for="dollarBudget">{!! __('label.budget_cost') !!}</label>
                         <div class="col-md-6">
-                            <x-global::forms.text-input variant="large" name="dollarBudget" id="dollarBudget" value="{{ $project['dollarBudget'] }}" />
+                            <x-global::forms.text-input name="dollarBudget" id="dollarBudget" value="{{ $project['dollarBudget'] }}" />
 
                         </div>
                     </div>

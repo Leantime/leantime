@@ -189,9 +189,9 @@ jQuery(document).ready(function(){
                 <div class="padding-top-sm">
                     <span>{!! __('label.week_from') !!}</span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}" style="margin-top:5px;"/>
+                    <input type="text" class="field-width-sm week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}" style="margin-top:5px;"/>
                     {!! __('label.until') !!}
-                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}" style="margin-top:6px;"/>
+                    <input type="text" class="field-width-sm week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
@@ -289,7 +289,7 @@ jQuery(document).ready(function(){
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
-                                    <x-global::forms.select enhanced data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
+                                    <x-global::forms.select width="sm" enhanced data-placeholder="{{ __('input.placeholders.choose_project') }}" class="project-select">
                                         <option value=""></option>
                                         @foreach ($allProjects as $projectRow)
                                             {!! sprintf(
@@ -312,7 +312,7 @@ jQuery(document).ready(function(){
                             </td>
                             <td width="14%">
                                 <div class="form-group" id="ticketSelect">
-                                    <x-global::forms.select enhanced data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="" class="ticket-select" name="ticketId">
+                                    <x-global::forms.select width="sm" enhanced data-placeholder="{{ __('input.placeholders.choose_todo') }}" class="ticket-select" name="ticketId">
                                         <option value=""></option>
                                         @foreach ($allTickets as $ticketRow)
                                             @if (in_array($ticketRow['id'], $existingTicketIds))
@@ -337,7 +337,7 @@ jQuery(document).ready(function(){
                                 </div>
                             </td>
                             <td width="14%">
-                                <x-global::forms.select class="kind-select" name="kindId" style="width:100%;">
+                                <x-global::forms.select width="sm" class="kind-select" name="kindId">
                                     @foreach ($kind as $key => $kindRow)
                                         <option value="{{ $key }}">{!! __($kindRow) !!}</option>
                                     @endforeach

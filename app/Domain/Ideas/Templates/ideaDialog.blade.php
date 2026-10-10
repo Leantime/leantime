@@ -29,7 +29,7 @@
         <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}"/>
         <input type="hidden" name="changeItem" value="1"/>
 
-        <x-global::forms.text-input name="description" variant="headline" style="width:99%;" value="{{ $tpl->escape($canvasItem['description']) }}"
+        <x-global::forms.text-input width="full" name="description" variant="headline" value="{{ $tpl->escape($canvasItem['description']) }}"
                placeholder="{{ __('input.placeholders.short_name') }}" /><br/>
 
         <input type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />

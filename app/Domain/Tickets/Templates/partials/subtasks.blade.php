@@ -10,7 +10,7 @@
                 hx-target="#ticketSubtasks">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
-                <input name="headline" type="text" title="{{ __("label.headline") }}" style="width:100%" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
+                <input class="field-width-full" name="headline" type="text" title="{{ __("label.headline") }}" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
                 <input type="submit" value="{{ __("buttons.save") }}" name="quickadd"  />
                 <div class="htmx-indicator-small">
                     <x-global::loader id="loadingthis" size="25px" />

@@ -265,7 +265,7 @@
                             <label class="control-label">{!! __('label.status') !!}</label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
-                                    <x-global::forms.select id="wikiStatusSelect" class="span11">
+                                    <x-global::forms.select width="full" id="wikiStatusSelect">
                                         <option value="draft" @selected($currentArticle->status === 'draft')>Draft</option>
                                         <option value="published" @selected($currentArticle->status !== 'draft')>Published</option>
                                     </x-global::forms.select>
@@ -298,7 +298,7 @@
                                             return $h->id != $currentArticle->id;
                                         });
                                     @endphp
-                                    <x-global::forms.select id="wikiParentSelect" class="span11">
+                                    <x-global::forms.select width="full" id="wikiParentSelect">
                                         <option value="0" @selected(! $currentArticle->parent || $currentArticle->parent == 0)>None</option>
                                         @foreach($parentOptions as $headline)
                                             <option value="{{ $headline->id }}" @selected($currentArticle->parent == $headline->id)>{{ $headline->title }}@if($headline->status === 'draft') ({!! __('label.draft') !!})@endif</option>
@@ -321,7 +321,7 @@
                             <label class="control-label">{!! __('label.milestone') !!}</label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
-                                    <x-global::forms.select id="wikiMilestoneSelect" class="span11">
+                                    <x-global::forms.select width="full" id="wikiMilestoneSelect">
                                         <option value="">{!! __('label.not_assigned_to_milestone') !!}</option>
                                         @foreach($milestones as $milestone)
                                             <option value="{{ $milestone->id }}" @selected($currentArticle->milestoneId == $milestone->id)>{{ $milestone->headline }}</option>

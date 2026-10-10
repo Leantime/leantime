@@ -9,6 +9,10 @@
     'search' => 'auto',       // auto (search box when > 10 options) | true | false
     'allowDeselect' => false, // single selects: show an "x" to clear the value
     'closeOnSelect' => true,  // multi selects: keep the list open while picking (false)
+
+    'width' => null,          // sm | md | lg | full | auto — field-width scale shared with forms.text-input
+                              // (forms.css). Omit for the default (md). Never `size`: that's the native
+                              // listbox-rows attribute.
     // Placeholder text comes from the existing `data-placeholder="…"` attribute (passes through).
 
     // --- design-system IDL: declared for the durable contract (shared with forms.text-input /
@@ -46,9 +50,10 @@
     Icons / colors per option: use <x-global::forms.select.option> (renders `data-html`, which the
     enhanced dropdown shows; a native select just shows the text).
 
-    Keep a select NATIVE (no `enhanced`) when it sits inside a Bootstrap dropdown panel (.dropdown-menu):
-    the enhanced list is mounted on <body>, so picking an option counts as a click outside the panel
-    and closes it. A leading blank `<option value=""></option>` is treated as the placeholder.
+    Width: every select (and text input) is `md` unless it asks for another size of the shared scale —
+    `width="sm"` for numbers/times/short choices, `lg` for long titles, `full` to fill the container,
+    `auto` for content width. Don't set pixel widths inline. A leading blank `<option value=""></option>`
+    is treated as the placeholder.
 
     Setting a value from code: leantime.selectController.setValue(select, value) — works enhanced or
     not, and fires `change` like a user pick. It rewrites the options from the dropdown's own copy, so
@@ -65,5 +70,9 @@
     // Only enhanced selects carry data-lt-select*, so a plain select's markup stays exactly as written.
     // (Not $attributes->merge(): merge() rewrites the style attribute.)
     $searchSetting = is_bool($search) ? ($search ? 'true' : 'false') : (string) $search;
+    // class() leaves the style attribute alone; SlimSelect copies the class onto its control.
+    $attrs = in_array($width, ['sm', 'md', 'lg', 'full', 'auto'], true)
+        ? $attributes->class(['field-width-'.$width])
+        : $attributes;
 @endphp
-<select {{ $attributes }}@if ($enhanced) data-lt-select="true" data-search="{{ $searchSetting }}" data-allow-deselect="{{ $allowDeselect ? 'true' : 'false' }}" data-close-on-select="{{ $closeOnSelect ? 'true' : 'false' }}"@endif>{{ $slot }}</select>
+<select {{ $attrs }}@if ($enhanced) data-lt-select="true" data-search="{{ $searchSetting }}" data-allow-deselect="{{ $allowDeselect ? 'true' : 'false' }}" data-close-on-select="{{ $closeOnSelect ? 'true' : 'false' }}"@endif>{{ $slot }}</select>

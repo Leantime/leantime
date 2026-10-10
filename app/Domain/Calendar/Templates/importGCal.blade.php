@@ -10,7 +10,7 @@
     <x-global::forms.text-input id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" /><br />
 
     <label for="url">{{ $tpl->__('label.ical_url') }}:</label>
-    <x-global::forms.text-input id="url" name="url" autocomplete="off" style="width:300px;" value="{{ $values['url'] }}" /><br />
+    <x-global::forms.text-input width="lg" id="url" name="url" autocomplete="off" value="{{ $values['url'] }}" /><br />
 
     <label for="color">{{ $tpl->__('label.color') }}:</label>
     <input type="text" name="colorClass" autocomplete="off" value="{{ $values['colorClass'] }}"  class="simpleColorPicker"/>

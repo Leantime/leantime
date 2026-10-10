@@ -5,9 +5,9 @@
             <h1>{{ __('headlines.invite_crew') }}</h1>
             <p>{{ __('text.invite_team') }}</p>
             <br />
-            <x-global::forms.text-input type="email" name="email1" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
-            <x-global::forms.text-input type="email" name="email2" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
-            <x-global::forms.text-input type="email" name="email3" value="" placeholder="{{ __('input.placeholder.email_invite') }}" style="width: 100%;" /><br />
+            <x-global::forms.text-input width="full" type="email" name="email1" value="" placeholder="{{ __('input.placeholder.email_invite') }}" /><br />
+            <x-global::forms.text-input width="full" type="email" name="email2" value="" placeholder="{{ __('input.placeholder.email_invite') }}" /><br />
+            <x-global::forms.text-input width="full" type="email" name="email3" value="" placeholder="{{ __('input.placeholder.email_invite') }}" /><br />
             <br />
                   </div>
         <div class="col-md-6">

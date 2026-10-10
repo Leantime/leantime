@@ -13,7 +13,7 @@
 {!! $tpl->displayNotification() !!}
     @if ($apiKeyValues !== false && isset($apiKeyValues['id']))
         <p>Your API Key was successfully created. Please copy the key below. This is your only chance to copy it.</p>
-        <x-global::forms.text-input id="apiKey" value="lt_{{ $apiKeyValues['user'] }}_{{ $apiKeyValues['passwordClean'] }}" style="width:100%;" />
+        <x-global::forms.text-input width="full" id="apiKey" value="lt_{{ $apiKeyValues['user'] }}_{{ $apiKeyValues['passwordClean'] }}" />
         <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('apiKey');">{!! __('links.copy_key') !!}</x-global::forms.button>
     @else
     <form action="{{ BASE_URL }}/api/newApiKey" method="post" class="stdform formModal" >

@@ -111,117 +111,115 @@
             <div class="clearfix"></div>
             <div class="headtitle" style="">
 
-            <table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
-                <tr>
-                    <td>
-                        <label for="clients">{!! __('label.client') !!}</label>
-                        <x-global::forms.select name="clientId">
-                            <option value="-1">{{ strip_tags(__('menu.all_clients')) }}</option>
-                            @foreach ($allClients as $client)
-                                <option value="{{ $client['id'] }}"
-                                    @if ($clientFilter == $client['id'])
+            <div class="filterRow">
+                <div class="filterRow__field">
+                    <label for="clients">{!! __('label.client') !!}</label>
+                    <x-global::forms.select width="sm" name="clientId">
+                        <option value="-1">{{ strip_tags(__('menu.all_clients')) }}</option>
+                        @foreach ($allClients as $client)
+                            <option value="{{ $client['id'] }}"
+                                @if ($clientFilter == $client['id'])
+                                    selected="selected"
+                                @endif
+                            >{{ $client['name'] }}</option>
+                        @endforeach
+                    </x-global::forms.select>
+                </div>
+                <div class="filterRow__field">
+                    <label for="projects">{!! __('label.project') !!}</label>
+                    <x-global::forms.select width="sm" name="project">
+                        <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
+                        @foreach ($allProjects as $project)
+                            <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
+                                @if ($projectFilter == $project['id'])
+                                    selected="selected"
+                                @endif
+                            >{{ $project['name'] }}</option>
+                        @endforeach
+                    </x-global::forms.select>
+                </div>
+                @if (! empty($allTickets))
+                <div class="filterRow__field">
+                    <label for="ticket">{!! __('label.ticket') !!}</label>
+                        <x-global::forms.select width="sm" name="ticket">
+                            <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
+                            @foreach ($allTickets as $ticket)
+                                <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
+                                    @if ($ticketFilter == $ticket['id'])
                                         selected="selected"
                                     @endif
-                                >{{ $client['name'] }}</option>
+                                >{{ $ticket['headline'] }}</option>
                             @endforeach
                         </x-global::forms.select>
-                    </td>
-                    <td>
-                        <label for="projects">{!! __('label.project') !!}</label>
-                        <x-global::forms.select name="project" style="max-width:120px;">
-                            <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
-                            @foreach ($allProjects as $project)
-                                <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
-                                    @if ($projectFilter == $project['id'])
-                                        selected="selected"
-                                    @endif
-                                >{{ $project['name'] }}</option>
-                            @endforeach
-                        </x-global::forms.select>
-                    </td>
-                    @if (! empty($allTickets))
-                    <td>
-                        <label for="ticket">{!! __('label.ticket') !!}</label>
-                            <x-global::forms.select name="ticket" style="max-width:120px;">
-                                <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
-                                @foreach ($allTickets as $ticket)
-                                    <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
-                                        @if ($ticketFilter == $ticket['id'])
-                                            selected="selected"
-                                        @endif
-                                    >{{ $ticket['headline'] }}</option>
-                                @endforeach
-                            </x-global::forms.select>
-                    </td>
-                    @endif
+                </div>
+                @endif
 
-                    <td>
-                        <label for="dateFrom">{!! __('label.date_from') !!}</label>
-                        <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
-                        value="{{ format($dateFrom)->date() }}" size="5" style="max-width:100px; margin-bottom:10px"/></td>
-                    <td>
-                        <label for="dateTo">{!! __('label.date_to') !!}</label>
-                        <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
-                        value="{{ format($dateTo)->date() }}" size="5" style="max-width:100px; margin-bottom:10px" /></td>
-                    <td>
-                    <label for="userId">{!! __('label.employee') !!}</label>
-                        <x-global::forms.select name="userId" id="userId" onchange="submit();" style="max-width:120px;">
-                            <option value="all">{!! __('label.all_employees') !!}</option>
+                <div class="filterRow__field">
+                    <label for="dateFrom">{!! __('label.date_from') !!}</label>
+                    <input type="text" id="dateFrom" class="field-width-sm dateFrom" name="dateFrom" autocomplete="off"
+                    value="{{ format($dateFrom)->date() }}" size="5" style="margin-bottom:10px"/></div>
+                <div class="filterRow__field">
+                    <label for="dateTo">{!! __('label.date_to') !!}</label>
+                    <input type="text" id="dateTo" class="field-width-sm dateTo" name="dateTo" autocomplete="off"
+                    value="{{ format($dateTo)->date() }}" size="5" style="margin-bottom:10px" /></div>
+                <div class="filterRow__field">
+                <label for="userId">{!! __('label.employee') !!}</label>
+                    <x-global::forms.select width="sm" name="userId" id="userId" onchange="submit();">
+                        <option value="all">{!! __('label.all_employees') !!}</option>
 
-                            @foreach ($employees as $row)
-                                <option value="{{ $row['id'] }}"
-                                    @if ($row['id'] == $employeeFilter)
-                                        selected="selected"
-                                    @endif
-                                >{{ sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) }}</option>
-                            @endforeach
-                        </x-global::forms.select>
-                    </td>
-                    <td>
-                        <label for="kind">{!! __('label.type') !!}</label>
-                        <x-global::forms.select id="kind" name="kind" onchange="submit();" style="max-width:120px;">
-                            <option value="all">{!! __('label.all_types') !!}</option>
-                            @foreach ($kind as $key => $row)
-                                <option value="{{ $key }}"
-                                    @if ($key == $actKind)
-                                        selected="selected"
-                                    @endif
-                                >{!! __($row) !!}</option>
-                            @endforeach
+                        @foreach ($employees as $row)
+                            <option value="{{ $row['id'] }}"
+                                @if ($row['id'] == $employeeFilter)
+                                    selected="selected"
+                                @endif
+                            >{{ sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) }}</option>
+                        @endforeach
+                    </x-global::forms.select>
+                </div>
+                <div class="filterRow__field">
+                    <label for="kind">{!! __('label.type') !!}</label>
+                    <x-global::forms.select width="sm" id="kind" name="kind" onchange="submit();">
+                        <option value="all">{!! __('label.all_types') !!}</option>
+                        @foreach ($kind as $key => $row)
+                            <option value="{{ $key }}"
+                                @if ($key == $actKind)
+                                    selected="selected"
+                                @endif
+                            >{!! __($row) !!}</option>
+                        @endforeach
 
-                        </x-global::forms.select>
-                    </td>
-                    <td>
-                        <label for="invEmpl">{!! __('label.invoiced') !!}</label>
-                        <x-global::forms.select name="invEmpl" id="invEmpl" style="max-width:120px;">
-                            <option value="all" @if ($invEmpl == 'all' || ! $invEmpl) selected="selected" @endif>{!! __('label.invoiced_all') !!}</option>
-                            <option value="1" @if ($invEmpl == '1') selected="selected" @endif>{!! __('label.invoiced') !!}</option>
-                            <option value="0" @if ($invEmpl == '0') selected="selected" @endif>{!! __('label.invoiced_not') !!}</option>
-                        </x-global::forms.select>
-                    </td>
-                    <td>
-                        <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
-                            @if ($invComp == '1')
-                                checked="checked"
-                            @endif
-                        />
-                        <label for="invEmpl">{!! __('label.invoiced_comp') !!}</label>
-                    </td>
+                    </x-global::forms.select>
+                </div>
+                <div class="filterRow__field">
+                    <label for="invEmpl">{!! __('label.invoiced') !!}</label>
+                    <x-global::forms.select width="sm" name="invEmpl" id="invEmpl">
+                        <option value="all" @if ($invEmpl == 'all' || ! $invEmpl) selected="selected" @endif>{!! __('label.invoiced_all') !!}</option>
+                        <option value="1" @if ($invEmpl == '1') selected="selected" @endif>{!! __('label.invoiced') !!}</option>
+                        <option value="0" @if ($invEmpl == '0') selected="selected" @endif>{!! __('label.invoiced_not') !!}</option>
+                    </x-global::forms.select>
+                </div>
+                <div class="filterRow__field">
+                    <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
+                        @if ($invComp == '1')
+                            checked="checked"
+                        @endif
+                    />
+                    <label for="invEmpl">{!! __('label.invoiced_comp') !!}</label>
+                </div>
 
-                    <td>
-                        <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
-                            @if ($paid == '1')
-                                checked="checked"
-                            @endif
-                        />
-                        <label for="paid">{!! __('label.paid') !!}</label>
-                    </td>
-                    <td>
-                        <input type="hidden" name='filterSubmit' value="1"/>
-                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
-                    </td>
-                </tr>
-            </table>
+                <div class="filterRow__field">
+                    <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
+                        @if ($paid == '1')
+                            checked="checked"
+                        @endif
+                    />
+                    <label for="paid">{!! __('label.paid') !!}</label>
+                </div>
+                <div class="filterRow__field">
+                    <input type="hidden" name='filterSubmit' value="1"/>
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
+                </div>
+            </div>
             </div>
 
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
