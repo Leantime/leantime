@@ -233,6 +233,12 @@
     align-items: center;
     gap: 6px;
 }
+/* Bootstrap's `.btn .caret { margin-top: 8px }` lines the caret up in a 20px
+   inline line box; in the flex button above it just pushes it down. */
+.lt-tabs-actions .btn .caret {
+    margin: 0;
+    vertical-align: middle;
+}
 .lt-tabs-actions .btn .badge {
     line-height: 1;
     padding: 3px 6px;

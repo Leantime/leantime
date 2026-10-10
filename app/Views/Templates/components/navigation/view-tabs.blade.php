@@ -10,8 +10,8 @@
     without views passes no tabs and gets just the right-aligned actions.
 
         <x-global::navigation.view-tabs :tabs="[
-            ['url' => BASE_URL.'/ideas/showBoards', 'label' => __('buttons.idea_wall'), 'active' => true],
-            ['url' => BASE_URL.'/ideas/advancedBoards', 'label' => __('buttons.idea_kanban'), 'active' => false],
+            ['url' => BASE_URL.'/ideas/showBoards', 'label' => __('links.wall'), 'active' => true],
+            ['url' => BASE_URL.'/ideas/advancedBoards', 'label' => __('links.kanban'), 'active' => false],
         ]">
             <x-slot:actions>
                 <x-global::forms.button tag="a" link="#/ideas/ideaDialog" contentRole="primary">…</x-global::forms.button>

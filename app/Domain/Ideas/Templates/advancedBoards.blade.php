@@ -57,8 +57,8 @@
         $canvasSuffix = ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '';
     @endphp
     <x-global::navigation.view-tabs :tabs="[
-        ['url' => BASE_URL.'/ideas/showBoards'.$canvasSuffix, 'label' => __('buttons.idea_wall'), 'active' => false],
-        ['url' => BASE_URL.'/ideas/advancedBoards'.$canvasSuffix, 'label' => __('buttons.idea_kanban'), 'active' => true],
+        ['url' => BASE_URL.'/ideas/showBoards'.$canvasSuffix, 'label' => __('links.wall'), 'active' => false],
+        ['url' => BASE_URL.'/ideas/advancedBoards'.$canvasSuffix, 'label' => __('links.kanban'), 'active' => true],
     ]">
         @if ($login::userIsAtLeast($roles::$editor) && count($allCanvas) > 0)
             <x-slot:actions>
