@@ -91,7 +91,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
 | card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
-| chip | `forms.chip` (+ `.option`) | forms | ⬜ | selectsComponentUpdates | **renamed from `actions.chip`**: it's a value picker bound to an entity field. Planned P3 |
+| chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
 | dropdown-menu | `actions.dropdown` (+ `.item`, `.header`, `.divider`) | actions | ⬜ | refactor/table-component | Planned P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject`; Bootstrap 2 data-api stays the engine |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating; tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
@@ -565,3 +565,22 @@ one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `
   templates' own widths → `select[style*="width"] { max-width: 100% }` (explicit widths win; everything else keeps
   the cap — dropping the cap globally grew long-label selects to content width, up to 352px). Rule: mixing
   enhanced and native in one form is fine; they must look the same closed.
+- _chip P3_: `forms.chip` + `forms.chip.option` (global) and `core/chips.js` — ONE delegated document click handler for
+  `[data-lt-chip] .dropdown-menu a[data-value]` (no per-page init; HTMX/modal-rendered chips just work). Adapters:
+  `ticket` → `Tickets.Tickets.patchTicket`, `canvas` → `Blueprints.Blueprints.patchCanvasItem` (with `canvasType`),
+  `goal` → `Goalcanvas.Goalcanvas.patchGoalItem`, `idea` → `Ideas.Ideas.patchIdeaItem`; `leantime.chipController.
+  registerAdapter()` for plugins. `@api` + `#[RequiresPermission(..., entityScoped: true)]` added to patchCanvasItem /
+  patchGoalItem (both already authorize fail-closed against the item's real project). After a save the chip fires
+  `lt:chip:changed`; ticketsController listens for the kanban side effects (move card when grouped by that field,
+  priority border, timer refresh on status). Markup keeps the old ids/classes (`{type}DropdownMenuLink{id}`,
+  `.label-*`, `priority-bg-*`), but `data-value` is now the RAW key (5 old grammars gone); option colors in
+  `data-class`/`data-color`, avatars in `data-image`. Domain wrappers hold the option loops that were copy-pasted
+  (25 of them built by PHP string concat). 44 chips / 16 core files migrated; deleted dead `canvas::element`; the
+  to-do widget's double write (hx-post + RPC) and its now-unused `MyToDos::updateStatus/updateMilestone` removed.
+  **Decision (Marcel):** canvas/goal/idea *author* chips can't save (author is not patchable, on purpose) → shown
+  read-only via `elements.author-avatar` (avatar + name tooltip). Legacy binders kept ONLY for plugin pages
+  (tickets: effort/milestone/status — Llamadorian; canvas: user/status/relates — StrategyPro/Whiteboards; ideas:
+  status/user — Whiteboards), each guarded to skip `[data-lt-chip]`; removed in P6. Unknown status now shows
+  `label.status_unknown` ("No Status Set") instead of hard-coded "new"/"unknown". Gotchas: the kanban recolors chips
+  directly, so chips.js removes every color class the chip's options declare (not just the last saved one); an
+  avatar-only chip (kanban) keeps its name in an `.sr-only` `[data-chip-label]` so a pick can't overwrite the avatar.

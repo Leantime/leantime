@@ -215,9 +215,6 @@
    jQuery(document).ready(function() {
 
        leantime.dashboardController.prepareHiddenDueDate();
-       leantime.ticketsController.initEffortDropdown();
-       leantime.ticketsController.initMilestoneDropdown();
-       leantime.ticketsController.initStatusDropdown();
 
        leantime.dashboardController.initProgressChart("chart-area", {{ round($projectProgress['percent']) }}, {{ round((100 - $projectProgress['percent'])) }});
 

@@ -849,10 +849,15 @@ class Goalcanvas extends BaseService
      * Patch allowlisted columns of a goal item, authorized for EDIT against the item's real
      * project.
      *
+     * @param  int  $id  Goal item id
      * @param  array<string, mixed>  $params  Fields to patch (allowlisted in the repository)
+     * @return bool False when no allowlisted columns were present
      *
      * @throws AuthorizationException When the item is unknown/foreign or EDIT is denied.
+     *
+     * @api
      */
+    #[RequiresPermission(GoalcanvasPermissions::EDIT, entityScoped: true)]
     public function patchGoalItem(int $id, array $params): bool
     {
         $projectId = $this->goalRepository->getCanvasItemProjectId($id, self::CANVAS_TYPE);

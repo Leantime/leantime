@@ -41,9 +41,6 @@
 
         @if($login::userIsAtLeast($roles::$editor))
             leantime.canvasController.initCanvasLinks();
-            leantime.canvasController.initUserDropdown();
-            leantime.canvasController.initStatusDropdown();
-            leantime.canvasController.initRelatesDropdown();
         @else
             leantime.authController.makeInputReadonly(".maincontentinner");
         @endif

@@ -663,6 +663,8 @@ leantime.ticketsController = (function () {
         jQuery('[data-toggle="tooltip"]').tooltip();
     };
 
+    // Legacy chip binder, kept only for plugin pages (Llamadorian) that still render the old chip
+    // markup. Core chips are <x-global::forms.chip> and are handled by core/chips.js.
     var initEffortDropdown = function () {
 
         var storyPointLabels = {
@@ -676,6 +678,9 @@ leantime.ticketsController = (function () {
         };
 
         jQuery(".effortDropdown .dropdown-menu a").unbind().on("click", function () {
+            if (jQuery(this).closest("[data-lt-chip]").length) {
+                return;
+            }
 
             var dataValue = jQuery(this).attr("data-value").split("_");
 
@@ -706,57 +711,14 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initPriorityDropdown = function () {
-        // '1' => 'Critical', '2' => 'High', '3' => 'Medium', '4' => 'Low'
-        var priorityLabels = {
-            '1': 'Critical',
-            '2': 'High',
-            '3': "Medium",
-            '4': "Low",
-            '5': "Lowest"
-        };
-
-        jQuery(".priorityDropdown .dropdown-menu a").unbind().on("click", function () {
-
-            var dataValue = jQuery(this).attr("data-value").split("_");
-
-            if (dataValue.length === 2) {
-                var ticketId = dataValue[0];
-                var priorityId = dataValue[1];
-
-                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { priority: priorityId } })
-                    .then(
-                    function () {
-                        jQuery("#priorityDropdownMenuLink" + ticketId + " span.text").text(priorityLabels[priorityId]);
-                        jQuery("#priorityDropdownMenuLink" + ticketId + "").removeClass("priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5");
-                        jQuery("#priorityDropdownMenuLink" + ticketId + "").addClass("priority-bg-" + priorityId);
-
-                        jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").removeClass("priority-border-1 priority-border-2 priority-border-3 priority-border-4 priority-border-5");
-                        jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").addClass("priority-border-" + priorityId);
-
-
-                        jQuery.growl({message: leantime.i18n.__("short_notifications.priority_updated"), style: "success"});
-
-                        // Move card to correct swimlane if grouped by priority
-                        if (leantime.kanbanGroupBy === 'priority') {
-                            moveCardToSwimlane(ticketId, priorityId);
-                        }
-
-                    }
-                ).catch(function (error) {
-                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
-                        console.error('Could not update ticket ' + ticketId, error);
-                });
-            } else {
-                console.log("Ticket Controller: Priority data value not set correctly");
-            }
-        });
-
-    };
-
+    // Legacy chip binder, kept only for plugin pages (Llamadorian) that still render the old chip
+    // markup. Core chips are <x-global::forms.chip> and are handled by core/chips.js.
     var initMilestoneDropdown = function () {
 
         jQuery(".milestoneDropdown .dropdown-menu a").unbind().on("click", function () {
+            if (jQuery(this).closest("[data-lt-chip]").length) {
+                return;
+            }
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -811,9 +773,14 @@ leantime.ticketsController = (function () {
         }
     };
 
+    // Legacy chip binder, kept only for plugin pages (Llamadorian) that still render the old chip
+    // markup. Core chips are <x-global::forms.chip> and are handled by core/chips.js.
     var initStatusDropdown = function () {
 
         jQuery(".statusDropdown .dropdown-menu a").unbind().on("click", function () {
+            if (jQuery(this).closest("[data-lt-chip]").length) {
+                return;
+            }
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -841,38 +808,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initUserDropdown = function () {
-
-        jQuery(".userDropdown .dropdown-menu a").unbind().on("click", function () {
-
-                var dataValue = jQuery(this).attr("data-value").split("_");
-                var dataLabel = jQuery(this).attr('data-label');
-
-            if (dataValue.length === 3) {
-                var ticketId = dataValue[0];
-                var userId = dataValue[1];
-                var profileImageId = dataValue[2];
-
-                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { editorId: userId } })
-                    .then(
-                    function () {
-                        jQuery("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img").attr("src", leantime.appUrl + "/users/profileImage/" + encodeURIComponent(userId));
-                        jQuery("#userDropdownMenuLink" + ticketId + " span.text span#user" + ticketId).text(dataLabel);
-                        jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
-
-                        // Move card to correct swimlane if grouped by user
-                        if (leantime.kanbanGroupBy === 'editorId') {
-                            moveCardToSwimlane(ticketId, userId);
-                        }
-                    }
-                ).catch(function (error) {
-                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
-                        console.error('Could not update ticket ' + ticketId, error);
-                });
-            }
-        });
-    };
-
     var initAsyncInputChange = function () {
 
         jQuery(".asyncInputUpdate").on("change", function () {
@@ -894,36 +829,6 @@ leantime.ticketsController = (function () {
                 });
             }
 
-        });
-    };
-
-    var initSprintDropdown = function () {
-
-        jQuery(".sprintDropdown .dropdown-menu a").unbind().on("click", function () {
-
-                var dataValue = jQuery(this).attr("data-value").split("_");
-                var dataLabel = jQuery(this).attr('data-label');
-
-            if (dataValue.length == 2) {
-                var ticketId = dataValue[0];
-                var sprintId = dataValue[1];
-
-                leantime.rpc('Tickets.Tickets.patchTicket', { id: ticketId, values: { sprint: sprintId } })
-                    .then(
-                    function () {
-                        jQuery("#sprintDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
-                        jQuery.growl({message: leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
-
-                        // Move card to correct swimlane if grouped by sprint
-                        if (leantime.kanbanGroupBy === 'sprint') {
-                            moveCardToSwimlane(ticketId, sprintId);
-                        }
-                    }
-                ).catch(function (error) {
-                        jQuery.growl({ message: (error && error.message) ? error.message : leantime.i18n.__("short_notifications.not_saved"), style: "error" });
-                        console.error('Could not update ticket ' + ticketId, error);
-                });
-            }
         });
     };
 
@@ -1414,30 +1319,9 @@ leantime.ticketsController = (function () {
                                     $milestoneDropdown.text(newLabel);
                                 }
 
-                                // Get the milestone color from the dropdown menu item
-                                var $milestoneMenuItem = $card.find('.milestoneDropdown .dropdown-menu a[data-value^="' + ticketId + '_' + newGroupValue + '_"]');
-                                var milestoneColor = '#b0b0b0'; // Default gray for "No Milestone"
-
-                                if ($milestoneMenuItem.length && newGroupValue !== '0' && newGroupValue !== '') {
-                                    // Extract color from the data-value (format: ticketId_milestoneId_color)
-                                    var dataValue = $milestoneMenuItem.attr('data-value');
-                                    if (dataValue) {
-                                        var parts = dataValue.split('_');
-                                        if (parts.length >= 3) {
-                                            milestoneColor = parts.slice(2).join('_'); // Handle colors with underscores
-                                        }
-                                    }
-                                    // Also try getting from inline style
-                                    if (!milestoneColor || milestoneColor === '#b0b0b0') {
-                                        var inlineStyle = $milestoneMenuItem.attr('style');
-                                        if (inlineStyle) {
-                                            var colorMatch = inlineStyle.match(/background-color:\s*([^;]+)/i);
-                                            if (colorMatch) {
-                                                milestoneColor = colorMatch[1].trim();
-                                            }
-                                        }
-                                    }
-                                }
+                                // The milestone's color is on its chip option.
+                                var $milestoneMenuItem = $card.find('.milestoneDropdown .dropdown-menu a[data-value="' + newGroupValue + '"]');
+                                var milestoneColor = $milestoneMenuItem.attr('data-color') || '#b0b0b0'; // gray = "No Milestone"
 
                                 // Update the dropdown toggle background color
                                 $card.find('.milestoneDropdown .dropdown-toggle').css('background-color', milestoneColor);
@@ -2104,6 +1988,30 @@ leantime.ticketsController = (function () {
         });
     };
 
+    // A ticket chip was changed (core/chips.js): keep the rest of the page in step.
+    document.addEventListener('lt:chip:changed', function (event) {
+        var chip = event.detail;
+        if (chip.adapter !== 'ticket') {
+            return;
+        }
+
+        // Grouped kanban: move the card to the swimlane of its new value.
+        if (leantime.kanbanGroupBy && leantime.kanbanGroupBy === chip.field) {
+            moveCardToSwimlane(chip.entityId, chip.value);
+        }
+
+        if (chip.field === 'priority') {
+            jQuery(chip.element).parents(".ticketBox")
+                .removeClass("priority-border-1 priority-border-2 priority-border-3 priority-border-4 priority-border-5")
+                .addClass("priority-border-" + chip.value);
+        }
+
+        // A done status stops a timer running on this to-do server-side (#415).
+        if (chip.field === 'status') {
+            refreshTimerIfRunningOn(chip.entityId);
+        }
+    });
+
     // Make public what you want to have public, everything else is private
     return {
         toggleFilterBar: toggleFilterBar,
@@ -2117,11 +2025,8 @@ leantime.ticketsController = (function () {
         initTicketKanban:initTicketKanban,
         initTicketsTable:initTicketsTable,
         initEffortDropdown:initEffortDropdown,
-        initPriorityDropdown:initPriorityDropdown,
         initMilestoneDropdown:initMilestoneDropdown,
         initStatusDropdown:initStatusDropdown,
-        initUserDropdown:initUserDropdown,
-        initSprintDropdown:initSprintDropdown,
         initToolTips:initToolTips,
         initTagsInput:initTagsInput,
         initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,

@@ -86,25 +86,7 @@
                 </div>
                 <div class="col-md-3" style="padding-top:3px;" >
                     <div class="right">
-                        <div class="dropdown ticketDropdown effortDropdown show">
-                            <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text">@if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0 && isset($efforts[$subticket['storypoints']]))
-                                                                                        {{ $efforts[$subticket['storypoints']] }}
-                                                                                   @else
-                                                                                           {{ __("label.story_points_unkown") }}
-                                                                                    @endif
-                                                                </span>
-                                &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $subticket['id'] }}">
-                                <li class="nav-header border">{{ __("dropdown.how_big_todo") }}</li>
-                                @foreach($efforts as $effortKey => $effortValue)
-                                    <li class='dropdown-item'>
-                                        <a href='javascript:void(0);' data-value='{{  $subticket['id'] }}_{{ $effortKey }}' id='ticketEffortChange{{ $subticket['id'] . $effortKey }}'> {{  $effortValue }}</a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                        <x-tickets::chip-effort :ticket-id="$subticket['id']" :storypoints="$subticket['storypoints']" :efforts="$efforts" />
 
                             @php
                                 if (isset($statusLabels[$subticket['status']])) {
@@ -115,22 +97,7 @@
                                     $name = 'new';
                                 }
                              @endphp
-                        <div class="dropdown ticketDropdown statusDropdown colorized show">
-                            <a class="dropdown-toggle f-left status {{ $class  }}" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text">{{$name }}
-                                                                </span>
-                                &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $subticket['id'] }}">
-                                <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
-
-                                    @foreach ($statusLabels as $key => $label)
-                                        <li class='dropdown-item'>
-                                            <a href='javascript:void(0);' class='{{ $label["class"] }}' data-label='{{ $label["name"] }}' data-value='{{ $subticket['id'] }}_{{ $key }}_{{ $label["class"] }}' id='ticketStatusChange{{ $subticket['id'] . $key }}' >{{ $label["name"] }}</a>
-                                        </li>
-                                    @endforeach
-                            </ul>
-                        </div>
+                        <x-tickets::chip-status :ticket-id="$subticket['id']" :status="$subticket['status']" :labels="$statusLabels" />
 
                     </div>
                 </div>
@@ -149,8 +116,6 @@
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
 
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initStatusDropdown();
 
         <?php } else { ?>
 

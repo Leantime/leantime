@@ -94,8 +94,6 @@
             jQuery('.sortable-list').nestedSortable();
 
             // Re-initialize interactive elements
-            leantime.ticketsController.initMilestoneDropdown();
-            leantime.ticketsController.initStatusDropdown();
             leantime.ticketsController.initDueDateTimePickers();
 
             // Re-initialize add task buttons

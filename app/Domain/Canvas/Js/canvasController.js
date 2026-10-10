@@ -110,12 +110,17 @@ leantime.canvasController = (function () {
         closeModal = true;
     };
 
+    // Legacy chip binder, kept only for plugin pages (StrategyPro, Whiteboards) that still render the old
+    // chip markup. Core chips are <x-global::forms.chip> and are handled by core/chips.js.
     var initUserDropdown = function () {
 
         jQuery("body").on(
             "click",
             ".userDropdown .dropdown-menu a",
             function () {
+                if (jQuery(this).closest("[data-lt-chip]").length) {
+                    return;
+                }
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -146,12 +151,17 @@ leantime.canvasController = (function () {
         );
     };
 
+    // Legacy chip binder, kept only for plugin pages (StrategyPro, Whiteboards) that still render the old
+    // chip markup. Core chips are <x-global::forms.chip> and are handled by core/chips.js.
     var initStatusDropdown = function () {
 
         jQuery("body").on(
             "click",
             ".statusDropdown .dropdown-menu a",
             function () {
+                if (jQuery(this).closest("[data-lt-chip]").length) {
+                    return;
+                }
 
                 var dataValue = jQuery(this).attr("data-value").split("/");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -186,12 +196,17 @@ leantime.canvasController = (function () {
 
     };
 
+    // Legacy chip binder, kept only for plugin pages (StrategyPro, Whiteboards) that still render the old
+    // chip markup. Core chips are <x-global::forms.chip> and are handled by core/chips.js.
     var initRelatesDropdown = function () {
 
         jQuery("body").on(
             "click",
             ".relatesDropdown .dropdown-menu a",
             function () {
+                if (jQuery(this).closest("[data-lt-chip]").length) {
+                    return;
+                }
 
                 var dataValue = jQuery(this).attr("data-value").split("/");
                 var dataLabel = jQuery(this).attr('data-label');

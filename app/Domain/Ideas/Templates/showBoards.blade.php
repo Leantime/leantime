@@ -122,42 +122,10 @@
 
                                 <div class="clearfix" style="padding-bottom: 8px;"></div>
 
-                                <div class="dropdown ticketDropdown statusDropdown show firstDropdown colorized">
-                                    <a class="dropdown-toggle f-left status {{ $canvasLabels[$row['box']]['class'] }} " href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                    <span class="text">{{ $canvasLabels[$row['box']]['name'] }}</span>
-                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
-                                        <li class="nav-header border">{!! __('dropdown.choose_status') !!}</li>
-
-                                        @foreach ($canvasLabels as $key => $label)
-                                            {!! "<li class='dropdown-item'>
-                                                <a href='javascript:void(0);' class='" . $label['class'] . "' data-label='" . $tpl->escape($label['name']) . "' data-value='" . $row['id'] . '_' . $key . '_' . $label['class'] . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $tpl->escape($label['name']) . "</a></li>" !!}
-                                        @endforeach
-                                    </ul>
-                                </div>
+                                <x-ideas::chip-status :idea-id="$row['id']" :box="$row['box']" :labels="$canvasLabels" />
 
 
-                                <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                    <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                    <span class="text">
-                                                                        @if ($row['authorFirstname'] != '')
-                                                                            {!! "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['author'] . "' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>" !!}
-                                                                        @else
-                                                                            {!! "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>" !!}
-                                                                        @endif
-                                                                    </span>
-
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                                        <li class="nav-header border">{!! __('dropdown.choose_user') !!}</li>
-
-                                        @foreach ($users as $user)
-                                            {!! "<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='" . sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) . "' data-value='" . $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) . "</a></li>" !!}
-                                        @endforeach
-                                    </ul>
-                                </div>
+                                <x-global::elements.author-avatar class="dropRight" :user-id="$row['author']" :name="trim(($row['authorFirstname'] ?? '').' '.($row['authorLastname'] ?? ''))" />
 
                                 <div class="pull-right" style="margin-right:10px;">
 
@@ -296,8 +264,6 @@
         leantime.ideasController.initWallImageModals();
 
         @if ($login::userIsAtLeast($roles::$editor))
-            leantime.ideasController.initStatusDropdown();
-            leantime.ideasController.initUserDropdown();
         @else
         leantime.authController.makeInputReadonly(".maincontentinner");
         @endif

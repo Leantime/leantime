@@ -97,6 +97,11 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     text-transform:none;
 }
 
+/* A chip while its pick is being saved (core/chips.js). */
+.ticketDropdown .dropdown-toggle.lt-chip-saving {
+    opacity: 0.6;
+}
+
 .ticketDropdown.show {
     display:inline-block;
 }

@@ -223,7 +223,10 @@ class Blueprints extends BaseService
      * @return bool False when no allowlisted columns were present (a client error, not a denial)
      *
      * @throws AuthorizationException When the item is unknown/foreign or EDIT is denied.
+     *
+     * @api
      */
+    #[RequiresPermission(BlueprintsPermissions::EDIT, entityScoped: true)]
     public function patchCanvasItem(int $id, array $params, string $canvasType): bool
     {
         $projectId = $this->blueprintsRepo->getCanvasItemProjectId($id, $canvasType);
