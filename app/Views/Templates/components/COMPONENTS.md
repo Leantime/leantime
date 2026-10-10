@@ -101,7 +101,6 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 ### P1
 | Component | Tag | Cat | Status | Notes |
 |---|---|---|---|---|
-| checkbox | `forms.checkbox` | forms | ⬜ | |
 | radio | `forms.radio` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Two markups today: `span.radio > input + label` (menus/panels — laid out as a flex row in dropdowns.css since P4) and Bootstrap 2 `label.radio`/float rows in forms. Target: one `forms.radio` (+ group) with the label next to the input everywhere. |
 | checkbox | `forms.checkbox` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Same split as radio (`span.checkbox` in menus, Bootstrap 2 float + `margin-left:-20px` elsewhere — the kanban "Cards" menu showed the misalignment). |
 | toggle | `forms.toggle` | forms | ⬜ | `input.toggle` switches (e.g. Show Tasks, task-type toggles) |
@@ -402,9 +401,6 @@ Port recipe (P5): create `X.blade.php` and delete `X.tpl.php` in the same commit
 `__()`, `echo "<li…"` → `@foreach`; keep inline scripts for P6 to clean. Both attribute gotchas above apply.
 
 ### Defer rubric (stays raw)
-~~Selects inside a Bootstrap dropdown panel stay native~~ — lifted in P4: `core/selects.js` stops click
-propagation on the body-mounted list of any select inside a `.dropdown-menu`, so enhanced selects work in
-panels (the tickets filter panel uses them).
 Selects with inline handlers beyond `submit()`/`location.href`; option lists built by PHP concat or
 `sprintf` over a `dispatchTplFilter` format (Timesheets `showMy` is a plugin extension point — migrate the
 shell only); radio-item menus (raw slot); `<?php echo` in attributes (modernize first); JS-string menus.

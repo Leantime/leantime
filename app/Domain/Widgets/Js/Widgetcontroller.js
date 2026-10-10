@@ -194,9 +194,14 @@ leantime.widgetController = (function () {
         let position = findAvailablePosition(widget, grid);
 
         if (!visible) {
-            removeWidget(jQuery("#" + id).closest(".grid-stack-item")[0]);
+            const widgetItem = jQuery("#" + id).closest(".grid-stack-item")[0];
+            if (widgetItem) {
+                removeWidget(widgetItem);
+            }
         } else {
-            // The server renders the widget's grid item (same partial as the dashboard).
+            // The server renders the widget's grid item (same partial as the dashboard). The checkbox
+            // stays disabled until it is on the grid, so it can't be switched off mid-request.
+            element.disabled = true;
             fetch(leantime.appUrl + '/hx/widgets/widgetShell/get?id=' + encodeURIComponent(id), {
                 credentials: 'include',
                 headers: { 'X-Requested-With': 'XMLHttpRequest', 'HX-Request': 'true' }
@@ -206,7 +211,7 @@ leantime.widgetController = (function () {
                     const template = document.createElement('template');
                     template.innerHTML = html.trim();
                     const widgetNode = template.content.querySelector('.grid-stack-item');
-                    if (!widgetNode) {
+                    if (!widgetNode || document.getElementById(widgetNode.id)) {
                         return;
                     }
 
@@ -221,7 +226,11 @@ leantime.widgetController = (function () {
                     htmx.process(widgetNode);
                     saveGrid({action: "toggleWidget", widgetId: id, visible: visible});
                 })
-                .catch(function (error) { console.error('[widgets] Could not add widget ' + id, error); });
+                .catch(function (error) {
+                    element.checked = false;
+                    console.error('[widgets] Could not add widget ' + id, error);
+                })
+                .finally(function () { element.disabled = false; });
         }
     }
 

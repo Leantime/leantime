@@ -95,6 +95,25 @@ jQuery(document).ready(function () {
         });
     }
 
+    // Bootstrap 2 handles Escape only while focus is on a dropdown's toggle. Close an open dropdown
+    // from anywhere inside it too (a menu link, a field in a filter panel) and hand focus back to
+    // its toggle. An enhanced select inside a panel closes its own list first.
+    document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape' || event.defaultPrevented || !(event.target instanceof Element)) {
+            return;
+        }
+        if (event.target.closest('.ss-main')) {
+            return;
+        }
+        var openDropdown = event.target.closest('.open');
+        var toggle = openDropdown ? openDropdown.querySelector(':scope > [data-toggle="dropdown"]') : null;
+        if (!toggle) {
+            return;
+        }
+        openDropdown.classList.remove('open');
+        toggle.focus();
+    });
+
     if (jQuery('.login-alert .alert').text() !== '') {
         jQuery('.login-alert').fadeIn();
     }
