@@ -94,7 +94,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
 | dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
-| tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating; tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
+| tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating/underline (underline = section tabs, see "Section tabs"); tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
 | view-tabs | `navigation.view-tabs` | navigation | ✅ | feature/page-toolbars | The bar between page header and content box: page VIEWS as link tabs on the left (server-side active), page ACTIONS on the right (`actions` slot: New, Filter, Group By, view settings, ranges). Replaces the hand-rolled bars in tickets (ticketBoardTabs/timelineTabs, `tickets::portfolio-tabs`). See "Page layout" |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
 | date-picker | `forms.date-picker` | forms | ⬜ | selectsComponentUpdates | jQuery-UI datepicker; needs htmx.onLoad re-init |
@@ -658,4 +658,19 @@ Model, My Timesheets (Week | List tabs + week range / Filters), All Timesheets (
 (Client + Timeframe) and portfolio table (New / Filter / Group By; the nested `#ticketSearch` forms are gone), To-Do
 roadmap (Timeframe — shared `tickets::partials.ganttTimeframe`). Not touched: Calendar (FullCalendar's own toolbar),
 Goal dashboard (section-level "Create New Goal"), Wiki/Docs (no view or filter controls in the box).
+
+### Section tabs: inside the box (2026-10-10, Marcel)
+Two kinds of tabs, one test: does the tab change **how the same data is shown** (view → `navigation.view-tabs`
+in the bar, outside the box) or **which part of one thing you edit** (section → inside the card/modal)?
+Section tabs each own their form / Save and post back to `…#section`; nothing applies across them.
+- One look: **underline** — full-width hairline, quiet grey labels, active section dark with an accent1 underline,
+  icon on every tab. `navigation.tabs variant="underline"` for new work (Goal dialog, plugin details).
+- The jQuery-UI sets (`.tabbedwidget.tab-primary`: To-Do view/new (modal + page), project settings + new project,
+  client, Company settings, My Profile, project selector) get the same skin from `tab-group.css` and **keep their
+  `ul > li > a[href=#id]` + `div#id` markup**: plugins print tabs into them (CustomFields → ticketTabs,
+  AdvancedAuth → company settings, ThemeBundle/Auth → editOwn, Llamadorian → projectTabsContent). Moving them to
+  the component means changing that plugin contract first, with the plugins shipped alongside.
+- Plugins: StrategyPro (newStrategy/showStrategy/canvasDialog) and PgmPro (newProgram/showProgram) tab sets go in a
+  plugins-repo PR.
+
 

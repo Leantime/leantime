@@ -692,14 +692,6 @@ body.loginpage {
     background:transparent;
 }
 
-.tab-primary.ui-tabs .ui-tabs-nav {
-    background: var(--tab-background);
-    border-bottom-width: 0px;
-    border-radius: var(--box-radius-large);
-    padding: 0px 15px 0px 15px;
-
-}
-
 .ui-tabs-panel {
     background:transparent;
 }
@@ -709,48 +701,7 @@ body.loginpage {
     border:none;
 }
 
-.tab-primary.ui-tabs .ui-tabs-nav {
-    height:40px;
-    margin-bottom: 15px;
-    box-shadow: var(--input-shadow);
-}
-
-.tab-primary.ui-tabs .ui-tabs-nav li a,
-.ui-tabs-nav > li a {
-    color:var(--main-action-bg);
-    background:none;
-}
-
-.tab-primary.ui-tabs .ui-tabs-nav li a:hover,
-.ui-tabs-nav > li a:hover {
-    background: var(--neutral);
-    color:var(--main-menu-link-hover-color);
-
-}
-
-.tab-primary.ui-tabs .ui-tabs-nav > li {
-    border-right:0px;
-}
-
-.tab-primary.ui-tabs .ui-tabs-nav > li a {
-    line-height:36px;
-    border-bottom:2px solid transparent;
-    border-top:2px solid transparent;
-    padding:0px 15px;
-    color:var(--main-action-bg);
-    font-weight:bold;
-    border-radius: 0;
-}
-
-body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
-    background:var(--tab-active-background);
-    border-bottom:2px solid var(--main-action-bg);
-    color:var(--tab-active-color);
-}
-
-.tab-primary.ui-tabs .ui-tabs-nav > li a:hover {
-    background:var(--tab-hover-background);
-}
+/* Section-tab skin for .tab-primary lives in tab-group.css (.lt-tabs--underline). */
 
 
 

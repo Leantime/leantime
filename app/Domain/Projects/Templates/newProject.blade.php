@@ -20,7 +20,7 @@
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
-                <li><a href="#projectdetails">{!! __('tabs.projectdetails') !!}</a></li>
+                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> {!! __('tabs.projectdetails') !!}</a></li>
             </ul>
 
             <div id="projectdetails">

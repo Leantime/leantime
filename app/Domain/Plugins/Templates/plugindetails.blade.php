@@ -45,7 +45,7 @@
             $pluginFirstTab = $pluginTabOrder[0] ?? null;
         @endphp
         @if ($pluginFirstTab !== null)
-        <x-global::navigation.tabs group="plugindetails" label="Plugin details sections">
+        <x-global::navigation.tabs group="plugindetails" variant="underline" label="Plugin details sections">
             @if (! empty($plugin->description))
                 <x-global::navigation.tabs.tab name="overview" :selected="$pluginFirstTab === 'overview'">Overview</x-global::navigation.tabs.tab>
             @endif

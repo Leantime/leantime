@@ -13,7 +13,10 @@
       label     string  REQUIRED. aria-label for the tablist.
       variant   string  'attached' (default) — gradient accent band with a
                         translucent framed segment group (board/report look), or
-                        'floating' — free-floating fully-rounded pills (RA look).
+                        'floating' — free-floating fully-rounded pills (RA look), or
+                        'underline' — SECTION tabs inside a white card or modal
+                        (switch which part of one thing you edit: goal dialog,
+                        plugin details). Hairline row, active section underlined.
       dark      bool    Floating variant only: dark-header color scheme
                         (server-stamped, mirrors the theme's color mode).
       panels    string  'toggle' (default) — the JS shows/hides elements marked

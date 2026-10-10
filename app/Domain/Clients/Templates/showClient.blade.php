@@ -24,9 +24,9 @@
         <div class="tabbedwidget tab-primary clientTabs">
 
             <ul>
-                <li><a href="#clientDetails">{!! __('label.client_details') !!}</a></li>
-                <li><a href="#comment">{!! sprintf(__('tabs.discussion_with_count'), count($comments)) !!}</a></li>
-                <li><a href="#files">{!! sprintf(__('tabs.files_with_count'), count($files)) !!}</a></li>
+                <li><a href="#clientDetails"><span class="fa fa-building"></span> {!! __('label.client_details') !!}</a></li>
+                <li><a href="#comment"><span class="fa fa-comments"></span> {!! sprintf(__('tabs.discussion_with_count'), count($comments)) !!}</a></li>
+                <li><a href="#files"><span class="fa fa-file"></span> {!! sprintf(__('tabs.files_with_count'), count($files)) !!}</a></li>
             </ul>
 
             <div id='clientDetails'>
