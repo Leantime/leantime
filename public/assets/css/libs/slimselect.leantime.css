@@ -43,8 +43,14 @@
     margin-bottom: 5px;
 }
 
-.ss-main:focus {
+/* Focus ring like a native select / text input: on any focus (mouse too — SlimSelect's control is a div,
+   so a click doesn't count as :focus-visible) and while its list is open. */
+.ss-main:focus,
+.ss-main.ss-open-below,
+.ss-main.ss-open-above {
     box-shadow: var(--input-shadow);
+    outline: 2px solid var(--focus-ring-color, var(--accent1));
+    outline-offset: 2px;
 }
 
 .ss-main .ss-values .ss-placeholder {

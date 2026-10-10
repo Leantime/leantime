@@ -163,7 +163,7 @@
                 @dispatchEvent('beforeStatusUpdate')
                 <div
                     class="status-container tw-flex-1 tw-justify-items-end tw-flex tw-flex-row tw-justify-end tw-gap-2 tw-content-center">
-                    <x-tickets::chip-status class="tw-content-center tw-mr-[10px]" align="end" :ticket-id="$ticket['id']" :status="$ticket['status']" :labels="$statusLabels[$ticket['projectId']] ?? []" />
+                    <x-tickets::chip-status class="tw-self-center tw-mr-[10px]" align="end" :ticket-id="$ticket['id']" :status="$ticket['status']" :labels="$statusLabels[$ticket['projectId']] ?? []" />
 
                     <div class="tw-content-center">
                         <div class="scheduler">

@@ -111,10 +111,22 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 }
 
-.ticketDropdown ul,
 .ticketDropdown ul li a{
-    top: 22px;
     font-size:var(--font-size-m);
+}
+
+/* Open the menu just below the chip itself: the chip's wrapper can be taller than the chip (e.g. when
+   it's centered in a flex row), and a fixed offset then put the menu over the chip. */
+.ticketDropdown ul {
+    top: calc(100% + 1px);
+    font-size:var(--font-size-m);
+}
+
+/* A chip with its menu open shows the focus ring, the same as a focused input or select (some pages move
+   focus off the chip on click, which used to drop the ring there). */
+.ticketDropdown.open > .dropdown-toggle {
+    outline: 2px solid var(--focus-ring-color, var(--accent1));
+    outline-offset: 2px;
 }
 
 .ticketDropdown.userDropdown {
