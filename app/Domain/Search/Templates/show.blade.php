@@ -69,12 +69,12 @@
                     <div class="filterBar hideOnLoad searchPage__filterPanel">
                         <label class="searchPage__filter">
                             <span class="searchPage__filterLabel">{{ __('search.filter.project') }}</span>
-                            <select name="projectId" form="searchPageForm" onchange="document.getElementById('searchPageForm').submit()">
+                            <x-global::forms.select name="projectId" form="searchPageForm" onchange="document.getElementById('searchPageForm').submit()">
                                 <option value="">{{ __('search.filter.all_projects') }}</option>
                                 @foreach ($projects as $project)
                                     <option value="{{ $project['id'] }}" @selected($filterValues['projectId'] === $project['id'])>{{ $project['name'] }}</option>
                                 @endforeach
-                            </select>
+                            </x-global::forms.select>
                         </label>
 
                         <label class="searchPage__filter">

@@ -263,11 +263,11 @@
                 <div class="gv-values">
                     <div>
                         <label class="control-label" for="goalMetricType">{{ __('label.type') }}</label>
-                        <select name="metricType" id="goalMetricType">
+                        <x-global::forms.select name="metricType" id="goalMetricType">
                             <option value="number" @if ($mType == 'number') selected @endif>{{ __('goalcanvas.type_number') }}</option>
                             <option value="percent" @if ($mType == 'percent') selected @endif>{{ __('goalcanvas.type_percent') }}</option>
                             <option value="currency" @if ($mType == 'currency') selected @endif>{{ __('goalcanvas.type_currency') }}</option>
-                        </select>
+                        </x-global::forms.select>
                     </div>
                     <div>
                         <label class="control-label" for="goalStartValue">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
@@ -311,12 +311,12 @@
                             </div>
                             <div class="row" id="existingMilestone" style="display:none;">
                                 <div class="col-md-12">
-                                    <select data-placeholder="{{ __("input.placeholders.filter_by_milestone") }}" name="existingMilestone" class="user-select">
+                                    <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
                                         <option value=""></option>
                                         @foreach ($milestones as $milestoneRow)
                                             <option value="{{ $milestoneRow->id }}">{{ $milestoneRow->headline }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                     <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()" contentRole="primary" />
@@ -352,13 +352,13 @@
                              styled dropdowns side by side. SlimSelect is still used by
                              other canvas templates and the ticket filter — this change
                              is local to the goal dialog, not a dependency removal. --}}
-                        <select name="status" id="statusCanvas">
+                        <x-global::forms.select name="status" id="statusCanvas">
                             @foreach ($statusLabels as $key => $data)
                                 @if ($data['active'])
                                     <option value="{{ $key }}" @if ($canvasItem['status'] == $key) selected @endif>{{ $data['title'] }}</option>
                                 @endif
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     @else
                         <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
                     @endif
@@ -386,13 +386,13 @@
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                     @if (!empty($relatesLabels))
                         <label class="control-label" for="relatesCanvas">{{ __('label.relates') }}</label>
-                        <select name="relates" id="relatesCanvas">
+                        <x-global::forms.select name="relates" id="relatesCanvas">
                             @foreach ($relatesLabels as $key => $data)
                                 @if ($data['active'])
                                     <option value="{{ $key }}" @if ($canvasItem['relates'] == $key) selected @endif>{{ $data['title'] }}</option>
                                 @endif
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
                     @else
                         <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
                     @endif

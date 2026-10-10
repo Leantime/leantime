@@ -96,7 +96,7 @@
                                             @php
                                             } else {
                                             @endphp
-                                                <select name="userProjectRole-{{ $assignedUser['id'] }}">
+                                                <x-global::forms.select name="userProjectRole-{{ $assignedUser['id'] }}">
                                                     <option value="inherit">Inherit</option>
                                                     <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
                                                         @if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) selected='selected' @endif
@@ -111,7 +111,7 @@
                                                     <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
                                                         @if ($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) selected='selected' @endif
                                                     >{!! __('label.roles.'.$roles::$manager) !!}</option>
-                                                </select>
+                                                </x-global::forms.select>
                                             @php } @endphp
                                             <div class="clearall"></div>
                                         </div>
@@ -144,7 +144,7 @@
                                                     <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$row['role']]) }}" />
                                                 @else
                                                     @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
-                                                    <select name="userProjectRole-{{ $row['id'] }}">
+                                                    <x-global::forms.select name="userProjectRole-{{ $row['id'] }}">
                                                         <option value="inherit">Inherit</option>
                                                         <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
                                                         @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) selected='selected' @endif
@@ -159,7 +159,7 @@
                                                         <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
                                                             @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$manager, $roles::getRoles())) selected='selected' @endif
                                                         >{!! __('label.roles.'.$roles::$manager) !!}</option>
-                                                    </select>
+                                                    </x-global::forms.select>
                                                 @endif
                                                 <div class="clearall"></div>
                                             </div>
@@ -350,7 +350,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label>{!! __('label.color') !!}</label>
-                                            <select name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen">
+                                            <x-global::forms.select name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen">
                                                 <option value="label-purple" class="label-purple" {{ $ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : '' }}><span class="label-purple">{!! __('label.purple') !!}</span></option>
                                                 <option value="label-pink" class="label-pink" {{ $ticketStatus['class'] == 'label-pink' ? 'selected="selected"' : '' }}><span class="label-pink">{!! __('label.pink') !!}</span></option>
                                                 <option value="label-darker-blue" class="label-darker-blue" {{ $ticketStatus['class'] == 'label-darker-blue' ? 'selected="selected"' : '' }}><span class="label-darker-blue">{!! __('label.darker-blue') !!}</span></option>
@@ -366,16 +366,16 @@
 
 
 
-                                            </select>
+                                            </x-global::forms.select>
                                         </div>
                                         <div class="col-md-2">
                                             <label>{!! __('label.reportType') !!}</label>
-                                            <select name="labelType-{{ $key }}" id="labelType-{{ $key }}">
+                                            <x-global::forms.select name="labelType-{{ $key }}" id="labelType-{{ $key }}">
                                                 <option value="NEW" {{ ($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : '' }}>{!! __('status.new') !!}</option>
                                                 <option value="INPROGRESS" {{ ($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : '' }}>{!! __('status.in_progress') !!}</option>
                                                 <option value="DONE" {{ ($ticketStatus['statusType'] == 'DONE') ? 'selected="selected"' : '' }}>{!! __('status.done') !!}</option>
                                                 <option value="NONE" {{ ($ticketStatus['statusType'] == 'NONE') ? 'selected="selected"' : '' }}>{!! __('status.dont_report') !!}</option>
-                                            </select>
+                                            </x-global::forms.select>
                                         </div>
                                         <div class="col-md-2">
                                             <label for="">{!! __('label.showInKanban') !!}</label>
@@ -430,7 +430,7 @@
         </div>
         <div class="col-md-2">
             <label>{!! __('label.color') !!}</label>
-            <select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
+            <x-global::forms.select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
                 <option value="label-blue" class="label-blue"><span class="label-blue">{!! __('label.blue') !!}</span></option>
                 <option value="label-info" class="label-info"><span class="label-info">{!! __('label.dark-blue') !!}</span></option>
                 <option value="label-darker-blue" class="label-darker-blue"><span class="label-darker-blue">{!! __('label.darker-blue') !!}</span></option>
@@ -443,16 +443,16 @@
                 <option value="label-purple" class="label-purple"><span class="label-purple">{!! __('label.purple') !!}</span></option>
                 <option value="label-brown" class="label-brown"><span class="label-brown">{!! __('label.brown') !!}</span></option>
                 <option value="label-default" class="label-default"><span class="label-default">{!! __('label.grey') !!}</span></option>
-            </select>
+            </x-global::forms.select>
         </div>
         <div class="col-md-2">
             <label>{!! __('label.reportType') !!}</label>
-            <select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
+            <x-global::forms.select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW">{!! __('status.new') !!}</option>
                 <option value="INPROGRESS">{!! __('status.in_progress') !!}</option>
                 <option value="DONE">{!! __('status.done') !!}</option>
                 <option value="NONE">{!! __('status.dont_report') !!}</option>
-            </select>
+            </x-global::forms.select>
         </div>
         <div class="col-md-2">
             <label for="">{!! __('label.showInKanban') !!}</label>

@@ -88,7 +88,7 @@
 
                         <div class="row" id="existingMilestone" style="display:none;">
                             <div class="col-md-12">
-                                <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
+                                <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
                                         name="existingMilestone" class="user-select">
                                     <option value="">{!! __('text.all_milestones') !!}</option>
                                     @foreach ($milestones as $milestoneRow)
@@ -98,7 +98,7 @@
                                             @endif
                                         >{{ $tpl->escape($milestoneRow->headline) }}</option>
                                     @endforeach
-                                </select>
+                                </x-global::forms.select>
                                 <input type="hidden" name="type" value="milestone"/>
                                 <input type="hidden" name="leancanvasitemid" value="{{ $id }} "/>
                                 <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryCanvasSubmitButton').click()"

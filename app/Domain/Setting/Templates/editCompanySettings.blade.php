@@ -43,13 +43,13 @@
                                             <label>{!! __('label.language') !!}</label>
                                         </div>
                                         <div class="col-md-8">
-                                            <select name="language" id="language">
+                                            <x-global::forms.select name="language" id="language">
                                                 @foreach ($languageList as $languagKey => $languageValue)
                                                     <option
                                                         value="{{ $languagKey }}"
                                                         @if ($companySettings['language'] == $languagKey) selected='selected' @endif>{{ $languageValue }}</option>
                                                 @endforeach
-                                            </select>
+                                            </x-global::forms.select>
 
 
                                         </div>
@@ -90,7 +90,7 @@
                                         </div>
                                         <div class="col-md-8">
                                                             <span class='field'>
-                                                                <select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
+                                                                <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
                                                                     <option value="">--{!! __('label.choose_option') !!}--</option>
                                                                     <option value="300" @if ($companySettings['messageFrequency'] == '300') selected @endif>{!! __('label.5min') !!}</option>
                                                                     <option value="900" @if ($companySettings['messageFrequency'] == '900') selected @endif>{!! __('label.15min') !!}</option>
@@ -102,7 +102,7 @@
                                                                     <option value="86400" @if ($companySettings['messageFrequency'] == '86400') selected @endif>{!! __('label.24h') !!}</option>
                                                                     <option value="172800" @if ($companySettings['messageFrequency'] == '172800') selected @endif>{!! __('label.48h') !!}</option>
                                                                     <option value="604800" @if ($companySettings['messageFrequency'] == '604800') selected @endif>{!! __('label.1w') !!}</option>
-                                                                </select> <br/>
+                                                                </x-global::forms.select> <br/>
                                                             </span>
                                         </div>
                                     </div>
@@ -150,13 +150,13 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <select name="defaultNotificationRelevance" class="form-control" style="max-width:300px;">
+                                                <x-global::forms.select name="defaultNotificationRelevance" class="form-control" style="max-width:300px;">
                                                     @foreach ($relevanceLevels as $level => $labelKey)
                                                         <option value="{{ $level }}" @if ($defaultRelevance === $level) selected @endif>
                                                             {!! __($labelKey) !!}
                                                         </option>
                                                     @endforeach
-                                                </select>
+                                                </x-global::forms.select>
                                             </div>
                                         </div>
                                     </div>

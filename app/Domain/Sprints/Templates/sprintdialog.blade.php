@@ -25,11 +25,11 @@
         {{-- Program sprint: project is fixed to the owning program and cannot be reassigned. --}}
         @php $lockedProject = $allAssignedprojects[0] ?? null; @endphp
         <input type="hidden" name="projectId" value="{{ $lockedProject['id'] ?? $currentProject }}" />
-        <select disabled>
+        <x-global::forms.select disabled>
             <option selected>{{ $tpl->escape($lockedProject['name'] ?? '') }}</option>
-        </select><br />
+        </x-global::forms.select><br />
     @else
-        <select name="projectId">
+        <x-global::forms.select name="projectId">
             @foreach ($allAssignedprojects as $project)
                 <option value="{{ $project['id'] }}"
                     @if ((isset($currentSprint) && ($currentSprint->projectId == $project['id'] || $currentProject == $project['id'])) || (! isset($currentSprint) && $currentProject == $project['id']))
@@ -37,7 +37,7 @@
                     @endif
                 >{{ $tpl->escape($project['name']) }}</option>
             @endforeach
-        </select><br />
+        </x-global::forms.select><br />
     @endif
 
     <br /><br />

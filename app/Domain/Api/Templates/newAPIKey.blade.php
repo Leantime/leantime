@@ -32,7 +32,7 @@
 
 
                 <label for="role">{!! __('label.role') !!}</label><div class="clearfix"></div>
-                <select name="role" id="role">
+                <x-global::forms.select name="role" id="role">
 
                     @foreach ($roles as $key => $role)
                         <option value="{{ $key }}"
@@ -44,10 +44,10 @@
                         </option>
                     @endforeach
 
-                </select> <br />
+                </x-global::forms.select> <br />
 
                 <label for="status">{!! __('label.status') !!}</label><div class="clearfix"></div>
-                <select name="status" id="status">
+                <x-global::forms.select name="status" id="status">
                     <option value="a"
                         @if (strtolower($values['status']) == 'a')
                             selected="selected"
@@ -64,7 +64,7 @@
                         {!! __('label.deactivated') !!}
                     </option>
 
-                </select>
+                </x-global::forms.select>
 
                     <div class="clearfix"></div>
 

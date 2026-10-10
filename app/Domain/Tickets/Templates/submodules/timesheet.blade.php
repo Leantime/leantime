@@ -17,13 +17,13 @@ $currentPay = $userHours * $userInfo['wage'];
 
                     <label for="kind">{!! __('label.timesheet_kind') !!}</label>
                     <span class="field">
-                    <select id="kind" name="kind">
+                    <x-global::forms.select id="kind" name="kind">
                     @foreach ($kind as $key => $row)
                         <option value="{{ $key }}"
                             @if ($row == $values['kind']) selected="selected" @endif
                         >{!! __(strtolower($row)) !!}</option>
                     @endforeach
-                    </select>
+                    </x-global::forms.select>
                     </span>
 
                     <label for="timesheetdate">{!! __('label.date') !!}:</label>

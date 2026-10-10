@@ -180,14 +180,14 @@
                                     <input type="hidden" name="quickadd" value="true"/>
                                 </div>
                                 <div>
-                                    <select name="projectId">
+                                    <x-global::forms.select name="projectId">
                                         @foreach($allAssignedprojects as $project)
                                             <option value="{{ $project['id']  }}"
 
                                                 {{ (session('currentProject') == $project['id'] ) ? 'selected' : '' }}
                                             >{{ $project["name"]  }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                 </div>
                                 <div>
                                     <input type="hidden" name="milestone" value=""/>
@@ -256,14 +256,14 @@
                                         <input type="hidden" name="quickadd" value="true"/>
                                     </div>
                                     <div>
-                                        <select name="projectId">
+                                        <x-global::forms.select name="projectId">
                                             @foreach($allAssignedprojects as $project)
                                                 <option value="{{ $project['id']  }}"
 
                                                     {{ (($groupBy === "project" && $project['id'] == $groupKey) || ($groupBy !== "project" && session('currentProject') == $groupKey)) ? 'selected' : '' }}
                                                 >{{ $project["name"]  }}</option>
                                             @endforeach
-                                        </select>
+                                        </x-global::forms.select>
                                     </div>
                                     <div>
                                         <input type="hidden" name="milestone" value=""/>

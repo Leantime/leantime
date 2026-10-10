@@ -34,12 +34,12 @@
                         <x-global::forms.text-input name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;" />
                         @if (isset($availableProjects))
                             {{-- Program (cross-project) board: a task must belong to one child project. --}}
-                            <select name="quickaddProjectId" class="form-control tw-mb-s" required aria-label="{{ __('label.project') }}">
+                            <x-global::forms.select name="quickaddProjectId" class="form-control tw-mb-s" required aria-label="{{ __('label.project') }}">
                                 <option value="">{{ __('label.project') }}…</option>
                                 @foreach ($availableProjects as $quickAddProjectId => $quickAddProjectName)
                                     <option value="{{ $quickAddProjectId }}">{{ $tpl->escape($quickAddProjectName) }}</option>
                                 @endforeach
-                            </select>
+                            </x-global::forms.select>
                         @endif
                         <input type="hidden" name="sprint" value="{{ $currentSprint }}" />
                         <input type="hidden" name="milestone" value="{{ htmlspecialchars((string) ($searchCriteria['milestone'] ?? ''), ENT_QUOTES, 'UTF-8') }}" />

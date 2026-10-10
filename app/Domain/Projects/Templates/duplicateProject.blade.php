@@ -11,13 +11,13 @@
     <input type="text" name="startDate" class="projectDateFrom" value="{{ dtHelper()->userNow()->formatDateForUser() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" /><br />
 
     <label>{!! __('label.client_product') !!}</label>
-    <select name="clientId" id="clientId">
+    <x-global::forms.select name="clientId" id="clientId">
         @foreach ($allClients as $row)
             <option value="{{ $row['id'] }}"
                 @if ($project['clientId'] == $row['id']) selected=selected @endif
             >{{ $row['name'] }}</option>
         @endforeach
-    </select>
+    </x-global::forms.select>
     <br />
     <input style="float:left; margin-right:5px;"
            type="checkbox" name="assignSameUsers" id="assignSameUsers"/>

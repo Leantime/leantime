@@ -53,7 +53,7 @@
                     <span class="fa fa-folder"></span>{!! __('subtitles.organization') !!}
                 </h4>
                 <label>Parent</label>
-                <select name="parent" style="width:100%;">
+                <x-global::forms.select name="parent" style="width:100%;">
                     <option value="0">None</option>
                     @foreach ($wikiHeadlines as $parent)
                         @if ($id != $parent->id)
@@ -61,13 +61,13 @@
                                     {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ $tpl->escape($parent->title) }}</option>
                         @endif
                     @endforeach
-                </select>
+                </x-global::forms.select>
 
                 <label>{!! __('label.status') !!}</label>
-                <select name="status" style="width:100%;">
+                <x-global::forms.select name="status" style="width:100%;">
                     <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{!! __('label.draft') !!}</option>
                     <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{!! __('label.published') !!}</option>
-                </select>
+                </x-global::forms.select>
             </div>
 
             @if ($id !== '')
@@ -100,7 +100,7 @@
 
                             <div class="row" id="existingMilestone" style="display:none;">
                                 <div class="col-md-12">
-                                    <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
+                                    <x-global::forms.select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" name="existingMilestone" class="user-select">
                                         <option value="">{!! __('label.all_milestones') !!}</option>
                                         @foreach ($milestones as $milestoneRow)
                                             <option value="{{ $milestoneRow->id }}"
@@ -109,7 +109,7 @@
                                                 @endif
                                             >{{ $milestoneRow->headline }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-global::forms.select>
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="articleId" value="{{ $id }} " />
                                     <x-global::forms.button tag="input" inputType="button" labelText="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" contentRole="primary" />
