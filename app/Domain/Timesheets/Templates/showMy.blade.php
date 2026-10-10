@@ -340,7 +340,7 @@ jQuery(document).ready(function(){
                                 </div>
                             </td>
                             <td width="14%">
-                                <x-global::forms.select class="kind-select" name="kindId">
+                                <x-global::forms.select class="kind-select" name="kindId" style="width:100%;">
                                     @foreach ($kind as $key => $kindRow)
                                         <option value="{{ $key }}">{!! __($kindRow) !!}</option>
                                     @endforeach

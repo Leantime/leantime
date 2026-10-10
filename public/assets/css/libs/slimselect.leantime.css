@@ -83,7 +83,8 @@
     border: 0;
     border-radius: var(--box-radius-small);
     box-shadow: var(--regular-shadow);
-    z-index: var(--zlayer-9, 10000);
+    /* Above nyroModal (100): the list is mounted on <body>, so inside a modal it must out-rank it. */
+    z-index: 10000;
 }
 
 .ss-content .ss-search input {
@@ -113,4 +114,11 @@
     padding: 0 10px;
     border-radius: var(--box-radius-large);
     line-height: 21px;
+}
+
+/* Option icons (forms.select.option icon): SlimSelect lays the value out as a flex row, which makes the
+   <i> a block with Font Awesome's short line-height — the glyph then sits above the text. */
+.ss-main .ss-values .ss-single i,
+.ss-content .ss-list .ss-option i {
+    line-height: inherit;
 }

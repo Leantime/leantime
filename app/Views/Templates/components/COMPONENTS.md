@@ -556,3 +556,12 @@ one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `
   Timesheets sync both pages, editOwn, newProject, moveTicket; light + dark. Companion plugins change: CustomFields
   select enhanced; StrategyPro goal-dialog KPI select moved from `register.php` echo strings into
   `partials/goalKpiSelect` (enhanced).
+- _select P2 review fixes (native/enhanced parity)_: (1) the extension-less `~slim-select/styles` import landed
+  AFTER our theme in main.css, so equal-specificity theme rules (padding, z-index…) silently lost → import the CSS
+  by path. (2) the open list's z-index was `--zlayer-9` (40) < nyroModal (100) → list hidden in modals; now 10000.
+  (3) option icons sat high (v2's flex row + Font Awesome line-height) → `line-height: inherit`. (4) Native selects
+  now share the enhanced closed state: `appearance:none` + the same chevron SVG (`--select-caret`, dark themes
+  override the stroke color), same padding/height. (5) bootstrap.min.css caps every select at 175px, which beat
+  templates' own widths → `select[style*="width"] { max-width: 100% }` (explicit widths win; everything else keeps
+  the cap — dropping the cap globally grew long-label selects to content width, up to 352px). Rule: mixing
+  enhanced and native in one form is fine; they must look the same closed.

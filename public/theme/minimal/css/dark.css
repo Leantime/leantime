@@ -609,4 +609,7 @@ body .ticketDropdown ul::after {
     background:var(--accent1);
 }
 
-
+/* Select caret in this theme's font color (see forms.css --select-caret). */
+:root {
+    --select-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,30 L50,70 L90,30' fill='none' stroke='%23ffffff' stroke-width='18' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
