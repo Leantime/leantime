@@ -10,29 +10,7 @@
 
         @foreach($dashboardGrid as $widget)
 
-            <x-widgets::moveableWidget
-                gs-x="{{ $widget->gridX }}"
-                gs-y="{{ $widget->gridY }}"
-                gs-h="{{ $widget->gridHeight }}"
-                gs-w="{{ $widget->gridWidth }}"
-                gs-min-w="{{ $widget->gridMinWidth }}"
-                gs-min-h="{{ $widget->gridMinHeight }}"
-                isNew="{{ isset($widget->isNew) ? 'true' : 'false' }}"
-                background="{{ $widget->widgetBackground }}"
-                noTitle="{{ $widget->noTitle }}"
-                name="{{ $widget->name }}"
-                :fixed="(empty($widget->fixed) ? false : true )"
-                alwaysVisible="{{ $widget->alwaysVisible }}"
-                id="widget_wrapper_{{ $widget->id }}"
-            >
-                <div hx-get="{{$widget->widgetUrl }}"
-                     hx-trigger="revealed"
-                     id="{{ $widget->id }}"
-                     class="tw-h-full"
-                     hx-swap="innerHTML">
-                    <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
-                </div>
-            </x-widgets::moveableWidget>
+            @include('widgets::partials.widgetShell', ['widget' => $widget])
 
         @endforeach
     </div>

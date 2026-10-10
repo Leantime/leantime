@@ -37,15 +37,13 @@
     </div>
     @if (count($allCanvas) > 0)
         <div class="pageheader-right">
-            <span class="dropdown dropdownWrapper headerEditDropdown">
-                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-                <ul class="dropdown-menu editCanvasDropdown ">
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
-                        <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
-                    @endif
-                </ul>
-            </span>
+            <x-global::actions.dropdown variant="header-menu">
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
+                    <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
+                @endif
+
+            </x-global::actions.dropdown>
         </div>
     @endif
 </div><!--pageheader-->
@@ -68,13 +66,12 @@
             </div>
             <div class="col-md-4">
                 <div class="pull-right">
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">{!! __('buttons.idea_wall') !!} {!! __('links.view') !!}</button>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ BASE_URL }}/ideas/showBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}" class="active">{!! __('buttons.idea_wall') !!}</a></li>
-                            <li><a href="{{ BASE_URL }}/ideas/advancedBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}" class="">{!! __('buttons.idea_kanban') !!}</a></li>
-                        </ul>
-                    </div>
+                    <x-global::actions.dropdown variant="filter">
+                        <x-slot:trigger>{!! __('buttons.idea_wall') !!} {!! __('links.view') !!}</x-slot:trigger>
+                        <li><a href="{{ BASE_URL }}/ideas/showBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}" class="active">{!! __('buttons.idea_wall') !!}</a></li>
+                        <li><a href="{{ BASE_URL }}/ideas/advancedBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}" class="">{!! __('buttons.idea_kanban') !!}</a></li>
+
+                    </x-global::actions.dropdown>
                 </div>
             </div>
 
@@ -92,19 +89,11 @@
                             <div class="col-md-12">
 
                                 @if ($login::userIsAtLeast($roles::$editor))
-                                    <div class="inlineDropDownContainer" style="float:right;">
-
-                                        <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                        </a>
-                                        &nbsp;&nbsp;&nbsp;
-                                        <ul class="dropdown-menu">
-                                            <li class="nav-header">{!! __('subtitles.edit') !!}</li>
-                                            <li><a href="#/ideas/ideaDialog/{{ $row['id'] }}" class="" data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
-                                            <li><a href="#/ideas/delCanvasItem/{{ $row['id'] }}" class="delete" data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
-
-                                        </ul>
-                                    </div>
+                                    <x-global::actions.dropdown style="float:right;">
+                                        <li class="nav-header">{!! __('subtitles.edit') !!}</li>
+                                        <li><a href="#/ideas/ideaDialog/{{ $row['id'] }}" class="" data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
+                                        <li><a href="#/ideas/delCanvasItem/{{ $row['id'] }}" class="delete" data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
+                                    </x-global::actions.dropdown>
                                 @endif
 
                                 <h4><a href="#/ideas/ideaDialog/{{ $row['id'] }}"
@@ -137,18 +126,14 @@
                                         @php $ideaTags = array_filter(array_map('trim', explode(',', (string) ($row['tags'] ?? '')))); @endphp
                                         @if (count($ideaTags) > 0)
                                             &nbsp;
-                                            <span class="dropdown">
-                                                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
-                                                    <i class="fa fa-tags" aria-hidden="true"></i> <small>{{ count($ideaTags) }}</small>
-                                                </a>
-                                                <ul class="dropdown-menu pull-right">
-                                                    <li style="padding:10px"><div class="tagsinput readonly">
-                                                        @foreach ($ideaTags as $tag)
-                                                            <span class="tag"><span>{{ $tag }}</span></span>
-                                                        @endforeach
-                                                    </div></li>
-                                                </ul>
-                                            </span>
+                                            <x-global::actions.dropdown variant="panel" as="span" class="dropdown" menu-as="ul" menu-class="pull-right">
+                                                <x-slot:trigger><i class="fa fa-tags" aria-hidden="true"></i> <small>{{ count($ideaTags) }}</small></x-slot:trigger>
+                                                <li style="padding:10px"><div class="tagsinput readonly">
+                                                    @foreach ($ideaTags as $tag)
+                                                        <span class="tag"><span>{{ $tag }}</span></span>
+                                                    @endforeach
+                                                </div></li>
+                                            </x-global::actions.dropdown>
                                         @endif
 
                                 </div>

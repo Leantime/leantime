@@ -37,8 +37,8 @@
              hx-swap="outerHTML">
 
             @if (count($clients) > 0)
-                <div class="dropdown dropdownWrapper pull-right">
-                    <a href="javascript:void(0)" class="btn btn-default dropdown-toggle header-title-dropdown" data-toggle="dropdown">
+                <x-global::actions.dropdown variant="subject" as="div" class="pull-right">
+                    <x-slot:trigger class="btn btn-default">
                         @if ($currentClientName != '')
                             {{ $currentClientName }}
                         @else
@@ -46,20 +46,18 @@
                         @endif
 
                         <i class="fa fa-caret-down"></i>
-                    </a>
+                    </x-slot:trigger>
+                    <li><a href="{{ CURRENT_URL }}">{{ __("headline.all_clients") }}</a></li>
+                    @foreach ($clients as $key => $value)
+                        <li>
+                            <a  href="javascript:void(0);"
+                                hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
+                                hx-target="#myProjectsHub"
+                                hx-swap="outerHTML">{{ $value['name'] }}</a>
+                        </li>
+                    @endforeach
 
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ CURRENT_URL }}">{{ __("headline.all_clients") }}</a></li>
-                        @foreach ($clients as $key => $value)
-                            <li>
-                                <a  href="javascript:void(0);"
-                                    hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
-                                    hx-target="#myProjectsHub"
-                                    hx-swap="outerHTML">{{ $value['name'] }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
+                </x-global::actions.dropdown>
             @endif
 
             @if (count($allProjects) == 0)

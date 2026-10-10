@@ -11,17 +11,13 @@
                 @if($name != '' && $noTitle == false)
                     <h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm" style="margin-top:-5px;">{{ __($name) }}</h5>
                 @endif
-                <div class="inlineDropDownContainer tw-float-right">
-                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
-                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> {{ __('label.resizeToFitContent', 'Resize to fit content') }}</a></li>
-                        @if(empty($alwaysVisible))
-                            <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> {{ __('label.hide', 'Hide') }}</a></li>
-                        @endif
-                    </ul>
-                </div>
+                <x-global::actions.dropdown trigger-class="editHeadline" class="tw-float-right">
+                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> {{ __('label.resizeToFitContent', 'Resize to fit content') }}</a></li>
+                    @if(empty($alwaysVisible))
+                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> {{ __('label.hide', 'Hide') }}</a></li>
+                    @endif
+
+                </x-global::actions.dropdown>
             </div>
             @endif
             <span class="clearall"></span>

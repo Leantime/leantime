@@ -2,17 +2,18 @@
 
 <div class="userinfo">
     @dispatchEvent('afterUserinfoMenuOpen')
-    @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false && session("companysettings.logoPath") !== '')
-        <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover" class="dropdown-toggle profileHandler includeLogo" data-toggle="dropdown">
+    @php
+        $companyLogo = session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false && session("companysettings.logoPath") !== ''
+            ? session("companysettings.logoPath")
+            : null;
+    @endphp
+    <x-global::actions.dropdown variant="panel" menu-as="ul">
+        <x-slot:trigger class="profileHandler {{ $companyLogo ? 'includeLogo' : '' }}" href="{{ BASE_URL }}/users/editOwn/" preload="mouseover">
             <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" class="profilePicture"/>
-            <img src="{{ session("companysettings.logoPath") }}" class="logo tw-pl-1" />
-        </a>
-    @else
-        <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover" class="dropdown-toggle profileHandler" data-toggle="dropdown">
-            <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" class="profilePicture"/>
-        </a>
-    @endif
-    <ul class="dropdown-menu">
+            @if ($companyLogo)
+                <img src="{{ $companyLogo }}" class="logo tw-pl-1" />
+            @endif
+        </x-slot:trigger>
         @dispatchEvent('afterUserinfoDropdownMenuOpen')
         <li>
             <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover">
@@ -43,14 +44,13 @@
                 </a>
             @endif
         </li>
-
-<li class="border">
-<a href='{{ BASE_URL }}/auth/logout'>
-   {!! __("menu.sign_out") !!}
-</a>
-</li>
-@dispatchEvent('beforeUserinfoDropdownMenuClose')
-</ul>
+        <li class="border">
+            <a href='{{ BASE_URL }}/auth/logout'>
+                {!! __("menu.sign_out") !!}
+            </a>
+        </li>
+        @dispatchEvent('beforeUserinfoDropdownMenuClose')
+    </x-global::actions.dropdown>
 @dispatchEvent('beforeUserinfoMenuClose')
 </div>
 @dispatchEvent('afterUserinfoMenuClose')

@@ -22,6 +22,26 @@
     padding: 5px 10px;
     border-radius: 0px;
 }
+
+/* List menus inset their items so a hovered item's background stays inside the menu's rounded
+   corners. Content panels (div.dropdown-menu) keep their own padding. */
+ul.dropdown-menu {
+    padding: 8px;
+}
+
+ul.dropdown-menu > li > a,
+ul.dropdown-menu > li > .dropdown-item-wrapper,
+.dropdown-menu span.radio,
+.dropdown-menu span.checkbox {
+    border-radius: var(--box-radius-small);
+}
+
+/* .btn-group sets white-space: nowrap for its buttons; panels inside one (filters, view settings)
+   hold labels and fields that must wrap. */
+.btn-group > div.dropdown-menu {
+    white-space: normal;
+}
+
 .pagetitle .dropdown-menu > li > a {
     color:var(--primary-font-color);
     text-decoration:none;
@@ -196,7 +216,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     margin-top:-1px;
 }
 
-.maincontent .dropdown img {
+.maincontent .dropdown img,
+.authorAvatar img {
     width:23px;
     border-radius: 12px;
     border: 1px solid var(--neutral);
@@ -512,29 +533,41 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color:#fff;
 }
 
-.dropdown-menu span.radio input[type="radio"] {
-    float:left;
-    vertical-align: middle;
-    margin-top: 9px;
-    margin-right:5px;
+/* Checkbox / radio rows in menus and panels: input and label side by side on one line, label
+   wrapping next to the input (not under it). Replaces Bootstrap 2's float + negative-margin layout. */
+.dropdown-menu span.radio,
+.dropdown-menu span.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 0;
+    padding: 5px 10px;
+}
+
+.dropdown-menu span.radio input[type="radio"],
+.dropdown-menu span.checkbox input[type="checkbox"] {
+    float: none;
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.dropdown-menu span.radio label,
+.dropdown-menu span.checkbox label {
+    display: block;
+    flex: 1 1 auto;
+    margin: 0;
+    padding: 0;
 }
 
 .dropdown-menu span.radio {
-    display:block;
     font-size: 12px;
     color: var(--main-menu-link-color);
     margin: 0px;
-    padding: 5px 10px;
 }
 
 .dropdown-menu span.radio:hover {
     color: var(--dropdown-link-hover-color);
     background:var(--dropdown-link-hover-bg);
-}
-
-.dropdown-menu span.radio label {
-    display:inline-block;
-    width:100%;
 }
 
 .wikiSelect {

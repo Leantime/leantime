@@ -1024,27 +1024,10 @@ a.barmenu:hover {
 
 
 
-.userloggedinfo ul li,
-.appsDropdown ul li{
-    font-size: var(--base-font-size);
-    line-height: normal;
-    margin-bottom: 1px;
-}
-
-.userloggedinfo ul li a,
-.appsDropdown ul li a{
-    line-height: normal;
-    padding:10px 20px;
-}
-
+/* Header menus (help, profile) use the shared .dropdown-menu item and header sizing (dropdowns.css). */
 .userloggedinfo ul li.border,
 .appsDropdown ul li.border{
     border-top:1px solid var(--neutral);
-}
-
-.userloggedinfo ul li.nav-header,
-.appsDropdown ul li.nav-header{
-    padding:10px;
 }
 
 .userloggedinfo ul li a span,

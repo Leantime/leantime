@@ -297,15 +297,8 @@
     text-align: center;
 }
 
-/* The toggle sets inline display, so this panel never sets display itself (hideOnLoad hides it). */
-.searchPage__bar .filterWrapper {
-    position: relative;
-}
-
 .searchPage__bar .filterWrapper .searchPage__filterPanel {
-    top: 100%;
     width: 280px;
-    margin-top: 6px;
     padding: 12px 14px;
     text-align: left;
 }

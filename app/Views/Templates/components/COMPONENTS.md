@@ -92,7 +92,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
 | card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
-| dropdown-menu | `actions.dropdown` (+ `.item`, `.header`, `.divider`) | actions | ⬜ | refactor/table-component | Planned P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject`; Bootstrap 2 data-api stays the engine |
+| dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating; tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
@@ -101,12 +101,12 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 ### P1
 | Component | Tag | Cat | Status | Notes |
 |---|---|---|---|---|
-| checkbox | `forms.checkbox` | forms | ⬜ | |
-| radio | `forms.radio` | forms | ⬜ | |
-| toggle | `forms.toggle` | forms | ⬜ | |
+| radio | `forms.radio` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Two markups today: `span.radio > input + label` (menus/panels — laid out as a flex row in dropdowns.css since P4) and Bootstrap 2 `label.radio`/float rows in forms. Target: one `forms.radio` (+ group) with the label next to the input everywhere. |
+| checkbox | `forms.checkbox` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Same split as radio (`span.checkbox` in menus, Bootstrap 2 float + `margin-left:-20px` elsewhere — the kanban "Cards" menu showed the misalignment). |
+| toggle | `forms.toggle` | forms | ⬜ | `input.toggle` switches (e.g. Show Tasks, task-type toggles) |
 | button-group | `forms.button-group` | forms | ⬜ | |
 | badge | `elements.badge` | elements | ⬜ | flat `badge` exists on master — migrate to category |
-| avatar | `elements.avatar` | elements | ⬜ | flat `avatar` exists on master |
+| avatar | `elements.avatar` | elements | ⬜ | **TODO (Marcel, 2026-10-10): one round avatar for every person image.** Today: flat `avatar` (initials only, 1 call-site), `elements.author-avatar` (canvas/goal/idea author — round only via `.authorAvatar` CSS), chip avatars (`tickets::chip-user`), raw `<img …/api/users?profileImage=…>` across headMenu/comments/notifications/cards. Target: `elements.avatar` (`userId`, `name` → tooltip/alt, `size` xs–xl, image with initials fallback, always round); `author-avatar` and the chip toggles compose it. |
 | accordion | `elements.accordion` | elements | ⬜ | flat `accordion` exists on master |
 | table | `elements.table` | elements | ⬜ | DataTables-coupled; class-backed (`Table.php`) |
 | empty-state | `elements.empty-state` | elements | ⬜ | wraps `undrawSvg` |
@@ -347,7 +347,7 @@ Thin domain wrappers hold the option loops copy-pasted ~54×:
 JS label maps go away), `blueprints::chip-{status,relates,user}` (shared by Canvas/Blueprints/Logicmodel/
 Goalcanvas/StrategyPro/Whiteboards via `adapter` + `canvasType`), `ideas::chip-status` (field `box`).
 
-**`actions.dropdown`** (+ `.item`, `.header`, `.divider`) — variant = today's DOM shape:
+**`actions.dropdown`** — variant = today's DOM shape (as built in P4; `.item`/`.header`/`.divider` sub-components were dropped — raw `<li>` items are already uniform):
 
 | `variant` | wrapper → trigger → menu |
 |---|---|
@@ -355,13 +355,14 @@ Goalcanvas/StrategyPro/Whiteboards via `adapter` + `canvasType`), `ideas::chip-s
 | `header-menu` | `span.dropdown.dropdownWrapper.headerEditDropdown` → `a.dropdown-toggle.btn.btn-transparent` → `ul.dropdown-menu.editCanvasDropdown` |
 | `filter` | `div.btn-group.viewDropDown` → `button.btn.dropdown-toggle` → `ul.dropdown-menu` |
 | `button` | `div.btn-group` → `.btn.btn-primary.dropdown-toggle` + caret |
-| `panel` | `div.dropdown` (or `viewDropDown`) → trigger slot → `div.dropdown-menu` (inputs/forms; stopPropagation inside) |
+| `panel` | bare `div` → `a.dropdown-toggle` → `div.dropdown-menu` — popovers with content (inputs, tabs, htmx) and menus whose trigger brings its own look (head menu, round buttons); `keep-open` stops inside clicks closing it |
 | `subject` | `span.dropdown.dropdownWrapper` → `a.dropdown-toggle.header-title-dropdown` (used by `subjectSwitcher`) |
 
-Props: `variant`, `trigger` slot (default icon trigger reusing `forms.button`'s role/scale maps), `align`,
-`menuClass`, `id`, `hx-*`/`preload` passthrough. `.item`: `link`, `leadingVisual`, `labelText`, `active`,
-onclick/hx/class passthrough. `.header` → `nav-header [border]`; `.divider` → `<li class="border">`; raw
-slot for radio/checkbox items.
+Props (built): `variant`, `label` (raw trigger HTML) or `trigger` slot (its attributes — `data-tippy-content`,
+`hx-*`, `preload`, `href`, extra `class` — go on the trigger), `icon` (⋮ variants), `href`, `as` (wrapper tag, e.g.
+`li` in the head menu), `menuAs` (`div` menu for a filter holding a form), `triggerClass`, `menuClass`, `menuId`,
+`menuStyle`, `keepOpen`, `ariaLabel`. Wrapper attributes pass through. Escape/outside-click/arrow handling is
+Bootstrap 2.3's own, so there is no `core/dropdown` JS.
 
 ### JS modules (IIFE on `leantime.*`, added to `compiled-app` after `app.js`)
 - **`public/assets/js/app/core/select/index.js`** — Tiptap-style registry: `leantime.select.{init, get,
@@ -378,8 +379,8 @@ slot for radio/checkbox items.
   `form` → hidden input + `change`. Updates text/class (via `data-current-class`)/color/avatar, growls, emits
   `lt:chip:changed`; `ticketsController` listens once for kanban side effects (`moveCardToSwimlane`,
   `priority-border-*`).
-- **`public/assets/js/app/core/dropdown/index.js`** — Escape closes `.open`; `htmx:beforeSwap` closes menus
-  inside the target. Nothing else.
+- ~~`core/dropdown/index.js`~~ — not needed: Bootstrap 2.3's data-api already closes on Escape and outside click,
+  and a swapped-out menu takes its `.open` wrapper with it.
 
 ### Phases (one PR each)
 | # | Repo | Scope |
@@ -400,9 +401,6 @@ Port recipe (P5): create `X.blade.php` and delete `X.tpl.php` in the same commit
 `__()`, `echo "<li…"` → `@foreach`; keep inline scripts for P6 to clean. Both attribute gotchas above apply.
 
 ### Defer rubric (stays raw)
-Selects inside a Bootstrap dropdown panel (`.dropdown-menu`) stay **native** (no `enhanced`): the enhanced
-list mounts on `<body>`, so a pick is an outside click and Bootstrap closes the panel (RecurringTasks'
-recurrence form is the live example).
 Selects with inline handlers beyond `submit()`/`location.href`; option lists built by PHP concat or
 `sprintf` over a `dispatchTplFilter` format (Timesheets `showMy` is a plugin extension point — migrate the
 shell only); radio-item menus (raw slot); `<?php echo` in attributes (modernize first); JS-string menus.
@@ -584,3 +582,38 @@ one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `
   `label.status_unknown` ("No Status Set") instead of hard-coded "new"/"unknown". Gotchas: the kanban recolors chips
   directly, so chips.js removes every color class the chip's options declare (not just the last saved one); an
   avatar-only chip (kanban) keeps its name in an `.sr-only` `[data-chip-label]` so a pick can't overwrite the avatar.
+- _dropdown P4_: `actions.dropdown` (global). 69 core dropdowns in 47 Blade files migrated by script
+  (wrapper/trigger/menu classes diffed against the variant's base; remaining classes/attrs passed through), the
+  Blade-control-flow ones (guarding `@if`, `@php`, `@if/@else` triggers) by a second pass, the rest by hand (head
+  menu, Dashboard round buttons, widget filters, tag popovers, invite link, kanban view menu). Verified by
+  before/after DOM of every `.dropdown-toggle` parent on 21 pages: 214/305 byte-identical after normalising, the rest
+  only intended deltas — `type="button"` on button triggers, `href="javascript:void(0);"` on hx triggers,
+  `aria-hidden` on ⋮ icons, `onclick="event.stopPropagation()"` on keep-open panels (replaces the head menu's jQuery
+  binder and the user-invite panel's `noClickProp` jQuery binder), `viewDropDown` on
+  the to-do/calendar widget and roadmap timeframe filters (same right-alignment they already had). Empty wrappers
+  around a guarded menu (non-editors on canvas/idea cards, canvas filters with no boards) are no longer rendered,
+  and the `&nbsp;` spacer inside idea/blueprint card ⋮ menus is gone (aligns them with every other card).
+  `subjectSwitcher` composes `variant="subject"`; projectHub's client filter uses the same shape (`as="div"`).
+  Dashboard: the widget shell is one partial (`widgets::partials.widgetShell`) rendered by the dashboard and by
+  `Hxcontrollers\WidgetShell` when the widget manager turns a widget on — the JS string copy in
+  `Widgetcontroller.js` is gone (it also printed the untranslated, unescaped widget name), and the ⋮ handlers are
+  delegated, so a newly added widget's Hide/Resize work without a reload. Vestigial `data-toggle` removed from
+  `onboardingProgress` (×4) and `importProgress`; `dropdownPill` deleted (0 call-sites). **Deferred:** `loginInfo`
+  (plugin hook `afterUserinfoMenuOpen` sits inside the wrapper), `stopwatch` (htmx-swapped `li` with conditional
+  content), project checklist step popovers, `projectSelector`, Wiki icon picker, Files uppy JS-string menus, plugin
+  pages (P6).
+- _dropdown P4, review round (Marcel)_: the remaining **non-Bootstrap dropdowns** were found by inventorying JS
+  toggles (`.toggle()`, `hideOnLoad`, `.dropdown-menu` without a toggle) instead of only `dropdown-toggle`: the three
+  jQuery-toggled `.filterBar` panels (tickets filter — shared by kanban/list/roadmap/milestones —, search page,
+  timesheets list) are now `variant="filter" menu-as="div" keep-open` panels: same position as their neighbours
+  (they sat 10px lower), close on Escape/outside click. Enhanced selects work inside dropdown panels now (the SlimSelect
+  list stops click propagation when its select is inside a `.dropdown-menu`; the jQuery UI datepicker div does the same
+  globally) — the "selects inside dropdown panels stay native" rule is lifted. `loginInfo` (plugin hooks kept, dropdown
+  nested in `.userinfo`), `stopwatch` (`as="li"` with its hx attributes) and the project checklist steps converted too.
+  `ticketsController.toggleFilterBar` and three dead `noClickProp` binders removed (editUser's DID bind — keep-open
+  replaced it). CSS: list menus inset their items (8px menu padding + `--box-radius-small` items) so a hovered item no
+  longer pokes out of the rounded corners; `.btn-group > div.dropdown-menu` resets `white-space` (btn-group's nowrap
+  broke wrapping in panels); checkbox/radio rows in menus are flex rows. Still custom, with reasons: `projectSelector`
+  (its menu IS an HxController view swapped whole), Wiki icon picker (library markup), Files upload rows (built
+  client-side), global search results (an autocomplete listbox, not a menu). Also fixed on the way: Goalcanvas
+  `canvasComment` 500 (undefined `$id` since the Blade conversion); canvas author images round again (`.authorAvatar`).

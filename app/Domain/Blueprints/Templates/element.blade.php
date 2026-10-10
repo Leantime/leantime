@@ -23,26 +23,17 @@
             <div class="ticketBox" id="item_{{ $row['id'] }}">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="inlineDropDownContainer" style="float:right;">
+                        @if($login::userIsAtLeast($roles::$editor))
+                            <x-global::actions.dropdown style="float:right;">
+                                <li class="nav-header">{!! __('subtitles.edit') !!}</li>
+                                <li><a href="#/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $row['id'] }}"
+                                       data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
+                                <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $row['id'] }}"
+                                       class="delete"
+                                       data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
 
-                            @if($login::userIsAtLeast($roles::$editor))
-                                <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                </a>
-                            @endif
-
-                            @if($login::userIsAtLeast($roles::$editor))
-                                &nbsp;&nbsp;&nbsp;
-                                <ul class="dropdown-menu">
-                                    <li class="nav-header">{!! __('subtitles.edit') !!}</li>
-                                    <li><a href="#/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $row['id'] }}"
-                                           data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
-                                    <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $row['id'] }}"
-                                           class="delete"
-                                           data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
-                                </ul>
-                            @endif
-                        </div>
+                            </x-global::actions.dropdown>
+                        @endif
 
                         <h4><a href="#/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $row['id'] }}"
                                data="item_{{ $row['id'] }}">{{ $row['description'] }}</a></h4>

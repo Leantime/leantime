@@ -199,19 +199,21 @@ div.tagsinput span.tag
     font-weight:normal
 }
 
+/* Filter panels: an actions.dropdown panel menu (position, shadow and radius come from .dropdown-menu).
+   They open left-aligned under their button, unlike the right-aligned view/group-by menus — except in
+   a right-edge toolbar (.lt-tabs-actions, see tab-group.css), where every menu opens leftward. */
 .filterBar {
-
-    border:0px solid var(--main-border-color);
     padding:10px;
-    margin-bottom:5px;
     padding-top:5px;
-    margin-top: 10px;
-    background:var(--secondary-background);
-    border-radius:var(--box-radius);
-    z-index: 10;
-    position: absolute;
-    left: 0px;
-    box-shadow: var(--large-shadow);
+}
+
+.viewDropDown .dropdown-menu.filterBar {
+    left: 0;
+    right: auto;
+}
+
+.lt-tabs-actions .viewDropDown .dropdown-menu.filterBar {
+    right: 0;
 }
 
 .filterBar label {

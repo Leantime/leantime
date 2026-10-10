@@ -199,19 +199,15 @@
              spot from every other entity dialog and an odd resting place for the
              one irreversible action. --}}
         @if ($login::userIsAtLeast($roles::$editor) && $id != '')
-            <div class="inlineDropDownContainer gv-actions-menu">
-                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown" aria-label="{{ __('label.actions') }}">
-                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                </a>
-                <ul class="dropdown-menu">
-                    <li class="nav-header">{{ $canvasTypes[$canvasItem['box']]['title'] }}</li>
-                    <li>
-                        <a href="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete">
-                            <i class="fa fa-trash-can"></i> {{ __('links.delete') }}
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <x-global::actions.dropdown aria-label="{{ __('label.actions') }}" class="gv-actions-menu">
+                <li class="nav-header">{{ $canvasTypes[$canvasItem['box']]['title'] }}</li>
+                <li>
+                    <a href="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete">
+                        <i class="fa fa-trash-can"></i> {{ __('links.delete') }}
+                    </a>
+                </li>
+
+            </x-global::actions.dropdown>
         @endif
 
         {{-- Section headers use the SYSTEM modal recipe (h4.widgettitle

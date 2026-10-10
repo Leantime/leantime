@@ -23,25 +23,25 @@
             <div class="col-md-12">
                 <div class="pull-right">
 
-                    <div class="btn-group dropRight">
+                    @php
+                        $currentView = '';
+                        if ($roadmapView == 'Day') {
+                            $currentView = __('buttons.day');
+                        } elseif ($roadmapView == 'Week') {
+                            $currentView = __('buttons.week');
+                        } elseif ($roadmapView == 'Month') {
+                            $currentView = __('buttons.month');
+                        }
+                    @endphp
+                    <x-global::actions.dropdown variant="filter" menu-id="ganttTimeControl" class="dropRight">
+                        <x-slot:trigger>
+                            {!! __('buttons.timeframe') !!}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span>
+                        </x-slot:trigger>
+                        <li><a href="javascript:void(0);" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {!! __('buttons.day') !!}</a></li>
+                        <li><a href="javascript:void(0);" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{!! __('buttons.week') !!}</a></li>
+                        <li><a href="javascript:void(0);" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{!! __('buttons.month') !!}</a></li>
 
-                        @php
-                            $currentView = '';
-                            if ($roadmapView == 'Day') {
-                                $currentView = __('buttons.day');
-                            } elseif ($roadmapView == 'Week') {
-                                $currentView = __('buttons.week');
-                            } elseif ($roadmapView == 'Month') {
-                                $currentView = __('buttons.month');
-                            }
-                        @endphp
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">{!! __('buttons.timeframe') !!}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span></button>
-                        <ul class="dropdown-menu" id="ganttTimeControl">
-                           <li><a href="javascript:void(0);" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {!! __('buttons.day') !!}</a></li>
-                            <li><a href="javascript:void(0);" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{!! __('buttons.week') !!}</a></li>
-                            <li><a href="javascript:void(0);" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{!! __('buttons.month') !!}</a></li>
-                        </ul>
-                    </div>
+                    </x-global::actions.dropdown>
                 </div>
 
             </div>

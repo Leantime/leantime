@@ -79,15 +79,13 @@
          vertically centered — never floated inside the title block. --}}
     @if(count($wikis) > 0)
         <div class="pageheader-right">
-            <span class="dropdown dropdownWrapper headerEditDropdown">
-                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-                <ul class="dropdown-menu editCanvasDropdown">
-                    @if($login::userIsAtLeast($roles::$editor) && $currentWiki)
-                        <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{!! __('link.edit_wiki') !!}</a></li>
-                        <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_wiki') !!}</a></li>
-                    @endif
-                </ul>
-            </span>
+            <x-global::actions.dropdown variant="header-menu">
+                @if($login::userIsAtLeast($roles::$editor) && $currentWiki)
+                    <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{!! __('link.edit_wiki') !!}</a></li>
+                    <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_wiki') !!}</a></li>
+                @endif
+
+            </x-global::actions.dropdown>
         </div>
     @endif
 </div>

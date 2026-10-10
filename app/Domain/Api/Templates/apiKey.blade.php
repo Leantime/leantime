@@ -119,9 +119,6 @@
 @once
 @push('scripts')
 <script>
-    jQuery(".noClickProp.dropdown-menu").on("click", function(e) {
-        e.stopPropagation();
-    });
 
     function accordionToggle(id) {
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");

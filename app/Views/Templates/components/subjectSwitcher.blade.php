@@ -11,10 +11,10 @@
     href/onclick), so the switch behavior stays domain-specific while the
     chrome is shared.
 
-    Keeps the existing classes (.header-title-dropdown, .dropdown,
-    .dropdown-menu) so the established CSS (dropdowns.css) and Bootstrap
-    data-toggle behavior apply unchanged — migrating a consumer is a
-    zero-visual-change swap.
+    The dropdown itself is actions.dropdown (variant "subject"):
+    (span.dropdown > a.header-title-dropdown > ul.dropdown-menu), so the
+    established CSS (dropdowns.css) and Bootstrap data-toggle behavior apply
+    unchanged.
 
     Props:
       parent      string|null  Parent crumb label (e.g. "To-Dos"). Escaped by
@@ -47,13 +47,7 @@
         @endif
         <span class="subjectSwitcher-sep" aria-hidden="true">{{ $separator }}</span>
     @endif
-    <span class="dropdown dropdownWrapper">
-        <a href="javascript:void(0)" role="button" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ $current }}
-            <i class="fa fa-caret-down" aria-hidden="true"></i>
-        </a>
-        <ul class="dropdown-menu">
-            {{ $slot }}
-        </ul>
-    </span>
+    <x-global::actions.dropdown variant="subject" :label="e($current)">
+        {{ $slot }}
+    </x-global::actions.dropdown>
 </h1>

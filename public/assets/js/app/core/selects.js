@@ -104,6 +104,14 @@ leantime.selectController = (function () {
         try {
             var instance = new SlimSelect({ select: select, settings: settingsFor(select) });
             instances.set(select, instance);
+
+            // The option list is mounted on <body>, so inside a Bootstrap dropdown panel a pick would
+            // count as an outside click and close the panel. Keep those clicks to the list.
+            if (select.closest('.dropdown-menu')) {
+                instance.render.content.main.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                });
+            }
             select.setAttribute('data-lt-select-ready', 'true');
         } catch (error) {
             // A select that fails to enhance still works as a native select.

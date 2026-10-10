@@ -46,107 +46,104 @@
 
         @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
-        <div class="btn-group left">
-            <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.group_by') }}"
-                    data-toggle="dropdown"><span class="fa-solid fa-diagram-project"></span></button>
-            <ul class="dropdown-menu pull-right">
-                <li class="nav-header">{!! __("text.group_by") !!}</li>
-                <li>
-                    <span class="radio">
-                        <input type="radio" name="groupBy"
-                               @if($groupBy == "time") checked='checked' @endif
-                               value="time" id="groupByDate"
-                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                               hx-trigger="click"
-                               hx-target="#yourToDoContainer"
-                               hx-swap="outerHTML"
-                               hx-indicator="#todoWidgetLoader"
-                               style="margin-top:4px;"
-                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
-                        />
-                        <label for="groupByDate">{!! __("label.dates") !!}</label>
-                    </span>
-                </li>
-                <li>
-                    <span class="radio">
-                        <input type="radio"
-                               name="groupBy"
-                               @if($groupBy == "project") checked='checked' @endif
-                               value="project" id="groupByProject"
-                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                               hx-trigger="click"
-                               hx-target="#yourToDoContainer"
-                               hx-swap="outerHTML"
-                               hx-indicator="#todoWidgetLoader"
-                               style="margin-top:4px;"
-                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
-                        />
-                        <label for="groupByProject">{!! __("label.project") !!}</label>
-                    </span>
-                </li>
-                <li>
-                    <span class="radio">
-                        <input type="radio"
-                               name="groupBy"
-                               @if($groupBy == "priority") checked='checked' @endif
-                               value="priority" id="groupByPriority"
-                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                               hx-trigger="click"
-                               hx-target="#yourToDoContainer"
-                               hx-swap="outerHTML"
-                               hx-indicator="#todoWidgetLoader"
-                               style="margin-top:4px;"
-                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
-                        />
-                        <label for="groupByPriority">{!! __("label.priority") !!}</label>
-                    </span>
-                </li>
-            </ul>
-        </div>
-        <div class="btn-group left ">
-            <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-toggle="dropdown">
+        <x-global::actions.dropdown variant="filter" menu-class="pull-right" class="left">
+            <x-slot:trigger class="btn-link btn-round-icon f-right" data-tippy-content="{{ __('text.group_by') }}"><span class="fa-solid fa-diagram-project"></span></x-slot:trigger>
+            <li class="nav-header">{!! __("text.group_by") !!}</li>
+            <li>
+                <span class="radio">
+                    <input type="radio" name="groupBy"
+                           @if($groupBy == "time") checked='checked' @endif
+                           value="time" id="groupByDate"
+                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                           hx-trigger="click"
+                           hx-target="#yourToDoContainer"
+                           hx-swap="outerHTML"
+                           hx-indicator="#todoWidgetLoader"
+                           style="margin-top:4px;"
+                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
+                    />
+                    <label for="groupByDate">{!! __("label.dates") !!}</label>
+                </span>
+            </li>
+            <li>
+                <span class="radio">
+                    <input type="radio"
+                           name="groupBy"
+                           @if($groupBy == "project") checked='checked' @endif
+                           value="project" id="groupByProject"
+                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                           hx-trigger="click"
+                           hx-target="#yourToDoContainer"
+                           hx-swap="outerHTML"
+                           hx-indicator="#todoWidgetLoader"
+                           style="margin-top:4px;"
+                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
+                    />
+                    <label for="groupByProject">{!! __("label.project") !!}</label>
+                </span>
+            </li>
+            <li>
+                <span class="radio">
+                    <input type="radio"
+                           name="groupBy"
+                           @if($groupBy == "priority") checked='checked' @endif
+                           value="priority" id="groupByPriority"
+                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                           hx-trigger="click"
+                           hx-target="#yourToDoContainer"
+                           hx-swap="outerHTML"
+                           hx-indicator="#todoWidgetLoader"
+                           style="margin-top:4px;"
+                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
+                    />
+                    <label for="groupByPriority">{!! __("label.priority") !!}</label>
+                </span>
+            </li>
+
+        </x-global::actions.dropdown>
+        <x-global::actions.dropdown variant="filter" menu-class="pull-right" class="left">
+            <x-slot:trigger class="btn-link btn-round-icon f-right">
                 <i class="fas fa-filter"></i>
                 @if($projectFilter != '')
                     <span class='badge badge-primary'>1</span>
                 @endif
-            </button>
-            <ul class="dropdown-menu pull-right">
-                <li class="nav-header">{!! __("text.filter") !!}</li>
-                <li
-                    @if($projectFilter == '')
-                        class='active'
-                    @endif
-                ><a href=""
-                    hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                    hx-trigger="click"
-                    hx-target="#yourToDoContainer"
-                    hx-swap="outerHTML"
-                    hx-indicator="#todoWidgetLoader"
-                    hx-vals='{"projectFilter": "all", "groupBy": "{{ $groupBy }}" }'
-
-                    >{{ __('labels.all_projects') }}
-
-                    </a></li>
-
-                @if($allAssignedprojects)
-                    @foreach($allAssignedprojects as $project)
-                        <li
-                            @if($projectFilter == $project['id'])
-                                class='active'
-                            @endif
-                        ><a href=""
-                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                            hx-trigger="click"
-                            hx-target="#yourToDoContainer"
-                            hx-swap="outerHTML"
-                            hx-indicator="#todoWidgetLoader"
-                            hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
-                            >{{ $project['name'] }}</a></li>
-                    @endforeach
+            </x-slot:trigger>
+            <li class="nav-header">{!! __("text.filter") !!}</li>
+            <li
+                @if($projectFilter == '')
+                    class='active'
                 @endif
+            ><a href=""
+                hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                hx-trigger="click"
+                hx-target="#yourToDoContainer"
+                hx-swap="outerHTML"
+                hx-indicator="#todoWidgetLoader"
+                hx-vals='{"projectFilter": "all", "groupBy": "{{ $groupBy }}" }'
 
-            </ul>
-        </div>
+                >{{ __('labels.all_projects') }}
+
+                </a></li>
+
+            @if($allAssignedprojects)
+                @foreach($allAssignedprojects as $project)
+                    <li
+                        @if($projectFilter == $project['id'])
+                            class='active'
+                        @endif
+                    ><a href=""
+                        hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                        hx-trigger="click"
+                        hx-target="#yourToDoContainer"
+                        hx-swap="outerHTML"
+                        hx-indicator="#todoWidgetLoader"
+                        hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
+                        >{{ $project['name'] }}</a></li>
+                @endforeach
+            @endif
+
+
+        </x-global::actions.dropdown>
 
         @dispatchEvent("afterTodoWidgetGroupByDropdown")
 

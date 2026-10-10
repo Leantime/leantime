@@ -6,43 +6,39 @@
 @dispatchEvent('beforeCalendar')
 
 
-<div class="clear minCalendar" style="position:absolute; top:10px; right:35px;">
+<x-global::actions.dropdown variant="filter" menu-class="pull-right" class="clear minCalendar" style="position:absolute; top:10px; right:35px;">
+    <x-slot:trigger class="btn-link btn-round-icon f-right" data-tippy-content="{{ __('text.calendar_view') }}"><i class="fa-solid fa-calendar-week"></i></x-slot:trigger>
+    <li>
+        <a class="fc-agendaDay-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
+           data-value="multiMonthOneMonth"
+           @if($tpl->getToggleState("dashboardCalendarView") == 'multiMonthOneMonth') selected='selected' @endif>{{ __('buttons.month', 'Month') }}</a>
+    </li>
+    <li>
+        <a class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
+           data-value="timeGridWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridWeek') selected='selected' @endif>{{ __('buttons.week', 'Week') }}</a>
+    </li>
+    <li>
+        <a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
+           data-value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay' || empty($tpl->getToggleState("dashboardCalendarView")) ) selected='selected' @endif>{{ __('buttons.day', 'Day') }}</a>
+    </li>
+    <li><a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
+           data-value="listWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'listWeek') selected='selected' @endif>{{ __('label.list', 'List') }}</a></li>
+    <li class="divider"></li>
+    {{-- Per-user preference: hide To-Dos in a done status (#3236). Re-renders this widget. --}}
+    <li>
+        <a href="javascript:void(0);"
+           hx-post="{{ BASE_URL }}/widgets/calendar/toggleDone"
+           hx-target="#calendar"
+           hx-swap="innerHTML">
+            @if ($hideDoneTickets ?? false)
+                <i class="fa-regular fa-eye"></i> {{ __('text.show_done_todos') }}
+            @else
+                <i class="fa-regular fa-eye-slash"></i> {{ __('text.hide_done_todos') }}
+            @endif
+        </a>
+    </li>
 
-    <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.calendar_view') }}"
-            data-toggle="dropdown"> <i class="fa-solid fa-calendar-week"></i></button>
-    <ul class="dropdown-menu pull-right">
-        <li>
-            <a class="fc-agendaDay-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
-               data-value="multiMonthOneMonth"
-               @if($tpl->getToggleState("dashboardCalendarView") == 'multiMonthOneMonth') selected='selected' @endif>{{ __('buttons.month', 'Month') }}</a>
-        </li>
-        <li>
-            <a class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
-               data-value="timeGridWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridWeek') selected='selected' @endif>{{ __('buttons.week', 'Week') }}</a>
-        </li>
-        <li>
-            <a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
-               data-value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay' || empty($tpl->getToggleState("dashboardCalendarView")) ) selected='selected' @endif>{{ __('buttons.day', 'Day') }}</a>
-        </li>
-        <li><a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
-               data-value="listWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'listWeek') selected='selected' @endif>{{ __('label.list', 'List') }}</a></li>
-        <li class="divider"></li>
-        {{-- Per-user preference: hide To-Dos in a done status (#3236). Re-renders this widget. --}}
-        <li>
-            <a href="javascript:void(0);"
-               hx-post="{{ BASE_URL }}/widgets/calendar/toggleDone"
-               hx-target="#calendar"
-               hx-swap="innerHTML">
-                @if ($hideDoneTickets ?? false)
-                    <i class="fa-regular fa-eye"></i> {{ __('text.show_done_todos') }}
-                @else
-                    <i class="fa-regular fa-eye-slash"></i> {{ __('text.hide_done_todos') }}
-                @endif
-            </a>
-        </li>
-    </ul>
-
-</div>
+</x-global::actions.dropdown>
 
 <div class="tw-h-full minCalendar">
     <div class="clear"></div>

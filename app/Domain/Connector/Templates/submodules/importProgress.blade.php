@@ -36,7 +36,7 @@
             @endphp
 
         <div class="step {{ $stepClass }}" style="left: {{ ($i / $totalSteps * 100) - $halfStep }}%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
+            <a href="javascript:void(0)">
                 <span class="innerCircle"></span>
                 <span class="title">
                     @if ($provider->stepDetails[$currentStep]['position'] > $provider->stepDetails[$step]['position'])
