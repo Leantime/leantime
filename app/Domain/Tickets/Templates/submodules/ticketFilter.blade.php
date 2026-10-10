@@ -25,47 +25,12 @@
     @endunless
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
-        {{-- Kept as a raw <a> (not forms.button): this button is whitespace-sensitive — the
-             </a>@if adjacency below avoids an inline-block gap, and the component would reintroduce
-             surrounding whitespace. Migrate once the component guarantees whitespace-tight output. --}}
-        <a class="btn btn-link" onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
-           data-tippy-content="{{ __('popover.filter') }}">
-            <i class="fas fa-filter"></i> Filter{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
-            {{-- Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance --}}
-        </a>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-global::actions.dropdown variant="filter">
-            <x-slot:trigger class="btn-link" data-tippy-content="{{ __('popover.group_by') }}">
-                <span class="fa-solid fa-diagram-project"></span> Group By
-                @if ($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
-                    <span class="badge badge-primary">1</span>
-                @endif
+        {{-- keep-open: picking filters inside the panel must not close it. Keep the closing tag right
+             next to the next dropdown: whitespace between them adds an inline-block gap. --}}
+        <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" menu-style="width:250px;" keep-open>
+            <x-slot:trigger class="btn-link" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
+                <i class="fas fa-filter"></i> Filter{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
             </x-slot:trigger>
-            @foreach ($groupBy as $input)
-                @if ($input['field'] === 'status' && $isKanbanView)
-                    @continue
-                @endif
-                {{-- "Group by project" only makes sense on a multi-project (program) board. --}}
-                @if ($input['field'] === 'projectId' && ! $showProjectFilter)
-                    @continue
-                @endif
-                <li>
-                    <span class="radio">
-                        <input
-                            type="radio"
-                            name="groupBy"
-                            @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
-                            value="{{ $input['field'] }}"
-                            id="{{ $input['id'] }}"
-                            onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $searchFormUrl }}')"
-                        />
-                        <label for="{{ $input['id'] }}">{!! __("label.{$input['label']}") !!}</label>
-                    </span>
-                </li>
-            @endforeach
-
-        </x-global::actions.dropdown>
-            @endif
-        <div class="filterBar hideOnLoad" style="width:250px;">
-
             <div class="row-fluid">
 
                 @dispatchEvent('filters.beforeFirstBarField')
@@ -176,7 +141,39 @@
 
             </div>
 
-        </div>
+        </x-global::actions.dropdown>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-global::actions.dropdown variant="filter">
+            <x-slot:trigger class="btn-link" data-tippy-content="{{ __('popover.group_by') }}">
+                <span class="fa-solid fa-diagram-project"></span> Group By
+                @if ($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
+                    <span class="badge badge-primary">1</span>
+                @endif
+            </x-slot:trigger>
+            @foreach ($groupBy as $input)
+                @if ($input['field'] === 'status' && $isKanbanView)
+                    @continue
+                @endif
+                {{-- "Group by project" only makes sense on a multi-project (program) board. --}}
+                @if ($input['field'] === 'projectId' && ! $showProjectFilter)
+                    @continue
+                @endif
+                <li>
+                    <span class="radio">
+                        <input
+                            type="radio"
+                            name="groupBy"
+                            @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
+                            value="{{ $input['field'] }}"
+                            id="{{ $input['id'] }}"
+                            onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $searchFormUrl }}')"
+                        />
+                        <label for="{{ $input['id'] }}">{!! __("label.{$input['label']}") !!}</label>
+                    </span>
+                </li>
+            @endforeach
+
+        </x-global::actions.dropdown>
+            @endif
+
 
         @if (isset($taskToggle) && $taskToggle === true)
             <div class="" style="float:right; margin-left:5px; ">

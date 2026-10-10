@@ -226,11 +226,6 @@ leantime.ticketsController = (function () {
     };
 
 
-    var toggleFilterBar = function () {
-        jQuery(".filterBar").toggle();
-
-    };
-
     var initGanttChart = function (tasks, viewMode, readonly) {
 
         function htmlEntities(str)
@@ -2014,7 +2009,6 @@ leantime.ticketsController = (function () {
 
     // Make public what you want to have public, everything else is private
     return {
-        toggleFilterBar: toggleFilterBar,
 
         initGanttChart:initGanttChart,
         updateRemainingHours:updateRemainingHours,

@@ -217,9 +217,6 @@
 @push('scripts')
 <script>
 
-    jQuery(".noClickProp.dropdown-menu").on("click", function(e) {
-        e.stopPropagation();
-    });
 
     function accordionToggle(id) {
 

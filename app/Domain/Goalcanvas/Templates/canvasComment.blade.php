@@ -2,14 +2,8 @@
 @section('content')
 
 @php
-
-/**
-* canvasComment.inc template - Generic template for comments
-*
-*/
-
-
-
+    // An unsaved item ('id' => '') has no discussion yet.
+    $id = $canvasItem['id'] ?? '';
 @endphp
 
 <script type="text/javascript">

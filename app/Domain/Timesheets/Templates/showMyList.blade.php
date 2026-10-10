@@ -21,42 +21,40 @@
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="form" name="form">
-            <div class="filterWrapper tw-relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left">{!! __('links.filter') !!} (1)</a>
-                <div class="filterBar" style="display:none; top:30px;">
+            <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" keep-open class="filterWrapper pull-left">
+                <x-slot:trigger class="btn-default">{!! __('links.filter') !!} (1)</x-slot:trigger>
 
-                    <div class="filterBoxLeft">
-                        <label for="dateFrom">{!! __('label.date_from') !!} {!! __('label.date_to') !!}</label>
-                        <input type="text"
-                               id="dateFrom"
-                               class="dateFrom"
-                               name="dateFrom"
-                               value="{{ $dateFrom->formatDateForUser() }}"
-                               style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
-                        <input type="text"
-                               id="dateTo"
-                               class="dateTo"
-                               name="dateTo"
-                               value="{{ $dateTo->formatDateForUser() }}"
-                               style="margin-bottom:10px; width:90px" />
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label for="kind">{!! __('label.type') !!}</label>
-                        <x-global::forms.select id="kind" name="kind" onchange="submit();">
-                            <option value="all">{!! __('label.all_types') !!}</option>
-                            @foreach($kind as $key => $row)
-                                <option value="{{ $key }}" @selected($key == $actKind)>{!! __($row) !!}</option>
-                            @endforeach
-                        </x-global::forms.select>
-                    </div>
-                    <div class="filterBoxLeft">
-                        <label>&nbsp;</label>
-                        <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
-                    </div>
-                    <div class="clearall"></div>
+                <div class="filterBoxLeft">
+                    <label for="dateFrom">{!! __('label.date_from') !!} {!! __('label.date_to') !!}</label>
+                    <input type="text"
+                           id="dateFrom"
+                           class="dateFrom"
+                           name="dateFrom"
+                           value="{{ $dateFrom->formatDateForUser() }}"
+                           style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
+                    <input type="text"
+                           id="dateTo"
+                           class="dateTo"
+                           name="dateTo"
+                           value="{{ $dateTo->formatDateForUser() }}"
+                           style="margin-bottom:10px; width:90px" />
                 </div>
-            </div>
+
+                <div class="filterBoxLeft">
+                    <label for="kind">{!! __('label.type') !!}</label>
+                    <x-global::forms.select id="kind" name="kind" onchange="submit();">
+                        <option value="all">{!! __('label.all_types') !!}</option>
+                        @foreach($kind as $key => $row)
+                            <option value="{{ $key }}" @selected($key == $actKind)>{!! __($row) !!}</option>
+                        @endforeach
+                    </x-global::forms.select>
+                </div>
+                <div class="filterBoxLeft">
+                    <label>&nbsp;</label>
+                    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
+                </div>
+                <div class="clearall"></div>
+            </x-global::actions.dropdown>
             <div class="pull-right">
                 <x-global::actions.dropdown variant="filter">
                     <x-slot:trigger>{!! __('links.list_view') !!} {!! __('links.view') !!}</x-slot:trigger>

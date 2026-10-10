@@ -23,8 +23,8 @@
             </div>
 
             @foreach ($progressSteps as $step)
-                <div class="step {{ $step['stepType'] }}" style="left: {{ $step['positionLeft'] }}%;">
-                    <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle" data-tippy-content="{{ __($step['description']) }}">
+                <x-global::actions.dropdown variant="panel" menu-as="ul" class="step {{ $step['stepType'] }}" style="left: {{ $step['positionLeft'] }}%;">
+                    <x-slot:trigger data-tippy-content="{{ __($step['description']) }}">
                         <span class="innerCircle"></span>
                         <span class="title">
                             @if ($step['status'] == 'done')
@@ -35,42 +35,40 @@
                                 {{ __("text.step_".$loop->index + 1) }}: {{ __($step['title']) }}
                             <i class="fa fa-caret-down" aria-hidden="true"></i>
                         </span>
-                    </a>
-                    <ul class="dropdown-menu">
+                    </x-slot:trigger>
+                    @foreach ($step['tasks'] as $key => $task)
+                        <li @if ($task['status'] == 'done') class="done" @endif>
+                            <input
+                                type="checkbox"
+                                name="{{ $key }}"
+                                id="progress_{{ $key }}"
+                                hx-patch="{{ BASE_URL }}/hx/projects/checklist/update-subtask/"
+                                hx-target="#progressForm"
+                                hx-swap="outerHTML"
+                                @if ($task['status'] == 'done') checked @endif
+                                @if (! in_array($step['stepType'], ['complete', 'current']))
+                                    disabled
 
-                        @foreach ($step['tasks'] as $key => $task)
-                            <li @if ($task['status'] == 'done') class="done" @endif>
-                                <input
-                                    type="checkbox"
-                                    name="{{ $key }}"
-                                    id="progress_{{ $key }}"
-                                    hx-patch="{{ BASE_URL }}/hx/projects/checklist/update-subtask/"
-                                    hx-target="#progressForm"
-                                    hx-swap="outerHTML"
-                                    @if ($task['status'] == 'done') checked @endif
-                                    @if (! in_array($step['stepType'], ['complete', 'current']))
-                                        disabled
+                                @endif
+                            />
+                            <label for="progress_{{ $key }}"
+                                   @if (! in_array($step['stepType'], ['complete', 'current']))
+                                       data-tippy-content="Finish the previous steps first"
 
-                                    @endif
-                                />
-                                <label for="progress_{{ $key }}"
-                                       @if (! in_array($step['stepType'], ['complete', 'current']))
-                                           data-tippy-content="Finish the previous steps first"
+                                   @endif
 
-                                       @endif
-
-                                >{{ __($task['title'] ?? '') }}</label>
-                                <span class="clearall"></span>
-                                <span class="taskDescription">
-                                {{ __($task['description'] ?? '') }}<br />
-                                <a href="{{ $task['link'] ?? '#' }}"><i class="fa fa-external-link"></i> Take me there</a>
-                                </span>
+                            >{{ __($task['title'] ?? '') }}</label>
+                            <span class="clearall"></span>
+                            <span class="taskDescription">
+                            {{ __($task['description'] ?? '') }}<br />
+                            <a href="{{ $task['link'] ?? '#' }}"><i class="fa fa-external-link"></i> Take me there</a>
+                            </span>
 
 
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
+                        </li>
+                    @endforeach
+
+                </x-global::actions.dropdown>
             @endforeach
         </div>
     </div>

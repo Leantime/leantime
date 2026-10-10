@@ -87,6 +87,14 @@ jQuery(document).ready(function () {
 
     leantime.initTooltips();
 
+    // The datepicker calendar floats on <body>: picking a date inside a dropdown panel (filters)
+    // must not count as an outside click that closes the panel.
+    if (jQuery.datepicker && jQuery.datepicker.dpDiv) {
+        jQuery.datepicker.dpDiv.on('click', function (event) {
+            event.stopPropagation();
+        });
+    }
+
     if (jQuery('.login-alert .alert').text() !== '') {
         jQuery('.login-alert').fadeIn();
     }

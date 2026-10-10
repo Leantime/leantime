@@ -102,11 +102,12 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | Component | Tag | Cat | Status | Notes |
 |---|---|---|---|---|
 | checkbox | `forms.checkbox` | forms | ⬜ | |
-| radio | `forms.radio` | forms | ⬜ | |
-| toggle | `forms.toggle` | forms | ⬜ | |
+| radio | `forms.radio` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Two markups today: `span.radio > input + label` (menus/panels — laid out as a flex row in dropdowns.css since P4) and Bootstrap 2 `label.radio`/float rows in forms. Target: one `forms.radio` (+ group) with the label next to the input everywhere. |
+| checkbox | `forms.checkbox` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Same split as radio (`span.checkbox` in menus, Bootstrap 2 float + `margin-left:-20px` elsewhere — the kanban "Cards" menu showed the misalignment). |
+| toggle | `forms.toggle` | forms | ⬜ | `input.toggle` switches (e.g. Show Tasks, task-type toggles) |
 | button-group | `forms.button-group` | forms | ⬜ | |
 | badge | `elements.badge` | elements | ⬜ | flat `badge` exists on master — migrate to category |
-| avatar | `elements.avatar` | elements | ⬜ | flat `avatar` exists on master |
+| avatar | `elements.avatar` | elements | ⬜ | **TODO (Marcel, 2026-10-10): one round avatar for every person image.** Today: flat `avatar` (initials only, 1 call-site), `elements.author-avatar` (canvas/goal/idea author — round only via `.authorAvatar` CSS), chip avatars (`tickets::chip-user`), raw `<img …/api/users?profileImage=…>` across headMenu/comments/notifications/cards. Target: `elements.avatar` (`userId`, `name` → tooltip/alt, `size` xs–xl, image with initials fallback, always round); `author-avatar` and the chip toggles compose it. |
 | accordion | `elements.accordion` | elements | ⬜ | flat `accordion` exists on master |
 | table | `elements.table` | elements | ⬜ | DataTables-coupled; class-backed (`Table.php`) |
 | empty-state | `elements.empty-state` | elements | ⬜ | wraps `undrawSvg` |
@@ -401,9 +402,9 @@ Port recipe (P5): create `X.blade.php` and delete `X.tpl.php` in the same commit
 `__()`, `echo "<li…"` → `@foreach`; keep inline scripts for P6 to clean. Both attribute gotchas above apply.
 
 ### Defer rubric (stays raw)
-Selects inside a Bootstrap dropdown panel (`.dropdown-menu`) stay **native** (no `enhanced`): the enhanced
-list mounts on `<body>`, so a pick is an outside click and Bootstrap closes the panel (RecurringTasks'
-recurrence form is the live example).
+~~Selects inside a Bootstrap dropdown panel stay native~~ — lifted in P4: `core/selects.js` stops click
+propagation on the body-mounted list of any select inside a `.dropdown-menu`, so enhanced selects work in
+panels (the tickets filter panel uses them).
 Selects with inline handlers beyond `submit()`/`location.href`; option lists built by PHP concat or
 `sprintf` over a `dispatchTplFilter` format (Timesheets `showMy` is a plugin extension point — migrate the
 shell only); radio-item menus (raw slot); `<?php echo` in attributes (modernize first); JS-string menus.
@@ -592,7 +593,7 @@ one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `
   before/after DOM of every `.dropdown-toggle` parent on 21 pages: 214/305 byte-identical after normalising, the rest
   only intended deltas — `type="button"` on button triggers, `href="javascript:void(0);"` on hx triggers,
   `aria-hidden` on ⋮ icons, `onclick="event.stopPropagation()"` on keep-open panels (replaces the head menu's jQuery
-  binder; the user-invite panel's `noClickProp` never had a handler, now it stays open as intended), `viewDropDown` on
+  binder and the user-invite panel's `noClickProp` jQuery binder), `viewDropDown` on
   the to-do/calendar widget and roadmap timeframe filters (same right-alignment they already had). Empty wrappers
   around a guarded menu (non-editors on canvas/idea cards, canvas filters with no boards) are no longer rendered,
   and the `&nbsp;` spacer inside idea/blueprint card ⋮ menus is gone (aligns them with every other card).
@@ -605,3 +606,18 @@ one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `
   (plugin hook `afterUserinfoMenuOpen` sits inside the wrapper), `stopwatch` (htmx-swapped `li` with conditional
   content), project checklist step popovers, `projectSelector`, Wiki icon picker, Files uppy JS-string menus, plugin
   pages (P6).
+- _dropdown P4, review round (Marcel)_: the remaining **non-Bootstrap dropdowns** were found by inventorying JS
+  toggles (`.toggle()`, `hideOnLoad`, `.dropdown-menu` without a toggle) instead of only `dropdown-toggle`: the three
+  jQuery-toggled `.filterBar` panels (tickets filter — shared by kanban/list/roadmap/milestones —, search page,
+  timesheets list) are now `variant="filter" menu-as="div" keep-open` panels: same position as their neighbours
+  (they sat 10px lower), close on Escape/outside click. Enhanced selects work inside dropdown panels now (the SlimSelect
+  list stops click propagation when its select is inside a `.dropdown-menu`; the jQuery UI datepicker div does the same
+  globally) — the "selects inside dropdown panels stay native" rule is lifted. `loginInfo` (plugin hooks kept, dropdown
+  nested in `.userinfo`), `stopwatch` (`as="li"` with its hx attributes) and the project checklist steps converted too.
+  `ticketsController.toggleFilterBar` and three dead `noClickProp` binders removed (editUser's DID bind — keep-open
+  replaced it). CSS: list menus inset their items (8px menu padding + `--box-radius-small` items) so a hovered item no
+  longer pokes out of the rounded corners; `.btn-group > div.dropdown-menu` resets `white-space` (btn-group's nowrap
+  broke wrapping in panels); checkbox/radio rows in menus are flex rows. Still custom, with reasons: `projectSelector`
+  (its menu IS an HxController view swapped whole), Wiki icon picker (library markup), Files upload rows (built
+  client-side), global search results (an autocomplete listbox, not a menu). Also fixed on the way: Goalcanvas
+  `canvasComment` 500 (undefined `$id` since the Blade conversion); canvas author images round again (`.authorAvatar`).
