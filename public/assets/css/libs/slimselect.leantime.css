@@ -56,6 +56,12 @@
     margin: 0;
 }
 
+/* The caret: a fixed 12px box (SlimSelect lets it shrink, which scales the chevron down and thins its
+   stroke). Same size and spot as the native select's caret (forms.css --select-caret). */
+.ss-main .ss-arrow {
+    flex: 0 0 12px;
+}
+
 /* Multi-select chips: the same pill as the tag input. */
 .ss-main .ss-values .ss-value {
     background-color: var(--accent1);
