@@ -43,8 +43,14 @@
     margin-bottom: 5px;
 }
 
-.ss-main:focus {
+/* Focus ring like a native select / text input: on any focus (mouse too — SlimSelect's control is a div,
+   so a click doesn't count as :focus-visible) and while its list is open. */
+.ss-main:focus,
+.ss-main.ss-open-below,
+.ss-main.ss-open-above {
     box-shadow: var(--input-shadow);
+    outline: 2px solid var(--focus-ring-color, var(--accent1));
+    outline-offset: 2px;
 }
 
 .ss-main .ss-values .ss-placeholder {
@@ -81,6 +87,28 @@
 
 .ss-main .ss-values .ss-value .ss-value-delete svg path {
     stroke: var(--accent1-color);
+}
+
+/* The open list is a separate panel (own shadow + rounded corners), not attached to the control, so the
+   control keeps its full radius when open — SlimSelect squares off the side the list attaches to. */
+.ss-main.ss-open-below,
+.ss-main.ss-open-above {
+    border-radius: var(--ss-border-radius);
+}
+
+.ss-content.ss-open-below,
+.ss-content.ss-open-above {
+    border-radius: var(--box-radius-small);
+}
+
+/* A 4px gap between control and list. SlimSelect positions the list with an inline margin (it overlaps
+   the control by 1px), so the gap is a transform on the open state, which it already animates. */
+.ss-content.ss-open-below {
+    transform: translateY(5px);
+}
+
+.ss-content.ss-open-above {
+    transform: translateY(-5px);
 }
 
 /* Open list: like .dropdown-menu. */

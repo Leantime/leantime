@@ -147,103 +147,11 @@
                                     </div>
                                     <div class="col-md-8 tw-mt-[3px]">
                                         <div class="right">
-                                            <div class="dropdown ticketDropdown effortDropdown show">
-                                                <a
-                                                    class="dropdown-toggle f-left label-default effort"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="effortDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">
-                                                     {{ $row['storypoints'] != '' && $row['storypoints'] > 0
-                                                            ? ($efforts[''.$row['storypoints'].''] ?? $row['storypoints'])
-                                                            : __('label.story_points_unkown')
-                                                        }}
-                                                </span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                            <x-tickets::chip-effort :ticket-id="$row['id']" :storypoints="$row['storypoints']" :efforts="$efforts" />
 
-                                                <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">{{ __('dropdown.how_big_todo') }}</li>
-                                                    @foreach ($efforts as $effortKey => $effortValue)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0)"
-                                                                data-value="{{ $row['id'] }}_{{ $effortKey}}"
-                                                                id="ticketEffortChange_{{ $row['id'] . $effortKey }}"
-                                                            >{{ $effortValue }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                            <x-tickets::chip-milestone :ticket-id="$row['id']" :milestone-id="$row['milestoneid']" :headline="$row['milestoneHeadline'] ?? ''" :color="$row['milestoneColor'] ?? ''" :milestones="$milestones" />
 
-                                            <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                                <a
-                                                    style="background-color:{{ __($row['milestoneColor']) }}"
-                                                    class="dropdown-toggle f-left label-default milestone"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="milestoneDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">
-                                                    {{ $row['milestoneid'] != '' && $row['milestoneid'] != 0
-                                                        ? $row['milestoneHeadline']
-                                                        : __('label.no_milestone')
-                                                    }}
-                                                </span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
-
-                                                <ul class="dropdown-menu" aria-labeledby="milestoneDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
-                                                    <li class="dropdown-item">
-                                                        <a
-                                                            href="javascript:void(0);"
-                                                            data-label="{{ __('label.no_milestone') }}"
-                                                            data-value="{{ $row['id'] }}_0_#b0b0b0"
-                                                            class="tw-bg-[#b0b0b0]"
-                                                        >{{ __('label.no_milestone') }}</a>
-                                                    </li>
-                                                    @foreach ($milestones as $milestone)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0);"
-                                                                data-label="{{ $milestone->headline }}"
-                                                                data-value="{{ $row['id'] }}_{{ $milestone->id }}_{{ $milestone->tags }}"
-                                                                id="ticketMilestoneChange_{{ $row['id'] . $milestone->id }}"
-                                                                style="background-color:{{ $milestone->tags }}"
-                                                            >{{ $milestone->headline }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-
-                                            <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                                <a
-                                                    class="dropdown-toggle f-left status {{ $statusLabels[$row['status']]['class'] }}"
-                                                    href="javascript:void(0);"
-                                                    role="button"
-                                                    id="statusDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                ><span class="text">{{ $statusLabels[$row['status']]['name'] }}</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
-
-                                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
-                                                    @foreach ($statusLabels as $key => $label)
-                                                        <li class="dropdown-item">
-                                                            <a
-                                                                href="javascript:void(0);"
-                                                                class="{{ $label['class'] }}"
-                                                                data-label="{{ $label['name'] }}"
-                                                                data-value="{{ $row['id'] }}_{{ $key }}_{{ $label['class'] }}"
-                                                                id="ticketStatusChange{{ $row['id'] . $key }}"
-                                                            >{{ $label['name'] }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                            <x-tickets::chip-status :ticket-id="$row['id']" :status="$row['status']" :labels="$statusLabels" />
                                         </div>
                                     </div>
                                 </div>
@@ -542,9 +450,6 @@
 
         @if ($login::userIsAtLeast($roles::$editor))
             leantime.dashboardController.prepareHiddenDueDate();
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initMilestoneDropdown();
-            leantime.ticketsController.initStatusDropdown();
             leantime.usersController.initUserEditModal();
         @else
             leantime.authController.makeInputReadonly(".maincontentinner");

@@ -108,42 +108,6 @@ class MyToDos extends HtmxController
     }
 
     /**
-     * Update task status via HTMX.
-     */
-    public function updateStatus()
-    {
-        $params = $this->incomingRequest->request->all();
-
-        if (isset($params['id']) && isset($params['status'])) {
-            $result = $this->patchTask($params['id'], ['status' => $params['status']]);
-
-            if ($result) {
-                $this->tpl->setNotification($this->language->__('short_notifications.status_updated'), 'success');
-            } else {
-                $this->tpl->setNotification($this->language->__('short_notifications.status_update_error'), 'error');
-            }
-        }
-    }
-
-    /**
-     * Update task milestone via HTMX.
-     */
-    public function updateMilestone()
-    {
-        $params = $this->incomingRequest->request->all();
-
-        if (isset($params['id']) && isset($params['milestoneId'])) {
-            $result = $this->patchTask($params['id'], ['milestoneid' => $params['milestoneId']]);
-
-            if ($result) {
-                $this->tpl->setNotification($this->language->__('short_notifications.milestone_updated'), 'success');
-            } else {
-                $this->tpl->setNotification($this->language->__('short_notifications.milestone_update_error'), 'error');
-            }
-        }
-    }
-
-    /**
      * Update task due date via HTMX.
      */
     public function updateDueDate()

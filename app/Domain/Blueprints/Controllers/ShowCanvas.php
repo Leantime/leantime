@@ -342,6 +342,7 @@ class ShowCanvas
         $this->tpl->assign('filter', $filter);
         $this->tpl->assign('currentCanvas', $currentCanvasId);
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
+        $this->tpl->assign('canvasType', $this->template->getDatabaseType());
         $this->tpl->assign('template', $this->template);
         $this->tpl->assign('canvasIcon', $this->template->icon);
         $this->tpl->assign('canvasTypes', $this->blueprintsService->getTranslatedBoxes($this->template));

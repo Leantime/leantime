@@ -266,111 +266,14 @@
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
 
                                             @if (!empty($statusLabels))
-                                                <div
-                                                    class="dropdown ticketDropdown statusDropdown colorized show firstDropdown">
-                                                    <a class="dropdown-toggle f-left status label-{{ $row['status'] != '' ? $statusLabels[$row['status']]['dropdown'] : '' }}"
-                                                        href="javascript:void(0);" role="button"
-                                                        id="statusDropdownMenuLink{{ $row['id'] }}"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <span
-                                                            class="text">{{ $row['status'] != '' ? $statusLabels[$row['status']]['title'] : '' }}</span>
-                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                    </a>
-                                                    <ul class="dropdown-menu"
-                                                        aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
-                                                        <li class="nav-header border">
-                                                            {{ __('dropdown.choose_status') }}</li>
-                                                        @foreach ($statusLabels as $key => $data)
-                                                            @if ($data['active'] || true)
-                                                                <li class='dropdown-item'>
-                                                                    <a href="javascript:void(0);"
-                                                                        class="label-{{ $data['dropdown'] }}"
-                                                                        data-label='{{ $data['title'] }}'
-                                                                        data-value="{{ $row['id'] . '/' . $key }}"
-                                                                        id="ticketStatusChange{{ $row['id'] . $key }}">{{ $data['title'] }}</a>
-                                                                </li>
-                                                            @endif
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
+                                                <x-blueprints::chip-label type="status" adapter="goal" :item-id="$row['id']" :value="$row['status'] ?? null" :labels="$statusLabels" />
                                             @endif
 
                                             @if (!empty($relatesLabels))
-                                                <div
-                                                    class="dropdown ticketDropdown relatesDropdown colorized show firstDropdown">
-                                                    <a class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}"
-                                                        href="javascript:void(0);" role="button"
-                                                        id="relatesDropdownMenuLink{{ $row['id'] }}"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <span
-                                                            class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span>
-                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                    </a>
-                                                    <ul class="dropdown-menu"
-                                                        aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
-                                                        <li class="nav-header border">
-                                                            {{ __('dropdown.choose_relates') }}</li>
-                                                        @foreach ($relatesLabels as $key => $data)
-                                                            @if ($data['active'] || true)
-                                                                <li class='dropdown-item'>
-                                                                    <a href="javascript:void(0);"
-                                                                        class="label-{{ $data['dropdown'] }}"
-                                                                        data-label='{{ $data['title'] }}'
-                                                                        data-value="{{ $row['id'] . '/' . $key }}"
-                                                                        id="ticketRelatesChange{{ $row['id'] . $key }}">{{ $data['title'] }}</a>
-                                                                </li>
-                                                            @endif
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
+                                                <x-blueprints::chip-label type="relates" adapter="goal" :item-id="$row['id']" :value="$row['relates'] ?? null" :labels="$relatesLabels" />
                                             @endif
 
-                                            <div
-                                                class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                                <a class="dropdown-toggle f-left" href="javascript:void(0);"
-                                                    role="button"
-                                                    id="userDropdownMenuLink{{ $row['id'] }}"
-                                                    data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <span class="text">
-                                                        @if ($row['authorFirstname'] != '')
-                                                            <span id='userImage{{ $row['id'] }}'>
-                                                                <img src='{{ BASE_URL }}/api/users?profileImage={{ $row['author'] }}'
-                                                                    width='25'
-                                                                    style='vertical-align: middle;' />
-                                                            </span>
-                                                            <span id='user{{ $row['id'] }}'></span>
-                                                        @else
-                                                            <span id='userImage{{ $row['id'] }}'>
-                                                                <img src='{{ BASE_URL }}/api/users?profileImage=false'
-                                                                    width='25'
-                                                                    style='vertical-align: middle;' />
-                                                            </span>
-                                                            <span id='user{{ $row['id'] }}'></span>
-                                                        @endif
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu"
-                                                    aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                                                    <li class="nav-header border">
-                                                        {{ __('dropdown.choose_user') }}</li>
-                                                    @foreach ($users as $user)
-                                                        <li class='dropdown-item'>
-                                                            <a href='javascript:void(0);'
-                                                                data-label='{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}'
-                                                                data-value='{{ $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] }}'
-                                                                id='userStatusChange{{ $row['id'] . $user['id'] }}'>
-                                                                <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}'
-                                                                    width='25'
-                                                                    style='vertical-align: middle; margin-right:5px;' />
-                                                                {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
-                                                            </a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
+                                            <x-global::elements.author-avatar class="dropRight" :user-id="$row['author']" :name="trim(($row['authorFirstname'] ?? '').' '.($row['authorLastname'] ?? ''))" />
 
                                             <div class="right" style="margin-right:10px;">
                                                 <a href="#/goalcanvas/editCanvasComment/{{ $row['id'] }}"
@@ -451,9 +354,6 @@
 
             @if ($login::userIsAtLeast($roles::$editor))
                 leantime.canvasController.initCanvasLinks();
-                leantime.canvasController.initUserDropdown();
-                leantime.canvasController.initStatusDropdown();
-                leantime.canvasController.initRelatesDropdown();
             @else
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif

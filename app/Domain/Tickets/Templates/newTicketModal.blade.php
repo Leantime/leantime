@@ -45,8 +45,6 @@
 
             leantime.ticketsController.initTagsInput();
 
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initStatusDropdown();
 
 
         @else

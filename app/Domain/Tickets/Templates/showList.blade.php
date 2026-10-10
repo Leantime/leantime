@@ -90,20 +90,7 @@
                                         : $statusLabels;
                                     @endphp
                                     <td data-order="{{ isset($rowStatusLabels[$row['status']]) ? $rowStatusLabels[$row['status']]['sortKey'] : '' }}" data-search="{{ isset($rowStatusLabels[$row['status']]) ? $rowStatusLabels[$row['status']]['name'] : '' }}" class="roundStatusBtn" style="width:20px">
-                                        <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                            <a class="dropdown-toggle status {{ isset($rowStatusLabels[$row['status']]) ? $rowStatusLabels[$row['status']]['class'] : '' }}" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-caret-down" aria-hidden="true"></i>
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
-                                                <li class="nav-header border">{!! __('dropdown.choose_status') !!}</li>
-                                                @php
-                                                foreach ($rowStatusLabels as $key => $label) {
-                                                    echo "<li class='dropdown-item'>
-                                            <a href='javascript:void(0);' class='".$tpl->escape($label['class'])."' data-label='".$tpl->escape($label['name'])."' data-value='".$row['id'].'_'.$key.'_'.$label['class']."' id='ticketStatusChange".$row['id'].$key."' >".$tpl->escape($label['name']).'</a>';
-                                                    echo '</li>';
-                                                }
-                                                @endphp
-                                            </ul>
-                                        </div>
+                                        <x-tickets::chip-status :float="false" :icon-only="true" :ticket-id="$row['id']" :status="$row['status']" :labels="$rowStatusLabels" />
                                     </td>
 
                                     <td data-search="{{ isset($rowStatusLabels[$row['status']]) ? $rowStatusLabels[$row['status']]['name'] : '' }}" data-order="{{ $row['headline'] }}" >
@@ -150,7 +137,6 @@
 
 
         @if ($login::userIsAtLeast($roles::$editor))
-        leantime.ticketsController.initStatusDropdown();
         @else
         leantime.authController.makeInputReadonly(".maincontentinner");
         @endif

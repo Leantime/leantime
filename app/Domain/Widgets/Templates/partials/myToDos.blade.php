@@ -348,8 +348,6 @@
             var sortableEnabled = {{ $tpl->dispatchFilter('todoWidgetSortableEnabled', 'true') ? 'true' : 'false' }};
 
             @if(session('userdata.id') != null)
-                leantime.ticketsController.initMilestoneDropdown();
-                leantime.ticketsController.initStatusDropdown();
                 leantime.ticketsController.initDueDateTimePickers();
 
 

@@ -137,8 +137,6 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
 
             leantime.ticketsController.initTagsInput();
 
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initStatusDropdown();
 
 
         <?php } else { ?>
