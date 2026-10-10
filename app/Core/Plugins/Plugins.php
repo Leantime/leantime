@@ -79,9 +79,16 @@ class Plugins
     /**
      * Gets paths for enabled plugins, supporting both folder and phar formats
      *
+     * When the enabled plugins can't be read (no database yet, e.g. during install or an outage) this
+     * falls back to the system plugins from config. Pass $strict to get the exception instead — callers
+     * that cache the result must not cache that fallback.
+     *
+     * @param  bool  $strict  Rethrow a failed plugin lookup instead of falling back to the system plugins
      * @return array Array of plugin paths with format information
+     *
+     * @throws \Exception When $strict and the enabled plugins can't be read
      */
-    public function getEnabledPluginPaths(): array
+    public function getEnabledPluginPaths(bool $strict = false): array
     {
         $pluginPaths = [];
         $pluginDirectory = APP_ROOT.'/app/Plugins/';
@@ -123,6 +130,10 @@ class Plugins
                 }
             }
         } catch (\Exception $e) {
+            if ($strict) {
+                throw $e;
+            }
+
             // Fall back to system plugins if service unavailable
             foreach ($this->enabledPlugins as $pluginName => $enabled) {
                 if ($enabled) {
