@@ -456,41 +456,103 @@
     box-shadow: var(--regular-shadow);
 }
 
-/* Dashboard calendar widget, Month view (#2333, #3863): FullCalendar's
-   multiMonth view sizes each month from an aspect ratio and writes that
-   height inline on the table, so a single month left the bottom half of the
-   widget empty. Stretch the one month to the widget's height instead; rows
-   still grow (and the view scrolls) when a day holds more events than fit.
-   FullCalendar picks fc-multimonth-singlecol or fc-multimonth-multicol for
-   this view depending on how much width the widget actually has, so both
-   variants need the fix (verified on the dev widget: it renders multicol at
-   the widget's own width, not singlecol, which is why a singlecol-only rule
-   had no visible effect here). */
-.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-month,
-.minCalendarWrapper .fc-multimonth-multicol .fc-multimonth-month {
+/* dayGridMonth (unlike multiMonth) honors dayMaxEvents/dayMaxEventRows; min-height gives
+   each day row room for a couple of stacked time+title events before "+N more" kicks in. */
+.minCalendarWrapper .fc-daygrid-day {
+    min-height: 90px;
+}
+
+/* Harness is absolutely positioned and content-sized by default, spilling into the next
+   day's column; force it to the cell's own width. Excludes -abs (multi-day events, which
+   FullCalendar positions with left/right, not width). */
+.minCalendarWrapper .fc-daygrid-event-harness:not(.fc-daygrid-event-harness-abs) {
+    width: 100% !important;
+}
+
+.minCalendarWrapper .dashboard-month-event {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    align-items: flex-start;
+    gap: 1px;
+    line-height: 1.25;
+    padding: 1px 2px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    /* --fc-event-text-color is fixed white regardless of theme; invisible in light mode. */
+    color: var(--primary-font-color, inherit);
 }
 
-.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-daygrid,
-.minCalendarWrapper .fc-multimonth-multicol .fc-multimonth-daygrid {
-    flex: 1 1 auto;
+/* Hidden by default, re-shown once the day cell has room (below): title always wins. */
+.minCalendarWrapper .dashboard-month-event .fc-event-time {
+    display: none;
+    font-size: 0.85em;
+    opacity: 0.8;
 }
 
-.minCalendarWrapper .fc-multimonth-singlecol .fc-multimonth-daygrid-table,
-.minCalendarWrapper .fc-multimonth-multicol .fc-multimonth-daygrid-table {
-    height: 100% !important;
+.minCalendarWrapper .dashboard-month-event .fc-event-title {
+    /* min-width:0 overrides the flex-item default, which let the title overflow the cell. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
 }
 
-/* The #2333 fix above stretches the multiMonth table to the widget height,
-   but the percentage/flex-grow chain between the view harness and the
-   actual day-grid table does not fully resolve to a definite height, so
-   every week row still collapses to just the day-number height and every
-   event (even a single one) is hidden behind "+N more". Give each day cell
-   an explicit pixel floor instead of relying on that chain, so there is
-   always room for a couple of events before the overflow link kicks in. */
-.minCalendarWrapper .fc-multimonth-singlecol td.fc-daygrid-day,
-.minCalendarWrapper .fc-multimonth-multicol td.fc-daygrid-day {
-    min-height: 90px !important;
+/* Each day cell is its own container-query root, so thresholds react to its own width. */
+.minCalendarWrapper .fc-daygrid-day-frame {
+    container-type: inline-size;
+    container-name: dashboard-month-day;
+}
+
+@container dashboard-month-day (min-width: 95px) {
+    .minCalendarWrapper .dashboard-month-event .fc-event-time {
+        display: block;
+    }
+}
+
+/* Capped at 2 lines so one long title can't balloon a whole week's row height. */
+@container dashboard-month-day (min-width: 150px) {
+    .minCalendarWrapper .dashboard-month-event .fc-event-title {
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* Drag mirror had no CSS anywhere, so it painted under the calendar's own elements. */
+.dragging-mirror {
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.minCalendarWrapper .fc-daygrid-more-link {
+    color: var(--primary-font-color, inherit);
+}
+
+/* The popover isn't inside a day cell, so the @container rules above never match there. */
+.minCalendarWrapper .fc-popover .dashboard-month-event .fc-event-time {
+    display: block;
+}
+
+.minCalendarWrapper .fc-popover .dashboard-month-event .fc-event-title {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+    /* FullCalendar's base CSS sets white-space:nowrap on event titles. */
+    white-space: normal;
+}
+
+.minCalendarWrapper .fc-popover {
+    max-width: min(360px, calc(100vw - 32px));
+}
+
+/* No built-in height limit; wrapped multi-line titles (above) can grow the popover
+   taller than the dashboard widget's own box. A tight cap forces a scrollbar on the
+   popover itself, rather than relying on an unrelated outer container's own scroll. */
+.minCalendarWrapper .fc-popover-body {
+    max-height: min(45vh, 320px);
+    overflow-y: auto;
 }
