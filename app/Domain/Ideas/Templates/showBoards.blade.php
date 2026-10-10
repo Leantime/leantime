@@ -49,35 +49,22 @@
 </div><!--pageheader-->
 
 <div class="maincontent">
+    @php
+        $canvasSuffix = ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '';
+    @endphp
+    <x-global::navigation.view-tabs :tabs="[
+        ['url' => BASE_URL.'/ideas/showBoards'.$canvasSuffix, 'label' => __('buttons.idea_wall'), 'active' => true],
+        ['url' => BASE_URL.'/ideas/advancedBoards'.$canvasSuffix, 'label' => __('buttons.idea_kanban'), 'active' => false],
+    ]">
+        @if ($login::userIsAtLeast($roles::$editor) && count($allCanvas) > 0)
+            <x-slot:actions>
+                <x-global::forms.button tag="a" link="#/ideas/ideaDialog?type=idea" contentRole="primary" id="customersegment"><span class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}</x-global::forms.button>
+            </x-slot:actions>
+        @endif
+    </x-global::navigation.view-tabs>
+
     <div class="maincontentinner" id="ideaBoards" style="min-height:350px;">
         {!! $tpl->displayNotification() !!}
-
-        <div class="row">
-            <div class="col-md-4">
-                @if ($login::userIsAtLeast($roles::$editor))
-                    @if (count($allCanvas) > 0)
-                        <x-global::forms.button tag="a" link="#/ideas/ideaDialog?type=idea" contentRole="primary" id="customersegment"><span
-                                    class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}</x-global::forms.button>
-                    @endif
-                @endif
-            </div>
-
-            <div class="col-md-4 center">
-            </div>
-            <div class="col-md-4">
-                <div class="pull-right">
-                    <x-global::actions.dropdown variant="filter">
-                        <x-slot:trigger>{!! __('buttons.idea_wall') !!} {!! __('links.view') !!}</x-slot:trigger>
-                        <li><a href="{{ BASE_URL }}/ideas/showBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}" class="active">{!! __('buttons.idea_wall') !!}</a></li>
-                        <li><a href="{{ BASE_URL }}/ideas/advancedBoards{{ ! empty($currentCanvas) ? '/'.(int) $currentCanvas : '' }}" class="">{!! __('buttons.idea_kanban') !!}</a></li>
-
-                    </x-global::actions.dropdown>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="clearfix"></div>
 
         @if (count($allCanvas) > 0)
             <div id="ideaMason" class="sortableTicketList" style="padding-top:10px;">

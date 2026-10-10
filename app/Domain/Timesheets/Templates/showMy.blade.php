@@ -174,29 +174,28 @@ jQuery(document).ready(function(){
 <!-- page header -->
 
 <div class="maincontent">
+    <x-global::navigation.view-tabs :tabs="[
+        ['url' => BASE_URL.'/timesheets/showMy', 'label' => __('links.week_view'), 'active' => true],
+        ['url' => BASE_URL.'/timesheets/showMyList', 'label' => __('links.list_view'), 'active' => false],
+    ]">
+        <x-slot:actions>
+            {{-- The week range belongs to the #timesheetList form below (form="…"): changing it reloads the week. --}}
+            <span class="lt-tabs-range">
+                <span>{!! __('label.week_from') !!}</span>
+                <a href="javascript:void(0)" id="prevWeek" aria-label="{{ __('language.prevText') }}"><i class="fa fa-chevron-left"></i></a>
+                <input type="text" class="field-width-sm week-picker" name="startDate" form="timesheetList" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}"/>
+                {!! __('label.until') !!}
+                <input type="text" class="field-width-sm week-picker" name="endDate" form="timesheetList" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}"/>
+                <a href="javascript:void(0)" id="nextWeek" aria-label="{{ __('language.nextText') }}"><i class="fa fa-chevron-right"></i></a>
+                <input type="hidden" name="search" value="1" form="timesheetList" />
+            </span>
+        </x-slot:actions>
+    </x-global::navigation.view-tabs>
+
     <div class="maincontentinner">
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
-            <x-global::actions.dropdown variant="filter" class="pull-right">
-                <x-slot:trigger>{!! __('links.week_view') !!} {!! __('links.view') !!}</x-slot:trigger>
-                <li><a href="{{ BASE_URL }}/timesheets/showMy" class="active">{!! __('links.week_view') !!}</a></li>
-                <li><a href="{{ BASE_URL }}/timesheets/showMyList" >{!! __('links.list_view') !!}</a></li>
-
-            </x-global::actions.dropdown>
-            <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
-
-                <div class="padding-top-sm">
-                    <span>{!! __('label.week_from') !!}</span>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="field-width-sm week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->formatDateForUser() }}" style="margin-top:5px;"/>
-                    {!! __('label.until') !!}
-                    <input type="text" class="field-width-sm week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="{{ __('language.dateformat') }}" value="{{ $dateFrom->addDays(6)->formatDateForUser() }}" style="margin-top:6px;"/>
-                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
-                    <input type="hidden" name="search" value="1" />
-                </div>
-
-            </div>
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
                 <colgroup>
                       <col class="con0" >

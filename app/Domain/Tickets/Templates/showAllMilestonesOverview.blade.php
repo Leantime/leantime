@@ -12,26 +12,28 @@
     @include('tickets::submodules.portfolioHeader')
 
     <div class="maincontent">
-        @include('tickets::submodules.portfolioTabs')
+        {{-- New / Filter sit on the right of the view bar like on every board (ticketFilter brings its
+             own #ticketSearch form, so it must not sit inside the one below). --}}
+        <x-tickets::portfolio-tabs>
+            <x-slot:actions>
+                @dispatchEvent('filters.afterLefthandSectionOpen')
+                @include('tickets::submodules.ticketNewBtn')
+                @include('tickets::submodules.ticketFilter')
+                @dispatchEvent('filters.beforeLefthandSectionClose')
+            </x-slot:actions>
+        </x-tickets::portfolio-tabs>
 
         <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
 
-        <form action="" method="get" id="ticketSearch">
+        <form action="" method="get" id="ticketTableHooks">
 
             @dispatchEvent('filters.afterFormOpen')
 
             <input type="hidden" value="1" name="search"/>
             <div class="row">
-                <div class="col-md-5">
-                    @dispatchEvent('filters.afterLefthandSectionOpen')
-                    @include('tickets::submodules.ticketNewBtn')
-                    @include('tickets::submodules.ticketFilter')
-                    @dispatchEvent('filters.beforeLefthandSectionClose')
-                </div>
-
-                <div class="col-md-2 center">
+                <div class="col-md-7 center">
                     @dispatchEvent('filters.afterCenterSectionOpen')
                     @dispatchEvent('filters.beforeCenterSectionClose')
                 </div>

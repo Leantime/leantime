@@ -16,37 +16,6 @@
 
     <div class="maincontentinner">
 
-        {{-- New / Filter moved into the nav bar (timelineTabs) so they get the
-             same pill treatment as every other board. Only the timeframe
-             control remains here. --}}
-        <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-
-                    @php
-                        $currentView = '';
-                        if ($roadmapView == 'Day') {
-                            $currentView = __('buttons.day');
-                        } elseif ($roadmapView == 'Week') {
-                            $currentView = __('buttons.week');
-                        } elseif ($roadmapView == 'Month') {
-                            $currentView = __('buttons.month');
-                        }
-                    @endphp
-                    <x-global::actions.dropdown variant="filter" menu-id="ganttTimeControl" class="dropRight">
-                        <x-slot:trigger>
-                            {!! __('buttons.timeframe') !!}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span>
-                        </x-slot:trigger>
-                        <li><a href="javascript:void(0);" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {!! __('buttons.day') !!}</a></li>
-                        <li><a href="javascript:void(0);" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{!! __('buttons.week') !!}</a></li>
-                        <li><a href="javascript:void(0);" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{!! __('buttons.month') !!}</a></li>
-
-                    </x-global::actions.dropdown>
-                </div>
-
-            </div>
-        </div>
-
         @php
         if (
             (is_array($timelineTasks) && count($timelineTasks) == 0) ||

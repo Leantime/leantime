@@ -87,88 +87,76 @@
     <!--pageheader-->
 
     <div class="maincontent">
+        <x-global::navigation.view-tabs>
+            <x-slot:actions>
+                @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
+                    <x-global::forms.button tag="a" link="#/goalcanvas/editCanvasItem?type={{ $elementName }}" contentRole="primary"
+                        id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-global::forms.button>
+                @endif
+                @if (count($allCanvas) > 0 && !empty($statusLabels))
+                    @php
+                        $filterStatus = $filter['status'] ?? 'all';
+                        $filterRelates = $filter['relates'] ?? 'all';
+                    @endphp
+                    <x-global::actions.dropdown variant="filter">
+                        <x-slot:trigger class="btn-link">
+                            @if (($filterStatus ?? '') == 'all')
+                                <i class="fas fa-filter"></i>
+                                    {!! __('status.all') !!} {!! __('links.view') !!}
+                            @else
+                                <i
+                                        class="fas fa-fw {{ __($statusLabels[$filterStatus]['icon']) }}"></i>
+                                    {{ $statusLabels[$filterStatus]['title'] }} {{ __('links.view') }}
+                            @endif
+                        </x-slot:trigger>
+                        <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all')
+                                        class="active"
+                        @endif><i class="fas fa-globe"></i> {!! __('status.all') !!}</a></li>
+                        @foreach ($statusLabels as $key => $data)
+                            <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
+                                    @if ($filterStatus == $key)
+                                    class="active"
+                        @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
+                        {!! $data['title'] !!}</a></li>
+                        @endforeach
+                    </x-global::actions.dropdown>
+                @endif
+                @if (count($allCanvas) > 0 && !empty($relatesLabels))
+                    @php
+                        $filterStatus = $filter['status'] ?? 'all';
+                        $filterRelates = $filter['relates'] ?? 'all';
+                    @endphp
+                    <x-global::actions.dropdown variant="filter">
+                        <x-slot:trigger class="btn-link">
+                            @if ($filterRelates == 'all')
+                                <i
+                                        class="fas fa-fw fa-globe"></i> {{ __('relates.all') }}
+                                    {{ __('links.view') }}
+                            @else
+                                <i
+                                        class="fas fa-fw {{ __($relatesLabels[$filterRelates]['icon']) }}"></i>
+                                    {{ $relatesLabels[$filterRelates]['title'] }} {{ __('links.view') }}
+                            @endif
+                        </x-slot:trigger>
+                        <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all')
+                                        class="active"
+                        @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
+                        @foreach ($relatesLabels as $key => $data)
+                            <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
+                                    @if ($filterRelates == $key)
+                                    class="active"
+                        @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
+                        {{ $data['title'] }}</a></li>
+                        @endforeach
+                    </x-global::actions.dropdown>
+                @endif
+            </x-slot:actions>
+        </x-global::navigation.view-tabs>
+
         <div class="maincontentinner">
 
             <?php echo $tpl->displayNotification(); ?>
 
-            <div class="row">
-                <div class="col-md-3">
-                    @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                        <x-global::forms.button tag="a" link="#/goalcanvas/editCanvasItem?type={{ $elementName }}" contentRole="primary"
-                            id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-global::forms.button>
-                    @endif
-                </div>
-
-                <div class="col-md-6 center">
-                </div>
-
-                <div class="col-md-3">
-                    <div class="pull-right">
-                        @if (count($allCanvas) > 0 && !empty($statusLabels))
-                            @php
-                                $filterStatus = $filter['status'] ?? 'all';
-                                $filterRelates = $filter['relates'] ?? 'all';
-                            @endphp
-                            <x-global::actions.dropdown variant="filter">
-                                <x-slot:trigger>
-                                    @if (($filterStatus ?? '') == 'all')
-                                        <i class="fas fa-filter"></i>
-                                            {!! __('status.all') !!} {!! __('links.view') !!}
-                                    @else
-                                        <i
-                                                class="fas fa-fw {{ __($statusLabels[$filterStatus]['icon']) }}"></i>
-                                            {{ $statusLabels[$filterStatus]['title'] }} {{ __('links.view') }}
-                                    @endif
-                                </x-slot:trigger>
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all')
-                                                class="active"
-                                @endif><i class="fas fa-globe"></i> {!! __('status.all') !!}</a></li>
-                                @foreach ($statusLabels as $key => $data)
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
-                                            @if ($filterStatus == $key)
-                                            class="active"
-                                @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
-                                {!! $data['title'] !!}</a></li>
-                                @endforeach
-
-                            </x-global::actions.dropdown>
-                        @endif
-
-                        @if (count($allCanvas) > 0 && !empty($relatesLabels))
-                            @php
-                                $filterStatus = $filter['status'] ?? 'all';
-                                $filterRelates = $filter['relates'] ?? 'all';
-                            @endphp
-                            <x-global::actions.dropdown variant="filter">
-                                <x-slot:trigger>
-                                    @if ($filterRelates == 'all')
-                                        <i
-                                                class="fas fa-fw fa-globe"></i> {{ __('relates.all') }}
-                                            {{ __('links.view') }}
-                                    @else
-                                        <i
-                                                class="fas fa-fw {{ __($relatesLabels[$filterRelates]['icon']) }}"></i>
-                                            {{ $relatesLabels[$filterRelates]['title'] }} {{ __('links.view') }}
-                                    @endif
-                                </x-slot:trigger>
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all')
-                                                class="active"
-                                @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
-                                @foreach ($relatesLabels as $key => $data)
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
-                                            @if ($filterRelates == $key)
-                                            class="active"
-                                @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
-                                {{ $data['title'] }}</a></li>
-                                @endforeach
-
-                            </x-global::actions.dropdown>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <div class="clearfix"></div>
 
 
             @if (count($allCanvas) > 0)

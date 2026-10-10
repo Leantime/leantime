@@ -73,41 +73,36 @@
 </div>
 
 <div class="maincontent">
+    @if (count($allCanvas) > 0 && ! empty($statusLabels))
+        <x-global::navigation.view-tabs>
+            <x-slot:actions>
+                @php
+                    $statusColorMap = ['blue' => '#1B75BB', 'orange' => '#fdab3d', 'green' => '#75BB1B', 'red' => '#BB1B25', 'grey' => '#c3ccd4'];
+                    if ($filter['status'] != 'all' && !isset($statusLabels[$filter['status']])) { $filter['status'] = 'all'; }
+                    if ($filter['status'] == 'all') {
+                        $statusFilterLabel = '<i class="fas fa-filter"></i> ' . $tpl->__('status.all');
+                    } else {
+                        $sc = $statusColorMap[$statusLabels[$filter['status']]['color']] ?? '#666';
+                        $statusFilterLabel = '<i class="fas fa-fw ' . $statusLabels[$filter['status']]['icon'] . '" style="color:' . $sc . '"></i> ' . $statusLabels[$filter['status']]['title'];
+                    }
+                @endphp
+                <x-global::actions.dropdown variant="filter">
+                    <x-slot:trigger class="btn-link">{!! $statusFilterLabel !!}</x-slot:trigger>
+                    <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
+                    @foreach ($statusLabels as $key => $data)
+                        @php $iconColor = $statusColorMap[$data['color']] ?? '#666'; @endphp
+                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}" style="color:{{ $iconColor }}"></i> {{ $data['title'] }}</a></li>
+                    @endforeach
+                </x-global::actions.dropdown>
+            </x-slot:actions>
+        </x-global::navigation.view-tabs>
+    @endif
+
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
 
         @if (count($allCanvas) > 0)
-            {{-- Toolbar --}}
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                {{-- Board creation lives in the header title dropdown; no duplicate button here. --}}
-                @if (!empty($statusLabels))
-                    @php
-                        $statusColorMap = ['blue' => '#1B75BB', 'orange' => '#fdab3d', 'green' => '#75BB1B', 'red' => '#BB1B25', 'grey' => '#c3ccd4'];
-                        if ($filter['status'] != 'all' && !isset($statusLabels[$filter['status']])) { $filter['status'] = 'all'; }
-                        if ($filter['status'] == 'all') {
-                            $statusFilterLabel = '<i class="fas fa-filter"></i> ' . $tpl->__('status.all');
-                        } else {
-                            $sc = $statusColorMap[$statusLabels[$filter['status']]['color']] ?? '#666';
-                            $statusFilterLabel = '<i class="fas fa-fw ' . $statusLabels[$filter['status']]['icon'] . '" style="color:' . $sc . '"></i> ' . $statusLabels[$filter['status']]['title'];
-                        }
-                    @endphp
-                    {{-- viewDropDown right-aligns the menu (left:auto; right:0). On
-                         this board the button sits at the left edge of the toolbar, so
-                         a 240px menu extends back under the sidebar and gets clipped
-                         by .primaryContent's overflow-x:hidden. Left-align it locally. --}}
-                    <x-global::actions.dropdown variant="filter" menu-style="left:0; right:auto;">
-                        <x-slot:trigger class="btn-default">{!! $statusFilterLabel !!}</x-slot:trigger>
-                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
-                        @foreach ($statusLabels as $key => $data)
-                            @php $iconColor = $statusColorMap[$data['color']] ?? '#666'; @endphp
-                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}" style="color:{{ $iconColor }}"></i> {{ $data['title'] }}</a></li>
-                        @endforeach
-
-                    </x-global::actions.dropdown>
-                @endif
-
-            </div>
             {{-- Export & print live in the header 3-dot menu (and the plugin extends it
                  via the logicmodel.headerActions hook), so no duplicate toolbar control here. --}}
 
