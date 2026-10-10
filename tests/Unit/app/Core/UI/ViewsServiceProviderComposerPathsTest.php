@@ -59,15 +59,23 @@ class ViewsServiceProviderComposerPathsTest extends \Unit\TestCase
         $this->assertContains('Leantime\\Views\\Composers\\App', $composers);
     }
 
-    public function test_the_strict_lookup_rethrows_instead_of_falling_back(): void
+    public function test_the_strict_lookup_rethrows_a_failed_plugin_query(): void
     {
         $plugins = $this->make(Plugins::class, ['enabledPlugins' => []]);
 
-        app()->bind(\Leantime\Domain\Plugins\Services\Plugins::class, function () {
-            throw new \RuntimeException('no database');
-        });
+        // The domain service swallows a failed plugin query and returns its own fallback unless it is
+        // asked to fail — exactly like the real one: the strict lookup must ask.
+        $domainPlugins = $this->createMock(\Leantime\Domain\Plugins\Services\Plugins::class);
+        $domainPlugins->method('getEnabledPlugins')->willReturnCallback(function (bool $failOnDatabaseError = false) {
+            if ($failOnDatabaseError) {
+                throw new \RuntimeException('plugin table unreadable');
+            }
 
-        $this->assertSame([], $plugins->getEnabledPluginPaths(), 'the default lookup falls back to the system plugins');
+            return [];
+        });
+        app()->instance(\Leantime\Domain\Plugins\Services\Plugins::class, $domainPlugins);
+
+        $this->assertSame([], $plugins->getEnabledPluginPaths(), 'the default lookup keeps the fallback');
 
         $this->expectException(\RuntimeException::class);
         $plugins->getEnabledPluginPaths(strict: true);

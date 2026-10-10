@@ -96,7 +96,9 @@ class Plugins
         // Get enabled plugins from the domain service
         try {
             $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
-            $enabledPlugins = $pluginService->getEnabledPlugins();
+            // In strict mode the domain service rethrows a failed plugin query instead of returning its own
+            // system-plugin fallback, so the caller can tell a real empty list from an unreadable one.
+            $enabledPlugins = $pluginService->getEnabledPlugins(failOnDatabaseError: $strict);
 
             foreach ($enabledPlugins as $plugin) {
                 // Skip incomplete class objects
