@@ -72,16 +72,12 @@
             <div class="column">
                 <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                     @if ($login::userIsAtLeast($roles::$manager) && ! $programBoard)
-                        <div class="inlineDropDownContainer" style="float:right;">
-                            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
-                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{!! __('headlines.edit_label') !!}</a>
-                                </li>
-                                <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{!! __('links.add_remove_col') !!}</a></li>
-                            </ul>
-                        </div>
+                        <x-global::actions.dropdown trigger-class="editHeadline" style="float:right;">
+                            <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{!! __('headlines.edit_label') !!}</a>
+                            </li>
+                            <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{!! __('links.add_remove_col') !!}</a></li>
+
+                        </x-global::actions.dropdown>
                     @endif
                     <strong class="count">0</strong>
                     {{ $statusRow['name'] }}
@@ -271,15 +267,14 @@
                                                     @endif
                                                     @if ($showTags)
                                                         @php $tagsArray = explode(',', $row['tags']); @endphp
-                                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
-                                                            <i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}
-                                                        </a>
-                                                        <ul class="dropdown-menu ">
-                                                            <li style="padding:10px"><div class='tagsinput readonly'>
-                                                            @foreach ($tagsArray as $tag)
-                                                                <span class='tag'><span>{{ $tag }}</span></span>
-                                                            @endforeach
-                                                                </div></li></ul>
+                                                        <x-global::actions.dropdown variant="panel" as="span" class="dropdown" menu-as="ul">
+                                                            <x-slot:trigger><i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}</x-slot:trigger>
+                                                            <li style="padding:10px"><div class="tagsinput readonly">
+                                                                @foreach ($tagsArray as $tag)
+                                                                    <span class="tag"><span>{{ $tag }}</span></span>
+                                                                @endforeach
+                                                            </div></li>
+                                                        </x-global::actions.dropdown>
                                                     @endif
 
                                                 </div>

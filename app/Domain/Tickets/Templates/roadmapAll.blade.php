@@ -36,33 +36,32 @@
             <div class="col-md-6">
                 <div class="pull-right">
 
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">{!! __('label.roles.client') !!}: <span class="viewText">{{ $clientNameSelected }}</span><span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a href={{ BASE_URL.'/tickets/roadmapAll' }} {{ empty($labelActive) ? "class='active'" : '' }} > {!! __('headline.all_clients') !!} </a></li>
-                            {!! $htmlDropdownClients !!}
-                        </ul>
-                    </div>
+                    <x-global::actions.dropdown variant="filter">
+                        <x-slot:trigger>{!! __('label.roles.client') !!}: <span class="viewText">{{ $clientNameSelected }}</span><span class="caret"></span></x-slot:trigger>
+                        <li><a href={{ BASE_URL.'/tickets/roadmapAll' }} {{ empty($labelActive) ? "class='active'" : '' }} > {!! __('headline.all_clients') !!} </a></li>
+                        {!! $htmlDropdownClients !!}
 
-                    <div class="btn-group dropRight">
+                    </x-global::actions.dropdown>
 
-                        @php
-                            $currentView = '';
-                            if ($roadmapView == 'Day') {
-                                $currentView = __('buttons.day');
-                            } elseif ($roadmapView == 'Week') {
-                                $currentView = __('buttons.week');
-                            } elseif ($roadmapView == 'Month') {
-                                $currentView = __('buttons.month');
-                            }
-                        @endphp
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">{!! __('buttons.timeframe') !!}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span></button>
-                        <ul class="dropdown-menu" id="ganttTimeControl">
-                            <li><a href="javascript:void(0);" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {!! __('buttons.day') !!}</a></li>
-                            <li><a href="javascript:void(0);" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{!! __('buttons.week') !!}</a></li>
-                            <li><a href="javascript:void(0);" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{!! __('buttons.month') !!}</a></li>
-                        </ul>
-                    </div>
+                    @php
+                        $currentView = '';
+                        if ($roadmapView == 'Day') {
+                            $currentView = __('buttons.day');
+                        } elseif ($roadmapView == 'Week') {
+                            $currentView = __('buttons.week');
+                        } elseif ($roadmapView == 'Month') {
+                            $currentView = __('buttons.month');
+                        }
+                    @endphp
+                    <x-global::actions.dropdown variant="filter" menu-id="ganttTimeControl" class="dropRight">
+                        <x-slot:trigger>
+                            {!! __('buttons.timeframe') !!}: <span class="viewText">{{ $currentView }}</span><span class="caret"></span>
+                        </x-slot:trigger>
+                        <li><a href="javascript:void(0);" data-value="Day" class="{{ $roadmapView == 'Day' ? 'active' : '' }}"> {!! __('buttons.day') !!}</a></li>
+                        <li><a href="javascript:void(0);" data-value="Week" class="{{ $roadmapView == 'Week' ? 'active' : '' }}">{!! __('buttons.week') !!}</a></li>
+                        <li><a href="javascript:void(0);" data-value="Month" class="{{ $roadmapView == 'Month' ? 'active' : '' }}">{!! __('buttons.month') !!}</a></li>
+
+                    </x-global::actions.dropdown>
 
                 </div>
 

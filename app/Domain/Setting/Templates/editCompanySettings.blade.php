@@ -229,16 +229,11 @@
                         @foreach ($apiKeys as $apiKey)
                             <li>
                                 <div class="ticketBox">
-                                      <div class="inlineDropDownContainer">
-                                        <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                        </a>
-                                        <ul class="dropdown-menu">
+                                      <x-global::actions.dropdown>
+                                          <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
+                                          <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
 
-                                            <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
-                                            <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
-                                        </ul>
-                                    </div>
+                                      </x-global::actions.dropdown>
                                     <a href="#/api/apiKey/{{ $apiKey['id'] }}"><strong>{{ $apiKey['firstname'] }}</strong></a><br />
                                     lt_{{ $apiKey['username'] }}***
                                     | {!! __('labels.created_on') !!}: {{ format($apiKey['createdOn'])->date() }} | {!! __('labels.last_used') !!}: {{ format($apiKey['lastlogin'])->date() }}

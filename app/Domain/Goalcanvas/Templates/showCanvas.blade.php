@@ -63,27 +63,24 @@
         </div>
         @if (count($allCanvas) > 0)
             <div class="pageheader-right">
-                <span class="dropdown dropdownWrapper headerEditDropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i
-                            class="fa-solid fa-ellipsis-v"></i></a>
-                    <ul class="dropdown-menu editCanvasDropdown">
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
-                            <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
-                            <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
-                            <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a>
-                            </li>
-                        @endif
-                        <li><a
-                                href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
+                <x-global::actions.dropdown variant="header-menu">
+                    @if ($login::userIsAtLeast($roles::$editor))
+                        <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
+                        <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
+                        <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
+                        <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a>
                         </li>
-                        <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/delCanvas/{{ $currentCanvas }}"
-                                    class="delete">{!!__('links.icon.delete') !!}</a></li>
-                        @endif
-                    </ul>
-                </span>
+                    @endif
+                    <li><a
+                            href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
+                    </li>
+                    <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
+                    @if ($login::userIsAtLeast($roles::$editor))
+                        <li><a href="#/goalcanvas/delCanvas/{{ $currentCanvas }}"
+                                class="delete">{!!__('links.icon.delete') !!}</a></li>
+                    @endif
+
+                </x-global::actions.dropdown>
             </div>
         @endif
     </div>
@@ -107,66 +104,66 @@
 
                 <div class="col-md-3">
                     <div class="pull-right">
-                        <div class="btn-group viewDropDown">
-                            @if (count($allCanvas) > 0 && !empty($statusLabels))
-                                @php
-                                    $filterStatus = $filter['status'] ?? 'all';
-                                    $filterRelates = $filter['relates'] ?? 'all';
-                                @endphp
-
-                                @if (($filterStatus ?? '') == 'all')
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i>
-                                        {!! __('status.all') !!} {!! __('links.view') !!}</button>
-                                @else
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i
-                                            class="fas fa-fw {{ __($statusLabels[$filterStatus]['icon']) }}"></i>
-                                        {{ $statusLabels[$filterStatus]['title'] }} {{ __('links.view') }}</button>
-                                @endif
-                                <ul class="dropdown-menu">
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all')
+                        @if (count($allCanvas) > 0 && !empty($statusLabels))
+                            @php
+                                $filterStatus = $filter['status'] ?? 'all';
+                                $filterRelates = $filter['relates'] ?? 'all';
+                            @endphp
+                            <x-global::actions.dropdown variant="filter">
+                                <x-slot:trigger>
+                                    @if (($filterStatus ?? '') == 'all')
+                                        <i class="fas fa-filter"></i>
+                                            {!! __('status.all') !!} {!! __('links.view') !!}
+                                    @else
+                                        <i
+                                                class="fas fa-fw {{ __($statusLabels[$filterStatus]['icon']) }}"></i>
+                                            {{ $statusLabels[$filterStatus]['title'] }} {{ __('links.view') }}
+                                    @endif
+                                </x-slot:trigger>
+                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all" @if ($filterStatus == 'all')
+                                                class="active"
+                                @endif><i class="fas fa-globe"></i> {!! __('status.all') !!}</a></li>
+                                @foreach ($statusLabels as $key => $data)
+                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
+                                            @if ($filterStatus == $key)
                                             class="active"
-                            @endif><i class="fas fa-globe"></i> {!! __('status.all') !!}</a></li>
-                            @foreach ($statusLabels as $key => $data)
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
-                                        @if ($filterStatus == $key)
-                                        class="active"
-                            @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
-                            {!! $data['title'] !!}</a></li>
-                            @endforeach
-                            </ul>
-                            @endif
-                        </div>
+                                @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
+                                {!! $data['title'] !!}</a></li>
+                                @endforeach
 
-                        <div class="btn-group viewDropDown">
-                            @if (count($allCanvas) > 0 && !empty($relatesLabels))
-                                @php
-                                    $filterStatus = $filter['status'] ?? 'all';
-                                    $filterRelates = $filter['relates'] ?? 'all';
-                                @endphp
+                            </x-global::actions.dropdown>
+                        @endif
 
-                                @if ($filterRelates == 'all')
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i
-                                            class="fas fa-fw fa-globe"></i> {{ __('relates.all') }}
-                                        {{ __('links.view') }}</button>
-                                @else
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown"><i
-                                            class="fas fa-fw {{ __($relatesLabels[$filterRelates]['icon']) }}"></i>
-                                        {{ $relatesLabels[$filterRelates]['title'] }} {{ __('links.view') }}</button>
-                                @endif
-                                <ul class="dropdown-menu">
-                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all')
+                        @if (count($allCanvas) > 0 && !empty($relatesLabels))
+                            @php
+                                $filterStatus = $filter['status'] ?? 'all';
+                                $filterRelates = $filter['relates'] ?? 'all';
+                            @endphp
+                            <x-global::actions.dropdown variant="filter">
+                                <x-slot:trigger>
+                                    @if ($filterRelates == 'all')
+                                        <i
+                                                class="fas fa-fw fa-globe"></i> {{ __('relates.all') }}
+                                            {{ __('links.view') }}
+                                    @else
+                                        <i
+                                                class="fas fa-fw {{ __($relatesLabels[$filterRelates]['icon']) }}"></i>
+                                            {{ $relatesLabels[$filterRelates]['title'] }} {{ __('links.view') }}
+                                    @endif
+                                </x-slot:trigger>
+                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all" @if ($filterRelates == 'all')
+                                                class="active"
+                                @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
+                                @foreach ($relatesLabels as $key => $data)
+                                    <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
+                                            @if ($filterRelates == $key)
                                             class="active"
-                            @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
-                            @foreach ($relatesLabels as $key => $data)
-                                <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
-                                        @if ($filterRelates == $key)
-                                        class="active"
-                            @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
-                            {{ $data['title'] }}</a></li>
-                            @endforeach
-                            </ul>
-                            @endif
-                        </div>
+                                @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
+                                {{ $data['title'] }}</a></li>
+                                @endforeach
+
+                            </x-global::actions.dropdown>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -197,24 +194,18 @@
                                             <div class="ticketBox" id="item_{{ $row['id'] }}">
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <div class="inlineDropDownContainer" style="float:right;">
-                                                            @if ($login::userIsAtLeast($roles::$editor))
-                                                                <a href="javascript:void(0)"
-                                                                    class="dropdown-toggle ticketDropDown"
-                                                                    data-toggle="dropdown">
-                                                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                                                </a>
-                                                                <ul class="dropdown-menu">
-                                                                    <li class="nav-header">{{ __('subtitles.edit') }}</li>
-                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
-                                                                            data="item_{{ $row['id'] }}">
-                                                                            {!!   __('links.edit_canvas_item') !!}</a></li>
-                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row['id'] }}"
-                                                                            data="item_{{ $row['id'] }}">
-                                                                        {!!  __('links.delete_canvas_item') !!}</a></li>
-                                                    </ul>
-                                                @endif
-                                            </div>
+                                                        @if ($login::userIsAtLeast($roles::$editor))
+                                                            <x-global::actions.dropdown style="float:right;">
+                                                                <li class="nav-header">{{ __('subtitles.edit') }}</li>
+                                                                <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
+                                                                        data="item_{{ $row['id'] }}">
+                                                                        {!!   __('links.edit_canvas_item') !!}</a></li>
+                                                                <li><a href="#/goalcanvas/delCanvasItem/{{ $row['id'] }}"
+                                                                        data="item_{{ $row['id'] }}">
+                                                                    {!!  __('links.delete_canvas_item') !!}</a></li>
+
+                                                            </x-global::actions.dropdown>
+                                                        @endif
 
                                             <h4><strong>Goal:</strong> <a
                                                     href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"

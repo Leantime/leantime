@@ -34,27 +34,22 @@
             <ul id='medialist' class='listfile'>
                 @foreach ($files as $file)
                     <li class="file-module-{{ $file['moduleId'] }}">
-                        <div class="inlineDropDownContainer dropright" style="float:right;">
+                        <x-global::actions.dropdown class="dropright" style="float:right;">
+                            <li class="nav-header">{!! __('subtitles.file') !!}</li>
+                            <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
 
-                            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="nav-header">{!! __('subtitles.file') !!}</li>
-                                <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
+                            @if ($login::userIsAtLeast($roles::$editor))
+                                <li>
+                                    <form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
+                                        @csrf
+                                        <input type="hidden" name="delFile" value="{{ $file['id'] }}" />
+                                        <button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</button>
+                                    </form>
+                                </li>
+                            @endif
 
-                                @if ($login::userIsAtLeast($roles::$editor))
-                                    <li>
-                                        <form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
-                                            @csrf
-                                            <input type="hidden" name="delFile" value="{{ $file['id'] }}" />
-                                            <button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</button>
-                                        </form>
-                                    </li>
-                                @endif
 
-                            </ul>
-                        </div>
+                        </x-global::actions.dropdown>
                         <a class="imageLink" data-ext="{{ $file['extension'] }}" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">
                             @if (in_array(strtolower($file['extension']), $imgExtensions ?? []))
                                 <img style='max-height: 50px; max-width: 70px;' src="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" alt="" />

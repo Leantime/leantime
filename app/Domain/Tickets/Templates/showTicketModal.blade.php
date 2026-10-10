@@ -30,55 +30,50 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $onTheClock = $onTheClock ?? false;
         ?>
-        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px; padding-right:10px;">
+        <x-global::actions.dropdown style="float:right; z-index:50; padding-top:10px; padding-right:10px;">
+            <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
+                    <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
+                    <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
+                    <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
+                    <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
+                        hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
+                        hx-trigger="timerUpdate from:body"
+                        hx-swap="outerHTML"
+                        class="timerContainer">
 
-            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-            </a>
-            <ul class="dropdown-menu">
-                <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
-                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
-                <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
-                <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
-                <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
-                    hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
-                    hx-trigger="timerUpdate from:body"
-                    hx-swap="outerHTML"
-                    class="timerContainer">
+                        @if ($onTheClock === false)
+                            <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
+                               hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
+                               hx-target="#timerHeadMenu"
+                               hx-swap="outerHTML"
+                               hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"start"}'>
+                                <span class="fa-regular fa-clock"></span> {{ __("links.start_work") }}
+                            </a>
+                        @endif
 
-                    @if ($onTheClock === false)
-                        <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
-                           hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
-                           hx-target="#timerHeadMenu"
-                           hx-swap="outerHTML"
-                           hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"start"}'>
-                            <span class="fa-regular fa-clock"></span> {{ __("links.start_work") }}
-                        </a>
-                    @endif
+                        @if ($onTheClock !== false && $onTheClock["id"] == $ticket->id)
+                            <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
+                               hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
+                               hx-target="#timerHeadMenu"
+                               hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"stop"}'
+                               hx-swap="outerHTML">
+                                <span class="fa fa-stop"></span>
 
-                    @if ($onTheClock !== false && $onTheClock["id"] == $ticket->id)
-                        <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
-                           hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
-                           hx-target="#timerHeadMenu"
-                           hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"stop"}'
-                           hx-swap="outerHTML">
-                            <span class="fa fa-stop"></span>
+                                @if (is_array($onTheClock) == true)
+                                    {!!  sprintf(__("links.stop_work_started_at"), dtHelper()->userNow()->setTimestamp((int) $onTheClock["since"])->format(__("language.timeformat"))) !!}
+                                @else
+                                    {!! sprintf(__("links.stop_work_started_at"), dtHelper()->userNow()->format(__("language.timeformat"))) !!}
+                                @endif
+                            </a>
+                        @endif
+                        @if ($onTheClock !== false && $onTheClock["id"] != $ticket->id)
+                            <span class='working'>
+                {{ __("text.timer_set_other_todo") }}
+            </span>
+                        @endif
+                    </li>
 
-                            @if (is_array($onTheClock) == true)
-                                {!!  sprintf(__("links.stop_work_started_at"), dtHelper()->userNow()->setTimestamp((int) $onTheClock["since"])->format(__("language.timeformat"))) !!}
-                            @else
-                                {!! sprintf(__("links.stop_work_started_at"), dtHelper()->userNow()->format(__("language.timeformat"))) !!}
-                            @endif
-                        </a>
-                    @endif
-                    @if ($onTheClock !== false && $onTheClock["id"] != $ticket->id)
-                        <span class='working'>
-            {{ __("text.timer_set_other_todo") }}
-        </span>
-                    @endif
-                </li>
-            </ul>
-        </div>
+        </x-global::actions.dropdown>
     <?php } ?>
     <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 

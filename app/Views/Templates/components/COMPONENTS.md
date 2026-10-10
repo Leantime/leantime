@@ -92,7 +92,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
 | card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
-| dropdown-menu | `actions.dropdown` (+ `.item`, `.header`, `.divider`) | actions | ⬜ | refactor/table-component | Planned P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject`; Bootstrap 2 data-api stays the engine |
+| dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating; tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
@@ -347,7 +347,7 @@ Thin domain wrappers hold the option loops copy-pasted ~54×:
 JS label maps go away), `blueprints::chip-{status,relates,user}` (shared by Canvas/Blueprints/Logicmodel/
 Goalcanvas/StrategyPro/Whiteboards via `adapter` + `canvasType`), `ideas::chip-status` (field `box`).
 
-**`actions.dropdown`** (+ `.item`, `.header`, `.divider`) — variant = today's DOM shape:
+**`actions.dropdown`** — variant = today's DOM shape (as built in P4; `.item`/`.header`/`.divider` sub-components were dropped — raw `<li>` items are already uniform):
 
 | `variant` | wrapper → trigger → menu |
 |---|---|
@@ -355,13 +355,14 @@ Goalcanvas/StrategyPro/Whiteboards via `adapter` + `canvasType`), `ideas::chip-s
 | `header-menu` | `span.dropdown.dropdownWrapper.headerEditDropdown` → `a.dropdown-toggle.btn.btn-transparent` → `ul.dropdown-menu.editCanvasDropdown` |
 | `filter` | `div.btn-group.viewDropDown` → `button.btn.dropdown-toggle` → `ul.dropdown-menu` |
 | `button` | `div.btn-group` → `.btn.btn-primary.dropdown-toggle` + caret |
-| `panel` | `div.dropdown` (or `viewDropDown`) → trigger slot → `div.dropdown-menu` (inputs/forms; stopPropagation inside) |
+| `panel` | bare `div` → `a.dropdown-toggle` → `div.dropdown-menu` — popovers with content (inputs, tabs, htmx) and menus whose trigger brings its own look (head menu, round buttons); `keep-open` stops inside clicks closing it |
 | `subject` | `span.dropdown.dropdownWrapper` → `a.dropdown-toggle.header-title-dropdown` (used by `subjectSwitcher`) |
 
-Props: `variant`, `trigger` slot (default icon trigger reusing `forms.button`'s role/scale maps), `align`,
-`menuClass`, `id`, `hx-*`/`preload` passthrough. `.item`: `link`, `leadingVisual`, `labelText`, `active`,
-onclick/hx/class passthrough. `.header` → `nav-header [border]`; `.divider` → `<li class="border">`; raw
-slot for radio/checkbox items.
+Props (built): `variant`, `label` (raw trigger HTML) or `trigger` slot (its attributes — `data-tippy-content`,
+`hx-*`, `preload`, `href`, extra `class` — go on the trigger), `icon` (⋮ variants), `href`, `as` (wrapper tag, e.g.
+`li` in the head menu), `menuAs` (`div` menu for a filter holding a form), `triggerClass`, `menuClass`, `menuId`,
+`menuStyle`, `keepOpen`, `ariaLabel`. Wrapper attributes pass through. Escape/outside-click/arrow handling is
+Bootstrap 2.3's own, so there is no `core/dropdown` JS.
 
 ### JS modules (IIFE on `leantime.*`, added to `compiled-app` after `app.js`)
 - **`public/assets/js/app/core/select/index.js`** — Tiptap-style registry: `leantime.select.{init, get,
@@ -378,8 +379,8 @@ slot for radio/checkbox items.
   `form` → hidden input + `change`. Updates text/class (via `data-current-class`)/color/avatar, growls, emits
   `lt:chip:changed`; `ticketsController` listens once for kanban side effects (`moveCardToSwimlane`,
   `priority-border-*`).
-- **`public/assets/js/app/core/dropdown/index.js`** — Escape closes `.open`; `htmx:beforeSwap` closes menus
-  inside the target. Nothing else.
+- ~~`core/dropdown/index.js`~~ — not needed: Bootstrap 2.3's data-api already closes on Escape and outside click,
+  and a swapped-out menu takes its `.open` wrapper with it.
 
 ### Phases (one PR each)
 | # | Repo | Scope |
@@ -584,3 +585,23 @@ one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `
   `label.status_unknown` ("No Status Set") instead of hard-coded "new"/"unknown". Gotchas: the kanban recolors chips
   directly, so chips.js removes every color class the chip's options declare (not just the last saved one); an
   avatar-only chip (kanban) keeps its name in an `.sr-only` `[data-chip-label]` so a pick can't overwrite the avatar.
+- _dropdown P4_: `actions.dropdown` (global). 69 core dropdowns in 47 Blade files migrated by script
+  (wrapper/trigger/menu classes diffed against the variant's base; remaining classes/attrs passed through), the
+  Blade-control-flow ones (guarding `@if`, `@php`, `@if/@else` triggers) by a second pass, the rest by hand (head
+  menu, Dashboard round buttons, widget filters, tag popovers, invite link, kanban view menu). Verified by
+  before/after DOM of every `.dropdown-toggle` parent on 21 pages: 214/305 byte-identical after normalising, the rest
+  only intended deltas — `type="button"` on button triggers, `href="javascript:void(0);"` on hx triggers,
+  `aria-hidden` on ⋮ icons, `onclick="event.stopPropagation()"` on keep-open panels (replaces the head menu's jQuery
+  binder; the user-invite panel's `noClickProp` never had a handler, now it stays open as intended), `viewDropDown` on
+  the to-do/calendar widget and roadmap timeframe filters (same right-alignment they already had). Empty wrappers
+  around a guarded menu (non-editors on canvas/idea cards, canvas filters with no boards) are no longer rendered,
+  and the `&nbsp;` spacer inside idea/blueprint card ⋮ menus is gone (aligns them with every other card).
+  `subjectSwitcher` composes `variant="subject"`; projectHub's client filter uses the same shape (`as="div"`).
+  Dashboard: the widget shell is one partial (`widgets::partials.widgetShell`) rendered by the dashboard and by
+  `Hxcontrollers\WidgetShell` when the widget manager turns a widget on — the JS string copy in
+  `Widgetcontroller.js` is gone (it also printed the untranslated, unescaped widget name), and the ⋮ handlers are
+  delegated, so a newly added widget's Hide/Resize work without a reload. Vestigial `data-toggle` removed from
+  `onboardingProgress` (×4) and `importProgress`; `dropdownPill` deleted (0 call-sites). **Deferred:** `loginInfo`
+  (plugin hook `afterUserinfoMenuOpen` sits inside the wrapper), `stopwatch` (htmx-swapped `li` with conditional
+  content), project checklist step popovers, `projectSelector`, Wiki icon picker, Files uppy JS-string menus, plugin
+  pages (P6).

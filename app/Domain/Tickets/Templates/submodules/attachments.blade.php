@@ -31,21 +31,16 @@
     <ul id='medialist' class='listfile'>
     @foreach ($files as $file)
         <li class="{{ $file['moduleId'] }}">
-            <div class="inlineDropDownContainer dropright" style="float:right;">
+            <x-global::actions.dropdown class="dropright" style="float:right;">
+                <li class="nav-header">{!! __('subtitles.file') !!}</li>
+                <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{!! __('links.download') !!}</a></li>
 
-                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                </a>
-                <ul class="dropdown-menu">
-                    <li class="nav-header">{!! __('subtitles.file') !!}</li>
-                    <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{!! __('links.download') !!}</a></li>
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="javascript:void(0);" data-post-url="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" data-post-field="delFile" data-post-value="{{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
+                @endif
 
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="javascript:void(0);" data-post-url="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" data-post-field="delFile" data-post-value="{{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
-                    @endif
 
-                </ul>
-            </div>
+            </x-global::actions.dropdown>
 
 
               <a class="cboxElement" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">

@@ -100,13 +100,12 @@ leantime.widgetController = (function () {
             gridResizeTimer = setTimeout(applyResponsiveGridMode, 200);
         });
 
-        jQuery(".grid-stack-item").each(function(){
-            jQuery(this).find(".removeWidget").click(function(){
-                removeWidget(jQuery(this).closest(".grid-stack-item")[0]);
-            });
-            jQuery(this).find(".fitContent").click(function(){
-                resizeWidget(jQuery(this).closest(".grid-stack-item")[0]);
-            });
+        // Delegated, so widgets added later from the widget manager get a working menu too.
+        jQuery(grid.el).on("click", ".removeWidget", function(){
+            removeWidget(jQuery(this).closest(".grid-stack-item")[0]);
+        });
+        jQuery(grid.el).on("click", ".fitContent", function(){
+            resizeWidget(jQuery(this).closest(".grid-stack-item")[0]);
         });
 
         jQuery(document).ready(function(){
@@ -197,61 +196,33 @@ leantime.widgetController = (function () {
         if (!visible) {
             removeWidget(jQuery("#" + id).closest(".grid-stack-item")[0]);
         } else {
-            // Create the widget structure using DOM methods
-            const widgetNode = document.createElement('div');
-            widgetNode.className = 'grid-stack-item';
+            // The server renders the widget's grid item (same partial as the dashboard).
+            fetch(leantime.appUrl + '/hx/widgets/widgetShell/get?id=' + encodeURIComponent(id), {
+                credentials: 'include',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'HX-Request': 'true' }
+            })
+                .then(function (response) { return response.text(); })
+                .then(function (html) {
+                    const template = document.createElement('template');
+                    template.innerHTML = html.trim();
+                    const widgetNode = template.content.querySelector('.grid-stack-item');
+                    if (!widgetNode) {
+                        return;
+                    }
 
-            // Create the content container
-            const contentDiv = document.createElement('div');
-            contentDiv.className = `grid-stack-item-content tw-p-none ${
-                widget.widgetBackground == "default" ? "maincontentinner" : widget.background
-            }`;
+                    grid.el.appendChild(widgetNode);
+                    grid.makeWidget(widgetNode, {
+                        x: widget.gridX || 0,
+                        y: widget.gridY || 50,
+                        w: widget.gridWidth || 2,
+                        h: widget.gridHeight || 2
+                    });
 
-            // Set the inner structure
-            contentDiv.innerHTML = buildWidget(widget);
-            widgetNode.appendChild(contentDiv);
-
-            // Add to grid and make it a widget
-            grid.el.appendChild(widgetNode);
-            grid.makeWidget(widgetNode, {
-                x: widget.gridX || 0,
-                y: widget.gridY || 50,
-                w: widget.gridWidth || 2,
-                h: widget.gridHeight || 2
-            });
-
-            // Initialize HTMX
-            htmx.process(widgetNode);
-
-            saveGrid({action: "toggleWidget", widgetId: id, visible: visible});
+                    htmx.process(widgetNode);
+                    saveGrid({action: "toggleWidget", widgetId: id, visible: visible});
+                })
+                .catch(function (error) { console.error('[widgets] Could not add widget ' + id, error); });
         }
-    }
-
-    var buildWidget = function(widget) {
-        return '<div class="widgetInner">' +
-            '        <div class="' + (widget.widgetBackground == "default" ? "tw-pb-l" : "") + '">\n' +
-            '            <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">\n' +
-            '               <div class="grid-handler-top tw-h-[40px] tw-cursor-grab tw-float-left tw-mr-sm">\n' +
-            '                    <i class="fa-solid fa-grip-vertical"></i>\n' +
-            '                </div>\n' +
-            '           ' + (widget.name != '' ? '<h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm">' + widget.name + '</h5>' : '') + '\n' +
-            '            <div class="inlineDropDownContainer tw-float-right">\n' +
-            '                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">\n' +
-            '                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>\n' +
-            '                </a>\n' +
-            '                <ul class="dropdown-menu">\n' +
-            '                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> ' + (leantime.i18n.__('label.resizeToFitContent') || 'Resize to fit content') + '</a></li>\n' +
-            '                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> ' + (leantime.i18n.__('label.hide') || 'Hide') + '</a></li>\n' +
-            '                </ul>\n' +
-            '            </div>\n' +
-            '\n' +
-            '        </div>\n' +
-            ' <div class="widgetContent tw-px-l">\n' +
-            '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" id="'+widget.id+'"></div>\n' +
-            '        </div>\n' +
-            '       </div>\n' +
-            '        <div class="clear"></div>\n' +
-            '    </div>\n';
     }
 
     // Make public what you want to have public, everything else is private

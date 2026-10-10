@@ -40,24 +40,23 @@
             </form>
 
             <div class="lt-tabs-actions">
-                <div class="btn-group viewDropDown">
-                    <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="{{ __('search.filter.types') }}">
+                <x-global::actions.dropdown variant="filter" menu-class="searchPage__typeMenu">
+                    <x-slot:trigger class="btn-link" data-tippy-content="{{ __('search.filter.types') }}">
                         <i class="fa-solid fa-layer-group"></i> {{ __('search.filter.types_button') }}
                         @if ($typesNarrowed)
                             <span class="badge badge-primary">{{ count($selectedTypes) }}</span>
                         @endif
-                    </button>
-                    <ul class="dropdown-menu searchPage__typeMenu">
-                        @foreach ($providers as $key => $provider)
-                            <li>
-                                <label>
-                                    <input type="checkbox" name="types[]" value="{{ $key }}" form="searchPageForm" @checked(in_array($key, $selectedTypes, true)) onchange="document.getElementById('searchPageForm').submit()" />
-                                    <span class="{{ $provider->icon() }}" aria-hidden="true"></span>{{ $provider->label() }}
-                                </label>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
+                    </x-slot:trigger>
+                    @foreach ($providers as $key => $provider)
+                        <li>
+                            <label>
+                                <input type="checkbox" name="types[]" value="{{ $key }}" form="searchPageForm" @checked(in_array($key, $selectedTypes, true)) onchange="document.getElementById('searchPageForm').submit()" />
+                                <span class="{{ $provider->icon() }}" aria-hidden="true"></span>{{ $provider->label() }}
+                            </label>
+                        </li>
+                    @endforeach
+
+                </x-global::actions.dropdown>
 
                 <div class="filterWrapper">
                     <a class="btn btn-link" href="javascript:void(0);" onclick="jQuery(this).next('.filterBar').toggle();" data-tippy-content="{{ __('popover.filter') }}">

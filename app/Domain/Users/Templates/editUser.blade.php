@@ -75,11 +75,11 @@
                     </x-global::forms.select>
                         @if ($values['status'] == 'i')
                         <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
-                            <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"><i class="fa fa-link"></i> {!! __('label.copyinviteLink') !!}</a>
-                            <div class="dropdown-menu padding-md noClickProp">
+                            <x-global::actions.dropdown variant="panel" as="span" class="dropdown" menu-class="padding-md" keep-open>
+                                <x-slot:trigger class="btn btn-default" href="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"><i class="fa fa-link"></i> {!! __('label.copyinviteLink') !!}</x-slot:trigger>
                                 <x-global::forms.text-input id="inviteURL" value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
                                 <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('inviteURL');">{!! __('links.copy_url') !!}</x-global::forms.button>
-                            </div>
+                            </x-global::actions.dropdown>
                             <x-global::forms.button tag="a" link="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite=1" contentRole="default" style="margin-left:5px;"><i class="fa fa-envelope"></i> {!! __('buttons.resend_invite') !!}</x-global::forms.button>
                         </div>
                         @endif

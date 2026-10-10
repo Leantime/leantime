@@ -25,14 +25,8 @@
             <div class="maincontentinner tw-z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
-                    <div class="pull-right dropdownWrapper">
-                        <a
-                            class="dropdown-toggle btn round-button"
-                            data-toggle="dropdown"
-                            data-tippy-content="{{ __('label.edit_project') }}"
-                            href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
-                        ><i class="fa fa-ellipsis"></i></a>
-                        <ul class="dropdown-menu">
+                    <x-global::actions.dropdown variant="panel" menu-as="ul" class="pull-right dropdownWrapper">
+                        <x-slot:trigger class="btn round-button" data-tippy-content="{{ __('label.edit_project') }}" href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"><i class="fa fa-ellipsis"></i></x-slot:trigger>
                             <li class="dropdown-item">
                                 <a
                                     href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
@@ -47,22 +41,14 @@
                                 ><i class="fa fa-trash"></i> {{ __('label.deleteProject', 'Delete Project') }}</a>
                             </li>
 
-                        </ul>
-                    </div>
+                    </x-global::actions.dropdown>
                 @endif
 
-                <div class="pull-right dropdownWrapper tw-mr-[5px]">
-                    <a
-                        class="dropdown-toggle btn round-button"
-                        data-toggle="dropdown"
-                        data-tippy-content="{{ __('label.copy_url_tooltip') }}"
-                        href="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}"
-                    ><i class="fa fa-link"></i></a>
-                    <div class="dropdown-menu padding-md">
-                        <x-global::forms.text-input id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
-                        <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-global::forms.button>
-                    </div>
-                </div>
+                <x-global::actions.dropdown variant="panel" menu-class="padding-md" keep-open class="pull-right dropdownWrapper tw-mr-[5px]">
+                    <x-slot:trigger class="btn round-button" data-tippy-content="{{ __('label.copy_url_tooltip') }}" href="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}"><i class="fa fa-link"></i></x-slot:trigger>
+                    <x-global::forms.text-input id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
+                    <x-global::forms.button contentRole="primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</x-global::forms.button>
+                </x-global::actions.dropdown>
 
                 <a
                     href="javascript:void(0);"
@@ -280,30 +266,24 @@
                                                 ) }}
                                             </strong>
                                                 @if ($login::userIsAtLeast($roles::$editor))
-                                                    <div class="inlineDropDownContainer tw-float-right tw-ml-[10px]">
-                                                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                                            <i class="fa fa-ellipsis-v"></i>
-                                                        </a>
+                                                    <x-global::actions.dropdown class="tw-float-right tw-ml-[10px]">
+                                                        @if ($row['userId'] == session("userdata.id"))
+                                                            <li>
+                                                                <a href="javascript:void(0);" class="deleteComment" data-post-field="delComment" data-post-value="{{ $row['id'] }}">
+                                                                    <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                                                                </a>
+                                                            </li>
+                                                        @endif
 
-                                                        <ul class="dropdown-menu">
-                                                            @if ($row['userId'] == session("userdata.id"))
-                                                                <li>
-                                                                    <a href="javascript:void(0);" class="deleteComment" data-post-field="delComment" data-post-value="{{ $row['id'] }}">
-                                                                        <span class="fa fa-trash"></span> {{ __('links.delete') }}
-                                                                    </a>
-                                                                </li>
-                                                            @endif
-
-                                                            @isset($ticket->id)
-                                                                <li>
-                                                                    <a
-                                                                        href="javascript:void(0);"
-                                                                        onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $ticket->id }})"
-                                                                    >{{ __('links.add_to_timesheets') }}</a>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
-                                                    </div>
+                                                        @isset($ticket->id)
+                                                            <li>
+                                                                <a
+                                                                    href="javascript:void(0);"
+                                                                    onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $ticket->id }})"
+                                                                >{{ __('links.add_to_timesheets') }}</a>
+                                                            </li>
+                                                        @endif
+                                                    </x-global::actions.dropdown>
                                                 @endif
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>

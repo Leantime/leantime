@@ -56,20 +56,18 @@
     </div>
     @if (count($allCanvas) > 0)
         <div class="pageheader-right">
-            <span class="dropdown dropdownWrapper headerEditDropdown">
-                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-                <ul class="dropdown-menu editCanvasDropdown">
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $currentCanvas }}" class="editCanvasLink">{!! $tpl->__('links.icon.edit') !!}</a></li>
-                    @endif
-                    <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $currentCanvas }}" hx-boost="false">{!! $tpl->__('links.icon.export') !!}</a></li>
-                    <li><a href="javascript:window.print();">{!! $tpl->__('links.icon.print') !!}</a></li>
-                    @dispatchEvent('logicmodel.headerActions', ['canvasId' => $currentCanvas])
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
-                    @endif
-                </ul>
-            </span>
+            <x-global::actions.dropdown variant="header-menu">
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $currentCanvas }}" class="editCanvasLink">{!! $tpl->__('links.icon.edit') !!}</a></li>
+                @endif
+                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $currentCanvas }}" hx-boost="false">{!! $tpl->__('links.icon.export') !!}</a></li>
+                <li><a href="javascript:window.print();">{!! $tpl->__('links.icon.print') !!}</a></li>
+                @dispatchEvent('logicmodel.headerActions', ['canvasId' => $currentCanvas])
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
+                @endif
+
+            </x-global::actions.dropdown>
         </div>
     @endif
 </div>
@@ -98,16 +96,15 @@
                          this board the button sits at the left edge of the toolbar, so
                          a 240px menu extends back under the sidebar and gets clipped
                          by .primaryContent's overflow-x:hidden. Left-align it locally. --}}
-                    <div class="btn-group viewDropDown">
-                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">{!! $statusFilterLabel !!}</button>
-                        <ul class="dropdown-menu" style="left:0; right:auto;">
-                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
-                            @foreach ($statusLabels as $key => $data)
-                                @php $iconColor = $statusColorMap[$data['color']] ?? '#666'; @endphp
-                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}" style="color:{{ $iconColor }}"></i> {{ $data['title'] }}</a></li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    <x-global::actions.dropdown variant="filter" menu-style="left:0; right:auto;">
+                        <x-slot:trigger class="btn-default">{!! $statusFilterLabel !!}</x-slot:trigger>
+                        <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all') class="active" @endif><i class="fas fa-globe"></i> {{ $tpl->__('status.all') }}</a></li>
+                        @foreach ($statusLabels as $key => $data)
+                            @php $iconColor = $statusColorMap[$data['color']] ?? '#666'; @endphp
+                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}" @if ($filter['status'] == $key) class="active" @endif><i class="fas fa-fw {{ $data['icon'] }}" style="color:{{ $iconColor }}"></i> {{ $data['title'] }}</a></li>
+                        @endforeach
+
+                    </x-global::actions.dropdown>
                 @endif
 
             </div>
