@@ -41,9 +41,9 @@
             @endif
         </span>
     </x-slot:toggle>
-    <x-global::forms.chip.option value="0" :label="__('label.not_assigned_to_user')" :image="$avatarUrl('false')" id="userStatusChange{{ $ticketId }}0">{{ __('label.not_assigned_to_user') }}</x-global::forms.chip.option>
+    <x-global::forms.chip.option value="0" :label="__('label.not_assigned_to_user')" id="userStatusChange{{ $ticketId }}0">{{ __('label.not_assigned_to_user') }}</x-global::forms.chip.option>
     @foreach ($users as $user)
         @php $fullName = sprintf(__('text.full_name'), $user['firstname'], $user['lastname']); @endphp
-        <x-global::forms.chip.option :value="$user['id']" :label="$fullName" :image="$avatarUrl($user['id'])" id="userStatusChange{{ $ticketId }}{{ $user['id'] }}"><img src="{{ $avatarUrl($user['id']) }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ $fullName }}</x-global::forms.chip.option>
+        <x-global::forms.chip.option :value="$user['id']" :label="$fullName" id="userStatusChange{{ $ticketId }}{{ $user['id'] }}"><img src="{{ $avatarUrl($user['id']) }}" width="25" style="vertical-align: middle; margin-right:5px;"/>{{ $fullName }}</x-global::forms.chip.option>
     @endforeach
 </x-global::forms.chip>

@@ -3,7 +3,6 @@
     'label' => null,     // text shown on the chip after the pick (defaults to the slot's text)
     'colorClass' => '',  // color class of this value: painted on the item and put on the chip when picked
     'color' => '',       // background color of this value (milestones)
-    'image' => '',       // avatar URL shown on the chip when picked (user chips)
 ])
 
 {{--
@@ -14,5 +13,5 @@
     $chipLabel = $label ?? html_entity_decode(trim(strip_tags((string) $slot)), ENT_QUOTES | ENT_HTML5);
 @endphp
 <li class="dropdown-item">
-    <a href="javascript:void(0);" {{ $attributes->class($colorClass !== '' ? [$colorClass] : []) }} data-value="{{ $value }}" data-label="{{ $chipLabel }}"@if ($colorClass !== '') data-class="{{ $colorClass }}"@endif @if ($color !== '') data-color="{{ $color }}" style="background-color:{{ $color }}"@endif @if ($image !== '') data-image="{{ $image }}"@endif>{{ $slot }}</a>
+    <a href="javascript:void(0);" {{ $attributes->class($colorClass !== '' ? [$colorClass] : []) }} data-value="{{ $value }}" data-label="{{ $chipLabel }}"@if ($colorClass !== '') data-class="{{ $colorClass }}"@endif @if ($color !== '') data-color="{{ $color }}" style="background-color:{{ $color }}"@endif>{{ $slot }}</a>
 </li>

@@ -10,7 +10,7 @@
  * Markup contract (written by the component, read here):
  *   wrapper [data-lt-chip=adapter][data-chip-type][data-entity-id][data-field][data-canvas-type]
  *   toggle  .dropdown-toggle with .text (or [data-chip-label] / img[data-chip-image] in a custom toggle)
- *   option  a[data-value][data-label][data-class][data-color][data-image]
+ *   option  a[data-value][data-label][data-class][data-color]
  */
 leantime.chipController = (function () {
 
@@ -81,9 +81,11 @@ leantime.chipController = (function () {
             toggle.style.backgroundColor = option.getAttribute('data-color') || '';
         }
 
+        // Avatar chips: the picked value is a user id (0 = nobody, which serves the default avatar). The URL is
+        // built here from the encoded id rather than read from the DOM (CodeQL js/xss-through-dom, see #3582).
         var image = toggle.querySelector('img[data-chip-image]');
-        if (image && option.getAttribute('data-image')) {
-            image.src = option.getAttribute('data-image');
+        if (image) {
+            image.src = leantime.appUrl + '/users/profileImage/' + encodeURIComponent(option.getAttribute('data-value'));
         }
 
         wrapper.setAttribute('data-current-value', option.getAttribute('data-value'));
