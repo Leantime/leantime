@@ -104,7 +104,7 @@
                                 <div class="">
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span>{!! __('label.client_product') !!}</h4>
-                                    <x-global::forms.select enhanced name="clientId" id="clientId">
+                                    <x-global::forms.select enhanced name="clientId" id="clientId" aria-label="{{ __('label.client_product') }}">
 
                                         @foreach ($clients as $row)
                                             <option value="{{ $row['id'] }}"
@@ -128,7 +128,7 @@
                                     {!! __('text.who_can_access') !!}
                                     <br /><br />
 
-                                    <x-global::forms.select enhanced name="globalProjectUserAccess" style="max-width:300px;">
+                                    <x-global::forms.select enhanced name="globalProjectUserAccess" style="max-width:300px;" aria-label="{{ __('labels.defaultaccess') }}">
                                         <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{!! __('labels.only_chose') !!}</option>
                                         <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_client') !!}</option>
                                         <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_org') !!}</option>

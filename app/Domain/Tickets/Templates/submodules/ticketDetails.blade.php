@@ -228,7 +228,7 @@
                         <label class="control-label">{!! __('label.milestone') !!}</label>
                         <div class="">
                             <div class="form-group">
-                                <x-global::forms.select enhanced  name="milestoneid"  class="span11" >
+                                <x-global::forms.select enhanced name="milestoneid" class="span11" aria-label="{{ __('label.milestone') }}">
                                     <option value="">{!! __('label.not_assigned_to_milestone') !!}</option>
                                     @foreach ($milestones as $milestoneRow)
                                         <option value="{{ $milestoneRow->id }}"
@@ -264,7 +264,7 @@
                         <label class="control-label">{!! __('label.related_to') !!}</label>
                         <div class="">
                             <div class="form-group">
-                                <x-global::forms.select enhanced  name="dependingTicketId"  class="span11" >
+                                <x-global::forms.select enhanced name="dependingTicketId" class="span11" aria-label="{{ __('label.related_to') }}">
                                     <option value="">{!! __('label.not_related') !!}</option>
                                     @if (is_array($ticketParents))
                                         @foreach ($ticketParents as $ticketRow)

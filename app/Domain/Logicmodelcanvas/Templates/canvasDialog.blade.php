@@ -185,7 +185,7 @@
                             <span class="lm-details-label"><i class="fas fa-fw fa-circle-dot"></i> {{ $tpl->__('label.status') }}</span>
                             <span class="lm-details-value">
                                 @php $statusColorMap = ['blue' => '#1B75BB', 'orange' => '#fdab3d', 'green' => '#75BB1B', 'red' => '#BB1B25', 'grey' => '#c3ccd4']; @endphp
-                                <x-global::forms.select name="status" id="statusCanvas" enhanced :search="false">
+                                <x-global::forms.select name="status" id="statusCanvas" enhanced :search="false" aria-label="{{ $tpl->__('label.status') }}">
                                     @foreach ($statusLabels as $key => $data)
                                         @if ($data['active'])
                                             <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}" :color="$statusColorMap[$data['color']] ?? '#666'">{{ $tpl->__($data['title']) }}</x-global::forms.select.option>
@@ -202,7 +202,7 @@
                     <div class="lm-details-row">
                         <span class="lm-details-label"><i class="fas fa-fw fa-flag"></i> {{ $tpl->__('logicmodel.priority.label') }}</span>
                         <span class="lm-details-value">
-                            <x-global::forms.select name="impact" id="priorityCanvas" enhanced :search="false">
+                            <x-global::forms.select name="impact" id="priorityCanvas" enhanced :search="false" aria-label="{{ $tpl->__('logicmodel.priority.label') }}">
                                 <option value="" @selected($currentImpact === '')>{{ $tpl->__('logicmodel.priority.none') }}</option>
                                 <x-global::forms.select.option value="1" :selected="$currentImpact === '1'" icon="fas fa-thermometer-full" color="#C73E5C">{{ $tpl->__('logicmodel.priority.critical') }}</x-global::forms.select.option>
                                 <x-global::forms.select.option value="2" :selected="$currentImpact === '2'" icon="fas fa-thermometer-three-quarters" color="#E85A5A">{{ $tpl->__('logicmodel.priority.high') }}</x-global::forms.select.option>
@@ -216,7 +216,7 @@
                     <div class="lm-details-row">
                         <span class="lm-details-label"><i class="fas fa-fw fa-layer-group"></i> {{ $tpl->__('logicmodel.stage.label') }}</span>
                         <span class="lm-details-value">
-                            <x-global::forms.select name="box" id="stageCanvas" enhanced :search="false">
+                            <x-global::forms.select name="box" id="stageCanvas" enhanced :search="false" aria-label="{{ $tpl->__('logicmodel.stage.label') }}">
                                 @foreach ($stages as $num => $stage)
                                     @php $stageBoxKey = 'lm_' . $stage['key']; @endphp
                                     <x-global::forms.select.option :value="$stageBoxKey" :selected="$boxKey === $stageBoxKey" icon="fas {{ $stage['icon'] }}" :color="$stage['color']">{{ $tpl->__($stage['title']) }}</x-global::forms.select.option>

@@ -16,6 +16,7 @@ input, button, select, textarea {
 input:focus-visible,
 button:focus-visible,
 select:focus-visible,
+.ss-main:focus-visible,
 textarea:focus-visible,
 .btn:focus-visible {
     outline: 2px solid var(--accent1);

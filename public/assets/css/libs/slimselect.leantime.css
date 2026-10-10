@@ -48,7 +48,8 @@
 }
 
 .ss-main .ss-values .ss-placeholder {
-    opacity: 0.6;
+    /* 0.75 keeps placeholder text above 4.5:1 contrast in light and dark mode. */
+    opacity: 0.75;
     padding: 0;
 }
 

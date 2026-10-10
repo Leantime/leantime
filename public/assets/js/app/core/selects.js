@@ -21,14 +21,37 @@ leantime.selectController = (function () {
 
     var instances = new WeakMap();
 
+    // Text of a label without the text of the <select> it may wrap (whose options would leak in).
+    var labelText = function (label, select) {
+        if (!label) {
+            return '';
+        }
+        var copy = label.cloneNode(true);
+        Array.prototype.forEach.call(copy.querySelectorAll('select'), function (el) { el.remove(); });
+        return copy.textContent.trim();
+    };
+
+    // The enhanced control's accessible name, from the ways our templates label a select.
+    // Returns '' when there is none, and the caller then leaves SlimSelect's own default in place.
     var labelFor = function (select) {
         if (select.getAttribute('aria-label')) {
             return select.getAttribute('aria-label');
         }
         if (select.id) {
-            var label = document.querySelector('label[for="' + CSS.escape(select.id) + '"]');
-            if (label && label.textContent.trim() !== '') {
-                return label.textContent.trim();
+            var forLabel = document.querySelector('label[for="' + CSS.escape(select.id) + '"]');
+            if (labelText(forLabel, select) !== '') {
+                return labelText(forLabel, select);
+            }
+        }
+        // <label>Name <select>…</select></label>
+        if (labelText(select.closest('label'), select) !== '') {
+            return labelText(select.closest('label'), select);
+        }
+        // <label>Name</label> <select>… — directly before the select or before its wrapper.
+        var candidates = [select.previousElementSibling, select.parentElement && select.parentElement.previousElementSibling];
+        for (var i = 0; i < candidates.length; i++) {
+            if (candidates[i] && candidates[i].tagName === 'LABEL' && labelText(candidates[i], select) !== '') {
+                return labelText(candidates[i], select);
             }
         }
         return select.getAttribute('data-placeholder') || select.getAttribute('title') || '';
@@ -48,15 +71,21 @@ leantime.selectController = (function () {
     var settingsFor = function (select) {
         var placeholder = select.getAttribute('data-placeholder') || '';
 
-        return {
+        var settings = {
             showSearch: showSearchFor(select),
             placeholderText: placeholder !== '' ? placeholder : leantime.i18n.__('label.choose_option'),
             searchPlaceholder: leantime.i18n.__('input.placeholders.search'),
             searchText: leantime.i18n.__('label.no_results'),
             allowDeselect: select.getAttribute('data-allow-deselect') === 'true',
-            closeOnSelect: select.getAttribute('data-close-on-select') !== 'false',
-            ariaLabel: labelFor(select)
+            closeOnSelect: select.getAttribute('data-close-on-select') !== 'false'
         };
+
+        var ariaLabel = labelFor(select);
+        if (ariaLabel !== '') {
+            settings.ariaLabel = ariaLabel;
+        }
+
+        return settings;
     };
 
     var enhance = function (select) {
