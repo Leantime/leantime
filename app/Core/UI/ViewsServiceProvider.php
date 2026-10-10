@@ -270,80 +270,97 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
     }
 
     /**
+     * The view composer classes to register: app and domain composers plus those of enabled plugins.
+     *
+     * Cached in the composerPaths manifest (cleared when plugins change). When the enabled plugins can't
+     * be read, this request gets the app composers only and nothing is cached: the manifest never
+     * expires, so caching that list would leave every plugin view without its composer data until the
+     * file is deleted by hand.
+     *
+     * @return array Composer class names
+     *
      * @throws BindingResolutionException
      */
-    public function getComposerPaths()
+    public function getComposerPaths(): array
     {
         $pathRepo = app()->make(PathManifestRepository::class);
 
-        if ($viewPaths = $pathRepo->loadManifest('composerPaths')) {
-            return $viewPaths;
+        if ($cachedComposers = $pathRepo->loadManifest('composerPaths')) {
+            return $cachedComposers;
         }
 
-        $storePaths = $this->discoverComposerPaths();
-
-        $viewPaths = $pathRepo->writeManifest('composerPaths', $storePaths);
-
-        return $viewPaths;
-    }
-
-    private function discoverComposerPaths()
-    {
-        $appComposerClasses = collect(glob(APP_ROOT.'/app/Views/Composers/*.php'))
+        $appComposerFiles = collect(glob(APP_ROOT.'/app/Views/Composers/*.php'))
             ->concat(glob(APP_ROOT.'/app/Domain/*/Composers/*.php'));
 
-        try {
-            $pluginService = $this->app->make(\Leantime\Core\Plugins\Plugins::class);
-            $enabledPluginPaths = $pluginService->getEnabledPluginPaths();
+        $pluginComposerFiles = $this->discoverPluginComposerFiles();
 
-            $pluginComposerClasses = collect($enabledPluginPaths)
-                ->map(function ($pluginInfo) {
-
-                    $composersPath = $pluginInfo['path'].'/Composers/';
-
-                    if ($pluginInfo['format'] === 'phar') {
-
-                        if (! file_exists($pluginInfo['path'])) {
-                            return [];
-                        }
-
-                        try {
-
-                            $composers = [];
-                            $p = new \Phar($composersPath, 0);
-                            $paths = collect(new \RecursiveIteratorIterator($p));
-
-                            foreach ($paths as $path) {
-                                $something = $path;
-                                $composers[] = 'Plugins/'.$pluginInfo['foldername'].'/Composers/'.$path->getFileName();
-                            }
-
-                            return $composers;
-
-                        } catch (\Exception $e) {
-                            return [];
-                        }
-                    }
-
-                    // Use glob which works for both folder and phar paths
-                    return glob($composersPath.'*.php') ?: [];
-                })
-                ->flatten();
-        } catch (\Exception $e) {
-            Log::error($e);
-            $pluginComposerClasses = collect();
+        if ($pluginComposerFiles === null) {
+            return $this->composerClassNames($appComposerFiles);
         }
 
-        $composerList = $appComposerClasses
-            ->concat($pluginComposerClasses)
+        return $pathRepo->writeManifest(
+            'composerPaths',
+            $this->composerClassNames($appComposerFiles->concat($pluginComposerFiles))
+        );
+    }
+
+    /**
+     * Composer files of the enabled plugins (folder and phar), or null when the enabled plugins
+     * can't be read.
+     */
+    private function discoverPluginComposerFiles(): ?\Illuminate\Support\Collection
+    {
+        try {
+            $pluginService = $this->app->make(\Leantime\Core\Plugins\Plugins::class);
+            $enabledPluginPaths = $pluginService->getEnabledPluginPaths(strict: true);
+        } catch (\Exception $e) {
+            Log::warning('View composers: enabled plugins unavailable, plugin composers skipped for this request (not cached).', ['exception' => $e]);
+
+            return null;
+        }
+
+        return collect($enabledPluginPaths)
+            ->map(function ($pluginInfo) {
+
+                $composersPath = $pluginInfo['path'].'/Composers/';
+
+                if ($pluginInfo['format'] === 'phar') {
+
+                    if (! file_exists($pluginInfo['path'])) {
+                        return [];
+                    }
+
+                    try {
+                        $composers = [];
+                        $pharComposers = collect(new \RecursiveIteratorIterator(new \Phar($composersPath, 0)));
+
+                        foreach ($pharComposers as $path) {
+                            $composers[] = 'Plugins/'.$pluginInfo['foldername'].'/Composers/'.$path->getFileName();
+                        }
+
+                        return $composers;
+                    } catch (\Exception $e) {
+                        return [];
+                    }
+                }
+
+                return glob($composersPath.'*.php') ?: [];
+            })
+            ->flatten();
+    }
+
+    /**
+     * Turns composer file paths (app/… or Plugins/…) into class names.
+     */
+    private function composerClassNames(\Illuminate\Support\Collection $composerFiles): array
+    {
+        return $composerFiles
             ->map(fn ($filepath) => Str::of($filepath)
                 ->replace([APP_ROOT.'/app/', '.php'], ['', '', ''])
                 ->replace('/', '\\')
                 ->start($this->app->getNamespace())
                 ->toString())
             ->all();
-
-        return $composerList;
     }
 
     public function boot()
