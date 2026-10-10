@@ -41,7 +41,7 @@
                 <div class="col-md-12 center">
                     <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                     <p>The type of the project. This will determine which features are available.</p>
-                    <x-global::forms.select name="type">
+                    <x-global::forms.select enhanced name="type">
                         @foreach ($projectTypes as $key => $type)
                             <option value="{{ $tpl->escape($key) }}"
                             @if ($project['type'] == $key)
@@ -129,7 +129,7 @@
                     <div class="col-md-12 " style="margin-bottom: 30px;">
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-building"></span>{!! __('label.client_product') !!}</h4>
-                    <x-global::forms.select name="clientId" id="clientId">
+                    <x-global::forms.select enhanced name="clientId" id="clientId" aria-label="{{ __('label.client_product') }}">
 
                         @foreach ($clients as $row)
                             <option value="{{ $row['id'] }}"
@@ -162,7 +162,7 @@
 
                 <label class="col-md-4 control-label" for="projectState">{!! __('label.project_state') !!}</label>
                 <div class="col-md-6">
-                    <x-global::forms.select name="projectState" id="projectState">
+                    <x-global::forms.select enhanced name="projectState" id="projectState">
                         <option value="0" @if ($project['state'] == 0) selected=selected @endif>{!! __('label.open') !!}</option>
 
                         <option value="-1" @if ($project['state'] == -1) selected=selected @endif>{!! __('label.closed') !!}</option>
@@ -181,7 +181,7 @@
                     {!! __('text.who_can_access') !!}
                     <br /><br />
 
-                    <x-global::forms.select name="globalProjectUserAccess" style="max-width:300px;">
+                    <x-global::forms.select enhanced name="globalProjectUserAccess" style="max-width:300px;" aria-label="{{ __('labels.defaultaccess') }}">
                         <option value="restricted" {{ $project['psettings'] == 'restricted' ? "selected='selected'" : '' }}>{!! __('labels.only_chose') !!}</option>
                         <option value="clients" {{ $project['psettings'] == 'clients' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_client') !!}</option>
                         <option value="all" {{ $project['psettings'] == 'all' ? "selected='selected'" : '' }}>{!! __('labels.everyone_in_org') !!}</option>

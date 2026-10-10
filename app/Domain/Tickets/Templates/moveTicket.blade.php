@@ -17,7 +17,7 @@
             <br /><br />
         </p>
 
-        <x-global::forms.select id="projectSelector" name="projectId">
+        <x-global::forms.select enhanced id="projectSelector" name="projectId" aria-label="{{ __('label.project') }}">
         @php
         $i = 0;
         $lastClient = '';
@@ -47,7 +47,4 @@
         jQuery.nmTop().close();
     @endif
 
-    jQuery(document).ready(function(){
-        jQuery("#projectSelector").chosen();
-    });
 </script>

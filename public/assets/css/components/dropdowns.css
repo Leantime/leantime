@@ -202,16 +202,10 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     display:block;
 }
 
-.chosen-results li[class*=" label-"] {
-    color:#fff;
-}
 
-.chosen-results li[class*=" label-"]:hover {
-    color:#555;
-}
-
-.chosen-results li.label-warning,
 .maincontent .ticketDropdown a.label-warning,
+.ss-values span.label-warning,
+.ss-list span.label-warning,
 .nyroModalCont .ticketDropdown a.label-warning,
 .label-warning,
 .label-yellow{
@@ -219,23 +213,26 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color:var(--yellow-text-color);
 }
 
-.chosen-results li.label-info,
 .maincontent .ticketDropdown a.label-info,
+.ss-values span.label-info,
+.ss-list span.label-info,
 .nyroModalCont .ticketDropdown a.label-info{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
-.chosen-results li.label-important,
 .maincontent .ticketDropdown a.label-important,
+.ss-values span.label-important,
+.ss-list span.label-important,
 .nyroModalCont .ticketDropdown a.label-important,
 .label-important{
     background:var(--red);
     color:var(--red-text-color);
 }
 
-.chosen-results li.label-danger,
 .maincontent .ticketDropdown a.label-danger,
+.ss-values span.label-danger,
+.ss-list span.label-danger,
 .nyroModalCont .ticketDropdown a.label-danger,
 .label-danger,
 .label-red{
@@ -243,8 +240,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color:var(--dark-red-text-color);
 }
 
-.chosen-results li.label-success,
 .maincontent .ticketDropdown a.label-success,
+.ss-values span.label-success,
+.ss-list span.label-success,
 .nyroModalCont .ticketDropdown a.label-success,
 .label-success,
 .label-green {
@@ -252,92 +250,103 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color:var(--green-text-color);
 }
 
-.chosen-results li.label-default,
 .maincontent .ticketDropdown a.label-default,
+.ss-values span.label-default,
+.ss-list span.label-default,
 .nyroModalCont .ticketDropdown a.label-default,
 .label-default{
     background: var(--grey);
     color:var(--grey-text-color);
 }
 
-.chosen-results li.label-default.milestone,
 .maincontent .ticketDropdown a.label-default.milestone,
 .nyroModalCont .ticketDropdown a.label-default.milestone {
     color:var(--blue-text-color);
 }
 
-.chosen-results li.label-purple,
 .maincontent .ticketDropdown a.label-purple,
+.ss-values span.label-purple,
+.ss-list span.label-purple,
 .nyroModalCont .ticketDropdown a.label-purple{
     background:var(--purple);
     color:var(--purple-text-color);
 }
 
-.chosen-results li.label-pink,
 .maincontent .ticketDropdown a.label-pink,
+.ss-values span.label-pink,
+.ss-list span.label-pink,
 .nyroModalCont .ticketDropdown a.label-pink{
     background:var(--pink);
     color:var(--pink-text-color);
 }
 
-.chosen-results li.label-brown,
 .maincontent .ticketDropdown a.label-brown,
+.ss-values span.label-brown,
+.ss-list span.label-brown,
 .nyroModalCont .ticketDropdown a.label-brown{
     background:var(--brown);
     color:var(--brown-text-color);
 }
 
-.chosen-results li.label-blue,
 .maincontent .ticketDropdown a.label-blue,
+.ss-values span.label-blue,
+.ss-list span.label-blue,
 .nyroModalCont .ticketDropdown a.label-blue{
     background:var(--blue);
     color:var(--blue-text-color);
 }
 
-.chosen-results li.label-dark-blue,
 .maincontent .ticketDropdown a.label-dark-blue,
+.ss-values span.label-dark-blue,
+.ss-list span.label-dark-blue,
 .nyroModalCont .ticketDropdown a.label-dark-blue{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
-.chosen-results li.label-darker-blue,
 .maincontent .ticketDropdown a.label-darker-blue,
+.ss-values span.label-darker-blue,
+.ss-list span.label-darker-blue,
 .nyroModalCont .ticketDropdown a.label-darker-blue{
     background:var(--darker-blue);
     color:var(--darker-blue-text-color);
 }
 
-.chosen-results li.label-green,
 .maincontent .ticketDropdown a.label-green,
+.ss-values span.label-green,
+.ss-list span.label-green,
 .nyroModalCont .ticketDropdown a.label-green{
     background:var(--green);
     color:var(--green-text-color);
 }
 
-.chosen-results li.label-dark-green,
 .maincontent .ticketDropdown a.label-dark-green,
+.ss-values span.label-dark-green,
+.ss-list span.label-dark-green,
 .nyroModalCont .ticketDropdown a.label-dark-green{
     background:var(--dark-green);
     color:var(--dark-green-text-color);
 }
 
-.chosen-results li.label-red,
 .maincontent .ticketDropdown a.label-red,
+.ss-values span.label-red,
+.ss-list span.label-red,
 .nyroModalCont .ticketDropdown a.label-red{
     background:var(--red);
     color:var(--red-text-color);
 }
 
-.chosen-results li.label-dark-red,
 .maincontent .ticketDropdown a.label-dark-red,
+.ss-values span.label-dark-red,
+.ss-list span.label-dark-red,
 .nyroModalCont .ticketDropdown a.label-dark-red{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
 
-.chosen-results li.label-grey,
 .maincontent .ticketDropdown a.label-grey,
+.ss-values span.label-grey,
+.ss-list span.label-grey,
 .nyroModalCont .ticketDropdown a.label-grey{
     background:var(--grey);
     color:var(--grey-text-color);

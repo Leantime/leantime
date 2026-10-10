@@ -31,10 +31,6 @@
 
     jQuery(document).ready(function() {
 
-        if(jQuery('#searchCanvas').length > 0) {
-            new SlimSelect({ select: '#searchCanvas' });
-        }
-
         @if(isset($_GET['closeModal']))
             jQuery.nmTop().close();
         @endif

@@ -207,7 +207,7 @@
                                 <div class="form-group">
                                     <label for="language" >{{ __('label.language') }}</label>
                                     <span class='field'>
-                                        <x-global::forms.select name="language" id="language" style="width: 220px">
+                                        <x-global::forms.select enhanced name="language" id="language" style="width: 220px">
                                             @foreach ($languageList as $languagKey => $languageValue )
                                                 <option value="{{ $languagKey }}"
                                                         @if ($userLang == $languagKey )
@@ -371,7 +371,7 @@
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
                                     <span>
-                                        <x-global::forms.select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
+                                        <x-global::forms.select enhanced name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
                                             <option value="">--{{ __('label.choose_option') }}--</option>
                                              <option value="60"
                                                      @if ($values['messagesfrequency'] == "60" )
@@ -523,9 +523,6 @@
 
         jQuery('.accountTabs').tabs();
 
-        jQuery("#messagesfrequency").chosen();
-        jQuery("#language").chosen();
-        jQuery("#themeSelect").chosen();
 
     });
 </script>

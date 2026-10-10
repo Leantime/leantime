@@ -184,7 +184,14 @@
                         <div class="lm-details-row">
                             <span class="lm-details-label"><i class="fas fa-fw fa-circle-dot"></i> {{ $tpl->__('label.status') }}</span>
                             <span class="lm-details-value">
-                                <x-global::forms.select name="status" id="statusCanvas"></x-global::forms.select>
+                                @php $statusColorMap = ['blue' => '#1B75BB', 'orange' => '#fdab3d', 'green' => '#75BB1B', 'red' => '#BB1B25', 'grey' => '#c3ccd4']; @endphp
+                                <x-global::forms.select name="status" id="statusCanvas" enhanced :search="false" aria-label="{{ $tpl->__('label.status') }}">
+                                    @foreach ($statusLabels as $key => $data)
+                                        @if ($data['active'])
+                                            <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}" :color="$statusColorMap[$data['color']] ?? '#666'">{{ $tpl->__($data['title']) }}</x-global::forms.select.option>
+                                        @endif
+                                    @endforeach
+                                </x-global::forms.select>
                             </span>
                         </div>
                     @else
@@ -195,7 +202,13 @@
                     <div class="lm-details-row">
                         <span class="lm-details-label"><i class="fas fa-fw fa-flag"></i> {{ $tpl->__('logicmodel.priority.label') }}</span>
                         <span class="lm-details-value">
-                            <x-global::forms.select name="impact" id="priorityCanvas"></x-global::forms.select>
+                            <x-global::forms.select name="impact" id="priorityCanvas" enhanced :search="false" aria-label="{{ $tpl->__('logicmodel.priority.label') }}">
+                                <option value="" @selected($currentImpact === '')>{{ $tpl->__('logicmodel.priority.none') }}</option>
+                                <x-global::forms.select.option value="1" :selected="$currentImpact === '1'" icon="fas fa-thermometer-full" color="#C73E5C">{{ $tpl->__('logicmodel.priority.critical') }}</x-global::forms.select.option>
+                                <x-global::forms.select.option value="2" :selected="$currentImpact === '2'" icon="fas fa-thermometer-three-quarters" color="#E85A5A">{{ $tpl->__('logicmodel.priority.high') }}</x-global::forms.select.option>
+                                <x-global::forms.select.option value="3" :selected="$currentImpact === '3'" icon="fas fa-thermometer-half" color="#F5A623">{{ $tpl->__('logicmodel.priority.medium') }}</x-global::forms.select.option>
+                                <x-global::forms.select.option value="4" :selected="$currentImpact === '4'" icon="fas fa-thermometer-quarter" color="#2ECC71">{{ $tpl->__('logicmodel.priority.low') }}</x-global::forms.select.option>
+                            </x-global::forms.select>
                         </span>
                     </div>
 
@@ -203,7 +216,12 @@
                     <div class="lm-details-row">
                         <span class="lm-details-label"><i class="fas fa-fw fa-layer-group"></i> {{ $tpl->__('logicmodel.stage.label') }}</span>
                         <span class="lm-details-value">
-                            <x-global::forms.select name="box" id="stageCanvas"></x-global::forms.select>
+                            <x-global::forms.select name="box" id="stageCanvas" enhanced :search="false" aria-label="{{ $tpl->__('logicmodel.stage.label') }}">
+                                @foreach ($stages as $num => $stage)
+                                    @php $stageBoxKey = 'lm_' . $stage['key']; @endphp
+                                    <x-global::forms.select.option :value="$stageBoxKey" :selected="$boxKey === $stageBoxKey" icon="fas {{ $stage['icon'] }}" :color="$stage['color']">{{ $tpl->__($stage['title']) }}</x-global::forms.select.option>
+                                @endforeach
+                            </x-global::forms.select>
                         </span>
                     </div>
 
@@ -211,7 +229,13 @@
                         <div class="lm-details-row">
                             <span class="lm-details-label"><i class="fas fa-fw fa-link"></i> {{ $tpl->__('label.relates') }}</span>
                             <span class="lm-details-value">
-                                <x-global::forms.select name="relates" id="relatesCanvas"></x-global::forms.select>
+                                <x-global::forms.select name="relates" id="relatesCanvas" enhanced :search="false">
+                                    @foreach ($relatesLabels as $key => $data)
+                                        @if ($data['active'])
+                                            <x-global::forms.select.option :value="$key" :selected="$canvasItem['relates'] == $key" icon="fas {{ $data['icon'] }}">{{ $tpl->__($data['title']) }}</x-global::forms.select.option>
+                                        @endif
+                                    @endforeach
+                                </x-global::forms.select>
                             </span>
                         </div>
                     @else
@@ -308,10 +332,7 @@
         background: transparent !important;
         box-shadow: none !important;
     }
-    .lm-details-value .ss-main .ss-single-selected {
-        border: none !important;
-        background: transparent !important;
-        padding-right: 0;
+    .lm-details-value .ss-main .ss-values {
         justify-content: flex-end;
     }
     .lm-details-text {
@@ -322,72 +343,6 @@
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
-
-        @if (! empty($statusLabels))
-            @php $statusColorMap = ['blue' => '#1B75BB', 'orange' => '#fdab3d', 'green' => '#75BB1B', 'red' => '#BB1B25', 'grey' => '#c3ccd4']; @endphp
-            new SlimSelect({
-                select: '#statusCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                    @foreach ($statusLabels as $key => $data)
-                        @if ($data['active'])
-                            @php $sColor = $statusColorMap[$data['color']] ?? '#666'; @endphp
-                            { innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}" style="color:{{ $sColor }}"></i>&nbsp;{{ $tpl->__($data['title']) }}',
-                              text: "{{ $tpl->__($data['title']) }}", value: "{{ $key }}", selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }} },
-                        @endif
-                    @endforeach
-                ]
-            });
-        @endif
-
-        // Priority dropdown (matches to-do priority structure; stored in the impact column)
-        new SlimSelect({
-            select: '#priorityCanvas',
-            showSearch: false,
-            valuesUseText: false,
-            data: [
-                { text: "{{ $tpl->__('logicmodel.priority.none') }}", value: "", selected: {{ $currentImpact === '' ? 'true' : 'false' }} },
-                { innerHTML: '<i class="fas fa-fw fa-thermometer-full" style="color:#C73E5C"></i>&nbsp;{{ $tpl->__('logicmodel.priority.critical') }}',
-                  text: "{{ $tpl->__('logicmodel.priority.critical') }}", value: "1", selected: {{ $currentImpact === '1' ? 'true' : 'false' }} },
-                { innerHTML: '<i class="fas fa-fw fa-thermometer-three-quarters" style="color:#E85A5A"></i>&nbsp;{{ $tpl->__('logicmodel.priority.high') }}',
-                  text: "{{ $tpl->__('logicmodel.priority.high') }}", value: "2", selected: {{ $currentImpact === '2' ? 'true' : 'false' }} },
-                { innerHTML: '<i class="fas fa-fw fa-thermometer-half" style="color:#F5A623"></i>&nbsp;{{ $tpl->__('logicmodel.priority.medium') }}',
-                  text: "{{ $tpl->__('logicmodel.priority.medium') }}", value: "3", selected: {{ $currentImpact === '3' ? 'true' : 'false' }} },
-                { innerHTML: '<i class="fas fa-fw fa-thermometer-quarter" style="color:#2ECC71"></i>&nbsp;{{ $tpl->__('logicmodel.priority.low') }}',
-                  text: "{{ $tpl->__('logicmodel.priority.low') }}", value: "4", selected: {{ $currentImpact === '4' ? 'true' : 'false' }} },
-            ]
-        });
-
-        // Stage dropdown (drives the box column)
-        new SlimSelect({
-            select: '#stageCanvas',
-            showSearch: false,
-            valuesUseText: false,
-            data: [
-                @foreach ($stages as $num => $stage)
-                    @php $stageBoxKey = 'lm_' . $stage['key']; @endphp
-                    { innerHTML: '<i class="fas fa-fw {{ $stage['icon'] }}" style="color:{{ $stage['color'] }}"></i>&nbsp;{{ $tpl->__($stage['title']) }}',
-                      text: "{{ $tpl->__($stage['title']) }}", value: "{{ $stageBoxKey }}", selected: {{ $boxKey === $stageBoxKey ? 'true' : 'false' }} },
-                @endforeach
-            ]
-        });
-
-        @if (! empty($relatesLabels))
-            new SlimSelect({
-                select: '#relatesCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                    @foreach ($relatesLabels as $key => $data)
-                        @if ($data['active'])
-                            { innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $tpl->__($data['title']) }}',
-                              text: "{{ $tpl->__($data['title']) }}", value: "{{ $key }}", selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }} },
-                        @endif
-                    @endforeach
-                ]
-            });
-        @endif
 
         if (window.leantime && window.leantime.tiptapController) {
             leantime.tiptapController.initSimpleEditor();

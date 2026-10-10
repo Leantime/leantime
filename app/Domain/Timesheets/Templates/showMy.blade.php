@@ -94,27 +94,10 @@ jQuery(document).ready(function(){
         jQuery(this).find('td a').removeClass('ui-state-hover');
     });
 
-    jQuery(".project-select").chosen();
-    jQuery(".ticket-select").chosen();
-    jQuery(".project-select").change(function(){
-            jQuery(".ticket-select").removeAttr("selected");
-            jQuery(".ticket-select").val("");
-            jQuery(".ticket-select").trigger("liszt:updated");
-
-            jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
-            var selectedValue = jQuery(this).find("option:selected").val();
-            jQuery(".ticket-select option").not(".project_"+selectedValue).hide();
-            jQuery("#ticketSelect .chosen-results li").not(".project_"+selectedValue).hide();
-            jQuery(".ticket-select").chosen("destroy").chosen();
-    });
-
-    jQuery(".ticket-select").change(function() {
-        var selectedValue = jQuery(this).find("option:selected").attr("data-value");
-        jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
-        jQuery(".project-select").trigger("liszt:updated");
-        jQuery(".ticket-select").chosen("destroy").chosen();
-    });
+    leantime.timesheetsController.initProjectTicketSync(
+        document.querySelector('#projectSelect select'),
+        document.querySelector('#ticketSelect select')
+    );
 
     jQuery("#nextWeek").click(function() {
         var date = jQuery("#endDate").datepicker('getDate');
@@ -309,7 +292,7 @@ jQuery(document).ready(function(){
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
-                                    <x-global::forms.select data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
+                                    <x-global::forms.select enhanced data-placeholder="{{ __('input.placeholders.choose_project') }}" style="" class="project-select" >
                                         <option value=""></option>
                                         @foreach ($allProjects as $projectRow)
                                             {!! sprintf(
@@ -332,7 +315,7 @@ jQuery(document).ready(function(){
                             </td>
                             <td width="14%">
                                 <div class="form-group" id="ticketSelect">
-                                    <x-global::forms.select data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="" class="ticket-select" name="ticketId">
+                                    <x-global::forms.select enhanced data-placeholder="{{ __('input.placeholders.choose_todo') }}" style="" class="ticket-select" name="ticketId">
                                         <option value=""></option>
                                         @foreach ($allTickets as $ticketRow)
                                             @if (in_array($ticketRow['id'], $existingTicketIds))
@@ -357,7 +340,7 @@ jQuery(document).ready(function(){
                                 </div>
                             </td>
                             <td width="14%">
-                                <x-global::forms.select class="kind-select" name="kindId">
+                                <x-global::forms.select class="kind-select" name="kindId" style="width:100%;">
                                     @foreach ($kind as $key => $kindRow)
                                         <option value="{{ $key }}">{!! __($kindRow) !!}</option>
                                     @endforeach

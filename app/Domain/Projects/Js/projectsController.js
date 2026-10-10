@@ -134,35 +134,18 @@ leantime.projectsController = (function () {
 
     };
 
+    // The status color selects are enhanced selects (forms.select enhanced), set up by
+    // leantime.selectController on page load. Plugin pages (PgmPro, StrategyPro) still call this.
     var initSelectFields = function () {
-
-        jQuery(document).ready(function () {
-
-            jQuery("#todosettings select.colorChosen").on('chosen:ready', function (e, params) {
-
-                var id = jQuery(this).attr('id').replace("-", "_");
-
-                jQuery("#" + id + "_chosen a span").removeClass();
-                jQuery("#" + id + "_chosen a span").addClass(params.selected);
-
-            }).chosen({
-                disable_search_threshold: 10
-            });
-
-            jQuery("#todosettings select.colorChosen").on('change', function (evt, params) {
-
-                var id = jQuery(this).attr('id').replace("-", "_");
-
-                jQuery("#" + id + "_chosen a span").removeClass();
-                jQuery("#" + id + "_chosen a span").addClass(params.selected);
-
-            });
-        });
+        leantime.selectController.init(document.getElementById('todosettings'));
     };
 
     var removeStatus = function (id) {
 
-        jQuery("#todostatus-" + id).parent().remove();
+        var statusRow = jQuery("#todostatus-" + id).parent();
+        // The row's enhanced select keeps its dropdown panel on <body>: release it with the row.
+        leantime.selectController.destroyWithin(statusRow[0]);
+        statusRow.remove();
 
     };
 
@@ -188,10 +171,8 @@ leantime.projectsController = (function () {
             return updatedContent = oldHTML.replaceAll('XXNEWKEYXX', newKey);
         });
 
-        jQuery('#todoStatusList').append("<li>" + statusCopy.html() + "</li>");
-
-        jQuery("#todosettings select.colorChosen").chosen("destroy");
-        leantime.projectsController.initSelectFields();
+        var newStatusRow = jQuery("<li>" + statusCopy.html() + "</li>").appendTo('#todoStatusList');
+        leantime.selectController.init(newStatusRow[0]);
         jQuery("#todoStatusList").sortable("destroy");
         leantime.projectsController.initTodoStatusSortable("#todoStatusList");
 

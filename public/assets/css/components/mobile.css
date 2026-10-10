@@ -2620,8 +2620,7 @@ min-width: 1200px
     /* Fields fill the column instead of fixed pixel/min widths overflowing */
     .nyroModalCont input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
     .nyroModalCont select,
-    .nyroModalCont textarea,
-    .nyroModalCont .chosen-container {
+    .nyroModalCont textarea{
         max-width: 100% !important;
         min-width: 0 !important;
         box-sizing: border-box;
@@ -2641,7 +2640,6 @@ min-width: 1200px
         padding: 0 !important;
     }
     .nyroModalCont .form-group select,
-    .nyroModalCont .form-group .chosen-container,
     .nyroModalCont .form-group .date-picker-form-control,
     .nyroModalCont .form-group input[type="text"] {
         width: 100% !important;

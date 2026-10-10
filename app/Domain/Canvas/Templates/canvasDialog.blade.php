@@ -44,7 +44,12 @@
 
         @if(! empty($statusLabels))
             <label>{!! __('label.status') !!}</label>
-            <x-global::forms.select name="status" style="width: 50%" id="statusCanvas">
+            <x-global::forms.select name="status" style="width: 50%" id="statusCanvas" enhanced :search="false">
+                @foreach($statusLabels as $key => $data)
+                    @if($data['active'])
+                        <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
+                    @endif
+                @endforeach
             </x-global::forms.select><br /><br />
         @else
             <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
@@ -52,7 +57,12 @@
 
         @if(! empty($relatesLabels))
             <label>{!! __('label.relates') !!}</label>
-            <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas">
+            <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas" enhanced :search="false">
+                @foreach($relatesLabels as $key => $data)
+                    @if($data['active'])
+                        <x-global::forms.select.option :value="$key" :selected="$canvasItem['relates'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
+                    @endif
+                @endforeach
             </x-global::forms.select><br />
         @else
             <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
@@ -179,37 +189,7 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
 
-        @if(! empty($statusLabels))
-            new SlimSelect({
-                select: '#statusCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                    @foreach($statusLabels as $key => $data)
-                        @if($data['active'])
-                            { innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                              text: "{{ $data['title'] }}", value: "{{ $key }}", selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }}},
-                        @endif
-                    @endforeach
-                ]
-            });
-        @endif
 
-        @if(! empty($relatesLabels))
-            new SlimSelect({
-                select: '#relatesCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                    @foreach($relatesLabels as $key => $data)
-                        @if($data['active'])
-                            { innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                              text: "{{ $data['title'] }}", value: "{{ $key }}", selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }}},
-                        @endif
-                    @endforeach
-                ]
-            });
-        @endif
 
         if (window.leantime && window.leantime.tiptapController) {
             leantime.tiptapController.initSimpleEditor();

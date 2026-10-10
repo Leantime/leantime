@@ -16,6 +16,7 @@ input, button, select, textarea {
 input:focus-visible,
 button:focus-visible,
 select:focus-visible,
+.ss-main:focus-visible,
 textarea:focus-visible,
 .btn:focus-visible {
     outline: 2px solid var(--accent1);
@@ -141,25 +142,36 @@ div.tagsinput span.tag a {
     clear: both;
 }
 
-.ss-main .ss-multi-selected {
-    padding:var(--input-padding);
-}
-
-.ss-main .ss-multi-selected .ss-values,
-.ss-main .ss-multi-selected .ss-disabled{
-    padding:0px;
-    height:21px; /* Equivalend to line height on tags input*/
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-value {
-    border-radius: 12px;
-    padding: 0px 10px;
-    margin: 0px;
-    border: 0px solid var(--primary-color);
-}
 
 select {
     min-height:30px;
+}
+
+/* The select caret: the same chevron SlimSelect draws for enhanced selects (core/selects.js), so a native
+   and an enhanced select look the same when closed. A data-URI image can't read CSS variables, so the
+   dark themes override this with their own stroke color. */
+:root {
+    --select-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,30 L50,70 L90,30' fill='none' stroke='%23333333' stroke-width='18' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* Native single selects: our caret instead of the OS one, placed where the enhanced select's caret sits
+   (input padding 10px + caret margin 5px from the right edge). */
+/* Bootstrap caps every select at 175px (bootstrap.min.css: select { max-width: 175px }), which also
+   overrode widths a template asked for — so a native select came out narrower than an enhanced one
+   given the same width. A select that sets its own width now gets it; the others keep the cap. */
+select[style*="width"] {
+    max-width: 100%;
+}
+
+select:not([multiple]):not([size]):not(.btn) {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: var(--select-caret);
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px 12px;
+    padding-right: 32px;
 }
 
 ::selection {
@@ -364,132 +376,8 @@ body input[type='submit'].btn-primary .caret,
 }
 
 
-.chosen-container-single .chosen-single {
-
-    height: auto;
-    background:none;
-    background-color: var(--secondary-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    border-radius: var(--input-radius);
-    padding: var(--input-padding);
-    color:var(--primary-font-color);
-}
-
-.chosen-container {
-    font-size:var(--base-font-size);
-    margin-bottom:10px;
-    min-width:175px
-}
-
 /* Search field input styling is handled separately below to avoid conflicts */
 
-.chosen-container-multi .chosen-choices {
-    background-color: var(--secondary-background);
-    line-height: 21px;
-    min-height: 33px;
-    border: 1px solid var(--main-border-color);
-    border-radius: var(--input-radius);
-    box-shadow: none;
-    padding: 3px 5px 3px 8px;
-}
-
-.chosen-container-active .chosen-single {
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow:var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active.chosen-with-drop .chosen-single {
-    border: 1px solid var(--main-border-color);
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-image: none;
-    background-image: none;
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active .chosen-choices {
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    padding: 3px 5px 3px 8px;
-}
-
-.chosen-container-active .chosen-choices li.search-field input[type="text"],
-.chosen-container-active .chosen-choices .search-field .chosen-search-input {
-    color:var(--primary-font-color);
-    padding: 0 !important;
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-    border: 0 !important;
-    background: transparent !important;
-}
-
-.chosen-container .chosen-drop {
-    position: absolute;
-    top: 100%;
-    z-index: 1010;
-    width: 100%;
-    border: 1px solid var(--main-border-color);
-    border-top: 0;
-    background: var(--secondary-background);
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    clip: rect(0, 0, 0, 0);
-    -webkit-clip-path: inset(100% 100%);
-    clip-path: inset(100% 100%);
-}
-
-.chosen-container .chosen-results li.highlighted {
-    color: var(--dropdown-link-hover-color) !important;
-    background: var(--dropdown-link-hover-bg) !important;
-    background-image: none;
-
-}
-
-.chosen-container-single .chosen-search input[type="text"] {
-
-    border: 1px solid var(--main-border-color);
-
-    font-size: var(--font-size-s);
-
-    line-height: normal;
-    border-radius: 0;
-}
-
-.chosen-container-single .chosen-single div b {
-    background-image:none !important;
-}
-.chosen-container-single .chosen-single div b:after {
-    content: "⌄";
-    line-height: 25px;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice {
-    position: relative;
-    margin: 3px 5px 3px 0;
-    padding: 6px 20px 6px 5px;
-    border: 0px solid #aaa;
-    max-width: 100%;
-    border-radius: 3px;
-    background-color: var(--accent1);
-    color: var(--accent1-color);
-    background-image: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    line-height: normal;
-    cursor: default;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
-    position: absolute;
-    top: 8px;
-}
 
 .btn-group>.btn {
 }
@@ -673,44 +561,6 @@ select,
     margin-right:10px;
 }
 
-.chosen-choices {
-
-}
-
-.chosen-container-multi .chosen-choices .search-choice {
-    border: 0px solid #bbb;
-    line-height: 12px;
-    padding: 1px 20px 1px 10px;
-    margin: 3px 0 2px 3px;
-    position: relative;
-    cursor: default;
-    border-radius:12px;
-    font-size:var(--font-size-s);
-}
-
-.chosen-container-multi .chosen-choices .search-choice .search-choice-close {
-    right:5px;
-}
-
-.chosen-container-multi .chosen-choices li.search-field input[type="text"],
-.chosen-container-multi .chosen-choices .search-field .chosen-search-input {
-    height: auto;
-    padding: 0 !important;
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-    border: 0 !important;
-    background: transparent !important;
-    margin: 1px 0 !important;
-}
-
-.chosen-container-single .chosen-search input {
-    background:var(--input-background);
-    border-color:var(--main-border-color);
-}
-
-.chosen-container .chosen-results .no-results {
-    background:var(--input-background);
-}
 
 input[type=checkbox] {
     margin-top:9px;
@@ -1201,71 +1051,10 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 
-
-.ss-main .ss-single-selected {
-    display: flex;
-    cursor: pointer;
-    width: 100%;
-    height: auto;
-    padding: var(--input-padding);
-    border: 1px solid var(--main-border-color);
-    background-color: var(--input-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    border-radius: var(--input-radius);
-
-    outline: 0;
-    box-sizing: border-box;
-}
-
 .ss-main {
     margin-bottom:5px;
 }
 
-.ss-main .ss-multi-selected {
-    min-height: auto;
-    background-color: var(--input-background);
-    line-height: 21px;
-    padding: 6px 10px;
-    border: 1px solid var(--main-border-color);
-    box-shadow: none;
-    border-radius: var(--input-radius);
-}
-
-.ss-main .ss-single-selected .placeholder {
-    line-height: 21px;
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-disabled {
-    color:var(--main-border-color);
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-disabled {
-    padding:0px;
-    margin:0px;
-}
-
-.ss-main .ss-multi-selected .ss-add {
-    display: flex;
-    flex: 1 1 3px;
-    margin: 4px 0px 0 5px;
-}
-
-.ss-main .ss-multi-selected .ss-values .ss-value {
-    background:var(--primary-color);
-}
-
-.ss-main .ss-single-selected .ss-arrow span {
-    padding:0px 4px;
-}
-
-.ss-main .ss-single-selected .ss-arrow span.arrow-up,
-.ss-main .ss-single-selected .ss-arrow span.arrow-down {
-    margin:0px;
-}
 
 
 body .btn.btn-link {
@@ -1311,21 +1100,6 @@ body .croppie-container {
     clear:both;
 }
 
-.maincontent .chosen-container .chosen-results li {
-    margin-bottom:2px;
-    list-style-type:none;
-    padding:5px;
-}
-
-.maincontent .chosen-container .chosen-results li span,
-.maincontent .chosen-container .chosen-single span{
-    margin-left:0px !important;
-}
-
-.maincontent .chosen-container .chosen-results li span:after,
-.maincontent .chosen-container .chosen-single span:after{
-    border-color:transparent;
-}
 
 
 .stdform p, .stdform div.par {

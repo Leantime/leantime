@@ -4,48 +4,25 @@ use Leantime\Core\Support\FromFormat;
 
 <script type="text/javascript">
 
+    // Reset the project to "all", then narrow the project list to the picked client. (Reset first:
+    // setting an enhanced select's value rewrites its options, which would undo the filter.)
     function filterProjectsByClient() {
-        var selectedClientId = jQuery('#clients option:selected').val();
-        var projectSelect = jQuery('#projects');
+        var clientId = document.getElementById('clients').value;
+        var projectSelect = document.getElementById('projects');
 
-        // Show all projects if "all" is selected
-        if (selectedClientId === 'all') {
-            projectSelect.find('option').show();
-        } else {
-            // Hide all options first (except the "all" option)
-            projectSelect.find('option[data-client-id]').hide();
+        leantime.selectController.setValue(projectSelect, 'all');
 
-            // Show only projects matching the selected client
-            projectSelect.find('option[data-client-id="' + selectedClientId + '"]').show();
-        }
-
-        // Reset project selection to "all" and trigger chosen update
-        projectSelect.val('all');
-        projectSelect.trigger("chosen:updated");
+        Array.prototype.forEach.call(projectSelect.querySelectorAll('option[data-client-id]'), function (option) {
+            var belongsToClient = clientId === 'all' || option.getAttribute('data-client-id') === clientId;
+            option.style.display = belongsToClient ? '' : 'none';
+        });
     }
 
     jQuery(document).ready(function() {
-        jQuery(".client-select").chosen();
-        jQuery(".project-select").chosen();
-        jQuery(".ticket-select").chosen();
-
-        jQuery(".project-select").change(function () {
-            jQuery(".ticket-select").removeAttr("selected");
-            jQuery(".ticket-select").val("");
-            jQuery(".ticket-select").trigger("liszt:updated");
-
-            jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
-
-            var selectedValue = jQuery(this).find("option:selected").val();
-            jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
-       });
-
-        jQuery(".ticket-select").change(function () {
-            var selectedValue = jQuery(this).find("option:selected").attr("data-value");
-            jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
-            jQuery(".project-select").trigger("liszt:updated");
-        });
+        leantime.timesheetsController.initProjectTicketSync(
+            document.getElementById('projects'),
+            document.getElementById('tickets')
+        );
 
         jQuery(document).ready(function ($) {
             jQuery("#datepicker, #date, #invoicedCompDate, #invoicedEmplDate, #paidDate").datepicker({
@@ -73,7 +50,7 @@ use Leantime\Core\Support\FromFormat;
 <form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
 
 <label for="clients">{!! __('label.client') !!}</label>
-<x-global::forms.select name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">
+<x-global::forms.select enhanced name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">
     <option value="all">{!! __('headline.all_clients') !!}</option>
     @foreach ($allClients as $client)
         <option value="{{ $client['id'] }}">{{ $client['name'] }}</option>
@@ -81,7 +58,7 @@ use Leantime\Core\Support\FromFormat;
 </x-global::forms.select> <br />
 
 <label for="projects">{!! __('label.project') !!}</label>
-<x-global::forms.select name="projects" id="projects" class="project-select">
+<x-global::forms.select enhanced name="projects" id="projects" class="project-select">
     <option value="all">{!! __('headline.all_projects') !!}</option>
 
     @foreach ($allProjects as $row)
@@ -95,7 +72,7 @@ use Leantime\Core\Support\FromFormat;
 
 <div id="ticketSelect">
 <label for="tickets">{!! __('label.ticket') !!}</label>
-<x-global::forms.select name="tickets" id="tickets" class="ticket-select">
+<x-global::forms.select enhanced name="tickets" id="tickets" class="ticket-select">
 
     @foreach ($allTickets as $row)
         <option class="project_{{ $row['projectId'] }}" data-value="{{ $row['projectId'] }}" value="{{ $row['id'] }}"

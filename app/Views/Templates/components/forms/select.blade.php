@@ -4,6 +4,13 @@
     // selects today (span11, user-select, form-control, tw-*) are context/JS hooks, not distinct
     // visual treatments, so they pass through via class="…".
 
+    // --- enhanced mode (SlimSelect v2, wired by public/assets/js/app/core/selects.js) ---
+    'enhanced' => false,      // true -> searchable/styled dropdown; false -> plain native <select>
+    'search' => 'auto',       // auto (search box when > 10 options) | true | false
+    'allowDeselect' => false, // single selects: show an "x" to clear the value
+    'closeOnSelect' => true,  // multi selects: keep the list open while picking (false)
+    // Placeholder text comes from the existing `data-placeholder="…"` attribute (passes through).
+
     // --- design-system IDL: declared for the durable contract (shared with forms.text-input /
     //     forms.textarea), intentionally NOT rendered in no-op mode (a label/validation wrapper
     //     would change today's markup). Activated in the design phase's field-row layout. ---
@@ -27,9 +34,25 @@
     hx-trigger="change", hx-include, hx-vals and inline onchange behave exactly like raw markup.
     The options are the slot.
 
-    JS-enhanced selects (Chosen / SlimSelect today) still work: the markup is identical, so their
-    existing initializers bind as before. The enhanced mode (`enhanced` prop + SlimSelect v2 registry)
-    and the option/optgroup sub-components arrive in the next phase — see COMPONENTS.md.
+    Enhanced: add `enhanced` and the select becomes a SlimSelect v2 dropdown. Never call
+    `new SlimSelect(...)` from a template — the registry in core/selects.js picks up every
+    `select[data-lt-select]` on first paint, after every htmx swap and inside modals, and destroys
+    the instance when htmx or the modal removes the select. The native <select> stays the source of
+    truth: it keeps its name/value, still fires `change` (so hx-trigger="change" and jQuery
+    .change() handlers work), and adding/removing/hiding <option>s re-syncs the dropdown.
+
+      <x-global::forms.select name="editorId" enhanced data-placeholder="{{ __('label.filter_by_user') }}">…</x-global::forms.select>
+
+    Icons / colors per option: use <x-global::forms.select.option> (renders `data-html`, which the
+    enhanced dropdown shows; a native select just shows the text).
+
+    Keep a select NATIVE (no `enhanced`) when it sits inside a Bootstrap dropdown panel (.dropdown-menu):
+    the enhanced list is mounted on <body>, so picking an option counts as a click outside the panel
+    and closes it. A leading blank `<option value=""></option>` is treated as the placeholder.
+
+    Setting a value from code: leantime.selectController.setValue(select, value) — works enhanced or
+    not, and fires `change` like a user pick. It rewrites the options from the dropdown's own copy, so
+    hide/show options AFTER setting the value, not before.
 
     Boolean attributes: write them bare (`multiple`, `required`) or bound (`:disabled="$isLocked"`).
     Blade component tags do NOT support directives (@if, @disabled, @selected) or bare {{ }} echoes
@@ -38,4 +61,9 @@
     Migration:
       <select name="role" id="role">…</select>   -> <x-global::forms.select name="role" id="role">…</x-global::forms.select>
 --}}
-<select {{ $attributes }}>{{ $slot }}</select>
+@php
+    // Only enhanced selects carry data-lt-select*, so a plain select's markup stays exactly as written.
+    // (Not $attributes->merge(): merge() rewrites the style attribute.)
+    $searchSetting = is_bool($search) ? ($search ? 'true' : 'false') : (string) $search;
+@endphp
+<select {{ $attributes }}@if ($enhanced) data-lt-select="true" data-search="{{ $searchSetting }}" data-allow-deselect="{{ $allowDeselect ? 'true' : 'false' }}" data-close-on-select="{{ $closeOnSelect ? 'true' : 'false' }}"@endif>{{ $slot }}</select>

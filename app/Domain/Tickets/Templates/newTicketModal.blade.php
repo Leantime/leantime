@@ -48,7 +48,6 @@
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initStatusDropdown();
 
-        jQuery(".ticketTabs select").chosen();
 
         @else
             leantime.authController.makeInputReadonly(".nyroModalCont");

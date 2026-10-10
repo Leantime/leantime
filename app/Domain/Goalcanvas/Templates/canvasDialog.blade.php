@@ -263,7 +263,7 @@
                 <div class="gv-values">
                     <div>
                         <label class="control-label" for="goalMetricType">{{ __('label.type') }}</label>
-                        <x-global::forms.select name="metricType" id="goalMetricType">
+                        <x-global::forms.select name="metricType" id="goalMetricType" enhanced :search="false">
                             <option value="number" @if ($mType == 'number') selected @endif>{{ __('goalcanvas.type_number') }}</option>
                             <option value="percent" @if ($mType == 'percent') selected @endif>{{ __('goalcanvas.type_percent') }}</option>
                             <option value="currency" @if ($mType == 'currency') selected @endif>{{ __('goalcanvas.type_currency') }}</option>
@@ -346,16 +346,10 @@
                 <div class="form-group">
                     <label class="control-label" for="statusCanvas">{{ __('label.status') }}</label>
                     @if (!empty($statusLabels))
-                        {{-- Plain <select>, options rendered server-side. This was a
-                             SlimSelect instance while the Type select next to it was a
-                             native one, which is what made the dialog show differently
-                             styled dropdowns side by side. SlimSelect is still used by
-                             other canvas templates and the ticket filter — this change
-                             is local to the goal dialog, not a dependency removal. --}}
-                        <x-global::forms.select name="status" id="statusCanvas">
+                        <x-global::forms.select name="status" id="statusCanvas" enhanced :search="false">
                             @foreach ($statusLabels as $key => $data)
                                 @if ($data['active'])
-                                    <option value="{{ $key }}" @if ($canvasItem['status'] == $key) selected @endif>{{ $data['title'] }}</option>
+                                    <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
                                 @endif
                             @endforeach
                         </x-global::forms.select>
@@ -386,10 +380,10 @@
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                     @if (!empty($relatesLabels))
                         <label class="control-label" for="relatesCanvas">{{ __('label.relates') }}</label>
-                        <x-global::forms.select name="relates" id="relatesCanvas">
+                        <x-global::forms.select name="relates" id="relatesCanvas" enhanced :search="false">
                             @foreach ($relatesLabels as $key => $data)
                                 @if ($data['active'])
-                                    <option value="{{ $key }}" @if ($canvasItem['relates'] == $key) selected @endif>{{ $data['title'] }}</option>
+                                    <x-global::forms.select.option :value="$key" :selected="$canvasItem['relates'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
                                 @endif
                             @endforeach
                         </x-global::forms.select>
@@ -470,11 +464,6 @@
                 // this dialog exists for (stale saved names fall through too).
                 if (!saved || !show(saved)) { if (!show('progress')) { show(tabs[0].getAttribute('data-tab')); } }
             })();
-
-            {{-- SlimSelect initialisers removed for THIS dialog: #statusCanvas and
-                 #relatesCanvas render their options server-side as plain <select>s
-                 now, matching the task modal. SlimSelect itself is still used by the
-                 other canvas templates and the ticket filter. --}}
 
             if (window.leantime && window.leantime.tiptapController) {
                 leantime.tiptapController.initSimpleEditor();

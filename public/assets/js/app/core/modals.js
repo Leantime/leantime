@@ -218,7 +218,7 @@ leantime.modals = (function () {
     };
 
     // Release widgets that register outside the content they belong to, so removed content can be
-    // garbage collected: htmx triggers, rich-text editors, Chosen (document handlers), tippy. For page content we own
+    // garbage collected: htmx triggers, rich-text editors, enhanced selects (panel on <body>), tippy. For page content we own
     // the whole subtree, so jQuery.cleanData also runs jQuery UI's remove hooks (sortable, datepicker).
     var releaseContent = function (root, withJqueryData) {
         if (!root) {
@@ -231,12 +231,10 @@ leantime.modals = (function () {
                 && typeof leantime.tiptapController.registry.destroyWithin === 'function') {
                 leantime.tiptapController.registry.destroyWithin(root);
             }
-            jQuery(root).find('select').each(function () {
-                var select = jQuery(this);
-                if (select.data('chosen')) {
-                    select.chosen('destroy');
-                }
-            });
+            // Enhanced selects mount their dropdown panel on <body>, outside the removed content.
+            if (leantime.selectController) {
+                leantime.selectController.destroyWithin(root);
+            }
             root.querySelectorAll('*').forEach(function (element) {
                 if (element._tippy) {
                     element._tippy.destroy();
@@ -470,6 +468,7 @@ leantime.modals = (function () {
                     // Idempotent + scoped to the modal so it doesn't re-instance
                     // page tooltips (see app.js initTooltips).
                     window.leantime?.initTooltips?.(document.querySelector('.nyroModalCont'));
+                    window.leantime?.selectController?.init(document.querySelector('.nyroModalCont'));
 
                     // Initialize Tiptap editors in modal (after small delay for DOM settlement)
                     setTimeout(function() {
