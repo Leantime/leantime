@@ -89,6 +89,28 @@
     stroke: var(--accent1-color);
 }
 
+/* The open list is a separate panel (own shadow + rounded corners), not attached to the control, so the
+   control keeps its full radius when open — SlimSelect squares off the side the list attaches to. */
+.ss-main.ss-open-below,
+.ss-main.ss-open-above {
+    border-radius: var(--ss-border-radius);
+}
+
+.ss-content.ss-open-below,
+.ss-content.ss-open-above {
+    border-radius: var(--box-radius-small);
+}
+
+/* A 4px gap between control and list. SlimSelect positions the list with an inline margin (it overlaps
+   the control by 1px), so the gap is a transform on the open state, which it already animates. */
+.ss-content.ss-open-below {
+    transform: translateY(5px);
+}
+
+.ss-content.ss-open-above {
+    transform: translateY(-5px);
+}
+
 /* Open list: like .dropdown-menu. */
 .ss-content {
     font-size: var(--base-font-size);
