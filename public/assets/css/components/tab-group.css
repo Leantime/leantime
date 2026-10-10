@@ -12,6 +12,9 @@
  *                       controls would fail WCAG AA on light accents).
  *   .lt-tabs--floating  free-floating fully-rounded glass pills (Resource
  *                       Allocation look); .lt-tabs--dark for dark headers.
+ *   .lt-tabs--underline section tabs inside white cards/modals (hairline row,
+ *                       active section underlined); also skins the legacy
+ *                       jQuery-UI .tab-primary tab sets.
  *
  * Behavior (ARIA, keyboard, persistence) lives in the component's script.
  */
@@ -194,31 +197,110 @@
     outline-offset: -2px;
 }
 
-/* Light-surface flavor — floating pills inside white cards/modals (goal
-   dialog): same shape, ink adapted so the glass doesn't vanish on white. */
-.lt-tabs--onlight .lt-tabs-group {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.08);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+/* ── Underline variant: SECTION tabs inside white cards and modals ───
+      (To-Do / Goal / plugin modals, Company settings, My Profile, project
+      and client settings). They switch which part of one thing you edit,
+      so they stay quiet and flat — a full-width hairline with the active
+      section underlined — and never look like the view pills above the
+      content box. The jQuery-UI tab sets (.tabbedwidget.tab-primary) keep
+      their ul/li/a markup because plugins print tabs into it, and get the
+      same skin here (design call 2026-10-10). ──────────────────────────── */
+.lt-tabs--underline,
+.tab-primary.ui-tabs .ui-tabs-nav {
+    --section-tab-muted: color-mix(in srgb, var(--primary-font-color) 70%, transparent);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 2px;
+    height: auto;
+    margin: 0 0 15px;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--main-border-color);
+    border-radius: 0;
+    box-shadow: none;
 }
-.lt-tabs--onlight .lt-tab {
-    color: var(--primary-font-color);
-    opacity: .75;
+.lt-tabs--underline .lt-tabs-group {
+    gap: 2px;
 }
-.lt-tabs--onlight .lt-tab:hover:not(.on):not(.is-active) {
-    color: var(--primary-font-color);
+.tab-primary.ui-tabs .ui-tabs-nav > li {
+    float: none;
+    border: 0;
+}
+.lt-tabs--underline .lt-tab,
+body .tab-primary.ui-tabs .ui-tabs-nav > li > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 40px;
+    line-height: 1;
+    margin-bottom: -1px;
+    padding: 0 12px;
+    font-size: var(--base-font-size);
+    font-weight: 500;
+    color: var(--section-tab-muted);
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: var(--box-radius-small) var(--box-radius-small) 0 0;
     opacity: 1;
-    background: rgba(0, 0, 0, 0.05);
 }
-.lt-tabs--onlight .lt-tab.on,
-.lt-tabs--onlight .lt-tab.is-active {
+.lt-tabs--underline .lt-tab i,
+.tab-primary.ui-tabs .ui-tabs-nav > li > a .fa,
+.tab-primary.ui-tabs .ui-tabs-nav > li > a [class*="fa-"] {
+    font-size: 12px;
+    opacity: 1;
+}
+.lt-tabs--underline .lt-tab:hover:not(.on),
+body .tab-primary.ui-tabs .ui-tabs-nav > li:not(.ui-state-active) > a:hover {
+    color: var(--primary-font-color);
+    background: var(--tab-hover-background, var(--neutral));
+}
+.lt-tabs--underline .lt-tab.on,
+body .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a {
+    color: var(--primary-font-color);
+    background: none;
+    border-bottom-color: var(--accent1);
+    font-weight: 500;
+}
+.lt-tabs--underline .lt-tab.on i,
+.tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a .fa,
+.tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a [class*="fa-"] {
     color: var(--accent1);
-    opacity: 1;
-    background: #fff;
 }
-.lt-tabs--onlight .lt-tab:focus-visible {
-    outline-color: var(--accent1);
+.lt-tabs--underline .lt-tab:focus-visible,
+.tab-primary.ui-tabs .ui-tabs-nav > li > a:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: -2px;
+}
+.lt-tabs--underline .lt-tab .ct {
+    background: var(--tab-hover-background, var(--neutral));
+    color: var(--section-tab-muted);
+}
+.lt-tabs--underline .lt-tab.on .ct {
+    background: color-mix(in srgb, var(--accent1) 10%, transparent);
+    color: var(--accent1);
+}
+/* Phones: one scrolling row instead of a stacked list (mobile.css stretches
+   every .tabbedwidget li to 100%). */
+@media (max-width: 1200px) {
+    .lt-tabs--underline,
+    .lt-tabs--underline .lt-tabs-group,
+    .tab-primary.ui-tabs .ui-tabs-nav,
+    .nyroModalCont .tab-primary.ui-tabs .ui-tabs-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .tab-primary.ui-tabs .ui-tabs-nav > li {
+        width: auto;
+        flex: none;
+    }
+    .lt-tabs--underline .lt-tab,
+    body .tab-primary.ui-tabs .ui-tabs-nav > li > a {
+        white-space: nowrap;
+    }
 }
 
 /* Inline actions (right cluster) — borderless on the page background.

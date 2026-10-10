@@ -24,7 +24,7 @@
 
             <ul>
                 <li>
-                    <a href="#ticketdetails">{!! __('tabs.ticketDetails') !!}</a>
+                    <a href="#ticketdetails"><span class="fa fa-star"></span> {!! __('tabs.ticketDetails') !!}</a>
                 </li>
             </ul>
 

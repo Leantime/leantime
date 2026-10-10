@@ -68,12 +68,9 @@
         .gv-field-lbl{font-size:var(--font-size-s);color:var(--gv-ink2);margin:0 0 6px;}
         .gv-unit{font-size:var(--font-size-xs);font-weight:700;color:var(--gv-acc);opacity:.85;}
 
-        /* tab bar — report deck style (gradient bar + translucent group + white active pill) */
-        /* Tab visuals come from the shared floating-pill standard
-           (tab-group.css: .lt-tabs--floating + --onlight for this white
-           modal surface); only the dialog-specific spacing stays here. */
+        /* Tab visuals come from the shared section-tab style
+           (tab-group.css: .lt-tabs--underline); only the spacing stays here. */
         .gv-tabs{margin:0 0 16px;}
-        .gv-tab i,.gv-tab span[class*="fa"]{font-size:12px;}
         .gv-panel{min-height:170px;}
         .gv-row{margin-bottom:18px;}
 
@@ -230,12 +227,11 @@
                  tabs (shared by both), status/dates/relates in the Details
                  rail. New goals have only Progress, so no bar at all. ── --}}
             @if ($id !== '')
-                <div class="gv-tabs lt-tabs lt-tabs--floating lt-tabs--onlight" role="tablist" aria-label="{{ __('goalcanvas.tabs_label') }}">
-                    <div class="gv-tab-group lt-tabs-group">
-                        <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-edit" aria-controls="gvPanel-edit" aria-selected="false" data-tab="edit"><i class="fa-solid fa-pen" aria-hidden="true"></i> {{ __('links.edit') }}</button>
-                        <button type="button" class="gv-tab lt-tab" role="tab" id="gvTab-progress" aria-controls="gvPanel-progress" aria-selected="false" data-tab="progress"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> {{ __('goalcanvas.tab_progress') }}</button>
-                    </div>
-                </div>
+                <x-global::navigation.tabs group="gv" variant="underline" class="gv-tabs" :label="__('goalcanvas.tabs_label')" storage="local" storage-key="gvActiveTab">
+                    <x-global::navigation.tabs.tab name="edit" icon="fa-solid fa-pen">{{ __('links.edit') }}</x-global::navigation.tabs.tab>
+                    {{-- Default = Progress: updating the value is the recurring job this dialog exists for. --}}
+                    <x-global::navigation.tabs.tab name="progress" icon="fa-solid fa-ranking-star" :selected="true">{{ __('goalcanvas.tab_progress') }}</x-global::navigation.tabs.tab>
+                </x-global::navigation.tabs>
             @endif
 
             {{-- Name — one label only (the placeholder); the modal's GOAL
@@ -250,7 +246,7 @@
             {{-- ── Tab: Edit — the goal's DEFINITION (metric, type, start,
                  target). One-time setup, separated from the recurring
                  monitoring job (review 2026-08-03). --}}
-            <div class="gv-panel" data-panel="edit" role="tabpanel" id="gvPanel-edit" aria-labelledby="gvTab-edit" tabindex="0">
+            <div class="gv-panel" id="gv-panel-edit" @if ($id !== '') role="tabpanel" aria-labelledby="gv-tab-edit" tabindex="0" @endif data-tabs-panel="edit" data-tabs-group="gv">
                 <div id="measureGoalContainer" class="gv-row">
                     <label class="control-label" for="goalDescriptionInput">{{ __('goalcanvas.metric_label') }}</label>
                     <x-global::forms.text-input width="full" name="description" id="goalDescriptionInput" value="{{ $canvasItem['description'] }}" />
@@ -281,7 +277,7 @@
                  All the bars live here — the goal metric plus each linked
                  milestone's own read-only bar. The Milestones tab MANAGES the
                  links; this tab watches them. --}}
-            <div class="gv-panel" data-panel="progress" role="tabpanel" id="gvPanel-progress" aria-labelledby="gvTab-progress" tabindex="0">
+            <div class="gv-panel" id="gv-panel-progress" @if ($id !== '') role="tabpanel" aria-labelledby="gv-tab-progress" tabindex="0" @endif data-tabs-panel="progress" data-tabs-group="gv">
                 @include('goalcanvas::partials.progressReadout')
 
                 {{-- The linked milestones — ONE list (summary + bars + management).
@@ -424,41 +420,6 @@
                     apply();
                     typeSel.addEventListener('change', apply);
                 }
-            })();
-
-            // Tabs — one zone at a time; remembers the last-used tab.
-            (function () {
-                var tabs = document.querySelectorAll('.gvDialog .gv-tab');
-                var panels = document.querySelectorAll('.gvDialog .gv-panel');
-                if (!tabs.length) return;
-                function show(name) {
-                    var found = false;
-                    panels.forEach(function (p) { var m = p.getAttribute('data-panel') === name; p.hidden = !m; p.style.display = m ? '' : 'none'; if (m) found = true; });
-                    tabs.forEach(function (t) {
-                        var active = t.getAttribute('data-tab') === name;
-                        t.classList.toggle('is-active', active);
-                        t.setAttribute('aria-selected', active ? 'true' : 'false');
-                        t.tabIndex = active ? 0 : -1;
-                    });
-                    if (found) { try { localStorage.setItem('gvActiveTab', name); } catch (e) {} }
-                    return found;
-                }
-                tabs.forEach(function (t, i) {
-                    t.addEventListener('click', function () { show(t.getAttribute('data-tab')); });
-                    // Roving-tabindex arrow-key navigation (WAI-ARIA tabs pattern).
-                    t.addEventListener('keydown', function (e) {
-                        var next = null;
-                        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { next = tabs[(i + 1) % tabs.length]; }
-                        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { next = tabs[(i - 1 + tabs.length) % tabs.length]; }
-                        else if (e.key === 'Home') { next = tabs[0]; }
-                        else if (e.key === 'End') { next = tabs[tabs.length - 1]; }
-                        if (next) { e.preventDefault(); show(next.getAttribute('data-tab')); next.focus(); }
-                    });
-                });
-                var saved = null; try { saved = localStorage.getItem('gvActiveTab'); } catch (e) {}
-                // Default = Progress: updating the value is the recurring job
-                // this dialog exists for (stale saved names fall through too).
-                if (!saved || !show(saved)) { if (!show('progress')) { show(tabs[0].getAttribute('data-tab')); } }
             })();
 
             if (window.leantime && window.leantime.tiptapController) {
