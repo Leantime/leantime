@@ -34,8 +34,11 @@
     width: 100%;
 }
 
-/* Closed state: same box as a native select/input. */
+/* Closed state: same box as a native select/input — including its width (forms.css field-width scale;
+   SlimSelect itself fills its container). */
 .ss-main {
+    width: var(--field-width-md, 100%);
+    max-width: 100%;
     font-size: var(--base-font-size);
     line-height: 21px;
     padding: var(--input-padding);

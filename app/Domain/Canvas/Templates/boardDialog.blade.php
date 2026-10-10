@@ -9,8 +9,7 @@
     </div>
     <div class="modal-body">
         <label>{!! __('label.title_new') !!}</label><br />
-        <x-global::forms.text-input name="canvastitle" value="{{ $canvasTitle }}" placeholder="{{ __('input.placeholders.enter_title_for_board') }}"
-               style="width: 100%" />
+        <x-global::forms.text-input width="full" name="canvastitle" value="{{ $canvasTitle }}" placeholder="{{ __('input.placeholders.enter_title_for_board') }}" />
     </div>
     <div class="modal-footer">
         @if(isset($_GET['id']))

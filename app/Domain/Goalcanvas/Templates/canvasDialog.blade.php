@@ -244,7 +244,7 @@
                 {{-- variant="headline" is the shared component's title treatment —
                      the same one the task modal uses for its headline — replacing a
                      block of dialog-private !important overrides on input[name=title]. --}}
-                <x-global::forms.text-input variant="headline" name="title" id="goalTitleInput" value="{{ $canvasItem['title'] }}" placeholder="{{ __('goalcanvas.name_goal') }}" aria-label="{{ __('goalcanvas.name_goal') }}" style="width:100%" />
+                <x-global::forms.text-input width="full" variant="headline" name="title" id="goalTitleInput" value="{{ $canvasItem['title'] }}" placeholder="{{ __('goalcanvas.name_goal') }}" aria-label="{{ __('goalcanvas.name_goal') }}" />
             </div>
 
             {{-- ── Tab: Edit — the goal's DEFINITION (metric, type, start,
@@ -253,7 +253,7 @@
             <div class="gv-panel" data-panel="edit" role="tabpanel" id="gvPanel-edit" aria-labelledby="gvTab-edit" tabindex="0">
                 <div id="measureGoalContainer" class="gv-row">
                     <label class="control-label" for="goalDescriptionInput">{{ __('goalcanvas.metric_label') }}</label>
-                    <x-global::forms.text-input name="description" id="goalDescriptionInput" value="{{ $canvasItem['description'] }}" style="width:100%" />
+                    <x-global::forms.text-input width="full" name="description" id="goalDescriptionInput" value="{{ $canvasItem['description'] }}" />
                 </div>
 
                 <div class="gv-values">
@@ -267,11 +267,11 @@
                     </div>
                     <div>
                         <label class="control-label" for="goalStartValue">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
-                        <x-global::forms.text-input type="number" step="0.01" name="startValue" id="goalStartValue" value="{{ $canvasItem['startValue'] }}" style="width:100%" />
+                        <x-global::forms.text-input width="full" type="number" step="0.01" name="startValue" id="goalStartValue" value="{{ $canvasItem['startValue'] }}" />
                     </div>
                     <div>
                         <label class="control-label" for="goalEndValue">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></label>
-                        <x-global::forms.text-input type="number" step="0.01" name="endValue" id="goalEndValue" value="{{ $canvasItem['endValue'] }}" style="width:100%" />
+                        <x-global::forms.text-input width="full" type="number" step="0.01" name="endValue" id="goalEndValue" value="{{ $canvasItem['endValue'] }}" />
                     </div>
                 </div>
             </div>
@@ -342,7 +342,7 @@
                 <div class="form-group">
                     <label class="control-label" for="statusCanvas">{{ __('label.status') }}</label>
                     @if (!empty($statusLabels))
-                        <x-global::forms.select name="status" id="statusCanvas" enhanced :search="false">
+                        <x-global::forms.select width="full" name="status" id="statusCanvas" enhanced :search="false">
                             @foreach ($statusLabels as $key => $data)
                                 @if ($data['active'])
                                     <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
@@ -364,11 +364,11 @@
                 <div class="gv-dates">
                     <div class="form-group">
                         <label class="control-label" for="goalStartDate">{{ __('label.start_date') }}</label>
-                        <input type="text" autocomplete="off" id="goalStartDate" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="startDate"/>
+                        <input type="text" autocomplete="off" id="goalStartDate" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="field-width-full startDate"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="goalEndDate">{{ __('label.end_date') }}</label>
-                        <input type="text" autocomplete="off" id="goalEndDate" value="{{ format($canvasItem['endDate'])->date() }}" name="endDate" class="endDate"/>
+                        <input type="text" autocomplete="off" id="goalEndDate" value="{{ format($canvasItem['endDate'])->date() }}" name="endDate" class="field-width-full endDate"/>
                     </div>
                 </div>
 

@@ -86,9 +86,9 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | Component | Tag | Cat | Status | Ref | Notes |
 |---|---|---|---|---|---|
 | button | `forms.button` | forms | ✅ | refactor/table-component | merged #3531: no-op migration + 3-tier role model |
-| text-input | `forms.text-input` | forms | ✅ | refactor/table-component | merged #3558: no-op; 146 call-sites / 56 files; variants `headline`/`large`/`small` (dropped `form`/`legacy` as CSS-redundant); HTML-native `type` prop; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr |
+| text-input | `forms.text-input` | forms | ✅ | refactor/table-component | merged #3558: no-op; 146 call-sites / 56 files; variants `headline`/`large`/`small` (dropped `form`/`legacy` as CSS-redundant); HTML-native `type` prop; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr Width via `width` (sm/md/lg/full/auto); the width-only `large`/`small` variants were removed (→ md / sm). |
 | textarea | `forms.textarea` | forms | ✅ | selectsComponentUpdates | merged #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
-| select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" |
+| select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" `width` prop (sm/md/lg/full/auto, default md) shared with text-input. |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
 | card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
@@ -617,3 +617,27 @@ one HTMX select end-to-end. Codeception `-g timesheet`, `-g api`, `-g ticket`, `
   (its menu IS an HxController view swapped whole), Wiki icon picker (library markup), Files upload rows (built
   client-side), global search results (an autocomplete listbox, not a menu). Also fixed on the way: Goalcanvas
   `canvasComment` 500 (undefined `$id` since the Blade conversion); canvas author images round again (`.authorAvatar`).
+
+### Field widths (2026-10-10, Marcel)
+One scale for selects (native + enhanced) and text inputs, set in `forms.css` (`--field-width-*`), so a form
+never mixes widths (before: content width capped at 175px for selects, Bootstrap's fixed 206px for inputs, plus
+seven different inline widths). Default **md** on the base `select`/`input` rules — so raw inputs (date pickers,
+legacy fields) get it too — and the `width` prop on `forms.select` / `forms.text-input` (classes
+`field-width-{sm,md,lg,full,auto}` on raw fields) for the rest:
+
+| width | size | use for |
+|---|---|---|
+| `sm` | 10rem | numbers, times, dates, durations, short codes / enums (priority, frequency), toolbar filters |
+| `md` | 16rem | default — names, languages, most single choices |
+| `lg` | 24rem | long titles (projects, to-dos, milestones), multi-selects with several picks |
+| `full` | 100% | single-column modals, narrow rails (goal dialog sidebar), filter panels (automatic in `.filterBar`) |
+| `auto` | content | rare: an inline control that must hug its content (plugin version picker) |
+
+Every size stops at its container (`max-width: 100%`, `box-sizing: border-box` so a select and an input with the
+same width render the same). Rules: no pixel widths inline; one width per column of a form (dates may be `sm` next
+to `md`/`full` fields). A row of filters above a table is a `.filterRow` (wrapping flex row of `sm` fields), not a
+layout table. Not a prop name: `size` (the native listbox-rows attribute). Applied in core: 29 templates (inline
+widths, `span11`/`tw-w-full` selects, date/time inputs → `sm`); All Timesheets filter table → `.filterRow`; ticket
+modal labels no longer shrink (fields line up). Plugins (Billing's inline `width:200px` selects, StrategyPro KPI)
+follow in P6.
+

@@ -90,7 +90,7 @@
                                         </div>
                                         <div class="col-md-8">
                                                             <span class='field'>
-                                                                <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
+                                                                <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency">
                                                                     <option value="">--{!! __('label.choose_option') !!}--</option>
                                                                     <option value="300" @if ($companySettings['messageFrequency'] == '300') selected @endif>{!! __('label.5min') !!}</option>
                                                                     <option value="900" @if ($companySettings['messageFrequency'] == '900') selected @endif>{!! __('label.15min') !!}</option>
@@ -150,7 +150,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <x-global::forms.select name="defaultNotificationRelevance" class="form-control" style="max-width:300px;">
+                                                <x-global::forms.select name="defaultNotificationRelevance" class="form-control">
                                                     @foreach ($relevanceLevels as $level => $labelKey)
                                                         <option value="{{ $level }}" @if ($defaultRelevance === $level) selected @endif>
                                                             {!! __($labelKey) !!}

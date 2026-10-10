@@ -69,7 +69,7 @@
             <div class="col-md-8">
 
                 {{-- Title --}}
-                <x-global::forms.text-input name="description" variant="headline" style="width:99%;"
+                <x-global::forms.text-input width="full" name="description" variant="headline"
                     value="{{ $tpl->escape($canvasItem['description']) }}"
                     placeholder="{{ $tpl->__('input.placeholders.short_name') }}" /><br /><br />
 

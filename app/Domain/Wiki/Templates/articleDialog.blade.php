@@ -53,7 +53,7 @@
                     <span class="fa fa-folder"></span>{!! __('subtitles.organization') !!}
                 </h4>
                 <label>Parent</label>
-                <x-global::forms.select name="parent" style="width:100%;">
+                <x-global::forms.select width="full" name="parent">
                     <option value="0">None</option>
                     @foreach ($wikiHeadlines as $parent)
                         @if ($id != $parent->id)
@@ -64,7 +64,7 @@
                 </x-global::forms.select>
 
                 <label>{!! __('label.status') !!}</label>
-                <x-global::forms.select name="status" style="width:100%;">
+                <x-global::forms.select width="full" name="status">
                     <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{!! __('label.draft') !!}</option>
                     <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{!! __('label.published') !!}</option>
                 </x-global::forms.select>

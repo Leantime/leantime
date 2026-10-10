@@ -156,11 +156,51 @@ select {
 
 /* Native single selects: our caret instead of the OS one, placed where the enhanced select's caret sits
    (input padding 10px + caret margin 5px from the right edge). */
-/* Bootstrap caps every select at 175px (bootstrap.min.css: select { max-width: 175px }), which also
-   overrode widths a template asked for — so a native select came out narrower than an enhanced one
-   given the same width. A select that sets its own width now gets it; the others keep the cap. */
-select[style*="width"] {
+/* Field widths: ONE scale for selects (native and enhanced) and text inputs, so fields in a form line
+   up instead of each taking its content's width (Bootstrap capped selects at 175px and fixed inputs at
+   206px). Default md; pick another size with the forms.select / forms.text-input `width` prop:
+     sm   numbers, times, durations, short codes and enums (priority, frequency)
+     md   default — names, languages, most single choices
+     lg   long titles (projects, to-dos, milestones), multi-selects with several picks
+     full fill the container (modals, filter panels, narrow columns)
+     auto the content's width (inline toolbars, table cells)
+   Every size stops at its container's width. Element-level selectors on purpose: a class or context
+   rule (table cells, span* grid classes, the login form) still wins. */
+:root {
+    --field-width-sm: 10rem;
+    --field-width-md: 16rem;
+    --field-width-lg: 24rem;
+}
+
+select,
+input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="search"],
+input[type="tel"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"],
+input:not([type]) {
+    box-sizing: border-box;
+    width: var(--field-width-md);
     max-width: 100%;
+}
+
+select.field-width-sm, input.field-width-sm, .ss-main.field-width-sm { width: var(--field-width-sm); }
+select.field-width-md, input.field-width-md, .ss-main.field-width-md { width: var(--field-width-md); }
+select.field-width-lg, input.field-width-lg, .ss-main.field-width-lg { width: var(--field-width-lg); }
+select.field-width-full, input.field-width-full, .ss-main.field-width-full { width: 100%; }
+select.field-width-auto, input.field-width-auto, .ss-main.field-width-auto { width: auto; }
+
+/* A row of filters above a table (All Timesheets): sm fields that wrap like a toolbar. */
+.filterRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0 15px;
+    margin-bottom: 10px;
+}
+
+/* Filter panels are narrow columns: their fields fill the panel. */
+.filterBar select,
+.filterBar .ss-main,
+.filterBar input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]) {
+    width: 100%;
 }
 
 select:not([multiple]):not([size]):not(.btn) {

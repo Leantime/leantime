@@ -31,7 +31,7 @@
             <div class="col-md-3">
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
-                        <x-global::forms.text-input name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" style="width: 100%;" />
+                        <x-global::forms.text-input width="full" name="headline" autofocus placeholder="{{ __('input.placeholders.create_task') }}" />
                         @if (isset($availableProjects))
                             {{-- Program (cross-project) board: a task must belong to one child project. --}}
                             <x-global::forms.select name="quickaddProjectId" class="form-control tw-mb-s" required aria-label="{{ __('label.project') }}">
