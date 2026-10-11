@@ -723,7 +723,10 @@ Card rollout (43 card types found 2026-10-11 — 34 core, 9 plugin-only; ~41 cor
 2. ✅ shared partials — `projectCard` (7 sites), `milestoneCard` (14 hx sites), `blueprints::element` (16 boards),
    `x-users::profile-box`, plugin card. Entity cards keep the legacy class on the root (`.lt-card.ticketBox`,
    `.projectBox`, `.profileBox` → legacy padding dropped); milestone card gained `.milestoneCard` (wiki embed, tours).
-3. one component per inline copy — `tickets::ticket-card` (kanban), `ideas::idea-card`, `goalcanvas::goal-card`.
+3. ✅ inline entity cards swapped in place — kanban to-do, dashboard latest to-dos, ideas wall + kanban, goal board +
+   goal dashboard, project status-label rows, plugin rows, legacy report milestones, `ticketCard`. No per-entity
+   component yet: each has ONE core caller; extract when the plugin copies (StrategyPro goals, Whiteboards ideas,
+   PgmPro/StrategyPro project kanban) convert and a second caller exists.
 4. My Work `todoItem` (most hooks). 5. comments, file tiles. 6. plugins (Notes, Whiteboards, PgmPro/StrategyPro
    kanban, Llamadorian, …).
 Entity-card rules: keep `.ticketBox`/`.moveable`/`.priority-border-N`/ids on the root; `@dispatchEvent` hooks stay
