@@ -329,7 +329,7 @@
                     <ul class="sortableTicketList" id="todoStatusList">
                         @foreach ($todoStatus as $key => $ticketStatus)
                             <li>
-                                <div class="ticketBox">
+                                <x-global::elements.card compact class="ticketBox">
 
                                     <div class="row statusList" id="todostatus-{{ $key }}">
 
@@ -392,7 +392,7 @@
                                     @if ($key == -1)
                                         <em>* the archive status is protected cannot be renamed or removed.</em>
                                     @endif
-                                </div>
+                                </x-global::elements.card>
                             </li>
 
                         @endforeach
@@ -412,7 +412,7 @@
 
 <!-- New Status Template -->
 <template class="newStatusTpl">
-    <div class="ticketBox">
+    <x-global::elements.card compact class="ticketBox">
     <div class="row statusList" id="todostatus-XXNEWKEYXX">
         <input type="hidden" name="labelKeys[]" id="labelKey-XXNEWKEYXX" class='labelKey' value="XXNEWKEYXX"/>
         <div class="sortHandle">
@@ -463,7 +463,7 @@
             <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete"><span class="fa fa-trash"></span></a>
         </div>
     </div>
-</div>
+</x-global::elements.card>
 </template>
 
 @once @push('scripts')

@@ -163,7 +163,7 @@
 
                                     @foreach ($allTickets as $row)
                                         @if (($row[$placementField] ?? null) == $key)
-                                        <div class="ticketBox moveable container priority-border-{{ $row['priority'] }}" id="ticket_{{ $row['id'] }}">
+                                        <x-global::elements.card compact class="ticketBox moveable container priority-border-{{ $row['priority'] }}" id="ticket_{{ $row['id'] }}">
 
                                             <div class="row" >
                                                 <div class="col-md-12">
@@ -282,7 +282,7 @@
                                             </div>
                                             @endif
 
-                                        </div>
+                                        </x-global::elements.card>
                                         @endif
                                     @endforeach
                                 </div>

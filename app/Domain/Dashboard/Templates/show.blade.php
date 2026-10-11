@@ -99,7 +99,7 @@
 
                     @foreach($tickets as $row)
                         <li class="ui-state-default" id="ticket_{{ $row['id'] }}">
-                            <div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
+                            <x-global::elements.card compact class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
                                 <div class="row">
                                     <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{{ $row['id'] }}">
                                         @if($row['dependingTicketId'] > 0)
@@ -142,7 +142,7 @@
                                     </div>
                                 </div>
 
-                            </div>
+                            </x-global::elements.card>
                         </li>
                     @endforeach
                 </ul>
