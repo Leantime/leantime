@@ -206,3 +206,9 @@ a.danger,
 a.delete {
     color:var(--red) !important;
 }
+
+/* Bootstrap sizes <small> at 85% (11.9px off 14px) — pin it to the scale. */
+small,
+.small {
+    font-size: var(--font-size-s);
+}
