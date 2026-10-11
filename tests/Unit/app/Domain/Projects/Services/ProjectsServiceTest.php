@@ -10,6 +10,7 @@ use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\CarbonMacros;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
@@ -141,11 +142,11 @@ class ProjectsServiceTest extends TestCase
         $this->webhookPosts = [];
 
         $users = [];
-        foreach ([1, 2, 3, 4, 5, 6] as $userId) {
+        foreach ([1, 2, 3, 4, 5, 6, 7] as $userId) {
             $users[$userId] = ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a', 'role' => 20, 'clientId' => 0, 'modified' => null];
         }
         foreach ($userOverrides as $userId => $columns) {
-            $users[$userId] = $columns === false ? false : $columns + $users[$userId];
+            $users[$userId] = $columns === false ? false : $columns + ($users[$userId] ?? ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a', 'role' => 20, 'clientId' => 0, 'modified' => null]);
         }
         $team = array_map(fn (int $userId) => $users[$userId], [1, 2, 3, 4, 5]);
 
@@ -153,7 +154,10 @@ class ProjectsServiceTest extends TestCase
             'getUsersAssignedToProject' => fn () => $team,
             'getUsersWithAccessToProject' => fn () => array_values(array_filter($users, fn ($u) => $u !== false && in_array($u['id'], $usersWithProjectAccess, true))),
             'getProject' => fn ($projectId) => $projectId == 5 ? ['id' => 5, 'name' => 'Acme', 'psettings' => 'restricted', 'clientId' => 3] : false,
-            'isUserAssignedToProject' => fn ($userId, $projectId) => $projectId == 5 && in_array((int) $userId, $usersWithProjectAccess, true),
+            'isUserAssignedToProject' => fn ($userId, $projectId) => $projectId == 5 && (
+                in_array((int) $userId, $usersWithProjectAccess, true)
+                || (isset($users[(int) $userId]['role']) && in_array(Roles::getRoleString($users[(int) $userId]['role']), [Roles::$admin, Roles::$owner], true))
+            ),
         ]);
         $userRepo = $this->make(UserRepository::class, [
             'getUser' => fn ($userId) => $users[(int) $userId] ?? false,
@@ -252,6 +256,7 @@ class ProjectsServiceTest extends TestCase
 
         $this->assertSame([2], $seen['emailRecipients']);
         $this->assertSame([2], $seen['pushRecipients']);
+        $this->assertSame([2], array_column($seen['inAppNotifications'] ?? [], 'userId'));
         $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
     }
 
@@ -264,7 +269,56 @@ class ProjectsServiceTest extends TestCase
 
         $this->assertSame([6], $seen['emailRecipients']);
         $this->assertSame([6], $seen['pushRecipients']);
+        $this->assertSame([6], array_column($seen['inAppNotifications'] ?? [], 'userId'));
         $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
+    }
+
+    public function test_notify_project_users_delivers_targeted_notification_to_unassigned_admin_or_owner(): void
+    {
+        // User 7 is an admin (role 40) who is NOT on the direct team ($team is 1..5)
+        // and NOT explicitly listed in usersWithProjectAccess.
+        // Because admins/owners have implicit access to all projects in Leantime,
+        // assigning a task to them must deliver the targeted notification.
+        $seen = $this->runNotifyProjectUsers(
+            [],
+            usersWithProjectAccess: [1, 2, 3, 4, 5],
+            userOverrides: [7 => ['role' => 40]],
+            recipientIds: [7],
+        );
+
+        $this->assertSame([7], $seen['emailRecipients']);
+        $this->assertSame([7], $seen['pushRecipients']);
+        $this->assertSame([7], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+        $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
+    }
+
+    public function test_notify_project_users_drops_targeted_recipient_without_project_access(): void
+    {
+        // User 7 is a regular editor (role 20) with no direct or indirect access to project 5.
+        // Targeted notification to user 7 must be dropped.
+        $seen = $this->runNotifyProjectUsers(
+            [],
+            usersWithProjectAccess: [1, 2, 3, 4, 5],
+            userOverrides: [7 => ['role' => 20]],
+            recipientIds: [7],
+        );
+
+        $this->assertSame([], $seen['emailRecipients'] ?? []);
+        $this->assertSame([], $seen['pushRecipients'] ?? []);
+        $this->assertSame([], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+        $this->assertSame(0, $seen['messengerCalls']);
+    }
+
+    public function test_notify_project_users_with_targeted_recipient_omits_author_self_notification(): void
+    {
+        // Author is user 1. When user 1 assigns a task to themselves (recipientIds = [1]),
+        // author exclusion must ensure no notifications are dispatched.
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5], recipientIds: [1]);
+
+        $this->assertSame([], $seen['emailRecipients'] ?? []);
+        $this->assertSame([], $seen['pushRecipients'] ?? []);
+        $this->assertSame([], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+        $this->assertSame(0, $seen['messengerCalls']);
     }
 
     /**

@@ -363,19 +363,21 @@ class Projects extends BaseService implements ChecksProjectAccess
         // Email
         $projectName = $this->getProjectName($notification->projectId);
 
-        $accessibleUsers = null;
+        $targetedUsers = null;
         if ($targetedRecipientIds !== null) {
-            // Assignees can have indirect project access (e.g. 'all' or 'clients' project settings)
-            // without a direct row in zp_relationuserproject. Build candidates from all users with
-            // access to the project so valid assignees are not omitted.
-            $accessibleUsers = $this->getUsersWithAccessToProject((int) $notification->projectId);
-            $candidateIds = [];
-            foreach ($accessibleUsers as $user) {
-                if (($user['notifications'] ?? 1) != 0 && strtolower($user['status'] ?? '') === 'a') {
-                    $candidateIds[] = (int) $user['id'];
+            // Build candidates by validating each allow-listed recipient with the canonical
+            // project access predicate (which covers direct team members, 'all'/'clients'
+            // project settings, and global admins/owners) so valid assignees are never omitted.
+            $targetedUsers = [];
+            foreach ($targetedRecipientIds as $targetUserId) {
+                if ($this->isUserAssignedToProject((int) $targetUserId, (int) $notification->projectId)) {
+                    $user = $this->userRepo->getUser((int) $targetUserId);
+                    if ($user !== false && ($user['notifications'] ?? 1) != 0 && strtolower($user['status'] ?? '') === 'a') {
+                        $targetedUsers[] = (array) $user;
+                    }
                 }
             }
-            $users = array_values(array_intersect($candidateIds, $targetedRecipientIds));
+            $users = array_map(fn ($u) => (int) $u['id'], $targetedUsers);
         } else {
             $users = $this->getUsersToNotify($notification->projectId);
         }
@@ -495,10 +497,9 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         // Apply same two-layer filtering to in-app notification users
         if ($targetedRecipientIds !== null) {
-            $accessibleUsers = $accessibleUsers ?? $this->getUsersWithAccessToProject((int) $notification->projectId);
             $allUsersToNotify = [];
-            foreach ($accessibleUsers as $user) {
-                if (($user['notifications'] ?? 1) != 0 && strtolower($user['status'] ?? '') === 'a' && (int) $user['id'] !== (int) $notification->authorId && in_array((int) $user['id'], $targetedRecipientIds, true)) {
+            foreach ($targetedUsers ?? [] as $user) {
+                if ((int) $user['id'] !== (int) $notification->authorId) {
                     $allUsersToNotify[] = $user;
                 }
             }
