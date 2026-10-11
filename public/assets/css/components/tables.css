@@ -689,9 +689,23 @@ table.fc-multimonth-header-table {
     line-height: 1.2;
 }
 
-/* White only while closed: the open state keeps its dark fill and white text, like Filter. */
-.tableButtons .dt-buttons .dt-button:not(.dt-button-active):not([aria-expanded="true"]) {
+/* Resting state: the white pill of the bar's Filter / Group By triggers. */
+.tableButtons .dt-buttons .dt-button:not(:hover):not(.dt-button-active):not([aria-expanded="true"]) {
     background: var(--secondary-background);
+}
+
+/* Hover and open: the same dark fill as a hovered Filter (.lt-tabs-actions .btn-link:hover). */
+.tableButtons .dt-buttons .dt-button:hover,
+.tableButtons .dt-buttons .dt-button.dt-button-active,
+.tableButtons .dt-buttons .dt-button[aria-expanded="true"] {
+    border-color: var(--secondary-action-hover-bg);
+    background: var(--secondary-action-hover-bg);
+    color: var(--secondary-action-hover-color);
+}
+
+.tableButtons .dt-buttons .dt-button:hover i,
+.tableButtons .dt-buttons .dt-button[aria-expanded="true"] i {
+    color: var(--secondary-action-hover-color);
 }
 
 .tableButtons .dt-buttons .dt-button span {
