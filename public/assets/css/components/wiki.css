@@ -1016,11 +1016,16 @@
     color: var(--secondary-font-color);
 }
 
+/* Height follows the illustration; a fixed height let it spill over the title. */
 .wiki-empty-state-icon {
-    width: 120px;
-    height: 120px;
+    width: 200px;
     margin: 0 auto 24px;
-    opacity: 0.4;
+}
+
+.wiki-empty-state-icon svg {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .wiki-empty-state-title {
