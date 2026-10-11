@@ -32,13 +32,17 @@
         $accordionState = $tpl->getToggleState($tpl->getToggleState("accordion_content-".$accordionId) === 'closed' ? 'closed' : 'open');
     @endphp
 
-    <div
-        class="tw-relative ticketBox {{ $ticket['type'] === 'milestone' ? 'milestone-box priority-border- ' : 'priority-border-'.$ticket['priority'] }} {{ $hasChildren ? 'has-children' : '' }}"
+    @php
+        // Milestones carry their colour as a 5px gradient strip along the bottom edge.
+        $milestoneStripStyle = $ticket['type'] === 'milestone'
+            ? 'background: var(--secondary-background) linear-gradient(135deg, '.$ticket['tags'].' 0%, var(--accent1) 100%); background-repeat: no-repeat; background-size: 100% 5px; background-position: bottom;'
+            : null;
+    @endphp
+    <x-global::elements.card compact
+        :class="'ticketBox '.($ticket['type'] === 'milestone' ? 'milestone-box priority-border- ' : 'priority-border-'.$ticket['priority']).($hasChildren ? ' has-children' : '')"
         data-val="{{ $ticket['id'] }}"
-        data-event='{!! $ticketDataJson !!}'
-        @if($ticket['type'] === 'milestone')
-            style="background: var(--secondary-background) linear-gradient(135deg, {{ $ticket['tags'] }} 0%, var(--accent1) 100%); background-repeat: no-repeat; background-size: 100% 5px; background-position: bottom;"
-        @endif
+        :data-event="$ticketDataJson"
+        :style="$milestoneStripStyle"
     >
         <div class="tw-absolute full-width-loader htmx-indicator-ticket-{{$ticket['id']}}">
             <div class="indeterminate"></div>
@@ -185,11 +189,10 @@
             </div>
         @endif
 
-    </div>
+    </x-global::elements.card>
 
     <!-- Subtask Form -->
-    <div id="subtask-form-{{$ticket['id']}}" class="subtask-form ticketBox"
-         style="display:none; margin:10px; margin-left:40px;">
+    <x-global::elements.card compact id="subtask-form-{{ $ticket['id'] }}" class="subtask-form ticketBox" style="display:none; margin:10px; margin-left:40px;">
         <form class="form-group"
               hx-post="{{ BASE_URL }}/widgets/myToDos/addSubtask?ticketId={{$ticket['id']}}"
               hx-target="#yourToDoContainer"
@@ -212,7 +215,7 @@
                 </div>
             </div>
         </form>
-    </div>
+    </x-global::elements.card>
     <!-- End Subtask Form -->
 
     <div id="accordion_content-{{ $accordionId }}"
@@ -227,8 +230,7 @@
         @if($level == 0 && $ticket['type'] === "milestone")
 
             <!-- Subtask Form -->
-            <div id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}" class="subtask-form ticketBox"
-                 style="display:none; margin:5px 0px;">
+            <x-global::elements.card compact id="task-add-form-{{ $groupKey }}-{{ $ticket['id'] }}" class="subtask-form ticketBox" style="display:none; margin:5px 0px;">
                 <form class="form-group"
                       id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}-form"
                       hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
@@ -269,7 +271,7 @@
                         </div>
                     </div>
                 </form>
-            </div>
+            </x-global::elements.card>
             <!-- End Subtask Form -->
 
             <a href="javascript:void(0);" id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}-handler"
