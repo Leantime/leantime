@@ -191,6 +191,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding-right:0px;
 }
 
+/* A chip keeps its full height in any container: as a plain inline link (table cells)
+   the line box collapsed it to ~16px while cards rendered 21px. */
+.dropdown.ticketDropdown > a {
+    display: inline-block;
+}
+
 /* Chips never underline on hover, wherever they sit (page, to-do dialog, widget).
    Two classes so it beats the theme's `.sortableTicketList a:hover` underline. */
 .dropdown.ticketDropdown > a:hover,

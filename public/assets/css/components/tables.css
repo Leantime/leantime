@@ -650,6 +650,11 @@ table td{
     font-weight:bold;
 }
 
+/* The bold is for the row's title link; the row menu reuses .ticketModal for "Edit". */
+.ticketTable .dropdown-menu .ticketModal {
+    font-weight: normal;
+}
+
 .dt-button-down-arrow {
     font-size:0px;
 }
