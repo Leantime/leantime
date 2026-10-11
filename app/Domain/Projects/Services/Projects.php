@@ -347,6 +347,18 @@ class Projects extends BaseService implements ChecksProjectAccess
             $notification->url['url'] = app()->make(TrustedAppUrl::class)->rebase($notification->url['url']);
         }
 
+        $targetedRecipientIds = null;
+        if (is_array($notification->recipientIds)) {
+            $targetedRecipientIds = array_values(
+                array_unique(
+                    array_filter(
+                        array_map('intval', $notification->recipientIds),
+                        fn (int $id) => $id > 0
+                    )
+                )
+            );
+        }
+
         // Email
         $users = $this->getUsersToNotify($notification->projectId);
         $projectName = $this->getProjectName($notification->projectId);
@@ -356,6 +368,15 @@ class Projects extends BaseService implements ChecksProjectAccess
             return $user != $notification->authorId;
         }, ARRAY_FILTER_USE_BOTH);
         $users = array_values($users);
+
+        if ($targetedRecipientIds !== null) {
+            $users = array_values(
+                array_filter(
+                    $users,
+                    fn ($userId) => in_array((int) $userId, $targetedRecipientIds, true)
+                )
+            );
+        }
 
         // Batch-load notification preferences for all candidate users
         $settingKeys = [];
@@ -375,8 +396,12 @@ class Projects extends BaseService implements ChecksProjectAccess
         $users = $this->filterUsersByEventType($users, $notification->module, $preloadedSettings);
 
         // Mentions and collaborators both bypass the two filter layers above.
-        $mentionedUserIds = $this->extractMentionedUserIds($notification);
-        $collaboratorIds = $this->extractCollaboratorIds($notification);
+        $mentionedUserIds = $targetedRecipientIds === null
+            ? $this->extractMentionedUserIds($notification)
+            : [];
+        $collaboratorIds = $targetedRecipientIds === null
+            ? $this->extractCollaboratorIds($notification)
+            : [];
         $users = $this->addBypassRecipients($users, $mentionedUserIds, $notification->authorId);
         $users = $this->addBypassRecipients($users, $collaboratorIds, $notification->authorId);
 
@@ -391,7 +416,9 @@ class Projects extends BaseService implements ChecksProjectAccess
         $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId);
 
         // Send to messengers
-        $this->messengerService->sendNotificationToMessengers($notification, $projectName);
+        if ($targetedRecipientIds === null) {
+            $this->messengerService->sendNotificationToMessengers($notification, $projectName);
+        }
 
         // Send mobile push notifications to recipients with a registered
         // device token. No-op for users with no mobile token; no-op for
@@ -447,7 +474,7 @@ class Projects extends BaseService implements ChecksProjectAccess
             $entityId = $notification->projectId;
         }
 
-        if ($contentToCheck != '') {
+        if ($targetedRecipientIds === null && $contentToCheck != '') {
             $this->notificationService->processMentions(
                 $contentToCheck,
                 $notification->module,
@@ -461,6 +488,14 @@ class Projects extends BaseService implements ChecksProjectAccess
         // Apply same two-layer filtering to in-app notification users
         $allUsersToNotify = $this->getAllUserInfoToNotify($notification->projectId);
         $allUserIds = array_map(fn ($u) => $u['id'], $allUsersToNotify);
+        if ($targetedRecipientIds !== null) {
+            $allUserIds = array_values(
+                array_filter(
+                    $allUserIds,
+                    fn ($userId) => in_array((int) $userId, $targetedRecipientIds, true)
+                )
+            );
+        }
         $filteredIds = $this->filterUsersByProjectRelevance($allUserIds, $notification, $preloadedSettings);
         $filteredIds = $this->filterUsersByEventType($filteredIds, $notification->module, $preloadedSettings);
 

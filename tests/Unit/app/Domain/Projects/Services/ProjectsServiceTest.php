@@ -134,7 +134,7 @@ class ProjectsServiceTest extends TestCase
      * @param  Webhooks|null  $webhooks  Replaces the real Webhooks service (built over a recording transport) when given.
      * @return array{emailRecipients: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null}
      */
-    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null): array
+    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, ?array $recipientIds = null): array
     {
         $seen = ['emailRecipients' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null];
         $this->queueTable = [];
@@ -228,6 +228,7 @@ class ProjectsServiceTest extends TestCase
         $notification->message = 'Ada updated "Ship it"';
         $notification->url = ['url' => 'https://leantime.example.com/tickets/showTicket/42', 'text' => 'Open'];
         $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review'];
+        $notification->recipientIds = $recipientIds;
 
         $this->makeService(
             projectRepo: $projectRepo,
@@ -239,6 +240,18 @@ class ProjectsServiceTest extends TestCase
         )->notifyProjectUsers($notification);
 
         return $seen;
+    }
+
+    public function test_notify_project_users_with_targeted_recipient_ids_only_delivers_to_allowlisted_users(): void
+    {
+        // When recipientIds is set (e.g. task assigned to user 2), only user 2 should receive notifications.
+        // User 6 is @mentioned in the description but must NOT bypass into recipients.
+        // Project messengers must NOT be called for targeted notifications.
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], recipientIds: [2]);
+
+        $this->assertSame([2], $seen['emailRecipients']);
+        $this->assertSame([2], $seen['pushRecipients']);
+        $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
     }
 
     /**
