@@ -90,7 +90,7 @@
 
                             @foreach ($canvasItems as $row)
                                 @if ($row['box'] == $key)
-                                    <div class="ticketBox moveable" id="item_{{ $row['id'] }}">
+                                    <x-global::elements.card compact class="ticketBox moveable" id="item_{{ $row['id'] }}">
 
                                         <div class="row">
                                             <div class="col-md-12">
@@ -157,7 +157,7 @@
                                             </div>
                                         @endif
 
-                                    </div>
+                                    </x-global::elements.card>
                                 @endif
                             @endforeach
 

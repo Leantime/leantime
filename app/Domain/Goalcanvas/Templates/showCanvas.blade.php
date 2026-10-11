@@ -179,7 +179,7 @@
                                             $nbcomments = $comments->countComments(moduleId: $row['id']);
                                         @endphp
                                         <div class="col-md-4">
-                                            <div class="ticketBox" id="item_{{ $row['id'] }}">
+                                            <x-global::elements.card compact class="ticketBox" id="item_{{ $row['id'] }}">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         @if ($login::userIsAtLeast($roles::$editor))
@@ -266,7 +266,7 @@
                                     </div>
 
                                     @include('goalcanvas::partials.milestoneChips', ['milestones' => $row['milestones'] ?? []])
-                                </div>
+                                </x-global::elements.card>
                             </div>
                         @endif
                     @endforeach

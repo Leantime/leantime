@@ -38,7 +38,7 @@
                         @if (count($newPlugins) > 0)
                             @foreach ($newPlugins as $newplugin)
                                 <li>
-                                    <div class="ticketBox fixed">
+                                    <x-global::elements.card compact class="ticketBox fixed">
                                         <div class="row">
 
                                             <div class="col-md-4">
@@ -58,7 +58,7 @@
                                             </div>
 
                                         </div>
-                                    </div>
+                                    </x-global::elements.card>
                                 </li>
                             @endforeach
                         @else

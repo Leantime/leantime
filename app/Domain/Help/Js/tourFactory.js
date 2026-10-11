@@ -256,7 +256,7 @@ leantime.tourFactory = (function () {
                     id: 'goal-progress',
                     title: "Goal Progress",
                     text: "As you update your goal metrics, the progress bar will show you how far along you are.",
-                    attachTo: { element: '.ticketBox > .row > .col-md-12 .progress', on: 'bottom' }
+                    attachTo: { element: '.ticketBox .row > .col-md-12 .progress', on: 'bottom' }
                 },
                 {
                     id: 'milestone-connection',

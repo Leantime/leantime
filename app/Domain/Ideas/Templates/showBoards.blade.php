@@ -70,7 +70,7 @@
             <div id="ideaMason" class="sortableTicketList" style="padding-top:10px;">
 
                 @foreach ($canvasItems as $row)
-                    <div class="ticketBox" id="item_{{ $row['id'] }}" data-value="{{ $row['id'] }}">
+                    <x-global::elements.card compact class="ticketBox" id="item_{{ $row['id'] }}" data-value="{{ $row['id'] }}">
 
                         <div class="row">
                             <div class="col-md-12">
@@ -139,7 +139,7 @@
                                 </div>
                             </div>
                         @endif
-                    </div>
+                    </x-global::elements.card>
 
                 @endforeach
 
