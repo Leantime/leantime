@@ -362,7 +362,7 @@
 
     --card-bg: var(--color-surface-card);
     --card-border: var(--color-border-default);
-    --card-radius: var(--radius-m);
+    --card-radius: var(--box-radius);
     --card-shadow: var(--shadow-s);
 
     --input-bg: var(--color-bg-input);

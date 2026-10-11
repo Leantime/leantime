@@ -1,5 +1,5 @@
 {{--
-    A card inside the content box: bordered, no shadow, optional header and footer rows.
+    A card inside the content box: border, soft shadow, 16px corners, optional header and footer rows.
 
     Not the page content box itself (`.maincontentinner`); this is what sits inside it.
 

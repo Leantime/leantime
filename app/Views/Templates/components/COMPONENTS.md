@@ -90,7 +90,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | textarea | `forms.textarea` | forms | ✅ | selectsComponentUpdates | merged #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
 | select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" `width` prop (sm/md/lg/full/auto, default md) shared with text-input. |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
-| card | `elements.card` | elements | 🟡 | — | Card INSIDE the content box (plugin look): border, no shadow, `--card-radius`; `header`/`footer` slots, `title`, `flush`, `tone` success/warning/danger/info/muted/empty. First user: report Resources & Coverage page. The page content box (`.maincontentinner`, 167 sites) is a separate later step |
+| card | `elements.card` | elements | 🟡 | — | Card INSIDE the content box: border + `--card-shadow`, `--card-radius` = `--box-radius` (16px — Marcel 2026-10-11: keep core corners and shadow); `header`/`footer` slots, `title`, `flush`, `tone` success/warning/danger/info/muted/empty. First user: report Resources & Coverage page. The page content box (`.maincontentinner`, 167 sites) is a separate later step |
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
 | dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
@@ -679,7 +679,7 @@ Section tabs each own their form / Save and post back to `…#section`; nothing 
 PgmPro / StrategyPro screens (report deck, resource allocation, reverse wizard) are the design source for the
 newer patterns; their private `--rd-*` / `--ra-*` palette and type sizes go away. Picks per pattern (audit page:
 claude.ai/artifact/A1KrfZ7XJduFnqecZ7G2Ug):
-- **Plugin look** → eyebrow, page-header status slot, card (header row, token radius), callout + note (card
+- **Plugin look** → eyebrow, page-header status slot, card (header row; but core 16px corners + shadow, decided 2026-10-11), callout + note (card
   tones), stat tile (delta pill, "See list"), entity chip, table rows, details list (kv rows), icon list rows.
 - **Merge** → type scale, section title, status badge, accordion. **Core** → buttons (`forms.button`, add `sm`).
 

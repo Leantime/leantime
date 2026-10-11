@@ -1,12 +1,13 @@
 /*
  * elements.card — a card inside the content box.
- * Border instead of a second shadow; tones tint background and border.
+ * Border plus the soft card shadow, 16px corners (Marcel, 2026-10-11); tones tint background and border.
  * Type follows the role table in COMPONENTS.md ("Plugin design alignment").
  */
 .lt-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
     color: var(--primary-font-color);
     overflow: hidden;
     min-width: 0;

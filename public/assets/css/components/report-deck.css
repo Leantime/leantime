@@ -35,7 +35,7 @@
     --rd-danger:var(--feedback-error-color);
     --rd-danger-bg:var(--feedback-error-bg);
     --rd-r-sm:var(--card-radius);
-    --rd-r-xs:var(--card-radius);
+    --rd-r-xs:var(--box-radius-small);
     --rd-sh-sm:var(--shadow-s);
     --rd-sh-lg:var(--large-shadow);
     color:var(--rd-text-1);
