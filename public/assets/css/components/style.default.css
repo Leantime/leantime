@@ -1049,6 +1049,10 @@ body.loginpage {
 .listfile > li {
     display: inline-block;
     margin: 5px 10px 5px 0;
+}
+
+/* Legacy tile look for plugin markup; core file tiles are elements.card. */
+.listfile > li:not(.lt-card) {
     border: 1px solid var(--main-border-color);
     padding: 10px;
     border-radius: var(--box-radius);
@@ -2113,15 +2117,19 @@ body .widgettitle .editHeadline:hover {
 }
 
 .commentContent {
-    background:var(--layered-background);
-    border: 1px solid var(--main-border-color);
-    border-radius:var(--box-radius);
     width:100%;
-    padding:12px 15px;
     font-size:var(--base-font-size);
 }
 
-.commentContent.statusUpdate {
+/* Legacy bubble look for plugin markup; core comments are elements.card. */
+.commentContent:not(.lt-card) {
+    background:var(--layered-background);
+    border: 1px solid var(--main-border-color);
+    border-radius:var(--box-radius);
+    padding:12px 15px;
+}
+
+.commentContent.statusUpdate:not(.lt-card) {
     background:var(--layered-background);
     border: 1px solid var(--main-border-color);
 }

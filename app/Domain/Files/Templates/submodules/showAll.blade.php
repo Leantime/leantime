@@ -33,7 +33,7 @@
 
             <ul id='medialist' class='listfile'>
                 @foreach ($files as $file)
-                    <li class="file-module-{{ $file['moduleId'] }}">
+                    <x-global::elements.card as="li" compact class="file-module-{{ $file['moduleId'] }}">
                         <x-global::actions.dropdown class="dropright" style="float:right;">
                             <li class="nav-header">{!! __('subtitles.file') !!}</li>
                             <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
@@ -58,7 +58,7 @@
                             @endif
                             <x-files::fileName :file="$file" />
                         </a>
-                    </li>
+                    </x-global::elements.card>
                 @endforeach
 
             <br class="clearall" />
@@ -231,7 +231,9 @@
         //window.location.hash = "files";
         //window.location.reload();*/
 
-            let html = '<li class="file-module-'+response.moduleId+'">' +
+            // Same structure as the server-rendered tiles (elements.card as li, compact body).
+            let html = '<li class="lt-card file-module-'+response.moduleId+'">' +
+                        '<div class="lt-card-bd lt-card-bd--compact">' +
                             '<div class="inlineDropDownContainer dropright" style="float:right;">' +
                                 '<a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">' +
                                     '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
@@ -249,6 +251,7 @@
 
                                 '<span class="filename" title="'+uploadedFileDisplayName(response)+'">'+uploadedFileDisplayName(response)+'</span>'+
                             '</a>'+
+                        '</div>'+
                         '</li>';
 
                  jQuery("#medialist").append(html);
