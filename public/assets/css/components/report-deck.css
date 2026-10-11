@@ -182,7 +182,7 @@
 .rd-scope .p1-hero .badge-goal{display:inline-flex;align-items:center;gap:5px;font-size:var(--font-size-s);font-weight:500;padding:3px 10px;border-radius:20px;background:var(--rd-s3-bg);color:#7d5c18;}
 .rd-scope .p1-hero .badge-goal i{font-size:var(--font-size-s);}
 .rd-scope .p1-hero .hm{font-size:var(--font-size-s);color:var(--rd-text-3);}
-.rd-scope .p1-hero.empty{font-size:var(--font-size-s);}
+.rd-scope .p1-hero.empty > .lt-card-bd{font-size:var(--font-size-s);}
 .rd-scope .p1-hero.empty .h{font-size:var(--base-font-size);font-weight:600;color:var(--rd-text-2);margin-bottom:4px;}
 .rd-scope .p1-hero.empty .p1-hero-cta{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:var(--font-size-s);font-weight:600;color:var(--rd-accent);text-decoration:none;background:color-mix(in srgb, var(--accent1) 6%, transparent);border-radius:20px;padding:7px 16px;transition:background .12s;}
 .rd-scope .p1-hero.empty .p1-hero-cta:hover{background:color-mix(in srgb, var(--accent1) 12%, transparent);text-decoration:none;color:var(--rd-accent);}
