@@ -33,7 +33,7 @@
 
             <ul id='medialist' class='listfile'>
                 @foreach ($files as $file)
-                    <li class="file-module-{{ $file['moduleId'] }}">
+                    <x-global::elements.card as="li" compact class="file-module-{{ $file['moduleId'] }}">
                         <x-global::actions.dropdown class="dropright" style="float:right;">
                             <li class="nav-header">{!! __('subtitles.file') !!}</li>
                             <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
@@ -58,7 +58,7 @@
                             @endif
                             <x-files::fileName :file="$file" />
                         </a>
-                    </li>
+                    </x-global::elements.card>
                 @endforeach
 
             <br class="clearall" />

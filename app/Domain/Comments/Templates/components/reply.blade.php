@@ -3,7 +3,7 @@
         <x-users::profile-image :user="array('id'=> $comment['userId'], 'modified' => $comment['userModified'])" />
     </div>
     <div class="commentMain">
-        <div class="commentContent">
+        <x-global::elements.card compact class="commentContent">
             <div class="right commendDate">
             {!! sprintf(
                 __('text.written_on'),
@@ -21,7 +21,7 @@
                 {!! $tpl->escapeMinimal($comment['text']) !!}
             </div>
 
-        </div>
+        </x-global::elements.card>
         <div class="commentLinks">
             @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$commenter))
                 <a href="javascript:void(0);"

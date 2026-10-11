@@ -257,7 +257,7 @@
                                 @endif
                                 <div class="clearall">
                                     <div>
-                                        <div class="commentContent statusUpdate commentStatus-{{ $row['status'] }}">
+                                        <x-global::elements.card compact class="commentContent statusUpdate commentStatus-{{ $row['status'] }}">
                                             <strong class="fancyLink">
                                                 {{ sprintf(
                                                     __('text.report_written_on'),
@@ -287,7 +287,7 @@
                                                 @endif
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
-                                        </div>
+                                        </x-global::elements.card>
 
                                         <div class="commentLinks">
                                             <small class="right">
