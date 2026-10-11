@@ -720,8 +720,9 @@ Card rollout (43 card types found 2026-10-11 — 34 core, 9 plugin-only; ~41 cor
    invite info, `.widget`+`.widgetcontent` panels (client edit/new, delete pages, add time), app-URL warning.
    Card got `as` (li rows) and `compact` (12/16 padding). Legacy classes still used by plugin markup are scoped
    `:not(.lt-card)` until the plugins convert.
-2. shared partials — `projectCard` (7 sites), `milestoneCard` (14 hx sites), `blueprints::element` (16 boards),
-   `x-users::profile-box`, plugin card.
+2. ✅ shared partials — `projectCard` (7 sites), `milestoneCard` (14 hx sites), `blueprints::element` (16 boards),
+   `x-users::profile-box`, plugin card. Entity cards keep the legacy class on the root (`.lt-card.ticketBox`,
+   `.projectBox`, `.profileBox` → legacy padding dropped); milestone card gained `.milestoneCard` (wiki embed, tours).
 3. one component per inline copy — `tickets::ticket-card` (kanban), `ideas::idea-card`, `goalcanvas::goal-card`.
 4. My Work `todoItem` (most hooks). 5. comments, file tiles. 6. plugins (Notes, Whiteboards, PgmPro/StrategyPro
    kanban, Llamadorian, …).
