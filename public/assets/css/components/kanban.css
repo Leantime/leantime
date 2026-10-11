@@ -898,12 +898,16 @@ body .maincontent .priority-text-5 a:link {
     display: block;
 }
 
-/* Compact ticket cards when swimlane is collapsed */
+/* Compact ticket cards when swimlane is collapsed. The card (elements.card) owns
+   the padding on its body, so the compact inset goes there, not on the root. */
 .kanban-swimlane-content.collapsed .ticketBox {
-    padding: 6px 8px;
-    padding-right: 36px; /* Space for user avatar */
     margin-bottom: 4px;
     position: relative;
+}
+
+.kanban-swimlane-content.collapsed .ticketBox > .lt-card-bd {
+    padding: 6px 8px;
+    padding-right: 36px; /* Space for user avatar */
 }
 
 .kanban-swimlane-content.collapsed .ticketBox .row {
