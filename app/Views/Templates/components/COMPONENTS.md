@@ -90,7 +90,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | textarea | `forms.textarea` | forms | ✅ | selectsComponentUpdates | merged #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
 | select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" `width` prop (sm/md/lg/full/auto, default md) shared with text-input. |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
-| card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
+| card | `elements.card` | elements | 🟡 | — | Card INSIDE the content box (plugin look): border, no shadow, `--card-radius`; `header`/`footer` slots, `title`, `flush`, `tone` success/warning/danger/info/muted/empty. First user: report Resources & Coverage page. The page content box (`.maincontentinner`, 167 sites) is a separate later step |
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
 | dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
@@ -703,6 +703,10 @@ Badges in a card header (e.g. "No capacity" + effort) sit on the same 20px box s
 Colours: text `--primary-font-color`; add `--secondary-font-color` / `--muted-font-color` (one each, light + dark,
 both themes); accent is `--accent1` so company colours apply. Radius from `--box-radius*`, not 11px.
 Also fix: `dark.css` has `--font-size-xxl` 22 / `xxxl` 26 while `light.css` has 20 / 24.
+
+Done (PR 1): `--color-text-secondary` / `--color-text-muted` are real greys (85% / 75% of the text colour; were
+#000 and the icon grey, unused); dark themes now 20 / 24px; the report's `--rd-*` palette aliases the core
+tokens (company accent, both themes), fixed `rgba(0,71,102,…)` tints → `--accent1`.
 
 Build order: tokens → `elements.card` (tones) → `elements.badge` → `elements.section-header` → `elements.table`
 (real `<table>`, DataTables optional, `allTicketsTable.*` hooks keep firing) / `elements.details-list` /
