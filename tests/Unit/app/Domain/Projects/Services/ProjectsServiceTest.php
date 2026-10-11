@@ -142,7 +142,7 @@ class ProjectsServiceTest extends TestCase
 
         $users = [];
         foreach ([1, 2, 3, 4, 5, 6] as $userId) {
-            $users[$userId] = ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a', 'role' => 20, 'clientId' => 0];
+            $users[$userId] = ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a', 'role' => 20, 'clientId' => 0, 'modified' => null];
         }
         foreach ($userOverrides as $userId => $columns) {
             $users[$userId] = $columns === false ? false : $columns + $users[$userId];
@@ -151,6 +151,7 @@ class ProjectsServiceTest extends TestCase
 
         $projectRepo = $this->make(ProjectRepository::class, [
             'getUsersAssignedToProject' => fn () => $team,
+            'getUsersWithAccessToProject' => fn () => array_values(array_filter($users, fn ($u) => $u !== false && in_array($u['id'], $usersWithProjectAccess, true))),
             'getProject' => fn ($projectId) => $projectId == 5 ? ['id' => 5, 'name' => 'Acme', 'psettings' => 'restricted', 'clientId' => 3] : false,
             'isUserAssignedToProject' => fn ($userId, $projectId) => $projectId == 5 && in_array((int) $userId, $usersWithProjectAccess, true),
         ]);
@@ -251,6 +252,18 @@ class ProjectsServiceTest extends TestCase
 
         $this->assertSame([2], $seen['emailRecipients']);
         $this->assertSame([2], $seen['pushRecipients']);
+        $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
+    }
+
+    public function test_notify_project_users_delivers_targeted_notification_to_user_with_indirect_project_access(): void
+    {
+        // User 6 is NOT on the direct project team (not in getUsersAssignedToProject / $team),
+        // but has indirect project access (in usersWithProjectAccess, e.g. via 'all' or 'clients' settings).
+        // When assigned a task (recipientIds = [6]), they should receive the targeted notification.
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], recipientIds: [6]);
+
+        $this->assertSame([6], $seen['emailRecipients']);
+        $this->assertSame([6], $seen['pushRecipients']);
         $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
     }
 

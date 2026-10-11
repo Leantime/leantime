@@ -320,7 +320,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      * 1. Per-project mute — users who muted this project are excluded
      * 2. Event-type preference — users who disabled this event category are excluded
      *
-     * @mentions always bypass both layers.
+     * @mentions always bypass both layers (disabled when recipientIds is set on the
+     * notification, where delivery is strictly restricted to the allow-listed recipients).
      *
      * Channels: queued email, project messengers, mobile push, in-app
      * notifications and — last — queued rows for the personal webhooks of
@@ -360,23 +361,30 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         // Email
-        $users = $this->getUsersToNotify($notification->projectId);
         $projectName = $this->getProjectName($notification->projectId);
+
+        $accessibleUsers = null;
+        if ($targetedRecipientIds !== null) {
+            // Assignees can have indirect project access (e.g. 'all' or 'clients' project settings)
+            // without a direct row in zp_relationuserproject. Build candidates from all users with
+            // access to the project so valid assignees are not omitted.
+            $accessibleUsers = $this->getUsersWithAccessToProject((int) $notification->projectId);
+            $candidateIds = [];
+            foreach ($accessibleUsers as $user) {
+                if (($user['notifications'] ?? 1) != 0 && strtolower($user['status'] ?? '') === 'a') {
+                    $candidateIds[] = (int) $user['id'];
+                }
+            }
+            $users = array_values(array_intersect($candidateIds, $targetedRecipientIds));
+        } else {
+            $users = $this->getUsersToNotify($notification->projectId);
+        }
 
         // Exclude the author
         $users = array_filter($users, function ($user) use ($notification) {
             return $user != $notification->authorId;
         }, ARRAY_FILTER_USE_BOTH);
         $users = array_values($users);
-
-        if ($targetedRecipientIds !== null) {
-            $users = array_values(
-                array_filter(
-                    $users,
-                    fn ($userId) => in_array((int) $userId, $targetedRecipientIds, true)
-                )
-            );
-        }
 
         // Batch-load notification preferences for all candidate users
         $settingKeys = [];
@@ -486,15 +494,18 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         // Apply same two-layer filtering to in-app notification users
-        $allUsersToNotify = $this->getAllUserInfoToNotify($notification->projectId);
-        $allUserIds = array_map(fn ($u) => $u['id'], $allUsersToNotify);
         if ($targetedRecipientIds !== null) {
-            $allUserIds = array_values(
-                array_filter(
-                    $allUserIds,
-                    fn ($userId) => in_array((int) $userId, $targetedRecipientIds, true)
-                )
-            );
+            $accessibleUsers = $accessibleUsers ?? $this->getUsersWithAccessToProject((int) $notification->projectId);
+            $allUsersToNotify = [];
+            foreach ($accessibleUsers as $user) {
+                if (($user['notifications'] ?? 1) != 0 && strtolower($user['status'] ?? '') === 'a' && (int) $user['id'] !== (int) $notification->authorId && in_array((int) $user['id'], $targetedRecipientIds, true)) {
+                    $allUsersToNotify[] = $user;
+                }
+            }
+            $allUserIds = array_map(fn ($u) => (int) $u['id'], $allUsersToNotify);
+        } else {
+            $allUsersToNotify = $this->getAllUserInfoToNotify($notification->projectId);
+            $allUserIds = array_map(fn ($u) => (int) $u['id'], $allUsersToNotify);
         }
         $filteredIds = $this->filterUsersByProjectRelevance($allUserIds, $notification, $preloadedSettings);
         $filteredIds = $this->filterUsersByEventType($filteredIds, $notification->module, $preloadedSettings);
