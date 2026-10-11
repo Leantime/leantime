@@ -27,17 +27,12 @@
 .reportSection h5.subtitle .sectionCount {
     font-size: var(--font-size-s);
     font-weight: normal;
-    color: var(--secondary-font-color);
+    color: var(--color-text-secondary);
 }
 
 /* ── needs attention ────────────────────────────────────────────────── */
 
 .reportNeedsAttention {
-    background: var(--card-bg, var(--secondary-background));
-    border: 1px solid var(--card-border, var(--main-border-color));
-    border-left: 3px solid var(--red);
-    border-radius: var(--card-radius, var(--box-radius));
-    padding: 14px 16px;
     margin-bottom: 24px;
 }
 
@@ -61,10 +56,6 @@
 }
 
 .reportMilestoneList .reportMilestone {
-    background: var(--card-bg, var(--secondary-background));
-    border: 1px solid var(--card-border, var(--main-border-color));
-    border-radius: var(--card-radius, var(--box-radius));
-    padding: 10px 14px;
     margin: 0 0 8px 0;
 }
 
@@ -77,13 +68,13 @@
 
 .reportMilestone .milestoneProject {
     font-size: var(--font-size-s);
-    color: var(--secondary-font-color);
+    color: var(--color-text-secondary);
 }
 
 .reportMilestone .milestoneMeta {
     margin-left: auto;
     font-size: var(--font-size-s);
-    color: var(--secondary-font-color);
+    color: var(--color-text-secondary);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
@@ -95,7 +86,7 @@
 
 .reportMilestone .reportKeyTasks summary {
     font-size: var(--font-size-s);
-    color: var(--secondary-font-color);
+    color: var(--color-text-secondary);
     cursor: pointer;
     margin-top: 4px;
 }
@@ -116,7 +107,7 @@
 .reportTable thead th {
     font-size: var(--font-size-s);
     font-weight: 600;
-    color: var(--secondary-font-color);
+    color: var(--color-text-secondary);
     text-align: left;
     padding: 6px 12px;
     border-bottom: 1px solid var(--main-border-color);
@@ -144,13 +135,13 @@
 .reportTable td .cellNote {
     display: block;
     font-size: var(--font-size-s);
-    color: var(--secondary-font-color);
+    color: var(--color-text-secondary);
     margin-top: 2px;
 }
 
 .reportTable .table-group-row td {
     font-weight: 600;
-    color: var(--secondary-font-color);
+    color: var(--color-text-secondary);
     font-size: var(--font-size-s);
     padding-top: 14px;
     border-bottom: 0;
@@ -163,12 +154,11 @@
 }
 
 .reportSlippage {
-    border: 1px dashed var(--main-border-color);
-    border-radius: var(--card-radius, var(--box-radius));
-    padding: 10px 14px;
     margin-top: 12px;
+}
+
+.reportSlippage .lt-card-bd {
     font-size: var(--font-size-s);
-    color: var(--secondary-font-color);
 }
 
 .reportSlippage strong {

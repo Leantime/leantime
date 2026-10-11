@@ -228,7 +228,7 @@
 
                         @foreach ($apiKeys as $apiKey)
                             <li>
-                                <div class="ticketBox">
+                                <x-global::elements.card compact class="apiKeyCard" style="margin-bottom:10px;">
                                       <x-global::actions.dropdown>
                                           <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
                                           <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
@@ -238,7 +238,7 @@
                                     lt_{{ $apiKey['username'] }}***
                                     | {!! __('labels.created_on') !!}: {{ format($apiKey['createdOn'])->date() }} | {!! __('labels.last_used') !!}: {{ format($apiKey['lastlogin'])->date() }}
 
-                                </div>
+                                </x-global::elements.card>
                             </li>
                         @endforeach
                         </ul>

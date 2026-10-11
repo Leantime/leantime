@@ -41,12 +41,12 @@
         $gapPerWk = $gapHrs / $weeks;
     @endphp
     <x-global::elements.card class="p3-cap">
+        <x-slot:title>{{ $c['name'] }}</x-slot:title>
         <x-slot:header>
             <span class="verdict {{ $c['verdict'] }}">
                 <i class="fa fa-{{ $c['verdict'] === 'critical' ? 'triangle-exclamation' : ($c['verdict'] === 'no_capacity' ? 'ban' : 'circle-exclamation') }}"></i>
                 {{ $vLabel }}
             </span>
-            <div class="lt-card-title">{{ $c['name'] }}</div>
 
             @if ($c['trustSignal'] === 'budgeted' && $c['effortHours'] > 0)
                 <span class="trust good" data-tippy-content="{{ __('stakeholder.rc.cap.trust_budgeted') }}">

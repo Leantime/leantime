@@ -90,7 +90,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | textarea | `forms.textarea` | forms | ✅ | selectsComponentUpdates | merged #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
 | select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" `width` prop (sm/md/lg/full/auto, default md) shared with text-input. |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
-| card | `elements.card` | elements | 🟡 | — | Card INSIDE the content box: border + `--card-shadow`, `--card-radius` = `--box-radius` (16px — Marcel 2026-10-11: keep core corners and shadow); `header`/`footer` slots, `title`, `flush`, `tone` success/warning/danger/info/muted/empty. Used by every report deck page (Overview, Logic Model, Resources & Coverage, Impact Journey, Programs). Pop-overs inside a card stay visible; only `flush` clips. The page content box (`.maincontentinner`, 167 sites) is a separate later step |
+| card | `elements.card` | elements | 🟡 | — | Card INSIDE the content box: border + `--card-shadow`, `--card-radius` = `--box-radius` (16px — Marcel 2026-10-11: keep core corners and shadow); `title` (prop, or slot for markup — the card wraps it in `.lt-card-title`), `header` (extra items after the title) / `footer` slots, `flush`, `tone` success/warning/danger/info/muted/empty. Used by every report deck page (Overview, Logic Model, Resources & Coverage, Impact Journey, Programs). Pop-overs inside a card stay visible; only `flush` clips. The page content box (`.maincontentinner`, 167 sites) is a separate later step |
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
 | dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
@@ -714,6 +714,20 @@ Done (PR 2): every report deck box is an `elements.card`; all text in `report-de
 class was never applied (Blade `@if` inside a component attribute) → fixed with `:class`. Left accent bars stay
 on Logic Model stages and Impact Journey beats (they mark the stage, not a tone). Still 13px: `navigation.tabs`
 labels (`tab-group.css`) — snap them with every tab bar at once, not report-only.
+
+Card rollout (43 card types found 2026-10-11 — 34 core, 9 plugin-only; ~41 core + ~27 plugin files):
+1. ✅ plain core boxes — report needs-attention / milestone rows / slippage, team-assignment `.userBox`, API key,
+   invite info, `.widget`+`.widgetcontent` panels (client edit/new, delete pages, add time), app-URL warning.
+   Card got `as` (li rows) and `compact` (12/16 padding). Legacy classes still used by plugin markup are scoped
+   `:not(.lt-card)` until the plugins convert.
+2. shared partials — `projectCard` (7 sites), `milestoneCard` (14 hx sites), `blueprints::element` (16 boards),
+   `x-users::profile-box`, plugin card.
+3. one component per inline copy — `tickets::ticket-card` (kanban), `ideas::idea-card`, `goalcanvas::goal-card`.
+4. My Work `todoItem` (most hooks). 5. comments, file tiles. 6. plugins (Notes, Whiteboards, PgmPro/StrategyPro
+   kanban, Llamadorian, …).
+Entity-card rules: keep `.ticketBox`/`.moveable`/`.priority-border-N`/ids on the root; `@dispatchEvent` hooks stay
+in the owning template (event names come from it) and pass in as slot content; drag selectors using `> .x`
+need the card without the body wrapper.
 
 Build order: tokens → `elements.card` (tones) → `elements.badge` → `elements.section-header` → `elements.table`
 (real `<table>`, DataTables optional, `allTicketsTable.*` hooks keep firing) / `elements.details-list` /
