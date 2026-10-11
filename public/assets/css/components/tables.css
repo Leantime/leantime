@@ -685,11 +685,13 @@ table.fc-multimonth-header-table {
 .tableButtons .dt-button {
     background: var(--secondary-background);
     padding: 7px 14px;
+    margin: 0;
     font-size: var(--base-font-size);
+    line-height: 1.2;
 }
 
-/* Columns menu: the app's dropdown look instead of DataTables' default. */
-.dt-button-collection {
+/* Columns menu: the app's dropdown look instead of DataTables' default (div.dt-button-collection). */
+body div.dt-button-collection {
     border: 0;
     border-radius: var(--box-radius);
     box-shadow: var(--large-shadow);
