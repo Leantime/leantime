@@ -3,7 +3,7 @@
 ])
 
 <div class="col-md-4">
-    <div class="ticketBox fixed" style="padding-top:0px; overflow: hidden; margin-bottom: 25px;">
+    <x-global::elements.card compact class="ticketBox fixed" style="overflow: hidden; margin-bottom: 25px;">
         <div class="row">
             <div class="col-md-12 tw-overflow-hidden tw-mb-m">
                 <img src="{{ $plugin->getPluginImageData() }}" width="75" height="75" class="tw-rounded tw-mt-base"/>
@@ -43,5 +43,5 @@
             </div>
         </div>
 
-    </div>
+    </x-global::elements.card>
 </div>

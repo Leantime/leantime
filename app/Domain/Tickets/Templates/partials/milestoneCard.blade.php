@@ -5,7 +5,7 @@
     'progressColor' => 'default'
  ])
 
-<div class="ticketBox fixed">
+<x-global::elements.card compact class="ticketBox fixed milestoneCard">
     <div class="row">
         <div class="col-md-8" style="margin-bottom:5px;">
             <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone={{ $milestone->id }}" >{{ $milestone->headline  }}</a></strong>
@@ -48,4 +48,4 @@
             window.leantime?.initTooltips?.();
         </script>
     @endfragment
-</div>
+</x-global::elements.card>
