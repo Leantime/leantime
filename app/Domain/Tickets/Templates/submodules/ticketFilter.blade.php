@@ -136,9 +136,9 @@
 
                 {{-- Show Tasks narrows what the milestone views list, so it lives with the other filters. --}}
                 @if ($taskToggle === true)
-                    <div class="form-group" style="margin-top:10px;">
-                        <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" {{ ($showTasks === 'true') ? 'checked="checked"' : '' }} style="margin-right:5px;" />
-                        <label for="taskTypeToggle" class="inline">{{ __('label.showTasks', 'Show Tasks') }}</label>
+                    <div class="form-group filterToggleRow">
+                        <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" {{ ($showTasks === 'true') ? 'checked="checked"' : '' }} />
+                        <label for="taskTypeToggle">{{ __('label.showTasks', 'Show Tasks') }}</label>
                     </div>
                 @endif
 

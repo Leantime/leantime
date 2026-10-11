@@ -680,3 +680,18 @@ table.fc-multimonth-header-table {
     display: inline-flex;
     gap: 5px;
 }
+
+/* Same white pill as the bar's Filter / Group By triggers. */
+.tableButtons .dt-button {
+    background: var(--secondary-background);
+    padding: 7px 14px;
+    font-size: var(--base-font-size);
+}
+
+/* Columns menu: the app's dropdown look instead of DataTables' default. */
+.dt-button-collection {
+    border: 0;
+    border-radius: var(--box-radius);
+    box-shadow: var(--large-shadow);
+    padding: 8px;
+}

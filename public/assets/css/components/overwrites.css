@@ -220,6 +220,25 @@ div.tagsinput span.tag
     font-weight:normal;
 }
 
+/* A switch + its label as one row inside a filter panel. The panel opens from the view
+   bar, whose own toggle labels are white, so reset the colour here. */
+.filterBar .filterToggleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.filterBar .filterToggleRow input.toggle {
+    margin-top: 0;
+}
+
+.filterBar .filterToggleRow label,
+.filterBar input.toggle + label {
+    color: var(--primary-font-color);
+    margin: 0;
+}
+
 .headtitle {
     background:var(--kanban-col-bg);
     border:0px solid var(--main-border-color);
