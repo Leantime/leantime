@@ -74,7 +74,7 @@
         :unit="$totalMsCount > 0 ? '/'.$totalMsCount : null"
         :label="$totalMsCount > 0 ? __('stakeholder.kpi.milestones_completed') : __('stakeholder.kpi.completed_this_period')"
         :delta="$completedDelta != 0 ? ['value' => $completedDelta, 'goodWhenUp' => true, 'label' => sprintf(__('stakeholder.kpi.delta_vs_prior'), $completedDelta)] : null"
-        class="@if ($completedCount > 0) has-detail @endif"
+        :class="$completedCount > 0 ? 'has-detail' : null"
         tabindex="{{ $completedCount > 0 ? 0 : -1 }}">
         @if ($completedCount > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
@@ -101,7 +101,7 @@
         :value="$goalsOnTrack"
         :unit="'/'.$goalsTotal"
         :label="__('stakeholder.kpi.goals_on_track_lc')"
-        class="@if (count($onTrackItems) > 0) has-detail @endif"
+        :class="count($onTrackItems) > 0 ? 'has-detail' : null"
         tabindex="{{ count($onTrackItems) > 0 ? 0 : -1 }}">
         @if (count($onTrackItems) > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
@@ -129,7 +129,7 @@
         :unit="$openMsCount > 0 ? '/'.$openMsCount : null"
         :label="$openMsCount > 0 ? __('stakeholder.kpi.overdue_of_open') : __('stakeholder.kpi.milestones_overdue')"
         :tone="$overdueCount > 0 ? 'risk' : 'default'"
-        class="@if ($overdueCount > 0) has-detail @endif"
+        :class="$overdueCount > 0 ? 'has-detail' : null"
         tabindex="{{ $overdueCount > 0 ? 0 : -1 }}">
         @if ($overdueCount > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
@@ -156,7 +156,7 @@
         :value="number_format($hoursLogged, $hoursLogged >= 100 ? 0 : 1)"
         unit="h"
         :label="__('stakeholder.kpi.hours_this_period')"
-        class="@if (count($hoursItems) > 0) has-detail @endif"
+        :class="count($hoursItems) > 0 ? 'has-detail' : null"
         tabindex="{{ count($hoursItems) > 0 ? 0 : -1 }}">
         @if (count($hoursItems) > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
