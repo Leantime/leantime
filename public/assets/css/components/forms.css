@@ -24,12 +24,20 @@ textarea:focus-visible,
     text-decoration: none;
 }
 
-form label{
-    padding-top:5px;
+/* Field labels: one look (forms.label). The base form rule matches so unmigrated labels agree. */
+.lt-label,
+form label {
+    padding-top: 5px;
+    padding-bottom: 5px;
     margin-bottom: 2px;
-    font-weight: bold;
-    opacity:0.8;
-    padding-bottom:5px;
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-semibold);
+    color: var(--primary-font-color);
+}
+
+.lt-label .lt-label-required {
+    margin-left: 2px;
+    color: var(--feedback-error-color);
 }
 
 form .switchery {

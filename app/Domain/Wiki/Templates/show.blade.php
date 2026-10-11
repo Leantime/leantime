@@ -262,7 +262,7 @@
 
                         <!-- Status Dropdown -->
                         <div class="form-group">
-                            <label class="control-label">{!! __('label.status') !!}</label>
+                            <x-global::forms.label>{!! __('label.status') !!}</x-global::forms.label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <x-global::forms.select width="full" id="wikiStatusSelect">
@@ -290,7 +290,7 @@
 
                         <!-- Parent -->
                         <div class="form-group">
-                            <label class="control-label">Parent</label>
+                            <x-global::forms.label>Parent</x-global::forms.label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     @php
@@ -318,7 +318,7 @@
 
                         <!-- Milestone -->
                         <div class="form-group">
-                            <label class="control-label">{!! __('label.milestone') !!}</label>
+                            <x-global::forms.label>{!! __('label.milestone') !!}</x-global::forms.label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <x-global::forms.select width="full" id="wikiMilestoneSelect">
@@ -341,7 +341,7 @@
 
                         <!-- Author -->
                         <div class="form-group">
-                            <label class="control-label">{!! __('label.author') !!}</label>
+                            <x-global::forms.label>{!! __('label.author') !!}</x-global::forms.label>
                             <div class="">
                                 <div class="wiki-author">
                                     <span class="wiki-author-avatar">{{ $authorInitials }}</span>
@@ -352,7 +352,7 @@
 
                         <!-- Last Saved -->
                         <div class="form-group">
-                            <label class="control-label">{!! __('label.last_updated') !!}</label>
+                            <x-global::forms.label>{!! __('label.last_updated') !!}</x-global::forms.label>
                             <div class="" id="wikiLastSaved" data-timestamp="{{ $currentArticle->modified }}">
                                 {{ format($currentArticle->modified)->diffForHumans() }}
                             </div>

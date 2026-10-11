@@ -670,12 +670,6 @@
     margin-bottom: 10px;
 }
 
-.wiki-properties-section .control-label {
-    font-size: var(--base-font-size);
-    font-weight: bold;
-    opacity: 0.8;
-}
-
 /* Author with Avatar */
 .wiki-author {
     display: flex;

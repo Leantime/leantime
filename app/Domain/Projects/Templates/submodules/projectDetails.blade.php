@@ -107,13 +107,13 @@
                                 class="fa fa-calendar"></span>{!! __('label.project_dates') !!}</h4>
 
 
-                        <label class="control-label">{!! __('label.project_start') !!}</label>
+                        <x-global::forms.label>{!! __('label.project_start') !!}</x-global::forms.label>
                         <div class="">
                             <input type="text" class="field-width-sm dates" name="start" autocomplete="off"
                                    value="{{ format($project['start'])->date() }}" placeholder="{{ __('language.dateformat') }}"/>
 
                         </div>
-                        <label class="control-label">{!! __('label.project_end') !!}</label>
+                        <x-global::forms.label>{!! __('label.project_end') !!}</x-global::forms.label>
                         <div class="">
                             <input type="text" class="field-width-sm dates" name="end" autocomplete="off"
                                    value="{{ format($project['end'])->date() }}" placeholder="{{ __('language.dateformat') }}"/>

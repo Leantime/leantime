@@ -2632,7 +2632,8 @@ min-width: 1200px
         display: block !important;
         width: 100% !important;
     }
-    .nyroModalCont .form-group .control-label {
+    .nyroModalCont .form-group .control-label,
+    .nyroModalCont .form-group .lt-label {
         display: block !important;
         width: 100% !important;
         text-align: left !important;
