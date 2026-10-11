@@ -690,6 +690,10 @@ table.fc-multimonth-header-table {
     line-height: 1.2;
 }
 
+.tableButtons .dt-buttons .dt-button span {
+    line-height: inherit;
+}
+
 /* Columns menu: the app's dropdown look instead of DataTables' default (div.dt-button-collection). */
 body div.dt-button-collection.dt-button-collection {
     border: 0;
