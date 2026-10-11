@@ -20,7 +20,9 @@
 
         <form action="" method="post" class="stdform">
 
-            <x-global::elements.card :title="__('OVERVIEW')">
+            <x-global::elements.card>
+
+                <x-slot:header><div class="lt-card-title">{!! __('OVERVIEW') !!}</div></x-slot:header>
 
                 <label for="name">{!! __('NAME') !!}</label>
                 <x-global::forms.text-input name="name" id="name" value="{{ $values['name'] }}" /><br />

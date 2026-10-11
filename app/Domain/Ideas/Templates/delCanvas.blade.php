@@ -12,7 +12,8 @@
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <x-global::elements.card :title="__('subtitles.delete')">
+        <x-global::elements.card>
+            <x-slot:header><div class="lt-card-title">{!! __('subtitles.delete') !!}</div></x-slot:header>
             <form method="post" action="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->escape($_GET['id']) }}">
                 <p>{!! __('text.are_you_sure_delete_idea_board') !!}</p>
                 <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />

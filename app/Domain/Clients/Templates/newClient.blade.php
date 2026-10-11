@@ -18,7 +18,9 @@
 
         {!! $tpl->displayNotification() !!}
 
-           <x-global::elements.card :title="__('subtitle.details')">
+           <x-global::elements.card>
+
+               <x-slot:header><div class="lt-card-title">{!! __('subtitle.details') !!}</div></x-slot:header>
 
                 <form action="" method="post" class="stdform">
 

@@ -35,7 +35,10 @@ $values = $values ?? [];
                 <div class="span12">
 
 
-                    <x-global::elements.card :title="__('OVERVIEW')" style="min-height: 460px">
+                    <x-global::elements.card style="min-height: 460px">
+
+
+                        <x-slot:header><div class="lt-card-title">{!! __('OVERVIEW') !!}</div></x-slot:header>
 
                             <label for="clients">{!! __('label.client') !!}</label>
                             <x-global::forms.select name="clients" id="clients" onchange="filterProjectsByClient();">

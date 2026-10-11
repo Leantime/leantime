@@ -18,7 +18,9 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <x-global::elements.card :title="__('subtitles.delete')">
+        <x-global::elements.card>
+
+            <x-slot:header><div class="lt-card-title">{!! __('subtitles.delete') !!}</div></x-slot:header>
 
             <form method="post">
 
