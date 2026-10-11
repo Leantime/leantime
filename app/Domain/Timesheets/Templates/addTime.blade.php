@@ -38,7 +38,7 @@ $values = $values ?? [];
                     <x-global::elements.card style="min-height: 460px">
 
 
-                        <x-slot:header><div class="lt-card-title">{!! __('OVERVIEW') !!}</div></x-slot:header>
+                        <x-slot:title>{!! __('OVERVIEW') !!}</x-slot:title>
 
                             <label for="clients">{!! __('label.client') !!}</label>
                             <x-global::forms.select name="clients" id="clients" onchange="filterProjectsByClient();">

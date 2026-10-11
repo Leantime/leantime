@@ -16,7 +16,7 @@
 
         <x-global::elements.card>
 
-            <x-slot:header><div class="lt-card-title">{!! __('subtitles.delete') !!}</div></x-slot:header>
+            <x-slot:title>{!! __('subtitles.delete') !!}</x-slot:title>
 
             <form method="post">
                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />

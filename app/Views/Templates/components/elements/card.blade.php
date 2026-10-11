@@ -7,16 +7,17 @@
       tone   string  'default' | 'success' | 'warning' | 'danger' | 'info' | 'muted' | 'empty'.
                      Tones tint the background and border; 'muted' is a quiet hint,
                      'empty' a dashed placeholder for "nothing here yet".
-      title  string  Optional header title (escaped). For a richer header (badges,
-                     a number on the right) use the `header` slot instead; put the
-                     name in an element with class `lt-card-title`.
+      title  string  Optional header title. A string prop is escaped; for markup (a translation
+                     with an icon) pass it as the `title` slot instead. The card wraps it
+                     in `.lt-card-title`, so callers never write that container.
       flush  bool    Body without padding, for a list or table that runs edge to edge.
       compact bool   Tighter body padding (12px 16px) for rows that repeat down a page.
       as     string  Root tag, default 'div'. Use 'li' when the card is an item of a list.
 
     Slots:
       default  The body.
-      header   Optional header row content (flex row, centred, 12px gap).
+      title    The header title when it needs markup (same as the prop, not escaped).
+      header   Extra items in the header row after the title: badges, a number, actions.
       footer   Optional footer row content.
 
     Anything else (id, data-*, extra classes) passes through to the card element.
@@ -41,11 +42,10 @@
 ]) }}>
     @if ($hasHeader)
         <div class="lt-card-hd">
-            @isset($header)
-                {{ $header }}
-            @else
+            @if ($title !== null)
                 <div class="lt-card-title">{{ $title }}</div>
-            @endisset
+            @endif
+            {{ $header ?? '' }}
         </div>
     @endif
 

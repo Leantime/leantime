@@ -20,7 +20,7 @@
 
            <x-global::elements.card>
 
-               <x-slot:header><div class="lt-card-title">{!! __('subtitle.details') !!}</div></x-slot:header>
+               <x-slot:title>{!! __('subtitle.details') !!}</x-slot:title>
 
                 <form action="" method="post" class="stdform">
 
