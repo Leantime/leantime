@@ -231,7 +231,9 @@
         //window.location.hash = "files";
         //window.location.reload();*/
 
-            let html = '<li class="file-module-'+response.moduleId+'">' +
+            // Same structure as the server-rendered tiles (elements.card as li, compact body).
+            let html = '<li class="lt-card file-module-'+response.moduleId+'">' +
+                        '<div class="lt-card-bd lt-card-bd--compact">' +
                             '<div class="inlineDropDownContainer dropright" style="float:right;">' +
                                 '<a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">' +
                                     '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
@@ -249,6 +251,7 @@
 
                                 '<span class="filename" title="'+uploadedFileDisplayName(response)+'">'+uploadedFileDisplayName(response)+'</span>'+
                             '</a>'+
+                        '</div>'+
                         '</li>';
 
                  jQuery("#medialist").append(html);
