@@ -321,6 +321,20 @@ class ProjectsServiceTest extends TestCase
         $this->assertSame(0, $seen['messengerCalls']);
     }
 
+    public function test_notify_project_users_rejects_malformed_allowlist_entries_without_coercion(): void
+    {
+        // Malformed entries like '2abc', true, 1.5, etc. must be rejected and not coerced into user IDs.
+        $seen = $this->runNotifyProjectUsers(
+            [],
+            usersWithProjectAccess: [1, 2, 3, 4, 5],
+            recipientIds: ['2abc', true, 0, -1, 1.5],
+        );
+
+        $this->assertSame([], $seen['emailRecipients'] ?? []);
+        $this->assertSame([], $seen['pushRecipients'] ?? []);
+        $this->assertSame([], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+    }
+
     /**
      * Runs the WEBHOOKS queue once the way the scheduler does: WebhookQueue built by the container.
      */

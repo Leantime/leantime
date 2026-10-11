@@ -350,14 +350,15 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $targetedRecipientIds = null;
         if (is_array($notification->recipientIds)) {
-            $targetedRecipientIds = array_values(
-                array_unique(
-                    array_filter(
-                        array_map('intval', $notification->recipientIds),
-                        fn (int $id) => $id > 0
-                    )
-                )
-            );
+            $validRecipientIds = [];
+            foreach ($notification->recipientIds as $recipientId) {
+                if (is_int($recipientId) && $recipientId > 0) {
+                    $validRecipientIds[] = $recipientId;
+                } elseif (is_string($recipientId) && ctype_digit($recipientId) && (int) $recipientId > 0) {
+                    $validRecipientIds[] = (int) $recipientId;
+                }
+            }
+            $targetedRecipientIds = array_values(array_unique($validRecipientIds));
         }
 
         // Email

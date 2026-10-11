@@ -505,14 +505,14 @@ class TicketsServiceTest extends TestCase
      *
      * @param  array<string, mixed>  $ticketRepoStubs
      */
-    private function buildAuthzService(array $ticketRepoStubs, PermissionService $permissions, ?TimesheetService $timesheetService = null): TicketsService
+    private function buildAuthzService(array $ticketRepoStubs, PermissionService $permissions, ?TimesheetService $timesheetService = null, ?ProjectService $projectService = null): TicketsService
     {
         $service = new TicketsService(
             language: $this->make(LanguageCore::class, ['__' => fn ($key) => $key]),
             ticketRepository: $this->make(TicketRepository::class, $ticketRepoStubs),
             timesheetsRepo: $this->make(TimesheetRepository::class),
             settingsRepo: $this->make(SettingRepository::class),
-            projectService: $this->make(ProjectService::class, [
+            projectService: $projectService ?? $this->make(ProjectService::class, [
                 'isUserAssignedToProject' => fn () => true,
                 'notifyProjectUsers' => fn () => null,
             ]),
@@ -1479,5 +1479,80 @@ class TicketsServiceTest extends TestCase
         ]));
 
         return $service;
+    }
+
+    public function test_update_ticket_reassignment_targets_only_new_assignee(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+
+        $dispatchedNotifications = [];
+        $projectService = $this->make(ProjectService::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'getProjectRole' => fn () => '',
+            'notifyProjectUsers' => function ($notification) use (&$dispatchedNotifications) {
+                $dispatchedNotifications[] = $notification;
+            },
+        ]);
+
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => (int) $id === 5 ? $this->ticketIn(5, 9, ['editorId' => 2]) : false,
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
+            'updateTicket' => fn () => true,
+        ], $this->permissionsForProjects([9]), projectService: $projectService);
+
+        $this->assertTrue($service->updateTicket(['id' => 5, 'editorId' => 3]));
+        $this->assertCount(1, $dispatchedNotifications);
+        $this->assertSame('assigned', $dispatchedNotifications[0]->action);
+        $this->assertSame([3], $dispatchedNotifications[0]->recipientIds);
+    }
+
+    public function test_update_ticket_without_reassignment_does_not_set_recipient_ids(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+
+        $dispatchedNotifications = [];
+        $projectService = $this->make(ProjectService::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'getProjectRole' => fn () => '',
+            'notifyProjectUsers' => function ($notification) use (&$dispatchedNotifications) {
+                $dispatchedNotifications[] = $notification;
+            },
+        ]);
+
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => (int) $id === 5 ? $this->ticketIn(5, 9, ['editorId' => 2]) : false,
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
+            'updateTicket' => fn () => true,
+        ], $this->permissionsForProjects([9]), projectService: $projectService);
+
+        $this->assertTrue($service->updateTicket(['id' => 5, 'headline' => 'Renamed']));
+        $this->assertCount(1, $dispatchedNotifications);
+        $this->assertSame('updated', $dispatchedNotifications[0]->action);
+        $this->assertNull($dispatchedNotifications[0]->recipientIds);
+    }
+
+    public function test_update_ticket_unassignment_does_not_set_recipient_ids(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor', 'name' => 'Caller']]);
+
+        $dispatchedNotifications = [];
+        $projectService = $this->make(ProjectService::class, [
+            'isUserAssignedToProject' => fn () => true,
+            'getProjectRole' => fn () => '',
+            'notifyProjectUsers' => function ($notification) use (&$dispatchedNotifications) {
+                $dispatchedNotifications[] = $notification;
+            },
+        ]);
+
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => (int) $id === 5 ? $this->ticketIn(5, 9, ['editorId' => 2]) : false,
+            'getStateLabels' => fn () => [3 => ['name' => 'status.new', 'statusType' => 'NEW']],
+            'updateTicket' => fn () => true,
+        ], $this->permissionsForProjects([9]), projectService: $projectService);
+
+        $this->assertTrue($service->updateTicket(['id' => 5, 'editorId' => '']));
+        $this->assertCount(1, $dispatchedNotifications);
+        $this->assertSame('updated', $dispatchedNotifications[0]->action);
+        $this->assertNull($dispatchedNotifications[0]->recipientIds);
     }
 }
