@@ -648,7 +648,11 @@ The To-Do board structure is the standard: **page header** (title / subject swit
 - View selectors are tabs in the bar, never a "… View ▾" dropdown in the box.
 - Page-level actions and filters (New / Add …, Filter, Group By, status/relates filters, timeframe, week range)
   go in the bar's actions. Filter-style triggers use `btn-link` (white pills); primary buttons stay primary.
-- Controls that act on ONE table (DataTables Export / Columns, `#tableButtons`) stay above that table in the box.
+- When the table IS the page's content (To-Do table, Milestones table + overview, My Timesheets list, All Timesheets),
+  its DataTables Export / Columns (`#tableButtons`) go in the bar's actions too (Marcel, 2026-10-11). Pass
+  `['tableButtons' => true]` to `ticketBoardTabs` / `timelineTabs`. Only a page with several tables keeps them
+  above their own table in the box.
+- Toggles that narrow what is listed (Show Tasks) live inside the Filter panel, not as a loose switch in the bar.
 - A page without views still gets the bar (actions only, right-aligned).
 - Fields moved out of their `<form>` keep submitting via `form="…"`; inline `submit()` → `this.form.submit()`.
 - Many filters → a Filter panel (`variant="filter" menu-as="div" menu-class="filterBar" keep-open`), not a row.
