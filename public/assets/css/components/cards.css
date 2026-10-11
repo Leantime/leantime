@@ -9,8 +9,12 @@
     border-radius: var(--card-radius);
     box-shadow: var(--card-shadow);
     color: var(--primary-font-color);
-    overflow: hidden;
     min-width: 0;
+}
+
+/* Only a flush card clips, so rows reach the rounded corners; others keep pop-overs visible. */
+.lt-card--flush {
+    overflow: hidden;
 }
 
 .lt-card-hd {

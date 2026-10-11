@@ -17,7 +17,7 @@
     <div>
         <div class="p4-lbl">{{ $scope === 'strategy' ? __('stakeholder.programs.label_programs') : __('stakeholder.programs.label_child_projects') }}</div>
         @if (count($programRows) === 0)
-            <div class="p4-empty">{{ $scope === 'strategy' ? __('stakeholder.programs.none') : __('stakeholder.programs.none_projects') }}</div>
+            <x-global::elements.card tone="empty" class="p4-empty">{{ $scope === 'strategy' ? __('stakeholder.programs.none') : __('stakeholder.programs.none_projects') }}</x-global::elements.card>
         @else
             @foreach ($programRows as $row)
                 @php
@@ -73,7 +73,7 @@
             $flatUpdates = array_slice($flatUpdates, 0, 5);  // top 5 for the packet view
         @endphp
         @if (count($flatUpdates) === 0)
-            <div class="p4-empty">{{ __('stakeholder.programs.no_updates') }}</div>
+            <x-global::elements.card tone="empty" class="p4-empty">{{ __('stakeholder.programs.no_updates') }}</x-global::elements.card>
         @else
             @foreach ($flatUpdates as $u)
                 @php
