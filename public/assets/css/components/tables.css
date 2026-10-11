@@ -683,11 +683,15 @@ table.fc-multimonth-header-table {
 
 /* Same white pill as the bar's Filter / Group By triggers. */
 .tableButtons .dt-buttons .dt-button {
-    background: var(--secondary-background);
     padding: 7px 14px;
     margin: 0;
     font-size: var(--base-font-size);
     line-height: 1.2;
+}
+
+/* White only while closed: the open state keeps its dark fill and white text, like Filter. */
+.tableButtons .dt-buttons .dt-button:not(.dt-button-active):not([aria-expanded="true"]) {
+    background: var(--secondary-background);
 }
 
 .tableButtons .dt-buttons .dt-button span {
