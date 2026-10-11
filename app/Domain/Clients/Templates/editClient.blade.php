@@ -20,9 +20,7 @@
 
         <form action="" method="post" class="stdform">
 
-            <div class="widget">
-            <h4 class="widgettitle">{!! __('OVERVIEW') !!}</h4>
-            <div class="widgetcontent">
+            <x-global::elements.card :title="__('OVERVIEW')">
 
                 <label for="name">{!! __('NAME') !!}</label>
                 <x-global::forms.text-input name="name" id="name" value="{{ $values['name'] }}" /><br />
@@ -58,8 +56,7 @@
 
                 <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE')" name="save" id="save" />
 
-                </div>
-            </div>
+                </x-global::elements.card>
 
         </form>
 

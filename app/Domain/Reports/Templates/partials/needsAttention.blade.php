@@ -15,7 +15,7 @@
 @endphp
 
 @if ($hasAttentionItems)
-    <div class="reportNeedsAttention">
+    <x-global::elements.card tone="danger" class="reportNeedsAttention">
         <h5 class="subtitle"><i class="fa fa-triangle-exclamation" style="color: var(--red);"></i> {{ __('subtitles.needs_attention') }}</h5>
 
         <ul class="tw-list-none tw-p-0 tw-m-0">
@@ -60,5 +60,5 @@
                 </li>
             @endforeach
         </ul>
-    </div>
+    </x-global::elements.card>
 @endif

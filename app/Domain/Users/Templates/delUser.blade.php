@@ -14,8 +14,7 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <h4 class="widget widgettitle">{!! __('subtitles.delete') !!}</h4>
-        <div class="widgetcontent">
+        <x-global::elements.card :title="__('subtitles.delete')">
 
             <form method="post">
                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
@@ -25,7 +24,7 @@
             </form>
 
 
-        </div>
+        </x-global::elements.card>
     </div>
 </div>
 

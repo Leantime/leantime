@@ -18,9 +18,7 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="widget">
-           <h4 class="widgettitle">{!! __('subtitle.details') !!}</h4>
-           <div class="widgetcontent">
+           <x-global::elements.card :title="__('subtitle.details')">
 
                 <form action="" method="post" class="stdform">
 
@@ -120,8 +118,7 @@
                     @dispatchEvent('beforeFormClose')
 
                 </form>
-            </div>
-        </div>
+            </x-global::elements.card>
     </div>
 </div>
 

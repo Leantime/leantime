@@ -611,10 +611,15 @@ input[type=color] {
     box-shadow: var(--input-shadow);
 }
 
-.userBox {
+/* Legacy look for plugin templates still on raw markup; core uses elements.card. */
+.userBox:not(.lt-card) {
     border:1px solid var(--main-border-color);
     border-radius: var(--box-radius);
     padding:10px;
+    margin-bottom:10px;
+}
+
+.userBox.lt-card {
     margin-bottom:10px;
 }
 

@@ -65,7 +65,7 @@
                              <div class="row">
                                 @foreach ($project['assignedUsers'] as $userId => $assignedUser)
                                     <div class="col-md-4">
-                                        <div class="userBox">
+                                        <x-global::elements.card compact class="userBox">
                                             <input type='checkbox' name='editorId[]' id="user-{{ $assignedUser['id'] }}" value='{{ $assignedUser['id'] }}'
                                                 checked="checked"
                                                 />
@@ -114,7 +114,7 @@
                                                 </x-global::forms.select>
                                             @php } @endphp
                                             <div class="clearall"></div>
-                                        </div>
+                                        </x-global::elements.card>
                                     </div>
                                 @endforeach
 
@@ -133,7 +133,7 @@
                                 @foreach ($availableUsers as $row)
                                     @if (collect($project['assignedUsers'])->where('id', $row['id'])->isEmpty())
                                         <div class="col-md-4">
-                                            <div class="userBox">
+                                            <x-global::elements.card compact class="userBox">
                                                 <input type='checkbox' name='editorId[]' id="user-{{ $row['id'] }}" value='{{ $row['id'] }}' />
 
                                                 <div class="commentImage">
@@ -162,7 +162,7 @@
                                                     </x-global::forms.select>
                                                 @endif
                                                 <div class="clearall"></div>
-                                            </div>
+                                            </x-global::elements.card>
                                         </div>
 
 
@@ -173,10 +173,10 @@
                                 @if ($login::userIsAtLeast($roles::$manager))
                                     <div class="col-md-4">
 
-                                        <div class="userBox">
+                                        <x-global::elements.card compact class="userBox">
                                             <a class="userEditModal" href="{{ BASE_URL }}/users/newUser?preSelectProjectId={{ $project['id'] }}" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> {!! __('links.create_user') !!}</a>
                                             <div class="clearall"></div>
-                                        </div>
+                                        </x-global::elements.card>
                                     </div>
                                 @endif
                             </div>

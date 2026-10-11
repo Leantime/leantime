@@ -11,6 +11,8 @@
                      a number on the right) use the `header` slot instead; put the
                      name in an element with class `lt-card-title`.
       flush  bool    Body without padding, for a list or table that runs edge to edge.
+      compact bool   Tighter body padding (12px 16px) for rows that repeat down a page.
+      as     string  Root tag, default 'div'. Use 'li' when the card is an item of a list.
 
     Slots:
       default  The body.
@@ -23,13 +25,16 @@
     'tone' => 'default',
     'title' => null,
     'flush' => false,
+    'compact' => false,
+    'as' => 'div',
 ])
 
 @php
     $hasHeader = $title !== null || isset($header);
+    $as = in_array($as, ['div', 'li', 'section', 'article'], true) ? $as : 'div';
 @endphp
 
-<div {{ $attributes->class([
+<{{ $as }} {{ $attributes->class([
     'lt-card',
     'lt-card--' . $tone => $tone !== 'default',
     'lt-card--flush' => $flush,
@@ -44,11 +49,11 @@
         </div>
     @endif
 
-    <div @class(['lt-card-bd', 'lt-card-bd--flush' => $flush])>
+    <div @class(['lt-card-bd', 'lt-card-bd--flush' => $flush, 'lt-card-bd--compact' => $compact])>
         {{ $slot }}
     </div>
 
     @isset($footer)
         <div class="lt-card-ft">{{ $footer }}</div>
     @endisset
-</div>
+</{{ $as }}>

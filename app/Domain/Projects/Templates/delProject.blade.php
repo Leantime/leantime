@@ -16,8 +16,7 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <h4 class="widget widgettitle">{!! __('subtitles.delete') !!}</h4>
-        <div class="widgetcontent">
+        <x-global::elements.card :title="__('subtitles.delete')">
 
             <form method="post">
                 <p>{!! __('text.confirm_project_deletion') !!}</p><br />
@@ -25,7 +24,7 @@
                 <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}" contentRole="tertiary">{!! __('buttons.back') !!}</x-global::forms.button>
             </form>
 
-        </div>
+        </x-global::elements.card>
 
 
     </div>

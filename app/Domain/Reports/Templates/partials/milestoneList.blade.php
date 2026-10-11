@@ -26,7 +26,7 @@
 @else
     <ul class="reportMilestoneList">
         @foreach ($milestones as $milestone)
-            <li class="reportMilestone" style="border-left: 3px solid {{ $milestone->tags }};">
+            <x-global::elements.card as="li" compact class="reportMilestone" style="border-left: 3px solid {{ $milestone->tags }};">
 
                 <div class="milestoneTitleRow">
                     @if ($mode === 'completed')
@@ -95,7 +95,7 @@
                     </div>
                 @endif
 
-            </li>
+            </x-global::elements.card>
         @endforeach
     </ul>
 @endif
