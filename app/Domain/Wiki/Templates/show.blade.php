@@ -95,7 +95,7 @@
 
     @if((! $currentArticle || $currentArticle->id != null) && (! $wikis || count($wikis) == 0))
         <!-- No wikis exist - show empty state -->
-        <div class="wiki-empty-state">
+        <div class="maincontentinner wiki-empty-state">
             <div class="wiki-empty-state-icon svgContainer">
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
             </div>
@@ -390,8 +390,8 @@
 
         @else
             <!-- Wiki exists but no articles yet -->
-            <div class="wiki-empty-state">
-                <div class="wiki-empty-state-icon svgContainer" style="width: 200px; margin: 0 auto;">
+            <div class="maincontentinner wiki-empty-state">
+                <div class="wiki-empty-state-icon svgContainer">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
                 </div>
                 <h3 class="wiki-empty-state-title">{!! __('headlines.no_articles_yet') !!}</h3>
