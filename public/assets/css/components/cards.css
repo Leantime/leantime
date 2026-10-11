@@ -25,9 +25,12 @@
     border-bottom: 1px solid var(--card-border);
 }
 
-.lt-card-title {
+.lt-card .lt-card-title {
     flex: 1;
     min-width: 0;
+    margin: 0;
+    padding: 0;
+    color: inherit;
     font-size: var(--base-font-size);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-snug);

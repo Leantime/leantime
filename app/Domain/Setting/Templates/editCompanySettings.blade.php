@@ -228,7 +228,7 @@
 
                         @foreach ($apiKeys as $apiKey)
                             <li>
-                                <x-global::elements.card compact class="apiKeyCard">
+                                <x-global::elements.card compact class="apiKeyCard" style="margin-bottom:10px;">
                                       <x-global::actions.dropdown>
                                           <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
                                           <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>

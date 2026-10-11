@@ -10,7 +10,10 @@
       title  string  Optional header title. A string prop is escaped; for markup (a translation
                      with an icon) pass it as the `title` slot instead. The card wraps it
                      in `.lt-card-title`, so callers never write that container.
+      titleAs string Heading tag for the title, default 'h4' (keeps the section in the heading
+                     outline); 'h2'-'h6' or 'div' when the card sits under a deeper heading.
       flush  bool    Body without padding, for a list or table that runs edge to edge.
+                     Wins over `compact` when both are set.
       compact bool   Tighter body padding (12px 16px) for rows that repeat down a page.
       as     string  Root tag, default 'div'. Use 'li' when the card is an item of a list.
 
@@ -25,6 +28,7 @@
 @props([
     'tone' => 'default',
     'title' => null,
+    'titleAs' => 'h4',
     'flush' => false,
     'compact' => false,
     'as' => 'div',
@@ -33,6 +37,7 @@
 @php
     $hasHeader = $title !== null || isset($header);
     $as = in_array($as, ['div', 'li', 'section', 'article'], true) ? $as : 'div';
+    $titleAs = in_array($titleAs, ['h2', 'h3', 'h4', 'h5', 'h6', 'div'], true) ? $titleAs : 'h4';
 @endphp
 
 <{{ $as }} {{ $attributes->class([
@@ -43,13 +48,13 @@
     @if ($hasHeader)
         <div class="lt-card-hd">
             @if ($title !== null)
-                <div class="lt-card-title">{{ $title }}</div>
+                <{{ $titleAs }} class="lt-card-title">{{ $title }}</{{ $titleAs }}>
             @endif
             {{ $header ?? '' }}
         </div>
     @endif
 
-    <div @class(['lt-card-bd', 'lt-card-bd--flush' => $flush, 'lt-card-bd--compact' => $compact])>
+    <div @class(['lt-card-bd', 'lt-card-bd--flush' => $flush, 'lt-card-bd--compact' => $compact && ! $flush])>
         {{ $slot }}
     </div>
 
