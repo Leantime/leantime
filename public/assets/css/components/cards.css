@@ -10,6 +10,7 @@
     box-shadow: var(--card-shadow);
     color: var(--primary-font-color);
     min-width: 0;
+    position: relative;
 }
 
 /* Only a flush card clips, so rows reach the rounded corners; others keep pop-overs visible. */
@@ -58,6 +59,14 @@
     border-top: 1px solid var(--card-border);
     font-size: var(--font-size-s);
     color: var(--color-text-secondary);
+}
+
+/* Entity cards keep their legacy class (.ticketBox, .projectBox) on the root: drag-and-drop, tours,
+   accessibility and the descendant styles select it. The card owns the box, so drop the legacy padding. */
+.lt-card.ticketBox,
+.lt-card.projectBox,
+.lt-card.profileBox {
+    padding: 0;
 }
 
 /* Tones: one treatment for all — tinted background, border in the tone colour. */
