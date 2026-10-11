@@ -40,6 +40,8 @@
                     <x-global::forms.button tag="input" inputType="submit" form="form" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
                 </div>
             </x-global::actions.dropdown>
+            {{-- Export / Columns for the table (DataTables appends them here). --}}
+            <div id="tableButtons" class="tableButtons"></div>
         </x-slot:actions>
     </x-global::navigation.view-tabs>
 
@@ -47,11 +49,6 @@
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="form" name="form">
-            {{-- Export / column visibility act on the table, so they stay with it (like the To-Do table). --}}
-            <div class="pull-right">
-                <div id="tableButtons" style="display:inline-block"></div>
-            </div>
-            <div class="clearfix"></div>
 
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
                 <colgroup>
