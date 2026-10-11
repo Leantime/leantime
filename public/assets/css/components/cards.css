@@ -1,0 +1,86 @@
+/*
+ * elements.card — a card inside the content box.
+ * Border instead of a second shadow; tones tint background and border.
+ * Type follows the role table in COMPONENTS.md ("Plugin design alignment").
+ */
+.lt-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    color: var(--primary-font-color);
+    overflow: hidden;
+    min-width: 0;
+}
+
+.lt-card-hd {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.lt-card-title {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+}
+
+.lt-card-bd {
+    padding: 16px;
+    font-size: var(--base-font-size);
+    line-height: var(--line-height-normal);
+}
+
+.lt-card-bd--flush {
+    padding: 0;
+}
+
+.lt-card-ft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--card-border);
+    font-size: var(--font-size-s);
+    color: var(--color-text-secondary);
+}
+
+/* Tones: one treatment for all — tinted background, border in the tone colour. */
+.lt-card--success { --lt-card-tone: var(--feedback-success-border); background: var(--feedback-success-bg); }
+.lt-card--warning { --lt-card-tone: var(--feedback-warning-border); background: var(--feedback-warning-bg); }
+.lt-card--danger  { --lt-card-tone: var(--feedback-error-border);   background: var(--feedback-error-bg); }
+.lt-card--info    { --lt-card-tone: var(--feedback-info-border);    background: var(--feedback-info-bg); }
+
+.lt-card--success,
+.lt-card--warning,
+.lt-card--danger,
+.lt-card--info {
+    border-color: color-mix(in srgb, var(--lt-card-tone) 35%, transparent);
+}
+
+.lt-card--success .lt-card-hd,
+.lt-card--warning .lt-card-hd,
+.lt-card--danger .lt-card-hd,
+.lt-card--info .lt-card-hd,
+.lt-card--success .lt-card-ft,
+.lt-card--warning .lt-card-ft,
+.lt-card--danger .lt-card-ft,
+.lt-card--info .lt-card-ft {
+    border-color: color-mix(in srgb, var(--lt-card-tone) 25%, transparent);
+}
+
+.lt-card--muted {
+    background: color-mix(in srgb, var(--primary-font-color) 4%, transparent);
+    border-color: transparent;
+    color: var(--color-text-secondary);
+}
+
+.lt-card--empty {
+    background: color-mix(in srgb, var(--primary-font-color) 2%, transparent);
+    border-style: dashed;
+    color: var(--color-text-muted);
+    text-align: center;
+}
