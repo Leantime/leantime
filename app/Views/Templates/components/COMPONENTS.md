@@ -728,7 +728,8 @@ Card rollout (43 card types found 2026-10-11 — 34 core, 9 plugin-only; ~41 cor
    component yet: each has ONE core caller; extract when the plugin copies (StrategyPro goals, Whiteboards ideas,
    PgmPro/StrategyPro project kanban) convert and a second caller exists.
 4. ✅ My Work `todoItem` (card + both add-subtask form cards). The milestone strip `@if` inside the tag became a
-   computed `:style`; `data-event` JSON passes through the attribute bag unchanged. 5. comments, file tiles. 6. plugins (Notes, Whiteboards, PgmPro/StrategyPro
+   computed `:style`; `data-event` JSON passes through the attribute bag unchanged. 5. ✅ comments (+ replies, `x-comments::reply`), project status updates, subtasks (both partials), file tiles
+   (`as="li"`, 5 lists). `.commentContent` / `.listfile > li` legacy looks scoped `:not(.lt-card)` for plugins. 6. plugins (Notes, Whiteboards, PgmPro/StrategyPro
    kanban, Llamadorian, …).
 Entity-card rules: keep `.ticketBox`/`.moveable`/`.priority-border-N`/ids on the root; `@dispatchEvent` hooks stay
 in the owning template (event names come from it) and pass in as slot content; drag selectors using `> .x`
