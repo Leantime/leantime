@@ -674,3 +674,37 @@ Section tabs each own their form / Save and post back to `…#section`; nothing 
   plugins-repo PR.
 
 
+
+### Plugin design alignment (2026-10-10, Marcel)
+PgmPro / StrategyPro screens (report deck, resource allocation, reverse wizard) are the design source for the
+newer patterns; their private `--rd-*` / `--ra-*` palette and type sizes go away. Picks per pattern (audit page:
+claude.ai/artifact/A1KrfZ7XJduFnqecZ7G2Ug):
+- **Plugin look** → eyebrow, page-header status slot, card (header row, token radius), callout + note (card
+  tones), stat tile (delta pill, "See list"), entity chip, table rows, details list (kv rows), icon list rows.
+- **Merge** → type scale, section title, status badge, accordion. **Core** → buttons (`forms.button`, add `sm`).
+
+**Type rule — sizes must not drift apart.** Text never goes below `--font-size-s` (12px); 10px (`--font-size-xs`)
+is for counters on icons only. No half pixels, no sizes off the scale. Each role has one size:
+
+| Role | Size / weight | Replaces (plugin) |
+|---|---|---|
+| page title | `--font-size-xl` 18 / 500 | |
+| section title | `--font-size-l` 16 / 700 | 13.5px upper accent title |
+| card title, row title | `--base-font-size` 14 / 600 | 14.5px row title |
+| body, table cell, details value | 14 / 400 | 13–15px |
+| meta, secondary line, description | `--font-size-s` 12 / 400, muted colour | 12.5 / 13px |
+| eyebrow, table header, details label | 12 / 600 upper, `.04em` tracking, muted | 10–11.5px upper |
+| badge, chip, delta pill | 12 / 600, **one height (20px)** everywhere | 10 / 10.5 / 11.5px badges |
+| stat value | `--font-size-xxxl` 24 / 600 | 28px |
+
+Within one element use at most two sizes next to each other (stat tile: 24 value + 12 label, nothing smaller).
+Badges in a card header (e.g. "No capacity" + effort) sit on the same 20px box so they line up; solid badges
+(clickable chip) and soft-tint badges (read-only status) share that box and only differ in colour.
+Colours: text `--primary-font-color`; add `--secondary-font-color` / `--muted-font-color` (one each, light + dark,
+both themes); accent is `--accent1` so company colours apply. Radius from `--box-radius*`, not 11px.
+Also fix: `dark.css` has `--font-size-xxl` 22 / `xxxl` 26 while `light.css` has 20 / 24.
+
+Build order: tokens → `elements.card` (tones) → `elements.badge` → `elements.section-header` → `elements.table`
+(real `<table>`, DataTables optional, `allTicketsTable.*` hooks keep firing) / `elements.details-list` /
+`elements.list-item` → accordion (`<details>`) → convert PgmPro (Resources first), then StrategyPro → move
+`resource-allocation.css`, `report-deck.css`, `reverse-wizard.css` out of core into the plugins.
