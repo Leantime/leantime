@@ -74,12 +74,14 @@
 }
 
 .lt-card--muted {
+    box-shadow: none;
     background: color-mix(in srgb, var(--primary-font-color) 4%, transparent);
     border-color: transparent;
     color: var(--color-text-secondary);
 }
 
 .lt-card--empty {
+    box-shadow: none;
     background: color-mix(in srgb, var(--primary-font-color) 2%, transparent);
     border-style: dashed;
     color: var(--color-text-muted);
