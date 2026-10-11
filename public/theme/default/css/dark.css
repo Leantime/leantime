@@ -100,8 +100,8 @@
     --font-size-m: var(--base-font-size);
     --font-size-l: 16px;
     --font-size-xl: 18px;
-    --font-size-xxl: 22px;
-    --font-size-xxxl: 26px;
+    --font-size-xxl: 20px;
+    --font-size-xxxl: 24px;
 
     --main-border-color: rgba(20,20,20, 0.9);
     --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%), 0px 0px 1px rgba(0 0 0 / 5%);
@@ -231,8 +231,8 @@
     --accent4-light: rgba(246,16,103,0.06);
 
     --color-text-primary: var(--color-text-default);
-    --color-text-secondary: var(--secondary-font-color);
-    --color-text-muted: var(--interactive-icon-color);
+    --color-text-secondary: color-mix(in srgb, var(--primary-font-color) 85%, transparent);
+    --color-text-muted: color-mix(in srgb, var(--primary-font-color) 75%, transparent);
     --color-text-disabled: var(--solid-neutral);
     --color-text-on-accent: var(--accent1-color);
 
@@ -379,7 +379,7 @@
 
     --card-bg: var(--color-surface-card);
     --card-border: var(--color-border-default);
-    --card-radius: var(--radius-m);
+    --card-radius: var(--box-radius);
     --card-shadow: var(--shadow-s);
 
     --input-bg: var(--color-bg-input);

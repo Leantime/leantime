@@ -214,8 +214,8 @@
     --accent4-light: rgba(246,16,103,0.06);
 
     --color-text-primary: var(--color-text-default);
-    --color-text-secondary: var(--secondary-font-color);
-    --color-text-muted: var(--interactive-icon-color);
+    --color-text-secondary: color-mix(in srgb, var(--primary-font-color) 85%, transparent);
+    --color-text-muted: color-mix(in srgb, var(--primary-font-color) 75%, transparent);
     --color-text-disabled: var(--solid-neutral);
     --color-text-on-accent: var(--accent1-color);
 
@@ -362,7 +362,7 @@
 
     --card-bg: var(--color-surface-card);
     --card-border: var(--color-border-default);
-    --card-radius: var(--radius-m);
+    --card-radius: var(--box-radius);
     --card-shadow: var(--shadow-s);
 
     --input-bg: var(--color-bg-input);

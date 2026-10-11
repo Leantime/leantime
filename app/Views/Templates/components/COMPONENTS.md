@@ -90,7 +90,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | textarea | `forms.textarea` | forms | ✅ | selectsComponentUpdates | merged #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
 | select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" `width` prop (sm/md/lg/full/auto, default md) shared with text-input. |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
-| card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
+| card | `elements.card` | elements | 🟡 | — | Card INSIDE the content box: border + `--card-shadow`, `--card-radius` = `--box-radius` (16px — Marcel 2026-10-11: keep core corners and shadow); `header`/`footer` slots, `title`, `flush`, `tone` success/warning/danger/info/muted/empty. First user: report Resources & Coverage page. The page content box (`.maincontentinner`, 167 sites) is a separate later step |
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
 | dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
@@ -674,3 +674,42 @@ Section tabs each own their form / Save and post back to `…#section`; nothing 
   plugins-repo PR.
 
 
+
+### Plugin design alignment (2026-10-10, Marcel)
+PgmPro / StrategyPro screens (report deck, resource allocation, reverse wizard) are the design source for the
+newer patterns; their private `--rd-*` / `--ra-*` palette and type sizes go away. Picks per pattern (audit page:
+claude.ai/artifact/A1KrfZ7XJduFnqecZ7G2Ug):
+- **Plugin look** → eyebrow, page-header status slot, card (header row; but core 16px corners + shadow, decided 2026-10-11), callout + note (card
+  tones), stat tile (delta pill, "See list"), entity chip, table rows, details list (kv rows), icon list rows.
+- **Merge** → type scale, section title, status badge, accordion. **Core** → buttons (`forms.button`, add `sm`).
+
+**Type rule — sizes must not drift apart.** Text never goes below `--font-size-s` (12px); 10px (`--font-size-xs`)
+is for counters on icons only. No half pixels, no sizes off the scale. Each role has one size:
+
+| Role | Size / weight | Replaces (plugin) |
+|---|---|---|
+| page title | `--font-size-xl` 18 / 500 | |
+| section title | `--font-size-l` 16 / 700 | 13.5px upper accent title |
+| card title, row title | `--base-font-size` 14 / 600 | 14.5px row title |
+| body, table cell, details value | 14 / 400 | 13–15px |
+| meta, secondary line, description | `--font-size-s` 12 / 400, muted colour | 12.5 / 13px |
+| eyebrow, table header, details label | 12 / 600 upper, `.04em` tracking, muted | 10–11.5px upper |
+| badge, chip, delta pill | 12 / 600, **one height (20px)** everywhere | 10 / 10.5 / 11.5px badges |
+| stat value | `--font-size-xxxl` 24 / 600 | 28px |
+
+Within one element use at most two sizes next to each other (stat tile: 24 value + 12 label, nothing smaller).
+Badges in a card header (e.g. "No capacity" + effort) sit on the same 20px box so they line up; solid badges
+(clickable chip) and soft-tint badges (read-only status) share that box and only differ in colour.
+Colours: text `--primary-font-color`, secondary `--color-text-secondary`, muted `--color-text-muted` (never the
+legacy `--secondary-font-color`, which is #000); accent is `--accent1` so company colours apply. Card corners
+`--card-radius` (= `--box-radius`), inner chips `--box-radius-small` — no hard-coded radii.
+Also fix: `dark.css` has `--font-size-xxl` 22 / `xxxl` 26 while `light.css` has 20 / 24.
+
+Done (PR 1): `--color-text-secondary` / `--color-text-muted` are real greys (85% / 75% of the text colour; were
+#000 and the icon grey, unused); dark themes now 20 / 24px; the report's `--rd-*` palette aliases the core
+tokens (company accent, both themes), fixed `rgba(0,71,102,…)` tints → `--accent1`.
+
+Build order: tokens → `elements.card` (tones) → `elements.badge` → `elements.section-header` → `elements.table`
+(real `<table>`, DataTables optional, `allTicketsTable.*` hooks keep firing) / `elements.details-list` /
+`elements.list-item` → accordion (`<details>`) → convert PgmPro (Resources first), then StrategyPro → move
+`resource-allocation.css`, `report-deck.css`, `reverse-wizard.css` out of core into the plugins.

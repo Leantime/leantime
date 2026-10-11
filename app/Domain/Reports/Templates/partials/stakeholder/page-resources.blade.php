@@ -65,13 +65,13 @@
 
     @if ($resourceSummary === null)
         {{-- No ResourcesGateway registered (plugin not installed / disabled). --}}
-        <div class="p3-res-strip">
+        <x-global::elements.card tone="empty" class="p3-res-strip">
             <div class="icn"><i class="fa fa-people-arrows"></i></div>
             <div class="cnt">
                 <div class="h">{{ __('stakeholder.rc.no_provider_title') }}</div>
                 <div class="d">{{ __('stakeholder.rc.no_provider_hint') }}</div>
             </div>
-        </div>
+        </x-global::elements.card>
     @elseif (! $hasResourceData)
         {{-- Provider installed, nothing authored yet. Resource data always comes
              from the program(s) — a strategy's own board stays empty by design —
@@ -99,7 +99,7 @@
                 $emptyCtaLabel = null;
             }
         @endphp
-        <div class="p3-res-strip">
+        <x-global::elements.card tone="empty" class="p3-res-strip">
             <div class="icn"><i class="fa fa-people-arrows"></i></div>
             <div class="cnt">
                 <div class="h">{{ $emptyTitle }}</div>
@@ -108,7 +108,7 @@
             @if ($emptyCtaHref !== null)
                 <a href="{{ $emptyCtaHref }}" class="p3-res-cta">{{ $emptyCtaLabel }} <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
             @endif
-        </div>
+        </x-global::elements.card>
     @else
         @php
             $people = $resourceSummary->people;
@@ -150,7 +150,7 @@
 
         <div class="p3-res-grid">
             {{-- People --}}
-            <div class="p3-rcard @if ($activePeopleCount === 0) empty @endif">
+            <x-global::elements.card :class="$activePeopleCount === 0 ? 'p3-rcard empty' : 'p3-rcard'">
                 <div class="rhead">
                     <div class="ricn"><i class="fa fa-users"></i></div>
                     <div class="rlbl">{{ __('stakeholder.rc.res_people') }}</div>
@@ -165,10 +165,10 @@
                 @else
                     <div class="rsub muted">{{ __('stakeholder.rc.res_no_capacity') }}</div>
                 @endif
-            </div>
+            </x-global::elements.card>
 
             {{-- Budget --}}
-            <div class="p3-rcard @if ($totalBudgeted === 0.0) empty @endif">
+            <x-global::elements.card :class="$totalBudgeted === 0.0 ? 'p3-rcard empty' : 'p3-rcard'">
                 <div class="rhead">
                     <div class="ricn"><i class="fa fa-coins"></i></div>
                     <div class="rlbl">{{ __('stakeholder.rc.res_budget') }}</div>
@@ -184,10 +184,10 @@
                     <div class="rv">—</div>
                     <div class="rsub muted">{{ __('stakeholder.rc.res_no_budget') }}</div>
                 @endif
-            </div>
+            </x-global::elements.card>
 
             {{-- Dependencies --}}
-            <div class="p3-rcard @if (count($dependencies) === 0) empty @endif">
+            <x-global::elements.card :class="count($dependencies) === 0 ? 'p3-rcard empty' : 'p3-rcard'">
                 <div class="rhead">
                     <div class="ricn"><i class="fa fa-handshake"></i></div>
                     <div class="rlbl">{{ __('stakeholder.rc.res_deps') }}</div>
@@ -202,7 +202,7 @@
                     <div class="rv">—</div>
                     <div class="rsub muted">{{ __('stakeholder.rc.res_no_deps') }}</div>
                 @endif
-            </div>
+            </x-global::elements.card>
         </div>
     @endif
 </div>
@@ -368,7 +368,7 @@
             </span>
         </div>
 
-        <div class="p3-bd">
+        <x-global::elements.card class="p3-bd" flush>
             <div class="p3-bd-row head">
                 <div class="p3-bd-cell">
                     @if ($useProgramRollup)
@@ -519,7 +519,7 @@
                     </div>
                 @endforeach
             @endif
-        </div>
+        </x-global::elements.card>
     </div>
 @endif
 
@@ -659,7 +659,7 @@
 
         @if ($urgent !== null)
             @php $urgentDays = $daysUntil($urgent->dueDate); @endphp
-            <div class="p3-dep-urgent {{ $urgentDays !== null && $urgentDays <= 30 ? 'soon' : '' }}">
+            <x-global::elements.card class="p3-dep-urgent" :tone="$urgentDays !== null && $urgentDays <= 30 ? 'warning' : 'default'">
                 <div class="ic"><i class="fa fa-clock"></i></div>
                 <div class="body">
                     <div class="hd">
@@ -675,7 +675,7 @@
                         @if ($urgent->owner) · {{ __('stakeholder.rc.dep.owner') }} <strong>{{ $urgent->owner }}</strong> @endif
                     </div>
                 </div>
-            </div>
+            </x-global::elements.card>
         @endif
 
         <div class="p3-dep-grid">
@@ -687,7 +687,7 @@
                     $dueDays = $daysUntil($due);
                     $ago = $fmtAgo($d->lastModified);
                 @endphp
-                <div class="p3-dep {{ $d->confirmed ? 'confirmed' : 'tentative' }}">
+                <x-global::elements.card :class="'p3-dep ' . ($d->confirmed ? 'confirmed' : 'tentative')">
                     <div class="p3-dep-hd">
                         <span class="status">
                             @if ($d->confirmed)
@@ -736,7 +736,7 @@
                     @if ($ago !== null)
                         <div class="p3-dep-foot">{{ sprintf(__('stakeholder.rc.dep.updated'), $ago) }}</div>
                     @endif
-                </div>
+                </x-global::elements.card>
             @endforeach
         </div>
     </div>
@@ -934,16 +934,16 @@
 
         <div class="p3-gaps">
             @if (count($gaps) === 0)
-                <div class="p3-gap ok">
+                <x-global::elements.card tone="success" class="p3-gap ok">
                     <div class="sev"><i class="fa fa-check"></i></div>
                     <div class="body">
                         <div class="headline">{{ __('stakeholder.rc.gap.none_headline') }}</div>
                         <div class="detail">{{ $isProgramScope ? __('stakeholder.rc.gap.none_detail_program') : __('stakeholder.rc.gap.none_detail_strategy') }}</div>
                     </div>
-                </div>
+                </x-global::elements.card>
             @else
                 @foreach ($gaps as $g)
-                    <div class="p3-gap {{ $g['sev'] }}">
+                    <x-global::elements.card :class="'p3-gap ' . $g['sev']">
                         <div class="sev"><i class="fa {{ $g['icon'] }}"></i></div>
                         <div class="body">
                             <div class="headline">{!! $g['headline'] !!}</div>
@@ -951,7 +951,7 @@
                                 <div class="detail">{!! $g['detail'] !!}</div>
                             @endif
                         </div>
-                    </div>
+                    </x-global::elements.card>
                 @endforeach
             @endif
         </div>

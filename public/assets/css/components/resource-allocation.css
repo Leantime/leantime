@@ -120,7 +120,7 @@
 }
 .ra-scope.ra-dark .ra-tab.on .ct {
     color:#004766;
-    background:rgba(0,71,102,.12);
+    background:color-mix(in srgb, var(--accent1) 12%, transparent);
 }
 .ra-scope.ra-dark .ra-focuslist .ra-jrow:hover,.ra-scope.ra-dark .ra-focuslist .ra-prow:hover {
     background:#2f3234;
@@ -251,8 +251,8 @@
     height:36px;
     font-family:inherit;
     color:var(--rd-accent);
-    background:rgba(0,71,102,.06);
-    border:1px solid rgba(0,71,102,.18);
+    background:color-mix(in srgb, var(--accent1) 6%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent1) 18%, transparent);
     border-radius:50%;
     cursor:pointer;
     transition:all .12s ease;
@@ -260,7 +260,7 @@
     flex:none;
 }
 .ra-autofill:hover {
-    background:rgba(0,71,102,.12);
+    background:color-mix(in srgb, var(--accent1) 12%, transparent);
     border-color:var(--rd-accent);
     box-shadow:0 2px 4px rgba(20,40,50,.08);
 }
@@ -375,8 +375,8 @@
 .ra-seg {
     display:inline-flex;
     gap:2px;
-    background:rgba(0,71,102,.06);
-    border:1px solid rgba(0,71,102,.18);
+    background:color-mix(in srgb, var(--accent1) 6%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent1) 18%, transparent);
     border-radius:100px;
     padding:3px;
     box-shadow:0 1px 2px rgba(20,40,50,.05);
@@ -738,14 +738,14 @@
     font-weight:600;
     color:var(--rd-accent);
     background:transparent !important;
-    border:1px solid rgba(0,71,102,.25);
+    border:1px solid color-mix(in srgb, var(--accent1) 25%, transparent);
     border-radius:100px;
     padding:3px 12px;
     cursor:pointer;
     transition:background .12s,border-color .12s;
 }
 .ra-alloc-done:hover {
-    background:rgba(0,71,102,.08) !important;
+    background:color-mix(in srgb, var(--accent1) 8%, transparent) !important;
     border-color:var(--rd-accent);
 }
 .ra-alloc-done:focus-visible {
@@ -847,7 +847,7 @@
 .ra-inline-input.alloc:focus {
     border-color:var(--rd-accent) !important;
     outline:none;
-    box-shadow:0 0 0 2px rgba(0,71,102,.12) !important;
+    box-shadow:0 0 0 2px color-mix(in srgb, var(--accent1) 12%, transparent) !important;
 }
 .ra-inline-input.alloc:placeholder-shown {
     color:var(--rd-text-4);
@@ -974,8 +974,8 @@
     text-decoration:none;
     padding:2px 8px;
     border-radius:100px;
-    background:rgba(0,71,102,.06);
-    border:1px solid rgba(0,71,102,.14);
+    background:color-mix(in srgb, var(--accent1) 6%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent1) 14%, transparent);
     transition:background .12s ease,border-color .12s ease;
     line-height:1.4;
 }
@@ -983,7 +983,7 @@
     font-size:9.5px;
 }
 .ra-scell-action:hover,.ra-scell-action:focus-visible {
-    background:rgba(0,71,102,.12);
+    background:color-mix(in srgb, var(--accent1) 12%, transparent);
     border-color:var(--rd-accent);
     outline:none;
 }
