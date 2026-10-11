@@ -32,6 +32,7 @@
 <div {{ $attributes->class([
     'lt-card',
     'lt-card--' . $tone => $tone !== 'default',
+    'lt-card--flush' => $flush,
 ]) }}>
     @if ($hasHeader)
         <div class="lt-card-hd">

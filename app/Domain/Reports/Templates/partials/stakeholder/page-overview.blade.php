@@ -74,7 +74,7 @@
         :unit="$totalMsCount > 0 ? '/'.$totalMsCount : null"
         :label="$totalMsCount > 0 ? __('stakeholder.kpi.milestones_completed') : __('stakeholder.kpi.completed_this_period')"
         :delta="$completedDelta != 0 ? ['value' => $completedDelta, 'goodWhenUp' => true, 'label' => sprintf(__('stakeholder.kpi.delta_vs_prior'), $completedDelta)] : null"
-        class="@if ($completedCount > 0) has-detail @endif"
+        :class="$completedCount > 0 ? 'has-detail' : null"
         tabindex="{{ $completedCount > 0 ? 0 : -1 }}">
         @if ($completedCount > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
@@ -101,7 +101,7 @@
         :value="$goalsOnTrack"
         :unit="'/'.$goalsTotal"
         :label="__('stakeholder.kpi.goals_on_track_lc')"
-        class="@if (count($onTrackItems) > 0) has-detail @endif"
+        :class="count($onTrackItems) > 0 ? 'has-detail' : null"
         tabindex="{{ count($onTrackItems) > 0 ? 0 : -1 }}">
         @if (count($onTrackItems) > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
@@ -129,7 +129,7 @@
         :unit="$openMsCount > 0 ? '/'.$openMsCount : null"
         :label="$openMsCount > 0 ? __('stakeholder.kpi.overdue_of_open') : __('stakeholder.kpi.milestones_overdue')"
         :tone="$overdueCount > 0 ? 'risk' : 'default'"
-        class="@if ($overdueCount > 0) has-detail @endif"
+        :class="$overdueCount > 0 ? 'has-detail' : null"
         tabindex="{{ $overdueCount > 0 ? 0 : -1 }}">
         @if ($overdueCount > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
@@ -156,7 +156,7 @@
         :value="number_format($hoursLogged, $hoursLogged >= 100 ? 0 : 1)"
         unit="h"
         :label="__('stakeholder.kpi.hours_this_period')"
-        class="@if (count($hoursItems) > 0) has-detail @endif"
+        :class="count($hoursItems) > 0 ? 'has-detail' : null"
         tabindex="{{ count($hoursItems) > 0 ? 0 : -1 }}">
         @if (count($hoursItems) > 0)
             <span class="see-list">{{ __('stakeholder.kpi.see_list') }} <i class="fa fa-chevron-down"></i></span>
@@ -224,7 +224,7 @@
     {{-- Peak this period — recommend-and-override. Ranked from completed
          milestones; owner override is a future write path. --}}
     @if ($peak === null)
-        <div class="p1-hero empty">
+        <x-global::elements.card tone="empty" class="p1-hero empty">
             <div class="eye"><span class="slabel">{{ __('stakeholder.overview.peak_label') }}</span></div>
             <div class="h">{{ __('stakeholder.overview.peak_none_title') }}</div>
             <div>{{ __('stakeholder.overview.peak_none_hint') }}</div>
@@ -236,9 +236,9 @@
                     <i class="fa fa-wand-magic-sparkles" aria-hidden="true"></i> {{ __('stakeholder.overview.peak_none_cta') }}
                 </a>
             @endif
-        </div>
+        </x-global::elements.card>
     @else
-        <div class="p1-hero">
+        <x-global::elements.card tone="success" class="p1-hero">
             <div class="eye">
                 <span class="slabel">{{ __('stakeholder.overview.peak_label') }}</span>
                 <span class="rec"><i class="fa fa-wand-magic-sparkles"></i> {{ __('stakeholder.overview.peak_recommended') }}</span>
@@ -258,10 +258,10 @@
                     <span class="hm">{{ $peakDate }}</span>
                 @endif
             </div>
-        </div>
+        </x-global::elements.card>
     @endif
 
-    <div class="p1-needs @if ($needsCount === 0) calm @endif">
+    <x-global::elements.card :tone="$needsCount === 0 ? 'default' : 'danger'" :class="$needsCount === 0 ? 'p1-needs calm' : 'p1-needs'">
         <div class="nt"><i class="fa @if ($needsCount === 0) fa-check-circle @else fa-triangle-exclamation @endif"></i>{{ __('stakeholder.overview.needs_label') }}</div>
         <div class="nx">
             @if ($needsCount === 0)
@@ -338,7 +338,7 @@
                 @endif
             @endif
         </div>
-    </div>
+    </x-global::elements.card>
 </div>
 
 {{-- ── Status narrative — authored, verbatim, per-program ──────────
@@ -403,7 +403,7 @@
     };
 @endphp
 
-    <div class="p1-narrative">
+    <x-global::elements.card class="p1-narrative">
         <div class="lb"><i class="fa fa-message"></i> {{ __('stakeholder.overview.narrative_label') }}</div>
         <div class="nn">
             @forelse ($narrativeNotes as $n)
@@ -417,12 +417,12 @@
                 <div class="nempty">{{ __('stakeholder.overview.narrative_empty') }}</div>
             @endforelse
         </div>
-    </div>
+    </x-global::elements.card>
 
 {{-- ── Theory of Change narrative (stage-colored) ────────────────── --}}
 @if ($hasLM && ! empty($logicModel['narrative']['hasItems']))
     @php $stageTexts = $logicModel['narrative']['stageTexts'] ?? []; @endphp
-    <div class="p1-toc collapsed" id="p1TocSection">
+    <x-global::elements.card class="p1-toc collapsed" id="p1TocSection">
         <div class="tl">
             <span class="lbl-inner">
                 {{ __('stakeholder.overview.toc_label') }}
@@ -454,9 +454,9 @@
             {{ __('stakeholder.overview.toc_in_service_of') }}
             <span class="n5">{{ $stageTexts['impact'] ?? '['.__('box.logicmodel.impact').']' }}</span>.
         </div>
-    </div>
+    </x-global::elements.card>
 @else
-    <div class="p1-toc empty">{{ __('stakeholder.overview.toc_empty') }}</div>
+    <x-global::elements.card tone="muted" class="p1-toc empty">{{ __('stakeholder.overview.toc_empty') }}</x-global::elements.card>
 @endif
 
 {{-- ── Theory-health strip — full state, not just warnings ──────── --}}
@@ -493,7 +493,7 @@
         $tone = $fragile > 0 ? 'risk' : ($unassessed > 0 ? 'partial' : 'solid');
     @endphp
 
-    <div class="p1-theory">
+    <x-global::elements.card class="p1-theory">
         <div class="hd">
             <span class="l">
                 {{ __('stakeholder.overview.theory_health_label') }}
@@ -601,7 +601,7 @@
                 {{ __('stakeholder.overview.theory_all_ok') }}
             </div>
         @endif
-    </div>
+    </x-global::elements.card>
 @endif
 
 <script>

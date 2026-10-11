@@ -503,14 +503,14 @@
     <div class="p2-subhead">{{ __('stakeholder.lm.page_subhead') }}</div>
 
     {{-- Belief — one templated sentence --}}
-    <div class="p2-believe">
+    <x-global::elements.card class="p2-believe">
         <span class="lb">{{ __('stakeholder.lm.believe_label') }}</span>
         @if ($beliefLine !== '')
             {{ $beliefLine }}
         @else
             {{ __('stakeholder.lm.belief_empty') }}
         @endif
-    </div>
+    </x-global::elements.card>
 
     {{-- Stage card renderer — one call for Outputs, one for Outcomes. --}}
     @foreach ([
@@ -550,7 +550,7 @@
             }
         @endphp
 
-        <div class="p2-stage {{ $stage['cls'] }}">
+        <x-global::elements.card :class="'p2-stage ' . $stage['cls']">
             <div class="stage-hd">
                 <div class="frame"><i class="fa {{ $stage['icon'] }}"></i> {{ $stage['frame'] }}</div>
                 <span class="p2-vbadge {{ $badgeCls }}"><span class="sd"></span> {{ $badgeLbl }}</span>
@@ -707,18 +707,18 @@
                     </div>
                 </details>
             @endif
-        </div>
+        </x-global::elements.card>
     @endforeach
 
     {{-- Impact — one aim, not a list --}}
     @if (count($impactItems) > 0)
         @php $primaryImpact = trim((string) (((array) $impactItems[0])['description'] ?? '')); @endphp
         @if ($primaryImpact !== '')
-            <div class="p2-impact">
+            <x-global::elements.card tone="success" class="p2-impact">
                 <div class="lb"><i class="fa fa-bullseye"></i> {{ __('stakeholder.lm.for_what_label') }}</div>
                 <div class="goal">{{ $primaryImpact }}</div>
                 <div class="horizon">{{ __('stakeholder.lm.impact_horizon') }}</div>
-            </div>
+            </x-global::elements.card>
         @endif
     @endif
 
@@ -729,7 +729,7 @@
             $assumption = rtrim($assumption, '.!?');
             $connector  = trim((string) ($fragileLink['connector_label'] ?? ''));
         @endphp
-        <div class="p2-risk">
+        <x-global::elements.card tone="danger" class="p2-risk">
             <i class="fa fa-triangle-exclamation ri"></i>
             <div class="rb">
                 <span class="rl">{{ __('stakeholder.lm.risk_label') }}</span>
@@ -742,7 +742,7 @@
                     <b>{{ __('stakeholder.lm.risk_no_evidence') }}</b>{{ __('stakeholder.lm.risk_keep_honest') }}
                 @endif
             </div>
-        </div>
+        </x-global::elements.card>
     @endif
 
     {{-- ── Also this period — real completed work with NO LM link.
@@ -791,7 +791,7 @@
     @endphp
 
     @if ($alsoCount > 0)
-        <div class="p2-also">
+        <x-global::elements.card tone="muted" class="p2-also">
             <div class="lb"><i class="fa fa-code-branch"></i> {{ __('stakeholder.lm.also_label') }}</div>
             @foreach ($alsoShown as $row)
                 {{-- Plain drift note: a milestone that closed this period but
@@ -806,7 +806,7 @@
             @if ($alsoMore > 0)
                 <div class="more">{{ sprintf(__('stakeholder.lm.also_more'), $alsoMore) }}</div>
             @endif
-        </div>
+        </x-global::elements.card>
     @endif
 
     {{-- Off-strategy drift (strategy scope) --}}

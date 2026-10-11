@@ -282,18 +282,41 @@
     // Click elsewhere closes it. Only one open at a time.
     // Targets the shared .lt-stat tile (x-global::statTile); the deck-local
     // .rd-kcell copy it used to drive was retired.
+    // Drill tiles act as disclosure buttons: role + aria-expanded for assistive tech,
+    // Enter/Space to toggle from the keyboard.
+    document.querySelectorAll('.lt-stat.has-detail').forEach(function (c) {
+        c.setAttribute('role', 'button');
+        c.setAttribute('aria-expanded', 'false');
+    });
+
+    function setDrillOpen(cell, open) {
+        cell.classList.toggle('open', open);
+        cell.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    function toggleDrill(cell) {
+        // Close every other open drill first (single-open behavior).
+        document.querySelectorAll('.lt-stat.has-detail.open').forEach(function (c) {
+            if (c !== cell) setDrillOpen(c, false);
+        });
+
+        if (cell) setDrillOpen(cell, ! cell.classList.contains('open'));
+    }
+
     document.addEventListener('click', function (e) {
-        var cell = e.target.closest('.lt-stat.has-detail');
         // Clicked inside the open drill? Let the click through (don't close).
         if (e.target.closest('.lt-stat.has-detail .lt-stat-drill')) return;
 
-        // Close every other open drill first (single-open behavior).
-        document.querySelectorAll('.lt-stat.has-detail.open').forEach(function (c) {
-            if (c !== cell) c.classList.remove('open');
-        });
+        toggleDrill(e.target.closest('.lt-stat.has-detail'));
+    });
 
-        // Toggle the clicked cell (if any).
-        if (cell) cell.classList.toggle('open');
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        var cell = e.target.closest ? e.target.closest('.lt-stat.has-detail') : null;
+        if (! cell || e.target !== cell) return;
+
+        e.preventDefault();
+        toggleDrill(cell);
     });
 })();
 </script>

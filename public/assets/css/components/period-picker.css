@@ -20,7 +20,7 @@
     align-items: center;
     gap: 8px;
     font: inherit;
-    font-size: 13px;
+    font-size: var(--base-font-size);
     color: var(--primary-font-color);
     background: var(--secondary-background);
     border: 1px solid var(--main-border-color);
@@ -38,7 +38,7 @@
 .lt-periodpicker-btn .lt-periodpicker-range,
 .lt-periodpicker-btn i {
     color: color-mix(in srgb, var(--primary-font-color) 62%, transparent);
-    font-size: 12px;
+    font-size: var(--font-size-s);
 }
 
 /* Hover matches every other pill control in the app (the filter pills, the
@@ -73,7 +73,7 @@
     border-radius: var(--box-radius-small, 8px);
     box-shadow: 0 20px 56px rgba(20, 40, 50, .16);
     z-index: 100;
-    font-size: 12px;
+    font-size: var(--font-size-s);
     line-height: 1.3;
     text-align: left;
 }
@@ -111,7 +111,7 @@
 }
 
 .lt-periodpicker-opt .l {
-    font-size: 12.5px;
+    font-size: var(--font-size-s);
     font-weight: 500;
     color: inherit;
 }
@@ -121,7 +121,7 @@
 }
 
 .lt-periodpicker-opt .d {
-    font-size: 10.5px;
+    font-size: var(--font-size-s);
     font-weight: 400;
     color: color-mix(in srgb, var(--primary-font-color) 58%, transparent);
 }
@@ -143,10 +143,10 @@
 
 .lt-periodpicker-cl {
     display: block;
-    font-size: 9.5px;
+    font-size: var(--font-size-s);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: .4px;
+    letter-spacing: .04em;
     color: color-mix(in srgb, var(--primary-font-color) 58%, transparent);
     margin: 0 0 5px;
     padding: 0;
@@ -167,7 +167,7 @@
     width: auto;
     max-width: 100%;
     font: inherit;
-    font-size: 11.5px;
+    font-size: var(--font-size-s);
     line-height: 1.2;
     padding: 5px 7px;
     height: 26px;
@@ -181,14 +181,14 @@
 
 .lt-periodpicker-dash {
     flex: none;
-    font-size: 11px;
+    font-size: var(--font-size-s);
     color: color-mix(in srgb, var(--primary-font-color) 58%, transparent);
 }
 
 .lt-periodpicker-apply {
     flex: none;
     font: inherit;
-    font-size: 11px;
+    font-size: var(--font-size-s);
     font-weight: 500;
     color: var(--main-action-color);
     background: var(--main-action-bg);
