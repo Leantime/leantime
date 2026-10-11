@@ -715,6 +715,20 @@ class was never applied (Blade `@if` inside a component attribute) → fixed wit
 on Logic Model stages and Impact Journey beats (they mark the stage, not a tone). Still 13px: `navigation.tabs`
 labels (`tab-group.css`) — snap them with every tab bar at once, not report-only.
 
+Card rollout (43 card types found 2026-10-11 — 34 core, 9 plugin-only; ~41 core + ~27 plugin files):
+1. ✅ plain core boxes — report needs-attention / milestone rows / slippage, team-assignment `.userBox`, API key,
+   invite info, `.widget`+`.widgetcontent` panels (client edit/new, delete pages, add time), app-URL warning.
+   Card got `as` (li rows) and `compact` (12/16 padding). Legacy classes still used by plugin markup are scoped
+   `:not(.lt-card)` until the plugins convert.
+2. shared partials — `projectCard` (7 sites), `milestoneCard` (14 hx sites), `blueprints::element` (16 boards),
+   `x-users::profile-box`, plugin card.
+3. one component per inline copy — `tickets::ticket-card` (kanban), `ideas::idea-card`, `goalcanvas::goal-card`.
+4. My Work `todoItem` (most hooks). 5. comments, file tiles. 6. plugins (Notes, Whiteboards, PgmPro/StrategyPro
+   kanban, Llamadorian, …).
+Entity-card rules: keep `.ticketBox`/`.moveable`/`.priority-border-N`/ids on the root; `@dispatchEvent` hooks stay
+in the owning template (event names come from it) and pass in as slot content; drag selectors using `> .x`
+need the card without the body wrapper.
+
 Build order: tokens → `elements.card` (tones) → `elements.badge` → `elements.section-header` → `elements.table`
 (real `<table>`, DataTables optional, `allTicketsTable.*` hooks keep firing) / `elements.details-list` /
 `elements.list-item` → accordion (`<details>`) → convert PgmPro (Resources first), then StrategyPro → move
