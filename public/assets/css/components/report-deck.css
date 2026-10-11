@@ -43,6 +43,9 @@
 /* Dark mode — server-stamped .rd-dark (mirrors the RA tab's .ra-dark). The
    colour tokens come from the theme; only the stage tints need dark values. */
 .rd-scope.rd-dark {
+    /* The theme accent is too dark to read as text on the dark panel (≈2.7:1); lift it
+       toward white so labels and links clear AA. Fills that use it get lighter too. */
+    --rd-accent:color-mix(in srgb, var(--accent1) 55%, #fff);
     /* Stage tints as low-alpha overlays so they read as dark surfaces on the
        panel instead of the light pastels used in light mode. */
     --rd-s1-bg:rgba(74,133,181,.16);

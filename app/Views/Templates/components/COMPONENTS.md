@@ -700,8 +700,9 @@ is for counters on icons only. No half pixels, no sizes off the scale. Each role
 Within one element use at most two sizes next to each other (stat tile: 24 value + 12 label, nothing smaller).
 Badges in a card header (e.g. "No capacity" + effort) sit on the same 20px box so they line up; solid badges
 (clickable chip) and soft-tint badges (read-only status) share that box and only differ in colour.
-Colours: text `--primary-font-color`; add `--secondary-font-color` / `--muted-font-color` (one each, light + dark,
-both themes); accent is `--accent1` so company colours apply. Radius from `--box-radius*`, not 11px.
+Colours: text `--primary-font-color`, secondary `--color-text-secondary`, muted `--color-text-muted` (never the
+legacy `--secondary-font-color`, which is #000); accent is `--accent1` so company colours apply. Card corners
+`--card-radius` (= `--box-radius`), inner chips `--box-radius-small` — no hard-coded radii.
 Also fix: `dark.css` has `--font-size-xxl` 22 / `xxxl` 26 while `light.css` has 20 / 24.
 
 Done (PR 1): `--color-text-secondary` / `--color-text-muted` are real greys (85% / 75% of the text colour; were
