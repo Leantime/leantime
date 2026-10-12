@@ -175,3 +175,57 @@
     background:var(--main-border-color-hover) !important;
     color:var(--primary-font-color);
 }
+
+/* actions.modal-header — one header row per dialog, aligned with the close X
+   (.nyroModalCloseButton: top 35px, right 40px, 25px square; the content starts 34px down). */
+.lt-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 25px;
+    margin: 1px 0 16px;
+    padding-right: 37px; /* X (25px) + gap */
+    position: relative;
+    z-index: 50; /* an open ⋮ menu paints over the dialog content below */
+}
+
+.lt-modal-header .lt-modal-title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-bold);
+    line-height: 25px;
+    color: var(--primary-color);
+}
+
+.lt-modal-header .lt-modal-title i {
+    margin-right: 6px;
+}
+
+.lt-modal-header .lt-modal-meta {
+    flex: none;
+    font-size: var(--font-size-s);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.lt-modal-header .lt-modal-actions {
+    float: none;
+    flex: none;
+    margin: 0;
+    line-height: 25px;
+}
+
+@media (max-width: 575px) {
+    /* Mobile: the X moves to 15px / 15px and the content padding to 20px / 10px. */
+    .lt-modal-header {
+        margin-top: -5px;
+        padding-right: 30px;
+    }
+
+    .lt-modal-header .lt-modal-meta {
+        display: none;
+    }
+}

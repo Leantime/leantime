@@ -30,7 +30,7 @@
         /* System design tokens, not a private palette (alignment pass
            2026-08-03): ink/lines/accent/sizes derive from the theme, so the
            dialog matches the rest of the app in BOTH themes. */
-        .gvDialog{width:860px;max-width:min(860px, 94vw);padding:6px 18px 14px;
+        .gvDialog{width:860px;max-width:min(860px, 94vw);padding:0 18px 14px;
             --gv-acc:var(--accent1);
             --gv-acc2:var(--accent1);
             --gv-line:var(--main-border-color);
@@ -52,7 +52,8 @@
            position:relative so the z-index actually applies (it is inert on a
            statically positioned element) and the open dropdown clears the
            surrounding chrome. */
-        .gv-actions-menu{float:right;position:relative;z-index:50;padding:10px 34px 0 0;}
+        /* The header reaches the content edge so its row lines up with the modal's X. */
+        .gvDialog > .lt-modal-header{margin-right:-18px;}
         /* Discussion sits under the MAIN column (its own form — kept outside
            the goal form so the nested-form parse never orphans the Save
            buttons again). */
@@ -63,7 +64,6 @@
         @media (max-width:900px){.gv-cols{grid-template-columns:1fr;}.gv-side{border-left:none;padding-left:0;}.gv-discussion{margin-right:0;}}
         /* Section headers ride the SYSTEM recipe (h4.widgettitle.title-light,
            same as the task modal) — no dialog-private eyebrow styles. */
-        .gvDialog > h4.widgettitle{margin:2px 0 12px;}
         /* Labels: the shared forms.label look, as in the task modal. Only the stacked spacing is the dialog's. */
         .gvDialog label{display:block;margin:0 0 6px;}
         .gv-unit{font-size:var(--font-size-s);font-weight:700;color:var(--gv-acc);opacity:.85;}
@@ -189,27 +189,18 @@
 
     <div class="gvDialog">
 
-        {{-- Destructive action lives in a ⋮ menu at the top right, beside the
-             modal's × — the same place and markup the task modal uses. It used
-             to sit at the BOTTOM of the Details rail, which is both a different
-             spot from every other entity dialog and an odd resting place for the
-             one irreversible action. --}}
-        @if ($login::userIsAtLeast($roles::$editor) && $id != '')
-            <x-global::actions.dropdown aria-label="{{ __('label.actions') }}" class="gv-actions-menu">
-                <li class="nav-header">{{ $canvasTypes[$canvasItem['box']]['title'] }}</li>
-                <li>
-                    <a href="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete">
-                        <i class="fa fa-trash-can"></i> {{ __('links.delete') }}
-                    </a>
-                </li>
-
-            </x-global::actions.dropdown>
-        @endif
-
-        {{-- Section headers use the SYSTEM modal recipe (h4.widgettitle
-             .title-light — same as Subtasks/Discussion/Schedule on the task
-             modal), not a dialog-private eyebrow style. --}}
-        <h4 class="widgettitle title-light"><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</h4>
+        <x-global::actions.modal-header :icon="'fas '.$canvasTypes[$canvasItem['box']]['icon']" :title="$canvasTypes[$canvasItem['box']]['title']">
+            @if ($login::userIsAtLeast($roles::$editor) && $id != '')
+                <x-slot:actions>
+                    <li class="nav-header">{{ $canvasTypes[$canvasItem['box']]['title'] }}</li>
+                    <li>
+                        <a href="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete">
+                            <i class="fa fa-trash-can"></i> {{ __('links.delete') }}
+                        </a>
+                    </li>
+                </x-slot:actions>
+            @endif
+        </x-global::actions.modal-header>
 
         <form class="formModal" method="post" action="{{ BASE_URL . "/goalcanvas/editCanvasItem/$id" }}">
 
