@@ -117,7 +117,8 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | date-info | `elements.date-info` | elements | ⬜ | relative-time |
 | statistic / code | `elements.statistic` / `elements.code` | elements | ⬜ | |
 | steps / breadcrumbs / pagination | `navigation.*` | navigation | ⬜ | |
-| alert / progress / skeleton / loading / indicator | `feedback.*` | feedback | ⬜ | `loader`/`loadingText` exist on master |
+| progress | `feedback.progress` | feedback | 🟡 | — | Progress bar on the existing `.progress` look with the ARIA progressbar contract: `value` (0–100, clamped), `tone` default (theme gradient)/info/warning/danger, `color` (custom bar colour, milestones), `size` default/sm (6px), `label` (accessible text, default "N% complete"), `showLabel` (12px muted line under it). Done: project cards, milestone cards, Blueprint boards, goal board + goal dashboard. Left: step bars (`.progressWrapper`: checklist, onboarding, import) and the milestone overview table |
+| alert / skeleton / loading / indicator | `feedback.*` | feedback | ⬜ | `loader`/`loadingText` exist on master |
 | page-header | `layout.page-header` | layout | ⬜ | flat `pageheader` exists on master |
 | color-picker / select-panel / context-menu | various | ⬜ | |
 
