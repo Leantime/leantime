@@ -624,9 +624,6 @@
     color: var(--feedback-error-color);
 }
 
-.wiki-edit-indicator.saved {
-    color: var(--green);
-}
 
 .wiki-edit-indicator i {
     font-size: 14px;
@@ -1208,7 +1205,8 @@
     background: var(--col-hover-bg);
 }
 
-.wiki-title-field input {
+/* The title input only: the icon picker renders its own search input inside this field. */
+.wiki-title-field #wikiTitleEditable {
     flex: 1;
     min-width: 0;
     width: auto !important;
