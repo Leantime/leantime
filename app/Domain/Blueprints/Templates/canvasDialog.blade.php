@@ -31,8 +31,9 @@
 
 <div class="" style="width:900px;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $boxMeta['icon'] }}"></i> {{ $boxMeta['title'] }}</h4>
-    <hr style="margin-top: 5px; margin-bottom: 15px;">
+    <x-global::actions.modal-header>
+    <x-slot:title><i class="fas {{ $boxMeta['icon'] }}"></i> {{ $boxMeta['title'] }}</x-slot:title>
+</x-global::actions.modal-header><hr style="margin-top: 5px; margin-bottom: 15px;">
     {!! $tpl->displayNotification() !!}
 
     <form class="formModal" method="post" action="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $id }}">

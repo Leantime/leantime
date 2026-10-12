@@ -8,9 +8,9 @@
 
 <div style="min-width:700px;">
 
-<h4 class="widgettitle title-light"><i class="fa fa-key"></i> {!! __('headlines.new_api_key') !!}</h4>
-
-{!! $tpl->displayNotification() !!}
+<x-global::actions.modal-header>
+    <x-slot:title><i class="fa fa-key"></i> {!! __('headlines.new_api_key') !!}</x-slot:title>
+</x-global::actions.modal-header>{!! $tpl->displayNotification() !!}
     @if ($apiKeyValues !== false && isset($apiKeyValues['id']))
         <p>Your API Key was successfully created. Please copy the key below. This is your only chance to copy it.</p>
         <x-global::forms.text-input width="full" id="apiKey" value="lt_{{ $apiKeyValues['user'] }}_{{ $apiKeyValues['passwordClean'] }}" />

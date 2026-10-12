@@ -5,9 +5,9 @@
     $projects = $relations;
 @endphp
 
-<h4 class="widgettitle title-light"><i class="fa fa-people-group"></i> {!! __('headlines.new_user') !!}</h4>
-
-{!! $tpl->displayNotification() !!}
+<x-global::actions.modal-header>
+    <x-slot:title><i class="fa fa-people-group"></i> {!! __('headlines.new_user') !!}</x-slot:title>
+</x-global::actions.modal-header>{!! $tpl->displayNotification() !!}
 
 <form action="{{ BASE_URL }}/users/newUser" method="post" class="stdform userEditModal formModal">
     <div class="row" style="width:800px;">

@@ -3,11 +3,9 @@
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light"><i class="fa fa-arrow-circle-o-right"></i>
-        {!! __('headlines.import_ldap_users') !!}
-    </h4>
-
-    {!! $tpl->displayNotification() !!}
+    <x-global::actions.modal-header>
+    <x-slot:title><i class="fa fa-arrow-circle-o-right"></i> {!! __('headlines.import_ldap_users') !!}</x-slot:title>
+</x-global::actions.modal-header>{!! $tpl->displayNotification() !!}
 
     @if ($confirmUsers)
         <form class="importModal userImportModal" method="post" action="{{ BASE_URL }}/users/import">

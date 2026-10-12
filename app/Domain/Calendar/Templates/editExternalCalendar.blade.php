@@ -1,7 +1,8 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><i class="fa-regular fa-calendar-plus"></i> {{ __('label.edit_ical') }}</h4>
-{!!  __('label.import_ical_content')  !!}
+<x-global::actions.modal-header>
+    <x-slot:title><i class="fa-regular fa-calendar-plus"></i> {{ __('label.edit_ical') }}</x-slot:title>
+</x-global::actions.modal-header>{!!  __('label.import_ical_content')  !!}
 
 
 <form action="{{ BASE_URL }}/calendar/editExternal/{{ $values['id'] }}" method="post" class="formModal">
