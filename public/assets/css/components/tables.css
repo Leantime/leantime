@@ -444,7 +444,7 @@
     margin-right:5px;
 }
 
-.dt-buttons .dt-button-collection button. dt-button-active{
+.dt-buttons .dt-button-collection button.dt-button-active{
     text-decoration: none;
 }
 
@@ -712,7 +712,8 @@ table.fc-multimonth-header-table {
     line-height: inherit;
 }
 
-/* Columns menu: the app's dropdown look instead of DataTables' default (div.dt-button-collection). */
+/* Columns menu: the app's dropdown look instead of DataTables' default. The class is doubled on
+   purpose: DataTables' own div.dt-button-collection rule loads later and wins otherwise (measured). */
 body div.dt-button-collection.dt-button-collection {
     border: 0;
     border-radius: var(--box-radius);

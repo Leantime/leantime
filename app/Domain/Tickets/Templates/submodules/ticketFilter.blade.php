@@ -138,7 +138,7 @@
                 @if ($taskToggle === true)
                     <div class="form-group filterToggleRow">
                         <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" {{ ($showTasks === 'true') ? 'checked="checked"' : '' }} />
-                        <label for="taskTypeToggle">{{ __('label.showTasks', 'Show Tasks') }}</label>
+                        <label for="taskTypeToggle">{{ __('label.showTasks') }}</label>
                     </div>
                 @endif
 
