@@ -67,7 +67,7 @@
             </li>
             @foreach ($sprints as $sprintRow)
                 <li>
-                    <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ $tpl->escape($sprintRow->name) }}@if (! empty($sprintRow->isInherited)) <span class="label label-info">{{ __('label.program_sprint') }}</span>@endif<br /><small>{!! sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) !!}</small></a>
+                    <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')">{{ $tpl->escape($sprintRow->name) }}@if (! empty($sprintRow->isInherited)) <x-global::elements.badge tone="info">{{ __('label.program_sprint') }}</x-global::elements.badge>@endif<br /><small>{!! sprintf(__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) !!}</small></a>
                 </li>
             @endforeach
         </x-global::subjectSwitcher>

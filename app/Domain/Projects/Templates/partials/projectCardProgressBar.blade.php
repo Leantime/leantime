@@ -20,12 +20,11 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            @if ($project['status'] !== null && $project['status'] != '')
-                <span class="label label-{{ $project['status'] }}">
-                                {{ __("label.project_status_" . $project['status']) }}
-                            </span><br />
+            @php($statusTone = ['green' => 'success', 'yellow' => 'warning', 'red' => 'danger'][$project['status'] ?? ''] ?? null)
+            @if ($statusTone !== null)
+                <x-global::elements.badge :tone="$statusTone" dot>{{ __("label.project_status_" . $project['status']) }}</x-global::elements.badge><br />
             @else
-                <span class="label label-grey">{{ __("label.no_status") }}</span><br />
+                <x-global::elements.badge tone="muted">{{ __("label.no_status") }}</x-global::elements.badge><br />
             @endif
         </div>
     </div>

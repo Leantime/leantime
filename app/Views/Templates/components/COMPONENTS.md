@@ -109,7 +109,8 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | checkbox | `forms.checkbox` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Same split as radio (`span.checkbox` in menus, Bootstrap 2 float + `margin-left:-20px` elsewhere — the kanban "Cards" menu showed the misalignment). |
 | toggle | `forms.toggle` | forms | ⬜ | `input.toggle` switches (e.g. Show Tasks, task-type toggles) |
 | button-group | `forms.button-group` | forms | ⬜ | |
-| badge | `elements.badge` | elements | ⬜ | flat `badge` exists on master — migrate to category |
+| badge | `elements.badge` | elements | 🟡 | — | Status label: `tone` default/accent/success/warning/danger/info/muted, `variant` soft (read-only, default) / solid, `dot`, `icon`, `count`, `href` (→ `<a>`). One box: 20px, 12 / semibold. Replaces the old flat Tailwind `badge` (removed). Done: project card status, program-sprint label, plugin details categories/tags. Counters on filter buttons stay `.badge` (10px counter rule) |
+| status-dot | `elements.status-dot` | elements | 🟡 | — | 8px dot in a badge tone; `label` gives a lone dot its accessible name. For "● On track" next to text |
 | avatar | `elements.avatar` | elements | ⬜ | **TODO (Marcel, 2026-10-10): one round avatar for every person image.** Today: flat `avatar` (initials only, 1 call-site), `elements.author-avatar` (canvas/goal/idea author — round only via `.authorAvatar` CSS), chip avatars (`tickets::chip-user`), raw `<img …/api/users?profileImage=…>` across headMenu/comments/notifications/cards. Target: `elements.avatar` (`userId`, `name` → tooltip/alt, `size` xs–xl, image with initials fallback, always round); `author-avatar` and the chip toggles compose it. |
 | accordion | `elements.accordion` | elements | ⬜ | flat `accordion` exists on master |
 | table | `elements.table` | elements | ⬜ | DataTables-coupled; class-backed (`Table.php`) |
