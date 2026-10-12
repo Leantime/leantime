@@ -18,46 +18,39 @@
     <x-global::elements.card tone="danger" class="reportNeedsAttention">
         <h5 class="subtitle"><i class="fa fa-triangle-exclamation" style="color: var(--red);"></i> {{ __('subtitles.needs_attention') }}</h5>
 
-        <ul class="tw-list-none tw-p-0 tw-m-0">
+        <ul class="lt-list">
             @foreach ($needsAttention['statusAlerts'] as $project)
-                <li>
-                    <span class="statusDot" style="background:var(--{{ $project->latestStatus === 'red' ? 'red' : 'yellow' }});"></span>
-                    <strong>{{ $tpl->escape($project->name) }}</strong>
+                <x-global::elements.list-item :title="$project->name">
+                    <x-slot:leading><span class="statusDot" style="background:var(--{{ $project->latestStatus === 'red' ? 'red' : 'yellow' }});"></span></x-slot:leading>
                     {{ __('text.attention_reported_status') }}
                     @if (!empty($project->latestStatusText))
-                        — <span class="tw-opacity-80">{{ $tpl->escape($project->latestStatusText) }}</span>
+                        — {{ $project->latestStatusText }}
                     @endif
-                </li>
+                </x-global::elements.list-item>
             @endforeach
 
             @foreach ($needsAttention['overdueMilestones'] as $milestone)
-                <li>
-                    <i class="fa fa-fw fa-clock" style="color: var(--red);"></i>
-                    <strong>{{ $tpl->escape($milestone->headline) }}</strong>
-                    @if ($showProjects)<span class="tw-opacity-60">({{ $tpl->escape($milestone->projectName) }})</span>@endif
+                <x-global::elements.list-item icon="fa fa-clock" tone="danger" :title="$milestone->headline">
+                    @if ($showProjects){{ $milestone->projectName }} · @endif
                     {{ __('text.attention_overdue_since') }} {{ $milestone->dueDate?->formatDateForUser() }}
-                </li>
+                </x-global::elements.list-item>
             @endforeach
 
             @foreach ($needsAttention['goalsAtRisk'] as $goal)
-                <li>
-                    <i class="fa fa-fw fa-bullseye" style="color: var(--yellow);"></i>
-                    <strong>{{ $tpl->escape($goal->title) }}</strong>
+                <x-global::elements.list-item icon="fa fa-bullseye" tone="warning" :title="$goal->title">
                     {{ $goal->status === 'status_miss' ? __('text.attention_goal_missed') : __('text.attention_goal_at_risk') }}
-                    <span class="tw-opacity-60">({{ \Leantime\Core\Support\Format::number((float) $goal->currentValue, 1) }} of {{ \Leantime\Core\Support\Format::number((float) $goal->endValue, 1) }} {{ $tpl->escape($goal->metricType ?? '') }})</span>
-                </li>
+                    ({{ \Leantime\Core\Support\Format::number((float) $goal->currentValue, 1) }} of {{ \Leantime\Core\Support\Format::number((float) $goal->endValue, 1) }} {{ $goal->metricType ?? '' }})
+                </x-global::elements.list-item>
             @endforeach
 
             @foreach ($needsAttention['staleProjects'] as $project)
-                <li>
-                    <i class="fa fa-fw fa-comment-slash tw-opacity-60"></i>
-                    <strong>{{ $tpl->escape($project->name) }}</strong>
+                <x-global::elements.list-item icon="fa fa-comment-slash" tone="muted" :title="$project->name">
                     @if (!empty($project->latestStatusDate))
                         {{ sprintf(__('text.attention_no_update_since'), $project->latestStatusDate->formatDateForUser()) }}
                     @else
                         {{ __('text.attention_never_updated') }}
                     @endif
-                </li>
+                </x-global::elements.list-item>
             @endforeach
         </ul>
     </x-global::elements.card>

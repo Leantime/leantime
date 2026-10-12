@@ -42,10 +42,6 @@
     margin-bottom: 8px;
 }
 
-.reportNeedsAttention ul li {
-    padding: 3px 0;
-    font-size: var(--font-size-m);
-}
 
 /* ── milestone list ─────────────────────────────────────────────────── */
 
