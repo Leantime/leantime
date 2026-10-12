@@ -355,14 +355,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="notifications" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="checkbox" value="on" name="notifications" class="input"
-                                               id="notifications"
-                                               @if ($values['notifications'] == "1" )
-                                                   checked='checked'
-                                               @endif/>
-                                        {{ __('label.receive_notifications') }}
-                                    </label>
+                                    <x-global::forms.checkbox name="notifications" value="on" id="notifications" :checked="$values['notifications'] == '1'">{{ __('label.receive_notifications') }}</x-global::forms.checkbox>
                                 </div>
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
@@ -424,20 +417,9 @@
                                     ];
                                 @endphp
                                 @foreach ($notificationCategories as $categoryKey => $config)
-                                    <label class="tw-flex tw-items-start tw-gap-2 tw-cursor-pointer tw-m-0 tw-py-1.5">
-                                        <input type="checkbox"
-                                               name="enabledEventTypes[]"
-                                               value="{{ $categoryKey }}"
-                                               class="input tw-mt-0.5"
-                                               @if (in_array($categoryKey, $enabledEventTypes))
-                                                   checked="checked"
-                                               @endif
-                                        />
-                                        <span>
-                                            <strong>{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</strong><br />
-                                            <small class="tw-text-gray-500">{{ __($config['description'] ?? '') }}</small>
-                                        </span>
-                                    </label>
+                                    <x-global::forms.checkbox name="enabledEventTypes[]" :value="$categoryKey" wrapperClass="tw-flex"
+                                        :checked="in_array($categoryKey, $enabledEventTypes)"
+                                        :description="__($config['description'] ?? '')">{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</x-global::forms.checkbox>
                                 @endforeach
                             </div>
 
@@ -478,14 +460,7 @@
                             <x-global::elements.section-header>{{ __('label.webhook_notifications') }}</x-global::elements.section-header>
                             <p><small>{{ __('label.webhook_notifications_description') }}</small></p>
                             <div class="form-group">
-                                <label for="webhookEnabled" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
-                                    <input type="checkbox" value="1" name="webhookEnabled" class="input"
-                                           id="webhookEnabled"
-                                           @if (!empty($webhookEnabled))
-                                               checked="checked"
-                                           @endif/>
-                                    {{ __('label.enable_webhook_notifications') }}
-                                </label>
+                                <x-global::forms.checkbox name="webhookEnabled" id="webhookEnabled" :checked="! empty($webhookEnabled)">{{ __('label.enable_webhook_notifications') }}</x-global::forms.checkbox>
                             </div>
                             <div class="form-group">
                                 <label for="webhookUrl">{{ __('label.webhook_url') }}</label>

@@ -108,9 +108,9 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 ### P1
 | Component | Tag | Cat | Status | Notes |
 |---|---|---|---|---|
-| radio | `forms.radio` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Two markups today: `span.radio > input + label` (menus/panels — laid out as a flex row in dropdowns.css since P4) and Bootstrap 2 `label.radio`/float rows in forms. Target: one `forms.radio` (+ group) with the label next to the input everywhere. |
-| checkbox | `forms.checkbox` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Same split as radio (`span.checkbox` in menus, Bootstrap 2 float + `margin-left:-20px` elsewhere — the kanban "Cards" menu showed the misalignment). |
-| toggle | `forms.toggle` | forms | ⬜ | `input.toggle` switches (e.g. Show Tasks, task-type toggles) |
+| radio | `forms.radio` | forms | 🟡 | One radio with its label, same look/props as `forms.checkbox` (`name`, `value` required) |
+| checkbox | `forms.checkbox` | forms | 🟡 | Checkbox or on/off switch (`variant="toggle"`, the existing `.toggle` look) with its label; label wraps the control. Props `name`, `value` (default '1'), `checked`, `id` (generated), `description` (12 muted line), `wrapperClass`; slot = label (markup ok, empty for a bare control + `aria-label`); other attributes → `<input>` (onchange, hx-*, disabled). Label 14 / regular. Done: account notification settings, widget manager, company telemetry, Show Tasks filter |
+| toggle | `forms.checkbox variant="toggle"` | forms | 🟡 | Folded into `forms.checkbox` (`variant="toggle"`): same label/description/attribute contract, the existing `.toggle` switch look |
 | button-group | `forms.button-group` | forms | ⬜ | |
 | badge | `elements.badge` | elements | 🟡 | — | Status label: `tone` default/accent/success/warning/danger/info/muted, `variant` soft (read-only, default) / solid, `dot`, `icon`, `count`, `href` (→ `<a>`). One box: 20px, 12 / semibold. Replaces the old flat Tailwind `badge` (removed). Done: project card status, program-sprint label, plugin details categories/tags. Counters on filter buttons stay `.badge` (10px counter rule) |
 | status-dot | `elements.status-dot` | elements | 🟡 | — | 8px dot in a badge tone; `label` gives a lone dot its accessible name. For "● On track" next to text |
