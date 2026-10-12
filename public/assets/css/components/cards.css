@@ -225,3 +225,37 @@ ol.lt-list {
 
     min-height: 20px;
 }
+
+/* elements.avatar — round profile picture; .lt-avatar-stack overlaps a row of them.
+   The doubled class beats the legacy `.maincontent .dropdown img` (23px, border, padding). */
+body img.lt-avatar.lt-avatar {
+    display: inline-block;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+    background: var(--secondary-background);
+}
+
+body img.lt-avatar.lt-avatar--xs { width: 20px; height: 20px; }
+body img.lt-avatar.lt-avatar--sm { width: 24px; height: 24px; }
+body img.lt-avatar.lt-avatar--lg { width: 40px; height: 40px; }
+body img.lt-avatar.lt-avatar--xl { width: 64px; height: 64px; }
+
+.lt-avatar-stack {
+    display: inline-flex;
+    align-items: center;
+}
+
+.lt-avatar-stack > .lt-avatar {
+    box-shadow: 0 0 0 2px var(--secondary-background);
+}
+
+body .lt-avatar-stack > .lt-avatar + .lt-avatar {
+    margin-left: -8px;
+}
