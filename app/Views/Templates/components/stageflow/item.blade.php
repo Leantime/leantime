@@ -50,7 +50,7 @@
 
     <div class="sf-item-foot">
         @if ($authorId || $authorName)
-            <x-global::avatar :userId="$authorId" :username="$authorName" size="sm" />
+            <x-global::elements.avatar :user-id="$authorId" :name="(string) $authorName" size="sm" />
         @elseif ($avatarUrl)
             <img class="sf-avatar" src="{{ $avatarUrl }}" width="18" />
         @endif
