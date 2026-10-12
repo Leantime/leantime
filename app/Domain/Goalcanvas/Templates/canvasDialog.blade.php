@@ -52,8 +52,6 @@
            position:relative so the z-index actually applies (it is inert on a
            statically positioned element) and the open dropdown clears the
            surrounding chrome. */
-        /* The header reaches the content edge so its row lines up with the modal's X. */
-        .gvDialog > .lt-modal-header{margin-right:-18px;}
         /* Discussion sits under the MAIN column (its own form — kept outside
            the goal form so the nested-form parse never orphans the Save
            buttons again). */
