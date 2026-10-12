@@ -64,9 +64,9 @@
         /* Section headers ride the SYSTEM recipe (h4.widgettitle.title-light,
            same as the task modal) — no dialog-private eyebrow styles. */
         .gvDialog > h4.widgettitle{margin:2px 0 12px;}
-        .gvDialog label{font-size:var(--font-size-s);font-weight:600;color:var(--gv-ink2);display:block;margin:0 0 6px;}
-        .gv-field-lbl{font-size:var(--font-size-s);color:var(--gv-ink2);margin:0 0 6px;}
-        .gv-unit{font-size:var(--font-size-xs);font-weight:700;color:var(--gv-acc);opacity:.85;}
+        /* Labels: the shared forms.label look, as in the task modal. Only the stacked spacing is the dialog's. */
+        .gvDialog label{display:block;margin:0 0 6px;}
+        .gv-unit{font-size:var(--font-size-s);font-weight:700;color:var(--gv-acc);opacity:.85;}
 
         /* Tab visuals come from the shared section-tab style
            (tab-group.css: .lt-tabs--underline); only the spacing stays here. */
@@ -163,7 +163,6 @@
         .gv-ms-list .gv-ms-item:last-child{border-bottom:0;}
         .gv-ms-remove{background:transparent;border:none;cursor:pointer;padding:6px 4px;opacity:.55;color:var(--gv-ink2);justify-self:end;}
         .gv-ms-remove:hover{opacity:1;color:var(--gv-acc);}
-        .gv-values .gv-field-lbl{font-size:11px;}
         .gv-dates{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:360px;}
 
         /* milestones panel */
@@ -248,13 +247,13 @@
                  monitoring job (review 2026-08-03). --}}
             <div class="gv-panel" id="gv-panel-edit" @if ($id !== '') role="tabpanel" aria-labelledby="gv-tab-edit" tabindex="0" @endif data-tabs-panel="edit" data-tabs-group="gv">
                 <div id="measureGoalContainer" class="gv-row">
-                    <label class="control-label" for="goalDescriptionInput">{{ __('goalcanvas.metric_label') }}</label>
+                    <x-global::forms.label for="goalDescriptionInput">{{ __('goalcanvas.metric_label') }}</x-global::forms.label>
                     <x-global::forms.text-input width="full" name="description" id="goalDescriptionInput" value="{{ $canvasItem['description'] }}" />
                 </div>
 
                 <div class="gv-values">
                     <div>
-                        <label class="control-label" for="goalMetricType">{{ __('label.type') }}</label>
+                        <x-global::forms.label for="goalMetricType">{{ __('label.type') }}</x-global::forms.label>
                         <x-global::forms.select name="metricType" id="goalMetricType" enhanced :search="false">
                             <option value="number" @if ($mType == 'number') selected @endif>{{ __('goalcanvas.type_number') }}</option>
                             <option value="percent" @if ($mType == 'percent') selected @endif>{{ __('goalcanvas.type_percent') }}</option>
@@ -262,11 +261,11 @@
                         </x-global::forms.select>
                     </div>
                     <div>
-                        <label class="control-label" for="goalStartValue">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></label>
+                        <x-global::forms.label for="goalStartValue">{{ __('goalcanvas.v_start') }} <span class="gv-unit"></span></x-global::forms.label>
                         <x-global::forms.text-input width="full" type="number" step="0.01" name="startValue" id="goalStartValue" value="{{ $canvasItem['startValue'] }}" />
                     </div>
                     <div>
-                        <label class="control-label" for="goalEndValue">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></label>
+                        <x-global::forms.label for="goalEndValue">{{ __('goalcanvas.v_goal') }} <span class="gv-unit"></span></x-global::forms.label>
                         <x-global::forms.text-input width="full" type="number" step="0.01" name="endValue" id="goalEndValue" value="{{ $canvasItem['endValue'] }}" />
                     </div>
                 </div>
@@ -336,7 +335,7 @@
                 <h4 class="widgettitle title-light gv-side-head"><i class="fa fa-circle-info" aria-hidden="true"></i> {{ __('goalcanvas.side_details') }}</h4>
 
                 <div class="form-group">
-                    <label class="control-label" for="statusCanvas">{{ __('label.status') }}</label>
+                    <x-global::forms.label for="statusCanvas">{{ __('label.status') }}</x-global::forms.label>
                     @if (!empty($statusLabels))
                         <x-global::forms.select width="full" name="status" id="statusCanvas" enhanced :search="false">
                             @foreach ($statusLabels as $key => $data)
@@ -359,11 +358,11 @@
                      datepicker to the same fields. --}}
                 <div class="gv-dates">
                     <div class="form-group">
-                        <label class="control-label" for="goalStartDate">{{ __('label.start_date') }}</label>
+                        <x-global::forms.label for="goalStartDate">{{ __('label.start_date') }}</x-global::forms.label>
                         <input type="text" autocomplete="off" id="goalStartDate" value="{{ format($canvasItem['startDate'])->date() }}" name="startDate" class="field-width-full startDate"/>
                     </div>
                     <div class="form-group">
-                        <label class="control-label" for="goalEndDate">{{ __('label.end_date') }}</label>
+                        <x-global::forms.label for="goalEndDate">{{ __('label.end_date') }}</x-global::forms.label>
                         <input type="text" autocomplete="off" id="goalEndDate" value="{{ format($canvasItem['endDate'])->date() }}" name="endDate" class="field-width-full endDate"/>
                     </div>
                 </div>
@@ -371,7 +370,7 @@
                 <div class="form-group">
                     @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                     @if (!empty($relatesLabels))
-                        <label class="control-label" for="relatesCanvas">{{ __('label.relates') }}</label>
+                        <x-global::forms.label for="relatesCanvas">{{ __('label.relates') }}</x-global::forms.label>
                         <x-global::forms.select name="relates" id="relatesCanvas" enhanced :search="false">
                             @foreach ($relatesLabels as $key => $data)
                                 @if ($data['active'])

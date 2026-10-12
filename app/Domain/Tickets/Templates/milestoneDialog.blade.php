@@ -28,7 +28,7 @@
     <label>{!! __('label.milestone_title') !!}</label>
     <x-global::forms.text-input width="full" name="headline" value="{{ $currentMilestone->headline }}" placeholder="{{ __('label.milestone_title') }}" /><br />
 
-    <label class="control-label">{!! __('label.project') !!}</label>
+    <x-global::forms.label>{!! __('label.project') !!}</x-global::forms.label>
     <x-global::forms.select width="full" name="projectId">
         @foreach ($allAssignedprojects as $project)
             @if (empty($project['type']) || $project['type'] == 'project')
