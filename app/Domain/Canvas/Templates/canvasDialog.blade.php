@@ -37,7 +37,6 @@
         </x-slot:actions>
     @endif
 </x-global::actions.modal-header>
-<hr style="margin-top: 5px; margin-bottom: 15px;">
     {!! $tpl->displayNotification() !!}
 
     <form class="formModal" method="post" action="{{ BASE_URL }}/{{ $canvasName }}canvas/editCanvasItem/{{ $id }}">
@@ -57,7 +56,7 @@
                         <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
                     @endif
                 @endforeach
-            </x-global::forms.select><br /><br />
+            </x-global::forms.select><br />
         @else
             <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
         @endif
