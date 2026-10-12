@@ -7,9 +7,7 @@
     $formUrl = CURRENT_URL;
 @endphp
 
-<h4 class="widgettitle title-light"><span
-            class="fa fa-comments"></span>{!! __('subtitles.discussion') !!}
-</h4>
+<x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}"
       id="commentForm">

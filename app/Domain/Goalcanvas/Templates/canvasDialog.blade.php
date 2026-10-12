@@ -321,7 +321,7 @@
 
             {{-- ── Details rail — the essentials (Docs-article pattern). ── --}}
             <aside class="gv-side">
-                <h4 class="widgettitle title-light gv-side-head"><i class="fa fa-circle-info" aria-hidden="true"></i> {{ __('goalcanvas.side_details') }}</h4>
+                <x-global::elements.section-header class="gv-side-head" icon="fa fa-circle-info">{{ __('goalcanvas.side_details') }}</x-global::elements.section-header>
 
                 <div class="form-group">
                     <x-global::forms.label for="statusCanvas">{{ __('label.status') }}</x-global::forms.label>
@@ -384,7 +384,7 @@
         @if ($id !== '')
             <div class="gv-discussion">
                 <hr />
-                <h4 class="widgettitle title-light"><span class="fa-solid fa-comments" aria-hidden="true"></span> {{ __('subtitles.discussion') }}</h4>
+                <x-global::elements.section-header icon="fa-solid fa-comments">{{ __('subtitles.discussion') }}</x-global::elements.section-header>
                 @include('comments::submodules.generalComment', ['formUrl' => '/goalcanvas/editCanvasItem/' . $id])
             </div>
         @endif

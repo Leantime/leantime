@@ -34,7 +34,7 @@
 
                     <div class="row row-fluid">
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> {!! __('subtitle.details') !!}</h4>
+                            <x-global::elements.section-header icon="fa fa-leaf">{!! __('subtitle.details') !!}</x-global::elements.section-header>
 
                             <div class="form-group">
                                 <label class=" control-label">{!! __('label.client_id') !!}</label>
@@ -121,7 +121,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {!! __('subtitles.users_assigned_to_this_client') !!}</h4>
+                            <x-global::elements.section-header icon="fa fa-users">{!! __('subtitles.users_assigned_to_this_client') !!}</x-global::elements.section-header>
                             <x-global::forms.button tag="a" link="#/users/newUser?preSelectedClient={{ $values['id'] }}" contentRole="primary"><i class='fa fa-plus'></i> {!! __('buttons.add_user') !!} </x-global::forms.button>
                             <table class='table table-bordered'>
                                 <colgroup>

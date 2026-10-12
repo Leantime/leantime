@@ -21,7 +21,7 @@
             <div class="row">
                 <div class="col-md-7">
                     <div class="maincontentinner">
-                    <h4 class="widgettitle title-light">{!! __('label.profile_information') !!}</h4>
+                    <x-global::elements.section-header>{!! __('label.profile_information') !!}</x-global::elements.section-header>
 
                     <label for="firstname">{!! __('label.firstname') !!}</label> <x-global::forms.text-input
                         name="firstname" id="firstname"
@@ -99,7 +99,7 @@
                     </x-global::forms.select><br/>
                         <br/>
 
-                        <h4 class="widgettitle title-light">{!! __('label.contact_information') !!}</h4>
+                        <x-global::elements.section-header>{!! __('label.contact_information') !!}</x-global::elements.section-header>
 
                         <label for="user">{!! __('label.email') !!}</label> <x-global::forms.text-input
                             name="user" id="user" value="{{ $values['user'] }}" /><br />
@@ -109,7 +109,7 @@
                             value="{{ $values['phone'] }}" /><br /><br />
 
 
-                        <h4 class="widgettitle title-light">{!! __('label.employee_information') !!}</h4>
+                        <x-global::elements.section-header>{!! __('label.employee_information') !!}</x-global::elements.section-header>
                         <label for="jobTitle">{!! __('label.jobTitle') !!}</label> <x-global::forms.text-input
                             name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
 
@@ -130,7 +130,7 @@
                                  best-effort). Both nullable — until an admin
                                  sets them, capacity math treats this user as
                                  unconfigured and skips warnings. --}}
-                            <h4 class="widgettitle title-light">{!! __('label.capacity') !!}</h4>
+                            <x-global::elements.section-header>{!! __('label.capacity') !!}</x-global::elements.section-header>
 
                             <label for="weekly_hours">{!! __('label.weekly_hours') !!}</label>
                             <x-global::forms.text-input
@@ -164,7 +164,7 @@
                 </div>
                 <div class="col-md-5">
                     <div class="maincontentinner">
-                    <h4 class="widgettitle title-light">{!! __('label.project_assignment') !!}</h4>
+                    <x-global::elements.section-header>{!! __('label.project_assignment') !!}</x-global::elements.section-header>
 
                     <div class="scrollableItemList">
                         @php

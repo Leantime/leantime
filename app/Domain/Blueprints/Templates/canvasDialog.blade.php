@@ -126,7 +126,7 @@
 
         @if($id !== '')
             <br /><br />
-            <h4 class="widgettitle title-light"><span class="fa fa-link"></span> {!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></h4>
+            <x-global::elements.section-header icon="fa fa-link">{!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></x-global::elements.section-header>
 
             @if($canvasItem['milestoneId'] == '')
                 <center>
@@ -186,7 +186,7 @@
     @if($id !== '')
         <br />
         <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{!! __('subtitles.discussion') !!}</h4>
+        <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
         @include('comments::submodules.generalComment', ['formUrl' => '/blueprints/' . $canvasSlug . '/editCanvasItem/' . $id])
     @endif
 </div>

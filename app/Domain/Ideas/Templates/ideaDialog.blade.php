@@ -53,7 +53,7 @@
             <hr>
             <input type="hidden" name="comment" value="1"/>
 
-            <h4 class="widgettitle title-light"><span class="fa fa-submodules.generalComment"></span>{!! __('subtitles.discussion') !!}</h4>
+            <x-global::elements.section-header icon="fa fa-submodules.generalComment">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
             @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/ideas/ideaDialog/' . $id])
         @endif
 
@@ -62,8 +62,7 @@
     <div class="col-md-4">
         @if ($id !== '')
             <br/><br/>
-            <h4 class="widgettitle title-light"><span
-                    class="fa fa-link"></span> {!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></h4>
+            <x-global::elements.section-header icon="fa fa-link">{!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></x-global::elements.section-header>
 
             <ul class="sortableTicketList" style="width:99%">
                 @if ($canvasItem['milestoneId'] == '')

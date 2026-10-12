@@ -152,7 +152,7 @@
             <br />
             <hr />
             @dispatchEvent('beforeSubtasks', ['ticketId' => $ticket->id])
-            <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> {!! __('subtitles.subtasks') !!}</h4>
+            <x-global::elements.section-header icon="fa-solid fa-sitemap">{!! __('subtitles.subtasks') !!}</x-global::elements.section-header>
 
             <x-global::hx
                 wrapperId="ticketSubtasks"
@@ -165,8 +165,7 @@
                 {{ __('label.loadingSubtasks', 'Loading Subtasks ...') }}<br /><br />
             </div>
 
-        <h4 class="widgettitle title-light"><span
-                    class="fa-solid fa-comments"></span>{!! __('subtitles.discussion') !!}</h4>
+        <x-global::elements.section-header icon="fa-solid fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
 
         <div class="row-fluid">
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" class="formModal">

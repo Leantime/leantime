@@ -123,7 +123,7 @@
                         <!-- Left: Contents Sidebar -->
                         <div class="wiki-contents-panel" id="contentsPanel">
                             <div class="wiki-panel-header">
-                                <h4 class="widgettitle title-light"><i class="fa fa-list"></i> Contents</h4>
+                                <x-global::elements.section-header icon="fa fa-list">Contents</x-global::elements.section-header>
                                 <button class="wiki-collapse-btn" id="toggleContents" title="Collapse">
                                     <i class="fa fa-chevron-left"></i>
                                 </button>
@@ -243,7 +243,7 @@
 
                         <!-- Comments Section -->
                         <section class="wiki-comments-section" id="comments">
-                            <h4 class="widgettitle title-light"><span class="fa-solid fa-comments"></span> {!! __('subtitles.discussion') !!}</h4>
+                            <x-global::elements.section-header icon="fa-solid fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
 
                             <form method="post" action="{{ BASE_URL }}/wiki/show/{{ $currentArticle->id }}#comment">
                                 <input type="hidden" name="comment" value="1" />
@@ -256,7 +256,7 @@
                         <!-- Properties Panel (inside content area) -->
                         <div class="wiki-properties-panel" id="propertiesPanel">
                             <div class="wiki-panel-header">
-                                <h4 class="widgettitle title-light"><i class="fa fa-info-circle"></i> Details</h4>
+                                <x-global::elements.section-header icon="fa fa-info-circle">Details</x-global::elements.section-header>
                                 <button class="wiki-collapse-btn" id="collapseProperties" title="Collapse">
                                     <i class="fa fa-chevron-right"></i>
                                 </button>
@@ -366,7 +366,7 @@
 
                     <!-- Activity Section -->
                     <div class="wiki-properties-section wiki-activity-section">
-                        <h4 class="widgettitle title-light"><i class="fa fa-clock-rotate-left"></i> Activity</h4>
+                        <x-global::elements.section-header icon="fa fa-clock-rotate-left">Activity</x-global::elements.section-header>
 
                         <div id="wikiActivityContainer"
                              hx-get="{{ BASE_URL }}/hx/wiki/articleActivity?articleId={{ $currentArticle->id }}"
