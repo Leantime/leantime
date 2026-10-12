@@ -46,13 +46,20 @@
 
 <div style="width:1000px; padding-bottom:20px;">
 
-    {{-- Header: stage pill --}}
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+    {{-- Header: the stage pill is the title --}}
+    <x-global::actions.modal-header>
+        <x-slot:title>
         <span style="display:inline-flex; align-items:center; gap:5px; padding:4px 14px; border-radius:20px; font-size:var(--font-size-s); font-weight:600; color:{{ $stageColor }}; background:{{ $stageBg }};">
             <i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] ?? 'fa-diagram-project' }}"></i>
             {{ isset($canvasTypes[$canvasItem['box']]) ? $tpl->__($canvasTypes[$canvasItem['box']]['title']) : '' }}
         </span>
-    </div>
+        </x-slot:title>
+        @if ($id != '')
+        <x-slot:actions>
+            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a></li>
+        </x-slot:actions>
+    @endif
+</x-global::actions.modal-header>
 
     {!! $tpl->displayNotification() !!}
 
@@ -271,9 +278,6 @@
                 <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</x-global::forms.button>
             @endif
 
-            @if ($id != '')
-                <x-global::forms.button tag="a" link="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete" style="margin-left:auto;" state="danger" variant="outline"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</x-global::forms.button>
-            @endif
         </div>
 
     </form>

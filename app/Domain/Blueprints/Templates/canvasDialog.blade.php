@@ -33,6 +33,11 @@
 
     <x-global::actions.modal-header>
     <x-slot:title><i class="fas {{ $boxMeta['icon'] }}"></i> {{ $boxMeta['title'] }}</x-slot:title>
+    @if ($id != '')
+        <x-slot:actions>
+            <li><a href="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+        </x-slot:actions>
+    @endif
 </x-global::actions.modal-header><hr style="margin-top: 5px; margin-bottom: 15px;">
     {!! $tpl->displayNotification() !!}
 
@@ -113,9 +118,6 @@
         <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}" />
         <input type="hidden" name="changeItem" value="1" />
 
-        @if($id != '')
-            <x-global::forms.button tag="a" link="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete right" state="danger" variant="outline"><i class='fa fa-trash-can'></i> {!! __('links.delete') !!}</x-global::forms.button>
-        @endif
 
         @if($login::userIsAtLeast($roles::$editor))
             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
