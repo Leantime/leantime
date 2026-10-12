@@ -57,9 +57,7 @@
     <div class="row">
         <div class="col-md-2">
             <div class="row-fluid marginBottom">
-                <h4 class="widgettitle title-light">
-                    <span class="fa fa-folder"></span>{!! __('subtitles.organization') !!}
-                </h4>
+                <x-global::elements.section-header icon="fa fa-folder">{!! __('subtitles.organization') !!}</x-global::elements.section-header>
                 <label>Parent</label>
                 <x-global::forms.select width="full" name="parent">
                     <option value="0">None</option>
@@ -79,7 +77,7 @@
             </div>
 
             @if ($id !== '')
-                <h4 class="widgettitle title-light"><span class="fa fa-link"></span> {!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></h4>
+                <x-global::elements.section-header icon="fa fa-link">{!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></x-global::elements.section-header>
 
                 <ul class="sortableTicketList" style="width:99%">
                     @if ($currentArticle->milestoneId == '')

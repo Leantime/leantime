@@ -21,7 +21,7 @@
          neither part of it nor separate from it, and the string grows with each
          status bucket so it would eventually crowd the action buttons. --}}
     <div class="gv-ms-head">
-        <h4 class="widgettitle title-light gv-ms-bars-head"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __('headlines.milestones') }}</h4>
+        <x-global::elements.section-header class="gv-ms-bars-head" icon="fa fa-flag-checkered">{{ __('headlines.milestones') }}</x-global::elements.section-header>
 
         <span class="gv-ms-actions">
             @if ($login::userIsAtLeast($roles::$editor))

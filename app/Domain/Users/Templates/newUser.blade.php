@@ -13,7 +13,7 @@
     <div class="row" style="width:800px;">
         <div class="col-md-7">
 
-                <h4 class="widgettitle title-light">{!! __('label.profile_information') !!}</h4>
+                <x-global::elements.section-header>{!! __('label.profile_information') !!}</x-global::elements.section-header>
 
                     <label for="firstname">{!! __('label.firstname') !!}</label> <x-global::forms.text-input
                         name="firstname" id="firstname"
@@ -54,7 +54,7 @@
             <br/>
 
 
-                <h4 class="widgettitle title-light">{!! __('label.contact_information') !!}</h4>
+                <x-global::elements.section-header>{!! __('label.contact_information') !!}</x-global::elements.section-header>
 
 
                     <label for="user">{!! __('label.email') !!}</label> <x-global::forms.text-input
@@ -65,7 +65,7 @@
                         value="{{ $values['phone'] }}" /><br />
             <br/>
 
-            <h4 class="widgettitle title-light">{!! __('label.employee_information') !!}</h4>
+            <x-global::elements.section-header>{!! __('label.employee_information') !!}</x-global::elements.section-header>
                 <label for="jobTitle">{!! __('label.jobTitle') !!}</label> <x-global::forms.text-input
                     name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
 
@@ -84,7 +84,7 @@
         </div>
         <div class="col-md-5">
 
-                <h4 class="widgettitle title-light">{!! __('label.project_assignment') !!}</h4>
+                <x-global::elements.section-header>{!! __('label.project_assignment') !!}</x-global::elements.section-header>
 
                 <div class="scrollableItemList">
                     @php

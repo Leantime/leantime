@@ -56,9 +56,7 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4 class="widgettitle title-light">
-                                        <span class="fa fa-users"></span>{!! __('headlines.team_member') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-users">{!! __('headlines.team_member') !!}</x-global::elements.section-header>
                                 </div>
                             </div>
 
@@ -123,9 +121,7 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4 class="widgettitle title-light">
-                                        <span class="fa fa-user-friends "></span>{!! __('headlines.assign_users_to_project') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-user-friends">{!! __('headlines.assign_users_to_project') !!}</x-global::elements.section-header>
                                 </div>
                             </div>
 
@@ -206,7 +202,7 @@
                     </div>
                 @endif
 
-                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
+                <x-global::elements.section-header icon="fa fa-leaf">Mattermost</x-global::elements.section-header>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="{{ BASE_URL }}/dist/images/mattermost-logoHorizontal.png" width="200" />
@@ -224,7 +220,7 @@
                     </div>
                 </div>
                 <br />
-                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Slack</h4>
+                <x-global::elements.section-header icon="fa fa-leaf">Slack</x-global::elements.section-header>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="https://cdn.cdnlogo.com/logos/s/52/slack.svg" width="200"/>
@@ -243,7 +239,7 @@
                     </div>
                 </div>
 
-                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Zulip</h4>
+                <x-global::elements.section-header icon="fa fa-leaf">Zulip</x-global::elements.section-header>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="{{ BASE_URL }}/dist/images/zulip-org-logo.png" width="200"/>
@@ -275,7 +271,7 @@
                     </div>
                 </div>
 
-                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Telegram</h4>
+                <x-global::elements.section-header icon="fa fa-leaf">Telegram</x-global::elements.section-header>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="{{ BASE_URL }}/dist/images/telegram-logo.svg" width="130" alt="Telegram logo" />
@@ -301,7 +297,7 @@
                 </div>
 
                 {{-- Slack webhook --}}
-                <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
+                <x-global::elements.section-header icon="fa fa-leaf">Discord</x-global::elements.section-header>
                 <div class='row'>
                     <div class='col-md-3'>
                         <img src='{{ BASE_URL }}/dist/images/discord-logo.png' width='200'/>

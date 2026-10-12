@@ -35,9 +35,7 @@
                                     <br />
                                     <input type="hidden" value="1" name="saveSettings" />
 
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-building"></span>{!! __('subtitles.companydetails') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-building">{!! __('subtitles.companydetails') !!}</x-global::elements.section-header>
                                     <div class="row">
                                         <div class="col-md-2">
                                             <label>{!! __('label.language') !!}</label>
@@ -81,9 +79,7 @@
                                         </div>
                                     @endif
                                     <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-cog"></span>{!! __('subtitles.defaults') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-cog">{!! __('subtitles.defaults') !!}</x-global::elements.section-header>
                                     <div class="row">
                                         <div class="col-md-2">
                                             <label for="messageFrequency">{!! __('label.messages_frequency') !!}</label>
@@ -107,9 +103,7 @@
                                         </div>
                                     </div>
                                     <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-bell"></span>{!! __('label.default_notification_types') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-bell">{!! __('label.default_notification_types') !!}</x-global::elements.section-header>
                                     <p>{!! __('label.default_notification_types_description') !!}</p>
                                     <div class="row">
                                         <div class="col-md-8">
@@ -143,9 +137,7 @@
                                     </div>
 
                                     <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-sliders"></span>{!! __('label.default_notification_relevance') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-sliders">{!! __('label.default_notification_relevance') !!}</x-global::elements.section-header>
                                     <p>{!! __('label.default_notification_relevance_description') !!}</p>
                                     <div class="row">
                                         <div class="col-md-8">
@@ -167,7 +159,7 @@
 
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings" >
                                     <input type="hidden" value="1" name="saveLogo" />
-                                    <h5 class="widgettitle title-light">{!! __('headlines.logo') !!}</h5>
+                                    <x-global::elements.section-header as="h5">{!! __('headlines.logo') !!}</x-global::elements.section-header>
                                     <br />
 
                                     <div class="row">

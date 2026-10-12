@@ -107,3 +107,56 @@
     color: var(--color-text-muted);
     text-align: center;
 }
+
+/* elements.section-header — section title inside a page, card or dialog (16 / bold, icon, 12px eyebrow + description). */
+.lt-section-hd {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 12px;
+}
+
+.lt-section-hd-text {
+    min-width: 0;
+}
+
+.lt-section-hd-eyebrow {
+    margin-bottom: 2px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+body .lt-section-hd .lt-section-hd-title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    color: var(--primary-color);
+    font-size: var(--font-size-l);
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.lt-section-hd-title > i:first-child {
+    flex: none;
+    width: 1.1em;
+    text-align: center;
+}
+
+.lt-section-hd-desc {
+    margin: 2px 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+.lt-section-hd-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+}

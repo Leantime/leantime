@@ -15,7 +15,7 @@
         <div class="row" >
             <div class="col-md-6">
 
-                <h4 class="widgettitle title-light">{!! __('label.basic_information') !!}</h4>
+                <x-global::elements.section-header>{!! __('label.basic_information') !!}</x-global::elements.section-header>
 
                 <label>{!! __('label.key') !!}</label><div class="clearfix"></div>
                 lt_{{ substr($values['user'], 0, 5) }}***<br /><br />
@@ -70,7 +70,7 @@
             </div>
             <div class="col-md-6">
 
-                <h4 class="widgettitle title-light">{!! __('label.project_access') !!}</h4>
+                <x-global::elements.section-header>{!! __('label.project_access') !!}</x-global::elements.section-header>
 
                 <div class="scrollableItemList">
                     @php

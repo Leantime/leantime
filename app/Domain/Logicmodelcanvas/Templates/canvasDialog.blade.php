@@ -286,7 +286,7 @@
          The comments submodule has its own <form> which would break the outer form. --}}
     @if ($id !== '')
         <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
-            <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ $tpl->__('subtitles.discussion') }}</h4>
+            <x-global::elements.section-header icon="fa fa-comments">{{ $tpl->__('subtitles.discussion') }}</x-global::elements.section-header>
             <input type="hidden" name="comment" value="1" />
             @include('comments::submodules.generalComment', ['formUrl' => '/' . $canvasName . 'canvas/editCanvasItem/' . $id])
         </div>
