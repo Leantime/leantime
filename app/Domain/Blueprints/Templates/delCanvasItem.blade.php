@@ -1,6 +1,7 @@
 <x-global::actions.modal-header>
     <x-slot:title>{!! __('subtitles.delete') !!}</x-slot:title>
-</x-global::actions.modal-header><hr style="margin-top: 5px; margin-bottom: 15px;">
+</x-global::actions.modal-header>
+<hr style="margin-top: 5px; margin-bottom: 15px;">
 
 <form method="post" action="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}">
     <p>{!! __('text.confirm_board_item_deletion') !!}</p><br />

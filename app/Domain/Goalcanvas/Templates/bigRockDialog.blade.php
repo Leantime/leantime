@@ -1,6 +1,7 @@
 <x-global::actions.modal-header>
     <x-slot:title><i class="fa-solid fa-mountain"></i> {{ empty($bigRock['title']) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{ $bigRock['title'] }}</x-slot:title>
-</x-global::actions.modal-header><form class="formModal" method="post"
+</x-global::actions.modal-header>
+<form class="formModal" method="post"
     action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock['id']) ? $bigRock['id'] : '' }}">
 
     <br />

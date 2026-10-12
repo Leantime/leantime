@@ -51,7 +51,8 @@ use Leantime\Core\Support\FromFormat;
     <x-slot:actions>
         <li><a href="{{ BASE_URL }}/timesheets/delTime/{{ $tpl->escape($_GET['id']) }}" class="delete editTimeModal"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
     </x-slot:actions>
-</x-global::actions.modal-header><form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
+</x-global::actions.modal-header>
+<form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
 
 <label for="clients">{!! __('label.client') !!}</label>
 <x-global::forms.select enhanced name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">
