@@ -184,7 +184,7 @@
     min-height: 25px;
     margin: 0 0 16px;
     position: relative;
-    z-index: var(--zlayer-7); /* the theme's modal-dropdown layer: an open ⋮ paints over the content below */
+    z-index: var(--zlayer-7, 30); /* the theme's modal-dropdown layer: an open ⋮ paints over the content below */
 }
 
 /* The header brings its own X; hide nyroModal's. It is written as a child of .nyroModalCont and
