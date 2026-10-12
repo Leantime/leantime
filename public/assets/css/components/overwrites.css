@@ -196,7 +196,7 @@ div.tagsinput span.tag
 .companyProject,
 .companyProject a{
     color:#999;
-    font-weight:normal
+    font-weight: normal
 }
 
 /* Filter panels: an actions.dropdown panel menu (position, shadow and radius come from .dropdown-menu).
@@ -217,7 +217,7 @@ div.tagsinput span.tag
 }
 
 .filterBar label {
-    font-weight:normal;
+    font-weight: normal;
 }
 
 .headtitle {
@@ -258,14 +258,14 @@ body .widgettitle.title-light {
     border-right:0px !important;
     border-bottom:0px solid #ccc;
     margin-bottom:15px;
-    font-size:var(--font-size-l);
+    font-size: var(--font-size-l);
     box-shadow: none;
 
 }
 
 .nyroModalCont .widgettitle.title-light {
     padding-top: 5px;
-    font-size:var(--font-size-l);
+    font-size: var(--font-size-l);
 }
 
 div.tagsinput {
@@ -317,7 +317,7 @@ div.growl div.growl-closer {
     background:var(--secondary-background);
     color:var(--primary-font-color);
     padding:20px;
-    font-size:var(--base-font-size);
+    font-size: var(--base-font-size);
     width:250px;
     opacity:1;
     border-radius:var(--box-radius);
@@ -328,7 +328,7 @@ div.growl div.growl-closer {
 
 div.growl growl-close {
     color:var(--primary-font-color);
-    font-size:var(--base-font-size);
+    font-size: var(--base-font-size);
 }
 
 div.growl.growl-default,
@@ -345,7 +345,7 @@ div.growl.growl-error {
 }
 
 div.growl .growl-title {
-    font-size: 18px;
+    font-size: var(--font-size-xl);
     line-height: 24px;
     display:none;
 }
@@ -387,7 +387,7 @@ body hr {
  */
 
 .tippy-content {
-    font-size:var(--font-size-s);
+    font-size: var(--font-size-s);
     color: var(--secondary-action-hover-color);
 }
 

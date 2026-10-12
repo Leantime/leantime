@@ -306,7 +306,7 @@
 /*}*/
 
 :root {
-    --fc-small-font-size: .85em;
+    --fc-small-font-size: var(--font-size-s);
     --fc-page-bg-color: var(--secondary-background);
     --fc-neutral-bg-color: var(--layered-background);
     --fc-neutral-text-color: var(--neutral);

@@ -30,7 +30,7 @@ min-width: 1200px
     }
 
     .mainwrapper.menuclosed .bigProjectSelector .fa {
-        font-size:var(--base-font-size);
+        font-size: var(--base-font-size);
         line-height: 50px;
     }
 
@@ -501,7 +501,7 @@ min-width: 1200px
     }
 
     .pagetitle h1 {
-        font-size: 18px;
+        font-size: var(--font-size-xl);
     }
 
     .pageheader {
@@ -565,11 +565,11 @@ min-width: 1200px
     }
 
     .leftmenu .nav-tabs.nav-stacked li a {
-        font-size: 13px;
+        font-size: var(--base-font-size);
     }
 
     .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
 
@@ -585,7 +585,7 @@ min-width: 1200px
     /* buttons */
     .tabbable > .nav-tabs > li {
         overflow: hidden;
-        font-size: 11px;
+        font-size: var(--font-size-s);
     }
 
     .tabbable > .nav-tabs > li a {
@@ -687,7 +687,7 @@ min-width: 1200px
 
     /* error */
     .errortitle h4 {
-        font-size: 20px;
+        font-size: var(--font-size-xxl);
     }
 
     .errortitle span {
@@ -714,7 +714,7 @@ min-width: 1200px
     .input-append .btn, .input-prepend .btn {
         padding-left: 8px;
         padding-right: 8px;
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
     /* footer */
@@ -773,7 +773,7 @@ min-width: 1200px
     }
 
     .commentlist li .comment-info h4 {
-        font-size: 14px;
+        font-size: var(--base-font-size);
     }
 
     /* buttons */
@@ -1005,7 +1005,7 @@ min-width: 1200px
         margin-bottom: 10px;
         padding-right: 0;
         white-space: nowrap;
-        font-size: 14px;
+        font-size: var(--base-font-size);
         color: #0866c6;
         text-decoration: none;
     }
@@ -1554,7 +1554,7 @@ min-width: 1200px
     /* calendar */
     .ui-datepicker-calendar td a {
         padding: 10px;
-        font-size: 12px;
+        font-size: var(--font-size-s);
     }
 
     /* buttons */
