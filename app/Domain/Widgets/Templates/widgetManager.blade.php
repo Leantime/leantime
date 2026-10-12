@@ -14,19 +14,11 @@
                         <p>{!! $widget->description !!} </p>
                         <div class="right">
                             @if($widget->alwaysVisible == false)
-                                <input
-                                    type="checkbox"
-                                    class="toggle"
-                                    id="widget-toggle-{{ $widget->id }}"
-                                    onclick="leantime.widgetController.toggleWidgetVisibility('{{ $widget->id }}', this, {{ json_encode($widget) }})"
-                                    @if(isset($activeWidgets[$widget->id]))
-                                        checked='checked'
-                                        @if(isset($activeWidgets[$widget->id]->isNew) && $activeWidgets[$widget->id]->isNew)
-                                            data-is-new="true"
-                                        @endif
-                                    @endif
-                                />
-                                <label for="widget-toggle-{{ $widget->id }}"></label>
+                                <x-global::forms.checkbox variant="toggle" :id="'widget-toggle-' . $widget->id"
+                                    :checked="isset($activeWidgets[$widget->id])"
+                                    :data-is-new="! empty($activeWidgets[$widget->id]->isNew) ? 'true' : null"
+                                    :aria-label="$widget->name"
+                                    onclick="leantime.widgetController.toggleWidgetVisibility('{{ $widget->id }}', this, {{ json_encode($widget) }})" />
                             @endif
                         </div>
                         <div class="clearall"></div>

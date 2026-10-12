@@ -137,8 +137,7 @@
                 {{-- Show Tasks narrows what the milestone views list, so it lives with the other filters. --}}
                 @if ($taskToggle === true)
                     <div class="form-group filterToggleRow">
-                        <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" {{ ($showTasks === 'true') ? 'checked="checked"' : '' }} />
-                        <label for="taskTypeToggle">{{ __('label.showTasks') }}</label>
+                        <x-global::forms.checkbox variant="toggle" id="taskTypeToggle" name="showTasks" value="true" :checked="$showTasks === 'true'" onchange="jQuery('#ticketSearch').submit();">{{ __('label.showTasks') }}</x-global::forms.checkbox>
                     </div>
                 @endif
 

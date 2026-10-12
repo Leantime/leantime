@@ -1973,3 +1973,53 @@ body .btn.btn-round-icon {
     line-height: 1;
     white-space: nowrap;
 }
+
+/* forms.checkbox / forms.radio — control + label (14 / regular) + optional 12px muted description.
+   `body label.lt-check` beats the base `form label` and `.stdform label` (float, fixed width) rules. */
+body label.lt-check {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
+    float: none;
+    width: auto;
+    margin: 0;
+    padding: 4px 0;
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.lt-check-input[type="checkbox"]:not(.toggle),
+.lt-check-input[type="radio"] {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    accent-color: var(--accent1);
+    cursor: pointer;
+}
+
+.lt-check--toggle input[type="checkbox"].toggle {
+    flex: none;
+    margin-top: 0;
+}
+
+.lt-check-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.lt-check-desc {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    line-height: 16px;
+}
+
+label.lt-check:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: .6;
+}

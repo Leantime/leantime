@@ -72,7 +72,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="hidden" name="telemetryToggleShown" value="1" />
-                                                <input type="checkbox" class="toggle" name="telemetryActive" id="telemetryActive" @if ($companySettings['telemetryActive']) checked="checked" @endif />
+                                                <x-global::forms.checkbox variant="toggle" name="telemetryActive" id="telemetryActive" :checked="(bool) $companySettings['telemetryActive']" :aria-label="strip_tags(__('label.send_telemetry'))" />
                                                 <br />
                                                 <small>{!! __('label.telemetry_background') !!}</small>
                                             </div>
