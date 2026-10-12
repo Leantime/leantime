@@ -220,6 +220,8 @@
     --status-done-color: #10b981;         /* Emerald-500 */
 
     /* Feedback Colors */
+    /* Strongest text end (black on light, white on dark): tinted text mixes its tone toward it to stay readable. */
+    --color-ink: #000;
     --feedback-success-bg: #e8f5e9;
     --feedback-success-color: var(--green);
     --feedback-success-border: #4caf50;

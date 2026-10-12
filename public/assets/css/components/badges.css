@@ -3,6 +3,8 @@
  *
  * One box: 20px tall, 12px / semibold (type rule in COMPONENTS.md). Each tone sets two colours
  * and the soft / solid variants pick from them, so a new tone is one line.
+ * Soft text is the tone mixed 60/40 toward --color-ink, which keeps 12px text above 5:1 on its
+ * tint in all four themes (the plain feedback colours drop to 2.5–4:1 on some of them).
  */
 .lt-badge {
     --lt-badge-color: color-mix(in srgb, var(--primary-font-color) 80%, transparent);
@@ -37,11 +39,11 @@ a.lt-badge:focus-visible {
     background: color-mix(in srgb, var(--lt-badge-solid) 20%, transparent);
 }
 
-.lt-badge--accent  { --lt-badge-color: var(--accent1); --lt-badge-bg: color-mix(in srgb, var(--accent1) 12%, transparent); --lt-badge-solid: var(--accent1); --lt-badge-solid-color: var(--accent1-color); }
-.lt-badge--success { --lt-badge-color: var(--feedback-success-color); --lt-badge-bg: var(--feedback-success-bg); --lt-badge-solid: var(--green); --lt-badge-solid-color: var(--green-text-color); }
-.lt-badge--warning { --lt-badge-color: var(--feedback-warning-color); --lt-badge-bg: var(--feedback-warning-bg); --lt-badge-solid: var(--yellow); --lt-badge-solid-color: var(--yellow-text-color); }
-.lt-badge--danger  { --lt-badge-color: var(--feedback-error-color); --lt-badge-bg: var(--feedback-error-bg); --lt-badge-solid: var(--red); --lt-badge-solid-color: var(--red-text-color); }
-.lt-badge--info    { --lt-badge-color: var(--feedback-info-color); --lt-badge-bg: var(--feedback-info-bg); --lt-badge-solid: var(--blue); --lt-badge-solid-color: var(--blue-text-color); }
+.lt-badge--accent  { --lt-badge-color: color-mix(in srgb, var(--accent1) 60%, var(--color-ink, var(--primary-font-color))); --lt-badge-bg: color-mix(in srgb, var(--accent1) 12%, transparent); --lt-badge-solid: var(--accent1); --lt-badge-solid-color: var(--accent1-color); }
+.lt-badge--success { --lt-badge-color: color-mix(in srgb, var(--feedback-success-color) 60%, var(--color-ink, var(--primary-font-color))); --lt-badge-bg: var(--feedback-success-bg); --lt-badge-solid: var(--green); --lt-badge-solid-color: var(--green-text-color); }
+.lt-badge--warning { --lt-badge-color: color-mix(in srgb, var(--feedback-warning-color) 60%, var(--color-ink, var(--primary-font-color))); --lt-badge-bg: var(--feedback-warning-bg); --lt-badge-solid: var(--yellow); --lt-badge-solid-color: var(--yellow-text-color); }
+.lt-badge--danger  { --lt-badge-color: color-mix(in srgb, var(--feedback-error-color) 60%, var(--color-ink, var(--primary-font-color))); --lt-badge-bg: var(--feedback-error-bg); --lt-badge-solid: var(--red); --lt-badge-solid-color: var(--red-text-color); }
+.lt-badge--info    { --lt-badge-color: color-mix(in srgb, var(--feedback-info-color) 60%, var(--color-ink, var(--primary-font-color))); --lt-badge-bg: var(--feedback-info-bg); --lt-badge-solid: var(--blue); --lt-badge-solid-color: var(--blue-text-color); }
 .lt-badge--muted   { --lt-badge-color: var(--color-text-muted); --lt-badge-bg: transparent; --lt-badge-solid: var(--grey); --lt-badge-solid-color: var(--grey-text-color); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-font-color) 15%, transparent); }
 
 .lt-badge--solid {
