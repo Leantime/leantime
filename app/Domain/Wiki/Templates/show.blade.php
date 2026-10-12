@@ -84,6 +84,10 @@
                     <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{!! __('link.edit_wiki') !!}</a></li>
                     <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_wiki') !!}</a></li>
                 @endif
+                @if($login::userIsAtLeast($roles::$editor) && isset($currentArticle->id) && $currentArticle->id)
+                    <li class="nav-header border">{!! __('label.article') !!}</li>
+                    <li><a class="delete" href="#/wiki/delArticle/{{ $currentArticle->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</a></li>
+                @endif
 
             </x-global::actions.dropdown>
         </div>
@@ -155,7 +159,8 @@
                             <header class="wiki-document-header">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <!-- Editable Title with Icon Picker -->
-                                    <div class="form-group" id="wikiTitleWrapper">
+                                    {{-- Icon picker + title read as ONE field: the icon is a button inside the title's border. --}}
+                                    <div class="form-group wiki-title-field" id="wikiTitleWrapper">
                                         <div class="btn-group inlineDropDownContainerLeft">
                                             <button data-selected="graduation-cap" type="button"
                                                     class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker"
@@ -172,7 +177,17 @@
                                                value="{{ e($currentArticle->title) }}"
                                                data-original="{{ e($currentArticle->title) }}"
                                                placeholder="{{ __('input.placeholders.wiki_title') }}"
-                                               style="width:80%" autocomplete="off" />
+                                               autocomplete="off" />
+                                    </div>
+
+                                    {{-- Save status: quiet text under the title (was a floating pill in the window corner). --}}
+                                    <div class="wiki-edit-indicator" id="wikiEditIndicator" style="display: none;"
+                                         data-label-editing="{{ __('label.wiki_editing') }}"
+                                         data-label-saving="{{ __('label.wiki_saving') }}"
+                                         data-label-saved="{{ __('label.wiki_saved') }}"
+                                         data-label-error="{{ __('label.wiki_save_failed') }}">
+                                        <i class="fa fa-circle"></i>
+                                        <span></span>
                                     </div>
 
                                     <!-- Editable Tags -->
@@ -211,11 +226,6 @@
                                 <textarea id="wikiArticleContent" class="wiki-editor-textarea" style="display:none;">{!! $tpl->escapeMinimal($currentArticle->description) !!}</textarea>
                                 <!-- Tiptap editor will be initialized here -->
                                 <div id="wikiTiptapEditor" class="wiki-document"></div>
-                                <!-- Edit mode indicator -->
-                                <div class="wiki-edit-indicator" id="wikiEditIndicator" style="display: none;">
-                                    <i class="fa fa-circle"></i>
-                                    <span>Editing</span>
-                                </div>
                             @else
                                 <!-- Read-only view for non-editors -->
                                 <article class="wiki-document" id="wikiDocumentContent">
@@ -372,15 +382,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Delete (pinned to bottom) -->
-                    @if($login::userIsAtLeast($roles::$editor))
-                    <div class="wiki-properties-footer">
-                        <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="wiki-action-btn delete" state="danger" variant="outline">
-                            <i class="fa fa-trash"></i> Delete Article
-                        </x-global::forms.button>
-                    </div>
-                    @endif
 
                         </div><!-- /.wiki-properties-panel -->
                     </div><!-- /.wiki-content-layout -->
@@ -617,12 +618,9 @@ jQuery(document).ready(function() {
             indicator.className = 'wiki-edit-indicator ' + state;
             var icon = indicator.querySelector('i');
             var text = indicator.querySelector('span');
-            switch (state) {
-                case 'editing': icon.className = 'fa fa-edit'; text.textContent = 'Editing'; break;
-                case 'saving': icon.className = 'fa fa-circle-notch fa-spin'; text.textContent = 'Saving...'; break;
-                case 'saved': icon.className = 'fa fa-check'; text.textContent = 'Saved'; break;
-                case 'error': icon.className = 'fa fa-exclamation-triangle'; text.textContent = 'Save failed'; break;
-            }
+            var icons = {editing: 'fa fa-pen', saving: 'fa fa-circle-notch fa-spin', saved: 'fa fa-check', error: 'fa fa-exclamation-triangle'};
+            icon.className = icons[state] || 'fa fa-circle';
+            text.textContent = indicator.dataset['label' + state.charAt(0).toUpperCase() + state.slice(1)] || '';
         }
 
         function hideIndicator() {
