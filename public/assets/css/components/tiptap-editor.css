@@ -141,10 +141,10 @@
     margin-top: 0;
 }
 
-.tiptap-editor .ProseMirror h1 { font-size: 1.75em; }
-.tiptap-editor .ProseMirror h2 { font-size: 1.5em; }
-.tiptap-editor .ProseMirror h3 { font-size: 1.25em; }
-.tiptap-editor .ProseMirror h4 { font-size: 1.1em; }
+.tiptap-editor .ProseMirror h1 { font-size: var(--font-size-xxxl); }
+.tiptap-editor .ProseMirror h2 { font-size: var(--font-size-xxl); }
+.tiptap-editor .ProseMirror h3 { font-size: var(--font-size-xl); }
+.tiptap-editor .ProseMirror h4 { font-size: var(--font-size-l); }
 
 .tiptap-editor .ProseMirror p {
     margin: 0 0 1em 0;
@@ -348,13 +348,13 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
 
 .tiptap-editor .ProseMirror sup {
     vertical-align: super;
-    font-size: 0.75em;
+    font-size: var(--font-size-s);
     line-height: 0;
 }
 
 .tiptap-editor .ProseMirror sub {
     vertical-align: sub;
-    font-size: 0.75em;
+    font-size: var(--font-size-s);
     line-height: 0;
 }
 
@@ -417,7 +417,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     padding: 0.2em 0.4em;
     border-radius: 4px;
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-    font-size: 0.9em;
+    font-size: var(--font-size-s);
 }
 
 /* Code blocks */
@@ -429,7 +429,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div {
     overflow-x: auto;
     margin: 1em 0;
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-    font-size: 0.9em;
+    font-size: var(--font-size-s);
     line-height: 1.5;
 }
 

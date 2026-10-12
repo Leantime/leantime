@@ -822,7 +822,7 @@
 
 .wiki-activity-time {
     color: var(--secondary-font-color);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     margin-top: 2px;
 }
 
@@ -898,7 +898,7 @@
 }
 
 .wiki-tree-draft {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     color: var(--secondary-font-color);
     font-style: italic;
 }

@@ -135,7 +135,7 @@
 .globalSearch__groupTitle {
     padding: 6px 16px 2px;
     color: var(--secondary-font-color);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -214,7 +214,7 @@
     flex-wrap: wrap;
     gap: 8px;
     color: var(--secondary-font-color);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
 }
 
 .searchResult__badge {
@@ -330,7 +330,7 @@
 
 .searchPage__filterLabel {
     color: var(--secondary-font-color);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
 }
 
 .searchPage__reset {
@@ -363,7 +363,7 @@
     border-radius: 999px;
     background: var(--light-layered-background);
     color: var(--secondary-font-color);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     font-weight: 600;
     line-height: 1.6;
     text-align: center;

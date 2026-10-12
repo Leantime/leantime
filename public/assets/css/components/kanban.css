@@ -660,7 +660,7 @@ body .maincontent .priority-text-5 a:link {
     padding-left: 16px; /* Align with label, not chevron */
 }
 
-/* Chevron - 10px, rotates on toggle */
+/* Chevron - rotates on toggle */
 .kanban-lane-chevron {
     font-size: var(--font-size-s);
     color: var(--primary-font-color);
@@ -1063,7 +1063,7 @@ body .maincontent .priority-text-5 a:link {
     text-decoration: none;
     color: var(--primary-font-color);
     transition: all 150ms ease-out;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     min-width: 0;
     overflow: hidden;
     height: 32px; /* Fixed height to fit in row */
@@ -1144,7 +1144,7 @@ body .maincontent .priority-text-5 a:link {
     padding: 4px 10px;
     background: var(--neutral-background);
     border-radius: 4px;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     color: var(--primary-font-color);
     opacity: 0.7;
     font-weight: 600;
@@ -1159,7 +1159,7 @@ body .maincontent .priority-text-5 a:link {
     padding: 4px 12px;
     color: var(--primary-font-color);
     opacity: 0.5;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     font-style: italic;
     height: 32px;
 }
@@ -1272,7 +1272,7 @@ body .maincontent .priority-text-5 a:link {
 
     .compact-ticket {
         max-width: 100%;
-        font-size: var(--font-size-xs);
+        font-size: var(--font-size-s);
     }
 
     .compact-ticket-avatar img {

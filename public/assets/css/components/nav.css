@@ -345,7 +345,7 @@ a.barmenu:hover {
 
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.title a {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     text-transform: uppercase;
     padding: 15px 5px 5px 25px;
 }
@@ -764,7 +764,7 @@ a.barmenu:hover {
 }
 
 .projectselector ul.selectorList li.projectLineItem.hasSubtitle a small {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     opacity:0.5;
 }
 
@@ -1349,7 +1349,7 @@ a.barmenu:hover {
     border-radius: 10px;
     line-height: 10px;
     text-align: center;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
 }
 
 .onboarding-checklist {

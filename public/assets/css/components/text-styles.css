@@ -143,7 +143,7 @@ a .label.feature-label.beta-label {
 
 .pagetitle h5 {
     text-transform: uppercase;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     color: var(--secondary-font-color);
     /* Reset the Bootstrap default heading margin so the subtitle sits tight
        under the title inside the auto-height header card. */
@@ -207,7 +207,8 @@ a.delete {
     color:var(--red) !important;
 }
 
-/* Bootstrap sizes <small> at 85% (11.9px off 14px) — pin it to the scale. */
+/* Bootstrap sizes <small> at 85% (11.9px off 14px) — pin body text <small> to the scale.
+   Inside headings (h1 small … h6 small) it is a sub-heading and keeps its own size on purpose. */
 small,
 .small {
     font-size: var(--font-size-s);

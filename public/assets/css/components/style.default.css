@@ -1471,7 +1471,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     -moz-border-radius: var(--box-radius-small);
     -webkit-border-radius: var(--box-radius-small);
     border-radius:  var(--box-radius-small);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     text-shadow: none;
     font-weight: normal;
     text-transform: uppercase;
@@ -2342,7 +2342,7 @@ a.titleInsertLink:hover {
     color:#fff;
     padding:0px 5px;
     border-radius:var(--box-radius);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     width:206px;
     margin-top:-2px;
     margin-bottom:10px;
