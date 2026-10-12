@@ -8,16 +8,7 @@
             {{ sprintf(__("text.percent_complete"), $percentDone) }}
         </div>
     </div>
-    <div class="progress">
-        <div class="progress-bar progress-bar-success"
-             role="progressbar"
-             aria-valuenow="{{ $percentDone }}"
-             aria-valuemin="0"
-             aria-valuemax="100"
-             style="width: {{ $percentDone }}%">
-            <span class="sr-only">{{ sprintf(__("text.percent_complete"), $percentDone) }}</span>
-        </div>
-    </div>
+    <x-global::feedback.progress :value="$percentDone" />
     <div class="row">
         <div class="col-md-12">
             @php($statusTone = ['green' => 'success', 'yellow' => 'warning', 'red' => 'danger'][$project['status'] ?? ''] ?? null)

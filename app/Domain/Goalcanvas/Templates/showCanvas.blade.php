@@ -221,15 +221,7 @@
                                                 </div>
                                                 <div class="col-md-4"></div>
                                             </div>
-                                            <div class="progress" style="margin-bottom:0px;">
-                                                <div class="progress-bar progress-bar-success"
-                                                    role="progressbar" aria-valuenow="{{ $percentDone }}"
-                                                    aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: {{ $percentDone }}%">
-                                                    <span
-                                                        class="sr-only">{{ sprintf(__('text.percent_complete'), $percentDone) }}</span>
-                                                </div>
-                                            </div>
+                                            <x-global::feedback.progress :value="$percentDone" />
                                             <div class="row" style="padding-bottom:0px;">
                                                 <div class="col-md-4">
                                                     <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>

@@ -696,3 +696,14 @@
         transform: rotate(360deg);
     }
 }
+
+/* feedback.progress */
+.progress.lt-progress--sm {
+    height: 6px;
+}
+
+.lt-progress-label {
+    margin-top: 4px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
