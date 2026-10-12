@@ -192,7 +192,7 @@
 
                                     <!-- Editable Tags -->
                                     <div class="wiki-tags-wrapper">
-                                        <x-global::forms.tags name="wikiTags" id="wikiTagsInput" :value="$currentArticle->tags ?? ''" />
+                                        <x-global::forms.tags name="wikiTags" id="wikiTagsInput" :value="$currentArticle->tags ?? ''" width="full" />
                                     </div>
                                 @else
                                     <h1 class="wiki-document-title">
