@@ -176,11 +176,7 @@
                             <td data-order="{{ $row['tags'] }}">
                                 @if ($row['tags'] != '')
                                     @php $tagsArray = explode(',', $row['tags']); @endphp
-                                    <div class='tagsinput readonly'>
-                                        @foreach ($tagsArray as $tag)
-                                            <span class='tag'><span>{{ $tag }}</span></span>
-                                        @endforeach
-                                    </div>
+                                    <x-global::elements.tag-list :tags="$tagsArray" />
                                 @endif
                             </td>
 

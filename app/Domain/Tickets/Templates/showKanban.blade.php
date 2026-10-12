@@ -269,11 +269,7 @@
                                                         @php $tagsArray = explode(',', $row['tags']); @endphp
                                                         <x-global::actions.dropdown variant="panel" as="span" class="dropdown" menu-as="ul">
                                                             <x-slot:trigger><i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}</x-slot:trigger>
-                                                            <li style="padding:10px"><div class="tagsinput readonly">
-                                                                @foreach ($tagsArray as $tag)
-                                                                    <span class="tag"><span>{{ $tag }}</span></span>
-                                                                @endforeach
-                                                            </div></li>
+                                                            <li style="padding:10px"><x-global::elements.tag-list :tags="$tagsArray" /></li>
                                                         </x-global::actions.dropdown>
                                                     @endif
 

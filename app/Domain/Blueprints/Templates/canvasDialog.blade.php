@@ -47,8 +47,9 @@
         <input type="hidden" value="{{ $canvasItem['box'] }}" name="box" id="box"/>
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
 
-        <label>{!! __('label.description') !!}</label>
-        <x-global::forms.text-input name="description" value="{{ $canvasItem['description'] }}" style="width:100%" /><br />
+        {{-- The item's `description` column is its title; the long text is the data field below. --}}
+        <x-global::forms.label for="canvasItemTitle">{!! __('label.title') !!}</x-global::forms.label>
+        <x-global::forms.text-input name="description" id="canvasItemTitle" value="{{ $canvasItem['description'] }}" width="full" /><br />
 
         @if(! empty($statusLabels))
             <label>{!! __('label.status') !!}</label>

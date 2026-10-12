@@ -1951,3 +1951,25 @@ body .btn.btn-round-icon {
     border:none;
     color:var(--interactive-icon-color);
 }
+
+/* elements.tag-list — read-only tag chips (badge size, soft tint). */
+.lt-tag-list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.lt-tag-list .lt-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--accent1) 12%, transparent);
+    /* Accent mixed toward the theme's ink so 12px text stays readable on the tint (dark themes). */
+    color: color-mix(in srgb, var(--accent1) 60%, var(--color-ink, var(--primary-font-color)));
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+}
