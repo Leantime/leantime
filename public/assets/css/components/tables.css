@@ -409,7 +409,7 @@
     outline:2px solid var(--neutral);
 }
 
-.maincontentinner .dt-buttons .dt-button-collection {
+.dt-buttons .dt-button-collection {
     position:absolute;
     z-index:3;
     float: left;
@@ -427,7 +427,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
-.maincontentinner .dt-buttons .dt-button-collection button {
+.dt-buttons .dt-button-collection button {
     display:block;
     width:100%;
     margin:0px;
@@ -438,29 +438,29 @@
     text-align:left;
 }
 
-.maincontentinner .dt-buttons .dt-button-collection button:before {
+.dt-buttons .dt-button-collection button:before {
     font-family: "Font Awesome 6 Free";
     content: "\f204";
     margin-right:5px;
 }
 
-.maincontentinner .dt-buttons .dt-button-collection button. dt-button-active{
+.dt-buttons .dt-button-collection button.dt-button-active{
     text-decoration: none;
 }
 
-.maincontentinner .dt-buttons .dt-button-collection button.dt-button-active:before {
+.dt-buttons .dt-button-collection button.dt-button-active:before {
     font-family: "Font Awesome 6 Free";
     content: "\f205";
     color:var(--accent1);
 }
 
-.maincontentinner .dt-buttons .dt-button-collection button:hover,
-.maincontentinner .dt-buttons .dt-button-collection button.active:hover{
+.dt-buttons .dt-button-collection button:hover,
+.dt-buttons .dt-button-collection button.active:hover{
     color: var(--dropdown-link-hover-color);
     background:var(--dropdown-link-hover-bg);
 }
 
-.maincontentinner .dt-buttons>.dt-button {
+.dt-buttons>.dt-button {
     display: inline-block;
     /* Same fix as the secondary button in forms.css: the border used to be the
        button's own background color, leaving Export / Columns white-on-white
@@ -478,18 +478,18 @@
     text-shadow: none;
 }
 
-.maincontentinner .dt-buttons>.dt-button span {
+.dt-buttons>.dt-button span {
 }
 
-.maincontentinner .dt-buttons>.dt-button:hover {
+.dt-buttons>.dt-button:hover {
     background:var(--secondary-action-hover-bg);
     color:var(--secondary-action-hover-color);
 }
-.maincontentinner .dt-buttons .dt-button-collection button {
+.dt-buttons .dt-button-collection button {
     border-radius:0px;
 }
 
-.maincontentinner .dt-buttons .dt-button-collection button:hover {
+.dt-buttons .dt-button-collection button:hover {
     background:var(--main-menu-link-hover-bg);
     color:var(--main-menu-link-hover-color);
 }
@@ -674,3 +674,54 @@ table.fc-multimonth-header-table {
     display:none;
 }
 
+
+/* Export / Columns in the view bar (pages where the table is the content). */
+.tableButtons {
+    display: inline-flex;
+    align-items: center;
+}
+
+.tableButtons .dt-buttons {
+    display: inline-flex;
+    gap: 5px;
+}
+
+/* Same white pill as the bar's Filter / Group By triggers. */
+.tableButtons .dt-buttons .dt-button {
+    padding: 7px 14px;
+    margin: 0;
+    font-size: var(--base-font-size);
+    line-height: 1.2;
+}
+
+/* Resting state: the white pill of the bar's Filter / Group By triggers. */
+.tableButtons .dt-buttons .dt-button:not(:hover):not(.dt-button-active):not([aria-expanded="true"]) {
+    background: var(--secondary-background);
+}
+
+/* Hover and open: the same dark fill as a hovered Filter (.lt-tabs-actions .btn-link:hover). */
+.tableButtons .dt-buttons .dt-button:hover,
+.tableButtons .dt-buttons .dt-button.dt-button-active,
+.tableButtons .dt-buttons .dt-button[aria-expanded="true"] {
+    border-color: var(--secondary-action-hover-bg);
+    background: var(--secondary-action-hover-bg);
+    color: var(--secondary-action-hover-color);
+}
+
+.tableButtons .dt-buttons .dt-button:hover i,
+.tableButtons .dt-buttons .dt-button[aria-expanded="true"] i {
+    color: var(--secondary-action-hover-color);
+}
+
+.tableButtons .dt-buttons .dt-button span {
+    line-height: inherit;
+}
+
+/* Columns menu: the app's dropdown look instead of DataTables' default. The class is doubled on
+   purpose: DataTables' own div.dt-button-collection rule loads later and wins otherwise (measured). */
+body div.dt-button-collection.dt-button-collection {
+    border: 0;
+    border-radius: var(--box-radius);
+    box-shadow: var(--large-shadow);
+    padding: 8px;
+}

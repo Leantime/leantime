@@ -20,6 +20,9 @@
                 @include('tickets::submodules.ticketNewBtn')
                 @include('tickets::submodules.ticketFilter')
                 @dispatchEvent('filters.beforeLefthandSectionClose')
+                @dispatchEvent('filters.afterRighthandSectionOpen')
+                <div id="tableButtons" class="tableButtons"></div>
+                @dispatchEvent('filters.beforeRighthandSectionClose')
             </x-slot:actions>
         </x-tickets::portfolio-tabs>
 
@@ -33,16 +36,9 @@
 
             <input type="hidden" value="1" name="search"/>
             <div class="row">
-                <div class="col-md-7 center">
+                <div class="col-md-12 center">
                     @dispatchEvent('filters.afterCenterSectionOpen')
                     @dispatchEvent('filters.beforeCenterSectionClose')
-                </div>
-                <div class="col-md-5">
-                    <div class="pull-right">
-                        @dispatchEvent('filters.afterRighthandSectionOpen')
-                        <div id="tableButtons" style="display:inline-block"></div>
-                        @dispatchEvent('filters.beforeRighthandSectionClose')
-                    </div>
                 </div>
 
             </div>

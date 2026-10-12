@@ -134,6 +134,14 @@
                     </div>
                 </div>
 
+                {{-- Show Tasks narrows what the milestone views list, so it lives with the other filters. --}}
+                @if ($taskToggle === true)
+                    <div class="form-group filterToggleRow">
+                        <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" {{ ($showTasks === 'true') ? 'checked="checked"' : '' }} />
+                        <label for="taskTypeToggle">{{ __('label.showTasks') }}</label>
+                    </div>
+                @endif
+
                 <div class="" style="margin-top:15px;">
                     <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.search')" name="search" class="form-control" contentRole="primary" />
                 </div>
@@ -174,12 +182,6 @@
             @endif
 
 
-        @if (isset($taskToggle) && $taskToggle === true)
-            <div class="" style="float:right; margin-left:5px; ">
-                <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" {{ ($showTasks === 'true') ? 'checked="checked"' : '' }} style="margin-right:5px;" />
-                <label style="text-wrap: nowrap; float:right;">{{ __('label.showTasks', 'Show Tasks') }}</label>
-            </div>
-        @endif
 
 
 
