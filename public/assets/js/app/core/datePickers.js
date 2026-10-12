@@ -87,10 +87,54 @@ leantime.dateController = (function () {
         );
     }
 
+    // forms.date-picker: init on render and after every htmx swap; a from/to pair (same
+    // data-lt-date-range group inside the swapped root) becomes a range picker.
+    var initComponents = function (root) {
+        if (!root || !root.querySelectorAll) {
+            return;
+        }
+        var inputs = Array.prototype.slice.call(root.querySelectorAll('input[data-lt-datepicker]:not(.hasDatepicker)'));
+        if (root.matches && root.matches('input[data-lt-datepicker]:not(.hasDatepicker)')) {
+            inputs.unshift(root);
+        }
+
+        var ranges = {};
+        inputs.forEach(function (input) {
+            var group = input.getAttribute('data-lt-date-range');
+            if (!group) {
+                initDatePicker(input);
+                return;
+            }
+            ranges[group] = ranges[group] || {};
+            ranges[group][input.getAttribute('data-lt-date-role')] = input;
+        });
+
+        Object.keys(ranges).forEach(function (group) {
+            var pair = ranges[group];
+            if (pair.from && pair.to) {
+                initDateRangePicker(pair.from, pair.to);
+                return;
+            }
+            // Half a pair in this swap: still a working date field.
+            initDatePicker(pair.from || pair.to);
+        });
+    };
+
+    htmx.onLoad(initComponents);
+
+    // jQuery UI keeps a reference to every picker; release it when htmx removes the field.
+    document.addEventListener('htmx:beforeCleanupElement', function (event) {
+        var element = event.target;
+        if (element && element.matches && element.matches('input[data-lt-datepicker].hasDatepicker')) {
+            jQuery(element).datepicker('destroy');
+        }
+    });
+
     // Make public what you want to have public, everything else is private
     return {
         initDateRangePicker:initDateRangePicker,
         initDatePicker:initDatePicker,
+        initComponents:initComponents,
     };
 
 })();
