@@ -155,6 +155,11 @@ body .lt-section-hd .lt-section-hd-title {
 }
 
 .lt-section-hd-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+}
 
 /* elements.list-item — list row: lead icon/avatar, title (14 / 600) + meta (12 muted), trailing items. */
 ul.lt-list,
