@@ -115,11 +115,7 @@
                                             &nbsp;
                                             <x-global::actions.dropdown variant="panel" as="span" class="dropdown" menu-as="ul" menu-class="pull-right">
                                                 <x-slot:trigger><i class="fa fa-tags" aria-hidden="true"></i> <small>{{ count($ideaTags) }}</small></x-slot:trigger>
-                                                <li style="padding:10px"><div class="tagsinput readonly">
-                                                    @foreach ($ideaTags as $tag)
-                                                        <span class="tag"><span>{{ $tag }}</span></span>
-                                                    @endforeach
-                                                </div></li>
+                                                <li style="padding:10px"><x-global::elements.tag-list :tags="$ideaTags" /></li>
                                             </x-global::actions.dropdown>
                                         @endif
 
