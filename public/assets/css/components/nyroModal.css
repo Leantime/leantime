@@ -228,8 +228,14 @@
     line-height: 25px;
 }
 
-/* Same look as nyroModal's X it replaces. */
+/* Same look as nyroModal's X it replaces. Only inside a modal: the same templates can also
+   render as a full page, where there is nothing to close. */
 .lt-modal-header .lt-modal-close {
+    display: none;
+}
+
+.nyroModalCont .lt-modal-header .lt-modal-close {
+    display: inline-block;
     flex: none;
     width: 25px;
     height: 25px;
