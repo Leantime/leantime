@@ -194,8 +194,9 @@ class TimesheetCest
         ]);
 
         // Close modal.
-        $I->waitForElementVisible('.nyroModalClose');
-        $I->clickWithRetry('.nyroModalClose');
+        // The dialog header (actions.modal-header) brings its own close X.
+        $I->waitForElementVisible('.lt-modal-close');
+        $I->clickWithRetry('.lt-modal-close');
 
         // Check that data have been updated.
         $I->wait(5);
