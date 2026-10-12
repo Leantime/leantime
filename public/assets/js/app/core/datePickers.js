@@ -121,6 +121,8 @@ leantime.dateController = (function () {
     };
 
     htmx.onLoad(initComponents);
+    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
+    document.addEventListener('lt:ui:modal.loaded', function (event) { initComponents(event.detail.root); });
 
     // jQuery UI keeps a reference to every picker; release it when htmx removes the field.
     document.addEventListener('htmx:beforeCleanupElement', function (event) {
