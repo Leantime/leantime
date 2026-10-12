@@ -212,8 +212,10 @@ class TimesheetCest
         $I->wantTo('Open ticket and add time');
 
         $I->amOnPage('/#/tickets/showTicket/10');
-        $I->waitForElementVisible('#ui-id-8');
-        $I->clickWithRetry('#ui-id-8');
+        // Select the Time Tracking tab by its link, not by jQuery UI's generated #ui-id-N:
+        // those numbers shift whenever another jQuery UI widget is created first.
+        $I->waitForElementVisible('.ticketTabs a[href="#timesheet"]');
+        $I->clickWithRetry('.ticketTabs a[href="#timesheet"]');
         $I->waitForElementVisible('#hours');
         $I->fillField('#hours', 4);
 
