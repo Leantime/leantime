@@ -1,7 +1,8 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><i class="fa-regular fa-calendar-plus"></i> {{ __('label.connect_calendar_title') }}</h4>
-<p class="subtitle">{{ __('label.connect_calendar_description') }}</p>
+<x-global::actions.modal-header>
+    <x-slot:title><i class="fa-regular fa-calendar-plus"></i> {{ __('label.connect_calendar_title') }}</x-slot:title>
+</x-global::actions.modal-header><p class="subtitle">{{ __('label.connect_calendar_description') }}</p>
 
 <br />
 

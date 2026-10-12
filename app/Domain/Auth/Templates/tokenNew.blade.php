@@ -1,7 +1,7 @@
 <div id="tokenModal">
-<h4 class="widgettitle title-light">{{ __('headlines.create_access_token') }}</h4>
-
-    <form hx-post="{{ BASE_URL }}/hx/auth/personalTokens/create"
+<x-global::actions.modal-header>
+    <x-slot:title>{{ __('headlines.create_access_token') }}</x-slot:title>
+</x-global::actions.modal-header><form hx-post="{{ BASE_URL }}/hx/auth/personalTokens/create"
           hx-target="#tokenModal" id="newToken">
 
         <div class="form-group">

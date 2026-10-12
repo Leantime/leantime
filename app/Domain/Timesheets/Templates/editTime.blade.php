@@ -46,8 +46,9 @@ use Leantime\Core\Support\FromFormat;
 
 {!! $tpl->displayNotification() !!}
 
-<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> {!! __('headlines.edit_time') !!}</h4>
-<form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
+<x-global::actions.modal-header>
+    <x-slot:title><span class="fa-regular fa-clock"></span> {!! __('headlines.edit_time') !!}</x-slot:title>
+</x-global::actions.modal-header><form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
 
 <label for="clients">{!! __('label.client') !!}</label>
 <x-global::forms.select enhanced name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">

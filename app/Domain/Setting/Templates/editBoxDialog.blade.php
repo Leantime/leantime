@@ -1,9 +1,9 @@
 @extends($layout)
 @section('content')
 
-<h4 class="widgettitle title-light">{!! __('headlines.edit_label') !!}</h4>
-
-{!! $tpl->displayNotification() !!}
+<x-global::actions.modal-header>
+    <x-slot:title>{!! __('headlines.edit_label') !!}</x-slot:title>
+</x-global::actions.modal-header>{!! $tpl->displayNotification() !!}
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/setting/editBoxLabel?{{ http_build_query(['module' => request()->query('module', ''), 'label' => request()->query('label', '')]) }}">
 

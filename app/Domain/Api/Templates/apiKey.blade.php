@@ -4,9 +4,9 @@
 
 <div style="min-width:700px;">
 
-<h4 class="widgettitle title-light"><i class="fa fa-key"></i> {!! __('headlines.api_key') !!}</h4>
-
-{!! $tpl->displayNotification() !!}
+<x-global::actions.modal-header>
+    <x-slot:title><i class="fa fa-key"></i> {!! __('headlines.api_key') !!}</x-slot:title>
+</x-global::actions.modal-header>{!! $tpl->displayNotification() !!}
 
 <form action="{{ BASE_URL }}/api/apiKey/{{ (int) $_GET['id'] }}" method="post" class="stdform formModal" >
         <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
