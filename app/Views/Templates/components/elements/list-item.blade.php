@@ -40,25 +40,25 @@
 
 <{{ $as }} {{ $attributes->class(['lt-list-item']) }}>
     @isset($leading)
-        <span class="lt-list-item-lead">{{ $leading }}</span>
+        <div class="lt-list-item-lead">{{ $leading }}</div>
     @elseif ($icon)
-        <span class="lt-list-item-lead lt-list-item-icon--{{ $tone }}"><i class="{{ $icon }}" aria-hidden="true"></i></span>
+        <div class="lt-list-item-lead lt-list-item-icon--{{ $tone }}"><i class="{{ $icon }}" aria-hidden="true"></i></div>
     @endisset
 
-    <span class="lt-list-item-main">
-        <span class="lt-list-item-title">
+    <div class="lt-list-item-main">
+        <div class="lt-list-item-title">
             @if ($href)
                 <a href="{{ $href }}" @if ($linkClass) class="{{ $linkClass }}" @endif>{!! $titleContent !!}</a>
             @else
                 {!! $titleContent !!}
             @endif
-        </span>
+        </div>
         @if ($hasMeta)
-            <span class="lt-list-item-meta">{{ $slot }}</span>
+            <div class="lt-list-item-meta">{{ $slot }}</div>
         @endif
-    </span>
+    </div>
 
     @isset($trailing)
-        <span class="lt-list-item-trail">{{ $trailing }}</span>
+        <div class="lt-list-item-trail">{{ $trailing }}</div>
     @endisset
 </{{ $as }}>
