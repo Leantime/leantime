@@ -22,13 +22,13 @@
 
                     @if (! empty($plugin->categories))
                         <strong>Categories:</strong> @foreach ($plugin->categories as $category)
-                            <x-global::badge :asLink="false">{{ $category['name'] }}</x-global::badge>
+                            <x-global::elements.badge>{{ $category['name'] }}</x-global::elements.badge>
                         @endforeach<br>
                     @endif
 
                     @if (! empty($plugin->tags))
                         <strong>Tags:</strong> @foreach ($plugin->tags as $tag)
-                            <x-global::badge :asLink="true" :url="'/plugins/marketplace?tag=' . $tag['slug']">{{ $tag['name'] }}</x-global::badge>
+                            <x-global::elements.badge tone="accent" :href="'/plugins/marketplace?tag=' . $tag['slug']">{{ $tag['name'] }}</x-global::elements.badge>
                         @endforeach<br>
                     @endif
                 </p>

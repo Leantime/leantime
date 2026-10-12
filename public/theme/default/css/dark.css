@@ -203,6 +203,8 @@
     --status-done-color: #10b981;         /* Emerald-500 */
 
     /* Feedback Colors (Dark Mode) */
+    /* Strongest text end (black on light, white on dark): tinted text mixes its tone toward it to stay readable. */
+    --color-ink: #fff;
     --feedback-success-bg: rgba(76, 175, 80, 0.12);
     --feedback-success-color: #66bb6a;
     --feedback-success-border: #4caf50;
