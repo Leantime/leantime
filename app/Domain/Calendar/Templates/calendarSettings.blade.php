@@ -2,7 +2,8 @@
 
 <x-global::actions.modal-header>
     <x-slot:title><i class="fa fa-cog"></i> {{ __('label.calendar_settings') }}</x-slot:title>
-</x-global::actions.modal-header><br />
+</x-global::actions.modal-header>
+<br />
 
 {{-- Connected Calendars Section --}}
 <h5 class="subtitle">{{ __('label.connected_calendars') }}</h5>

@@ -8,6 +8,11 @@
 
 <x-global::actions.modal-header>
     <x-slot:title><i class="fa fa-book"></i> {!! __('label.wiki') !!} {{ $tpl->escape($currentWiki->title) }}</x-slot:title>
+    @if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor))
+        <x-slot:actions>
+            <li><a href="#/wiki/delWiki/{{ $currentWiki->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_wiki') !!}</a></li>
+        </x-slot:actions>
+    @endif
 </x-global::actions.modal-header>{!! $tpl->displayNotification() !!}
 
 @php
@@ -29,9 +34,6 @@
             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
         </div>
         <div class="col-md-6 align-right padding-top-sm">
-            @if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor))
-                <a href="{{ BASE_URL }}/wiki/delWiki/{{ $currentWiki->id }}" class="delete formModal"><i class="fa fa-trash"></i> {!! __('links.delete_wiki') !!}</a>
-            @endif
         </div>
     </div>
 

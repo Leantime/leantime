@@ -279,8 +279,11 @@ class TimesheetCest
         $I->see('#1 - Edit');
 
         $I->clickWithRetry('#editTimesheet-1');
-        $I->waitForElementVisible('.delete');
-        $I->clickWithRetry('.stdformbutton .delete');
+        // Delete lives in the dialog header's ⋮ menu.
+        $I->waitForElementVisible('.lt-modal-header .ticketDropDown');
+        $I->clickWithRetry('.lt-modal-header .ticketDropDown');
+        $I->waitForElementVisible('.lt-modal-header .delete');
+        $I->clickWithRetry('.lt-modal-header .delete');
 
         $I->wait(5);
         $I->see('Should the timesheet really be deleted?');

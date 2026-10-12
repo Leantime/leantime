@@ -22,7 +22,8 @@
 
     <x-global::actions.modal-header>
     <x-slot:title><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] ?? '' }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] ?? '' }}</x-slot:title>
-</x-global::actions.modal-header><hr style="margin-top: 5px; margin-bottom: 15px;">
+</x-global::actions.modal-header>
+<hr style="margin-top: 5px; margin-bottom: 15px;">
 
     {!! $tpl->displayNotification() !!}
 

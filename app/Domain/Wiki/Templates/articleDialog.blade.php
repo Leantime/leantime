@@ -44,6 +44,14 @@
     createTree($id, null, $wikiHeadlines, $wikiHL, '');
 @endphp
 
+<x-global::actions.modal-header icon="fa fa-file-lines" :title="__('headline.doc')">
+    @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
+        <x-slot:actions>
+            <li><a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_article') !!}</a></li>
+        </x-slot:actions>
+    @endif
+</x-global::actions.modal-header>
+
 <form class="formModal" method="post" action="{{ CURRENT_URL }}">
 
     <div class="row">
@@ -173,10 +181,6 @@
                         <x-global::forms.button tag="input" inputType="submit" contentRole="secondary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" :labelText="__('buttons.save_and_close')" />
                     </div>
                     <div class="col-md-2 align-right padding-top-sm">
-                        @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
-                            <br />
-                            <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</x-global::forms.button>
-                        @endif
                     </div>
                 </div>
 

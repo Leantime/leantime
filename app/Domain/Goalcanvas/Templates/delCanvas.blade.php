@@ -3,7 +3,8 @@
 
 <x-global::actions.modal-header>
     <x-slot:title>{!!__("subtitles.delete") !!}</x-slot:title>
-</x-global::actions.modal-header><form method="post" action="{{ BASE_URL."/goalcanvas/delCanvas/$id" }}">
+</x-global::actions.modal-header>
+<form method="post" action="{{ BASE_URL."/goalcanvas/delCanvas/$id" }}">
     @if(isset($csrf_token))
         <input type="hidden" name="csrf_token" value="{{ $csrf_token }}">
     @endif

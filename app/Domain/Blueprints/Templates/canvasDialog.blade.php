@@ -33,7 +33,12 @@
 
     <x-global::actions.modal-header>
     <x-slot:title><i class="fas {{ $boxMeta['icon'] }}"></i> {{ $boxMeta['title'] }}</x-slot:title>
-</x-global::actions.modal-header><hr style="margin-top: 5px; margin-bottom: 15px;">
+    @if ($id != '')
+        <x-slot:actions>
+            <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+        </x-slot:actions>
+    @endif
+</x-global::actions.modal-header>
     {!! $tpl->displayNotification() !!}
 
     <form class="formModal" method="post" action="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $id }}">
@@ -53,7 +58,7 @@
                         <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
                     @endif
                 @endforeach
-            </x-global::forms.select><br /><br />
+            </x-global::forms.select><br />
         @else
             <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
         @endif
@@ -113,9 +118,6 @@
         <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}" />
         <input type="hidden" name="changeItem" value="1" />
 
-        @if($id != '')
-            <x-global::forms.button tag="a" link="{{ BASE_URL }}/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="blueprintsCanvasModal delete right" state="danger" variant="outline"><i class='fa fa-trash-can'></i> {!! __('links.delete') !!}</x-global::forms.button>
-        @endif
 
         @if($login::userIsAtLeast($roles::$editor))
             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
