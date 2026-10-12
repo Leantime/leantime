@@ -122,7 +122,7 @@
                 <div class="form-group tw-flex tw-w-3/5">
                     <x-global::forms.label class="tw-mx-m tw-w-[100px] tw-shrink-0">{!! __('label.tags') !!}</x-global::forms.label>
                     <div class="">
-                        <input type="text" value="{{ $ticket->tags }}" name="tags" id="tags" />
+                        <x-global::forms.tags :value="$ticket->tags" />
                     </div>
                 </div>
                 <br />

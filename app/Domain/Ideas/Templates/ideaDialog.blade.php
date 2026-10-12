@@ -40,7 +40,7 @@
         <x-global::forms.text-input width="full" name="description" variant="headline" value="{{ $tpl->escape($canvasItem['description']) }}"
                placeholder="{{ __('input.placeholders.short_name') }}" /><br/>
 
-        <input type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
+        <x-global::forms.tags :value="$canvasItem['tags']" />
 
         <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
@@ -162,7 +162,6 @@
         if (window.leantime && window.leantime.tiptapController) {
             leantime.tiptapController.initComplexEditor();
         }
-        leantime.ticketsController.initTagsInput();
 
         @if (!$login::userIsAtLeast($roles::$editor))
             leantime.authController.makeInputReadonly(".nyroModalCont");
