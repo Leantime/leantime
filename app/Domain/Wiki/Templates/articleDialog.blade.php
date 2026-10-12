@@ -168,7 +168,7 @@
             <x-global::forms.text-input variant="headline" name="title" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
 
             <br />
-            <input type="text" value="{{ $tpl->escape($currentArticle->tags) }}" name="tags" id="tags" />
+            <x-global::forms.tags :value="$currentArticle->tags" />
 
             <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor" name="description">{{ $currentArticle->description ?? '' }}</textarea>
 
@@ -286,7 +286,6 @@
            jQuery(".articleIcon").val(event.iconpickerValue);
         });
 
-        leantime.ticketsController.initTagsInput();
 
     });
 

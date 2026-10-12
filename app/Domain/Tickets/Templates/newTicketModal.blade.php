@@ -45,7 +45,6 @@
             leantime.dateController.initDatePicker(".dates");
             leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
 
-            leantime.ticketsController.initTagsInput();
 
 
 

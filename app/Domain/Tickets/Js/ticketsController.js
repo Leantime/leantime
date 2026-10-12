@@ -1922,34 +1922,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initTagsInput = function ( ) {
-        jQuery("#tags").tagsInput({
-            // autocomplete_url must be defined to enable the autocomplete branch in the tagsInput plugin.
-            // The actual data source is overridden below via the jQuery UI autocomplete `source` function.
-            'autocomplete_url': true,
-            'autocomplete': {
-                source: function (request, response) {
-                    leantime.rpc('Tags.Tags.getTags', { projectId: leantime.currentProject, term: request.term })
-                        .then(function (tags) {
-                            response(tags || []);
-                        })
-                        .catch(function (error) {
-                            console.error('Could not load tags', error);
-                            response([]);
-                        });
-                }
-            }
-        });
-
-        jQuery("#tags_tag").on("focusout", function () {
-            let tag = jQuery(this).val();
-
-            if (tag != '') {
-                jQuery("#tags").addTag(tag);
-            }
-        });
-
-    };
 
     var addCommentTimesheetContent = function (commentId, taskId) {
         var content = "Discussion on To-Do #" + taskId + ":"
@@ -2022,7 +1994,6 @@ leantime.ticketsController = (function () {
         initMilestoneDropdown:initMilestoneDropdown,
         initStatusDropdown:initStatusDropdown,
         initToolTips:initToolTips,
-        initTagsInput:initTagsInput,
         initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
         initAsyncInputChange:initAsyncInputChange,
         initDueDateTimePickers:initDueDateTimePickers,

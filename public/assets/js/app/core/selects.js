@@ -88,6 +88,49 @@ leantime.selectController = (function () {
         return settings;
     };
 
+    // Tag fields (<x-global::forms.tags>): suggestions come from the project's existing tags, typing a
+    // new one adds it, and the chips are written back as one comma-separated string to the hidden
+    // input the backend reads (the old jQuery tagsInput contract). That input fires `change`.
+    var tagEventsFor = function (select) {
+        var target = document.getElementById(select.getAttribute('data-lt-tags'));
+
+        var syncTarget = function (options) {
+            if (!target) {
+                return;
+            }
+            var value = options.map(function (option) { return option.value; }).join(',');
+            if (target.value === value) {
+                return;
+            }
+            target.value = value;
+            target.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+
+        return {
+            search: function (term, currentData) {
+                var chosen = currentData.filter(function (option) { return option.selected; })
+                    .map(function (option) { return option.value; });
+
+                return leantime.rpc('Tags.Tags.getTags', { projectId: leantime.currentProject, term: term })
+                    .then(function (tags) {
+                        return (tags || [])
+                            .filter(function (tag) { return chosen.indexOf(tag) === -1; })
+                            .map(function (tag) { return { text: tag, value: tag }; });
+                    })
+                    .catch(function () {
+                        return [];
+                    });
+            },
+            addable: function (value) {
+                var tag = value.replace(/,/g, ' ').trim();
+                return tag === '' ? false : tag;
+            },
+            afterChange: function (selected) {
+                syncTarget(selected);
+            }
+        };
+    };
+
     var enhance = function (select) {
         if (instances.has(select) || typeof SlimSelect === 'undefined') {
             return;
@@ -102,7 +145,11 @@ leantime.selectController = (function () {
         }
 
         try {
-            var instance = new SlimSelect({ select: select, settings: settingsFor(select) });
+            var config = { select: select, settings: settingsFor(select) };
+            if (select.hasAttribute('data-lt-tags')) {
+                config.events = tagEventsFor(select);
+            }
+            var instance = new SlimSelect(config);
             instances.set(select, instance);
 
             // The option list is mounted on <body>, so inside a Bootstrap dropdown panel a pick would

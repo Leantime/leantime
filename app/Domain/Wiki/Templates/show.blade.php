@@ -192,12 +192,7 @@
 
                                     <!-- Editable Tags -->
                                     <div class="wiki-tags-wrapper">
-                                        <input type="text"
-                                               id="wikiTagsInput"
-                                               class="wiki-tags-input"
-                                               data-role="tagsinput"
-                                               value="{{ e($currentArticle->tags ?? '') }}"
-                                               placeholder="Add tags..." />
+                                        <x-global::forms.tags name="wikiTags" id="wikiTagsInput" :value="$currentArticle->tags ?? ''" width="full" />
                                     </div>
                                 @else
                                     <h1 class="wiki-document-title">
@@ -775,23 +770,11 @@ jQuery(document).ready(function() {
         });
     }
 
+    // Tags (forms.tags): the hidden #wikiTagsInput holds the comma-separated value and fires `change`.
     var tagsInput = document.getElementById('wikiTagsInput');
-    if (tagsInput && jQuery.fn.tagsInput) {
-        jQuery('#wikiTagsInput').tagsInput({
-            width: '100%',
-            height: 'auto',
-            defaultText: 'Add tag...',
-            placeholderColor: 'var(--secondary-font-color)',
-            onChange: function(elem, elem_tags) {
-                // The tagsInput plugin passes only the single tag that changed as elem_tags, and
-                // fires once with `undefined` during its initial import. Saving elem_tags directly
-                // overwrote the column with just the last tag (and the literal "undefined" on load).
-                // Ignore the init call and persist the full delimited value instead.
-                if (typeof elem_tags === 'undefined') {
-                    return;
-                }
-                saveField('tags', jQuery('#wikiTagsInput').val(), function() { updateLastSaved(); });
-            }
+    if (tagsInput) {
+        tagsInput.addEventListener('change', function() {
+            saveField('tags', tagsInput.value, function() { updateLastSaved(); });
         });
     }
 
