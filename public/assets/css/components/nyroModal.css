@@ -184,10 +184,12 @@
     min-height: 25px;
     margin: 0 0 16px;
     position: relative;
-    z-index: 50; /* an open ⋮ menu paints over the dialog content below */
+    z-index: var(--zlayer-7); /* the theme's modal-dropdown layer: an open ⋮ paints over the content below */
 }
 
-/* The header brings its own X; hide nyroModal's (rendered as a sibling after the content). */
+/* The header brings its own X; hide nyroModal's. It is written as a child of .nyroModalCont and
+   _reposition() later moves it after the content as a sibling, so cover both. */
+.nyroModalCont:has(.lt-modal-header) > .nyroModalCloseButton,
 .nyroModalCont:has(.lt-modal-header) ~ .nyroModalCloseButton {
     display: none !important;
 }
