@@ -1,9 +1,10 @@
 {{--
     actions.modal-header — the first row of every dialog.
 
-    Lines up with the modal's close X (rendered by nyroModal outside the content, pinned 35px
-    down / 40px in, 25px tall): the row is 25px high, starts at the X's top and keeps room on
-    the right so nothing runs under it. Tabs, if any, go in their own row below.
+    Owns the dialog's close X, so title, ⋮ and X always share one row. nyroModal's own X is
+    pinned outside the content with inline positions and does not line up reliably (mobile
+    especially); when a dialog has this header, that X is hidden (nyroModal.css). Tabs, if any,
+    go in their own row below.
 
     Props:
       icon    string  Optional Font Awesome classes for the leading icon ("fa-solid fa-bullseye").
@@ -38,4 +39,11 @@
             {{ $actions }}
         </x-global::actions.dropdown>
     @endisset
+
+    {{-- Closes through nmTop() (like lt:ui:modal.close), so it keeps working after htmx
+         re-renders the dialog content; nyroModal only binds .nyroModalClose once. --}}
+    <button type="button" class="lt-modal-close" aria-label="{{ __('buttons.close') }}"
+            onclick="jQuery.nmTop() && jQuery.nmTop().close();">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
 </div>

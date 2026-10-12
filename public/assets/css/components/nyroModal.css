@@ -176,17 +176,20 @@
     color:var(--primary-font-color);
 }
 
-/* actions.modal-header — one header row per dialog, aligned with the close X
-   (.nyroModalCloseButton: top 35px, right 40px, 25px square; the content starts 34px down). */
+/* actions.modal-header — one header row per dialog: title, meta, ⋮ and its own close X. */
 .lt-modal-header {
     display: flex;
     align-items: center;
     gap: 12px;
     min-height: 25px;
-    margin: 1px 0 16px;
-    padding-right: 37px; /* X (25px) + gap */
+    margin: 0 0 16px;
     position: relative;
     z-index: 50; /* an open ⋮ menu paints over the dialog content below */
+}
+
+/* The header brings its own X; hide nyroModal's (rendered as a sibling after the content). */
+.nyroModalCont:has(.lt-modal-header) ~ .nyroModalCloseButton {
+    display: none !important;
 }
 
 .lt-modal-header .lt-modal-title {
@@ -218,13 +221,32 @@
     line-height: 25px;
 }
 
-@media (max-width: 575px) {
-    /* Mobile: the X moves to 15px / 15px and the content padding to 20px / 10px. */
-    .lt-modal-header {
-        margin-top: -5px;
-        padding-right: 30px;
-    }
+/* Same look as nyroModal's X it replaces. */
+.lt-modal-header .lt-modal-close {
+    flex: none;
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--box-radius-small);
+    background: transparent;
+    color: var(--primary-font-color);
+    font-size: var(--font-size-xl);
+    line-height: 25px;
+    text-align: center;
+    cursor: pointer;
+}
 
+.lt-modal-header .lt-modal-close:hover {
+    background: var(--main-border-color-hover);
+}
+
+.lt-modal-header .lt-modal-close:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+@media (max-width: 575px) {
     .lt-modal-header .lt-modal-meta {
         display: none;
     }
