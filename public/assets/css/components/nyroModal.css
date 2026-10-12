@@ -207,6 +207,13 @@
     margin-right: 6px;
 }
 
+/* Parent breadcrumb in front of the title (subtask → its to-do). */
+.lt-modal-header .lt-modal-title .lt-modal-parent {
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-body);
+    color: var(--color-text-muted);
+}
+
 .lt-modal-header .lt-modal-meta {
     flex: none;
     font-size: var(--font-size-s);
