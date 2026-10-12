@@ -15,7 +15,7 @@
     <x-slot:title><i class="fa fa-list-1-2"></i> {!! __('label.sprint') !!} {{ $currentSprint->name }}</x-slot:title>
     @if (isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor))
         <x-slot:actions>
-            <li><a href="{{ BASE_URL }}/sprints/delSprint/{{ $currentSprint->id }}" class="delete formModal sprintModal"><i class="fa fa-trash-can"></i> {!! __('links.delete_sprint') !!}</a></li>
+            <li><a href="#/sprints/delSprint/{{ $currentSprint->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_sprint') !!}</a></li>
         </x-slot:actions>
     @endif
 </x-global::actions.modal-header>{!! $tpl->displayNotification() !!}

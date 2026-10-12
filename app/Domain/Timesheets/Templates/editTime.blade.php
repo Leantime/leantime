@@ -49,7 +49,7 @@ use Leantime\Core\Support\FromFormat;
 <x-global::actions.modal-header>
     <x-slot:title><span class="fa-regular fa-clock"></span> {!! __('headlines.edit_time') !!}</x-slot:title>
     <x-slot:actions>
-        <li><a href="{{ BASE_URL }}/timesheets/delTime/{{ $tpl->escape($_GET['id']) }}" class="delete editTimeModal"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+        <li><a href="#/timesheets/delTime/{{ (int) $_GET['id'] }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
     </x-slot:actions>
 </x-global::actions.modal-header>
 <form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">

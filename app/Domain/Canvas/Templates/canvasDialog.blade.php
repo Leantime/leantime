@@ -33,7 +33,7 @@
     <x-slot:title><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</x-slot:title>
     @if ($id != '')
         <x-slot:actions>
-            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
         </x-slot:actions>
     @endif
 </x-global::actions.modal-header>
