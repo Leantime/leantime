@@ -2067,3 +2067,56 @@ button.lt-info-tip[aria-expanded="true"] {
     background: color-mix(in srgb, var(--primary-font-color) 8%, transparent);
     color: var(--accent1);
 }
+
+/* forms.button-group — joined buttons, or a segmented single-choice track. */
+.lt-btn-group {
+    display: inline-flex;
+    align-items: stretch;
+    vertical-align: middle;
+}
+
+.lt-btn-group > .btn {
+    margin: 0;
+}
+
+.lt-btn-group:not(.lt-btn-group--segmented) > .btn:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.lt-btn-group:not(.lt-btn-group--segmented) > .btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.lt-btn-group--segmented {
+    gap: 2px;
+    padding: 2px;
+    border-radius: var(--element-radius);
+    background: color-mix(in srgb, var(--primary-font-color) 7%, transparent);
+}
+
+body .lt-btn-group--segmented > .btn {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--color-text-secondary, var(--primary-font-color));
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+body .lt-btn-group--segmented > .btn:hover,
+body .lt-btn-group--segmented > .btn:focus-visible {
+    background: color-mix(in srgb, var(--primary-font-color) 6%, transparent);
+    color: var(--primary-font-color);
+}
+
+body .lt-btn-group--segmented > .btn.active,
+body .lt-btn-group--segmented > .btn[aria-pressed="true"] {
+    background: var(--secondary-background);
+    box-shadow: var(--min-shadow);
+    color: var(--accent1);
+}

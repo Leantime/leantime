@@ -98,6 +98,33 @@ leantime.snippets = (function () {
     });
     document.addEventListener('lt:ui:modal.loaded', function (event) { initInfoTips(event.detail.root); });
 
+    // forms.button-group segmented: expose the starting choice to assistive tech on render.
+    var initSegmentedGroups = function (root) {
+        if (!root || !root.querySelectorAll) {
+            return;
+        }
+        root.querySelectorAll('.lt-btn-group--segmented > .btn:not([aria-pressed])').forEach(function (button) {
+            button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
+        });
+    };
+    htmx.onLoad(initSegmentedGroups);
+    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
+    document.addEventListener('lt:ui:modal.loaded', function (event) { initSegmentedGroups(event.detail.root); });
+
+    // forms.button-group segmented: one picked option. Moves .active / aria-pressed to the clicked
+    // button; the page's own click handler reacts to the choice.
+    document.addEventListener('click', function (event) {
+        var button = event.target.closest ? event.target.closest('.lt-btn-group--segmented > .btn') : null;
+        if (!button) {
+            return;
+        }
+        Array.prototype.forEach.call(button.parentElement.children, function (sibling) {
+            var picked = sibling === button;
+            sibling.classList.toggle('active', picked);
+            sibling.setAttribute('aria-pressed', picked ? 'true' : 'false');
+        });
+    });
+
     var toggleTheme = function (theme) {
 
         var themeUrl = jQuery("#themeStyleSheet").attr("href");

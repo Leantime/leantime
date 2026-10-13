@@ -107,11 +107,11 @@
                             </span>
 
                                 <div class="pull-right">
-                                    <div class="btn-group mt-1 mx-auto" role="group">
-                                        <x-global::forms.button tag="a" id="NumChartButtonSprint" class="btn-sm btn-secondary active chartButtons" link="javascript:void(0)">{!! __('label.num_tickets') !!}</x-global::forms.button>
-                                        <x-global::forms.button tag="a" id="EffortChartButtonSprint" class="btn-sm btn-secondary chartButtons" link="javascript:void(0)">{!! __('label.effort') !!}</x-global::forms.button>
-                                        <x-global::forms.button tag="a" id="HourlyChartButtonSprint" class="btn-sm btn-secondary chartButtons" link="javascript:void(0)">{!! __('label.hours') !!}</x-global::forms.button>
-                                    </div>
+                                    <x-global::forms.button-group segmented :label="__('label.chart_metric')">
+                                        <x-global::forms.button inputType="button" aria-pressed="true" id="NumChartButtonSprint" class="active chartButtons" scale="s">{!! __('label.num_tickets') !!}</x-global::forms.button>
+                                        <x-global::forms.button inputType="button" aria-pressed="false" id="EffortChartButtonSprint" class="chartButtons" scale="s">{!! __('label.effort') !!}</x-global::forms.button>
+                                        <x-global::forms.button inputType="button" aria-pressed="false" id="HourlyChartButtonSprint" class="chartButtons" scale="s">{!! __('label.hours') !!}</x-global::forms.button>
+                                    </x-global::forms.button-group>
 
                                 </div>
 
@@ -128,11 +128,11 @@
                         <h5 class="subtitle">{!! __('subtitles.cummulative_flow') !!}</h5>
 
                         <div class="pull-right">
-                            <div class="btn-group mt-1 mx-auto" role="group">
-                                <x-global::forms.button tag="a" id="NumChartButtonBacklog" class="btn-sm btn-secondary active backlogChartButtons" link="javascript:void(0)">{!! __('label.num_tickets') !!}</x-global::forms.button>
-                                <x-global::forms.button tag="a" id="EffortChartButtonBacklog" class="btn-sm btn-secondary backlogChartButtons" link="javascript:void(0)">{!! __('label.effort') !!}</x-global::forms.button>
-                                <x-global::forms.button tag="a" id="HourlyChartButtonBacklog" class="btn-sm btn-secondary backlogChartButtons" link="javascript:void(0)">{!! __('label.hours') !!}</x-global::forms.button>
-                            </div>
+                            <x-global::forms.button-group segmented :label="__('label.chart_metric')">
+                                <x-global::forms.button inputType="button" aria-pressed="true" id="NumChartButtonBacklog" class="active backlogChartButtons" scale="s">{!! __('label.num_tickets') !!}</x-global::forms.button>
+                                <x-global::forms.button inputType="button" aria-pressed="false" id="EffortChartButtonBacklog" class="backlogChartButtons" scale="s">{!! __('label.effort') !!}</x-global::forms.button>
+                                <x-global::forms.button inputType="button" aria-pressed="false" id="HourlyChartButtonBacklog" class="backlogChartButtons" scale="s">{!! __('label.hours') !!}</x-global::forms.button>
+                            </x-global::forms.button-group>
 
                         </div>
                         <div style="width:100%; height:350px;">
