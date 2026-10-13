@@ -29,7 +29,10 @@
 
 @php
     $id = $id ?: 'lt-date-' . bin2hex(random_bytes(4));
-    $displayValue = $value instanceof \DateTimeInterface ? format($value)->date() : (string) $value;
+    // format() takes DateTime or Carbon; normalise any DateTimeInterface (e.g. DateTimeImmutable) first.
+    $displayValue = $value instanceof \DateTimeInterface
+        ? format(\Carbon\CarbonImmutable::instance($value))->date()
+        : (string) $value;
     $range = in_array($range, ['from', 'to'], true) ? $range : null;
     $width = in_array($width, ['sm', 'md', 'lg', 'full', 'auto'], true) ? $width : 'sm';
 @endphp

@@ -28,6 +28,12 @@ leantime.dateController = (function () {
             prevText: leantime.i18n.__("language.prevText"),
             weekHeader: leantime.i18n.__("language.weekHeader"),
             firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+            // Readonly fields never open the calendar (single pickers too, not only ranges).
+            beforeShow: function (input) {
+                if (jQuery(input).attr('readonly')) {
+                    return false;
+                }
+            },
             onSelect: callback
 
         };
@@ -113,6 +119,13 @@ leantime.dateController = (function () {
             var pair = ranges[group];
             if (pair.from && pair.to) {
                 initDateRangePicker(pair.from, pair.to);
+                // The limits otherwise only apply after the first change; seed them from rendered values.
+                if (pair.from.value !== '') {
+                    jQuery(pair.to).datepicker('option', 'minDate', getDate(pair.from));
+                }
+                if (pair.to.value !== '') {
+                    jQuery(pair.from).datepicker('option', 'maxDate', getDate(pair.to));
+                }
                 return;
             }
             // Half a pair in this swap: still a working date field.
