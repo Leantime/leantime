@@ -22,7 +22,7 @@
 @endphp
 
 @if (count($milestones) === 0)
-    <div class="tw-opacity-60 tw-text-sm tw-py-2">{{ $emptyText }}</div>
+    <x-global::elements.empty-state compact :description="$emptyText" />
 @else
     <ul class="reportMilestoneList">
         @foreach ($milestones as $milestone)

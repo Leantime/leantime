@@ -352,3 +352,88 @@ dl.lt-details--inline {
     color: var(--color-text-muted);
     cursor: pointer;
 }
+
+/* elements.empty-state — icon / illustration, title (16 / 600), 12px muted hint, actions. */
+.lt-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 32px 16px;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.lt-empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary-font-color) 6%, transparent);
+    font-size: var(--font-size-xxl);
+}
+
+.lt-empty-image {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 240px;
+    max-height: 160px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.lt-empty-image svg {
+    width: 100%;
+    height: auto;
+    max-height: 160px;
+}
+
+.lt-empty > .lt-empty-title {
+    margin: 0;
+    padding: 0;
+    color: var(--primary-font-color);
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-semibold);
+}
+
+.lt-empty-desc {
+    max-width: 420px;
+    font-size: var(--font-size-s);
+}
+
+.lt-empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.lt-empty--compact {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    padding: 8px 0;
+    text-align: left;
+}
+
+.lt-empty--compact .lt-empty-icon {
+    width: auto;
+    height: auto;
+    margin: 0;
+    background: none;
+    font-size: var(--font-size-s);
+}
+
+.lt-empty--compact > .lt-empty-title {
+    font-size: var(--base-font-size);
+}
+
+.lt-empty--compact .lt-empty-actions {
+    margin: 0 0 0 auto;
+}
