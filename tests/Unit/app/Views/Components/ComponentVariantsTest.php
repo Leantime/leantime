@@ -92,4 +92,24 @@ class ComponentVariantsTest extends TestCase
         $this->assertStringContainsString('lt-stat tone-warning', $this->render('<x-global::statTile value="3" label="Over" tone="warning" />'));
         $this->assertStringContainsString('lt-stat tone-success', $this->render('<x-global::statTile value="9" label="On track" tone="success" />'));
     }
+
+    public function test_button_group_is_a_labelled_group_that_forwards_attributes(): void
+    {
+        $html = $this->render('<x-global::forms.button-group label="Save options" id="saveGroup" class="extra"><button class="btn">Save</button></x-global::forms.button-group>');
+
+        $this->assertStringContainsString('role="group"', $html);
+        $this->assertStringContainsString('aria-label="Save options"', $html);
+        $this->assertStringContainsString('id="saveGroup"', $html);
+        $this->assertMatchesRegularExpression('/class="lt-btn-group extra"/', $html);
+        $this->assertStringNotContainsString('lt-btn-group--segmented', $html);
+    }
+
+    public function test_segmented_button_group_gets_its_modifier(): void
+    {
+        $html = $this->render('<x-global::forms.button-group segmented label="Chart metric"><button class="btn active" aria-pressed="true">Hours</button></x-global::forms.button-group>');
+
+        $this->assertStringContainsString('lt-btn-group--segmented', $html);
+        $this->assertStringContainsString('aria-label="Chart metric"', $html);
+        $this->assertStringContainsString('aria-pressed="true"', $html);
+    }
 }

@@ -654,11 +654,6 @@ input[type=color] {
 
 }
 
-.backlogChartButtons,
-.chartButtons{
-    margin-left:5px !important;
-}
-
 
 .dropdown-toggle.full-width-select {
     width:100%;
