@@ -54,4 +54,27 @@ class PluginCompatibilityTest extends TestCase
     {
         $this->assertFalse($this->compatibility()->isCompatible('not a version range'));
     }
+
+    public function test_system_plugin_folders_are_checked_by_path(): void
+    {
+        $base = sys_get_temp_dir().'/lt-system-plugins-'.uniqid();
+        foreach (['Supported' => '>=3.0', 'Future' => '>=99.0'] as $folder => $range) {
+            mkdir($base.'/'.$folder, 0777, true);
+            file_put_contents($base.'/'.$folder.'/composer.json', json_encode(['extra' => ['leantime' => ['requires' => $range]]]));
+        }
+        mkdir($base.'/NoComposer');
+
+        $compatibility = $this->compatibility('3.12.0');
+
+        $this->assertTrue($compatibility->pluginAtPathIsCompatible($base.'/Supported'));
+        $this->assertFalse($compatibility->pluginAtPathIsCompatible($base.'/Future/'));
+        $this->assertTrue($compatibility->pluginAtPathIsCompatible($base.'/NoComposer'));
+
+        foreach (['Supported', 'Future'] as $folder) {
+            unlink($base.'/'.$folder.'/composer.json');
+            rmdir($base.'/'.$folder);
+        }
+        rmdir($base.'/NoComposer');
+        rmdir($base);
+    }
 }

@@ -129,4 +129,50 @@ class EnabledPluginsCacheTest extends TestCase
         }
         @rmdir($pluginDir);
     }
+
+    public function test_incompatible_system_plugins_are_not_loaded_either(): void
+    {
+        $pluginDir = sys_get_temp_dir().'/lt-system-guard-'.getmypid().'/';
+        foreach (['CurrentSystem' => '>=3.0', 'FutureSystem' => '>=99.0'] as $folder => $range) {
+            @mkdir($pluginDir.$folder, 0777, true);
+            file_put_contents($pluginDir.$folder.'/composer.json', json_encode([
+                'name' => 'leantime/'.strtolower($folder),
+                'description' => 'test',
+                'version' => '1.0.0',
+                'homepage' => '',
+                'authors' => [],
+                'extra' => ['leantime' => ['requires' => $range]],
+            ]));
+        }
+
+        $config = $this->make(Environment::class, [
+            'has' => fn ($key) => $key === 'plugins',
+            'get' => fn ($key, $default = null) => match ($key) {
+                'debug' => false,
+                'plugins' => 'CurrentSystem,FutureSystem',
+                default => $default,
+            },
+        ]);
+        $plugins = $this->make(Plugins::class, [
+            'pluginRepository' => $this->makeEmpty(PluginRepository::class, ['getAllPlugins' => fn () => []]),
+            'config' => $config,
+            'appSettings' => app(AppSettings::class),
+            'compatibility' => app(PluginCompatibility::class),
+            'settingsService' => $this->makeEmpty(SettingsService::class),
+        ]);
+        $directory = new \ReflectionProperty(Plugins::class, 'pluginDirectory');
+        $directory->setValue($plugins, $pluginDir);
+
+        $enabled = $plugins->getEnabledPlugins();
+
+        // Positive control: the system plugin path is exercised at all.
+        $this->assertArrayHasKey('CurrentSystem', $enabled);
+        $this->assertArrayNotHasKey('FutureSystem', $enabled);
+
+        foreach (['CurrentSystem', 'FutureSystem'] as $folder) {
+            @unlink($pluginDir.$folder.'/composer.json');
+            @rmdir($pluginDir.$folder);
+        }
+        @rmdir($pluginDir);
+    }
 }

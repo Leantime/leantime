@@ -3,6 +3,7 @@
 namespace Leantime\Core\Plugins;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -44,25 +45,40 @@ class PluginCrashBreaker
                 return;
             }
 
-            $cacheKey = 'plugins.failures.'.strtolower($pluginFolder);
-            $now = time();
-            $recentFailures = array_values(array_filter(
-                (array) Cache::get($cacheKey, []),
-                fn ($timestamp) => is_int($timestamp) && $timestamp > $now - self::WINDOW_SECONDS
-            ));
-            $recentFailures[] = $now;
-
-            if (count($recentFailures) < self::THRESHOLD) {
-                Cache::put($cacheKey, $recentFailures, self::WINDOW_SECONDS);
-
-                return;
-            }
-
-            Cache::forget($cacheKey);
-            app(PluginService::class)->disableAfterFailures($pluginFolder, $error->getMessage());
+            // Concurrent failing requests would otherwise read the same window and overwrite each
+            // other (never reaching the threshold, or disabling twice). Waits briefly for the lock;
+            // a failure that can't get it in time is dropped rather than slowing the error page.
+            $lock = Cache::lock('plugins.failures.lock.'.strtolower($pluginFolder), 5);
+            $lock->block(2, function () use ($pluginFolder, $error) {
+                $this->countFailure($pluginFolder, $error);
+            });
         } catch (Throwable $breakerError) {
             Log::warning('Plugin crash breaker could not record an error: '.$breakerError->getMessage());
         }
+    }
+
+    /**
+     * Adds a failure to the plugin's window and disables it at the threshold. Runs under the
+     * plugin's lock (see {@see record()}).
+     */
+    private function countFailure(string $pluginFolder, Throwable $error): void
+    {
+        $cacheKey = 'plugins.failures.'.strtolower($pluginFolder);
+        $now = time();
+        $recentFailures = array_values(array_filter(
+            (array) Cache::get($cacheKey, []),
+            fn ($timestamp) => is_int($timestamp) && $timestamp > $now - self::WINDOW_SECONDS
+        ));
+        $recentFailures[] = $now;
+
+        if (count($recentFailures) < self::THRESHOLD) {
+            Cache::put($cacheKey, $recentFailures, self::WINDOW_SECONDS);
+
+            return;
+        }
+
+        Cache::forget($cacheKey);
+        app(PluginService::class)->disableAfterFailures($pluginFolder, $error->getMessage());
     }
 
     /**
@@ -103,6 +119,11 @@ class PluginCrashBreaker
         // Leantime's own exceptions (not found, forbidden, validation…) carry an HTTP status too.
         if ($error instanceof HttpExceptionInterface) {
             return $error->getStatusCode() >= 500;
+        }
+
+        // A response thrown on purpose (an auth redirect, an abort with a page): only a 5xx counts.
+        if ($error instanceof HttpResponseException) {
+            return $error->getResponse()->getStatusCode() >= 500;
         }
 
         return ! ($error instanceof LaravelValidationException

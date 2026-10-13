@@ -395,13 +395,37 @@ class Plugins
     #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function enablePlugin(int $id): bool
     {
+        return $this->enable($id, null);
+    }
+
+    /**
+     * Enables a plugin after a core update, checking it against the version just installed.
+     *
+     * The updater still runs the previous release's code, so the running version is the old one;
+     * a plugin that supports only the new release would otherwise be refused. Not @api: only
+     * system:update calls it.
+     *
+     * @param  int  $id  The plugin id.
+     * @param  string  $installedLeantimeVersion  The Leantime version that was just installed.
+     */
+    public function enablePluginForVersion(int $id, string $installedLeantimeVersion): bool
+    {
+        return $this->enable($id, $installedLeantimeVersion);
+    }
+
+    /**
+     * Enables a plugin when it supports $leantimeVersion (default: the running version) and, for
+     * marketplace plugins, its license is valid.
+     */
+    private function enable(int $id, ?string $leantimeVersion): bool
+    {
         $this->clearCache();
 
         $pluginModel = $this->pluginRepository->getPlugin($id);
 
-        $this->applyCompatibility($pluginModel);
+        $this->applyCompatibility($pluginModel, $leantimeVersion);
         if ($pluginModel->compatible === false) {
-            Log::warning('Not enabling plugin '.$pluginModel->foldername.': it supports Leantime '.$pluginModel->requires.', this is '.$this->appSettings->appVersion);
+            Log::warning('Not enabling plugin '.$pluginModel->foldername.': it supports Leantime '.$pluginModel->requires.', not '.($leantimeVersion ?? $this->appSettings->appVersion));
 
             return false;
         }
@@ -1013,9 +1037,10 @@ class Plugins
      * plugin's composer.json. A plugin whose files can't be read keeps compatible = null
      * (unknown): it can't load anyway, and the loader reports the missing files.
      *
+     * @param  string|null  $leantimeVersion  The version to check against; default the running one.
      * @return InstalledPlugin The same plugin, for chaining.
      */
-    private function applyCompatibility(InstalledPlugin $plugin): InstalledPlugin
+    private function applyCompatibility(InstalledPlugin $plugin, ?string $leantimeVersion = null): InstalledPlugin
     {
         $composer = $this->readComposer((string) $plugin->foldername);
 
@@ -1024,7 +1049,7 @@ class Plugins
         }
 
         $plugin->requires = $this->compatibility->rangeFor($composer);
-        $plugin->compatible = $this->compatibility->isCompatible($plugin->requires);
+        $plugin->compatible = $this->compatibility->isCompatible($plugin->requires, $leantimeVersion);
 
         return $plugin;
     }
@@ -1054,7 +1079,8 @@ class Plugins
     }
 
     /**
-     * Drops the plugins that don't support this Leantime version from an enabled-plugin list,
+     * Drops the plugins that don't support this Leantime version from an enabled-plugin list
+     * (system plugins too: being impossible to disable locally must not mean their code loads),
      * and tells the administrators once per plugin version and Leantime version.
      *
      * @param  array<string, InstalledPlugin>  $plugins  Enabled plugins keyed by folder.
@@ -1063,7 +1089,7 @@ class Plugins
     private function withoutIncompatible(array $plugins): array
     {
         foreach ($plugins as $folder => $plugin) {
-            if ($plugin->type === $this->pluginTypes['system'] || $plugin->compatible !== false) {
+            if ($plugin->compatible !== false) {
                 continue;
             }
 
@@ -1088,17 +1114,33 @@ class Plugins
         $settingKey = 'plugins.incompatibleNotified.'.$plugin->foldername;
         $marker = $plugin->version.'|'.$this->appSettings->appVersion;
 
-        if ($this->settingsService->getSetting($settingKey) === $marker || ! isset($plugin->id)) {
+        // System plugins have no database row to point the notification at; the log line is theirs.
+        if (! isset($plugin->id) || $this->settingsService->getSetting($settingKey) === $marker) {
             return;
         }
 
-        $this->notifyAdmins(
-            $plugin->id,
-            'plugin_incompatible',
-            sprintf(__('notification.plugin_incompatible_paused'), $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
-        );
-        // Only after the notification went out, so a failed send is retried on the next rebuild.
-        $this->settingsService->saveSetting($settingKey, $marker);
+        // Several workers rebuild the list at once after an update: only the lock holder sends,
+        // and it re-reads the marker inside the lock. The others skip (the holder covers them).
+        $lock = Cache::lock('plugins.incompatibleNotify.'.$plugin->foldername, 30);
+        if (! $lock->get()) {
+            return;
+        }
+
+        try {
+            if ($this->settingsService->getSetting($settingKey) === $marker) {
+                return;
+            }
+
+            $this->notifyAdmins(
+                $plugin->id,
+                'plugin_incompatible',
+                sprintf(__('notification.plugin_incompatible_paused'), $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
+            );
+            // Only after the notification went out, so a failed send is retried on the next rebuild.
+            $this->settingsService->saveSetting($settingKey, $marker);
+        } finally {
+            $lock->release();
+        }
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace Unit\app\Core\Plugins;
 
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Plugins\PluginCrashBreaker;
@@ -76,6 +79,9 @@ class PluginCrashBreakerTest extends TestCase
         $this->assertFalse($breaker->counts(new HttpException(404)));
         $this->assertTrue($breaker->counts(new HttpException(500)));
         $this->assertTrue($breaker->counts(new \TypeError('bad call')));
+        // Auth::authOrRedirect() and friends throw a redirect on purpose: not a fault.
+        $this->assertFalse($breaker->counts(new HttpResponseException(new RedirectResponse('/auth/login'))));
+        $this->assertTrue($breaker->counts(new HttpResponseException(new Response('down', 503))));
     }
 
     public function test_plugin_is_disabled_at_the_threshold_not_before(): void

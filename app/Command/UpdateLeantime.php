@@ -90,15 +90,15 @@ class UpdateLeantime extends Command
         $targetVersion = ltrim((string) $latestVersion, 'v');
 
         $incompatiblePlugins = collect($plugins->getAllPlugins(enabledOnly: true) ?: [])
-            ->filter(fn ($plugin) => $plugin->type !== 'system' && $plugin->requires !== null)
+            ->filter(fn ($plugin) => $plugin->requires !== null)
             ->reject(fn ($plugin) => $compatibility->isCompatible($plugin->requires, $targetVersion));
 
         if ($incompatiblePlugins->isEmpty()) {
             $io->text('All enabled plugins support v'.$targetVersion.'.');
         } else {
             $io->warning(array_merge(
-                ['These plugins do not support v'.$targetVersion.' and will stay disabled after the update until you install a compatible version:'],
-                $incompatiblePlugins->map(fn ($plugin) => $plugin->name.' '.$plugin->version.' (supports '.$plugin->requires.')')->values()->all()
+                ['These plugins do not support v'.$targetVersion.' and will not load after the update until you install a compatible version:'],
+                $incompatiblePlugins->map(fn ($plugin) => $plugin->name.' '.$plugin->version.' (supports '.$plugin->requires.')'.($plugin->type === 'system' ? ', system plugin from LEAN_PLUGINS' : ''))->values()->all()
             ));
 
             // Automated runs keep going: core skips incompatible plugins, so the update itself is safe.
@@ -213,8 +213,11 @@ class UpdateLeantime extends Command
                     continue;
                 }
 
-                $plugins->enablePlugin($plugin->id);
-                $io->text($plugin->name.': Enabled');
+                if ($plugins->enablePluginForVersion($plugin->id, $targetVersion)) {
+                    $io->text($plugin->name.': Enabled');
+                } else {
+                    $io->text($plugin->name.': could not be enabled (license check failed); enable it in My Apps');
+                }
             }
         }
 

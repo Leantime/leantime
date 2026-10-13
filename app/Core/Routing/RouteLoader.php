@@ -69,8 +69,13 @@ class RouteLoader
         if (isset(app(Environment::class)->plugins)) {
             $configPlugins = explode(',', app(Environment::class)->plugins);
 
-            Route::middleware([CheckPermissions::class])->group(function () use ($configPlugins) {
+            $compatibility = app(\Leantime\Core\Plugins\PluginCompatibility::class);
+
+            Route::middleware([CheckPermissions::class])->group(function () use ($configPlugins, $compatibility) {
                 foreach ($configPlugins as $plugin) {
+                    if (! $compatibility->pluginAtPathIsCompatible(APP_ROOT.'/app/Plugins/'.$plugin)) {
+                        continue;
+                    }
                     if (file_exists($pluginRoutesPath = APP_ROOT.'/app/Plugins/'.$plugin.'/routes.php')) {
                         require_once $pluginRoutesPath;
                     }

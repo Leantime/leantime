@@ -23,7 +23,44 @@ class PluginCompatibility
     /** Range assumed for plugins that declare none (everything released before 3.12 targets 3.x). */
     public const UNDECLARED_RANGE = '>=3.0 <4.0';
 
+    /** @var array<string, bool> Per-request results of {@see pluginAtPathIsCompatible()}, by path. */
+    private static array $pathResults = [];
+
     public function __construct(private AppSettings $appSettings) {}
+
+    /**
+     * Whether the folder plugin at $pluginPath supports the running Leantime version.
+     *
+     * For system plugins (from config), which core loads straight from their folder rather than
+     * through the enabled-plugin list. A plugin without a readable composer.json counts as
+     * compatible here: there is no range to check, and the loaders skip what isn't there.
+     *
+     * @param  string  $pluginPath  The plugin's folder, e.g. APP_ROOT.'/app/Plugins/Notes'.
+     */
+    public function pluginAtPathIsCompatible(string $pluginPath): bool
+    {
+        $pluginPath = rtrim($pluginPath, '/');
+        if (isset(self::$pathResults[$pluginPath])) {
+            return self::$pathResults[$pluginPath];
+        }
+
+        $composer = is_file($pluginPath.'/composer.json')
+            ? json_decode((string) file_get_contents($pluginPath.'/composer.json'), true)
+            : null;
+
+        if (! is_array($composer)) {
+            return self::$pathResults[$pluginPath] = true;
+        }
+
+        $range = $this->rangeFor($composer);
+        $compatible = $this->isCompatible($range);
+
+        if (! $compatible) {
+            Log::warning('Not loading system plugin '.basename($pluginPath).': it supports Leantime '.$range.', this is '.$this->appSettings->appVersion);
+        }
+
+        return self::$pathResults[$pluginPath] = $compatible;
+    }
 
     /**
      * The range a plugin declares in its composer.json, or null when it declares none.
