@@ -62,9 +62,8 @@
                                 </li>
                             @endforeach
                         @else
-                            <x-global::undrawSvg image="undraw_empty_cart_co35.svg" headline="Nothing New">
-                                We couldn't discover any new plugins in your plugin folder, please make sure the plugin is unzipped and contains a composer.json file.
-                            </x-global::undrawSvg>
+                            <x-global::elements.empty-state image="undraw_no_data_re_kwbl.svg" titleAs="h3" title="Nothing New"
+                                description="We couldn't discover any new plugins in your plugin folder, please make sure the plugin is unzipped and contains a composer.json file." />
                         @endif
                     </ul>
                 </div>

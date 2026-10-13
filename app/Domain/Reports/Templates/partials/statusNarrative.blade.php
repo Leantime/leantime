@@ -14,7 +14,7 @@
 @endphp
 
 @if (count($updatesByProject) === 0)
-    <div class="tw-opacity-60 tw-text-sm tw-py-2">{{ $emptyText }}</div>
+    <x-global::elements.empty-state compact :description="$emptyText" />
 @else
     <div class="reportStatusNarrative tw-flex tw-flex-col tw-gap-3">
         @foreach ($updatesByProject as $projectId => $updates)
