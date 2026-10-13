@@ -1020,13 +1020,17 @@ class Plugins
         $failed = [];
         $previousUpdates = $this->getAvailableUpdates();
 
-        foreach ($this->pluginRepository->getAllPlugins(false) ?: [] as $plugin) {
-            if ($plugin->format !== $this->pluginFormat['phar']) {
-                continue;
-            }
+        $marketplacePlugins = collect($this->pluginRepository->getAllPlugins(false) ?: [])
+            ->filter(fn (InstalledPlugin $plugin) => $plugin->format === $this->pluginFormat['phar']);
 
+        // One request for all plugins when the marketplace offers it; otherwise one per plugin.
+        $releasesByIdentifier = $marketplacePlugins->isEmpty()
+            ? []
+            : $this->fetchLatestReleases($marketplacePlugins->map(fn (InstalledPlugin $plugin) => $plugin->getIdentifier())->values()->all());
+
+        foreach ($marketplacePlugins as $plugin) {
             try {
-                $version = $this->findUpdate($plugin);
+                $version = $this->findUpdate($plugin, $releasesByIdentifier === null ? null : ($releasesByIdentifier[strtolower($plugin->getIdentifier())] ?? []));
             } catch (\Throwable $e) {
                 Log::warning('Could not check for an update of plugin '.$plugin->foldername.': '.$e->getMessage());
                 $failed[] = (string) $plugin->foldername;
@@ -1053,6 +1057,125 @@ class Plugins
     }
 
     /**
+     * The releases of several marketplace plugins in one request (`ltmp-api/latest`), keyed by
+     * lower-cased identifier, each in the shape of a plugin's compatibility list. Null when the
+     * marketplace doesn't offer the batch call (older marketplace) or it fails: the caller then
+     * asks per plugin.
+     *
+     * @param  array<int, string>  $identifiers  Marketplace identifiers of the installed plugins.
+     * @return array<string, array<int, array<string, mixed>>>|null
+     */
+    private function fetchLatestReleases(array $identifiers): ?array
+    {
+        try {
+            $response = $this->httpClient()->get("{$this->marketplaceUrl}/ltmp-api/latest", [
+                'identifiers' => implode(',', $identifiers),
+                'lt-v' => $this->appSettings->appVersion,
+            ]);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $releases = $response->ok() ? $response->json('plugins') : null;
+
+        if (! is_array($releases)) {
+            return null;
+        }
+
+        return collect($releases)
+            ->filter(fn ($pluginReleases) => is_array($pluginReleases))
+            ->mapWithKeys(fn ($pluginReleases, $identifier) => [strtolower((string) $identifier) => array_values($pluginReleases)])
+            ->all();
+    }
+
+    /**
+     * Turns automatic plugin updates on or off (off by default). When on, the daily update check
+     * installs new minor and patch releases of marketplace plugins; major releases wait for an
+     * administrator.
+     *
+     * @api
+     */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
+    public function setAutoUpdate(bool $enabled): void
+    {
+        $this->settingsService->saveSetting('plugins.autoUpdate', $enabled ? '1' : '0');
+    }
+
+    /**
+     * Whether automatic plugin updates are on (off unless an administrator turned them on).
+     *
+     * @api
+     */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
+    public function isAutoUpdateEnabled(): bool
+    {
+        return (string) $this->settingsService->getSetting('plugins.autoUpdate', '0') === '1';
+    }
+
+    /**
+     * The daily plugin update job: checks for updates and, when automatic updates are on, installs
+     * the minor and patch ones. Each automatic update (or its rollback) is reported to the admins.
+     *
+     * Not @api: the scheduler calls it.
+     *
+     * @return array{available: array<string, string>, updated: array<string, string>, failed: array<string, string>, waiting: array<string, string>}
+     *                                                                                                                                                Folder => version (failed: folder => reason); waiting = major releases left for an admin.
+     */
+    public function runScheduledUpdates(): array
+    {
+        $result = ['available' => $this->checkForUpdates(), 'updated' => [], 'failed' => [], 'waiting' => []];
+
+        if ($result['available'] === [] || ! $this->isAutoUpdateEnabled()) {
+            return $result;
+        }
+
+        $installedByFolder = collect($this->pluginRepository->getAllPlugins(false) ?: [])->keyBy('foldername');
+
+        foreach ($result['available'] as $folder => $version) {
+            $plugin = $installedByFolder->get($folder);
+            if ($plugin === null) {
+                continue;
+            }
+
+            if (! self::isMinorOrPatchUpdate((string) $plugin->version, $version)) {
+                $result['waiting'][$folder] = $version;
+
+                continue;
+            }
+
+            try {
+                $this->updatePlugin($plugin->id);
+                $result['updated'][$folder] = $version;
+                $message = sprintf(__('notification.plugin_auto_updated'), $plugin->name, $version);
+            } catch (\Throwable $e) {
+                $result['failed'][$folder] = $e->getMessage();
+                $message = sprintf(__('notification.plugin_auto_update_failed'), $plugin->name, $version, Str::limit($e->getMessage(), 300));
+                Log::warning('Automatic update of plugin '.$folder.' to '.$version.' failed: '.$e->getMessage());
+            }
+
+            try {
+                $this->notifyAdmins($plugin->id, 'plugin_update', $message);
+            } catch (\Throwable $e) {
+                Log::warning('Could not notify about the automatic update of plugin '.$folder.': '.$e->getMessage());
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Whether $to is a minor or patch release after $from (same major version), which automatic
+     * updates may install.
+     */
+    public static function isMinorOrPatchUpdate(string $from, string $to): bool
+    {
+        $fromMajor = (int) explode('.', ltrim($from, 'v'))[0];
+        $toMajor = (int) explode('.', ltrim($to, 'v'))[0];
+
+        return $fromMajor === $toMajor && version_compare(ltrim($to, 'v'), ltrim($from, 'v'), '>');
+    }
+
+    /**
      * The updates found by the last {@see checkForUpdates()}: plugin folder => version.
      *
      * @return array<string, string>
@@ -1073,17 +1196,24 @@ class Plugins
      * The newest marketplace version of a plugin that supports this Leantime version and is newer
      * than the installed one, or null when there is none.
      *
+     * @param  array<int, array<string, mixed>>|null  $releases  The plugin's releases, when already
+     *                                                           fetched in a batch; null asks the marketplace.
+     *
      * @throws \RuntimeException When the marketplace doesn't answer for the plugin (never "no update").
      */
-    private function findUpdate(InstalledPlugin $plugin): ?string
+    private function findUpdate(InstalledPlugin $plugin, ?array $releases = null): ?string
     {
-        $marketplacePlugin = $this->getMarketplacePlugin($plugin->getIdentifier());
+        if ($releases === null) {
+            $marketplacePlugin = $this->getMarketplacePlugin($plugin->getIdentifier());
 
-        if ($marketplacePlugin === false) {
-            throw new \RuntimeException('The marketplace did not answer for '.$plugin->getIdentifier());
+            if ($marketplacePlugin === false) {
+                throw new \RuntimeException('The marketplace did not answer for '.$plugin->getIdentifier());
+            }
+
+            $releases = $marketplacePlugin->compatibility;
         }
 
-        $latest = collect($marketplacePlugin->compatibility)
+        $latest = collect($releases)
             ->filter(fn ($release) => is_array($release) && ! empty($release['version_number']))
             ->filter(fn ($release) => $this->compatibility->isCompatible($this->releaseRange($release)))
             ->map(fn ($release) => ltrim((string) $release['version_number'], 'v'))
