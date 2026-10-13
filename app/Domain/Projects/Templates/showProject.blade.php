@@ -196,10 +196,7 @@
             <div id="integrations">
 
                 @if ($projectMuteCount > 0)
-                    <div class="alert alert-info" style="margin-bottom: 20px;">
-                        <i class="fa fa-bell-slash"></i>
-                        {!! sprintf(__('label.project_mute_count'), $projectMuteCount) !!}
-                    </div>
+                    <x-global::feedback.alert icon="fa fa-bell-slash">{!! sprintf(__('label.project_mute_count'), $projectMuteCount) !!}</x-global::feedback.alert>
                 @endif
 
                 <x-global::elements.section-header icon="fa fa-leaf">Mattermost</x-global::elements.section-header>

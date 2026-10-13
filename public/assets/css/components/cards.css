@@ -259,3 +259,96 @@ body img.lt-avatar.lt-avatar--xl { width: 64px; height: 64px; }
 body .lt-avatar-stack > .lt-avatar + .lt-avatar {
     margin-left: -8px;
 }
+
+/* elements.details-list — read-only label / value facts. */
+dl.lt-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+}
+
+.lt-details-row {
+    min-width: 0;
+}
+
+.lt-details dt {
+    margin: 0 0 2px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.lt-details dd {
+    margin: 0;
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+    overflow-wrap: anywhere;
+}
+
+dl.lt-details--inline {
+    gap: 8px;
+}
+
+.lt-details--inline .lt-details-row {
+    display: grid;
+    grid-template-columns: minmax(100px, 30%) 1fr;
+    gap: 12px;
+    align-items: baseline;
+}
+
+.lt-details--inline dt {
+    margin: 0;
+}
+
+/* feedback.alert — tinted message box in a tone (info / success / warning / danger). */
+.lt-alert {
+    --lt-alert-tone: var(--feedback-info-border);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border: 1px solid color-mix(in srgb, var(--lt-alert-tone) 35%, transparent);
+    border-radius: var(--box-radius-small);
+    background: var(--feedback-info-bg);
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+}
+
+.lt-alert--success { --lt-alert-tone: var(--feedback-success-border); background: var(--feedback-success-bg); }
+.lt-alert--warning { --lt-alert-tone: var(--feedback-warning-border); background: var(--feedback-warning-bg); }
+.lt-alert--danger  { --lt-alert-tone: var(--feedback-error-border);   background: var(--feedback-error-bg); }
+
+.lt-alert-icon {
+    flex: none;
+    margin-top: 3px;
+    color: var(--lt-alert-tone);
+}
+
+.lt-alert-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.lt-alert-title {
+    font-weight: var(--font-weight-semibold);
+}
+
+.lt-alert-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.lt-alert-close {
+    flex: none;
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+}
