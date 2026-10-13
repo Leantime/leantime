@@ -68,7 +68,9 @@ class PluginCompatibilityTest extends TestCase
 
         $this->assertTrue($compatibility->pluginAtPathIsCompatible($base.'/Supported'));
         $this->assertFalse($compatibility->pluginAtPathIsCompatible($base.'/Future/'));
+        // No composer.json = no declared range = the 3.x default: fine on 3.12, not on 4.0.
         $this->assertTrue($compatibility->pluginAtPathIsCompatible($base.'/NoComposer'));
+        $this->assertFalse($this->compatibility('4.0.0')->pluginAtPathIsCompatible($base.'/NoComposer'));
 
         foreach (['Supported', 'Future'] as $folder) {
             unlink($base.'/'.$folder.'/composer.json');
