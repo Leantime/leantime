@@ -109,7 +109,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating/underline (underline = section tabs, see "Section tabs"); tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
 | view-tabs | `navigation.view-tabs` | navigation | ✅ | feature/page-toolbars | The bar between page header and content box: page VIEWS as link tabs on the left (server-side active), page ACTIONS on the right (`actions` slot: New, Filter, Group By, view settings, ranges). Replaces the hand-rolled bars in tickets (ticketBoardTabs/timelineTabs, `tickets::portfolio-tabs`). See "Page layout" |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
-| date-picker | `forms.date-picker` | forms | ⬜ | selectsComponentUpdates | jQuery-UI datepicker; needs htmx.onLoad re-init |
+| date-picker | `forms.date-picker` | forms | 🟡 | — | Date field on the jQuery-UI picker (user's format + language): `name`, `id`, `value` (user-format string or DateTimeInterface), `range` from/to + `rangeGroup` (to ≥ from, empty to takes from), `width` (default sm). `core/datePickers.js` inits on render + every htmx swap and destroys on `htmx:beforeCleanupElement` (no per-page `initDatePicker` scripts). Done: new project dates. Left: ~20 raw `.dates`/`#dateFrom` inputs with page scripts (timesheets, to-do dialogs, goal dialog) — swap with each page |
 
 ### P1
 | Component | Tag | Cat | Status | Notes |

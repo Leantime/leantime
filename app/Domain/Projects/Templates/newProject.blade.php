@@ -84,14 +84,12 @@
                                 <div>
                                     <label>{!! __('label.project_start') !!}</label>
                                     <div class="">
-                                        <input type="text" class="field-width-sm dates dateFrom" name="start" autocomplete="off"
-                                               value="{{ $project['start'] }}" placeholder="{{ __('language.dateformat') }}" />
+                                        <x-global::forms.date-picker name="start" range="from" :value="$project['start']" class="dates dateFrom" />
 
                                     </div>
                                     <label>{!! __('label.project_end') !!}</label>
                                     <div class="">
-                                        <input type="text" class="field-width-sm dates dateTo" name="end" autocomplete="off"
-                                               value="{{ $project['end'] }}" placeholder="{{ __('language.dateformat') }}" />
+                                        <x-global::forms.date-picker name="end" range="to" :value="$project['end']" class="dates dateTo" />
 
                                     </div>
                                 </div>
@@ -148,7 +146,6 @@
 <script type="text/javascript">
     jQuery(document).ready(function() {
 
-        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
         leantime.projectsController.initProjectTabs();
         if (window.leantime && window.leantime.tiptapController) {
