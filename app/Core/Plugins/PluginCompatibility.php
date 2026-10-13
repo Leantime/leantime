@@ -17,47 +17,16 @@ use Leantime\Core\Configuration\AppSettings;
  * Plugins released before this existed declare nothing. They were all built for Leantime 3.x,
  * so they are treated as {@see UNDECLARED_RANGE}: they keep loading on every 3.x release and
  * are flagged as incompatible on 4.0.
+ *
+ * System plugins (LEAN_PLUGINS) are not guarded: they come from the deployment's config, and
+ * whoever configures them is responsible for running versions that fit.
  */
 class PluginCompatibility
 {
     /** Range assumed for plugins that declare none (everything released before 3.12 targets 3.x). */
     public const UNDECLARED_RANGE = '>=3.0 <4.0';
 
-    /** @var array<string, bool> Per-request results of {@see pluginAtPathIsCompatible()}, by path and version. */
-    private static array $pathResults = [];
-
     public function __construct(private AppSettings $appSettings) {}
-
-    /**
-     * Whether the folder plugin at $pluginPath supports the running Leantime version.
-     *
-     * For system plugins (from config), which core loads straight from their folder rather than
-     * through the enabled-plugin list. A plugin without a readable composer.json declares no
-     * range, so it gets {@see UNDECLARED_RANGE} like any other plugin that declares none.
-     *
-     * @param  string  $pluginPath  The plugin's folder, e.g. APP_ROOT.'/app/Plugins/Notes'.
-     */
-    public function pluginAtPathIsCompatible(string $pluginPath): bool
-    {
-        $pluginPath = rtrim($pluginPath, '/');
-        $resultKey = $pluginPath.'|'.$this->appSettings->appVersion;
-        if (isset(self::$pathResults[$resultKey])) {
-            return self::$pathResults[$resultKey];
-        }
-
-        $composer = is_file($pluginPath.'/composer.json')
-            ? json_decode((string) file_get_contents($pluginPath.'/composer.json'), true)
-            : null;
-
-        $range = $this->rangeFor(is_array($composer) ? $composer : []);
-        $compatible = $this->isCompatible($range);
-
-        if (! $compatible) {
-            Log::warning('Not loading system plugin '.basename($pluginPath).': it supports Leantime '.$range.', this is '.$this->appSettings->appVersion);
-        }
-
-        return self::$pathResults[$resultKey] = $compatible;
-    }
 
     /**
      * The range a plugin declares in its composer.json, or null when it declares none.

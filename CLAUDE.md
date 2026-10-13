@@ -742,6 +742,7 @@ Leantime has a comprehensive plugin system that allows extending core functional
 
 7. **Compatibility and failure guard** (`app/Core/Plugins`):
    - Plugins declare the Leantime versions they support in composer.json: `"extra": {"leantime": {"requires": ">=3.12 <4.0"}}` (Composer constraint, checked with composer/semver). Plugins that declare nothing count as `>=3.0 <4.0` (`PluginCompatibility::UNDECLARED_RANGE`).
+   - System plugins (`LEAN_PLUGINS`) are not guarded: the deployment that configures them owns their compatibility (the updater still lists them).
    - `Plugins::getEnabledPlugins()` (the source for register files, routes, views, console) drops plugins that don't support the running version; they stay enabled in the DB, show "Not compatible" in My Apps, can't be enabled, and admins are notified once per plugin version + Leantime version. The cache key includes the app version, so a core update re-checks on the first request.
    - `PluginCrashBreaker` (called from `ExceptionHandler::render`): a plugin that causes 5 request-failing errors (5xx / uncaught, attributed by stack trace or view path) within 10 minutes is disabled locally (license stays activated) and admins are notified.
    - `system:update` lists enabled plugins that don't support the target version before updating and leaves them disabled afterwards.

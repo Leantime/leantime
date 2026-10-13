@@ -263,10 +263,9 @@ class Plugins
 
             Log::error('Could not read enabled plugins, continuing without user plugins: '.$e->getMessage());
 
-            // Only system plugins remain here, and they get the same compatibility filter.
             return self::dispatch_filter(
                 hook: 'beforeReturnCachedPlugins',
-                payload: $this->withoutIncompatible($this->buildPluginList([], true)),
+                payload: $this->buildPluginList([], true),
                 available_params: ['enabledOnly' => true]);
         }
 
@@ -1076,9 +1075,9 @@ class Plugins
     }
 
     /**
-     * Drops the plugins that don't support this Leantime version from an enabled-plugin list
-     * (system plugins too: being impossible to disable locally must not mean their code loads),
-     * and tells the administrators once per plugin version and Leantime version.
+     * Drops the plugins that don't support this Leantime version from an enabled-plugin list,
+     * and tells the administrators once per plugin version and Leantime version. System plugins
+     * (from config) are left alone: the deployment that configures them owns their compatibility.
      *
      * @param  array<string, InstalledPlugin>  $plugins  Enabled plugins keyed by folder.
      * @return array<string, InstalledPlugin>
@@ -1086,7 +1085,8 @@ class Plugins
     private function withoutIncompatible(array $plugins): array
     {
         foreach ($plugins as $folder => $plugin) {
-            if ($plugin->compatible !== false) {
+            // System plugins come from the deployment's config: whoever configures them owns their compatibility.
+            if ($plugin->type === $this->pluginTypes['system'] || $plugin->compatible !== false) {
                 continue;
             }
 
@@ -1111,7 +1111,6 @@ class Plugins
         $settingKey = 'plugins.incompatibleNotified.'.$plugin->foldername;
         $marker = $plugin->version.'|'.$this->appSettings->appVersion;
 
-        // System plugins have no database row to point the notification at; the log line is theirs.
         if (! isset($plugin->id) || $this->settingsService->getSetting($settingKey) === $marker) {
             return;
         }

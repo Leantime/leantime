@@ -524,12 +524,7 @@ class EventDispatcher implements Dispatcher
             $configplugins = explode(',', app(Environment::class)->plugins);
 
             // TODO: Do phar plugins get to be system plugins? Right now they dont
-            $compatibility = app(\Leantime\Core\Plugins\PluginCompatibility::class);
             foreach ($configplugins as $plugin) {
-                // System plugins can't be disabled locally, so an incompatible one is skipped here.
-                if (! $compatibility->pluginAtPathIsCompatible(APP_ROOT.'/app/Plugins/'.$plugin)) {
-                    continue;
-                }
                 if (file_exists($pluginEventsPath = APP_ROOT.'/app/Plugins/'.$plugin.'/register.php')) {
                     include_once $pluginEventsPath;
                 }

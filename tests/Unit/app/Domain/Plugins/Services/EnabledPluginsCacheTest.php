@@ -130,18 +130,19 @@ class EnabledPluginsCacheTest extends TestCase
         @rmdir($pluginDir);
     }
 
-    public function test_incompatible_system_plugins_are_not_loaded_either(): void
+    /** System plugins come from config; whoever configures them owns their compatibility. */
+    public function test_system_plugins_are_not_guarded(): void
     {
-        $this->assertSystemPluginsFiltered(fn () => []);
+        $this->assertSystemPluginsLoaded(fn () => []);
     }
 
-    /** The plugin table is down: only system plugins remain, and they are still filtered. */
-    public function test_incompatible_system_plugins_are_filtered_when_the_plugin_table_fails(): void
+    /** The plugin table is down: the system plugins still load. */
+    public function test_system_plugins_load_when_the_plugin_table_fails(): void
     {
-        $this->assertSystemPluginsFiltered(fn () => throw new \PDOException('plugin table unavailable'));
+        $this->assertSystemPluginsLoaded(fn () => throw new \PDOException('plugin table unavailable'));
     }
 
-    private function assertSystemPluginsFiltered(callable $getAllPlugins): void
+    private function assertSystemPluginsLoaded(callable $getAllPlugins): void
     {
         $pluginDir = sys_get_temp_dir().'/lt-system-guard-'.getmypid().'/';
         foreach (['CurrentSystem' => '>=3.0', 'FutureSystem' => '>=99.0'] as $folder => $range) {
@@ -176,9 +177,8 @@ class EnabledPluginsCacheTest extends TestCase
 
         $enabled = $plugins->getEnabledPlugins();
 
-        // Positive control: the system plugin path is exercised at all.
         $this->assertArrayHasKey('CurrentSystem', $enabled);
-        $this->assertArrayNotHasKey('FutureSystem', $enabled);
+        $this->assertArrayHasKey('FutureSystem', $enabled);
 
         foreach (['CurrentSystem', 'FutureSystem'] as $folder) {
             @unlink($pluginDir.$folder.'/composer.json');

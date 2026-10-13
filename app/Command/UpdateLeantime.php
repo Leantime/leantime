@@ -98,7 +98,7 @@ class UpdateLeantime extends Command
         } else {
             $io->warning(array_merge(
                 ['These plugins do not support v'.$targetVersion.' and will not load after the update until you install a compatible version:'],
-                $incompatiblePlugins->map(fn ($plugin) => $plugin->name.' '.$plugin->version.' (supports '.$plugin->requires.')'.($plugin->type === 'system' ? ', system plugin from LEAN_PLUGINS' : ''))->values()->all()
+                $incompatiblePlugins->map(fn ($plugin) => $plugin->name.' '.$plugin->version.' (supports '.$plugin->requires.')'.($plugin->type === 'system' ? ', system plugin from LEAN_PLUGINS: still loaded, check it before updating' : ''))->values()->all()
             ));
 
             // Automated runs keep going: core skips incompatible plugins, so the update itself is safe.
