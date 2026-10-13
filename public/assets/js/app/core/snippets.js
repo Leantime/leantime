@@ -123,6 +123,7 @@ leantime.snippets = (function () {
             sibling.classList.toggle('active', picked);
             sibling.setAttribute('aria-pressed', picked ? 'true' : 'false');
         });
+    });
 
     // elements.accordion with an id remembers open/closed per user (same store as accordionToggle).
     // `toggle` does not bubble, so listen in the capture phase. Browsers also fire it when a
