@@ -50,7 +50,7 @@ class InstalledPlugin implements PluginDisplayStrategy
     /** The Leantime versions this plugin supports (Composer constraint), from its composer.json. */
     public ?string $requires = null;
 
-    /** Whether the running Leantime version is in {@see $requires}; null when unknown (files missing). */
+    /** Whether the running Leantime version is in {@see $requires}; null until it has been checked. */
     public ?bool $compatible = null;
 
     public function getCardDesc(): string

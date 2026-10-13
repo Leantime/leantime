@@ -263,9 +263,10 @@ class Plugins
 
             Log::error('Could not read enabled plugins, continuing without user plugins: '.$e->getMessage());
 
+            // Only system plugins remain here, and they get the same compatibility filter.
             return self::dispatch_filter(
                 hook: 'beforeReturnCachedPlugins',
-                payload: $this->buildPluginList([], true),
+                payload: $this->withoutIncompatible($this->buildPluginList([], true)),
                 available_params: ['enabledOnly' => true]);
         }
 
@@ -1034,19 +1035,15 @@ class Plugins
 
     /**
      * Sets a plugin's supported range and whether this Leantime version is in it, read from the
-     * plugin's composer.json. A plugin whose files can't be read keeps compatible = null
-     * (unknown): it can't load anyway, and the loader reports the missing files.
+     * plugin's composer.json. A plugin without a readable composer.json declares no range, so it
+     * gets the undeclared (3.x) range: its folder may still hold a register.php or routes.php.
      *
      * @param  string|null  $leantimeVersion  The version to check against; default the running one.
      * @return InstalledPlugin The same plugin, for chaining.
      */
     private function applyCompatibility(InstalledPlugin $plugin, ?string $leantimeVersion = null): InstalledPlugin
     {
-        $composer = $this->readComposer((string) $plugin->foldername);
-
-        if ($composer === null) {
-            return $plugin;
-        }
+        $composer = $this->readComposer((string) $plugin->foldername) ?? [];
 
         $plugin->requires = $this->compatibility->rangeFor($composer);
         $plugin->compatible = $this->compatibility->isCompatible($plugin->requires, $leantimeVersion);

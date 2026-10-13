@@ -132,6 +132,17 @@ class EnabledPluginsCacheTest extends TestCase
 
     public function test_incompatible_system_plugins_are_not_loaded_either(): void
     {
+        $this->assertSystemPluginsFiltered(fn () => []);
+    }
+
+    /** The plugin table is down: only system plugins remain, and they are still filtered. */
+    public function test_incompatible_system_plugins_are_filtered_when_the_plugin_table_fails(): void
+    {
+        $this->assertSystemPluginsFiltered(fn () => throw new \PDOException('plugin table unavailable'));
+    }
+
+    private function assertSystemPluginsFiltered(callable $getAllPlugins): void
+    {
         $pluginDir = sys_get_temp_dir().'/lt-system-guard-'.getmypid().'/';
         foreach (['CurrentSystem' => '>=3.0', 'FutureSystem' => '>=99.0'] as $folder => $range) {
             @mkdir($pluginDir.$folder, 0777, true);
@@ -154,7 +165,7 @@ class EnabledPluginsCacheTest extends TestCase
             },
         ]);
         $plugins = $this->make(Plugins::class, [
-            'pluginRepository' => $this->makeEmpty(PluginRepository::class, ['getAllPlugins' => fn () => []]),
+            'pluginRepository' => $this->makeEmpty(PluginRepository::class, ['getAllPlugins' => $getAllPlugins]),
             'config' => $config,
             'appSettings' => app(AppSettings::class),
             'compatibility' => app(PluginCompatibility::class),
