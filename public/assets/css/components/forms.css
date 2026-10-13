@@ -2023,3 +2023,19 @@ label.lt-check:has(input:disabled) {
     cursor: not-allowed;
     opacity: .6;
 }
+
+/* forms.button icon-only (icon + ariaLabel): a square button with just the icon. */
+.btn.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+}
+
+.btn.btn-icon.btn-small {
+    width: 24px;
+    height: 24px;
+    font-size: var(--font-size-s);
+}

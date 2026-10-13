@@ -15,7 +15,7 @@
                        ['value' => float,          // signed change
                         'goodWhenUp' => bool|null, // null = no good/bad meaning
                         'label' => string|null]    // e.g. "vs. prior period"
-      tone   string  'default' | 'risk' (colors the value red).
+      tone   string  'default' | 'risk' or 'danger' (red value) | 'warning' | 'success'.
       icon   string  Optional Font Awesome classes shown before the label.
       sub    mixed   Optional detail line(s) under the label — a string, or an
                      array of strings for a second, smaller line ("of 40h/wk",
@@ -71,8 +71,15 @@
             ? array_values(array_filter($sub, fn ($l) => $l !== null && $l !== ''))
             : [$sub]);
 
+    // 'danger' is the same as 'risk' (red value); warning / success colour the value too.
+    $toneClass = match ($tone) {
+        'risk', 'danger' => ' risk',
+        'warning' => ' tone-warning',
+        'success' => ' tone-success',
+        default => '',
+    };
     $tileClasses = 'lt-stat'
-        .($tone === 'risk' ? ' risk' : '')
+        .$toneClass
         .($muted ? ' is-muted' : '');
 @endphp
 

@@ -266,3 +266,23 @@
         display: none;
     }
 }
+
+/* actions.modal-header with an eyebrow / description: the heading block takes the title's place. */
+.lt-modal-header .lt-modal-heading {
+    flex: 1;
+    min-width: 0;
+}
+
+.lt-modal-header .lt-modal-eyebrow {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.lt-modal-header .lt-modal-desc {
+    margin: 2px 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}

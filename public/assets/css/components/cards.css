@@ -437,3 +437,15 @@ dl.lt-details--inline {
 .lt-empty--compact .lt-empty-actions {
     margin: 0 0 0 auto;
 }
+
+/* Accent tone: the highlight card (trial banner, recommended plan). */
+.lt-card--accent {
+    border-color: color-mix(in srgb, var(--accent1) 35%, transparent);
+    background: color-mix(in srgb, var(--accent1) 6%, var(--card-bg, var(--secondary-background)));
+}
+
+/* The picked card in a set of choices. */
+.lt-card--selected {
+    border-color: var(--accent1);
+    box-shadow: 0 0 0 1px var(--accent1), var(--card-shadow, none);
+}

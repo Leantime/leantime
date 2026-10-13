@@ -287,3 +287,11 @@
     font-style: italic;
     padding: 4px 6px 2px;
 }
+
+.lt-stat.tone-warning .lt-stat-value {
+    color: var(--feedback-warning-color);
+}
+
+.lt-stat.tone-success .lt-stat-value {
+    color: var(--green);
+}
