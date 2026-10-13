@@ -2041,3 +2041,29 @@ body .btn.btn-icon.btn-small {
     height: 24px;
     font-size: var(--font-size-s);
 }
+
+/* elements.info-tip — (?) button next to a label or title; opens on hover, focus or tap. */
+button.lt-info-tip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin: 0 0 0 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: 400;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+button.lt-info-tip:hover,
+button.lt-info-tip:focus-visible,
+button.lt-info-tip[aria-expanded="true"] {
+    background: color-mix(in srgb, var(--primary-font-color) 8%, transparent);
+    color: var(--accent1);
+}
