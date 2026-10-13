@@ -123,7 +123,9 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | steps | `navigation.steps` | navigation | 🟡 | Where you are in a multi-step flow: `steps` (labels, or `label`/`href`/`description`), `current` (1-based; past the end = all done), `orientation` horizontal/vertical, `label` (aria). Numbered dots joined by a line, done = check (finished steps with `href` link back), current = accent ring + `aria-current="step"`. Labels 12 / 600. Done: invite onboarding (`x-auth::onboardingProgress` composes it). Left: project checklist (`.progressWrapper`, has its own sub-task popovers) |
 | breadcrumbs / pagination | `navigation.*` | navigation | ⬜ | |
 | progress | `feedback.progress` | feedback | 🟡 | — | Progress bar on the existing `.progress` look with the ARIA progressbar contract: `value` (0–100, clamped), `tone` default (theme gradient)/info/warning/danger, `color` (custom bar colour, milestones), `size` default/sm (6px), `label` (accessible text, default "N% complete"), `showLabel` (12px muted line under it). Done: project cards, milestone cards, Blueprint boards, goal board + goal dashboard. Left: step bars (`.progressWrapper`: checklist, onboarding, import) and the milestone overview table |
-| alert / skeleton / loading / indicator | `feedback.*` | feedback | ⬜ | `loader`/`loadingText` exist on master |
+| alert | `feedback.alert` | feedback | 🟡 | Message inside the page (not a toast, not a card): `tone` info/success/warning/danger (warning + danger use `role="alert"`, the others `status`), `title`, `icon` (tone default, '' for none), `dismissible`, `actions` slot. Done: project integrations mute notice |
+| details-list | `elements.details-list` (+ `.item`) | elements | 🟡 | Read-only facts: `items` (label => escaped value) or `.item label="…"` rows with markup; `layout` stacked (side panels) / inline (label column). Labels 12 / 600 upper muted, values 14 |
+| skeleton / loading / indicator | `feedback.*` | feedback | ⬜ | `loader`/`loadingText` exist on master |
 | page-header | `layout.page-header` | layout | ⬜ | flat `pageheader` exists on master |
 | color-picker / select-panel / context-menu | various | ⬜ | |
 
