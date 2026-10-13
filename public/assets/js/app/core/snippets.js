@@ -123,6 +123,54 @@ leantime.snippets = (function () {
             sibling.classList.toggle('active', picked);
             sibling.setAttribute('aria-pressed', picked ? 'true' : 'false');
         });
+
+    // elements.accordion with an id remembers open/closed per user (same store as accordionToggle).
+    // `toggle` does not bubble, so listen in the capture phase. Browsers also fire it when a
+    // <details open> first renders; data-lt-open holds the rendered state so only a real change saves.
+    document.addEventListener('toggle', function (event) {
+        var details = event.target;
+        if (!details || !details.matches || !details.matches('details[data-lt-accordion]')) {
+            return;
+        }
+        var state = details.open ? 'open' : 'closed';
+        if (details.getAttribute('data-lt-open') === state) {
+            return;
+        }
+        details.setAttribute('data-lt-open', state);
+        leantime.rpc('Api.Api.setSubmenuState', {
+            submenu: 'accordion_content-' + details.getAttribute('data-lt-accordion'),
+            state: state
+        }).catch(function (e) { console.error('Could not persist accordion state', e); });
+    }, true);
+
+    // elements.accordion actions sit over the summary row (outside <summary> so they don't toggle);
+    // reserve exactly their width so long or several actions never cover the title.
+    var accordionActionsObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(function (entries) {
+        entries.forEach(function (entry) {
+            var accordion = entry.target.closest('.lt-accordion');
+            if (accordion) {
+                var box = entry.target.getBoundingClientRect();
+                accordion.style.setProperty('--lt-accordion-actions-w', Math.ceil(box.width) + 'px');
+                // Wrapped actions are taller than the summary row: reserve that height too.
+                accordion.style.setProperty('--lt-accordion-actions-h', Math.ceil(box.height) + 'px');
+            }
+        });
+    });
+    var observeAccordionActions = function (root) {
+        if (!accordionActionsObserver || !root || !root.querySelectorAll) {
+            return;
+        }
+        root.querySelectorAll('.lt-accordion > .lt-accordion-actions').forEach(function (actions) {
+            accordionActionsObserver.observe(actions);
+        });
+    };
+    htmx.onLoad(observeAccordionActions);
+    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
+    document.addEventListener('lt:ui:modal.loaded', function (event) { observeAccordionActions(event.detail.root); });
+    document.addEventListener('htmx:beforeCleanupElement', function (event) {
+        if (accordionActionsObserver && event.target.matches && event.target.matches('.lt-accordion > .lt-accordion-actions')) {
+            accordionActionsObserver.unobserve(event.target);
+        }
     });
 
     var toggleTheme = function (theme) {

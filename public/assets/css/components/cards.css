@@ -449,3 +449,121 @@ dl.lt-details--inline {
     border-color: var(--accent1);
     box-shadow: 0 0 0 1px var(--accent1), var(--card-shadow, none);
 }
+
+/* elements.accordion — <details> section: chevron + 16 / bold title, optional counter and actions. */
+.lt-accordion {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.lt-accordion-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    padding: 4px 0;
+    color: var(--primary-color);
+    font-size: var(--font-size-l);
+    font-weight: 700;
+    list-style: none;
+    cursor: pointer;
+}
+
+.lt-accordion-summary::-webkit-details-marker {
+    display: none;
+}
+
+.lt-accordion-summary:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    border-radius: var(--box-radius-small);
+}
+
+/* Room for the actions, which sit over the summary row but outside <summary>. core/snippets.js
+   sets the real width (--lt-accordion-actions-w) from the rendered actions; 120px until then. */
+.lt-accordion-summary--actions {
+    min-height: var(--lt-accordion-actions-h, 32px);
+    padding-right: calc(var(--lt-accordion-actions-w, 120px) + 12px);
+}
+
+.lt-accordion-chevron {
+    flex: none;
+    width: 1em;
+    font-size: var(--font-size-s);
+    text-align: center;
+    transition: transform .15s ease;
+}
+
+.lt-accordion details[open] > .lt-accordion-summary .lt-accordion-chevron {
+    transform: rotate(90deg);
+}
+
+.lt-accordion-title {
+    min-width: 0;
+}
+
+.lt-accordion-body {
+    padding: 8px 0 4px;
+}
+
+.lt-accordion-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    max-width: 60%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+}
+
+.lt-accordion--on-page .lt-accordion-summary {
+    color: var(--main-titles-color);
+}
+
+.lt-accordion--card {
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--card-radius, var(--box-radius));
+    background: var(--card-bg, var(--secondary-background));
+}
+
+.lt-accordion--card .lt-accordion-summary {
+    padding: 8px 16px;
+}
+
+.lt-accordion--card .lt-accordion-summary--actions {
+    padding-right: calc(var(--lt-accordion-actions-w, 120px) + 28px);
+}
+
+.lt-accordion--card .lt-accordion-actions {
+    right: 16px;
+    min-height: 48px;
+}
+
+.lt-accordion--card .lt-accordion-body {
+    padding: 0 16px 16px;
+}
+
+/* Print every section in full, collapsed or not (persisted state must not drop content from a
+   hard copy). Chromium hides closed <details> content via ::details-content. */
+@media print {
+    .lt-accordion-chevron,
+    .lt-accordion-actions {
+        display: none;
+    }
+
+    .lt-accordion details > .lt-accordion-body {
+        display: block !important;
+    }
+
+    .lt-accordion details::details-content {
+        content-visibility: visible !important;
+        display: block !important;
+    }
+
+    .lt-accordion-summary--actions {
+        padding-right: 0 !important;
+    }
+}
