@@ -3,7 +3,7 @@
 @section('content')
 
 
-    <x-auth::onboardingProgress :percentComplete="88" current="time" :completed="['account', 'theme', 'personalization']" />
+    <x-auth::onboardingProgress current="time" />
 
 
     <h2>🗓️ Shaping A Daily Flow</h2>

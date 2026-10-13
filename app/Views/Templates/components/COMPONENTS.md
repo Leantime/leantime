@@ -120,7 +120,8 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | empty-state | `elements.empty-state` | elements | ⬜ | wraps `undrawSvg` |
 | date-info | `elements.date-info` | elements | ⬜ | relative-time |
 | statistic / code | `elements.statistic` / `elements.code` | elements | ⬜ | |
-| steps / breadcrumbs / pagination | `navigation.*` | navigation | ⬜ | |
+| steps | `navigation.steps` | navigation | 🟡 | Where you are in a multi-step flow: `steps` (labels, or `label`/`href`/`description`), `current` (1-based; past the end = all done), `orientation` horizontal/vertical, `label` (aria). Numbered dots joined by a line, done = check (finished steps with `href` link back), current = accent ring + `aria-current="step"`. Labels 12 / 600. Done: invite onboarding (`x-auth::onboardingProgress` composes it). Left: project checklist (`.progressWrapper`, has its own sub-task popovers) |
+| breadcrumbs / pagination | `navigation.*` | navigation | ⬜ | |
 | progress | `feedback.progress` | feedback | 🟡 | — | Progress bar on the existing `.progress` look with the ARIA progressbar contract: `value` (0–100, clamped), `tone` default (theme gradient)/info/warning/danger, `color` (custom bar colour, milestones), `size` default/sm (6px), `label` (accessible text, default "N% complete"), `showLabel` (12px muted line under it). Done: project cards, milestone cards, Blueprint boards, goal board + goal dashboard. Left: step bars (`.progressWrapper`: checklist, onboarding, import) and the milestone overview table |
 | alert / skeleton / loading / indicator | `feedback.*` | feedback | ⬜ | `loader`/`loadingText` exist on master |
 | page-header | `layout.page-header` | layout | ⬜ | flat `pageheader` exists on master |

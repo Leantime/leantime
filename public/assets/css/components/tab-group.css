@@ -432,3 +432,128 @@ body .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a {
         display: none;
     }
 }
+
+/* navigation.steps — numbered dots joined by a line; done = check, current = accent ring. */
+.lt-steps {
+    display: flex;
+    margin: 0 0 16px;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+}
+
+.lt-step {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    text-align: center;
+}
+
+/* The line from this step's dot back to the previous one (logical sides, so it mirrors in RTL). */
+.lt-step + .lt-step::before {
+    content: '';
+    position: absolute;
+    top: 13px;
+    inset-inline-end: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--main-border-color);
+}
+
+.lt-step--done + .lt-step::before,
+.lt-step--done + .lt-step--current::before {
+    background: var(--accent1);
+}
+
+.lt-step-link {
+    display: contents;
+    color: inherit;
+    text-decoration: none;
+}
+
+.lt-step-dot {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--main-border-color);
+    border-radius: 50%;
+    background: var(--secondary-background);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+}
+
+.lt-step--done .lt-step-dot {
+    border-color: var(--accent1);
+    background: var(--accent1);
+    color: var(--accent1-color);
+}
+
+.lt-step--current .lt-step-dot {
+    border-color: var(--accent1);
+    color: var(--accent1);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent1) 15%, transparent);
+}
+
+.lt-step-text {
+    display: flex;
+    flex-direction: column;
+    margin-top: 6px;
+    padding: 0 4px;
+}
+
+.lt-step-label {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+}
+
+.lt-step--done .lt-step-label,
+.lt-step--current .lt-step-label {
+    color: var(--primary-font-color);
+}
+
+.lt-step-desc {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+a.lt-step-link:hover .lt-step-label,
+a.lt-step-link:focus-visible .lt-step-label {
+    color: var(--accent1);
+    text-decoration: underline;
+}
+
+/* Vertical rail */
+.lt-steps--vertical {
+    flex-direction: column;
+    gap: 16px;
+}
+
+.lt-steps--vertical .lt-step {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: start;
+}
+
+.lt-steps--vertical .lt-step + .lt-step::before {
+    top: auto;
+    inset-inline-end: auto;
+    bottom: 100%;
+    inset-inline-start: 13px;
+    width: 2px;
+    height: 16px;
+}
+
+.lt-steps--vertical .lt-step-text {
+    margin: 4px 0 0;
+    margin-inline-start: 10px;
+    padding: 0;
+}
