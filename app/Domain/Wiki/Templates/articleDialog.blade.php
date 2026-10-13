@@ -77,7 +77,7 @@
             </div>
 
             @if ($id !== '')
-                <x-global::elements.section-header icon="fa fa-link">{!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></x-global::elements.section-header>
+                <x-global::elements.section-header icon="fa fa-link">{!! __('headlines.linked_milestone') !!} <x-global::elements.info-tip :text="__('tooltip.link_milestones_tooltip')" /></x-global::elements.section-header>
 
                 <ul class="sortableTicketList" style="width:99%">
                     @if ($currentArticle->milestoneId == '')

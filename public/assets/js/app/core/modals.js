@@ -469,6 +469,12 @@ leantime.modals = (function () {
                     // page tooltips (see app.js initTooltips).
                     window.leantime?.initTooltips?.(document.querySelector('.nyroModalCont'));
                     window.leantime?.selectController?.init(document.querySelector('.nyroModalCont'));
+                    // nyroModal content is not an htmx swap, so htmx.onLoad never sees it. Components
+                    // that init on htmx.onLoad also listen for this (one event instead of a call per
+                    // component here). Not htmx:load itself: some page onLoad handlers aren't idempotent.
+                    document.dispatchEvent(new CustomEvent('lt:ui:modal.loaded', {
+                        detail: { root: document.querySelector('.nyroModalCont') }
+                    }));
 
                     // Initialize Tiptap editors in modal (after small delay for DOM settlement)
                     setTimeout(function() {
