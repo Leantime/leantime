@@ -73,11 +73,8 @@
                 </div>
             @endif
 
-            <x-global::accordion id="myProjectsHub-favorites" class="noBackground">
-                <x-slot name="title">
-                    ⭐ My Favorites
-                </x-slot>
-                <x-slot name="content">
+            <x-global::elements.accordion id="myProjectsHub-favorites" open onPage>
+<x-slot:title>⭐ My Favorites</x-slot:title>
                     <div class="row">
                         @php
                             $hasFavorites = false;
@@ -98,15 +95,11 @@
                             </div>
                         @endif
                     </div>
-                </x-slot>
-            </x-global::accordion>
+                </x-global::elements.accordion>
 
 
-            <x-global::accordion id="myProjectsHub-otherProjects" class="noBackground">
-                <x-slot name="title">
-                    {{ __("text.all_assigned_projects")  }}
-                </x-slot>
-                <x-slot name="content">
+            <x-global::elements.accordion id="myProjectsHub-otherProjects" open onPage>
+<x-slot:title>{{ __("text.all_assigned_projects")  }}</x-slot:title>
 
                     <div class="row">
                         @foreach ($allProjects as $project)
@@ -119,8 +112,7 @@
                             @endif
                         @endforeach
                     </div>
-                </x-slot>
-            </x-global::accordion>
+                </x-global::elements.accordion>
         </div>
     </div>
 @endsection
