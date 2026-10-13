@@ -2023,3 +2023,21 @@ label.lt-check:has(input:disabled) {
     cursor: not-allowed;
     opacity: .6;
 }
+
+/* forms.button icon-only (icon + ariaLabel): a square button with just the icon. */
+/* `body` beats mobile.css (576–1200px), which stretches `.maincontentinner .btn` to full width. */
+body .btn.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+body .btn.btn-icon.btn-small {
+    width: 24px;
+    height: 24px;
+    font-size: var(--font-size-s);
+}

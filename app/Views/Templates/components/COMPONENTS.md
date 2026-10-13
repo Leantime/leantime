@@ -1,5 +1,11 @@
 # Frontend Componentization — Tracker & Playbook
 
+### Variants added for the plugin move (3.12)
+- `forms.button`: `icon` + `ariaLabel` → icon-only square button (32px, 24px with `scale="s"`), name as tooltip. `btn-sm`/`btn-xs` → `scale="s"`.
+- `actions.modal-header`: `eyebrow` (12 / 600 upper) and `description` (12 muted) around the title; without them the markup is unchanged.
+- `pageheader`: `icon` is a real prop (was an untyped variable that also leaked an `icon=""` attribute onto the header); `status` slot for badges right after the title.
+- `elements.card`: `tone="accent"` (highlight card: trial banner, recommended plan); `selected` (the picked card in a set of choices; the caller owns the input).
+- `statTile`: `tone` also takes `danger` (= `risk`), `warning`, `success`.
 > **Owner:** maintained by Claude as the single source of truth for the componentization
 > effort. Supersedes the "Component Updates Tracker" spreadsheet (whose *status* column is
 > stale — the taxonomy, naming, prop vocabulary, and priorities are kept).

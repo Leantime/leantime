@@ -638,3 +638,16 @@ body.lt-doc-page .maincontentinner {
     opacity: 0.6;
     pointer-events: none;
 }
+
+/* pageheader `status` slot: badges right after the title; the title stops stretching so they sit next to it. */
+.pageheader:has(> .pageheader-status) > .pagetitle {
+    flex: 0 1 auto;
+}
+
+.pageheader-status {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 8px;
+    padding-left: 12px;
+}

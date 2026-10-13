@@ -10,6 +10,8 @@
       icon    string  Optional Font Awesome classes for the leading icon ("fa-solid fa-bullseye").
       title   string  The dialog's title (escaped). For markup (a translation with an icon, a
                       parent breadcrumb) use the `title` slot instead.
+      eyebrow     string  Small uppercase label above the title ("New allocation", "Program").
+      description string  One muted line under the title.
 
     Slots:
       title    Title with markup.
@@ -22,13 +24,30 @@
 @props([
     'icon' => null,
     'title' => null,
+    'eyebrow' => null,
+    'description' => null,
 ])
 
 <div {{ $attributes->class(['lt-modal-header']) }}>
-    <h4 class="lt-modal-title">
-        @if ($icon)<i class="{{ $icon }}" aria-hidden="true"></i>@endif
-        {{ $title }}
-    </h4>
+    @if ($eyebrow || $description)
+        <div class="lt-modal-heading">
+            @if ($eyebrow)
+                <div class="lt-modal-eyebrow">{{ $eyebrow }}</div>
+            @endif
+            <h4 class="lt-modal-title">
+                @if ($icon)<i class="{{ $icon }}" aria-hidden="true"></i>@endif
+                {{ $title }}
+            </h4>
+            @if ($description)
+                <p class="lt-modal-desc">{{ $description }}</p>
+            @endif
+        </div>
+    @else
+        <h4 class="lt-modal-title">
+            @if ($icon)<i class="{{ $icon }}" aria-hidden="true"></i>@endif
+            {{ $title }}
+        </h4>
+    @endif
 
     @isset($meta)
         <div class="lt-modal-meta">{{ $meta }}</div>

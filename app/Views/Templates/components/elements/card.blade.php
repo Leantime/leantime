@@ -4,7 +4,8 @@
     Not the page content box itself (`.maincontentinner`); this is what sits inside it.
 
     Props:
-      tone   string  'default' | 'success' | 'warning' | 'danger' | 'info' | 'muted' | 'empty'.
+      tone   string  'default' | 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'muted' | 'empty'.
+                     'accent' is the highlight card (a trial banner, the recommended plan).
                      Tones tint the background and border; 'muted' is a quiet hint,
                      'empty' a dashed placeholder for "nothing here yet".
       title  string  Optional header title. A string prop is escaped; for markup (a translation
@@ -16,6 +17,8 @@
                      Wins over `compact` when both are set.
       compact bool   Tighter body padding (12px 16px) for rows that repeat down a page.
       as     string  Root tag, default 'div'. Use 'li' when the card is an item of a list.
+      selected bool  The picked card in a set of choices (plan, template, route): accent border.
+                     The caller owns the input (radio/button) and its aria state.
 
     Slots:
       default  The body.
@@ -32,6 +35,7 @@
     'flush' => false,
     'compact' => false,
     'as' => 'div',
+    'selected' => false,
 ])
 
 @php
@@ -44,6 +48,7 @@
     'lt-card',
     'lt-card--' . $tone => $tone !== 'default',
     'lt-card--flush' => $flush,
+    'lt-card--selected' => $selected,
 ]) }}>
     @if ($hasHeader)
         <div class="lt-card-hd">
