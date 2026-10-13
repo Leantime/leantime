@@ -133,6 +133,44 @@ class Plugins
         return (string) $id;
     }
 
+    /**
+     * Updates an installed plugin's row from a freshly read plugin model: metadata and version,
+     * and the license when one is given. The enabled flag is left as it is.
+     */
+    public function updatePlugin(int $id, InstalledPlugin $plugin): bool
+    {
+        $values = [
+            'name' => $plugin->name,
+            'description' => $plugin->description,
+            'version' => $plugin->version,
+            'homepage' => $plugin->homepage,
+            'authors' => $plugin->authors,
+            'format' => $plugin->format ?? 'folder',
+        ];
+
+        if (! empty($plugin->license)) {
+            $values['license'] = $plugin->license;
+        }
+
+        return $this->db->table('zp_plugins')->where('id', $id)->update($values) >= 0;
+    }
+
+    /**
+     * The ids of every row for a plugin folder, oldest first (updates used to insert a new row
+     * each time, so older installs can have several).
+     *
+     * @return array<int>
+     */
+    public function getPluginIdsByFolder(string $foldername): array
+    {
+        return $this->db->table('zp_plugins')
+            ->where('foldername', $foldername)
+            ->orderBy('id')
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
     public function enablePlugin(int $id): bool
     {
         return $this->db->table('zp_plugins')

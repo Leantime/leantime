@@ -53,6 +53,9 @@ class InstalledPlugin implements PluginDisplayStrategy
     /** Whether the running Leantime version is in {@see $requires}; null until it has been checked. */
     public ?bool $compatible = null;
 
+    /** A newer marketplace version that supports this Leantime version, from the last update check. */
+    public ?string $availableUpdate = null;
+
     public function getCardDesc(): string
     {
         return $this->description ??= '';

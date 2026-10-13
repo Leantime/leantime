@@ -104,6 +104,12 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             return;
         }
 
+        // plugin:verify loads exactly one plugin itself, so its result isn't masked by the others
+        // (or by the plugin's own register.php already having run here, errors swallowed).
+        if ($this->currentCommand === 'plugin:verify') {
+            return;
+        }
+
         if (! Installation::isInstalled()) {
             return;
         }

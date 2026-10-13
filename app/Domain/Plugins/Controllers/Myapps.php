@@ -37,11 +37,26 @@ class Myapps extends Controller
      * Installs, enables, disables or removes a plugin. These change the installation, so they
      * are only accepted as POST.
      *
-     * @param  array  $params  Request parameters; one of install/enable/disable/remove => plugin id.
+     * @param  array  $params  Request parameters; one of install/enable/disable/remove/update => plugin id,
+     *                         or checkUpdates.
      */
     public function post($params): Response
     {
-        foreach (['install', 'enable', 'disable', 'remove'] as $action) {
+        if ($this->incomingRequest->request->has('checkUpdates')) {
+            try {
+                $updates = $this->pluginService->checkForUpdates();
+                $this->tpl->setNotification(
+                    count($updates) > 0 ? sprintf(__('notification.plugin_updates_found'), count($updates)) : __('notification.plugin_updates_none'),
+                    'success'
+                );
+            } catch (\Exception $e) {
+                $this->tpl->setNotification($e->getMessage(), 'error');
+            }
+
+            return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
+        }
+
+        foreach (['install', 'enable', 'disable', 'remove', 'update'] as $action) {
             $id = $this->incomingRequest->request->get($action);
 
             if (empty($id)) {
