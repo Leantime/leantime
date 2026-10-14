@@ -124,9 +124,21 @@ class PluginArchive
 
         // The new version is in place; only now is the previous one discarded (or kept for a restore).
         if ($hadPreviousVersion && $keepPreviousIn !== null) {
-            $this->keepDirectory($backupDir, $keepPreviousIn);
+            if ($this->keepDirectory($backupDir, $keepPreviousIn)) {
+                return;
+            }
 
-            return;
+            // An update that can't keep its fallback doesn't happen: put the previous version back.
+            $failedDir = $parentDir.DIRECTORY_SEPARATOR.'.'.basename($pluginDir).'.failed-'.$suffix;
+            if (@rename($pluginDir, $failedDir) && @rename($backupDir, $pluginDir)) {
+                self::removeDirectory($failedDir);
+
+                throw new \RuntimeException('The previous plugin version could not be kept for a rollback, so the update was not applied');
+            }
+
+            Log::error('Plugin update could not keep or restore the previous version', ['backup' => $backupDir]);
+
+            throw new \RuntimeException(sprintf('Plugin update failed; the previous version was kept at "%s"', $backupDir));
         }
 
         self::removeDirectory($backupDir);
@@ -153,23 +165,33 @@ class PluginArchive
 
     /**
      * Moves $directory to $target (replacing what is there), falling back to copy-and-delete when
-     * they are on different filesystems. Never throws: a copy that can't be kept only costs the
-     * restore option, not the update.
+     * they are on different filesystems. $directory is only removed once the copy is confirmed;
+     * on failure it stays where it is (the caller restores it).
+     *
+     * @return bool Whether $directory is now kept at $target.
      */
-    private function keepDirectory(string $directory, string $target): void
+    private function keepDirectory(string $directory, string $target): bool
     {
         try {
             self::removeDirectory($target);
             File::ensureDirectoryExists(dirname($target));
 
-            if (! @rename($directory, $target)) {
-                File::copyDirectory($directory, $target);
+            if (@rename($directory, $target)) {
+                return true;
             }
+
+            if (File::copyDirectory($directory, $target)) {
+                self::removeDirectory($directory);
+
+                return true;
+            }
+
+            self::removeDirectory($target);
         } catch (\Throwable $e) {
             Log::warning('Could not keep the previous plugin version at '.$target.': '.$e->getMessage());
-        } finally {
-            self::removeDirectory($directory);
         }
+
+        return false;
     }
 
     /**

@@ -44,11 +44,16 @@ class Myapps extends Controller
     {
         if ($this->incomingRequest->request->has('checkUpdates')) {
             try {
-                $updates = $this->pluginService->checkForUpdates();
-                $this->tpl->setNotification(
-                    count($updates) > 0 ? sprintf(__('notification.plugin_updates_found'), count($updates)) : __('notification.plugin_updates_none'),
-                    'success'
-                );
+                ['updates' => $updates, 'failed' => $failed] = $this->pluginService->checkForUpdates();
+
+                if ($failed !== []) {
+                    $this->tpl->setNotification(sprintf(__('notification.plugin_updates_check_failed'), implode(', ', $failed)), 'error');
+                } else {
+                    $this->tpl->setNotification(
+                        count($updates) > 0 ? sprintf(__('notification.plugin_updates_found'), count($updates)) : __('notification.plugin_updates_none'),
+                        'success'
+                    );
+                }
             } catch (\Exception $e) {
                 $this->tpl->setNotification($e->getMessage(), 'error');
             }

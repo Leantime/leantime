@@ -104,9 +104,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             return;
         }
 
-        // plugin:verify loads exactly one plugin itself, so its result isn't masked by the others
-        // (or by the plugin's own register.php already having run here, errors swallowed).
-        if ($this->currentCommand === 'plugin:verify') {
+        if ($this->runsWithoutUserPlugins()) {
             return;
         }
 
@@ -154,6 +152,16 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         session(['usersettings.language' => $effectiveLanguage]);
         $language->readIni();
+    }
+
+    /**
+     * Whether this console run must not load user plugins at all (register files, command
+     * discovery, phars): plugin:verify loads exactly one plugin itself, so its result is that
+     * plugin's alone, never another plugin's stub or command failing.
+     */
+    private function runsWithoutUserPlugins(): bool
+    {
+        return $this->currentCommand === 'plugin:verify';
     }
 
     /**
@@ -222,7 +230,17 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         // Load Dynamic command paths for leantime
         $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/'));
 
-        // Load commands from enabled plugins
+        // Load commands from enabled plugins (their phars are included on the way).
+        if ($this->runsWithoutUserPlugins()) {
+            foreach ($this->commandRoutePaths as $path) {
+                if (file_exists($path)) {
+                    require $path;
+                }
+            }
+
+            return;
+        }
+
         try {
             $pluginService = app()->make(\Leantime\Core\Plugins\Plugins::class);
             $enabledPluginPaths = $pluginService->getEnabledPluginPaths();

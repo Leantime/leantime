@@ -881,6 +881,7 @@ class Plugins
         // holds the previous phar.
         $composer = $isUpdate ? $this->verifyUpdateOrRollBack($foldername, (string) $previousCopy) : null;
 
+        // A new install has no previous phar in this process, so it can read composer.json itself.
         $pluginModel = $composer !== null
             ? $this->pluginFromComposer($composer, $foldername, (string) $plugin->license, 'phar')
             : $this->createPluginFromComposer($foldername, (string) $plugin->license);
@@ -960,9 +961,11 @@ class Plugins
      *
      * The marketplace lists only versions whose range includes this Leantime version (it gets
      * `lt-v`); the range is checked here again so a listing mistake can't offer an incompatible one.
-     * A plugin the marketplace can't answer for is skipped (logged), not reported as up to date.
+     * A plugin the marketplace can't answer for (outage, error) is not reported as up to date: it
+     * keeps what the previous check found and is listed in `failed` (logged).
      *
-     * @return array<string, string> Available updates: plugin folder => version.
+     * @return array{updates: array<string, string>, failed: array<int, string>}
+     *                                                                           updates: plugin folder => version; failed: plugin folders that could not be checked.
      *
      * @api
      */
@@ -970,6 +973,8 @@ class Plugins
     public function checkForUpdates(): array
     {
         $updates = [];
+        $failed = [];
+        $previousUpdates = $this->getAvailableUpdates();
 
         foreach ($this->pluginRepository->getAllPlugins(false) ?: [] as $plugin) {
             if ($plugin->format !== $this->pluginFormat['phar']) {
@@ -980,6 +985,10 @@ class Plugins
                 $version = $this->findUpdate($plugin);
             } catch (\Throwable $e) {
                 Log::warning('Could not check for an update of plugin '.$plugin->foldername.': '.$e->getMessage());
+                $failed[] = (string) $plugin->foldername;
+                if (isset($previousUpdates[$plugin->foldername])) {
+                    $updates[$plugin->foldername] = $previousUpdates[$plugin->foldername];
+                }
 
                 continue;
             }
@@ -996,7 +1005,7 @@ class Plugins
         $this->settingsService->saveSetting('plugins.updatesCheckedAt', dtHelper()->dbNow()->formatDateTimeForDb());
         $this->clearCache();
 
-        return $updates;
+        return ['updates' => $updates, 'failed' => $failed];
     }
 
     /**
@@ -1004,7 +1013,7 @@ class Plugins
      *
      * @return array<string, string>
      */
-    public function getAvailableUpdates(): array
+    private function getAvailableUpdates(): array
     {
         // Also read on the plugin list's database-error path: no update badges then, never an error.
         try {
@@ -1018,14 +1027,16 @@ class Plugins
 
     /**
      * The newest marketplace version of a plugin that supports this Leantime version and is newer
-     * than the installed one, or null.
+     * than the installed one, or null when there is none.
+     *
+     * @throws \RuntimeException When the marketplace doesn't answer for the plugin (never "no update").
      */
     private function findUpdate(InstalledPlugin $plugin): ?string
     {
         $marketplacePlugin = $this->getMarketplacePlugin($plugin->getIdentifier());
 
         if ($marketplacePlugin === false) {
-            return null;
+            throw new \RuntimeException('The marketplace did not answer for '.$plugin->getIdentifier());
         }
 
         $latest = collect($marketplacePlugin->compatibility)
@@ -1061,33 +1072,21 @@ class Plugins
      * load or doesn't support this Leantime version, the previous version is put back and the
      * update fails with the reason.
      *
-     * @return array<string, mixed>|null The new version's composer.json, or null when no PHP CLI is
-     *                                   available to verify with (the update stays; logged).
+     * Without a PHP CLI, a timeout, or no readable result, the update is rolled back too: it is
+     * only kept once it has been seen to load (and this process can't read the new phar's
+     * composer.json, so the database would otherwise record the old version).
+     *
+     * @return array<string, mixed> The new version's composer.json.
      *
      * @throws \RuntimeException When the update was rolled back.
      */
-    private function verifyUpdateOrRollBack(string $folder, string $previousCopy): ?array
+    private function verifyUpdateOrRollBack(string $folder, string $previousCopy): array
     {
-        $php = (new PhpExecutableFinder)->find(false);
+        [$composer, $problem] = $this->runPluginVerify($folder);
 
-        if ($php === false) {
-            Log::warning('No PHP CLI found to verify the update of plugin '.$folder.'; keeping it without a load check.');
-
-            return null;
+        if ($problem === null && ! $this->compatibility->isCompatible($this->compatibility->rangeFor($composer))) {
+            $problem = 'it does not support Leantime '.$this->appSettings->appVersion;
         }
-
-        $process = new Process([$php, APP_ROOT.'/bin/leantime', 'plugin:verify', $folder, '--json'], APP_ROOT, null, null, 120);
-        $process->run();
-
-        $lines = array_filter(explode("\n", trim($process->getOutput())));
-        $result = json_decode((string) end($lines), true);
-        $composer = is_array($result['composer'] ?? null) ? $result['composer'] : null;
-
-        $problem = match (true) {
-            ! $process->isSuccessful() || ! is_array($result) || ($result['ok'] ?? false) !== true => (string) ($result['error'] ?? trim($process->getErrorOutput().' '.$process->getOutput())),
-            $composer !== null && ! $this->compatibility->isCompatible($this->compatibility->rangeFor($composer)) => 'it does not support Leantime '.$this->appSettings->appVersion,
-            default => null,
-        };
 
         if ($problem === null) {
             return $composer;
@@ -1098,6 +1097,41 @@ class Plugins
         $this->clearCache();
 
         throw new \RuntimeException(sprintf(__('notification.plugin_update_rolled_back'), $folder, Str::limit($problem, 300)));
+    }
+
+    /**
+     * Runs `plugin:verify {folder} --json` in a fresh PHP process.
+     *
+     * @return array{0: array<string, mixed>, 1: string|null} [composer.json of the installed version, problem or null]
+     */
+    private function runPluginVerify(string $folder): array
+    {
+        $php = (new PhpExecutableFinder)->find(false);
+
+        if ($php === false) {
+            return [[], 'no PHP command line binary was found to check that it loads'];
+        }
+
+        try {
+            $process = new Process([$php, APP_ROOT.'/bin/leantime', 'plugin:verify', $folder, '--json'], APP_ROOT, null, null, 120);
+            $process->run();
+        } catch (\Throwable $e) {
+            // Timeout or the process could not start.
+            return [[], 'the load check did not complete: '.$e->getMessage()];
+        }
+
+        $lines = array_filter(explode("\n", trim($process->getOutput())));
+        $result = json_decode((string) end($lines), true);
+
+        if (! $process->isSuccessful() || ! is_array($result) || ($result['ok'] ?? false) !== true) {
+            return [[], (string) ($result['error'] ?? trim($process->getErrorOutput().' '.$process->getOutput()))];
+        }
+
+        if (! is_array($result['composer'] ?? null)) {
+            return [[], 'its composer.json could not be read'];
+        }
+
+        return [$result['composer'], null];
     }
 
     /**
@@ -1150,7 +1184,18 @@ class Plugins
             return;
         }
 
+        // The daily job and a manual check can run at once: only the lock holder sends, and it
+        // re-reads the marker inside the lock.
+        $lock = Cache::lock('plugins.updateNotify.'.$plugin->foldername, 30);
+        if (! $lock->get()) {
+            return;
+        }
+
         try {
+            if ($this->settingsService->getSetting($settingKey) === $version) {
+                return;
+            }
+
             $this->notifyAdmins(
                 $plugin->id,
                 'plugin_update',
@@ -1159,6 +1204,8 @@ class Plugins
             $this->settingsService->saveSetting($settingKey, $version);
         } catch (\Throwable $e) {
             Log::warning('Could not notify about the update of plugin '.$plugin->foldername.': '.$e->getMessage());
+        } finally {
+            $lock->release();
         }
     }
 

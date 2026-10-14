@@ -23,6 +23,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class VerifyPluginCommand extends Command
 {
+    /**
+     * Declares the plugin folder argument and the --json option.
+     */
     protected function configure(): void
     {
         parent::configure();
@@ -30,6 +33,11 @@ class VerifyPluginCommand extends Command
         $this->addOption('json', null, InputOption::VALUE_NONE, 'Print one JSON line: {ok, error?, composer?} (used by the updater)');
     }
 
+    /**
+     * Loads the plugin's phar, register.php and routes.php and reports whether that worked.
+     *
+     * @return int 0 when the plugin loads, 1 otherwise.
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $folder = (string) $input->getArgument('folder');
@@ -76,6 +84,9 @@ class VerifyPluginCommand extends Command
         return self::SUCCESS;
     }
 
+    /**
+     * Prints a failure (plain or as the JSON result line) and returns the failure exit code.
+     */
     private function failWith(OutputInterface $output, bool $asJson, string $error): int
     {
         $output->writeln($asJson ? (string) json_encode(['ok' => false, 'error' => $error]) : '<error>'.$error.'</error>');
