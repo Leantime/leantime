@@ -17,6 +17,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Plugins\PluginCompatibility;
 use Leantime\Domain\Notifications\Services\Notifications;
 use Leantime\Domain\Plugins\Events\PluginDisabled;
 use Leantime\Domain\Plugins\Events\PluginEnabled;
@@ -103,6 +104,7 @@ class Plugins
         private UsersService $usersService,
         private AppSettings $appSettings,
         private PluginArchive $pluginArchive,
+        private PluginCompatibility $compatibility,
     ) {
         $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         // $this->marketplaceUrl = 'https://marketplace.leantime.test';
@@ -167,6 +169,7 @@ class Plugins
                 $plugin->vendorId = $marketplacePluginCache[$pluginIdentifier]->vendorId;
                 $plugin->vendorEmail = $marketplacePluginCache[$pluginIdentifier]->vendorEmail;
             }
+            $this->applyCompatibility($plugin);
             $installedPluginsById[$plugin->foldername] = $plugin;
 
         }
@@ -221,6 +224,10 @@ class Plugins
     /**
      * Returns the enabled plugins (database plus system plugins from config), cached.
      *
+     * Only plugins that support this Leantime version are returned: everything that loads plugin
+     * code (register files, routes, views, the console) goes through here, so an incompatible
+     * plugin stays enabled in the database but is not loaded. Administrators are told once.
+     *
      * A failing plugin-table query is never cached as "no plugins": the next call retries. Web
      * requests keep running without user plugins in that case; callers that must not silently run
      * without them (the console scheduler) pass $failOnDatabaseError to get the exception instead.
@@ -237,8 +244,12 @@ class Plugins
     public function getEnabledPlugins(bool $failOnDatabaseError = false): mixed
     {
 
-        if (Cache::store('installation')->has('plugins.enabledPlugins') && $this->config->debug === false) {
-            $enabledPlugins = static::dispatch_filter('beforeReturnCachedPlugins', Cache::store('installation')->get('plugins.enabledPlugins'), ['enabledOnly' => true]);
+        // Keyed by the Leantime version: after a core update the list is rebuilt, so plugins that
+        // don't support the new version drop out on the first request.
+        $cacheKey = $this->enabledPluginsCacheKey();
+
+        if (Cache::store('installation')->has($cacheKey) && $this->config->debug === false) {
+            $enabledPlugins = static::dispatch_filter('beforeReturnCachedPlugins', Cache::store('installation')->get($cacheKey), ['enabledOnly' => true]);
 
             return $enabledPlugins;
         }
@@ -258,14 +269,14 @@ class Plugins
                 available_params: ['enabledOnly' => true]);
         }
 
-        Cache::store('installation')->set('plugins.enabledPlugins', $this->buildPluginList($installedPlugins, true));
+        Cache::store('installation')->set($cacheKey, $this->withoutIncompatible($this->buildPluginList($installedPlugins, true)));
 
         /**
          * Filters session array of enabled plugins before returning
          */
         return self::dispatch_filter(
             hook: 'beforeReturnCachedPlugins',
-            payload: Cache::store('installation')->get('plugins.enabledPlugins'),
+            payload: Cache::store('installation')->get($cacheKey),
             available_params: ['enabledOnly' => true]);
 
     }
@@ -330,6 +341,9 @@ class Plugins
             ->set('authors', json_encode($pluginFile['authors']))
             ->get();
 
+        $plugin->requires = $this->compatibility->rangeFor($pluginFile);
+        $plugin->compatible = $this->compatibility->isCompatible($plugin->requires);
+
         return $plugin;
     }
 
@@ -381,9 +395,40 @@ class Plugins
     #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function enablePlugin(int $id): bool
     {
+        return $this->enable($id, null);
+    }
+
+    /**
+     * Enables a plugin after a core update, checking it against the version just installed.
+     *
+     * The updater still runs the previous release's code, so the running version is the old one;
+     * a plugin that supports only the new release would otherwise be refused. Not @api: only
+     * system:update calls it.
+     *
+     * @param  int  $id  The plugin id.
+     * @param  string  $installedLeantimeVersion  The Leantime version that was just installed.
+     */
+    public function enablePluginForVersion(int $id, string $installedLeantimeVersion): bool
+    {
+        return $this->enable($id, $installedLeantimeVersion);
+    }
+
+    /**
+     * Enables a plugin when it supports $leantimeVersion (default: the running version) and, for
+     * marketplace plugins, its license is valid.
+     */
+    private function enable(int $id, ?string $leantimeVersion): bool
+    {
         $this->clearCache();
 
         $pluginModel = $this->pluginRepository->getPlugin($id);
+
+        $this->applyCompatibility($pluginModel, $leantimeVersion);
+        if ($pluginModel->compatible === false) {
+            Log::warning('Not enabling plugin '.$pluginModel->foldername.': it supports Leantime '.$pluginModel->requires.', not '.($leantimeVersion ?? $this->appSettings->appVersion));
+
+            return false;
+        }
 
         if ($pluginModel->format === 'phar' && ! $this->validLicense($pluginModel)) {
             return false;
@@ -938,27 +983,193 @@ class Plugins
         $this->clearCache();
         $this->disablePlugin($pluginId);
 
-        // Get all admin users
-        $userService = app()->make(UsersService::class);
-        $notificationService = app()->make(Notifications::class);
         $plugin = $this->pluginRepository->getPlugin($pluginId);
 
-        // Create notification for all admin users
+        $this->notifyAdmins(
+            $pluginId,
+            'plugin_license',
+            sprintf("The plugin '%s' has been disabled due to license validation failure. Please check your marketplace subscription.", $plugin->name)
+        );
+    }
+
+    /**
+     * Disables a plugin that keeps failing requests (called by the core plugin crash breaker)
+     * and tells the administrators why.
+     *
+     * Only the local switch is flipped: the marketplace license stays activated, so turning the
+     * plugin back on after a fix needs no new activation. System plugins (from config) can't be
+     * disabled here.
+     *
+     * Not @api: only the crash breaker calls it.
+     *
+     * @param  string  $pluginFolder  The plugin's folder name.
+     * @param  string  $lastError  The message of the error that tripped the breaker.
+     * @return bool Whether a plugin was disabled.
+     */
+    public function disableAfterFailures(string $pluginFolder, string $lastError): bool
+    {
+        $plugin = collect($this->pluginRepository->getAllPlugins(true))
+            ->first(fn (InstalledPlugin $installed) => strcasecmp($installed->foldername, $pluginFolder) === 0);
+
+        if ($plugin === null) {
+            Log::error('Plugin '.$pluginFolder.' keeps failing requests but is not a disableable plugin (system plugin or not installed): '.$lastError);
+
+            return false;
+        }
+
+        $this->pluginRepository->disablePlugin($plugin->id);
+        $this->clearCache();
+
+        Log::error('Disabled plugin '.$plugin->foldername.' after repeated errors: '.$lastError);
+        PluginDisabled::dispatch(plugin: (string) $plugin->foldername);
+
+        $this->notifyAdmins(
+            $plugin->id,
+            'plugin_failing',
+            sprintf(__('notification.plugin_disabled_after_errors'), $plugin->name, Str::limit($lastError, 200))
+        );
+
+        return true;
+    }
+
+    /**
+     * Sets a plugin's supported range and whether this Leantime version is in it, read from the
+     * plugin's composer.json. A plugin without a readable composer.json declares no range, so it
+     * gets the undeclared (3.x) range: its folder may still hold a register.php or routes.php.
+     *
+     * @param  string|null  $leantimeVersion  The version to check against; default the running one.
+     * @return InstalledPlugin The same plugin, for chaining.
+     */
+    private function applyCompatibility(InstalledPlugin $plugin, ?string $leantimeVersion = null): InstalledPlugin
+    {
+        $composer = $this->readComposer((string) $plugin->foldername) ?? [];
+
+        $plugin->requires = $this->compatibility->rangeFor($composer);
+        $plugin->compatible = $this->compatibility->isCompatible($plugin->requires, $leantimeVersion);
+
+        return $plugin;
+    }
+
+    /**
+     * The decoded composer.json of an installed plugin (folder or phar), or null when missing.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function readComposer(string $pluginFolder): ?array
+    {
+        if (preg_match('/^[A-Za-z0-9_-]+$/', $pluginFolder) !== 1) {
+            return null;
+        }
+
+        $pluginPath = Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR).$pluginFolder.DIRECTORY_SEPARATOR;
+        foreach ([$pluginPath.'composer.json', "phar://{$pluginPath}{$pluginFolder}.phar/composer.json"] as $composerPath) {
+            if (! @file_exists($composerPath)) {
+                continue;
+            }
+            $composer = json_decode((string) @file_get_contents($composerPath), true);
+
+            return is_array($composer) ? $composer : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Drops the plugins that don't support this Leantime version from an enabled-plugin list,
+     * and tells the administrators once per plugin version and Leantime version. System plugins
+     * (from config) are left alone: the deployment that configures them owns their compatibility.
+     *
+     * @param  array<string, InstalledPlugin>  $plugins  Enabled plugins keyed by folder.
+     * @return array<string, InstalledPlugin>
+     */
+    private function withoutIncompatible(array $plugins): array
+    {
+        foreach ($plugins as $folder => $plugin) {
+            // System plugins come from the deployment's config: whoever configures them owns their compatibility.
+            if ($plugin->type === $this->pluginTypes['system'] || $plugin->compatible !== false) {
+                continue;
+            }
+
+            unset($plugins[$folder]);
+            Log::warning('Not loading plugin '.$plugin->foldername.' '.$plugin->version.': it supports Leantime '.$plugin->requires.', this is '.$this->appSettings->appVersion);
+
+            try {
+                $this->notifyIncompatibleOnce($plugin);
+            } catch (\Throwable $e) {
+                Log::warning('Could not notify about incompatible plugin '.$plugin->foldername.': '.$e->getMessage());
+            }
+        }
+
+        return $plugins;
+    }
+
+    /**
+     * One admin notification per plugin version and Leantime version, not one per cache rebuild.
+     */
+    private function notifyIncompatibleOnce(InstalledPlugin $plugin): void
+    {
+        $settingKey = 'plugins.incompatibleNotified.'.$plugin->foldername;
+        $marker = $plugin->version.'|'.$this->appSettings->appVersion;
+
+        if (! isset($plugin->id) || $this->settingsService->getSetting($settingKey) === $marker) {
+            return;
+        }
+
+        // Several workers rebuild the list at once after an update: only the lock holder sends,
+        // and it re-reads the marker inside the lock. The others skip (the holder covers them).
+        $lock = Cache::lock('plugins.incompatibleNotify.'.$plugin->foldername, 30);
+        if (! $lock->get()) {
+            return;
+        }
+
+        try {
+            if ($this->settingsService->getSetting($settingKey) === $marker) {
+                return;
+            }
+
+            $this->notifyAdmins(
+                $plugin->id,
+                'plugin_incompatible',
+                sprintf(__('notification.plugin_incompatible_paused'), $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
+            );
+            // Only after the notification went out, so a failed send is retried on the next rebuild.
+            $this->settingsService->saveSetting($settingKey, $marker);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * Sends an in-app notification about a plugin to every administrator and owner.
+     */
+    private function notifyAdmins(int $pluginId, string $type, string $message): void
+    {
+        $userService = app()->make(UsersService::class);
+        $notificationService = app()->make(Notifications::class);
+
         $admins = collect($userService->getAll())->filter(fn ($user) => in_array($user['role'], [40, 50]));
 
         $notifications = $admins->map(fn ($admin) => [
             'userId' => $admin['id'],
             'read' => '0',
-            'type' => 'plugin_license',
+            'type' => $type,
             'module' => 'plugins',
             'moduleId' => $pluginId,
-            'message' => sprintf("The plugin '%s' has been disabled due to license validation failure. Please check your marketplace subscription.", $plugin->name),
+            'message' => $message,
             'datetime' => dtHelper()->dbNow()->formatDateTimeForDb(), // UTC; date() is the user's tz here (#3201)
-            'url' => '/plugins/show',
+            'url' => '/plugins/myapps',
             'authorId' => 1,
-        ])->toArray();
+        ])->values()->toArray();
 
         $notificationService->addNotifications($notifications);
+    }
+
+    /**
+     * The installation-cache key of the enabled-plugin list for the running Leantime version.
+     */
+    private function enabledPluginsCacheKey(): string
+    {
+        return 'plugins.enabledPlugins.'.$this->appSettings->appVersion;
     }
 
     /**
@@ -1052,6 +1263,13 @@ class Plugins
 
         $succeeded = $this->{"{$action}Plugin"}($id);
 
+        if (! $succeeded && $action === 'enable') {
+            $plugin = $this->pluginRepository->getPlugin((int) $id);
+            if ($plugin !== false && $this->applyCompatibility($plugin)->compatible === false) {
+                return ['notification.plugin_incompatible', 'error'];
+            }
+        }
+
         return $succeeded
             ? ["notification.plugin_{$action}_success", 'success']
             : ["notification.plugin_{$action}_error", 'error'];
@@ -1094,6 +1312,7 @@ class Plugins
         Cache::store('installation')->forget('domainEvents');
         Cache::store('installation')->forget('commands');
         Cache::store('installation')->forget('plugins.enabledPlugins');
+        Cache::store('installation')->forget($this->enabledPluginsCacheKey());
         // Permission engine caches — a documented cache clear must bust them too, or a
         // newly-shipped domain/plugin permission class stays invisible (and acts as a recovery
         // path if the provider cache ever goes stale). Provider discovery is code-derived and

@@ -20,6 +20,7 @@ use InvalidArgumentException;
 use Leantime\Core\Application;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Core\Http\ApiRequest;
+use Leantime\Core\Plugins\PluginCrashBreaker;
 use Leantime\Core\UI\Template;
 use Psr\Log\LoggerInterface;
 use Sentry\Laravel\Integration;
@@ -306,6 +307,15 @@ class ExceptionHandler implements ExceptionHandlerContract
      */
     public function render($request, Throwable $e)
     {
+        // Only errors that fail a request reach render(); a plugin that keeps causing them is
+        // disabled before it takes every page down. Guarded: an error early in boot may come
+        // before the container can build the breaker, and rendering must never fail on it.
+        try {
+            app(PluginCrashBreaker::class)->record($e);
+        } catch (Throwable) {
+            // Nothing to record yet.
+        }
+
         if (method_exists($e, 'render') && $response = $e->render($request)) {
             return $response;
         } elseif ($e instanceof Responsable) {

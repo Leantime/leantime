@@ -167,7 +167,7 @@ class PluginsServiceTest extends TestCase
         config(['view.compiled' => $compiledDir]);
         $this->app->instance(\Leantime\Core\Auth\Permissions\PermissionService::class, $this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, ['flushCache' => null]));
 
-        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class)->clearCache();
+        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class, ['appSettings' => app(\Leantime\Core\Configuration\AppSettings::class)])->clearCache();
 
         $this->assertFileDoesNotExist($compiledDir.'/abc123.php');
         $this->assertFileExists($compiledDir.'/.gitignore');
@@ -190,7 +190,7 @@ class PluginsServiceTest extends TestCase
             },
         ]));
 
-        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class)->clearCache();
+        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class, ['appSettings' => app(\Leantime\Core\Configuration\AppSettings::class)])->clearCache();
 
         $this->assertSame(1, $flushed);
     }
