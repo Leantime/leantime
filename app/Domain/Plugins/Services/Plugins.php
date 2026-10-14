@@ -837,6 +837,12 @@ class Plugins
 
         $this->clearCache();
 
+        // An update replaces files that must be there to fall back to. Without them it would run as
+        // a fresh install (no load check, no rollback), so it is refused before anything is fetched.
+        if ($expectedFolder !== null && ! is_dir($this->pluginDirectory.$expectedFolder)) {
+            throw new \RuntimeException(sprintf(__('notification.plugin_update_files_missing'), $expectedFolder));
+        }
+
         // Updating an installed plugin: no need to type the license key again.
         if (empty($plugin->license)) {
             $plugin->license = $this->findInstalledMarketplacePlugin((string) $plugin->identifier)?->license;

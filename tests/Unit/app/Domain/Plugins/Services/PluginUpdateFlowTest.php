@@ -249,4 +249,21 @@ class PluginUpdateFlowTest extends TestCase
 
         $this->assertSame([], $this->archiveInstalls);
     }
+
+    /** The row exists but the folder doesn't: no fallback, so no update (never a silent fresh install). */
+    public function test_an_update_without_its_installed_files_is_refused_before_download(): void
+    {
+        rmdir($this->pluginDir.'Notes');
+
+        try {
+            $this->service([$this->composer('1.5.0'), null])->installMarketplacePlugin($this->notes(), '1.5.0', 'Notes');
+            $this->fail('An update without its installed files must be refused');
+        } catch (\RuntimeException $e) {
+            // Refused (the message is in the language file).
+        }
+
+        $this->assertSame([], $this->archiveInstalls);
+        $this->assertSame([], $this->rowUpdates);
+        Http::assertNothingSent();
+    }
 }
