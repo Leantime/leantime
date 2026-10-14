@@ -881,12 +881,26 @@ class Plugins
         // holds the previous phar.
         $composer = $isUpdate ? $this->verifyUpdateOrRollBack($foldername, (string) $previousCopy) : null;
 
-        // A new install has no previous phar in this process, so it can read composer.json itself.
-        $pluginModel = $composer !== null
-            ? $this->pluginFromComposer($composer, $foldername, (string) $plugin->license, 'phar')
-            : $this->createPluginFromComposer($foldername, (string) $plugin->license);
+        try {
+            // A new install has no previous phar in this process, so it can read composer.json itself.
+            $pluginModel = $composer !== null
+                ? $this->pluginFromComposer($composer, $foldername, (string) $plugin->license, 'phar')
+                : $this->createPluginFromComposer($foldername, (string) $plugin->license);
 
-        $this->recordInstalledPlugin($pluginModel);
+            $this->recordInstalledPlugin($pluginModel);
+        } catch (\Throwable $e) {
+            // The files changed but the database didn't: an update goes back to the previous
+            // version rather than leaving the two out of step.
+            if ($isUpdate) {
+                Log::error('Plugin '.$foldername.' update could not be recorded, restoring the previous version: '.$e->getMessage());
+                $this->pluginArchive->restore((string) $previousCopy, $pluginDir);
+                $this->clearCache();
+
+                throw new \RuntimeException(sprintf(__('notification.plugin_update_rolled_back'), $foldername, Str::limit($e->getMessage(), 300)), 0, $e);
+            }
+
+            throw $e;
+        }
 
         $this->forgetAvailableUpdate($foldername);
         $this->clearCache();
@@ -1102,9 +1116,12 @@ class Plugins
     /**
      * Runs `plugin:verify {folder} --json` in a fresh PHP process.
      *
+     * Protected (not public, so never reachable over JSON-RPC) only so tests can stand in for the
+     * fresh process.
+     *
      * @return array{0: array<string, mixed>, 1: string|null} [composer.json of the installed version, problem or null]
      */
-    private function runPluginVerify(string $folder): array
+    protected function runPluginVerify(string $folder): array
     {
         $php = (new PhpExecutableFinder)->find(false);
 
