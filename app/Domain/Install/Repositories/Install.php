@@ -3457,7 +3457,8 @@ class Install
                 $rows = $connection->table('zp_plugins')->where('foldername', $folder)->orderBy('id')->get();
 
                 $keep = $rows->filter(fn ($row) => (bool) $row->enabled)->last() ?? $rows->last();
-                $highestVersion = $rows->pluck('version')->filter()->sort(fn ($a, $b) => version_compare((string) $a, (string) $b))->last();
+                // A leading "v" (v1.4.2) would sort below plain numbers, so compare without it.
+                $highestVersion = $rows->pluck('version')->filter()->sort(fn ($a, $b) => version_compare(ltrim((string) $a, 'v'), ltrim((string) $b, 'v')))->last();
                 $license = $rows->reverse()->pluck('license')->first(fn ($key) => ! empty($key));
 
                 $connection->table('zp_plugins')->where('id', $keep->id)->update(array_filter([

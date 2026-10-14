@@ -989,14 +989,26 @@ class Plugins
             return false;
         }
 
+        $this->updatePluginTo($installed, $version);
+
+        return true;
+    }
+
+    /**
+     * Updates an installed marketplace plugin to exactly $version (with its stored license key).
+     * The install verifies that this version is what got installed, else it rolls back.
+     * Protected (never reachable over JSON-RPC) only so tests can stand in for the install.
+     *
+     * @throws \Exception When the download, install or verification fails (rolled back where possible).
+     */
+    protected function updatePluginTo(InstalledPlugin $installed, string $version): void
+    {
         $marketplacePlugin = build(new MarketplacePlugin)
             ->set('identifier', $installed->getIdentifier())
             ->set('license', (string) $installed->license)
             ->get();
 
         $this->installMarketplacePlugin($marketplacePlugin, $version, (string) $installed->foldername);
-
-        return true;
     }
 
     /**
@@ -1030,7 +1042,8 @@ class Plugins
 
         foreach ($marketplacePlugins as $plugin) {
             try {
-                $version = $this->findUpdate($plugin, $releasesByIdentifier === null ? null : ($releasesByIdentifier[strtolower($plugin->getIdentifier())] ?? []));
+                // A plugin the batch answer left out is asked about on its own (never "up to date").
+                $version = $this->findUpdate($plugin, $releasesByIdentifier[strtolower($plugin->getIdentifier())] ?? null);
             } catch (\Throwable $e) {
                 Log::warning('Could not check for an update of plugin '.$plugin->foldername.': '.$e->getMessage());
                 $failed[] = (string) $plugin->foldername;
@@ -1148,7 +1161,9 @@ class Plugins
             }
 
             try {
-                $this->updatePlugin($plugin->id);
+                // Exactly the version that passed the minor/patch check, never a newer one the
+                // marketplace may list by now.
+                $this->updatePluginTo($plugin, $version);
                 $result['updated'][$folder] = $version;
                 $message = sprintf(__('notification.plugin_auto_updated'), $plugin->name, $version);
             } catch (\Throwable $e) {

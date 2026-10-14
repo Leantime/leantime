@@ -19,7 +19,7 @@ class PluginAutoUpdateTest extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
 
-    /** @var array<int> */
+    /** @var array<int, array{0: int, 1: string}> plugin id and the exact version asked for */
     private array $updatedIds = [];
 
     private function plugin(int $id, string $folder, string $version): InstalledPlugin
@@ -49,10 +49,8 @@ class PluginAutoUpdateTest extends TestCase
                 'getSetting' => fn ($key, $default = false) => $key === 'plugins.autoUpdate' ? ($autoUpdate ? '1' : '0') : $default,
             ]),
             'checkForUpdates' => fn () => ['updates' => $available, 'failed' => []],
-            'updatePlugin' => $updatePlugin ?? function (int $id) {
-                $this->updatedIds[] = $id;
-
-                return true;
+            'updatePluginTo' => $updatePlugin ?? function (InstalledPlugin $plugin, string $version) {
+                $this->updatedIds[] = [$plugin->id, $version];
             },
         ]);
     }
@@ -80,7 +78,8 @@ class PluginAutoUpdateTest extends TestCase
 
         $this->assertSame(['Notes' => '1.5.0'], $result['updated']);
         $this->assertSame(['PgmPro' => '2.0.0'], $result['waiting']);
-        $this->assertSame([1], $this->updatedIds);
+        // Pinned to the version that passed the check.
+        $this->assertSame([[1, '1.5.0']], $this->updatedIds);
     }
 
     public function test_a_failed_automatic_update_is_reported_not_thrown(): void
@@ -122,6 +121,30 @@ class PluginAutoUpdateTest extends TestCase
         Http::fake([
             '*/ltmp-api/latest*' => Http::response('Not found', 404),
             '*/ltmp-api/details/*' => Http::response(['name' => 'Notes', 'compatibility' => [
+                ['version_number' => '1.5.0', 'supported_version_from' => '3.0', 'supported_version_to' => 'latest'],
+            ]]),
+        ]);
+
+        $appSettings = new AppSettings;
+        $appSettings->appVersion = '3.12.0';
+        $plugins = $this->make(Plugins::class, [
+            'marketplaceUrl' => 'https://marketplace.test',
+            'pluginRepository' => $this->makeEmpty(PluginRepository::class, ['getAllPlugins' => fn () => [$this->plugin(1, 'Notes', '1.4.2')]]),
+            'appSettings' => $appSettings,
+            'compatibility' => new PluginCompatibility($appSettings),
+            'settingsService' => $this->makeEmpty(SettingsService::class, ['getSetting' => fn ($key, $default = false) => str_starts_with($key, 'plugins.updateNotified.') ? '1.5.0' : $default]),
+            'clearCache' => null,
+        ]);
+
+        $this->assertSame(['updates' => ['Notes' => '1.5.0'], 'failed' => []], $plugins->checkForUpdates());
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/ltmp-api/details/leantime_notes'));
+    }
+
+    public function test_a_plugin_left_out_of_the_batch_answer_is_asked_about_on_its_own(): void
+    {
+        Http::fake([
+            '*/ltmp-api/latest*' => Http::response(['plugins' => ['leantime_other' => []]]),
+            '*/ltmp-api/details/leantime_notes*' => Http::response(['name' => 'Notes', 'compatibility' => [
                 ['version_number' => '1.5.0', 'supported_version_from' => '3.0', 'supported_version_to' => 'latest'],
             ]]),
         ]);

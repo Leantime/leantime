@@ -93,4 +93,16 @@ class UpdateSql30530Test extends TestCase
 
         $this->assertTrue($this->installer(DB::connection('no_plugins'))->update_sql_30530());
     }
+
+    /** "v2.0.0" is newer than "1.5.0" (a plain version_compare sorts it below). */
+    public function test_a_leading_v_does_not_hide_the_newest_version(): void
+    {
+        $connection = $this->connection();
+        $this->addRow($connection, 'Notes', true, '1.5.0', 'key');
+        $this->addRow($connection, 'Notes', false, 'v2.0.0', 'key');
+
+        $this->assertTrue($this->installer($connection)->update_sql_30530());
+
+        $this->assertSame('v2.0.0', $connection->table('zp_plugins')->where('foldername', 'Notes')->value('version'));
+    }
 }
