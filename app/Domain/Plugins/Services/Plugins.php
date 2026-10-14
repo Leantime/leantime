@@ -112,6 +112,15 @@ class Plugins
         // $this->marketplaceUrl = 'https://marketplace.leantime.test';
     }
 
+    /**
+     * HTTP client for marketplace calls that decide what code gets installed (update checks):
+     * certificate-verified, unlike {@see httpClient()} used for browsing.
+     */
+    protected function verifiedHttpClient()
+    {
+        return Http::timeout($this->timeout);
+    }
+
     protected function httpClient()
     {
 
@@ -843,6 +852,14 @@ class Plugins
             throw new \RuntimeException(sprintf(__('notification.plugin_update_files_missing'), $expectedFolder));
         }
 
+        // Decided from an earlier snapshot (the scheduler, or a page opened a while ago): with the
+        // lock held, the target must still be newer than what is installed now. Never a reinstall
+        // or a downgrade after someone else updated in between.
+        $currentVersion = $expectedFolder !== null ? $this->installedPluginFor($expectedFolder)?->version : null;
+        if ($currentVersion !== null && version_compare(ltrim($version, 'v'), ltrim((string) $currentVersion, 'v'), '<=')) {
+            throw new \RuntimeException(sprintf(__('notification.plugin_update_not_newer'), $expectedFolder, $currentVersion, $version));
+        }
+
         // Updating an installed plugin: no need to type the license key again.
         if (empty($plugin->license)) {
             $plugin->license = $this->findInstalledMarketplacePlugin((string) $plugin->identifier)?->license;
@@ -1081,7 +1098,7 @@ class Plugins
     private function fetchLatestReleases(array $identifiers): ?array
     {
         try {
-            $response = $this->httpClient()->get("{$this->marketplaceUrl}/ltmp-api/latest", [
+            $response = $this->verifiedHttpClient()->get("{$this->marketplaceUrl}/ltmp-api/latest", [
                 'identifiers' => implode(',', $identifiers),
                 'lt-v' => $this->appSettings->appVersion,
             ]);
@@ -1223,13 +1240,15 @@ class Plugins
     private function findUpdate(InstalledPlugin $plugin, ?array $releases = null): ?string
     {
         if ($releases === null) {
-            $marketplacePlugin = $this->getMarketplacePlugin($plugin->getIdentifier());
+            // Verified TLS: this answer picks the version that gets installed.
+            $response = $this->verifiedHttpClient()->get("{$this->marketplaceUrl}/ltmp-api/details/".rawurlencode($plugin->getIdentifier()), [
+                'lt-v' => $this->appSettings->appVersion,
+            ]);
+            $releases = $response->ok() ? $response->json('compatibility') : null;
 
-            if ($marketplacePlugin === false) {
+            if (! is_array($releases)) {
                 throw new \RuntimeException('The marketplace did not answer for '.$plugin->getIdentifier());
             }
-
-            $releases = $marketplacePlugin->compatibility;
         }
 
         $latest = collect($releases)
@@ -1354,10 +1373,18 @@ class Plugins
      */
     private function installedNameFor(string $folder): ?string
     {
-        $installed = collect($this->pluginRepository->getAllPlugins(false) ?: [])
-            ->first(fn (InstalledPlugin $plugin) => strcasecmp((string) $plugin->foldername, $folder) === 0);
+        $installed = $this->installedPluginFor($folder);
 
         return $installed !== null && ! empty($installed->name) ? (string) $installed->name : null;
+    }
+
+    /**
+     * The installed plugin row for a folder, read fresh from the database.
+     */
+    private function installedPluginFor(string $folder): ?InstalledPlugin
+    {
+        return collect($this->pluginRepository->getAllPlugins(false) ?: [])
+            ->first(fn (InstalledPlugin $plugin) => strcasecmp((string) $plugin->foldername, $folder) === 0);
     }
 
     /**
