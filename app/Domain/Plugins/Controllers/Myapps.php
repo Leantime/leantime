@@ -29,6 +29,7 @@ class Myapps extends Controller
     {
         $this->tpl->assign('newPlugins', $this->pluginService->discoverNewPlugins());
         $this->tpl->assign('installedPlugins', $this->pluginService->getAllPlugins());
+        $this->tpl->assign('autoUpdate', $this->pluginService->isAutoUpdateEnabled());
 
         return $this->tpl->display('plugins.myapps');
     }
@@ -38,10 +39,17 @@ class Myapps extends Controller
      * are only accepted as POST.
      *
      * @param  array  $params  Request parameters; one of install/enable/disable/remove/update => plugin id,
-     *                         or checkUpdates.
+     *                         checkUpdates, or autoUpdateShown (+ autoUpdate when switched on).
      */
     public function post($params): Response
     {
+        if ($this->incomingRequest->request->has('autoUpdateShown')) {
+            $this->pluginService->setAutoUpdate($this->incomingRequest->request->has('autoUpdate'));
+            $this->tpl->setNotification(__('notification.plugin_auto_update_saved'), 'success');
+
+            return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
+        }
+
         if ($this->incomingRequest->request->has('checkUpdates')) {
             try {
                 ['updates' => $updates, 'failed' => $failed] = $this->pluginService->checkForUpdates();

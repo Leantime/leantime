@@ -112,6 +112,15 @@ class Plugins
         // $this->marketplaceUrl = 'https://marketplace.leantime.test';
     }
 
+    /**
+     * HTTP client for marketplace calls that decide what code gets installed (update checks):
+     * certificate-verified, unlike {@see httpClient()} used for browsing.
+     */
+    protected function verifiedHttpClient()
+    {
+        return Http::timeout($this->timeout);
+    }
+
     protected function httpClient()
     {
 
@@ -750,8 +759,8 @@ class Plugins
      */
     public function parseMarketplaceError(RequestException $exception): string
     {
-        $errorJson = str_replace('HTTP request returned status code 500:', '', $exception->getMessage());
-        $errorJson = str_replace('HTTP request returned status code 200:', '', $errorJson);
+        // Any status: the marketplace also answers 409 for a release that doesn't support this version.
+        $errorJson = (string) preg_replace('/^HTTP request returned status code \d+:\s*/', '', $exception->getMessage());
         $errors = json_decode(trim($errorJson));
 
         return $errors->error ?? $errors->message ?? 'There was an error installing the plugin';
@@ -841,6 +850,14 @@ class Plugins
         // a fresh install (no load check, no rollback), so it is refused before anything is fetched.
         if ($expectedFolder !== null && ! is_dir($this->pluginDirectory.$expectedFolder)) {
             throw new \RuntimeException(sprintf(__('notification.plugin_update_files_missing'), $expectedFolder));
+        }
+
+        // Decided from an earlier snapshot (the scheduler, or a page opened a while ago): with the
+        // lock held, the target must still be newer than what is installed now. Never a reinstall
+        // or a downgrade after someone else updated in between.
+        $currentVersion = $expectedFolder !== null ? $this->installedPluginFor($expectedFolder)?->version : null;
+        if ($currentVersion !== null && version_compare(ltrim($version, 'v'), ltrim((string) $currentVersion, 'v'), '<=')) {
+            throw new \RuntimeException(sprintf(__('notification.plugin_update_not_newer'), $expectedFolder, $currentVersion, $version));
         }
 
         // Updating an installed plugin: no need to type the license key again.
@@ -989,14 +1006,26 @@ class Plugins
             return false;
         }
 
+        $this->updatePluginTo($installed, $version);
+
+        return true;
+    }
+
+    /**
+     * Updates an installed marketplace plugin to exactly $version (with its stored license key).
+     * The install verifies that this version is what got installed, else it rolls back.
+     * Protected (never reachable over JSON-RPC) only so tests can stand in for the install.
+     *
+     * @throws \Exception When the download, install or verification fails (rolled back where possible).
+     */
+    protected function updatePluginTo(InstalledPlugin $installed, string $version): void
+    {
         $marketplacePlugin = build(new MarketplacePlugin)
             ->set('identifier', $installed->getIdentifier())
             ->set('license', (string) $installed->license)
             ->get();
 
         $this->installMarketplacePlugin($marketplacePlugin, $version, (string) $installed->foldername);
-
-        return true;
     }
 
     /**
@@ -1020,13 +1049,18 @@ class Plugins
         $failed = [];
         $previousUpdates = $this->getAvailableUpdates();
 
-        foreach ($this->pluginRepository->getAllPlugins(false) ?: [] as $plugin) {
-            if ($plugin->format !== $this->pluginFormat['phar']) {
-                continue;
-            }
+        $marketplacePlugins = collect($this->pluginRepository->getAllPlugins(false) ?: [])
+            ->filter(fn (InstalledPlugin $plugin) => $plugin->format === $this->pluginFormat['phar']);
 
+        // One request for all plugins when the marketplace offers it; otherwise one per plugin.
+        $releasesByIdentifier = $marketplacePlugins->isEmpty()
+            ? []
+            : $this->fetchLatestReleases($marketplacePlugins->map(fn (InstalledPlugin $plugin) => $plugin->getIdentifier())->values()->all());
+
+        foreach ($marketplacePlugins as $plugin) {
             try {
-                $version = $this->findUpdate($plugin);
+                // A plugin the batch answer left out is asked about on its own (never "up to date").
+                $version = $this->findUpdate($plugin, $releasesByIdentifier[strtolower($plugin->getIdentifier())] ?? null);
             } catch (\Throwable $e) {
                 Log::warning('Could not check for an update of plugin '.$plugin->foldername.': '.$e->getMessage());
                 $failed[] = (string) $plugin->foldername;
@@ -1053,6 +1087,131 @@ class Plugins
     }
 
     /**
+     * The releases of several marketplace plugins in one request (`ltmp-api/latest`), keyed by
+     * lower-cased identifier, each in the shape of a plugin's compatibility list. Null when the
+     * marketplace doesn't offer the batch call (older marketplace) or it fails: the caller then
+     * asks per plugin.
+     *
+     * @param  array<int, string>  $identifiers  Marketplace identifiers of the installed plugins.
+     * @return array<string, array<int, array<string, mixed>>>|null
+     */
+    private function fetchLatestReleases(array $identifiers): ?array
+    {
+        try {
+            $response = $this->verifiedHttpClient()->get("{$this->marketplaceUrl}/ltmp-api/latest", [
+                'identifiers' => implode(',', $identifiers),
+                'lt-v' => $this->appSettings->appVersion,
+            ]);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $releases = $response->ok() ? $response->json('plugins') : null;
+
+        if (! is_array($releases)) {
+            return null;
+        }
+
+        return collect($releases)
+            ->filter(fn ($pluginReleases) => is_array($pluginReleases))
+            ->mapWithKeys(fn ($pluginReleases, $identifier) => [strtolower((string) $identifier) => array_values($pluginReleases)])
+            ->all();
+    }
+
+    /**
+     * Turns automatic plugin updates on or off (off by default). When on, the daily update check
+     * installs new minor and patch releases of marketplace plugins; major releases wait for an
+     * administrator.
+     *
+     * @api
+     */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
+    public function setAutoUpdate(bool $enabled): void
+    {
+        $this->settingsService->saveSetting('plugins.autoUpdate', $enabled ? '1' : '0');
+    }
+
+    /**
+     * Whether automatic plugin updates are on (off unless an administrator turned them on).
+     *
+     * @api
+     */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
+    public function isAutoUpdateEnabled(): bool
+    {
+        return (string) $this->settingsService->getSetting('plugins.autoUpdate', '0') === '1';
+    }
+
+    /**
+     * The daily plugin update job: checks for updates and, when automatic updates are on, installs
+     * the minor and patch ones. Each automatic update (or its rollback) is reported to the admins.
+     *
+     * Not @api: the scheduler calls it.
+     *
+     * Result (all keyed by plugin folder): available = folder => version found; checkFailed = folders
+     * the marketplace didn't answer for (their earlier result is kept); updated = folder => version
+     * installed; failed = folder => reason; waiting = folder => major version left for an admin.
+     *
+     * @return array{available: array<string, string>, checkFailed: array<int, string>, updated: array<string, string>, failed: array<string, string>, waiting: array<string, string>}
+     */
+    public function runScheduledUpdates(): array
+    {
+        $check = $this->checkForUpdates();
+        $result = ['available' => $check['updates'], 'checkFailed' => $check['failed'], 'updated' => [], 'failed' => [], 'waiting' => []];
+
+        if ($result['available'] === [] || ! $this->isAutoUpdateEnabled()) {
+            return $result;
+        }
+
+        $installedByFolder = collect($this->pluginRepository->getAllPlugins(false) ?: [])->keyBy('foldername');
+
+        foreach ($result['available'] as $folder => $version) {
+            $plugin = $installedByFolder->get($folder);
+            if ($plugin === null) {
+                continue;
+            }
+
+            if (! self::isMinorOrPatchUpdate((string) $plugin->version, $version)) {
+                $result['waiting'][$folder] = $version;
+
+                continue;
+            }
+
+            try {
+                // Exactly the version that passed the minor/patch check, never a newer one the
+                // marketplace may list by now.
+                $this->updatePluginTo($plugin, $version);
+                $result['updated'][$folder] = $version;
+                $message = sprintf(__('notification.plugin_auto_updated'), $plugin->name, $version);
+            } catch (\Throwable $e) {
+                $result['failed'][$folder] = $e->getMessage();
+                $message = sprintf(__('notification.plugin_auto_update_failed'), $plugin->name, $version, Str::limit($e->getMessage(), 300));
+                Log::warning('Automatic update of plugin '.$folder.' to '.$version.' failed: '.$e->getMessage());
+            }
+
+            try {
+                $this->notifyAdmins($plugin->id, 'plugin_update', $message);
+            } catch (\Throwable $e) {
+                Log::warning('Could not notify about the automatic update of plugin '.$folder.': '.$e->getMessage());
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Whether $to is a minor or patch release after $from (same major version), which automatic
+     * updates may install.
+     */
+    public static function isMinorOrPatchUpdate(string $from, string $to): bool
+    {
+        $fromMajor = (int) explode('.', ltrim($from, 'v'))[0];
+        $toMajor = (int) explode('.', ltrim($to, 'v'))[0];
+
+        return $fromMajor === $toMajor && version_compare(ltrim($to, 'v'), ltrim($from, 'v'), '>');
+    }
+
+    /**
      * The updates found by the last {@see checkForUpdates()}: plugin folder => version.
      *
      * @return array<string, string>
@@ -1073,17 +1232,26 @@ class Plugins
      * The newest marketplace version of a plugin that supports this Leantime version and is newer
      * than the installed one, or null when there is none.
      *
+     * @param  array<int, array<string, mixed>>|null  $releases  The plugin's releases, when already
+     *                                                           fetched in a batch; null asks the marketplace.
+     *
      * @throws \RuntimeException When the marketplace doesn't answer for the plugin (never "no update").
      */
-    private function findUpdate(InstalledPlugin $plugin): ?string
+    private function findUpdate(InstalledPlugin $plugin, ?array $releases = null): ?string
     {
-        $marketplacePlugin = $this->getMarketplacePlugin($plugin->getIdentifier());
+        if ($releases === null) {
+            // Verified TLS: this answer picks the version that gets installed.
+            $response = $this->verifiedHttpClient()->get("{$this->marketplaceUrl}/ltmp-api/details/".rawurlencode($plugin->getIdentifier()), [
+                'lt-v' => $this->appSettings->appVersion,
+            ]);
+            $releases = $response->ok() ? $response->json('compatibility') : null;
 
-        if ($marketplacePlugin === false) {
-            throw new \RuntimeException('The marketplace did not answer for '.$plugin->getIdentifier());
+            if (! is_array($releases)) {
+                throw new \RuntimeException('The marketplace did not answer for '.$plugin->getIdentifier());
+            }
         }
 
-        $latest = collect($marketplacePlugin->compatibility)
+        $latest = collect($releases)
             ->filter(fn ($release) => is_array($release) && ! empty($release['version_number']))
             ->filter(fn ($release) => $this->compatibility->isCompatible($this->releaseRange($release)))
             ->map(fn ($release) => ltrim((string) $release['version_number'], 'v'))
@@ -1205,10 +1373,18 @@ class Plugins
      */
     private function installedNameFor(string $folder): ?string
     {
-        $installed = collect($this->pluginRepository->getAllPlugins(false) ?: [])
-            ->first(fn (InstalledPlugin $plugin) => strcasecmp((string) $plugin->foldername, $folder) === 0);
+        $installed = $this->installedPluginFor($folder);
 
         return $installed !== null && ! empty($installed->name) ? (string) $installed->name : null;
+    }
+
+    /**
+     * The installed plugin row for a folder, read fresh from the database.
+     */
+    private function installedPluginFor(string $folder): ?InstalledPlugin
+    {
+        return collect($this->pluginRepository->getAllPlugins(false) ?: [])
+            ->first(fn (InstalledPlugin $plugin) => strcasecmp((string) $plugin->foldername, $folder) === 0);
     }
 
     /**

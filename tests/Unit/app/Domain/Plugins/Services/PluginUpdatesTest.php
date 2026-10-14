@@ -5,7 +5,6 @@ namespace Unit\app\Domain\Plugins\Services;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Plugins\PluginCompatibility;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
-use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
 use Leantime\Domain\Plugins\Services\Plugins;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
@@ -44,10 +43,14 @@ class PluginUpdatesTest extends TestCase
         $appSettings = new AppSettings;
         $appSettings->appVersion = '3.12.0';
 
-        $marketplace = new MarketplacePlugin;
-        $marketplace->compatibility = $releases;
+        // The update check asks the marketplace itself (verified TLS): batch "not offered", details answers.
+        \Illuminate\Support\Facades\Http::fake([
+            '*/ltmp-api/latest*' => \Illuminate\Support\Facades\Http::response('Not found', 404),
+            '*/ltmp-api/details/*' => \Illuminate\Support\Facades\Http::response(['compatibility' => $releases]),
+        ]);
 
         return $this->make(Plugins::class, [
+            'marketplaceUrl' => 'https://marketplace.test',
             'pluginRepository' => $this->makeEmpty(PluginRepository::class, $repositoryCalls + ['getAllPlugins' => fn () => $installed]),
             'appSettings' => $appSettings,
             'compatibility' => new PluginCompatibility($appSettings),
@@ -60,7 +63,6 @@ class PluginUpdatesTest extends TestCase
                     return true;
                 },
             ]),
-            'getMarketplacePlugin' => fn () => $marketplace,
             'clearCache' => null,
         ]);
     }
@@ -135,6 +137,9 @@ class PluginUpdatesTest extends TestCase
     /** A marketplace outage is a failed check, not "up to date": the earlier result is kept. */
     public function test_an_unanswered_check_keeps_the_previous_result_and_reports_the_failure(): void
     {
+        // The marketplace is down: neither the batch call nor details answers.
+        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response('Unavailable', 503)]);
+
         $plugins = $this->make(Plugins::class, [
             'pluginRepository' => $this->makeEmpty(PluginRepository::class, ['getAllPlugins' => fn () => [$this->marketplacePlugin(1, 'Notes', '1.4.2')]]),
             'appSettings' => new AppSettings,
@@ -147,7 +152,7 @@ class PluginUpdatesTest extends TestCase
                     return true;
                 },
             ]),
-            'getMarketplacePlugin' => fn () => false,
+            'marketplaceUrl' => 'https://marketplace.test',
             'clearCache' => null,
         ]);
 

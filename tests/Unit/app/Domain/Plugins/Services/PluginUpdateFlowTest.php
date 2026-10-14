@@ -266,4 +266,18 @@ class PluginUpdateFlowTest extends TestCase
         $this->assertSame([], $this->rowUpdates);
         Http::assertNothingSent();
     }
+
+    /** Decided from an older snapshot: with the lock held, the target must still be newer. */
+    public function test_a_target_that_is_no_longer_newer_is_not_installed(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        try {
+            // Installed is 1.4.2; asking for 1.4.2 (or older) again is refused before download.
+            $this->service([$this->composer('1.4.2'), null])->installMarketplacePlugin($this->notes(), '1.4.2', 'Notes');
+        } finally {
+            $this->assertSame([], $this->archiveInstalls);
+            Http::assertNothingSent();
+        }
+    }
 }
