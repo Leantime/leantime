@@ -156,6 +156,23 @@ class Plugins
     }
 
     /**
+     * Rewrites one plugin row ({@see updatePlugin()}) and removes the other rows of the same
+     * plugin, in one transaction: either all of it is saved or none of it.
+     *
+     * @param  array<int>  $duplicateIds  Other rows of the same plugin folder.
+     */
+    public function replacePluginRows(int $id, InstalledPlugin $plugin, array $duplicateIds): void
+    {
+        $this->db->transaction(function () use ($id, $plugin, $duplicateIds): void {
+            $this->updatePlugin($id, $plugin);
+
+            if ($duplicateIds !== []) {
+                $this->db->table('zp_plugins')->whereIn('id', $duplicateIds)->delete();
+            }
+        });
+    }
+
+    /**
      * The ids of every row for a plugin folder, oldest first (updates used to insert a new row
      * each time, so older installs can have several).
      *

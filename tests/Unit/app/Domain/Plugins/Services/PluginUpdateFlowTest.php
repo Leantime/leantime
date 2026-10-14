@@ -5,6 +5,7 @@ namespace Unit\app\Domain\Plugins\Services;
 use Illuminate\Support\Facades\Http;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Plugins\PluginCompatibility;
+use Leantime\Domain\Plugins\Models\InstalledPlugin;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
 use Leantime\Domain\Plugins\Services\PluginArchive;
@@ -78,12 +79,10 @@ class PluginUpdateFlowTest extends TestCase
                 },
             ]),
             'pluginRepository' => $this->makeEmpty(PluginRepository::class, $repositoryCalls + [
-                'getAllPlugins' => fn () => [],
+                'getAllPlugins' => fn () => [$this->installedNotes()],
                 'getPluginIdsByFolder' => fn () => [3],
-                'updatePlugin' => function (int $id, $plugin) {
+                'replacePluginRows' => function (int $id, $plugin, array $duplicates) {
                     $this->rowUpdates[] = [$id, $plugin->version];
-
-                    return true;
                 },
             ]),
             'settingsService' => $this->makeEmpty(SettingsService::class, ['getCompanyId' => 'instance-1']),
@@ -95,6 +94,20 @@ class PluginUpdateFlowTest extends TestCase
         (new \ReflectionProperty(Plugins::class, 'pluginDirectory'))->setValue($plugins, $this->pluginDir);
 
         return $plugins;
+    }
+
+    /** The installed row the update replaces. */
+    private function installedNotes(): InstalledPlugin
+    {
+        $installed = new InstalledPlugin;
+        $installed->id = 3;
+        $installed->name = 'leantime/notes';
+        $installed->foldername = 'Notes';
+        $installed->format = 'phar';
+        $installed->version = '1.4.2';
+        $installed->license = 'key-123';
+
+        return $installed;
     }
 
     private function notes(): MarketplacePlugin
@@ -156,7 +169,7 @@ class PluginUpdateFlowTest extends TestCase
 
         try {
             $this->service([$this->composer('1.5.0'), null], [
-                'updatePlugin' => fn () => throw new \PDOException('database gone'),
+                'replacePluginRows' => fn () => throw new \PDOException('database gone'),
             ])->installMarketplacePlugin($this->notes(), '1.5.0');
         } finally {
             $this->assertSame(1, $this->restores);
@@ -178,5 +191,62 @@ class PluginUpdateFlowTest extends TestCase
             $this->assertSame(0, $this->restores, 'Nothing to restore for a new install');
             $this->assertNull($this->archiveInstalls[0][3] ?? null, 'A new install keeps no previous version');
         }
+    }
+
+    public function test_a_download_for_another_plugin_folder_is_refused_before_files_change(): void
+    {
+        try {
+            $this->service([$this->composer('1.5.0'), null])->installMarketplacePlugin($this->notes(), '1.5.0', 'PgmPro');
+            $this->fail('A package for another folder must be refused');
+        } catch (\RuntimeException $e) {
+            // Refused before the archive step (the message names both folders in the language file).
+        }
+
+        $this->assertSame([], $this->archiveInstalls, 'No files were touched');
+        $this->assertSame([], $this->rowUpdates);
+    }
+
+    public function test_a_different_version_than_requested_is_rolled_back(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('not 1.5.0');
+
+        try {
+            $this->service([$this->composer('1.4.9'), null])->installMarketplacePlugin($this->notes(), '1.5.0', 'Notes');
+        } finally {
+            $this->assertSame(1, $this->restores);
+            $this->assertSame([], $this->rowUpdates);
+        }
+    }
+
+    public function test_a_different_package_than_installed_is_rolled_back(): void
+    {
+        $composer = $this->composer('1.5.0');
+        $composer['name'] = 'someone/else';
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('someone/else');
+
+        try {
+            $this->service([$composer, null])->installMarketplacePlugin($this->notes(), '1.5.0', 'Notes');
+        } finally {
+            $this->assertSame(1, $this->restores);
+        }
+    }
+
+    public function test_a_second_concurrent_update_of_the_same_plugin_is_refused(): void
+    {
+        $lock = \Illuminate\Support\Facades\Cache::lock('plugins.install.leantime_notes', 900);
+        $this->assertTrue($lock->get());
+
+        try {
+            $this->service([$this->composer('1.5.0'), null])->installMarketplacePlugin($this->notes(), '1.5.0', 'Notes');
+            $this->fail('A concurrent update must be refused');
+        } catch (\RuntimeException $e) {
+            $this->assertSame(__('notification.plugin_update_busy'), $e->getMessage());
+        } finally {
+            $lock->release();
+        }
+
+        $this->assertSame([], $this->archiveInstalls);
     }
 }

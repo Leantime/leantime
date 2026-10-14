@@ -806,12 +806,33 @@ class Plugins
      *
      * @param  MarketplacePlugin  $plugin  The marketplace plugin to be installed, including its identifier and license key.
      * @param  string  $version  The version of the plugin to be installed.
+     * @param  string|null  $expectedFolder  For an update: the installed plugin's folder. A download
+     *                                       for any other folder is refused before files change.
      *
      * @throws RequestException If the HTTP request to download the plugin fails or returns an unexpected response type.
      * @throws \Exception If the plugin cannot be downloaded, removed, or added to the system.
      * @throws \RuntimeException If the plugin directory cannot be created.
      */
-    public function installMarketplacePlugin(MarketplacePlugin $plugin, string $version): void
+    public function installMarketplacePlugin(MarketplacePlugin $plugin, string $version, ?string $expectedFolder = null): void
+    {
+        // Two installs of the same plugin at once would share the kept previous version (and the
+        // second could restore the first one's files): one at a time per plugin.
+        $lock = Cache::lock('plugins.install.'.strtolower((string) $plugin->identifier), 900);
+        if (! $lock->get()) {
+            throw new \RuntimeException(__('notification.plugin_update_busy'));
+        }
+
+        try {
+            $this->installMarketplacePluginLocked($plugin, $version, $expectedFolder);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * {@see installMarketplacePlugin()} under its per-plugin lock.
+     */
+    private function installMarketplacePluginLocked(MarketplacePlugin $plugin, string $version, ?string $expectedFolder): void
     {
 
         $this->clearCache();
@@ -855,11 +876,17 @@ class Plugins
             throw new \Exception(__('notification.plugin_cant_download'));
         }
 
+        // An update must land in the plugin being updated, never in another plugin's folder.
+        if ($expectedFolder !== null && strcasecmp($foldername, $expectedFolder) !== 0) {
+            throw new \RuntimeException(sprintf(__('notification.plugin_update_wrong_package'), $expectedFolder, $foldername));
+        }
+
         // A private, unpredictable temp path for the download, always removed afterwards.
         $temporaryFile = Str::finish(sys_get_temp_dir(), '/').'leantime-plugin-'.bin2hex(random_bytes(16)).'.zip';
         $pluginDir = "{$this->pluginDirectory}{$foldername}";
         $isUpdate = is_dir($pluginDir);
         $previousCopy = $isUpdate ? $this->previousVersionPath($foldername) : null;
+        $installedName = $isUpdate ? $this->installedNameFor($foldername) : null;
 
         try {
             if (! file_put_contents($temporaryFile, $response->body())) {
@@ -879,7 +906,7 @@ class Plugins
         // An update must load before it counts; otherwise the previous version comes back. The
         // fresh process also reads the new composer.json, which this process can't: it still
         // holds the previous phar.
-        $composer = $isUpdate ? $this->verifyUpdateOrRollBack($foldername, (string) $previousCopy) : null;
+        $composer = $isUpdate ? $this->verifyUpdateOrRollBack($foldername, (string) $previousCopy, $version, $installedName) : null;
 
         try {
             // A new install has no previous phar in this process, so it can read composer.json itself.
@@ -927,10 +954,7 @@ class Plugins
             return;
         }
 
-        $this->pluginRepository->updatePlugin(array_shift($existingIds), $pluginModel);
-        foreach ($existingIds as $duplicateId) {
-            $this->pluginRepository->removePlugin($duplicateId);
-        }
+        $this->pluginRepository->replacePluginRows(array_shift($existingIds), $pluginModel, $existingIds);
     }
 
     /**
@@ -964,7 +988,7 @@ class Plugins
             ->set('license', (string) $installed->license)
             ->get();
 
-        $this->installMarketplacePlugin($marketplacePlugin, $version);
+        $this->installMarketplacePlugin($marketplacePlugin, $version, (string) $installed->foldername);
 
         return true;
     }
@@ -1090,17 +1114,27 @@ class Plugins
      * only kept once it has been seen to load (and this process can't read the new phar's
      * composer.json, so the database would otherwise record the old version).
      *
+     * The installed release must also be the one requested: the same package name as before and
+     * the requested version.
+     *
+     * @param  string  $requestedVersion  The version that was asked for.
+     * @param  string|null  $installedName  The package name of the version being replaced.
      * @return array<string, mixed> The new version's composer.json.
      *
      * @throws \RuntimeException When the update was rolled back.
      */
-    private function verifyUpdateOrRollBack(string $folder, string $previousCopy): array
+    private function verifyUpdateOrRollBack(string $folder, string $previousCopy, string $requestedVersion, ?string $installedName): array
     {
         [$composer, $problem] = $this->runPluginVerify($folder);
 
-        if ($problem === null && ! $this->compatibility->isCompatible($this->compatibility->rangeFor($composer))) {
-            $problem = 'it does not support Leantime '.$this->appSettings->appVersion;
-        }
+        // What was installed must be what was asked for: the same package, the requested release.
+        $installedVersion = ltrim((string) ($composer['version'] ?? ''), 'v');
+        $problem ??= match (true) {
+            $installedVersion !== ltrim($requestedVersion, 'v') => 'the download was version '.($installedVersion ?: 'unknown').', not '.$requestedVersion,
+            $installedName !== null && strcasecmp((string) ($composer['name'] ?? ''), $installedName) !== 0 => 'the download was the package '.($composer['name'] ?? 'unknown').', not '.$installedName,
+            ! $this->compatibility->isCompatible($this->compatibility->rangeFor($composer)) => 'it does not support Leantime '.$this->appSettings->appVersion,
+            default => null,
+        };
 
         if ($problem === null) {
             return $composer;
@@ -1158,6 +1192,17 @@ class Plugins
     private function previousVersionPath(string $folder): string
     {
         return storage_path('app/plugins-previous/'.$folder);
+    }
+
+    /**
+     * The package name (composer "name") recorded for an installed plugin folder, if any.
+     */
+    private function installedNameFor(string $folder): ?string
+    {
+        $installed = collect($this->pluginRepository->getAllPlugins(false) ?: [])
+            ->first(fn (InstalledPlugin $plugin) => strcasecmp((string) $plugin->foldername, $folder) === 0);
+
+        return $installed !== null && ! empty($installed->name) ? (string) $installed->name : null;
     }
 
     /**

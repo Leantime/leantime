@@ -101,7 +101,7 @@ class PluginUpdatesTest extends TestCase
 
     public function test_an_update_rewrites_the_existing_row_and_removes_duplicates(): void
     {
-        $calls = ['added' => 0, 'updated' => [], 'removed' => []];
+        $calls = ['added' => 0, 'replaced' => []];
         $plugins = $this->service([], [], [
             'getPluginIdsByFolder' => fn () => [3, 17, 21],
             'addPlugin' => function () use (&$calls) {
@@ -109,24 +109,17 @@ class PluginUpdatesTest extends TestCase
 
                 return '99';
             },
-            'updatePlugin' => function (int $id, InstalledPlugin $plugin) use (&$calls) {
-                $calls['updated'][] = [$id, $plugin->version];
-
-                return true;
-            },
-            'removePlugin' => function (int $id) use (&$calls) {
-                $calls['removed'][] = $id;
-
-                return true;
+            'replacePluginRows' => function (int $id, InstalledPlugin $plugin, array $duplicateIds) use (&$calls) {
+                $calls['replaced'][] = [$id, $plugin->version, $duplicateIds];
             },
         ]);
 
         $record = new \ReflectionMethod(Plugins::class, 'recordInstalledPlugin');
         $record->invoke($plugins, $this->marketplacePlugin(0, 'Notes', '1.5.0', ''));
 
+        // One transactional call: row 3 rewritten, 17 and 21 removed together.
         $this->assertSame(0, $calls['added']);
-        $this->assertSame([[3, '1.5.0']], $calls['updated']);
-        $this->assertSame([17, 21], $calls['removed']);
+        $this->assertSame([[3, '1.5.0', [17, 21]]], $calls['replaced']);
     }
 
     public function test_an_update_reuses_the_stored_license_key(): void
