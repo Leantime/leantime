@@ -48,7 +48,7 @@ class PluginAutoUpdateTest extends TestCase
             'settingsService' => $this->makeEmpty(SettingsService::class, [
                 'getSetting' => fn ($key, $default = false) => $key === 'plugins.autoUpdate' ? ($autoUpdate ? '1' : '0') : $default,
             ]),
-            'checkForUpdates' => fn () => $available,
+            'checkForUpdates' => fn () => ['updates' => $available, 'failed' => []],
             'updatePlugin' => $updatePlugin ?? function (int $id) {
                 $this->updatedIds[] = $id;
 
@@ -112,7 +112,7 @@ class PluginAutoUpdateTest extends TestCase
             'clearCache' => null,
         ]);
 
-        $this->assertSame(['Notes' => '1.5.0'], $plugins->checkForUpdates());
+        $this->assertSame(['updates' => ['Notes' => '1.5.0'], 'failed' => []], $plugins->checkForUpdates());
         Http::assertSent(fn ($request) => str_contains($request->url(), '/ltmp-api/latest') && str_contains($request->url(), 'identifiers=leantime_notes'));
         Http::assertNotSent(fn ($request) => str_contains($request->url(), '/ltmp-api/details/'));
     }
@@ -137,7 +137,7 @@ class PluginAutoUpdateTest extends TestCase
             'clearCache' => null,
         ]);
 
-        $this->assertSame(['Notes' => '1.5.0'], $plugins->checkForUpdates());
+        $this->assertSame(['updates' => ['Notes' => '1.5.0'], 'failed' => []], $plugins->checkForUpdates());
         Http::assertSent(fn ($request) => str_contains($request->url(), '/ltmp-api/details/leantime_notes'));
     }
 }

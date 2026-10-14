@@ -1118,12 +1118,16 @@ class Plugins
      *
      * Not @api: the scheduler calls it.
      *
-     * @return array{available: array<string, string>, updated: array<string, string>, failed: array<string, string>, waiting: array<string, string>}
-     *                                                                                                                                                Folder => version (failed: folder => reason); waiting = major releases left for an admin.
+     * Result (all keyed by plugin folder): available = folder => version found; checkFailed = folders
+     * the marketplace didn't answer for (their earlier result is kept); updated = folder => version
+     * installed; failed = folder => reason; waiting = folder => major version left for an admin.
+     *
+     * @return array{available: array<string, string>, checkFailed: array<int, string>, updated: array<string, string>, failed: array<string, string>, waiting: array<string, string>}
      */
     public function runScheduledUpdates(): array
     {
-        $result = ['available' => $this->checkForUpdates(), 'updated' => [], 'failed' => [], 'waiting' => []];
+        $check = $this->checkForUpdates();
+        $result = ['available' => $check['updates'], 'checkFailed' => $check['failed'], 'updated' => [], 'failed' => [], 'waiting' => []];
 
         if ($result['available'] === [] || ! $this->isAutoUpdateEnabled()) {
             return $result;

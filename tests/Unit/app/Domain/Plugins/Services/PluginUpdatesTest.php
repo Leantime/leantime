@@ -19,6 +19,14 @@ class PluginUpdatesTest extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // No real marketplace: the batch endpoint is "not offered", so the per-plugin path runs.
+        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response('Not found', 404)]);
+    }
+
     /** @var array<string, mixed> */
     private array $savedSettings = [];
 
