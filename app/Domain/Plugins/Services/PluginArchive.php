@@ -54,17 +54,20 @@ class PluginArchive
      * @param  string  $zipPath  The downloaded archive.
      * @param  string  $folderName  The plugin folder name; the archive must hold `{folderName}.phar`.
      * @param  string  $pluginDir  The target plugin directory.
+     * @param  string|null  $keepPreviousIn  Where to keep the version being replaced (an update keeps it
+     *                                       so it can be restored with {@see restore()}); null discards it.
+     *                                       Any copy already there is replaced.
      *
      * @throws \RuntimeException When the archive is unsafe, incomplete, or its phar signature is invalid,
      *                           or the content can't be put in place.
      */
-    public function install(string $zipPath, string $folderName, string $pluginDir): void
+    public function install(string $zipPath, string $folderName, string $pluginDir, ?string $keepPreviousIn = null): void
     {
         $stagingDir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'leantime-plugin-'.bin2hex(random_bytes(16));
 
         try {
             $this->extractVerified($zipPath, $folderName, $stagingDir);
-            $this->swapInto($stagingDir, $pluginDir);
+            $this->swapInto($stagingDir, $pluginDir, $keepPreviousIn);
         } finally {
             if (is_dir($stagingDir)) {
                 File::deleteDirectory($stagingDir);
@@ -81,10 +84,11 @@ class PluginArchive
      *
      * @param  string  $stagingDir  The verified, extracted archive.
      * @param  string  $pluginDir  The target plugin directory.
+     * @param  string|null  $keepPreviousIn  Where to move the replaced version instead of deleting it.
      *
      * @throws \RuntimeException When the new version can't be put in place.
      */
-    private function swapInto(string $stagingDir, string $pluginDir): void
+    private function swapInto(string $stagingDir, string $pluginDir, ?string $keepPreviousIn = null): void
     {
         $pluginDir = rtrim($pluginDir, '/\\');
         $parentDir = dirname($pluginDir);
@@ -118,8 +122,76 @@ class PluginArchive
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
         }
 
-        // The new version is in place; only now is the previous one discarded.
+        // The new version is in place; only now is the previous one discarded (or kept for a restore).
+        if ($hadPreviousVersion && $keepPreviousIn !== null) {
+            if ($this->keepDirectory($backupDir, $keepPreviousIn)) {
+                return;
+            }
+
+            // An update that can't keep its fallback doesn't happen: put the previous version back.
+            $failedDir = $parentDir.DIRECTORY_SEPARATOR.'.'.basename($pluginDir).'.failed-'.$suffix;
+            if (@rename($pluginDir, $failedDir) && @rename($backupDir, $pluginDir)) {
+                self::removeDirectory($failedDir);
+
+                throw new \RuntimeException('The previous plugin version could not be kept for a rollback, so the update was not applied');
+            }
+
+            Log::error('Plugin update could not keep or restore the previous version', ['backup' => $backupDir]);
+
+            throw new \RuntimeException(sprintf('Plugin update failed; the previous version was kept at "%s"', $backupDir));
+        }
+
         self::removeDirectory($backupDir);
+    }
+
+    /**
+     * Puts a version kept by {@see install()} back in place of the current one, which is discarded.
+     * Same no-gap swap as an install; the kept copy is removed once it is live again.
+     *
+     * @param  string  $keptDir  The kept previous version.
+     * @param  string  $pluginDir  The plugin directory to restore.
+     *
+     * @throws \RuntimeException When there is nothing to restore or the swap fails.
+     */
+    public function restore(string $keptDir, string $pluginDir): void
+    {
+        if (! is_dir($keptDir)) {
+            throw new \RuntimeException('No previous plugin version to restore');
+        }
+
+        $this->swapInto($keptDir, $pluginDir);
+        self::removeDirectory($keptDir);
+    }
+
+    /**
+     * Moves $directory to $target (replacing what is there), falling back to copy-and-delete when
+     * they are on different filesystems. $directory is only removed once the copy is confirmed;
+     * on failure it stays where it is (the caller restores it).
+     *
+     * @return bool Whether $directory is now kept at $target.
+     */
+    private function keepDirectory(string $directory, string $target): bool
+    {
+        try {
+            self::removeDirectory($target);
+            File::ensureDirectoryExists(dirname($target));
+
+            if (@rename($directory, $target)) {
+                return true;
+            }
+
+            if (File::copyDirectory($directory, $target)) {
+                self::removeDirectory($directory);
+
+                return true;
+            }
+
+            self::removeDirectory($target);
+        } catch (\Throwable $e) {
+            Log::warning('Could not keep the previous plugin version at '.$target.': '.$e->getMessage());
+        }
+
+        return false;
     }
 
     /**

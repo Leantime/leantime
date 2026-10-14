@@ -51,6 +51,7 @@ class EnabledPluginsCacheTest extends TestCase
             'config' => $config,
             'appSettings' => app(AppSettings::class),
             'compatibility' => app(PluginCompatibility::class),
+            'settingsService' => $this->makeEmpty(SettingsService::class),
         ]);
     }
 

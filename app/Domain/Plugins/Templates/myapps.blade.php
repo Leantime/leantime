@@ -18,6 +18,9 @@
                 <div class="col-lg-12">
                     <h5 class="subtitle" style="margin-bottom:15px;">
                         {{ __("text.installed_plugins") }}
+                        <x-global::forms.button tag="a" link="javascript:void(0);" scale="s" contentRole="secondary" class="pull-right"
+                            data-post-url="{{ BASE_URL }}/plugins/myapps" data-post-field="checkUpdates" data-post-value="1"
+                            leadingVisual="fa fa-rotate">{{ __('buttons.check_plugin_updates') }}</x-global::forms.button>
                     </h5>
                     <div class="row sortableTicketList">
                         @each('plugins::partials.plugin', $installedPlugins, 'plugin')

@@ -1,5 +1,13 @@
 @if($plugin->type !== "system")
     <div style="padding-top:10px; padding-left:0px;">
+        @if (! empty($plugin->availableUpdate) && $plugin->id)
+            {{-- Uses the license key the plugin was installed with; a version that fails to load is rolled back. --}}
+            <div class="tw-mb-xs">
+                <x-global::elements.badge tone="info" icon="fa fa-arrow-up">{{ sprintf(__('label.plugin_update_available'), $plugin->availableUpdate) }}</x-global::elements.badge>
+                <a href="javascript:void(0);" data-post-url="{{ BASE_URL }}/plugins/myapps" data-post-field="update" data-post-value="{{ $plugin->id }}"><i class="fa fa-download"></i> {{ __('buttons.update_plugin') }}</a>
+            </div>
+        @endif
+
         @if ($plugin->compatible === false)
             {{-- Core doesn't load it on this Leantime version (enabled or not), so it can't be enabled. --}}
             <x-global::elements.badge tone="danger" icon="fa fa-triangle-exclamation">{{ __('label.plugin_incompatible') }}</x-global::elements.badge>
