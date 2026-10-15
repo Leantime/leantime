@@ -192,12 +192,22 @@ class EnabledPluginsCacheTest extends TestCase
      * Without a loaded language (the console loads plugins first) the notice would read as a bare
      * key: it is not sent and its marker is not saved, so a later request sends it properly.
      */
-    public function test_the_incompatibility_notice_waits_for_the_language(): void
+    public function test_the_incompatibility_notice_reads_as_text_without_the_language(): void
     {
         // As in a console boot before the language is initialised: every key comes back as itself.
         $language = app(\Leantime\Core\Language::class);
         app()->instance(\Leantime\Core\Language::class, $this->makeEmpty(\Leantime\Core\Language::class, [
             '__' => fn (string $index, string $default = '') => $index,
+        ]));
+
+        $sent = [];
+        app()->instance(\Leantime\Domain\Users\Services\Users::class, $this->makeEmpty(\Leantime\Domain\Users\Services\Users::class, [
+            'getAll' => fn () => [['id' => 1, 'role' => 50]],
+        ]));
+        app()->instance(\Leantime\Domain\Notifications\Services\Notifications::class, $this->makeEmpty(\Leantime\Domain\Notifications\Services\Notifications::class, [
+            'addNotifications' => function ($notifications) use (&$sent) {
+                $sent = $notifications;
+            },
         ]));
 
         $pluginDir = sys_get_temp_dir().'/lt-plugin-notice-'.getmypid().'/';
@@ -233,7 +243,10 @@ class EnabledPluginsCacheTest extends TestCase
         (new \ReflectionProperty(Plugins::class, 'pluginDirectory'))->setValue($plugins, $pluginDir);
 
         $this->assertArrayNotHasKey('Future', $plugins->getEnabledPlugins());
-        $this->assertArrayNotHasKey('plugins.incompatibleNotified.Future', $saved, 'Marker left unsaved for a later, translated send');
+        // Sent right away (the cached list never retries it), in English rather than as the bare key.
+        $this->assertCount(1, $sent);
+        $this->assertStringStartsWith("The plugin 'leantime/future' (v1.0.0) doesn't support Leantime", $sent[0]['message']);
+        $this->assertArrayHasKey('plugins.incompatibleNotified.Future', $saved);
 
         app()->instance(\Leantime\Core\Language::class, $language);
         @unlink($pluginDir.'Future/composer.json');

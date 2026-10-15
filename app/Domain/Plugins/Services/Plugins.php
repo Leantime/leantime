@@ -1711,13 +1711,6 @@ class Plugins
             return;
         }
 
-        // The console loads plugins before its language: there the text would be the bare key. The
-        // marker stays unsaved, so the next request that has the language sends it properly.
-        $message = __('notification.plugin_incompatible_paused');
-        if ($message === 'notification.plugin_incompatible_paused') {
-            return;
-        }
-
         // Several workers rebuild the list at once after an update: only the lock holder sends,
         // and it re-reads the marker inside the lock. The others skip (the holder covers them).
         $lock = Cache::lock('plugins.incompatibleNotify.'.$plugin->foldername, 30);
@@ -1733,7 +1726,9 @@ class Plugins
             $this->notifyAdmins(
                 $plugin->id,
                 'plugin_incompatible',
-                sprintf($message, $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
+                sprintf(
+                    self::translatedOr('notification.plugin_incompatible_paused', "The plugin '%s' (v%s) doesn't support Leantime %s (it supports %s), so it is not being loaded. Update the plugin to turn it back on."),
+                    $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
             );
             // Only after the notification went out, so a failed send is retried on the next rebuild.
             $this->settingsService->saveSetting($settingKey, $marker);
@@ -1750,7 +1745,8 @@ class Plugins
     {
         $text = __($key);
 
-        return $text === $key ? $english : $text;
+        // Without a loaded language the lookup gives the bare key (or nothing at all).
+        return is_string($text) && $text !== '' && $text !== $key ? $text : $english;
     }
 
     /**
