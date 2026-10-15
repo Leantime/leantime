@@ -8,6 +8,14 @@ Plugins now update from right inside Leantime: update notices surface available 
 ### A refreshed, consistent interface
 A new shared component library brings cards, dialogs, forms, menus, tabs and more onto one consistent look and type scale across the whole app - from reports and My Work to kanban boards, goals, ideas and plugin screens. Dialog titles, close buttons and Delete actions now live in a standard modal header, and menus, filters and panels all use one dropdown. (#3887, #3900, #3901, #3881, #3884)
 
+## Upgrade Notes
+- **Database update:** 3.12 runs a small migration (db version 3.5.30) that merges duplicate plugin rows left by older plugin updates. Open Leantime once after upgrading (or run `php bin/leantime system:update`) to apply it.
+- **Plugin compatibility:** plugins can now declare the Leantime versions they support (`"extra": {"leantime": {"requires": ">=3.12 <4.0"}}` in their composer.json). Plugins that don't declare a range are treated as supporting 3.x. A plugin that doesn't support the running version is skipped instead of loaded, shown as "Not compatible" in My Apps, and admins get a notification. `system:update` lists such plugins before updating. Plugins configured via `LEAN_PLUGINS` are not checked.
+- **Crash breaker:** a plugin that causes 5 failing requests within 10 minutes is disabled automatically (its license stays active) and admins are notified.
+- **One-click plugin updates** reuse the stored license key and verify the new version in a separate PHP process before keeping it. The server needs a PHP command line available; without one the update is rolled back. Automatic plugin updates are off by default and only install minor/patch releases.
+- **Installing from git:** a new Composer dependency (`composer/semver`) was added. The release packages include it; git-based installs need to run `composer install`.
+- New plugin and component strings are English-only for now.
+
 ## New Features
 - **One-click and automatic plugin updates** - Update notices, one-click updates with rollback, and opt-in automatic updates, with duplicate plugin rows merged (#3921, #3922)
 - **Plugin stability safeguards** - A version guard and crash breaker isolate incompatible or failing plugins (#3920)
