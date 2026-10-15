@@ -24,10 +24,14 @@ class TicketsCest
         $I->waitForElementVisible('.main-title-input', 120);
         $I->fillField(['class' => 'main-title-input'], 'Test Ticket');
 
-        $I->waitForElementClickable('.tagsinput', 15);
-        $I->clickWithRetry('.tagsinput', 90);
-        $I->wait(2);
-        $I->type('test-tag,');
+        // Tags (forms.tags): open the field, type a new tag, Enter adds it.
+        $I->waitForElementClickable('.lt-tags .ss-main', 15);
+        $I->clickWithRetry('.lt-tags .ss-main', 90);
+        $I->waitForElementVisible('.ss-content.ss-open-below .ss-search input, .ss-content.ss-open-above .ss-search input', 15);
+        $I->fillField('.ss-content.ss-open-below .ss-search input, .ss-content.ss-open-above .ss-search input', 'test-tag');
+        $I->wait(1);
+        $I->pressKey('.ss-content.ss-open-below .ss-search input, .ss-content.ss-open-above .ss-search input', \Facebook\WebDriver\WebDriverKeys::ENTER);
+        $I->wait(1);
         $I->waitForElementClickable('[data-tiptap-editor] .ProseMirror', 120);
         $I->wait(2);
         $I->clickWithRetry('[data-tiptap-editor] .ProseMirror');
@@ -41,6 +45,7 @@ class TicketsCest
         $I->seeInDatabase('zp_tickets', [
             'headline' => 'Test Ticket',
             'description like' => '%<p>Test Description</p>%',
+            'tags' => 'test-tag',
         ]);
     }
 

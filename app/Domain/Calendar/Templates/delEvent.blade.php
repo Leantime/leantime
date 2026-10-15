@@ -6,8 +6,9 @@
     $id = (int) $_GET['id'];
 @endphp
 
-<h4 class="widgettitle title-light">{!! __('subtitles.delete') !!}</h4>
-
+<x-global::actions.modal-header>
+    <x-slot:title>{!! __('subtitles.delete') !!}</x-slot:title>
+</x-global::actions.modal-header>
 <form method="post" class="formModal" action="{{ BASE_URL }}/calendar/delEvent/{{ $id }}">
     @dispatchEvent('afterFormOpen')
     <p>{!! __('text.confirm_event_deletion') !!}</p><br />

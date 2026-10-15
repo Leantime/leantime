@@ -90,7 +90,7 @@
 
                             @foreach ($canvasItems as $row)
                                 @if ($row['box'] == $key)
-                                    <div class="ticketBox moveable" id="item_{{ $row['id'] }}">
+                                    <x-global::elements.card compact class="ticketBox moveable" id="item_{{ $row['id'] }}">
 
                                         <div class="row">
                                             <div class="col-md-12">
@@ -133,11 +133,7 @@
                                                             &nbsp;
                                                             <x-global::actions.dropdown variant="panel" as="span" class="dropdown" menu-as="ul" menu-class="pull-right">
                                                                 <x-slot:trigger><i class="fa fa-tags" aria-hidden="true"></i> <small>{{ count($ideaTags) }}</small></x-slot:trigger>
-                                                                <li style="padding:10px"><div class="tagsinput readonly">
-                                                                    @foreach ($ideaTags as $tag)
-                                                                        <span class="tag"><span>{{ $tag }}</span></span>
-                                                                    @endforeach
-                                                                </div></li>
+                                                                <li style="padding:10px"><x-global::elements.tag-list :tags="$ideaTags" /></li>
                                                             </x-global::actions.dropdown>
                                                         @endif
 
@@ -157,7 +153,7 @@
                                             </div>
                                         @endif
 
-                                    </div>
+                                    </x-global::elements.card>
                                 @endif
                             @endforeach
 

@@ -142,7 +142,7 @@ leantime.projectsController = (function () {
 
     var removeStatus = function (id) {
 
-        var statusRow = jQuery("#todostatus-" + id).parent();
+        var statusRow = jQuery("#todostatus-" + id).closest("li");
         // The row's enhanced select keeps its dropdown panel on <body>: release it with the row.
         leantime.selectController.destroyWithin(statusRow[0]);
         statusRow.remove();

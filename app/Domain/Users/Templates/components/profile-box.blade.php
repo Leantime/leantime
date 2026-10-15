@@ -2,7 +2,7 @@
     'user' => null
 ])
 
-<div class="profileBox">
+<x-global::elements.card compact class="profileBox">
     <div class="commentImage">
         @if (isset($user['userId']) || isset($user->userId))
             <x-users::profile-image :user="$user" />
@@ -13,4 +13,4 @@
     <div class="userName">
         {{ $slot }}
     </div>
-</div>
+</x-global::elements.card>

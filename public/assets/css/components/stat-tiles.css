@@ -39,7 +39,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 28px;
+    font-size: var(--font-size-xxxl);
     font-weight: 600;
     letter-spacing: -.6px;
     line-height: 1;
@@ -48,7 +48,7 @@
 }
 
 .lt-stat-value .lt-stat-unit {
-    font-size: 15px;
+    font-size: var(--base-font-size);
     font-weight: 500;
     letter-spacing: .5px;
     align-self: flex-end;
@@ -61,7 +61,7 @@
    --secondary-font-color, which is #000 in the default theme and so would read
    as loud as the value it is meant to sit behind. */
 .lt-stat-label {
-    font-size: 12.5px;
+    font-size: var(--font-size-s);
     line-height: 1.3;
     margin-top: 5px;
     display: flex;
@@ -75,7 +75,7 @@
    qualifies the number. A second line (lt-stat-sub-more) steps down again so a
    tile can carry a rollup without competing with the primary caption. */
 .lt-stat-sub {
-    font-size: 12.5px;
+    font-size: var(--font-size-s);
     line-height: 1.35;
     margin-top: 3px;
     color: color-mix(in srgb, var(--primary-font-color) 60%, transparent);
@@ -83,7 +83,7 @@
 }
 
 .lt-stat-sub-more {
-    font-size: 11.5px;
+    font-size: var(--font-size-s);
 }
 
 /* Amber, not red: a sub-line saying "2h over plan" is a caution worth reading,
@@ -110,7 +110,7 @@
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    font-size: 12px;
+    font-size: var(--font-size-s);
     font-weight: 700;
     letter-spacing: .2px;
     padding: 4px 10px;
@@ -120,7 +120,7 @@
 }
 
 .lt-stat-delta i {
-    font-size: 9px;
+    font-size: var(--font-size-s);
 }
 
 /* Token-driven, not the deck's hardcoded #dcf1e6/#fbe0e8 pair: --green/--red
@@ -185,10 +185,10 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 10px;
+    font-size: var(--font-size-s);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: .4px;
+    letter-spacing: .04em;
     opacity: .7;
     color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
     transition: opacity .12s, color .12s;
@@ -196,7 +196,7 @@
 }
 
 .lt-stat.has-detail .see-list i {
-    font-size: 9px;
+    font-size: var(--font-size-s);
     transition: transform .18s;
 }
 
@@ -225,7 +225,7 @@
     visibility: hidden;
     transform: translateY(-3px);
     transition: opacity .12s, transform .12s, visibility .12s;
-    font-size: 11.5px;
+    font-size: var(--font-size-s);
     line-height: 1.4;
     text-align: left;
     letter-spacing: 0;
@@ -238,9 +238,9 @@
 }
 
 .lt-stat-drill .kd-hd {
-    font-size: 9.5px;
-    font-weight: 700;
-    letter-spacing: .4px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform: uppercase;
     color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
     padding: 2px 6px 6px;
@@ -277,13 +277,21 @@
 
 .lt-stat-drill li .mt {
     color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
-    font-size: 10.5px;
+    font-size: var(--font-size-s);
     flex: none;
 }
 
 .lt-stat-drill .kd-more {
-    font-size: 10.5px;
+    font-size: var(--font-size-s);
     color: color-mix(in srgb, var(--primary-font-color) 65%, transparent);
     font-style: italic;
     padding: 4px 6px 2px;
+}
+
+.lt-stat.tone-warning .lt-stat-value {
+    color: var(--feedback-warning-color);
+}
+
+.lt-stat.tone-success .lt-stat-value {
+    color: var(--green);
 }

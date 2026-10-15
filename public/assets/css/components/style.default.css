@@ -181,7 +181,7 @@ body.loginpage {
 }
 
 .loginpage .pagetitle h1 {
-    font-size:32px;
+    font-size: 32px;
 }
 
 .loginpanelinner {
@@ -285,7 +285,7 @@ body.loginpage {
 .row .regLeft .welcomeContent h1 {
     font-family: var(--primary-font-family);
     font-size: 32px;
-    font-weight:400;
+    font-weight: 400;
 }
 
 .row .regLeft .welcomeContent {
@@ -360,8 +360,8 @@ body.loginpage {
 }
 
 .row .regRight h2 {
-    font-weight:bold;
-    font-size:var(--font-size-xxl);
+    font-weight: bold;
+    font-size: var(--font-size-xxl);
 }
 
 .iq-objects-04 {
@@ -657,7 +657,7 @@ body.loginpage {
 .pageicon {
     width: 30px;
     height:30px;
-    font-size:16px;
+    font-size: var(--font-size-l);
     padding: 0px;
     /* Dark on the white/glass header card (was white on the gradient). */
     color: var(--primary-font-color);
@@ -760,9 +760,9 @@ body.loginpage {
 .boxedHighlight .value {
     padding-top:10px;
     padding-bottom:10px;
-    font-size:36px;
+    font-size: 36px;
     display:block;
-    font-weight:lighter;
+    font-weight: lighter;
 
 }
 
@@ -1049,6 +1049,10 @@ body.loginpage {
 .listfile > li {
     display: inline-block;
     margin: 5px 10px 5px 0;
+}
+
+/* Legacy tile look for plugin markup; core file tiles are elements.card. */
+.listfile > li:not(.lt-card) {
     border: 1px solid var(--main-border-color);
     padding: 10px;
     border-radius: var(--box-radius);
@@ -1163,7 +1167,7 @@ ul.list-inline li {
 }
 
 .errortitle h4 {
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     margin-bottom: 20px;
 }
 
@@ -1467,7 +1471,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     -moz-border-radius: var(--box-radius-small);
     -webkit-border-radius: var(--box-radius-small);
     border-radius:  var(--box-radius-small);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     text-shadow: none;
     font-weight: normal;
     text-transform: uppercase;
@@ -1475,7 +1479,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .badge {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     text-shadow: none;
     font-weight: normal;
     line-height: 19px;
@@ -1530,7 +1534,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     font-size: var(--font-size-xxl);
     color: var(--primary-font-color);
     margin-bottom: 20px;
-    font-weight:normal;
+    font-weight: normal;
 }
 
 .popover, .popover-title {
@@ -1830,7 +1834,7 @@ div.color-picker ul li:hover {
 .sortableTicketList .ticketBox small {
     font-size: var(--font-size-s);
     color: var(--secondary-font-color);
-    font-weight:lighter;
+    font-weight: lighter;
 }
 
 .sortableTicketList .ticketBox li {
@@ -1863,7 +1867,7 @@ div.color-picker ul li:hover {
     opacity: 0;
     filter: alpha(opacity=0);
     transform: translate(-300px, 0) scale(4);
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     direction: ltr;
     cursor: pointer;
 }
@@ -2028,7 +2032,7 @@ body::after {
 }
 
 .leftpanel .promotion i {
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     float: left;
     margin-right: 10px;
     line-height: 45px;
@@ -2113,15 +2117,19 @@ body .widgettitle .editHeadline:hover {
 }
 
 .commentContent {
+    width:100%;
+    font-size: var(--base-font-size);
+}
+
+/* Legacy bubble look for plugin markup; core comments are elements.card. */
+.commentContent:not(.lt-card) {
     background:var(--layered-background);
     border: 1px solid var(--main-border-color);
     border-radius:var(--box-radius);
-    width:100%;
     padding:12px 15px;
-    font-size:var(--base-font-size);
 }
 
-.commentContent.statusUpdate {
+.commentContent.statusUpdate:not(.lt-card) {
     background:var(--layered-background);
     border: 1px solid var(--main-border-color);
 }
@@ -2150,13 +2158,13 @@ body .widgettitle .editHeadline:hover {
 }
 
 .commentContent .name {
-    font-weight:bold;
+    font-weight: bold;
     display:block;
     margin-bottom:5px;
 }
 
 .commentContent .commentDate {
-    font-size:var(--font-size-s);
+    font-size: var(--font-size-s);
 }
 
 .commentImage {
@@ -2181,7 +2189,7 @@ body .widgettitle .editHeadline:hover {
     display:inline-block;
     margin-right:10px;
     margin-bottom:10px;
-    font-size:var(--font-size-s);
+    font-size: var(--font-size-s);
 }
 
 .commentMain .replies {
@@ -2213,7 +2221,7 @@ body .widgettitle .editHeadline:hover {
 
 
 .sortHandle {
-    font-size:16px;
+    font-size: var(--font-size-l);
     color:#ccc;
     padding-left:15px;
 }
@@ -2229,7 +2237,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .articleHeadline {
-    font-size:var(--font-size-xxxl);
+    font-size: var(--font-size-xxxl);
     margin-bottom:10px;
 }
 
@@ -2301,13 +2309,13 @@ body .widgettitle .editHeadline:hover {
     border-radius:50px;
     width:50px;
     line-height:50px;
-    font-size:28px;
+    font-size: 28px;
     background:var(--secondary-background);
     color:var(--primary-color);
 }
 
 .profileBox .userName {
-    font-size:var(--font-size-l);
+    font-size: var(--font-size-l);
     display:block;
 }
 
@@ -2322,7 +2330,7 @@ a.titleInsertLink,
 a.titleInsertLink:link{
     float:right;
     color:#aaa;
-    font-size:var(--font-size-s);
+    font-size: var(--font-size-s);
 }
 
 a.titleInsertLink:hover {
@@ -2334,7 +2342,7 @@ a.titleInsertLink:hover {
     color:#fff;
     padding:0px 5px;
     border-radius:var(--box-radius);
-    font-size:var(--font-size-xs);
+    font-size: var(--font-size-s);
     width:206px;
     margin-top:-2px;
     margin-bottom:10px;
@@ -2439,7 +2447,7 @@ a.titleInsertLink:hover {
 .projectBox .projectAvatar .fa {
 
     color:var(--main-action-color);
-    font-size: 23px;
+    font-size: var(--font-size-xxxl);
     line-height: 50px;
 }
 
@@ -2449,7 +2457,7 @@ a.titleInsertLink:hover {
 }
 
 h3.todaysDate {
-    font-weight:normal;
+    font-weight: normal;
 }
 
 .ui-resizable-handle.ui-resizable-w {
@@ -2519,7 +2527,7 @@ h3.todaysDate {
 
 }
 .bigNumberBox .content {
-    font-size:36px
+    font-size: 36px
 }
 
 .verticalTab {
@@ -2539,7 +2547,7 @@ h3.todaysDate {
     top: 50%;
     left: 50%;
     margin: 0;
-    font-size:var(--font-size-l);
+    font-size: var(--font-size-l);
 }
 
 
@@ -2693,7 +2701,7 @@ h3.todaysDate {
     border-radius: 10px;
     text-decoration: none;
     color: var(--primary-color);
-    font-weight:bold;
+    font-weight: bold;
     white-space: nowrap;
 }
 
@@ -2706,7 +2714,7 @@ h3.todaysDate {
 
 a.userMention {
     color: var(--primary-color);
-    font-weight:bold;
+    font-weight: bold;
 }
 
 a.userMention:hover,
@@ -2718,7 +2726,7 @@ a.userMention:focus {
 a.confetti {
     cursor:pointer;
     color:var(--primary-color);
-    font-weight:bold;
+    font-weight: bold;
 }
 
 /* Mirror transform utility - used for mirrored emoji in notifications */
@@ -2835,7 +2843,7 @@ h4 .helperTooltip,
 
 .bigNumberBoxText {
     color: var(--main-titles-color);
-    font-weight:bold;
+    font-weight: bold;
 }
 
 .maincontent .infoIcon {
@@ -2906,7 +2914,7 @@ h4 .helperTooltip,
 
 body div .fancyLink {
     background-color: var(--accent1);
-    font-weight:bold;
+    font-weight: bold;
 
     /* Create the gradient. */
     background-image: var(--element-gradient);
@@ -2930,7 +2938,7 @@ body a.btn.btn-fancy {
 
 body a.btn-link.btn-fancy {
     background-color: var(--accent1);
-    font-weight:bold;
+    font-weight: bold;
 
     /* Create the gradient. */
     background-image: var(--element-gradient);

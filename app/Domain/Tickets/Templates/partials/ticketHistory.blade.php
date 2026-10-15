@@ -24,8 +24,7 @@
                 @endphp
                 <li class="tw-flex tw-gap-m tw-py-sm" style="border-bottom:1px solid var(--main-border-color);">
                     @if ($entry->userId)
-                        <img src="{{ BASE_URL }}/api/users?profileImage={{ $entry->userId }}"
-                             alt="" class="tw-rounded-full" style="width:32px; height:32px; flex-shrink:0;" />
+                        <x-global::elements.avatar :user-id="$entry->userId" :name="$entry->userName" />
                     @endif
                     <div class="tw-flex-1">
                         <div>

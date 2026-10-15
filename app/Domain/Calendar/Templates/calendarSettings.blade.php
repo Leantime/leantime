@@ -1,7 +1,8 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><i class="fa fa-cog"></i> {{ __('label.calendar_settings') }}</h4>
-
+<x-global::actions.modal-header>
+    <x-slot:title><i class="fa fa-cog"></i> {{ __('label.calendar_settings') }}</x-slot:title>
+</x-global::actions.modal-header>
 <br />
 
 {{-- Connected Calendars Section --}}

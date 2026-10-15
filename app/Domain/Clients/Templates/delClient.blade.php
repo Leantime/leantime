@@ -18,8 +18,9 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <h4 class="widget widgettitle">{!! __('subtitles.delete') !!}</h4>
-        <div class="widgetcontent">
+        <x-global::elements.card>
+
+            <x-slot:title>{!! __('subtitles.delete') !!}</x-slot:title>
 
             <form method="post">
 
@@ -32,7 +33,7 @@
                 @dispatchEvent('beforeFormClose')
 
             </form>
-        </div>
+        </x-global::elements.card>
 
     </div>
 </div>

@@ -2,8 +2,9 @@
 
 @section('content')
 
-<h4 class="widgettitle title-light">{!! __('headlines.delete_sprint') !!}</h4>
-
+<x-global::actions.modal-header>
+    <x-slot:title>{!! __('headlines.delete_sprint') !!}</x-slot:title>
+</x-global::actions.modal-header>
 <form method="post" action="{{ BASE_URL }}/sprints/delSprint/{{ $id }}">
     <p>{!! __('text.are_you_sure_delete_sprint') !!}</p><br />
     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />

@@ -163,7 +163,7 @@
 
                                     @foreach ($allTickets as $row)
                                         @if (($row[$placementField] ?? null) == $key)
-                                        <div class="ticketBox moveable container priority-border-{{ $row['priority'] }}" id="ticket_{{ $row['id'] }}">
+                                        <x-global::elements.card compact class="ticketBox moveable container priority-border-{{ $row['priority'] }}" id="ticket_{{ $row['id'] }}">
 
                                             <div class="row" >
                                                 <div class="col-md-12">
@@ -269,11 +269,7 @@
                                                         @php $tagsArray = explode(',', $row['tags']); @endphp
                                                         <x-global::actions.dropdown variant="panel" as="span" class="dropdown" menu-as="ul">
                                                             <x-slot:trigger><i class="fa fa-tags" aria-hidden="true"></i> {{ count($tagsArray) }}</x-slot:trigger>
-                                                            <li style="padding:10px"><div class="tagsinput readonly">
-                                                                @foreach ($tagsArray as $tag)
-                                                                    <span class="tag"><span>{{ $tag }}</span></span>
-                                                                @endforeach
-                                                            </div></li>
+                                                            <li style="padding:10px"><x-global::elements.tag-list :tags="$tagsArray" /></li>
                                                         </x-global::actions.dropdown>
                                                     @endif
 
@@ -282,7 +278,7 @@
                                             </div>
                                             @endif
 
-                                        </div>
+                                        </x-global::elements.card>
                                         @endif
                                     @endforeach
                                 </div>

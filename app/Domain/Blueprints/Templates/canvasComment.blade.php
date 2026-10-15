@@ -20,8 +20,10 @@
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] ?? '' }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] ?? '' }}</h4>
-    <hr style="margin-top: 5px; margin-bottom: 15px;">
+    <x-global::actions.modal-header>
+    <x-slot:title><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] ?? '' }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] ?? '' }}</x-slot:title>
+</x-global::actions.modal-header>
+<hr style="margin-top: 5px; margin-bottom: 15px;">
 
     {!! $tpl->displayNotification() !!}
 
@@ -30,7 +32,7 @@
     @if($id !== '')
         <br />
         <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{!! __('subtitles.discussion') !!}</h4>
+        <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
         @include('comments::submodules.generalComment', ['formUrl' => '/blueprints/' . $canvasSlug . '/editCanvasComment/' . $id])
     @endif
 </div>

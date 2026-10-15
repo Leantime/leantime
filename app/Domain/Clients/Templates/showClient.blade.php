@@ -34,7 +34,7 @@
 
                     <div class="row row-fluid">
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> {!! __('subtitle.details') !!}</h4>
+                            <x-global::elements.section-header icon="fa fa-leaf">{!! __('subtitle.details') !!}</x-global::elements.section-header>
 
                             <div class="form-group">
                                 <label class=" control-label">{!! __('label.client_id') !!}</label>
@@ -121,7 +121,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {!! __('subtitles.users_assigned_to_this_client') !!}</h4>
+                            <x-global::elements.section-header icon="fa fa-users">{!! __('subtitles.users_assigned_to_this_client') !!}</x-global::elements.section-header>
                             <x-global::forms.button tag="a" link="#/users/newUser?preSelectedClient={{ $values['id'] }}" contentRole="primary"><i class='fa fa-plus'></i> {!! __('buttons.add_user') !!} </x-global::forms.button>
                             <table class='table table-bordered'>
                                 <colgroup>
@@ -227,7 +227,7 @@
 
                     <ul id='medialist' class='listfile'>
                                     @foreach ($files as $file)
-                                        <li class="{{ $file['moduleId'] }}">
+                                        <x-global::elements.card as="li" compact class="{{ $file['moduleId'] }}">
                                             <x-global::actions.dropdown style="float:right;">
                                                 <li class="nav-header">{!! __('subtitles.file') !!}</li>
                                                 <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
@@ -246,7 +246,7 @@
                                                   @endif
                                                 <span class="filename">{{ $file['realName'] }}</span>
                                               </a>
-                                           </li>
+                                           </x-global::elements.card>
                                     @endforeach
                                     <br class="clearall" />
                                     </ul>

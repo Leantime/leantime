@@ -1,16 +1,15 @@
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light"><i class="fa-regular fa-calendar-plus"></i> {{ __('label.connect_calendar_title') }}</h4>
+<x-global::actions.modal-header>
+    <x-slot:title><i class="fa-regular fa-calendar-plus"></i> {{ __('label.connect_calendar_title') }}</x-slot:title>
+</x-global::actions.modal-header>
 <p class="subtitle">{{ __('label.connect_calendar_description') }}</p>
 
 <br />
 
 {{-- iCal URL Import --}}
-<x-global::accordion id="connectCalendar-ical" class="noBackground">
-    <x-slot name="title">
-        <i class="fa fa-calendar-alt" style="margin-right: 5px;"></i> {{ __('label.ical_url_title') }}
-    </x-slot>
-    <x-slot name="content" style="padding-top: 10px;">
+<x-global::elements.accordion id="connectCalendar-ical" open>
+<x-slot:title><i class="fa fa-calendar-alt"></i> {{ __('label.ical_url_title') }}</x-slot:title>
         <p class="text-muted small">{{ __('label.ical_url_description') }}</p>
 
         <form action="{{ BASE_URL }}/calendar/connectCalendar" method="post" class="formModal">
@@ -27,30 +26,25 @@
             <br /><br />
             <x-global::forms.button tag="input" inputType="submit" name="save" contentRole="primary" :labelText="__('label.import_ical_button')" />
         </form>
-    </x-slot>
-</x-global::accordion>
+    </x-global::elements.accordion>
 
 {{-- Plugin-injected providers (CalDAV, Google Calendar, etc.) --}}
 {{-- Note: SVG icons via {!! !!} are trusted plugin content. Plugins are responsible for sanitizing their output. --}}
 @foreach($providers as $provider)
     @if($provider['id'] !== 'ical')
-        <x-global::accordion id="connectCalendar-{{ e($provider['id']) }}" class="noBackground">
-            <x-slot name="title">
-                @if(($provider['iconType'] ?? 'fontawesome') === 'svg')
+        <x-global::elements.accordion id="connectCalendar-{{ e($provider['id']) }}" open>
+<x-slot:title>@if(($provider['iconType'] ?? 'fontawesome') === 'svg')
                     <span style="display: inline-block; width: 18px; height: 18px; vertical-align: middle; margin-right: 5px;">{!! $provider['icon'] !!}</span>
                 @else
-                    <i class="{{ e($provider['icon']) }}" style="margin-right: 5px;"></i>
+                    <i class="{{ e($provider['icon']) }}"></i>
                 @endif
-                {{ $provider['title'] }}
-            </x-slot>
-            <x-slot name="content" style="padding-top: 10px;">
+                {{ $provider['title'] }}</x-slot:title>
                 <p class="text-muted small">{{ $provider['description'] }}</p>
                 <x-global::forms.button tag="a" link="{{ $provider['actionUrl'] }}"
                    contentRole="primary" class="{{ ($provider['actionType'] ?? 'link') === 'modal' ? 'formModal' : '' }}">
                     {{ $provider['actionLabel'] }}
                 </x-global::forms.button>
-            </x-slot>
-        </x-global::accordion>
+            </x-global::elements.accordion>
     @endif
 @endforeach
 

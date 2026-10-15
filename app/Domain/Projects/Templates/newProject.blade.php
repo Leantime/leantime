@@ -65,7 +65,7 @@
                         <div class="col-md-4">
 
                             @if ($projectTypes && count($projectTypes) > 1)
-                                <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
+                                <x-global::elements.section-header icon="fa-regular fa-rectangle-list">Project Type</x-global::elements.section-header>
                                 <p>The type of the project. This will determine which features are available.</p>
                                 <x-global::forms.select enhanced name="type">
                                     @foreach ($projectTypes as $key => $type)
@@ -80,19 +80,16 @@
                             @dispatchEvent('beforeClientPicker', $project)
 
                             <div style="margin-bottom: 30px;">
-                                <h4 class="widgettitle title-light tw-block"><span
-                                        class="fa fa-calendar"></span>{!! __('label.project_dates') !!}</h4>
+                                <x-global::elements.section-header icon="fa fa-calendar">{!! __('label.project_dates') !!}</x-global::elements.section-header>
                                 <div>
                                     <label>{!! __('label.project_start') !!}</label>
                                     <div class="">
-                                        <input type="text" class="field-width-sm dates dateFrom" name="start" autocomplete="off"
-                                               value="{{ $project['start'] }}" placeholder="{{ __('language.dateformat') }}" />
+                                        <x-global::forms.date-picker name="start" range="from" :value="$project['start']" class="dates dateFrom" />
 
                                     </div>
                                     <label>{!! __('label.project_end') !!}</label>
                                     <div class="">
-                                        <input type="text" class="field-width-sm dates dateTo" name="end" autocomplete="off"
-                                               value="{{ $project['end'] }}" placeholder="{{ __('language.dateformat') }}" />
+                                        <x-global::forms.date-picker name="end" range="to" :value="$project['end']" class="dates dateTo" />
 
                                     </div>
                                 </div>
@@ -102,8 +99,7 @@
                             <div style="margin-bottom: 30px;">
 
                                 <div class="">
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-building"></span>{!! __('label.client_product') !!}</h4>
+                                    <x-global::elements.section-header icon="fa fa-building">{!! __('label.client_product') !!}</x-global::elements.section-header>
                                     <x-global::forms.select enhanced name="clientId" id="clientId" aria-label="{{ __('label.client_product') }}">
 
                                         @foreach ($clients as $row)
@@ -123,8 +119,7 @@
 
                             <div style="margin-bottom: 30px;">
                                 <div class="">
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-lock-open"></span>{!! __('labels.defaultaccess') !!}</h4>
+                                    <x-global::elements.section-header icon="fa fa-lock-open">{!! __('labels.defaultaccess') !!}</x-global::elements.section-header>
                                     {!! __('text.who_can_access') !!}
                                     <br /><br />
 
@@ -151,7 +146,6 @@
 <script type="text/javascript">
     jQuery(document).ready(function() {
 
-        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
         leantime.projectsController.initProjectTabs();
         if (window.leantime && window.leantime.tiptapController) {

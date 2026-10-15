@@ -4,7 +4,9 @@
 @endphp
 
 <div style="min-width:90%">
-        <h1>{!! __('headlines.new_to_do') !!}</h1>
+        <x-global::actions.modal-header icon="fa fa-plus">
+            <x-slot:title>{!! __('headlines.new_to_do') !!}</x-slot:title>
+        </x-global::actions.modal-header>
 
         {!! $tpl->displayNotification() !!}
 
@@ -43,7 +45,6 @@
             leantime.dateController.initDatePicker(".dates");
             leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
 
-            leantime.ticketsController.initTagsInput();
 
 
 

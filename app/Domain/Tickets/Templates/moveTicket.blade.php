@@ -1,8 +1,6 @@
-@if ($ticket->type == 'milestone')
-    <h4 class="widgettitle title-light">{!! __('headline.move_milestone') !!} </h4>
-@else
-    <h4 class="widgettitle title-light">{!! __('headline.move_todo') !!} </h4>
-@endif
+<x-global::actions.modal-header>
+    <x-slot:title>{!! $ticket->type == 'milestone' ? __('headline.move_milestone') : __('headline.move_todo') !!}</x-slot:title>
+</x-global::actions.modal-header>
 
 
     <form method="post" action="{{ BASE_URL }}/tickets/moveTicket/{{ $ticket->id }}" class="formModal">

@@ -1,8 +1,9 @@
 @extends($layout) 
 @section('content')
 
-<h4 class="widgettitle title-light">{!!__("subtitles.delete") !!}</h4>
-
+<x-global::actions.modal-header>
+    <x-slot:title>{!!__("subtitles.delete") !!}</x-slot:title>
+</x-global::actions.modal-header>
 <form method="post" action="{{ BASE_URL."/goalcanvas/delCanvas/$id" }}">
     @if(isset($csrf_token))
         <input type="hidden" name="csrf_token" value="{{ $csrf_token }}">

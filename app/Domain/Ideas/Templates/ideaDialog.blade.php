@@ -12,6 +12,14 @@
     }
 @endphp
 
+<x-global::actions.modal-header icon="fa fa-lightbulb" :title="__('headline.idea')">
+    @if ($id != '')
+        <x-slot:actions>
+            <li><a href="#/ideas/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+        </x-slot:actions>
+    @endif
+</x-global::actions.modal-header>
+
 {!! $tpl->displayNotification() !!}
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}" id="ideaItemForm">
@@ -32,7 +40,7 @@
         <x-global::forms.text-input width="full" name="description" variant="headline" value="{{ $tpl->escape($canvasItem['description']) }}"
                placeholder="{{ __('input.placeholders.short_name') }}" /><br/>
 
-        <input type="text" value="{{ $tpl->escape($canvasItem['tags']) }}" name="tags" id="tags" />
+        <x-global::forms.tags :value="$canvasItem['tags']" />
 
         <textarea rows="3" cols="10" name="data" class="tiptapComplex"
                   placeholder="">{!! $tpl->escapeMinimal($canvasItem['data']) !!}</textarea><br/>
@@ -45,7 +53,7 @@
             <hr>
             <input type="hidden" name="comment" value="1"/>
 
-            <h4 class="widgettitle title-light"><span class="fa fa-submodules.generalComment"></span>{!! __('subtitles.discussion') !!}</h4>
+            <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
             @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/ideas/ideaDialog/' . $id])
         @endif
 
@@ -54,8 +62,7 @@
     <div class="col-md-4">
         @if ($id !== '')
             <br/><br/>
-            <h4 class="widgettitle title-light"><span
-                    class="fa fa-link"></span> {!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></h4>
+            <x-global::elements.section-header icon="fa fa-link">{!! __('headlines.linked_milestone') !!} <x-global::elements.info-tip :text="__('tooltip.link_milestones_tooltip')" /></x-global::elements.section-header>
 
             <ul class="sortableTicketList" style="width:99%">
                 @if ($canvasItem['milestoneId'] == '')
@@ -137,10 +144,6 @@
 </form>
 
 <div class="showDialogOnLoad" >
-        @if ($id != '')
-            <x-global::forms.button tag="a" link="{{ BASE_URL }}/ideas/delCanvasItem/{{ $id }}" class="ideaModal delete right" state="danger" variant="outline"><i
-                        class="fa fa-trash"></i> {!! __('links.delete') !!}</x-global::forms.button>
-        @endif
 </div>
 
 @once
@@ -158,7 +161,6 @@
         if (window.leantime && window.leantime.tiptapController) {
             leantime.tiptapController.initComplexEditor();
         }
-        leantime.ticketsController.initTagsInput();
 
         @if (!$login::userIsAtLeast($roles::$editor))
             leantime.authController.makeInputReadonly(".nyroModalCont");

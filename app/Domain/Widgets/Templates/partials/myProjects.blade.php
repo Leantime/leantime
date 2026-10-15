@@ -23,11 +23,8 @@
     @endif
     <div class="clearall"></div>
 
-    <x-global::accordion id="myProjectWidget-favorites" class="{{ $background }}">
-        <x-slot name="title">
-            ⭐ My Favorites
-        </x-slot>
-        <x-slot name="content">
+    <x-global::elements.accordion id="myProjectWidget-favorites" :onPage="$background === 'noBackground'" open>
+<x-slot:title>⭐ My Favorites</x-slot:title>
 
             <div class="row">
                 @php
@@ -47,15 +44,11 @@
                     You don't have any favorites. 😿
                 @endif
             </div>
-        </x-slot>
-    </x-global::accordion>
+        </x-global::elements.accordion>
 
 
-    <x-global::accordion id="myProjectWidget-otherProjects" class="{{ $background }}">
-        <x-slot name="title">
-            🗂️ All Assigned Projects
-        </x-slot>
-        <x-slot name="content">
+    <x-global::elements.accordion id="myProjectWidget-otherProjects" :onPage="$background === 'noBackground'" open>
+<x-slot:title>🗂️ All Assigned Projects</x-slot:title>
 
             <div class="row">
                 @foreach ($allProjects as $project)
@@ -69,8 +62,7 @@
 
                 @endforeach
             </div>
-        </x-slot>
-    </x-global::accordion>
+        </x-global::elements.accordion>
 
 </div>
 

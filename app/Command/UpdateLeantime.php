@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Http;
 use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Plugins\PluginCompatibility;
 use Leantime\Domain\Plugins\Services\Plugins;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -78,6 +79,36 @@ class UpdateLeantime extends Command
             return self::SUCCESS;
         }
 
+        // Plugin compatibility + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Plugins that don't support the new version won't load after the update (core skips
+        // them), so say which ones before anything changes.
+        $io->section('Plugin Compatibility');
+
+        /** @var Plugins $plugins */
+        $plugins = app()->make(Plugins::class);
+        $compatibility = app()->make(PluginCompatibility::class);
+        $targetVersion = ltrim((string) $latestVersion, 'v');
+
+        $incompatiblePlugins = collect($plugins->getAllPlugins(enabledOnly: true) ?: [])
+            ->filter(fn ($plugin) => $plugin->requires !== null)
+            ->reject(fn ($plugin) => $compatibility->isCompatible($plugin->requires, $targetVersion));
+
+        if ($incompatiblePlugins->isEmpty()) {
+            $io->text('All enabled plugins support v'.$targetVersion.'.');
+        } else {
+            $io->warning(array_merge(
+                ['These plugins do not support v'.$targetVersion.' and will not load after the update until you install a compatible version:'],
+                $incompatiblePlugins->map(fn ($plugin) => $plugin->name.' '.$plugin->version.' (supports '.$plugin->requires.')'.($plugin->type === 'system' ? ', system plugin from LEAN_PLUGINS: still loaded, check it before updating' : ''))->values()->all()
+            ));
+
+            // Automated runs keep going: core skips incompatible plugins, so the update itself is safe.
+            if ($input->isInteractive() && ! $io->confirm('Update Leantime anyway?', false)) {
+                $io->text('Update cancelled. Update the plugins first, then run system:update again.');
+
+                return self::SUCCESS;
+            }
+        }
+
         // Backup DB + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Database Backup');
         $skipBackup = $input->getOption('skipDbBackup');
@@ -123,8 +154,6 @@ class UpdateLeantime extends Command
         // Let's disable plugins
         $io->section('Disabling Plugins');
 
-        /** @var Plugins $plugins */
-        $plugins = app()->make(Plugins::class);
         $enabledPlugins = $plugins->getAllPlugins(enabledOnly: true);
         foreach ($enabledPlugins as $plugin) {
             if ($plugin->type != 'system' && isset($plugin->id)) {
@@ -177,8 +206,18 @@ class UpdateLeantime extends Command
         $io->section('Re-enabling Plugins');
         foreach ($enabledPlugins as $plugin) {
             if ($plugin->type != 'system' && isset($plugin->id)) {
-                $plugins->enablePlugin($plugin->id);
-                $io->text($plugin->name.': Enabled');
+                // This process still runs the old code, so check against the version just installed.
+                if ($plugin->requires !== null && ! $compatibility->isCompatible($plugin->requires, $targetVersion)) {
+                    $io->text($plugin->name.': left disabled (supports '.$plugin->requires.')');
+
+                    continue;
+                }
+
+                if ($plugins->enablePluginForVersion($plugin->id, $targetVersion)) {
+                    $io->text($plugin->name.': Enabled');
+                } else {
+                    $io->text($plugin->name.': could not be enabled (license check failed); enable it in My Apps');
+                }
             }
         }
 

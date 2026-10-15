@@ -4,7 +4,7 @@
 <ul class="sortableTicketList" style="margin-bottom:120px;">
     <li class="">
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> {!! __('links.quick_add_todo') !!}</a>
-        <div class="ticketBox hideOnLoad" id="subticket_new" >
+        <x-global::elements.card compact class="ticketBox hideOnLoad" id="subticket_new">
 
             <form method="post" class="form-group formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#substasks">
                 <input type="hidden" value="new" name="subtaskId" />
@@ -20,7 +20,7 @@
             </form>
 
             <div class="clearfix"></div>
-        </div>
+        </x-global::elements.card>
     </li>
 
 
@@ -40,7 +40,7 @@ $sumEstHours = 0;
     }
     @endphp
     <li class="ui-state-default" id="ticket_{{ $subticket['id'] }}" >
-        <div class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}" >
+        <x-global::elements.card compact class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}">
 
             <div class="row">
                 <div class="col-md-12" style="padding:0 15px;">
@@ -89,7 +89,7 @@ $sumEstHours = 0;
                 </div>
 
             </div>
-        </div>
+        </x-global::elements.card>
     </li>
 
 @endforeach

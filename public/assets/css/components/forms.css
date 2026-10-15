@@ -24,12 +24,20 @@ textarea:focus-visible,
     text-decoration: none;
 }
 
-form label{
-    padding-top:5px;
+/* Field labels: one look (forms.label). The base form rule matches so unmigrated labels agree. */
+.lt-label,
+form label {
+    padding-top: 5px;
+    padding-bottom: 5px;
     margin-bottom: 2px;
-    font-weight:bold;
-    opacity:0.8;
-    padding-bottom:5px;
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-semibold);
+    color: var(--primary-font-color);
+}
+
+.lt-label .lt-label-required {
+    margin-left: 2px;
+    color: var(--feedback-error-color);
 }
 
 form .switchery {
@@ -106,7 +114,7 @@ body div.tagsinput {
 }
 
 body div.tagsinput input {
-    font-size:var(--base-font-size);
+    font-size: var(--base-font-size);
     color:var(--primary-font-color) !important;
     width:auto;
     padding:0px;
@@ -121,7 +129,7 @@ body div.tagsinput span.tag {
 }
 
 div.tagsinput span.tag {
-    font-size:var(--font-size-m);
+    font-size: var(--font-size-m);
 }
 
 div.tagsinput span.tag a {
@@ -292,7 +300,7 @@ a.btn-default,
 {
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
-    font-weight:bold;
+    font-weight: bold;
     padding: var(--input-padding);
     line-height:21px;
     background: var(--secondary-action-bg);
@@ -369,7 +377,7 @@ input[type='submit'],
     border-radius:var(--element-radius);
     outline:0;
     font-size: var(--base-font-size);
-    font-weight:bold;
+    font-weight: bold;
     padding: var(--input-padding);
     line-height:21px;
     box-shadow:none;
@@ -611,10 +619,15 @@ input[type=color] {
     box-shadow: var(--input-shadow);
 }
 
-.userBox {
+/* Legacy look for plugin templates still on raw markup; core uses elements.card. */
+.userBox:not(.lt-card) {
     border:1px solid var(--main-border-color);
     border-radius: var(--box-radius);
     padding:10px;
+    margin-bottom:10px;
+}
+
+.userBox.lt-card {
     margin-bottom:10px;
 }
 
@@ -639,11 +652,6 @@ input[type=color] {
 .userBox input{
     margin-bottom:0px;
 
-}
-
-.backlogChartButtons,
-.chartButtons{
-    margin-left:5px !important;
 }
 
 
@@ -688,7 +696,7 @@ body input[type=text].main-title-input.main-title-input {
     border: 1px solid var(--main-border-color);
     border-radius:var(--box-radius);
     box-shadow:none;
-    font-size:var(--font-size-xxxl);
+    font-size: var(--font-size-xxxl);
     margin-bottom:5px;
 }
 
@@ -1066,7 +1074,7 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .radioTab span {
-    font-size:var(--font-size-s);
+    font-size: var(--font-size-s);
     color:var(--primary-font-color);
     line-height:1;
 }
@@ -1306,7 +1314,7 @@ body .croppie-container {
 }
 
 .selectable .selectableContent label {
-    font-weight:normal;
+    font-weight: normal;
     padding-bottom:0px;
 
 }
@@ -1327,7 +1335,7 @@ body .croppie-container {
 }
 
 .selectable .selectableContent .emoji {
-    font-size:var(--font-size-xxl);
+    font-size: var(--font-size-xxl);
     padding-right:5px;
     vertical-align: middle;
 }
@@ -1345,12 +1353,12 @@ body .croppie-container {
 
 .selectable.active .selectableContent label,
 .selectable.active .selectableContent{
-    font-weight:bold;
+    font-weight: bold;
 }
 
 .selectable.active .selectable-label {
     color:var(--accent1);
-    font-weight:bold;
+    font-weight: bold;
 }
 
 .selectable:hover .selectableContent{
@@ -1418,14 +1426,14 @@ body a.textInputSwitch {
     cursor:text;
     height:40px;
     line-height:40px;
-    font-size:var(--font-size-l);
+    font-size: var(--font-size-l);
     text-align:left;
     background:var(--layered-background);
     margin-bottom:10px;
     padding-left:10px;
     border-radius: var(--element-radius);
     color:var(--primary-font-color);
-    font-weight:bold;
+    font-weight: bold;
 }
 
 .textInputSwitch:hover {
@@ -1675,7 +1683,7 @@ input[type=number].hide-controls {
 
 .dropdown-title {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--font-size-l);
 }
 
 .dropdown-content {
@@ -1937,4 +1945,173 @@ body .btn.btn-round-icon {
     padding:0px;
     border:none;
     color:var(--interactive-icon-color);
+}
+
+/* elements.tag-list — read-only tag chips (badge size, soft tint). */
+.lt-tag-list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.lt-tag-list .lt-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--accent1) 12%, transparent);
+    /* Accent mixed toward the theme's ink so 12px text stays readable on the tint (dark themes). */
+    color: color-mix(in srgb, var(--accent1) 60%, var(--color-ink, var(--primary-font-color)));
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* forms.checkbox / forms.radio — control + label (14 / regular) + optional 12px muted description.
+   `body label.lt-check` beats the base `form label` and `.stdform label` (float, fixed width) rules. */
+body label.lt-check {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
+    float: none;
+    width: auto;
+    margin: 0;
+    padding: 4px 0;
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.lt-check-input[type="checkbox"]:not(.toggle),
+.lt-check-input[type="radio"] {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    accent-color: var(--accent1);
+    cursor: pointer;
+}
+
+.lt-check--toggle input[type="checkbox"].toggle {
+    flex: none;
+    margin-top: 0;
+}
+
+.lt-check-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.lt-check-desc {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    line-height: 16px;
+}
+
+label.lt-check:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: .6;
+}
+
+/* forms.button icon-only (icon + ariaLabel): a square button with just the icon. */
+/* `body` beats mobile.css (576–1200px), which stretches `.maincontentinner .btn` to full width. */
+body .btn.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+body .btn.btn-icon.btn-small {
+    width: 24px;
+    height: 24px;
+    font-size: var(--font-size-s);
+}
+
+/* elements.info-tip — (?) button next to a label or title; opens on hover, focus or tap. */
+button.lt-info-tip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin: 0 0 0 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: 400;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+button.lt-info-tip:hover,
+button.lt-info-tip:focus-visible,
+button.lt-info-tip[aria-expanded="true"] {
+    background: color-mix(in srgb, var(--primary-font-color) 8%, transparent);
+    color: var(--accent1);
+}
+
+/* forms.button-group — joined buttons, or a segmented single-choice track. */
+.lt-btn-group {
+    display: inline-flex;
+    align-items: stretch;
+    vertical-align: middle;
+}
+
+.lt-btn-group > .btn {
+    margin: 0;
+}
+
+.lt-btn-group:not(.lt-btn-group--segmented) > .btn:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.lt-btn-group:not(.lt-btn-group--segmented) > .btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.lt-btn-group--segmented {
+    gap: 2px;
+    padding: 2px;
+    border-radius: var(--element-radius);
+    background: color-mix(in srgb, var(--primary-font-color) 7%, transparent);
+}
+
+body .lt-btn-group--segmented > .btn {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--color-text-secondary, var(--primary-font-color));
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+body .lt-btn-group--segmented > .btn:hover,
+body .lt-btn-group--segmented > .btn:focus-visible {
+    background: color-mix(in srgb, var(--primary-font-color) 6%, transparent);
+    color: var(--primary-font-color);
+}
+
+body .lt-btn-group--segmented > .btn.active,
+body .lt-btn-group--segmented > .btn[aria-pressed="true"] {
+    background: var(--secondary-background);
+    box-shadow: var(--min-shadow);
+    color: var(--accent1);
 }

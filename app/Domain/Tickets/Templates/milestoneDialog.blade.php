@@ -13,13 +13,15 @@
     }
 </script>
 
-<div class="modal-icons">
-    @if (isset($currentMilestone->id) && $currentMilestone->id != '')
-        <a href="#/tickets/delMilestone/{{ $currentMilestone->id }}" class="danger" data-tippy-content="Delete"><i class='fa fa-trash-can'></i></a>
+<x-global::actions.modal-header>
+    <x-slot:title>{!! __('headline.milestone') !!}</x-slot:title>
+    @if (isset($currentMilestone->id) && $currentMilestone->id != '' && $login::userIsAtLeast($roles::$editor))
+        <x-slot:actions>
+            <li class="nav-header">{!! __('headline.milestone') !!}</li>
+            <li><a href="#/tickets/delMilestone/{{ $currentMilestone->id }}" class="delete"><i class="fa fa-trash-can"></i> {{ __('links.delete') }}</a></li>
+        </x-slot:actions>
     @endif
-</div>
-
-<h4 class="widgettitle title-light">{!! __('headline.milestone') !!} </h4>
+</x-global::actions.modal-header>
 
 {!! $tpl->displayNotification() !!}
 
@@ -28,7 +30,7 @@
     <label>{!! __('label.milestone_title') !!}</label>
     <x-global::forms.text-input width="full" name="headline" value="{{ $currentMilestone->headline }}" placeholder="{{ __('label.milestone_title') }}" /><br />
 
-    <label class="control-label">{!! __('label.project') !!}</label>
+    <x-global::forms.label>{!! __('label.project') !!}</x-global::forms.label>
     <x-global::forms.select width="full" name="projectId">
         @foreach ($allAssignedprojects as $project)
             @if (empty($project['type']) || $project['type'] == 'project')

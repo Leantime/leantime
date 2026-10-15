@@ -740,7 +740,16 @@ Leantime has a comprehensive plugin system that allows extending core functional
    - If a system has more users than allowed for a plugin the plugin is disabled. Data remains in the database
    - Daily cron validates all marketplace plugin licenses
 
-7. **Refactoring Considerations**:
+7. **Compatibility and failure guard** (`app/Core/Plugins`):
+   - Plugins declare the Leantime versions they support in composer.json: `"extra": {"leantime": {"requires": ">=3.12 <4.0"}}` (Composer constraint, checked with composer/semver). Plugins that declare nothing count as `>=3.0 <4.0` (`PluginCompatibility::UNDECLARED_RANGE`).
+   - System plugins (`LEAN_PLUGINS`) are not guarded: the deployment that configures them owns their compatibility (the updater still lists them).
+   - `Plugins::getEnabledPlugins()` (the source for register files, routes, views, console) drops plugins that don't support the running version; they stay enabled in the DB, show "Not compatible" in My Apps, can't be enabled, and admins are notified once per plugin version + Leantime version. The cache key includes the app version, so a core update re-checks on the first request.
+   - `PluginCrashBreaker` (called from `ExceptionHandler::render`): a plugin that causes 5 request-failing errors (5xx / uncaught, attributed by stack trace or view path) within 10 minutes is disabled locally (license stays activated) and admins are notified.
+   - `system:update` lists enabled plugins that don't support the target version before updating and leaves them disabled afterwards.
+   - Updates (marketplace/phar plugins): `Plugins::checkForUpdates()` (daily cron `plugins:checkUpdates` + "Check for updates" in My Apps) asks the marketplace for the newest release whose range includes this version, stores it in setting `plugins.availableUpdates`, and notifies admins once per version. `updatePlugin($id)` reuses the stored license key; the update keeps the replaced version in `storage/app/plugins-previous/{Folder}`, runs `plugin:verify {Folder} --json` in a fresh process (the running one still holds the old phar), and restores the previous version if the new one doesn't load. Installs/updates keep ONE `zp_plugins` row per folder (migration 30530 merged the duplicates older updates left).
+   - Automatic updates: off by default (setting `plugins.autoUpdate`, toggle in My Apps). The daily `plugins:checkUpdates` job runs `runScheduledUpdates()`: check, then install minor/patch releases only (major ones wait for an admin), each reported to the admins. The check asks the marketplace in one `ltmp-api/latest?identifiers=…&lt-v=…` request when available, else per plugin via `details`.
+
+8. **Refactoring Considerations**:
    - Move away from string-based event hooks to class-based events
    - Implement a more robust dependency management system
    - Standardize plugin activation/deactivation hooks

@@ -97,6 +97,39 @@ class PluginArchiveTest extends TestCase
         $this->assertSame(['Notes'], array_values(array_diff(scandir(dirname($pluginDir)), ['.', '..'])));
     }
 
+    /** An update keeps the version it replaced outside the plugin folder, and restore() brings it back. */
+    public function test_update_keeps_the_previous_version_and_restore_brings_it_back(): void
+    {
+        [$phar, $publicKey] = $this->opensslSignedPhar();
+        $pluginDir = $this->existingPluginDir();
+        $keptDir = $this->workDir.DIRECTORY_SEPARATOR.'previous'.DIRECTORY_SEPARATOR.'Notes';
+
+        $archive = new PluginArchive;
+        $archive->install($this->makeZip(['Notes.phar' => $phar, 'Notes.phar.pubkey' => $publicKey]), 'Notes', $pluginDir, $keptDir);
+
+        $this->assertSame($phar, file_get_contents($pluginDir.'/Notes.phar'));
+        $this->assertSame('installed-version', file_get_contents($keptDir.'/Notes.phar'));
+        // Nothing next to the plugin folder: the kept copy lives elsewhere.
+        $this->assertSame(['Notes'], array_values(array_diff(scandir(dirname($pluginDir)), ['.', '..'])));
+
+        $archive->restore($keptDir, $pluginDir);
+
+        $this->assertSame('installed-version', file_get_contents($pluginDir.'/Notes.phar'));
+        $this->assertDirectoryDoesNotExist($keptDir);
+    }
+
+    public function test_restore_without_a_kept_version_fails_and_changes_nothing(): void
+    {
+        $pluginDir = $this->existingPluginDir();
+
+        try {
+            (new PluginArchive)->restore($this->workDir.'/previous/Missing', $pluginDir);
+            $this->fail('restore() should refuse a missing kept version');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('installed-version', file_get_contents($pluginDir.'/Notes.phar'));
+        }
+    }
+
     public function test_installs_when_no_previous_version_exists(): void
     {
         [$phar, $publicKey] = $this->opensslSignedPhar();

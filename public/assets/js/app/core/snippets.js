@@ -60,6 +60,120 @@ leantime.snippets = (function () {
 
     };
 
+    // elements.info-tip: its own tippy (hover, focus and tap) so it also works on touch screens,
+    // where leantime.initTooltips turns plain data-tippy-content tooltips off.
+    var initInfoTips = function (root) {
+        if (typeof tippy === 'undefined' || !root || !root.querySelectorAll) {
+            return;
+        }
+        var buttons = Array.prototype.slice.call(root.querySelectorAll('button[data-lt-info]'));
+        // An outerHTML swap hands htmx.onLoad the button itself.
+        if (root.matches && root.matches('button[data-lt-info]')) {
+            buttons.unshift(root);
+        }
+        buttons.forEach(function (button) {
+            if (button._tippy) {
+                return;
+            }
+            tippy(button, {
+                content: button.getAttribute('data-lt-info'),
+                // The button already describes itself (aria-describedby → its sr-only text);
+                // Tippy's own aria-describedby would read the same text twice.
+                aria: { content: null, expanded: false },
+                trigger: 'mouseenter focus click',
+                interactive: false,
+                maxWidth: 320,
+                onShow: function () { button.setAttribute('aria-expanded', 'true'); },
+                onHide: function () { button.setAttribute('aria-expanded', 'false'); }
+            });
+        });
+    };
+    htmx.onLoad(initInfoTips);
+    // Release the popper and its document listeners when htmx removes a tip (even an open one).
+    document.addEventListener('htmx:beforeCleanupElement', function (event) {
+        var element = event.target;
+        if (element && element.matches && element.matches('button[data-lt-info]') && element._tippy) {
+            element._tippy.destroy();
+        }
+    });
+    document.addEventListener('lt:ui:modal.loaded', function (event) { initInfoTips(event.detail.root); });
+
+    // forms.button-group segmented: expose the starting choice to assistive tech on render.
+    var initSegmentedGroups = function (root) {
+        if (!root || !root.querySelectorAll) {
+            return;
+        }
+        root.querySelectorAll('.lt-btn-group--segmented > .btn:not([aria-pressed])').forEach(function (button) {
+            button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
+        });
+    };
+    htmx.onLoad(initSegmentedGroups);
+    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
+    document.addEventListener('lt:ui:modal.loaded', function (event) { initSegmentedGroups(event.detail.root); });
+
+    // forms.button-group segmented: one picked option. Moves .active / aria-pressed to the clicked
+    // button; the page's own click handler reacts to the choice.
+    document.addEventListener('click', function (event) {
+        var button = event.target.closest ? event.target.closest('.lt-btn-group--segmented > .btn') : null;
+        if (!button) {
+            return;
+        }
+        Array.prototype.forEach.call(button.parentElement.children, function (sibling) {
+            var picked = sibling === button;
+            sibling.classList.toggle('active', picked);
+            sibling.setAttribute('aria-pressed', picked ? 'true' : 'false');
+        });
+    });
+
+    // elements.accordion with an id remembers open/closed per user (same store as accordionToggle).
+    // `toggle` does not bubble, so listen in the capture phase. Browsers also fire it when a
+    // <details open> first renders; data-lt-open holds the rendered state so only a real change saves.
+    document.addEventListener('toggle', function (event) {
+        var details = event.target;
+        if (!details || !details.matches || !details.matches('details[data-lt-accordion]')) {
+            return;
+        }
+        var state = details.open ? 'open' : 'closed';
+        if (details.getAttribute('data-lt-open') === state) {
+            return;
+        }
+        details.setAttribute('data-lt-open', state);
+        leantime.rpc('Api.Api.setSubmenuState', {
+            submenu: 'accordion_content-' + details.getAttribute('data-lt-accordion'),
+            state: state
+        }).catch(function (e) { console.error('Could not persist accordion state', e); });
+    }, true);
+
+    // elements.accordion actions sit over the summary row (outside <summary> so they don't toggle);
+    // reserve exactly their width so long or several actions never cover the title.
+    var accordionActionsObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(function (entries) {
+        entries.forEach(function (entry) {
+            var accordion = entry.target.closest('.lt-accordion');
+            if (accordion) {
+                var box = entry.target.getBoundingClientRect();
+                accordion.style.setProperty('--lt-accordion-actions-w', Math.ceil(box.width) + 'px');
+                // Wrapped actions are taller than the summary row: reserve that height too.
+                accordion.style.setProperty('--lt-accordion-actions-h', Math.ceil(box.height) + 'px');
+            }
+        });
+    });
+    var observeAccordionActions = function (root) {
+        if (!accordionActionsObserver || !root || !root.querySelectorAll) {
+            return;
+        }
+        root.querySelectorAll('.lt-accordion > .lt-accordion-actions').forEach(function (actions) {
+            accordionActionsObserver.observe(actions);
+        });
+    };
+    htmx.onLoad(observeAccordionActions);
+    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
+    document.addEventListener('lt:ui:modal.loaded', function (event) { observeAccordionActions(event.detail.root); });
+    document.addEventListener('htmx:beforeCleanupElement', function (event) {
+        if (accordionActionsObserver && event.target.matches && event.target.matches('.lt-accordion > .lt-accordion-actions')) {
+            accordionActionsObserver.unobserve(event.target);
+        }
+    });
+
     var toggleTheme = function (theme) {
 
         var themeUrl = jQuery("#themeStyleSheet").attr("href");

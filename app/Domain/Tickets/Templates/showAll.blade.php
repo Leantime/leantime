@@ -17,25 +17,9 @@
 
 <div class="maincontent">
 
-    @include('tickets::submodules.ticketBoardTabs')
+    @include('tickets::submodules.ticketBoardTabs', ['tableButtons' => true])
 
     <div class="maincontentinner">
-
-        {{-- Board actions (New / Filter / Group By) moved into the nav bar
-             (ticketBoardTabs). Only the table-specific DataTables buttons remain
-             here, right-aligned above the table. --}}
-        <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-                    @dispatchEvent('filters.afterRighthandSectionOpen')
-                    <div id="tableButtons" style="display:inline-block"></div>
-                    @dispatchEvent('filters.beforeRighthandSectionClose')
-                </div>
-            </div>
-
-        </div>
-
-        <div class="clearfix" style="margin-bottom: 20px;"></div>
 
         @if (isset($availableProjects))
             {{-- Program (cross-project) board: consistent inline quick-add with a required
@@ -192,11 +176,7 @@
                             <td data-order="{{ $row['tags'] }}">
                                 @if ($row['tags'] != '')
                                     @php $tagsArray = explode(',', $row['tags']); @endphp
-                                    <div class='tagsinput readonly'>
-                                        @foreach ($tagsArray as $tag)
-                                            <span class='tag'><span>{{ $tag }}</span></span>
-                                        @endforeach
-                                    </div>
+                                    <x-global::elements.tag-list :tags="$tagsArray" />
                                 @endif
                             </td>
 

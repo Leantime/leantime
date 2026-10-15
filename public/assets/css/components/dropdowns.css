@@ -112,7 +112,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding-right: 10px;
     padding-top:10px;
     padding-bottom:5px;
-    font-size:var(--font-size-m);
+    font-size: var(--font-size-m);
     color:var(--interactive-icon-color);
     text-transform:none;
 }
@@ -127,19 +127,19 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .ticketDropdown {
-    font-size:var(--font-size-m);
+    font-size: var(--font-size-m);
 
 }
 
 .ticketDropdown ul li a{
-    font-size:var(--font-size-m);
+    font-size: var(--font-size-m);
 }
 
 /* Open the menu just below the chip itself: the chip's wrapper can be taller than the chip (e.g. when
    it's centered in a flex row), and a fixed offset then put the menu over the chip. */
 .ticketDropdown ul {
     top: calc(100% + 1px);
-    font-size:var(--font-size-m);
+    font-size: var(--font-size-m);
 }
 
 /* A chip with its menu open shows the focus ring, the same as a focused input or select (some pages move
@@ -191,8 +191,16 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding-right:0px;
 }
 
-.maincontent .ticketDropdown > a:hover,
-.maincontent .ticketDropdown > a:focus {
+/* A chip keeps its full height in any container: as a plain inline link (table cells)
+   the line box collapsed it to ~16px while cards rendered 21px. */
+.dropdown.ticketDropdown > a {
+    display: inline-block;
+}
+
+/* Chips never underline on hover, wherever they sit (page, to-do dialog, widget).
+   Two classes so it beats the theme's `.sortableTicketList a:hover` underline. */
+.dropdown.ticketDropdown > a:hover,
+.dropdown.ticketDropdown > a:focus {
     text-decoration: none;
 }
 
@@ -411,7 +419,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     font-size: var(--font-size-l);
     color: var(--primary-font-color);
     margin-bottom: 10px;
-    font-weight:bold;
+    font-weight: bold;
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
     padding: 5px 0px;
@@ -560,7 +568,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .dropdown-menu span.radio {
-    font-size: 12px;
+    font-size: var(--font-size-s);
     color: var(--main-menu-link-color);
     margin: 0px;
 }
@@ -636,7 +644,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .pagetitle .header-title-dropdown .fa {
     padding-left:4px;
-    font-size:.8em;
+    font-size: .8em;
     opacity:.55;
 }
 
@@ -672,7 +680,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     background:transparent;
     color:var(--primary-font-color);
     border:none;
-    font-size:var(--font-size-l);
+    font-size: var(--font-size-l);
 }
 .pagetitle .btn-transparent:hover {
     color:var(--accent1);

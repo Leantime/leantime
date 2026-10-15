@@ -5,7 +5,7 @@
     'progressColor' => 'default'
  ])
 
-<div class="ticketBox fixed">
+<x-global::elements.card compact class="ticketBox fixed milestoneCard">
     <div class="row">
         <div class="col-md-8" style="margin-bottom:5px;">
             <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone={{ $milestone->id }}" >{{ $milestone->headline  }}</a></strong>
@@ -29,15 +29,10 @@
         @endif
         <div class="row">
             <div class="col-md-12">
-                <div class="progress" data-tippy-content="<?=sprintf($tpl->__("text.percent_complete"), format($percentDone)->decimal())?>">
-                    <div class="progress-bar progress-bar-success"
-                         role="progressbar"
-                         aria-valuenow="{{ $percentDone }}"
-                         aria-valuemin="0" aria-valuemax="100"
-                         style="width: {{ $percentDone }}%; {{ $progressColor !== 'default' ? ' background: #'.$progressColor.'; ' : '' }}">
-                        <span class="sr-only">{{ sprintf($tpl->__("text.percent_complete"), format($percentDone)->decimal()) }}</span>
-                    </div>
-                </div>
+                <x-global::feedback.progress :value="$percentDone"
+                    :color="$progressColor !== 'default' ? '#' . $progressColor : null"
+                    :label="sprintf(__('text.percent_complete'), format($percentDone)->decimal())"
+                    :data-tippy-content="sprintf(__('text.percent_complete'), format($percentDone)->decimal())" />
             </div>
         </div>
 
@@ -48,4 +43,4 @@
             window.leantime?.initTooltips?.();
         </script>
     @endfragment
-</div>
+</x-global::elements.card>

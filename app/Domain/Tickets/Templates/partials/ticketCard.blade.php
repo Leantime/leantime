@@ -1,4 +1,4 @@
-<div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
+<x-global::elements.card compact class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
     <div class="row">
         <div class="col-md-8 titleContainer">
             @if($cardType == "full")
@@ -67,4 +67,4 @@
             @endif
         </div>
     </div>
-</div>
+</x-global::elements.card>

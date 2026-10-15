@@ -28,6 +28,12 @@ leantime.dateController = (function () {
             prevText: leantime.i18n.__("language.prevText"),
             weekHeader: leantime.i18n.__("language.weekHeader"),
             firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+            // Readonly fields never open the calendar (single pickers too, not only ranges).
+            beforeShow: function (input) {
+                if (jQuery(input).attr('readonly')) {
+                    return false;
+                }
+            },
             onSelect: callback
 
         };
@@ -87,10 +93,63 @@ leantime.dateController = (function () {
         );
     }
 
+    // forms.date-picker: init on render and after every htmx swap; a from/to pair (same
+    // data-lt-date-range group inside the swapped root) becomes a range picker.
+    var initComponents = function (root) {
+        if (!root || !root.querySelectorAll) {
+            return;
+        }
+        var inputs = Array.prototype.slice.call(root.querySelectorAll('input[data-lt-datepicker]:not(.hasDatepicker)'));
+        if (root.matches && root.matches('input[data-lt-datepicker]:not(.hasDatepicker)')) {
+            inputs.unshift(root);
+        }
+
+        var ranges = {};
+        inputs.forEach(function (input) {
+            var group = input.getAttribute('data-lt-date-range');
+            if (!group) {
+                initDatePicker(input);
+                return;
+            }
+            ranges[group] = ranges[group] || {};
+            ranges[group][input.getAttribute('data-lt-date-role')] = input;
+        });
+
+        Object.keys(ranges).forEach(function (group) {
+            var pair = ranges[group];
+            if (pair.from && pair.to) {
+                initDateRangePicker(pair.from, pair.to);
+                // The limits otherwise only apply after the first change; seed them from rendered values.
+                if (pair.from.value !== '') {
+                    jQuery(pair.to).datepicker('option', 'minDate', getDate(pair.from));
+                }
+                if (pair.to.value !== '') {
+                    jQuery(pair.from).datepicker('option', 'maxDate', getDate(pair.to));
+                }
+                return;
+            }
+            // Half a pair in this swap: still a working date field.
+            initDatePicker(pair.from || pair.to);
+        });
+    };
+
+    htmx.onLoad(initComponents);
+    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
+    document.addEventListener('lt:ui:modal.loaded', function (event) { initComponents(event.detail.root); });
+
+    // jQuery UI keeps a reference to every picker; release it when htmx removes the field.
+    document.addEventListener('htmx:beforeCleanupElement', function (event) {
+        var element = event.target;
+        if (element && element.matches && element.matches('input[data-lt-datepicker].hasDatepicker')) {
+            jQuery(element).datepicker('destroy');
+        }
+    });
+
     // Make public what you want to have public, everything else is private
     return {
         initDateRangePicker:initDateRangePicker,
         initDatePicker:initDatePicker,
+        initComponents:initComponents,
     };
 
 })();

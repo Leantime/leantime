@@ -84,6 +84,10 @@
                     <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{!! __('link.edit_wiki') !!}</a></li>
                     <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_wiki') !!}</a></li>
                 @endif
+                @if($login::userIsAtLeast($roles::$editor) && isset($currentArticle->id) && $currentArticle->id)
+                    <li class="nav-header border">{!! __('label.article') !!}</li>
+                    <li><a class="delete" href="#/wiki/delArticle/{{ $currentArticle->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</a></li>
+                @endif
 
             </x-global::actions.dropdown>
         </div>
@@ -95,7 +99,7 @@
 
     @if((! $currentArticle || $currentArticle->id != null) && (! $wikis || count($wikis) == 0))
         <!-- No wikis exist - show empty state -->
-        <div class="wiki-empty-state">
+        <div class="maincontentinner wiki-empty-state">
             <div class="wiki-empty-state-icon svgContainer">
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
             </div>
@@ -119,7 +123,7 @@
                         <!-- Left: Contents Sidebar -->
                         <div class="wiki-contents-panel" id="contentsPanel">
                             <div class="wiki-panel-header">
-                                <h4 class="widgettitle title-light"><i class="fa fa-list"></i> Contents</h4>
+                                <x-global::elements.section-header icon="fa fa-list">Contents</x-global::elements.section-header>
                                 <button class="wiki-collapse-btn" id="toggleContents" title="Collapse">
                                     <i class="fa fa-chevron-left"></i>
                                 </button>
@@ -155,7 +159,8 @@
                             <header class="wiki-document-header">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <!-- Editable Title with Icon Picker -->
-                                    <div class="form-group" id="wikiTitleWrapper">
+                                    {{-- Icon picker + title read as ONE field: the icon is a button inside the title's border. --}}
+                                    <div class="form-group wiki-title-field" id="wikiTitleWrapper">
                                         <div class="btn-group inlineDropDownContainerLeft">
                                             <button data-selected="graduation-cap" type="button"
                                                     class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker"
@@ -172,17 +177,22 @@
                                                value="{{ e($currentArticle->title) }}"
                                                data-original="{{ e($currentArticle->title) }}"
                                                placeholder="{{ __('input.placeholders.wiki_title') }}"
-                                               style="width:80%" autocomplete="off" />
+                                               autocomplete="off" />
+                                    </div>
+
+                                    {{-- Save status: quiet text under the title (was a floating pill in the window corner). --}}
+                                    <div class="wiki-edit-indicator" id="wikiEditIndicator" style="display: none;"
+                                         data-label-editing="{{ __('label.wiki_editing') }}"
+                                         data-label-saving="{{ __('label.wiki_saving') }}"
+                                         data-label-saved="{{ __('label.wiki_saved') }}"
+                                         data-label-error="{{ __('label.wiki_save_failed') }}">
+                                        <i class="fa fa-circle"></i>
+                                        <span></span>
                                     </div>
 
                                     <!-- Editable Tags -->
                                     <div class="wiki-tags-wrapper">
-                                        <input type="text"
-                                               id="wikiTagsInput"
-                                               class="wiki-tags-input"
-                                               data-role="tagsinput"
-                                               value="{{ e($currentArticle->tags ?? '') }}"
-                                               placeholder="Add tags..." />
+                                        <x-global::forms.tags name="wikiTags" id="wikiTagsInput" :value="$currentArticle->tags ?? ''" width="full" />
                                     </div>
                                 @else
                                     <h1 class="wiki-document-title">
@@ -211,11 +221,6 @@
                                 <textarea id="wikiArticleContent" class="wiki-editor-textarea" style="display:none;">{!! $tpl->escapeMinimal($currentArticle->description) !!}</textarea>
                                 <!-- Tiptap editor will be initialized here -->
                                 <div id="wikiTiptapEditor" class="wiki-document"></div>
-                                <!-- Edit mode indicator -->
-                                <div class="wiki-edit-indicator" id="wikiEditIndicator" style="display: none;">
-                                    <i class="fa fa-circle"></i>
-                                    <span>Editing</span>
-                                </div>
                             @else
                                 <!-- Read-only view for non-editors -->
                                 <article class="wiki-document" id="wikiDocumentContent">
@@ -238,7 +243,7 @@
 
                         <!-- Comments Section -->
                         <section class="wiki-comments-section" id="comments">
-                            <h4 class="widgettitle title-light"><span class="fa-solid fa-comments"></span> {!! __('subtitles.discussion') !!}</h4>
+                            <x-global::elements.section-header icon="fa-solid fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
 
                             <form method="post" action="{{ BASE_URL }}/wiki/show/{{ $currentArticle->id }}#comment">
                                 <input type="hidden" name="comment" value="1" />
@@ -251,7 +256,7 @@
                         <!-- Properties Panel (inside content area) -->
                         <div class="wiki-properties-panel" id="propertiesPanel">
                             <div class="wiki-panel-header">
-                                <h4 class="widgettitle title-light"><i class="fa fa-info-circle"></i> Details</h4>
+                                <x-global::elements.section-header icon="fa fa-info-circle">Details</x-global::elements.section-header>
                                 <button class="wiki-collapse-btn" id="collapseProperties" title="Collapse">
                                     <i class="fa fa-chevron-right"></i>
                                 </button>
@@ -262,7 +267,7 @@
 
                         <!-- Status Dropdown -->
                         <div class="form-group">
-                            <label class="control-label">{!! __('label.status') !!}</label>
+                            <x-global::forms.label>{!! __('label.status') !!}</x-global::forms.label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <x-global::forms.select width="full" id="wikiStatusSelect">
@@ -290,7 +295,7 @@
 
                         <!-- Parent -->
                         <div class="form-group">
-                            <label class="control-label">Parent</label>
+                            <x-global::forms.label>Parent</x-global::forms.label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     @php
@@ -318,7 +323,7 @@
 
                         <!-- Milestone -->
                         <div class="form-group">
-                            <label class="control-label">{!! __('label.milestone') !!}</label>
+                            <x-global::forms.label>{!! __('label.milestone') !!}</x-global::forms.label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <x-global::forms.select width="full" id="wikiMilestoneSelect">
@@ -341,7 +346,7 @@
 
                         <!-- Author -->
                         <div class="form-group">
-                            <label class="control-label">{!! __('label.author') !!}</label>
+                            <x-global::forms.label>{!! __('label.author') !!}</x-global::forms.label>
                             <div class="">
                                 <div class="wiki-author">
                                     <span class="wiki-author-avatar">{{ $authorInitials }}</span>
@@ -352,7 +357,7 @@
 
                         <!-- Last Saved -->
                         <div class="form-group">
-                            <label class="control-label">{!! __('label.last_updated') !!}</label>
+                            <x-global::forms.label>{!! __('label.last_updated') !!}</x-global::forms.label>
                             <div class="" id="wikiLastSaved" data-timestamp="{{ $currentArticle->modified }}">
                                 {{ format($currentArticle->modified)->diffForHumans() }}
                             </div>
@@ -361,7 +366,7 @@
 
                     <!-- Activity Section -->
                     <div class="wiki-properties-section wiki-activity-section">
-                        <h4 class="widgettitle title-light"><i class="fa fa-clock-rotate-left"></i> Activity</h4>
+                        <x-global::elements.section-header icon="fa fa-clock-rotate-left">Activity</x-global::elements.section-header>
 
                         <div id="wikiActivityContainer"
                              hx-get="{{ BASE_URL }}/hx/wiki/articleActivity?articleId={{ $currentArticle->id }}"
@@ -373,15 +378,6 @@
                         </div>
                     </div>
 
-                    <!-- Delete (pinned to bottom) -->
-                    @if($login::userIsAtLeast($roles::$editor))
-                    <div class="wiki-properties-footer">
-                        <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="wiki-action-btn delete" state="danger" variant="outline">
-                            <i class="fa fa-trash"></i> Delete Article
-                        </x-global::forms.button>
-                    </div>
-                    @endif
-
                         </div><!-- /.wiki-properties-panel -->
                     </div><!-- /.wiki-content-layout -->
                 </main>
@@ -390,8 +386,8 @@
 
         @else
             <!-- Wiki exists but no articles yet -->
-            <div class="wiki-empty-state">
-                <div class="wiki-empty-state-icon svgContainer" style="width: 200px; margin: 0 auto;">
+            <div class="maincontentinner wiki-empty-state">
+                <div class="wiki-empty-state-icon svgContainer">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
                 </div>
                 <h3 class="wiki-empty-state-title">{!! __('headlines.no_articles_yet') !!}</h3>
@@ -617,12 +613,9 @@ jQuery(document).ready(function() {
             indicator.className = 'wiki-edit-indicator ' + state;
             var icon = indicator.querySelector('i');
             var text = indicator.querySelector('span');
-            switch (state) {
-                case 'editing': icon.className = 'fa fa-edit'; text.textContent = 'Editing'; break;
-                case 'saving': icon.className = 'fa fa-circle-notch fa-spin'; text.textContent = 'Saving...'; break;
-                case 'saved': icon.className = 'fa fa-check'; text.textContent = 'Saved'; break;
-                case 'error': icon.className = 'fa fa-exclamation-triangle'; text.textContent = 'Save failed'; break;
-            }
+            var icons = {editing: 'fa fa-pen', saving: 'fa fa-circle-notch fa-spin', saved: 'fa fa-check', error: 'fa fa-exclamation-triangle'};
+            icon.className = icons[state] || 'fa fa-circle';
+            text.textContent = indicator.dataset['label' + state.charAt(0).toUpperCase() + state.slice(1)] || '';
         }
 
         function hideIndicator() {
@@ -777,23 +770,11 @@ jQuery(document).ready(function() {
         });
     }
 
+    // Tags (forms.tags): the hidden #wikiTagsInput holds the comma-separated value and fires `change`.
     var tagsInput = document.getElementById('wikiTagsInput');
-    if (tagsInput && jQuery.fn.tagsInput) {
-        jQuery('#wikiTagsInput').tagsInput({
-            width: '100%',
-            height: 'auto',
-            defaultText: 'Add tag...',
-            placeholderColor: 'var(--secondary-font-color)',
-            onChange: function(elem, elem_tags) {
-                // The tagsInput plugin passes only the single tag that changed as elem_tags, and
-                // fires once with `undefined` during its initial import. Saving elem_tags directly
-                // overwrote the column with just the last tag (and the literal "undefined" on load).
-                // Ignore the init call and persist the full delimited value instead.
-                if (typeof elem_tags === 'undefined') {
-                    return;
-                }
-                saveField('tags', jQuery('#wikiTagsInput').val(), function() { updateLastSaved(); });
-            }
+    if (tagsInput) {
+        tagsInput.addEventListener('change', function() {
+            saveField('tags', tagsInput.value, function() { updateLastSaved(); });
         });
     }
 

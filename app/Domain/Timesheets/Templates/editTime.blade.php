@@ -46,7 +46,12 @@ use Leantime\Core\Support\FromFormat;
 
 {!! $tpl->displayNotification() !!}
 
-<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> {!! __('headlines.edit_time') !!}</h4>
+<x-global::actions.modal-header>
+    <x-slot:title><span class="fa-regular fa-clock"></span> {!! __('headlines.edit_time') !!}</x-slot:title>
+    <x-slot:actions>
+        <li><a href="#/timesheets/delTime/{{ (int) $_GET['id'] }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+    </x-slot:actions>
+</x-global::actions.modal-header>
 <form action="{{ BASE_URL }}/timesheets/editTime/{{ (int) $_GET['id'] }}" method="post" class="editTimeModal">
 
 <label for="clients">{!! __('label.client') !!}</label>
@@ -155,7 +160,6 @@ use Leantime\Core\Support\FromFormat;
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <x-global::forms.button tag="a" class="delete editTimeModal pull-right" link="{{ BASE_URL }}/timesheets/delTime/{{ $tpl->escape($_GET['id']) }}" state="danger" variant="outline">{!! __('links.delete') !!}</x-global::forms.button>
         <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
     </p>
 </form>

@@ -1,5 +1,11 @@
 # Frontend Componentization — Tracker & Playbook
 
+### Variants added for the plugin move (3.12)
+- `forms.button`: `icon` + `ariaLabel` → icon-only square button (32px, 24px with `scale="s"`), name as tooltip. `btn-sm`/`btn-xs` → `scale="s"`.
+- `actions.modal-header`: `eyebrow` (12 / 600 upper) and `description` (12 muted) around the title; without them the markup is unchanged.
+- `pageheader`: `icon` is a real prop (was an untyped variable that also leaked an `icon=""` attribute onto the header); `status` slot for badges right after the title.
+- `elements.card`: `tone="accent"` (highlight card: trial banner, recommended plan); `selected` (the picked card in a set of choices; the caller owns the input).
+- `statTile`: `tone` also takes `danger` (= `risk`), `warning`, `success`.
 > **Owner:** maintained by Claude as the single source of truth for the componentization
 > effort. Supersedes the "Component Updates Tracker" spreadsheet (whose *status* column is
 > stale — the taxonomy, naming, prop vocabulary, and priorities are kept).
@@ -89,32 +95,44 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | text-input | `forms.text-input` | forms | ✅ | refactor/table-component | merged #3558: no-op; 146 call-sites / 56 files; variants `headline`/`large`/`small` (dropped `form`/`legacy` as CSS-redundant); HTML-native `type` prop; **defer JS-coupled** (datepickers/tags/inline-edit/color/sorter/hourCell) + legacy `<?php echo ?>`-in-attr Width via `width` (sm/md/lg/full/auto); the width-only `large`/`small` variants were removed (→ md / sm). |
 | textarea | `forms.textarea` | forms | ✅ | selectsComponentUpdates | merged #3562: thin no-op (attrs + inner-content slot); 10 plain migrated / 6 files; **defer Tiptap editors** (`.tiptapSimple`/`.tiptapComplex`/`.wiki-editor-textarea`) |
 | select | `forms.select` + `forms.select.option` | forms | 🟡 | selectsComponentUpdates | P1 (#3873) no-op shell, 115 core Blade selects / 43 files. P2: `enhanced` prop → SlimSelect v2 via one registry (`core/selects.js`); **Chosen removed**; 45 core select tags enhanced; canvas-dialog icons server-rendered (goal dialog icons restored). `optgroup` stays raw markup (no sub-component needed). Plugins + `.tpl.php` in P5/P6. See "Select & dropdown phase" `width` prop (sm/md/lg/full/auto, default md) shared with text-input. |
+| label | `forms.label` | forms | 🟡 | — | One field label: 14px / semibold / text colour (`for`, `required`; layout classes pass through). Base `form label` rule matches, so unmigrated labels agree. Migrated: all 28 `control-label` labels (task, goal, milestone, Docs dialogs, project details). Remaining ~280 plain `<label>`s migrate with `forms.field-row` |
+| tags | `forms.tags` | forms | 🟡 | — | Tag field on the enhanced select (SlimSelect `search` → `Tags.Tags.getTags` RPC, `addable` → Enter adds a tag). Posts through a hidden input with the old `name`/`id` as one comma-separated string (old jQuery tagsInput contract) and fires `change` on it. Done: to-do details (new + edit), idea dialog, article dialog, Docs page. Still on jQuery tagsInput: plugin Notes (older releases). Remove the plugin + CSS in the release after 3.12 |
+| tag-list | `elements.tag-list` | elements | 🟡 | — | Read-only tags as chips: `tags` (comma string or array). Badge size (20px, 12 / semibold), soft accent tint. Done: kanban + table tag panels, idea boards |
 | form-field | `forms.field-row` | forms | ⬜ | refactor/table-component | label-row + caption + validation wrapper |
-| card (content-box) | `elements.card` | elements | ⬜ | ui-components | **replaces `.maincontentinner`** (167 sites) |
+| card | `elements.card` | elements | 🟡 | — | Card INSIDE the content box: border + `--card-shadow`, `--card-radius` = `--box-radius` (16px — Marcel 2026-10-11: keep core corners and shadow); `title` (prop, or slot for markup — the card wraps it in `.lt-card-title`), `header` (extra items after the title) / `footer` slots, `flush`, `tone` success/warning/danger/info/muted/empty. Used by every report deck page (Overview, Logic Model, Resources & Coverage, Impact Journey, Programs). Pop-overs inside a card stay visible; only `flush` clips. The page content box (`.maincontentinner`, 167 sites) is a separate later step |
+| section-header | `elements.section-header` | elements | 🟡 | — | Section title inside a page, card or dialog: default slot = title (markup ok), `icon`, `eyebrow` (12 / 600 upper), `description` (12 muted), `as` h2–h6 (default h4), `actions` slot right-aligned. Title 16 / 700 in `--primary-color`. Replaced every core `h4.widgettitle.title-light` (70 sites: to-do dialog, project settings, user/API key/company settings, Docs, Blueprint/idea/goal dialogs). Left: `canvasComment` first rows (old comment-only dialogs), kanban column `.widgettitle` (column header, not a section) |
+| list-item | `elements.list-item` | elements | 🟡 | — | List row: `icon` + `tone` (or `leading` slot: avatar, status dot, checkbox), `title` (prop escaped / slot), `href` + `linkClass`, default slot = 12px muted meta line, `trailing` slot (badges, numbers, ⋮). Rows go in `<ul class="lt-list">` (hairline between rows); `as` li/div. Title 14 / 600. Done: report Needs attention |
 | chip | `forms.chip` (+ `.option`) | forms | 🟡 | selectsComponentUpdates | P3: one delegated handler (`core/chips.js`) saving over JSON-RPC (adapters ticket/canvas/goal/idea); domain wrappers `tickets::chip-{status,milestone,effort,priority,user,sprint}`, `blueprints::chip-label`, `ideas::chip-status`; all 44 core chips migrated; canvas/idea author shown read-only (`elements.author-avatar`). Plugin `.tpl.php` chips in P5/P6 |
 | dropdown-menu | `actions.dropdown` | actions | 🟡 | feature/dropdown-component | P4: variants `menu`/`header-menu`/`filter`/`button`/`panel`/`subject` (= today's DOM shapes); items stay raw `<li>` slot; `trigger` slot carries trigger attrs (tippy/hx/href); `keep-open` for panels; Bootstrap 2 data-api stays the engine (no core JS). 69 core dropdowns / 47 files migrated; `subjectSwitcher` composes it; dashboard widget shell server-rendered. Plugins in P6 |
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
+| modal-header | `actions.modal-header` | actions | 🟡 | — | First row of every dialog: `icon`, `title` (prop or slot), `meta` slot, `actions` slot (→ ⋮ menu; Delete lives here, never in the body) and its OWN close X (nyroModal's X is pinned outside the content with inline positions and never lined up; hidden via `.nyroModalCont:has(.lt-modal-header) ~ .nyroModalCloseButton`). Close calls `jQuery.nmTop().close()` so it survives htmx re-renders. Done: to-do (`Task #92`, headline stays the big field), goal, milestone. Next: ~40 single-title dialogs, then Delete-in-body → ⋮ (7), then plugins |
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating/underline (underline = section tabs, see "Section tabs"); tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
 | view-tabs | `navigation.view-tabs` | navigation | ✅ | feature/page-toolbars | The bar between page header and content box: page VIEWS as link tabs on the left (server-side active), page ACTIONS on the right (`actions` slot: New, Filter, Group By, view settings, ranges). Replaces the hand-rolled bars in tickets (ticketBoardTabs/timelineTabs, `tickets::portfolio-tabs`). See "Page layout" |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
-| date-picker | `forms.date-picker` | forms | ⬜ | selectsComponentUpdates | jQuery-UI datepicker; needs htmx.onLoad re-init |
+| date-picker | `forms.date-picker` | forms | 🟡 | — | Date field on the jQuery-UI picker (user's format + language): `name`, `id`, `value` (user-format string or DateTimeInterface), `range` from/to + `rangeGroup` (to ≥ from, empty to takes from), `width` (default sm). `core/datePickers.js` inits on render + every htmx swap and destroys on `htmx:beforeCleanupElement` (no per-page `initDatePicker` scripts). Done: new project dates. Left: ~20 raw `.dates`/`#dateFrom` inputs with page scripts (timesheets, to-do dialogs, goal dialog) — swap with each page |
 
 ### P1
 | Component | Tag | Cat | Status | Notes |
 |---|---|---|---|---|
-| radio | `forms.radio` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Two markups today: `span.radio > input + label` (menus/panels — laid out as a flex row in dropdowns.css since P4) and Bootstrap 2 `label.radio`/float rows in forms. Target: one `forms.radio` (+ group) with the label next to the input everywhere. |
-| checkbox | `forms.checkbox` | forms | ⬜ | **TODO (Marcel, 2026-10-10).** Same split as radio (`span.checkbox` in menus, Bootstrap 2 float + `margin-left:-20px` elsewhere — the kanban "Cards" menu showed the misalignment). |
-| toggle | `forms.toggle` | forms | ⬜ | `input.toggle` switches (e.g. Show Tasks, task-type toggles) |
-| button-group | `forms.button-group` | forms | ⬜ | |
-| badge | `elements.badge` | elements | ⬜ | flat `badge` exists on master — migrate to category |
-| avatar | `elements.avatar` | elements | ⬜ | **TODO (Marcel, 2026-10-10): one round avatar for every person image.** Today: flat `avatar` (initials only, 1 call-site), `elements.author-avatar` (canvas/goal/idea author — round only via `.authorAvatar` CSS), chip avatars (`tickets::chip-user`), raw `<img …/api/users?profileImage=…>` across headMenu/comments/notifications/cards. Target: `elements.avatar` (`userId`, `name` → tooltip/alt, `size` xs–xl, image with initials fallback, always round); `author-avatar` and the chip toggles compose it. |
-| accordion | `elements.accordion` | elements | ⬜ | flat `accordion` exists on master |
+| radio | `forms.radio` | forms | 🟡 | One radio with its label, same look/props as `forms.checkbox` (`name`, `value` required) |
+| checkbox | `forms.checkbox` | forms | 🟡 | Checkbox or on/off switch (`variant="toggle"`, the existing `.toggle` look) with its label; label wraps the control. Props `name`, `value` (default '1'), `checked`, `id` (generated), `description` (12 muted line), `wrapperClass`; slot = label (markup ok, empty for a bare control + `aria-label`); other attributes → `<input>` (onchange, hx-*, disabled). Label 14 / regular. Done: account notification settings, widget manager, company telemetry, Show Tasks filter |
+| toggle | `forms.checkbox variant="toggle"` | forms | 🟡 | Folded into `forms.checkbox` (`variant="toggle"`): same label/description/attribute contract, the existing `.toggle` switch look |
+| button-group | `forms.button-group` | forms | 🟡 | Buttons that belong together: joined (shared borders, default) or `segmented` (pill track, one choice; clicking moves `.active` + `aria-pressed`, `core/snippets.js`). `label` → `aria-label`. Done: Reports chart metric toggles (to-dos / effort / hours) |
+| badge | `elements.badge` | elements | 🟡 | Status label: `tone` default/accent/success/warning/danger/info/muted, `variant` soft (read-only, default) / solid, `dot`, `icon`, `count`, `href` (→ `<a>`). One box: 20px, 12 / semibold. Replaces the old flat Tailwind `badge` (removed). Done: project card status, program-sprint label, plugin details categories/tags. Counters on filter buttons stay `.badge` (10px counter rule) |
+| status-dot | `elements.status-dot` | elements | 🟡 | 8px dot in a badge tone; `label` gives a lone dot its accessible name. For "● On track" next to text |
+| avatar | `elements.avatar` | elements | 🟡 | One round profile picture: `userId` (empty → unassigned placeholder), `name` (alt + tooltip), `size` xs 20 / sm 24 / md 32 / lg 40 / xl 64, `version` (user `modified` → cache-busting `v=`). The `/api/users?profileImage=` endpoint already falls back to initials. Overlapping rows: wrap in `.lt-avatar-stack`. Doubled class beats the legacy `.maincontent .dropdown img`. Done: `author-avatar` composes it, to-do history. Old flat `avatar` removed (its one caller, `stageflow.item` (Logic Model stage items), now uses `elements.avatar`). Left: chip avatars (`tickets::chip-user`), comments / headMenu / project team `<img>`s with their own context CSS — sweep with their components |
+| accordion | `elements.accordion` | elements | 🟡 | Collapsible section on native `<details>`: `title` (prop / slot), `icon`, `count` (counter badge), `open`, `id` (remembers open/closed per user in the old accordion's store, `accordion_content-{id}`; saves only on a real change — browsers fire `toggle` on first render), `card` (bordered), `onPage` (summary in the page-title colour when it sits on the page background), `actions` slot (right of the summary, before the body in focus order, doesn't toggle). Summary 16 / 700. Done: Project Hub, My Projects widget, Connect calendar. Old flat `accordion` DEPRECATED, kept through 3.12 for plugin releases (CustomFields); still used by Search panels and the My ToDos widget, plus ~10 hand-written `.accordionTitle` blocks (to-do groups, to-do sidebar) — later sweep |
 | table | `elements.table` | elements | ⬜ | DataTables-coupled; class-backed (`Table.php`) |
-| empty-state | `elements.empty-state` | elements | ⬜ | wraps `undrawSvg` |
+| empty-state | `elements.empty-state` | elements | 🟡 | Nothing-here-yet block: `icon` (round muted) or `image` (undraw file from dist/images/svg), `title` (16 / 600), `description` or default slot (12 muted hint), `actions` slot (CTA). `compact`: left-aligned single row inside a list or card. Done: report empty lists (milestones, goals, status updates), plugin store empty states. `undrawSvg` stays for illustrations that are not empty states (project type picker, help pages) |
+| info-tip | `elements.info-tip` | elements | 🟡 | (?) button that explains the thing next to it: `text` (escaped), `label` (aria, default "More information"). Own tippy on hover, focus AND tap (works on touch, where `data-tippy-content` tooltips are off), text also in an sr-only span via `aria-describedby`. Done: the 6 `fa-question-circle-o helperTooltip` icons (linked-milestone headers, project checklist) |
 | date-info | `elements.date-info` | elements | ⬜ | relative-time |
 | statistic / code | `elements.statistic` / `elements.code` | elements | ⬜ | |
-| steps / breadcrumbs / pagination | `navigation.*` | navigation | ⬜ | |
-| alert / progress / skeleton / loading / indicator | `feedback.*` | feedback | ⬜ | `loader`/`loadingText` exist on master |
+| steps | `navigation.steps` | navigation | 🟡 | Where you are in a multi-step flow: `steps` (labels, or `label`/`href`/`description`), `current` (1-based; past the end = all done), `orientation` horizontal/vertical, `label` (aria). Numbered dots joined by a line, done = check (finished steps with `href` link back), current = accent ring + `aria-current="step"`. Labels 12 / 600. Done: invite onboarding (`x-auth::onboardingProgress` composes it). Left: project checklist (`.progressWrapper`, has its own sub-task popovers) |
+| breadcrumbs / pagination | `navigation.*` | navigation | ⬜ | |
+| progress | `feedback.progress` | feedback | 🟡 | Progress bar on the existing `.progress` look with the ARIA progressbar contract: `value` (0–100, clamped), `tone` default (theme gradient)/info/warning/danger, `color` (custom bar colour, milestones), `size` default/sm (6px), `label` (accessible text, default "N% complete"), `showLabel` (12px muted line under it). Done: project cards, milestone cards, Blueprint boards, goal board + goal dashboard. Left: step bars (`.progressWrapper`: checklist, onboarding, import) and the milestone overview table |
+| alert | `feedback.alert` | feedback | 🟡 | Message inside the page (not a toast, not a card): `tone` info/success/warning/danger (warning + danger use `role="alert"`, the others `status`), `title`, `icon` (tone default, '' for none), `dismissible`, `actions` slot. Done: project integrations mute notice |
+| details-list | `elements.details-list` (+ `.item`) | elements | 🟡 | Read-only facts: `items` (label => escaped value) or `.item label="…"` rows with markup; `layout` stacked (side panels) / inline (label column). Labels 12 / 600 upper muted, values 14 |
+| skeleton / loading / indicator | `feedback.*` | feedback | ⬜ | `loader`/`loadingText` exist on master |
 | page-header | `layout.page-header` | layout | ⬜ | flat `pageheader` exists on master |
 | color-picker / select-panel / context-menu | various | ⬜ | |
 
@@ -648,7 +666,11 @@ The To-Do board structure is the standard: **page header** (title / subject swit
 - View selectors are tabs in the bar, never a "… View ▾" dropdown in the box.
 - Page-level actions and filters (New / Add …, Filter, Group By, status/relates filters, timeframe, week range)
   go in the bar's actions. Filter-style triggers use `btn-link` (white pills); primary buttons stay primary.
-- Controls that act on ONE table (DataTables Export / Columns, `#tableButtons`) stay above that table in the box.
+- When the table IS the page's content (To-Do table, Milestones table + overview, My Timesheets list, All Timesheets),
+  its DataTables Export / Columns (`#tableButtons`) go in the bar's actions too (Marcel, 2026-10-11). Pass
+  `['tableButtons' => true]` to `ticketBoardTabs` / `timelineTabs`. Only a page with several tables keeps them
+  above their own table in the box.
+- Toggles that narrow what is listed (Show Tasks) live inside the Filter panel, not as a loose switch in the bar.
 - A page without views still gets the bar (actions only, right-aligned).
 - Fields moved out of their `<form>` keep submitting via `form="…"`; inline `submit()` → `this.form.submit()`.
 - Many filters → a Filter panel (`variant="filter" menu-as="div" menu-class="filterBar" keep-open`), not a row.
@@ -674,3 +696,68 @@ Section tabs each own their form / Save and post back to `…#section`; nothing 
   plugins-repo PR.
 
 
+
+### Plugin design alignment (2026-10-10, Marcel)
+PgmPro / StrategyPro screens (report deck, resource allocation, reverse wizard) are the design source for the
+newer patterns; their private `--rd-*` / `--ra-*` palette and type sizes go away. Picks per pattern (audit page:
+claude.ai/artifact/A1KrfZ7XJduFnqecZ7G2Ug):
+- **Plugin look** → eyebrow, page-header status slot, card (header row; but core 16px corners + shadow, decided 2026-10-11), callout + note (card
+  tones), stat tile (delta pill, "See list"), entity chip, table rows, details list (kv rows), icon list rows.
+- **Merge** → type scale, section title, status badge, accordion. **Core** → buttons (`forms.button`, add `sm`).
+
+**Type rule — sizes must not drift apart.** Text never goes below `--font-size-s` (12px); 10px (`--font-size-xs`)
+is for counters on icons only. No half pixels, no sizes off the scale. Each role has one size:
+
+| Role | Size / weight | Replaces (plugin) |
+|---|---|---|
+| page title | `--font-size-xl` 18 / 500 | |
+| section title | `--font-size-l` 16 / 700 | 13.5px upper accent title |
+| card title, row title | `--base-font-size` 14 / 600 | 14.5px row title |
+| body, table cell, details value | 14 / 400 | 13–15px |
+| meta, secondary line, description | `--font-size-s` 12 / 400, muted colour | 12.5 / 13px |
+| eyebrow, table header, details label | 12 / 600 upper, `.04em` tracking, muted | 10–11.5px upper |
+| badge, chip, delta pill | 12 / 600, **one height (20px)** everywhere | 10 / 10.5 / 11.5px badges |
+| stat value | `--font-size-xxxl` 24 / 600 | 28px |
+
+Within one element use at most two sizes next to each other (stat tile: 24 value + 12 label, nothing smaller).
+Badges in a card header (e.g. "No capacity" + effort) sit on the same 20px box so they line up; solid badges
+(clickable chip) and soft-tint badges (read-only status) share that box and only differ in colour.
+Colours: text `--primary-font-color`, secondary `--color-text-secondary`, muted `--color-text-muted` (never the
+legacy `--secondary-font-color`, which is #000); accent is `--accent1` so company colours apply. Card corners
+`--card-radius` (= `--box-radius`), inner chips `--box-radius-small` — no hard-coded radii.
+Also fix: `dark.css` has `--font-size-xxl` 22 / `xxxl` 26 while `light.css` has 20 / 24.
+
+Done (PR 1): `--color-text-secondary` / `--color-text-muted` are real greys (85% / 75% of the text colour; were
+#000 and the icon grey, unused); dark themes now 20 / 24px; the report's `--rd-*` palette aliases the core
+tokens (company accent, both themes), fixed `rgba(0,71,102,…)` tints → `--accent1`.
+
+Done (PR 2): every report deck box is an `elements.card`; all text in `report-deck.css`, `stat-tiles.css`,
+`period-picker.css` snapped to the scale (uppercase labels 12/600, `.04em`). Stat tile drill-down `has-detail`
+class was never applied (Blade `@if` inside a component attribute) → fixed with `:class`. Left accent bars stay
+on Logic Model stages and Impact Journey beats (they mark the stage, not a tone). Still 13px: `navigation.tabs`
+labels (`tab-group.css`) — snap them with every tab bar at once, not report-only.
+
+Card rollout (43 card types found 2026-10-11 — 34 core, 9 plugin-only; ~41 core + ~27 plugin files):
+1. ✅ plain core boxes — report needs-attention / milestone rows / slippage, team-assignment `.userBox`, API key,
+   invite info, `.widget`+`.widgetcontent` panels (client edit/new, delete pages, add time), app-URL warning.
+   Card got `as` (li rows) and `compact` (12/16 padding). Legacy classes still used by plugin markup are scoped
+   `:not(.lt-card)` until the plugins convert.
+2. ✅ shared partials — `projectCard` (7 sites), `milestoneCard` (14 hx sites), `blueprints::element` (16 boards),
+   `x-users::profile-box`, plugin card. Entity cards keep the legacy class on the root (`.lt-card.ticketBox`,
+   `.projectBox`, `.profileBox` → legacy padding dropped); milestone card gained `.milestoneCard` (wiki embed, tours).
+3. ✅ inline entity cards swapped in place — kanban to-do, dashboard latest to-dos, ideas wall + kanban, goal board +
+   goal dashboard, project status-label rows, plugin rows, legacy report milestones, `ticketCard`. No per-entity
+   component yet: each has ONE core caller; extract when the plugin copies (StrategyPro goals, Whiteboards ideas,
+   PgmPro/StrategyPro project kanban) convert and a second caller exists.
+4. ✅ My Work `todoItem` (card + both add-subtask form cards). The milestone strip `@if` inside the tag became a
+   computed `:style`; `data-event` JSON passes through the attribute bag unchanged. 5. ✅ comments (+ replies, `x-comments::reply`), project status updates, subtasks (both partials), file tiles
+   (`as="li"`, 5 lists). `.commentContent` / `.listfile > li` legacy looks scoped `:not(.lt-card)` for plugins. 6. plugins (Notes, Whiteboards, PgmPro/StrategyPro
+   kanban, Llamadorian, …).
+Entity-card rules: keep `.ticketBox`/`.moveable`/`.priority-border-N`/ids on the root; `@dispatchEvent` hooks stay
+in the owning template (event names come from it) and pass in as slot content; drag selectors using `> .x`
+need the card without the body wrapper.
+
+Build order: tokens → `elements.card` (tones) → `elements.badge` → `elements.section-header` → `elements.table`
+(real `<table>`, DataTables optional, `allTicketsTable.*` hooks keep firing) / `elements.details-list` /
+`elements.list-item` → accordion (`<details>`) → convert PgmPro (Resources first), then StrategyPro → move
+`resource-allocation.css`, `report-deck.css`, `reverse-wizard.css` out of core into the plugins.

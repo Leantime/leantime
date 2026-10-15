@@ -21,6 +21,13 @@
                 @include('tickets::partials.ganttTimeframe')
             @endisset
             @dispatchEvent('filters.beforeLefthandSectionClose')
+            @if ($tableButtons ?? false)
+                {{-- The table is this page's content, so its Export / Columns live in the bar too
+                     (DataTables appends them to #tableButtons). --}}
+                @dispatchEvent('filters.afterRighthandSectionOpen')
+                <div id="tableButtons" class="tableButtons"></div>
+                @dispatchEvent('filters.beforeRighthandSectionClose')
+            @endif
         </x-slot:actions>
     @endisset
 </x-global::navigation.view-tabs>

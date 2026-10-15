@@ -34,4 +34,10 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
                 $pluginsService->disablePluginNotifyOwner($plugin->id);
             });
     })->name('plugins:checkLicense')->daily();
+
+    // New marketplace versions: shown in My Apps and sent to the admins once per version. With
+    // automatic updates on (off by default), minor and patch releases are installed too.
+    $params['schedule']->call(function () {
+        app()->make(Services\Plugins::class)->runScheduledUpdates();
+    })->name('plugins:checkUpdates')->daily();
 });

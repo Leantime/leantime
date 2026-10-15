@@ -10,7 +10,7 @@ $currentPay = $userHours * $userInfo['wage'];
             <div class="col-md-6">
 
 
-                <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span>{!! __('headline.add_time_entry', false) !!}</h4>
+                <x-global::elements.section-header icon="fa fa-clock-o">{!! __('headline.add_time_entry', false) !!}</x-global::elements.section-header>
                 <br />
 
                 <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#timesheet" class="formModal">
@@ -44,7 +44,7 @@ $currentPay = $userHours * $userInfo['wage'];
 
             </div>
             <div class="col-md-6">
-                <h4 class="widgettitle title-light"><span class="fa fa-bar-chart"></span>{!! __('subtitles.logged_hours_chart') !!}</h4>
+                <x-global::elements.section-header icon="fa fa-bar-chart">{!! __('subtitles.logged_hours_chart') !!}</x-global::elements.section-header>
 
                 <br />
                 <canvas id="canvas"></canvas>

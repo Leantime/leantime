@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <x-auth::onboardingProgress :percentComplete="100" current="" :completed="['account', 'theme', 'personalization', 'time']" />
+    <x-auth::onboardingProgress current="" />
 
 <h2>🎉 Your Leantime journey is about to begin</h2>
 
@@ -17,10 +17,10 @@
 
         <div class="row">
             <div class="col-md-6">
-                <div class="ticketBox tw-p-[20px]">
+                <x-global::elements.card>
                     <span class="fancyLink">Did you know?</span><br />
                     <span style="font-size:16px;">Setting Intentions has been shown to <strong>more than double the success rate</strong> of completing a task.</span>
-                </div>
+                </x-global::elements.card>
             </div>
             <div class="col-md-6">
                 <x-global::undrawSvg image="undraw_adventure_map_hnin.svg" maxWidth="60%" maxHeight="300px"></x-global::undrawSvg>

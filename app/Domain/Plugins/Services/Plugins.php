@@ -17,6 +17,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Plugins\PluginCompatibility;
 use Leantime\Domain\Notifications\Services\Notifications;
 use Leantime\Domain\Plugins\Events\PluginDisabled;
 use Leantime\Domain\Plugins\Events\PluginEnabled;
@@ -27,6 +28,8 @@ use Leantime\Domain\Plugins\Permissions\PluginsPermissions;
 use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Leantime\Domain\Users\Services\Users as UsersService;
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Process;
 
 /**
  * @api
@@ -103,9 +106,19 @@ class Plugins
         private UsersService $usersService,
         private AppSettings $appSettings,
         private PluginArchive $pluginArchive,
+        private PluginCompatibility $compatibility,
     ) {
         $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         // $this->marketplaceUrl = 'https://marketplace.leantime.test';
+    }
+
+    /**
+     * HTTP client for marketplace calls that decide what code gets installed (update checks):
+     * certificate-verified, unlike {@see httpClient()} used for browsing.
+     */
+    protected function verifiedHttpClient()
+    {
+        return Http::timeout($this->timeout);
     }
 
     protected function httpClient()
@@ -145,6 +158,7 @@ class Plugins
     private function buildPluginList(array $installedPlugins, bool $enabledOnly): array
     {
         $installedPluginsById = [];
+        $availableUpdates = $this->getAvailableUpdates();
 
         // Build array with pluginId as $key
         foreach ($installedPlugins as &$plugin) {
@@ -166,6 +180,11 @@ class Plugins
                 $plugin->vendorDisplayName = $marketplacePluginCache[$pluginIdentifier]->vendorDisplayName;
                 $plugin->vendorId = $marketplacePluginCache[$pluginIdentifier]->vendorId;
                 $plugin->vendorEmail = $marketplacePluginCache[$pluginIdentifier]->vendorEmail;
+            }
+            $this->applyCompatibility($plugin);
+            $update = $availableUpdates[$plugin->foldername] ?? null;
+            if (is_string($update) && version_compare($update, (string) $plugin->version, '>')) {
+                $plugin->availableUpdate = $update;
             }
             $installedPluginsById[$plugin->foldername] = $plugin;
 
@@ -221,6 +240,10 @@ class Plugins
     /**
      * Returns the enabled plugins (database plus system plugins from config), cached.
      *
+     * Only plugins that support this Leantime version are returned: everything that loads plugin
+     * code (register files, routes, views, the console) goes through here, so an incompatible
+     * plugin stays enabled in the database but is not loaded. Administrators are told once.
+     *
      * A failing plugin-table query is never cached as "no plugins": the next call retries. Web
      * requests keep running without user plugins in that case; callers that must not silently run
      * without them (the console scheduler) pass $failOnDatabaseError to get the exception instead.
@@ -237,8 +260,12 @@ class Plugins
     public function getEnabledPlugins(bool $failOnDatabaseError = false): mixed
     {
 
-        if (Cache::store('installation')->has('plugins.enabledPlugins') && $this->config->debug === false) {
-            $enabledPlugins = static::dispatch_filter('beforeReturnCachedPlugins', Cache::store('installation')->get('plugins.enabledPlugins'), ['enabledOnly' => true]);
+        // Keyed by the Leantime version: after a core update the list is rebuilt, so plugins that
+        // don't support the new version drop out on the first request.
+        $cacheKey = $this->enabledPluginsCacheKey();
+
+        if (Cache::store('installation')->has($cacheKey) && $this->config->debug === false) {
+            $enabledPlugins = static::dispatch_filter('beforeReturnCachedPlugins', Cache::store('installation')->get($cacheKey), ['enabledOnly' => true]);
 
             return $enabledPlugins;
         }
@@ -258,14 +285,14 @@ class Plugins
                 available_params: ['enabledOnly' => true]);
         }
 
-        Cache::store('installation')->set('plugins.enabledPlugins', $this->buildPluginList($installedPlugins, true));
+        Cache::store('installation')->set($cacheKey, $this->withoutIncompatible($this->buildPluginList($installedPlugins, true)));
 
         /**
          * Filters session array of enabled plugins before returning
          */
         return self::dispatch_filter(
             hook: 'beforeReturnCachedPlugins',
-            payload: Cache::store('installation')->get('plugins.enabledPlugins'),
+            payload: Cache::store('installation')->get($cacheKey),
             available_params: ['enabledOnly' => true]);
 
     }
@@ -317,6 +344,19 @@ class Plugins
         $json = file_get_contents($composerPath);
         $pluginFile = json_decode($json, true);
 
+        return $this->pluginFromComposer($pluginFile, $pluginFolder, $license_key, $format);
+    }
+
+    /**
+     * Builds an installed-plugin model from a plugin's decoded composer.json.
+     *
+     * @param  array<string, mixed>  $pluginFile  The decoded composer.json.
+     * @param  string  $pluginFolder  The plugin's folder name.
+     * @param  string  $license_key  The marketplace license key, if any.
+     * @param  string  $format  'folder' or 'phar'.
+     */
+    private function pluginFromComposer(array $pluginFile, string $pluginFolder, string $license_key, string $format): InstalledPlugin
+    {
         $plugin = build(new InstalledPlugin)
             ->set('name', $pluginFile['name'])
             ->set('enabled', 0)
@@ -329,6 +369,9 @@ class Plugins
             ->set('homepage', $pluginFile['homepage'])
             ->set('authors', json_encode($pluginFile['authors']))
             ->get();
+
+        $plugin->requires = $this->compatibility->rangeFor($pluginFile);
+        $plugin->compatible = $this->compatibility->isCompatible($plugin->requires);
 
         return $plugin;
     }
@@ -381,9 +424,40 @@ class Plugins
     #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function enablePlugin(int $id): bool
     {
+        return $this->enable($id, null);
+    }
+
+    /**
+     * Enables a plugin after a core update, checking it against the version just installed.
+     *
+     * The updater still runs the previous release's code, so the running version is the old one;
+     * a plugin that supports only the new release would otherwise be refused. Not @api: only
+     * system:update calls it.
+     *
+     * @param  int  $id  The plugin id.
+     * @param  string  $installedLeantimeVersion  The Leantime version that was just installed.
+     */
+    public function enablePluginForVersion(int $id, string $installedLeantimeVersion): bool
+    {
+        return $this->enable($id, $installedLeantimeVersion);
+    }
+
+    /**
+     * Enables a plugin when it supports $leantimeVersion (default: the running version) and, for
+     * marketplace plugins, its license is valid.
+     */
+    private function enable(int $id, ?string $leantimeVersion): bool
+    {
         $this->clearCache();
 
         $pluginModel = $this->pluginRepository->getPlugin($id);
+
+        $this->applyCompatibility($pluginModel, $leantimeVersion);
+        if ($pluginModel->compatible === false) {
+            Log::warning('Not enabling plugin '.$pluginModel->foldername.': it supports Leantime '.$pluginModel->requires.', not '.($leantimeVersion ?? $this->appSettings->appVersion));
+
+            return false;
+        }
 
         if ($pluginModel->format === 'phar' && ! $this->validLicense($pluginModel)) {
             return false;
@@ -685,8 +759,8 @@ class Plugins
      */
     public function parseMarketplaceError(RequestException $exception): string
     {
-        $errorJson = str_replace('HTTP request returned status code 500:', '', $exception->getMessage());
-        $errorJson = str_replace('HTTP request returned status code 200:', '', $errorJson);
+        // Any status: the marketplace also answers 409 for a release that doesn't support this version.
+        $errorJson = (string) preg_replace('/^HTTP request returned status code \d+:\s*/', '', $exception->getMessage());
         $errors = json_decode(trim($errorJson));
 
         return $errors->error ?? $errors->message ?? 'There was an error installing the plugin';
@@ -741,15 +815,55 @@ class Plugins
      *
      * @param  MarketplacePlugin  $plugin  The marketplace plugin to be installed, including its identifier and license key.
      * @param  string  $version  The version of the plugin to be installed.
+     * @param  string|null  $expectedFolder  For an update: the installed plugin's folder. A download
+     *                                       for any other folder is refused before files change.
      *
      * @throws RequestException If the HTTP request to download the plugin fails or returns an unexpected response type.
      * @throws \Exception If the plugin cannot be downloaded, removed, or added to the system.
      * @throws \RuntimeException If the plugin directory cannot be created.
      */
-    public function installMarketplacePlugin(MarketplacePlugin $plugin, string $version): void
+    public function installMarketplacePlugin(MarketplacePlugin $plugin, string $version, ?string $expectedFolder = null): void
+    {
+        // Two installs of the same plugin at once would share the kept previous version (and the
+        // second could restore the first one's files): one at a time per plugin.
+        $lock = Cache::lock('plugins.install.'.strtolower((string) $plugin->identifier), 900);
+        if (! $lock->get()) {
+            throw new \RuntimeException(__('notification.plugin_update_busy'));
+        }
+
+        try {
+            $this->installMarketplacePluginLocked($plugin, $version, $expectedFolder);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * {@see installMarketplacePlugin()} under its per-plugin lock.
+     */
+    private function installMarketplacePluginLocked(MarketplacePlugin $plugin, string $version, ?string $expectedFolder): void
     {
 
         $this->clearCache();
+
+        // An update replaces files that must be there to fall back to. Without them it would run as
+        // a fresh install (no load check, no rollback), so it is refused before anything is fetched.
+        if ($expectedFolder !== null && ! is_dir($this->pluginDirectory.$expectedFolder)) {
+            throw new \RuntimeException(sprintf(__('notification.plugin_update_files_missing'), $expectedFolder));
+        }
+
+        // Decided from an earlier snapshot (the scheduler, or a page opened a while ago): with the
+        // lock held, the target must still be newer than what is installed now. Never a reinstall
+        // or a downgrade after someone else updated in between.
+        $currentVersion = $expectedFolder !== null ? $this->installedPluginFor($expectedFolder)?->version : null;
+        if ($currentVersion !== null && version_compare(ltrim($version, 'v'), ltrim((string) $currentVersion, 'v'), '<=')) {
+            throw new \RuntimeException(sprintf(__('notification.plugin_update_not_newer'), $expectedFolder, $currentVersion, $version));
+        }
+
+        // Updating an installed plugin: no need to type the license key again.
+        if (empty($plugin->license)) {
+            $plugin->license = $this->findInstalledMarketplacePlugin((string) $plugin->identifier)?->license;
+        }
 
         // The archive is code this server will run, so it is only ever fetched over verified
         // HTTPS (unlike the other marketplace calls made through httpClient()): the marketplace
@@ -785,8 +899,17 @@ class Plugins
             throw new \Exception(__('notification.plugin_cant_download'));
         }
 
+        // An update must land in the plugin being updated, never in another plugin's folder.
+        if ($expectedFolder !== null && strcasecmp($foldername, $expectedFolder) !== 0) {
+            throw new \RuntimeException(sprintf(__('notification.plugin_update_wrong_package'), $expectedFolder, $foldername));
+        }
+
         // A private, unpredictable temp path for the download, always removed afterwards.
         $temporaryFile = Str::finish(sys_get_temp_dir(), '/').'leantime-plugin-'.bin2hex(random_bytes(16)).'.zip';
+        $pluginDir = "{$this->pluginDirectory}{$foldername}";
+        $isUpdate = is_dir($pluginDir);
+        $previousCopy = $isUpdate ? $this->previousVersionPath($foldername) : null;
+        $installedName = $isUpdate ? $this->installedNameFor($foldername) : null;
 
         try {
             if (! file_put_contents($temporaryFile, $response->body())) {
@@ -795,21 +918,539 @@ class Plugins
 
             // Verifies the archive (entries, then the phar signature in a staging directory) before
             // anything reaches the plugin directory; the installed version is only replaced after.
-            $this->pluginArchive->install($temporaryFile, $foldername, "{$this->pluginDirectory}{$foldername}");
+            // An update keeps the version it replaces, so a broken one can be rolled back.
+            $this->pluginArchive->install($temporaryFile, $foldername, $pluginDir, $previousCopy);
         } finally {
             if (is_file($temporaryFile)) {
                 @unlink($temporaryFile);
             }
         }
 
-        // read the composer.json content from the plugin phar file
-        $pluginModel = $this->createPluginFromComposer($foldername, $plugin->license);
+        // An update must load before it counts; otherwise the previous version comes back. The
+        // fresh process also reads the new composer.json, which this process can't: it still
+        // holds the previous phar.
+        $composer = $isUpdate ? $this->verifyUpdateOrRollBack($foldername, (string) $previousCopy, $version, $installedName) : null;
 
-        if (! $this->pluginRepository->addPlugin($pluginModel)) {
-            throw new \Exception(__('notification_cant_add_to_db'));
+        try {
+            // A new install has no previous phar in this process, so it can read composer.json itself.
+            $pluginModel = $composer !== null
+                ? $this->pluginFromComposer($composer, $foldername, (string) $plugin->license, 'phar')
+                : $this->createPluginFromComposer($foldername, (string) $plugin->license);
+
+            $this->recordInstalledPlugin($pluginModel);
+        } catch (\Throwable $e) {
+            // The files changed but the database didn't: an update goes back to the previous
+            // version rather than leaving the two out of step.
+            if ($isUpdate) {
+                Log::error('Plugin '.$foldername.' update could not be recorded, restoring the previous version: '.$e->getMessage());
+                $this->pluginArchive->restore((string) $previousCopy, $pluginDir);
+                $this->clearCache();
+
+                throw new \RuntimeException(sprintf(__('notification.plugin_update_rolled_back'), $foldername, Str::limit($e->getMessage(), 300)), 0, $e);
+            }
+
+            throw $e;
         }
 
-        PluginInstalled::dispatch(plugin: (string) $pluginModel->foldername, format: (string) $pluginModel->format);
+        $this->forgetAvailableUpdate($foldername);
+        $this->clearCache();
+    }
+
+    /**
+     * Saves a just-installed plugin: one row per plugin. An update rewrites the existing row
+     * (keeping it enabled and, when no new key was given, its license) instead of adding a
+     * second, disabled one; extra rows left by earlier updates are removed.
+     *
+     * @throws \Exception When a new plugin can't be added.
+     */
+    private function recordInstalledPlugin(InstalledPlugin $pluginModel): void
+    {
+        $existingIds = $this->pluginRepository->getPluginIdsByFolder((string) $pluginModel->foldername);
+
+        if ($existingIds === []) {
+            if (! $this->pluginRepository->addPlugin($pluginModel)) {
+                throw new \Exception(__('notification_cant_add_to_db'));
+            }
+
+            PluginInstalled::dispatch(plugin: (string) $pluginModel->foldername, format: (string) $pluginModel->format);
+
+            return;
+        }
+
+        $this->pluginRepository->replacePluginRows(array_shift($existingIds), $pluginModel, $existingIds);
+    }
+
+    /**
+     * Updates an installed marketplace plugin to its newest version that supports this Leantime
+     * version, with the license key it was installed with. A version that doesn't load is rolled
+     * back (the error says so).
+     *
+     * @param  int  $id  The plugin id.
+     * @return bool False when there is nothing to update to.
+     *
+     * @throws \Exception When the download, install or verification fails (rolled back where possible).
+     *
+     * @api
+     */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
+    public function updatePlugin(int $id): bool
+    {
+        $installed = $this->pluginRepository->getPlugin($id);
+
+        if ($installed === false || $installed->format !== $this->pluginFormat['phar']) {
+            return false;
+        }
+
+        $version = $this->findUpdate($installed);
+        if ($version === null) {
+            return false;
+        }
+
+        $this->updatePluginTo($installed, $version);
+
+        return true;
+    }
+
+    /**
+     * Updates an installed marketplace plugin to exactly $version (with its stored license key).
+     * The install verifies that this version is what got installed, else it rolls back.
+     * Protected (never reachable over JSON-RPC) only so tests can stand in for the install.
+     *
+     * @throws \Exception When the download, install or verification fails (rolled back where possible).
+     */
+    protected function updatePluginTo(InstalledPlugin $installed, string $version): void
+    {
+        $marketplacePlugin = build(new MarketplacePlugin)
+            ->set('identifier', $installed->getIdentifier())
+            ->set('license', (string) $installed->license)
+            ->get();
+
+        $this->installMarketplacePlugin($marketplacePlugin, $version, (string) $installed->foldername);
+    }
+
+    /**
+     * Asks the marketplace for a newer version of every installed marketplace plugin, keeps the
+     * result for My Apps, and tells the administrators about each new version once.
+     *
+     * The marketplace lists only versions whose range includes this Leantime version (it gets
+     * `lt-v`); the range is checked here again so a listing mistake can't offer an incompatible one.
+     * A plugin the marketplace can't answer for (outage, error) is not reported as up to date: it
+     * keeps what the previous check found and is listed in `failed` (logged).
+     *
+     * @return array{updates: array<string, string>, failed: array<int, string>}
+     *                                                                           updates: plugin folder => version; failed: plugin folders that could not be checked.
+     *
+     * @api
+     */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
+    public function checkForUpdates(): array
+    {
+        $updates = [];
+        $failed = [];
+        $previousUpdates = $this->getAvailableUpdates();
+
+        $marketplacePlugins = collect($this->pluginRepository->getAllPlugins(false) ?: [])
+            ->filter(fn (InstalledPlugin $plugin) => $plugin->format === $this->pluginFormat['phar']);
+
+        // One request for all plugins when the marketplace offers it; otherwise one per plugin.
+        $releasesByIdentifier = $marketplacePlugins->isEmpty()
+            ? []
+            : $this->fetchLatestReleases($marketplacePlugins->map(fn (InstalledPlugin $plugin) => $plugin->getIdentifier())->values()->all());
+
+        foreach ($marketplacePlugins as $plugin) {
+            try {
+                // A plugin the batch answer left out is asked about on its own (never "up to date").
+                $version = $this->findUpdate($plugin, $releasesByIdentifier[strtolower($plugin->getIdentifier())] ?? null);
+            } catch (\Throwable $e) {
+                Log::warning('Could not check for an update of plugin '.$plugin->foldername.': '.$e->getMessage());
+                $failed[] = (string) $plugin->foldername;
+                if (isset($previousUpdates[$plugin->foldername])) {
+                    $updates[$plugin->foldername] = $previousUpdates[$plugin->foldername];
+                }
+
+                continue;
+            }
+
+            if ($version === null) {
+                continue;
+            }
+
+            $updates[$plugin->foldername] = $version;
+            $this->notifyUpdateOnce($plugin, $version);
+        }
+
+        $this->settingsService->saveSetting('plugins.availableUpdates', json_encode($updates));
+        $this->settingsService->saveSetting('plugins.updatesCheckedAt', dtHelper()->dbNow()->formatDateTimeForDb());
+        $this->clearCache();
+
+        return ['updates' => $updates, 'failed' => $failed];
+    }
+
+    /**
+     * The releases of several marketplace plugins in one request (`ltmp-api/latest`), keyed by
+     * lower-cased identifier, each in the shape of a plugin's compatibility list. Null when the
+     * marketplace doesn't offer the batch call (older marketplace) or it fails: the caller then
+     * asks per plugin.
+     *
+     * @param  array<int, string>  $identifiers  Marketplace identifiers of the installed plugins.
+     * @return array<string, array<int, array<string, mixed>>>|null
+     */
+    private function fetchLatestReleases(array $identifiers): ?array
+    {
+        try {
+            $response = $this->verifiedHttpClient()->get("{$this->marketplaceUrl}/ltmp-api/latest", [
+                'identifiers' => implode(',', $identifiers),
+                'lt-v' => $this->appSettings->appVersion,
+            ]);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $releases = $response->ok() ? $response->json('plugins') : null;
+
+        if (! is_array($releases)) {
+            return null;
+        }
+
+        return collect($releases)
+            ->filter(fn ($pluginReleases) => is_array($pluginReleases))
+            ->mapWithKeys(fn ($pluginReleases, $identifier) => [strtolower((string) $identifier) => array_values($pluginReleases)])
+            ->all();
+    }
+
+    /**
+     * Turns automatic plugin updates on or off (off by default). When on, the daily update check
+     * installs new minor and patch releases of marketplace plugins; major releases wait for an
+     * administrator.
+     *
+     * @api
+     */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
+    public function setAutoUpdate(bool $enabled): void
+    {
+        $this->settingsService->saveSetting('plugins.autoUpdate', $enabled ? '1' : '0');
+    }
+
+    /**
+     * Whether automatic plugin updates are on (off unless an administrator turned them on).
+     *
+     * @api
+     */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
+    public function isAutoUpdateEnabled(): bool
+    {
+        return (string) $this->settingsService->getSetting('plugins.autoUpdate', '0') === '1';
+    }
+
+    /**
+     * The daily plugin update job: checks for updates and, when automatic updates are on, installs
+     * the minor and patch ones. Each automatic update (or its rollback) is reported to the admins.
+     *
+     * Not @api: the scheduler calls it.
+     *
+     * Result (all keyed by plugin folder): available = folder => version found; checkFailed = folders
+     * the marketplace didn't answer for (their earlier result is kept); updated = folder => version
+     * installed; failed = folder => reason; waiting = folder => major version left for an admin.
+     *
+     * @return array{available: array<string, string>, checkFailed: array<int, string>, updated: array<string, string>, failed: array<string, string>, waiting: array<string, string>}
+     */
+    public function runScheduledUpdates(): array
+    {
+        $check = $this->checkForUpdates();
+        $result = ['available' => $check['updates'], 'checkFailed' => $check['failed'], 'updated' => [], 'failed' => [], 'waiting' => []];
+
+        if ($result['available'] === [] || ! $this->isAutoUpdateEnabled()) {
+            return $result;
+        }
+
+        $installedByFolder = collect($this->pluginRepository->getAllPlugins(false) ?: [])->keyBy('foldername');
+
+        foreach ($result['available'] as $folder => $version) {
+            $plugin = $installedByFolder->get($folder);
+            if ($plugin === null) {
+                continue;
+            }
+
+            if (! self::isMinorOrPatchUpdate((string) $plugin->version, $version)) {
+                $result['waiting'][$folder] = $version;
+
+                continue;
+            }
+
+            try {
+                // Exactly the version that passed the minor/patch check, never a newer one the
+                // marketplace may list by now.
+                $this->updatePluginTo($plugin, $version);
+                $result['updated'][$folder] = $version;
+                $message = sprintf(__('notification.plugin_auto_updated'), $plugin->name, $version);
+            } catch (\Throwable $e) {
+                $result['failed'][$folder] = $e->getMessage();
+                $message = sprintf(__('notification.plugin_auto_update_failed'), $plugin->name, $version, Str::limit($e->getMessage(), 300));
+                Log::warning('Automatic update of plugin '.$folder.' to '.$version.' failed: '.$e->getMessage());
+            }
+
+            try {
+                $this->notifyAdmins($plugin->id, 'plugin_update', $message);
+            } catch (\Throwable $e) {
+                Log::warning('Could not notify about the automatic update of plugin '.$folder.': '.$e->getMessage());
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Whether $to is a minor or patch release after $from (same major version), which automatic
+     * updates may install.
+     */
+    public static function isMinorOrPatchUpdate(string $from, string $to): bool
+    {
+        $fromMajor = (int) explode('.', ltrim($from, 'v'))[0];
+        $toMajor = (int) explode('.', ltrim($to, 'v'))[0];
+
+        return $fromMajor === $toMajor && version_compare(ltrim($to, 'v'), ltrim($from, 'v'), '>');
+    }
+
+    /**
+     * The updates found by the last {@see checkForUpdates()}: plugin folder => version.
+     *
+     * @return array<string, string>
+     */
+    private function getAvailableUpdates(): array
+    {
+        // Also read on the plugin list's database-error path: no update badges then, never an error.
+        try {
+            $stored = json_decode((string) $this->settingsService->getSetting('plugins.availableUpdates', '[]'), true);
+        } catch (\Throwable $e) {
+            return [];
+        }
+
+        return is_array($stored) ? array_filter($stored, 'is_string') : [];
+    }
+
+    /**
+     * The newest marketplace version of a plugin that supports this Leantime version and is newer
+     * than the installed one, or null when there is none.
+     *
+     * @param  array<int, array<string, mixed>>|null  $releases  The plugin's releases, when already
+     *                                                           fetched in a batch; null asks the marketplace.
+     *
+     * @throws \RuntimeException When the marketplace doesn't answer for the plugin (never "no update").
+     */
+    private function findUpdate(InstalledPlugin $plugin, ?array $releases = null): ?string
+    {
+        if ($releases === null) {
+            // Verified TLS: this answer picks the version that gets installed.
+            $response = $this->verifiedHttpClient()->get("{$this->marketplaceUrl}/ltmp-api/details/".rawurlencode($plugin->getIdentifier()), [
+                'lt-v' => $this->appSettings->appVersion,
+            ]);
+            $releases = $response->ok() ? $response->json('compatibility') : null;
+
+            if (! is_array($releases)) {
+                throw new \RuntimeException('The marketplace did not answer for '.$plugin->getIdentifier());
+            }
+        }
+
+        $latest = collect($releases)
+            ->filter(fn ($release) => is_array($release) && ! empty($release['version_number']))
+            ->filter(fn ($release) => $this->compatibility->isCompatible($this->releaseRange($release)))
+            ->map(fn ($release) => ltrim((string) $release['version_number'], 'v'))
+            ->sort(fn ($a, $b) => version_compare($b, $a))
+            ->first();
+
+        return $latest !== null && version_compare($latest, ltrim((string) $plugin->version, 'v'), '>') ? $latest : null;
+    }
+
+    /**
+     * The Leantime range of one marketplace release ("supported from / to"; "latest", "dev" or
+     * "master" as "to" means no upper bound).
+     *
+     * @param  array<string, mixed>  $release  One entry of a marketplace plugin's compatibility list.
+     */
+    private function releaseRange(array $release): string
+    {
+        $from = ltrim((string) ($release['supported_version_from'] ?? '0'), 'v');
+        $to = strtolower(ltrim((string) ($release['supported_version_to'] ?? ''), 'v'));
+
+        if ($to === '' || in_array($to, ['latest', 'dev', 'master'], true)) {
+            return '>='.$from;
+        }
+
+        return '>='.$from.' <='.$to;
+    }
+
+    /**
+     * Runs `plugin:verify` for an updated plugin in a fresh process. When the new version doesn't
+     * load or doesn't support this Leantime version, the previous version is put back and the
+     * update fails with the reason.
+     *
+     * Without a PHP CLI, a timeout, or no readable result, the update is rolled back too: it is
+     * only kept once it has been seen to load (and this process can't read the new phar's
+     * composer.json, so the database would otherwise record the old version).
+     *
+     * The installed release must also be the one requested: the same package name as before and
+     * the requested version.
+     *
+     * @param  string  $requestedVersion  The version that was asked for.
+     * @param  string|null  $installedName  The package name of the version being replaced.
+     * @return array<string, mixed> The new version's composer.json.
+     *
+     * @throws \RuntimeException When the update was rolled back.
+     */
+    private function verifyUpdateOrRollBack(string $folder, string $previousCopy, string $requestedVersion, ?string $installedName): array
+    {
+        [$composer, $problem] = $this->runPluginVerify($folder);
+
+        // What was installed must be what was asked for: the same package, the requested release.
+        $installedVersion = ltrim((string) ($composer['version'] ?? ''), 'v');
+        $problem ??= match (true) {
+            $installedVersion !== ltrim($requestedVersion, 'v') => 'the download was version '.($installedVersion ?: 'unknown').', not '.$requestedVersion,
+            $installedName !== null && strcasecmp((string) ($composer['name'] ?? ''), $installedName) !== 0 => 'the download was the package '.($composer['name'] ?? 'unknown').', not '.$installedName,
+            ! $this->compatibility->isCompatible($this->compatibility->rangeFor($composer)) => 'it does not support Leantime '.$this->appSettings->appVersion,
+            default => null,
+        };
+
+        if ($problem === null) {
+            return $composer;
+        }
+
+        Log::error('Plugin '.$folder.' update failed its load check, restoring the previous version: '.$problem);
+        $this->pluginArchive->restore($previousCopy, "{$this->pluginDirectory}{$folder}");
+        $this->clearCache();
+
+        throw new \RuntimeException(sprintf(__('notification.plugin_update_rolled_back'), $folder, Str::limit($problem, 300)));
+    }
+
+    /**
+     * Runs `plugin:verify {folder} --json` in a fresh PHP process.
+     *
+     * Protected (not public, so never reachable over JSON-RPC) only so tests can stand in for the
+     * fresh process.
+     *
+     * @return array{0: array<string, mixed>, 1: string|null} [composer.json of the installed version, problem or null]
+     */
+    protected function runPluginVerify(string $folder): array
+    {
+        $php = (new PhpExecutableFinder)->find(false);
+
+        if ($php === false) {
+            return [[], 'no PHP command line binary was found to check that it loads'];
+        }
+
+        try {
+            $process = new Process([$php, APP_ROOT.'/bin/leantime', 'plugin:verify', $folder, '--json'], APP_ROOT, null, null, 120);
+            $process->run();
+        } catch (\Throwable $e) {
+            // Timeout or the process could not start.
+            return [[], 'the load check did not complete: '.$e->getMessage()];
+        }
+
+        $lines = array_filter(explode("\n", trim($process->getOutput())));
+        $result = json_decode((string) end($lines), true);
+
+        if (! $process->isSuccessful() || ! is_array($result) || ($result['ok'] ?? false) !== true) {
+            return [[], (string) ($result['error'] ?? trim($process->getErrorOutput().' '.$process->getOutput()))];
+        }
+
+        if (! is_array($result['composer'] ?? null)) {
+            return [[], 'its composer.json could not be read'];
+        }
+
+        return [$result['composer'], null];
+    }
+
+    /**
+     * Where an update keeps the version it replaced (outside the plugin directory, so the
+     * new-plugin scan never mistakes it for a plugin).
+     */
+    private function previousVersionPath(string $folder): string
+    {
+        return storage_path('app/plugins-previous/'.$folder);
+    }
+
+    /**
+     * The package name (composer "name") recorded for an installed plugin folder, if any.
+     */
+    private function installedNameFor(string $folder): ?string
+    {
+        $installed = $this->installedPluginFor($folder);
+
+        return $installed !== null && ! empty($installed->name) ? (string) $installed->name : null;
+    }
+
+    /**
+     * The installed plugin row for a folder, read fresh from the database.
+     */
+    private function installedPluginFor(string $folder): ?InstalledPlugin
+    {
+        return collect($this->pluginRepository->getAllPlugins(false) ?: [])
+            ->first(fn (InstalledPlugin $plugin) => strcasecmp((string) $plugin->foldername, $folder) === 0);
+    }
+
+    /**
+     * The installed marketplace plugin with this marketplace identifier, if any.
+     */
+    private function findInstalledMarketplacePlugin(string $identifier): ?InstalledPlugin
+    {
+        if ($identifier === '') {
+            return null;
+        }
+
+        return collect($this->pluginRepository->getAllPlugins(false) ?: [])
+            ->first(fn (InstalledPlugin $installed) => $installed->format === $this->pluginFormat['phar']
+                && strcasecmp($installed->getIdentifier(), $identifier) === 0);
+    }
+
+    /**
+     * Drops a plugin from the stored available updates once it has been updated.
+     */
+    private function forgetAvailableUpdate(string $folder): void
+    {
+        $updates = $this->getAvailableUpdates();
+
+        if (! isset($updates[$folder])) {
+            return;
+        }
+
+        unset($updates[$folder]);
+        $this->settingsService->saveSetting('plugins.availableUpdates', json_encode($updates));
+    }
+
+    /**
+     * One admin notification per plugin and new version (saved after it went out, so a failed
+     * send is retried by the next check).
+     */
+    private function notifyUpdateOnce(InstalledPlugin $plugin, string $version): void
+    {
+        $settingKey = 'plugins.updateNotified.'.$plugin->foldername;
+
+        if (! isset($plugin->id) || $this->settingsService->getSetting($settingKey) === $version) {
+            return;
+        }
+
+        // The daily job and a manual check can run at once: only the lock holder sends, and it
+        // re-reads the marker inside the lock.
+        $lock = Cache::lock('plugins.updateNotify.'.$plugin->foldername, 30);
+        if (! $lock->get()) {
+            return;
+        }
+
+        try {
+            if ($this->settingsService->getSetting($settingKey) === $version) {
+                return;
+            }
+
+            $this->notifyAdmins(
+                $plugin->id,
+                'plugin_update',
+                sprintf(__('notification.plugin_update_available'), $plugin->name, $version, $plugin->version)
+            );
+            $this->settingsService->saveSetting($settingKey, $version);
+        } catch (\Throwable $e) {
+            Log::warning('Could not notify about the update of plugin '.$plugin->foldername.': '.$e->getMessage());
+        } finally {
+            $lock->release();
+        }
     }
 
     /**
@@ -938,27 +1579,193 @@ class Plugins
         $this->clearCache();
         $this->disablePlugin($pluginId);
 
-        // Get all admin users
-        $userService = app()->make(UsersService::class);
-        $notificationService = app()->make(Notifications::class);
         $plugin = $this->pluginRepository->getPlugin($pluginId);
 
-        // Create notification for all admin users
+        $this->notifyAdmins(
+            $pluginId,
+            'plugin_license',
+            sprintf(__('notification.plugin_disabled_license'), $plugin->name)
+        );
+    }
+
+    /**
+     * Disables a plugin that keeps failing requests (called by the core plugin crash breaker)
+     * and tells the administrators why.
+     *
+     * Only the local switch is flipped: the marketplace license stays activated, so turning the
+     * plugin back on after a fix needs no new activation. System plugins (from config) can't be
+     * disabled here.
+     *
+     * Not @api: only the crash breaker calls it.
+     *
+     * @param  string  $pluginFolder  The plugin's folder name.
+     * @param  string  $lastError  The message of the error that tripped the breaker.
+     * @return bool Whether a plugin was disabled.
+     */
+    public function disableAfterFailures(string $pluginFolder, string $lastError): bool
+    {
+        $plugin = collect($this->pluginRepository->getAllPlugins(true))
+            ->first(fn (InstalledPlugin $installed) => strcasecmp($installed->foldername, $pluginFolder) === 0);
+
+        if ($plugin === null) {
+            Log::error('Plugin '.$pluginFolder.' keeps failing requests but is not a disableable plugin (system plugin or not installed): '.$lastError);
+
+            return false;
+        }
+
+        $this->pluginRepository->disablePlugin($plugin->id);
+        $this->clearCache();
+
+        Log::error('Disabled plugin '.$plugin->foldername.' after repeated errors: '.$lastError);
+        PluginDisabled::dispatch(plugin: (string) $plugin->foldername);
+
+        $this->notifyAdmins(
+            $plugin->id,
+            'plugin_failing',
+            sprintf(__('notification.plugin_disabled_after_errors'), $plugin->name, Str::limit($lastError, 200))
+        );
+
+        return true;
+    }
+
+    /**
+     * Sets a plugin's supported range and whether this Leantime version is in it, read from the
+     * plugin's composer.json. A plugin without a readable composer.json declares no range, so it
+     * gets the undeclared (3.x) range: its folder may still hold a register.php or routes.php.
+     *
+     * @param  string|null  $leantimeVersion  The version to check against; default the running one.
+     * @return InstalledPlugin The same plugin, for chaining.
+     */
+    private function applyCompatibility(InstalledPlugin $plugin, ?string $leantimeVersion = null): InstalledPlugin
+    {
+        $composer = $this->readComposer((string) $plugin->foldername) ?? [];
+
+        $plugin->requires = $this->compatibility->rangeFor($composer);
+        $plugin->compatible = $this->compatibility->isCompatible($plugin->requires, $leantimeVersion);
+
+        return $plugin;
+    }
+
+    /**
+     * The decoded composer.json of an installed plugin (folder or phar), or null when missing.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function readComposer(string $pluginFolder): ?array
+    {
+        if (preg_match('/^[A-Za-z0-9_-]+$/', $pluginFolder) !== 1) {
+            return null;
+        }
+
+        $pluginPath = Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR).$pluginFolder.DIRECTORY_SEPARATOR;
+        foreach ([$pluginPath.'composer.json', "phar://{$pluginPath}{$pluginFolder}.phar/composer.json"] as $composerPath) {
+            if (! @file_exists($composerPath)) {
+                continue;
+            }
+            $composer = json_decode((string) @file_get_contents($composerPath), true);
+
+            return is_array($composer) ? $composer : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Drops the plugins that don't support this Leantime version from an enabled-plugin list,
+     * and tells the administrators once per plugin version and Leantime version. System plugins
+     * (from config) are left alone: the deployment that configures them owns their compatibility.
+     *
+     * @param  array<string, InstalledPlugin>  $plugins  Enabled plugins keyed by folder.
+     * @return array<string, InstalledPlugin>
+     */
+    private function withoutIncompatible(array $plugins): array
+    {
+        foreach ($plugins as $folder => $plugin) {
+            // System plugins come from the deployment's config: whoever configures them owns their compatibility.
+            if ($plugin->type === $this->pluginTypes['system'] || $plugin->compatible !== false) {
+                continue;
+            }
+
+            unset($plugins[$folder]);
+            Log::warning('Not loading plugin '.$plugin->foldername.' '.$plugin->version.': it supports Leantime '.$plugin->requires.', this is '.$this->appSettings->appVersion);
+
+            try {
+                $this->notifyIncompatibleOnce($plugin);
+            } catch (\Throwable $e) {
+                Log::warning('Could not notify about incompatible plugin '.$plugin->foldername.': '.$e->getMessage());
+            }
+        }
+
+        return $plugins;
+    }
+
+    /**
+     * One admin notification per plugin version and Leantime version, not one per cache rebuild.
+     */
+    private function notifyIncompatibleOnce(InstalledPlugin $plugin): void
+    {
+        $settingKey = 'plugins.incompatibleNotified.'.$plugin->foldername;
+        $marker = $plugin->version.'|'.$this->appSettings->appVersion;
+
+        if (! isset($plugin->id) || $this->settingsService->getSetting($settingKey) === $marker) {
+            return;
+        }
+
+        // Several workers rebuild the list at once after an update: only the lock holder sends,
+        // and it re-reads the marker inside the lock. The others skip (the holder covers them).
+        $lock = Cache::lock('plugins.incompatibleNotify.'.$plugin->foldername, 30);
+        if (! $lock->get()) {
+            return;
+        }
+
+        try {
+            if ($this->settingsService->getSetting($settingKey) === $marker) {
+                return;
+            }
+
+            $this->notifyAdmins(
+                $plugin->id,
+                'plugin_incompatible',
+                sprintf(__('notification.plugin_incompatible_paused'), $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
+            );
+            // Only after the notification went out, so a failed send is retried on the next rebuild.
+            $this->settingsService->saveSetting($settingKey, $marker);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * Sends an in-app notification about a plugin to every administrator and owner.
+     */
+    private function notifyAdmins(int $pluginId, string $type, string $message): void
+    {
+        $userService = app()->make(UsersService::class);
+        $notificationService = app()->make(Notifications::class);
+
         $admins = collect($userService->getAll())->filter(fn ($user) => in_array($user['role'], [40, 50]));
 
         $notifications = $admins->map(fn ($admin) => [
             'userId' => $admin['id'],
             'read' => '0',
-            'type' => 'plugin_license',
+            'type' => $type,
             'module' => 'plugins',
             'moduleId' => $pluginId,
-            'message' => sprintf("The plugin '%s' has been disabled due to license validation failure. Please check your marketplace subscription.", $plugin->name),
+            'message' => $message,
             'datetime' => dtHelper()->dbNow()->formatDateTimeForDb(), // UTC; date() is the user's tz here (#3201)
-            'url' => '/plugins/show',
+            'url' => '/plugins/myapps',
             'authorId' => 1,
-        ])->toArray();
+        ])->values()->toArray();
 
         $notificationService->addNotifications($notifications);
+    }
+
+    /**
+     * The installation-cache key of the enabled-plugin list for the running Leantime version.
+     */
+    private function enabledPluginsCacheKey(): string
+    {
+        return 'plugins.enabledPlugins.'.$this->appSettings->appVersion;
     }
 
     /**
@@ -1032,7 +1839,7 @@ class Plugins
      * key and type is the notification severity ('success' or 'error'). This keeps the
      * dynamic dispatch and notification-key assembly out of the controller.
      *
-     * @param  string  $action  One of: install, enable, disable, remove.
+     * @param  string  $action  One of: install, enable, disable, remove, update.
      * @param  mixed  $id  The plugin identifier (folder name for install, numeric id otherwise).
      * @return array{0: string, 1: string} A [messageKey, type] notification descriptor.
      *
@@ -1044,13 +1851,20 @@ class Plugins
     #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function performPluginAction(string $action, mixed $id): array
     {
-        $allowedActions = ['install', 'enable', 'disable', 'remove'];
+        $allowedActions = ['install', 'enable', 'disable', 'remove', 'update'];
 
         if (! in_array($action, $allowedActions, true)) {
             throw new \InvalidArgumentException("Unsupported plugin action: {$action}");
         }
 
         $succeeded = $this->{"{$action}Plugin"}($id);
+
+        if (! $succeeded && $action === 'enable') {
+            $plugin = $this->pluginRepository->getPlugin((int) $id);
+            if ($plugin !== false && $this->applyCompatibility($plugin)->compatible === false) {
+                return ['notification.plugin_incompatible', 'error'];
+            }
+        }
 
         return $succeeded
             ? ["notification.plugin_{$action}_success", 'success']
@@ -1094,6 +1908,7 @@ class Plugins
         Cache::store('installation')->forget('domainEvents');
         Cache::store('installation')->forget('commands');
         Cache::store('installation')->forget('plugins.enabledPlugins');
+        Cache::store('installation')->forget($this->enabledPluginsCacheKey());
         // Permission engine caches — a documented cache clear must bust them too, or a
         // newly-shipped domain/plugin permission class stays invisible (and acts as a recovery
         // path if the provider cache ever goes stale). Provider discovery is code-derived and

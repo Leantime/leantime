@@ -21,7 +21,7 @@
          neither part of it nor separate from it, and the string grows with each
          status bucket so it would eventually crowd the action buttons. --}}
     <div class="gv-ms-head">
-        <h4 class="widgettitle title-light gv-ms-bars-head"><span class="fa fa-flag-checkered" aria-hidden="true"></span> {{ __('headlines.milestones') }}</h4>
+        <x-global::elements.section-header class="gv-ms-bars-head" icon="fa fa-flag-checkered">{{ __('headlines.milestones') }}</x-global::elements.section-header>
 
         <span class="gv-ms-actions">
             @if ($login::userIsAtLeast($roles::$editor))
@@ -30,7 +30,7 @@
                     <button type="button" class="gv-ms-act helperTooltip" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');" data-tippy-content="{{ __('goalcanvas.ms_link') }}" title="{{ __('goalcanvas.ms_link') }}" aria-label="{{ __('goalcanvas.ms_link') }}"><i class="fa fa-link" aria-hidden="true"></i></button>
                 @endif
             @endif
-            <i class="fa fa-question-circle-o helperTooltip" aria-hidden="true" data-tippy-content="{{ __("tooltip.link_milestones_tooltip") }}"></i>
+            <x-global::elements.info-tip :text="__('tooltip.link_milestones_tooltip')" />
         </span>
     </div>
 

@@ -30,7 +30,7 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <form action="" method="post">
-                                    <h4 class="widgettitle title-light"><?php echo $tpl->__('label.profile_information'); ?></h4>
+                                    <x-global::elements.section-header><?php echo $tpl->__('label.profile_information'); ?></x-global::elements.section-header>
                                     <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                     <div class="row-fluid">
                                         <div class="form-group">
@@ -70,7 +70,7 @@
                                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                                         </p>
                                         <br />
-                                        <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
+                                        <x-global::elements.section-header>{{ __('label.employee_information') }}</x-global::elements.section-header>
                                         <em>{{ __('text.only_admins_can_change_user_info') }}</em><br /><br />
                                         <div class="form-group">
                                             <label for="phone" >{{ __('label.jobTitle') }}</label>
@@ -144,9 +144,7 @@
                     </div>
 
                     <div id="security">
-                        <h4 class="widgettitle title-light">
-                            {!! __('headlines.change_password') !!}
-                        </h4>
+                        <x-global::elements.section-header>{!! __('headlines.change_password') !!}</x-global::elements.section-header>
                         @if (session("userdata.isExternalAuth") )
                             <strong> {{  __("text.account_managed_external_auth") }}</strong><br /><br />
                         @endif
@@ -189,9 +187,7 @@
                             @endif
                         </form>
                         <br /><br />
-                        <h4 class="widgettitle title-light">
-                            <i class="fa-solid fa-shield-halved"></i> {{ __('headlines.twoFA') }}
-                        </h4>
+                        <x-global::elements.section-header icon="fa-solid fa-shield-halved">{{ __('headlines.twoFA') }}</x-global::elements.section-header>
                         @if ($values['twoFAEnabled'] )
                             <p>{!!   __('text.twoFA_enabled') !!}</p>
                         @else
@@ -359,14 +355,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="notifications" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="checkbox" value="on" name="notifications" class="input"
-                                               id="notifications"
-                                               @if ($values['notifications'] == "1" )
-                                                   checked='checked'
-                                               @endif/>
-                                        {{ __('label.receive_notifications') }}
-                                    </label>
+                                    <x-global::forms.checkbox name="notifications" value="on" id="notifications" :checked="$values['notifications'] == '1'">{{ __('label.receive_notifications') }}</x-global::forms.checkbox>
                                 </div>
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
@@ -414,7 +403,7 @@
 
                             <hr />
 
-                            <h4 class="widgettitle title-light">{{ __('label.notification_event_types') }}</h4>
+                            <x-global::elements.section-header>{{ __('label.notification_event_types') }}</x-global::elements.section-header>
                             <p><small>{{ __('label.notification_event_types_description') }}</small></p>
                             <div class="tw-mb-4">
                                 @php
@@ -428,26 +417,15 @@
                                     ];
                                 @endphp
                                 @foreach ($notificationCategories as $categoryKey => $config)
-                                    <label class="tw-flex tw-items-start tw-gap-2 tw-cursor-pointer tw-m-0 tw-py-1.5">
-                                        <input type="checkbox"
-                                               name="enabledEventTypes[]"
-                                               value="{{ $categoryKey }}"
-                                               class="input tw-mt-0.5"
-                                               @if (in_array($categoryKey, $enabledEventTypes))
-                                                   checked="checked"
-                                               @endif
-                                        />
-                                        <span>
-                                            <strong>{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</strong><br />
-                                            <small class="tw-text-gray-500">{{ __($config['description'] ?? '') }}</small>
-                                        </span>
-                                    </label>
+                                    <x-global::forms.checkbox name="enabledEventTypes[]" :value="$categoryKey" wrapperClass="tw-flex"
+                                        :checked="in_array($categoryKey, $enabledEventTypes)"
+                                        :description="__($config['description'] ?? '')">{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</x-global::forms.checkbox>
                                 @endforeach
                             </div>
 
                             <hr />
 
-                            <h4 class="widgettitle title-light">{{ __('label.project_notifications') }}</h4>
+                            <x-global::elements.section-header>{{ __('label.project_notifications') }}</x-global::elements.section-header>
                             <p><small>{{ __('label.project_notifications_description') }}</small></p>
                             <div class="tw-max-w-lg tw-max-h-[350px] tw-overflow-y-auto tw-mb-5">
                                 @if (count($userProjects) > 0)
@@ -479,17 +457,10 @@
 
                             <hr />
 
-                            <h4 class="widgettitle title-light">{{ __('label.webhook_notifications') }}</h4>
+                            <x-global::elements.section-header>{{ __('label.webhook_notifications') }}</x-global::elements.section-header>
                             <p><small>{{ __('label.webhook_notifications_description') }}</small></p>
                             <div class="form-group">
-                                <label for="webhookEnabled" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
-                                    <input type="checkbox" value="1" name="webhookEnabled" class="input"
-                                           id="webhookEnabled"
-                                           @if (!empty($webhookEnabled))
-                                               checked="checked"
-                                           @endif/>
-                                    {{ __('label.enable_webhook_notifications') }}
-                                </label>
+                                <x-global::forms.checkbox name="webhookEnabled" id="webhookEnabled" :checked="! empty($webhookEnabled)">{{ __('label.enable_webhook_notifications') }}</x-global::forms.checkbox>
                             </div>
                             <div class="form-group">
                                 <label for="webhookUrl">{{ __('label.webhook_url') }}</label>

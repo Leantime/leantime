@@ -175,3 +175,114 @@
     background:var(--main-border-color-hover) !important;
     color:var(--primary-font-color);
 }
+
+/* actions.modal-header — one header row per dialog: title, meta, ⋮ and its own close X. */
+.lt-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 25px;
+    margin: 0 0 16px;
+    position: relative;
+    z-index: var(--zlayer-7, 30); /* the theme's modal-dropdown layer: an open ⋮ paints over the content below */
+}
+
+/* The header brings its own X; hide nyroModal's. It is written as a child of .nyroModalCont and
+   _reposition() later moves it after the content as a sibling, so cover both. */
+.nyroModalCont:has(.lt-modal-header) > .nyroModalCloseButton,
+.nyroModalCont:has(.lt-modal-header) ~ .nyroModalCloseButton {
+    display: none !important;
+}
+
+.lt-modal-header .lt-modal-title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-bold);
+    line-height: 25px;
+    color: var(--primary-color);
+}
+
+.lt-modal-header .lt-modal-title i {
+    margin-right: 6px;
+}
+
+/* Parent breadcrumb in front of the title (subtask → its to-do). */
+.lt-modal-header .lt-modal-title .lt-modal-parent {
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-body);
+    color: var(--color-text-muted);
+}
+
+.lt-modal-header .lt-modal-meta {
+    flex: none;
+    font-size: var(--font-size-s);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.lt-modal-header .lt-modal-actions {
+    float: none;
+    flex: none;
+    margin: 0;
+    line-height: 25px;
+}
+
+/* Same look as nyroModal's X it replaces. Only inside a modal: the same templates can also
+   render as a full page, where there is nothing to close. */
+.lt-modal-header .lt-modal-close {
+    display: none;
+}
+
+.nyroModalCont .lt-modal-header .lt-modal-close {
+    display: inline-block;
+    flex: none;
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--box-radius-small);
+    background: transparent;
+    color: var(--primary-font-color);
+    font-size: var(--font-size-xl);
+    line-height: 25px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.lt-modal-header .lt-modal-close:hover {
+    background: var(--main-border-color-hover);
+}
+
+.lt-modal-header .lt-modal-close:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+}
+
+@media (max-width: 575px) {
+    .lt-modal-header .lt-modal-meta {
+        display: none;
+    }
+}
+
+/* actions.modal-header with an eyebrow / description: the heading block takes the title's place. */
+.lt-modal-header .lt-modal-heading {
+    flex: 1;
+    min-width: 0;
+}
+
+.lt-modal-header .lt-modal-eyebrow {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.lt-modal-header .lt-modal-desc {
+    margin: 2px 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}

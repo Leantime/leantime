@@ -48,7 +48,7 @@
                         <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['userId'] }}&v={{ format($row['userModified'])->timestamp() }}"/>
                     </div>
                     <div class="commentMain">
-                        <div class="commentContent" id="comment-to-hide-on-edit-{{ $formHash }}-{{ $row['id'] }}">
+                        <x-global::elements.card compact class="commentContent" id="comment-to-hide-on-edit-{{ $formHash }}-{{ $row['id'] }}">
                             <div class="right commentDate">
                                 {!! sprintf(__('text.written_on'), format($row['date'])->date(), format($row['date'])->time()) !!}
                                     @if ($login::userIsAtLeast($roles::$editor))
@@ -76,7 +76,7 @@
                             <div class="text tiptap-content" id="commentText-{{ $formHash }}-{{ $row['id'] }}">
                                 <div id="comment-text-to-hide-{{ $formHash }}-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
                             </div>
-                        </div>
+                        </x-global::elements.card>
                         <div class="commentLinks" id="comment-link-to-hide-on-edit-{{ $formHash }}-{{ $row['id'] }}">
                             @if ($login::userIsAtLeast($roles::$commenter))
                                 <a href="javascript:void(0);"
@@ -113,13 +113,13 @@
                                             <img src="{{ BASE_URL }}/api/users?profileImage={{ $comment['userId'] }}&v={{ format($comment['userModified'])->timestamp() }}"/>
                                         </div>
                                         <div class="commentMain">
-                                            <div class="commentContent">
+                                            <x-global::elements.card compact class="commentContent">
                                                 <div class="right commentDate">
                                                     {!! sprintf(__('text.written_on'), format($comment['date'])->date(), format($comment['date'])->time()) !!}
                                                 </div>
                                                 <span class="name">{!! sprintf(__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])) !!}</span>
                                                 <div class="text tiptap-content" id="comment-text-to-hide-reply-{{ $formHash }}-{{ $comment['id'] }}">{!! $tpl->escapeMinimal($comment['text']) !!}</div>
-                                            </div>
+                                            </x-global::elements.card>
 
                                             <div class="commentLinks">
                                                 @if ($login::userIsAtLeast($roles::$commenter))

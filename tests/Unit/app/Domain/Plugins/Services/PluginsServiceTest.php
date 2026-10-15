@@ -105,6 +105,19 @@ class PluginsServiceTest extends TestCase
         $this->assertSame('License invalid', $service->parseMarketplaceError($exception));
     }
 
+    /** The marketplace refuses a release that doesn't support this Leantime version with a 409. */
+    public function test_parse_marketplace_error_reads_a_409_refusal(): void
+    {
+        /** @var PluginService $service */
+        $service = $this->make(PluginService::class);
+
+        $exception = new RequestException(
+            new HttpResponse(new PsrResponse(409, [], '{"error":"Version 1.4.5 of this plugin does not support Leantime 2.0.0","activated":false}'))
+        );
+
+        $this->assertSame('Version 1.4.5 of this plugin does not support Leantime 2.0.0', $service->parseMarketplaceError($exception));
+    }
+
     public function test_parse_marketplace_error_falls_back_to_generic_message(): void
     {
         /** @var PluginService $service */
@@ -167,7 +180,7 @@ class PluginsServiceTest extends TestCase
         config(['view.compiled' => $compiledDir]);
         $this->app->instance(\Leantime\Core\Auth\Permissions\PermissionService::class, $this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, ['flushCache' => null]));
 
-        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class)->clearCache();
+        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class, ['appSettings' => app(\Leantime\Core\Configuration\AppSettings::class)])->clearCache();
 
         $this->assertFileDoesNotExist($compiledDir.'/abc123.php');
         $this->assertFileExists($compiledDir.'/.gitignore');
@@ -190,7 +203,7 @@ class PluginsServiceTest extends TestCase
             },
         ]));
 
-        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class)->clearCache();
+        $this->make(\Leantime\Domain\Plugins\Services\Plugins::class, ['appSettings' => app(\Leantime\Core\Configuration\AppSettings::class)])->clearCache();
 
         $this->assertSame(1, $flushed);
     }

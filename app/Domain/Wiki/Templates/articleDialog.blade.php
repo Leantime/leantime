@@ -44,14 +44,20 @@
     createTree($id, null, $wikiHeadlines, $wikiHL, '');
 @endphp
 
+<x-global::actions.modal-header icon="fa fa-file-lines" :title="__('headline.doc')">
+    @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
+        <x-slot:actions>
+            <li><a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_article') !!}</a></li>
+        </x-slot:actions>
+    @endif
+</x-global::actions.modal-header>
+
 <form class="formModal" method="post" action="{{ CURRENT_URL }}">
 
     <div class="row">
         <div class="col-md-2">
             <div class="row-fluid marginBottom">
-                <h4 class="widgettitle title-light">
-                    <span class="fa fa-folder"></span>{!! __('subtitles.organization') !!}
-                </h4>
+                <x-global::elements.section-header icon="fa fa-folder">{!! __('subtitles.organization') !!}</x-global::elements.section-header>
                 <label>Parent</label>
                 <x-global::forms.select width="full" name="parent">
                     <option value="0">None</option>
@@ -71,7 +77,7 @@
             </div>
 
             @if ($id !== '')
-                <h4 class="widgettitle title-light"><span class="fa fa-link"></span> {!! __('headlines.linked_milestone') !!} <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{{ __('tooltip.link_milestones_tooltip') }}"></i></h4>
+                <x-global::elements.section-header icon="fa fa-link">{!! __('headlines.linked_milestone') !!} <x-global::elements.info-tip :text="__('tooltip.link_milestones_tooltip')" /></x-global::elements.section-header>
 
                 <ul class="sortableTicketList" style="width:99%">
                     @if ($currentArticle->milestoneId == '')
@@ -160,7 +166,7 @@
             <x-global::forms.text-input variant="headline" name="title" value="{{ $tpl->escape($currentArticle->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" style="width:80%" />
 
             <br />
-            <input type="text" value="{{ $tpl->escape($currentArticle->tags) }}" name="tags" id="tags" />
+            <x-global::forms.tags :value="$currentArticle->tags" />
 
             <textarea class="tiptapComplex" rows="20" cols="80" id="wikiArticleContentEditor" name="description">{{ $currentArticle->description ?? '' }}</textarea>
 
@@ -173,10 +179,6 @@
                         <x-global::forms.button tag="input" inputType="submit" contentRole="secondary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" :labelText="__('buttons.save_and_close')" />
                     </div>
                     <div class="col-md-2 align-right padding-top-sm">
-                        @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
-                            <br />
-                            <x-global::forms.button tag="a" link="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete" state="danger" variant="outline"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</x-global::forms.button>
-                        @endif
                     </div>
                 </div>
 
@@ -282,7 +284,6 @@
            jQuery(".articleIcon").val(event.iconpickerValue);
         });
 
-        leantime.ticketsController.initTagsInput();
 
     });
 

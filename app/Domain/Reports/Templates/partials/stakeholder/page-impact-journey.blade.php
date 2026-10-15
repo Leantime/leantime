@@ -30,10 +30,10 @@
 
 @if (! $hasLM)
     <div class="p4-wrap">
-        <div class="p4-empty">
+        <x-global::elements.card tone="empty" class="p4-empty">
             <div class="lb">{{ __('stakeholder.ij.no_lm_title') }}</div>
             <div class="s">{{ __('stakeholder.ij.no_lm_hint') }}</div>
-        </div>
+        </x-global::elements.card>
     </div>
 @else
     @php
@@ -235,7 +235,7 @@
              — the block-level lens toggle means only one shows at a
              time, so there is no duplication for the reader. --}}
         <div class="p4-vision" data-lens-block="vision">
-            <div class="beat today">
+            <x-global::elements.card class="beat today">
                 <div class="lb"><i class="fa fa-flag"></i> {{ __('stakeholder.ij.beat_today_lb') }}</div>
                 @if ($startedText !== '')
                     <div class="txt">{{ $startedText }}</div>
@@ -245,9 +245,9 @@
                         <span class="nudge">{!! sprintf(e(__('stakeholder.ij.bookend_started_nudge')), $lmCanvasLink) !!}</span>
                     </div>
                 @endif
-            </div>
+            </x-global::elements.card>
 
-            <div class="beat arc">
+            <x-global::elements.card class="beat arc">
                 <div class="lb"><i class="fa fa-arrow-trend-up"></i> {{ __('stakeholder.ij.beat_arc_lb') }}</div>
                 @if ($arcStatement !== '')
                     <div class="statement">{{ $arcStatement }}</div>
@@ -257,9 +257,9 @@
                         <span class="nudge">{!! sprintf(e(__('stakeholder.ij.beat_arc_empty_nudge')), $lmCanvasLink) !!}</span>
                     </div>
                 @endif
-            </div>
+            </x-global::elements.card>
 
-            <div class="beat delivered">
+            <x-global::elements.card class="beat delivered">
                 <div class="lb"><i class="fa fa-bullseye"></i> {{ __('stakeholder.ij.beat_delivered_lb') }}</div>
                 @if ($differentTitle !== '')
                     <div class="txt">{{ $differentTitle }}</div>
@@ -272,7 +272,7 @@
                         <span class="nudge">{!! sprintf(e(__('stakeholder.ij.bookend_different_nudge')), $lmCanvasLink) !!}</span>
                     </div>
                 @endif
-            </div>
+            </x-global::elements.card>
         </div>
 
         {{-- ── PROGRESS + IMPACT: the same bookends flanking the arc with
@@ -282,7 +282,7 @@
 
         {{-- STARTED bookend — authored problem text or honest empty state.
              NO narrative dump. NO generated summary. --}}
-        <div class="p4-bookend started">
+        <x-global::elements.card class="p4-bookend started">
             <div class="lb"><i class="fa fa-flag"></i> {{ __('stakeholder.ij.bookend_started') }}</div>
             @if ($startedText !== '')
                 <div class="meaning" style="margin-top:0;">{{ $startedText }}</div>
@@ -292,11 +292,11 @@
                     <span class="nudge">{!! sprintf(e(__('stakeholder.ij.bookend_started_nudge')), $lmCanvasLink) !!}</span>
                 </div>
             @endif
-        </div>
+        </x-global::elements.card>
 
         {{-- The Arc --}}
         @if (count($outMetrics) > 0 || count($ocMetrics) > 0)
-            <div class="p4-arc">
+            <x-global::elements.card class="p4-arc">
                 <div class="lb"><i class="fa fa-arrow-trend-up"></i> {{ __('stakeholder.ij.arc_label') }}</div>
 
                 @foreach ([
@@ -435,18 +435,18 @@
                 @if (! $progressUnlocked)
                     <div class="p4-chip" data-lens="vision"><i class="fa fa-circle-info"></i> {{ __('stakeholder.ij.chip_first_period') }}</div>
                 @endif
-            </div>
+            </x-global::elements.card>
         @else
-            <div class="p4-empty">
+            <x-global::elements.card tone="empty" class="p4-empty">
                 <div class="lb">{{ __('stakeholder.ij.no_metrics_title') }}</div>
                 <div class="s">{{ __('stakeholder.ij.no_metrics_hint') }}</div>
-            </div>
+            </x-global::elements.card>
         @endif
 
         {{-- DIFFERENT bookend — authored impact + supporting meaning.
              Meaning is the emotional payload: WHY this matters to the
              people it affects. Never generated. --}}
-        <div class="p4-bookend different">
+        <x-global::elements.card class="p4-bookend different">
             <div class="lb"><i class="fa fa-bullseye"></i> {{ __('stakeholder.ij.bookend_different') }}</div>
             @if ($differentTitle !== '')
                 <div class="txt">{{ $differentTitle }}</div>
@@ -463,7 +463,7 @@
                     <span class="nudge">{!! sprintf(e(__('stakeholder.ij.bookend_different_nudge')), $lmCanvasLink) !!}</span>
                 </div>
             @endif
-        </div>
+        </x-global::elements.card>
 
         </div>{{-- /[data-lens-block=tracks] --}}
 

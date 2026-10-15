@@ -102,6 +102,7 @@ class Install
         30527,
         30528,
         30529,
+        30530,
     ];
 
     /**
@@ -3422,6 +3423,60 @@ class Install
             Log::error('Migration 30529: '.$e->getMessage());
 
             return ['Migration 30529 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30530 — database update for v3.5.30.
+     *
+     * Plugin updates used to INSERT a new zp_plugins row instead of updating the existing one,
+     * leaving a second, disabled row with the new version next to the old, enabled row with the
+     * stale version. Keeps one row per plugin folder: the enabled one (else the newest), with the
+     * highest version of the duplicates (that is what is on disk) and the newest non-empty
+     * license key. Updates now rewrite the row, so this only cleans up what is already there.
+     */
+    public function update_sql_30530(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+
+            if (! $connection->getSchemaBuilder()->hasTable('zp_plugins')) {
+                return true;
+            }
+
+            $duplicateFolders = $connection->table('zp_plugins')
+                ->select('foldername')
+                ->groupBy('foldername')
+                ->havingRaw('COUNT(*) > 1')
+                ->pluck('foldername');
+
+            foreach ($duplicateFolders as $folder) {
+                $rows = $connection->table('zp_plugins')->where('foldername', $folder)->orderBy('id')->get();
+
+                $keep = $rows->filter(fn ($row) => (bool) $row->enabled)->last() ?? $rows->last();
+                // A leading "v" (v1.4.2) would sort below plain numbers, so compare without it.
+                $highestVersion = $rows->pluck('version')->filter()->sort(fn ($a, $b) => version_compare(ltrim((string) $a, 'v'), ltrim((string) $b, 'v')))->last();
+                $license = $rows->reverse()->pluck('license')->first(fn ($key) => ! empty($key));
+
+                $connection->table('zp_plugins')->where('id', $keep->id)->update(array_filter([
+                    'version' => $highestVersion,
+                    'license' => $license,
+                ], fn ($value) => $value !== null));
+
+                $connection->table('zp_plugins')
+                    ->where('foldername', $folder)
+                    ->where('id', '!=', $keep->id)
+                    ->delete();
+
+                Log::info('Migration 30530: merged '.$rows->count().' rows of plugin '.$folder.' into row '.$keep->id);
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30530: '.$e->getMessage());
+
+            return ['Migration 30530 failed: '.$e->getMessage()];
         }
 
         return true;

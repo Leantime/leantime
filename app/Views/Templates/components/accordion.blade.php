@@ -1,3 +1,5 @@
+{{-- DEPRECATED: use elements.accordion. Kept through 3.12 for plugin releases that still call
+     <x-global::accordion> (CustomFields); remove in the release after. --}}
 @props([
     'state' => $tpl->getToggleState("accordion_content-".$id) == 'closed' ? 'closed' : 'open',
     'id'

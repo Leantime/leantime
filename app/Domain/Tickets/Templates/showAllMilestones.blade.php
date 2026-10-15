@@ -14,26 +14,11 @@
 
 <div class="maincontent">
 
-    @include('tickets::submodules.timelineTabs')
+    @include('tickets::submodules.timelineTabs', ['tableButtons' => true])
 
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
-
-        {{-- New / Filter moved into the nav bar (timelineTabs). Only the
-             table's own export/columns buttons remain here. --}}
-        <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-                    @dispatchEvent('filters.afterRighthandSectionOpen')
-                    <div id="tableButtons" style="display:inline-block"></div>
-                    @dispatchEvent('filters.beforeRighthandSectionClose')
-                </div>
-            </div>
-
-        </div>
-
-        <div class="clearfix" style="margin-bottom: 20px;"></div>
 
         @if (isset($allTicketGroups['all']))
             @php $allTickets = $allTicketGroups['all']['items']; @endphp

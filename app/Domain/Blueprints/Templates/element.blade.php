@@ -20,7 +20,7 @@
                 $nbcomments = (int) ($row['commentCount'] ?? 0);
             @endphp
 
-            <div class="ticketBox" id="item_{{ $row['id'] }}">
+            <x-global::elements.card compact class="ticketBox" id="item_{{ $row['id'] }}">
                 <div class="row">
                     <div class="col-md-12">
                         @if($login::userIsAtLeast($roles::$editor))
@@ -69,7 +69,7 @@
                         </div>
                     </div>
                 @endif
-            </div>
+            </x-global::elements.card>
         @endif
     @endforeach
     <br />

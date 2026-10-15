@@ -63,7 +63,7 @@
 }
 
 .wiki-sidebar.collapsed .wiki-tree-link i {
-    font-size: 18px;
+    font-size: var(--font-size-xl);
     opacity: 1;
 }
 
@@ -81,8 +81,6 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--main-border-color);
 }
 
 .wiki-sidebar-title {
@@ -189,8 +187,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--main-border-color);
+    
 }
 
 .wiki-panel-header .widgettitle {
@@ -547,7 +544,7 @@
     padding: 4px 10px;
     background: var(--layered-background);
     border-radius: 8px;
-    font-size: 11px;
+    font-size: var(--font-size-s);
     color: var(--secondary-font-color);
     opacity: 0.8;
     pointer-events: none;
@@ -601,53 +598,35 @@
     display: none !important;
 }
 
-/* Edit indicator */
+/* Save status — quiet text under the title. */
 .wiki-edit-indicator {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background: var(--layered-background);
-    border: 1px solid var(--main-border-color);
-    border-radius: 20px;
-    font-size: var(--base-font-size);
-    color: var(--primary-font-color);
-    z-index: 100;
-    transition: all 0.2s ease;
+    gap: 6px;
+    margin: 4px 0 0;
+    font-size: var(--font-size-s);
+    color: var(--color-text-muted);
 }
 
 .wiki-edit-indicator.editing {
-    background: var(--accent1);
-    border-color: var(--accent1);
-    color: white;
+    color: var(--color-text-muted);
 }
 
 .wiki-edit-indicator.saving {
-    background: var(--layered-background);
     color: var(--accent1);
 }
 
 .wiki-edit-indicator.saved {
-    background: var(--green-bg, rgba(40, 167, 69, 0.15));
-    border-color: var(--green, #28a745);
-    color: var(--green, #28a745);
+    color: var(--feedback-success-color);
 }
 
 .wiki-edit-indicator.error {
-    background: var(--red-bg, rgba(220, 53, 69, 0.15));
-    border-color: var(--red, #dc3545);
-    color: var(--red, #dc3545);
+    color: var(--feedback-error-color);
 }
 
-.wiki-edit-indicator.saved {
-    color: var(--green);
-}
 
 .wiki-edit-indicator i {
-    font-size: 14px;
+    font-size: var(--base-font-size);
 }
 
 /* ==========================================================================
@@ -670,12 +649,6 @@
     margin-bottom: 10px;
 }
 
-.wiki-properties-section .control-label {
-    font-size: var(--base-font-size);
-    font-weight: bold;
-    opacity: 0.8;
-}
-
 /* Author with Avatar */
 .wiki-author {
     display: flex;
@@ -693,7 +666,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
 }
 
@@ -788,7 +761,7 @@
     justify-content: center;
     flex-shrink: 0;
     color: var(--secondary-font-color);
-    font-size: 12px;
+    font-size: var(--font-size-s);
 }
 
 .wiki-activity-icon.edit {
@@ -822,7 +795,7 @@
 
 .wiki-activity-time {
     color: var(--secondary-font-color);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     margin-top: 2px;
 }
 
@@ -889,7 +862,7 @@
 }
 
 .wiki-tree-link i {
-    font-size: 14px;
+    font-size: var(--base-font-size);
     opacity: 0.7;
 }
 
@@ -898,7 +871,7 @@
 }
 
 .wiki-tree-draft {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-s);
     color: var(--secondary-font-color);
     font-style: italic;
 }
@@ -992,6 +965,10 @@
     border-radius: 0 !important;
 }
 
+.wiki-milestone-card .milestoneCard > .lt-card-bd {
+    padding: 0;
+}
+
 /* ==========================================================================
    Comments Section
    ========================================================================== */
@@ -1016,11 +993,16 @@
     color: var(--secondary-font-color);
 }
 
+/* Height follows the illustration; a fixed height let it spill over the title. */
 .wiki-empty-state-icon {
-    width: 120px;
-    height: 120px;
+    width: 200px;
     margin: 0 auto 24px;
-    opacity: 0.4;
+}
+
+.wiki-empty-state-icon svg {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .wiki-empty-state-title {
@@ -1178,4 +1160,52 @@
 
 [data-theme="dark"] .wiki-properties-panel {
     box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Title field: icon picker inside the title's border, one control.
+   The headline input loses its own border; the wrapper draws it. */
+.wiki-title-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    padding: 2px 4px;
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--input-radius);
+    background: var(--input-background);
+    box-shadow: var(--input-shadow);
+}
+
+.wiki-title-field:focus-within {
+    border-color: var(--accent1);
+}
+
+.wiki-title-field .inlineDropDownContainerLeft {
+    float: none;
+    flex: none;
+}
+
+.wiki-title-field .btn.titleIconPicker,
+.wiki-title-field .btn.titleIconPicker:hover {
+    border: 0;
+    border-radius: var(--box-radius-small);
+}
+
+.wiki-title-field .btn.titleIconPicker {
+    background: transparent;
+}
+
+.wiki-title-field .btn.titleIconPicker:hover {
+    background: var(--col-hover-bg);
+}
+
+/* The title input only: the icon picker renders its own search input inside this field. */
+.wiki-title-field #wikiTitleEditable {
+    flex: 1;
+    min-width: 0;
+    width: auto !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding-left: 4px !important;
 }

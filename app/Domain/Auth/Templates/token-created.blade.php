@@ -1,4 +1,4 @@
-<h4 class="widgettitle title-light">{{ __('headlines.token_created') }}</h4>
+<x-global::elements.section-header>{{ __('headlines.token_created') }}</x-global::elements.section-header>
 <p>{{ __('text.copy_token_now') }}</p>
 <div class="form-group">
     <x-global::forms.text-input value="{{ $newToken }}" onclick="this.select();" />

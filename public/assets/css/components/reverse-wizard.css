@@ -97,19 +97,19 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:22px;
+    font-size: var(--font-size-xxl);
     margin:0 auto 14px;
 }
 
 .reverse-modal .rm-hd h1 {
-    font-size:22px;
-    font-weight:600;
-    letter-spacing:-.3px;
+    font-size: var(--font-size-xxl);
+    font-weight: 600;
+    letter-spacing: -.3px;
     margin:0;
 }
 
 .reverse-modal .rm-hd p {
-    font-size:13.5px;
+    font-size: var(--base-font-size);
     color:#7a8791;
     margin-top:6px;
     max-width:440px;
@@ -123,7 +123,7 @@
     padding:11px 15px;
     background:#f6f8f7;
     border-radius:11px;
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:#4a5a63;
     display:flex;
     align-items:center;
@@ -177,14 +177,14 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:17px;
+    font-size: var(--font-size-l);
     color:#fff;
     flex:none;
 }
 
 .reverse-modal .rm-opt .ot {
-    font-size:15px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     display:flex;
     align-items:center;
     gap:9px;
@@ -192,8 +192,8 @@
 }
 
 .reverse-modal .rm-opt .obadge {
-    font-size:10px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     background:#e7f5ee;
     color:#1a7d52;
     border-radius:20px;
@@ -201,7 +201,7 @@
 }
 
 .reverse-modal .rm-opt .od {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:#7a8791;
     margin-top:2px;
     line-height:1.45;
@@ -210,7 +210,7 @@
 .reverse-modal .rm-opt .arr {
     margin-left:auto;
     color:#aab4bb;
-    font-size:15px;
+    font-size: var(--base-font-size);
 }
 
 .reverse-modal .rm-opt.is-loading {
@@ -246,23 +246,23 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-wiz .rw-hd .ey {
-    font-size:11px;
-    font-weight:600;
-    letter-spacing:1.4px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     color:var(--rw-accent);
     margin-bottom:8px;
 }
 
 .rev-wiz .rw-hd h1 {
-    font-size:21px;
-    font-weight:600;
-    letter-spacing:-.3px;
+    font-size: var(--font-size-xxl);
+    font-weight: 600;
+    letter-spacing: -.3px;
     margin:0;
 }
 
 .rev-wiz .rw-hd p {
-    font-size:13.5px;
+    font-size: var(--base-font-size);
     color:var(--rw-muted);
     margin-top:7px;
     max-width:470px;
@@ -315,10 +315,10 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     top:15px;
     left:50%;
     transform:translateX(-50%);
-    font-size:10.5px;
+    font-size: var(--font-size-s);
     white-space:nowrap;
     color:var(--rw-tgt);
-    font-weight:600;
+    font-weight: 600;
 }
 
 .rev-wiz .rw-scope {
@@ -329,7 +329,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     padding:11px 15px;
     background:#f7f9f9;
     border-radius:12px;
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-text-2);
 }
 
@@ -340,7 +340,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 
 .rev-wiz .rw-scope b {
     color:var(--rw-text);
-    font-weight:600;
+    font-weight: 600;
 }
 
 .rev-wiz .rw-body {
@@ -380,7 +380,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     justify-content:center;
     flex:none;
     color:#fff;
-    font-size:10px;
+    font-size: var(--font-size-s);
     transition:.15s;
     background:var(--rw-panel);
 }
@@ -396,8 +396,8 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-wiz .rw-name {
-    font-size:14px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     line-height:1.3;
     color:var(--rw-text);
 }
@@ -419,7 +419,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     border-radius:14px;
     cursor:pointer;
     font-family:inherit;
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-text-2);
 }
 
@@ -435,7 +435,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 .rev-wiz .rw-reveal .rc {
     margin-left:auto;
     color:var(--rw-faint);
-    font-size:11px;
+    font-size: var(--font-size-s);
 }
 
 .rev-wiz .rw-hidden {
@@ -448,7 +448,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-wiz .rw-prov {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-faint);
     margin:14px 2px 4px;
     display:flex;
@@ -466,7 +466,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-wiz .rw-foot .cnt {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-muted);
 }
 
@@ -487,13 +487,13 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 /* ── Outcomes-stage specifics ────────────────────────────────────── */
 
 .rev-wiz.rev-wiz--outcomes .rw-seclab {
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:var(--rw-muted);
     margin:0 2px 11px;
 }
 
 .rev-wiz.rev-wiz--outcomes .rw-meta {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-muted);
     margin-top:5px;
     display:flex;
@@ -504,8 +504,8 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 
 .rev-wiz.rev-wiz--outcomes .rw-btn {
     font-family:inherit;
-    font-size:13px;
-    font-weight:500;
+    font-size: var(--base-font-size);
+    font-weight: 500;
     border-radius:22px;
     padding:10px 17px;
     cursor:pointer;
@@ -518,7 +518,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     background:var(--rw-primary);
     color:#fff;
     border-color:var(--rw-primary);
-    font-weight:600;
+    font-weight: 600;
     display:inline-flex;
     align-items:center;
     gap:8px;
@@ -526,11 +526,11 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 
 .rev-wiz .rw-meta .tgt {
     color:var(--rw-tgt);
-    font-weight:600;
+    font-weight: 600;
 }
 
 .rev-wiz .rw-source-note {
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:#54636b;
     margin:16px 2px 2px;
     padding-top:13px;
@@ -545,7 +545,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     color:var(--rw-accent-deep);
     margin-top:2px;
     flex:none;
-    font-size:11px;
+    font-size: var(--font-size-s);
 }
 
 .rev-wiz .rw-btn-next[disabled] {
@@ -556,24 +556,24 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 /* ── Step-stage specifics ────────────────────────────────────────── */
 
 .rev-wiz.rev-wiz--step .rw-seclab {
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:var(--rw-muted);
     margin:14px 2px 11px;
     text-transform:uppercase;
-    letter-spacing:.5px;
-    font-weight:600;
+    letter-spacing: .04em;
+    font-weight: 600;
 }
 
 .rev-wiz.rev-wiz--step .rw-meta {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-muted);
     margin-top:3px;
 }
 
 .rev-wiz.rev-wiz--step .rw-btn {
     font-family:inherit;
-    font-size:13px;
-    font-weight:500;
+    font-size: var(--base-font-size);
+    font-weight: 500;
     border-radius:22px;
     padding:10px 17px;
     cursor:pointer;
@@ -590,7 +590,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     background:var(--rw-primary);
     color:#fff;
     border-color:var(--rw-primary);
-    font-weight:600;
+    font-weight: 600;
 }
 
 .rev-wiz .rw-seclab:first-child {
@@ -598,22 +598,22 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-wiz .rw-grouplab {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-text-2);
     margin:12px 2px 8px;
-    font-weight:600;
+    font-weight: 600;
 }
 
 .rev-wiz .rw-groupmeta {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-muted);
-    font-weight:400;
+    font-weight: 400;
     margin-left:6px;
     font-style:italic;
 }
 
 .rev-wiz .rw-tail {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-muted);
     margin:6px 2px;
     font-style:italic;
@@ -624,15 +624,15 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-wiz .rw-guide h2 {
-    font-size:16px;
-    font-weight:600;
+    font-size: var(--font-size-l);
+    font-weight: 600;
     color:var(--rw-text);
     margin:0 0 6px;
-    letter-spacing:-.1px;
+    letter-spacing: -.1px;
 }
 
 .rev-wiz .rw-guide p {
-    font-size:14px;
+    font-size: var(--base-font-size);
     color:var(--rw-text-2);
     line-height:1.55;
     margin:0 0 14px;
@@ -641,14 +641,14 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 .rev-wiz .rw-guide .rw-guide-sub {
     margin-top:8px;
     color:var(--rw-muted);
-    font-size:12.5px;
+    font-size: var(--font-size-s);
 }
 
 .rev-wiz .rw-guide .rw-guide-lbl {
     display:block;
-    font-size:11px;
-    font-weight:600;
-    letter-spacing:.5px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     color:var(--rw-muted);
     margin:16px 2px 8px;
@@ -660,7 +660,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     border:1.5px solid var(--rw-border);
     border-radius:14px;
     font-family:inherit;
-    font-size:14.5px;
+    font-size: var(--base-font-size);
     line-height:1.6;
     color:var(--rw-text);
     resize:vertical;
@@ -692,23 +692,23 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-review .rr-hd .ey {
-    font-size:11px;
-    font-weight:600;
-    letter-spacing:1.4px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     color:var(--rw-accent);
     margin-bottom:8px;
 }
 
 .rev-review .rr-hd h1 {
-    font-size:21px;
-    font-weight:600;
-    letter-spacing:-.3px;
+    font-size: var(--font-size-xxl);
+    font-weight: 600;
+    letter-spacing: -.3px;
     margin:0;
 }
 
 .rev-review .rr-hd p {
-    font-size:13.5px;
+    font-size: var(--base-font-size);
     color:var(--rw-muted);
     margin-top:7px;
     max-width:470px;
@@ -761,7 +761,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    font-size:13px;
+    font-size: var(--base-font-size);
     flex:none;
 }
 
@@ -771,16 +771,16 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-review .rr-stage .rr-title {
-    font-size:14px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     color:var(--rw-text);
     flex:1;
     min-width:0;
 }
 
 .rev-review .rr-stage .rr-count {
-    font-size:12px;
-    font-weight:500;
+    font-size: var(--font-size-s);
+    font-weight: 500;
     color:var(--rw-text-2);
     background:var(--rw-border-soft);
     border-radius:20px;
@@ -794,10 +794,10 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-review .rr-stage .rr-badge {
-    font-size:10px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     text-transform:uppercase;
-    letter-spacing:.5px;
+    letter-spacing: .04em;
     padding:2px 8px;
     border-radius:20px;
 }
@@ -819,10 +819,10 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 
 .rev-review .rr-details .rr-source {
     color:var(--rw-faint);
-    font-size:11px;
-    font-weight:500;
+    font-size: var(--font-size-s);
+    font-weight: 500;
     text-transform:uppercase;
-    letter-spacing:.4px;
+    letter-spacing: .04em;
     margin-left:6px;
     font-style:normal;
 }
@@ -830,7 +830,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 .rev-review .rr-stage summary .arr {
     margin-left:8px;
     color:var(--rw-faint);
-    font-size:12px;
+    font-size: var(--font-size-s);
     transition:transform .15s;
 }
 
@@ -846,7 +846,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     margin:0;
     padding:0;
     list-style:none;
-    font-size:13px;
+    font-size: var(--base-font-size);
     color:var(--rw-text);
     line-height:1.65;
 }
@@ -864,7 +864,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 .rev-review .rr-details .empty {
     font-style:italic;
     color:var(--rw-muted);
-    font-size:12.5px;
+    font-size: var(--font-size-s);
 }
 
 .rev-review .rr-details .impact-text {
@@ -872,10 +872,10 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     border-left:2px solid #d4a44c;
     padding:10px 12px;
     border-radius:8px;
-    font-size:14px;
+    font-size: var(--base-font-size);
     color:var(--rw-text);
     line-height:1.55;
-    font-weight:500;
+    font-weight: 500;
 }
 
 .rev-review .rr-emptyall {
@@ -884,7 +884,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     color:#5a4a10;
     padding:14px 18px;
     border-radius:12px;
-    font-size:13px;
+    font-size: var(--base-font-size);
     margin:14px 0;
 }
 
@@ -898,7 +898,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .rev-review .rr-note {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--rw-muted);
     line-height:1.5;
     flex:1;
@@ -910,8 +910,8 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 
 .rev-review .rr-btn {
     font-family:inherit;
-    font-size:13px;
-    font-weight:500;
+    font-size: var(--base-font-size);
+    font-weight: 500;
     border-radius:22px;
     padding:10px 17px;
     cursor:pointer;
@@ -928,7 +928,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     background:var(--rw-primary);
     color:#fff;
     border-color:var(--rw-primary);
-    font-weight:600;
+    font-weight: 600;
 }
 
 .rev-review .rr-btn-primary[disabled] {
@@ -942,7 +942,7 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 11px;
+    font-size: var(--font-size-s);
     font-weight: 600;
     line-height: 1.4;
     border-radius: 20px;
@@ -951,6 +951,6 @@ body.reverse-intercept-open .lmCanvas-stages, body.reverse-intercept-open .lm-st
 }
 
 .sp-source-chip i {
-    font-size: 9px;
+    font-size: var(--font-size-s);
     opacity: .85;
 }

@@ -35,9 +35,10 @@ $values = $values ?? [];
                 <div class="span12">
 
 
-                    <div class="widget">
-                        <h4 class="widgettitle">{!! __('OVERVIEW') !!}</h4>
-                        <div class="widgetcontent" style="min-height: 460px">
+                    <x-global::elements.card style="min-height: 460px">
+
+
+                        <x-slot:title>{!! __('OVERVIEW') !!}</x-slot:title>
 
                             <label for="clients">{!! __('label.client') !!}</label>
                             <x-global::forms.select name="clients" id="clients" onchange="filterProjectsByClient();">
@@ -149,7 +150,9 @@ $values = $values ?? [];
 
                             @endif <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE')" name="save" /> <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE_NEW')" name="saveNew" />
 
-
+                    </x-global::elements.card>
+                </div>
+            </div>
         </form>
     </div>
 </div>

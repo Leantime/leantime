@@ -8,8 +8,9 @@
 
 {!! $tpl->displayNotification() !!}
 
-<h4 class="widgettitle title-light">{!! __('subtitles.event') !!}</h4>
-
+<x-global::actions.modal-header>
+    <x-slot:title>{!! __('subtitles.event') !!}</x-slot:title>
+</x-global::actions.modal-header>
 <form action="{{ BASE_URL }}/calendar/addEvent/" method="post" class='formModal'>
     @csrf
 

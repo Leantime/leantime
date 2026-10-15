@@ -35,9 +35,7 @@
                                     <br />
                                     <input type="hidden" value="1" name="saveSettings" />
 
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-building"></span>{!! __('subtitles.companydetails') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-building">{!! __('subtitles.companydetails') !!}</x-global::elements.section-header>
                                     <div class="row">
                                         <div class="col-md-2">
                                             <label>{!! __('label.language') !!}</label>
@@ -74,16 +72,14 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="hidden" name="telemetryToggleShown" value="1" />
-                                                <input type="checkbox" class="toggle" name="telemetryActive" id="telemetryActive" @if ($companySettings['telemetryActive']) checked="checked" @endif />
+                                                <x-global::forms.checkbox variant="toggle" name="telemetryActive" id="telemetryActive" :checked="(bool) $companySettings['telemetryActive']" :aria-label="strip_tags(__('label.send_telemetry'))" />
                                                 <br />
                                                 <small>{!! __('label.telemetry_background') !!}</small>
                                             </div>
                                         </div>
                                     @endif
                                     <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-cog"></span>{!! __('subtitles.defaults') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-cog">{!! __('subtitles.defaults') !!}</x-global::elements.section-header>
                                     <div class="row">
                                         <div class="col-md-2">
                                             <label for="messageFrequency">{!! __('label.messages_frequency') !!}</label>
@@ -107,9 +103,7 @@
                                         </div>
                                     </div>
                                     <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-bell"></span>{!! __('label.default_notification_types') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-bell">{!! __('label.default_notification_types') !!}</x-global::elements.section-header>
                                     <p>{!! __('label.default_notification_types_description') !!}</p>
                                     <div class="row">
                                         <div class="col-md-8">
@@ -143,9 +137,7 @@
                                     </div>
 
                                     <br />
-                                    <h4 class="widgettitle title-light"><span
-                                            class="fa fa-sliders"></span>{!! __('label.default_notification_relevance') !!}
-                                    </h4>
+                                    <x-global::elements.section-header icon="fa fa-sliders">{!! __('label.default_notification_relevance') !!}</x-global::elements.section-header>
                                     <p>{!! __('label.default_notification_relevance_description') !!}</p>
                                     <div class="row">
                                         <div class="col-md-8">
@@ -167,7 +159,7 @@
 
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings" >
                                     <input type="hidden" value="1" name="saveLogo" />
-                                    <h5 class="widgettitle title-light">{!! __('headlines.logo') !!}</h5>
+                                    <x-global::elements.section-header as="h5">{!! __('headlines.logo') !!}</x-global::elements.section-header>
                                     <br />
 
                                     <div class="row">
@@ -228,7 +220,7 @@
 
                         @foreach ($apiKeys as $apiKey)
                             <li>
-                                <div class="ticketBox">
+                                <x-global::elements.card compact class="apiKeyCard" style="margin-bottom:10px;">
                                       <x-global::actions.dropdown>
                                           <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
                                           <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
@@ -238,7 +230,7 @@
                                     lt_{{ $apiKey['username'] }}***
                                     | {!! __('labels.created_on') !!}: {{ format($apiKey['createdOn'])->date() }} | {!! __('labels.last_used') !!}: {{ format($apiKey['lastlogin'])->date() }}
 
-                                </div>
+                                </x-global::elements.card>
                             </li>
                         @endforeach
                         </ul>

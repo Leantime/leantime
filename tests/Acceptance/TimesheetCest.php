@@ -194,8 +194,9 @@ class TimesheetCest
         ]);
 
         // Close modal.
-        $I->waitForElementVisible('.nyroModalClose');
-        $I->clickWithRetry('.nyroModalClose');
+        // The dialog header (actions.modal-header) brings its own close X.
+        $I->waitForElementVisible('.lt-modal-close');
+        $I->clickWithRetry('.lt-modal-close');
 
         // Check that data have been updated.
         $I->wait(5);
@@ -211,8 +212,10 @@ class TimesheetCest
         $I->wantTo('Open ticket and add time');
 
         $I->amOnPage('/#/tickets/showTicket/10');
-        $I->waitForElementVisible('#ui-id-8');
-        $I->clickWithRetry('#ui-id-8');
+        // Select the Time Tracking tab by its link, not by jQuery UI's generated #ui-id-N:
+        // those numbers shift whenever another jQuery UI widget is created first.
+        $I->waitForElementVisible('.ticketTabs a[href="#timesheet"]');
+        $I->clickWithRetry('.ticketTabs a[href="#timesheet"]');
         $I->waitForElementVisible('#hours');
         $I->fillField('#hours', 4);
 
@@ -278,8 +281,11 @@ class TimesheetCest
         $I->see('#1 - Edit');
 
         $I->clickWithRetry('#editTimesheet-1');
-        $I->waitForElementVisible('.delete');
-        $I->clickWithRetry('.stdformbutton .delete');
+        // Delete lives in the dialog header's ⋮ menu.
+        $I->waitForElementVisible('.lt-modal-header .ticketDropDown');
+        $I->clickWithRetry('.lt-modal-header .ticketDropDown');
+        $I->waitForElementVisible('.lt-modal-header .delete');
+        $I->clickWithRetry('.lt-modal-header .delete');
 
         $I->wait(5);
         $I->see('Should the timesheet really be deleted?');

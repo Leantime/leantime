@@ -1,6 +1,6 @@
-<h4 class="widgettitle title-light">{!! __('subtitles.delete') !!}</h4>
-
-@if (!empty($error))
+<x-global::actions.modal-header>
+    <x-slot:title>{!! __('subtitles.delete') !!}</x-slot:title>
+</x-global::actions.modal-header>@if (!empty($error))
     {!! $error !!}
 @else
 

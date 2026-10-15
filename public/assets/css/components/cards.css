@@ -1,0 +1,569 @@
+/*
+ * elements.card — a card inside the content box.
+ * Border plus the soft card shadow, 16px corners (Marcel, 2026-10-11); tones tint background and border.
+ * Type follows the role table in COMPONENTS.md ("Plugin design alignment").
+ */
+.lt-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    color: var(--primary-font-color);
+    min-width: 0;
+    position: relative;
+}
+
+/* Only a flush card clips, so rows reach the rounded corners; others keep pop-overs visible. */
+.lt-card--flush {
+    overflow: hidden;
+}
+
+.lt-card-hd {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.lt-card .lt-card-title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    color: inherit;
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+}
+
+.lt-card-bd {
+    padding: 16px;
+    font-size: var(--base-font-size);
+    line-height: var(--line-height-normal);
+}
+
+.lt-card-bd--flush {
+    padding: 0;
+}
+
+.lt-card-bd--compact {
+    padding: 12px 16px;
+}
+
+.lt-card-ft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--card-border);
+    font-size: var(--font-size-s);
+    color: var(--color-text-secondary);
+}
+
+/* Entity cards keep their legacy class (.ticketBox, .projectBox) on the root: drag-and-drop, tours,
+   accessibility and the descendant styles select it. The card owns the box, so drop the legacy padding. */
+.lt-card.ticketBox,
+.lt-card.projectBox,
+.lt-card.profileBox {
+    padding: 0;
+}
+
+/* Tones: one treatment for all — tinted background, border in the tone colour. */
+.lt-card--success { --lt-card-tone: var(--feedback-success-border); background: var(--feedback-success-bg); }
+.lt-card--warning { --lt-card-tone: var(--feedback-warning-border); background: var(--feedback-warning-bg); }
+.lt-card--danger  { --lt-card-tone: var(--feedback-error-border);   background: var(--feedback-error-bg); }
+.lt-card--info    { --lt-card-tone: var(--feedback-info-border);    background: var(--feedback-info-bg); }
+
+.lt-card--success,
+.lt-card--warning,
+.lt-card--danger,
+.lt-card--info {
+    border-color: color-mix(in srgb, var(--lt-card-tone) 35%, transparent);
+}
+
+.lt-card--success .lt-card-hd,
+.lt-card--warning .lt-card-hd,
+.lt-card--danger .lt-card-hd,
+.lt-card--info .lt-card-hd,
+.lt-card--success .lt-card-ft,
+.lt-card--warning .lt-card-ft,
+.lt-card--danger .lt-card-ft,
+.lt-card--info .lt-card-ft {
+    border-color: color-mix(in srgb, var(--lt-card-tone) 25%, transparent);
+}
+
+.lt-card--muted {
+    box-shadow: none;
+    background: color-mix(in srgb, var(--primary-font-color) 4%, transparent);
+    border-color: transparent;
+    color: var(--color-text-secondary);
+}
+
+.lt-card--empty {
+    box-shadow: none;
+    background: color-mix(in srgb, var(--primary-font-color) 2%, transparent);
+    border-style: dashed;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+/* elements.section-header — section title inside a page, card or dialog (16 / bold, icon, 12px eyebrow + description). */
+.lt-section-hd {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 12px;
+}
+
+.lt-section-hd-text {
+    min-width: 0;
+}
+
+.lt-section-hd-eyebrow {
+    margin-bottom: 2px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+body .lt-section-hd .lt-section-hd-title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    color: var(--primary-color);
+    font-size: var(--font-size-l);
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.lt-section-hd-title > i:first-child {
+    flex: none;
+    width: 1.1em;
+    text-align: center;
+}
+
+.lt-section-hd-desc {
+    margin: 2px 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+.lt-section-hd-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+}
+
+/* elements.list-item — list row: lead icon/avatar, title (14 / 600) + meta (12 muted), trailing items. */
+ul.lt-list,
+ol.lt-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.lt-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+.lt-list > .lt-list-item + .lt-list-item {
+    border-top: 1px solid var(--main-border-color);
+}
+
+.lt-list-item-lead {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    color: var(--color-text-muted);
+}
+
+.lt-list-item-icon--accent  { color: var(--accent1); }
+.lt-list-item-icon--success { color: var(--green); }
+.lt-list-item-icon--warning { color: var(--yellow); }
+.lt-list-item-icon--danger  { color: var(--red); }
+.lt-list-item-icon--info    { color: var(--blue); }
+
+.lt-list-item-main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.lt-list-item-title {
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-semibold);
+    line-height: 20px;
+    overflow-wrap: anywhere;
+}
+
+.lt-list-item-meta {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    line-height: 16px;
+}
+
+.lt-list-item-trail {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+
+    min-height: 20px;
+}
+
+/* elements.avatar — round profile picture; .lt-avatar-stack overlaps a row of them.
+   The doubled class beats the legacy `.maincontent .dropdown img` (23px, border, padding). */
+body img.lt-avatar.lt-avatar {
+    display: inline-block;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+    background: var(--secondary-background);
+}
+
+body img.lt-avatar.lt-avatar--xs { width: 20px; height: 20px; }
+body img.lt-avatar.lt-avatar--sm { width: 24px; height: 24px; }
+body img.lt-avatar.lt-avatar--lg { width: 40px; height: 40px; }
+body img.lt-avatar.lt-avatar--xl { width: 64px; height: 64px; }
+
+.lt-avatar-stack {
+    display: inline-flex;
+    align-items: center;
+}
+
+.lt-avatar-stack > .lt-avatar {
+    box-shadow: 0 0 0 2px var(--secondary-background);
+}
+
+body .lt-avatar-stack > .lt-avatar + .lt-avatar {
+    margin-left: -8px;
+}
+
+/* elements.details-list — read-only label / value facts. */
+dl.lt-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+}
+
+.lt-details-row {
+    min-width: 0;
+}
+
+.lt-details dt {
+    margin: 0 0 2px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.lt-details dd {
+    margin: 0;
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+    overflow-wrap: anywhere;
+}
+
+dl.lt-details--inline {
+    gap: 8px;
+}
+
+.lt-details--inline .lt-details-row {
+    display: grid;
+    grid-template-columns: minmax(100px, 30%) 1fr;
+    gap: 12px;
+    align-items: baseline;
+}
+
+.lt-details--inline dt {
+    margin: 0;
+}
+
+/* feedback.alert — tinted message box in a tone (info / success / warning / danger). */
+.lt-alert {
+    --lt-alert-tone: var(--feedback-info-border);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border: 1px solid color-mix(in srgb, var(--lt-alert-tone) 35%, transparent);
+    border-radius: var(--box-radius-small);
+    background: var(--feedback-info-bg);
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+}
+
+.lt-alert--success { --lt-alert-tone: var(--feedback-success-border); background: var(--feedback-success-bg); }
+.lt-alert--warning { --lt-alert-tone: var(--feedback-warning-border); background: var(--feedback-warning-bg); }
+.lt-alert--danger  { --lt-alert-tone: var(--feedback-error-border);   background: var(--feedback-error-bg); }
+
+.lt-alert-icon {
+    flex: none;
+    margin-top: 3px;
+    color: var(--lt-alert-tone);
+}
+
+.lt-alert-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.lt-alert-title {
+    font-weight: var(--font-weight-semibold);
+}
+
+.lt-alert-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.lt-alert-close {
+    flex: none;
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+}
+
+/* elements.empty-state — icon / illustration, title (16 / 600), 12px muted hint, actions. */
+.lt-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 32px 16px;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.lt-empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary-font-color) 6%, transparent);
+    font-size: var(--font-size-xxl);
+}
+
+.lt-empty-image {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 240px;
+    max-height: 160px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.lt-empty-image svg {
+    width: 100%;
+    height: auto;
+    max-height: 160px;
+}
+
+.lt-empty > .lt-empty-title {
+    margin: 0;
+    padding: 0;
+    color: var(--primary-font-color);
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-semibold);
+}
+
+.lt-empty-desc {
+    max-width: 420px;
+    font-size: var(--font-size-s);
+}
+
+.lt-empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.lt-empty--compact {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    padding: 8px 0;
+    text-align: left;
+}
+
+.lt-empty--compact .lt-empty-icon {
+    width: auto;
+    height: auto;
+    margin: 0;
+    background: none;
+    font-size: var(--font-size-s);
+}
+
+.lt-empty--compact > .lt-empty-title {
+    font-size: var(--base-font-size);
+}
+
+.lt-empty--compact .lt-empty-actions {
+    margin: 0 0 0 auto;
+}
+
+/* Accent tone: the highlight card (trial banner, recommended plan). */
+.lt-card--accent {
+    border-color: color-mix(in srgb, var(--accent1) 35%, transparent);
+    background: color-mix(in srgb, var(--accent1) 6%, var(--card-bg, var(--secondary-background)));
+}
+
+/* The picked card in a set of choices. */
+.lt-card--selected {
+    border-color: var(--accent1);
+    box-shadow: 0 0 0 1px var(--accent1), var(--card-shadow, none);
+}
+
+/* elements.accordion — <details> section: chevron + 16 / bold title, optional counter and actions. */
+.lt-accordion {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.lt-accordion-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    padding: 4px 0;
+    color: var(--primary-color);
+    font-size: var(--font-size-l);
+    font-weight: 700;
+    list-style: none;
+    cursor: pointer;
+}
+
+.lt-accordion-summary::-webkit-details-marker {
+    display: none;
+}
+
+.lt-accordion-summary:focus-visible {
+    outline: 2px solid var(--accent1);
+    outline-offset: 2px;
+    border-radius: var(--box-radius-small);
+}
+
+/* Room for the actions, which sit over the summary row but outside <summary>. core/snippets.js
+   sets the real width (--lt-accordion-actions-w) from the rendered actions; 120px until then. */
+.lt-accordion-summary--actions {
+    min-height: var(--lt-accordion-actions-h, 32px);
+    padding-right: calc(var(--lt-accordion-actions-w, 120px) + 12px);
+}
+
+.lt-accordion-chevron {
+    flex: none;
+    width: 1em;
+    font-size: var(--font-size-s);
+    text-align: center;
+    transition: transform .15s ease;
+}
+
+.lt-accordion details[open] > .lt-accordion-summary .lt-accordion-chevron {
+    transform: rotate(90deg);
+}
+
+.lt-accordion-title {
+    min-width: 0;
+}
+
+.lt-accordion-body {
+    padding: 8px 0 4px;
+}
+
+.lt-accordion-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    max-width: 60%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+}
+
+.lt-accordion--on-page .lt-accordion-summary {
+    color: var(--main-titles-color);
+}
+
+.lt-accordion--card {
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--card-radius, var(--box-radius));
+    background: var(--card-bg, var(--secondary-background));
+}
+
+.lt-accordion--card .lt-accordion-summary {
+    padding: 8px 16px;
+}
+
+.lt-accordion--card .lt-accordion-summary--actions {
+    padding-right: calc(var(--lt-accordion-actions-w, 120px) + 28px);
+}
+
+.lt-accordion--card .lt-accordion-actions {
+    right: 16px;
+    min-height: 48px;
+}
+
+.lt-accordion--card .lt-accordion-body {
+    padding: 0 16px 16px;
+}
+
+/* Print every section in full, collapsed or not (persisted state must not drop content from a
+   hard copy). Chromium hides closed <details> content via ::details-content. */
+@media print {
+    .lt-accordion-chevron,
+    .lt-accordion-actions {
+        display: none;
+    }
+
+    .lt-accordion details > .lt-accordion-body {
+        display: block !important;
+    }
+
+    .lt-accordion details::details-content {
+        content-visibility: visible !important;
+        display: block !important;
+    }
+
+    .lt-accordion-summary--actions {
+        padding-right: 0 !important;
+    }
+}

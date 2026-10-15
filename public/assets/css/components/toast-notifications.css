@@ -67,7 +67,7 @@
 .toast-notification__dismiss {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: var(--font-size-xxxl);
     line-height: 1;
     color: var(--primary-font-color);
     cursor: pointer;

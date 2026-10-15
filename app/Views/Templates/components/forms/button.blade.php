@@ -9,6 +9,8 @@
     'leadingVisual' => '',        // icon class, e.g. "fa fa-plus"
     'trailingVisual' => '',       // icon class
     'labelText' => '',            // text label; falls back to the slot
+    'icon' => '',                 // icon-only button: Font Awesome classes; needs ariaLabel
+    'ariaLabel' => '',            // accessible name (and tooltip) of an icon-only button
 ])
 
 {{--
@@ -24,6 +26,10 @@
       btn-secondary -> contentRole="secondary"  btn-transparent -> contentRole="ghost"
       btn-link    -> contentRole="link"         btn-danger/info/success/warning -> state="…"
       btn-small/btn-large -> scale="s"/"l"      extra classes -> pass as class="…"
+      btn-sm / btn-xs (Bootstrap 3, unstyled here) -> scale="s"
+    Icon-only (⋮, ×, row actions): icon="fa fa-pen" ariaLabel="Edit" → a square button, no text.
+      ariaLabel is required (render throws without it); a <button> defaults to type="button"
+      (pass inputType="submit" for an icon submit).
     JS-coupled buttons (.dropdown-toggle) are migrated in the dropdown phase, not here.
 --}}
 @php
@@ -66,7 +72,18 @@
     } else {
         $colorClass = $stateClass !== '' ? $stateClass : $roleClass;
     }
-    $classes = trim('btn '.$colorClass.' '.$scaleClass);
+    $isIconOnly = $icon !== '';
+    // An icon-only control has no visible text, so it must be named; fail loudly at render
+    // instead of shipping an unnamed button.
+    if ($isIconOnly && trim($ariaLabel) === '' && trim((string) $attributes->get('aria-label', '')) === '') {
+        throw new \InvalidArgumentException('forms.button: an icon-only button (icon="'.$icon.'") needs ariaLabel.');
+    }
+    // Icon-only buttons are row actions, close and expand controls: never an accidental form submit.
+    if ($isIconOnly && $tag === 'button' && $inputType === null) {
+        $inputType = 'button';
+    }
+    $classes = trim('btn '.$colorClass.' '.$scaleClass.($isIconOnly ? ' btn-icon' : ''));
+    $iconAttributes = $isIconOnly && $ariaLabel !== '' ? ['aria-label' => $ariaLabel, 'data-tippy-content' => $ariaLabel] : [];
 
     // Inner content: leading icon + (labelText or slot) + trailing icon, matching the
     // hand-written "<i class="fa …"></i> Label" markup buttons use today.
@@ -81,13 +98,17 @@
     />
 @elseif ($tag === 'a')
     {{-- emit href only when a link is given, so <a onclick> without href stays href-less --}}
-    <a {{ $attributes->merge(['class' => $classes] + ($link !== null ? ['href' => $link] : [])) }}>
+    <a {{ $attributes->merge(['class' => $classes] + ($link !== null ? ['href' => $link] : []) + $iconAttributes) }}>
+        @if ($isIconOnly)<i class="{{ $icon }}" aria-hidden="true"></i>@else
         @if ($leadingVisual)<i class="{{ $leadingVisual }}"></i> @endif{{ $hasLabel ? $labelText : $slot }}@if ($trailingVisual) <i class="{{ $trailingVisual }}"></i>@endif
+        @endif
     </a>
 @else
     {{-- Bare <button> emits NO type so the native default (submit inside a form) is preserved;
          pass inputType only when the source had an explicit type. --}}
-    <button @if ($inputType !== null) type="{{ $inputType }}" @endif {{ $attributes->merge(['class' => $classes]) }}>
+    <button @if ($inputType !== null) type="{{ $inputType }}" @endif {{ $attributes->merge(['class' => $classes] + $iconAttributes) }}>
+        @if ($isIconOnly)<i class="{{ $icon }}" aria-hidden="true"></i>@else
         @if ($leadingVisual)<i class="{{ $leadingVisual }}"></i> @endif{{ $hasLabel ? $labelText : $slot }}@if ($trailingVisual) <i class="{{ $trailingVisual }}"></i>@endif
+        @endif
     </button>
 @endif

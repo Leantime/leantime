@@ -120,7 +120,7 @@
 }
 .ra-scope.ra-dark .ra-tab.on .ct {
     color:#004766;
-    background:rgba(0,71,102,.12);
+    background:color-mix(in srgb, var(--accent1) 12%, transparent);
 }
 .ra-scope.ra-dark .ra-focuslist .ra-jrow:hover,.ra-scope.ra-dark .ra-focuslist .ra-prow:hover {
     background:#2f3234;
@@ -176,8 +176,8 @@
     left:auto;
     background:var(--rd-text-1);
     color:#fff;
-    font-size:12px;
-    font-weight:400;
+    font-size: var(--font-size-s);
+    font-weight: 400;
     line-height:1.4;
     padding:8px 12px;
     border-radius:8px;
@@ -230,14 +230,14 @@
     background:#eef7f2;
     border:1px solid #cfe5db;
     border-radius:var(--rd-r-sm);
-    font-size:13px;
+    font-size: var(--base-font-size);
     color:#1a4e3d;
     line-height:1.5;
 }
 .ra-seed-banner i {
     color:var(--rd-ok);
     margin-top:2px;
-    font-size:14px;
+    font-size: var(--base-font-size);
     flex:none;
 }
 .ra-seed-banner b {
@@ -251,8 +251,8 @@
     height:36px;
     font-family:inherit;
     color:var(--rd-accent);
-    background:rgba(0,71,102,.06);
-    border:1px solid rgba(0,71,102,.18);
+    background:color-mix(in srgb, var(--accent1) 6%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent1) 18%, transparent);
     border-radius:50%;
     cursor:pointer;
     transition:all .12s ease;
@@ -260,7 +260,7 @@
     flex:none;
 }
 .ra-autofill:hover {
-    background:rgba(0,71,102,.12);
+    background:color-mix(in srgb, var(--accent1) 12%, transparent);
     border-color:var(--rd-accent);
     box-shadow:0 2px 4px rgba(20,40,50,.08);
 }
@@ -269,7 +269,7 @@
     outline-offset:2px;
 }
 .ra-autofill i {
-    font-size:13px;
+    font-size: var(--base-font-size);
     color:var(--rd-accent);
 }
 .ra-autofill[disabled] {
@@ -286,8 +286,8 @@
     border-radius:100px;
     background:var(--rd-accent);
     color:#fff;
-    font-size:10.5px;
-    font-weight:700;
+    font-size: var(--font-size-s);
+    font-weight: 700;
     line-height:17px;
     text-align:center;
     box-shadow:0 0 0 2px #fff;
@@ -314,8 +314,8 @@
     display:inline-flex;
     align-items:center;
     gap:6px;
-    font-size:12px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-ok);
     background:rgba(62,147,122,.08);
     border:1px solid rgba(62,147,122,.22);
@@ -327,7 +327,7 @@
     transition:background .12s ease,border-color .12s ease;
 }
 .ra-sync-ok i {
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 .ra-sync-ok:hover,.ra-sync-ok:focus-visible {
     background:rgba(62,147,122,.14);
@@ -341,8 +341,8 @@
     left:auto;
     background:var(--rd-text-1);
     color:#fff;
-    font-size:12px;
-    font-weight:400;
+    font-size: var(--font-size-s);
+    font-weight: 400;
     line-height:1.4;
     padding:8px 12px;
     border-radius:8px;
@@ -375,8 +375,8 @@
 .ra-seg {
     display:inline-flex;
     gap:2px;
-    background:rgba(0,71,102,.06);
-    border:1px solid rgba(0,71,102,.18);
+    background:color-mix(in srgb, var(--accent1) 6%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent1) 18%, transparent);
     border-radius:100px;
     padding:3px;
     box-shadow:0 1px 2px rgba(20,40,50,.05);
@@ -384,12 +384,12 @@
 .ra-seg a {
     padding:6px 14px;
     border-radius:100px;
-    font-size:12.5px;
-    font-weight:500;
+    font-size: var(--font-size-s);
+    font-weight: 500;
     color:var(--rd-text-2);
     text-decoration:none;
     transition:all .12s ease;
-    letter-spacing:.1px;
+    letter-spacing: .1px;
     line-height:1.3;
 }
 .ra-seg a:hover:not(.on) {
@@ -399,7 +399,7 @@
 .ra-seg a.on {
     background:#fff;
     color:var(--rd-accent);
-    font-weight:600;
+    font-weight: 600;
     box-shadow:0 1px 3px rgba(20,40,50,.1);
 }
 .ra-seg a:focus-visible {
@@ -422,7 +422,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:12px;
+    font-size: var(--font-size-s);
     transition:all .12s ease;
 }
 .ra-arrow:hover {
@@ -468,16 +468,16 @@
     display:flex;
     align-items:center;
     gap:6px;
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.7px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     color:var(--rd-accent);
     margin:0;
     line-height:1.2;
 }
 .ra-secHd h2.sn {
-    font-size:11px;
+    font-size: var(--font-size-s);
     margin:0;
 }
 .ra-info-tip {
@@ -501,9 +501,9 @@
     left:0;
     background:var(--rd-text-1);
     color:#fff;
-    font-size:12px;
-    font-weight:400;
-    letter-spacing:0;
+    font-size: var(--font-size-s);
+    font-weight: 400;
+    letter-spacing: 0;
     text-transform:none;
     line-height:1.4;
     padding:8px 12px;
@@ -540,10 +540,10 @@
 }
 .ra-legend .ra-legend-title {
     display:block;
-    font-size:10.5px;
-    font-weight:700;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     text-transform:uppercase;
-    letter-spacing:.5px;
+    letter-spacing: .04em;
     color:rgba(255,255,255,.55);
     margin-bottom:8px;
 }
@@ -552,7 +552,7 @@
     align-items:center;
     gap:9px;
     padding:3px 0;
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:#fff;
     line-height:1.3;
 }
@@ -570,7 +570,7 @@
 }
 .ra-secHd .sc {
     display:block;
-    font-size:13.5px;
+    font-size: var(--base-font-size);
     color:var(--rd-text-3);
     line-height:1.4;
 }
@@ -579,8 +579,8 @@
     align-items:center;
     gap:6px;
     font-family:inherit;
-    font-size:12px;
-    font-weight:500;
+    font-size: var(--font-size-s);
+    font-weight: 500;
     color:var(--rd-accent) !important;
     background:var(--rd-panel) !important;
     border:1px solid var(--rd-line);
@@ -601,7 +601,7 @@
     outline-offset:2px;
 }
 .ra-addbtn i {
-    font-size:10px;
+    font-size: var(--font-size-s);
 }
 .ra-scope .ra-inline-input {
     background:transparent !important;
@@ -609,7 +609,7 @@
     padding:2px 6px !important;
     margin:-2px -6px;
     font:inherit;
-    font-size:inherit;
+    font-size: inherit;
     color:inherit;
     border-radius:5px !important;
     height:auto !important;
@@ -633,11 +633,11 @@
     font-variant-numeric:tabular-nums;
 }
 .ra-inline-input.name {
-    font-size:13.5px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
 }
 .ra-inline-input.role {
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
     width:auto;
     max-width:8em;
@@ -645,19 +645,19 @@
 .ra-inline-input.cap {
     width:3.2em;
     text-align:right;
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
     display:inline-block;
     padding-right:4px;
 }
 .ra-inline-input.blabel {
-    font-size:13.5px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
 }
 .ra-inline-input.money {
     width:5em;
-    font-size:11.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
 }
 .ra-inline-input.assign-select {
     -webkit-appearance:none;
@@ -665,7 +665,7 @@
     padding-right:22px !important;
     background:transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path fill="%237a8791" d="M0 0l5 6 5-6z"/></svg>') no-repeat right 7px center !important;
     cursor:pointer;
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-2);
     width:auto;
     max-width:160px;
@@ -699,7 +699,7 @@
     top:50%;
     right:8px;
     transform:translateY(-50%);
-    font-size:10.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-4);
     opacity:0;
     transition:opacity .12s,color .12s;
@@ -728,24 +728,24 @@
     padding:6px 6px 2px;
 }
 .ra-alloc-refresh-note {
-    font-size:10.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-4);
     font-style:italic;
 }
 .ra-alloc-done {
     font-family:inherit;
-    font-size:11.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-accent);
     background:transparent !important;
-    border:1px solid rgba(0,71,102,.25);
+    border:1px solid color-mix(in srgb, var(--accent1) 25%, transparent);
     border-radius:100px;
     padding:3px 12px;
     cursor:pointer;
     transition:background .12s,border-color .12s;
 }
 .ra-alloc-done:hover {
-    background:rgba(0,71,102,.08) !important;
+    background:color-mix(in srgb, var(--accent1) 8%, transparent) !important;
     border-color:var(--rd-accent);
 }
 .ra-alloc-done:focus-visible {
@@ -757,7 +757,7 @@
     grid-template-columns:12px minmax(0,1fr) auto minmax(80px,1fr) 42px;
     gap:10px;
     align-items:center;
-    font-size:12px;
+    font-size: var(--font-size-s);
     padding:3px 6px;
     border-radius:6px;
     transition:background .12s;
@@ -784,7 +784,7 @@
     font-variant-numeric:tabular-nums;
 }
 .ra-alloc-row .in .hh {
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
 }
 .ra-alloc-row .pb {
@@ -800,7 +800,7 @@
     transition:width .18s;
 }
 .ra-alloc-row .pct {
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
     text-align:right;
     font-variant-numeric:tabular-nums;
@@ -816,8 +816,8 @@
     margin-left:6px;
     padding:1px 6px;
     border-radius:100px;
-    font-size:10.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     line-height:1.5;
     white-space:nowrap;
     color:#8a5a00;
@@ -827,13 +827,13 @@
     vertical-align:middle;
 }
 .ra-noaccess i {
-    font-size:9.5px;
+    font-size: var(--font-size-s);
 }
 .ra-inline-input.alloc {
     width:3em;
     text-align:right;
-    font-size:12px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-text-1);
     background:var(--rd-panel) !important;
     border:1px solid var(--rd-line) !important;
@@ -847,7 +847,7 @@
 .ra-inline-input.alloc:focus {
     border-color:var(--rd-accent) !important;
     outline:none;
-    box-shadow:0 0 0 2px rgba(0,71,102,.12) !important;
+    box-shadow:0 0 0 2px color-mix(in srgb, var(--accent1) 12%, transparent) !important;
 }
 .ra-inline-input.alloc:placeholder-shown {
     color:var(--rd-text-4);
@@ -856,7 +856,7 @@
 }
 .ra-inline-input::placeholder {
     color:var(--rd-text-4);
-    font-weight:400;
+    font-weight: 400;
 }
 .ra-inline-input[type="number"]::-webkit-inner-spin-button, .ra-inline-input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance:none;
@@ -894,7 +894,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:13px;
+    font-size: var(--base-font-size);
     opacity:0;
     transition:opacity .12s,color .12s,background .12s;
 }
@@ -933,7 +933,7 @@
     box-sizing:border-box;
     padding:8px 12px;
     font-family:inherit;
-    font-size:13px;
+    font-size: var(--base-font-size);
     color:var(--rd-text-1);
     border-radius:6px;
     cursor:pointer;
@@ -953,7 +953,7 @@
     background:var(--rd-danger-bg);
 }
 .ra-row-menu-items i {
-    font-size:12px;
+    font-size: var(--font-size-s);
     width:14px;
     text-align:center;
 }
@@ -968,22 +968,22 @@
     display:inline-flex;
     align-items:center;
     gap:4px;
-    font-size:10.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-accent);
     text-decoration:none;
     padding:2px 8px;
     border-radius:100px;
-    background:rgba(0,71,102,.06);
-    border:1px solid rgba(0,71,102,.14);
+    background:color-mix(in srgb, var(--accent1) 6%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent1) 14%, transparent);
     transition:background .12s ease,border-color .12s ease;
     line-height:1.4;
 }
 .ra-scell-action i {
-    font-size:9.5px;
+    font-size: var(--font-size-s);
 }
 .ra-scell-action:hover,.ra-scell-action:focus-visible {
-    background:rgba(0,71,102,.12);
+    background:color-mix(in srgb, var(--accent1) 12%, transparent);
     border-color:var(--rd-accent);
     outline:none;
 }
@@ -994,8 +994,8 @@
     left:auto;
     background:var(--rd-text-1);
     color:#fff;
-    font-size:12px;
-    font-weight:400;
+    font-size: var(--font-size-s);
+    font-weight: 400;
     line-height:1.4;
     padding:8px 12px;
     border-radius:8px;
@@ -1066,13 +1066,13 @@
     flex:none;
 }
 .ra-jrow .jt {
-    font-size:15px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     color:var(--rd-text-1);
     line-height:1.2;
 }
 .ra-jrow .jp {
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
     margin-top:2px;
 }
@@ -1080,13 +1080,13 @@
     text-align:right;
 }
 .ra-jrow .jh {
-    font-size:15px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
 }
 .ra-jrow .jh small {
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-3);
-    font-weight:400;
+    font-weight: 400;
 }
 .ra-jrow .jbar {
     height:6px;
@@ -1102,7 +1102,7 @@
     border-radius:3px;
 }
 .ra-jrow .jpct {
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-3);
     margin-top:3px;
 }
@@ -1139,19 +1139,19 @@
     width:100%;
     height:100%;
     color:#3a6b5c;
-    font-size:11px;
-    font-weight:600;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
     display:flex;
     align-items:center;
     justify-content:center;
 }
 .ra-prow .pn {
-    font-size:13.5px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     line-height:1.2;
 }
 .ra-prow .prole {
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-3);
 }
 .ra-prow .prole .ra-emp-badge {
@@ -1179,8 +1179,8 @@
     left:8px;
     top:50%;
     transform:translateY(-50%);
-    font-size:11px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:#fff;
     white-space:nowrap;
 }
@@ -1193,16 +1193,16 @@
     text-align:right;
 }
 .ra-putil .pv {
-    font-size:15px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
 }
 .ra-putil .pv small {
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-3);
-    font-weight:400;
+    font-weight: 400;
 }
 .ra-putil .pa {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-3);
 }
 .ra-putil.cap .pv,.ra-putil.cap .pa {
@@ -1216,9 +1216,9 @@
     margin-left:6px;
     padding:1px 7px;
     border-radius:100px;
-    font-size:9.5px;
-    font-weight:700;
-    letter-spacing:.4px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     vertical-align:1px;
     line-height:1.4;
@@ -1241,8 +1241,8 @@
 }
 .ra-cap-from-user {
     display:inline-block;
-    font-size:11px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-text-2);
     background:var(--rd-line-soft);
     border-radius:3px;
@@ -1270,8 +1270,8 @@
     padding:13px 2px 0;
 }
 .ra-ptot .tl {
-    font-size:12px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--ra-text-2);
 }
 .ra-ptot .tsegs {
@@ -1283,7 +1283,7 @@
     display:flex;
     align-items:center;
     gap:6px;
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-2);
 }
 .ra-ptot .tseg .sw {
@@ -1293,7 +1293,7 @@
 }
 .ra-ptot .tseg b {
     color:var(--ra-text-1);
-    font-weight:600;
+    font-weight: 600;
 }
 .ra-bstrip {
     height:12px;
@@ -1316,8 +1316,8 @@
     border-bottom:1px solid var(--ra-line-soft);
 }
 .ra-brow .bl {
-    font-size:13.5px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     display:flex;
     align-items:center;
     gap:8px;
@@ -1329,7 +1329,7 @@
     flex:none;
 }
 .ra-brow .assign {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-2);
 }
 .ra-bbar-wrap {
@@ -1349,7 +1349,7 @@
     border-radius:3px;
 }
 .ra-bnums {
-    font-size:13px;
+    font-size: var(--base-font-size);
     color:var(--rd-text-2);
     display:flex;
     justify-content:flex-start;
@@ -1365,12 +1365,12 @@
 }
 .ra-bnums b {
     color:var(--ra-text-1);
-    font-weight:600;
+    font-weight: 600;
 }
 .ra-bnums .ra-inline-input.money {
     width:4.5em;
     text-align:left;
-    font-weight:600;
+    font-weight: 600;
     color:var(--rd-text-1);
     margin:0 !important;
 }
@@ -1384,8 +1384,8 @@
 }
 .ra-bpct {
     text-align:right;
-    font-size:14px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     font-variant-numeric:tabular-nums;
 }
 .ra-bpct.risk {
@@ -1393,8 +1393,8 @@
 }
 .ra-bpct .flag {
     display:block;
-    font-size:9.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--ra-danger);
 }
 .ra-brow.stub {
@@ -1406,23 +1406,23 @@
     grid-template-columns:1fr auto;
 }
 .ra-stub-msg {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--ra-warn-tx);
     display:flex;
     align-items:center;
     gap:8px;
 }
 .ra-stub-msg i {
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:#b8860b;
 }
 .ra-stub-msg b {
     color:var(--ra-text-1);
-    font-weight:600;
+    font-weight: 600;
 }
 .ra-stub-do {
-    font-size:12px;
-    font-weight:500;
+    font-size: var(--font-size-s);
+    font-weight: 500;
     color:var(--ra-accent);
     background:#fff;
     border:1px solid var(--ra-line);
@@ -1438,9 +1438,9 @@
     margin-bottom:6px;
 }
 .ra-legend .slabel {
-    font-size:11px;
-    font-weight:600;
-    letter-spacing:1px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     color:var(--ra-accent);
 }
@@ -1448,7 +1448,7 @@
     display:flex;
     align-items:center;
     gap:7px;
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-2);
 }
 .ra-lgi .sw {
@@ -1466,11 +1466,11 @@
     border-bottom:1px solid var(--ra-line-soft);
 }
 .ra-drow .dp {
-    font-size:13.5px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
 }
 .ra-drow .dt {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-2);
     text-transform:capitalize;
 }
@@ -1478,8 +1478,8 @@
     display:inline-flex;
     align-items:center;
     gap:6px;
-    font-size:12px;
-    font-weight:500;
+    font-size: var(--font-size-s);
+    font-weight: 500;
     padding:4px 11px;
     border-radius:20px;
     width:fit-content;
@@ -1500,7 +1500,7 @@
     filter:brightness(.95);
 }
 .ra-dconf i {
-    font-size:11px;
+    font-size: var(--font-size-s);
 }
 .ra-scope.ra-dark .ra-dconf.yes {
     background:rgba(87,181,152,.16);
@@ -1522,13 +1522,13 @@
     opacity:.6;
 }
 .ra-empty .ra-empty-title {
-    font-size:16px;
-    font-weight:600;
+    font-size: var(--font-size-l);
+    font-weight: 600;
     color:var(--rd-text-1);
     margin:0 0 6px;
 }
 .ra-empty .ra-empty-desc {
-    font-size:13px;
+    font-size: var(--base-font-size);
     color:var(--rd-text-3);
     max-width:380px;
     margin:0 auto 18px;
@@ -1539,8 +1539,8 @@
     align-items:center;
     gap:8px;
     font-family:inherit;
-    font-size:12.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:#fff;
     background:var(--rd-accent);
     border:none;
@@ -1573,17 +1573,17 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:19px;
+    font-size: var(--font-size-xl);
     margin:0 auto 12px;
 }
 .ra-invite .tt {
-    font-size:15px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     margin-bottom:5px;
     color:var(--ra-text-1);
 }
 .ra-invite .dd {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-3);
     max-width:440px;
     margin:0 auto 16px;
@@ -1600,8 +1600,8 @@
     align-items:center;
     gap:8px;
     font:inherit;
-    font-size:13px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     color:#fff;
     background:var(--ra-accent);
     border:none;
@@ -1610,7 +1610,7 @@
     cursor:pointer;
 }
 .ra-btn-fill i {
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:#8fd6c4;
 }
 .ra-btn-fill[disabled] {
@@ -1622,8 +1622,8 @@
     align-items:center;
     gap:7px;
     font:inherit;
-    font-size:13px;
-    font-weight:500;
+    font-size: var(--base-font-size);
+    font-weight: 500;
     color:var(--ra-accent);
     background:#fff;
     border:1px solid var(--ra-line);
@@ -1633,7 +1633,7 @@
     text-decoration:none;
 }
 .ra-btn-add i {
-    font-size:11px;
+    font-size: var(--font-size-s);
 }
 .ra-prow.stub {
     border:1px dashed #e6d9b3;
@@ -1651,8 +1651,8 @@
     display:inline-flex;
     align-items:center;
     gap:3px;
-    font-size:10px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--ra-warn-tx);
     background:var(--ra-warn-bg);
     border-radius:10px;
@@ -1671,17 +1671,17 @@
     background:repeating-linear-gradient(135deg,#f4efe2,#f4efe2 6px,#efe7d2 6px,#efe7d2 12px);
 }
 .ra-prow.stub .stub-hours {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--ra-warn-tx);
     display:flex;
     align-items:center;
     justify-content:center;
     height:100%;
-    font-weight:500;
+    font-weight: 500;
 }
 .ra-btn-link-user {
-    font-size:12px;
-    font-weight:500;
+    font-size: var(--font-size-s);
+    font-weight: 500;
     color:var(--ra-accent);
     background:#fff;
     border:1px solid var(--ra-line);
@@ -1700,12 +1700,12 @@
     display:flex;
     align-items:center;
     padding-left:9px;
-    font-size:10px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-4);
     font-style:italic;
 }
 .ra-putil .dl-none {
-    font-size:11px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-4);
     font-style:italic;
 }
@@ -1718,15 +1718,15 @@
     background:#f6f8f7;
     border-radius:var(--ra-r-sm);
     margin-bottom:14px;
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-2);
 }
 .ra-guide .gl {
-    font-weight:600;
+    font-weight: 600;
     color:var(--ra-text-3);
-    letter-spacing:.4px;
+    letter-spacing: .04em;
     text-transform:uppercase;
-    font-size:10.5px;
+    font-size: var(--font-size-s);
 }
 .ra-gk {
     display:flex;
@@ -1748,7 +1748,7 @@
     border:1px dashed rgba(62,147,122,.6);
 }
 .ra-gk .ratio {
-    font-weight:600;
+    font-weight: 600;
     color:var(--ra-text-1);
     background:#e7f1ee;
     border-radius:20px;
@@ -1756,11 +1756,11 @@
 }
 .ra-jhead {
     padding:0 6px 6px;
-    font-size:10.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--ra-text-4);
     text-transform:uppercase;
-    letter-spacing:.5px;
+    letter-spacing: .04em;
     display:grid;
     grid-template-columns:minmax(0,1fr) 70px 70px 60px 150px;
     gap:14px;
@@ -1784,18 +1784,18 @@
     text-align:right;
 }
 .ra-jrow.v2 .num .nv {
-    font-size:15px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
 }
 .ra-jrow.v2 .num .nv small {
-    font-size:10px;
+    font-size: var(--font-size-s);
     color:var(--ra-text-3);
-    font-weight:400;
+    font-weight: 400;
 }
 .ra-jrow.v2 .delta {
     text-align:right;
-    font-size:13px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     color:var(--rd-text-3);
 }
 .ra-jrow.v2 .delta.ok {
@@ -1879,8 +1879,8 @@
     left:7px;
     top:50%;
     transform:translateY(-50%);
-    font-size:10px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:#fff;
 }
 .ra-planbar .elsewhere {
@@ -1906,7 +1906,7 @@
 }
 .ra-overcap-hint {
     color:var(--rd-danger);
-    font-weight:600;
+    font-weight: 600;
 }
 .ra-planbar .act-marker {
     position:absolute;
@@ -1920,8 +1920,8 @@
     z-index:2;
 }
 .ra-putil .dl {
-    font-size:11.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-text-3);
 }
 .ra-putil .dl.ok {
@@ -1935,16 +1935,16 @@
 }
 .ra-ptot .tseg .un {
     color:var(--ra-warn-tx);
-    font-weight:600;
+    font-weight: 600;
 }
 .ra-ptot .tseg .ov {
     color:var(--ra-danger);
-    font-weight:600;
+    font-weight: 600;
 }
 .ra-ptot .tseg .delta {
     margin-left:4px;
-    font-size:10.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-text-3);
 }
 .ra-ptot .tseg .delta.under {
@@ -1954,55 +1954,55 @@
     color:var(--ra-danger);
 }
 .ra-jrow.v2 .num .nv small {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     margin-left:2px;
 }
 .ra-jrow .jpct,.ra-jrow.v2 .jpct {
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 .ra-jhead {
-    font-size:11px;
+    font-size: var(--font-size-s);
 }
 .ra-prow .prole {
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 .ra-putil .dl {
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 .ra-putil .dl-none {
-    font-size:12px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
 }
 .ra-putil .pv small {
-    font-size:12px;
+    font-size: var(--font-size-s);
     margin-left:1px;
 }
 .ra-putil .pa {
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 
 .ra-alloc-row .in .hh {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
 }
 .ra-alloc-row .pct {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
 }
 .ra-alloc-refresh-note {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
     font-style:normal;
 }
 .ra-emp-badge {
-    font-size:10.5px;
+    font-size: var(--font-size-s);
 }
 .ra-prow.stub .pn .seeded-tag {
-    font-size:10.5px;
+    font-size: var(--font-size-s);
 }
 .ra-legend .ra-legend-title {
-    font-size:11px;
+    font-size: var(--font-size-s);
 }
 .ra-cap-from-user {
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 @media (max-width: 700px) {
     .ra-prow.v2 {
@@ -2079,7 +2079,7 @@
       linkUser) becomes .ra-mbtn.primary; outline bases keep bare .ra-mbtn. ── */
 .ra-mbtn {
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--font-size-s);
     font-weight: 600;
     padding: 6px 14px;
     border-radius: 100px;
@@ -2118,22 +2118,22 @@
     margin-bottom:14px;
 }
 .ra-modal-hd .l {
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.7px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     color:var(--rd-accent);
     display:block;
     margin-bottom:3px;
 }
 .ra-modal-hd .t {
-    font-size:18px;
-    font-weight:600;
+    font-size: var(--font-size-xl);
+    font-weight: 600;
     color:var(--rd-text-1);
     line-height:1.2;
 }
 .ra-modal-hd .s {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
     margin-top:4px;
 }
@@ -2149,7 +2149,7 @@
 }
 .ra-ap-search i {
     color:var(--rd-text-4);
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 .ra-ap-search input {
     border:none;
@@ -2169,14 +2169,14 @@
     margin:0 2px 6px;
 }
 .ra-ap-grouphd .gt {
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.6px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     color:var(--rd-text-3);
 }
 .ra-ap-grouphd .gs {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-4);
 }
 .ra-ap-list {
@@ -2201,23 +2201,23 @@
     display:none;
 }
 .ra-ap-name {
-    font-size:13.5px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     color:var(--rd-text-1);
 }
 .ra-ap-meta {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
 }
 .ra-ap-empty {
     padding:20px 14px;
     color:var(--rd-text-3);
-    font-size:13px;
+    font-size: var(--base-font-size);
     text-align:center;
 }
 .ra-ap-added {
-    font-size:11.5px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-text-4);
     white-space:nowrap;
 }
@@ -2227,7 +2227,7 @@
     padding-top:12px;
 }
 .ra-ap-ph .phhd {
-    font-size:12.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-2);
     margin-bottom:8px;
 }
@@ -2238,7 +2238,7 @@
 .ra-ap-phform input {
     flex:1;
     font:inherit;
-    font-size:13px;
+    font-size: var(--base-font-size);
     padding:7px 12px;
     border:1px solid var(--rd-line);
     border-radius:100px;
@@ -2262,7 +2262,7 @@
 }
 .ra-lu-search i {
     color:var(--rd-text-4);
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 .ra-lu-search input {
     border:none;
@@ -2294,18 +2294,18 @@
     display:none;
 }
 .ra-lu-name {
-    font-size:13.5px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     color:var(--rd-text-1);
 }
 .ra-lu-email {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
 }
 .ra-lu-empty {
     padding:22px 14px;
     color:var(--rd-text-3);
-    font-size:13px;
+    font-size: var(--base-font-size);
     text-align:center;
 }
 /* ── newDependencyModal ── */
@@ -2316,10 +2316,10 @@
     margin-bottom:12px;
 }
 .ra-field label {
-    font-size:11px;
-    font-weight:600;
+    font-size: var(--font-size-s);
+    font-weight: 600;
     color:var(--rd-text-2);
-    letter-spacing:.3px;
+    letter-spacing: .3px;
 }
 .ra-field input[type="text"], .ra-field input[type="number"] {
     background:var(--rd-panel);
@@ -2338,7 +2338,7 @@
     display:flex;
     align-items:center;
     gap:8px;
-    font-size:13px;
+    font-size: var(--base-font-size);
     color:var(--rd-text-2);
     margin-bottom:16px;
     cursor:pointer;
@@ -2368,7 +2368,7 @@
 }
 .ra-mp-search i {
     color:var(--rd-text-4);
-    font-size:12px;
+    font-size: var(--font-size-s);
 }
 .ra-mp-search input {
     border:none !important;
@@ -2405,18 +2405,18 @@
     display:none;
 }
 .ra-mp-name {
-    font-size:13.5px;
-    font-weight:600;
+    font-size: var(--base-font-size);
+    font-weight: 600;
     color:var(--rd-text-1);
 }
 .ra-mp-client {
-    font-size:11.5px;
+    font-size: var(--font-size-s);
     color:var(--rd-text-3);
 }
 .ra-mp-empty {
     padding:22px 14px;
     color:var(--rd-text-3);
-    font-size:13px;
+    font-size: var(--base-font-size);
     text-align:center;
 }
 .ra-mp-create {
@@ -2425,9 +2425,9 @@
     margin-top:8px;
 }
 .ra-mp-create-label {
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.5px;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    letter-spacing: .04em;
     text-transform:uppercase;
     color:var(--rd-text-3);
     margin-bottom:6px;

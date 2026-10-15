@@ -11,7 +11,7 @@
 @endphp
 
 @if (!empty($slippage['pushedOut']) || !empty($slippage['addedMidPeriod']))
-    <div class="reportSlippage">
+    <x-global::elements.card tone="muted" compact class="reportSlippage">
         <strong class="tw-block tw-mb-1"><i class="fa fa-fw fa-arrows-left-right tw-opacity-60"></i> {{ __('subtitles.changed_this_period') }}</strong>
 
         @foreach ($slippage['pushedOut'] as $milestone)
@@ -29,5 +29,5 @@
                 {{ __('text.slippage_added_mid_period') }}
             </div>
         @endforeach
-    </div>
+    </x-global::elements.card>
 @endif

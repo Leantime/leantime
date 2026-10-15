@@ -22,11 +22,11 @@
 @endphp
 
 @if (count($milestones) === 0)
-    <div class="tw-opacity-60 tw-text-sm tw-py-2">{{ $emptyText }}</div>
+    <x-global::elements.empty-state compact :description="$emptyText" />
 @else
     <ul class="reportMilestoneList">
         @foreach ($milestones as $milestone)
-            <li class="reportMilestone" style="border-left: 3px solid {{ $milestone->tags }};">
+            <x-global::elements.card as="li" compact class="reportMilestone" style="border-left: 3px solid {{ $milestone->tags }};">
 
                 <div class="milestoneTitleRow">
                     @if ($mode === 'completed')
@@ -95,7 +95,7 @@
                     </div>
                 @endif
 
-            </li>
+            </x-global::elements.card>
         @endforeach
     </ul>
 @endif
