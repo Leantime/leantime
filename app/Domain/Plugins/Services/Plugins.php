@@ -1622,7 +1622,7 @@ class Plugins
         $this->notifyAdmins(
             $plugin->id,
             'plugin_failing',
-            sprintf(__('notification.plugin_disabled_after_errors'), $plugin->name, Str::limit($lastError, 200))
+            sprintf(self::translatedOr('notification.plugin_disabled_after_errors', "The plugin '%s' was disabled because it kept causing errors: %s"), $plugin->name, Str::limit($lastError, 200))
         );
 
         return true;
@@ -1711,6 +1711,13 @@ class Plugins
             return;
         }
 
+        // The console loads plugins before its language: there the text would be the bare key. The
+        // marker stays unsaved, so the next request that has the language sends it properly.
+        $message = __('notification.plugin_incompatible_paused');
+        if ($message === 'notification.plugin_incompatible_paused') {
+            return;
+        }
+
         // Several workers rebuild the list at once after an update: only the lock holder sends,
         // and it re-reads the marker inside the lock. The others skip (the holder covers them).
         $lock = Cache::lock('plugins.incompatibleNotify.'.$plugin->foldername, 30);
@@ -1726,13 +1733,24 @@ class Plugins
             $this->notifyAdmins(
                 $plugin->id,
                 'plugin_incompatible',
-                sprintf(__('notification.plugin_incompatible_paused'), $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
+                sprintf($message, $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
             );
             // Only after the notification went out, so a failed send is retried on the next rebuild.
             $this->settingsService->saveSetting($settingKey, $marker);
         } finally {
             $lock->release();
         }
+    }
+
+    /**
+     * The translation of $key, or $english when the language isn't loaded yet (an error early in a
+     * request or console boot): an admin notification must never read as a bare language key.
+     */
+    private static function translatedOr(string $key, string $english): string
+    {
+        $text = __($key);
+
+        return $text === $key ? $english : $text;
     }
 
     /**
