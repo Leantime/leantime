@@ -189,8 +189,8 @@ class EnabledPluginsCacheTest extends TestCase
     }
 
     /**
-     * Without a loaded language (the console loads plugins first) the notice would read as a bare
-     * key: it is not sent and its marker is not saved, so a later request sends it properly.
+     * Without a loaded language (the console loads plugins first) the notice is still sent right away,
+     * in English: the filtered list is cached, so a deferred notice would never be retried.
      */
     public function test_the_incompatibility_notice_reads_as_text_without_the_language(): void
     {

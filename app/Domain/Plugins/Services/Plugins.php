@@ -1743,10 +1743,10 @@ class Plugins
      */
     private static function translatedOr(string $key, string $english): string
     {
-        $text = __($key);
-
         // Without a loaded language the lookup gives the bare key (or nothing at all).
-        return is_string($text) && $text !== '' && $text !== $key ? $text : $english;
+        $text = (string) __($key);
+
+        return $text !== '' && $text !== $key ? $text : $english;
     }
 
     /**
