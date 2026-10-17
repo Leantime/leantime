@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="maincontentinner">
-                <h5 class="subtitle">{{ __('headlines.jump_right_back_in') }}</h5>
+                <x-global::elements.section-header as="h5">{{ __('headlines.jump_right_back_in') }}</x-global::elements.section-header>
                 <div class="row">
                 @foreach ($recentProgressCanvas as $canvasType => $board)
                     <div class="col-md-3">

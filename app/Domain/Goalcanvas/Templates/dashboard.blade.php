@@ -95,9 +95,12 @@ foreach ($allCanvas as $canvasRow) {
         @foreach ($allCanvas as $canvasRow)
             <div class="row">
                 <div class="col-md-12">
-                    <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary pull-right'><i class="fa fa-plus"></i> {{ __('links.create_new_goal') }}</a>
-
-                    <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></h5>
+                    <x-global::elements.section-header as="h5">
+                        <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a>
+                        <x-slot:actions>
+                            <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary'><i class="fa fa-plus"></i> {{ __('links.create_new_goal') }}</a>
+                        </x-slot:actions>
+                    </x-global::elements.section-header>
                 </div>
             </div>
             <div class="row" style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">

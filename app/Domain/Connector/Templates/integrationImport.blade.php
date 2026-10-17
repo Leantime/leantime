@@ -27,7 +27,7 @@
     <div class="maincontentinner center">
         {!! $tpl->displayNotification() !!}
 
-        <h5 class="subtitle">{{ __('headlines.integration_review') }}</h5>
+        <x-global::elements.section-header as="h5">{{ __('headlines.integration_review') }}</x-global::elements.section-header>
 
         @if (!empty($flags))
             <p style="font-style: oblique">{{ __('text.integration_resolve_errors') }}</p>

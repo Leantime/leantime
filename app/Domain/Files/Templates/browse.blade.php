@@ -17,7 +17,7 @@
     <div id="fileManager">
         <div class="maincontentinner">
             {!! $tpl->displayNotification() !!}
-            <h5 class="subtitle">{!! __('headline.browse_files_headline') !!}</h5>
+            <x-global::elements.section-header as="h5">{!! __('headline.browse_files_headline') !!}</x-global::elements.section-header>
 
         @if ($login::userIsAtLeast($roles::$editor))
         <div class="uploadWrapper">
