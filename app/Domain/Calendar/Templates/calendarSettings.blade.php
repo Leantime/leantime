@@ -36,7 +36,7 @@
                             <i class="fa fa-pen"></i>
                         </a>
                         &nbsp;
-                        <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('label.delete') }}">
+                        <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('buttons.delete') }}">
                             <i class="fa fa-trash"></i>
                         </a>
                     @endif

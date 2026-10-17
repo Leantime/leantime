@@ -22,7 +22,7 @@
                             <h5>1. {!! __('text.twoFA_qr') !!}</h5>
                             <br />
                             <img src="{{ $qrData }}" style="border-radius: var(--box-radius);"/><br />
-                            Secret: <p>{{ $secret }}</p><br/>
+                            {{ __('label.secret_colon') }} <p>{{ $secret }}</p><br/>
                             <form action="" method="post" class='stdform'>
                                 <h5>2. {!! __('text.twoFA_verify_code') !!}</h5>
                                 <p>

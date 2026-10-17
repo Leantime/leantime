@@ -24,9 +24,9 @@
         @endif
 
         @if ($plugin->enabled && $plugin->compatible !== false && file_exists(APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Controllers/Settings.php'))
-            <a href="{{ BASE_URL }}/{{ $plugin->foldername }}/settings"><i class="fa fa-cog"></i> Settings</a>
+            <a href="{{ BASE_URL }}/{{ $plugin->foldername }}/settings"><i class="fa fa-cog"></i> {{ __('label.settings') }}</a>
         @endif
     </div>
 @else
-    <p>System Plugin, cannot be disabled or removed</p>
+    <p>{{ __('text.system_plugin_locked') }}</p>
 @endif

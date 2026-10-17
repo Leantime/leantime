@@ -3,7 +3,7 @@
 @section('content')
 
     <x-global::layout.page-header icon="fa fa-puzzle-piece">
-        My Apps
+        {{ __('headlines.my_apps') }}
     </x-global::layout.page-header>
 
     @displayNotification()
@@ -73,8 +73,8 @@
                                 </li>
                             @endforeach
                         @else
-                            <x-global::elements.empty-state image="undraw_no_data_re_kwbl.svg" titleAs="h3" title="Nothing New"
-                                description="We couldn't discover any new plugins in your plugin folder, please make sure the plugin is unzipped and contains a composer.json file." />
+                            <x-global::elements.empty-state image="undraw_no_data_re_kwbl.svg" titleAs="h3" :title="__('headlines.no_new_plugins')"
+                                :description="__('text.no_new_plugins')" />
                         @endif
                     </ul>
                 </div>

@@ -2,11 +2,11 @@
 
 @section('content')
 
-<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('OVERVIEW')">
-    {!! __('ALL_GCCALS') !!}
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('label.overview')">
+    {!! __('label.connected_calendars') !!}
     <x-slot:actions>
         <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
-            <x-global::forms.text-input name="term" placeholder="To search type and hit enter..." />
+            <x-global::forms.text-input name="term" :placeholder="__('input.placeholders.search_type_hit_enter')" />
         </form>
     </x-slot:actions>
 </x-global::layout.page-header>
@@ -22,9 +22,9 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>{!! __('NAME') !!}</th>
-                        <th>{!! __('URL') !!}</th>
-                        <th>{!! __('COLOR') !!}</th>
+                        <th>{!! __('label.name') !!}</th>
+                        <th>{!! __('label.calendar_url') !!}</th>
+                        <th>{!! __('label.color') !!}</th>
                     </tr>
                 </thead>
 

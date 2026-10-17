@@ -89,12 +89,12 @@
             </div>
 
             <div class="maincontentinner tw-z-10 latest-todos">
-                <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</x-global::forms.button>
+                <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> {{ __('links.create_todo') }}</x-global::forms.button>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
                     @if (count($tickets) == 0)
-                        <em>Nothing to see here. Move on.</em><br/><br/>
+                        <em>{{ __('text.nothing_to_see_here') }}</em><br/><br/>
                     @endif
 
                     @foreach($tickets as $row)

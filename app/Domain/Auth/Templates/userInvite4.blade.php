@@ -6,8 +6,8 @@
     <x-auth::onboardingProgress current="time" />
 
 
-    <h2>🗓️ Shaping A Daily Flow</h2>
-    <p>We'll use these times to help prioritize your tasks</p>
+    <h2>🗓️ {{ __('headlines.onboarding_daily_flow') }}</h2>
+    <p>{{ __('text.onboarding_times_help_prioritize') }}</p>
 
 <div class="regcontent">
 
@@ -17,7 +17,7 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <label>What time do you usually start working?</label>
+        <label>{{ __('label.onboarding_work_start') }}</label>
         <div class="">
             <x-global::selectable selected="{{ $daySchedule['workStart'] == '8' ? 'true' : 'false' }}" :id="'daySchedule-workStart-1'" :name="'daySchedule-workStart-button'" :value="'8'" :label="''" onclick="jQuery('#daySchedule-workStart').val('8').hide(); jQuery('#daySchedule-workStart-3').show();" class="compact">
                 <label for="" class="">
@@ -31,7 +31,7 @@
             </x-global::selectable>
             <x-global::selectable selected="" :id="'daySchedule-workStart-3'" :name="'daySchedule-workStart-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-workStart').show()">
                 <label for="" class="">
-                    <i class="fa fa-clock"></i> Select my own
+                    <i class="fa fa-clock"></i> {{ __('label.select_my_own_time') }}
                 </label>
             </x-global::selectable>
             <x-global::forms.select name="daySchedule-workStart" id="daySchedule-workStart" style="display:none; vertical-align: top;">
@@ -43,7 +43,7 @@
             </x-global::forms.select>
         </div>
         <br />
-        <label>When do you normally take a lunch break from work?</label>
+        <label>{{ __('label.onboarding_lunch_break') }}</label>
         <div class="">
             <x-global::selectable selected="{{ $daySchedule['lunch'] == '12' ? 'true' : 'false' }}" :id="'daySchedule-lunch-1'" :name="'daySchedule-lunch-button'" :value="'12'" :label="''" onclick="jQuery('#daySchedule-lunch').val('12').hide(); jQuery('#daySchedule-lunch-3').show();" class="compact">
                 <label for="" class="">
@@ -57,7 +57,7 @@
             </x-global::selectable>
             <x-global::selectable selected="" :id="'daySchedule-lunch-3'" :name="'daySchedule-lunch-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-lunch').show()">
                 <label for="" class="">
-                    <i class="fa fa-clock"></i> Select my own
+                    <i class="fa fa-clock"></i> {{ __('label.select_my_own_time') }}
                 </label>
             </x-global::selectable>
             <x-global::forms.select name="daySchedule-lunch" id="daySchedule-lunch" style="display:none; vertical-align: top;">
@@ -69,7 +69,7 @@
             </x-global::forms.select>
         </div>
         <br />
-        <label>When do you normally end your work day? 🥳</label>
+        <label>{{ __('label.onboarding_work_end') }} 🥳</label>
 
         <div class="">
             <x-global::selectable selected="{{ $daySchedule['workEnd'] == '16' ? 'true' : 'false' }}" :id="'daySchedule-workEnd-1'" :name="'daySchedule-workEnd-button'" :value="'16'" :label="''" onclick="jQuery('#daySchedule-workEnd').val('16').hide(); jQuery('#daySchedule-workEnd-3').show();" class="compact">
@@ -84,7 +84,7 @@
             </x-global::selectable>
             <x-global::selectable selected="" :id="'daySchedule-workEnd-3'" :name="'daySchedule-workEnd-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-workEnd').show()">
                 <label for="" class="">
-                    <i class="fa fa-clock"></i> Select my own
+                    <i class="fa fa-clock"></i> {{ __('label.select_my_own_time') }}
                 </label>
             </x-global::selectable>
             <x-global::forms.select name="daySchedule-workEnd" id="daySchedule-workEnd" style="display:none; vertical-align: top;">
@@ -130,7 +130,7 @@
 {{--        </div>--}}
         <br /> <br />
         <div class="tw-text-right">
-            <x-global::forms.button tag="a" link="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=3" contentRole="tertiary" style="width:auto; margin-right:10px">Back</x-global::forms.button>
+            <x-global::forms.button tag="a" link="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=3" contentRole="tertiary" style="width:auto; margin-right:10px">{{ __('buttons.back') }}</x-global::forms.button>
             <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
         </div>
 

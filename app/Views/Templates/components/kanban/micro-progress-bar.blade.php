@@ -31,7 +31,7 @@ $expandedHeight = $heights['expanded'][$size] ?? '22px';
 
 <div {{ $attributes->merge(['class' => 'micro-progress-bar']) }}
      role="progressbar"
-     aria-label="Status breakdown"
+     aria-label="{{ __('label.status_breakdown') }}"
      style="position: relative; width: 100%;"
      onmouseenter="this.querySelector('.progress-segments').style.height='{{ $expandedHeight }}'; this.querySelector('.progress-segments').style.borderRadius='4px';"
      onmouseleave="this.querySelector('.progress-segments').style.height='{{ $collapsedHeight }}'; this.querySelector('.progress-segments').style.borderRadius='2.5px';">
@@ -60,7 +60,7 @@ $expandedHeight = $heights['expanded'][$size] ?? '22px';
     @else
         <!-- Empty state for screen readers -->
         <span style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;">
-            No tasks in this group.
+            {{ __('text.no_tasks_in_group') }}
         </span>
     @endif
 </div>

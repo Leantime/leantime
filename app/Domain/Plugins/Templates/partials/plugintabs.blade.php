@@ -2,16 +2,16 @@
      .maincontentinner.tabs band CSS is gone, so this partial rides the
      shared lt-tabs structure like the ticket board tabs. --}}
 <div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
-    <nav class="lt-tabs-group" aria-label="Apps">
+    <nav class="lt-tabs-group" aria-label="{{ __('label.apps') }}">
         <ul>
             <li class="{{ $currentUrl == 'marketplace' ? "active" : ""  }}">
                 <a href="<?=BASE_URL ?>/plugins/marketplace">
-                    <i class="fa-solid fa-store"></i> Explore Apps
+                    <i class="fa-solid fa-store"></i> {{ __('links.explore_apps') }}
                 </a>
             </li>
             <li class="{{ $currentUrl == 'installed' ? "active" : ""  }}">
                 <a href="<?=BASE_URL ?>/plugins/myapps">
-                    <i class="fa-solid fa-puzzle-piece"></i> My Apps
+                    <i class="fa-solid fa-puzzle-piece"></i> {{ __('headlines.my_apps') }}
                 </a>
             </li>
         </ul>

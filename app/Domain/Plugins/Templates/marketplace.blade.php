@@ -3,7 +3,7 @@
 @section('content')
 
     <x-global::layout.page-header icon="fa fa-puzzle-piece">
-        App Marketplace
+        {{ __('headlines.app_marketplace') }}
     </x-global::layout.page-header>
 
     @displayNotification()

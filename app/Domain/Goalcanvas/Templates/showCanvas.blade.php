@@ -194,12 +194,12 @@
                                                             </x-global::actions.dropdown>
                                                         @endif
 
-                                            <h4><strong>Goal:</strong> <a
+                                            <h4><strong>{{ __('label.goal_colon') }}</strong> <a
                                                     href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
                                                     data="item_{{ $row['id'] }}">{{ $row['title'] }}</a>
                                             </h4>
                                             <br />
-                                            <strong>Metric:</strong> {{ $row['description'] }}
+                                            <strong>{{ __('label.metric_colon') }}</strong> {{ $row['description'] }}
                                             <br /><br />
 
                                             @php
@@ -223,7 +223,7 @@
                                             <x-global::feedback.progress :value="$percentDone" />
                                             <div class="row" style="padding-bottom:0px;">
                                                 <div class="col-md-4">
-                                                    <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>
+                                                    <small>{{ __('label.start_colon') }}<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>
                                                 </div>
                                                 <div class="col-md-4 center">
                                                     <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row['currentValue'] . $metricTypeBack }}</small>

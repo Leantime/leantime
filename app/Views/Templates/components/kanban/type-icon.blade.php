@@ -16,6 +16,6 @@ $fontSize = $sizes[$size] ?? '16px';
 
 <span {{ $attributes->merge(['class' => 'type-icon']) }}
       style="font-size: {{ $fontSize }}; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px;"
-      data-tippy-content="Type: {{ $label }}"
+      data-tippy-content="{{ sprintf(__('label.type_name'), $label) }}"
       role="img"
-      aria-label="Type: {{ $label }}">{{ $icon }}</span>
+      aria-label="{{ sprintf(__('label.type_name'), $label) }}">{{ $icon }}</span>

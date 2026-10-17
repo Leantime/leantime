@@ -16,7 +16,7 @@
 
         <div class="row-fluid">
             <div class="form-group">
-                <label for="themeSelect">Optimal Stimulation</label>
+                <label for="themeSelect">{{ __('label.optimal_stimulation') }}</label>
                 <span class='field tw-flex'>
 
                      <?php
@@ -32,14 +32,14 @@
             </div>
             <br />
             <div class="form-group">
-                <label>Readability</label>
+                <label>{{ __('label.readability') }}</label>
                 <div class="tw-flex">
                     @foreach($availableFonts as $key => $font)
 
                         <x-global::selectable  data-tippy-content="{{ $fontTooltips[$key] }}" :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
                             <label for="selectable-{{ $key }}" class="font tw-w-[150px]"
                                    style="font-family:'{{ $font }}'; font-size:16px;">
-                                The quick brown fox jumps over the lazy dog
+                                {{ __('text.font_preview_sentence') }}
                             </label>
                         </x-global::selectable>
 
@@ -51,7 +51,7 @@
         </div>
         <br />
         <div class="tw-text-right">
-            <x-global::forms.button tag="a" link="{{BASE_URL}}/auth/userInvite/{{$inviteId}}" contentRole="tertiary" style="width:auto; margin-right:10px">Back</x-global::forms.button>
+            <x-global::forms.button tag="a" link="{{BASE_URL}}/auth/userInvite/{{$inviteId}}" contentRole="tertiary" style="width:auto; margin-right:10px">{{ __('buttons.back') }}</x-global::forms.button>
             <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
         </div>
 

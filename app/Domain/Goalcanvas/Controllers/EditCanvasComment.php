@@ -177,7 +177,7 @@ class EditCanvasComment extends Controller
 
                     return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$params['itemId']);
                 } else {
-                    $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
             } else {
                 if (isset($_POST['description']) && ! empty($_POST['description'])) {
@@ -227,7 +227,7 @@ class EditCanvasComment extends Controller
 
                     return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$id);
                 } else {
-                    $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
             }
         }

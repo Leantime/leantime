@@ -101,7 +101,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="center">
-                                    <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}&v={{ format($user['modified'])->timestamp() }}'  class='profileImg tw-rounded-full' alt='Profile Picture' id="previousImage"/>
+                                    <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}&v={{ format($user['modified'])->timestamp() }}'  class='profileImg tw-rounded-full' alt='{{ __('headlines.profile_picture') }}' id="previousImage"/>
                                     <div id="profileImg">
                                     </div>
 
@@ -275,7 +275,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="themeSelect">Optimal Stimulation</label>
+                                    <label for="themeSelect">{{ __('label.optimal_stimulation') }}</label>
                                     <span class='field tw-flex tw-w-80'>
 
                                          <?php
@@ -312,13 +312,13 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <hr />
-                                        <label>Font</label>
+                                        <label>{{ __('label.font') }}</label>
                                         @foreach($availableFonts as $key => $font)
 
                                             <x-global::selectable  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
                                                 <label for="selectable-{{ $key }}" class="font tw-w-[200px]"
                                                        style="font-family:'{{ $font }}'; font-size:16px;">
-                                                    The quick brown fox jumps over the lazy dog
+                                                    {{ __('text.font_preview_sentence') }}
                                                 </label>
                                             </x-global::selectable>
 
@@ -329,7 +329,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <hr />
-                                        <label>Color Scheme</label>
+                                        <label>{{ __('label.color_scheme') }}</label>
                                         @foreach($availableColorSchemes as $key => $scheme )
                                             <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
                                                 <label for="color-{{ $key }}" class="colorCircle"
