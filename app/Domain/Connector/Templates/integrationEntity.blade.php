@@ -26,7 +26,7 @@
 
         {!! $tpl->displayNotification() !!}
 
-            <h5 class="subtitle">{{ __('headlines.integration_what_importing') }}</h5>
+            <x-global::elements.section-header as="h5">{{ __('headlines.integration_what_importing') }}</x-global::elements.section-header>
             <br />
             {{ __('text.integration_choose_entity') }}
             {{ __('text.integration_arrow_direction') }}<br /><br />

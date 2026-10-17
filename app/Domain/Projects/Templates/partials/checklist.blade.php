@@ -3,7 +3,7 @@
 ])
 
 @if ($includeTitle)
-    <h5 class="subtitle">{{ __('headlines.project_checklist') }} <x-global::elements.info-tip :text="__('text.project_checklist_help')" /> </h5><br/>
+    <x-global::elements.section-header as="h5">{{ __('headlines.project_checklist') }} <x-global::elements.info-tip :text="__('text.project_checklist_help')" /> </x-global::elements.section-header><br/>
 
 @endif
 

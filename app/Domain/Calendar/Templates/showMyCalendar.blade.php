@@ -19,7 +19,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
     <div class="row">
         <div class="col-md-2">
             <div class="maincontentinner">
-                <h5 class="subtitle tw-pb-m">{{ __('label.calendars') }}</h5>
+                <x-global::elements.section-header as="h5" class="tw-pb-m">{{ __('label.calendars') }}</x-global::elements.section-header>
 
                 <ul class="simpleList">
                     <li><span class="indicatorCircle" style="background:var(--accent1)"></span>{{ __('label.events') }}</li>

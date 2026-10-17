@@ -20,7 +20,7 @@
         {!! $tpl->displayNotification() !!}
 
         <img width="200" src="{{ BASE_URL }}/{{ $provider->image }}" />
-        <h5 class="subtitle">{{ __('headlines.new_integration') }}</h5>
+        <x-global::elements.section-header as="h5">{{ __('headlines.new_integration') }}</x-global::elements.section-header>
 
         {{ $provider->name }}<br />
         {!! $provider->description !!}<br /><br />

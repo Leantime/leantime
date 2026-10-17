@@ -10,7 +10,7 @@
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
-        <h5 class="subtitle">{{ __('headlines.integrations_sync') }}</h5>
+        <x-global::elements.section-header as="h5">{{ __('headlines.integrations_sync') }}</x-global::elements.section-header>
         <p>{{ __('label.available_integrations') }}</p>
 
         <div class="row">

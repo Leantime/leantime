@@ -28,7 +28,7 @@
             <div class="maincontentinner center">
 
                 {!! $tpl->displayNotification() !!}
-                <h5 class="subtitle">{{ __('headlines.integration_match_fields') }}</h5>
+                <x-global::elements.section-header as="h5">{{ __('headlines.integration_match_fields') }}</x-global::elements.section-header>
                 <p class="mb-2">{{ __('text.integration_match_fields') }}</p><br />
 
                 <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=parse{{ $urlAppend }}">
@@ -69,7 +69,7 @@
         </div>
         <div class="col-md-3">
             <div class="maincontentinner">
-            <h5 class="subtitle">{{ __('headlines.integration_requirements') }}</h5>
+            <x-global::elements.section-header as="h5">{{ __('headlines.integration_requirements') }}</x-global::elements.section-header>
             <p>{{ __('text.integration_requirements') }}</p>
             @foreach ($flags as $flag)
                 <hr />

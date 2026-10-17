@@ -16,7 +16,7 @@
 
 @if ($hasAttentionItems)
     <x-global::elements.card tone="danger" class="reportNeedsAttention">
-        <h5 class="subtitle"><i class="fa fa-triangle-exclamation" style="color: var(--red);"></i> {{ __('subtitles.needs_attention') }}</h5>
+        <x-global::elements.section-header as="h5"><i class="fa fa-triangle-exclamation" style="color: var(--red);"></i> {{ __('subtitles.needs_attention') }}</x-global::elements.section-header>
 
         <ul class="lt-list">
             @foreach ($needsAttention['statusAlerts'] as $project)

@@ -90,7 +90,7 @@
 
             <div class="maincontentinner tw-z-10 latest-todos">
                 <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> {{ __('links.create_todo') }}</x-global::forms.button>
-                <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
+                <x-global::elements.section-header as="h5">{{ __('headlines.latest_todos') }}</x-global::elements.section-header>
                 <br/>
                 <ul class="sortableTicketList">
                     @if (count($tickets) == 0)
@@ -151,7 +151,7 @@
             <div class="maincontentinner team-container">
                 @dispatchEvent('teamBoxBeginning', ['project' => $project])
 
-                <h5 class="subtitle">{{ __('tabs.team') }}</h5>
+                <x-global::elements.section-header as="h5">{{ __('tabs.team') }}</x-global::elements.section-header>
 
                 <div class="row teamBox">
                     @foreach ($project['assignedUsers'] as $userId => $assignedUser)
@@ -212,7 +212,7 @@
                     @endif
                 </div>
 
-                <h5 class="subtitle">{{ __('subtitles.project_updates') }}</h5>
+                <x-global::elements.section-header as="h5">{{ __('subtitles.project_updates') }}</x-global::elements.section-header>
 
                 <form method="post" action="{{ BASE_URL }}/dashboard/show">
                     <input type="hidden" name="comment" value="1" />
@@ -339,7 +339,7 @@
             <div class="maincontentinner project-progress">
                 <div class="row" id="projectProgressContainer">
                     <div class="col-md-12">
-                        <h5 class="subtitle">{{ __('subtitles.project_progress') }}</h5>
+                        <x-global::elements.section-header as="h5">{{ __('subtitles.project_progress') }}</x-global::elements.section-header>
 
                         <div id="canvas-holder" class="tw-w-full tw-h-[250px]">
                             <canvas id="chart-area"></canvas>
@@ -351,7 +351,7 @@
 
                 <div class="row" id="milestoneProgressContainer">
                     <div class="col-md-12">
-                        <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
+                        <x-global::elements.section-header as="h5">{{ __('headline.milestones') }}</x-global::elements.section-header>
                         <ul class="sortableTicketList">
                             @if (count($milestones) == 0)
                                 <div class="center">
