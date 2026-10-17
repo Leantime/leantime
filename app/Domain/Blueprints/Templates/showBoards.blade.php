@@ -2,12 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa-solid fa-chess"></span></div>
-    <div class="pagetitle">
-        <h1>{!! __('headlines.blueprints') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-chess">
+    {!! __('headlines.blueprints') !!}
+</x-global::layout.page-header>
 
 {!! $tpl->displayNotification() !!}
 

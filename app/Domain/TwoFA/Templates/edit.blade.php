@@ -2,12 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-lock"></span></div>
-    <div class="pagetitle">
-        <h1>{!! __('label.twoFA') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa fa-lock">
+    {!! __('label.twoFA') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">

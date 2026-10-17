@@ -1,15 +1,9 @@
 @extends($layout)
 @section('content')
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pagetitle">
-        <h1>{!! __('headlines.login') !!}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header>
+    {!! __('headlines.login') !!}
+</x-global::layout.page-header>
 
 <div class="regcontent">
     @dispatchEvent('afterRegcontentOpen')

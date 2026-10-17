@@ -32,14 +32,9 @@
     }
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon">
-        <span class="fa fa-fw fa-chart-gantt"></span>
-    </div>
-    <div class="pagetitle">
-        @if (($sprints !== false) && ($sprints !== null) && count($sprints) > 0)
+<x-global::layout.page-header icon="fa fa-fw fa-chart-gantt">
+    @if (($sprints !== false) && ($sprints !== null) && count($sprints) > 0)
+        <x-slot:switcher>
             <x-global::subjectSwitcher
                 :parent="__('headline.milestones')"
                 :current="$sprint !== false ? $sprint->name : __('label.select_board')">
@@ -57,11 +52,10 @@
                     </li>
                 @endforeach
             </x-global::subjectSwitcher>
-        @else
-            <h1>{!! __('headline.milestones') !!}</h1>
-        @endif
-        <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
-    </div>
+        </x-slot:switcher>
+    @else
+        {!! __('headline.milestones') !!}
+    @endif
     @if (
         ($currentSprint !== false)
             && ($currentSprint !== null)
@@ -69,7 +63,7 @@
             && $currentSprintId != 'all'
             && $currentSprintId != 'backlog'
     )
-        <div class="pageheader-right">
+        <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
                 {{-- Inherited (program-owned) sprints are managed at the program level only.
                      $sprint can be false (stale/deleted currentSprint), so guard the object access. --}}
@@ -79,8 +73,7 @@
                 @endif
 
             </x-global::actions.dropdown>
-        </div>
+        </x-slot:actions>
     @endif
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+</x-global::layout.page-header>
+<input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />

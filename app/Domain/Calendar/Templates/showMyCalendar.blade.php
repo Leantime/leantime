@@ -8,17 +8,9 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 }
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('headline.calendar') !!}</h5>
-        <h1>{!! __('headline.my_calendar') !!}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('headline.calendar')">
+    {!! __('headline.my_calendar') !!}
+</x-global::layout.page-header>
 
 {!! $tpl->displayNotification() !!}
 

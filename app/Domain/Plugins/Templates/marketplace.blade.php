@@ -2,9 +2,9 @@
 
 @section('content')
 
-    <x-global::pageheader :icon="'fa fa-puzzle-piece'">
-        <h1>App Marketplace</h1>
-    </x-global::pageheader>
+    <x-global::layout.page-header icon="fa fa-puzzle-piece">
+        App Marketplace
+    </x-global::layout.page-header>
 
     @displayNotification()
 

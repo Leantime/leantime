@@ -1,4 +1,7 @@
 {{--
+    DEPRECATED: use layout.page-header. Kept through 3.12 for plugin releases that still call
+    <x-global::pageheader> (CustomFields, GoogleCalendar, Copilot, StrategyPro, PgmPro); remove in the release after.
+
     Shared page header card.
 
     Props:

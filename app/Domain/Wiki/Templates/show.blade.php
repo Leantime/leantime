@@ -56,10 +56,9 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-book"></span></div>
-    <div class="pagetitle">
-        @if(count($wikis) > 0)
+<x-global::layout.page-header icon="fa fa-book">
+    @if(count($wikis) > 0)
+        <x-slot:switcher>
             <x-global::subjectSwitcher
                 :parent="__('headlines.documents')"
                 :current="$currentWiki !== false ? $currentWiki->title : __('label.select_board')">
@@ -71,14 +70,12 @@
                     </li>
                 @endforeach
             </x-global::subjectSwitcher>
-        @else
-            <h1>{!! __('headlines.documents') !!}</h1>
-        @endif
-    </div>
-    {{-- Header rule (2026-08-03): actions ⋮ sits in the right cluster,
-         vertically centered — never floated inside the title block. --}}
+        </x-slot:switcher>
+    @else
+        {!! __('headlines.documents') !!}
+    @endif
     @if(count($wikis) > 0)
-        <div class="pageheader-right">
+        <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
                 @if($login::userIsAtLeast($roles::$editor) && $currentWiki)
                     <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{!! __('link.edit_wiki') !!}</a></li>
@@ -90,9 +87,9 @@
                 @endif
 
             </x-global::actions.dropdown>
-        </div>
+        </x-slot:actions>
     @endif
-</div>
+</x-global::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}

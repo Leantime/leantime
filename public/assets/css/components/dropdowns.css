@@ -638,6 +638,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid transparent;
     padding: 3px 12px;
+    /* 22px line + 3px padding + 1px border = 30px, the page icon's height, so a
+       header with a switcher is as tall as one with a plain title. */
+    line-height: 22px;
     border-radius: 100px;
     transition: background .12s, border-color .12s;
 }

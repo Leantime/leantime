@@ -91,14 +91,9 @@
 @endpush
 @endonce
 
-<!-- page header -->
-<div class="pageheader">
-    <div class="pageicon"><span class="fa-solid fa-business-time"></span></div>
-        <div class="pagetitle">
-        <h1>{!! __('headlines.all_timesheets') !!}</h1>
-    </div>
-</div>
-<!-- page header -->
+<x-global::layout.page-header icon="fa-solid fa-business-time">
+    {!! __('headlines.all_timesheets') !!}
+</x-global::layout.page-header>
 
 
 <div class="maincontent">

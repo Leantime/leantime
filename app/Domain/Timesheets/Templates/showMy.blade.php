@@ -163,15 +163,9 @@ jQuery(document).ready(function(){
 @endpush
 @endonce
 
-<!-- page header -->
-<div class="pageheader">
-    <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('headline.overview') !!}</h5>
-        <h1>{!! __('headline.my_timesheets') !!}</h1>
-    </div>
-</div>
-<!-- page header -->
+<x-global::layout.page-header icon="fa-regular fa-clock" :eyebrow="__('headline.overview')">
+    {!! __('headline.my_timesheets') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <x-global::navigation.view-tabs :tabs="[

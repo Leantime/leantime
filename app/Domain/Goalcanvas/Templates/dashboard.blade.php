@@ -36,10 +36,9 @@ foreach ($allCanvas as $canvasRow) {
     div.canvas-element-center-middle { text-align: center; }
 </style>
 
-<div class="pageheader">
-    <div class="pageicon"><span class='fa {{ $canvasIcon }}'></span></div>
-    <div class="pagetitle">
-        @if (count($allCanvas) > 0)
+<x-global::layout.page-header icon="fa {{ $canvasIcon }}">
+    @if (count($allCanvas) > 0)
+        <x-slot:switcher>
             <x-global::subjectSwitcher
                 :parent="__('headline.goal.dashboardboard')"
                 current="All Goal Groups">
@@ -51,11 +50,11 @@ foreach ($allCanvas as $canvasRow) {
                     <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
                 @endforeach
             </x-global::subjectSwitcher>
-        @else
-            <h1>{{ __("headline.goal.dashboardboard") }}</h1>
-        @endif
-    </div>
-</div><!--pageheader-->
+        </x-slot:switcher>
+    @else
+        {{ __("headline.goal.dashboardboard") }}
+    @endif
+</x-global::layout.page-header>
 
 <div class="maincontent">
 

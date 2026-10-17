@@ -2,12 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
-    <div class="pagetitle">
-       <h1>Integrations</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-circle-nodes">
+    Integrations
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">

@@ -2,13 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-chart-bar"></span></div>
-    <div class="pagetitle">
-        <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
-        <h1>{!! __('headlines.reports') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa fa-chart-bar" :eyebrow="session('currentProjectClient') . ' // ' . session('currentProjectName')">
+    {!! __('headlines.reports') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
 
