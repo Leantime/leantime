@@ -45,6 +45,20 @@ class ProjectModulesTest extends \Unit\TestCase
                 return $this->rows[$projectId] ?? [];
             }
 
+            public int $bulkReads = 0;
+
+            public function getModuleOverridesForProjects(array $projectIds): array
+            {
+                $this->bulkReads++;
+                $overridesByProject = [];
+
+                foreach ($projectIds as $projectId) {
+                    $overridesByProject[$projectId] = $this->rows[$projectId] ?? [];
+                }
+
+                return $overridesByProject;
+            }
+
             public function updateModuleOverrides(int $projectId, callable $change): void
             {
                 $this->rows[$projectId] = $change($this->rows[$projectId] ?? []);
@@ -159,6 +173,26 @@ class ProjectModulesTest extends \Unit\TestCase
 
         $this->assertSame('boards', $this->projectModules->blockingRoute('api', 'boards', 7)?->id);
         $this->assertNull($this->projectModules->blockingRoute('api', 'canvas', 7));
+    }
+
+    public function test_filtering_rows_reads_all_their_projects_at_once(): void
+    {
+        $this->store->rows[5] = ['wiki' => false];
+
+        $rows = [
+            ['id' => 1, 'projectId' => 5],
+            ['id' => 2, 'projectId' => 6],
+            ['id' => 3, 'projectId' => 7],
+            ['id' => 4, 'projectId' => 6],
+        ];
+
+        $this->assertSame([2, 3, 4], array_column($this->projectModules->withoutSwitchedOffProjects('wiki', $rows), 'id'));
+        $this->assertSame(1, $this->store->bulkReads);
+        $this->assertSame(0, $this->store->reads, 'no per-project reads');
+
+        // A module that isn't registered filters nothing and reads nothing.
+        $this->assertCount(4, $this->projectModules->withoutSwitchedOffProjects('pomodoro', $rows));
+        $this->assertSame(1, $this->store->bulkReads);
     }
 
     public function test_copy_gives_the_new_project_the_same_choices(): void

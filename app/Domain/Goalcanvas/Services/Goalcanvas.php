@@ -185,7 +185,15 @@ class Goalcanvas extends BaseService
         // Checks if first level is also link+report or just link
         $children = $this->goalRepository->getCanvasItemsByKPI($parentId);
 
+        // Linked goals can live in other projects: leave out those with the Goals module off. A
+        // switched-off first-level goal takes its own children with it.
+        $this->projectModules?->preload(array_merge(array_column($children, 'projectId'), array_column($children, 'childProjectId')));
+
         foreach ($children as $child) {
+            if (! $this->goalsEnabledIn((int) ($child['projectId'] ?? 0))) {
+                continue;
+            }
+
             // Added Child already? Look for child of child
             if (! isset($goals[$child['id']])) {
                 $goals[$child['id']] = [
@@ -201,7 +209,7 @@ class Goalcanvas extends BaseService
                 ];
             }
 
-            if ($child['childId'] != '') {
+            if ($child['childId'] != '' && $this->goalsEnabledIn((int) ($child['childProjectId'] ?? 0))) {
                 if (isset($goals[$child['childId']]) === false) {
                     $goals[$child['childId']] = [
                         'id' => $child['childId'],

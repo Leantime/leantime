@@ -111,12 +111,45 @@ class ProjectModules
      */
     public function withoutSwitchedOffProjects(string $moduleId, array $rows, string $projectKey = 'projectId'): array
     {
+        if (! $this->registry->has($moduleId)) {
+            return array_values($rows);
+        }
+
+        $this->preload(array_column($rows, $projectKey));
+
         $remaining = array_filter(
             $rows,
             fn (array $row): bool => $this->isEnabled($moduleId, (int) ($row[$projectKey] ?? 0))
         );
 
         return array_values($remaining);
+    }
+
+    /**
+     * Load the stored choices of many projects in one read, so filtering rows that span projects
+     * doesn't query once per project.
+     *
+     * @param  array<int, int|string|null>  $projectIds
+     */
+    public function preload(array $projectIds): void
+    {
+        $missingIds = [];
+
+        foreach ($projectIds as $projectId) {
+            $projectId = (int) $projectId;
+
+            if ($projectId > 0 && ! isset($this->overridesByProject[$projectId])) {
+                $missingIds[$projectId] = $projectId;
+            }
+        }
+
+        if ($missingIds === []) {
+            return;
+        }
+
+        foreach ($this->store->getModuleOverridesForProjects(array_values($missingIds)) as $projectId => $overrides) {
+            $this->overridesByProject[(int) $projectId] = $overrides;
+        }
     }
 
     /**

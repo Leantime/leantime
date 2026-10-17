@@ -800,6 +800,7 @@ class Goalcanvas extends Blueprints
                 'childrenLvl1.endValue as childEndValue',
                 'childrenLvl1.canvasId as childCanvasId',
                 'childrenLvl1Board.title as childBoardTitle',
+                'childrenLvl1Board.projectId as childProjectId',
                 'childrenLvl1Project.name as childProjectName',
             ])
             ->leftJoin('zp_canvas', 'zp_canvas_items.canvasId', '=', 'zp_canvas.id')

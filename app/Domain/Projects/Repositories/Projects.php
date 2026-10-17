@@ -1184,6 +1184,39 @@ class Projects implements StoresProjectModules
     }
 
     /**
+     * The module switches of several projects in one query.
+     *
+     * @param  array<int, int>  $projectIds
+     * @return array<int, array<string, bool>> Project id => (module id => enabled), for every existing project asked for.
+     */
+    public function getModuleOverridesForProjects(array $projectIds): array
+    {
+        if ($projectIds === []) {
+            return [];
+        }
+
+        try {
+            $metadataByProject = $this->connection->table('zp_projects')
+                ->whereIn('id', $projectIds)
+                ->pluck('metadata', 'id');
+        } catch (QueryException $e) {
+            // The column arrives with db update 3.5.31; until then there are no module switches.
+            Log::warning('Could not read project metadata: '.$e->getMessage());
+
+            return [];
+        }
+
+        $overridesByProject = [];
+
+        foreach ($metadataByProject as $projectId => $json) {
+            $modules = $this->decodeMetadata($json)['modules'] ?? [];
+            $overridesByProject[(int) $projectId] = is_array($modules) ? array_map(fn ($enabled) => (bool) $enabled, $modules) : [];
+        }
+
+        return $overridesByProject;
+    }
+
+    /**
      * Change the module switches in the project's metadata, keeping any other metadata keys. The
      * project row is locked from read to write, so concurrent saves can't undo each other.
      *

@@ -992,4 +992,30 @@ class GoalcanvasServiceTest extends TestCase
         $this->assertSame([4], array_keys($service->getParentKPIs(6)));
         $this->assertSame([], $service->getParentKPIs(5));
     }
+
+    public function test_linked_goals_skip_projects_with_goals_switched_off(): void
+    {
+        $child = fn (int $id, int $projectId, string $childId = '', int $childProjectId = 0): array => [
+            'id' => $id, 'title' => "Goal $id", 'startValue' => 0, 'endValue' => 10, 'currentValue' => 5,
+            'metricType' => 'number', 'boardTitle' => 'B', 'canvasId' => 1, 'projectName' => "P$projectId",
+            'projectId' => $projectId,
+            'childId' => $childId, 'childTitle' => "Goal $childId", 'childStartValue' => 0, 'childEndValue' => 10,
+            'childCurrentValue' => 5, 'childMetricType' => 'number', 'childBoardTitle' => 'B', 'childCanvasId' => 1,
+            'childProjectName' => "P$childProjectId", 'childProjectId' => $childProjectId,
+        ];
+
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 6,
+            'getCanvasItemsByKPI' => fn () => [
+                $child(10, 6, '20', 5),   // child in an enabled project, grandchild in project 5 (off)
+                $child(11, 5, '21', 6),   // child in project 5 (off): skipped with its own child
+                $child(12, 6, '22', 6),
+            ],
+        ]);
+
+        $service = new GoalcanvasService($repo, $this->projectsWithAccess([5, 6]), $this->goalsOffInProject5());
+        $service->setPermissionService($this->allowingPermissions());
+
+        $this->assertSame([10, 12, 22], array_keys($service->getChildrenbyKPI(1)));
+    }
 }
