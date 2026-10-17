@@ -9,6 +9,7 @@ namespace Leantime\Domain\Menu\Repositories;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -19,6 +20,9 @@ class Menu
 
     // Default menu
     public const DEFAULT_MENU = 'default';
+
+    // Menus that aren't about the current project, so project module switches don't apply to them
+    private const NON_PROJECT_MENUS = ['personal', 'company', 'projecthub'];
 
     // Menu structures
     public array $menuStructures = [
@@ -46,49 +50,6 @@ class Menu
                     60 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'icon' => 'fa fa-fw fa-book', 'tooltip' => 'menu.wiki_tooltip', 'href' => '/wiki/show'],
                     70 => ['type' => 'item', 'module' => 'files', 'title' => 'menu.files', 'icon' => 'fa fa-fw fa-file', 'tooltip' => 'menu.files_tooltip', 'href' => '/files/browse'],
                     80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/project', 'active' => ['project', 'show'], 'role' => 'editor'],
-                ],
-            ],
-        ],
-        // Display all menu items
-        'full_menu' => [
-            10 => [
-                'type' => 'submenu', 'id' => 'planning', 'title' => 'menu.planning_execution', 'visual' => 'open',
-                'submenu' => [
-                    11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'icon' => 'fa fa-fw fa-home', 'tooltip' => 'menu.dashboard_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
-                    21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
-                    31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'icon' => 'fa fa-fw fa-sliders', 'tooltip' => 'menu.milestones_tooltip', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
-                    40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/showCanvas'],
-                ],
-            ],
-            50 => [
-                'type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'closed',
-                'submenu' => [
-                    51 => ['type' => 'item', 'module' => 'blueprints', 'icon' => 'far fa-fw fa-note-sticky', 'tooltip' => 'menu.insightscanvas_tooltip', 'title' => 'menu.insightscanvas', 'href' => '/blueprints/insights/showCanvas', 'active' => ['insights']],
-                    52 => ['type' => 'item', 'module' => 'ideas', 'icon' => 'fa fa-fw fa-lightbulb', 'tooltip' => 'menu.ideas_tooltip', 'title' => 'menu.ideation', 'href' => '/ideas/showBoards'],
-                ],
-            ],
-            60 => [
-                'type' => 'submenu', 'id' => 'dts-frameworks',  'title' => 'menu.dts.frameworks', 'visual' => 'closed',
-                'submenu' => [
-                    61 => ['type' => 'header', 'title' => 'menu.dts.observe'],
-                    62 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.sbcanvas', 'icon' => 'fas fa-fw fa-list-check', 'tooltip' => 'menu.sbcanvas_tooltip', 'href' => '/blueprints/sb/showCanvas', 'active' => ['sb']],
-                    63 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.riskscanvas', 'icon' => 'fas fa-fw fa-person-falling', 'tooltip' => 'menu.riskscanvas_tooltip', 'href' => '/blueprints/risks/showCanvas', 'active' => ['risks']],
-                    64 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.eacanvas', 'icon' => 'fas fa-fw fa-tree', 'tooltip' => 'menu.eacanvas_tooltip', 'href' => '/blueprints/ea/showCanvas', 'active' => ['ea']],
-                    65 => ['type' => 'header', 'title' => 'menu.dts.design'],
-                    66 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.lbmcanvas', 'icon' => 'fas fa-fw fa-building', 'tooltip' => 'menu.lbmcanvas_tooltip', 'href' => '/blueprints/lbm/showCanvas', 'active' => ['lbm']],
-                    67 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.dbmcanvas', 'icon' => 'fas fa-fw fa-building', 'tooltip' => 'menu.dbmcanvas_tooltip', 'href' => '/blueprints/dbm/showCanvas', 'active' => ['dbm']],
-                    68 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.cpcanvas', 'icon' => 'fas fa-fw fa-city', 'tooltip' => 'menu.cpcanvas_tooltip', 'href' => '/blueprints/cp/showCanvas', 'active' => ['cp']],
-                    69 => ['type' => 'header', 'title' => 'menu.dts.validate'],
-                    70 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.sqcanvas', 'icon' => 'fas fa-fw fa-chess', 'tooltip' => 'menu.sqcanvas_tooltip', 'href' => '/blueprints/sq/showCanvas', 'active' => ['sq']],
-                    71 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.smcanvas', 'icon' => 'fas fa-fw fa-message', 'tooltip' => 'menu.smcanvas_tooltip', 'href' => '/blueprints/sm/showCanvas', 'active' => ['sm']],
-                ],
-            ],
-            80 => [
-                'type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open',
-                'submenu' => [
-                    81 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'icon' => 'fa fa-fw fa-book', 'tooltip' => 'menu.wiki_tooltip', 'href' => '/wiki/show'],
-                    82 => ['type' => 'item', 'module' => 'blueprints', 'title' => 'menu.retroscanvas', 'icon' => 'fa fa-fw fa-hand-spock', 'tooltip' => 'menu.retroscanvas_tooltip', 'href' => '/blueprints/retros/showCanvas', 'active' => ['retros']],
-                    83 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/project', 'active' => ['project', 'show'], 'role' => 'editor'],
                 ],
             ],
         ],
@@ -132,6 +93,7 @@ class Menu
         private EnvironmentCore $config,
         /** @var TicketService */
         private TicketService $ticketsService,
+        private ProjectModules $projectModules,
     ) {
         if (session()->exists('usersettings.submenuToggle') === false && session()->exists('userdata') === true) {
             $setting = $this->settingsRepo;
@@ -141,29 +103,6 @@ class Menu
                 ),
             ]);
         }
-    }
-
-    /**
-     * getMenuTypes - Return an array of a currently supported menu types
-     *
-     * @return array Array of supported menu types
-     */
-    public function getMenuTypes(): array
-    {
-        $language = $this->language;
-        $config = $this->config;
-
-        if (! isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
-            return [self::DEFAULT_MENU => $language->__('label.menu_type.'.self::DEFAULT_MENU)];
-        }
-
-        $menuTypes = [];
-
-        foreach ($this->menuStructures as $key => $menu) {
-            $menuTypes[$key] = $language->__("label.menu_type.$key");
-        }
-
-        return $menuTypes;
     }
 
     /**
@@ -281,7 +220,11 @@ class Menu
                     break;
 
                 case 'item':
-                    // TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
+                    if ($this->isModuleOff($element, $menuType)) {
+                        unset($menuStructure[$key]);
+                        break;
+                    }
+
                     $this->processMenuItem($element, $menuStructure[$key]);
                     break;
 
@@ -311,12 +254,22 @@ class Menu
                                 break;
 
                             case 'item':
+                                if ($this->isModuleOff($subelement, $menuType)) {
+                                    unset($menuStructure[$key]['submenu'][$subkey]);
+                                    break;
+                                }
+
                                 $this->processMenuItem($subelement, $menuStructure[$key]['submenu'][$subkey]);
                                 break;
 
                             default:
                                 exit("Cannot proceed due to invalid submenu element: '".$subelement['type']."'");
                         }
+                    }
+
+                    // A submenu whose items all belong to switched-off modules goes too
+                    if (empty($menuStructure[$key]['submenu'])) {
+                        unset($menuStructure[$key]);
                     }
 
                     break;
@@ -329,6 +282,21 @@ class Menu
         // TODO: Add menu filter here!
 
         return $menuStructure;
+    }
+
+    /**
+     * Whether a menu item belongs to a module that is switched off in the current project.
+     *
+     * @param  array<string, mixed>  $element  The menu item.
+     * @param  string  $menuType  The menu being built; only project menus are filtered.
+     */
+    private function isModuleOff(array $element, string $menuType): bool
+    {
+        if (empty($element['module']) || in_array($menuType, self::NON_PROJECT_MENUS, true)) {
+            return false;
+        }
+
+        return ! $this->projectModules->isEnabled((string) $element['module'], (int) session('currentProject'));
     }
 
     public function processMenuItem($element, &$structure): void

@@ -548,6 +548,16 @@ System admins and users can create API Keys. There are 2 types of keys:
 **Additional Auth providers**
 Leantime supports LDAP and OIDC authentication natively but can also integrate additional providers via Laravel Socialite (Authentik, Auth0, Gitea, GitHub, GitLab, Google, Keycloak, Microsoft, Okta, PropelAuth, EduID, SAML2).
 
+#### Project Modules (per-project feature switches)
+Admins switch features on or off per project (Project settings → Modules). It is a blanket switch, not role-based: off means off for everyone in that project, and no role can grant past it. Content is never deleted.
+- **Infra in Core** (`app/Core/Modules`): `ModuleRegistry` (the switchable modules), `ProjectModules` (state per project), `Middleware/ProjectModuleGate` (blocks pages + `/hx` fragments of switched-off modules, after `CurrentProject`), the `@module('id', $projectId)` Blade condition, and a hook in `PermissionService::currentUserCan` (denies project-scoped permissions of the module's `permissionDomain` in that project, which covers JSON-RPC/MCP).
+- **UI/API in Domain** (`app/Domain/Modulemanager`): the settings tab, the `getProjectModules`/`saveProjectModules` `@api` methods, the "not available" page, and `register.php`, which registers the core modules (Goals, Ideas, Blueprints, Docs, Files library, Reports). To-Dos, Milestones, the dashboard and comments are always on.
+- **Storage**: `zp_projects.metadata` JSON, `{"modules": {"wiki": false}}`, holding only choices that differ from a module's default. Copied by `duplicateProject()`.
+- **Plugins**: `$registration->registerModule([...])` in `register.php`. Menu items carry `module` (set automatically by `addMenuItem()`); a menu item whose `module` is off is hidden in project menus.
+- A module's `permissionDomain` stays null when that domain also guards things that must keep working: `files.*` backs ticket attachments and editor uploads (so Files claims only the library route `files.browse`; `files/showAll` is the to-do attachment list), and `blueprints.*` backs every canvas type (Logic Model, whiteboards).
+- Cross-project reads that services serve in-process (MCP tools, polling) filter rows with `ProjectModules::withoutSwitchedOffProjects()`, which bulk-loads the switches in one query.
+- The old per-project `menuType` column is retired: core no longer reads or writes it. It stays in the schema until the plugins that still select it are updated.
+
 ## Frontend Architecture
 
 ### Build System

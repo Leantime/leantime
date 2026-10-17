@@ -375,6 +375,7 @@ class SchemaBuilder
             $table->integer('active')->nullable();
             $table->text('menuType')->nullable();
             $table->text('psettings')->nullable();
+            $table->text('metadata')->nullable();
             $table->integer('parent')->nullable();
             $table->string('type', 45)->nullable();
             $table->dateTime('start')->nullable();

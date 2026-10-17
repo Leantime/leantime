@@ -1,7 +1,3 @@
-@php
-    use Leantime\Domain\Menu\Repositories\Menu;
-@endphp
-
 <form action="" method="post" class="stdform">
 
     <div class="row">
@@ -150,9 +146,6 @@
             <div class="row marginBottom" style="margin-bottom: 30px;">
                 <div class="col-md-12">
                     <x-global::elements.section-header icon="fa fa-wrench">{!! __('label.settings') !!}</x-global::elements.section-header>
-
-            <input type="hidden" name="menuType" id="menuType"
-                           value="{{ Menu::DEFAULT_MENU }}">
 
                     <div class="form-group">
 

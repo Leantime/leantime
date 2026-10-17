@@ -6,15 +6,18 @@ use DateInterval;
 use DatePeriod;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
+use Leantime\Core\Modules\Contracts\StoresProjectModules;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
-class Projects
+class Projects implements StoresProjectModules
 {
     use EventhelperCore;
 
@@ -57,7 +60,6 @@ class Projects
                 'project.hourBudget',
                 'project.dollarBudget',
                 'project.state',
-                'project.menuType',
                 'project.type',
                 'project.modified',
                 'client.name as clientName',
@@ -81,7 +83,6 @@ class Projects
             'project.hourBudget',
             'project.dollarBudget',
             'project.state',
-            'project.menuType',
             'project.type',
             'project.modified',
             'client.name',
@@ -140,7 +141,6 @@ class Projects
                 'project.hourBudget',
                 'project.dollarBudget',
                 'project.state',
-                'project.menuType',
                 'project.type',
                 'project.modified',
                 'client.name as clientName',
@@ -157,7 +157,6 @@ class Projects
                 'project.hourBudget',
                 'project.dollarBudget',
                 'project.state',
-                'project.menuType',
                 'project.type',
                 'project.modified',
                 'client.name',
@@ -405,7 +404,6 @@ class Projects
                 'project.state',
                 'project.hourBudget',
                 'project.dollarBudget',
-                'project.menuType',
                 'project.type',
                 'project.parent',
                 'project.modified',
@@ -489,7 +487,6 @@ class Projects
             'project.state',
             'project.hourBudget',
             'project.dollarBudget',
-            'project.menuType',
             'project.type',
             'project.parent',
             'project.modified',
@@ -520,7 +517,6 @@ class Projects
                 'project.state',
                 'project.hourBudget',
                 'project.dollarBudget',
-                'project.menuType',
                 'project.type',
                 'project.parent',
                 'project.modified',
@@ -569,7 +565,6 @@ class Projects
             'project.state',
             'project.hourBudget',
             'project.dollarBudget',
-            'project.menuType',
             'project.type',
             'project.parent',
             'project.modified',
@@ -616,7 +611,6 @@ class Projects
                 'project.hourBudget',
                 'project.dollarBudget',
                 'project.state',
-                'project.menuType',
                 'project.modified',
                 'project.type',
                 'client.name as clientName',
@@ -635,7 +629,6 @@ class Projects
                 'project.hourBudget',
                 'project.dollarBudget',
                 'project.state',
-                'project.menuType',
                 'project.modified',
                 'project.type',
                 'client.name',
@@ -686,7 +679,6 @@ class Projects
                 'zp_projects.hourBudget',
                 'zp_projects.dollarBudget',
                 'zp_projects.psettings',
-                'zp_projects.menuType',
                 'zp_projects.avatar',
                 'zp_projects.cover',
                 'zp_projects.type',
@@ -717,7 +709,6 @@ class Projects
                 'zp_projects.hourBudget',
                 'zp_projects.dollarBudget',
                 'zp_projects.psettings',
-                'zp_projects.menuType',
                 'zp_projects.avatar',
                 'zp_projects.cover',
                 'zp_projects.type',
@@ -850,7 +841,6 @@ class Projects
             'hourBudget' => $values['hourBudget'],
             'dollarBudget' => $values['dollarBudget'],
             'psettings' => $values['psettings'],
-            'menuType' => $values['menuType'] ?? '',
             'type' => $values['type'] ?? 'project',
             'parent' => $values['parent'] ?? null,
             'start' => $startDate,
@@ -903,7 +893,6 @@ class Projects
                 'hourBudget' => $values['hourBudget'] ?? '',
                 'dollarBudget' => $values['dollarBudget'] ?? '',
                 'psettings' => $values['psettings'] ?? '',
-                'menuType' => $values['menuType'] ?? 'default',
                 'type' => $values['type'] ?? 'project',
                 'parent' => $values['parent'] ?? null,
                 'start' => $startDate,
@@ -1160,7 +1149,14 @@ class Projects
 
         $updateData = [];
         foreach ($params as $key => $value) {
-            $updateData[DbCore::sanitizeToColumnString($key)] = $value;
+            $column = DbCore::sanitizeToColumnString($key);
+
+            // Metadata holds structured settings (module switches) with their own save path.
+            if (strtolower($column) === 'metadata') {
+                continue;
+            }
+
+            $updateData[$column] = $value;
         }
 
         $updateData['modified'] = date('Y-m-d H:i:s');
@@ -1168,6 +1164,118 @@ class Projects
         return $this->connection->table('zp_projects')
             ->where('id', $id)
             ->update($updateData) >= 0;
+    }
+
+    /**
+     * The module switches stored in the project's metadata.
+     *
+     * @return array<string, bool> Module id => enabled.
+     */
+    public function getModuleOverrides(int $projectId): array
+    {
+        $metadata = $this->getMetadata($projectId);
+        $modules = $metadata['modules'] ?? [];
+
+        if (! is_array($modules)) {
+            return [];
+        }
+
+        return array_map(fn ($enabled) => (bool) $enabled, $modules);
+    }
+
+    /**
+     * The module switches of several projects in one query.
+     *
+     * @param  array<int, int>  $projectIds
+     * @return array<int, array<string, bool>> Project id => (module id => enabled), for every existing project asked for.
+     */
+    public function getModuleOverridesForProjects(array $projectIds): array
+    {
+        if ($projectIds === []) {
+            return [];
+        }
+
+        try {
+            $metadataByProject = $this->connection->table('zp_projects')
+                ->whereIn('id', $projectIds)
+                ->pluck('metadata', 'id');
+        } catch (QueryException $e) {
+            // The column arrives with db update 3.5.31; until then there are no module switches.
+            Log::warning('Could not read project metadata: '.$e->getMessage());
+
+            return [];
+        }
+
+        $overridesByProject = [];
+
+        foreach ($metadataByProject as $projectId => $json) {
+            $modules = $this->decodeMetadata($json)['modules'] ?? [];
+            $overridesByProject[(int) $projectId] = is_array($modules) ? array_map(fn ($enabled) => (bool) $enabled, $modules) : [];
+        }
+
+        return $overridesByProject;
+    }
+
+    /**
+     * Change the module switches in the project's metadata, keeping any other metadata keys. The
+     * project row is locked from read to write, so concurrent saves can't undo each other.
+     *
+     * @param  callable(array<string, bool>): array<string, bool>  $change  Gets the stored switches, returns the new ones.
+     */
+    public function updateModuleOverrides(int $projectId, callable $change): void
+    {
+        $this->connection->transaction(function () use ($projectId, $change): void {
+            $json = $this->connection->table('zp_projects')
+                ->where('id', $projectId)
+                ->lockForUpdate()
+                ->value('metadata');
+
+            $metadata = $this->decodeMetadata($json);
+            $modules = is_array($metadata['modules'] ?? null) ? $metadata['modules'] : [];
+            $metadata['modules'] = (object) $change(array_map(fn ($enabled) => (bool) $enabled, $modules));
+
+            $this->connection->table('zp_projects')
+                ->where('id', $projectId)
+                ->update([
+                    'metadata' => json_encode($metadata),
+                    'modified' => date('Y-m-d H:i:s'),
+                ]);
+        });
+    }
+
+    /**
+     * The decoded `metadata` JSON column of a project.
+     *
+     * @return array<string, mixed> Empty when the project has no metadata or doesn't exist.
+     */
+    private function getMetadata(int $projectId): array
+    {
+        try {
+            $json = $this->connection->table('zp_projects')
+                ->where('id', $projectId)
+                ->value('metadata');
+        } catch (QueryException $e) {
+            // The column arrives with db update 3.5.31; until then there are no module switches.
+            Log::warning('Could not read project metadata: '.$e->getMessage());
+
+            return [];
+        }
+
+        return $this->decodeMetadata($json);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function decodeMetadata(mixed $json): array
+    {
+        if (! is_string($json) || $json === '') {
+            return [];
+        }
+
+        $metadata = json_decode($json, true);
+
+        return is_array($metadata) ? $metadata : [];
     }
 
     /**

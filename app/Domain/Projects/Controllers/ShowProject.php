@@ -186,7 +186,6 @@ class ShowProject extends Controller
                 'hourBudget' => $_POST['hourBudget'],
                 'dollarBudget' => $_POST['dollarBudget'],
                 'psettings' => $_POST['globalProjectUserAccess'],
-                'menuType' => $_POST['menuType'],
                 'type' => $_POST['type'] ?? $project['type'],
                 'parent' => $_POST['parent'] ?? '',
                 'start' => isset($_POST['start']) && dtHelper()->isValidDateString($_POST['start']) ? dtHelper()->parseUserDateTime($_POST['start'])->formatDateTimeForDb() : '',
@@ -244,7 +243,6 @@ class ShowProject extends Controller
         $this->tpl->assign('todoStatus', $this->ticketService->getStatusLabels());
         $this->tpl->assign('employees', $this->projectService->getEmployees());
         $this->tpl->assign('project', $project);
-        $this->tpl->assign('menuTypes', $this->projectService->getMenuTypes());
         $this->tpl->assign('projectTypes', $this->projectService->getProjectTypes());
         $this->tpl->assign('state', ['open', 'closed']);
         $this->tpl->assign('role', session('userdata.role'));

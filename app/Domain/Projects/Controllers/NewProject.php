@@ -54,7 +54,6 @@ class NewProject extends Controller
 
         $values = $this->projectService->getNewProjectDefaults($defaultParent);
 
-        $this->tpl->assign('menuTypes', $this->projectService->getMenuTypes());
         $this->tpl->assign('project', $values);
         $this->tpl->assign('availableUsers', $this->projectService->getAllUsers());
         $this->tpl->assign('clients', $this->clientService->getAll());
@@ -117,7 +116,6 @@ class NewProject extends Controller
             'dollarBudget' => $_POST['dollarBudget'] ?? 0,
             'state' => $_POST['projectState'],
             'psettings' => $_POST['globalProjectUserAccess'],
-            'menuType' => $_POST['menuType'] ?? 'default',
             'type' => $_POST['type'] ?? 'project',
             'parent' => $parent,
             'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
@@ -144,7 +142,6 @@ class NewProject extends Controller
             return Frontcontroller::redirect(BASE_URL.'/projects/showProject/'.$id);
         }
 
-        $this->tpl->assign('menuTypes', $this->projectService->getMenuTypes());
         $this->tpl->assign('project', $values);
         $this->tpl->assign('availableUsers', $this->projectService->getAllUsers());
         $this->tpl->assign('clients', $this->clientService->getAll());

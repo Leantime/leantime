@@ -28,7 +28,6 @@ use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
@@ -1793,7 +1792,6 @@ class Projects extends BaseService implements ChecksProjectAccess
             'state' => $projectValues['state'],
             'hourBudget' => $projectValues['hourBudget'],
             'dollarBudget' => $projectValues['dollarBudget'],
-            'menuType' => $projectValues['menuType'],
             'psettings' => $projectValues['psettings'],
             'assignedUsers' => [],
         ];
@@ -1808,6 +1806,10 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $projectSettingsKeys = ['retrolabels', 'ticketlabels', 'idealabels'];
         $newProjectId = $this->projectRepository->addProject($copyProject);
+
+        // The copy gets the same modules switched on and off.
+        $sourceModules = $this->projectRepository->getModuleOverrides($projectId);
+        $this->projectRepository->updateModuleOverrides($newProjectId, fn (array $modules): array => $sourceModules);
 
         // ProjectSettings
         foreach ($projectSettingsKeys as $key) {
@@ -3221,20 +3223,6 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * Returns the list of supported menu types.
-     *
-     * Thin passthrough so controllers do not have to inject the menu repository.
-     *
-     * @return array Map of menu type key => translated label.
-     *
-     * @api
-     */
-    public function getMenuTypes(): array
-    {
-        return app()->make(MenuRepository::class)->getMenuTypes();
-    }
-
-    /**
      * Returns all users in the system.
      *
      * Thin passthrough so controllers do not have to inject the user repository.
@@ -3284,7 +3272,6 @@ class Projects extends BaseService implements ChecksProjectAccess
             'assignedUsers' => [session('userdata.id')],
             'dollarBudget' => '',
             'state' => '',
-            'menuType' => MenuRepository::DEFAULT_MENU,
             'type' => 'project',
             'parent' => $parent,
             'psettings' => '',
