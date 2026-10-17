@@ -50,14 +50,15 @@ $moduleRegistry->register(new Module(
     permissionDomain: 'wiki',
 ));
 
-// The file library only: files.* also guards ticket attachments and images pasted into the
-// editor, which stay available.
+// The file library (/files/browse) only. files.* also guards ticket attachments and images
+// pasted into the editor, and /files/showAll is the attachment list in the to-do modal (its
+// delete forms post there), so all of those stay available.
 $moduleRegistry->register(new Module(
     id: 'files',
     title: 'modules.files.title',
     description: 'modules.files.description',
     icon: 'fa fa-fw fa-file',
-    routes: ['files.browse', 'files.showAll'],
+    routes: ['files.browse'],
 ));
 
 $moduleRegistry->register(new Module(

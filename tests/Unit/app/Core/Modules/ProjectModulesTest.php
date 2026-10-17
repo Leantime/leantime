@@ -26,10 +26,11 @@ class ProjectModulesTest extends \Unit\TestCase
 
         $this->registry = new ModuleRegistry;
         $this->registry->register(new Module(id: 'wiki', title: 'Docs', routes: ['wiki'], permissionDomain: 'wiki'));
-        $this->registry->register(new Module(id: 'files', title: 'Files', routes: ['files.browse', 'files.showAll']));
+        $this->registry->register(new Module(id: 'files', title: 'Files', routes: ['files.browse']));
         $this->registry->register(new Module(id: 'Whiteboardscanvas', title: 'Whiteboards', routes: ['Whiteboardscanvas'], source: 'Whiteboardscanvas'));
         $this->registry->register(new Module(id: 'beta', title: 'Beta', enabledByDefault: false, routes: ['beta']));
         $this->registry->register(new Module(id: 'boards', title: 'Boards', routes: ['boards', 'api.boards']));
+        $this->registry->register(new Module(id: 'library', title: 'Library', routes: ['library.showAll']));
 
         $this->store = new class implements StoresProjectModules
         {
@@ -146,21 +147,23 @@ class ProjectModulesTest extends \Unit\TestCase
 
     public function test_routes_of_a_switched_off_module_are_blocked(): void
     {
-        $this->store->rows[7] = ['wiki' => false, 'files' => false, 'Whiteboardscanvas' => false];
+        $this->store->rows[7] = ['wiki' => false, 'files' => false, 'Whiteboardscanvas' => false, 'library' => false];
 
         $this->assertSame('wiki', $this->projectModules->blockingRoute('wiki', 'show', 7)?->id);
         $this->assertSame('files', $this->projectModules->blockingRoute('files', 'browse', 7)?->id);
         $this->assertSame('Whiteboardscanvas', $this->projectModules->blockingRoute('whiteboardscanvas', 'showCanvas', 7)?->id);
 
-        // Matched like the Frontcontroller resolves controllers: these all reach Files\ShowAll.
-        $this->assertSame('files', $this->projectModules->blockingRoute('files', 'show-all', 7)?->id);
-        $this->assertSame('files', $this->projectModules->blockingRoute('files', 'show_all', 7)?->id);
-        $this->assertSame('files', $this->projectModules->blockingRoute('Files', 'ShowAll', 7)?->id);
-        $this->assertSame('files', $this->projectModules->blockingRoute('files', 'show all', 7)?->id);
+        // Matched like the Frontcontroller resolves controllers: these all reach the ShowAll action.
+        $this->assertSame('library', $this->projectModules->blockingRoute('library', 'show-all', 7)?->id);
+        $this->assertSame('library', $this->projectModules->blockingRoute('library', 'show_all', 7)?->id);
+        $this->assertSame('library', $this->projectModules->blockingRoute('Library', 'ShowAll', 7)?->id);
+        $this->assertSame('library', $this->projectModules->blockingRoute('library', 'show all', 7)?->id);
 
-        // Only the claimed actions of Files are blocked; attachments still upload and download.
+        // Only the claimed actions of Files are blocked; attachments still upload, download, and
+        // are listed and deleted through the to-do modal's files/showAll.
         $this->assertNull($this->projectModules->blockingRoute('files', 'upload', 7));
         $this->assertNull($this->projectModules->blockingRoute('files', 'get', 7));
+        $this->assertNull($this->projectModules->blockingRoute('files', 'showAll', 7));
 
         $this->assertNull($this->projectModules->blockingRoute('wiki', 'show', 8));
         $this->assertNull($this->projectModules->blockingRoute('tickets', 'showKanban', 7));
@@ -210,7 +213,7 @@ class ProjectModulesTest extends \Unit\TestCase
         $this->store->rows[7] = ['wiki' => false];
 
         $this->assertSame(
-            ['wiki' => false, 'files' => true, 'Whiteboardscanvas' => true, 'beta' => false, 'boards' => true],
+            ['wiki' => false, 'files' => true, 'Whiteboardscanvas' => true, 'beta' => false, 'boards' => true, 'library' => true],
             $this->projectModules->statesFor(7)
         );
     }

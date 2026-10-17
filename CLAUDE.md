@@ -554,7 +554,8 @@ Admins switch features on or off per project (Project settings → Modules). It 
 - **UI/API in Domain** (`app/Domain/Modulemanager`): the settings tab, the `getProjectModules`/`saveProjectModules` `@api` methods, the "not available" page, and `register.php`, which registers the core modules (Goals, Ideas, Blueprints, Docs, Files library, Reports). To-Dos, Milestones, the dashboard and comments are always on.
 - **Storage**: `zp_projects.metadata` JSON, `{"modules": {"wiki": false}}`, holding only choices that differ from a module's default. Copied by `duplicateProject()`.
 - **Plugins**: `$registration->registerModule([...])` in `register.php`. Menu items carry `module` (set automatically by `addMenuItem()`); a menu item whose `module` is off is hidden in project menus.
-- A module's `permissionDomain` stays null when that domain also guards things that must keep working: `files.*` backs ticket attachments and editor uploads, and `blueprints.*` backs every canvas type (Logic Model, whiteboards).
+- A module's `permissionDomain` stays null when that domain also guards things that must keep working: `files.*` backs ticket attachments and editor uploads (so Files claims only the library route `files.browse`; `files/showAll` is the to-do attachment list), and `blueprints.*` backs every canvas type (Logic Model, whiteboards).
+- Cross-project reads that services serve in-process (MCP tools, polling) filter rows with `ProjectModules::withoutSwitchedOffProjects()`, which bulk-loads the switches in one query.
 - The old per-project `menuType` column is retired: core no longer reads or writes it. It stays in the schema until the plugins that still select it are updated.
 
 ## Frontend Architecture
