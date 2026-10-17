@@ -2,11 +2,9 @@
 
 @section('content')
 
-<x-global::pageheader :icon="'fa fa-user'">
-    <h5>{{ __('label.overview') }}</h5>
-    <h1>{!! __('headlines.accountSettings') !!}</h1>
-
-</x-global::pageheader>
+<x-global::layout.page-header icon="fa fa-user" :eyebrow="__('label.overview')">
+    {!! __('headlines.accountSettings') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
 
