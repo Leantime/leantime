@@ -130,8 +130,8 @@ class Goalcanvas extends BaseService
     /**
      * Sum the linked children's current values for a parent goal, authorized for VIEW against
      * the PARENT goal's project. The cross-project roll-up of linked children is the feature;
-     * the gate is on the parent the caller asked about. Returns 0 for a missing/foreign/
-     * unauthorized parent.
+     * the gate is on the parent the caller asked about. Linked goals in projects with the Goals
+     * module switched off are left out. Returns 0 for a missing/foreign/unauthorized parent.
      *
      * @return int|mixed
      *
@@ -151,9 +151,22 @@ class Goalcanvas extends BaseService
         // goal B
         // Checks if first level is also link+report or just link
         $goals = $this->goalRepository->getCanvasItemsByKPI($parentId);
+
+        // Linked goals can live in other projects: those with the Goals module off don't count
+        // towards the roll-up, same as they are left out of getChildrenbyKPI().
+        $this->projectModules?->preload(array_merge(array_column($goals, 'projectId'), array_column($goals, 'childProjectId')));
+
         $currentValueSum = 0;
         foreach ($goals as $child) {
+            if (! $this->goalsEnabledIn((int) ($child['projectId'] ?? 0))) {
+                continue;
+            }
+
             if ($child['setting'] == 'linkAndReport') {
+                if (! $this->goalsEnabledIn((int) ($child['childProjectId'] ?? 0))) {
+                    continue;
+                }
+
                 $currentValueSum = $currentValueSum + $child['childCurrentValue'];
             } else {
                 $currentValueSum = $currentValueSum + $child['currentValue'];
