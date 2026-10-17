@@ -103,6 +103,7 @@ class Install
         30528,
         30529,
         30530,
+        30531,
     ];
 
     /**
@@ -567,6 +568,7 @@ class Install
                     `active` int(11) DEFAULT NULL,
                     `menuType` MEDIUMTEXT DEFAULT NULL,
                     `psettings` MEDIUMTEXT NULL,
+                    `metadata` TEXT NULL,
                     `parent` INT(11) NULL,
                     `type` VARCHAR(45) NULL,
                     `start` DATETIME NULL,
@@ -3477,6 +3479,35 @@ class Install
             Log::error('Migration 30530: '.$e->getMessage());
 
             return ['Migration 30530 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30531 — database update for v3.5.31.
+     *
+     * Adds `zp_projects.metadata`, a JSON column for structured project settings. It starts with
+     * the per-project module switches (`{"modules": {"wiki": false}}`). The old `menuType` column
+     * is no longer read or written by core; it stays until the plugins that still select it have
+     * been updated.
+     */
+    public function update_sql_30531(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if ($schema->hasTable('zp_projects') && ! $schema->hasColumn('zp_projects', 'metadata')) {
+                $schema->table('zp_projects', function (Blueprint $table): void {
+                    $table->text('metadata')->nullable();
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30531: '.$e->getMessage());
+
+            return ['Migration 30531 failed: '.$e->getMessage()];
         }
 
         return true;

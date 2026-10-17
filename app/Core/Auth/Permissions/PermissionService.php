@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Auth\Contracts\ChecksProjectAccess;
 use Leantime\Core\Auth\RoleResolver;
 use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Auth\Models\Roles;
 
 /**
@@ -21,6 +22,10 @@ use Leantime\Domain\Auth\Models\Roles;
  *    cached role->permission grant map. Effective role is project-aware (see {@see RoleResolver}).
  *  - DATA ACCESS — for project-scoped permissions targeting a concrete project, is the user
  *    actually a member of (or otherwise able to access) that project? Admin/owner bypass.
+ *
+ * Before either, a project-scoped check against a concrete project fails when the permission's
+ * domain belongs to a module that is switched off in that project ({@see ProjectModules}). That
+ * switch is a blanket one, so no role can grant past it.
  *
  * Ownership and other entity-specific checks deliberately live in callers, not here.
  */
@@ -37,6 +42,7 @@ class PermissionService
         private PermissionRepository $repo,
         private RoleResolver $roles,
         private ChecksProjectAccess $projectAccess,
+        private ?ProjectModules $projectModules = null,
     ) {}
 
     /**
@@ -48,9 +54,10 @@ class PermissionService
     }
 
     /**
-     * The authorization decision. Resolves the effective role (project-aware for
-     * project-scoped permissions), checks the grant map, then — only for project-scoped
-     * permissions against a concrete project — ANDs in project data access.
+     * The authorization decision. Denies project-scoped permissions of modules that are off in
+     * the target project, resolves the effective role (project-aware for project-scoped
+     * permissions), checks the grant map, then — only for project-scoped permissions against a
+     * concrete project — ANDs in project data access.
      *
      * @param  string  $permissionKey  A `domain.action` key.
      * @param  int|null  $projectId  The project the acted-on entity belongs to (for project-scoped checks).
@@ -60,6 +67,10 @@ class PermissionService
     {
         $projectScoped = $this->isProjectScoped($permissionKey);
         $useGlobal = $forceGlobal === true || ! $projectScoped;
+
+        if (! $useGlobal && $this->projectModules !== null && ! $this->projectModules->allowsPermission($permissionKey, $projectId)) {
+            return false;
+        }
 
         if ($useGlobal) {
             $role = $this->roles->effectiveRole(true);

@@ -39,6 +39,7 @@ return [
 
             \Leantime\Core\Auth\AuthenticationServiceProvider::class,
             \Leantime\Core\Auth\Permissions\PermissionServiceProvider::class,
+            \Leantime\Core\Modules\ModulesServiceProvider::class,
             \Leantime\Core\Middleware\RateLimiter::class,
             \Leantime\Core\Database\DatabaseServiceProvider::class,
             \Leantime\Core\WorkStructure\WorkStructureServiceProvider::class,

@@ -71,11 +71,6 @@ class DefaultConfig
     public string $defaultTimezone = 'America/Los_Angeles';
 
     /**
-     * @var bool Enable to specifiy menu on a project by project basis
-     */
-    public bool $enableMenuType = false;
-
-    /**
      * @var bool|int Debug flag
      */
     #[LaravelConfig('app.debug')]

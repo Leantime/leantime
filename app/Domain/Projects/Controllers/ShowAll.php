@@ -5,7 +5,6 @@ namespace Leantime\Domain\Projects\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,17 +12,12 @@ class ShowAll extends Controller
 {
     private ProjectService $projectService;
 
-    private MenuRepository $menuRepo;
-
     /**
      * Initializes dependencies.
      */
-    public function init(
-        ProjectService $projectService,
-        MenuRepository $menuRepo
-    ): void {
+    public function init(ProjectService $projectService): void
+    {
         $this->projectService = $projectService;
-        $this->menuRepo = $menuRepo;
     }
 
     /**
@@ -51,7 +45,6 @@ class ShowAll extends Controller
             $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects(session('userdata.id'), session('userdata.clientId')));
         }
 
-        $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
         $this->tpl->assign('showClosedProjects', session('showClosedProjects'));
 
         return $this->tpl->display('projects.showAll');

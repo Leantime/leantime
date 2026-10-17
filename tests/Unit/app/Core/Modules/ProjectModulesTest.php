@@ -1,0 +1,167 @@
+<?php
+
+namespace Tests\Unit\app\Core\Modules;
+
+use Leantime\Core\Modules\Contracts\StoresProjectModules;
+use Leantime\Core\Modules\Module;
+use Leantime\Core\Modules\ModuleRegistry;
+use Leantime\Core\Modules\ProjectModules;
+
+/**
+ * Per-project module switches: defaults, stored overrides, and the two questions the gates ask
+ * (may this permission be granted here, is this route switched off here).
+ */
+class ProjectModulesTest extends \Unit\TestCase
+{
+    private ModuleRegistry $registry;
+
+    /** In-memory stand-in for the zp_projects.metadata column. */
+    private StoresProjectModules $store;
+
+    private ProjectModules $projectModules;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->registry = new ModuleRegistry;
+        $this->registry->register(new Module(id: 'wiki', title: 'Docs', routes: ['wiki'], permissionDomain: 'wiki'));
+        $this->registry->register(new Module(id: 'files', title: 'Files', routes: ['files.browse', 'files.showAll']));
+        $this->registry->register(new Module(id: 'Whiteboardscanvas', title: 'Whiteboards', routes: ['Whiteboardscanvas'], source: 'Whiteboardscanvas'));
+        $this->registry->register(new Module(id: 'beta', title: 'Beta', enabledByDefault: false, routes: ['beta']));
+
+        $this->store = new class implements StoresProjectModules
+        {
+            /** @var array<int, array<string, bool>> */
+            public array $rows = [];
+
+            public int $reads = 0;
+
+            public function getModuleOverrides(int $projectId): array
+            {
+                $this->reads++;
+
+                return $this->rows[$projectId] ?? [];
+            }
+
+            public function saveModuleOverrides(int $projectId, array $overrides): void
+            {
+                $this->rows[$projectId] = $overrides;
+            }
+        };
+
+        $this->projectModules = new ProjectModules($this->registry, $this->store);
+    }
+
+    public function test_modules_follow_their_default_until_a_project_chooses(): void
+    {
+        $this->assertTrue($this->projectModules->isEnabled('wiki', 7));
+        $this->assertFalse($this->projectModules->isEnabled('beta', 7));
+    }
+
+    public function test_unknown_modules_and_requests_without_a_project_count_as_on(): void
+    {
+        $this->store->rows[7] = ['wiki' => false];
+
+        $this->assertTrue($this->projectModules->isEnabled('tickets', 7));
+        $this->assertTrue($this->projectModules->isEnabled('wiki', null));
+        $this->assertTrue($this->projectModules->isEnabled('wiki', 0));
+    }
+
+    public function test_saving_stores_only_choices_that_differ_from_the_default(): void
+    {
+        $this->projectModules->save(7, ['wiki' => false, 'files' => true, 'beta' => true]);
+
+        $this->assertSame(['wiki' => false, 'beta' => true], $this->store->rows[7]);
+        $this->assertFalse($this->projectModules->isEnabled('wiki', 7));
+        $this->assertTrue($this->projectModules->isEnabled('beta', 7));
+
+        $this->projectModules->save(7, ['wiki' => true]);
+
+        $this->assertSame(['beta' => true], $this->store->rows[7]);
+        $this->assertTrue($this->projectModules->isEnabled('wiki', 7));
+    }
+
+    public function test_saving_keeps_choices_for_modules_that_are_not_registered_right_now(): void
+    {
+        // A plugin that is disabled for the install isn't registered; its choice must survive.
+        $this->store->rows[7] = ['pomodoro' => false];
+
+        $this->projectModules->save(7, ['wiki' => false, 'pomodoro' => true]);
+
+        $this->assertSame(['pomodoro' => false, 'wiki' => false], $this->store->rows[7]);
+    }
+
+    public function test_stored_choices_are_read_once_per_project(): void
+    {
+        $this->projectModules->isEnabled('wiki', 7);
+        $this->projectModules->isEnabled('files', 7);
+        $this->projectModules->isEnabled('wiki', 8);
+
+        $this->assertSame(2, $this->store->reads);
+    }
+
+    public function test_module_ids_match_in_any_letter_case(): void
+    {
+        $this->projectModules->save(7, ['whiteboardscanvas' => false]);
+
+        $this->assertSame(['Whiteboardscanvas' => false], $this->store->rows[7]);
+        $this->assertFalse($this->projectModules->isEnabled('Whiteboardscanvas', 7));
+        $this->assertFalse($this->projectModules->isEnabled('whiteboardscanvas', 7));
+    }
+
+    public function test_permissions_of_a_switched_off_module_are_not_allowed_in_that_project(): void
+    {
+        $this->store->rows[7] = ['wiki' => false];
+
+        $this->assertFalse($this->projectModules->allowsPermission('wiki.view', 7));
+        $this->assertTrue($this->projectModules->allowsPermission('wiki.view', 8));
+        $this->assertTrue($this->projectModules->allowsPermission('wiki.view', null));
+        $this->assertTrue($this->projectModules->allowsPermission('tickets.view', 7));
+    }
+
+    public function test_modules_without_a_permission_domain_never_deny_permissions(): void
+    {
+        // Files backs ticket attachments: switching the file library off must not touch files.*.
+        $this->store->rows[7] = ['files' => false];
+
+        $this->assertTrue($this->projectModules->allowsPermission('files.view', 7));
+        $this->assertTrue($this->projectModules->allowsPermission('files.upload', 7));
+    }
+
+    public function test_routes_of_a_switched_off_module_are_blocked(): void
+    {
+        $this->store->rows[7] = ['wiki' => false, 'files' => false, 'Whiteboardscanvas' => false];
+
+        $this->assertSame('wiki', $this->projectModules->blockingRoute('wiki', 'show', 7)?->id);
+        $this->assertSame('files', $this->projectModules->blockingRoute('files', 'browse', 7)?->id);
+        $this->assertSame('Whiteboardscanvas', $this->projectModules->blockingRoute('whiteboardscanvas', 'showCanvas', 7)?->id);
+
+        // Only the claimed actions of Files are blocked; attachments still upload and download.
+        $this->assertNull($this->projectModules->blockingRoute('files', 'upload', 7));
+        $this->assertNull($this->projectModules->blockingRoute('files', 'get', 7));
+
+        $this->assertNull($this->projectModules->blockingRoute('wiki', 'show', 8));
+        $this->assertNull($this->projectModules->blockingRoute('tickets', 'showKanban', 7));
+    }
+
+    public function test_copy_gives_the_new_project_the_same_choices(): void
+    {
+        $this->store->rows[7] = ['wiki' => false, 'beta' => true];
+
+        $this->projectModules->copy(7, 9);
+
+        $this->assertFalse($this->projectModules->isEnabled('wiki', 9));
+        $this->assertTrue($this->projectModules->isEnabled('beta', 9));
+    }
+
+    public function test_states_list_every_registered_module(): void
+    {
+        $this->store->rows[7] = ['wiki' => false];
+
+        $this->assertSame(
+            ['wiki' => false, 'files' => true, 'Whiteboardscanvas' => true, 'beta' => false],
+            $this->projectModules->statesFor(7)
+        );
+    }
+}

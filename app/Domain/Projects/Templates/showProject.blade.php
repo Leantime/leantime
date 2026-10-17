@@ -32,6 +32,7 @@
             <ul>
                 <li><a href="#projectdetails"><span class="fa fa-leaf"></span> {!! __('tabs.projectdetails') !!}</a></li>
                 <li><a href="#team"><span class="fa fa-group"></span> {!! __('tabs.team') !!}</a></li>
+                <li><a href="#modules"><span class="fa fa-puzzle-piece"></span> {{ __('tabs.modules') }}</a></li>
 
                 <li><a href="#integrations"> <span class="fa fa-asterisk"></span> {!! __('tabs.Integrations') !!}</a></li>
                 <li><a href="#todosettings"><span class="fa fa-list-ul"></span> {!! __('tabs.todosettings') !!}</a></li>
@@ -191,6 +192,10 @@
 
                 </form>
 
+            </div>
+
+            <div id="modules">
+                <x-global::hx endpoint="modulemanager/projectModules/get/{{ $project['id'] }}" trigger="load" loaderCount="4" />
             </div>
 
             <div id="integrations">

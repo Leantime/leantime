@@ -35,8 +35,6 @@ class Config
 
     public $defaultTimezone = 'America/Los_Angeles';      // Set default timezone
 
-    public $enableMenuType = false;                       // Enable to specify menu on a project-by-project basis
-
     public $debug = 0;                                    // Debug flag
 
     public $disableLoginForm = false;                     // If true then don't show the login form (useful only if additional auth method[s] are available)
