@@ -13,16 +13,9 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
-    <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{!! __('headlines.connector') !!} // {{ $provider->name }}</h1>
-            </div>
-        </div>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-circle-nodes">
+    {!! __('headlines.connector') !!} // {{ $provider->name }}
+</x-global::layout.page-header>
 
 {!! $tpl->displayNotification() !!}
 

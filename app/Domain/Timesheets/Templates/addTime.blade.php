@@ -5,18 +5,14 @@
 $values = $values ?? [];
 @endphp
 
-<div class="pageheader">
-    <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
-        <x-global::forms.text-input name="term"
-               placeholder="{{ __('input.placeholders.search_type_hit_enter') }}" />
-    </form>
-
-    <div class="pageicon"><span class="fa-laptop"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('OVERVIEW') !!}</h5>
-        <h1>{!! __('MY_TIMESHEETS') !!}</h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa fa-laptop" :eyebrow="__('OVERVIEW')">
+    {!! __('MY_TIMESHEETS') !!}
+    <x-slot:actions>
+        <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
+            <x-global::forms.text-input name="term" placeholder="{{ __('input.placeholders.search_type_hit_enter') }}" />
+        </form>
+    </x-slot:actions>
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">

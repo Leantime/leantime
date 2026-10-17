@@ -16,16 +16,9 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
-    <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{!! __('headlines.integrations') !!} // {{ $provider->name }} </h1>
-            </div>
-        </div>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-circle-nodes">
+    {!! __('headlines.integrations') !!} // {{ $provider->name }}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">

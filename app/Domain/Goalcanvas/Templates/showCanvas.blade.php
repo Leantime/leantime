@@ -40,50 +40,49 @@
         }
     </style>
 
-    <div class="pageheader">
-        <div class="pageicon"><span class="fas {{ $canvasIcon }}"></span></div>
-        <div class="pagetitle">
-            @if (count($allCanvas) > 0)
-                <x-global::subjectSwitcher
-                    :parent="__('headline.goal.board')"
-                    :current="$canvasTitle">
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/goalcanvas/bigRock">{!! __('links.icon.create_new_bigrock') !!}</a></li>
-                    @endif
-                    <li class="border"></li>
-                    @foreach ($allCanvas as $canvasRow)
-                        <li><a
-                                href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a>
-                        </li>
-                    @endforeach
-                </x-global::subjectSwitcher>
-            @else
-                <h1>{{ __('headline.goal.board') }}</h1>
-            @endif
-        </div>
-        @if (count($allCanvas) > 0)
-            <div class="pageheader-right">
-                <x-global::actions.dropdown variant="header-menu">
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
-                        <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
-                        <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
-                        <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a>
-                        </li>
-                    @endif
+    <x-global::layout.page-header icon="fas {{ $canvasIcon }}">
+    @if (count($allCanvas) > 0)
+        <x-slot:switcher>
+            <x-global::subjectSwitcher
+                :parent="__('headline.goal.board')"
+                :current="$canvasTitle">
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/goalcanvas/bigRock">{!! __('links.icon.create_new_bigrock') !!}</a></li>
+                @endif
+                <li class="border"></li>
+                @foreach ($allCanvas as $canvasRow)
                     <li><a
-                            href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
+                            href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a>
                     </li>
-                    <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
-                    @if ($login::userIsAtLeast($roles::$editor))
-                        <li><a href="#/goalcanvas/delCanvas/{{ $currentCanvas }}"
-                                class="delete">{!!__('links.icon.delete') !!}</a></li>
-                    @endif
+                @endforeach
+            </x-global::subjectSwitcher>
+        </x-slot:switcher>
+    @else
+        {{ __('headline.goal.board') }}
+    @endif
+    @if (count($allCanvas) > 0)
+        <x-slot:actions>
+            <x-global::actions.dropdown variant="header-menu">
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
+                    <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
+                    <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
+                    <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a>
+                    </li>
+                @endif
+                <li><a
+                        href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
+                </li>
+                <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <li><a href="#/goalcanvas/delCanvas/{{ $currentCanvas }}"
+                            class="delete">{!!__('links.icon.delete') !!}</a></li>
+                @endif
 
-                </x-global::actions.dropdown>
-            </div>
-        @endif
-    </div>
+            </x-global::actions.dropdown>
+        </x-slot:actions>
+    @endif
+</x-global::layout.page-header>
     <!--pageheader-->
 
     <div class="maincontent">

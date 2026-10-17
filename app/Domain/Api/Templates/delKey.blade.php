@@ -2,13 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-key"></i></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headlines.delete_key') !!}</h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa-solid fa-key" :eyebrow="__('label.administration')">
+    {!! __('headlines.delete_key') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
