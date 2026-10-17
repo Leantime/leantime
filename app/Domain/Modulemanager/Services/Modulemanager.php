@@ -8,6 +8,7 @@ namespace Leantime\Domain\Modulemanager\Services;
 
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Modules\ModuleRegistry;
 use Leantime\Core\Modules\ProjectModules;
@@ -21,6 +22,11 @@ use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
  */
 class Modulemanager extends BaseService
 {
+    // Used directly (not only via BaseService) so this class keeps its own event context: the
+    // trait caches the context in a private static, which BaseService subclasses would otherwise
+    // share, and plugins listen for leantime.domain.modulemanager.…moduleAvailability.
+    use DispatchesEvents;
+
     public function __construct(
         private Plugins $pluginService,
         private ModuleRegistry $moduleRegistry,
