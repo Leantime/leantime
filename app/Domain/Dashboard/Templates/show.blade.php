@@ -1,19 +1,19 @@
 @extends($layout)
 
 @section('content')
-<x-global::pageheader :icon="'fa fa-gauge-high'">
+<x-global::layout.page-header icon="fa fa-gauge-high" :eyebrow="session('currentProjectClient')">
+    {!! __('headlines.project_dashboard') !!}
     @if (count($allUsers) == 1)
-        <a href="#/users/newUser" class="headerCTA">
-            <i class="fa fa-users"></i>
-            <span class="tw-text-[14px] tw-leading-[25px]">
-                {{ __('links.dont_do_it_alone') }}
-            </span>
-        </a>
+        <x-slot:actions>
+            <a href="#/users/newUser" class="headerCTA">
+                <i class="fa fa-users"></i>
+                <span class="tw-text-[14px] tw-leading-[25px]">
+                    {{ __('links.dont_do_it_alone') }}
+                </span>
+            </a>
+        </x-slot:actions>
     @endif
-
-    <h5>{{ session("currentProjectClient") }}</h5>
-    <h1>{!! __('headlines.project_dashboard') !!}</h1>
-</x-global::pageheader>
+</x-global::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
