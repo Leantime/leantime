@@ -922,6 +922,7 @@ class Goalcanvas extends Blueprints
             ->select([
                 'zp_canvas_items.id',
                 'zp_canvas_items.description',
+                'zp_canvas.projectId',
                 'project.name as projectName',
                 'zp_canvas.title as boardTitle',
             ])

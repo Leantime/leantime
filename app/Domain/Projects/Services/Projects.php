@@ -1808,7 +1808,8 @@ class Projects extends BaseService implements ChecksProjectAccess
         $newProjectId = $this->projectRepository->addProject($copyProject);
 
         // The copy gets the same modules switched on and off.
-        $this->projectRepository->saveModuleOverrides($newProjectId, $this->projectRepository->getModuleOverrides($projectId));
+        $sourceModules = $this->projectRepository->getModuleOverrides($projectId);
+        $this->projectRepository->updateModuleOverrides($newProjectId, fn (array $modules): array => $sourceModules);
 
         // ProjectSettings
         foreach ($projectSettingsKeys as $key) {
@@ -2091,9 +2092,6 @@ class Projects extends BaseService implements ChecksProjectAccess
         $this->authorize(ProjectsPermissions::EDIT, null, true);
 
         $params = $this->rejectCyclicParent((int) $id, $params);
-
-        // Metadata holds structured settings (module switches) with their own save paths.
-        unset($params['metadata']);
 
         // The repository reports success for zero affected rows, so only a project that
         // existed before the write can transition into archived.

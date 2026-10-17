@@ -5,6 +5,7 @@ namespace Leantime\Domain\Goalcanvas\Services;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Blueprints\Events\CanvasCreated;
 use Leantime\Domain\Blueprints\Events\CanvasItemCreated;
 use Leantime\Domain\Goalcanvas\Events\GoalProgressUpdated;
@@ -44,10 +45,33 @@ class Goalcanvas extends BaseService
         'nolink',
     ];
 
-    public function __construct(GoalcanvaRepository $goalRepository, ProjectService $projectService)
-    {
+    public function __construct(
+        GoalcanvaRepository $goalRepository,
+        ProjectService $projectService,
+        private ?ProjectModules $projectModules = null,
+    ) {
         $this->goalRepository = $goalRepository;
         $this->projectService = $projectService;
+    }
+
+    /**
+     * Whether the Goals module is on in a project (Project settings -> Modules). Reads that span
+     * projects use this directly: MCP tools call them in-process, past the permission hook.
+     */
+    private function goalsEnabledIn(int $projectId): bool
+    {
+        return $this->projectModules === null || $this->projectModules->isEnabled('goalcanvas', $projectId);
+    }
+
+    /**
+     * Drop rows of projects that have the Goals module switched off.
+     *
+     * @param  array<int|string, array<string, mixed>>  $rows  Rows carrying a `projectId`.
+     * @return array<int|string, array<string, mixed>>
+     */
+    private function withoutSwitchedOffProjects(array $rows): array
+    {
+        return array_filter($rows, fn (array $row): bool => $this->goalsEnabledIn((int) ($row['projectId'] ?? 0)));
     }
 
     /**
@@ -201,7 +225,11 @@ class Goalcanvas extends BaseService
     #[RequiresPermission(GoalcanvasPermissions::VIEW, projectIdParam: 'projectId')]
     public function getParentKPIs($projectId): array
     {
-        $kpis = $this->goalRepository->getAllAvailableKPIs($projectId);
+        if (! $this->goalsEnabledIn((int) $projectId)) {
+            return [];
+        }
+
+        $kpis = $this->withoutSwitchedOffProjects($this->goalRepository->getAllAvailableKPIs($projectId) ?: []);
 
         $goals = [];
 
@@ -958,7 +986,7 @@ class Goalcanvas extends BaseService
     #[RequiresPermission(GoalcanvasPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollGoals(?int $projectId = null, ?int $board = null)
     {
-        $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
+        $goals = $this->withoutSwitchedOffProjects($this->goalRepository->getAllAccountGoals($projectId, $board) ?: []);
 
         foreach ($goals as $key => $goal) {
             $goals[$key] = $this->prepareDatesForApiResponse($goal);
@@ -975,7 +1003,7 @@ class Goalcanvas extends BaseService
     #[RequiresPermission(GoalcanvasPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForUpdatedGoals(?int $projectId = null, ?int $board = null): array|false
     {
-        $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
+        $goals = $this->withoutSwitchedOffProjects($this->goalRepository->getAllAccountGoals($projectId, $board) ?: []);
 
         foreach ($goals as $key => $goal) {
             $goals[$key] = $this->prepareDatesForApiResponse($goal);

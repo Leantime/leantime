@@ -17,8 +17,8 @@ $moduleRegistry->register(new Module(
     title: 'modules.goalcanvas.title',
     description: 'modules.goalcanvas.description',
     icon: 'fa fa-fw fa-bullseye',
-    routes: ['goalcanvas'],
-    permissionDomain: 'goalcanvas',
+    routes: ['goalcanvas', 'api.goalcanvas'],
+    permissionDomain: 'goals',
 ));
 
 $moduleRegistry->register(new Module(
@@ -31,13 +31,14 @@ $moduleRegistry->register(new Module(
 ));
 
 // Routes only: the blueprints.* permissions also guard the older canvas types (Logic Model,
-// whiteboards), which must keep working when the Blueprints boards are off.
+// whiteboards), which must keep working when the Blueprints boards are off. That is also why
+// /api/canvas (those older types) is not claimed, but the boards' own /api/blueprints is.
 $moduleRegistry->register(new Module(
     id: 'blueprints',
     title: 'modules.blueprints.title',
     description: 'modules.blueprints.description',
     icon: 'fa fa-fw fa-compass-drafting',
-    routes: ['blueprints'],
+    routes: ['blueprints', 'api.blueprints'],
 ));
 
 $moduleRegistry->register(new Module(

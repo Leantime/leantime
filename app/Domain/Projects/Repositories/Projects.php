@@ -1149,7 +1149,14 @@ class Projects implements StoresProjectModules
 
         $updateData = [];
         foreach ($params as $key => $value) {
-            $updateData[DbCore::sanitizeToColumnString($key)] = $value;
+            $column = DbCore::sanitizeToColumnString($key);
+
+            // Metadata holds structured settings (module switches) with their own save path.
+            if (strtolower($column) === 'metadata') {
+                continue;
+            }
+
+            $updateData[$column] = $value;
         }
 
         $updateData['modified'] = date('Y-m-d H:i:s');
@@ -1177,21 +1184,30 @@ class Projects implements StoresProjectModules
     }
 
     /**
-     * Replace the module switches in the project's metadata, keeping any other metadata keys.
+     * Change the module switches in the project's metadata, keeping any other metadata keys. The
+     * project row is locked from read to write, so concurrent saves can't undo each other.
      *
-     * @param  array<string, bool>  $overrides  Module id => enabled.
+     * @param  callable(array<string, bool>): array<string, bool>  $change  Gets the stored switches, returns the new ones.
      */
-    public function saveModuleOverrides(int $projectId, array $overrides): void
+    public function updateModuleOverrides(int $projectId, callable $change): void
     {
-        $metadata = $this->getMetadata($projectId);
-        $metadata['modules'] = (object) $overrides;
+        $this->connection->transaction(function () use ($projectId, $change): void {
+            $json = $this->connection->table('zp_projects')
+                ->where('id', $projectId)
+                ->lockForUpdate()
+                ->value('metadata');
 
-        $this->connection->table('zp_projects')
-            ->where('id', $projectId)
-            ->update([
-                'metadata' => json_encode($metadata),
-                'modified' => date('Y-m-d H:i:s'),
-            ]);
+            $metadata = $this->decodeMetadata($json);
+            $modules = is_array($metadata['modules'] ?? null) ? $metadata['modules'] : [];
+            $metadata['modules'] = (object) $change(array_map(fn ($enabled) => (bool) $enabled, $modules));
+
+            $this->connection->table('zp_projects')
+                ->where('id', $projectId)
+                ->update([
+                    'metadata' => json_encode($metadata),
+                    'modified' => date('Y-m-d H:i:s'),
+                ]);
+        });
     }
 
     /**
@@ -1212,6 +1228,14 @@ class Projects implements StoresProjectModules
             return [];
         }
 
+        return $this->decodeMetadata($json);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function decodeMetadata(mixed $json): array
+    {
         if (! is_string($json) || $json === '') {
             return [];
         }

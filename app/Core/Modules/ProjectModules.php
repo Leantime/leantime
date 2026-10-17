@@ -68,25 +68,26 @@ class ProjectModules
      */
     public function save(int $projectId, array $states): void
     {
-        $overrides = $this->store->getModuleOverrides($projectId);
+        $this->store->updateModuleOverrides($projectId, function (array $overrides) use ($states): array {
+            foreach ($states as $moduleId => $enabled) {
+                $module = $this->registry->get((string) $moduleId);
 
-        foreach ($states as $moduleId => $enabled) {
-            $module = $this->registry->get((string) $moduleId);
+                if ($module === null) {
+                    continue;
+                }
 
-            if ($module === null) {
-                continue;
+                if ((bool) $enabled === $module->enabledByDefault) {
+                    unset($overrides[$module->id]);
+
+                    continue;
+                }
+
+                $overrides[$module->id] = (bool) $enabled;
             }
 
-            if ((bool) $enabled === $module->enabledByDefault) {
-                unset($overrides[$module->id]);
+            return $overrides;
+        });
 
-                continue;
-            }
-
-            $overrides[$module->id] = (bool) $enabled;
-        }
-
-        $this->store->saveModuleOverrides($projectId, $overrides);
         unset($this->overridesByProject[$projectId]);
     }
 
@@ -95,7 +96,9 @@ class ProjectModules
      */
     public function copy(int $fromProjectId, int $toProjectId): void
     {
-        $this->store->saveModuleOverrides($toProjectId, $this->store->getModuleOverrides($fromProjectId));
+        $sourceOverrides = $this->store->getModuleOverrides($fromProjectId);
+
+        $this->store->updateModuleOverrides($toProjectId, fn (array $overrides): array => $sourceOverrides);
         unset($this->overridesByProject[$toProjectId]);
     }
 

@@ -41,20 +41,32 @@ final class Module
 
     /**
      * Whether a request to /{module}/{action} belongs to this module.
+     *
+     * Segments are compared the way the Frontcontroller resolves controllers (Str::studly), so
+     * /files/show-all, /files/show_all and /files/showAll all count as files.showAll.
      */
     public function claimsRoute(string $module, string $action): bool
     {
-        $module = strtolower($module);
-        $action = strtolower($action);
+        $module = self::normalizeSegment($module);
+        $action = self::normalizeSegment($action);
 
         foreach ($this->routes as $route) {
-            $route = strtolower($route);
+            [$routeModule, $routeAction] = array_pad(explode('.', $route, 2), 2, null);
 
-            if ($route === $module || $route === $module.'.'.$action) {
+            if (self::normalizeSegment($routeModule) !== $module) {
+                continue;
+            }
+
+            if ($routeAction === null || self::normalizeSegment($routeAction) === $action) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private static function normalizeSegment(string $segment): string
+    {
+        return strtolower(str_replace(['-', '_'], '', $segment));
     }
 }

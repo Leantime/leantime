@@ -29,6 +29,7 @@ class ProjectModulesTest extends \Unit\TestCase
         $this->registry->register(new Module(id: 'files', title: 'Files', routes: ['files.browse', 'files.showAll']));
         $this->registry->register(new Module(id: 'Whiteboardscanvas', title: 'Whiteboards', routes: ['Whiteboardscanvas'], source: 'Whiteboardscanvas'));
         $this->registry->register(new Module(id: 'beta', title: 'Beta', enabledByDefault: false, routes: ['beta']));
+        $this->registry->register(new Module(id: 'boards', title: 'Boards', routes: ['boards', 'api.boards']));
 
         $this->store = new class implements StoresProjectModules
         {
@@ -44,9 +45,9 @@ class ProjectModulesTest extends \Unit\TestCase
                 return $this->rows[$projectId] ?? [];
             }
 
-            public function saveModuleOverrides(int $projectId, array $overrides): void
+            public function updateModuleOverrides(int $projectId, callable $change): void
             {
-                $this->rows[$projectId] = $overrides;
+                $this->rows[$projectId] = $change($this->rows[$projectId] ?? []);
             }
         };
 
@@ -137,12 +138,26 @@ class ProjectModulesTest extends \Unit\TestCase
         $this->assertSame('files', $this->projectModules->blockingRoute('files', 'browse', 7)?->id);
         $this->assertSame('Whiteboardscanvas', $this->projectModules->blockingRoute('whiteboardscanvas', 'showCanvas', 7)?->id);
 
+        // Matched like the Frontcontroller resolves controllers: these all reach Files\ShowAll.
+        $this->assertSame('files', $this->projectModules->blockingRoute('files', 'show-all', 7)?->id);
+        $this->assertSame('files', $this->projectModules->blockingRoute('files', 'show_all', 7)?->id);
+        $this->assertSame('files', $this->projectModules->blockingRoute('Files', 'ShowAll', 7)?->id);
+
         // Only the claimed actions of Files are blocked; attachments still upload and download.
         $this->assertNull($this->projectModules->blockingRoute('files', 'upload', 7));
         $this->assertNull($this->projectModules->blockingRoute('files', 'get', 7));
 
         $this->assertNull($this->projectModules->blockingRoute('wiki', 'show', 8));
         $this->assertNull($this->projectModules->blockingRoute('tickets', 'showKanban', 7));
+    }
+
+    public function test_native_api_routes_can_be_claimed(): void
+    {
+        // e.g. PATCH /api/blueprints/{slug}: module "api", action "blueprints".
+        $this->store->rows[7] = ['boards' => false];
+
+        $this->assertSame('boards', $this->projectModules->blockingRoute('api', 'boards', 7)?->id);
+        $this->assertNull($this->projectModules->blockingRoute('api', 'canvas', 7));
     }
 
     public function test_copy_gives_the_new_project_the_same_choices(): void
@@ -160,7 +175,7 @@ class ProjectModulesTest extends \Unit\TestCase
         $this->store->rows[7] = ['wiki' => false];
 
         $this->assertSame(
-            ['wiki' => false, 'files' => true, 'Whiteboardscanvas' => true, 'beta' => false],
+            ['wiki' => false, 'files' => true, 'Whiteboardscanvas' => true, 'beta' => false, 'boards' => true],
             $this->projectModules->statesFor(7)
         );
     }

@@ -22,9 +22,10 @@ interface StoresProjectModules
     public function getModuleOverrides(int $projectId): array;
 
     /**
-     * Replace the stored module switches of a project.
+     * Change the stored module switches of a project atomically: read, apply $change, write, with
+     * the project row locked in between, so two admins saving at once can't undo each other.
      *
-     * @param  array<string, bool>  $overrides  Module id => enabled.
+     * @param  callable(array<string, bool>): array<string, bool>  $change  Gets the stored switches, returns the new ones.
      */
-    public function saveModuleOverrides(int $projectId, array $overrides): void;
+    public function updateModuleOverrides(int $projectId, callable $change): void;
 }
