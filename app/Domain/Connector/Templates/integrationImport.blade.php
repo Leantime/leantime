@@ -27,10 +27,10 @@
     <div class="maincontentinner center">
         {!! $tpl->displayNotification() !!}
 
-        <h5 class="subtitle">Review</h5>
+        <h5 class="subtitle">{{ __('headlines.integration_review') }}</h5>
 
         @if (!empty($flags))
-            <p style="font-style: oblique">Please resolve the following errors and reconnect your integration:</p>
+            <p style="font-style: oblique">{{ __('text.integration_resolve_errors') }}</p>
             <ul style="padding-left: 20px; margin-bottom: 20px;">
                 @php $messages = []; @endphp
                 @foreach ($flags as $flag)
@@ -40,13 +40,13 @@
                     @endif
                 @endforeach
             </ul>
-            <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">Go Back</x-global::forms.button>
+            <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">{{ __('links.go_back') }}</x-global::forms.button>
         @else
-            <x-global::forms.button tag="a" class="right" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" contentRole="primary">Confirm</x-global::forms.button>
+            <x-global::forms.button tag="a" class="right" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" contentRole="primary">{{ __('buttons.confirm') }}</x-global::forms.button>
         @endif
         <div class="clearall"></div>
 
-        <p>All set, we are importing the data you see below.</p>
+        <p>{{ __('text.integration_importing') }}</p>
         <br />
 
         <table width="100%">

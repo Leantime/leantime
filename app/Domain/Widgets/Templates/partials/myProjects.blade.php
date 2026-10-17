@@ -24,7 +24,7 @@
     <div class="clearall"></div>
 
     <x-global::elements.accordion id="myProjectWidget-favorites" :onPage="$background === 'noBackground'" open>
-<x-slot:title>⭐ My Favorites</x-slot:title>
+<x-slot:title>⭐ {{ __('headlines.my_favorites') }}</x-slot:title>
 
             <div class="row">
                 @php
@@ -41,14 +41,14 @@
                     @endif
                 @endforeach
                 @if($hasFavorites === false)
-                    You don't have any favorites. 😿
+                    {{ __('text.no_favorites') }}
                 @endif
             </div>
         </x-global::elements.accordion>
 
 
     <x-global::elements.accordion id="myProjectWidget-otherProjects" :onPage="$background === 'noBackground'" open>
-<x-slot:title>🗂️ All Assigned Projects</x-slot:title>
+<x-slot:title>🗂️ {{ __('headlines.all_assigned_projects') }}</x-slot:title>
 
             <div class="row">
                 @foreach ($allProjects as $project)

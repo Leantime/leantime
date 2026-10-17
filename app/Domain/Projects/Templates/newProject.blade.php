@@ -59,8 +59,8 @@
                         <div class="col-md-4">
 
                             @if ($projectTypes && count($projectTypes) > 1)
-                                <x-global::elements.section-header icon="fa-regular fa-rectangle-list">Project Type</x-global::elements.section-header>
-                                <p>The type of the project. This will determine which features are available.</p>
+                                <x-global::elements.section-header icon="fa-regular fa-rectangle-list">{{ __('label.project_type') }}</x-global::elements.section-header>
+                                <p>{{ __('text.project_type_help') }}</p>
                                 <x-global::forms.select enhanced name="type">
                                     @foreach ($projectTypes as $key => $type)
                                         <option value="{{ $key }}"

@@ -10,7 +10,7 @@ use Leantime\Domain\Tickets\Models\TicketDesignTokens;
 // Handle null/0/empty effort as "No Effort"
 $isNoEffort = $effort === null || $effort === '' || $effort === 0 || $effort === '0';
 $token = TicketDesignTokens::getEffort($effort);
-$sizeLabel = $isNoEffort ? 'No Effort' : ($token['tshirtLabel'] ?? 'M');
+$sizeLabel = $isNoEffort ? __('label.no_effort') : ($token['tshirtLabel'] ?? 'M');
 
 $sizes = [
     'sm' => ['width' => 20, 'height' => 18],
@@ -24,7 +24,7 @@ $color = '#159A80'; // Brand teal from design
 
 <span {{ $attributes->merge(['class' => 'tshirt-icon']) }}
       style="display: inline-flex; align-items: center; gap: 4px;"
-      data-tippy-content="{{ $sizeLabel }} Effort">
+      data-tippy-content="{{ sprintf(__('label.effort_level'), $sizeLabel) }}">
     <svg
         width="{{ $sizeConfig['width'] }}"
         height="{{ $sizeConfig['height'] }}"
@@ -45,6 +45,6 @@ $color = '#159A80'; // Brand teal from design
     @endif
 
     <span style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;">
-        {{ $sizeLabel }} Effort
+        {{ sprintf(__('label.effort_level'), $sizeLabel) }}
     </span>
 </span>

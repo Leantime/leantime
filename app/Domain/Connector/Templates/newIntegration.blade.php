@@ -20,12 +20,12 @@
         {!! $tpl->displayNotification() !!}
 
         <img width="200" src="{{ BASE_URL }}/{{ $provider->image }}" />
-        <h5 class="subtitle">New Integration</h5>
+        <h5 class="subtitle">{{ __('headlines.new_integration') }}</h5>
 
         {{ $provider->name }}<br />
         {!! $provider->description !!}<br /><br />
 
-        <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect" contentRole="primary">Click Here to Connect</x-global::forms.button>
+        <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect" contentRole="primary">{{ __('buttons.click_to_connect') }}</x-global::forms.button>
 
     </div>
 </div>

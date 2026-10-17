@@ -138,7 +138,7 @@
                                         <td><a href='mailto:{{ $user['username'] }}'>{{ $user['username'] }}</a></td>
                                         <td>{{ $user['phone'] }}</td>
                                         <td>
-                                            <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('buttons.edit') }}">
+                                            <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('label.edit') }}">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             <form method="post" action="{{ BASE_URL }}/clients/removeUser" style="display:inline;"

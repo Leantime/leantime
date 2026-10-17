@@ -194,7 +194,7 @@
                                     <input type="hidden" name="dateToFinish"
                                            value="{{ dtHelper()->userNow()->next(\Carbon\CarbonInterface::FRIDAY)->format('Y-m-d') }}"/>
                                     <x-global::forms.textarea name="description" class="description-input" style="display:none;"
-                                              placeholder="{{ __('input.placeholders.description') }}"></x-global::forms.textarea>
+                                              placeholder="{{ __('label.description') }}"></x-global::forms.textarea>
                                 </div>
                                 <div>
                                     <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.save')" name="create"
@@ -279,7 +279,7 @@
                                         <input type="hidden" name="dateToFinish"
                                                value="{{ $dueDate }}"/>
                                         <x-global::forms.textarea name="description" class="description-input" style="display:none;"
-                                                  placeholder="{{ __('input.placeholders.description') }}"></x-global::forms.textarea>
+                                                  placeholder="{{ __('label.description') }}"></x-global::forms.textarea>
                                     </div>
                                     <div>
                                         <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.save')" name="create"

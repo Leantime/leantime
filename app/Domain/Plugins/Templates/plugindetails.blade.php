@@ -13,21 +13,21 @@
                 </h2>
                 <p>
                     @if ((int) $plugin->reviewCount > 0)
-                        <strong>Reviews:</strong> {{ $plugin->reviewCount }}<br>
+                        <strong>{{ __('label.reviews_colon') }}</strong> {{ $plugin->reviewCount }}<br>
                     @endif
 
                     @if ((int) $plugin->rating > 0)
-                        <strong>Rating:</strong> {{ $plugin->rating }}<br>
+                        <strong>{{ __('label.rating_colon') }}</strong> {{ $plugin->rating }}<br>
                     @endif
 
                     @if (! empty($plugin->categories))
-                        <strong>Categories:</strong> @foreach ($plugin->categories as $category)
+                        <strong>{{ __('label.categories_colon') }}</strong> @foreach ($plugin->categories as $category)
                             <x-global::elements.badge>{{ $category['name'] }}</x-global::elements.badge>
                         @endforeach<br>
                     @endif
 
                     @if (! empty($plugin->tags))
-                        <strong>Tags:</strong> @foreach ($plugin->tags as $tag)
+                        <strong>{{ __('label.tags_colon') }}</strong> @foreach ($plugin->tags as $tag)
                             <x-global::elements.badge tone="accent" :href="'/plugins/marketplace?tag=' . $tag['slug']">{{ $tag['name'] }}</x-global::elements.badge>
                         @endforeach<br>
                     @endif
@@ -45,17 +45,17 @@
             $pluginFirstTab = $pluginTabOrder[0] ?? null;
         @endphp
         @if ($pluginFirstTab !== null)
-        <x-global::navigation.tabs group="plugindetails" variant="underline" label="Plugin details sections">
+        <x-global::navigation.tabs group="plugindetails" variant="underline" :label="__('label.plugin_details_sections')">
             @if (! empty($plugin->description))
-                <x-global::navigation.tabs.tab name="overview" :selected="$pluginFirstTab === 'overview'">Overview</x-global::navigation.tabs.tab>
+                <x-global::navigation.tabs.tab name="overview" :selected="$pluginFirstTab === 'overview'">{{ __('label.overview') }}</x-global::navigation.tabs.tab>
             @endif
 
             @if ($plugin->reviewCount > 0)
-                <x-global::navigation.tabs.tab name="reviews" :count="$plugin->reviewCount" :selected="$pluginFirstTab === 'reviews'">Reviews</x-global::navigation.tabs.tab>
+                <x-global::navigation.tabs.tab name="reviews" :count="$plugin->reviewCount" :selected="$pluginFirstTab === 'reviews'">{{ __('label.reviews') }}</x-global::navigation.tabs.tab>
             @endif
 
             @if (! empty($plugin->compatibility))
-                <x-global::navigation.tabs.tab name="compatibility" :selected="$pluginFirstTab === 'compatibility'">Compatibility</x-global::navigation.tabs.tab>
+                <x-global::navigation.tabs.tab name="compatibility" :selected="$pluginFirstTab === 'compatibility'">{{ __('label.compatibility') }}</x-global::navigation.tabs.tab>
             @endif
         </x-global::navigation.tabs>
         @endif
@@ -94,8 +94,8 @@
                         <table class="tw-w-full tw-text-left tw-pt-base">
                             <thead>
                                 <tr>
-                                    <th>Plugin Version:</th>
-                                    <th>Compatible With Leantime Versions:</th>
+                                    <th>{{ __('label.plugin_version_colon') }}</th>
+                                    <th>{{ __('label.compatible_versions_colon') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -117,9 +117,9 @@
                     :link="$plugin->marketplaceUrl"
                     target="_blank"
                     rel="noopener noreferrer"
-                >Get a license</x-global::button>
+                >{{ __('links.get_a_license') }}</x-global::button>
             @else
-                <span>This plugin currently isn't available for purchase.</span>
+                <span>{{ __('text.plugin_not_for_sale') }}</span>
             @endif
 
             @fragment('plugin-installation')
@@ -155,11 +155,11 @@
                                         <option value="{{ $compatibility['version_number'] }}">{{ $compatibility['version_number'] }}</option>
                                     @endforeach
                                 </x-global::forms.select>
-                                <x-global::forms.text-input class="!tw-mb-none !tw-py-[4px]" name="plugin[license]" placeholder="License Key" />
+                                <x-global::forms.text-input class="!tw-mb-none !tw-py-[4px]" name="plugin[license]" :placeholder="__('label.license_key')" />
                                 <x-global::button
                                     :tag="'button'"
                                     :type="'secondary'"
-                                >Install</x-global::button>
+                                >{{ __('buttons.install') }}</x-global::button>
                                 <div class="htmx-indicator-small">
                                     <x-global::loader id="loadingthis" size="25px" />
                                 </div>
@@ -170,7 +170,7 @@
                         </div>
                     @endif
                 @else
-                    <span>This plugin currently isn't available for installation.</span>
+                    <span>{{ __('text.plugin_not_installable') }}</span>
                 @endif
             @endfragment
         </div>

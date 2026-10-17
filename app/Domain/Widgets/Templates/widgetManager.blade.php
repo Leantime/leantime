@@ -1,6 +1,6 @@
 <div class="" style="min-width:50%;">
     <h1>{{ __("headlines.widget_manager") }}</h1>
-    <x-global::forms.button tag="a" contentRole="secondary" class="pull-right" link="{{ BASE_URL }}/dashboard/home?resetDashboard=true" style="margin-bottom:10px;"><i class="fa-solid fa-arrow-rotate-left"></i> Reset Dashboard</x-global::forms.button>
+    <x-global::forms.button tag="a" contentRole="secondary" class="pull-right" link="{{ BASE_URL }}/dashboard/home?resetDashboard=true" style="margin-bottom:10px;"><i class="fa-solid fa-arrow-rotate-left"></i> {{ __('buttons.reset_dashboard') }}</x-global::forms.button>
     <p>{{ __("text.choose_widgets") }}</p>
     <br />
     <div class="row">

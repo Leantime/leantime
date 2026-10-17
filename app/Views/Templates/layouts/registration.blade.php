@@ -44,8 +44,8 @@
                 <div class="col-md-5 regLeft" style="position:relative; background:var(--element-gradient); padding:20px; height:auto;">
 
                     <h1 style="position: relative; z-index: 5; width:100%; font-size:16px;">
-                        <span style="font-size:26px">Sign Up</span><br /><br />
-                        No set up required!<br />Enjoy the extra time. 🎉<br />
+                        <span style="font-size:26px">{{ __('headlines.sign_up') }}</span><br /><br />
+                        {!! __('text.signup_no_setup') !!} 🎉<br />
                     </h1>
 
                 </div>

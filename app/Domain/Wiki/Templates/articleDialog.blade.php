@@ -58,9 +58,9 @@
         <div class="col-md-2">
             <div class="row-fluid marginBottom">
                 <x-global::elements.section-header icon="fa fa-folder">{!! __('subtitles.organization') !!}</x-global::elements.section-header>
-                <label>Parent</label>
+                <label>{{ __('label.parent') }}</label>
                 <x-global::forms.select width="full" name="parent">
-                    <option value="0">None</option>
+                    <option value="0">{{ __('label.none') }}</option>
                     @foreach ($wikiHeadlines as $parent)
                         @if ($id != $parent->id)
                             <option value="{{ $parent->id }}"
@@ -118,7 +118,7 @@
                                     </x-global::forms.select>
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="articleId" value="{{ $id }} " />
-                                    <x-global::forms.button tag="input" inputType="button" labelText="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" contentRole="primary" />
+                                    <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.save')" onclick="jQuery('#primaryArticleSubmitButton').click()" contentRole="primary" />
                                     <x-global::forms.button tag="a" link="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" contentRole="tertiary">
                                         <i class="fas fa-times"></i> {!! __('links.cancel') !!}
                                     </x-global::forms.button>

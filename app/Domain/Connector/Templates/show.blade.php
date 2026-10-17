@@ -3,15 +3,15 @@
 @section('content')
 
 <x-global::layout.page-header icon="fa-solid fa-circle-nodes">
-    Integrations
+    {{ __('headlines.integrations') }}
 </x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
 
         {!! $tpl->displayNotification() !!}
-        <h5 class="subtitle">Sync Leantime with your external applications</h5>
-        <p>Available Integrations</p>
+        <h5 class="subtitle">{{ __('headlines.integrations_sync') }}</h5>
+        <p>{{ __('label.available_integrations') }}</p>
 
         <div class="row">
             @foreach ($providers as $provider)
@@ -22,7 +22,7 @@
                         </div>
                         <span class="userName">
                             <strong>{{ $provider->name }}</strong>
-                            <br /><small>Available methods: {{ implode(', ', $provider->methods) }}</small>
+                            <br /><small>{{ sprintf(__('label.available_methods'), implode(', ', $provider->methods)) }}</small>
                             <br /><br />
                             {!! $provider->description !!}
                         </span>
@@ -31,7 +31,7 @@
                         @if (isset($provider->button))
                             <x-global::forms.button tag="a" link="{{ $provider->button['url'] }}" contentRole="primary">{{ $provider->button['text'] }}</x-global::forms.button>
                         @else
-                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" contentRole="primary">Create New Integration</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" contentRole="primary">{{ __('buttons.create_new_integration') }}</x-global::forms.button>
                         @endif
 
                         <div class="clearall"></div>

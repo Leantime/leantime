@@ -73,7 +73,7 @@ foreach ($statusColumns as $statusId => $statusData) {
      role="button"
      aria-expanded="{{ $expanded ? 'true' : 'false' }}"
      aria-controls="swimlane-content-{{ $groupId }}"
-     aria-label="{{ strip_tags($label) }} - {{ $totalCount }} tasks - {{ $expanded ? 'Expanded' : 'Collapsed' }}"
+     aria-label="{{ strip_tags($label) }} - {{ sprintf(__('label.task_count'), $totalCount) }} - {{ $expanded ? __('label.expanded') : __('label.collapsed') }}"
      onclick="leantime.kanbanController.toggleSwimlane('{{ $groupId }}')"
      onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); leantime.kanbanController.toggleSwimlane('{{ $groupId }}'); }">
 
@@ -116,7 +116,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         @endif
 
         {{-- Count Badge (inline) - only visible when collapsed --}}
-        <span class="kanban-lane-count kanban-lane-count--inline" data-tippy-content="{{ $totalCount }} tasks">{{ $totalCount }}</span>
+        <span class="kanban-lane-count kanban-lane-count--inline" data-tippy-content="{{ sprintf(__('label.task_count'), $totalCount) }}">{{ $totalCount }}</span>
     </div>
 
     {{-- Row 2: Progress Bar + Count Badge --}}
@@ -133,7 +133,7 @@ foreach ($statusColumns as $statusId => $statusData) {
         </div>
 
         {{-- Count Badge --}}
-        <span class="kanban-lane-count" data-tippy-content="{{ $totalCount }} tasks">{{ $totalCount }}</span>
+        <span class="kanban-lane-count" data-tippy-content="{{ sprintf(__('label.task_count'), $totalCount) }}">{{ $totalCount }}</span>
     </div>
 
     </div>{{-- .kanban-swimlane-sidebar-inner --}}

@@ -10,7 +10,7 @@
               onclick="jQuery('#subtask-form-{{$ticket['id']}}').slideToggle();"
               class="add-subtask-link">
               <i class="fa-solid fa-diagram-predecessor"></i>
-              Add Subtask
+              {{ __('label.addSubtask') }}
         </a></li>
         @endif
     </ul>

@@ -161,7 +161,7 @@
 
                                         <div class="col-md-12">
                                             @if ($companySettings['logo'] != '')
-                                            <img src='{{ $companySettings['logo'] }}'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
+                                            <img src='{{ $companySettings['logo'] }}'  class='logoImg' alt='{{ __('label.logo') }}' id="previousImage" width="260"/>
                                             @else
                                                 {!! __('text.no_logo') !!}
                                             @endif
@@ -208,7 +208,7 @@
                 </div>
 
                     <div id="apiKeys">
-                        <x-global::forms.button tag="a" link="#/api/newApiKey" contentRole="primary">Generate API Key</x-global::forms.button>
+                        <x-global::forms.button tag="a" link="#/api/newApiKey" contentRole="primary">{{ __('buttons.generate_api_key') }}</x-global::forms.button>
                         <br /> <br />
                         <ul class="sortableTicketList">
 
@@ -217,8 +217,8 @@
                             <li>
                                 <x-global::elements.card compact class="apiKeyCard" style="margin-bottom:10px;">
                                       <x-global::actions.dropdown>
-                                          <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
-                                          <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
+                                          <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> {{ __('links.edit_api_key') }}</a></li>
+                                          <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_api_key') }}</a></li>
 
                                       </x-global::actions.dropdown>
                                     <a href="#/api/apiKey/{{ $apiKey['id'] }}"><strong>{{ $apiKey['firstname'] }}</strong></a><br />

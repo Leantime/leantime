@@ -235,7 +235,7 @@ class EditCanvasComment
 
                     return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasComment/'.$data['itemId']);
                 } else {
-                    $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
             } else {
                 if (isset($data['description']) && ! empty($data['description'])) {
@@ -293,7 +293,7 @@ class EditCanvasComment
 
                     return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasComment/'.$id);
                 } else {
-                    $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
             }
         }
