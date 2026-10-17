@@ -15,16 +15,9 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
-    <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{!! __('headlines.connector') !!} // {{ $provider->name }}</h1>
-            </div>
-        </div>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-circle-nodes">
+    {!! __('headlines.connector') !!} // {{ $provider->name }}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -35,15 +28,15 @@
             <div class="maincontentinner center">
 
                 {!! $tpl->displayNotification() !!}
-                <h5 class="subtitle">Match Fields</h5>
-                <p class="mb-2">Match the fields from your source to the corresponding fields in Leantime</p><br />
+                <h5 class="subtitle">{{ __('headlines.integration_match_fields') }}</h5>
+                <p class="mb-2">{{ __('text.integration_match_fields') }}</p><br />
 
                 <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=parse{{ $urlAppend }}">
                     <table class="table table-bordered">
                         <thead>
                         <tr>
-                            <th class="center">Source Field</th>
-                            <th class="center">Leantime Field</th>
+                            <th class="center">{{ __('label.source_field') }}</th>
+                            <th class="center">{{ __('label.leantime_field') }}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -57,7 +50,7 @@
                                                 {{ $fields['name'] }}
                                             </option>
                                         @endforeach
-                                        <option value="">Don't map</option>
+                                        <option value="">{{ __('label.dont_map') }}</option>
                                     </x-global::forms.select>
                                 </td>
                             </tr>
@@ -65,10 +58,10 @@
                         </tbody>
                     </table>
                     <div class="left">
-                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="tertiary" class="pull-left">Back</x-global::forms.button>
+                        <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="tertiary" class="pull-left">{{ __('buttons.back') }}</x-global::forms.button>
                     </div>
                     <div class="right">
-                        <x-global::forms.button inputType="submit" contentRole="primary">Next</x-global::forms.button>
+                        <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.next') }}</x-global::forms.button>
                     </div>
                     <div class="clearall"></div>
                 </form>
@@ -76,8 +69,8 @@
         </div>
         <div class="col-md-3">
             <div class="maincontentinner">
-            <h5 class="subtitle">Requirements for a successful import</h5>
-            <p>Please review these requirements and make sure your import and mapping covers everything.</p>
+            <h5 class="subtitle">{{ __('headlines.integration_requirements') }}</h5>
+            <p>{{ __('text.integration_requirements') }}</p>
             @foreach ($flags as $flag)
                 <hr />
                 <p style="padding-left:10px"><strong>{{ $flag }}</strong></p>

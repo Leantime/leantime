@@ -7,13 +7,9 @@
 
 {!! $tpl->displayNotification() !!}
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headlines.edit_user') !!}</h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('label.administration')">
+    {!! __('headlines.edit_user') !!}
+</x-global::layout.page-header>
 
 <form action="" method="post" class="stdform userEditModal">
         <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />

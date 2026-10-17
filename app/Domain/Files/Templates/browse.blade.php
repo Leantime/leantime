@@ -7,15 +7,9 @@
     $openedAsPopup = request()->boolean('modalPopUp');
 @endphp
 
-<div class="pageheader">
-
-    <div class="pageicon"><span class="fa fa-fw fa-file"></span></div>
-    <div class="pagetitle">
-        <h5>{{ session('currentProjectName') }}</h5>
-        <h1>{!! __('headlines.files') !!}</h1>
-    </div>
-
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa fa-fw fa-file" :eyebrow="session('currentProjectName')">
+    {!! __('headlines.files') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
 

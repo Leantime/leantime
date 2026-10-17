@@ -14,7 +14,7 @@
                         data-tippy-content="{{ __('marketplace.certified_tooltip') }}"
                     >
                         <i class="fa fa-certificate"></i>
-                        Certified
+                        {{ __('label.certified') }}
                     </div>
                 @endif
                 <div class="clearall"></div>

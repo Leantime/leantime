@@ -5,17 +5,9 @@
     $values = $client;
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa fa-address-book"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{{ $values['name'] }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header icon="fa fa-address-book" :eyebrow="__('label.administration')">
+    {{ $values['name'] }}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -146,7 +138,7 @@
                                         <td><a href='mailto:{{ $user['username'] }}'>{{ $user['username'] }}</a></td>
                                         <td>{{ $user['phone'] }}</td>
                                         <td>
-                                            <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('buttons.edit') }}">
+                                            <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('label.edit') }}">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             <form method="post" action="{{ BASE_URL }}/clients/removeUser" style="display:inline;"

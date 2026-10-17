@@ -50,7 +50,7 @@
     <span class="reaction-picker-toggle">
         <button type="button" class="add-reaction-btn" onclick="toggleReactionPicker(this, {{ $commentId }})">
             <i class="fa fa-smile-o"></i>
-            <span class="sr-only">Add reaction</span>
+            <span class="sr-only">{{ __('label.add_reaction') }}</span>
         </button>
     </span>
 </span>

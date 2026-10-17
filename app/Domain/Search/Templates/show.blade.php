@@ -1,10 +1,9 @@
 @extends($layout)
 
 @section('content')
-<x-global::pageheader :icon="'fa-solid fa-magnifying-glass'">
-    <h5>{{ __('search.headline') }}</h5>
-    <h1>{{ __('search.results_for') }} “{{ $term }}”</h1>
-</x-global::pageheader>
+<x-global::layout.page-header icon="fa-solid fa-magnifying-glass" :eyebrow="__('search.headline')">
+    {{ __('search.results_for') }} “{{ $term }}”
+</x-global::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}

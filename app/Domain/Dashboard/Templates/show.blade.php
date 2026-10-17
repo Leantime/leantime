@@ -1,19 +1,19 @@
 @extends($layout)
 
 @section('content')
-<x-global::pageheader :icon="'fa fa-gauge-high'">
+<x-global::layout.page-header icon="fa fa-gauge-high" :eyebrow="session('currentProjectClient')">
+    {!! __('headlines.project_dashboard') !!}
     @if (count($allUsers) == 1)
-        <a href="#/users/newUser" class="headerCTA">
-            <i class="fa fa-users"></i>
-            <span class="tw-text-[14px] tw-leading-[25px]">
-                {{ __('links.dont_do_it_alone') }}
-            </span>
-        </a>
+        <x-slot:actions>
+            <a href="#/users/newUser" class="headerCTA">
+                <i class="fa fa-users"></i>
+                <span class="tw-text-[14px] tw-leading-[25px]">
+                    {{ __('links.dont_do_it_alone') }}
+                </span>
+            </a>
+        </x-slot:actions>
     @endif
-
-    <h5>{{ session("currentProjectClient") }}</h5>
-    <h1>{!! __('headlines.project_dashboard') !!}</h1>
-</x-global::pageheader>
+</x-global::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
@@ -89,12 +89,12 @@
             </div>
 
             <div class="maincontentinner tw-z-10 latest-todos">
-                <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</x-global::forms.button>
+                <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> {{ __('links.create_todo') }}</x-global::forms.button>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
                     @if (count($tickets) == 0)
-                        <em>Nothing to see here. Move on.</em><br/><br/>
+                        <em>{{ __('text.nothing_to_see_here') }}</em><br/><br/>
                     @endif
 
                     @foreach($tickets as $row)

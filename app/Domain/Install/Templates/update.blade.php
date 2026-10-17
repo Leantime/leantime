@@ -2,11 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pagetitle">
-        <h1>{!! __('headlines.update_database') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header>
+    {!! __('headlines.update_database') !!}
+</x-global::layout.page-header>
 {!! $tpl->displayInlineNotification() !!}
 <div class="regcontent" id="login">
     <p>{!! __('text.new_db_version') !!}</p><br />

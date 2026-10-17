@@ -1,15 +1,9 @@
 @extends($layout)
 @section('content')
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pagetitle">
-        <h1>{!! __('headlines.reset_password') !!}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div>
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header>
+    {!! __('headlines.reset_password') !!}
+</x-global::layout.page-header>
 <div class="regcontent">
     @dispatchEvent('afterRegcontentOpen')
     <form id="resetPassword" action="" method="post">

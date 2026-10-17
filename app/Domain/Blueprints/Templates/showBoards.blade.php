@@ -2,12 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa-solid fa-chess"></span></div>
-    <div class="pagetitle">
-        <h1>{!! __('headlines.blueprints') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-chess">
+    {!! __('headlines.blueprints') !!}
+</x-global::layout.page-header>
 
 {!! $tpl->displayNotification() !!}
 
@@ -16,7 +13,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="maincontentinner">
-                <h5 class="subtitle">Jump right back in</h5>
+                <h5 class="subtitle">{{ __('headlines.jump_right_back_in') }}</h5>
                 <div class="row">
                 @foreach ($recentProgressCanvas as $canvasType => $board)
                     <div class="col-md-3">
@@ -71,7 +68,7 @@
             <div class="maincontentinner">
                 <h5 class="accordionTitle" id="accordion_link_other">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_other" onclick="accordionToggle('other');">
-                        <i class="fa fa-angle-down"></i> Templates
+                        <i class="fa fa-angle-down"></i> {{ __('label.templates') }}
                     </a>
                 </h5>
                 <p style="padding-left:19px;">{!! __('description.other_tools') !!}</p>

@@ -13,16 +13,9 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
-    <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{!! __('headlines.connector') !!} // {{ $provider->name }}</h1>
-            </div>
-        </div>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-circle-nodes">
+    {!! __('headlines.connector') !!} // {{ $provider->name }}
+</x-global::layout.page-header>
 
 {!! $tpl->displayNotification() !!}
 
@@ -36,10 +29,10 @@
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_party_re_nmwj.svg') !!}
             </div>
             <br />
-            <h3>Integration Success</h3>
-            <p>Your data was synced successfully.</p>
+            <h3>{{ __('headlines.integration_success') }}</h3>
+            <p>{{ __('text.integration_synced') }}</p>
             <br />
-            <a class='btn btn-default' href='{{ BASE_URL }}/connector/show'>Go back to integrations</a>
+            <a class='btn btn-default' href='{{ BASE_URL }}/connector/show'>{{ __('links.back_to_integrations') }}</a>
         </div>
     </div>
 </div>

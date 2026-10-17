@@ -38,7 +38,7 @@
                     <span class="fc-icon fc-icon-chevron-left"></span>
                 </button>
 
-                <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
+                <button class="fc-today-button btn btn-default right" style="margin-right:5px;">{{ __('label.today_lowercase') }}</button>
 
 
                 <x-global::forms.select id="my-select" style="margin-right:5px;" class="right">

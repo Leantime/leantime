@@ -74,7 +74,7 @@
             @endif
 
             <x-global::elements.accordion id="myProjectsHub-favorites" open onPage>
-<x-slot:title>⭐ My Favorites</x-slot:title>
+<x-slot:title>⭐ {{ __('headlines.my_favorites') }}</x-slot:title>
                     <div class="row">
                         @php
                             $hasFavorites = false;

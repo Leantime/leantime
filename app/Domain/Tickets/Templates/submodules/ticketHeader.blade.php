@@ -32,28 +32,18 @@
     }
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon">
-        <span class="fa fa-fw fa-thumb-tack"></span>
-    </div>
-    <div class="pagetitle">
-        {{-- Build "Client // Project" only from the parts that exist, so a
-             missing client/project never leaves a stray " // ". (`.` binds
-             tighter than `??`, so the old inline expression mis-grouped.) --}}
-        @php
-            $headerParts = array_filter(
-                [session('currentProjectClient'), session('currentProjectName')],
-                fn ($part) => $part !== null && $part !== ''
-            );
-        @endphp
-        <h5>{{ implode(' / ', $headerParts) }}</h5>
+{{-- Build "Client // Project" only from the parts that exist, so a
+     missing client/project never leaves a stray " // ". (`.` binds
+     tighter than `??`, so the old inline expression mis-grouped.) --}}
+@php
+    $headerParts = array_filter(
+        [session('currentProjectClient'), session('currentProjectName')],
+        fn ($part) => $part !== null && $part !== ''
+    );
+@endphp
 
-        {{-- Migrated to the shared subject switcher (was a hand-rolled
-             header-title-dropdown). The sprint menu items stay here — they're
-             domain-specific — but the "To-Dos // <current> ▾" chrome is now the
-             component. Zero visual change. --}}
+<x-global::layout.page-header icon="fa fa-fw fa-thumb-tack" :eyebrow="implode(' / ', $headerParts)">
+    <x-slot:switcher>
         <x-global::subjectSwitcher
             :parent="__('headlines.todos')"
             :current="$sprint !== false ? $sprint->name : __('dropdown.choose_sprint')">
@@ -71,16 +61,10 @@
                 </li>
             @endforeach
         </x-global::subjectSwitcher>
-        <input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />
+    </x-slot:switcher>
 
-    </div>
-
-    {{-- Right cluster on the breadcrumb bar: board stats + (for a real sprint
-         view only) the sprint edit/delete ⋮ menu. --}}
-    <div class="pageheader-right">
-        {{-- Header rule (2026-08-03): LEFT = orientation (where you are),
-             RIGHT = information (what about it) — meta, then status, then ⋮,
-             one vertically-centered row. --}}
+    {{-- Right cluster: board stats + (for a real sprint view only) the sprint edit/delete ⋮ menu. --}}
+    <x-slot:actions>
         @isset($boardSummary)
             @php
                 // Board metrics as a one-line meta string; segments join with a
@@ -116,7 +100,6 @@
 
             </x-global::actions.dropdown>
         @endif
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+    </x-slot:actions>
+</x-global::layout.page-header>
+<input type="hidden" name="sprintSelect" id="sprintSelect" value="{{ $currentSprintId }}" />

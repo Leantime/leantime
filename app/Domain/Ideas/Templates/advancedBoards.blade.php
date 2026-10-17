@@ -20,10 +20,9 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><i class="far fa-lightbulb"></i></div>
-    <div class="pagetitle">
-        @if (count($allCanvas) > 0)
+<x-global::layout.page-header icon="far fa-lightbulb">
+    @if (count($allCanvas) > 0)
+        <x-slot:switcher>
             <x-global::subjectSwitcher
                 :parent="__('headlines.idea_management')"
                 :current="$canvasTitle">
@@ -35,12 +34,12 @@
                     <li><a href='{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow['id'] }}'>{{ $tpl->escape($canvasRow['title']) }}</a></li>
                 @endforeach
             </x-global::subjectSwitcher>
-        @else
-            <h1>{!! __('headlines.idea_management') !!}</h1>
-        @endif
-    </div>
+        </x-slot:switcher>
+    @else
+        {!! __('headlines.idea_management') !!}
+    @endif
     @if (count($allCanvas) > 0)
-        <div class="pageheader-right">
+        <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
                 @if ($login::userIsAtLeast($roles::$editor))
                     <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
@@ -48,9 +47,9 @@
                 @endif
 
             </x-global::actions.dropdown>
-        </div>
+        </x-slot:actions>
     @endif
-</div><!--pageheader-->
+</x-global::layout.page-header>
 
 <div class="maincontent">
     @php

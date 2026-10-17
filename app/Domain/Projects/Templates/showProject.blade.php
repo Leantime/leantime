@@ -6,14 +6,9 @@
     $state = $state ?? null;
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-suitcase"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! sprintf(__('headline.project'), $tpl->escape($project['name'])) !!}
-        </h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa fa-suitcase" :eyebrow="__('label.administration')">
+    {!! sprintf(__('headline.project'), $tpl->escape($project['name'])) !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -22,8 +17,8 @@
 
         <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
-            <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" contentRole="default" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}"><i class="fa-regular fa-copy"></i> Copy</x-global::forms.button>
-            <x-global::forms.button tag="a" state="danger" variant="outline" class="delete" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('link.delete_project') }}"><i class="fa fa-trash"></i> Delete</x-global::forms.button>
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" contentRole="default" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}"><i class="fa-regular fa-copy"></i> {{ __('buttons.clone') }}</x-global::forms.button>
+            <x-global::forms.button tag="a" state="danger" variant="outline" class="delete" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('label.deleteProject') }}"><i class="fa fa-trash"></i> {{ __('buttons.delete') }}</x-global::forms.button>
 
 
         </div>
@@ -80,7 +75,7 @@
                                                 @endif
                                                 @if ($assignedUser['source'] == 'api')
                                                     <small>
-                                                        API Access
+                                                        {{ __('label.api_access') }}
                                                     </small>
                                                     <br/>
                                                 @endif
@@ -96,7 +91,7 @@
                                             } else {
                                             @endphp
                                                 <x-global::forms.select name="userProjectRole-{{ $assignedUser['id'] }}">
-                                                    <option value="inherit">Inherit</option>
+                                                    <option value="inherit">{{ __('label.inherit') }}</option>
                                                     <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
                                                         @if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) selected='selected' @endif
                                                     >{!! __('label.roles.'.$roles::$readonly) !!}</option>
@@ -142,7 +137,7 @@
                                                 @else
                                                     @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
                                                     <x-global::forms.select name="userProjectRole-{{ $row['id'] }}">
-                                                        <option value="inherit">Inherit</option>
+                                                        <option value="inherit">{{ __('label.inherit') }}</option>
                                                         <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
                                                         @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) selected='selected' @endif
                                                             >{!! __('label.roles.'.$roles::$readonly) !!}</option>
@@ -276,7 +271,7 @@
                 <x-global::elements.section-header icon="fa fa-leaf">Telegram</x-global::elements.section-header>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="{{ BASE_URL }}/dist/images/telegram-logo.svg" width="130" alt="Telegram logo" />
+                        <img src="{{ BASE_URL }}/dist/images/telegram-logo.svg" width="130" alt="Telegram" />
                     </div>
 
                     <div class="col-md-5">
@@ -388,7 +383,7 @@
                                     </div>
 
                                     @if ($key == -1)
-                                        <em>* the archive status is protected cannot be renamed or removed.</em>
+                                        <em>{{ __('text.archive_status_protected') }}</em>
                                     @endif
                                 </x-global::elements.card>
                             </li>

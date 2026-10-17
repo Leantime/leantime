@@ -5,18 +5,14 @@
 $values = $values ?? [];
 @endphp
 
-<div class="pageheader">
-    <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
-        <x-global::forms.text-input name="term"
-               placeholder="{{ __('input.placeholders.search_type_hit_enter') }}" />
-    </form>
-
-    <div class="pageicon"><span class="fa-laptop"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('OVERVIEW') !!}</h5>
-        <h1>{!! __('MY_TIMESHEETS') !!}</h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa fa-laptop" :eyebrow="__('label.overview')">
+    {!! __('headline.my_timesheets') !!}
+    <x-slot:actions>
+        <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
+            <x-global::forms.text-input name="term" placeholder="{{ __('input.placeholders.search_type_hit_enter') }}" />
+        </form>
+    </x-slot:actions>
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -38,7 +34,7 @@ $values = $values ?? [];
                     <x-global::elements.card style="min-height: 460px">
 
 
-                        <x-slot:title>{!! __('OVERVIEW') !!}</x-slot:title>
+                        <x-slot:title>{!! __('label.overview') !!}</x-slot:title>
 
                             <label for="clients">{!! __('label.client') !!}</label>
                             <x-global::forms.select name="clients" id="clients" onchange="filterProjectsByClient();">
@@ -48,12 +44,12 @@ $values = $values ?? [];
                                 @endforeach
                             </x-global::forms.select> <br/>
 
-                            <label for="projects">{!! __('PROJECT') !!}</label> <x-global::forms.select
+                            <label for="projects">{!! __('label.project') !!}</label> <x-global::forms.select
                                     name="projects" id="projects"
                                     onchange="removeOptions($('select#projects option:selected').val());">
 
 
-                                <option value="all">{!! __('ALL_PROJECTS') !!}</option>
+                                <option value="all">{!! __('labels.all_projects') !!}</option>
 
                                 <optgroup>
                                     @php $lastClientName = ''; @endphp
@@ -74,7 +70,7 @@ $values = $values ?? [];
                                 </optgroup>
                             </x-global::forms.select> <br/>
 
-                            <label for="tickets">{!! __('TICKET') !!}</label>
+                            <label for="tickets">{!! __('label.ticket') !!}</label>
                             <x-global::forms.select name="tickets" id="tickets">
 
                                 @foreach ($allTickets as $row)
@@ -87,7 +83,7 @@ $values = $values ?? [];
 
                             </x-global::forms.select> <br/>
                             <br/>
-                            <label for="kind">{!! __('KIND') !!}</label> <x-global::forms.select id="kind"
+                            <label for="kind">{!! __('label.kind') !!}</label> <x-global::forms.select id="kind"
                                                                                           name="kind">
                                 @foreach ($kind as $row)
                                     <option value="{{ $row }}"
@@ -98,25 +94,25 @@ $values = $values ?? [];
                                 @endforeach
 
                             </x-global::forms.select><br/>
-                            <label for="date">{!! __('DATE') !!}</label> <input type="text" autocomplete="off"
+                            <label for="date">{!! __('label.date') !!}</label> <input type="text" autocomplete="off"
                                                                                          id="date" name="date"
                                                                                          value="{{ $values['date'] }}"
                                                                                          size="7"/>
                             <br/>
-                            <label for="hours">{!! __('HOURS') !!}</label> <x-global::forms.text-input
+                            <label for="hours">{!! __('label.hours') !!}</label> <x-global::forms.text-input
                                     id="hours" name="hours"
                                     value="{{ $values['hours'] }}" size="7" /> <br/>
-                            <label for="description">{!! __('DESCRIPTION') !!}</label> <x-global::forms.textarea
+                            <label for="description">{!! __('label.description') !!}</label> <x-global::forms.textarea
                                     rows="5" cols="50" id="description"
                                     name="description">{{ $values['description'] }}</x-global::forms.textarea><br/>
                             <br/>
                             <br/>
-                            <label for="invoicedEmpl">{!! __('INVOICED') !!}</label> <input
+                            <label for="invoicedEmpl">{!! __('label.invoiced') !!}</label> <input
                                     type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
                                 @if (isset($values['invoicedEmpl']) && $values['invoicedEmpl'] == '1')
                                     checked="checked"
                                 @endif />
-                            {!! __('ONDATE') !!}&nbsp;<input type="text"
+                            {!! __('label.ondate') !!}&nbsp;<input type="text"
                                                                       id="invoicedEmplDate" name="invoicedEmplDate"
                                                                       value="{{ $values['invoicedEmplDate'] }}"
                                                                       size="7"/><br/>
@@ -124,23 +120,23 @@ $values = $values ?? [];
 
                             @if ($login::userIsAtLeast($roles::$manager))
                                 <br/>
-                                <label for="invoicedComp">{!! __('INVOICED_COMP') !!}</label> <input
+                                <label for="invoicedComp">{!! __('label.invoiced_comp') !!}</label> <input
                                         type="checkbox" name="invoicedComp" id="invoicedComp"
                                     @if ($values['invoicedComp'] == '1')
                                         checked="checked"
                                     @endif />
-                                {!! __('ONDATE') !!}&nbsp;<input type="text" autocomplete="off"
+                                {!! __('label.ondate') !!}&nbsp;<input type="text" autocomplete="off"
                                                                           id="invoicedCompDate"
                                                                           name="invoicedCompDate"
                                                                           value="{{ $values['invoicedCompDate'] }}"
                                                                           size="7"/><br/>
 
-                                <label for="paid">{!! __('labels.paid') !!}</label> <input
+                                <label for="paid">{!! __('label.paid') !!}</label> <input
                                     type="checkbox" name="paid" id="paid"
                                     @if ($values['paid'] == '1')
                                         checked="checked"
                                     @endif />
-                                {!! __('ONDATE') !!}&nbsp;<input type="text" autocomplete="off"
+                                {!! __('label.ondate') !!}&nbsp;<input type="text" autocomplete="off"
                                                                           id="paidDate"
                                                                           name="paidDate"
                                                                           value="{{ $values['paidDate'] }}"
@@ -148,7 +144,7 @@ $values = $values ?? [];
 
 
 
-                            @endif <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE')" name="save" /> <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('SAVE_NEW')" name="saveNew" />
+                            @endif <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" /> <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save_and_new')" name="saveNew" />
 
                     </x-global::elements.card>
                 </div>

@@ -44,13 +44,13 @@
                 class='notifcationTabs active'
                 id="notificationsListLink"
                 onclick="toggleNotificationTabs('notifications')"
-            >Notification ({{ $totalNewNotifications }})</a>
+            >{{ sprintf(__('label.notifications_count'), $totalNewNotifications) }}</a>
             <a
                 href='javascript:void(0);'
                 class='notifcationTabs'
                 id="mentionsListLink"
                 onclick="toggleNotificationTabs('mentions')"
-            >Mentions ({{ $totalNewMentions }})</a>
+            >{{ sprintf(__('label.mentions_count'), $totalNewMentions) }}</a>
         </div>
 
         <div class="scroll-wrapper">

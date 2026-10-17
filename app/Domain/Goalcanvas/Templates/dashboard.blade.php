@@ -36,10 +36,9 @@ foreach ($allCanvas as $canvasRow) {
     div.canvas-element-center-middle { text-align: center; }
 </style>
 
-<div class="pageheader">
-    <div class="pageicon"><span class='fa {{ $canvasIcon }}'></span></div>
-    <div class="pagetitle">
-        @if (count($allCanvas) > 0)
+<x-global::layout.page-header icon="fa {{ $canvasIcon }}">
+    @if (count($allCanvas) > 0)
+        <x-slot:switcher>
             <x-global::subjectSwitcher
                 :parent="__('headline.goal.dashboardboard')"
                 current="All Goal Groups">
@@ -51,18 +50,18 @@ foreach ($allCanvas as $canvasRow) {
                     <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
                 @endforeach
             </x-global::subjectSwitcher>
-        @else
-            <h1>{{ __("headline.goal.dashboardboard") }}</h1>
-        @endif
-    </div>
-</div><!--pageheader-->
+        </x-slot:switcher>
+    @else
+        {{ __("headline.goal.dashboardboard") }}
+    @endif
+</x-global::layout.page-header>
 
 <div class="maincontent">
 
 <div class="row" style="margin-bottom:20px; ">
     <div class="col-md-4">
         <div class="bigNumberBox" style="padding: 29px 15px;">
-            <h2>Progress: {{ round($goalStats['avgPercentComplete']) }}%</h2>
+            <h2>{{ sprintf(__('label.goal_progress_percent'), round($goalStats['avgPercentComplete'])) }}</h2>
 
             <x-global::feedback.progress :value="$goalStats['avgPercentComplete']" style="margin-top:5px;" />
         </div>
@@ -70,19 +69,19 @@ foreach ($allCanvas as $canvasRow) {
     <div class="col-md-2"></div>
     <div class="col-md-2">
         <div class="bigNumberBox priority-border-4">
-            <h2>On Track</h2>
+            <h2>{{ __('label.project_status_green') }}</h2>
             <span class="content">{{ $goalStats['goalsOnTrack'] }}</span>
         </div>
     </div>
     <div class="col-md-2">
         <div class="bigNumberBox priority-border-3">
-            <h2>At Risk</h2>
+            <h2>{{ __('label.project_status_yellow') }}</h2>
             <span class="content">{{ $goalStats['goalsAtRisk'] }}</span>
         </div>
     </div>
     <div class="col-md-2">
         <div class="bigNumberBox priority-border-1">
-            <h2>Miss</h2>
+            <h2>{{ __('label.goal_miss') }}</h2>
             <span class="content">{{ $goalStats['goalsMiss'] }}</span>
         </div>
     </div>
@@ -96,7 +95,7 @@ foreach ($allCanvas as $canvasRow) {
         @foreach ($allCanvas as $canvasRow)
             <div class="row">
                 <div class="col-md-12">
-                    <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary pull-right'><i class="fa fa-plus"></i> Create New Goal</a>
+                    <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary pull-right'><i class="fa fa-plus"></i> {{ __('links.create_new_goal') }}</a>
 
                     <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></h5>
                 </div>
@@ -111,7 +110,7 @@ foreach ($allCanvas as $canvasRow) {
                         <div class="col-md-12">
                             <div class="row">
                                 @if (!is_countable($canvasItems) || count($canvasItems) == 0)
-                                    <div class='col-md-12'>No goals on this board yet. Open the <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
+                                    <div class='col-md-12'>{!! sprintf(__('text.goal_board_empty'), BASE_URL . '/goalcanvas/showCanvas/' . (int) $canvasRow["id"]) !!}</div>
                                 @endif
                                 @foreach ($canvasItems as $row)
                                     @php
@@ -137,13 +136,13 @@ foreach ($allCanvas as $canvasRow) {
                                                         @endif
 
                                                         <h4>
-                                                            <strong>Goal:</strong>
+                                                            <strong>{{ __('label.goal_colon') }}</strong>
                                                             <a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}" class="goalCanvasModal" data="item_{{ $row['id'] }}">
                                                                 {{ $row["title"] }}
                                                             </a>
                                                         </h4>
                                                         <br />
-                                                        <strong>Metric:</strong> {{$row["description"] }}
+                                                        <strong>{{ __('label.metric_colon') }}</strong> {{$row["description"] }}
                                                         <br /><br />
 
                                                         @php
@@ -167,7 +166,7 @@ foreach ($allCanvas as $canvasRow) {
                                                         <x-global::feedback.progress :value="$percentDone" />
                                                         <div class="row" style="padding-bottom:0px;">
                                                             <div class="col-md-4">
-                                                                <small>Start:<br />{{ $metricTypeFront . $row["startValue"] . $metricTypeBack }}</small>
+                                                                <small>{{ __('label.start_colon') }}<br />{{ $metricTypeFront . $row["startValue"] . $metricTypeBack }}</small>
                                                             </div>
                                                             <div class="col-md-4 center">
                                                                 <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row["currentValue"] . $metricTypeBack }}</small>

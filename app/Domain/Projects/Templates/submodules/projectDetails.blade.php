@@ -35,8 +35,8 @@
 
                 @if ($projectTypes && count($projectTypes) > 1)
                 <div class="col-md-12 center">
-                    <x-global::elements.section-header icon="fa-regular fa-rectangle-list">Project Type</x-global::elements.section-header>
-                    <p>The type of the project. This will determine which features are available.</p>
+                    <x-global::elements.section-header icon="fa-regular fa-rectangle-list">{{ __('label.project_type') }}</x-global::elements.section-header>
+                    <p>{{ __('text.project_type_help') }}</p>
                     <x-global::forms.select enhanced name="type">
                         @foreach ($projectTypes as $key => $type)
                             <option value="{{ $tpl->escape($key) }}"
@@ -58,7 +58,7 @@
 
                     <x-global::elements.section-header icon="fa fa-picture-o">{!! __('label.project_avatar') !!}</x-global::elements.section-header>
 
-                    <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project['id'] }}&v={{ format($project['modified'])->timestamp() }}'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                    <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project['id'] }}&v={{ format($project['modified'])->timestamp() }}'  class='profileImg' alt='{{ __('headlines.profile_picture') }}' id="previousImage"/>
                     <div id="projectAvatar">
                     </div>
 

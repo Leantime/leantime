@@ -10,6 +10,6 @@ $fontSize = $sizes[$size] ?? '16px';
 
 <span {{ $attributes->merge(['class' => 'sprint-icon']) }}
       style="font-size: {{ $fontSize }}; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px;"
-      data-tippy-content="Sprint: {{ $label }}"
+      data-tippy-content="{{ sprintf(__('label.sprint_x'), $label) }}"
       role="img"
-      aria-label="Sprint: {{ $label }}">🏃</span>
+      aria-label="{{ sprintf(__('label.sprint_x'), $label) }}">🏃</span>

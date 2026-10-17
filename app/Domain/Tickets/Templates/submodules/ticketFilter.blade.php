@@ -29,7 +29,7 @@
              next to the next dropdown: whitespace between them adds an inline-block gap. --}}
         <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" menu-style="width:250px;" keep-open>
             <x-slot:trigger class="btn-link" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
-                <i class="fas fa-filter"></i> Filter{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
+                <i class="fas fa-filter"></i> {{ __('label.filter') }}{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
             </x-slot:trigger>
             <div class="row-fluid">
 
@@ -149,7 +149,7 @@
 
         </x-global::actions.dropdown>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-global::actions.dropdown variant="filter">
             <x-slot:trigger class="btn-link" data-tippy-content="{{ __('popover.group_by') }}">
-                <span class="fa-solid fa-diagram-project"></span> Group By
+                <span class="fa-solid fa-diagram-project"></span> {{ __('text.group_by') }}
                 @if ($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
                     <span class="badge badge-primary">1</span>
                 @endif

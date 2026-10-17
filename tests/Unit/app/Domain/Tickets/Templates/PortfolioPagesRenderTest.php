@@ -157,8 +157,7 @@ class PortfolioPagesRenderTest extends TestCase
         file_put_contents($layoutDir.'/stub.blade.php', '@yield("content") @stack("scripts")');
         app('view')->addNamespace('portfoliotest', $layoutDir);
 
-        return [
-            'layout' => 'portfoliotest::stub',
+        $globals = [
             'tpl' => new class
             {
                 public function __call(string $name, array $arguments): string
@@ -175,5 +174,11 @@ class PortfolioPagesRenderTest extends TestCase
             },
             'roles' => Roles::class,
         ];
+
+        // Shared, not just passed, like setupGlobalVars() does: components (the page
+        // header's plugin hooks call $tpl) don't see the page's own variables.
+        app('view')->share($globals);
+
+        return ['layout' => 'portfoliotest::stub'] + $globals;
     }
 }

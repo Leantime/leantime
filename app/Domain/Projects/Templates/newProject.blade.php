@@ -2,15 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-
-    <div class="pageicon"><span class="fa fa-suitcase"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headline.new_project') !!}</h1>
-    </div>
-
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa fa-suitcase" :eyebrow="__('label.administration')">
+    {!! __('headline.new_project') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -65,8 +59,8 @@
                         <div class="col-md-4">
 
                             @if ($projectTypes && count($projectTypes) > 1)
-                                <x-global::elements.section-header icon="fa-regular fa-rectangle-list">Project Type</x-global::elements.section-header>
-                                <p>The type of the project. This will determine which features are available.</p>
+                                <x-global::elements.section-header icon="fa-regular fa-rectangle-list">{{ __('label.project_type') }}</x-global::elements.section-header>
+                                <p>{{ __('text.project_type_help') }}</p>
                                 <x-global::forms.select enhanced name="type">
                                     @foreach ($projectTypes as $key => $type)
                                         <option value="{{ $key }}"

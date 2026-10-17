@@ -32,10 +32,9 @@
     div.canvas-element-center-middle { text-align: center; }
 </style>
 
-<div class="pageheader">
-    <div class="pageicon"><span class='fa {{ $canvasIcon }}'></span></div>
-    <div class="pagetitle">
-        @if(count($allCanvas) > 0)
+<x-global::layout.page-header icon="fa {{ $canvasIcon }}">
+    @if(count($allCanvas) > 0)
+        <x-slot:switcher>
             <x-global::subjectSwitcher
                 :parent="__('headline.' . $canvasName . '.board')"
                 :current="$canvasTitle">
@@ -47,12 +46,12 @@
                     <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ e($canvasRow['title']) }}</a></li>
                 @endforeach
             </x-global::subjectSwitcher>
-        @else
-            <h1>{!! __("headline.$canvasName.board") !!}</h1>
-        @endif
-    </div>
+        </x-slot:switcher>
+    @else
+        {!! __("headline.$canvasName.board") !!}
+    @endif
     @if(count($allCanvas) > 0)
-        <div class="pageheader-right">
+        <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
                 @if($login::userIsAtLeast($roles::$editor))
                     <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $currentCanvas }}" class="editCanvasLink ">{!! __('links.icon.edit') !!}</a></li>
@@ -64,9 +63,9 @@
                 @endif
 
             </x-global::actions.dropdown>
-        </div>
+        </x-slot:actions>
     @endif
-</div><!--pageheader-->
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <x-global::navigation.view-tabs>

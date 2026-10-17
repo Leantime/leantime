@@ -8,17 +8,9 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 }
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('headline.calendar') !!}</h5>
-        <h1>{!! __('headline.my_calendar') !!}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('headline.calendar')">
+    {!! __('headline.my_calendar') !!}
+</x-global::layout.page-header>
 
 {!! $tpl->displayNotification() !!}
 
@@ -27,11 +19,11 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
     <div class="row">
         <div class="col-md-2">
             <div class="maincontentinner">
-                <h5 class="subtitle tw-pb-m">Calendars</h5>
+                <h5 class="subtitle tw-pb-m">{{ __('label.calendars') }}</h5>
 
                 <ul class="simpleList">
-                    <li><span class="indicatorCircle" style="background:var(--accent1)"></span>Events</li>
-                    <li><span class="indicatorCircle" style="background:var(--accent2)"></span>Projects & Tasks</li>
+                    <li><span class="indicatorCircle" style="background:var(--accent1)"></span>{{ __('label.events') }}</li>
+                    <li><span class="indicatorCircle" style="background:var(--accent2)"></span>{{ __('label.projects_and_tasks') }}</li>
 
                 @foreach ($externalCalendars as $calendars)
                     <li>
@@ -67,7 +59,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <x-global::forms.button tag="a" link="#/calendar/export" contentRole="default" class="right">Export</x-global::forms.button>
+                        <x-global::forms.button tag="a" link="#/calendar/export" contentRole="default" class="right">{{ __('links.export') }}</x-global::forms.button>
                         <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                             <span class="fc-icon fc-icon-chevron-right"></span>
                         </button>
@@ -75,14 +67,14 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                             <span class="fc-icon fc-icon-chevron-left"></span>
                         </button>
 
-                        <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
+                        <button class="fc-today-button btn btn-default right" style="margin-right:5px;">{{ __('label.today_lowercase') }}</button>
 
 
                         <x-global::forms.select id="my-select" style="margin-right:5px;" class="right">
-                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>
-                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>Week</option>
-                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>Month</option>
-                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
+                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' }}>{{ __('buttons.day') }}</option>
+                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>{{ __('buttons.week') }}</option>
+                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>{{ __('buttons.month') }}</option>
+                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>{{ __('label.year') }}</option>
                         </x-global::forms.select>
                     </div>
                 </div>

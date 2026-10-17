@@ -101,7 +101,7 @@
         </div>
     @empty
         <div class="wiki-activity-empty">
-            <span>No activity yet</span>
+            <span>{{ __('text.no_activity_yet') }}</span>
         </div>
     @endforelse
 </div>
