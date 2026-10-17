@@ -4,9 +4,7 @@
 --}}
 <form method="post" action="{{ BASE_URL }}/modulemanager/projectModules/{{ $projectId }}">
 
-    <x-global::elements.section-header icon="fa fa-puzzle-piece" :description="__('text.project_modules_intro')">
-        {{ __('headlines.project_modules') }}
-    </x-global::elements.section-header>
+    <p>{{ __('text.project_modules_intro') }}</p>
 
     @if (empty($modules))
         <p>{{ __('text.no_project_modules') }}</p>
