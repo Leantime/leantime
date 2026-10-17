@@ -2,6 +2,8 @@
 
 namespace Leantime\Core\Modules;
 
+use Illuminate\Support\Str;
+
 /**
  * A feature that can be switched on or off per project (Wiki, Ideas, a plugin's board, …).
  *
@@ -43,7 +45,8 @@ final class Module
      * Whether a request to /{module}/{action} belongs to this module.
      *
      * Segments are compared the way the Frontcontroller resolves controllers (Str::studly), so
-     * /files/show-all, /files/show_all and /files/showAll all count as files.showAll.
+     * /files/show-all, /files/show_all, /files/show%20all and /files/showAll all count as
+     * files.showAll.
      */
     public function claimsRoute(string $module, string $action): bool
     {
@@ -67,6 +70,6 @@ final class Module
 
     private static function normalizeSegment(string $segment): string
     {
-        return strtolower(str_replace(['-', '_'], '', $segment));
+        return strtolower(Str::studly($segment));
     }
 }

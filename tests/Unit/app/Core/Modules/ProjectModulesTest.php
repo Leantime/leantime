@@ -142,6 +142,7 @@ class ProjectModulesTest extends \Unit\TestCase
         $this->assertSame('files', $this->projectModules->blockingRoute('files', 'show-all', 7)?->id);
         $this->assertSame('files', $this->projectModules->blockingRoute('files', 'show_all', 7)?->id);
         $this->assertSame('files', $this->projectModules->blockingRoute('Files', 'ShowAll', 7)?->id);
+        $this->assertSame('files', $this->projectModules->blockingRoute('files', 'show all', 7)?->id);
 
         // Only the claimed actions of Files are blocked; attachments still upload and download.
         $this->assertNull($this->projectModules->blockingRoute('files', 'upload', 7));

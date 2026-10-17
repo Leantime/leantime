@@ -103,6 +103,23 @@ class ProjectModules
     }
 
     /**
+     * Drop the rows of projects that have a module switched off, for reads that span projects
+     * (polling, MCP tools calling a service in-process past the permission hook).
+     *
+     * @param  array<int|string, array<string, mixed>>  $rows  Rows carrying a project id.
+     * @return array<int, array<string, mixed>> The remaining rows as a list (stays a JSON array).
+     */
+    public function withoutSwitchedOffProjects(string $moduleId, array $rows, string $projectKey = 'projectId'): array
+    {
+        $remaining = array_filter(
+            $rows,
+            fn (array $row): bool => $this->isEnabled($moduleId, (int) ($row[$projectKey] ?? 0))
+        );
+
+        return array_values($remaining);
+    }
+
+    /**
      * Whether a permission may be granted in a project as far as modules are concerned: false
      * when the permission's domain belongs to a module that is off in that project.
      *

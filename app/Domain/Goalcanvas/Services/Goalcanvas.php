@@ -71,7 +71,11 @@ class Goalcanvas extends BaseService
      */
     private function withoutSwitchedOffProjects(array $rows): array
     {
-        return array_filter($rows, fn (array $row): bool => $this->goalsEnabledIn((int) ($row['projectId'] ?? 0)));
+        if ($this->projectModules === null) {
+            return $rows;
+        }
+
+        return $this->projectModules->withoutSwitchedOffProjects('goalcanvas', $rows);
     }
 
     /**

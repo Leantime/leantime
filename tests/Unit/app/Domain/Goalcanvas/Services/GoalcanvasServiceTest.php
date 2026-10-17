@@ -986,7 +986,9 @@ class GoalcanvasServiceTest extends TestCase
         $service = new GoalcanvasService($repo, $this->projectsWithAccess([5, 6]), $this->goalsOffInProject5());
         $service->setPermissionService($this->allowingPermissions());
 
-        $this->assertSame([2], array_values(array_column($service->pollGoals(), 'id')));
+        $goals = $service->pollGoals();
+        $this->assertSame([0], array_keys($goals), 'stays a list, so JSON-RPC returns an array');
+        $this->assertSame(2, $goals[0]['id']);
         $this->assertSame([4], array_keys($service->getParentKPIs(6)));
         $this->assertSame([], $service->getParentKPIs(5));
     }
