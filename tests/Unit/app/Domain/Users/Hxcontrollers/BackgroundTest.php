@@ -33,8 +33,10 @@ class BackgroundTest extends TestCase
         ]);
 
         $backgrounds = $this->make(Backgrounds::class, [
-            'setBackgroundType' => function (string $type) use ($changes): void {
+            'setBackgroundType' => function (string $type) use ($changes): bool {
                 $changes->append(['setBackgroundType', $type]);
+
+                return true;
             },
             'useUnsplashPhoto' => function (string $photoId) use ($changes): bool {
                 $changes->append(['useUnsplashPhoto', $photoId]);

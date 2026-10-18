@@ -192,39 +192,34 @@ class Theme
      *
      * @api
      */
+    /**
+     * Dark-mode colors of the predefined schemes. In dark mode the primary color is also text on
+     * dark panels (active menu and dropdown items, links), so each one reaches about 4.5:1 on
+     * #404040. Primary buttons switch to a dark label on these light accents (sections/header).
+     */
+    private const DARK_MODE_COLOR_SCHEMES = [
+        'grayscale1' => ['primaryColor' => '#e8e8e8', 'secondaryColor' => '#b0b0b0'],
+        'grayscale2' => ['primaryColor' => '#a0a0a0', 'secondaryColor' => '#d1d1d1'],
+        'copper' => ['primaryColor' => '#dc9f89', 'secondaryColor' => '#1ebfd2'],
+        'mustard' => ['primaryColor' => '#dc9f8d', 'secondaryColor' => '#f3aa38'],
+        'nebular' => ['primaryColor' => '#db9e92', 'secondaryColor' => '#94aede'],
+        'fuchsia' => ['primaryColor' => '#f58db5', 'secondaryColor' => '#81adc4'],
+        'fruit' => ['primaryColor' => '#96b0d0', 'secondaryColor' => '#f58fa2'],
+        'highlands' => ['primaryColor' => '#7eb6c9', 'secondaryColor' => '#fc9885'],
+        'moss' => ['primaryColor' => '#afb444', 'secondaryColor' => '#84bd26'],
+        'morning' => ['primaryColor' => '#a7adc0', 'secondaryColor' => '#f3aa34'],
+        'ocean' => ['primaryColor' => '#4abdc9', 'secondaryColor' => '#fdd78c'],
+        'energy' => ['primaryColor' => '#fb9360', 'secondaryColor' => '#df9d94'],
+        'forrest' => ['primaryColor' => '#e59a95', 'secondaryColor' => '#c2a89a'],
+    ];
+
     private function getColorSchemeForMode(string $schemeName, array $scheme): array
     {
-        $colorMode = $this->getColorMode();
-
-        // Adjust grayscale schemes for dark mode to ensure readability
-        if ($colorMode === 'dark') {
-            if ($schemeName === 'grayscale1') {
-                return [
-                    'name' => $scheme['name'],
-                    'primaryColor' => '#e8e8e8',   // Light gray - 8.5:1 contrast on #292929
-                    'secondaryColor' => '#b0b0b0', // Medium gray - 4.2:1 contrast
-                ];
-            }
-            if ($schemeName === 'grayscale2') {
-                return [
-                    'name' => $scheme['name'],
-                    'primaryColor' => '#a0a0a0',   // Light gray - 5.0:1 contrast on #292929
-                    'secondaryColor' => '#d1d1d1', // Light gray - 9.1:1 contrast
-                ];
-            }
-            // Forest's near-black red disappears on dark panels (1.0:1 on #404040). The primary is
-            // also the button background under white labels, so the lighter red keeps both above 3:1.
-            if ($schemeName === 'forrest') {
-                return [
-                    'name' => $scheme['name'],
-                    'primaryColor' => '#db7069',   // 3.2:1 on #404040, 4.5:1 on #292929, 3.2:1 with white text
-                    'secondaryColor' => '#ac8874', // 3.2:1 on #404040
-                ];
-            }
+        if ($this->getColorMode() !== 'dark' || ! isset(self::DARK_MODE_COLOR_SCHEMES[$schemeName])) {
+            return $scheme;
         }
 
-        // Light mode: use original values
-        return $scheme;
+        return ['name' => $scheme['name']] + self::DARK_MODE_COLOR_SCHEMES[$schemeName];
     }
 
     /**

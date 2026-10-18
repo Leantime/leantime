@@ -119,7 +119,7 @@ class ThemeTest extends \Unit\TestCase
         $lightTheme = $this->make(Theme::class, ['getColorMode' => 'light']);
 
         $this->assertSame(
-            ['name' => 'Forest', 'primaryColor' => '#db7069', 'secondaryColor' => '#ac8874'],
+            ['name' => 'Forest', 'primaryColor' => '#e59a95', 'secondaryColor' => '#c2a89a'],
             $schemeForMode->invoke($darkTheme, 'forrest', $forest)
         );
         $this->assertSame($forest, $schemeForMode->invoke($lightTheme, 'forrest', $forest));

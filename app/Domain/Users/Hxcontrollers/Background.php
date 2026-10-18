@@ -71,8 +71,11 @@ class Background extends HtmxController
         }
 
         try {
-            $this->backgrounds->setBackgroundType((string) $this->incomingRequest->request->get('type', ''));
-            $this->tpl->setNotification(__('notifications.background_settings_saved'), 'success');
+            if ($this->backgrounds->setBackgroundType((string) $this->incomingRequest->request->get('type', ''))) {
+                $this->tpl->setNotification(__('notifications.background_settings_saved'), 'success');
+            } else {
+                $this->tpl->setNotification(__('notifications.background_not_saved'), 'error');
+            }
         } catch (ValidationException $exception) {
             $this->tpl->setNotification(__('notifications.background_not_saved'), 'error');
         }

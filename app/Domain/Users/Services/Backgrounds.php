@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Users\Services;
 
+use Illuminate\Cache\CacheManager;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\Client\Factory as HttpClient;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +23,8 @@ use Leantime\Domain\Setting\Services\Setting;
  * arbitrary URL as background.
  *
  * An uploaded background is a file of the user; it is deleted once another background replaces it.
+ * Changes run under a per-user lock (changeBackground), so two tabs changing the background at
+ * the same time can't delete the upload that ends up in use.
  */
 class Backgrounds extends BaseService
 {
@@ -47,12 +51,18 @@ class Backgrounds extends BaseService
     /** Image formats every browser can show; getimagesize() also detects TIFF, BMP and others. */
     private const IMAGE_TYPES = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_WEBP];
 
+    /** Seconds a change may hold the per-user lock, and seconds another change waits for it. */
+    private const LOCK_SECONDS = 30;
+
+    private const LOCK_WAIT_SECONDS = 10;
+
     public function __construct(
         private Theme $theme,
         private Environment $config,
         private Files $files,
         private HttpClient $http,
         private Setting $settings,
+        private CacheManager $cache,
     ) {}
 
     /**
@@ -80,10 +90,11 @@ class Backgrounds extends BaseService
      * Switch the current user's background type. Switching to the gradient removes the image.
      *
      * @param  string  $type  'gradient' or 'image'
+     * @return bool False when another background change kept it from being saved.
      *
      * @throws ValidationException When the type is unknown.
      */
-    public function setBackgroundType(string $type): void
+    public function setBackgroundType(string $type): bool
     {
         if (! in_array($type, [self::TYPE_GRADIENT, self::TYPE_IMAGE], true)) {
             $message = 'Unknown background type';
@@ -91,12 +102,15 @@ class Backgrounds extends BaseService
             throw new ValidationException(['type' => [$message]], $message);
         }
 
-        $this->theme->setBackgroundType($type);
+        // Switching to "image" keeps the current image; no file changes, so no lock needed.
+        if ($type === self::TYPE_IMAGE) {
+            $this->theme->setBackgroundType($type);
+
+            return true;
+        }
 
         // The gradient removes the image, so an uploaded one is no longer needed.
-        if ($type === self::TYPE_GRADIENT) {
-            $this->replaceUploadedBackgroundFile(null);
-        }
+        return $this->changeBackground(fn () => $this->theme->setBackgroundType($type), newFileId: null);
     }
 
     /**
@@ -196,8 +210,13 @@ class Backgrounds extends BaseService
             return false;
         }
 
-        $this->theme->setBackgroundImage($rawUrl.self::UNSPLASH_BACKGROUND_SIZE);
-        $this->replaceUploadedBackgroundFile(null);
+        $saved = $this->changeBackground(
+            fn () => $this->theme->setBackgroundImage($rawUrl.self::UNSPLASH_BACKGROUND_SIZE),
+            newFileId: null,
+        );
+        if (! $saved) {
+            return false;
+        }
 
         $this->trackUnsplashDownload((string) $response->json('links.download_location', ''));
 
@@ -241,8 +260,47 @@ class Backgrounds extends BaseService
             'realName' => $storedFile['realName'],
         ]);
 
-        $this->theme->setBackgroundImage($fileUrl);
-        $this->replaceUploadedBackgroundFile(['fileId' => (int) $storedFile['fileId'], 'url' => $fileUrl]);
+        $saved = $this->changeBackground(
+            fn () => $this->theme->setBackgroundImage($fileUrl),
+            newFileId: (int) $storedFile['fileId'],
+        );
+        if (! $saved) {
+            $this->files->deleteFile((int) $storedFile['fileId']);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Apply a background change and clean up the upload it replaces, under a per-user lock. Two
+     * changes running at the same time (two tabs) would otherwise both see the same previous
+     * upload, and one could delete the file the other just saved as background.
+     *
+     * @param  \Closure  $applyChange  Saves the new background.
+     * @param  int|null  $newFileId  The uploaded file the background now uses, null for none.
+     * @return bool False when another change held the lock for too long; nothing was saved.
+     */
+    private function changeBackground(\Closure $applyChange, ?int $newFileId): bool
+    {
+        $userId = (int) session('userdata.id');
+        $lock = $this->cache->lock('users.background.'.$userId, self::LOCK_SECONDS);
+
+        try {
+            $lock->block(self::LOCK_WAIT_SECONDS);
+        } catch (LockTimeoutException $exception) {
+            Log::warning('Background change skipped: another change for this user is still running', ['userId' => $userId]);
+
+            return false;
+        }
+
+        try {
+            $applyChange();
+            $this->replaceUploadedBackgroundFile($userId, $newFileId);
+        } finally {
+            $lock->release();
+        }
 
         return true;
     }
@@ -250,33 +308,22 @@ class Backgrounds extends BaseService
     /**
      * Remember the uploaded file the background now uses (null: none) and delete the one it used
      * before. Only that file is deleted: the "user" files module also holds profile pictures.
-     *
-     * @param  array{fileId: int, url: string}|null  $newFile  The new uploaded background.
+     * Runs inside changeBackground's lock.
      */
-    private function replaceUploadedBackgroundFile(?array $newFile): void
+    private function replaceUploadedBackgroundFile(int $userId, ?int $newFileId): void
     {
-        $settingKey = 'usersettings.'.(int) session('userdata.id').'.backgroundFile';
-        $previousFile = json_decode((string) $this->settings->getSetting($settingKey, ''), true);
+        $settingKey = 'usersettings.'.$userId.'.backgroundFileId';
+        $previousFileId = (int) $this->settings->getSetting($settingKey, 0);
 
-        if ($newFile !== null) {
-            $this->settings->saveSetting($settingKey, json_encode($newFile));
-        } elseif (is_array($previousFile)) {
+        if ($newFileId !== null) {
+            $this->settings->saveSetting($settingKey, $newFileId);
+        } elseif ($previousFileId > 0) {
             $this->settings->deleteSetting($settingKey);
         }
 
-        $previousFileId = (int) ($previousFile['fileId'] ?? 0);
-        if ($previousFileId <= 0 || $previousFileId === ($newFile['fileId'] ?? null)) {
-            return;
+        if ($previousFileId > 0 && $previousFileId !== $newFileId) {
+            $this->files->deleteFile($previousFileId);
         }
-
-        // Two changes can run at the same time (two tabs). The previous upload is only deleted
-        // when it is not the background that ended up saved, so a racing request can never
-        // delete the image in use; at worst one replaced upload is left behind.
-        if (($previousFile['url'] ?? '') === (string) $this->theme->getBackgroundImage()) {
-            return;
-        }
-
-        $this->files->deleteFile($previousFileId);
     }
 
     /**

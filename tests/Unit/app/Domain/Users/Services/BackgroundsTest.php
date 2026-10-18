@@ -63,7 +63,6 @@ class BackgroundsTest extends TestCase
             'setBackgroundType' => function (string $type) {
                 $this->storedTypes[] = $type;
             },
-            'getBackgroundImage' => fn () => $this->currentImage(),
         ]);
 
         $files = $this->make(Files::class, [
@@ -91,24 +90,7 @@ class BackgroundsTest extends TestCase
             },
         ]);
 
-        return new Backgrounds($theme, $config, $files, $this->http, $settings);
-    }
-
-    /**
-     * The background image currently saved: the last one stored, none after the gradient.
-     */
-    private function currentImage(): ?string
-    {
-        if (end($this->storedTypes) === 'gradient') {
-            return null;
-        }
-
-        return end($this->storedImages) ?: null;
-    }
-
-    private function trackedUpload(int $fileId, string $url): string
-    {
-        return json_encode(['fileId' => $fileId, 'url' => $url]);
+        return new Backgrounds($theme, $config, $files, $this->http, $settings, app('cache'));
     }
 
     /**
@@ -131,7 +113,7 @@ class BackgroundsTest extends TestCase
         $this->assertTrue($this->makeService(uploadedFileId: 11)->useUploadedImage(['file' => $this->pngUpload()]));
 
         $this->assertSame([10], $this->deletedFileIds);
-        $this->assertSame(11, json_decode($this->settings['usersettings.1.backgroundFile'], true)['fileId']);
+        $this->assertSame(11, $this->settings['usersettings.1.backgroundFileId']);
 
         // Unique names: with file renaming turned off, two uploads of "bg.png" would otherwise share
         // one stored file, and deleting the replaced one would delete the new background.
@@ -143,52 +125,42 @@ class BackgroundsTest extends TestCase
 
     public function test_switching_to_the_gradient_deletes_the_uploaded_background(): void
     {
-        $this->settings['usersettings.1.backgroundFile'] = $this->trackedUpload(10, 'https://leantime.test/files/get?encName=a');
+        $this->settings['usersettings.1.backgroundFileId'] = 10;
 
         $this->makeService()->setBackgroundType('gradient');
 
         $this->assertSame([10], $this->deletedFileIds);
-        $this->assertArrayNotHasKey('usersettings.1.backgroundFile', $this->settings);
+        $this->assertArrayNotHasKey('usersettings.1.backgroundFileId', $this->settings);
     }
 
-    public function test_the_upload_still_in_use_is_never_deleted(): void
+    public function test_a_change_waits_for_another_change_and_gives_up_without_saving(): void
     {
-        // Two tabs racing: this request finds a previous upload that the other request has just
-        // saved as the background. Deleting it would leave the saved background pointing nowhere.
-        $this->storedImages[] = 'https://leantime.test/files/get?encName=b';
-        $this->settings['usersettings.1.backgroundFile'] = $this->trackedUpload(11, 'https://leantime.test/files/get?encName=b');
+        // Two tabs: while one change holds the user's lock, another must not save or clean up,
+        // and its freshly uploaded file is removed again.
+        $this->settings['usersettings.1.backgroundFileId'] = 10;
+        $otherChange = app('cache')->lock('users.background.1', 30);
+        $this->assertTrue($otherChange->get());
 
-        $this->http->fake([
-            'api.unsplash.com/photos/abc123/download*' => $this->http->response(['url' => 'https://example.test']),
-            'api.unsplash.com/photos/abc123' => $this->http->response($this->unsplashPhoto('https://images.unsplash.com/photo-1?ixid=1')),
-        ]);
-        $theme = $this->make(Theme::class, [
-            'setBackgroundImage' => fn () => null,
-            'getBackgroundImage' => fn () => 'https://leantime.test/files/get?encName=b',
-        ]);
-        $settings = $this->make(Setting::class, [
-            'getSetting' => fn ($key, $default = false) => $this->settings[$key] ?? $default,
-            'saveSetting' => fn () => true,
-            'deleteSetting' => fn () => null,
-        ]);
-        $files = $this->make(Files::class, [
-            'deleteFile' => function ($fileId) {
-                $this->deletedFileIds[] = (int) $fileId;
+        $waitSeconds = new \ReflectionClassConstant(Backgrounds::class, 'LOCK_WAIT_SECONDS');
+        $this->assertSame(10, $waitSeconds->getValue(), 'The test relies on the wait being bounded');
 
-                return true;
-            },
-        ]);
-        $config = $this->make(Environment::class);
-        $config->unsplashAccessKey = 'test-key';
+        try {
+            $started = microtime(true);
+            $saved = $this->makeService(uploadedFileId: 11)->useUploadedImage(['file' => $this->pngUpload()]);
+        } finally {
+            $otherChange->release();
+        }
 
-        (new Backgrounds($theme, $config, $files, $this->http, $settings))->useUnsplashPhoto('abc123');
-
-        $this->assertSame([], $this->deletedFileIds);
+        $this->assertFalse($saved);
+        $this->assertGreaterThanOrEqual(9, microtime(true) - $started, 'It waited for the other change first');
+        $this->assertSame([], $this->storedImages, 'Nothing is saved');
+        $this->assertSame(10, $this->settings['usersettings.1.backgroundFileId'], 'The tracked upload is unchanged');
+        $this->assertSame([11], $this->deletedFileIds, 'Only the new, unused upload is removed');
     }
 
     public function test_an_unsplash_photo_deletes_the_uploaded_background(): void
     {
-        $this->settings['usersettings.1.backgroundFile'] = $this->trackedUpload(10, 'https://leantime.test/files/get?encName=a');
+        $this->settings['usersettings.1.backgroundFileId'] = 10;
         $this->http->fake([
             'api.unsplash.com/photos/abc123/download*' => $this->http->response(['url' => 'https://example.test']),
             'api.unsplash.com/photos/abc123' => $this->http->response($this->unsplashPhoto('https://images.unsplash.com/photo-1?ixid=1')),
@@ -197,7 +169,7 @@ class BackgroundsTest extends TestCase
         $this->assertTrue($this->makeService()->useUnsplashPhoto('abc123'));
 
         $this->assertSame([10], $this->deletedFileIds);
-        $this->assertArrayNotHasKey('usersettings.1.backgroundFile', $this->settings);
+        $this->assertArrayNotHasKey('usersettings.1.backgroundFileId', $this->settings);
     }
 
     private function unsplashPhoto(string $rawUrl): array
@@ -281,7 +253,7 @@ class BackgroundsTest extends TestCase
             'api.unsplash.com/photos/abc123' => $this->http->response($this->unsplashPhoto('https://evil.test/x.jpg')),
         ]);
 
-        $this->settings['usersettings.1.backgroundFile'] = $this->trackedUpload(10, 'https://leantime.test/files/get?encName=a');
+        $this->settings['usersettings.1.backgroundFileId'] = 10;
 
         $this->assertFalse($this->makeService()->useUnsplashPhoto('abc123'));
         $this->assertSame([], $this->storedImages);
