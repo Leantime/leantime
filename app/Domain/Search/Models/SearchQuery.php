@@ -51,6 +51,8 @@ final class SearchQuery
      *                                            an empty list means no project-backed results (owner-scoped
      *                                            entities such as private files are still searched).
      * @param  array<string, mixed>  $filters  Optional provider filters (projectId, …).
+     * @param  int[]  $excludedProjectIds  Projects never searched, on top of the access scope (the
+     *                                     provider's module is switched off there).
      */
     public function __construct(
         string $term,
@@ -59,11 +61,28 @@ final class SearchQuery
         int $limit = 20,
         int $offset = 0,
         public readonly array $filters = [],
+        public readonly array $excludedProjectIds = [],
     ) {
         $this->term = self::normalize($term);
         $this->tokens = self::tokenize($this->term);
         $this->limit = max(1, min(self::MAX_LIMIT, $limit));
         $this->offset = max(0, $offset);
+    }
+
+    /**
+     * The same query, also leaving out the given projects.
+     *
+     * @param  int[]  $projectIds
+     */
+    public function withoutProjects(array $projectIds): self
+    {
+        if ($projectIds === []) {
+            return $this;
+        }
+
+        $excludedProjectIds = array_values(array_unique([...$this->excludedProjectIds, ...$projectIds]));
+
+        return new self($this->term, $this->userId, $this->accessibleProjectIds, $this->limit, $this->offset, $this->filters, $excludedProjectIds);
     }
 
     /**

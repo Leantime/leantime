@@ -19,6 +19,9 @@ class ProjectModules
     /** @var array<int, array<string, bool>> Stored overrides per project id. */
     private array $overridesByProject = [];
 
+    /** @var array<int, array<string, bool>>|null Stored overrides of every project that has any. */
+    private ?array $allOverrides = null;
+
     public function __construct(
         private ModuleRegistry $registry,
         private StoresProjectModules $store,
@@ -89,6 +92,7 @@ class ProjectModules
         });
 
         unset($this->overridesByProject[$projectId]);
+        $this->allOverrides = null;
     }
 
     /**
@@ -100,6 +104,7 @@ class ProjectModules
 
         $this->store->updateModuleOverrides($toProjectId, fn (array $overrides): array => $sourceOverrides);
         unset($this->overridesByProject[$toProjectId]);
+        $this->allOverrides = null;
     }
 
     /**
@@ -123,6 +128,36 @@ class ProjectModules
         );
 
         return array_values($remaining);
+    }
+
+    /**
+     * The projects that have a module switched off, for queries that span every project and
+     * exclude them in SQL (search). One read of all stored choices per request.
+     *
+     * Built from the stored choices, so it is complete for modules that are on by default (all
+     * core modules). For a module that is off by default it lists only explicit "off" choices.
+     *
+     * @return array<int, int>
+     */
+    public function switchedOffProjectIds(string $moduleId): array
+    {
+        $module = $this->registry->get($moduleId);
+
+        if ($module === null) {
+            return [];
+        }
+
+        $this->allOverrides ??= $this->store->getAllModuleOverrides();
+
+        $projectIds = [];
+
+        foreach ($this->allOverrides as $projectId => $overrides) {
+            if (($overrides[$module->id] ?? $module->enabledByDefault) === false) {
+                $projectIds[] = (int) $projectId;
+            }
+        }
+
+        return $projectIds;
     }
 
     /**

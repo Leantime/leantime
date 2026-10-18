@@ -69,7 +69,7 @@ class BlueprintsProvider implements SearchProvider
             return [];
         }
 
-        $boardQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, min(self::BOARD_HITS, $query->limit), 0, $query->filters);
+        $boardQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, min(self::BOARD_HITS, $query->limit), 0, $query->filters, $query->excludedProjectIds);
         $boardRows = $this->searchRepository->searchCanvasBoards($boardQuery, $types);
         $boardCount = count($boardRows);
 
@@ -96,7 +96,7 @@ class BlueprintsProvider implements SearchProvider
             return $results;
         }
 
-        $itemQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, $itemLimit, max(0, $query->offset - $boardCount), $query->filters);
+        $itemQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, $itemLimit, max(0, $query->offset - $boardCount), $query->filters, $query->excludedProjectIds);
 
         foreach ($this->searchRepository->searchCanvasItems($itemQuery, $types, null, titleColumn: 'description') as $row) {
             $title = (string) ($row['title'] ?: Highlighter::snippet($row['description'] ?? null, [], 120));

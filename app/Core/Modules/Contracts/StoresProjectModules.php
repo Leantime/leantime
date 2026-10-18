@@ -32,6 +32,14 @@ interface StoresProjectModules
     public function getModuleOverridesForProjects(array $projectIds): array;
 
     /**
+     * The stored module switches of every project that has any, for queries that span all projects
+     * (search excludes switched-off projects in SQL).
+     *
+     * @return array<int, array<string, bool>> Project id => (module id => enabled).
+     */
+    public function getAllModuleOverrides(): array;
+
+    /**
      * Change the stored module switches of a project atomically: read, apply $change, write, with
      * the project row locked in between, so two admins saving at once can't undo each other.
      *
