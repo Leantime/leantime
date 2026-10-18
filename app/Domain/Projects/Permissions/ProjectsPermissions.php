@@ -17,6 +17,10 @@ use Leantime\Core\Auth\Permissions\ProvidesPermissions;
  *    already have access to. This closes the cross-project read IDOR on the @api reads without
  *    changing who can see their own projects.
  *
+ *  - VIEW_ALL is GLOBAL-scoped (admin+ by default): see every project without being a member.
+ *    Project lists, search and the project-scoped engine check skip the membership check for
+ *    roles that hold it.
+ *
  *  - CREATE / EDIT / DELETE are GLOBAL-scoped, MANAGER+ (admin/owner via scope:any; an explicit
  *    manager rule in {@see \Leantime\Core\Auth\Permissions\DefaultRolePermissions} grants them —
  *    editors do NOT get them). This is grant-equivalent to the legacy controllers, which gate
@@ -33,6 +37,9 @@ final class ProjectsPermissions implements ProvidesPermissions
 {
     /** Read a project's data by id (project-scoped, readonly+; AND-ins data access). */
     public const VIEW = 'projects.view';
+
+    /** See every project without being a member. Admin+ (global, company-wide). */
+    public const VIEW_ALL = 'projects.viewAll';
 
     /** Create a project. Manager+ (global, company-wide). */
     public const CREATE = 'projects.create';
@@ -52,6 +59,7 @@ final class ProjectsPermissions implements ProvidesPermissions
     {
         return [
             new Permission(self::VIEW, 'View a project', true),
+            new Permission(self::VIEW_ALL, 'See all projects', false),
             new Permission(self::CREATE, 'Create projects', false),
             new Permission(self::EDIT, 'Edit projects', false),
             new Permission(self::DELETE, 'Delete projects', false),

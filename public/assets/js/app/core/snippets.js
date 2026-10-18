@@ -130,7 +130,16 @@ leantime.snippets = (function () {
     // <details open> first renders; data-lt-open holds the rendered state so only a real change saves.
     document.addEventListener('toggle', function (event) {
         var details = event.target;
-        if (!details || !details.matches || !details.matches('details[data-lt-accordion]')) {
+        if (!details || !details.matches || !details.matches('.lt-accordion > details')) {
+            return;
+        }
+        // A DataTable set up while its section was closed has no column widths yet.
+        if (details.open && window.jQuery && jQuery.fn.dataTable) {
+            jQuery(details).find('table.dataTable').each(function () {
+                jQuery(this).DataTable().columns.adjust();
+            });
+        }
+        if (!details.hasAttribute('data-lt-accordion')) {
             return;
         }
         var state = details.open ? 'open' : 'closed';

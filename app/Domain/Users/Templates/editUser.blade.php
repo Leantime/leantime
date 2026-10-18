@@ -164,43 +164,34 @@
 
                     <div class="scrollableItemList">
                         @php
-                            $currentClient = '';
-                            $i = 0;
+                            // One collapsible section per client; projects without a client go under "Not assigned to a client".
+                            $projectsByClient = [];
+                            foreach ($allProjects as $row) {
+                                $clientName = (string) ($row['clientName'] ?? '') !== '' ? $row['clientName'] : __('label.no_clients');
+                                $projectsByClient[$clientName][] = $row;
+                            }
                         @endphp
-                        @foreach ($allProjects as $row)
-                            @php
-                                if ($row['clientName'] == null) {
-                                    $row['clientName'] = 'Not assigned to client';
-                                }
-                            @endphp
-                            @if ($currentClient != $row['clientName'])
-                                @if ($i > 0)
+                        @foreach ($projectsByClient as $clientName => $clientProjects)
+                            <x-global::elements.accordion :title="$clientName" open>
+                                @foreach ($clientProjects as $row)
+                                    <div class="item" style="padding:10px 0px;">
+                                        <input type="checkbox" name="projects[]" id='project_{{ $row['id'] }}' value="{{ $row['id'] }}"
+                                            @if (is_array($projects) === true && in_array($row['id'], $projects) === true)
+                                                checked='checked'
+                                            @endif
+                                        />
+                                        <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
+                                            <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}' />
+                                        </span>
+
+                                        <label for="project_{{ $row['id'] }}" style="margin-top:-11px">
+                                            <small>{{ $row['type'] }}</small><br />
+                                                                    {{ $row['name'] }}</label>
+                                        <div class="clearall"></div>
                                     </div>
-                                @endif
-                                <h3 id='accordion_link_{{ $i }}'>
-                                    <a href='#' onclick='accordionToggle({{ $i }});' id='accordion_toggle_{{ $i }}'><i class='fa fa-angle-down'></i> {{ $row['clientName'] }}</a>
-                                </h3>
-                                <div id='accordion_{{ $i }}' class='simpleAccordionContainer'>
-                                @php $currentClient = $row['clientName']; @endphp
-                            @endif
-                            <div class="item" style="padding:10px 0px;">
-                                <input type="checkbox" name="projects[]" id='project_{{ $row['id'] }}' value="{{ $row['id'] }}"
-                                    @if (is_array($projects) === true && in_array($row['id'], $projects) === true)
-                                        checked='checked'
-                                    @endif
-                                />
-                                <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
-                                    <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}' />
-                                </span>
-
-                                <label for="project_{{ $row['id'] }}" style="margin-top:-11px">
-                                    <small>{{ $row['type'] }}</small><br />
-                                                            {{ $row['name'] }}</label>
-                                <div class="clearall"></div>
-                            </div>
-                            @php $i++; @endphp
+                                @endforeach
+                            </x-global::elements.accordion>
                         @endforeach
-
                     </div>
                     </div>
 
@@ -209,28 +200,5 @@
         </div>
 </form>
 
-@once
-@push('scripts')
-<script>
-
-
-    function accordionToggle(id) {
-
-        let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
-
-        if(currentLink.hasClass("fa-angle-right")){
-            currentLink.removeClass("fa-angle-right");
-            currentLink.addClass("fa-angle-down");
-            jQuery('#accordion_'+id).slideDown("fast");
-        }else{
-            currentLink.removeClass("fa-angle-down");
-            currentLink.addClass("fa-angle-right");
-            jQuery('#accordion_'+id).slideUp("fast");
-        }
-
-    }
-</script>
-@endpush
-@endonce
 
 @endsection

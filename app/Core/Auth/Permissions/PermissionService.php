@@ -9,6 +9,7 @@ use Leantime\Core\Auth\RoleResolver;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 
 /**
  * The capability engine: the single runtime answer to "may the current user do X?".
@@ -134,14 +135,35 @@ class PermissionService
     }
 
     /**
-     * Admin/owner, and roles ranked with them, access every project (mirrors
-     * getProjectsUserHasAccessTo's bypass), so they skip the per-project membership check.
+     * Whether a role sees every project without being a member (`projects.viewAll`). Project
+     * lists, search and the project-scoped check below use this. Reads the grant map directly,
+     * never currentUserCan(): it runs inside every project check.
+     *
+     * With unseeded grant tables the built-in rule (admin and above) applies, so admins keep
+     * their project lists while the seed is missing.
+     *
+     * @param  string  $roleName  Role name, e.g. 'admin' or a custom role's name.
+     */
+    public function roleSeesAllProjects(string $roleName): bool
+    {
+        $grantMap = $this->map();
+
+        if ($grantMap === []) {
+            return Roles::isAtLeast($roleName, Roles::$admin);
+        }
+
+        return in_array(ProjectsPermissions::VIEW_ALL, $grantMap[$roleName] ?? [], true);
+    }
+
+    /**
+     * The current user's global role sees every project, so they skip the per-project
+     * membership check.
      */
     private function canAccessAllProjects(): bool
     {
         $globalRole = $this->roles->globalRole();
 
-        return $globalRole !== null && Roles::isAtLeast($globalRole, Roles::$admin);
+        return $globalRole !== null && $this->roleSeesAllProjects($globalRole);
     }
 
     /**

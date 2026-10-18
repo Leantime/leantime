@@ -113,6 +113,9 @@
     --box-radius-large: 24px;
     --box-radius: 16px;
     --box-radius-small: 8px;
+    /* Inner padding of the page header and the content box (.maincontentinner), so their
+       contents line up. */
+    --box-padding: 16px;
     --element-radius: 16px;
     --input-radius: 15px;
 
@@ -487,20 +490,17 @@ textarea:focus-visible {
     outline-offset: 1px;
 }
 
-/* Link hover state - high contrast change for low vision accessibility */
+/* Link hover state - high contrast colour change for low vision accessibility (no underline) */
 a:hover {
     color: #000000;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 2px;
+    text-decoration: none;
 }
 
 /* Dashboard task links - extra visual feedback on hover */
 .latest-todos a:hover,
 .sortableTicketList a:hover {
     color: #000000;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+    text-decoration: none;
     background-color: rgba(0, 0, 0, 0.05);
 }
 

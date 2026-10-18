@@ -2335,7 +2335,7 @@ class Projects extends BaseService implements ChecksProjectAccess
             return [];
         }
 
-        if (Auth::userIsAtLeast(Roles::$admin)) {
+        if (Roles::seesAllProjects(session('userdata.role'))) {
             return $projects;
         }
 

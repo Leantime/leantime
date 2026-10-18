@@ -6,7 +6,7 @@
 --}}
 @if ($offset === 0)
     {{-- Loaded count for the section header; "+" when another page exists. --}}
-    <span class="searchPage__count" id="searchCount-{{ $provider->key() }}" hx-swap-oob="true">{{ count($results) }}{{ $hasMore ? '+' : '' }}</span>
+    <span class="lt-badge lt-badge--count searchPage__count" id="searchCount-{{ $provider->key() }}" hx-swap-oob="true">{{ count($results) }}{{ $hasMore ? '+' : '' }}</span>
 @endif
 
 @if ($offset === 0 && $results === [])

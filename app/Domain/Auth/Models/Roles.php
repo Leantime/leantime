@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Auth\Permissions\PermissionRepository;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Events\DispatchesEvents;
 
 /**
@@ -161,6 +162,52 @@ class Roles
 
         foreach (array_keys(self::getFilteredRoles()) as $roleKey) {
             if (self::isAtLeast($roleKey, $requiredRole)) {
+                $matchingKeys[] = (string) $roleKey;
+            }
+        }
+
+        return $matchingKeys;
+    }
+
+    /**
+     * Whether a role sees every project without being a member (it holds `projects.viewAll`).
+     * Falls back to "admin and above" when the grant map can't be read (no database).
+     *
+     * @param  mixed  $role  Role key or name.
+     *
+     * @throws BindingResolutionException
+     */
+    public static function seesAllProjects(mixed $role): bool
+    {
+        $roleKey = self::getRoleKey($role);
+
+        if ($roleKey === false) {
+            return false;
+        }
+
+        $roleName = (string) self::getRoleString($roleKey);
+
+        try {
+            return app(PermissionService::class)->roleSeesAllProjects($roleName);
+        } catch (\Throwable $e) {
+            // No database (install, unit tests). Not logged: this runs on every access check.
+            return self::isAtLeast($roleName, self::$admin);
+        }
+    }
+
+    /**
+     * Keys of every role that sees every project, as strings for `whereIn` on `zp_user.role`.
+     *
+     * @return string[]
+     *
+     * @throws BindingResolutionException
+     */
+    public static function keysThatSeeAllProjects(): array
+    {
+        $matchingKeys = [];
+
+        foreach (array_keys(self::getFilteredRoles()) as $roleKey) {
+            if (self::seesAllProjects($roleKey)) {
                 $matchingKeys[] = (string) $roleKey;
             }
         }

@@ -29,7 +29,8 @@
 
     @php
         $accordionId = 'task-children-'.$groupKey.$ticket['id'];
-        $accordionState = $tpl->getToggleState($tpl->getToggleState("accordion_content-".$accordionId) === 'closed' ? 'closed' : 'open');
+        // The subtask list's saved open/closed state (stored by snippets.accordionToggle).
+        $accordionState = $tpl->getToggleState('accordion_content-'.$accordionId) === 'closed' ? 'closed' : 'open';
     @endphp
 
     @php
