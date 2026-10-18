@@ -10,6 +10,7 @@ use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Modules\ProjectModules;
+use Leantime\Core\UI\UiState;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -94,47 +95,31 @@ class Menu
         /** @var TicketService */
         private TicketService $ticketsService,
         private ProjectModules $projectModules,
-    ) {
-        if (session()->exists('usersettings.submenuToggle') === false && session()->exists('userdata') === true) {
-            $setting = $this->settingsRepo;
-            session([
-                'usersettings.submenuToggle' => safe_unserialize(
-                    $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle'), []
-                ),
-            ]);
-        }
-    }
+    ) {}
 
     /**
-     * setSubmenuState - Set the state of the submenu (open or closed)
+     * setSubmenuState - Save a UI state of the current user (submenu / accordion open or closed,
+     * a sidebar width, a calendar view …).
      *
-     * @param  string  $submenu  Submenu identifier
-     * @param  string  $state  New state (open / closed)
+     * Stored per state in the database (UiState), not in the session: parallel requests can't
+     * overwrite each other, and the next page load shows it.
+     *
+     * @param  string  $submenu  State name, e.g. "accordion_content-tickets-organization"
+     * @param  string  $state  New value ("open", "closed", "320" …)
      */
     public function setSubmenuState(string $submenu, string $state): void
     {
-
-        if (session()->exists('usersettings.submenuToggle') && is_array(session('usersettings.submenuToggle'))) {
-            session(['usersettings.submenuToggle.'.$submenu => $state]);
-        }
-
-        $setting = $this->settingsRepo;
-        $setting->saveSetting('usersetting.'.session('userdata.id').'.submenuToggle', serialize(session('usersettings.submenuToggle')));
+        app(UiState::class)->set($submenu, $state);
     }
 
     /**
-     * getSubmenuState - Gets the state of the submenu (open or closed)
+     * getSubmenuState - A saved UI state of the current user, or false when never saved.
      *
-     * @param  string  $submenu  Submenu identifier
+     * @param  string  $submenu  State name
      */
-    public function getSubmenuState(string $submenu)
+    public function getSubmenuState(string $submenu): string|false
     {
-        $setting = $this->settingsRepo;
-        $subStructure = $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle');
-
-        session(['usersettings.submenuToggle' => safe_unserialize($subStructure, [])]);
-
-        return session('usersettings.submenuToggle.'.$submenu) ?? false;
+        return app(UiState::class)->get($submenu) ?? false;
     }
 
     /**
@@ -203,10 +188,6 @@ class Menu
 
         $menuStructure = $this->menuStructures[$menuType];
 
-        if (session()->exists('usersettings.submenuToggle') === false || is_array(session('usersettings.submenuToggle')) === false) {
-            session(['usersettings.submenuToggle' => []]);
-        }
-
         ksort($menuStructure);
 
         foreach ($menuStructure as $key => $element) {
@@ -239,8 +220,7 @@ class Menu
                     if ($element['visual'] == 'always') {
                         $submenuState = 'open';
                     } else {
-                        $submenuState = session('usersettings.submenuToggle.'.$element['id']) ?? $element['visual'];
-                        session(['usersettings.submenuToggle.'.$element['id'] => $submenuState]);
+                        $submenuState = app(UiState::class)->get($element['id']) ?? $element['visual'];
                     }
                     $menuStructure[$key]['visual'] = $submenuState;
 

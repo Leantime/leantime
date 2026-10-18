@@ -10,7 +10,7 @@
                        e.g. a milestone's colour. Anything else is ignored.
       count    int     Optional number shown as a counter after the title ("Open items 4").
       open     bool    Open on first render. With `id`, the user's last choice wins.
-      id       string  Remembers open/closed per user (same store as the old accordion, key
+      id       string  Remembers open/closed per user (UiState, same key as the old accordion,
                        "accordion_content-{id}"). Omit for a section that always starts as `open` says.
       card     bool    Bordered card look instead of a plain section.
       onPage   bool    The section sits on the page background (outside the content box, e.g. the
@@ -37,12 +37,12 @@
 
 @php
     $isOpen = (bool) $open;
-    // The state is stored under a dot-notation session path, so a "." in the id ("0.5") would nest
-    // it under another key. Escape anything outside [A-Za-z0-9_-]; ids without such characters stay
-    // as they are, so their saved choices carry over.
+    // The state id (also sent by core/snippets.js when the user toggles) escapes anything outside
+    // [A-Za-z0-9_-], so "0.5" and "0" stay different keys; ids without such characters stay as they
+    // are, so their saved choices carry over. States live in UiState (one database row each).
     $stateId = $id === null ? null : preg_replace_callback('/[^A-Za-z0-9_-]/', fn ($m) => '~' . bin2hex($m[0]), (string) $id);
     if ($stateId !== null) {
-        $savedState = session('usersettings.submenuToggle.accordion_content-' . $stateId);
+        $savedState = app(\Leantime\Core\UI\UiState::class)->get('accordion_content-' . $stateId);
         if ($savedState === 'open' || $savedState === 'closed') {
             $isOpen = $savedState === 'open';
         }
