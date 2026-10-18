@@ -303,7 +303,7 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 15px;
+        padding: 5px var(--box-padding, 16px);
         min-height: 50px;
     }
 
@@ -505,7 +505,7 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 15px;
+        padding: 5px var(--box-padding, 16px);
         min-height: 50px;
     }
 
@@ -1090,7 +1090,7 @@ min-width: 1200px
     }
 
     .pageheader {
-        padding: 5px 15px;
+        padding: 5px var(--box-padding, 16px);
         min-height: 50px;
     }
 
