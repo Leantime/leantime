@@ -225,7 +225,7 @@
                     }
                 @endphp
 
-                <x-global::elements.accordion :id="'ticketBox1-' . $groupKey . '-' . $loop->index" open :count="count($ticketGroup['tickets'])" data-todo-group="{{ $groupKey }}">
+                <x-global::elements.accordion :id="'ticketBox1-' . $groupKey . '-' . $loop->index" open :count="count($ticketGroup['tickets'])" class="todo-group" data-todo-group="{{ $groupKey }}">
                     <x-slot:title>{!! __($ticketGroup["labelName"]) !!}</x-slot:title>
                     <x-slot:actions>
                         <x-global::forms.button tag="a" link="javascript:void(0);" contentRole="link" class="add-task-button" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}">

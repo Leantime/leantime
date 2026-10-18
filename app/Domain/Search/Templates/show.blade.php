@@ -115,8 +115,8 @@
                         <x-slot:title>
                             <span class="{{ $provider->icon() }} searchPage__panelIcon" aria-hidden="true"></span>
                             <span id="searchPanel-{{ $key }}">{{ $provider->label() }}</span>
-                            {{-- Filled with the result count by search/results/get (hx-swap-oob on this id). --}}
-                            <span class="searchPage__count" id="searchCount-{{ $key }}"></span>
+                            {{-- The accordion's count badge, filled by search/results/get (hx-swap-oob on this id). --}}
+                            <span class="lt-badge lt-badge--count searchPage__count" id="searchCount-{{ $key }}"></span>
                         </x-slot:title>
                         <x-global::hx
                             endpoint="search/results/get"

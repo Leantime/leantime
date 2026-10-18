@@ -1,7 +1,7 @@
 {{--
     tickets::group-section — one group of a grouped to-do view (table, list, milestones): an
     elements.accordion titled with the group's label and count, coloured like the group (its
-    milestone colour, else its status colour). The ungrouped "all" group renders its content as is.
+    milestone colour, else its status or priority colour). The ungrouped "all" group renders its content as is.
 
     Props:
       group     array   An entry of Tickets::getAllGrouped(): label (rendered raw — the service
@@ -17,16 +17,21 @@
 ])
 
 @php
-    // The status label classes the old group headers coloured their titles with.
-    $statusColors = [
+    // The group classes the old headers coloured their titles with: status labels and priorities.
+    $classColors = [
         'label-warning' => 'var(--yellow)',
         'label-important' => 'var(--red)',
         'label-info' => 'var(--dark-blue)',
         'label-danger' => 'var(--dark-red)',
         'label-success' => 'var(--green)',
         'label-default' => 'var(--grey)',
+        'priority-text-1' => 'var(--dark-red)',
+        'priority-text-2' => 'var(--red)',
+        'priority-text-3' => 'var(--yellow)',
+        'priority-text-4' => 'var(--green)',
+        'priority-text-5' => 'var(--dark-grey)',
     ];
-    $groupColor = ! empty($group['color']) ? $group['color'] : ($statusColors[$group['class'] ?? ''] ?? null);
+    $groupColor = ! empty($group['color']) ? $group['color'] : ($classColors[$group['class'] ?? ''] ?? null);
 @endphp
 
 @if ($group['label'] === 'all')

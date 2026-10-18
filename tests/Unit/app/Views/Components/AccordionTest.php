@@ -100,6 +100,16 @@ class AccordionTest extends TestCase
         $this->assertStringContainsString('ROWS', $html);
     }
 
+    public function test_a_priority_group_keeps_its_priority_colour(): void
+    {
+        $html = $this->render('<x-tickets::group-section :group="$group" groupBy="priority">ROWS</x-tickets::group-section>', [
+            'group' => ['label' => 'Medium', 'id' => '3', 'class' => 'priority-text-3', 'color' => '', 'items' => [1]],
+        ]);
+
+        $this->assertStringContainsString('data-lt-accordion="tickets-priority-3"', $html);
+        $this->assertStringContainsString('--lt-accordion-title-color: var(--yellow)', $html);
+    }
+
     public function test_a_milestone_colour_wins_over_the_status_colour(): void
     {
         $html = $this->render('<x-tickets::group-section :group="$group" groupBy="milestoneid">ROWS</x-tickets::group-section>', [
