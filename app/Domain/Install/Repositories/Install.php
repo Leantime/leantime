@@ -105,6 +105,7 @@ class Install
         30530,
         30531,
         30532,
+        30533,
     ];
 
     /**
@@ -3569,6 +3570,41 @@ class Install
             Log::error('Migration 30532: '.$e->getMessage());
 
             return ['Migration 30532 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30533 — database update for v3.5.33.
+     *
+     * Adds two permissions: `projects.viewAll` (see every project without being a member; replaces
+     * the hard-coded "admin and above" rule) and `roles.manage` (for the custom roles plugin). The
+     * sync grants new permissions only: both go to admins and owners, the roles that had these
+     * abilities before, and to custom roles whose base role gets them. No other grant changes, so
+     * permissions an administrator removed stay removed. The provider cache is flushed first
+     * because `roles.manage` comes from a new provider class.
+     */
+    public function update_sql_30533(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_roles') || ! $schema->hasTable('zp_permissions')) {
+                Log::info('Migration 30533 skipped: permission tables missing (30518 not applied?)');
+
+                return true;
+            }
+
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class)->syncDiscoveredPermissions();
+        } catch (\Exception $e) {
+            Log::error('Migration 30533: '.$e->getMessage());
+
+            return ['Migration 30533 failed: '.$e->getMessage()];
         }
 
         return true;

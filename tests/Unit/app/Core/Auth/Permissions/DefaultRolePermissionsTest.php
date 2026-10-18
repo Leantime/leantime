@@ -86,6 +86,8 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
             new Permission('projects.create', 'Create projects', false),
             new Permission('projects.edit', 'Edit projects', false),
             new Permission('projects.delete', 'Delete projects', false),
+            new Permission('projects.viewAll', 'See all projects', false),
+            new Permission('roles.manage', 'Manage roles and permissions', false),
         ];
     }
 
@@ -295,5 +297,18 @@ class DefaultRolePermissionsTest extends \Unit\TestCase
 
         $this->assertTrue($matches->invoke(null, $included, $rule), 'A keys-listed, non-excluded permission still matches');
         $this->assertFalse($matches->invoke(null, $excluded, $rule), 'A keys-listed permission that is also excluded must NOT match');
+    }
+
+    public function test_only_admins_and_owners_see_all_projects_and_manage_roles(): void
+    {
+        foreach (['readonly', 'commenter', 'editor', 'manager'] as $roleName) {
+            $this->assertNotContains('projects.viewAll', $this->grantsFor($roleName), $roleName);
+            $this->assertNotContains('roles.manage', $this->grantsFor($roleName), $roleName);
+        }
+
+        foreach (['admin', 'owner'] as $roleName) {
+            $this->assertContains('projects.viewAll', $this->grantsFor($roleName), $roleName);
+            $this->assertContains('roles.manage', $this->grantsFor($roleName), $roleName);
+        }
     }
 }

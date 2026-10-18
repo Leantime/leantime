@@ -333,7 +333,7 @@ class Projects implements StoresProjectModules
      * The shared "user can reach this project" predicate used by both
      * getUserProjects('all') and getProjectsUserHasAccessTo(): the user is a
      * member, the project is public (psettings='all'), or the user is an
-     * admin/owner (role ranked admin or above, resolved via the requestingUser join each caller
+     * admin/owner (role that sees all projects, resolved via the requestingUser join each caller
      * already applies). The client-shared case differs between callers
      * (own-client column vs a passed client id), so each passes its own
      * $clientClause. Centralising this stops the two access paths from drifting
@@ -348,7 +348,7 @@ class Projects implements StoresProjectModules
         $q->where('relation.userId', $userId)
             ->orWhere('project.psettings', 'all')
             ->orWhere($clientClause)
-            ->orWhereIn('requestingUser.role', Roles::keysAtLeast(Roles::$admin));
+            ->orWhereIn('requestingUser.role', Roles::keysThatSeeAllProjects());
     }
 
     /**
@@ -1003,8 +1003,8 @@ class Projects implements StoresProjectModules
             return false;
         }
 
-        // admins owners and managers can access everything
-        if (Roles::isAtLeast($user['role'], Roles::$admin)) {
+        // Roles that see all projects (admins and owners by default) can access everything
+        if (Roles::seesAllProjects($user['role'])) {
             return true;
         }
 
