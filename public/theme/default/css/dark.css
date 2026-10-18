@@ -682,20 +682,17 @@ textarea:focus-visible {
     outline-offset: 1px;
 }
 
-/* Link hover state - high contrast change for low vision accessibility */
+/* Link hover state - high contrast colour change for low vision accessibility (no underline) */
 a:hover {
     color: #ffffff;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 2px;
+    text-decoration: none;
 }
 
 /* Dashboard task links - extra visual feedback on hover */
 .latest-todos a:hover,
 .sortableTicketList a:hover {
     color: #ffffff;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+    text-decoration: none;
     background-color: rgba(255, 255, 255, 0.1);
 }
 
