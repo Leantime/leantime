@@ -482,7 +482,36 @@ class StartSession
      */
     protected function shouldPersistSession(IncomingRequest $request)
     {
-        return $request->isApiOrCronRequest() === false && $this->sessionConfigured();
+        if (! $this->sessionConfigured()) {
+            return false;
+        }
+
+        return $request->isApiOrCronRequest() === false || $this->isBrowserRpcRequest($request);
+    }
+
+    /**
+     * The app's own JavaScript calling JSON-RPC (leantime.rpc): an AJAX request to /api/jsonrpc
+     * that carries the user's session cookie. It runs on the user's web session, so what it
+     * changes there (accordion states, sidebar widths, the menu state) is persisted like any web
+     * request (lock-free, changed keys merged on save). Before, those writes were dropped and
+     * the next page rendered the old value.
+     *
+     * External API clients (no session cookie) and cron stay stateless.
+     */
+    protected function isBrowserRpcRequest(IncomingRequest $request): bool
+    {
+        if (! $request->ajax()) {
+            return false;
+        }
+
+        $segments = array_values(array_filter(explode('/', trim($request->path(), '/'))));
+        if (($segments[0] ?? '') !== 'api' || ($segments[1] ?? '') !== 'jsonrpc') {
+            return false;
+        }
+
+        $cookieName = $this->manager->getSessionConfig()['cookie'] ?? null;
+
+        return is_string($cookieName) && $cookieName !== '' && $request->cookies->has($cookieName);
     }
 
     /**

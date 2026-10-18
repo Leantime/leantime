@@ -113,13 +113,20 @@ class Menu
      */
     public function setSubmenuState(string $submenu, string $state): void
     {
+        $settingKey = 'usersetting.'.session('userdata.id').'.submenuToggle';
 
-        if (session()->exists('usersettings.submenuToggle') && is_array(session('usersettings.submenuToggle'))) {
-            session(['usersettings.submenuToggle.'.$submenu => $state]);
-        }
+        // Write on top of the stored states, not this request's session copy: another request
+        // may have saved a state since this session was loaded, and writing the session copy
+        // back would drop it.
+        $raw = $this->settingsRepo->getSetting($settingKey);
+        $stored = is_string($raw) ? safe_unserialize($raw, []) : [];
+        $stored = is_array($stored) ? $stored : [];
+        $session = session('usersettings.submenuToggle');
+        $states = array_merge(is_array($session) ? $session : [], $stored);
+        $states[$submenu] = $state;
 
-        $setting = $this->settingsRepo;
-        $setting->saveSetting('usersetting.'.session('userdata.id').'.submenuToggle', serialize(session('usersettings.submenuToggle')));
+        session(['usersettings.submenuToggle' => $states]);
+        $this->settingsRepo->saveSetting($settingKey, serialize($states));
     }
 
     /**
