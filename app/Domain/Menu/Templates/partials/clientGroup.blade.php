@@ -7,7 +7,7 @@
     @foreach($projects as $project)
 
         @php
-            $parentState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$project['clientId'], 'closed');
+            $parentState = app(\Leantime\Core\UI\UiState::class)->get($prefix.'-projectSelectorlist-group-'.$project['clientId'], 'closed');
         @endphp
 
         @if(

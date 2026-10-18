@@ -114,9 +114,16 @@ class AccordionTest extends TestCase
 
     public function test_effort_groups_zero_and_a_half_keep_separate_state(): void
     {
-        // The state lives under a dot-notation session path: "0.5" must not nest under "0".
-        session(['usersettings.submenuToggle' => []]);
-        session(['usersettings.submenuToggle.accordion_content-tickets-storypoints-0~2e5' => 'closed']);
+        // "0.5" and "0" must stay different states (the id escapes the dot: "0~2e5").
+        $db = new \Illuminate\Database\SQLiteConnection(new \PDO('sqlite::memory:'));
+        $db->getSchemaBuilder()->create('zp_settings', function ($table) {
+            $table->string('key', 175)->primary();
+            $table->text('value')->nullable();
+        });
+        session(['userdata.id' => 7]);
+        $state = new \Leantime\Core\UI\UiState($db);
+        $state->set('accordion_content-tickets-storypoints-0~2e5', 'closed');
+        app()->instance(\Leantime\Core\UI\UiState::class, $state);
 
         $half = $this->render('<x-tickets::group-section :group="$group" groupBy="storypoints">ROWS</x-tickets::group-section>', [
             'group' => ['label' => '0.5', 'id' => '0.5', 'value' => '0.5', 'class' => '', 'color' => '', 'items' => [1]],

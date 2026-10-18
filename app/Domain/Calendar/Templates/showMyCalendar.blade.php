@@ -3,9 +3,8 @@
 @section('content')
 
 @php
-if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
-    session(['usersettings.submenuToggle.myCalendarView' => 'dayGridMonth']);
-}
+    // The calendar's last view (saved by the view select via Api.Api.setSubmenuState).
+    $myCalendarView = app(\Leantime\Core\UI\UiState::class)->get('myCalendarView', 'dayGridMonth');
 @endphp
 
 <x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('headline.calendar')">
@@ -71,10 +70,10 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
 
                         <x-global::forms.select id="my-select" style="margin-right:5px;" class="right">
-                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' }}>{{ __('buttons.day') }}</option>
-                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>{{ __('buttons.week') }}</option>
-                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>{{ __('buttons.month') }}</option>
-                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>{{ __('label.year') }}</option>
+                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ $myCalendarView == 'timeGridDay' ? 'selected' : '' }}>{{ __('buttons.day') }}</option>
+                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ $myCalendarView == 'timeGridWeek' ? 'selected' : '' }}>{{ __('buttons.week') }}</option>
+                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ $myCalendarView == 'dayGridMonth' ? 'selected' : '' }}>{{ __('buttons.month') }}</option>
+                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ $myCalendarView == 'multiMonthYear' ? 'selected' : '' }}>{{ __('label.year') }}</option>
                         </x-global::forms.select>
                     </div>
                 </div>
@@ -158,7 +157,7 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
                 timeZone: leantime.i18n.__("usersettings.timezone"),
                 height: 'calc(100% - 40px)',
                 stickyHeaderDates: true,
-                initialView: '{{ session('usersettings.submenuToggle.myCalendarView') }}',
+                initialView: '{{ $myCalendarView }}',
                 eventSources:eventSources,
                 editable: true,
                 headerToolbar: false,
