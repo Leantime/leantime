@@ -38,7 +38,7 @@ leantime.contentBox = (function () {
 
     var clamp = function (box, side, width) {
         var otherSide = side === 'left' ? 'right' : 'left';
-        var room = widthOf(box) - widthOf(sidebarOf(box, otherSide)) - MAIN_MIN_WIDTH;
+        var room = box.clientWidth - widthOf(sidebarOf(box, otherSide)) - MAIN_MIN_WIDTH;
         var max = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, room));
         return Math.round(Math.max(MIN_WIDTH, Math.min(max, width)));
     };
@@ -46,6 +46,36 @@ leantime.contentBox = (function () {
     var apply = function (box, side, width, resizer) {
         box.style.setProperty('--lt-content-' + side + '-w', width + 'px');
         resizer.setAttribute('aria-valuenow', String(width));
+    };
+
+    var resizerOf = function (box, side) {
+        return box.querySelector(':scope > .lt-content-resizer[data-lt-side="' + side + '"]');
+    };
+
+    // A width saved in a wider window renders narrower (the sidebars shrink to keep the main
+    // pane usable). Before a resize, pin both sidebars to what is shown, so flex doesn't hand the
+    // space around again, and save the pinned widths, so the next load shows the same layout.
+    var pinRenderedWidths = function (box) {
+        // Measure both before changing either: pinning one sidebar re-flows the other.
+        var pins = [];
+        ['left', 'right'].forEach(function (side) {
+            var sidebar = sidebarOf(box, side);
+            var resizer = resizerOf(box, side);
+            if (!sidebar || !resizer) {
+                return;
+            }
+            // Rounded down, so the pinned widths never add up to more than the box holds.
+            var rendered = Math.floor(widthOf(sidebar));
+            var preferred = parseInt(box.style.getPropertyValue('--lt-content-' + side + '-w'), 10);
+            if (rendered !== preferred) {
+                pins.push({ side: side, resizer: resizer, width: rendered });
+            }
+        });
+
+        pins.forEach(function (pin) {
+            apply(box, pin.side, pin.width, pin.resizer);
+            save(box, pin.side, pin.width);
+        });
     };
 
     var save = function (box, side, width) {
@@ -73,6 +103,7 @@ leantime.contentBox = (function () {
         }
         var box = boxOf(resizer);
         var side = resizer.getAttribute('data-lt-side');
+        pinRenderedWidths(box);
         drag = {
             resizer: resizer,
             box: box,
@@ -112,11 +143,12 @@ leantime.contentBox = (function () {
 
     document.addEventListener('keydown', function (event) {
         var resizer = event.target.closest && event.target.closest('.lt-content-resizer');
-        if (!resizer) {
+        if (!resizer || ['ArrowRight', 'ArrowLeft', 'Home', 'End'].indexOf(event.key) === -1) {
             return;
         }
         var box = boxOf(resizer);
         var side = resizer.getAttribute('data-lt-side');
+        pinRenderedWidths(box);
         var current = widthOf(sidebarOf(box, side));
         var direction = growthDirection(box, side);
         var width;
@@ -127,10 +159,8 @@ leantime.contentBox = (function () {
             width = current - KEY_STEP * direction;
         } else if (event.key === 'Home') {
             width = MIN_WIDTH;
-        } else if (event.key === 'End') {
-            width = MAX_WIDTH;
         } else {
-            return;
+            width = MAX_WIDTH;
         }
         event.preventDefault();
         width = clamp(box, side, width);
