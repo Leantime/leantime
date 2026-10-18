@@ -5856,6 +5856,7 @@ class Tickets extends BaseService
                 }
             }
         }
+        unset($ticketGroup);
 
         // Fetch the milestone data for all collected milestone IDs
         //            if (! empty($milestoneIds)) {
@@ -5889,8 +5890,8 @@ class Tickets extends BaseService
         // The cards check each ticket's project for the Timesheets module (timer button): load
         // the module switches of every project shown in one read, subtasks included.
         $projectIdsShown = [];
-        foreach ($tickets as $ticketGroup) {
-            $projectIdsShown = [...$projectIdsShown, ...array_column($ticketGroup['tickets'] ?? [], 'projectId')];
+        foreach ($tickets as $shownGroup) {
+            $projectIdsShown = [...$projectIdsShown, ...array_column($shownGroup['tickets'] ?? [], 'projectId')];
         }
         $this->projectModules?->preload($projectIdsShown);
 
