@@ -84,6 +84,37 @@ class UiStateTest extends TestCase
         $this->assertSame('dayGridMonth', $state->get('myCalendarView'));
     }
 
+    public function test_names_that_differ_only_by_case_stay_separate(): void
+    {
+        // zp_settings.key is case-insensitive on MySQL (utf8mb4_unicode_ci); SQLite compares
+        // binary, so check the keys only use characters every collation compares exactly.
+        $this->request()->set('accordion_content-Foo', 'closed');
+        $this->request()->set('accordion_content-foo', 'open');
+
+        $state = $this->request();
+        $this->assertSame('closed', $state->get('accordion_content-Foo'));
+        $this->assertSame('open', $state->get('accordion_content-foo'));
+
+        $keys = $this->db->table('zp_settings')->pluck('key')->all();
+        $this->assertCount(2, $keys);
+        foreach ($keys as $key) {
+            $this->assertMatchesRegularExpression('/^[a-z0-9_.~-]+$/', $key);
+        }
+    }
+
+    public function test_a_dotted_name_saved_by_the_old_store_still_applies(): void
+    {
+        // The old store wrote through a dot-notation session path: "section.part" was nested.
+        $this->db->table('zp_settings')->insert([
+            'key' => 'usersetting.7.submenuToggle',
+            'value' => serialize(['section' => ['part' => 'closed'], 'mainMenu' => 'open']),
+        ]);
+
+        $state = $this->request();
+        $this->assertSame('closed', $state->get('section.part'));
+        $this->assertSame('open', $state->get('mainMenu'));
+    }
+
     public function test_states_are_per_user(): void
     {
         $this->request()->set('accordion_content-a', 'closed');
