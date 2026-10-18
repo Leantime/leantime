@@ -623,7 +623,7 @@ function renderEmojiList(editor, view) {
     if (currentResults.length === 0) {
         var emptyDiv = document.createElement('div');
         emptyDiv.className = 'tiptap-emoji-popup__empty';
-        emptyDiv.textContent = 'No emojis found';
+        emptyDiv.textContent = leantime.i18n.__('tiptap.emoji.no_results');
         emojiPopup.appendChild(emptyDiv);
         return;
     }
@@ -784,7 +784,7 @@ function showEmojiPickerDialog(editor) {
     // Header
     var header = document.createElement('div');
     header.className = 'tiptap-emoji-dialog__header';
-    header.innerHTML = '<h3>Insert Emoji</h3><button type="button" class="tiptap-emoji-dialog__close">&times;</button>';
+    header.innerHTML = '<h3>' + leantime.i18n.__('tiptap.emoji.dialog_title') + '</h3><button type="button" class="tiptap-emoji-dialog__close">&times;</button>';
     dialog.appendChild(header);
 
     // Search
@@ -792,7 +792,7 @@ function showEmojiPickerDialog(editor) {
     searchDiv.className = 'tiptap-emoji-dialog__search';
     var searchInput = document.createElement('input');
     searchInput.type = 'text';
-    searchInput.placeholder = 'Search emojis...';
+    searchInput.placeholder = leantime.i18n.__('tiptap.emoji.search_placeholder');
     searchInput.className = 'tiptap-emoji-dialog__search-input';
     searchDiv.appendChild(searchInput);
     dialog.appendChild(searchDiv);
@@ -805,7 +805,7 @@ function showEmojiPickerDialog(editor) {
     // Footer
     var footer = document.createElement('div');
     footer.className = 'tiptap-emoji-dialog__footer';
-    footer.innerHTML = '<button type="button" class="tiptap-emoji-dialog__cancel">Cancel</button>';
+    footer.innerHTML = '<button type="button" class="tiptap-emoji-dialog__cancel">' + leantime.i18n.__('buttons.cancel') + '</button>';
     dialog.appendChild(footer);
 
     overlay.appendChild(dialog);
@@ -830,7 +830,7 @@ function showEmojiPickerDialog(editor) {
         });
 
         if (results.length === 0) {
-            grid.innerHTML = '<div class="tiptap-emoji-dialog__empty">No emojis found</div>';
+            grid.innerHTML = '<div class="tiptap-emoji-dialog__empty">' + leantime.i18n.__('tiptap.emoji.no_results') + '</div>';
         }
     }
 

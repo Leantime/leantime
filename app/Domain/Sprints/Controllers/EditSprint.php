@@ -100,15 +100,15 @@ class EditSprint extends Controller
                 $params['id'] = (int) $_GET['id'];
                 $sprintId = $params['id'];
                 if ($this->sprintService->editSprint($params)) {
-                    $this->tpl->setNotification('Sprint edited successfully', 'success');
+                    $this->tpl->setNotification($this->language->__('notification.sprint_edited_successfully'), 'success');
                 } else {
-                    $this->tpl->setNotification('There was a problem saving the sprint', 'error');
+                    $this->tpl->setNotification($this->language->__('notification.sprint_save_problem'), 'error');
                 }
             } else {
                 if ($sprintId = $this->sprintService->addSprint($params)) {
-                    $this->tpl->setNotification('Sprint created successfully.', 'success');
+                    $this->tpl->setNotification($this->language->__('notification.sprint_created_successfully'), 'success');
                 } else {
-                    $this->tpl->setNotification('There was a problem saving the sprint', 'error');
+                    $this->tpl->setNotification($this->language->__('notification.sprint_save_problem'), 'error');
                 }
             }
         } catch (MissingParameterException $e) {

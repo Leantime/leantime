@@ -18,7 +18,7 @@ class ProjectDefinitionStep implements OnboardingSteps
 
     public function getTitle(): string
     {
-        return 'Describe your project';
+        return __('label.projectDescription');
     }
 
     /**

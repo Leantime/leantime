@@ -87,7 +87,7 @@ function createMermaidExtension() {
                 editBtn.type = 'button';
                 editBtn.className = 'tiptap-mermaid__edit-btn';
                 editBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
-                editBtn.title = 'Edit diagram';
+                editBtn.title = leantime.i18n.__('tiptap.mermaid.edit_diagram');
                 container.appendChild(editBtn);
 
                 // Create delete button
@@ -95,7 +95,7 @@ function createMermaidExtension() {
                 deleteBtn.type = 'button';
                 deleteBtn.className = 'tiptap-mermaid__delete-btn';
                 deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
-                deleteBtn.title = 'Delete diagram';
+                deleteBtn.title = leantime.i18n.__('tiptap.mermaid.delete_diagram');
                 container.appendChild(deleteBtn);
 
                 // Create edit mode container (hidden by default)
@@ -106,7 +106,7 @@ function createMermaidExtension() {
                 var textarea = document.createElement('textarea');
                 textarea.className = 'tiptap-mermaid__textarea';
                 textarea.value = node.attrs.code;
-                textarea.placeholder = 'Enter Mermaid diagram code...';
+                textarea.placeholder = leantime.i18n.__('tiptap.mermaid.code_placeholder');
                 editContainer.appendChild(textarea);
 
                 var buttonRow = document.createElement('div');
@@ -115,13 +115,13 @@ function createMermaidExtension() {
                 var saveBtn = document.createElement('button');
                 saveBtn.type = 'button';
                 saveBtn.className = 'tiptap-mermaid__save-btn';
-                saveBtn.textContent = 'Save';
+                saveBtn.textContent = leantime.i18n.__('buttons.save');
                 buttonRow.appendChild(saveBtn);
 
                 var cancelBtn = document.createElement('button');
                 cancelBtn.type = 'button';
                 cancelBtn.className = 'tiptap-mermaid__cancel-btn';
-                cancelBtn.textContent = 'Cancel';
+                cancelBtn.textContent = leantime.i18n.__('buttons.cancel');
                 buttonRow.appendChild(cancelBtn);
 
                 editContainer.appendChild(buttonRow);
@@ -130,7 +130,7 @@ function createMermaidExtension() {
                 // Render function
                 function renderDiagram(code) {
                     if (!window.mermaid) {
-                        diagramContainer.innerHTML = '<div class="tiptap-mermaid__error">Mermaid library not loaded</div>';
+                        diagramContainer.innerHTML = '<div class="tiptap-mermaid__error">' + leantime.i18n.__('tiptap.mermaid.library_not_loaded') + '</div>';
                         return;
                     }
 
@@ -151,10 +151,10 @@ function createMermaidExtension() {
                         window.mermaid.render(id, code).then(function(result) {
                             diagramContainer.innerHTML = result.svg;
                         }).catch(function(error) {
-                            diagramContainer.innerHTML = '<div class="tiptap-mermaid__error">Invalid diagram syntax:<br>' + escapeHtml(error.message || String(error)) + '</div>';
+                            diagramContainer.innerHTML = '<div class="tiptap-mermaid__error">' + leantime.i18n.__('tiptap.mermaid.invalid_syntax_prefix') + '<br>' + escapeHtml(error.message || String(error)) + '</div>';
                         });
                     } catch (error) {
-                        diagramContainer.innerHTML = '<div class="tiptap-mermaid__error">Error rendering diagram:<br>' + escapeHtml(error.message || String(error)) + '</div>';
+                        diagramContainer.innerHTML = '<div class="tiptap-mermaid__error">' + leantime.i18n.__('tiptap.mermaid.render_error_prefix') + '<br>' + escapeHtml(error.message || String(error)) + '</div>';
                     }
                 }
 
@@ -287,30 +287,30 @@ function showMermaidDialog(editor) {
 
     dialog.innerHTML =
         '<div class="tiptap-mermaid-dialog__header">' +
-            '<h3>Insert Mermaid Diagram</h3>' +
+            '<h3>' + leantime.i18n.__('tiptap.mermaid.insert_title') + '</h3>' +
             '<button type="button" class="tiptap-mermaid-dialog__close">&times;</button>' +
         '</div>' +
         '<div class="tiptap-mermaid-dialog__body">' +
             '<div class="tiptap-mermaid-dialog__templates">' +
-                '<label>Template:</label>' +
+                '<label>' + leantime.i18n.__('tiptap.mermaid.template_label') + '</label>' +
                 '<select class="tiptap-mermaid-dialog__template-select">' +
-                    '<option value="flowchart">Flowchart</option>' +
-                    '<option value="sequence">Sequence Diagram</option>' +
-                    '<option value="gantt">Gantt Chart</option>' +
-                    '<option value="pie">Pie Chart</option>' +
-                    '<option value="mindmap">Mind Map</option>' +
-                    '<option value="custom">Custom</option>' +
+                    '<option value="flowchart">' + leantime.i18n.__('tiptap.mermaid.template_flowchart') + '</option>' +
+                    '<option value="sequence">' + leantime.i18n.__('tiptap.mermaid.template_sequence') + '</option>' +
+                    '<option value="gantt">' + leantime.i18n.__('tiptap.mermaid.template_gantt') + '</option>' +
+                    '<option value="pie">' + leantime.i18n.__('tiptap.mermaid.template_pie') + '</option>' +
+                    '<option value="mindmap">' + leantime.i18n.__('tiptap.mermaid.template_mindmap') + '</option>' +
+                    '<option value="custom">' + leantime.i18n.__('tiptap.mermaid.template_custom') + '</option>' +
                 '</select>' +
             '</div>' +
-            '<textarea class="tiptap-mermaid-dialog__code" rows="10" placeholder="Enter Mermaid diagram code...">' + defaultDiagram + '</textarea>' +
+            '<textarea class="tiptap-mermaid-dialog__code" rows="10" placeholder="' + leantime.i18n.__('tiptap.mermaid.code_placeholder') + '">' + defaultDiagram + '</textarea>' +
             '<div class="tiptap-mermaid-dialog__preview">' +
-                '<label>Preview:</label>' +
+                '<label>' + leantime.i18n.__('tiptap.dialog.preview') + '</label>' +
                 '<div class="tiptap-mermaid-dialog__preview-area"></div>' +
             '</div>' +
         '</div>' +
         '<div class="tiptap-mermaid-dialog__footer">' +
-            '<button type="button" class="tiptap-mermaid-dialog__cancel">Cancel</button>' +
-            '<button type="button" class="tiptap-mermaid-dialog__insert">Insert Diagram</button>' +
+            '<button type="button" class="tiptap-mermaid-dialog__cancel">' + leantime.i18n.__('buttons.cancel') + '</button>' +
+            '<button type="button" class="tiptap-mermaid-dialog__insert">' + leantime.i18n.__('tiptap.mermaid.insert_diagram') + '</button>' +
         '</div>';
 
     overlay.appendChild(dialog);
@@ -341,7 +341,7 @@ function showMermaidDialog(editor) {
         previewTimeout = setTimeout(function() {
             var code = codeArea.value.trim();
             if (!code) {
-                previewArea.innerHTML = '<span class="tiptap-mermaid-dialog__preview-empty">Enter code to see preview</span>';
+                previewArea.innerHTML = '<span class="tiptap-mermaid-dialog__preview-empty">' + leantime.i18n.__('tiptap.mermaid.preview_empty') + '</span>';
                 return;
             }
 
@@ -353,14 +353,14 @@ function showMermaidDialog(editor) {
                     }).catch(function(error) {
                         var errorSpan = document.createElement('span');
                         errorSpan.className = 'tiptap-mermaid-dialog__preview-error';
-                        errorSpan.textContent = error.message || 'Invalid syntax';
+                        errorSpan.textContent = error.message || leantime.i18n.__('tiptap.mermaid.invalid_syntax');
                         previewArea.innerHTML = '';
                         previewArea.appendChild(errorSpan);
                     });
                 } catch (error) {
                     var errorSpan = document.createElement('span');
                     errorSpan.className = 'tiptap-mermaid-dialog__preview-error';
-                    errorSpan.textContent = error.message || 'Error';
+                    errorSpan.textContent = error.message || leantime.i18n.__('tiptap.mermaid.error');
                     previewArea.innerHTML = '';
                     previewArea.appendChild(errorSpan);
                 }

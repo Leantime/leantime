@@ -25,7 +25,7 @@ class FirstTaskStep implements OnboardingSteps
      */
     public function getTitle(): string
     {
-        return 'Name your first task';
+        return __('label.onboarding_step_name_first_task');
     }
 
     /**

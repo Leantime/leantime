@@ -76,9 +76,9 @@ class EditClient extends Controller
 
         if ($values['name'] !== '') {
             $this->clientService->editClient($values);
-            $this->tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success', 'client_updated');
+            $this->tpl->setNotification($this->language->__('notification.client_saved_successfully'), 'success', 'client_updated');
         } else {
-            $this->tpl->setNotification('NO_NAME', 'error');
+            $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
         }
 
         $this->tpl->assign('values', $values);

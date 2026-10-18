@@ -23,7 +23,7 @@ class ProjectIntroStep implements OnboardingSteps
      */
     public function getTitle(): string
     {
-        return 'Name your project';
+        return __('label.onboarding_step_name_project');
     }
 
     /**

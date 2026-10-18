@@ -213,7 +213,7 @@ SNAKE.Snake = SNAKE.Snake || (function() {
         function recordScore() {
             var highScore = localStorage.jsSnakeHighScore;
             if (me.snakeLength > highScore) {
-                alert('Congratulations! You have beaten your previous high score, which was ' + highScore + '.');
+                alert(leantime.i18n.__('text.snake_new_highscore').replace('%s', highScore));
                 localStorage.setItem('jsSnakeHighScore', me.snakeLength);
             }
         }
@@ -691,19 +691,19 @@ SNAKE.Board = SNAKE.Board || (function() {
 
             elmPauseScreen = document.createElement("div");
             elmPauseScreen.className = "snake-pause-screen";
-            elmPauseScreen.innerHTML = "<div style='padding:10px;'>[Paused]<p/>Press [space] to unpause.</div>";
+            elmPauseScreen.innerHTML = "<div style='padding:10px;'>" + leantime.i18n.__("text.snake_paused") + "</div>";
 
             elmAboutPanel = document.createElement("div");
             elmAboutPanel.className = "snake-panel-component";
-            elmAboutPanel.innerHTML = "<a href='http://patorjk.com/blog/software/' class='snake-link'>more patorjk.com apps</a> - <a href='https://github.com/patorjk/JavaScript-Snake' class='snake-link'>source code</a> - <a href='https://www.youtube.com/channel/UCpcCLm9y6CsjHUrCvJHYHUA' class='snake-link'>pat's youtube</a>";
+            elmAboutPanel.innerHTML = "<a href='http://patorjk.com/blog/software/' class='snake-link'>" + leantime.i18n.__("links.snake_more_apps") + "</a> - <a href='https://github.com/patorjk/JavaScript-Snake' class='snake-link'>" + leantime.i18n.__("links.snake_source_code") + "</a> - <a href='https://www.youtube.com/channel/UCpcCLm9y6CsjHUrCvJHYHUA' class='snake-link'>" + leantime.i18n.__("links.snake_pats_youtube") + "</a>";
 
             elmLengthPanel = document.createElement("div");
             elmLengthPanel.className = "snake-panel-component";
-            elmLengthPanel.innerHTML = "Length: 1";
+            elmLengthPanel.innerHTML = leantime.i18n.__("label.snake_length").replace("%s", 1);
 
             elmHighscorePanel = document.createElement("div");
             elmHighscorePanel.className = "snake-panel-component";
-            elmHighscorePanel.innerHTML = "Highscore: " + (localStorage.jsSnakeHighScore || 0);
+            elmHighscorePanel.innerHTML = leantime.i18n.__("label.snake_highscore").replace("%s", localStorage.jsSnakeHighScore || 0);
 
             elmWelcome = createWelcomeElement();
             elmTryAgain = createTryAgainElement();
@@ -749,11 +749,11 @@ SNAKE.Board = SNAKE.Board || (function() {
             var welcomeTxt = document.createElement("div");
             var fullScreenText = "";
             if (config.fullScreen) {
-                fullScreenText = "On Windows, press F11 to play in Full Screen mode.";
+                fullScreenText = leantime.i18n.__("text.snake_fullscreen_hint");
             }
-            welcomeTxt.innerHTML = "JavaScript Snake<p></p>Use the <strong>arrow keys</strong> on your keyboard to play the game. " + fullScreenText + "<p></p>";
+            welcomeTxt.innerHTML = "JavaScript Snake<p></p>" + leantime.i18n.__("text.snake_instructions") + " " + fullScreenText + "<p></p>";
             var welcomeStart = document.createElement("button");
-            welcomeStart.appendChild(document.createTextNode("Play Game"));
+            welcomeStart.appendChild(document.createTextNode(leantime.i18n.__("buttons.play_game")));
             var loadGame = function() {
                 SNAKE.removeEventListener(window, "keyup", kbShortcut, false);
                 tmpElm.style.display = "none";
@@ -784,7 +784,7 @@ SNAKE.Board = SNAKE.Board || (function() {
             var gameEndTxt = document.createElement("div");
             gameEndTxt.innerHTML = "JavaScript Snake<p></p>" + message + "<p></p>";
             var gameEndStart = document.createElement("button");
-            gameEndStart.appendChild(document.createTextNode("Play Again?"));
+            gameEndStart.appendChild(document.createTextNode(leantime.i18n.__("buttons.play_again")));
 
             var reloadGame = function () {
                 tmpElm.style.display = "none";
@@ -810,11 +810,11 @@ SNAKE.Board = SNAKE.Board || (function() {
         }
 
         function createTryAgainElement() {
-            return createGameEndElement("You died :(", "sbTryAgain", "snake-try-again-dialog");
+            return createGameEndElement(leantime.i18n.__("text.snake_you_died"), "sbTryAgain", "snake-try-again-dialog");
         }
 
         function createWinElement() {
-            return createGameEndElement("You win! :D", "sbWin", "snake-win-dialog");
+            return createGameEndElement(leantime.i18n.__("text.snake_you_win"), "sbWin", "snake-win-dialog");
         }
 
         function handleEndCondition(elmDialog) {
@@ -850,7 +850,7 @@ SNAKE.Board = SNAKE.Board || (function() {
         me.resetBoard = function() {
             SNAKE.removeEventListener(elmContainer, "keydown", myKeyListener, false);
             mySnake.reset();
-            elmLengthPanel.innerHTML = "Length: 1";
+            elmLengthPanel.innerHTML = leantime.i18n.__("label.snake_length").replace("%s", 1);
             me.setupPlayingField();
         };
         /**
@@ -1048,11 +1048,11 @@ SNAKE.Board = SNAKE.Board || (function() {
          *   or not (false) after the snake eats food.
          */
         me.foodEaten = function() {
-            elmLengthPanel.innerHTML = "Length: " + mySnake.snakeLength;
+            elmLengthPanel.innerHTML = leantime.i18n.__("label.snake_length").replace("%s", mySnake.snakeLength);
             if (mySnake.snakeLength > localStorage.jsSnakeHighScore)
             {
                 localStorage.setItem("jsSnakeHighScore", mySnake.snakeLength);
-                elmHighscorePanel.innerHTML = "Highscore: " + localStorage.jsSnakeHighScore;
+                elmHighscorePanel.innerHTML = leantime.i18n.__("label.snake_highscore").replace("%s", localStorage.jsSnakeHighScore);
             }
             if (!myFood.randomlyPlaceFood()) {
                 return false;

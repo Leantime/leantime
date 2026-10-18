@@ -149,7 +149,7 @@
                             <div class="column">
                                 <div class="contentInner status_{{ $key }} {{ isset($emptyColumns[$key]) ? 'empty-column' : '' }}"
                                      data-empty-text="{{ isset($emptyColumns[$key]) ? 'Empty' : '' }}"
-                                     aria-label="{{ isset($emptyColumns[$key]) ? 'Empty column' : htmlspecialchars($statusRow['name']).' column items' }}"
+                                     aria-label="{{ isset($emptyColumns[$key]) ? __('label.empty_column') : sprintf(__('label.column_items'), $statusRow['name']) }}"
                                      role="list">
 
                                     @include('tickets::partials.quickadd-form', [

@@ -544,7 +544,7 @@ class Timesheets extends BaseService
                 $kind = $postData['kindId'];
 
                 if ($ticketId == 0 && $hours > 0) {
-                    $notifications[] = ['type' => 'error', 'message' => 'Task ID is required for new entries'];
+                    $notifications[] = ['type' => 'error', 'message' => __('notifications.task_id_required_new_entries')];
 
                     return $notifications;
                 }
@@ -571,9 +571,9 @@ class Timesheets extends BaseService
 
             try {
                 $this->upsertTime((int) $ticketId, $values);
-                $notifications[] = ['type' => 'success', 'message' => 'Timesheet saved successfully'];
+                $notifications[] = ['type' => 'success', 'message' => __('notifications.timesheet_saved_successfully')];
             } catch (\Exception $e) {
-                $notifications[] = ['type' => 'error', 'message' => 'Error logging time: '.$e->getMessage()];
+                $notifications[] = ['type' => 'error', 'message' => sprintf(__('notifications.error_logging_time'), $e->getMessage())];
                 report($e);
             }
         }

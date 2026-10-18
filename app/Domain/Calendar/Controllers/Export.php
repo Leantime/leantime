@@ -55,7 +55,7 @@ class Export extends Controller
                 $this->calendarService->generateIcalHash();
                 $this->tpl->setNotification('notifications.ical_success', 'success');
             } catch (\Exception $e) {
-                $this->tpl->setNotification('There was a problem generating the ical hash', 'error');
+                $this->tpl->setNotification($this->language->__('notification.ical_hash_problem'), 'error');
             }
         }
 
@@ -73,7 +73,7 @@ class Export extends Controller
         try {
             $icalUrl = $this->calendarService->getICalUrl();
         } catch (\Exception $e) {
-            $this->tpl->setNotification('Could not find ical URL', 'error');
+            $this->tpl->setNotification($this->language->__('notification.ical_url_not_found'), 'error');
         }
 
         $this->tpl->assign('url', $icalUrl);

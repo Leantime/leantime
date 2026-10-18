@@ -57,7 +57,7 @@ class ShowMy extends Controller
             $fromDate = $parsed['date'];
 
             if ($parsed['failed']) {
-                $this->tpl->setNotification('Could not parse date', 'error', 'save_timesheet');
+                $this->tpl->setNotification($this->language->__('notification.could_not_parse_date'), 'error', 'save_timesheet');
             }
         }
 

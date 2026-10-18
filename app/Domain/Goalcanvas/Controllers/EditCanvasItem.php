@@ -355,7 +355,7 @@ class EditCanvasItem extends Controller
                     $id = $this->goalService->createGoalItem($canvasItem);
                     $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
-                    $this->tpl->setNotification($canvasTypes[$params['box']]['title'].' successfully created', 'success', 'goal_item_created');
+                    $this->tpl->setNotification(sprintf($this->language->__('notification.canvas_item_created'), $canvasTypes[$params['box']]['title']), 'success', 'goal_item_created');
 
                     $subject = $this->language->__('email_notifications.canvas_board_item_created');
                     $actual_link = BASE_URL.'#/goalcanvas/editCanvasItem/'.(int) $params['itemId'];
