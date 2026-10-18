@@ -504,7 +504,7 @@ final class TicketUpdated implements EmitsClientEvent, LeantimeEvent {
 TicketUpdated::dispatch(ticketId: $id);
 ```
 
-Plugins shipped as phars should use the literal wire string (`'lt:tickets:ticket.updated'`) rather than the constant, so they don't fatal on a core version without that class.
+Plugins reference the event class with `::class` (`setHTMXEvent(TicketUpdated::class)`, `htmxEvent: TicketUpdated::class`). `::class` compiles to a plain string without loading the class, so it never crashes. Core resolves it to the wire name in `HtmxEvents::name()`. Where a plugin needs the wire string itself, it calls `HtmxEvents::name(TicketUpdated::class)` and declares the core version that has it in `extra.leantime.requires`. Avoid `TicketUpdated::CLIENT_EVENT` in plugins: it fatals on a core without the constant, and system plugins skip the version guard.
 
 **HTMX-backed components** — declare the event contract on an `HxComponent` and mount with `<x-global::hx>` (no hand-written boilerplate). The mount reads `listensTo()` so the emit side and the listen side reference the SAME event class and cannot drift apart:
 ```php
