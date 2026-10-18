@@ -34,6 +34,9 @@ class BackgroundsTest extends TestCase
     /** @var int[] File ids the service deleted. */
     private array $deletedFileIds = [];
 
+    /** @var string[] File names the service handed to Files::upload(). */
+    private array $uploadedNames = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,6 +47,7 @@ class BackgroundsTest extends TestCase
         $this->storedTypes = [];
         $this->settings = [];
         $this->deletedFileIds = [];
+        $this->uploadedNames = [];
         session(['userdata.id' => 1]);
     }
 
@@ -62,7 +66,11 @@ class BackgroundsTest extends TestCase
         ]);
 
         $files = $this->make(Files::class, [
-            'upload' => fn () => ['fileId' => $uploadedFileId, 'encName' => 'enc', 'extension' => 'png', 'realName' => 'bg.png'],
+            'upload' => function ($files) use ($uploadedFileId) {
+                $this->uploadedNames[] = $files['file']['name'];
+
+                return ['fileId' => $uploadedFileId, 'encName' => 'enc', 'extension' => 'png', 'realName' => 'bg.png'];
+            },
             'deleteFile' => function ($fileId) {
                 $this->deletedFileIds[] = (int) $fileId;
 
@@ -106,6 +114,13 @@ class BackgroundsTest extends TestCase
 
         $this->assertSame([10], $this->deletedFileIds);
         $this->assertSame(11, $this->settings['usersettings.1.backgroundFileId']);
+
+        // Unique names: with file renaming turned off, two uploads of "bg.png" would otherwise share
+        // one stored file, and deleting the replaced one would delete the new background.
+        $this->assertCount(2, array_unique($this->uploadedNames));
+        foreach ($this->uploadedNames as $uploadedName) {
+            $this->assertMatchesRegularExpression('/^background-[0-9a-f]{16}\.png$/', $uploadedName);
+        }
     }
 
     public function test_switching_to_the_gradient_deletes_the_uploaded_background(): void

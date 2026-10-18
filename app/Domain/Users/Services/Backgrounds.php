@@ -220,6 +220,12 @@ class Backgrounds extends BaseService
             return false;
         }
 
+        // A unique name: with LEAN_FILESYSTEM_RENAME_FILES=false files are stored under their own
+        // name, so two uploads of "background.png" would share one file and deleting the replaced
+        // one would delete the new background too.
+        $extension = strtolower(pathinfo((string) $upload['name'], PATHINFO_EXTENSION));
+        $upload['name'] = 'background-'.bin2hex(random_bytes(8)).'.'.$extension;
+
         $storedFile = $this->files->upload(['file' => $upload], 'user', $userId);
 
         // Files::upload returns the file row on success, an error message or false otherwise.

@@ -212,6 +212,15 @@ class Theme
                     'secondaryColor' => '#d1d1d1', // Light gray - 9.1:1 contrast
                 ];
             }
+            // Forest's near-black red disappears on dark panels (1.0:1 on #404040). The primary is
+            // also the button background under white labels, so the lighter red keeps both above 3:1.
+            if ($schemeName === 'forrest') {
+                return [
+                    'name' => $scheme['name'],
+                    'primaryColor' => '#db7069',   // 3.2:1 on #404040, 4.5:1 on #292929, 3.2:1 with white text
+                    'secondaryColor' => '#ac8874', // 3.2:1 on #404040
+                ];
+            }
         }
 
         // Light mode: use original values
@@ -353,13 +362,10 @@ class Theme
      */
     public function getBackgroundImage(): ?string
     {
+        // Read from the settings cache on every request, not a session copy: a change made in
+        // another session (which may delete the old uploaded image) has to show up here too.
         if (Auth::isLoggedIn()) {
-            if (session()->exists('usersettings.backgroundImage')) {
-                return session('usersettings.backgroundImage') ?: null;
-            }
-
             $image = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundImage');
-            session(['usersettings.backgroundImage' => $image ?: '']);
 
             return $image ?: null;
         }
@@ -372,8 +378,6 @@ class Theme
         if (Auth::isLoggedIn()) {
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', 'image');
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundImage', $url);
-            session(['usersettings.backgroundType' => 'image']);
-            session(['usersettings.backgroundImage' => $url]);
         }
     }
 
@@ -386,12 +390,7 @@ class Theme
     public function getBackgroundType(): string
     {
         if (Auth::isLoggedIn()) {
-            if (session()->exists('usersettings.backgroundType')) {
-                return session('usersettings.backgroundType') ?: 'gradient';
-            }
-
             $type = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundType');
-            session(['usersettings.backgroundType' => $type ?: 'gradient']);
 
             return $type ?: 'gradient';
         }
@@ -403,10 +402,8 @@ class Theme
     {
         if (Auth::isLoggedIn()) {
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', $type);
-            session(['usersettings.backgroundType' => $type]);
             if ($type == 'gradient') {
                 $this->settingsRepo->deleteSetting('usersettings.'.session('userdata.id').'.backgroundImage');
-                session(['usersettings.backgroundImage' => '']);
             }
         }
     }
@@ -1153,7 +1150,5 @@ class Theme
         session()->forget('usersettings.colorScheme');
         session()->forget('usersettings.themeFont');
         session()->forget('usersettings.theme');
-        session()->forget('usersettings.backgroundType');
-        session()->forget('usersettings.backgroundImage');
     }
 }

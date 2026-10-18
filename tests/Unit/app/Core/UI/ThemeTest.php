@@ -109,4 +109,19 @@ class ThemeTest extends \Unit\TestCase
         $this->assertEquals('themeDefault', $colorScheme);
 
     }
+
+    public function test_forest_gets_readable_colors_in_dark_mode(): void
+    {
+        $forest = ['name' => 'Forest', 'primaryColor' => '#74211c', 'secondaryColor' => '#32251e'];
+        $schemeForMode = new \ReflectionMethod(Theme::class, 'getColorSchemeForMode');
+
+        $darkTheme = $this->make(Theme::class, ['getColorMode' => 'dark']);
+        $lightTheme = $this->make(Theme::class, ['getColorMode' => 'light']);
+
+        $this->assertSame(
+            ['name' => 'Forest', 'primaryColor' => '#db7069', 'secondaryColor' => '#ac8874'],
+            $schemeForMode->invoke($darkTheme, 'forrest', $forest)
+        );
+        $this->assertSame($forest, $schemeForMode->invoke($lightTheme, 'forrest', $forest));
+    }
 }
