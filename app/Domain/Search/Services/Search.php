@@ -8,7 +8,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Search\Contracts\SearchProvider;
 use Leantime\Domain\Search\Models\SearchQuery;
@@ -265,7 +264,7 @@ class Search
     {
         $userId = (int) session('userdata.id');
 
-        $accessibleProjectIds = Auth::userIsAtLeast(Roles::$admin, true)
+        $accessibleProjectIds = Roles::seesAllProjects(session('userdata.role'))
             ? null
             : $this->projectService->getAccessibleProjectIds($userId);
 

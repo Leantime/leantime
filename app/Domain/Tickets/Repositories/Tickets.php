@@ -321,7 +321,7 @@ class Tickets
 
     /**
      * Limit a ticket query to projects the user may see: assigned projects, projects open to
-     * everyone, projects open to the user's client, or every project for manager+ (role ranked admin or above).
+     * everyone, projects open to the user's client, or every project for manager+ (role that sees all projects).
      *
      * The query must already join zp_projects and the requesting user as "requestor".
      *
@@ -342,7 +342,7 @@ class Tickets
                         $q2->where('zp_projects.psettings', 'clients')
                             ->where('zp_projects.clientId', $clientId);
                     })
-                    ->orWhereIn('requestor.role', Roles::keysAtLeast(Roles::$admin));
+                    ->orWhereIn('requestor.role', Roles::keysThatSeeAllProjects());
             });
     }
 
@@ -1023,7 +1023,7 @@ class Tickets
                         $q2->where('zp_projects.psettings', 'clients')
                             ->where('zp_projects.clientId', $clientId);
                     })
-                    ->orWhereIn('requestor.role', Roles::keysAtLeast(Roles::$admin));
+                    ->orWhereIn('requestor.role', Roles::keysThatSeeAllProjects());
             });
 
         if (isset($projectId) && $projectId > 0) {
@@ -1112,7 +1112,7 @@ class Tickets
                         $q2->where('zp_projects.psettings', 'clients')
                             ->where('zp_projects.clientId', $clientId);
                     })
-                    ->orWhereIn('requestor.role', Roles::keysAtLeast(Roles::$admin));
+                    ->orWhereIn('requestor.role', Roles::keysThatSeeAllProjects());
             })
             ->where('zp_tickets.type', '<>', 'milestone');
 
@@ -1584,7 +1584,7 @@ class Tickets
                         $q2->where('zp_projects.psettings', 'clients')
                             ->where('zp_projects.clientId', $clientId);
                     })
-                    ->orWhereIn('requestor.role', Roles::keysAtLeast(Roles::$admin));
+                    ->orWhereIn('requestor.role', Roles::keysThatSeeAllProjects());
             });
 
         // Restrict to milestone-type rows only when the caller didn't specify a type at all (e.g. the

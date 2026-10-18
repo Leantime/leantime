@@ -39,7 +39,7 @@ class ShowAll extends Controller
 
         $this->tpl->assign('role', session('userdata.role'));
 
-        if (Auth::userIsAtLeast(Roles::$admin)) {
+        if (Roles::seesAllProjects(session('userdata.role'))) {
             $this->tpl->assign('allProjects', $this->projectService->getAll(session('showClosedProjects')));
         } else {
             $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects(session('userdata.id'), session('userdata.clientId')));
