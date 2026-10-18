@@ -18,8 +18,8 @@ a:focus-visible {
 }
 
 /* Hover turns a link to the text colour, without an underline (Marcel, 2026-10-18). The explicit
-   `none` also overrides Bootstrap's `a:hover { text-decoration: underline }`. Users who ask for more
-   contrast still get underlined links (accessibility.css, prefers-contrast: high). */
+   `none` also overrides Bootstrap's `a:hover { text-decoration: underline }`. People who ask for
+   more contrast keep the underline (below). */
 body a:hover {
     color: var(--primary-font-color);
 }
@@ -31,6 +31,17 @@ body a:focus,
 body .btn-link:hover,
 body .btn-link:focus {
     text-decoration: none;
+}
+
+/* Increased contrast (the OS setting; the media value is `more`, `high` never matched): keep the
+   hover / focus underline. Same selectors, later, so it wins over the rule above. */
+@media (prefers-contrast: more) {
+    body a:hover,
+    body a:focus,
+    body .btn-link:hover,
+    body .btn-link:focus {
+        text-decoration: underline;
+    }
 }
 
 /* Focus styles for interactive elements */
