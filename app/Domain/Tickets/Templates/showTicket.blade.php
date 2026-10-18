@@ -26,7 +26,9 @@
                 <li><a href="#subtasks"><span class="fa fa-list-check"></span> {!! __('tabs.subtasks') !!} ({{ $numSubTasks }})</a></li>
                 <li><a href="#files"><span class="fa fa-file"></span> {!! __('tabs.files') !!} ({{ $numFiles }})</a></li>
                 @if (session('userdata.role') != 'client')
-                    <li><a href="#timesheet" id="timesheetTab"><span class="fa fa-clock"></span> {!! __('tabs.time_tracking') !!}</a></li>
+                    @module('timesheets', $ticket->projectId)
+                        <li><a href="#timesheet" id="timesheetTab"><span class="fa fa-clock"></span> {!! __('tabs.time_tracking') !!}</a></li>
+                    @endmodule
                 @endif
                 <li><a href="#history"><span class="fa fa-clock-rotate-left"></span> {!! __('tabs.history') !!}</a></li>
             </ul>
@@ -51,9 +53,11 @@
 
 
             @if (session('userdata.role') != 'client')
-                <div id="timesheet">
-                    @include('tickets::submodules.timesheet')
-                </div>
+                @module('timesheets', $ticket->projectId)
+                    <div id="timesheet">
+                        @include('tickets::submodules.timesheet')
+                    </div>
+                @endmodule
             @endif
 
             <div id="history">

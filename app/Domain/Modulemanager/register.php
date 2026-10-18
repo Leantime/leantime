@@ -69,3 +69,14 @@ $moduleRegistry->register(new Module(
     routes: ['reports'],
     permissionDomain: 'reports',
 ));
+
+// Time tracking on the project's to-dos. Timesheets permissions are global (company-wide), so the
+// permission hook can't switch them off per project: the Timesheets service refuses to book time
+// on a switched-off project's tickets instead, and the ticket screens hide the timer and the time
+// tab. My Timesheets and All Timesheets span projects and stay available, so no routes are claimed.
+$moduleRegistry->register(new Module(
+    id: 'timesheets',
+    title: 'modules.timesheets.title',
+    description: 'modules.timesheets.description',
+    icon: 'fa fa-fw fa-clock',
+));

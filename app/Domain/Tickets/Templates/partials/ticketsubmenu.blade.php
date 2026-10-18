@@ -23,11 +23,13 @@
 
         @dispatchEvent("submenuSection", ["ticket"=>$ticket])
 
-        <li class="nav-header border">{{  __("subtitles.track_time") }}</li>
-        @dispatchEvent("beforeTimer", ["ticket"=>$ticket])
-        <li class="timerContainer tw-px-[10px]">
-            @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock, 'style'=> 'full'])
-        </li>
+        @module('timesheets', $ticket['projectId'] ?? null)
+            <li class="nav-header border">{{  __("subtitles.track_time") }}</li>
+            @dispatchEvent("beforeTimer", ["ticket"=>$ticket])
+            <li class="timerContainer tw-px-[10px]">
+                @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock, 'style'=> 'full'])
+            </li>
+        @endmodule
         @dispatchEvent("end")
 
     </x-global::actions.dropdown>

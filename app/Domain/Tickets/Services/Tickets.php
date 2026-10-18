@@ -17,6 +17,7 @@ use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -95,6 +96,7 @@ class Tickets extends BaseService
      * @param  DateTimeHelper  $dateTimeHelper  The date time helper instance.
      * @param  CommentService  $commentService  The comments service instance.
      * @param  ClientService  $clientService  The clients service instance.
+     * @param  ProjectModules|null  $projectModules  Per-project module switches.
      */
     public function __construct(
         private LanguageCore $language,
@@ -108,7 +110,8 @@ class Tickets extends BaseService
         private Goalcanvas $goalcanvasService,
         private DateTimeHelper $dateTimeHelper,
         private CommentService $commentService,
-        private ClientService $clientService
+        private ClientService $clientService,
+        private ?ProjectModules $projectModules = null,
     ) {}
 
     /**
@@ -5853,6 +5856,7 @@ class Tickets extends BaseService
                 }
             }
         }
+        unset($ticketGroup);
 
         // Fetch the milestone data for all collected milestone IDs
         //            if (! empty($milestoneIds)) {
@@ -5882,6 +5886,14 @@ class Tickets extends BaseService
         // Enrich while tickets are still flat — buildTicketHierarchy() nests subtasks into
         // 'children', so enriching afterwards would only reach the root rows.
         $tickets = $this->enrichGroupedTicketsWithCollaborators($tickets);
+
+        // The cards check each ticket's project for the Timesheets module (timer button): load
+        // the module switches of every project shown in one read, subtasks included.
+        $projectIdsShown = [];
+        foreach ($tickets as $shownGroup) {
+            $projectIdsShown = [...$projectIdsShown, ...array_column($shownGroup['tickets'] ?? [], 'projectId')];
+        }
+        $this->projectModules?->preload($projectIdsShown);
 
         // Process tickets to build hierarchical structure
         foreach ($tickets as $groupKey => &$ticketGroup) {

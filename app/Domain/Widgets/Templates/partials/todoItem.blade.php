@@ -79,7 +79,9 @@
             <div class="tw-flex tw-flex-row">
                 <div class="tw-content-center">
                     <div class="tw-content-center tw-mr-[10px]">
-                        @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
+                        @module('timesheets', $ticket['projectId'] ?? null)
+                            @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
+                        @endmodule
                     </div>
                 </div>
 
