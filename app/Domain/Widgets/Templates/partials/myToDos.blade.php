@@ -27,7 +27,7 @@
 
 <div id="yourToDoContainer"
      hx-get="{{BASE_URL}}/widgets/myToDos/get"
-     hx-trigger="{{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE }} from:body, {{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::SUBTASK_UPDATE }} from:body"
+     hx-trigger="{{ \Leantime\Domain\Tickets\Events\TicketCreated::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Tickets\Events\TicketUpdated::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Tickets\Events\TicketDeleted::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Tickets\Events\SubtasksUpdated::CLIENT_EVENT }} from:body"
      class="clear"
      hx-swap="outerHTML"
      hx-ext="json-enc"

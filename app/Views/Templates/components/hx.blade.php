@@ -5,12 +5,12 @@
     via htmx. Works two ways:
 
       Contract-driven (drift-proof) — pass an HxComponent class; route + refresh events are read
-      from the class so emit/listen sides share one enum:
+      from the class so emit/listen sides share one event class:
         <x-global::hx :for="\Leantime\Domain\Tickets\Hxcontrollers\Subtasks::class" :id="$ticketId" />
 
       Attribute-driven (escape hatch for one-offs / plugins) — pass the endpoint + events explicitly:
         <x-global::hx endpoint="comments/reactions/get" :id="$commentId"
-                      :listen="[\Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE]" />
+                      :listen="[\Leantime\Domain\Tickets\Events\TicketUpdated::class]" />
 
     Props:
       for          FQCN of an HxComponent (contract-driven mode).
@@ -18,7 +18,8 @@
       action       Override the mounted action (defaults to the component's $mountAction).
       endpoint     Route segment after /hx/ (attribute-driven mode), e.g. "comments/reactions/get".
       trigger      Initial load trigger. Default "revealed" (loads when scrolled into view).
-      listen       Event(s) that should re-fetch the component (attribute-driven mode).
+      listen       Event(s) that should re-fetch the component (attribute-driven mode): EmitsClientEvent
+                   classes, HtmxEvent enum cases or raw names.
       target/swap  Standard htmx overrides. swap defaults to the component's $swap, else innerHTML.
       vals         Array serialized into hx-vals.
       loader       loadingText skeleton type. loaderCount  number of skeleton rows.
@@ -49,13 +50,15 @@
         $resolvedSwap = $resolvedSwap ?? $for::$swap;
 
         foreach ($for::listensTo() as $event) {
-            $listenEvents[] = $id !== null ? $event->scoped($id) : $event->event();
+            $listenEvents[] = $id !== null
+                ? \Leantime\Core\Events\Htmx\HtmxEvents::scoped($event, $id)
+                : \Leantime\Core\Events\Htmx\HtmxEvents::name($event);
         }
     } else {
         $path = trim((string) $endpoint, '/');
 
         foreach ((array) $listen as $event) {
-            $listenEvents[] = $event instanceof \Leantime\Core\Events\Htmx\HtmxEvent ? $event->event() : (string) $event;
+            $listenEvents[] = \Leantime\Core\Events\Htmx\HtmxEvents::name($event);
         }
     }
 

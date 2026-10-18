@@ -6,8 +6,9 @@ namespace Leantime\Core\Events\Htmx;
  * Canonical client UI command events (the `lt:ui:*` plane).
  *
  * These are imperative commands to the JS layer (show a toast, close the modal, refresh the page),
- * as opposed to domain data events ("entity X changed") which live in per-domain Htmx{Domain}Events
- * enums. There is exactly one home for UI commands so casing/naming never drifts again — plugins
+ * as opposed to domain data events ("entity X changed"), which are declared on the domain event
+ * classes themselves ({@see \Leantime\Core\Events\Contracts\EmitsClientEvent}, e.g. TicketUpdated).
+ * There is exactly one home for UI commands so casing/naming never drifts again — plugins
  * reuse these cases rather than minting their own `lt:ui:*` strings.
  *
  * Legacy string equivalents (e.g. HTMX.ShowNotification, closeModal) are dual-emitted during the
