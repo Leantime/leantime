@@ -1,5 +1,5 @@
 @php
-    $groupState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$parent, 'closed');
+    $groupState = app(\Leantime\Core\UI\UiState::class)->get($prefix.'-projectSelectorlist-group-'.$parent, 'closed');
 @endphp
 <ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }}">
     @foreach($projects as $project)
@@ -14,7 +14,7 @@
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
                 @php
-                    $parentState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$project['id'], 'closed');
+                    $parentState = app(\Leantime\Core\UI\UiState::class)->get($prefix.'-projectSelectorlist-group-'.$project['id'], 'closed');
                 @endphp
 
                 @if((empty($project['children']) || count($project['children']) ==0))

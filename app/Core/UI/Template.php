@@ -676,20 +676,16 @@ class Template
     }
 
     /**
-     * getToggleState - retrieves the toggle state of a submenu by name from the session
+     * getToggleState - a saved UI state of the current user (accordion / submenu open or closed …)
      *
-     * @param  string  $name  - the name of the submenu toggle
-     * @return string|false - the toggle state of the submenu ("true"/"false"), or false if unset
+     * @param  string  $name  - the name of the state
+     * @return string|false - the saved value ("open", "closed" …), or false if never saved
      *
      * @deprecated this should be in a component
      */
     public function getToggleState(string $name): string|false
     {
-        if (session()->exists('usersettings.submenuToggle.'.$name)) {
-            return session('usersettings.submenuToggle.'.$name);
-        }
-
-        return false;
+        return app(UiState::class)->get($name) ?? false;
     }
 
     /**

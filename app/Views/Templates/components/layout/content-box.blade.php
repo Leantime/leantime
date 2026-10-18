@@ -9,7 +9,7 @@
     applying. Below 992px the sidebars stack above / below the main content.
 
     Props:
-      id          string  Remembers the sidebar widths per user (keys "content-box_{id}_left|right").
+      id          string  Remembers the sidebar widths per user (UiState: "content-box_{id}_left|right").
       leftWidth   int     Default width of the left sidebar in px (260).
       rightWidth  int     Default width of the right sidebar in px (300).
       resizable   bool    Show the resize handles (default true).
@@ -32,12 +32,12 @@
     $hasLeft = isset($left) && trim((string) $left) !== '';
     $hasRight = isset($right) && trim((string) $right) !== '';
 
-    // Saved per user under a dot-notation session path: keep the key dot-free (see elements.accordion).
+    // Widths are saved per user in UiState (one row each); the id escapes like elements.accordion's.
     $stateId = $id === null ? null : preg_replace_callback('/[^A-Za-z0-9_-]/', fn ($m) => '~' . bin2hex($m[0]), (string) $id);
     $minWidth = 160;
     $maxWidth = 800;
     $widthFor = function (string $side, int $default) use ($stateId, $minWidth, $maxWidth): int {
-        $saved = $stateId === null ? null : session('usersettings.submenuToggle.content-box_' . $stateId . '_' . $side);
+        $saved = $stateId === null ? null : app(\Leantime\Core\UI\UiState::class)->get('content-box_' . $stateId . '_' . $side);
 
         return is_numeric($saved) ? max($minWidth, min($maxWidth, (int) $saved)) : $default;
     };

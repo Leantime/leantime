@@ -44,6 +44,22 @@ class ContentBoxTest extends TestCase
         return (string) $factory->file($file, $data)->render();
     }
 
+    /** Saved UI states for the current user (UiState on an in-memory database). */
+    private function savedStates(array $states): void
+    {
+        $db = new \Illuminate\Database\SQLiteConnection(new \PDO('sqlite::memory:'));
+        $db->getSchemaBuilder()->create('zp_settings', function ($table) {
+            $table->string('key', 175)->primary();
+            $table->text('value')->nullable();
+        });
+        session(['userdata.id' => 7]);
+        $uiState = new \Leantime\Core\UI\UiState($db);
+        foreach ($states as $name => $value) {
+            $uiState->set($name, $value);
+        }
+        app()->instance(\Leantime\Core\UI\UiState::class, $uiState);
+    }
+
     // Note: in these one-line templates a closing </x-slot> needs whitespace after it, or Blade
     // reads "@endslotText" as one word.
     public function test_without_sidebars_it_is_the_plain_content_box(): void
@@ -83,10 +99,10 @@ class ContentBoxTest extends TestCase
 
     public function test_the_saved_width_wins_and_is_clamped(): void
     {
-        session(['usersettings.submenuToggle' => [
+        $this->savedStates([
             'content-box_my-calendar_left' => '333',
             'content-box_my-calendar_right' => '5000',
-        ]]);
+        ]);
 
         $html = $this->render('<x-global::layout.content-box id="my-calendar"><x-slot:left>L</x-slot:left> M <x-slot:right>R</x-slot:right> </x-global::layout.content-box>');
 
@@ -97,7 +113,7 @@ class ContentBoxTest extends TestCase
 
     public function test_a_non_numeric_saved_width_falls_back_to_the_default(): void
     {
-        session(['usersettings.submenuToggle' => ['content-box_my-calendar_left' => 'wide; color:red']]);
+        $this->savedStates(['content-box_my-calendar_left' => 'wide; color:red']);
 
         $html = $this->render('<x-global::layout.content-box id="my-calendar"><x-slot:left>L</x-slot:left> M</x-global::layout.content-box>');
 
