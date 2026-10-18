@@ -2,15 +2,21 @@
 
 namespace Leantime\Domain\Tickets\Events;
 
+use Leantime\Core\Events\Concerns\InteractsWithClientEvents;
 use Leantime\Core\Events\Concerns\InteractsWithEvents;
+use Leantime\Core\Events\Contracts\EmitsClientEvent;
 use Leantime\Core\Events\Contracts\LeantimeEvent;
 
 /**
  * Fired after a ticket (including subtasks) was created.
+ *
+ * On htmx requests it also tells the browser (lt:tickets:ticket.created).
  */
-final class TicketCreated implements LeantimeEvent
+final class TicketCreated implements EmitsClientEvent, LeantimeEvent
 {
-    use InteractsWithEvents;
+    use InteractsWithClientEvents, InteractsWithEvents;
+
+    public const CLIENT_EVENT = 'lt:tickets:ticket.created';
 
     /**
      * @param  int|null  $ticketId  The created ticket id; null when the emit site doesn't capture it.

@@ -218,11 +218,43 @@ leantime.snippets = (function () {
 
     };
 
+    // Relative luminance (WCAG) of a #rrggbb color, null when it can't be parsed.
+    var relativeLuminance = function (hexColor) {
+        var match = /^#?([0-9a-f]{6})$/i.exec(hexColor || '');
+        if (!match) {
+            return null;
+        }
+
+        var channels = [0, 2, 4].map(function (offset) {
+            var value = parseInt(match[1].substr(offset, 2), 16) / 255;
+            return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
+        });
+
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    };
+
+    // Live preview of a color scheme. Applies the same contrast rules as sections/header.blade.php:
+    // a nav scrim when white text is below AA on an accent, and a dark primary-button label when
+    // white is below AA on accent1 and dark text reads better.
     var toggleColors = function (accent1, accent2) {
 
-        jQuery("#colorSchemeSetter").html(":root { --accent1: "+accent1+"; --accent2: "+accent2+"}")
+        var navNeedsScrim = [accent1, accent2].some(function (accent) {
+            var luminance = relativeLuminance(accent);
+            return luminance === null || 1.05 / (luminance + 0.05) < 4.5;
+        });
 
+        var css = ":root { --accent1: " + accent1 + "; --accent2: " + accent2 + "; --nav-scrim: " + (navNeedsScrim ? "0.22" : "0") + ";";
 
+        var primaryLuminance = relativeLuminance(accent1);
+        if (primaryLuminance !== null) {
+            var whiteLabelContrast = 1.05 / (primaryLuminance + 0.05);
+            var darkLabelContrast = (primaryLuminance + 0.05) / (0.0103 + 0.05);
+            if (whiteLabelContrast < 4.5 && darkLabelContrast > whiteLabelContrast) {
+                css += " --main-action-label-color: #1a1a1a;";
+            }
+        }
+
+        jQuery("#colorSchemeSetter").html(css + " }");
     };
 
 

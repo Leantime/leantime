@@ -471,7 +471,7 @@ class UsersServiceTest extends TestCase
     }
 
     // ---------------------------------------------------------------------
-    // Personal notification webhook (saveOwnNotificationPreferences /
+    // Personal notification webhook (saveOwnWebhookSettings /
     // getNotificationPreferences).
     // ---------------------------------------------------------------------
 
@@ -526,25 +526,22 @@ class UsersServiceTest extends TestCase
         return json_encode(['url' => $url, 'enabled' => $enabled]);
     }
 
-    public function test_save_notification_preferences_stores_the_webhook_for_the_session_user_only(): void
+    public function test_save_webhook_settings_stores_the_webhook_for_the_session_user_only(): void
     {
         session(['userdata' => ['id' => 7]]);
         $saved = [];
 
         $this->makeService($this->profileRepo(), ['settingsService' => $this->settingsStore([], $saved)])
-            ->saveOwnNotificationPreferences(99, [
+            ->saveOwnWebhookSettings(99, [
                 'webhookUrl' => '  https://hooks.example.com/services/abc?token=xyz  ',
                 'webhookEnabled' => 'on',
             ]);
 
+        $this->assertSame(['usersettings.7.webhook'], array_keys($saved), 'Only the session user\'s webhook is written');
         $this->assertSame(
             ['url' => 'https://hooks.example.com/services/abc?token=xyz', 'enabled' => true],
             json_decode($saved['usersettings.7.webhook'], true)
         );
-        $this->assertSame('usersettings.7.webhook', array_key_first($saved), 'The webhook is saved before any other preference');
-        foreach (array_keys($saved) as $key) {
-            $this->assertStringNotContainsString('usersettings.99.', $key, 'A caller-supplied id must never be written to');
-        }
     }
 
     public function test_unchecking_the_webhook_keeps_the_url_but_disables_delivery(): void
@@ -552,7 +549,7 @@ class UsersServiceTest extends TestCase
         $saved = [];
 
         $this->makeService($this->profileRepo(), ['settingsService' => $this->settingsStore([], $saved)])
-            ->saveOwnNotificationPreferences(1, ['webhookUrl' => 'https://hooks.example.com/abc']);
+            ->saveOwnWebhookSettings(1, ['webhookUrl' => 'https://hooks.example.com/abc']);
 
         $this->assertSame(['url' => 'https://hooks.example.com/abc', 'enabled' => false], json_decode($saved['usersettings.1.webhook'], true));
     }
@@ -562,24 +559,39 @@ class UsersServiceTest extends TestCase
         $saved = [];
 
         $this->makeService($this->profileRepo(), ['settingsService' => $this->settingsStore([], $saved)])
-            ->saveOwnNotificationPreferences(1, ['webhookUrl' => '', 'webhookEnabled' => '1']);
+            ->saveOwnWebhookSettings(1, ['webhookUrl' => '', 'webhookEnabled' => '1']);
 
         $this->assertSame(['url' => '', 'enabled' => false], json_decode($saved['usersettings.1.webhook'], true));
     }
 
-    /**
-     * @dataProvider payloadWithoutWebhookUrlProvider
-     */
-    public function test_omitting_the_webhook_url_leaves_the_stored_webhook_unchanged(array $post): void
+    public function test_a_cleared_webhook_url_arriving_as_null_disables_delivery(): void
     {
-        // API clients built before the webhook existed only send the older preferences.
+        // ConvertEmptyStringsToNull turns the cleared form field into null.
+        $saved = [];
+
+        $this->makeService($this->profileRepo(), ['settingsService' => $this->settingsStore([], $saved)])
+            ->saveOwnWebhookSettings(1, ['webhookUrl' => null]);
+
+        $this->assertSame(['url' => '', 'enabled' => false], json_decode($saved['usersettings.1.webhook'], true));
+    }
+
+    public function test_notification_preferences_never_touch_the_webhook(): void
+    {
+        // The webhook has its own tab and save; webhook fields sent along with the
+        // notification preferences are ignored.
         $storedWebhook = $this->webhookSetting('https://hooks.example.com/abc', true);
         $saved = [];
         $editOwnCalls = 0;
         $settings = $this->settingsStore(['usersettings.1.webhook' => $storedWebhook], $saved);
 
         $this->makeService($this->profileRepo($editOwnCalls), ['settingsService' => $settings])
-            ->saveOwnNotificationPreferences(1, $post);
+            ->saveOwnNotificationPreferences(1, [
+                'notifications' => '1',
+                'messagesfrequency' => '60',
+                'enabledEventTypes' => ['tasks'],
+                'webhookUrl' => '',
+                'webhookEnabled' => '0',
+            ]);
 
         $this->assertSame($storedWebhook, $settings->getSetting('usersettings.1.webhook'), 'The stored webhook must be left exactly as it was');
         $this->assertArrayNotHasKey('usersettings.1.webhook', $saved, 'Nothing may be written to the webhook setting');
@@ -588,22 +600,11 @@ class UsersServiceTest extends TestCase
         $this->assertSame(json_encode(['tasks']), $saved['usersettings.1.notificationEventTypes']);
     }
 
-    public static function payloadWithoutWebhookUrlProvider(): array
-    {
-        $olderPreferences = ['notifications' => '1', 'messagesfrequency' => '60', 'enabledEventTypes' => ['tasks']];
-
-        return [
-            'older preferences only' => [$olderPreferences],
-            'opt-in without a url' => [$olderPreferences + ['webhookEnabled' => '0']],
-        ];
-    }
-
     public function test_a_failed_webhook_disable_is_not_reported_as_saved(): void
     {
         // The user unchecks the box, but the write reports false and the store still holds
         // the enabled webhook — delivery would keep going, so this must not look saved.
         $saved = [];
-        $editOwnCalls = 0;
         $logged = [];
         Log::shouldReceive('error')->andReturnUsing(function ($message, $context = []) use (&$logged) {
             $logged[] = $message.' '.json_encode($context);
@@ -615,15 +616,13 @@ class UsersServiceTest extends TestCase
         );
 
         try {
-            $this->makeService($this->profileRepo($editOwnCalls), ['settingsService' => $settings])
-                ->saveOwnNotificationPreferences(1, ['notifications' => '1', 'webhookUrl' => 'https://hooks.example.com/secret-token']);
+            $this->makeService($this->profileRepo(), ['settingsService' => $settings])
+                ->saveOwnWebhookSettings(1, ['webhookUrl' => 'https://hooks.example.com/secret-token']);
             $this->fail('A webhook setting that did not persist must throw');
         } catch (WebhookSettingNotSavedException $e) {
             $this->assertStringNotContainsString('secret-token', $e->getMessage());
         }
 
-        $this->assertSame(['usersettings.1.webhook'], array_keys($saved), 'No other preference may be written after the webhook failed');
-        $this->assertSame(0, $editOwnCalls);
         $this->assertCount(1, $logged);
         $this->assertStringNotContainsString('secret-token', $logged[0], 'The webhook URL must never reach the logs');
     }
@@ -631,7 +630,6 @@ class UsersServiceTest extends TestCase
     public function test_a_webhook_write_that_throws_is_reported_without_the_url(): void
     {
         $saved = [];
-        $editOwnCalls = 0;
         $logged = [];
         Log::shouldReceive('error')->andReturnUsing(function ($message, $context = []) use (&$logged) {
             $logged[] = $message.' '.json_encode($context);
@@ -642,16 +640,14 @@ class UsersServiceTest extends TestCase
         });
 
         try {
-            $this->makeService($this->profileRepo($editOwnCalls), ['settingsService' => $settings])
-                ->saveOwnNotificationPreferences(1, ['webhookUrl' => 'https://hooks.example.com/secret-token', 'webhookEnabled' => '1']);
+            $this->makeService($this->profileRepo(), ['settingsService' => $settings])
+                ->saveOwnWebhookSettings(1, ['webhookUrl' => 'https://hooks.example.com/secret-token', 'webhookEnabled' => '1']);
             $this->fail('A webhook setting that could not be written must throw');
         } catch (WebhookSettingNotSavedException $e) {
             $this->assertNull($e->getPrevious(), 'The DB exception (and the URL in its message) must not be chained');
             $this->assertStringNotContainsString('secret-token', $e->getMessage());
         }
 
-        $this->assertSame(['usersettings.1.webhook'], array_keys($saved));
-        $this->assertSame(0, $editOwnCalls);
         $this->assertCount(1, $logged);
         $this->assertStringContainsString('RuntimeException', $logged[0]);
         $this->assertStringNotContainsString('secret-token', $logged[0], 'The webhook URL must never reach the logs');
@@ -661,18 +657,16 @@ class UsersServiceTest extends TestCase
     {
         // updateOrInsert returns false when the row already holds the identical value.
         $saved = [];
-        $editOwnCalls = 0;
         $settings = $this->settingsStore(
             ['usersettings.1.webhook' => $this->webhookSetting('https://hooks.example.com/abc', true)],
             $saved,
             fn () => false,
         );
 
-        $this->makeService($this->profileRepo($editOwnCalls), ['settingsService' => $settings])
-            ->saveOwnNotificationPreferences(1, ['webhookUrl' => 'https://hooks.example.com/abc', 'webhookEnabled' => '1', 'messagesfrequency' => '60']);
+        $this->makeService($this->profileRepo(), ['settingsService' => $settings])
+            ->saveOwnWebhookSettings(1, ['webhookUrl' => 'https://hooks.example.com/abc', 'webhookEnabled' => '1']);
 
-        $this->assertSame(1, $editOwnCalls, 'The remaining preferences are still saved');
-        $this->assertSame(60, $saved['usersettings.1.messageFrequency']);
+        $this->assertSame(['usersettings.1.webhook'], array_keys($saved), 'No exception: the unchanged webhook counts as saved');
     }
 
     /**
@@ -681,14 +675,10 @@ class UsersServiceTest extends TestCase
     public function test_an_invalid_webhook_url_is_rejected_before_anything_is_saved(mixed $webhookUrl): void
     {
         $saved = [];
-        $editOwnCalls = 0;
-        $service = $this->makeService($this->profileRepo($editOwnCalls), ['settingsService' => $this->settingsStore([], $saved)]);
+        $service = $this->makeService($this->profileRepo(), ['settingsService' => $this->settingsStore([], $saved)]);
 
         try {
-            $service->saveOwnNotificationPreferences(1, [
-                'notifications' => '1',
-                'messagesfrequency' => '60',
-                'enabledEventTypes' => ['tasks'],
+            $service->saveOwnWebhookSettings(1, [
                 'webhookUrl' => $webhookUrl,
                 'webhookEnabled' => '1',
             ]);
@@ -697,8 +687,7 @@ class UsersServiceTest extends TestCase
             $this->assertSame(['webhookUrl' => ['notification.invalid_webhook_url']], $e->getErrorData());
         }
 
-        $this->assertSame([], $saved, 'No preference may be written when the webhook URL is rejected');
-        $this->assertSame(0, $editOwnCalls, 'The notifications flag must not be written either');
+        $this->assertSame([], $saved, 'Nothing may be written when the webhook URL is rejected');
     }
 
     public static function invalidWebhookUrlProvider(): array
@@ -711,7 +700,6 @@ class UsersServiceTest extends TestCase
             'not a url' => ['hooks.example.com/abc'],
             'too long' => ['https://hooks.example.com/'.str_repeat('a', 2048)],
             'array instead of string' => [['https://hooks.example.com/abc']],
-            'explicit null' => [null],
         ];
     }
 

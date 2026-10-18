@@ -147,6 +147,8 @@
                                    data-id="{{ $ticket['id'] }}"
                                    onchange="jQuery('#due-date-picker-trigger-{{ $ticket['id'] }}').text(this.value);"
                                    name="date"
+                                   {{-- reload the widget afterwards so the task moves to its new date group --}}
+                                   data-lt-refresh-container
                                    hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
                                    hx-trigger="change"
                                    hx-vals='{"id": "{{ $ticket['id'] }}"}'
@@ -154,6 +156,7 @@
                             <button class="reset-button"
                                     data-id="{{ $ticket['id'] }}"
                                     id="reset-date-{{ $ticket['id'] }}"
+                                    data-lt-refresh-container
                                     hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
                                     hx-vals='{"id": "{{ $ticket['id'] }}", "date": ""}'
                                     hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}">

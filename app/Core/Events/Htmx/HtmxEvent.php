@@ -13,6 +13,10 @@ namespace Leantime\Core\Events\Htmx;
  *   - data events:    lt:{domain}:{entity}.{verb}   e.g. lt:tickets:ticket.updated
  *   - UI commands:    lt:ui:{command}               e.g. lt:ui:modal.close
  *
+ * Core uses this for the UI command enum ({@see HtmxUiEvents}). Domain data events are declared on
+ * the domain event class instead ({@see \Leantime\Core\Events\Contracts\EmitsClientEvent}); an
+ * enum remains fine for a plugin's client-only events that have no domain event behind them.
+ *
  * Use the {@see InteractsWithHtmxEvents} trait to satisfy this interface. Note: PHP enums cannot
  * implement Stringable / __toString, so use {@see event()} (or `->value`) to get the wire name in
  * PHP. In Blade, `{{ MyEvents::Case }}` renders the value (Laravel's e() unwraps backed enums).

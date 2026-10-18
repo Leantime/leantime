@@ -382,7 +382,8 @@ input[type='submit'],
     line-height:21px;
     box-shadow:none;
     text-shadow: none;
-    color: var(--main-action-color);
+    /* --main-action-label-color: dark label when white is too faint on the accent (sections/header). */
+    color: var(--main-action-label-color, var(--main-action-color));
     display: inline-block;
     word-spacing: 2px;
     border: 1px solid var(--main-action-bg);
@@ -409,7 +410,7 @@ body input[type='submit'].btn-primary .caret,
 
 .btn-primary[disabled] {
     background:var(--main-action-bg);
-    color: var(--main-action-color);
+    color: var(--main-action-label-color, var(--main-action-color));
     border: 1px solid var(--main-action-bg);
     cursor:not-allowed;
 }

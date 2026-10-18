@@ -12,9 +12,9 @@ use Leantime\Domain\Users\Services\Users as UserService;
 use Unit\TestCase;
 
 /**
- * The notifications tab of the own-profile form: a rejected webhook URL or an
- * unsaved webhook setting must surface as an error, never as the "saved"
- * confirmation.
+ * The notifications and webhooks tabs of the own-profile form: a rejected
+ * webhook URL or an unsaved webhook setting must surface as an error, never as
+ * the "saved" confirmation.
  */
 class EditOwnTest extends TestCase
 {
@@ -46,19 +46,16 @@ class EditOwnTest extends TestCase
     }
 
     /**
-     * Submits the notifications tab through the real controller with the given
-     * (stubbed) user service.
+     * Submits a tab of the own-profile form through the real controller with the
+     * given (stubbed) user service and returns the redirect target.
+     *
+     * @param  array<string, string>  $post  The tab's fields, without the form token.
      */
-    private function submitNotificationsTab(UserService $userService): void
+    private function submitTab(UserService $userService, array $post): string
     {
         app()->instance(UserService::class, $userService);
 
-        $_POST = [
-            'formToken' => 'expected-token',
-            'savenotifications' => '1',
-            'webhookUrl' => 'http://insecure.example.com/hook',
-            'webhookEnabled' => '1',
-        ];
+        $_POST = ['formToken' => 'expected-token'] + $post;
 
         $tpl = $this->make(Template::class, [
             'setNotification' => function (string $message, string $type) {
@@ -69,13 +66,24 @@ class EditOwnTest extends TestCase
 
         $response = (new EditOwn($this->make(IncomingRequest::class), $tpl, $language))->post();
 
-        $this->assertStringEndsWith('/users/editOwn#notifications', $response->headers->get('Location'));
+        return (string) $response->headers->get('Location');
+    }
+
+    private function submitWebhooksTab(UserService $userService): void
+    {
+        $location = $this->submitTab($userService, [
+            'savewebhooks' => '1',
+            'webhookUrl' => 'http://insecure.example.com/hook',
+            'webhookEnabled' => '1',
+        ]);
+
+        $this->assertStringEndsWith('/users/editOwn#webhooks', $location);
     }
 
     public function test_rejected_webhook_url_shows_an_error_and_no_success(): void
     {
-        $this->submitNotificationsTab($this->make(UserService::class, [
-            'saveOwnNotificationPreferences' => function () {
+        $this->submitWebhooksTab($this->make(UserService::class, [
+            'saveOwnWebhookSettings' => function () {
                 throw ValidationException::withMessages(['webhookUrl' => ['notification.invalid_webhook_url']]);
             },
         ]));
@@ -85,8 +93,8 @@ class EditOwnTest extends TestCase
 
     public function test_unsaved_webhook_setting_shows_a_generic_error_and_no_success(): void
     {
-        $this->submitNotificationsTab($this->make(UserService::class, [
-            'saveOwnNotificationPreferences' => function () {
+        $this->submitWebhooksTab($this->make(UserService::class, [
+            'saveOwnWebhookSettings' => function () {
                 throw new WebhookSettingNotSavedException;
             },
         ]));
@@ -99,19 +107,35 @@ class EditOwnTest extends TestCase
         // Only the known outcomes are handled; anything else (e.g. a DB error) must reach the exception handler.
         $this->expectExceptionObject(new \RuntimeException('database went away'));
 
-        $this->submitNotificationsTab($this->make(UserService::class, [
-            'saveOwnNotificationPreferences' => function () {
+        $this->submitWebhooksTab($this->make(UserService::class, [
+            'saveOwnWebhookSettings' => function () {
                 throw new \RuntimeException('database went away');
             },
         ]));
     }
 
-    public function test_accepted_preferences_show_the_success_confirmation(): void
+    public function test_accepted_webhook_shows_the_success_confirmation(): void
     {
-        $this->submitNotificationsTab($this->make(UserService::class, [
-            'saveOwnNotificationPreferences' => fn () => null,
+        $this->submitWebhooksTab($this->make(UserService::class, [
+            'saveOwnWebhookSettings' => fn () => null,
         ]));
 
+        $this->assertSame([['notifications.changed_profile_settings_successfully', 'success']], $this->notifications);
+    }
+
+    public function test_notification_preferences_are_saved_without_the_webhook(): void
+    {
+        $webhookSaves = 0;
+
+        $location = $this->submitTab($this->make(UserService::class, [
+            'saveOwnNotificationPreferences' => fn () => null,
+            'saveOwnWebhookSettings' => function () use (&$webhookSaves) {
+                $webhookSaves++;
+            },
+        ]), ['savenotifications' => '1', 'notifications' => 'on']);
+
+        $this->assertStringEndsWith('/users/editOwn#notifications', $location);
+        $this->assertSame(0, $webhookSaves);
         $this->assertSame([['notifications.changed_profile_settings_successfully', 'success']], $this->notifications);
     }
 }

@@ -66,18 +66,25 @@ abstract class HtmxController
     }
 
     /**
-     * Sets the response header to trigger an htmx event
+     * Queue a client (HTMX) event on the HX-Trigger response header.
      *
-     **/
+     * @param  HtmxEvent|string  $eventName  An HtmxEvent enum case, an EmitsClientEvent class name
+     *                                       (TicketUpdated::class) or a raw event name.
+     */
     public function setHTMXEvent(HtmxEvent|string $eventName): void
     {
         $this->headers['HX-Trigger'] ??= [];
-        $this->headers['HX-Trigger'][] = $eventName instanceof HtmxEvent ? $eventName->event() : $eventName;
+        $this->headers['HX-Trigger'][] = HtmxEvents::name($eventName);
     }
 
     /**
      * Queue one or more client (HTMX) events on the HX-Trigger response header.
-     * Accepts HtmxEvent enum cases (preferred) or raw strings.
+     *
+     * Domain data events usually need no call here: dispatching an EmitsClientEvent domain event
+     * during an htmx request queues it automatically. Use this for UI commands (HtmxUiEvents) and
+     * for responses that should announce a change no domain event covers.
+     *
+     * @param  HtmxEvent|string  ...$events  HtmxEvent enum cases, EmitsClientEvent class names or raw names.
      */
     public function emit(HtmxEvent|string ...$events): void
     {
