@@ -33,12 +33,13 @@ class PermissionServiceModulesTest extends \Unit\TestCase
     }
 
     /**
-     * An admin who holds wiki.view everywhere, in an install where project 7 has the wiki off.
+     * An admin who holds wiki.view everywhere and sees all projects, in an install where project 7
+     * has the wiki off.
      */
     private function service(): PermissionService
     {
         $repo = $this->make(PermissionRepository::class, [
-            'getRolePermissionMap' => fn (): array => ['admin' => ['wiki.view', 'timesheets.view']],
+            'getRolePermissionMap' => fn (): array => ['admin' => ['wiki.view', 'timesheets.view', 'projects.viewAll']],
             'getAllPermissions' => fn (): array => [
                 ['permissionKey' => 'wiki.view', 'isProjectScoped' => 1],
                 ['permissionKey' => 'timesheets.view', 'isProjectScoped' => 0],
@@ -89,7 +90,7 @@ class PermissionServiceModulesTest extends \Unit\TestCase
     public function test_the_service_still_works_without_modules_wired(): void
     {
         $repo = $this->make(PermissionRepository::class, [
-            'getRolePermissionMap' => fn (): array => ['admin' => ['wiki.view']],
+            'getRolePermissionMap' => fn (): array => ['admin' => ['wiki.view', 'projects.viewAll']],
             'getAllPermissions' => fn (): array => [['permissionKey' => 'wiki.view', 'isProjectScoped' => 1]],
         ]);
 

@@ -39,7 +39,9 @@ class ShowAll extends Controller
 
         $this->tpl->assign('role', session('userdata.role'));
 
-        if (Auth::userIsAtLeast(Roles::$admin)) {
+        // getAll() returns only the projects this user may see (all of them with projects.viewAll),
+        // so it is safe for any admin-level role. Others see their client's projects.
+        if (Auth::userIsAtLeast(Roles::$admin) || Roles::seesAllProjects(session('userdata.role'))) {
             $this->tpl->assign('allProjects', $this->projectService->getAll(session('showClosedProjects')));
         } else {
             $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects(session('userdata.id'), session('userdata.clientId')));
