@@ -5,8 +5,18 @@
       current-background  The gradient / image choice plus the page's background style (swapped
                           out of band). Returned after every change.
       unsplash-results    Unsplash search results (only reachable when Unsplash is configured).
+
+    One change at a time: every change (gradient, photo, upload) syncs on #backgroundPicker with
+    "drop", so clicks while a change is running are ignored and a slower response can't repaint a
+    background the user already replaced. ("queue" would lose them: the response replaces the
+    gradient button, and htmx drops queued requests of removed elements.) While a change runs,
+    #backgroundPicker has .htmx-request (hx-indicator) and shows it is busy.
 --}}
-<div class="tw-max-w-4xl">
+<style>
+    #backgroundPicker.htmx-request { cursor: progress; }
+    #backgroundPicker.htmx-request #currentBackground { opacity: 0.5; }
+</style>
+<div class="tw-max-w-4xl" id="backgroundPicker">
     <p>{{ __('text.set_your_background') }}</p>
     <br />
 
@@ -19,6 +29,8 @@
                     @class(['selectable tw-bg-transparent tw-border-0 tw-p-0', 'active' => $backgroundType !== 'image'])
                     aria-pressed="{{ $backgroundType !== 'image' ? 'true' : 'false' }}"
                     hx-post="{{ BASE_URL }}/hx/users/background/setType"
+                    hx-sync="#backgroundPicker:drop"
+                    hx-indicator="#backgroundPicker"
                     hx-vals='{"type": "gradient"}'
                     hx-target="#currentBackground"
                     hx-swap="outerHTML">
@@ -96,6 +108,8 @@
                                     class="tw-block tw-w-full tw-p-0 tw-border-0 tw-bg-transparent tw-cursor-pointer"
                                     title="{{ __('buttons.use_image') }}"
                                     hx-post="{{ BASE_URL }}/hx/users/background/useUnsplashPhoto"
+                                    hx-sync="#backgroundPicker:drop"
+                                    hx-indicator="#backgroundPicker"
                                     hx-vals="{{ json_encode(['photoId' => $photo['id']]) }}"
                                     hx-target="#currentBackground"
                                     hx-swap="outerHTML">
@@ -126,10 +140,11 @@
     <div id="backgroundUpload" @class(['tw-hidden' => $unsplashEnabled])>
         <form class="tw-flex tw-items-center tw-gap-2"
               hx-post="{{ BASE_URL }}/hx/users/background/upload"
+              hx-sync="#backgroundPicker:drop"
               hx-encoding="multipart/form-data"
               hx-target="#currentBackground"
               hx-swap="outerHTML"
-              hx-indicator="#backgroundUploadLoading">
+              hx-indicator="#backgroundPicker, #backgroundUploadLoading">
             <input type="file" name="file" accept="image/jpeg,image/png,image/gif,image/webp" required
                    aria-label="{{ __('label.background_image') }}" />
             <x-global::forms.button inputType="submit" contentRole="primary" :labelText="__('buttons.upload')" />
