@@ -182,6 +182,9 @@ document.addEventListener('htmx:afterRequest', function () { leantime.htmxProgre
 // reload the whole widget). Components elsewhere on the page still refresh. Only that exact
 // format counts: UI commands (lt:ui:notify) and client-only events (lt:chip:changed, which
 // chips.js fires after a JSON-RPC save) have no entity.verb part and are never suppressed.
+// A control whose response does NOT render everything it affects opts out with
+// data-lt-refresh-container (the to-do widget's due-date picker: the task has to move to its
+// new date group, so the widget reloads).
 var leantimeDataEventPattern = /^lt:[a-z]+:[a-z]+\.[a-z]+(#.+)?$/;
 
 document.addEventListener('htmx:confirm', function (evt) {
@@ -191,9 +194,10 @@ document.addEventListener('htmx:confirm', function (evt) {
     }
 
     var isDataEvent = leantimeDataEventPattern.test(triggeringEvent.type) && triggeringEvent.type.indexOf('lt:ui:') !== 0;
-    var cameFromInside = triggeringEvent.target instanceof Node && evt.detail.elt.contains(triggeringEvent.target);
+    var cameFromInside = triggeringEvent.target instanceof Element && evt.detail.elt.contains(triggeringEvent.target);
+    var wantsContainerRefresh = cameFromInside && triggeringEvent.target.closest('[data-lt-refresh-container]') !== null;
 
-    if (isDataEvent && cameFromInside) {
+    if (isDataEvent && cameFromInside && !wantsContainerRefresh) {
         evt.preventDefault();
     }
 });
