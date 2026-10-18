@@ -52,6 +52,7 @@ class ClearAll extends Command
         $this->call('view:clear');
 
         $io->text('Clear Installation Cache');
+        Language::forgetCachedLanguageList();
         $languageList = app()->make(Language::class)->getLanguageList();
         $languageCodes = is_array($languageList) ? array_keys($languageList) : ['en-US'];
         foreach ($languageCodes as $languageCode) {
