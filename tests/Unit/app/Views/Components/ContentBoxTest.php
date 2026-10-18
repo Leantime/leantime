@@ -128,6 +128,14 @@ class ContentBoxTest extends TestCase
         $this->assertStringContainsString('data-lt-content="board~2e1"', $html);
     }
 
+    public function test_stack_lg_and_main_class(): void
+    {
+        $html = $this->render('<x-global::layout.content-box stack="lg" mainClass="hidden-sm"><x-slot:left>L</x-slot:left> M</x-global::layout.content-box>');
+
+        $this->assertStringContainsString('class="maincontentinner lt-content lt-content--stack-lg"', $html);
+        $this->assertStringContainsString('<div class="lt-content-main hidden-sm">', $html);
+    }
+
     public function test_resizable_off_renders_no_handles(): void
     {
         $html = $this->render('<x-global::layout.content-box :resizable="false"><x-slot:left>L</x-slot:left> M</x-global::layout.content-box>');

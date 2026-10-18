@@ -330,6 +330,17 @@
     .maincontent .maincontentinner {
         height:calc(100vh - 165px);
     }
+
+    /* Stacked (narrow screens): the calendar pane gets the full height, below the calendar list. */
+    @media (max-width: 991px) {
+        .maincontent .maincontentinner.lt-content {
+            height:auto;
+        }
+
+        .maincontent .lt-content .lt-content-main {
+            height:calc(100vh - 165px);
+        }
+    }
 </style>
 
 @endsection

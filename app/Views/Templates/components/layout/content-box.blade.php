@@ -6,13 +6,17 @@
     store as accordion states.
 
     Without sidebars it renders the plain content box, so every `.maincontentinner` style keeps
-    applying. Below 992px the sidebars stack above / below the main content.
+    applying. Below 992px (or 1200px with stack="lg") the sidebars stack above / below the main
+    content, and the sidebars give up width before the main pane drops under 320px.
 
     Props:
       id          string  Remembers the sidebar widths per user (UiState: "content-box_{id}_left|right").
       leftWidth   int     Default width of the left sidebar in px (260).
       rightWidth  int     Default width of the right sidebar in px (300).
       resizable   bool    Show the resize handles (default true).
+      stack       string  Below which width the sidebars stack: 'md' (992px, default) or 'lg' (1200px,
+                          for pages whose main pane is hidden on smaller screens anyway).
+      mainClass   string  Classes for the main pane (e.g. "hidden-sm" to hide it on small screens).
 
     Slots:
       default  The main content.
@@ -26,6 +30,8 @@
     'leftWidth' => 260,
     'rightWidth' => 300,
     'resizable' => true,
+    'stack' => 'md',
+    'mainClass' => '',
 ])
 
 @php
@@ -50,7 +56,7 @@
         {{ $slot }}
     </div>
 @else
-    <div {{ $attributes->class(['maincontentinner', 'lt-content'])->merge([
+    <div {{ $attributes->class(['maincontentinner', 'lt-content', 'lt-content--stack-lg' => $stack === 'lg'])->merge([
             'style' => ($hasLeft ? '--lt-content-left-w: ' . $leftW . 'px;' : '') . ($hasRight ? ' --lt-content-right-w: ' . $rightW . 'px;' : ''),
         ]) }} @if ($stateId !== null) data-lt-content="{{ $stateId }}" @endif>
         @if ($hasLeft)
@@ -62,7 +68,7 @@
                      data-lt-side="left" data-lt-default="{{ (int) $leftWidth }}"></div>
             @endif
         @endif
-        <div class="lt-content-main">
+        <div @class(['lt-content-main', $mainClass => $mainClass !== ''])>
             {{ $slot }}
         </div>
         @if ($hasRight)

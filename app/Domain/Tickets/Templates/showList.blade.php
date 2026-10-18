@@ -19,7 +19,7 @@
 
     @include('tickets::submodules.ticketBoardTabs')
 
-    <x-global::layout.content-box id="tickets-list" :leftWidth="340">
+    <x-global::layout.content-box id="tickets-list" :leftWidth="340" stack="lg" mainClass="hidden-sm">
         <x-slot:left>
             @dispatchEvent('allTicketsTable.before', ['tickets' => $allTickets])
             {{-- The list sits on the sidebar itself (no card): quick-add form, then the groups. --}}
@@ -97,17 +97,16 @@
             </div>
             @dispatchEvent('allTicketsTable.afterClose', ['tickets' => $allTickets])
         </x-slot:left>
-        {{-- Hidden on small screens, as before: there the list opens to-dos in the dialog. --}}
-        <div class="hidden-sm">
-            <div id="ticketContent">
-                <div class="center">
-                    <div class='svgContainer'>
-                        {!! file_get_contents(ROOT.'/dist/images/svg/undraw_design_data_khdb.svg') !!}
-                    </div>
-
-                    <h3>{!! __('headlines.pick_a_task') !!}</h3>
-                    {!! __('text.edit_tasks_in_here') !!}
+        {{-- The main pane is hidden on small screens (mainClass), as before: there the list opens
+             to-dos in the dialog, and the list fills the box (stack="lg"). --}}
+        <div id="ticketContent">
+            <div class="center">
+                <div class='svgContainer'>
+                    {!! file_get_contents(ROOT.'/dist/images/svg/undraw_design_data_khdb.svg') !!}
                 </div>
+
+                <h3>{!! __('headlines.pick_a_task') !!}</h3>
+                {!! __('text.edit_tasks_in_here') !!}
             </div>
         </div>
     </x-global::layout.content-box>

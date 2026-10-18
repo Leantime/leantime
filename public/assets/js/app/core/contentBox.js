@@ -150,5 +150,29 @@ leantime.contentBox = (function () {
         save(box, side, width);
     });
 
+    // Keep each divider's aria-valuenow equal to its sidebar's rendered width: the sidebars shrink
+    // (CSS) when the box is narrower than the saved widths allow.
+    var syncValues = function (root) {
+        var scope = root && root.querySelectorAll ? root : document;
+        scope.querySelectorAll('.lt-content-resizer').forEach(function (resizer) {
+            var box = boxOf(resizer);
+            var sidebar = box ? sidebarOf(box, resizer.getAttribute('data-lt-side')) : null;
+            // Stacked (narrow screens) the handle is hidden and the sidebar is full width.
+            if (sidebar && resizer.offsetParent !== null) {
+                resizer.setAttribute('aria-valuenow', String(Math.round(widthOf(sidebar))));
+            }
+        });
+    };
+
+    var resizeTimer = null;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () { syncValues(document); }, 150);
+    });
+    document.addEventListener('DOMContentLoaded', function () { syncValues(document); });
+    if (window.htmx) {
+        htmx.onLoad(syncValues);
+    }
+
     return {};
 })();

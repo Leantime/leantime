@@ -11,14 +11,16 @@
 }
 
 .lt-content-main {
-    flex: 1 1 auto;
-    min-width: 0;
+    /* Takes the space the sidebars leave. Saved widths come from wider windows: when they don't
+       fit, the sidebars shrink (down to 160px) before the main pane gets narrower than this. */
+    flex: 1 1 0px;
+    min-width: 320px;
     padding: var(--box-padding, 16px);
 }
 
 .lt-content-side {
-    flex: 0 0 auto;
-    min-width: 0;
+    flex: 0 1 auto;
+    min-width: 160px;
     box-sizing: border-box;
     padding: var(--box-padding, 16px);
     background: var(--content-sidebar-bg, var(--color-surface-inset));
@@ -89,6 +91,11 @@
         flex-direction: column;
     }
 
+    .lt-content-main {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
     .lt-content-side--left,
     .lt-content-side--right {
         width: auto;
@@ -110,5 +117,49 @@
 
     .lt-content-resizer {
         display: none;
+    }
+}
+
+/* stack="lg": the same, already below 1200px (pages whose main pane is hidden there). */
+@media (max-width: 1200px) {
+    .maincontentinner.lt-content--stack-lg {
+        flex-direction: column;
+    }
+
+    .lt-content--stack-lg .lt-content-main {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .lt-content--stack-lg .lt-content-side--left,
+    .lt-content--stack-lg .lt-content-side--right {
+        width: auto;
+        border-inline: 0;
+        border-radius: 0;
+    }
+
+    .lt-content--stack-lg .lt-content-side--left {
+        border-bottom: 1px solid var(--main-border-color);
+        border-start-start-radius: calc(var(--box-radius) - 1px);
+        border-start-end-radius: calc(var(--box-radius) - 1px);
+    }
+
+    .lt-content--stack-lg .lt-content-side--right {
+        border-top: 1px solid var(--main-border-color);
+        border-end-start-radius: calc(var(--box-radius) - 1px);
+        border-end-end-radius: calc(var(--box-radius) - 1px);
+    }
+
+    .lt-content--stack-lg .lt-content-resizer {
+        display: none;
+    }
+}
+
+/* Where `hidden-sm` hides the main pane (576–1200px) the stacked sidebar is the only pane left:
+   round all its corners and drop the divider line. */
+@media (min-width: 576px) and (max-width: 1200px) {
+    .lt-content--stack-lg:has(> .lt-content-main.hidden-sm) > .lt-content-side--left {
+        border-bottom: 0;
+        border-radius: calc(var(--box-radius) - 1px);
     }
 }
