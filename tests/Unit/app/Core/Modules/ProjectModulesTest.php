@@ -60,6 +60,15 @@ class ProjectModulesTest extends \Unit\TestCase
                 return $overridesByProject;
             }
 
+            public int $allReads = 0;
+
+            public function getAllModuleOverrides(): array
+            {
+                $this->allReads++;
+
+                return array_filter($this->rows);
+            }
+
             public function updateModuleOverrides(int $projectId, callable $change): void
             {
                 $this->rows[$projectId] = $change($this->rows[$projectId] ?? []);
@@ -67,6 +76,25 @@ class ProjectModulesTest extends \Unit\TestCase
         };
 
         $this->projectModules = new ProjectModules($this->registry, $this->store);
+    }
+
+    public function test_switched_off_project_ids_come_from_one_read_and_refresh_after_a_save(): void
+    {
+        $this->store->rows = [
+            7 => ['wiki' => false],
+            8 => ['wiki' => true, 'files' => false],
+            9 => ['files' => false],
+        ];
+
+        $this->assertSame([7], $this->projectModules->switchedOffProjectIds('wiki'));
+        $this->assertSame([8, 9], $this->projectModules->switchedOffProjectIds('files'));
+        $this->assertSame([], $this->projectModules->switchedOffProjectIds('unknown'));
+        $this->assertSame(1, $this->store->allReads);
+
+        $this->projectModules->save(9, ['wiki' => false]);
+
+        $this->assertSame([7, 9], $this->projectModules->switchedOffProjectIds('wiki'));
+        $this->assertSame(2, $this->store->allReads);
     }
 
     public function test_modules_follow_their_default_until_a_project_chooses(): void
