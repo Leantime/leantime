@@ -37,8 +37,12 @@
 
 @php
     $isOpen = (bool) $open;
-    if ($id !== null) {
-        $savedState = session('usersettings.submenuToggle.accordion_content-' . $id);
+    // The state is stored under a dot-notation session path, so a "." in the id ("0.5") would nest
+    // it under another key. Escape anything outside [A-Za-z0-9_-]; ids without such characters stay
+    // as they are, so their saved choices carry over.
+    $stateId = $id === null ? null : preg_replace_callback('/[^A-Za-z0-9_-]/', fn ($m) => '~' . bin2hex($m[0]), (string) $id);
+    if ($stateId !== null) {
+        $savedState = session('usersettings.submenuToggle.accordion_content-' . $stateId);
         if ($savedState === 'open' || $savedState === 'closed') {
             $isOpen = $savedState === 'open';
         }
@@ -55,7 +59,7 @@
     @isset($actions)
         <div class="lt-accordion-actions">{{ $actions }}</div>
     @endisset
-    <details @if ($isOpen) open @endif @if ($id !== null) data-lt-accordion="{{ $id }}" data-lt-open="{{ $isOpen ? 'open' : 'closed' }}" @endif>
+    <details @if ($isOpen) open @endif @if ($stateId !== null) data-lt-accordion="{{ $stateId }}" data-lt-open="{{ $isOpen ? 'open' : 'closed' }}" @endif>
         <summary @class(['lt-accordion-summary', 'lt-accordion-summary--actions' => isset($actions)]) @if ($titleColor) style="--lt-accordion-title-color: {{ $titleColor }}" @endif>
             <i class="fa fa-chevron-right lt-accordion-chevron" aria-hidden="true"></i>
             @if ($icon)

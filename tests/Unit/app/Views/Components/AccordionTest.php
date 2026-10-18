@@ -112,6 +112,30 @@ class AccordionTest extends TestCase
         $this->assertStringNotContainsString('a_release_a', $html);
     }
 
+    public function test_effort_groups_zero_and_a_half_keep_separate_state(): void
+    {
+        // The state lives under a dot-notation session path: "0.5" must not nest under "0".
+        session(['usersettings.submenuToggle' => []]);
+        session(['usersettings.submenuToggle.accordion_content-tickets-storypoints-0~2e5' => 'closed']);
+
+        $half = $this->render('<x-tickets::group-section :group="$group" groupBy="storypoints">ROWS</x-tickets::group-section>', [
+            'group' => ['label' => '0.5', 'id' => '0.5', 'value' => '0.5', 'class' => '', 'color' => '', 'items' => [1]],
+        ]);
+        $zero = $this->render('<x-tickets::group-section :group="$group" groupBy="storypoints">ROWS</x-tickets::group-section>', [
+            'group' => ['label' => '0', 'id' => '0', 'value' => '0', 'class' => '', 'color' => '', 'items' => [1]],
+        ]);
+
+        $this->assertStringContainsString('data-lt-accordion="tickets-storypoints-0~2e5" data-lt-open="closed"', $half);
+        $this->assertStringContainsString('data-lt-accordion="tickets-storypoints-0" data-lt-open="open"', $zero);
+    }
+
+    public function test_an_id_without_special_characters_is_kept_as_is(): void
+    {
+        $html = $this->render('<x-global::elements.accordion id="myProjectsHub-favorites" title="Favorites">Body</x-global::elements.accordion>');
+
+        $this->assertStringContainsString('data-lt-accordion="myProjectsHub-favorites"', $html);
+    }
+
     public function test_a_priority_group_keeps_its_priority_colour(): void
     {
         $html = $this->render('<x-tickets::group-section :group="$group" groupBy="priority">ROWS</x-tickets::group-section>', [
