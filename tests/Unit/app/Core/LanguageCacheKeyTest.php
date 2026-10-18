@@ -43,4 +43,42 @@ class LanguageCacheKeyTest extends TestCase
         $this->assertFalse($store->has(Language::cacheKeyFor('de-DE')));
         $this->assertTrue($store->has(Language::cacheKeyFor('en-US')));
     }
+
+    public function test_language_list_cache_key_contains_app_version(): void
+    {
+        $this->assertSame('languages.langlist_'.app(AppSettings::class)->appVersion, Language::languageListCacheKey());
+    }
+
+    /**
+     * A list cached by an older release (under the unversioned key) must not hide languages a
+     * release adds to languagelist.ini.
+     */
+    public function test_language_list_ignores_a_list_cached_by_an_older_release(): void
+    {
+        $store = new \Illuminate\Cache\Repository(new \Illuminate\Cache\ArrayStore);
+        $store->put('languages.langlist', ['en-US' => 'English (US)']);
+
+        \Illuminate\Support\Facades\Cache::shouldReceive('store')->with('installation')->andReturn($store);
+
+        $language = (new \ReflectionClass(Language::class))->newInstanceWithoutConstructor();
+        $languageList = $language->getLanguageList();
+
+        $this->assertIsArray($languageList);
+        $this->assertArrayHasKey('kaa', $languageList);
+        $this->assertSame($languageList, $store->get(Language::languageListCacheKey()));
+    }
+
+    public function test_forget_cached_language_list_clears_versioned_and_legacy_keys(): void
+    {
+        $store = new \Illuminate\Cache\Repository(new \Illuminate\Cache\ArrayStore);
+        $store->put('languages.langlist', ['en-US' => 'English (US)']);
+        $store->put(Language::languageListCacheKey(), ['en-US' => 'English (US)']);
+
+        \Illuminate\Support\Facades\Cache::shouldReceive('store')->with('installation')->andReturn($store);
+
+        $this->assertTrue(Language::forgetCachedLanguageList());
+
+        $this->assertFalse($store->has('languages.langlist'));
+        $this->assertFalse($store->has(Language::languageListCacheKey()));
+    }
 }

@@ -48,6 +48,8 @@ class ClearLanguage extends Command
 
         $io->section('Clearing Language Cache');
 
+        // Drop the cached list first so languages added since it was cached are cleared too.
+        Language::forgetCachedLanguageList();
         $langList = $language->getLanguageList();
 
         if ($langList) {

@@ -235,6 +235,20 @@ leantime.ticketsController = (function () {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
+        // The Gantt formats month names with Intl.DateTimeFormat, which needs the whole language
+        // code: the first two letters of "kaa" (Karakalpak) are "ka" (Georgian). A code the browser
+        // doesn't support (or that isn't a valid tag) falls back to English.
+        function ganttLanguage()
+        {
+            var languageCode = leantime.i18n.__("language.code");
+
+            try {
+                return Intl.DateTimeFormat.supportedLocalesOf([languageCode]).length > 0 ? languageCode : 'en';
+            } catch (error) {
+                return 'en';
+            }
+        }
+
         jQuery(document).ready(
             function () {
 
@@ -259,7 +273,7 @@ leantime.ticketsController = (function () {
                             padding:20,
                             view_mode: viewMode,
                             date_format: leantime.i18n.__("language.momentJSDate"),
-                            language: leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
+                            language: ganttLanguage(),
                             additional_rows: 5,
                             custom_popup_html: function (task) {
 
