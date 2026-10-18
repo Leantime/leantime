@@ -58,7 +58,7 @@
         <div class="col-md-2">
             <div class="row-fluid marginBottom">
                 <x-global::elements.section-header icon="fa fa-folder">{!! __('subtitles.organization') !!}</x-global::elements.section-header>
-                <label>{{ __('label.parent') }}</label>
+                <x-global::forms.label>{{ __('label.parent') }}</x-global::forms.label>
                 <x-global::forms.select width="full" name="parent">
                     <option value="0">{{ __('label.none') }}</option>
                     @foreach ($wikiHeadlines as $parent)
@@ -69,7 +69,7 @@
                     @endforeach
                 </x-global::forms.select>
 
-                <label>{!! __('label.status') !!}</label>
+                <x-global::forms.label>{!! __('label.status') !!}</x-global::forms.label>
                 <x-global::forms.select width="full" name="status">
                     <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{!! __('label.draft') !!}</option>
                     <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{!! __('label.published') !!}</option>

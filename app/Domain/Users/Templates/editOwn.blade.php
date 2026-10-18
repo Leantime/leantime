@@ -35,7 +35,7 @@
                                     <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                     <div class="row-fluid">
                                         <div class="form-group">
-                                            <label for="firstname" >{{ __('label.firstname') }}</label>
+                                            <x-global::forms.label for="firstname" >{{ __('label.firstname') }}</x-global::forms.label>
                                             <span>
                                                 <input type="text" class="input" name="firstname" id="firstname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                 value="{{ $values['firstname'] }}"/><br/>
@@ -43,7 +43,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="lastname" >{{ __('label.lastname') }}</label>
+                                            <x-global::forms.label for="lastname" >{{ __('label.lastname') }}</x-global::forms.label>
                                             <span>
                                                 <input type="text" name="lastname" class="input" id="lastname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                 value="{{ $values['lastname']  }}"/><br/>
@@ -51,7 +51,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="user" >{{ __('label.email') }}</label>
+                                            <x-global::forms.label for="user" >{{ __('label.email') }}</x-global::forms.label>
                                             <span>
                                                 <input type="text" name="user" class="input" id="user" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                 value="{{ $values['user']  }}"/><br/>
@@ -59,7 +59,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="phone" >{{ __('label.phone') }}</label>
+                                            <x-global::forms.label for="phone" >{{ __('label.phone') }}</x-global::forms.label>
                                             <span>
                                                 <input type="text" name="phone" class="input" id="phone" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                 value="{{ $values['phone']  }}"/><br/>
@@ -74,7 +74,7 @@
                                         <x-global::elements.section-header>{{ __('label.employee_information') }}</x-global::elements.section-header>
                                         <em>{{ __('text.only_admins_can_change_user_info') }}</em><br /><br />
                                         <div class="form-group">
-                                            <label for="phone" >{{ __('label.jobTitle') }}</label>
+                                            <x-global::forms.label for="phone" >{{ __('label.jobTitle') }}</x-global::forms.label>
                                             <span>
                                                 <input type="text" name="jobTitle" readonly class="input" id="jobTitle"}}
                                                 value="{{ $values['jobTitle']  }}"/><br/>
@@ -82,7 +82,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="phone" >{{ __('label.jobLevel') }}</label>
+                                            <x-global::forms.label for="phone" >{{ __('label.jobLevel') }}</x-global::forms.label>
                                             <span>
                                                 <input type="text" name="jobLevel" readonly class="input" id="jobLevel"}}
                                                        value="{{ $values['jobLevel']  }}"/><br/>
@@ -90,7 +90,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="phone" >{{ __('label.department') }}</label>
+                                            <x-global::forms.label for="phone" >{{ __('label.department') }}</x-global::forms.label>
                                             <span>
                                                 <input type="text" name="department" readonly class="input" id="department"}}
                                                        value="{{ $values['department']  }}"/><br/>
@@ -110,7 +110,7 @@
 
                                     <div class="par">
 
-                                        <label>{{ __('label.upload') }}</label>
+                                        <x-global::forms.label>{{ __('label.upload') }}</x-global::forms.label>
 
                                         <div class='fileupload fileupload-new' data-provides='fileupload'>
                                             <input type="hidden"/>
@@ -153,7 +153,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="currentPassword" >{{ __('label.old_password') }}</label>
+                                    <x-global::forms.label for="currentPassword" >{{ __('label.old_password') }}</x-global::forms.label>
                                     <span>
                                         <input type='password' value="" name="currentPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                id="currentPassword"/><br/>
@@ -161,7 +161,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="newPassword" >{{ __('label.new_password') }}</label>
+                                    <x-global::forms.label for="newPassword" >{{ __('label.new_password') }}</x-global::forms.label>
                                     <span>
                                         <input type='password' value="" name="newPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                id="newPassword"/>
@@ -171,7 +171,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="confirmPassword" >{{ __('label.password_repeat') }}</label>
+                                    <x-global::forms.label for="confirmPassword" >{{ __('label.password_repeat') }}</x-global::forms.label>
                                     <span>
                                         <input type="password" value="" name="confirmPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                id="confirmPassword"/><br/>
@@ -202,7 +202,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="language" >{{ __('label.language') }}</label>
+                                    <x-global::forms.label for="language" >{{ __('label.language') }}</x-global::forms.label>
                                     <span class='field'>
                                         <x-global::forms.select enhanced name="language" id="language">
                                             @foreach ($languageList as $languagKey => $languageValue )
@@ -215,7 +215,7 @@
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="date_format" >{{ __('label.date_format') }}</label>
+                                    <x-global::forms.label for="date_format" >{{ __('label.date_format') }}</x-global::forms.label>
                                     <span>
                                         <x-global::forms.select name="date_format" id="date_format">
                                            @php
@@ -234,7 +234,7 @@
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="time_format" >{{ __('label.time_format') }}</label>
+                                    <x-global::forms.label for="time_format" >{{ __('label.time_format') }}</x-global::forms.label>
                                     <span>
                                         <x-global::forms.select name="time_format" id="time_format">
                                             @php
@@ -253,7 +253,7 @@
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="timezone" >{{ __('label.timezone') }}</label>
+                                    <x-global::forms.label for="timezone" >{{ __('label.timezone') }}</x-global::forms.label>
                                     <span>
                                         <x-global::forms.select name="timezone" id="timezone">
 
@@ -278,7 +278,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="themeSelect">{{ __('label.optimal_stimulation') }}</label>
+                                    <x-global::forms.label for="themeSelect">{{ __('label.optimal_stimulation') }}</x-global::forms.label>
                                     <span class='field tw-flex tw-w-80'>
 
                                          <?php
@@ -296,7 +296,7 @@
                                     <div class="col-md-12">
 
                                         <hr />
-                                        <label for="colormode" >{{ __('label.colormode') }}</label>
+                                        <x-global::forms.label for="colormode" >{{ __('label.colormode') }}</x-global::forms.label>
 
                                         <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                                             <label for="colormode-light" class="tw-w-[100px]">
@@ -315,14 +315,14 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <hr />
-                                        <label>{{ __('label.font') }}</label>
+                                        <x-global::forms.label>{{ __('label.font') }}</x-global::forms.label>
                                         @foreach($availableFonts as $key => $font)
 
                                             <x-global::selectable  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
-                                                <label for="selectable-{{ $key }}" class="font tw-w-[200px]"
+                                                <x-global::forms.label for="selectable-{{ $key }}" class="font tw-w-[200px]"
                                                        style="font-family:'{{ $font }}'; font-size:16px;">
                                                     {{ __('text.font_preview_sentence') }}
-                                                </label>
+                                                </x-global::forms.label>
                                             </x-global::selectable>
 
                                         @endforeach
@@ -332,7 +332,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <hr />
-                                        <label>{{ __('label.color_scheme') }}</label>
+                                        <x-global::forms.label>{{ __('label.color_scheme') }}</x-global::forms.label>
                                         @foreach($availableColorSchemes as $key => $scheme )
                                             <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
                                                 <label for="color-{{ $key }}" class="colorCircle"
@@ -364,7 +364,7 @@
                                     <x-global::forms.checkbox name="notifications" value="on" id="notifications" :checked="$values['notifications'] == '1'">{{ __('label.receive_notifications') }}</x-global::forms.checkbox>
                                 </div>
                                 <div class="form-group">
-                                    <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
+                                    <x-global::forms.label for="messagesfrequency" >{{ __('label.messages_frequency') }}</x-global::forms.label>
                                     <span>
                                         <x-global::forms.select enhanced name="messagesfrequency" class="input" id="messagesfrequency">
                                             <option value="">--{{ __('label.choose_option') }}--</option>
@@ -475,7 +475,7 @@
                                 <x-global::forms.checkbox name="webhookEnabled" id="webhookEnabled" :checked="! empty($webhookEnabled)">{{ __('label.enable_webhook_notifications') }}</x-global::forms.checkbox>
                             </div>
                             <div class="form-group">
-                                <label for="webhookUrl">{{ __('label.webhook_url') }}</label>
+                                <x-global::forms.label for="webhookUrl">{{ __('label.webhook_url') }}</x-global::forms.label>
                                 <span>
                                     <x-global::forms.text-input type="url" name="webhookUrl" id="webhookUrl" class="input"
                                                                 placeholder="https://example.com/webhook"

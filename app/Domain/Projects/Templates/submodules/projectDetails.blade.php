@@ -149,7 +149,7 @@
 
                     <div class="form-group">
 
-                <label class="col-md-4 control-label" for="projectState">{!! __('label.project_state') !!}</label>
+                <x-global::forms.label class="col-md-4 control-label" for="projectState">{!! __('label.project_state') !!}</x-global::forms.label>
                 <div class="col-md-6">
                     <x-global::forms.select enhanced name="projectState" id="projectState">
                         <option value="0" @if ($project['state'] == 0) selected=selected @endif>{!! __('label.open') !!}</option>
@@ -182,7 +182,7 @@
                 <div class="col-md-12 ">
                     <x-global::elements.section-header icon="fa fa-money-bill-alt">{!! __('label.budgets') !!}</x-global::elements.section-header>
                     <div class="form-group">
-                        <label class="col-md-4 control-label"for="hourBudget">{!! __('label.hourly_budget') !!}</label>
+                        <x-global::forms.label class="col-md-4 control-label" for="hourBudget">{!! __('label.hourly_budget') !!}</x-global::forms.label>
                         <div class="col-md-6">
                             <x-global::forms.text-input name="hourBudget" id="hourBudget" value="{{ $project['hourBudget'] }}" />
 
@@ -190,7 +190,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-4 control-label" for="dollarBudget">{!! __('label.budget_cost') !!}</label>
+                        <x-global::forms.label class="col-md-4 control-label" for="dollarBudget">{!! __('label.budget_cost') !!}</x-global::forms.label>
                         <div class="col-md-6">
                             <x-global::forms.text-input name="dollarBudget" id="dollarBudget" value="{{ $project['dollarBudget'] }}" />
 

@@ -36,7 +36,7 @@ $values = $values ?? [];
 
                         <x-slot:title>{!! __('label.overview') !!}</x-slot:title>
 
-                            <label for="clients">{!! __('label.client') !!}</label>
+                            <x-global::forms.label for="clients">{!! __('label.client') !!}</x-global::forms.label>
                             <x-global::forms.select name="clients" id="clients" onchange="filterProjectsByClient();">
                                 <option value="all">{!! __('headline.all_clients') !!}</option>
                                 @foreach ($allClients as $client)
@@ -44,7 +44,7 @@ $values = $values ?? [];
                                 @endforeach
                             </x-global::forms.select> <br/>
 
-                            <label for="projects">{!! __('label.project') !!}</label> <x-global::forms.select
+                            <x-global::forms.label for="projects">{!! __('label.project') !!}</x-global::forms.label> <x-global::forms.select
                                     name="projects" id="projects"
                                     onchange="removeOptions($('select#projects option:selected').val());">
 
@@ -70,7 +70,7 @@ $values = $values ?? [];
                                 </optgroup>
                             </x-global::forms.select> <br/>
 
-                            <label for="tickets">{!! __('label.ticket') !!}</label>
+                            <x-global::forms.label for="tickets">{!! __('label.ticket') !!}</x-global::forms.label>
                             <x-global::forms.select name="tickets" id="tickets">
 
                                 @foreach ($allTickets as $row)
@@ -83,7 +83,7 @@ $values = $values ?? [];
 
                             </x-global::forms.select> <br/>
                             <br/>
-                            <label for="kind">{!! __('label.kind') !!}</label> <x-global::forms.select id="kind"
+                            <x-global::forms.label for="kind">{!! __('label.kind') !!}</x-global::forms.label> <x-global::forms.select id="kind"
                                                                                           name="kind">
                                 @foreach ($kind as $row)
                                     <option value="{{ $row }}"
@@ -94,15 +94,15 @@ $values = $values ?? [];
                                 @endforeach
 
                             </x-global::forms.select><br/>
-                            <label for="date">{!! __('label.date') !!}</label> <input type="text" autocomplete="off"
+                            <x-global::forms.label for="date">{!! __('label.date') !!}</x-global::forms.label> <input type="text" autocomplete="off"
                                                                                          id="date" name="date"
                                                                                          value="{{ $values['date'] }}"
                                                                                          size="7"/>
                             <br/>
-                            <label for="hours">{!! __('label.hours') !!}</label> <x-global::forms.text-input
+                            <x-global::forms.label for="hours">{!! __('label.hours') !!}</x-global::forms.label> <x-global::forms.text-input
                                     id="hours" name="hours"
                                     value="{{ $values['hours'] }}" size="7" /> <br/>
-                            <label for="description">{!! __('label.description') !!}</label> <x-global::forms.textarea
+                            <x-global::forms.label for="description">{!! __('label.description') !!}</x-global::forms.label> <x-global::forms.textarea
                                     rows="5" cols="50" id="description"
                                     name="description">{{ $values['description'] }}</x-global::forms.textarea><br/>
                             <br/>

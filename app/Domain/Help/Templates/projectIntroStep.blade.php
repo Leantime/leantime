@@ -6,7 +6,7 @@
                 <h1>{{  __('headlines.hi_there') }}</h1>
                 <p>{!!  __('text.get_organized_with_projects') !!}</p>
                 <br />
-                <label>{{ __('label.start_with_project_title') }}</label>
+                <x-global::forms.label>{{ __('label.start_with_project_title') }}</x-global::forms.label>
                 <x-global::forms.text-input width="full" id="projectName" name="projectname" value="" placeholder="" /><br />
 
             </div>

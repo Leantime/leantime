@@ -76,12 +76,12 @@
                             <div style="margin-bottom: 30px;">
                                 <x-global::elements.section-header icon="fa fa-calendar">{!! __('label.project_dates') !!}</x-global::elements.section-header>
                                 <div>
-                                    <label>{!! __('label.project_start') !!}</label>
+                                    <x-global::forms.label>{!! __('label.project_start') !!}</x-global::forms.label>
                                     <div class="">
                                         <x-global::forms.date-picker name="start" range="from" :value="$project['start']" class="dates dateFrom" />
 
                                     </div>
-                                    <label>{!! __('label.project_end') !!}</label>
+                                    <x-global::forms.label>{!! __('label.project_end') !!}</x-global::forms.label>
                                     <div class="">
                                         <x-global::forms.date-picker name="end" range="to" :value="$project['end']" class="dates dateTo" />
 

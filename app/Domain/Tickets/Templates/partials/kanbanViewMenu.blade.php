@@ -27,7 +27,7 @@
                        value="{{ $fieldName }}"
                        id="kanbanField-{{ $fieldName }}"
                        @checked($isVisible) />
-                <label for="kanbanField-{{ $fieldName }}">{{ __('label.kanban_field_'.$fieldName) }}</label>
+                <x-global::forms.label for="kanbanField-{{ $fieldName }}">{{ __('label.kanban_field_'.$fieldName) }}</x-global::forms.label>
             </span>
         @endforeach
 
@@ -39,7 +39,7 @@
                        value="{{ $sortOption }}"
                        id="kanbanSort-{{ $sortOption }}"
                        @checked($kanbanSort === $sortOption) />
-                <label for="kanbanSort-{{ $sortOption }}">{{ __('label.kanban_sort_'.$sortOption) }}</label>
+                <x-global::forms.label for="kanbanSort-{{ $sortOption }}">{{ __('label.kanban_sort_'.$sortOption) }}</x-global::forms.label>
             </span>
         @endforeach
 

@@ -22,10 +22,10 @@
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/sprints/editSprint/{{ $id }}">
 
-    <label>{!! __('label.sprint_name') !!}</label>
+    <x-global::forms.label>{!! __('label.sprint_name') !!}</x-global::forms.label>
     <x-global::forms.text-input name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" /><br />
 
-    <label>{!! __('label.project') !!}</label>
+    <x-global::forms.label>{!! __('label.project') !!}</x-global::forms.label>
     @if (! empty($lockProject))
         {{-- Program sprint: project is fixed to the owning program and cannot be reassigned. --}}
         @php $lockedProject = $allAssignedprojects[0] ?? null; @endphp
@@ -47,10 +47,10 @@
 
     <br /><br />
     <p>{!! __('label.sprint_dates') !!}</p><br/>
-    <label>{!! __('label.first_day') !!}</label>
+    <x-global::forms.label>{!! __('label.first_day') !!}</x-global::forms.label>
     <input type="text" name="startDate" autocomplete="off" value="{{ format($currentSprint->startDate)->date() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" /><br />
 
-    <label>{!! __('label.last_day') !!}</label>
+    <x-global::forms.label>{!! __('label.last_day') !!}</x-global::forms.label>
     <input type="text" name="endDate" autocomplete="off" value="{{ format($currentSprint->endDate)->date() }} " placeholder="{{ __('language.dateformat') }}" id="sprintEnd" />
 
     <br />

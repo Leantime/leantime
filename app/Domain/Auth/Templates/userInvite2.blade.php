@@ -16,7 +16,7 @@
 
         <div class="row-fluid">
             <div class="form-group">
-                <label for="themeSelect">{{ __('label.optimal_stimulation') }}</label>
+                <x-global::forms.label for="themeSelect">{{ __('label.optimal_stimulation') }}</x-global::forms.label>
                 <span class='field tw-flex'>
 
                      <?php
@@ -32,15 +32,15 @@
             </div>
             <br />
             <div class="form-group">
-                <label>{{ __('label.readability') }}</label>
+                <x-global::forms.label>{{ __('label.readability') }}</x-global::forms.label>
                 <div class="tw-flex">
                     @foreach($availableFonts as $key => $font)
 
                         <x-global::selectable  data-tippy-content="{{ $fontTooltips[$key] }}" :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
-                            <label for="selectable-{{ $key }}" class="font tw-w-[150px]"
+                            <x-global::forms.label for="selectable-{{ $key }}" class="font tw-w-[150px]"
                                    style="font-family:'{{ $font }}'; font-size:16px;">
                                 {{ __('text.font_preview_sentence') }}
-                            </label>
+                            </x-global::forms.label>
                         </x-global::selectable>
 
                     @endforeach

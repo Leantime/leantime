@@ -37,7 +37,7 @@
                     <div class="col-md-3"></div>
                     <div class="col-md-2 right">
                         <h1>{{ __('headlines.integration_from') }}</h1>
-                        <label for="providerEntities">{{ $provider->name }}</label>
+                        <x-global::forms.label for="providerEntities">{{ $provider->name }}</x-global::forms.label>
                         <x-global::forms.select width="full" name="providerEntities" id="providerEntities">
                             @foreach ($providerEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
@@ -50,7 +50,7 @@
                     <div class="col-md-2">
                         <h1>{{ __('headlines.integration_to') }}</h1>
 
-                        <label for="leantimeEntities">Leantime</label>
+                        <x-global::forms.label for="leantimeEntities">Leantime</x-global::forms.label>
                         <x-global::forms.select width="full" name="leantimeEntities" id="leantimeEntities">
                             @foreach ($leantimeEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>

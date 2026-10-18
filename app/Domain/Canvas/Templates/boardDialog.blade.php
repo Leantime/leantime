@@ -8,7 +8,7 @@
     <x-slot:title><i class='fa fa-plus'></i> {!! __('subtitles.create_new_board') !!}</x-slot:title>
 </x-global::actions.modal-header>
     <div class="modal-body">
-        <label>{!! __('label.title_new') !!}</label><br />
+        <x-global::forms.label>{!! __('label.title_new') !!}</x-global::forms.label><br />
         <x-global::forms.text-input width="full" name="canvastitle" value="{{ $canvasTitle }}" placeholder="{{ __('input.placeholders.enter_title_for_board') }}" />
     </div>
     <div class="modal-footer">

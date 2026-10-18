@@ -16,11 +16,11 @@
         <input type="hidden" name="redirectUrl" value="{{ $redirectUrl }}" />
 
         <div class="">
-            <label for="username">{{ __('label.email') }}</label>
+            <x-global::forms.label for="username">{{ __('label.email') }}</x-global::forms.label>
             <x-global::forms.text-input name="username" id="username" placeholder="{{ __($inputPlaceholder) }}" value="" />
         </div>
         <div class="">
-            <label for="password">{{ __('label.password') }}</label>
+            <x-global::forms.label for="password">{{ __('label.password') }}</x-global::forms.label>
             <x-global::forms.text-input type="password" name="password" id="password" autocomplete="off" placeholder="{{ __('input.placeholders.enter_password') }}" value="" />
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/auth/resetPw" class="forgotPw">{!! __('links.forgot_password') !!}</a>

@@ -178,7 +178,7 @@
                             <h4 class="modal-title">{!! __('headlines.start_new_idea_board') !!}</h4>
                         </div>
                         <div class="modal-body">
-                            <label>{!! __('label.topic_idea_board') !!}</label>
+                            <x-global::forms.label>{!! __('label.topic_idea_board') !!}</x-global::forms.label>
                             <x-global::forms.text-input width="full" name="canvastitle" placeholder="{{ __('input.placeholders.name_for_idea_board') }}" />
                         </div>
                         <div class="modal-footer">
@@ -200,7 +200,7 @@
                             <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>
                         </div>
                         <div class="modal-body">
-                            <label>{!! __('label.title_idea_board') !!}</label>
+                            <x-global::forms.label>{!! __('label.title_idea_board') !!}</x-global::forms.label>
                             <x-global::forms.text-input width="full" name="canvastitle" value="{{ $canvasTitle }}" />
                         </div>
                         <div class="modal-footer">

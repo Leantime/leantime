@@ -33,7 +33,7 @@
                                     <x-global::elements.section-header icon="fa fa-building">{!! __('subtitles.companydetails') !!}</x-global::elements.section-header>
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>{!! __('label.language') !!}</label>
+                                            <x-global::forms.label>{!! __('label.language') !!}</x-global::forms.label>
                                         </div>
                                         <div class="col-md-8">
                                             <x-global::forms.select name="language" id="language">
@@ -50,7 +50,7 @@
 
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>{!! __('label.company_name') !!}</label>
+                                            <x-global::forms.label>{!! __('label.company_name') !!}</x-global::forms.label>
                                         </div>
                                         <div class="col-md-8">
                                             <x-global::forms.text-input name="name" id="companyName"  value="{{ $companySettings['name'] }}" class="pull-left" />
@@ -77,7 +77,7 @@
                                     <x-global::elements.section-header icon="fa fa-cog">{!! __('subtitles.defaults') !!}</x-global::elements.section-header>
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label for="messageFrequency">{!! __('label.messages_frequency') !!}</label>
+                                            <x-global::forms.label for="messageFrequency">{!! __('label.messages_frequency') !!}</x-global::forms.label>
                                         </div>
                                         <div class="col-md-8">
                                                             <span class='field'>
@@ -170,7 +170,7 @@
                                             <br />
                                             <div class="par">
 
-                                                <label>{!! __('label.upload_new_logo') !!}</label>
+                                                <x-global::forms.label>{!! __('label.upload_new_logo') !!}</x-global::forms.label>
 
                                                 <div class='fileupload fileupload-new' data-provides='fileupload'>
                                                     <input type="hidden"/>
