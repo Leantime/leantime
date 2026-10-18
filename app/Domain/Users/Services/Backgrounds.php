@@ -224,7 +224,8 @@ class Backgrounds extends BaseService
         // name, so two uploads of "background.png" would share one file and deleting the replaced
         // one would delete the new background too.
         $extension = strtolower(pathinfo((string) $upload['name'], PATHINFO_EXTENSION));
-        $upload['name'] = 'background-'.bin2hex(random_bytes(8)).'.'.$extension;
+        // Letters and digits only: files/get strips everything else from the name before the lookup.
+        $upload['name'] = 'background'.bin2hex(random_bytes(8)).'.'.$extension;
 
         $storedFile = $this->files->upload(['file' => $upload], 'user', $userId);
 
@@ -241,7 +242,7 @@ class Backgrounds extends BaseService
         ]);
 
         $this->theme->setBackgroundImage($fileUrl);
-        $this->replaceUploadedBackgroundFile((int) $storedFile['fileId']);
+        $this->replaceUploadedBackgroundFile(['fileId' => (int) $storedFile['fileId'], 'url' => $fileUrl]);
 
         return true;
     }
@@ -249,21 +250,33 @@ class Backgrounds extends BaseService
     /**
      * Remember the uploaded file the background now uses (null: none) and delete the one it used
      * before. Only that file is deleted: the "user" files module also holds profile pictures.
+     *
+     * @param  array{fileId: int, url: string}|null  $newFile  The new uploaded background.
      */
-    private function replaceUploadedBackgroundFile(?int $newFileId): void
+    private function replaceUploadedBackgroundFile(?array $newFile): void
     {
-        $settingKey = 'usersettings.'.(int) session('userdata.id').'.backgroundFileId';
-        $previousFileId = (int) $this->settings->getSetting($settingKey, 0);
+        $settingKey = 'usersettings.'.(int) session('userdata.id').'.backgroundFile';
+        $previousFile = json_decode((string) $this->settings->getSetting($settingKey, ''), true);
 
-        if ($newFileId !== null) {
-            $this->settings->saveSetting($settingKey, $newFileId);
-        } elseif ($previousFileId > 0) {
+        if ($newFile !== null) {
+            $this->settings->saveSetting($settingKey, json_encode($newFile));
+        } elseif (is_array($previousFile)) {
             $this->settings->deleteSetting($settingKey);
         }
 
-        if ($previousFileId > 0 && $previousFileId !== $newFileId) {
-            $this->files->deleteFile($previousFileId);
+        $previousFileId = (int) ($previousFile['fileId'] ?? 0);
+        if ($previousFileId <= 0 || $previousFileId === ($newFile['fileId'] ?? null)) {
+            return;
         }
+
+        // Two changes can run at the same time (two tabs). The previous upload is only deleted
+        // when it is not the background that ended up saved, so a racing request can never
+        // delete the image in use; at worst one replaced upload is left behind.
+        if (($previousFile['url'] ?? '') === (string) $this->theme->getBackgroundImage()) {
+            return;
+        }
+
+        $this->files->deleteFile($previousFileId);
     }
 
     /**
