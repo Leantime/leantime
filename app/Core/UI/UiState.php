@@ -3,6 +3,7 @@
 namespace Leantime\Core\UI;
 
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\Db as DbCore;
 
@@ -123,7 +124,9 @@ class UiState
                 continue;
             }
             $legacy = safe_unserialize((string) $row->value, []);
-            foreach (is_array($legacy) ? $legacy : [] as $name => $value) {
+            // The old store wrote through a dot-notation session path, so a name with dots
+            // ("section.part") was saved nested: flatten it back to the dotted name.
+            foreach (is_array($legacy) ? Arr::dot($legacy) : [] as $name => $value) {
                 if (is_scalar($value)) {
                     $states[$this->storedName((string) $name)] = (string) $value;
                 }
@@ -159,14 +162,19 @@ class UiState
     }
 
     /**
-     * The name as stored: names that would make the key too long are shortened to a stable hash.
+     * The name as stored in the key. zp_settings.key compares case- and accent-insensitively on
+     * MySQL (utf8mb4_unicode_ci), so "Foo" and "foo" would share a row: everything outside
+     * [a-z0-9_-] is escaped ("~" + hex), which keeps distinct names distinct under any collation.
+     * Names that would make the key too long are shortened to a stable hash.
      */
     private function storedName(string $name): string
     {
+        $encoded = preg_replace_callback('/[^a-z0-9_-]/', fn ($m) => '~'.bin2hex($m[0]), $name);
+
         // Longest prefix for a realistic user id ("usersetting.9999999999.ui.").
         $room = self::MAX_KEY_LENGTH - 26;
 
-        return strlen($name) <= $room ? $name : substr($name, 0, $room - 41).'~'.sha1($name);
+        return strlen($encoded) <= $room ? $encoded : substr($encoded, 0, $room - 41).'~'.sha1($name);
     }
 
     private function userId(): ?int
