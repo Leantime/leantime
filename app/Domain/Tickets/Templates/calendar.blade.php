@@ -40,7 +40,7 @@
                 <button class="fc-today-button btn btn-default right" style="margin-right:5px;">{{ __('label.today_lowercase') }}</button>
 
 
-                <x-global::forms.select id="my-select" style="margin-right:5px;" class="right">
+                <x-global::forms.select id="my-select" width="sm" style="margin-right:5px;" class="right">
                     <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ $projectCalendarView == 'timeGridDay' ? 'selected' : '' }}>{{ __('buttons.day', 'Day') }}</option>
                     <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ $projectCalendarView == 'timeGridWeek' ? 'selected' : '' }}>{{ __('buttons.week', 'Week') }}</option>
                     <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ $projectCalendarView == 'dayGridMonth' ? 'selected' : '' }}>{{ __('buttons.month', 'Month') }}</option>

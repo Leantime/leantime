@@ -96,7 +96,7 @@ leantime.snippets = (function () {
             element._tippy.destroy();
         }
     });
-    document.addEventListener('lt:ui:modal.loaded', function (event) { initInfoTips(event.detail.root); });
+    document.addEventListener('lt:ui:content.loaded', function (event) { initInfoTips(event.detail.root); });
 
     // forms.button-group segmented: expose the starting choice to assistive tech on render.
     var initSegmentedGroups = function (root) {
@@ -108,8 +108,8 @@ leantime.snippets = (function () {
         });
     };
     htmx.onLoad(initSegmentedGroups);
-    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
-    document.addEventListener('lt:ui:modal.loaded', function (event) { initSegmentedGroups(event.detail.root); });
+    // Content inserted outside an htmx swap (dialogs …): see leantime.initLoadedContent in app.js.
+    document.addEventListener('lt:ui:content.loaded', function (event) { initSegmentedGroups(event.detail.root); });
 
     // forms.button-group segmented: one picked option. Moves .active / aria-pressed to the clicked
     // button; the page's own click handler reacts to the choice.
@@ -175,8 +175,8 @@ leantime.snippets = (function () {
         });
     };
     htmx.onLoad(observeAccordionActions);
-    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
-    document.addEventListener('lt:ui:modal.loaded', function (event) { observeAccordionActions(event.detail.root); });
+    // Content inserted outside an htmx swap (dialogs …): see leantime.initLoadedContent in app.js.
+    document.addEventListener('lt:ui:content.loaded', function (event) { observeAccordionActions(event.detail.root); });
     document.addEventListener('htmx:beforeCleanupElement', function (event) {
         if (accordionActionsObserver && event.target.matches && event.target.matches('.lt-accordion > .lt-accordion-actions')) {
             accordionActionsObserver.unobserve(event.target);

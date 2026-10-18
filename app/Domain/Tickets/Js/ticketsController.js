@@ -1888,7 +1888,28 @@ leantime.ticketsController = (function () {
         jQuery(".ticketRows").removeClass("active");
         jQuery("#row-" + id).addClass("active");
 
-        jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px' /></div>");
+        var loadingHtml = "<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px' /></div>";
+
+        // The detail goes in with jQuery, not htmx: release the old content's enhanced selects
+        // (their dropdown panels sit on <body>) before replacing it.
+        function replaceContent(html)
+        {
+            var container = jQuery(element)[0];
+            if (container && leantime.selectController) {
+                leantime.selectController.destroyWithin(container);
+            }
+            jQuery(element).html(html);
+        }
+
+        // ... and initialize the new content the way an htmx swap would (selects, tags, dates).
+        function showTicket(html)
+        {
+            replaceContent(html);
+            leantime.initLoadedContent(jQuery(element)[0]);
+            formSubmitHandler(element);
+        }
+
+        replaceContent(loadingHtml);
 
         function formSubmitHandler(element)
         {
@@ -1904,18 +1925,18 @@ leantime.ticketsController = (function () {
                         leantime.tiptapController.registry.destroyAll();
                     }
 
-                    jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px'/></div>");
-
                     var data = jQuery(this).serialize();
+                    var action = jQuery(this).attr("action");
+
+                    replaceContent(loadingHtml);
 
                     jQuery.ajax({
-                        url: jQuery(this).attr("action"),
+                        url: action,
                         data: data,
                         type: "post",
                         success: function (data) {
 
-                            jQuery(element).html(data);
-                            formSubmitHandler(element);
+                            showTicket(data);
 
                         },
                         error: function () {
@@ -1931,8 +1952,7 @@ leantime.ticketsController = (function () {
 
         jQuery.get(leantime.appUrl + '/tickets/showTicket/' + id, function ( data ) {
 
-            jQuery(element).html(data);
-            formSubmitHandler(element);
+            showTicket(data);
 
         });
 
