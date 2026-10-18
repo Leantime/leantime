@@ -50,7 +50,7 @@
                         </td>
                         <td><a href="{{ BASE_URL }}/users/editUser/{{ $row['id'] }}">{{ $row['username'] }}</a></td>
                         <td>{{ $row['clientName'] }}</td>
-                        <td>{!! __('label.roles.' . $roles[$row['role']]) !!}</td>
+                        <td>{{ \Leantime\Domain\Auth\Models\Roles::label($row['role']) }}</td>
                         <td>@if (strtolower($row['status']) == 'a')
                             {!! __('label.active') !!}
                         @elseif (strtolower($row['status']) == 'i')

@@ -83,30 +83,18 @@
                                                     <small>{!! __('label.invited') !!}</small>
                                                 @endif
                                             </label>
-                                            @php
-                                            if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) {
-                                            @endphp
-                                                <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$assignedUser['role']]) }}" />
-                                            @php
-                                            } else {
-                                            @endphp
+                                            @if ($roles::isAtLeast($assignedUser['role'], $roles::$admin))
+                                                <x-global::forms.text-input readonly disabled value="{{ $roles::label($assignedUser['role']) }}" />
+                                            @else
                                                 <x-global::forms.select name="userProjectRole-{{ $assignedUser['id'] }}">
                                                     <option value="inherit">{{ __('label.inherit') }}</option>
-                                                    <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
-                                                        @if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) selected='selected' @endif
-                                                    >{!! __('label.roles.'.$roles::$readonly) !!}</option>
-
-                                                    <option value="{{ array_search($roles::$commenter, $roles::getRoles()) }}"
-                                                        @if ($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) selected='selected' @endif
-                                                    >{!! __('label.roles.'.$roles::$commenter) !!}</option>
-                                                    <option value="{{ array_search($roles::$editor, $roles::getRoles()) }}"
-                                                        @if ($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) selected='selected' @endif
-                                                    >{!! __('label.roles.'.$roles::$editor) !!}</option>
-                                                    <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
-                                                        @if ($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) selected='selected' @endif
-                                                    >{!! __('label.roles.'.$roles::$manager) !!}</option>
+                                                    @foreach ($roles::getProjectAssignableRoles() as $projectRoleKey => $projectRoleName)
+                                                        <option value="{{ $projectRoleKey }}"
+                                                            @if ($assignedUser['projectRole'] == $projectRoleKey) selected='selected' @endif
+                                                        >{{ $roles::label($projectRoleKey) }}</option>
+                                                    @endforeach
                                                 </x-global::forms.select>
-                                            @php } @endphp
+                                            @endif
                                             <div class="clearall"></div>
                                         </x-global::elements.card>
                                     </div>
@@ -132,25 +120,17 @@
                                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}"/>
                                                 </div>
                                                 <label for="user-{{ $row['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) !!}</label>
-                                                @if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner)
-                                                    <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$row['role']]) }}" />
+                                                @if ($roles::isAtLeast($row['role'], $roles::$admin))
+                                                    <x-global::forms.text-input readonly disabled value="{{ $roles::label($row['role']) }}" />
                                                 @else
                                                     @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
                                                     <x-global::forms.select name="userProjectRole-{{ $row['id'] }}">
                                                         <option value="inherit">{{ __('label.inherit') }}</option>
-                                                        <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
-                                                        @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) selected='selected' @endif
-                                                            >{!! __('label.roles.'.$roles::$readonly) !!}</option>
-
-                                                        <option value="{{ array_search($roles::$commenter, $roles::getRoles()) }}"
-                                                            @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) selected='selected' @endif
-                                                        >{!! __('label.roles.'.$roles::$commenter) !!}</option>
-                                                        <option value="{{ array_search($roles::$editor, $roles::getRoles()) }}"
-                                                            @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$editor, $roles::getRoles())) selected='selected' @endif
-                                                        >{!! __('label.roles.'.$roles::$editor) !!}</option>
-                                                        <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
-                                                            @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$manager, $roles::getRoles())) selected='selected' @endif
-                                                        >{!! __('label.roles.'.$roles::$manager) !!}</option>
+                                                        @foreach ($roles::getProjectAssignableRoles() as $projectRoleKey => $projectRoleName)
+                                                            <option value="{{ $projectRoleKey }}"
+                                                                @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == $projectRoleKey) selected='selected' @endif
+                                                            >{{ $roles::label($projectRoleKey) }}</option>
+                                                        @endforeach
                                                     </x-global::forms.select>
                                                 @endif
                                                 <div class="clearall"></div>

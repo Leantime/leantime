@@ -104,6 +104,7 @@ class Install
         30529,
         30530,
         30531,
+        30532,
     ];
 
     /**
@@ -3508,6 +3509,66 @@ class Install
             Log::error('Migration 30531: '.$e->getMessage());
 
             return ['Migration 30531 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30532 — database update for v3.5.32.
+     *
+     * Splits a role's stored key from its rank so custom roles can exist: adds `zp_roles.roleKey`
+     * (the value kept in zp_user.role / zp_relationuserproject.projectRole) and `zp_roles.baseRole`
+     * (the built-in role a custom role acts as wherever code checks a role by name). Built-in roles
+     * keep their keys 5..50, which equal their levels, so no user row changes.
+     */
+    public function update_sql_30532(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_roles')) {
+                Log::info('Migration 30532 skipped: zp_roles missing (30518 not applied?)');
+
+                return true;
+            }
+
+            if (! $schema->hasColumn('zp_roles', 'roleKey')) {
+                $schema->table('zp_roles', function (Blueprint $table): void {
+                    $table->integer('roleKey')->nullable();
+                    $table->string('baseRole', 50)->nullable();
+                });
+            }
+
+            $builtInRoleKeys = [
+                'readonly' => 5,
+                'commenter' => 10,
+                'editor' => 20,
+                'manager' => 30,
+                'admin' => 40,
+                'owner' => 50,
+            ];
+
+            foreach ($builtInRoleKeys as $roleName => $roleKey) {
+                $connection->table('zp_roles')
+                    ->where('name', $roleName)
+                    ->whereNull('roleKey')
+                    ->update(['roleKey' => $roleKey]);
+            }
+
+            if (! $schema->hasIndex('zp_roles', ['roleKey'], 'unique')) {
+                $schema->table('zp_roles', function (Blueprint $table): void {
+                    $table->unique(['roleKey'], 'idx_roles_roleKey');
+                });
+            }
+
+            \Leantime\Domain\Auth\Models\Roles::flushCache();
+        } catch (\Exception $e) {
+            Log::error('Migration 30532: '.$e->getMessage());
+
+            return ['Migration 30532 failed: '.$e->getMessage()];
         }
 
         return true;

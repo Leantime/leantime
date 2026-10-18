@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Setting\Repositories\Setting;
 
 class Helper
@@ -474,7 +475,7 @@ class Helper
         $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
         $ticketService->quickAddTicket($values);
 
-        if (in_array($role, ['admin', 'owner', 'manager'])) {
+        if (Roles::isAtLeast($role, Roles::$manager)) {
 
             $values['headline'] = '👥 '.__('label.onboarding_task_invite_team');
             $values['description'] = sprintf(__('text.onboarding_task_invite_team'), BASE_URL.'/users/showAll');

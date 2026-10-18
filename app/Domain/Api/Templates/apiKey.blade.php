@@ -35,7 +35,7 @@
                                 selected="selected"
                             @endif
                         >
-                            {!! __('label.roles.' . $role) !!}
+                            {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
                         </option>
                     @endforeach
 

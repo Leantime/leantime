@@ -1399,14 +1399,10 @@ class Tickets extends BaseService
      */
     private function userIsAtLeastForProject(string $role, int $projectId): bool
     {
-        $roles = Roles::getRoles();
         $globalRole = session('userdata.role');
 
-        $globalKey = array_search($globalRole, $roles, true);
-        $managerKey = array_search(Roles::$manager, $roles, true);
-
         // Manager+ (manager, admin, owner) keep their global role everywhere.
-        if ($globalKey !== false && $managerKey !== false && $globalKey >= $managerKey) {
+        if (Roles::isAtLeast($globalRole, Roles::$manager)) {
             $effectiveRole = $globalRole;
         } else {
             $projectRole = $this->projectService->getProjectRole(session('userdata.id'), $projectId);
@@ -1414,10 +1410,7 @@ class Tickets extends BaseService
             $effectiveRole = $projectRole === '' ? $globalRole : Roles::getRoleString((int) $projectRole);
         }
 
-        $requiredKey = array_search($role, $roles, true);
-        $effectiveKey = array_search($effectiveRole, $roles, true);
-
-        return $requiredKey !== false && $effectiveKey !== false && $effectiveKey >= $requiredKey;
+        return Roles::isAtLeast($effectiveRole, $role);
     }
 
     /**

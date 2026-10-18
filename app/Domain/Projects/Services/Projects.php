@@ -1196,11 +1196,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         // to "no explicit role" so callers safely fall back to the user's global role instead of an
         // unresolvable one that would deny all project access.
         if (ctype_digit((string) $projectRole)) {
-            $roles = Roles::getRoles();
-            $assignableRoles = array_diff_key($roles, [
-                array_search(Roles::$admin, $roles, true) => null,
-                array_search(Roles::$owner, $roles, true) => null,
-            ]);
+            $assignableRoles = Roles::getProjectAssignableRoles();
 
             return isset($assignableRoles[(int) $projectRole]) ? (string) (int) $projectRole : '';
         }

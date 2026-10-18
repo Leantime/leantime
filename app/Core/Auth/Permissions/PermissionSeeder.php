@@ -63,6 +63,8 @@ class PermissionSeeder
                 $role['displayName'],
                 $role['level'],
                 isSystem: true,
+                // Built-in roles are stored in zp_user.role by their level (5..50).
+                roleKey: $role['level'],
             );
         }
 

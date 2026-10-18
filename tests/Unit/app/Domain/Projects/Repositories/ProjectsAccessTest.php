@@ -67,6 +67,13 @@ class ProjectsAccessTest extends TestCase
 
                 return $this;
             }
+
+            public function orWhereIn(...$args): static
+            {
+                $this->calls[] = ['orWhereIn', $args];
+
+                return $this;
+            }
         };
     }
 
@@ -96,7 +103,7 @@ class ProjectsAccessTest extends TestCase
                 if ($arg instanceof \Closure) {
                     $probe = $this->test->probeClosure($arg);
                     foreach ($probe->calls as $call) {
-                        if ($call === ['orWhere', ['requestingUser.role', '>=', 40]]) {
+                        if ($call === ['orWhereIn', ['requestingUser.role', ['40', '50']]]) {
                             $this->accessClosure = $arg;
 
                             // Stop the query build here — the rest is irrelevant.
@@ -168,7 +175,7 @@ class ProjectsAccessTest extends TestCase
         $this->assertSame(['orWhere', ['project.psettings', 'all']], $q->calls[1], 'public');
         $this->assertSame('orWhere', $q->calls[2][0], 'client (delegated to caller clause)');
         $this->assertSame($clientClause, $q->calls[2][1][0], 'the caller-supplied client clause is forwarded unchanged');
-        $this->assertSame(['orWhere', ['requestingUser.role', '>=', 40]], $q->calls[3], 'admin/owner blanket');
+        $this->assertSame(['orWhereIn', ['requestingUser.role', ['40', '50']]], $q->calls[3], 'admin/owner blanket');
     }
 
     public function test_get_projects_user_has_access_to_scopes_client_clause_to_passed_client_id(): void

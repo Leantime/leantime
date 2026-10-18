@@ -18,6 +18,7 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Plugins\PluginCompatibility;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Notifications\Services\Notifications;
 use Leantime\Domain\Plugins\Events\PluginDisabled;
 use Leantime\Domain\Plugins\Events\PluginEnabled;
@@ -1757,7 +1758,7 @@ class Plugins
         $userService = app()->make(UsersService::class);
         $notificationService = app()->make(Notifications::class);
 
-        $admins = collect($userService->getAll())->filter(fn ($user) => in_array($user['role'], [40, 50]));
+        $admins = collect($userService->getAll())->filter(fn ($user) => in_array((string) $user['role'], Roles::keysAtLeast(Roles::$admin), true));
 
         $notifications = $admins->map(fn ($admin) => [
             'userId' => $admin['id'],
