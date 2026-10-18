@@ -1018,4 +1018,23 @@ class GoalcanvasServiceTest extends TestCase
 
         $this->assertSame([10, 12, 22], array_keys($service->getChildrenbyKPI(1)));
     }
+
+    public function test_child_goal_reporting_skips_projects_with_goals_switched_off(): void
+    {
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 6,
+            'getCanvasItemsByKPI' => fn () => [
+                ['setting' => 'linkonly', 'currentValue' => 10.0, 'projectId' => 6, 'childCurrentValue' => null, 'childProjectId' => null],
+                ['setting' => 'linkonly', 'currentValue' => 100.0, 'projectId' => 5, 'childCurrentValue' => null, 'childProjectId' => null],
+                ['setting' => 'linkAndReport', 'currentValue' => 0.0, 'projectId' => 6, 'childCurrentValue' => 3.0, 'childProjectId' => 6],
+                ['setting' => 'linkAndReport', 'currentValue' => 0.0, 'projectId' => 6, 'childCurrentValue' => 1000.0, 'childProjectId' => 5],
+            ],
+        ]);
+
+        $service = new GoalcanvasService($repo, $this->projectsWithAccess([5, 6]), $this->goalsOffInProject5());
+        $service->setPermissionService($this->allowingPermissions());
+
+        // Only the project-6 goals count: 10 (linkonly) + 3 (rolled-up grandchild in project 6).
+        $this->assertEqualsWithDelta(13.0, $service->getChildGoalsForReporting(1), 0.01);
+    }
 }
