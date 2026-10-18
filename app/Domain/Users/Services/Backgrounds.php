@@ -10,6 +10,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Files\Services\Files;
+use Leantime\Domain\Setting\Services\Setting;
 
 /**
  * The current user's page background: the theme's color gradient, an uploaded image or an
@@ -18,6 +19,8 @@ use Leantime\Domain\Files\Services\Files;
  * Unsplash is only offered when an access key is configured (LEAN_UNSPLASH_ACCESS_KEY). Photos
  * are always resolved on the server by their Unsplash id, so a caller can never store an
  * arbitrary URL as background.
+ *
+ * An uploaded background is a file of the user; it is deleted once another background replaces it.
  */
 class Backgrounds extends BaseService
 {
@@ -49,6 +52,7 @@ class Backgrounds extends BaseService
         private Environment $config,
         private Files $files,
         private HttpClient $http,
+        private Setting $settings,
     ) {}
 
     /**
@@ -88,6 +92,11 @@ class Backgrounds extends BaseService
         }
 
         $this->theme->setBackgroundType($type);
+
+        // The gradient removes the image, so an uploaded one is no longer needed.
+        if ($type === self::TYPE_GRADIENT) {
+            $this->replaceUploadedBackgroundFile(null);
+        }
     }
 
     /**
@@ -188,6 +197,7 @@ class Backgrounds extends BaseService
         }
 
         $this->theme->setBackgroundImage($rawUrl.self::UNSPLASH_BACKGROUND_SIZE);
+        $this->replaceUploadedBackgroundFile(null);
 
         $this->trackUnsplashDownload((string) $response->json('links.download_location', ''));
 
@@ -225,8 +235,29 @@ class Backgrounds extends BaseService
         ]);
 
         $this->theme->setBackgroundImage($fileUrl);
+        $this->replaceUploadedBackgroundFile((int) $storedFile['fileId']);
 
         return true;
+    }
+
+    /**
+     * Remember the uploaded file the background now uses (null: none) and delete the one it used
+     * before. Only that file is deleted: the "user" files module also holds profile pictures.
+     */
+    private function replaceUploadedBackgroundFile(?int $newFileId): void
+    {
+        $settingKey = 'usersettings.'.(int) session('userdata.id').'.backgroundFileId';
+        $previousFileId = (int) $this->settings->getSetting($settingKey, 0);
+
+        if ($newFileId !== null) {
+            $this->settings->saveSetting($settingKey, $newFileId);
+        } elseif ($previousFileId > 0) {
+            $this->settings->deleteSetting($settingKey);
+        }
+
+        if ($previousFileId > 0 && $previousFileId !== $newFileId) {
+            $this->files->deleteFile($previousFileId);
+        }
     }
 
     /**

@@ -127,7 +127,7 @@ class Theme
         ],
         'nebular' => [
             'name' => 'Nebula',
-            'primaryColor' => '#d18475',
+            'primaryColor' => '#bf5440',
             'secondaryColor' => '#0f1b31',
         ],
         'fuchsia' => [
@@ -157,12 +157,12 @@ class Theme
         ],
         'ocean' => [
             'name' => 'Ocean',
-            'primaryColor' => '#73ccd5',
+            'primaryColor' => '#298089',
             'secondaryColor' => '#fdd78c',
         ],
         'energy' => [
             'name' => 'Energy',
-            'primaryColor' => '#FA6821',
+            'primaryColor' => '#cf4705',
             'secondaryColor' => '#91372b',
         ],
         'forrest' => [

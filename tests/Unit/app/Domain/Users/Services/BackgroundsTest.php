@@ -8,6 +8,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Files\Services\Files;
+use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Users\Services\Backgrounds;
 use Unit\TestCase;
 
@@ -27,6 +28,12 @@ class BackgroundsTest extends TestCase
     /** @var string[] Background types the service stored through the theme. */
     private array $storedTypes = [];
 
+    /** @var array<string, mixed> In-memory user settings. */
+    private array $settings = [];
+
+    /** @var int[] File ids the service deleted. */
+    private array $deletedFileIds = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -35,9 +42,12 @@ class BackgroundsTest extends TestCase
         $this->http->preventStrayRequests();
         $this->storedImages = [];
         $this->storedTypes = [];
+        $this->settings = [];
+        $this->deletedFileIds = [];
+        session(['userdata.id' => 1]);
     }
 
-    private function makeService(string $accessKey = 'test-key'): Backgrounds
+    private function makeService(string $accessKey = 'test-key', ?int $uploadedFileId = null): Backgrounds
     {
         $config = $this->make(Environment::class);
         $config->unsplashAccessKey = $accessKey;
@@ -51,7 +61,75 @@ class BackgroundsTest extends TestCase
             },
         ]);
 
-        return new Backgrounds($theme, $config, $this->make(Files::class), $this->http);
+        $files = $this->make(Files::class, [
+            'upload' => fn () => ['fileId' => $uploadedFileId, 'encName' => 'enc', 'extension' => 'png', 'realName' => 'bg.png'],
+            'deleteFile' => function ($fileId) {
+                $this->deletedFileIds[] = (int) $fileId;
+
+                return true;
+            },
+        ]);
+
+        $settings = $this->make(Setting::class, [
+            'getSetting' => fn ($key, $default = false) => $this->settings[$key] ?? $default,
+            'saveSetting' => function ($key, $value) {
+                $this->settings[$key] = $value;
+
+                return true;
+            },
+            'deleteSetting' => function ($key) {
+                unset($this->settings[$key]);
+            },
+        ]);
+
+        return new Backgrounds($theme, $config, $files, $this->http, $settings);
+    }
+
+    /**
+     * A real PNG upload, as one $_FILES entry.
+     */
+    private function pngUpload(): array
+    {
+        $png = tempnam(sys_get_temp_dir(), 'bg');
+        $image = imagecreatetruecolor(4, 4);
+        imagepng($image, $png);
+
+        return ['name' => 'bg.png', 'type' => 'image/png', 'tmp_name' => $png, 'error' => UPLOAD_ERR_OK, 'size' => filesize($png)];
+    }
+
+    public function test_a_new_upload_deletes_the_previously_uploaded_background(): void
+    {
+        $this->assertTrue($this->makeService(uploadedFileId: 10)->useUploadedImage(['file' => $this->pngUpload()]));
+        $this->assertSame([], $this->deletedFileIds, 'Nothing to delete on the first upload');
+
+        $this->assertTrue($this->makeService(uploadedFileId: 11)->useUploadedImage(['file' => $this->pngUpload()]));
+
+        $this->assertSame([10], $this->deletedFileIds);
+        $this->assertSame(11, $this->settings['usersettings.1.backgroundFileId']);
+    }
+
+    public function test_switching_to_the_gradient_deletes_the_uploaded_background(): void
+    {
+        $this->settings['usersettings.1.backgroundFileId'] = 10;
+
+        $this->makeService()->setBackgroundType('gradient');
+
+        $this->assertSame([10], $this->deletedFileIds);
+        $this->assertArrayNotHasKey('usersettings.1.backgroundFileId', $this->settings);
+    }
+
+    public function test_an_unsplash_photo_deletes_the_uploaded_background(): void
+    {
+        $this->settings['usersettings.1.backgroundFileId'] = 10;
+        $this->http->fake([
+            'api.unsplash.com/photos/abc123/download*' => $this->http->response(['url' => 'https://example.test']),
+            'api.unsplash.com/photos/abc123' => $this->http->response($this->unsplashPhoto('https://images.unsplash.com/photo-1?ixid=1')),
+        ]);
+
+        $this->assertTrue($this->makeService()->useUnsplashPhoto('abc123'));
+
+        $this->assertSame([10], $this->deletedFileIds);
+        $this->assertArrayNotHasKey('usersettings.1.backgroundFileId', $this->settings);
     }
 
     private function unsplashPhoto(string $rawUrl): array
@@ -135,8 +213,11 @@ class BackgroundsTest extends TestCase
             'api.unsplash.com/photos/abc123' => $this->http->response($this->unsplashPhoto('https://evil.test/x.jpg')),
         ]);
 
+        $this->settings['usersettings.1.backgroundFileId'] = 10;
+
         $this->assertFalse($this->makeService()->useUnsplashPhoto('abc123'));
         $this->assertSame([], $this->storedImages);
+        $this->assertSame([], $this->deletedFileIds, 'A refused photo keeps the uploaded background');
     }
 
     public function test_photo_id_with_path_characters_is_refused_without_a_request(): void
