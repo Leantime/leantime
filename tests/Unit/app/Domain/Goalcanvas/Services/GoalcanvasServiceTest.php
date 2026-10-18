@@ -136,14 +136,34 @@ class GoalcanvasServiceTest extends TestCase
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasItemProjectId' => fn () => 9,
             'getCanvasItemsByKPI' => fn () => [
-                ['setting' => 'linkonly', 'currentValue' => 10.0, 'childCurrentValue' => 999.0],
-                ['setting' => 'linkAndReport', 'currentValue' => 0.0, 'childCurrentValue' => 5.0],
+                ['id' => 2, 'setting' => 'linkonly', 'currentValue' => 10.0, 'childCurrentValue' => 999.0],
+                ['id' => 3, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'childCurrentValue' => 5.0],
             ],
         ]);
 
         $sum = $this->service($repo)->getChildGoalsForReporting(1);
 
         $this->assertEqualsWithDelta(15.0, $sum, 0.01);
+    }
+
+    public function test_child_goal_reporting_counts_a_linkonly_goal_once_whatever_its_own_children(): void
+    {
+        // The KPI query returns one row per (linked goal, goal linked to it). A linkonly goal with
+        // two goals under it comes back twice but its own value counts once; a linkAndReport goal
+        // contributes each of its children.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'getCanvasItemsByKPI' => fn () => [
+                ['id' => 2, 'setting' => 'linkonly', 'currentValue' => 10.0, 'childId' => 20, 'childCurrentValue' => 1.0],
+                ['id' => 2, 'setting' => 'linkonly', 'currentValue' => 10.0, 'childId' => 21, 'childCurrentValue' => 2.0],
+                ['id' => 3, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'childId' => 30, 'childCurrentValue' => 4.0],
+                ['id' => 3, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'childId' => 31, 'childCurrentValue' => 5.0],
+            ],
+        ]);
+
+        $sum = $this->service($repo)->getChildGoalsForReporting(1);
+
+        $this->assertEqualsWithDelta(19.0, $sum, 0.01);
     }
 
     // ---------------------------------------------------------------------
@@ -1024,10 +1044,10 @@ class GoalcanvasServiceTest extends TestCase
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasItemProjectId' => fn () => 6,
             'getCanvasItemsByKPI' => fn () => [
-                ['setting' => 'linkonly', 'currentValue' => 10.0, 'projectId' => 6, 'childCurrentValue' => null, 'childProjectId' => null],
-                ['setting' => 'linkonly', 'currentValue' => 100.0, 'projectId' => 5, 'childCurrentValue' => null, 'childProjectId' => null],
-                ['setting' => 'linkAndReport', 'currentValue' => 0.0, 'projectId' => 6, 'childCurrentValue' => 3.0, 'childProjectId' => 6],
-                ['setting' => 'linkAndReport', 'currentValue' => 0.0, 'projectId' => 6, 'childCurrentValue' => 1000.0, 'childProjectId' => 5],
+                ['id' => 2, 'setting' => 'linkonly', 'currentValue' => 10.0, 'projectId' => 6, 'childCurrentValue' => null, 'childProjectId' => null],
+                ['id' => 3, 'setting' => 'linkonly', 'currentValue' => 100.0, 'projectId' => 5, 'childCurrentValue' => null, 'childProjectId' => null],
+                ['id' => 4, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'projectId' => 6, 'childCurrentValue' => 3.0, 'childProjectId' => 6],
+                ['id' => 4, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'projectId' => 6, 'childCurrentValue' => 1000.0, 'childProjectId' => 5],
             ],
         ]);
 

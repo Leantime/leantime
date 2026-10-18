@@ -157,6 +157,7 @@ class Goalcanvas extends BaseService
         $this->projectModules?->preload(array_merge(array_column($goals, 'projectId'), array_column($goals, 'childProjectId')));
 
         $currentValueSum = 0;
+        $countedChildIds = [];
         foreach ($goals as $child) {
             if (! $this->goalsEnabledIn((int) ($child['projectId'] ?? 0))) {
                 continue;
@@ -168,9 +169,17 @@ class Goalcanvas extends BaseService
                 }
 
                 $currentValueSum = $currentValueSum + $child['childCurrentValue'];
-            } else {
-                $currentValueSum = $currentValueSum + $child['currentValue'];
+
+                continue;
             }
+
+            // A linked goal comes back once per goal linked to it in turn: count its own value once.
+            if (isset($countedChildIds[$child['id']])) {
+                continue;
+            }
+
+            $countedChildIds[$child['id']] = true;
+            $currentValueSum = $currentValueSum + $child['currentValue'];
         }
 
         return $currentValueSum;
