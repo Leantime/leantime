@@ -11,8 +11,9 @@ use Leantime\Core\Auth\Permissions\PermissionService;
 use Unit\app\Domain\Install\SqliteStandInForInstalledDatabase;
 
 /**
- * When an update adds permissions, custom roles get the ones their base role gets by default, so
- * new features work for them. Grants an administrator removed are never added back.
+ * When an update adds permissions, every role gets the new ones it gets by default (custom roles
+ * through their base role), so new features work for everyone. Grants an administrator removed
+ * are never added back, and a sync that fails can simply be run again.
  */
 class PermissionSeederCustomRolesTest extends \Unit\TestCase
 {
@@ -57,10 +58,10 @@ class PermissionSeederCustomRolesTest extends \Unit\TestCase
         return $repository;
     }
 
-    private function seeder(): PermissionSeeder
+    private function seeder(?PermissionRepository $repository = null): PermissionSeeder
     {
         return new PermissionSeeder(
-            $this->repository(),
+            $repository ?? $this->repository(),
             $this->make(PermissionRegistry::class, ['all' => fn (): array => $this->catalog]),
             $this->make(PermissionService::class, ['flushCache' => null]),
         );
@@ -132,5 +133,62 @@ class PermissionSeederCustomRolesTest extends \Unit\TestCase
 
         // Level 35 sits between manager (30) and admin (40): manager defaults apply ('*' on project permissions).
         $this->assertSame(['reports.export'], $this->grantsOf('team_lead'));
+    }
+
+    public function test_new_permissions_reach_built_in_roles_without_restoring_revoked_grants(): void
+    {
+        $this->installWithQaLead();
+
+        // An administrator took tickets.create away from editors.
+        $repository = $this->repository();
+        $repository->revoke((int) $repository->getRoleByName('editor')['id'], 'tickets.create');
+
+        $this->useCatalog([
+            new Permission('tickets.view', 'View', true),
+            new Permission('tickets.create', 'Create', true),
+            new Permission('projects.viewAll', 'See all projects', false),
+            new Permission('roles.manage', 'Manage roles', false),
+        ]);
+        $this->seeder()->syncDiscoveredPermissions();
+
+        $this->assertSame(['tickets.view'], $this->grantsOf('editor'));
+        $this->assertSame(['projects.viewAll', 'roles.manage', 'tickets.create', 'tickets.view'], $this->grantsOf('admin'));
+        $this->assertSame(['projects.viewAll', 'roles.manage', 'tickets.create', 'tickets.view'], $this->grantsOf('owner'));
+    }
+
+    public function test_a_failed_sync_can_be_retried(): void
+    {
+        $this->installWithQaLead();
+
+        $this->useCatalog([
+            new Permission('tickets.view', 'View', true),
+            new Permission('tickets.create', 'Create', true),
+            new Permission('wiki.create', 'Create', true),
+        ]);
+
+        $failingRepository = new class extends PermissionRepository
+        {
+            public function __construct() {}
+
+            public function grant(int $roleId, string $permissionKey): void
+            {
+                throw new \RuntimeException('connection lost');
+            }
+        };
+        (new \ReflectionProperty(PermissionRepository::class, 'db'))->setValue($failingRepository, $this->connection);
+
+        try {
+            $this->seeder($failingRepository)->syncDiscoveredPermissions();
+            $this->fail('the grant failure should surface');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('connection lost', $e->getMessage());
+        }
+
+        $this->assertFalse($this->connection->table('zp_permissions')->where('permissionKey', 'wiki.create')->exists(), 'the sync rolled back');
+
+        $this->seeder()->syncDiscoveredPermissions();
+
+        $this->assertSame(['tickets.view', 'wiki.create'], $this->grantsOf('qa_lead'));
+        $this->assertContains('wiki.create', $this->grantsOf('editor'));
     }
 }

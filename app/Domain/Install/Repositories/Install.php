@@ -3579,10 +3579,11 @@ class Install
      * update_sql_30533 — database update for v3.5.33.
      *
      * Adds two permissions: `projects.viewAll` (see every project without being a member; replaces
-     * the hard-coded "admin and above" rule) and `roles.manage` (for the custom roles plugin). Both
-     * go to admins and owners, the roles that had these abilities before. Custom roles get them
-     * when their base role does. The provider cache is flushed first because `roles.manage` comes
-     * from a new provider class.
+     * the hard-coded "admin and above" rule) and `roles.manage` (for the custom roles plugin). The
+     * sync grants new permissions only: both go to admins and owners, the roles that had these
+     * abilities before, and to custom roles whose base role gets them. No other grant changes, so
+     * permissions an administrator removed stay removed. The provider cache is flushed first
+     * because `roles.manage` comes from a new provider class.
      */
     public function update_sql_30533(): bool|array
     {
@@ -3599,9 +3600,7 @@ class Install
 
             app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
 
-            $seeder = app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class);
-            $seeder->syncDiscoveredPermissions();
-            $seeder->seedBuiltInRoles();
+            app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class)->syncDiscoveredPermissions();
         } catch (\Exception $e) {
             Log::error('Migration 30533: '.$e->getMessage());
 

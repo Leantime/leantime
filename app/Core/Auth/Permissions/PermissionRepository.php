@@ -29,6 +29,19 @@ class PermissionRepository
         $this->db = $db->getConnection();
     }
 
+    /**
+     * Run several writes as one unit on the permission tables' connection.
+     *
+     * @template T
+     *
+     * @param  \Closure(): T  $writes
+     * @return T
+     */
+    public function transaction(\Closure $writes): mixed
+    {
+        return $this->db->transaction($writes);
+    }
+
     // ------------------------------------------------------------------
     // Roles
     // ------------------------------------------------------------------
