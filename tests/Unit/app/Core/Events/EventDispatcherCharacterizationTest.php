@@ -28,6 +28,24 @@ class CharacterizationEmitter
 }
 
 /**
+ * A base class using the trait, like BaseService/Repository/Controller: its subclasses
+ * share the trait's statics.
+ */
+abstract class CharacterizationBaseEmitter
+{
+    use DispatchesEvents;
+
+    public function updateThing(): void
+    {
+        self::dispatchEvent('thing_updated');
+    }
+}
+
+class CharacterizationFirstSibling extends CharacterizationBaseEmitter {}
+
+class CharacterizationSecondSibling extends CharacterizationBaseEmitter {}
+
+/**
  * Characterization tests locking the CURRENT EventDispatcher behavior before the
  * class-based event bridge is added. These tests document the string-event contract
  * that existing plugins rely on; they must keep passing unchanged.
@@ -81,6 +99,20 @@ class EventDispatcherCharacterizationTest extends TestCase
             'unit.app.core.events.characterizationemitter.updateThing.thing_updated',
             EventDispatcher::get_available_hooks()['events']
         );
+    }
+
+    /**
+     * Subclasses of one base each fire under their own class name, whichever dispatched first.
+     */
+    public function test_sibling_subclasses_each_name_events_after_their_own_class(): void
+    {
+        (new CharacterizationFirstSibling)->updateThing();
+        (new CharacterizationSecondSibling)->updateThing();
+
+        $events = EventDispatcher::get_available_hooks()['events'];
+
+        $this->assertContains('unit.app.core.events.characterizationfirstsibling.updateThing.thing_updated', $events);
+        $this->assertContains('unit.app.core.events.characterizationsecondsibling.updateThing.thing_updated', $events);
     }
 
     /**
