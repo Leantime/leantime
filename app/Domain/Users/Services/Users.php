@@ -449,7 +449,7 @@ class Users extends BaseService
             return false;
         }
 
-        UserCreated::dispatch(userId: (int) $result, role: (int) Roles::getRoleLevel($values['role'] ?? ''), source: 'invite');
+        UserCreated::dispatch(userId: (int) $result, role: (int) Roles::getRoleKey($values['role'] ?? ''), source: 'invite');
 
         $emailSent = $this->sendUserInvite($inviteCode, $values['user']);
 
@@ -623,7 +623,7 @@ class Users extends BaseService
         $newUserId = $this->userRepo->addUser($values);
 
         if ($newUserId !== false) {
-            UserCreated::dispatch(userId: (int) $newUserId, role: (int) Roles::getRoleLevel($values['role']), source: 'admin');
+            UserCreated::dispatch(userId: (int) $newUserId, role: (int) Roles::getRoleKey($values['role']), source: 'admin');
         }
 
         return $newUserId;

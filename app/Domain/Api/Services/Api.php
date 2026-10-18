@@ -152,7 +152,7 @@ class Api
             return false;
         }
 
-        UserCreated::dispatch(userId: (int) $values['id'], role: (int) Roles::getRoleLevel($values['role'] ?? ''), source: 'api');
+        UserCreated::dispatch(userId: (int) $values['id'], role: (int) Roles::getRoleKey($values['role'] ?? ''), source: 'api');
         ApiKeyCreated::dispatch(apiUserId: (int) $values['id']);
 
         return $values;

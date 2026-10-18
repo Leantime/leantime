@@ -27,12 +27,12 @@
             <x-global::forms.select name="role" id="role">
 
                 @foreach ($roles as $key => $role)
-                    @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30)
+                    @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && \Leantime\Domain\Auth\Models\Roles::getRoleLevel($key) > 30)
                         @continue
                     @endif
                         <option value="{{ $key }}"
                         @if ($key == $values['role']) selected="selected" @endif>
-                        {!! __('label.roles.' . $role) !!}
+                        {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
                     </option>
                 @endforeach
 

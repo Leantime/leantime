@@ -9,6 +9,7 @@ use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Files\Repositories\Files;
 use Leantime\Domain\Users\Enums\EmploymentType;
 
@@ -31,8 +32,6 @@ class Users
     public string $department;
 
     public int $id;
-
-    public array $adminRoles = [40, 50];
 
     public array $status = ['active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited'];
 
@@ -289,7 +288,7 @@ class Users
             ->limit(1)
             ->first();
 
-        if ($result && in_array($result->role, $this->adminRoles)) {
+        if ($result && Roles::isAtLeast($result->role, Roles::$admin)) {
             return true;
         }
 

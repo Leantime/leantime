@@ -38,12 +38,12 @@
                                  today, so this is defense-in-depth against any future widening
                                  of who can reach this screen — a lower role must never be able
                                  to escalate an account above its own authority. --}}
-                            @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30)
+                            @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && \Leantime\Domain\Auth\Models\Roles::getRoleLevel($key) > 30)
                                 @continue
                             @endif
                             <option value="{{ $key }}"
                                 @if ($key == $values['role']) selected="selected" @endif>
-                                {!! __('label.roles.' . $role) !!}
+                                {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
                             </option>
                         @endforeach
 

@@ -45,7 +45,7 @@ class StatusSummaryQueryTest extends TestCase
         $sql = $this->baseQuery(null, true)->toSql();
 
         $this->assertStringContainsString('left join `zp_relationuserproject` as `rup`', $sql);
-        $this->assertStringContainsString('`requestor`.`role` >= ?', $sql);
+        $this->assertStringContainsString('`requestor`.`role` in (?, ?)', $sql);
         $this->assertStringContainsString('`zp_projects`.`state` <> ?', $sql);
         $this->assertStringContainsString('`zp_tickets`.`type` <> ?', $sql);
         $this->assertStringNotContainsString('`zp_tickets`.`projectId` = ?', $sql);

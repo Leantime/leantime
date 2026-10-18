@@ -124,23 +124,24 @@ class PermissionService
         return (bool) ($this->meta()[$permissionKey]['projectScoped'] ?? false);
     }
 
-    /** Forget the cached grant map + vocabulary meta. Call after any role/permission write. */
+    /** Forget the cached grant map, vocabulary meta and role table. Call after any role/permission write. */
     public function flushCache(): void
     {
         $this->grantMapIsEmpty = false;
         Cache::store()->forget(self::MAP_CACHE_KEY);
         Cache::store()->forget(self::META_CACHE_KEY);
+        Roles::flushCache();
     }
 
     /**
-     * Admin/owner access every project (mirrors getProjectsUserHasAccessTo's bypass), so
-     * they skip the per-project membership check.
+     * Admin/owner, and roles ranked with them, access every project (mirrors
+     * getProjectsUserHasAccessTo's bypass), so they skip the per-project membership check.
      */
     private function canAccessAllProjects(): bool
     {
         $globalRole = $this->roles->globalRole();
 
-        return $globalRole === Roles::$owner || $globalRole === Roles::$admin;
+        return $globalRole !== null && Roles::isAtLeast($globalRole, Roles::$admin);
     }
 
     /**

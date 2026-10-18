@@ -333,7 +333,7 @@ class Projects implements StoresProjectModules
      * The shared "user can reach this project" predicate used by both
      * getUserProjects('all') and getProjectsUserHasAccessTo(): the user is a
      * member, the project is public (psettings='all'), or the user is an
-     * admin/owner (role >= 40, resolved via the requestingUser join each caller
+     * admin/owner (role ranked admin or above, resolved via the requestingUser join each caller
      * already applies). The client-shared case differs between callers
      * (own-client column vs a passed client id), so each passes its own
      * $clientClause. Centralising this stops the two access paths from drifting
@@ -348,7 +348,7 @@ class Projects implements StoresProjectModules
         $q->where('relation.userId', $userId)
             ->orWhere('project.psettings', 'all')
             ->orWhere($clientClause)
-            ->orWhere('requestingUser.role', '>=', 40);
+            ->orWhereIn('requestingUser.role', Roles::keysAtLeast(Roles::$admin));
     }
 
     /**
@@ -913,13 +913,9 @@ class Projects implements StoresProjectModules
 
         // Add users to relation
         if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
-            // Roles that may be assigned as a per-project role: every known role key except
-            // admin/owner (they're global-only and never scoped to a single project).
-            $roles = Roles::getRoles();
-            $assignableRoles = array_diff_key($roles, [
-                array_search(Roles::$admin, $roles, true) => null,
-                array_search(Roles::$owner, $roles, true) => null,
-            ]);
+            // Roles that may be assigned as a per-project role: every role ranked below admin
+            // (admin/owner are global-only and never scoped to a single project).
+            $assignableRoles = Roles::getProjectAssignableRoles();
 
             foreach ($values['assignedUsers'] as $userId) {
                 $roleValue = (string) ($values['projectRoles']['userProjectRole-'.$userId] ?? '');
@@ -1008,7 +1004,7 @@ class Projects implements StoresProjectModules
         }
 
         // admins owners and managers can access everything
-        if (in_array(Roles::getRoleString($user['role']), [Roles::$admin, Roles::$owner])) {
+        if (Roles::isAtLeast($user['role'], Roles::$admin)) {
             return true;
         }
 

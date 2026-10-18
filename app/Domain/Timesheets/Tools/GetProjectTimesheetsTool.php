@@ -51,7 +51,7 @@ class GetProjectTimesheetsTool extends Tool
         $projectId = (int) ($arguments['projectId'] ?? 0);
 
         $globalRole = session('userdata.role');
-        if (! in_array($globalRole, [Roles::$manager, Roles::$admin, Roles::$owner], true)) {
+        if (! Roles::isAtLeast($globalRole, Roles::$manager)) {
             // getProjectRole() returns a stored role key (usually a numeric string like "30");
             // resolve it to a role name before comparing (same pattern as
             // Tickets::userIsAtLeastForProject).
@@ -60,7 +60,7 @@ class GetProjectTimesheetsTool extends Tool
                 ? Roles::getRoleString((int) $projectRoleKey)
                 : $projectRoleKey;
 
-            if ($projectRole !== Roles::$manager) {
+            if ($projectRole === false || ! Roles::isAtLeast($projectRole, Roles::$manager)) {
                 return ToolResult::error("You don't have permission to view project-wide timesheet data. This requires a manager role or above, or a manager role in this project.");
             }
         }

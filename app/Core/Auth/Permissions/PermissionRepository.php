@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Auth\Permissions;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 
@@ -17,6 +18,8 @@ use Leantime\Core\Db\Db as DbCore;
 class PermissionRepository
 {
     private ConnectionInterface $db;
+
+    private ?bool $roleKeyColumnsExist = null;
 
     public function __construct(DbCore $db)
     {
@@ -60,45 +63,92 @@ class PermissionRepository
     /**
      * Insert or update a role keyed by its (unique) name. Returns the role id.
      * Built-in roles pass isSystem=true so the admin UI can protect them.
+     *
+     * @param  int|null  $roleKey  Value stored in zp_user.role for this role; null leaves it unchanged.
+     * @param  string|null  $baseRole  Built-in role a custom role acts as for checks by role name.
      */
-    public function upsertRole(string $name, string $displayName, int $level, bool $isSystem = false, ?string $description = null): int
-    {
+    public function upsertRole(
+        string $name,
+        string $displayName,
+        int $level,
+        bool $isSystem = false,
+        ?string $description = null,
+        ?int $roleKey = null,
+        ?string $baseRole = null,
+    ): int {
         $now = dtHelper()->userNow()->formatDateTimeForDb();
-        $existing = $this->getRoleByName($name);
 
-        if ($existing !== null) {
-            $this->db->table('zp_roles')->where('id', $existing['id'])->update([
-                'displayName' => $displayName,
-                'level' => $level,
-                'isSystem' => $isSystem ? 1 : 0,
-                'description' => $description,
-                'modified' => $now,
-            ]);
-
-            return (int) $existing['id'];
-        }
-
-        return (int) $this->db->table('zp_roles')->insertGetId([
-            'name' => $name,
+        $row = [
             'displayName' => $displayName,
             'level' => $level,
             'isSystem' => $isSystem ? 1 : 0,
             'description' => $description,
-            'createdOn' => $now,
             'modified' => $now,
+        ];
+
+        // Older migrations seed roles before update_sql_30532 adds these columns.
+        if ($this->hasRoleKeyColumns()) {
+            if ($roleKey !== null) {
+                $row['roleKey'] = $roleKey;
+            }
+            $row['baseRole'] = $baseRole;
+        }
+
+        $existing = $this->getRoleByName($name);
+
+        if ($existing !== null) {
+            $this->db->table('zp_roles')->where('id', $existing['id'])->update($row);
+
+            return (int) $existing['id'];
+        }
+
+        return (int) $this->db->table('zp_roles')->insertGetId($row + [
+            'name' => $name,
+            'createdOn' => $now,
         ]);
     }
 
-    /** @param  array<string, mixed>  $data */
+    /**
+     * Create (or update by name) a role from an array. A role without a `roleKey` gets the next
+     * free custom key (100 and up).
+     *
+     * @param  array<string, mixed>  $data
+     */
     public function createRole(array $data): int
     {
+        $existing = $this->getRoleByName((string) $data['name']);
+        $roleKey = $data['roleKey'] ?? $existing['roleKey'] ?? $this->nextCustomRoleKey();
+
         return $this->upsertRole(
             (string) $data['name'],
             (string) ($data['displayName'] ?? $data['name']),
             (int) ($data['level'] ?? 20),
             (bool) ($data['isSystem'] ?? false),
             $data['description'] ?? null,
+            (int) $roleKey,
+            $data['baseRole'] ?? null,
         );
+    }
+
+    /**
+     * Next unused key for a custom role. Custom roles start at 100 so they never collide with the
+     * built-in keys (5..50).
+     */
+    public function nextCustomRoleKey(): int
+    {
+        $highestKey = (int) $this->db->table('zp_roles')->max('roleKey');
+
+        return max($highestKey, 99) + 1;
+    }
+
+    private function hasRoleKeyColumns(): bool
+    {
+        if ($this->roleKeyColumnsExist === null) {
+            $this->roleKeyColumnsExist = $this->db instanceof Connection
+                && $this->db->getSchemaBuilder()->hasColumn('zp_roles', 'roleKey');
+        }
+
+        return $this->roleKeyColumnsExist;
     }
 
     /** @param  array<string, mixed>  $data */
