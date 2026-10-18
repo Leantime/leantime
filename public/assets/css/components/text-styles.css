@@ -34,13 +34,16 @@ body .btn-link:focus {
 }
 
 /* Increased contrast (the OS setting; the media value is `more`, `high` never matched): keep the
-   hover / focus underline. Same selectors, later, so it wins over the rule above. */
+   hover / focus underline on every link. An accessibility override, so !important: it must beat
+   the more specific task-list, report and step-link rules too. */
 @media (prefers-contrast: more) {
-    body a:hover,
-    body a:focus,
-    body .btn-link:hover,
-    body .btn-link:focus {
-        text-decoration: underline;
+    a:hover,
+    a:focus,
+    .btn-link:hover,
+    .btn-link:focus,
+    a.lt-step-link:hover .lt-step-label,
+    a.lt-step-link:focus-visible .lt-step-label {
+        text-decoration: underline !important;
     }
 }
 
