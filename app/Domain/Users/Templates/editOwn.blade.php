@@ -20,8 +20,11 @@
                         <li><a href="#security">{!! __('tabs.security') !!}</a></li>
                         <li><a href="#settings">{!! __('tabs.settings') !!}</a></li>
                         <li><a href="#notifications">{!! __('tabs.notifications') !!}</a></li>
+                        <li><a href="#webhooks">{!! __('tabs.webhooks') !!}</a></li>
                         <li><a href="#theme">{!! __('tabs.theme') !!}</a></li>
+                        <li><a href="#background">{!! __('tabs.background') !!}</a></li>
                         @dispatchEvent('tabs')
+                        <li><a href="#personalTokens"><i class="fa-solid fa-key"></i> {{ __('tabs.personal_access_tokens') }}</a></li>
                     </ul>
 
                     <div id="myProfile">
@@ -348,6 +351,11 @@
                         @dispatchEvent('themecontent')
                     </div>
 
+                    <div id="background">
+                        {{-- Loads when the tab is shown, so Unsplash is only queried by users who open it. --}}
+                        <x-global::hx endpoint="users/background" trigger="intersect once" wrapperId="backgroundSettings" />
+                    </div>
+
                     <div id="notifications">
                         <form action="" method="post">
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
@@ -453,10 +461,16 @@
                                 @endif
                             </div>
 
-                            <hr />
+                            <input type="hidden" name="savenotifications" value="1" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
+                        </form>
+                    </div>
 
-                            <x-global::elements.section-header>{{ __('label.webhook_notifications') }}</x-global::elements.section-header>
-                            <p><small>{{ __('label.webhook_notifications_description') }}</small></p>
+                    <div id="webhooks">
+                        <form action="" method="post">
+                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
+                            <p>{{ __('label.webhook_notifications_description') }}</p>
+                            <br />
                             <div class="form-group">
                                 <x-global::forms.checkbox name="webhookEnabled" id="webhookEnabled" :checked="! empty($webhookEnabled)">{{ __('label.enable_webhook_notifications') }}</x-global::forms.checkbox>
                             </div>
@@ -471,12 +485,16 @@
                                 </span>
                             </div>
 
-                            <input type="hidden" name="savenotifications" value="1" />
+                            <input type="hidden" name="savewebhooks" value="1" />
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
                         </form>
                     </div>
 
                     @dispatchEvent('tabsContent')
+
+                    <div id="personalTokens">
+                        <x-global::hx endpoint="auth/personalTokens" trigger="load" />
+                    </div>
                 </div>
             </div>
         </div>
