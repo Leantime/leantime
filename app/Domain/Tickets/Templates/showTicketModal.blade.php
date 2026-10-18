@@ -38,6 +38,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                 <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
                         <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                         <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
+                        @module('timesheets', $ticket->projectId)
                         <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                         <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
                             hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
@@ -76,6 +77,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                 </span>
                             @endif
                         </li>
+                        @endmodule
             </x-slot:actions>
         @endif
     </x-global::actions.modal-header>
@@ -84,9 +86,11 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
         <ul>
             <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
             <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $numFiles; ?>)</a></li>
-            <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
-            <?php } ?>
+            @if ($login::userIsAtLeast($roles::$editor))
+                @module('timesheets', $ticket->projectId)
+                    <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
+                @endmodule
+            @endif
             <li><a href="#history"><span class="fa fa-clock-rotate-left"></span> <?php echo $tpl->__('tabs.history') ?></a></li>
             <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
         </ul>
@@ -102,9 +106,11 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
         </div>
 
         @if($login::userIsAtLeast($roles::$editor))
-            <div id="timesheet">
-                @include('tickets::submodules.timesheet')
-            </div>
+            @module('timesheets', $ticket->projectId)
+                <div id="timesheet">
+                    @include('tickets::submodules.timesheet')
+                </div>
+            @endmodule
         @endif
 
         <div id="history">
