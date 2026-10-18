@@ -71,23 +71,66 @@ class UpdateSql30532Test extends TestCase
         $this->assertTrue($this->installer($connection)->update_sql_30532());
     }
 
-    public function test_custom_roles_get_keys_from_100_up(): void
+    private function migratedDatabase(): SqliteStandInForInstalledDatabase
     {
         $connection = new SqliteStandInForInstalledDatabase;
         $this->createRolesTableFrom30518($connection);
+        $connection->statement('CREATE TABLE zp_user (id INTEGER PRIMARY KEY AUTOINCREMENT, role VARCHAR(200))');
+        $connection->statement('CREATE TABLE zp_relationuserproject (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, projectId INTEGER, projectRole VARCHAR(20))');
+        $connection->statement('CREATE TABLE zp_role_permissions (id INTEGER PRIMARY KEY AUTOINCREMENT, roleId INTEGER, permissionId INTEGER)');
         $this->installer($connection)->update_sql_30532();
 
+        return $connection;
+    }
+
+    public function test_custom_roles_get_keys_from_their_id(): void
+    {
+        $connection = $this->migratedDatabase();
         $repository = $this->repository($connection);
-        $repository->createRole(['name' => 'qa_lead', 'displayName' => 'QA Lead', 'level' => 20, 'baseRole' => 'editor']);
-        $repository->createRole(['name' => 'team_lead', 'displayName' => 'Team Lead', 'level' => 30, 'baseRole' => 'manager']);
+
+        $qaLeadId = $repository->createRole(['name' => 'qa_lead', 'displayName' => 'QA Lead', 'level' => 20, 'baseRole' => 'editor']);
+        $teamLeadId = $repository->createRole(['name' => 'team_lead', 'displayName' => 'Team Lead', 'level' => 30, 'baseRole' => 'manager']);
         // Saving an existing role again keeps its key.
         $repository->createRole(['name' => 'qa_lead', 'displayName' => 'QA Lead (renamed)', 'level' => 20, 'baseRole' => 'editor']);
 
         $qaLead = $repository->getRoleByName('qa_lead');
-        $this->assertSame(100, (int) $qaLead['roleKey']);
+        $this->assertSame(100 + $qaLeadId, (int) $qaLead['roleKey']);
+        $this->assertGreaterThanOrEqual(100, (int) $qaLead['roleKey']);
         $this->assertSame('editor', $qaLead['baseRole']);
         $this->assertSame('QA Lead (renamed)', $qaLead['displayName']);
-        $this->assertSame(101, (int) $repository->getRoleByName('team_lead')['roleKey']);
+        $this->assertSame(100 + $teamLeadId, (int) $repository->getRoleByName('team_lead')['roleKey']);
+    }
+
+    public function test_a_deleted_role_key_is_never_given_to_a_new_role(): void
+    {
+        $connection = $this->migratedDatabase();
+        $repository = $this->repository($connection);
+
+        $tempId = $repository->createRole(['name' => 'temp', 'level' => 20, 'baseRole' => 'editor']);
+        $tempKey = (int) $repository->getRoleByName('temp')['roleKey'];
+        $this->assertTrue($repository->deleteRole($tempId));
+
+        $repository->createRole(['name' => 'deputy_admin', 'level' => 40, 'baseRole' => 'admin']);
+
+        $this->assertNotSame($tempKey, (int) $repository->getRoleByName('deputy_admin')['roleKey']);
+    }
+
+    public function test_a_role_still_held_by_users_or_projects_cannot_be_deleted(): void
+    {
+        $connection = $this->migratedDatabase();
+        $repository = $this->repository($connection);
+
+        $userRoleId = $repository->createRole(['name' => 'held_by_user', 'level' => 20, 'baseRole' => 'editor']);
+        $projectRoleId = $repository->createRole(['name' => 'held_by_project', 'level' => 20, 'baseRole' => 'editor']);
+        $connection->table('zp_user')->insert(['role' => (string) $repository->getRoleById($userRoleId)['roleKey']]);
+        $connection->table('zp_relationuserproject')->insert(['userId' => 1, 'projectId' => 3, 'projectRole' => (string) $repository->getRoleById($projectRoleId)['roleKey']]);
+
+        $this->assertFalse($repository->deleteRole($userRoleId));
+        $this->assertFalse($repository->deleteRole($projectRoleId));
+        $this->assertNotNull($repository->getRoleById($userRoleId));
+
+        $editorId = (int) $repository->getRoleByName('editor')['id'];
+        $this->assertFalse($repository->deleteRole($editorId), 'built-in roles are never deleted');
     }
 
     public function test_seeding_before_the_migration_still_works(): void

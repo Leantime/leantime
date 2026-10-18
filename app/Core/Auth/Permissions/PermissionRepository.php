@@ -19,6 +19,9 @@ class PermissionRepository
 {
     private ConnectionInterface $db;
 
+    /** Custom role keys are this plus the role's id, so they never overlap the built-in keys (5..50). */
+    public const CUSTOM_ROLE_KEY_OFFSET = 100;
+
     private ?bool $roleKeyColumnsExist = null;
 
     public function __construct(DbCore $db)
@@ -109,36 +112,35 @@ class PermissionRepository
     }
 
     /**
-     * Create (or update by name) a role from an array. A role without a `roleKey` gets the next
-     * free custom key (100 and up).
+     * Create (or update by name) a role from an array. A new role without a `roleKey` gets a
+     * custom key derived from its row id (100 + id): ids are never reused, so neither are keys,
+     * and two roles created at the same time can't get the same key.
      *
      * @param  array<string, mixed>  $data
      */
     public function createRole(array $data): int
     {
         $existing = $this->getRoleByName((string) $data['name']);
-        $roleKey = $data['roleKey'] ?? $existing['roleKey'] ?? $this->nextCustomRoleKey();
 
-        return $this->upsertRole(
+        $roleId = $this->upsertRole(
             (string) $data['name'],
             (string) ($data['displayName'] ?? $data['name']),
             (int) ($data['level'] ?? 20),
             (bool) ($data['isSystem'] ?? false),
             $data['description'] ?? null,
-            (int) $roleKey,
+            isset($data['roleKey']) ? (int) $data['roleKey'] : null,
             $data['baseRole'] ?? null,
         );
-    }
 
-    /**
-     * Next unused key for a custom role. Custom roles start at 100 so they never collide with the
-     * built-in keys (5..50).
-     */
-    public function nextCustomRoleKey(): int
-    {
-        $highestKey = (int) $this->db->table('zp_roles')->max('roleKey');
+        $needsCustomKey = ! isset($data['roleKey']) && ($existing['roleKey'] ?? null) === null;
 
-        return max($highestKey, 99) + 1;
+        if ($needsCustomKey && $this->hasRoleKeyColumns()) {
+            $this->db->table('zp_roles')
+                ->where('id', $roleId)
+                ->update(['roleKey' => self::CUSTOM_ROLE_KEY_OFFSET + $roleId]);
+        }
+
+        return $roleId;
     }
 
     private function hasRoleKeyColumns(): bool
@@ -159,12 +161,49 @@ class PermissionRepository
         return (bool) $this->db->table('zp_roles')->where('id', $id)->update($data);
     }
 
-    /** Deletes a role and its grants. Callers must block deletion of isSystem roles. */
+    /**
+     * Deletes a role and its grants. Refuses (returns false) for built-in roles and for roles
+     * that a user, API key or project membership still holds: those rows store the role's key,
+     * and must be moved to another role first.
+     */
     public function deleteRole(int $id): bool
     {
+        $role = $this->getRoleById($id);
+
+        if ($role === null || ! empty($role['isSystem'])) {
+            return false;
+        }
+
+        if ($this->isRoleAssigned($role)) {
+            return false;
+        }
+
         $this->db->table('zp_role_permissions')->where('roleId', $id)->delete();
 
         return (bool) $this->db->table('zp_roles')->where('id', $id)->delete();
+    }
+
+    /**
+     * Whether any user (incl. API keys) or project membership stores this role's key.
+     *
+     * @param  array<string, mixed>  $role  A zp_roles row.
+     */
+    public function isRoleAssigned(array $role): bool
+    {
+        $roleKey = $role['roleKey'] ?? null;
+
+        if ($roleKey === null) {
+            return false;
+        }
+
+        $storedRoleKey = (string) $roleKey;
+
+        $heldByUser = $this->db->table('zp_user')->where('role', $storedRoleKey)->exists();
+        if ($heldByUser) {
+            return true;
+        }
+
+        return $this->db->table('zp_relationuserproject')->where('projectRole', $storedRoleKey)->exists();
     }
 
     // ------------------------------------------------------------------

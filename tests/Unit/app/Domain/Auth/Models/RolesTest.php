@@ -2,6 +2,8 @@
 
 namespace Unit\app\Domain\Auth\Models;
 
+use Illuminate\Contracts\Queue\Job;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Auth\Permissions\PermissionRepository;
 use Leantime\Core\Auth\RoleCeiling;
@@ -187,5 +189,25 @@ class RolesTest extends \Unit\TestCase
         session(['userdata' => ['id' => 4, 'role' => 'qa_lead']]);
         $this->assertFalse((new RoleCeiling)->canAssign(Roles::$manager));
         $this->assertTrue((new RoleCeiling)->canAssign(Roles::$editor));
+    }
+
+    public function test_a_queue_worker_picks_up_role_changes_at_the_next_job(): void
+    {
+        $this->useQaLeadRole();
+        $this->assertSame(20, Roles::getRoleLevel('qa_lead'));
+
+        // Another process lowers the role and flushes the shared cache; this worker's copy is stale.
+        $this->app->instance(PermissionRepository::class, $this->make(PermissionRepository::class, [
+            'getAllRoles' => fn (): array => [
+                ['name' => 'qa_lead', 'displayName' => 'QA Lead', 'roleKey' => 100, 'level' => 5, 'baseRole' => 'readonly', 'isSystem' => 0],
+            ],
+        ]));
+        Cache::store()->flush();
+        $this->assertSame(20, Roles::getRoleLevel('qa_lead'));
+
+        $this->app->make('events')->dispatch(new JobProcessing('database', $this->makeEmpty(Job::class)));
+
+        $this->assertSame(5, Roles::getRoleLevel('qa_lead'));
+        $this->assertSame('readonly', Roles::getBaseRole('qa_lead'));
     }
 }

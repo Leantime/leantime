@@ -253,13 +253,23 @@ class Roles
      */
     public static function flushCache(): void
     {
-        self::$loadedRoleTables = [];
+        self::forgetLoadedRoles();
 
         try {
             Cache::store()->forget(self::CACHE_KEY);
         } catch (\Throwable $e) {
             // No cache store yet (early boot / install): nothing to forget.
         }
+    }
+
+    /**
+     * Forget this process's copy of the role table so the next lookup reads the shared cache
+     * again. Long-running workers call this before each job: another process may have changed
+     * a role and flushed the shared cache since.
+     */
+    public static function forgetLoadedRoles(): void
+    {
+        self::$loadedRoleTables = [];
     }
 
     /**
