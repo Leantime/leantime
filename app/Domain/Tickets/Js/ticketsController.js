@@ -53,7 +53,9 @@ leantime.ticketsController = (function () {
 
             // Update the aria-label for accessibility
             var currentLabel = $sidebar.attr('aria-label') || '';
-            var newLabel = currentLabel.replace(/\d+ tasks/, ticketCount + ' tasks');
+            var taskCountLabel = leantime.i18n.__('label.task_count');
+            var taskCountPattern = new RegExp(taskCountLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace('%s', '\\d+'));
+            var newLabel = currentLabel.replace(taskCountPattern, taskCountLabel.replace('%s', ticketCount));
             $sidebar.attr('aria-label', newLabel);
         });
 
@@ -126,7 +128,7 @@ leantime.ticketsController = (function () {
                     // Update tooltip - only show if count > 0
                     var currentTooltip = $segment.attr('data-tippy-content') || '';
                     var labelMatch = currentTooltip.match(/^([^:]+):/);
-                    var label = labelMatch ? labelMatch[1] : 'Status ' + statusId;
+                    var label = labelMatch ? labelMatch[1] : leantime.i18n.__('label.status') + ' ' + statusId;
                     $segment.attr('data-tippy-content', count > 0 ? label + ': ' + count : '');
                 }
             });
@@ -1228,12 +1230,12 @@ leantime.ticketsController = (function () {
                             $container.removeClass("empty-column");
                             $container.attr("data-empty-text", "");
                             var currentLabel = $container.attr("aria-label") || "";
-                            $container.attr("aria-label", currentLabel.replace("Empty column", "") + " column items");
+                            $container.attr("aria-label", leantime.i18n.__("label.column_items").replace("%s", currentLabel.replace(leantime.i18n.__("label.empty_column"), "")));
                         } else {
                             // Column is empty - add empty state
                             $container.addClass("empty-column");
                             $container.attr("data-empty-text", "Empty");
-                            $container.attr("aria-label", "Empty column");
+                            $container.attr("aria-label", leantime.i18n.__("label.empty_column"));
                         }
                     });
 
@@ -1345,7 +1347,7 @@ leantime.ticketsController = (function () {
 
                                     // Get the new user's name from swimlane header
                                     var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
-                                    var newUserName = $newSwimlaneHeader.text() || leantime.i18n.__("label.not_assigned");
+                                    var newUserName = $newSwimlaneHeader.text() || leantime.i18n.__("label.not_assigned_to_user");
                                     $userDropdown.find('span.text span#user' + ticketId).text(newUserName);
                                 }
 
@@ -1381,12 +1383,12 @@ leantime.ticketsController = (function () {
                                     // Clear the date display for "No Due Date"
                                     $dateDisplay.contents().filter(function() {
                                         return this.nodeType === 3;
-                                    }).first().replaceWith(' No due date');
+                                    }).first().replaceWith(' ' + leantime.i18n.__("text.no_due_date"));
                                 }
                             }
 
                             // Show success notification immediately for better perceived speed
-                            jQuery.growl({message: "To-Do Updated", style: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.todo_updated"), style: "success"});
 
                             var swimlaneValues = {};
                             swimlaneValues[fieldName] = newGroupValue;
@@ -1637,7 +1639,7 @@ leantime.ticketsController = (function () {
 
 
                     // Update footer by showing the total with the reference of the column index
-                    jQuery(api.column(9).footer()).html('Total');
+                    jQuery(api.column(9).footer()).html(leantime.i18n.__("label.total"));
                     jQuery(api.column(10).footer()).html(plannedHours);
                     jQuery(api.column(11).footer()).html(hoursLeft);
                     jQuery(api.column(12).footer()).html(loggedHours);
@@ -1924,7 +1926,7 @@ leantime.ticketsController = (function () {
 
 
     var addCommentTimesheetContent = function (commentId, taskId) {
-        var content = "Discussion on To-Do #" + taskId + ":"
+        var content = leantime.i18n.__("text.discussion_on_todo").replace("%s", taskId)
         + "\n\r"
         + jQuery("#commentText-" + commentId).text();
 

@@ -361,7 +361,7 @@ function buildIframeAttributes(type, embedSrc, title) {
         // Allow all permissions needed for editable embeds
         allow: 'accelerometer; autoplay; clipboard-read; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen; camera; microphone',
         sandbox: sandboxValue,
-        title: title || getTypeName(type) + ' embed',
+        title: title || leantime.i18n.__('tiptap.embed.iframe_title').replace('%s', getTypeName(type)),
         loading: 'lazy',
     };
 }
@@ -559,7 +559,7 @@ var EmbedNode = Node.create({
                             embedId: videoId,
                             src: 'https://www.youtube.com/embed/' + videoId,
                             originalUrl: options.src,
-                            title: options.title || 'YouTube video',
+                            title: options.title || leantime.i18n.__('tiptap.embed.video_title').replace('%s', 'YouTube'),
                         },
                     });
                 };
@@ -577,7 +577,7 @@ var EmbedNode = Node.create({
                             embedId: videoId,
                             src: 'https://player.vimeo.com/video/' + videoId,
                             originalUrl: options.src,
-                            title: options.title || 'Vimeo video',
+                            title: options.title || leantime.i18n.__('tiptap.embed.video_title').replace('%s', 'Vimeo'),
                         },
                     });
                 };
@@ -622,23 +622,23 @@ function showEmbedDialog(editor) {
         '<div class="tiptap-embed-dialog__overlay"></div>' +
         '<div class="tiptap-embed-dialog__content">' +
             '<div class="tiptap-embed-dialog__header">' +
-                '<h3>Embed Content</h3>' +
-                '<button type="button" class="tiptap-embed-dialog__close" aria-label="Close">&times;</button>' +
+                '<h3>' + leantime.i18n.__('tiptap.embed.dialog_title') + '</h3>' +
+                '<button type="button" class="tiptap-embed-dialog__close" aria-label="' + leantime.i18n.__('buttons.close') + '">&times;</button>' +
             '</div>' +
             '<div class="tiptap-embed-dialog__body">' +
                 '<div class="tiptap-embed-dialog__field">' +
-                    '<label>Paste URL</label>' +
-                    '<input type="text" class="tiptap-embed-dialog__input" placeholder="Paste a link to embed..." />' +
+                    '<label>' + leantime.i18n.__('tiptap.embed.paste_url') + '</label>' +
+                    '<input type="text" class="tiptap-embed-dialog__input" placeholder="' + leantime.i18n.__('tiptap.embed.url_placeholder') + '" />' +
                     '<div class="tiptap-embed-dialog__preview" style="display:none;"></div>' +
                 '</div>' +
                 '<div class="tiptap-embed-dialog__services">' +
-                    '<div class="tiptap-embed-dialog__services-label">Supported services:</div>' +
+                    '<div class="tiptap-embed-dialog__services-label">' + leantime.i18n.__('tiptap.embed.supported_services') + '</div>' +
                     '<div class="tiptap-embed-dialog__services-grid">' + servicesHtml + '</div>' +
                 '</div>' +
             '</div>' +
             '<div class="tiptap-embed-dialog__footer">' +
-                '<button type="button" class="tiptap-embed-dialog__btn tiptap-embed-dialog__btn--cancel">Cancel</button>' +
-                '<button type="button" class="tiptap-embed-dialog__btn tiptap-embed-dialog__btn--primary" disabled>Embed</button>' +
+                '<button type="button" class="tiptap-embed-dialog__btn tiptap-embed-dialog__btn--cancel">' + leantime.i18n.__('buttons.cancel') + '</button>' +
+                '<button type="button" class="tiptap-embed-dialog__btn tiptap-embed-dialog__btn--primary" disabled>' + leantime.i18n.__('tiptap.label.embed') + '</button>' +
             '</div>' +
         '</div>';
 
@@ -662,12 +662,12 @@ function showEmbedDialog(editor) {
         if (detectedType) {
             var typeName = getTypeName(detectedType);
             var icon = getTypeIcon(detectedType);
-            preview.innerHTML = '<i class="fa ' + icon + '"></i> ' + typeName + ' detected';
+            preview.innerHTML = '<i class="fa ' + icon + '"></i> ' + leantime.i18n.__('tiptap.embed.detected').replace('%s', typeName);
             preview.style.display = 'block';
             preview.className = 'tiptap-embed-dialog__preview tiptap-embed-dialog__preview--success';
             embedBtn.disabled = false;
         } else if (url.length > 0) {
-            preview.innerHTML = '<i class="fa fa-exclamation-circle"></i> URL not recognized';
+            preview.innerHTML = '<i class="fa fa-exclamation-circle"></i> ' + leantime.i18n.__('tiptap.embed.not_recognized');
             preview.style.display = 'block';
             preview.className = 'tiptap-embed-dialog__preview tiptap-embed-dialog__preview--error';
             embedBtn.disabled = true;

@@ -202,7 +202,7 @@ class EditCanvasComment extends Controller
 
                     $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
-                    $this->tpl->setNotification($canvasTypes[$params['box']].' successfully created', 'success', strtoupper(static::CANVAS_NAME).'canvasitem_created');
+                    $this->tpl->setNotification(sprintf($this->language->__('notification.canvas_item_created'), $this->language->__($canvasTypes[$params['box']]['title'] ?? $params['box'])), 'success', strtoupper(static::CANVAS_NAME).'canvasitem_created');
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = [

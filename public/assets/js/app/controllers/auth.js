@@ -30,7 +30,7 @@ leantime.authController = (function () {
                 jQuery('#newTokenModal').modal('hide');
                 jQuery('#tokenName').val('');
 
-                leantime.notification.show('Token created successfully. Make sure to copy your token now, you won\'t be able to see it again!');
+                leantime.notification.show(leantime.i18n.__('notifications.token_created_copy_now'));
 
                 // Show token in a modal
                 leantime.snippets.copyToClipboard(response.token);
@@ -45,7 +45,7 @@ leantime.authController = (function () {
     }
 
     function deleteToken(id) {
-        if (!confirm('Are you sure you want to delete this token?')) {
+        if (!confirm(leantime.i18n.__('notifications.confirm_token_delete'))) {
             return;
         }
 
@@ -53,11 +53,11 @@ leantime.authController = (function () {
             url: leantime.appUrl + '/advancedAuth/personalTokens/delete/' + id,
             type: 'DELETE',
             success: function() {
-                leantime.notification.show('Token deleted successfully');
+                leantime.notification.show(leantime.i18n.__('notifications.token_deleted'));
                 window.location.reload();
             },
             error: function() {
-                leantime.notification.show('Error deleting token', 'error');
+                leantime.notification.show(leantime.i18n.__('notifications.token_delete_error'), 'error');
             }
         });
     }

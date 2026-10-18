@@ -103,7 +103,7 @@ function createSuggestionPopup() {
  */
 function renderSuggestionItems(items, popup, selectedIndex, onSelect) {
     if (items.length === 0) {
-        popup.innerHTML = '<div class="tiptap-mention-popup__empty">No users found</div>';
+        popup.innerHTML = '<div class="tiptap-mention-popup__empty">' + leantime.i18n.__('tiptap.mention.no_users') + '</div>';
         return;
     }
 

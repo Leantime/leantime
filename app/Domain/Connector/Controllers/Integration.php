@@ -132,7 +132,7 @@ class Integration extends Controller
         $entity = $this->integrationService->resolveImportEntity($params, $currentIntegration);
 
         if ($entity === null) {
-            $this->tpl->setNotification('Entity not set', 'error');
+            $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
 
             return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id.'');
         }
@@ -173,7 +173,7 @@ class Integration extends Controller
         $result = $this->connectorService->importValues($payload['fields'], $payload['values'], session('currentImportEntity'));
 
         if ($result !== true) {
-            $this->tpl->setNotification('There was a problem with the import '.$result, 'error');
+            $this->tpl->setNotification(sprintf($this->language->__('notification.import_problem'), $result), 'error');
         }
 
         return $this->tpl->display('connector.integrationConfirm');

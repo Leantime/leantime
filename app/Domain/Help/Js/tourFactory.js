@@ -42,232 +42,232 @@ leantime.tourFactory = (function () {
             'myWorkDashboard': [
                 {
                     id: "welcome-step",
-                    title: "👋 Welcome to the Dashboard Tour",
-                    text: "Let's start with a few basics to get you up to speed on the navigation and different elements inside Leantime.",
+                    title: "👋 " + leantime.i18n.__("tour.my_work.welcome_title"),
+                    text: leantime.i18n.__("tour.my_work.welcome_text"),
                 },
                 {
                     id: "top-nav-step",
-                    title: "Work Modes",
-                    text: "The top navigation shows you the current 'work mode' you're in. You can be inside a project, your personal work area, or in the company mode.",
+                    title: leantime.i18n.__("tour.my_work.work_modes_title"),
+                    text: leantime.i18n.__("tour.my_work.work_modes_text"),
                     attachTo: { element: '.work-modes', on: 'bottom' }
                 },
                 {
                     id: "menu-step",
-                    title: "Left Navigation",
-                    text: "The left navigation breaks down the current work mode and gives you access to different areas. Everything presented here is part of the currently selected work mode above.",
+                    title: leantime.i18n.__("tour.left_navigation"),
+                    text: leantime.i18n.__("tour.my_work.left_nav_text"),
                     attachTo: { element: '.leftpanel', on: 'right' }
                 },
                 {
                     id: "my-menu",
-                    title: "My Profile Bar",
-                    text: "Here you'll find links to your account as well as notifications and latest news about Leantime.",
+                    title: leantime.i18n.__("tour.my_work.profile_bar_title"),
+                    text: leantime.i18n.__("tour.my_work.profile_bar_text"),
                     attachTo: { element: '.headmenu.pull-right', on: 'bottom' }
                 },
                 {
                     id: "dashboard-widgets",
-                    title: "Your Dashboard Widgets",
-                    text: "Your dashboard is broken up into various widgets showing you focused information about your work.",
+                    title: leantime.i18n.__("tour.my_work.widgets_title"),
+                    text: leantime.i18n.__("tour.my_work.widgets_text"),
                     attachTo: { element: '.primaryContent', on: 'top' }
                 },
                 {
                     id: "dashboard-widgets-dandd",
-                    title: "Customize Your Dashboard",
-                    text: "Widgets can be resized and moved around using the drag and drop functionality.",
+                    title: leantime.i18n.__("tour.my_work.customize_title"),
+                    text: leantime.i18n.__("tour.my_work.customize_text"),
                     attachTo: { element: '#widget_wrapper_todos .grid-handler-top', on: 'bottom' }
                 },
                 {
                     id: "my-todo-widget",
-                    title: "My To-Dos",
-                    text: "The My To-Do widget shows you all the tasks that are currently assigned to you.",
+                    title: leantime.i18n.__("tour.my_work.todos_title"),
+                    text: leantime.i18n.__("tour.my_work.todos_text"),
                     attachTo: { element: '#widget_wrapper_todos', on: 'top' }
                 },
                 {
                     id: "my-todo-widget2",
-                    title: "Group To-Dos",
-                    text: "You can use the dropdowns here to filter your tasks by project or group them by priority, status, project, or dates.",
+                    title: leantime.i18n.__("tour.my_work.group_todos_title"),
+                    text: leantime.i18n.__("tour.my_work.group_todos_text"),
                     attachTo: { element: '#yourToDoContainer > .clear', on: 'bottom' }
                 },
                 {
                     id: "my-todo-widget4",
-                    title: "Sort To-Dos",
-                    text: "Each To-Do can be dragged and dropped to change its order. You can also drag and drop a task to the calendar to schedule it.",
+                    title: leantime.i18n.__("tour.my_work.sort_todos_title"),
+                    text: leantime.i18n.__("tour.my_work.sort_todos_text"),
                     attachTo: { element: '#yourToDoContainer .sortable-item:first-child', on: 'bottom' }
                 },
                 {
                     id: "my-todo-widget-timer",
-                    title: "Start the Timer",
-                    text: "When you're ready to start working on a task, just click the start timer button.",
+                    title: leantime.i18n.__("tour.my_work.timer_title"),
+                    text: leantime.i18n.__("tour.my_work.timer_text"),
                     attachTo: { element: '#yourToDoContainer .sortable-item:first-child .timerContainer', on: 'bottom' }
                 },
                 {
                     id: "my-todo-widget-complete",
-                    title: "Complete a Task",
-                    text: "Once a task is complete, you can mark it as done by clicking the status dropdown.",
+                    title: leantime.i18n.__("tour.my_work.complete_task_title"),
+                    text: leantime.i18n.__("tour.my_work.complete_task_text"),
                     attachTo: { element: '#yourToDoContainer .sortable-item:first-child .statusDropdown', on: 'bottom' }
                 },
                 {
                     id: "my-todo-widget-add",
-                    title: "Add More Tasks",
-                    text: "You can add more tasks by clicking the plus button in each section, or by using the 3-dot menu next to each task.",
+                    title: leantime.i18n.__("tour.my_work.add_tasks_title"),
+                    text: leantime.i18n.__("tour.my_work.add_tasks_text"),
                     attachTo: { element: '#yourToDoContainer .fa-circle-plus', on: 'bottom' }
                 },
                 {
                     id: "finish",
-                    title: "Congratulations!",
-                    text: "You've completed the My Work dashboard tour. Head to <a href='"+leantime.appUrl+"/dashboard/show'>your project</a> to learn more about project management in Leantime.",
+                    title: leantime.i18n.__("tour.congratulations"),
+                    text: leantime.i18n.__("tour.my_work.finish_text").replace('%s', leantime.appUrl),
                 },
             ],
             'projectDashboard': [
                 {
                     id: "left-nav",
-                    title: "Project Menu",
-                    text: "The project menu organizes your project into different sections: <strong>Data Room</strong> - to host all your files and information, <strong>Think</strong> - to strategize, ideate and define, <strong>Make</strong> - to manage goals, milestones and tasks.",
+                    title: leantime.i18n.__("tour.project_dashboard.menu_title"),
+                    text: leantime.i18n.__("tour.project_dashboard.menu_text"),
                     attachTo: { element: '.leftmenu ul', on: 'left' }
                 },
                 {
                     id: 'project-selector',
-                    title: "Project Selector",
-                    text: "Use the project selector to jump between projects. The left menu shows everything related to your current project.",
+                    title: leantime.i18n.__("tour.project_dashboard.selector_title"),
+                    text: leantime.i18n.__("tour.project_dashboard.selector_text"),
                     attachTo: { element: '.bigProjectSelector', on: 'bottom' }
                 },
                 {
                     id: 'project-checklist',
-                    title: "Checklist",
-                    text: "The project checklist is a quick reference to see if your project contains all the necessary information for successful execution.",
+                    title: leantime.i18n.__("tour.project_dashboard.checklist_title"),
+                    text: leantime.i18n.__("tour.project_dashboard.checklist_text"),
                     attachTo: { element: '#progressForm', on: 'bottom' }
                 },
                 {
                     id: 'project-status',
-                    title: "Quick Status Updates",
-                    text: "You can use status updates to quickly share the progress of your project with your team using red, yellow and green colors. The status will be visible across the application.",
+                    title: leantime.i18n.__("tour.project_dashboard.status_title"),
+                    text: leantime.i18n.__("tour.project_dashboard.status_text"),
                     attachTo: { element: '.project-updates', on: 'left' }
                 },
                 {
                     id: 'project-progress',
-                    title: "Progress",
-                    text: "The project progress indicator shows you how much work you have completed. It accounts for various task sizes, team velocity, and project milestones.",
+                    title: leantime.i18n.__("tour.project_dashboard.progress_title"),
+                    text: leantime.i18n.__("tour.project_dashboard.progress_text"),
                     attachTo: { element: '.project-progress', on: 'left' }
                 },
                 {
                     id: 'latest-tasks',
-                    title: "Latest Tasks",
-                    text: "The list of latest tasks shows you the most recent tasks added to your project and can be used as a project inbox.",
+                    title: leantime.i18n.__("tour.project_dashboard.latest_tasks_title"),
+                    text: leantime.i18n.__("tour.project_dashboard.latest_tasks_text"),
                     attachTo: { element: '.latest-todos', on: 'left' }
                 },
                 {
                     id: 'teams',
-                    title: "Team",
-                    text: "The team box shows you the members of this project.",
+                    title: leantime.i18n.__("tour.project_dashboard.team_title"),
+                    text: leantime.i18n.__("tour.project_dashboard.team_text"),
                     attachTo: { element: '.team-container', on: 'top' }
                 },
                 {
                     id: 'finished',
-                    title: "Congratulations!",
-                    text: "You've completed the project dashboard tour. Head to the <a href='"+leantime.appUrl+"/tickets/showKanban'>To-Dos</a> to learn more about the various ways to manage your tasks in Leantime.",
+                    title: leantime.i18n.__("tour.congratulations"),
+                    text: leantime.i18n.__("tour.project_dashboard.finish_text").replace('%s', leantime.appUrl),
                 }
             ],
             'kanbanBoard': [
                 {
                     id: 'kanban-overview',
-                    title: "Your Kanban Board",
-                    text: "This is your Kanban board. It helps you visualize your work and limit work-in-progress.",
+                    title: leantime.i18n.__("tour.kanban_board.overview_title"),
+                    text: leantime.i18n.__("tour.kanban_board.overview_text"),
                     attachTo: { element: '.kanban-board-wrapper', on: 'top' }
                 },
                 {
                     id: 'kanban-columns',
-                    title: "Work Flow",
-                    text: "Tasks move from left to right as they progress. Drag and drop cards to update their status.",
+                    title: leantime.i18n.__("tour.kanban_board.workflow_title"),
+                    text: leantime.i18n.__("tour.kanban_board.workflow_text"),
                     attachTo: { element: '.column', on: 'right' }
                 },
                 {
                     id: 'kanban-columns2',
-                    title: "Flexible Columns",
-                    text: "Using the 3-dot menu, you can add or remove columns and rename them.",
+                    title: leantime.i18n.__("tour.kanban_board.columns_title"),
+                    text: leantime.i18n.__("tour.kanban_board.columns_text"),
                     attachTo: { element: '.column .widgettitle .inlineDropDownContainer', on: 'right' }
                 },
                 {
                     id: 'kanban-filter',
-                    title: "Filter Tasks",
-                    text: "You can filter your tasks by various fields like priority, status, project, or dates.",
+                    title: leantime.i18n.__("tour.kanban_board.filter_title"),
+                    text: leantime.i18n.__("tour.kanban_board.filter_text"),
                     attachTo: { element: '.filterWrapper > .btn', on: 'bottom' }
                 },
                 {
                     id: 'kanban-group',
-                    title: "Swimlanes",
-                    text: "Additionally, you can group your tasks to create Kanban swimlanes. This helps you visualize your work by team members, priority, or milestones.",
+                    title: leantime.i18n.__("tour.kanban_board.swimlanes_title"),
+                    text: leantime.i18n.__("tour.kanban_board.swimlanes_text"),
                     attachTo: { element: '.filterWrapper > .btn-group', on: 'bottom' }
                 },
                 {
                     id: 'kanban-sprints',
-                    title: "Sprints",
-                    text: "If you manage your work in sprints, you can use the dropdown here to select, create, and update sprints.",
+                    title: leantime.i18n.__("tour.kanban_board.sprints_title"),
+                    text: leantime.i18n.__("tour.kanban_board.sprints_text"),
                     attachTo: { element: '.pageheader .dropdown', on: 'bottom' }
                 },
                 {
                     id: 'kanban-congrats',
-                    title: "Congratulations!",
-                    text: "This concludes the Kanban tour. Head to the <a href='"+leantime.appUrl+"/tickets/showKanban'>Milestones</a> to learn how to create and manage milestones in Leantime.",
+                    title: leantime.i18n.__("tour.congratulations"),
+                    text: leantime.i18n.__("tour.kanban_board.finish_text").replace('%s', leantime.appUrl),
                 }
             ],
             'milestoneView': [
                 {
                     id: 'milestone-overview',
-                    title: "Milestones",
-                    text: "Milestones help you track major outcomes and project phases.",
+                    title: leantime.i18n.__("tour.milestones.overview_title"),
+                    text: leantime.i18n.__("tour.milestones.overview_text"),
                     attachTo: { element: '.gantt-wrapper', on: 'top' }
                 },
                 {
                     id: 'milestone-drag',
-                    title: "Drag & Sort",
-                    text: "Each bar represents one milestone. You can drag them along the timeline, reorder, and resize them. Everything you do on this screen updates the timing of your milestones.",
+                    title: leantime.i18n.__("tour.milestones.drag_title"),
+                    text: leantime.i18n.__("tour.milestones.drag_text"),
                     attachTo: { element: '.gantt-wrapper', on: 'top' }
                 },
                 {
                     id: 'milestone-filter',
-                    title: "Filter",
-                    text: "You can filter your milestones and also view tasks that are part of them.",
+                    title: leantime.i18n.__("tour.milestones.filter_title"),
+                    text: leantime.i18n.__("tour.milestones.filter_text"),
                     attachTo: { element: '.filterWrapper > .btn', on: 'bottom' }
                 },
                 {
                     id: 'milestone-timeframes',
-                    title: "Timeframes",
-                    text: "You can change the timeframe of the timeline view to see more of the year or dive deep into a daily breakdown.",
+                    title: leantime.i18n.__("tour.milestones.timeframes_title"),
+                    text: leantime.i18n.__("tour.milestones.timeframes_text"),
                     attachTo: { element: '.col-md-4 .pull-right', on: 'bottom' }
                 },
                 {
                     id: 'milestone-congrats',
-                    title: "Congratulations!",
-                    text: "This concludes the milestone tour. Head to the <a href='"+leantime.appUrl+"/goalcanvas/dashboard'>Goals</a> to learn how to create and manage goals in Leantime.",
+                    title: leantime.i18n.__("tour.congratulations"),
+                    text: leantime.i18n.__("tour.milestones.finish_text").replace('%s', leantime.appUrl),
                 },
             ],
             'goalsView': [
                 {
                     id: 'goals-overview',
-                    title: "Goals",
-                    text: "Goals help you track measurable impact on your projects.",
+                    title: leantime.i18n.__("tour.goals.overview_title"),
+                    text: leantime.i18n.__("tour.goals.overview_text"),
                 },
                 {
                     id: 'goal-parts',
-                    title: "Objectives & Metrics",
-                    text: "Each goal is made up of an Objective (what you're trying to accomplish) and a Metric (how you'll measure it).",
+                    title: leantime.i18n.__("tour.goals.parts_title"),
+                    text: leantime.i18n.__("tour.goals.parts_text"),
                     attachTo: { element: '.ticketBox', on: 'top' }
                 },
                 {
                     id: 'goal-progress',
-                    title: "Goal Progress",
-                    text: "As you update your goal metrics, the progress bar will show you how far along you are.",
+                    title: leantime.i18n.__("tour.goals.progress_title"),
+                    text: leantime.i18n.__("tour.goals.progress_text"),
                     attachTo: { element: '.ticketBox .row > .col-md-12 .progress', on: 'bottom' }
                 },
                 {
                     id: 'milestone-connection',
-                    title: "Milestones & Goals",
-                    text: "You can connect goals to milestones to track the task-level progress of your goals. This helps identify gaps in your project plan.",
+                    title: leantime.i18n.__("tour.goals.milestones_title"),
+                    text: leantime.i18n.__("tour.goals.milestones_text"),
                     attachTo: { element: '.ticketBox.fixed', on: 'bottom' }
                 },
                 {
                     id: 'milestone-congrats',
-                    title: "Congratulations!",
-                    text: "This concludes the goals tour. Milestones, Goals, and To-Dos are the basic building blocks in Leantime. Use them to break down your work into manageable chunks. Head to the <a href='"+leantime.appUrl+"/tickets/showKanban'>Kanban Board</a> to review your tasks.",
+                    title: leantime.i18n.__("tour.congratulations"),
+                    text: leantime.i18n.__("tour.goals.finish_text").replace('%s', leantime.appUrl),
                 },
             ]
         };

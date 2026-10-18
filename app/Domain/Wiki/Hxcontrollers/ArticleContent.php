@@ -71,7 +71,7 @@ class ArticleContent extends HtmxController
 
             return new Response(json_encode([
                 'success' => true,
-                'message' => 'Saved',
+                'message' => $this->language->__('label.wiki_saved'),
                 'timestamp' => dtHelper()->userNow()->formatDateTimeForDb(),
                 'title' => $article->title,
                 'status' => $article->status,
@@ -80,7 +80,7 @@ class ArticleContent extends HtmxController
 
         return new Response(json_encode([
             'success' => false,
-            'message' => 'Failed to save',
+            'message' => $this->language->__('notification.article_save_failed'),
         ], JSON_THROW_ON_ERROR), 500, ['Content-Type' => 'application/json']);
     }
 
@@ -100,7 +100,7 @@ class ArticleContent extends HtmxController
 
         // Create new article with defaults
         $article = new Article;
-        $article->title = 'Untitled';
+        $article->title = $this->language->__('search.untitled');
         $article->author = session('userdata.id');
         $article->canvasId = $currentWiki;
         $article->data = 'far fa-file-alt';
@@ -118,6 +118,6 @@ class ArticleContent extends HtmxController
             return $response;
         }
 
-        return new Response('Failed to create article', 500);
+        return new Response($this->language->__('notification.article_create_failed'), 500);
     }
 }

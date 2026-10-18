@@ -813,16 +813,16 @@
                     let message = "";
                     switch(dragState.nestingErrorType) {
                         case 'project':
-                            message = "Can't nest elements from 2 different projects";
+                            message = leantime.i18n.__("short_notifications.cant_nest_different_projects");
                             break;
                         case 'types':
-                            message = "Can't nest these elements underneach each other";
+                            message = leantime.i18n.__("short_notifications.cant_nest_these_elements");
                             break;
                         case 'circular':
-                            message = "Can't nest element undneath itself";
+                            message = leantime.i18n.__("short_notifications.cant_nest_under_itself");
                             break;
                         default:
-                            message = "Nesting not allowed here";
+                            message = leantime.i18n.__("short_notifications.nesting_not_allowed");
                     }
 
                     jQuery.growl({message: message, style: "error"});

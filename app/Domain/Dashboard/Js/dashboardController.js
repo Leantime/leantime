@@ -104,7 +104,7 @@ leantime.dashboardController = (function () {
                         lineTension: 0,
                 },
                     {
-                        label: 'Actual',
+                        label: leantime.i18n.__("label.actual"),
                         backgroundColor: leantime.dashboardController.chartColors.red,
                         borderColor: leantime.dashboardController.chartColors.red,
                         data: actualData,

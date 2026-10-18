@@ -46,10 +46,10 @@ class Update extends Controller
 
             if (is_array($success) === true) {
                 foreach ($success as $errorMessage) {
-                    $this->tpl->setNotification('There was a problem. Please reach out to support@leantime.io for assistance.', 'error');
+                    $this->tpl->setNotification($this->language->__('notification.update_problem_contact_support'), 'error');
                     // report($errorMessage);
                 }
-                $this->tpl->setNotification('There was a problem updating your database. Please check your error logs to verify your database is up to date.', 'error');
+                $this->tpl->setNotification($this->language->__('notification.update_database_problem'), 'error');
 
                 return FrontcontrollerCore::redirect(BASE_URL.'/install/update');
             }
@@ -59,7 +59,7 @@ class Update extends Controller
             }
         }
 
-        $this->tpl->setNotification('There was a problem. Please reach out to support@leantime.io for assistance.', 'error');
+        $this->tpl->setNotification($this->language->__('notification.update_problem_contact_support'), 'error');
 
         return FrontcontrollerCore::redirect(BASE_URL.'/install/update');
     }

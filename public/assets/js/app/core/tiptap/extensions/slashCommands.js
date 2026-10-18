@@ -15,8 +15,8 @@ var defaultCommands = [
     // Sorted alphabetically by label
     {
         name: 'columns2',
-        label: '2 Columns',
-        description: 'Create two-column layout',
+        get label() { return leantime.i18n.__('tiptap.label.columns_2'); },
+        get description() { return leantime.i18n.__('tiptap.slash.columns_2_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>',
         command: function(editor) {
             editor.chain().focus().setColumns(2).run();
@@ -24,8 +24,8 @@ var defaultCommands = [
     },
     {
         name: 'columns3',
-        label: '3 Columns',
-        description: 'Create three-column layout',
+        get label() { return leantime.i18n.__('tiptap.label.columns_3'); },
+        get description() { return leantime.i18n.__('tiptap.slash.columns_3_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="5" height="18" rx="1"/><rect x="9.5" y="3" width="5" height="18" rx="1"/><rect x="17" y="3" width="5" height="18" rx="1"/></svg>',
         command: function(editor) {
             editor.chain().focus().setColumns(3).run();
@@ -33,8 +33,8 @@ var defaultCommands = [
     },
     {
         name: 'columns4',
-        label: '4 Columns',
-        description: 'Create four-column layout',
+        get label() { return leantime.i18n.__('tiptap.label.columns_4'); },
+        get description() { return leantime.i18n.__('tiptap.slash.columns_4_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="4" height="18" rx="1"/><rect x="7" y="3" width="4" height="18" rx="1"/><rect x="13" y="3" width="4" height="18" rx="1"/><rect x="19" y="3" width="4" height="18" rx="1"/></svg>',
         command: function(editor) {
             editor.chain().focus().setColumns(4).run();
@@ -42,8 +42,8 @@ var defaultCommands = [
     },
     {
         name: 'sidebarLeft',
-        label: 'Sidebar Left',
-        description: 'Narrow left, wide right layout',
+        get label() { return leantime.i18n.__('tiptap.label.sidebar_left'); },
+        get description() { return leantime.i18n.__('tiptap.slash.sidebar_left_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="11" y="3" width="10" height="18" rx="1"/></svg>',
         command: function(editor) {
             editor.chain().focus().setColumnLayout(2, 'sidebar-left').run();
@@ -51,8 +51,8 @@ var defaultCommands = [
     },
     {
         name: 'sidebarRight',
-        label: 'Sidebar Right',
-        description: 'Wide left, narrow right layout',
+        get label() { return leantime.i18n.__('tiptap.label.sidebar_right'); },
+        get description() { return leantime.i18n.__('tiptap.slash.sidebar_right_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="10" height="18" rx="1"/><rect x="16" y="3" width="5" height="18" rx="1"/></svg>',
         command: function(editor) {
             editor.chain().focus().setColumnLayout(2, 'sidebar-right').run();
@@ -60,8 +60,8 @@ var defaultCommands = [
     },
     {
         name: 'sidebarBoth',
-        label: 'Sidebar Both',
-        description: 'Sidebars on both sides of content',
+        get label() { return leantime.i18n.__('tiptap.label.sidebar_both'); },
+        get description() { return leantime.i18n.__('tiptap.slash.sidebar_both_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="4" height="18" rx="1"/><rect x="8" y="3" width="8" height="18" rx="1"/><rect x="18" y="3" width="4" height="18" rx="1"/></svg>',
         command: function(editor) {
             editor.chain().focus().setColumnLayout(3, 'sidebar-both').run();
@@ -69,8 +69,8 @@ var defaultCommands = [
     },
     {
         name: 'bulletList',
-        label: 'Bullet List',
-        description: 'Create a simple bullet list',
+        get label() { return leantime.i18n.__('tiptap.label.bullet_list'); },
+        get description() { return leantime.i18n.__('tiptap.slash.bullet_list_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg>',
         command: function(editor) {
             editor.chain().focus().toggleBulletList().run();
@@ -78,8 +78,8 @@ var defaultCommands = [
     },
     {
         name: 'codeBlock',
-        label: 'Code Block',
-        description: 'Add a code snippet',
+        get label() { return leantime.i18n.__('tiptap.label.code_block'); },
+        get description() { return leantime.i18n.__('tiptap.slash.code_block_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
         command: function(editor) {
             editor.chain().focus().toggleCodeBlock().run();
@@ -87,8 +87,8 @@ var defaultCommands = [
     },
     {
         name: 'details',
-        label: 'Collapsible',
-        description: 'Add collapsible section',
+        get label() { return leantime.i18n.__('tiptap.label.collapsible'); },
+        get description() { return leantime.i18n.__('tiptap.slash.collapsible_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l7 7 7-7"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>',
         command: function(editor) {
             editor.chain().focus().setDetails().run();
@@ -96,8 +96,8 @@ var defaultCommands = [
     },
     {
         name: 'mermaid',
-        label: 'Diagram',
-        description: 'Insert a Mermaid diagram',
+        get label() { return leantime.i18n.__('tiptap.label.diagram'); },
+        get description() { return leantime.i18n.__('tiptap.slash.diagram_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="8" y="14" width="7" height="7" rx="1"/><line x1="6.5" y1="10" x2="6.5" y2="14"/><line x1="6.5" y1="14" x2="11.5" y2="14"/><line x1="17.5" y1="10" x2="17.5" y2="14"/><line x1="17.5" y1="14" x2="11.5" y2="14"/></svg>',
         command: function(editor) {
             if (window.leantime && window.leantime.tiptapMermaid) {
@@ -109,8 +109,8 @@ var defaultCommands = [
     },
     {
         name: 'horizontalRule',
-        label: 'Divider',
-        description: 'Add a horizontal divider',
+        get label() { return leantime.i18n.__('tiptap.label.divider'); },
+        get description() { return leantime.i18n.__('tiptap.slash.divider_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg>',
         command: function(editor) {
             editor.chain().focus().setHorizontalRule().run();
@@ -118,8 +118,8 @@ var defaultCommands = [
     },
     {
         name: 'embed',
-        label: 'Embed',
-        description: 'Embed video, docs, or other content',
+        get label() { return leantime.i18n.__('tiptap.label.embed'); },
+        get description() { return leantime.i18n.__('tiptap.slash.embed_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
         command: function(editor) {
             if (window.leantime && window.leantime.tiptapEmbed) {
@@ -129,8 +129,8 @@ var defaultCommands = [
     },
     {
         name: 'emoji',
-        label: 'Emoji',
-        description: 'Insert an emoji',
+        get label() { return leantime.i18n.__('tiptap.label.emoji'); },
+        get description() { return leantime.i18n.__('tiptap.slash.emoji_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
         command: function(editor) {
             if (window.leantime && window.leantime.tiptapEmoji) {
@@ -140,8 +140,8 @@ var defaultCommands = [
     },
     {
         name: 'heading1',
-        label: 'Heading 1',
-        description: 'Large section heading',
+        get label() { return leantime.i18n.__('tiptap.label.heading_1'); },
+        get description() { return leantime.i18n.__('tiptap.slash.heading_1_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="m17 12 3-2v8"/></svg>',
         command: function(editor) {
             editor.chain().focus().toggleHeading({ level: 1 }).run();
@@ -149,8 +149,8 @@ var defaultCommands = [
     },
     {
         name: 'heading2',
-        label: 'Heading 2',
-        description: 'Medium section heading',
+        get label() { return leantime.i18n.__('tiptap.label.heading_2'); },
+        get description() { return leantime.i18n.__('tiptap.slash.heading_2_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/></svg>',
         command: function(editor) {
             editor.chain().focus().toggleHeading({ level: 2 }).run();
@@ -158,8 +158,8 @@ var defaultCommands = [
     },
     {
         name: 'heading3',
-        label: 'Heading 3',
-        description: 'Small section heading',
+        get label() { return leantime.i18n.__('tiptap.label.heading_3'); },
+        get description() { return leantime.i18n.__('tiptap.slash.heading_3_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M17.5 10.5c1.7-1 3.5 0 3.5 1.5a2 2 0 0 1-2 2"/><path d="M17 17.5c2 1.5 4 .3 4-1.5a2 2 0 0 0-2-2"/></svg>',
         command: function(editor) {
             editor.chain().focus().toggleHeading({ level: 3 }).run();
@@ -167,8 +167,8 @@ var defaultCommands = [
     },
     {
         name: 'image',
-        label: 'Image',
-        description: 'Upload or embed an image',
+        get label() { return leantime.i18n.__('tiptap.label.image'); },
+        get description() { return leantime.i18n.__('tiptap.slash.image_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>',
         command: function(editor) {
             // Trigger the image button in toolbar if available
@@ -181,7 +181,7 @@ var defaultCommands = [
                 }
             }
             // Fallback to prompt
-            var url = window.prompt('Enter image URL:');
+            var url = window.prompt(leantime.i18n.__('tiptap.slash.enter_image_url'));
             if (url) {
                 editor.chain().focus().setImage({ src: url }).run();
             }
@@ -189,11 +189,11 @@ var defaultCommands = [
     },
     {
         name: 'mathInline',
-        label: 'Inline Math',
-        description: 'Insert inline LaTeX formula',
+        get label() { return leantime.i18n.__('tiptap.label.inline_math'); },
+        get description() { return leantime.i18n.__('tiptap.slash.inline_math_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><text x="6" y="17" font-size="14" fill="currentColor" stroke="none">x²</text></svg>',
         command: function(editor) {
-            var latex = window.prompt('Enter LaTeX formula:', 'x^2');
+            var latex = window.prompt(leantime.i18n.__('tiptap.slash.enter_latex_formula'), 'x^2');
             if (latex) {
                 editor.chain().focus().setMathInline({ latex: latex }).run();
             }
@@ -201,8 +201,8 @@ var defaultCommands = [
     },
     {
         name: 'math',
-        label: 'Math Equation',
-        description: 'Insert a LaTeX math block',
+        get label() { return leantime.i18n.__('tiptap.label.math_equation'); },
+        get description() { return leantime.i18n.__('tiptap.slash.math_equation_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4l6-16h4"/><path d="M4 12h6"/></svg>',
         command: function(editor) {
             if (window.leantime && window.leantime.tiptapMath) {
@@ -214,8 +214,8 @@ var defaultCommands = [
     },
     {
         name: 'numberedList',
-        label: 'Numbered List',
-        description: 'Create a numbered list',
+        get label() { return leantime.i18n.__('tiptap.label.numbered_list'); },
+        get description() { return leantime.i18n.__('tiptap.slash.numbered_list_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>',
         command: function(editor) {
             editor.chain().focus().toggleOrderedList().run();
@@ -223,8 +223,8 @@ var defaultCommands = [
     },
     {
         name: 'blockquote',
-        label: 'Quote',
-        description: 'Add a blockquote',
+        get label() { return leantime.i18n.__('tiptap.label.quote'); },
+        get description() { return leantime.i18n.__('tiptap.slash.quote_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/></svg>',
         command: function(editor) {
             editor.chain().focus().toggleBlockquote().run();
@@ -232,8 +232,8 @@ var defaultCommands = [
     },
     {
         name: 'table',
-        label: 'Table',
-        description: 'Insert a table',
+        get label() { return leantime.i18n.__('tiptap.label.table'); },
+        get description() { return leantime.i18n.__('tiptap.slash.table_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>',
         command: function(editor) {
             editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
@@ -241,8 +241,8 @@ var defaultCommands = [
     },
     {
         name: 'toc',
-        label: 'Table of Contents',
-        description: 'Insert auto-generated TOC',
+        get label() { return leantime.i18n.__('tiptap.label.table_of_contents'); },
+        get description() { return leantime.i18n.__('tiptap.slash.table_of_contents_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="5" y1="10" x2="21" y2="10"/><line x1="5" y1="14" x2="21" y2="14"/><line x1="5" y1="18" x2="21" y2="18"/><circle cx="3" cy="10" r="1" fill="currentColor"/><circle cx="3" cy="14" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>',
         command: function(editor) {
             editor.chain().focus().setTableOfContents().run();
@@ -250,8 +250,8 @@ var defaultCommands = [
     },
     {
         name: 'taskList',
-        label: 'Task List',
-        description: 'Create a checklist with tasks',
+        get label() { return leantime.i18n.__('tiptap.label.task_list'); },
+        get description() { return leantime.i18n.__('tiptap.slash.task_list_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m3 17 2 2 4-4"/><line x1="13" y1="6" x2="21" y2="6"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="13" y1="18" x2="21" y2="18"/></svg>',
         command: function(editor) {
             editor.chain().focus().toggleTaskList().run();
@@ -259,8 +259,8 @@ var defaultCommands = [
     },
     {
         name: 'template',
-        label: 'Template',
-        description: 'Insert a document template',
+        get label() { return leantime.i18n.__('tiptap.label.template'); },
+        get description() { return leantime.i18n.__('tiptap.slash.template_description'); },
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>',
         command: function(editor) {
             showTemplatePicker(editor);
@@ -317,14 +317,14 @@ function showTemplatePicker(editor) {
         '<div class="tiptap-template-picker__overlay"></div>' +
         '<div class="tiptap-template-picker__content">' +
             '<div class="tiptap-template-picker__header">' +
-                '<h3>Insert Template</h3>' +
-                '<button type="button" class="tiptap-template-picker__close" aria-label="Close">&times;</button>' +
+                '<h3>' + leantime.i18n.__('tiptap.slash.insert_template') + '</h3>' +
+                '<button type="button" class="tiptap-template-picker__close" aria-label="' + leantime.i18n.__('buttons.close') + '">&times;</button>' +
             '</div>' +
             '<div class="tiptap-template-picker__search">' +
-                '<input type="text" placeholder="Search templates..." class="tiptap-template-picker__search-input" />' +
+                '<input type="text" placeholder="' + leantime.i18n.__('tiptap.slash.search_templates') + '" class="tiptap-template-picker__search-input" />' +
             '</div>' +
             '<div class="tiptap-template-picker__body">' +
-                '<div class="tiptap-template-picker__loading">Loading templates...</div>' +
+                '<div class="tiptap-template-picker__loading">' + leantime.i18n.__('tiptap.slash.loading_templates') + '</div>' +
             '</div>' +
         '</div>';
 
@@ -352,14 +352,14 @@ function showTemplatePicker(editor) {
     fetchTemplates().then(function(templates) {
         function renderTemplates(filteredTemplates) {
             if (filteredTemplates.length === 0) {
-                body.innerHTML = '<div class="tiptap-template-picker__empty">No templates found</div>';
+                body.innerHTML = '<div class="tiptap-template-picker__empty">' + leantime.i18n.__('tiptap.slash.no_templates') + '</div>';
                 return;
             }
 
             // Group by category
             var categories = {};
             filteredTemplates.forEach(function(tpl) {
-                var cat = tpl.category || 'Other';
+                var cat = tpl.category || leantime.i18n.__('tiptap.slash.template_category_other');
                 if (!categories[cat]) {
                     categories[cat] = [];
                 }
@@ -456,11 +456,11 @@ function updateActiveItem(popup, selectedIndex) {
  */
 function renderCommandItems(items, popup, selectedIndex, onSelect, onHover) {
     if (items.length === 0) {
-        popup.innerHTML = '<div class="tiptap-slash-popup__empty">No commands found</div>';
+        popup.innerHTML = '<div class="tiptap-slash-popup__empty">' + leantime.i18n.__('tiptap.slash.no_commands') + '</div>';
         return;
     }
 
-    var html = '<div class="tiptap-slash-popup__header">Commands</div>';
+    var html = '<div class="tiptap-slash-popup__header">' + leantime.i18n.__('tiptap.slash.commands') + '</div>';
     html += '<div class="tiptap-slash-popup__items">';
     html += items.map(function(item, index) {
         var activeClass = index === selectedIndex ? 'tiptap-slash-popup__item--active' : '';

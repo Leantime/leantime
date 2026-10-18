@@ -98,7 +98,7 @@ var TableOfContents = Node.create({
                 'data-max-depth': props.node.attrs.maxDepth,
                 'data-numbered': props.node.attrs.numbered ? 'true' : 'false',
             }, props.HTMLAttributes),
-            ['div', { class: 'tiptap-toc__content' }, 'Table of Contents'],
+            ['div', { class: 'tiptap-toc__content' }, leantime.i18n.__('tiptap.label.table_of_contents')],
         ];
     },
 
@@ -118,7 +118,7 @@ var TableOfContents = Node.create({
 
             var title = document.createElement('span');
             title.className = 'tiptap-toc__title';
-            title.textContent = 'Table of Contents';
+            title.textContent = leantime.i18n.__('tiptap.label.table_of_contents');
             header.appendChild(title);
 
             // Settings button
@@ -126,7 +126,7 @@ var TableOfContents = Node.create({
             settingsBtn.type = 'button';
             settingsBtn.className = 'tiptap-toc__settings-btn';
             settingsBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>';
-            settingsBtn.title = 'TOC Settings';
+            settingsBtn.title = leantime.i18n.__('tiptap.toc.settings');
             header.appendChild(settingsBtn);
 
             // Delete button
@@ -134,7 +134,7 @@ var TableOfContents = Node.create({
             deleteBtn.type = 'button';
             deleteBtn.className = 'tiptap-toc__delete-btn';
             deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
-            deleteBtn.title = 'Remove table of contents';
+            deleteBtn.title = leantime.i18n.__('tiptap.toc.remove');
             header.appendChild(deleteBtn);
 
             container.appendChild(header);
@@ -150,19 +150,19 @@ var TableOfContents = Node.create({
             settingsPanel.style.display = 'none';
             settingsPanel.innerHTML =
                 '<label class="tiptap-toc__setting">' +
-                    '<span>Max depth:</span>' +
+                    '<span>' + leantime.i18n.__('tiptap.toc.max_depth') + '</span>' +
                     '<select class="tiptap-toc__depth-select">' +
-                        '<option value="1">H1 only</option>' +
+                        '<option value="1">' + leantime.i18n.__('tiptap.toc.depth_h1_only') + '</option>' +
                         '<option value="2">H1-H2</option>' +
                         '<option value="3" selected>H1-H3</option>' +
                         '<option value="4">H1-H4</option>' +
                         '<option value="5">H1-H5</option>' +
-                        '<option value="6">All headings</option>' +
+                        '<option value="6">' + leantime.i18n.__('tiptap.toc.depth_all') + '</option>' +
                     '</select>' +
                 '</label>' +
                 '<label class="tiptap-toc__setting">' +
                     '<input type="checkbox" class="tiptap-toc__numbered-check"> ' +
-                    '<span>Show numbers</span>' +
+                    '<span>' + leantime.i18n.__('tiptap.toc.show_numbers') + '</span>' +
                 '</label>';
             container.appendChild(settingsPanel);
 
@@ -187,7 +187,7 @@ var TableOfContents = Node.create({
                 });
 
                 if (headings.length === 0) {
-                    content.innerHTML = '<div class="tiptap-toc__empty">No headings found</div>';
+                    content.innerHTML = '<div class="tiptap-toc__empty">' + leantime.i18n.__('tiptap.toc.no_headings') + '</div>';
                     return;
                 }
 

@@ -310,7 +310,7 @@ class EditCanvasItem
                     $canvasTypes = $this->blueprintsService->getTranslatedBoxes($this->template);
 
                     $this->tpl->setNotification(
-                        $canvasTypes[$data['box']]['title'].' successfully created',
+                        sprintf($this->language->__('notification.canvas_item_created'), $canvasTypes[$data['box']]['title']),
                         'success',
                         ''.$data['box'].'_item_created'
                     );

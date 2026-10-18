@@ -55,7 +55,7 @@ class Login extends Controller
             // would mint a code whose exchange can never succeed (pkceMatches
             // rejects an empty challenge). Fail loudly at the front door.
             if ($mobile && $codeChallenge === '') {
-                $this->tpl->setNotification('Mobile login requires a PKCE code_challenge.', 'error');
+                $this->tpl->setNotification($this->language->__('notification.oidc_mobile_pkce_required'), 'error');
 
                 return Frontcontroller::redirect(BASE_URL.'/auth/login');
             }
@@ -65,7 +65,7 @@ class Login extends Controller
             // malformed value so a crafted request can't persist junk into the
             // code store and to enforce the intended mobile contract.
             if ($codeChallenge !== '' && ! preg_match('/^[A-Za-z0-9\-_]{43,128}$/', $codeChallenge)) {
-                $this->tpl->setNotification('Invalid PKCE code_challenge.', 'error');
+                $this->tpl->setNotification($this->language->__('notification.oidc_invalid_pkce'), 'error');
 
                 return Frontcontroller::redirect(BASE_URL.'/auth/login');
             }
@@ -79,7 +79,7 @@ class Login extends Controller
             Log::error($e);
         }
 
-        $this->tpl->setNotification('Auth URL could not be found. Check the logs for more details', 'error');
+        $this->tpl->setNotification($this->language->__('notification.oidc_auth_url_not_found'), 'error');
 
         return Frontcontroller::redirect(BASE_URL.'/auth/login');
     }

@@ -20,7 +20,7 @@ class InviteTeamStep implements OnboardingSteps
 
     public function getTitle(): string
     {
-        return 'Invite your team';
+        return __('label.onboarding_step_invite_team');
     }
 
     /**

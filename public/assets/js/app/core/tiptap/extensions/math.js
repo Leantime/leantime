@@ -38,7 +38,7 @@ function renderMath(latex, displayMode) {
             output: 'html',
         });
     } catch (error) {
-        return '<span class="tiptap-math__error">' + escapeHtml(error.message || 'Invalid LaTeX') + '</span>';
+        return '<span class="tiptap-math__error">' + escapeHtml(error.message || leantime.i18n.__('tiptap.math.invalid_latex')) + '</span>';
     }
 }
 
@@ -121,7 +121,7 @@ var MathInline = Node.create({
             dom.addEventListener('dblclick', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                var newLatex = window.prompt('Edit LaTeX:', node.attrs.latex);
+                var newLatex = window.prompt(leantime.i18n.__('tiptap.math.edit_latex_prompt'), node.attrs.latex);
                 if (newLatex !== null && typeof getPos === 'function') {
                     var pos = getPos();
                     editor.chain().focus().command(function(cmdProps) {
@@ -232,7 +232,7 @@ var MathBlock = Node.create({
             editBtn.type = 'button';
             editBtn.className = 'tiptap-math__edit-btn';
             editBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
-            editBtn.title = 'Edit equation';
+            editBtn.title = leantime.i18n.__('tiptap.math.edit_equation');
             dom.appendChild(editBtn);
 
             // Delete button
@@ -240,7 +240,7 @@ var MathBlock = Node.create({
             deleteBtn.type = 'button';
             deleteBtn.className = 'tiptap-math__delete-btn';
             deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
-            deleteBtn.title = 'Delete equation';
+            deleteBtn.title = leantime.i18n.__('tiptap.math.delete_equation');
             dom.appendChild(deleteBtn);
 
             // Render math
@@ -343,26 +343,26 @@ function showMathDialog(editor, initialLatex, isBlock, onSave) {
 
     dialog.innerHTML =
         '<div class="tiptap-math-dialog__header">' +
-            '<h3>' + (onSave ? 'Edit' : 'Insert') + ' Math Equation</h3>' +
+            '<h3>' + (onSave ? leantime.i18n.__('tiptap.math.edit_title') : leantime.i18n.__('tiptap.math.insert_title')) + '</h3>' +
             '<button type="button" class="tiptap-math-dialog__close">&times;</button>' +
         '</div>' +
         '<div class="tiptap-math-dialog__body">' +
             '<div class="tiptap-math-dialog__type">' +
-                '<label><input type="radio" name="mathType" value="block" ' + (isBlock ? 'checked' : '') + '> Block (display)</label>' +
-                '<label><input type="radio" name="mathType" value="inline" ' + (!isBlock ? 'checked' : '') + '> Inline</label>' +
+                '<label><input type="radio" name="mathType" value="block" ' + (isBlock ? 'checked' : '') + '> ' + leantime.i18n.__('tiptap.math.type_block') + '</label>' +
+                '<label><input type="radio" name="mathType" value="inline" ' + (!isBlock ? 'checked' : '') + '> ' + leantime.i18n.__('tiptap.math.type_inline') + '</label>' +
             '</div>' +
-            '<textarea class="tiptap-math-dialog__code" rows="4" placeholder="Enter LaTeX...">' + escapeHtml(initialLatex) + '</textarea>' +
+            '<textarea class="tiptap-math-dialog__code" rows="4" placeholder="' + leantime.i18n.__('tiptap.math.code_placeholder') + '">' + escapeHtml(initialLatex) + '</textarea>' +
             '<div class="tiptap-math-dialog__examples">' +
-                '<small>Examples: \\frac{a}{b}, \\sqrt{x}, x^2, \\sum_{i=1}^n, \\int_0^1</small>' +
+                '<small>' + leantime.i18n.__('tiptap.math.examples') + ' \\frac{a}{b}, \\sqrt{x}, x^2, \\sum_{i=1}^n, \\int_0^1</small>' +
             '</div>' +
             '<div class="tiptap-math-dialog__preview">' +
-                '<label>Preview:</label>' +
+                '<label>' + leantime.i18n.__('tiptap.dialog.preview') + '</label>' +
                 '<div class="tiptap-math-dialog__preview-area"></div>' +
             '</div>' +
         '</div>' +
         '<div class="tiptap-math-dialog__footer">' +
-            '<button type="button" class="tiptap-math-dialog__cancel">Cancel</button>' +
-            '<button type="button" class="tiptap-math-dialog__insert">' + (onSave ? 'Save' : 'Insert') + '</button>' +
+            '<button type="button" class="tiptap-math-dialog__cancel">' + leantime.i18n.__('buttons.cancel') + '</button>' +
+            '<button type="button" class="tiptap-math-dialog__insert">' + (onSave ? leantime.i18n.__('buttons.save') : leantime.i18n.__('tiptap.dialog.insert')) + '</button>' +
         '</div>';
 
     overlay.appendChild(dialog);
@@ -385,14 +385,14 @@ function showMathDialog(editor, initialLatex, isBlock, onSave) {
             var displayMode = dialog.querySelector('input[name="mathType"]:checked').value === 'block';
 
             if (!latex) {
-                previewArea.innerHTML = '<span class="tiptap-math-dialog__preview-empty">Enter LaTeX to see preview</span>';
+                previewArea.innerHTML = '<span class="tiptap-math-dialog__preview-empty">' + leantime.i18n.__('tiptap.math.preview_empty') + '</span>';
                 return;
             }
 
             loadKaTeX().then(function() {
                 previewArea.innerHTML = renderMath(latex, displayMode);
             }).catch(function() {
-                previewArea.innerHTML = '<span class="tiptap-math-dialog__preview-error">Could not load KaTeX</span>';
+                previewArea.innerHTML = '<span class="tiptap-math-dialog__preview-error">' + leantime.i18n.__('tiptap.math.katex_load_failed') + '</span>';
             });
         }, 300);
     }
