@@ -804,7 +804,7 @@
 .rd-scope .p4-bookend .empty{font-size:var(--base-font-size);color:var(--rd-text-3);font-style:italic;}
 .rd-scope .p4-bookend .empty .nudge{color:var(--rd-text-2);font-style:normal;font-weight:400;margin-left:4px;}
 .rd-scope .p4-bookend .empty .nudge a{color:var(--rd-accent);font-weight:600;text-decoration:none;}
-.rd-scope .p4-bookend .empty .nudge a:hover{text-decoration:underline;}
+.rd-scope .p4-bookend .empty .nudge a:hover{color:var(--rd-text-1);}
 
 /* Metrics — the arc */
 .rd-scope .p4-arc{margin-bottom:14px;}
@@ -890,7 +890,7 @@
 .rd-scope .p4-vision .beat .empty{font-size:var(--base-font-size);color:var(--rd-text-3);font-style:italic;}
 .rd-scope .p4-vision .beat .empty .nudge{color:var(--rd-text-2);font-style:normal;font-weight:400;margin-left:4px;}
 .rd-scope .p4-vision .beat .empty .nudge a{color:var(--rd-accent);font-weight:600;text-decoration:none;}
-.rd-scope .p4-vision .beat .empty .nudge a:hover{text-decoration:underline;}
+.rd-scope .p4-vision .beat .empty .nudge a:hover{color:var(--rd-text-1);}
 
 /* Block-level lens visibility — the beats show on Vision only, the tracks
    block shows on Progress/Impact only. Per-element [data-lens] rules

@@ -17,11 +17,20 @@ a:focus-visible {
     border-radius: var(--element-radius);
 }
 
+/* Hover turns a link to the text colour, without an underline (Marcel, 2026-10-18). The explicit
+   `none` also overrides Bootstrap's `a:hover { text-decoration: underline }`. Users who ask for more
+   contrast still get underlined links (accessibility.css, prefers-contrast: high). */
 body a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 2px;
     color: var(--primary-font-color);
+}
+
+/* Bootstrap underlines hover AND focus, and .btn-link outranks `body a:hover`: switch all of them
+   off (keyboard focus keeps its outline from a:focus-visible). */
+body a:hover,
+body a:focus,
+body .btn-link:hover,
+body .btn-link:focus {
+    text-decoration: none;
 }
 
 /* Focus styles for interactive elements */

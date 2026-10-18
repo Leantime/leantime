@@ -533,8 +533,7 @@ body .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a {
 
 a.lt-step-link:hover .lt-step-label,
 a.lt-step-link:focus-visible .lt-step-label {
-    color: var(--accent1);
-    text-decoration: underline;
+    color: var(--primary-font-color);
 }
 
 /* Vertical rail */
