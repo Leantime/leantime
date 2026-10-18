@@ -130,7 +130,8 @@
               hx-target="#currentBackground"
               hx-swap="outerHTML"
               hx-indicator="#backgroundUploadLoading">
-            <input type="file" name="file" accept="image/jpeg,image/png,image/gif,image/webp" required />
+            <input type="file" name="file" accept="image/jpeg,image/png,image/gif,image/webp" required
+                   aria-label="{{ __('label.background_image') }}" />
             <x-global::forms.button inputType="submit" contentRole="primary" :labelText="__('buttons.upload')" />
             <div id="backgroundUploadLoading" class="htmx-indicator-small">
                 <x-global::loader id="backgroundUploadLoader" size="25px" />
