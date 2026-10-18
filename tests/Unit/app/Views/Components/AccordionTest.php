@@ -100,6 +100,18 @@ class AccordionTest extends TestCase
         $this->assertStringContainsString('ROWS', $html);
     }
 
+    public function test_the_state_is_keyed_by_the_grouped_value_not_the_sort_id(): void
+    {
+        // Milestone groups get a sort id from the name ("a_release_a"); two similar names would
+        // share it, so the saved state goes by the milestone's own id.
+        $html = $this->render('<x-tickets::group-section :group="$group" groupBy="milestoneid">ROWS</x-tickets::group-section>', [
+            'group' => ['label' => 'Release A', 'id' => 'a_release_a', 'value' => '42', 'class' => '', 'color' => '#1b75bb', 'items' => [1]],
+        ]);
+
+        $this->assertStringContainsString('data-lt-accordion="tickets-milestoneid-42"', $html);
+        $this->assertStringNotContainsString('a_release_a', $html);
+    }
+
     public function test_a_priority_group_keeps_its_priority_colour(): void
     {
         $html = $this->render('<x-tickets::group-section :group="$group" groupBy="priority">ROWS</x-tickets::group-section>', [

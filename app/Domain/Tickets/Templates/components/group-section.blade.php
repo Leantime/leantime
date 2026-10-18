@@ -5,7 +5,7 @@
 
     Props:
       group     array   An entry of Tickets::getAllGrouped(): label (rendered raw — the service
-                        escapes it), id, class, color, more-info, items.
+                        escapes it), id, value, class, color, more-info, items.
       groupBy   string  The active group-by field, so a collapsed group is remembered per field
                         (status 3 and milestone 3 are different groups).
       subtitle  string  Optional line under the title, e.g. the group's more-info.
@@ -32,13 +32,16 @@
         'priority-text-5' => 'var(--dark-grey)',
     ];
     $groupColor = ! empty($group['color']) ? $group['color'] : ($classColors[$group['class'] ?? ''] ?? null);
+    // Remember the state by the grouped value (milestone id, user id, status …): `id` is a sort key
+    // built from the name for milestone and parent-task groups, so two similar names would collide.
+    $stateKey = (string) ($group['value'] ?? '') !== '' ? $group['value'] : $group['id'];
 @endphp
 
 @if ($group['label'] === 'all')
     {{ $slot }}
 @else
     <x-global::elements.accordion
-        :id="'tickets-' . $groupBy . '-' . $group['id']"
+        :id="'tickets-' . $groupBy . '-' . $stateKey"
         open
         :color="$groupColor"
         :count="count($group['items'])"
