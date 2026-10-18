@@ -18,7 +18,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <label for="colormode" >{{ __('label.colormode') }}</label>
+                <x-global::forms.label for="colormode" >{{ __('label.colormode') }}</x-global::forms.label>
 
                 <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                     <label for="colormode-light" class="tw-w-[200px]">
@@ -36,7 +36,7 @@
         <br />
         <div class="row">
             <div class="col-md-12">
-                <label>{{ __('label.color_scheme') }}</label>
+                <x-global::forms.label>{{ __('label.color_scheme') }}</x-global::forms.label>
                 @foreach($availableColorSchemes as $key => $scheme )
                     <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
                         <label for="color-{{ $key }}" class="colorCircle"

@@ -7,13 +7,13 @@
 
 <form action="{{ BASE_URL }}/calendar/importGCal" method="post" class="formModal">
 
-    <label for="name">{{ $tpl->__('label.calendar_name') }}:</label>
+    <x-global::forms.label for="name">{{ $tpl->__('label.calendar_name') }}:</x-global::forms.label>
     <x-global::forms.text-input id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" /><br />
 
-    <label for="url">{{ $tpl->__('label.ical_url') }}:</label>
+    <x-global::forms.label for="url">{{ $tpl->__('label.ical_url') }}:</x-global::forms.label>
     <x-global::forms.text-input width="lg" id="url" name="url" autocomplete="off" value="{{ $values['url'] }}" /><br />
 
-    <label for="color">{{ $tpl->__('label.color') }}:</label>
+    <x-global::forms.label for="color">{{ $tpl->__('label.color') }}:</x-global::forms.label>
     <input type="text" name="colorClass" autocomplete="off" value="{{ $values['colorClass'] }}"  class="simpleColorPicker"/>
 
     @dispatchEvent('beforeSubmitButton')

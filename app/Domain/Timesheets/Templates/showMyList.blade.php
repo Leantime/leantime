@@ -19,11 +19,11 @@
             {{-- The filter fields belong to the #form form below (form="…"). --}}
             <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" menu-style="width:250px;" keep-open class="filterWrapper">
                 <x-slot:trigger class="btn-link">{!! __('links.filter') !!} <span class="badge badge-primary">1</span></x-slot:trigger>
-                <label for="dateFrom">{!! __('label.date_from') !!}</label>
+                <x-global::forms.label for="dateFrom">{!! __('label.date_from') !!}</x-global::forms.label>
                 <input type="text" id="dateFrom" class="dateFrom" name="dateFrom" form="form" value="{{ $dateFrom->formatDateForUser() }}" />
-                <label for="dateTo">{!! __('label.until') !!}</label>
+                <x-global::forms.label for="dateTo">{!! __('label.until') !!}</x-global::forms.label>
                 <input type="text" id="dateTo" class="dateTo" name="dateTo" form="form" value="{{ $dateTo->formatDateForUser() }}" />
-                <label for="kind">{!! __('label.type') !!}</label>
+                <x-global::forms.label for="kind">{!! __('label.type') !!}</x-global::forms.label>
                 <x-global::forms.select id="kind" name="kind" form="form" onchange="this.form.submit();">
                     <option value="all">{!! __('label.all_types') !!}</option>
                     @foreach($kind as $key => $row)

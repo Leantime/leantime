@@ -27,7 +27,7 @@
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}" style="min-width: 250px;">
 
-    <label>{!! __('label.milestone_title') !!}</label>
+    <x-global::forms.label>{!! __('label.milestone_title') !!}</x-global::forms.label>
     <x-global::forms.text-input width="full" name="headline" value="{{ $currentMilestone->headline }}" placeholder="{{ __('label.milestone_title') }}" /><br />
 
     <x-global::forms.label>{!! __('label.project') !!}</x-global::forms.label>
@@ -45,7 +45,7 @@
         @endforeach
     </x-global::forms.select>
 
-    <label>{!! __('label.todo_status') !!}</label>
+    <x-global::forms.label>{!! __('label.todo_status') !!}</x-global::forms.label>
     <x-global::forms.select width="full" id="status-select" name="status"
             data-placeholder="{{ isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]['name'] : '' }}">
 
@@ -56,7 +56,7 @@
         @endforeach
     </x-global::forms.select>
 
-    <label>{!! __('label.dependent_on') !!}</label>
+    <x-global::forms.label>{!! __('label.dependent_on') !!}</x-global::forms.label>
     <x-global::forms.select width="full" name="dependentMilestone">
         <option value="">{!! __('label.no_dependency') !!}</option>
         @foreach ($milestones as $milestoneRow)
@@ -69,7 +69,7 @@
 
     </x-global::forms.select>
 
-    <label>{!! __('label.owner') !!}</label>
+    <x-global::forms.label>{!! __('label.owner') !!}</x-global::forms.label>
     <x-global::forms.select width="full" data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
             name="editorId" class="user-select">
         <option value="">{!! __('dropdown.not_assigned') !!}</option>
@@ -80,16 +80,16 @@
         @endforeach
     </x-global::forms.select>
 
-    <label>{!! __('label.color') !!}</label>
+    <x-global::forms.label>{!! __('label.color') !!}</x-global::forms.label>
     <input type="text" name="tags" autocomplete="off" value="{{ $currentMilestone->tags }}" placeholder="{{ __('input.placeholders.pick_a_color') }}" class="field-width-full simpleColorPicker"/><br />
 
-    <label>{!! __('label.planned_start_date') !!}</label>
+    <x-global::forms.label>{!! __('label.planned_start_date') !!}</x-global::forms.label>
     <input type="text" name="editFrom" class="field-width-sm" autocomplete="off" value="{{ format($currentMilestone->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}" id="milestoneEditFrom" /><br />
 
-    <label>{!! __('label.planned_end_date') !!}</label>
+    <x-global::forms.label>{!! __('label.planned_end_date') !!}</x-global::forms.label>
     <input type="text" name="editTo" class="field-width-sm" autocomplete="off" value="{{ format($currentMilestone->editTo)->date() }}"  placeholder="{{ __('language.dateformat') }}" id="milestoneEditTo" /><br />
 
-    <label>{!! __('label.outcome_impact') !!}</label>
+    <x-global::forms.label>{!! __('label.outcome_impact') !!}</x-global::forms.label>
     <textarea name="outcomeImpact" rows="3" class="tw-w-full"
               placeholder="{{ __('input.placeholders.outcome_impact') }}">{{ $currentMilestone->outcomeImpact }}</textarea><br />
 

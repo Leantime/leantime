@@ -17,22 +17,22 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <label>{{ __('label.onboarding_work_start') }}</label>
+        <x-global::forms.label>{{ __('label.onboarding_work_start') }}</x-global::forms.label>
         <div class="">
             <x-global::selectable selected="{{ $daySchedule['workStart'] == '8' ? 'true' : 'false' }}" :id="'daySchedule-workStart-1'" :name="'daySchedule-workStart-button'" :value="'8'" :label="''" onclick="jQuery('#daySchedule-workStart').val('8').hide(); jQuery('#daySchedule-workStart-3').show();" class="compact">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     {{ format($dayHourOptions[8]['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($dayHourOptions[8]['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::selectable selected="{{ $daySchedule['workStart'] == '10' ? 'true' : 'false' }}" :id="'daySchedule-workStart-2'" :name="'daySchedule-workStart-button'" :value="'10'" :label="''" onclick="jQuery('#daySchedule-workStart').val('10').hide(); jQuery('#daySchedule-workStart-3').show(); " class="compact">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     {{ format($dayHourOptions[10]['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($dayHourOptions[10]['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::selectable selected="" :id="'daySchedule-workStart-3'" :name="'daySchedule-workStart-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-workStart').show()">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     <i class="fa fa-clock"></i> {{ __('label.select_my_own_time') }}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::forms.select name="daySchedule-workStart" id="daySchedule-workStart" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
@@ -43,22 +43,22 @@
             </x-global::forms.select>
         </div>
         <br />
-        <label>{{ __('label.onboarding_lunch_break') }}</label>
+        <x-global::forms.label>{{ __('label.onboarding_lunch_break') }}</x-global::forms.label>
         <div class="">
             <x-global::selectable selected="{{ $daySchedule['lunch'] == '12' ? 'true' : 'false' }}" :id="'daySchedule-lunch-1'" :name="'daySchedule-lunch-button'" :value="'12'" :label="''" onclick="jQuery('#daySchedule-lunch').val('12').hide(); jQuery('#daySchedule-lunch-3').show();" class="compact">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     {{ format($dayHourOptions[12]['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($dayHourOptions[12]['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::selectable selected="{{ $daySchedule['lunch'] == '14' ? 'true' : 'false' }}" :id="'daySchedule-lunch-2'" :name="'daySchedule-lunch-button'" :value="'14'" :label="''" onclick="jQuery('#daySchedule-lunch').val('14').hide(); jQuery('#daySchedule-lunch-3').show();" class="compact">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     {{ format($dayHourOptions[14]['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($dayHourOptions[14]['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::selectable selected="" :id="'daySchedule-lunch-3'" :name="'daySchedule-lunch-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-lunch').show()">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     <i class="fa fa-clock"></i> {{ __('label.select_my_own_time') }}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::forms.select name="daySchedule-lunch" id="daySchedule-lunch" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
@@ -69,23 +69,23 @@
             </x-global::forms.select>
         </div>
         <br />
-        <label>{{ __('label.onboarding_work_end') }} 🥳</label>
+        <x-global::forms.label>{{ __('label.onboarding_work_end') }} 🥳</x-global::forms.label>
 
         <div class="">
             <x-global::selectable selected="{{ $daySchedule['workEnd'] == '16' ? 'true' : 'false' }}" :id="'daySchedule-workEnd-1'" :name="'daySchedule-workEnd-button'" :value="'16'" :label="''" onclick="jQuery('#daySchedule-workEnd').val('16').hide(); jQuery('#daySchedule-workEnd-3').show();" class="compact">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     {{ format($dayHourOptions[16]['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($dayHourOptions[16]['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::selectable selected="{{ $daySchedule['workEnd'] == '18' ? 'true' : 'false' }}" :id="'daySchedule-workEnd-2'" :name="'daySchedule-workEnd-button'" :value="'18'" :label="''" onclick="jQuery('#daySchedule-workEnd').val('18').hide(); jQuery('#daySchedule-workEnd-3').show();" class="compact">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     {{ format($dayHourOptions[18]['start'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time() }} - {{  format($dayHourOptions[18]['end'], null, \Leantime\Core\Support\FromFormat::User24hTime)->time()}}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::selectable selected="" :id="'daySchedule-workEnd-3'" :name="'daySchedule-workEnd-button'" :value="''" :label="''" class="compact" onclick="jQuery(this).hide(); jQuery('#daySchedule-workEnd').show()">
-                <label for="" class="">
+                <x-global::forms.label for="">
                     <i class="fa fa-clock"></i> {{ __('label.select_my_own_time') }}
-                </label>
+                </x-global::forms.label>
             </x-global::selectable>
             <x-global::forms.select name="daySchedule-workEnd" id="daySchedule-workEnd" style="display:none; vertical-align: top;">
                 @foreach($dayHourOptions as $key => $value)
@@ -99,9 +99,9 @@
         {{--        <div class="tw-flex">--}}
 {{--            @foreach([1,2,3,4,5,6,7] as $dayOfWeekIso)--}}
 {{--                <x-global::selectable type="checkbox" class="circle" selected="{{ isset($workdays[$dayOfWeekIso]) ? 'true' : '' }}" :id="'dayOfWeek-'.$dayOfWeekIso" :name="'dayOfWeek-'.$dayOfWeekIso" :value="$dayOfWeekIso" :label="''" onclick="showTimeForm({{$dayOfWeekIso}})">--}}
-{{--                    <label for="dayOfWeek-{{ $dayOfWeekIso }}" class="">--}}
+{{--                    <x-global::forms.label for="dayOfWeek-{{ $dayOfWeekIso }}">--}}
 {{--                        {{ substr(__('dates.day_of_week_iso-'.$dayOfWeekIso), 0, 2) }}--}}
-{{--                    </label>--}}
+{{--                    </x-global::forms.label>--}}
 {{--                </x-global::selectable>--}}
 {{--            @endforeach--}}
 {{--        </div>--}}

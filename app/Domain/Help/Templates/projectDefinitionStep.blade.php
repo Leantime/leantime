@@ -6,13 +6,13 @@
                 <h1>{{  __('headlines.make_it_happen') }}</h1>
                 <p>{!!  __('text.structured_project_thinking') !!}</p>
                 <br />
-                <label><strong>{{ __('label.what_are_you_trying_to_accomplish') }}</strong></label>
+                <x-global::forms.label><strong>{{ __('label.what_are_you_trying_to_accomplish') }}</strong></x-global::forms.label>
                 <x-global::forms.textarea id="accomplish" name="accomplish" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
                 <br />
-                <label><strong>{{ __('label.how_does_the_world_look_like') }}</strong></label>
+                <x-global::forms.label><strong>{{ __('label.how_does_the_world_look_like') }}</strong></x-global::forms.label>
                 <x-global::forms.textarea id="wordlview" name="worldview" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
                 <br />
-                <label><strong>{{ __('label.why_is_this_important') }}</strong></label>
+                <x-global::forms.label><strong>{{ __('label.why_is_this_important') }}</strong></x-global::forms.label>
                 <x-global::forms.textarea id="whyImportant" name="whyImportant" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
 
             </div>

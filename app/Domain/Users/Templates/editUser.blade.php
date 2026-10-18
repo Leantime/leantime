@@ -19,17 +19,17 @@
                     <div class="maincontentinner">
                     <x-global::elements.section-header>{!! __('label.profile_information') !!}</x-global::elements.section-header>
 
-                    <label for="firstname">{!! __('label.firstname') !!}</label> <x-global::forms.text-input
+                    <x-global::forms.label for="firstname">{!! __('label.firstname') !!}</x-global::forms.label> <x-global::forms.text-input
                         name="firstname" id="firstname"
                         value="{{ $values['firstname'] }}" /><br />
 
-                    <label for="lastname">{!! __('label.lastname') !!}</label> <x-global::forms.text-input
+                    <x-global::forms.label for="lastname">{!! __('label.lastname') !!}</x-global::forms.label> <x-global::forms.text-input
                         name="lastname" id="lastname"
                         value="{{ $values['lastname'] }}" /><br />
 
 
 
-                    <label for="role">{!! __('label.role') !!}</label>
+                    <x-global::forms.label for="role">{!! __('label.role') !!}</x-global::forms.label>
                     <x-global::forms.select name="role" id="role">
 
                         @foreach ($roles as $key => $role)
@@ -49,7 +49,7 @@
 
                     </x-global::forms.select> <br />
 
-                    <label for="status">{!! __('label.status') !!}</label>
+                    <x-global::forms.label for="status">{!! __('label.status') !!}</x-global::forms.label>
                     <x-global::forms.select name="status" id="status" class="pull-left">
 
                         <option value="a"
@@ -84,7 +84,7 @@
 
 
 
-                    <label for="client">{!! __('label.client') !!}</label>
+                    <x-global::forms.label for="client">{!! __('label.client') !!}</x-global::forms.label>
                     <x-global::forms.select name='client' id="client">
                         @if ($login::userIsAtLeast('manager'))
                             <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
@@ -97,22 +97,22 @@
 
                         <x-global::elements.section-header>{!! __('label.contact_information') !!}</x-global::elements.section-header>
 
-                        <label for="user">{!! __('label.email') !!}</label> <x-global::forms.text-input
+                        <x-global::forms.label for="user">{!! __('label.email') !!}</x-global::forms.label> <x-global::forms.text-input
                             name="user" id="user" value="{{ $values['user'] }}" /><br />
 
-                        <label for="phone">{!! __('label.phone') !!}</label> <x-global::forms.text-input
+                        <x-global::forms.label for="phone">{!! __('label.phone') !!}</x-global::forms.label> <x-global::forms.text-input
                             name="phone" id="phone"
                             value="{{ $values['phone'] }}" /><br /><br />
 
 
                         <x-global::elements.section-header>{!! __('label.employee_information') !!}</x-global::elements.section-header>
-                        <label for="jobTitle">{!! __('label.jobTitle') !!}</label> <x-global::forms.text-input
+                        <x-global::forms.label for="jobTitle">{!! __('label.jobTitle') !!}</x-global::forms.label> <x-global::forms.text-input
                             name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
 
-                        <label for="jobLevel">{!! __('label.jobLevel') !!}</label> <x-global::forms.text-input
+                        <x-global::forms.label for="jobLevel">{!! __('label.jobLevel') !!}</x-global::forms.label> <x-global::forms.text-input
                             name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" /><br />
 
-                        <label for="department">{!! __('label.department') !!}</label> <x-global::forms.text-input
+                        <x-global::forms.label for="department">{!! __('label.department') !!}</x-global::forms.label> <x-global::forms.text-input
                             name="department" id="department" value="{{ $values['department'] }}" /><br />
 
 
@@ -128,7 +128,7 @@
                                  unconfigured and skips warnings. --}}
                             <x-global::elements.section-header>{!! __('label.capacity') !!}</x-global::elements.section-header>
 
-                            <label for="weekly_hours">{!! __('label.weekly_hours') !!}</label>
+                            <x-global::forms.label for="weekly_hours">{!! __('label.weekly_hours') !!}</x-global::forms.label>
                             <x-global::forms.text-input
                                 name="weekly_hours"
                                 id="weekly_hours"
@@ -139,7 +139,7 @@
                                 placeholder="{{ __('label.weekly_hours_placeholder') }}" /><br />
                             <span class="hint">{!! __('label.weekly_hours_hint') !!}</span><br /><br />
 
-                            <label for="employment_type">{!! __('label.employment_type') !!}</label>
+                            <x-global::forms.label for="employment_type">{!! __('label.employment_type') !!}</x-global::forms.label>
                             <x-global::forms.select name="employment_type" id="employment_type">
                                 <option value="">{!! __('label.employment_type.unset') !!}</option>
                                 @foreach (\Leantime\Domain\Users\Enums\EmploymentType::cases() as $type)
@@ -184,9 +184,9 @@
                                             <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}' />
                                         </span>
 
-                                        <label for="project_{{ $row['id'] }}" style="margin-top:-11px">
+                                        <x-global::forms.label for="project_{{ $row['id'] }}" style="margin-top:-11px">
                                             <small>{{ $row['type'] }}</small><br />
-                                                                    {{ $row['name'] }}</label>
+                                                                    {{ $row['name'] }}</x-global::forms.label>
                                         <div class="clearall"></div>
                                     </div>
                                 @endforeach

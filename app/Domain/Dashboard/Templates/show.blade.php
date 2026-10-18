@@ -218,7 +218,7 @@
                     <input type="hidden" name="comment" value="1" />
                         @if ($login::userIsAtLeast($roles::$editor))
                             <div id="comment0" class="commentBox tw-hidden">
-                                <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
+                                <x-global::forms.label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</x-global::forms.label>
 
                                 <x-global::forms.select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
                                     <option value="green">{{ __('label.project_status_green') }}</option>

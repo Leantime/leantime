@@ -66,7 +66,7 @@
                                             <div class="commentImage">
                                                 <img src="{{ BASE_URL }}/api/users?profileImage={{ $assignedUser['id'] }}&v={{ format($assignedUser['modified'])->timestamp() }}"/>
                                             </div>
-                                            <label for="user-{{ $assignedUser['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])) !!}
+                                            <x-global::forms.label for="user-{{ $assignedUser['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])) !!}
                                                 @if ($assignedUser['jobTitle'] != '')
                                                     <small>
                                                         {{ $assignedUser['jobTitle'] }}
@@ -82,7 +82,7 @@
                                                 @if ($assignedUser['status'] == 'i')
                                                     <small>{!! __('label.invited') !!}</small>
                                                 @endif
-                                            </label>
+                                            </x-global::forms.label>
                                             @if ($roles::isAtLeast($assignedUser['role'], $roles::$admin))
                                                 <x-global::forms.text-input readonly disabled value="{{ $roles::label($assignedUser['role']) }}" />
                                             @else
@@ -119,7 +119,7 @@
                                                 <div class="commentImage">
                                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}"/>
                                                 </div>
-                                                <label for="user-{{ $row['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) !!}</label>
+                                                <x-global::forms.label for="user-{{ $row['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) !!}</x-global::forms.label>
                                                 @if ($roles::isAtLeast($row['role'], $roles::$admin))
                                                     <x-global::forms.text-input readonly disabled value="{{ $roles::label($row['role']) }}" />
                                                 @else
@@ -312,17 +312,17 @@
                                             <span class="fa fa-sort"></span>
                                         </div>
                                         <div class="col-md-1">
-                                            <label>{!! __('label.sortindex') !!}</label>
+                                            <x-global::forms.label>{!! __('label.sortindex') !!}</x-global::forms.label>
                                             <input type="text" name="labelSort-{{ $key }}" class="sorter" id="labelSort-{{ $key }}" value="{{ $ticketStatus['sortKey'] }}" style="width:50px;"/>
                                         </div>
                                         <div class="col-md-2">
 
-                                            <label>{!! __('label.label') !!}</label>
+                                            <x-global::forms.label>{!! __('label.label') !!}</x-global::forms.label>
                                             <input type="text" name="label-{{ $key }}" {{ $key == -1 ? 'readonly' : '' }} id="label-{{ $key }}" value="{{ $ticketStatus['name'] }}" />
 
                                         </div>
                                         <div class="col-md-2">
-                                            <label>{!! __('label.color') !!}</label>
+                                            <x-global::forms.label>{!! __('label.color') !!}</x-global::forms.label>
                                             <x-global::forms.select name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen" enhanced :search="false">
                                                 <x-global::forms.select.option value="label-purple" color-class="label-purple" :selected="$ticketStatus['class'] == 'label-purple'">{!! __('label.purple') !!}</x-global::forms.select.option>
                                                 <x-global::forms.select.option value="label-pink" color-class="label-pink" :selected="$ticketStatus['class'] == 'label-pink'">{!! __('label.pink') !!}</x-global::forms.select.option>
@@ -342,7 +342,7 @@
                                             </x-global::forms.select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label>{!! __('label.reportType') !!}</label>
+                                            <x-global::forms.label>{!! __('label.reportType') !!}</x-global::forms.label>
                                             <x-global::forms.select name="labelType-{{ $key }}" id="labelType-{{ $key }}">
                                                 <option value="NEW" {{ ($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : '' }}>{!! __('status.new') !!}</option>
                                                 <option value="INPROGRESS" {{ ($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : '' }}>{!! __('status.in_progress') !!}</option>
@@ -351,7 +351,7 @@
                                             </x-global::forms.select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label for="">{!! __('label.showInKanban') !!}</label>
+                                            <x-global::forms.label for="">{!! __('label.showInKanban') !!}</x-global::forms.label>
                                             <input type="checkbox" name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" {{ $ticketStatus['kanbanCol'] ? 'checked="checked"' : '' }}/>
                                         </div>
                                         <div class="remove">
@@ -393,16 +393,16 @@
             <span class="fa fa-sort"></span>
         </div>
         <div class="col-md-1">
-            <label>{!! __('label.sortindex') !!}</label>
+            <x-global::forms.label>{!! __('label.sortindex') !!}</x-global::forms.label>
             <input type="text" name="labelSort-XXNEWKEYXX" class="sorter" id="labelSort-XXNEWKEYXX" value="" style="width:50px;"/>
         </div>
         <div class="col-md-2">
-            <label>{!! __('label.label') !!}</label>
+            <x-global::forms.label>{!! __('label.label') !!}</x-global::forms.label>
             <input type="text" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
 
         </div>
         <div class="col-md-2">
-            <label>{!! __('label.color') !!}</label>
+            <x-global::forms.label>{!! __('label.color') !!}</x-global::forms.label>
             <x-global::forms.select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen" enhanced :search="false">
                 <x-global::forms.select.option value="label-blue" color-class="label-blue">{!! __('label.blue') !!}</x-global::forms.select.option>
                 <x-global::forms.select.option value="label-info" color-class="label-info">{!! __('label.dark-blue') !!}</x-global::forms.select.option>
@@ -419,7 +419,7 @@
             </x-global::forms.select>
         </div>
         <div class="col-md-2">
-            <label>{!! __('label.reportType') !!}</label>
+            <x-global::forms.label>{!! __('label.reportType') !!}</x-global::forms.label>
             <x-global::forms.select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW">{!! __('status.new') !!}</option>
                 <option value="INPROGRESS">{!! __('status.in_progress') !!}</option>
@@ -428,7 +428,7 @@
             </x-global::forms.select>
         </div>
         <div class="col-md-2">
-            <label for="">{!! __('label.showInKanban') !!}</label>
+            <x-global::forms.label for="">{!! __('label.showInKanban') !!}</x-global::forms.label>
             <input type="checkbox" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"/>
         </div>
         <div class="remove">

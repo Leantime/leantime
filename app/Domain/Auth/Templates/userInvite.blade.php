@@ -18,16 +18,16 @@
         <input type="hidden" name="step" value="1"/>
 
         <div class="">
-            <label for="name"><?php echo $tpl->language->__("label.name"); ?></label>
+            <x-global::forms.label for="name"><?php echo $tpl->language->__("label.name"); ?></x-global::forms.label>
             <input type="text" name="name" style="margin-bottom:15px" id="name" placeholder="<?php echo $tpl->language->__("input.placeholders.name"); ?>" value="<?=$tpl->escape($user['firstname']); ?>" />
         </div>
         <div class="">
-            <label for="jobTitle"><?php echo $tpl->language->__("label.role_or_title"); ?></label>
+            <x-global::forms.label for="jobTitle"><?php echo $tpl->language->__("label.role_or_title"); ?></x-global::forms.label>
             <input type="text" name="jobTitle" id="jobTitle" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.jobtitle"); ?>" value="<?=$tpl->escape($user['jobTitle']); ?>" />
 
         </div>
         <div class="">
-            <label for="password"><?php echo $tpl->language->__("label.password"); ?></label>
+            <x-global::forms.label for="password"><?php echo $tpl->language->__("label.password"); ?></x-global::forms.label>
             <input type="password" name="password" autocomplete="off" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
             <span id="pwStrength" style="width:100%;"></span>
         </div>

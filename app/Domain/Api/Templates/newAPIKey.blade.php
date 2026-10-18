@@ -25,13 +25,13 @@
 
                 <x-global::elements.section-header>{!! __('label.basic_information') !!}</x-global::elements.section-header>
 
-                <label for="firstname">{!! __('label.key_name') !!}</label><div class="clearfix"></div>
+                <x-global::forms.label for="firstname">{!! __('label.key_name') !!}</x-global::forms.label><div class="clearfix"></div>
                     <x-global::forms.text-input
                     name="firstname" id="firstname"
                     value="" /><br />
 
 
-                <label for="role">{!! __('label.role') !!}</label><div class="clearfix"></div>
+                <x-global::forms.label for="role">{!! __('label.role') !!}</x-global::forms.label><div class="clearfix"></div>
                 <x-global::forms.select name="role" id="role">
 
                     @foreach ($roles as $key => $role)
@@ -46,7 +46,7 @@
 
                 </x-global::forms.select> <br />
 
-                <label for="status">{!! __('label.status') !!}</label><div class="clearfix"></div>
+                <x-global::forms.label for="status">{!! __('label.status') !!}</x-global::forms.label><div class="clearfix"></div>
                 <x-global::forms.select name="status" id="status">
                     <option value="a"
                         @if (strtolower($values['status']) == 'a')
@@ -94,7 +94,7 @@
                                         @if (is_array($relations) === true && in_array($row['id'], $relations) === true)
                                             checked="checked"
                                         @endif
-                                    /><label for="project_{{ $row['id'] }}">{{ $tpl->escape($row['name']) }}</label>
+                                    /><x-global::forms.label for="project_{{ $row['id'] }}">{{ $tpl->escape($row['name']) }}</x-global::forms.label>
                                     <div class="clearall"></div>
                                 </div>
                             @endforeach

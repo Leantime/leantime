@@ -52,7 +52,7 @@
         <x-global::forms.text-input name="description" id="canvasItemTitle" value="{{ $canvasItem['description'] }}" width="full" /><br />
 
         @if(! empty($statusLabels))
-            <label>{!! __('label.status') !!}</label>
+            <x-global::forms.label>{!! __('label.status') !!}</x-global::forms.label>
             <x-global::forms.select name="status" style="width: 50%" id="statusCanvas" enhanced :search="false">
                 @foreach($statusLabels as $key => $data)
                     @if($data['active'])
@@ -65,7 +65,7 @@
         @endif
 
         @if(! empty($relatesLabels))
-            <label>{!! __('label.relates') !!}</label>
+            <x-global::forms.label>{!! __('label.relates') !!}</x-global::forms.label>
             <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas" enhanced :search="false">
                 @foreach($relatesLabels as $key => $data)
                     @if($data['active'])
@@ -78,7 +78,7 @@
         @endif
 
         @if($dataLabels[1]['active'])
-            <label>{!! __($dataLabels[1]['title']) !!}</label>
+            <x-global::forms.label>{!! __($dataLabels[1]['title']) !!}</x-global::forms.label>
             @if(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int')
                 <x-global::forms.text-input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}"/><br />
             @elseif(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string')
@@ -91,7 +91,7 @@
         @endif
 
         @if($dataLabels[2]['active'])
-            <label>{!! __($dataLabels[2]['title']) !!}</label>
+            <x-global::forms.label>{!! __($dataLabels[2]['title']) !!}</x-global::forms.label>
             @if(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int')
                 <x-global::forms.text-input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}"/><br />
             @elseif(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string')
@@ -104,7 +104,7 @@
         @endif
 
         @if($dataLabels[3]['active'])
-            <label>{!! __($dataLabels[3]['title']) !!}</label>
+            <x-global::forms.label>{!! __($dataLabels[3]['title']) !!}</x-global::forms.label>
             @if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int')
                 <x-global::forms.text-input type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/><br />
             @elseif(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string')
