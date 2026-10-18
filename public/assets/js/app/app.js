@@ -77,6 +77,22 @@ leantime.initTooltips = function (root) {
     });
 };
 
+// Content put on the page outside an htmx swap (a dialog, the List view's to-do detail) gets what
+// htmx.onLoad gives a swap: htmx attributes, tooltips, enhanced selects, and lt:ui:content.loaded
+// for the components that init on htmx.onLoad (date pickers, snippets). Not htmx:load itself:
+// some page onLoad handlers aren't idempotent.
+leantime.initLoadedContent = function (root) {
+    if (!root) {
+        return;
+    }
+    htmx.process(root);
+    leantime.initTooltips(root);
+    if (leantime.selectController) {
+        leantime.selectController.init(root);
+    }
+    document.dispatchEvent(new CustomEvent('lt:ui:content.loaded', { detail: { root: root } }));
+};
+
 jQuery(document).ready(function () {
 
     leantime.replaceSVGColors();

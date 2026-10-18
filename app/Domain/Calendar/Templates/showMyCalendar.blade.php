@@ -44,33 +44,30 @@
             <a href="#/calendar/connectCalendar" class="formModal" style="display:block; margin-bottom:8px; margin-left:-5px;"><i class="fa-regular fa-calendar-plus" style="width:16px;"></i> {!! __('label.connect_calendar') !!}</a>
             <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><i class="fa fa-cog" style="width:16px;"></i> {!! __('label.calendar_settings') !!}</a>
         </x-slot:left>
-        <div class="row">
-            <div class="col-md-4">
+        {{-- One toolbar row: the two outer groups share the free space, so the title stays centred
+             and the view controls stay on one line. --}}
+        <div class="calendarToolbar tw-flex tw-flex-wrap tw-items-center tw-gap-sm tw-mb-m">
+            <div class="tw-flex-1">
                 <x-global::forms.button tag="a" link="#/calendar/addEvent" contentRole="primary" class="formModal"><i class='fa fa-plus'></i> {!! __('buttons.add_event') !!}</x-global::forms.button>
             </div>
-            <div class="col-md-4">
-                <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
-                    <h2>..</h2>
-                </div>
+            <div class="fc-center center" id="calendarTitle">
+                <h2>..</h2>
             </div>
-            <div class="col-md-4">
-                <x-global::forms.button tag="a" link="#/calendar/export" contentRole="default" class="right">{{ __('links.export') }}</x-global::forms.button>
-                <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
-                    <span class="fc-icon fc-icon-chevron-right"></span>
-                </button>
-                <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px;">
-                    <span class="fc-icon fc-icon-chevron-left"></span>
-                </button>
-
-                <button class="fc-today-button btn btn-default right" style="margin-right:5px;">{{ __('label.today_lowercase') }}</button>
-
-
-                <x-global::forms.select id="my-select" style="margin-right:5px;" class="right">
+            <div class="tw-flex-1 tw-flex tw-items-center tw-justify-end tw-gap-xs">
+                <x-global::forms.select id="my-select" width="sm" class="tw-mb-none">
                     <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ $myCalendarView == 'timeGridDay' ? 'selected' : '' }}>{{ __('buttons.day') }}</option>
                     <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ $myCalendarView == 'timeGridWeek' ? 'selected' : '' }}>{{ __('buttons.week') }}</option>
                     <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ $myCalendarView == 'dayGridMonth' ? 'selected' : '' }}>{{ __('buttons.month') }}</option>
                     <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ $myCalendarView == 'multiMonthYear' ? 'selected' : '' }}>{{ __('label.year') }}</option>
                 </x-global::forms.select>
+                <button class="fc-today-button btn btn-default" type="button">{{ __('label.today_lowercase') }}</button>
+                <button class="fc-prev-button btn btn-default" type="button">
+                    <span class="fc-icon fc-icon-chevron-left"></span>
+                </button>
+                <button class="fc-next-button btn btn-default" type="button">
+                    <span class="fc-icon fc-icon-chevron-right"></span>
+                </button>
+                <x-global::forms.button tag="a" link="#/calendar/export" contentRole="default">{{ __('links.export') }}</x-global::forms.button>
             </div>
         </div>
         <div id="calendar"></div>
@@ -149,7 +146,7 @@
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
                 timeZone: leantime.i18n.__("usersettings.timezone"),
-                height: 'calc(100% - 40px)',
+                height: '100%',
                 stickyHeaderDates: true,
                 initialView: '{{ $myCalendarView }}',
                 eventSources:eventSources,
@@ -329,6 +326,17 @@
 <style type="text/css">
     .maincontent .maincontentinner {
         height:calc(100vh - 165px);
+    }
+
+    /* The calendar takes the height the toolbar leaves (the toolbar wraps on narrow screens). */
+    .maincontent .lt-content .lt-content-main {
+        display:flex;
+        flex-direction:column;
+    }
+
+    .maincontent .lt-content .lt-content-main #calendar {
+        flex:1 1 0;
+        min-height:0;
     }
 
     /* Stacked (narrow screens): the calendar pane gets the full height, below the calendar list. */
