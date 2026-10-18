@@ -41,6 +41,9 @@ class Backgrounds extends BaseService
 
     private const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
+    /** Image formats every browser can show; getimagesize() also detects TIFF, BMP and others. */
+    private const IMAGE_TYPES = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_WEBP];
+
     public function __construct(
         private Theme $theme,
         private Environment $config,
@@ -89,17 +92,21 @@ class Backgrounds extends BaseService
 
     /**
      * Search Unsplash for landscape photos. Without a query a random page of wallpapers is returned.
-     * Empty when Unsplash is not configured or the request fails.
+     * No photos when Unsplash is not configured or the request fails. nextPage is the page that
+     * shows other photos for the same query (back to 1 after the last one).
      *
-     * @return array<int, array{id: string, thumbnailUrl: string, description: string, photographerName: string, photographerUrl: string}>
+     * @return array{photos: array<int, array{id: string, thumbnailUrl: string, description: string, photographerName: string, photographerUrl: string}>, nextPage: int}
      */
     public function searchUnsplash(string $query, int $page = 1): array
     {
+        $noPhotos = ['photos' => [], 'nextPage' => 1];
+
         if (! $this->isUnsplashEnabled()) {
-            return [];
+            return $noPhotos;
         }
 
         $query = trim($query);
+        $page = max(1, $page);
         if ($query === '') {
             $query = self::UNSPLASH_DEFAULT_QUERY;
             $page = random_int(1, self::UNSPLASH_DEFAULT_QUERY_PAGES);
@@ -108,7 +115,7 @@ class Backgrounds extends BaseService
         try {
             $response = $this->unsplashRequest()->get('/search/photos', [
                 'query' => $query,
-                'page' => max(1, $page),
+                'page' => $page,
                 'per_page' => self::UNSPLASH_RESULTS_PER_PAGE,
                 'orientation' => 'landscape',
                 'content_filter' => 'high',
@@ -116,13 +123,13 @@ class Backgrounds extends BaseService
         } catch (\Throwable $exception) {
             Log::warning('Unsplash search failed: '.$exception->getMessage());
 
-            return [];
+            return $noPhotos;
         }
 
         if (! $response->successful()) {
             Log::warning('Unsplash search failed with status '.$response->status());
 
-            return [];
+            return $noPhotos;
         }
 
         $photos = [];
@@ -140,7 +147,12 @@ class Backgrounds extends BaseService
             ];
         }
 
-        return $photos;
+        $totalPages = (int) $response->json('total_pages', 1);
+
+        return [
+            'photos' => $photos,
+            'nextPage' => $page < $totalPages ? $page + 1 : 1,
+        ];
     }
 
     /**
@@ -256,7 +268,8 @@ class Backgrounds extends BaseService
     }
 
     /**
-     * Whether an uploaded file is a raster image. SVG is refused, it can carry scripts.
+     * Whether an uploaded file is a JPEG, PNG, GIF or WebP image, by name and by content.
+     * SVG is refused, it can carry scripts.
      *
      * @param  array  $upload  One entry of $_FILES.
      */
@@ -271,7 +284,9 @@ class Backgrounds extends BaseService
             return false;
         }
 
-        return @getimagesize((string) $upload['tmp_name']) !== false;
+        $imageInfo = @getimagesize((string) $upload['tmp_name']);
+
+        return $imageInfo !== false && in_array($imageInfo[2], self::IMAGE_TYPES, true);
     }
 
     /**

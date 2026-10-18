@@ -70,7 +70,7 @@ class BackgroundsTest extends TestCase
         $service = $this->makeService(accessKey: '');
 
         $this->assertFalse($service->isUnsplashEnabled());
-        $this->assertSame([], $service->searchUnsplash('mountains'));
+        $this->assertSame(['photos' => [], 'nextPage' => 1], $service->searchUnsplash('mountains'));
         $this->assertFalse($service->useUnsplashPhoto('abc123'));
         $this->assertCount(0, $this->http->recorded());
     }
@@ -79,19 +79,21 @@ class BackgroundsTest extends TestCase
     {
         $this->http->fake([
             'api.unsplash.com/search/photos*' => $this->http->response([
+                'total_pages' => 3,
                 'results' => [$this->unsplashPhoto('https://images.unsplash.com/photo-1?ixid=1')],
             ]),
         ]);
 
-        $photos = $this->makeService()->searchUnsplash('mountains');
+        $searchResult = $this->makeService()->searchUnsplash('mountains');
 
+        $this->assertSame(2, $searchResult['nextPage']);
         $this->assertSame([[
             'id' => 'abc123',
             'thumbnailUrl' => 'https://images.unsplash.com/photo-1?w=400',
             'description' => 'snowy mountains',
             'photographerName' => 'Jane Doe',
             'photographerUrl' => 'https://unsplash.com/@jane?utm_source=leantime&utm_medium=referral',
-        ]], $photos);
+        ]], $searchResult['photos']);
 
         $this->http->assertSent(fn (Request $request) => $request->hasHeader('Authorization', 'Client-ID test-key')
             && $request['query'] === 'mountains');
@@ -101,7 +103,17 @@ class BackgroundsTest extends TestCase
     {
         $this->http->fake(['api.unsplash.com/*' => $this->http->response(['errors' => ['Rate Limit Exceeded']], 403)]);
 
-        $this->assertSame([], $this->makeService()->searchUnsplash('mountains'));
+        $this->assertSame(['photos' => [], 'nextPage' => 1], $this->makeService()->searchUnsplash('mountains'));
+    }
+
+    public function test_the_next_page_after_the_last_one_starts_over(): void
+    {
+        $this->http->fake([
+            'api.unsplash.com/search/photos*' => $this->http->response(['total_pages' => 3, 'results' => []]),
+        ]);
+
+        $this->assertSame(1, $this->makeService()->searchUnsplash('mountains', 3)['nextPage']);
+        $this->http->assertSent(fn (Request $request) => $request['page'] === 3);
     }
 
     public function test_using_a_photo_stores_its_resized_url_and_reports_the_download(): void
@@ -142,6 +154,29 @@ class BackgroundsTest extends TestCase
 
         $this->expectException(ValidationException::class);
         $service->setBackgroundType('video');
+    }
+
+    public function test_upload_of_an_image_format_browsers_cannot_show_is_refused(): void
+    {
+        // A TIFF named .jpg: getimagesize() detects it, but it is not a JPEG/PNG/GIF/WebP.
+        $tiff = tempnam(sys_get_temp_dir(), 'bg');
+        file_put_contents($tiff, "II*\x00\x08\x00\x00\x00\x03\x00\x00\x01\x03\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x01\x03\x00\x01\x00\x00\x00\x01\x00\x00\x00\x15\x01\x03\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00");
+        $this->assertSame(IMAGETYPE_TIFF_II, getimagesize($tiff)[2], 'The fixture must be a TIFF getimagesize() recognizes');
+
+        session(['userdata.id' => 1]);
+
+        $stored = $this->makeService()->useUploadedImage(['file' => [
+            'name' => 'background.jpg',
+            'type' => 'image/jpeg',
+            'tmp_name' => $tiff,
+            'error' => UPLOAD_ERR_OK,
+            'size' => filesize($tiff),
+        ]]);
+
+        unlink($tiff);
+
+        $this->assertFalse($stored);
+        $this->assertSame([], $this->storedImages);
     }
 
     public function test_upload_that_is_not_an_image_is_refused(): void

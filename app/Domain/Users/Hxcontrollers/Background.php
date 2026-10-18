@@ -7,6 +7,7 @@ use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Users\Services\Backgrounds;
 use Leantime\Views\Composers\Header;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The "Background" tab of the user's own settings: choose the color gradient, an uploaded
@@ -14,6 +15,8 @@ use Leantime\Views\Composers\Header;
  *
  * Every change saves right away and answers with the "current background" fragment, which also
  * swaps the page's background style out of band, so the new background shows without a reload.
+ * Changes only accept POST: the Frontcontroller dispatches these actions on GET too, and a GET
+ * skips the request-origin check, so a cross-site link could otherwise reset the background.
  */
 class Background extends HtmxController
 {
@@ -41,15 +44,19 @@ class Background extends HtmxController
     }
 
     /**
-     * Unsplash search results for the "q" query.
+     * Unsplash search results for the "q" query. "page" is sent by the refresh button only, so a
+     * changed query starts at page 1.
      */
     public function search(): string
     {
         $query = (string) $this->incomingRequest->query->get('q', '');
         $page = (int) $this->incomingRequest->query->get('page', 1);
 
+        $searchResult = $this->backgrounds->searchUnsplash($query, $page);
+
         $this->assignTabVariables();
-        $this->tpl->assign('photos', $this->backgrounds->searchUnsplash($query, $page));
+        $this->tpl->assign('photos', $searchResult['photos']);
+        $this->tpl->assign('nextPage', $searchResult['nextPage']);
 
         return 'unsplash-results';
     }
@@ -57,10 +64,14 @@ class Background extends HtmxController
     /**
      * Switch between gradient and image.
      */
-    public function setType(): string
+    public function setType(): string|Response
     {
+        if (! $this->incomingRequest->isMethod('POST')) {
+            return $this->tpl->emptyResponse(405);
+        }
+
         try {
-            $this->backgrounds->setBackgroundType((string) $this->incomingRequest->input('type', ''));
+            $this->backgrounds->setBackgroundType((string) $this->incomingRequest->request->get('type', ''));
             $this->tpl->setNotification(__('notifications.background_settings_saved'), 'success');
         } catch (ValidationException $exception) {
             $this->tpl->setNotification(__('notifications.background_not_saved'), 'error');
@@ -74,8 +85,12 @@ class Background extends HtmxController
     /**
      * Use the Unsplash photo with the posted "photoId".
      */
-    public function useUnsplashPhoto(): string
+    public function useUnsplashPhoto(): string|Response
     {
+        if (! $this->incomingRequest->isMethod('POST')) {
+            return $this->tpl->emptyResponse(405);
+        }
+
         $photoId = (string) $this->incomingRequest->request->get('photoId', '');
 
         if ($this->backgrounds->useUnsplashPhoto($photoId)) {
@@ -92,8 +107,12 @@ class Background extends HtmxController
     /**
      * Use the uploaded image ("file") as background.
      */
-    public function upload(): string
+    public function upload(): string|Response
     {
+        if (! $this->incomingRequest->isMethod('POST')) {
+            return $this->tpl->emptyResponse(405);
+        }
+
         if ($this->backgrounds->useUploadedImage($_FILES)) {
             $this->tpl->setNotification(__('notifications.background_settings_saved'), 'success');
         } else {

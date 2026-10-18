@@ -13,35 +13,30 @@
     @fragment('current-background')
     <div id="currentBackground">
         <label><strong>{{ __('label.background_type') }}</strong></label>
-        <div class="tw-flex tw-gap-4">
-            <x-global::selectable
-                :selected="$backgroundType !== 'image' ? 'true' : ''"
-                :name="'backgroundType'"
-                :value="'gradient'"
-                :id="'backgroundTypeGradient'"
-                :label="__('label.gradient')"
-                hx-post="{{ BASE_URL }}/hx/users/background/setType?type=gradient"
-                hx-target="#currentBackground"
-                hx-swap="outerHTML"
-            >
-                <label for="selectable-backgroundTypeGradient" class="colorCircle"
-                       style="border-radius:10px; background:linear-gradient(135deg, {{ $primaryColor }} 20%, {{ $secondaryColor }} 100%);">
-                    <div style="width:65px; height:65px;">&nbsp;</div>
-                </label>
-            </x-global::selectable>
+        {{-- Native buttons (not global::selectable) so the choice works with the keyboard. --}}
+        <div class="tw-flex tw-gap-4" role="group" aria-label="{{ __('label.background_type') }}">
+            <button type="button"
+                    @class(['selectable tw-bg-transparent tw-border-0 tw-p-0', 'active' => $backgroundType !== 'image'])
+                    aria-pressed="{{ $backgroundType !== 'image' ? 'true' : 'false' }}"
+                    hx-post="{{ BASE_URL }}/hx/users/background/setType"
+                    hx-vals='{"type": "gradient"}'
+                    hx-target="#currentBackground"
+                    hx-swap="outerHTML">
+                <span class="selectableContent tw-block">
+                    <span class="tw-block"
+                          style="width:65px; height:65px; border-radius:10px; background:linear-gradient(135deg, {{ $primaryColor }} 20%, {{ $secondaryColor }} 100%);"></span>
+                </span>
+                <span class="selectable-label">{{ __('label.gradient') }}</span>
+            </button>
 
             @if($backgroundType === 'image' && $backgroundImage !== '')
-                <x-global::selectable
-                    :selected="'true'"
-                    :name="'backgroundType'"
-                    :value="'image'"
-                    :id="'backgroundTypeImage'"
-                    :label="__('label.image')"
-                >
-                    <label for="selectable-backgroundTypeImage">
+                {{-- The current image: shown, not a control (pick another image below). --}}
+                <div class="selectable active">
+                    <span class="selectableContent tw-block">
                         <img src="{{ $backgroundImage }}" alt="" style="width:65px; height:65px; object-fit:cover; border-radius:10px;" />
-                    </label>
-                </x-global::selectable>
+                    </span>
+                    <span class="selectable-label">{{ __('label.image') }}</span>
+                </div>
             @else
                 <div class="tw-flex tw-items-center tw-w-[150px] tw-text-sm tw-opacity-70">
                     {{ __('text.pick_background_image_below') }}
@@ -81,6 +76,8 @@
                        hx-trigger="load, keyup changed delay:500ms"
                        hx-target="#unsplashResults"
                        hx-indicator="#unsplashLoading" />
+                {{-- Only the refresh button sends "page" (a changed query starts at 1); search results update it. --}}
+                <input type="hidden" name="page" id="unsplashNextPage" value="2" />
                 <x-global::forms.button inputType="submit" icon="fa fa-refresh" :ariaLabel="__('buttons.refresh_images')" />
                 <div id="unsplashLoading" class="htmx-indicator-small">
                     <x-global::loader id="unsplashLoader" size="25px" />
@@ -89,6 +86,9 @@
 
             <div id="unsplashResults" class="tw-grid tw-grid-cols-2 md:tw-grid-cols-4 tw-gap-4 tw-mt-4">
                 @fragment('unsplash-results')
+                    @isset($nextPage)
+                        <input type="hidden" name="page" id="unsplashNextPage" value="{{ $nextPage }}" hx-swap-oob="true" />
+                    @endisset
                     @isset($photos)
                     @forelse($photos as $photo)
                         <div class="tw-rounded-lg tw-overflow-hidden">

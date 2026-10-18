@@ -352,7 +352,8 @@
                     </div>
 
                     <div id="background">
-                        <x-global::hx endpoint="users/background" trigger="load" wrapperId="backgroundSettings" />
+                        {{-- Loads when the tab is shown, so Unsplash is only queried by users who open it. --}}
+                        <x-global::hx endpoint="users/background" trigger="intersect once" wrapperId="backgroundSettings" />
                     </div>
 
                     <div id="notifications">
