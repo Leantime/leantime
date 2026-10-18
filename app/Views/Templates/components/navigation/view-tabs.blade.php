@@ -7,7 +7,8 @@
     navigation.view-tabs — the bar between the page header and the content box: the page's VIEWS on the
     left (Kanban / Table / List, Wall / Kanban, Week / List…) and its ACTIONS on the right (New, Filter,
     Group By, view settings, export). Mount it inside .maincontent, before .maincontentinner. A page
-    without views passes no tabs and gets just the right-aligned actions.
+    without views passes no tabs and gets just the right-aligned actions; with neither (no tabs, and an
+    actions slot that renders empty) nothing is output.
 
         <x-global::navigation.view-tabs :tabs="[
             ['url' => BASE_URL.'/ideas/showBoards', 'label' => __('links.wall'), 'active' => true],
@@ -25,7 +26,11 @@
 --}}
 @php
     $navLabel = $label ?? implode(' / ', array_map(fn ($tab) => trim(strip_tags((string) $tab['label'])), $tabs));
+    // An actions slot whose contents are all behind @if (e.g. editor-only buttons) renders empty;
+    // without tabs or actions the bar would be an empty box that adds a gap above the content.
+    $hasActions = isset($actions) && $actions->hasActualContent();
 @endphp
+@if (count($tabs) > 0 || $hasActions)
 <div class="lt-tabs lt-tabs--floating lt-tabs--links hideOnPrint">
     @if (count($tabs) > 0)
         <nav class="lt-tabs-group" aria-label="{{ $navLabel }}">
@@ -43,9 +48,10 @@
         </nav>
     @endif
 
-    @isset($actions)
+    @if ($hasActions)
         <div class="lt-tabs-actions">
             {{ $actions }}
         </div>
-    @endisset
+    @endif
 </div>
+@endif
