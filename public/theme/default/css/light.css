@@ -113,6 +113,9 @@
     --box-radius-large: 24px;
     --box-radius: 16px;
     --box-radius-small: 8px;
+    /* Inner padding of the page header and the content box (.maincontentinner), so their
+       contents line up. */
+    --box-padding: 16px;
     --element-radius: 16px;
     --input-radius: 15px;
 
