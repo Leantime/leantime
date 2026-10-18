@@ -175,18 +175,22 @@ leantime.htmxProgress = (function () {
 document.addEventListener('htmx:beforeRequest', function () { leantime.htmxProgress.start(); });
 document.addEventListener('htmx:afterRequest', function () { leantime.htmxProgress.done(); });
 
-// Data events (lt:{domain}:{entity}.{verb}) arrive on the HX-Trigger header of the response and
-// are fired on the element that made the request. A component listening for them must not
-// refetch itself when that element sits inside it: its own request already rendered the change
-// (the to-do widget's inline title edit would otherwise reload the whole widget). Components
-// elsewhere on the page still refresh. UI commands (lt:ui:*) are not data events.
+// Data events (lt:{domain}:{entity}.{verb}, optionally scoped with #{id}) arrive on the
+// HX-Trigger header of the response and are fired on the element that made the request. A
+// component listening for them must not refetch itself when that element sits inside it: its
+// own request already rendered the change (the to-do widget's inline title edit would otherwise
+// reload the whole widget). Components elsewhere on the page still refresh. Only that exact
+// format counts: UI commands (lt:ui:notify) and client-only events (lt:chip:changed, which
+// chips.js fires after a JSON-RPC save) have no entity.verb part and are never suppressed.
+var leantimeDataEventPattern = /^lt:[a-z]+:[a-z]+\.[a-z]+(#.+)?$/;
+
 document.addEventListener('htmx:confirm', function (evt) {
     var triggeringEvent = evt.detail.triggeringEvent;
     if (!triggeringEvent || typeof triggeringEvent.type !== 'string') {
         return;
     }
 
-    var isDataEvent = triggeringEvent.type.indexOf('lt:') === 0 && triggeringEvent.type.indexOf('lt:ui:') !== 0;
+    var isDataEvent = leantimeDataEventPattern.test(triggeringEvent.type) && triggeringEvent.type.indexOf('lt:ui:') !== 0;
     var cameFromInside = triggeringEvent.target instanceof Node && evt.detail.elt.contains(triggeringEvent.target);
 
     if (isDataEvent && cameFromInside) {

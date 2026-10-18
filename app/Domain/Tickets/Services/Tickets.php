@@ -4967,7 +4967,8 @@ class Tickets extends BaseService
 
             TicketDeleted::dispatch(ticketId: (int) $id, legacyHook: __FUNCTION__);
 
-            if (($ticket->type ?? '') === 'subtask' && (int) ($ticket->dependingTicketId ?? 0) > 0) {
+            // The parent's subtask list selects children by dependingTicketId, whatever their type.
+            if ((int) ($ticket->dependingTicketId ?? 0) > 0) {
                 SubtasksUpdated::dispatch(parentTicketId: (int) $ticket->dependingTicketId);
             }
 
