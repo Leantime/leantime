@@ -66,13 +66,9 @@
     <div class="row">
         <div class="col-md-12">
             <div class="maincontentinner">
-                <h5 class="accordionTitle" id="accordion_link_other">
-                    <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_other" onclick="accordionToggle('other');">
-                        <i class="fa fa-angle-down"></i> {{ __('label.templates') }}
-                    </a>
-                </h5>
-                <p style="padding-left:19px;">{!! __('description.other_tools') !!}</p>
-                <div id="accordion_other" class="row teamBox" style="padding-left:19px;">
+                <x-global::elements.accordion id="blueprints-templates" :title="__('label.templates')" open>
+                <p>{!! __('description.other_tools') !!}</p>
+                <div class="row teamBox">
 
                     @foreach ($otherBoards as $board)
                         @if (! isset($board['visible']) || $board['visible'] === 1)
@@ -95,7 +91,7 @@
                         @endif
                     @endforeach
                 </div>
-
+                </x-global::elements.accordion>
 
             </div>
         </div>
@@ -104,26 +100,5 @@
 
 </div>
 
-@once
-@push('scripts')
-<script>
-    function accordionToggle(id) {
-
-        let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
-
-        if(currentLink.hasClass("fa-angle-right")){
-            currentLink.removeClass("fa-angle-right");
-            currentLink.addClass("fa-angle-down");
-            jQuery('#accordion_'+id).slideDown("fast");
-        }else{
-            currentLink.removeClass("fa-angle-down");
-            currentLink.addClass("fa-angle-right");
-            jQuery('#accordion_'+id).slideUp("fast");
-        }
-
-    }
-</script>
-@endpush
-@endonce
 
 @endsection

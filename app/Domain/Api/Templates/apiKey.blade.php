@@ -74,40 +74,27 @@
 
                 <div class="scrollableItemList">
                     @php
-                        $currentClient = '';
-                        $i = 0;
-                        $containerOpen = false;
+                        // One collapsible section per client; projects without a client go under "Not assigned to a client".
+                        $projectsByClient = [];
+                        foreach ($allProjects as $row) {
+                            $clientName = (string) ($row['clientName'] ?? '') !== '' ? $row['clientName'] : __('label.no_clients');
+                            $projectsByClient[$clientName][] = $row;
+                        }
                     @endphp
-                    @foreach ($allProjects as $row)
-                        @if ($currentClient != $row['clientName'])
-                            @if ($i > 0 && $containerOpen)
+                    @foreach ($projectsByClient as $clientName => $clientProjects)
+                        <x-global::elements.accordion :title="$clientName" open>
+                            @foreach ($clientProjects as $row)
+                                <div class="item">
+                                    <input type="checkbox" name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
+                                        @if (is_array($relations) === true && in_array($row['id'], $relations) === true)
+                                            checked="checked"
+                                        @endif
+                                    /><label for="project_{{ $row['id'] }}">{{ $tpl->escape($row['name']) }}</label>
+                                    <div class="clearall"></div>
                                 </div>
-                                @php $containerOpen = false; @endphp
-                            @endif
-                            <h3 id="accordion_link_{{ $i }}">
-                                <a href="#" onclick="accordionToggle({{ $i }});" id="accordion_toggle_{{ $i }}"><i class="fa fa-angle-down"></i> {{ $tpl->escape($row['clientName']) }}</a>
-                            </h3>
-                            <div id="accordion_{{ $i }}" class="simpleAccordionContainer">
-                            @php
-                                $currentClient = $row['clientName'];
-                                $containerOpen = true;
-                            @endphp
-                        @endif
-
-                        <div class="item">
-                            <input type="checkbox" name="projects[]" id="project_{{ $row['id'] }}" value="{{ $row['id'] }}"
-                                @if (is_array($relations) === true && in_array($row['id'], $relations) === true)
-                                    checked="checked"
-                                @endif
-                            /><label for="project_{{ $row['id'] }}">{{ $tpl->escape($row['name']) }}</label>
-                            <div class="clearall"></div>
-                        </div>
-                        @php $i++; @endphp
+                            @endforeach
+                        </x-global::elements.accordion>
                     @endforeach
-                    @if ($containerOpen)
-                        </div>
-                    @endif
-
                 </div>
 
             </div>
@@ -116,24 +103,5 @@
 </form>
 </div>
 
-@once
-@push('scripts')
-<script>
-
-    function accordionToggle(id) {
-        let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
-        if (currentLink.hasClass("fa-angle-right")){
-            currentLink.removeClass("fa-angle-right");
-            currentLink.addClass("fa-angle-down");
-            jQuery('#accordion_'+id).slideDown("fast");
-        } else {
-            currentLink.removeClass("fa-angle-down");
-            currentLink.addClass("fa-angle-right");
-            jQuery('#accordion_'+id).slideUp("fast");
-        }
-    }
-</script>
-@endpush
-@endonce
 
 @endsection

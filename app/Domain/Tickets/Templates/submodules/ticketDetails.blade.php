@@ -179,17 +179,7 @@
 
         <div class="row marginBottom">
             <div class="col-md-12">
-                <h5 class="accordionTitle" id="accordion_link_tickets-organization" style="padding-bottom:15px; font-size:var(--font-size-l)">
-                    <a href="javascript:void(0)"
-                       class="accordion-toggle"
-                       id="accordion_toggle_tickets-organization"
-                       onclick="leantime.snippets.accordionToggle('tickets-organization');">
-                            <i class="fa fa-angle-down"></i>
-                            <span class="fa fa-folder-open"></span>
-                            {!! __('subtitles.organization') !!}
-                    </a>
-                </h5>
-                <div class="simpleAccordionContainer" id="accordion_content-tickets-organization" style="padding-left:0">
+                <x-global::elements.accordion id="tickets-organization" icon="fa fa-folder-open" :title="__('subtitles.organization')" open>
 
                     <!-- Type -->
                     <div class="form-group">
@@ -276,24 +266,14 @@
                         </div>
                     </div>
 
-                </div>
+                </x-global::elements.accordion>
 
             </div>
         </div>
 
         <div class="row marginBottom">
             <div class="col-md-12">
-                <h5 class="accordionTitle" id="accordion_link_tickets-dates" style="padding-bottom:15px; font-size:var(--font-size-l)">
-                    <a href="javascript:void(0)"
-                       class="accordion-toggle"
-                       id="accordion_toggle_tickets-dates"
-                       onclick="leantime.snippets.accordionToggle('tickets-dates');">
-                        <i class="fa fa-angle-down"></i>
-                        <span class="fa fa-calendar"></span>
-                        {!! __('subtitles.schedule') !!}
-                    </a>
-                </h5>
-                <div class="simpleAccordionContainer" id="accordion_content-tickets-dates" style="padding-left:0">
+                <x-global::elements.accordion id="tickets-dates" icon="fa fa-calendar" :title="__('subtitles.schedule')" open>
                     <div class="form-group">
                         <x-global::forms.label>{!! __('label.working_date_from') !!}</x-global::forms.label>
                         <div class="">
@@ -328,7 +308,7 @@
                     </div>
 
 
-                </div>
+                </x-global::elements.accordion>
 
             </div>
         </div>

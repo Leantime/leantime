@@ -5,6 +5,9 @@
     Props:
       title    string  Summary text (escaped). For markup use the `title` slot.
       icon     string  Font Awesome classes before the title.
+      subtitle string  A small line under the title ("Start: Oct 1 • End: Oct 30"). Escaped.
+      color    string  Title colour: a hex value or a CSS variable ("#1b75bb", "var(--green)"),
+                       e.g. a milestone's colour. Anything else is ignored.
       count    int     Optional number shown as a counter after the title ("Open items 4").
       open     bool    Open on first render. With `id`, the user's last choice wins.
       id       string  Remembers open/closed per user (same store as the old accordion, key
@@ -23,6 +26,8 @@
 @props([
     'title' => null,
     'icon' => null,
+    'subtitle' => null,
+    'color' => null,
     'count' => null,
     'open' => false,
     'id' => null,
@@ -39,6 +44,10 @@
         }
     }
     $titleContent = $title instanceof \Illuminate\View\ComponentSlot ? $title : e($title ?? '');
+    // The colour lands in a style attribute: allow only a plain colour value, nothing that could
+    // close the declaration and add others.
+    $titleColor = is_string($color) && preg_match('/^(#[0-9a-fA-F]{3,8}|var\(--[\w-]+\))$/', trim($color)) ? trim($color) : null;
+    $hasSubtitle = trim((string) $subtitle) !== '';
 @endphp
 
 <div {{ $attributes->class(['lt-accordion', 'lt-accordion--card' => $card, 'lt-accordion--on-page' => $onPage]) }}>
@@ -47,12 +56,19 @@
         <div class="lt-accordion-actions">{{ $actions }}</div>
     @endisset
     <details @if ($isOpen) open @endif @if ($id !== null) data-lt-accordion="{{ $id }}" data-lt-open="{{ $isOpen ? 'open' : 'closed' }}" @endif>
-        <summary @class(['lt-accordion-summary', 'lt-accordion-summary--actions' => isset($actions)])>
+        <summary @class(['lt-accordion-summary', 'lt-accordion-summary--actions' => isset($actions)]) @if ($titleColor) style="--lt-accordion-title-color: {{ $titleColor }}" @endif>
             <i class="fa fa-chevron-right lt-accordion-chevron" aria-hidden="true"></i>
             @if ($icon)
                 <i class="{{ $icon }}" aria-hidden="true"></i>
             @endif
-            <span class="lt-accordion-title">{!! $titleContent !!}</span>
+            @if ($hasSubtitle)
+                <span class="lt-accordion-heading">
+                    <span class="lt-accordion-title">{!! $titleContent !!}</span>
+                    <span class="lt-accordion-subtitle">{{ $subtitle }}</span>
+                </span>
+            @else
+                <span class="lt-accordion-title">{!! $titleContent !!}</span>
+            @endif
             @if ($count !== null)
                 <span class="lt-badge lt-badge--count">{{ $count }}</span>
             @endif

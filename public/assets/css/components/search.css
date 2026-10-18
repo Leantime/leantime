@@ -343,11 +343,14 @@
     gap: 6px;
 }
 
-.searchPage__panel .accordionTitle {
+.searchPage__panel {
+    margin-bottom: 0;
+}
+
+.searchPage__panel .lt-accordion-title {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 0;
 }
 
 .searchPage__panelIcon {
@@ -373,7 +376,7 @@
     display: none;
 }
 
-.searchPage__panel .simpleAccordionContainer {
+.searchPage__panel .lt-accordion-body {
     padding: 0 0 8px;
 }
 

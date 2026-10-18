@@ -462,7 +462,8 @@ dl.lt-details--inline {
     gap: 8px;
     min-height: 32px;
     padding: 4px 0;
-    color: var(--primary-color);
+    /* --lt-accordion-title-color: the `color` prop (a milestone or status colour). */
+    color: var(--lt-accordion-title-color, var(--primary-color));
     font-size: var(--font-size-l);
     font-weight: 700;
     list-style: none;
@@ -502,6 +503,19 @@ dl.lt-details--inline {
     min-width: 0;
 }
 
+/* Title with a `subtitle` line under it. */
+.lt-accordion-heading {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.lt-accordion-subtitle {
+    color: var(--primary-font-color);
+    font-size: var(--font-size-s);
+    font-weight: 400;
+}
+
 .lt-accordion-body {
     padding: 8px 0 4px;
 }
@@ -520,7 +534,7 @@ dl.lt-details--inline {
 }
 
 .lt-accordion--on-page .lt-accordion-summary {
-    color: var(--main-titles-color);
+    color: var(--lt-accordion-title-color, var(--main-titles-color));
 }
 
 .lt-accordion--card {
