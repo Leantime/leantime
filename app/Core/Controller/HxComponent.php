@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Controller;
 
+use Leantime\Core\Events\Contracts\EmitsClientEvent;
 use Leantime\Core\Events\Htmx\HtmxEvent;
 
 /**
@@ -11,8 +12,12 @@ use Leantime\Core\Events\Htmx\HtmxEvent;
  * is fetched from, the events that should make it re-fetch ({@see listensTo}), and the events it
  * emits when its actions mutate data ({@see emits}). The `<x-global::hx :for="...::class">` mount
  * component reads this contract to auto-wire `hx-get`/`hx-trigger`, so the emit side and the listen
- * side reference the SAME enum case and can never drift apart (the class of bug where a template
+ * side reference the SAME event and can never drift apart (the class of bug where a template
  * listens for `subtasksUpdated` while the controller emits `subtasks_update`).
+ *
+ * Events are named by their domain event class (SubtasksUpdated::class), which implements
+ * {@see \Leantime\Core\Events\Contracts\EmitsClientEvent}: the service that dispatches it puts
+ * it on the response, so the component's actions don't emit it by hand.
  *
  * Plain {@see HtmxController}s remain valid; declaring the contract is opt-in. Components that don't
  * extend this can still be mounted with explicit `endpoint`/`listen` attributes on `<x-global::hx>`.
@@ -35,7 +40,7 @@ abstract class HxComponent extends HtmxController
     /**
      * Events that should cause this component to re-fetch itself.
      *
-     * @return array<int, HtmxEvent>
+     * @return array<int, class-string<EmitsClientEvent>|HtmxEvent>
      */
     public static function listensTo(): array
     {
@@ -43,10 +48,10 @@ abstract class HxComponent extends HtmxController
     }
 
     /**
-     * Events this component emits when its actions mutate data (contract/documentation; the actual
-     * emission happens via {@see \Leantime\Core\UI\Template::emit()} inside the action methods).
+     * Events this component's actions cause (contract/documentation; the actual emission happens
+     * when the service dispatches the domain event, or via {@see \Leantime\Core\UI\Template::emit()}).
      *
-     * @return array<int, HtmxEvent>
+     * @return array<int, class-string<EmitsClientEvent>|HtmxEvent>
      */
     public static function emits(): array
     {

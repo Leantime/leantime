@@ -32,6 +32,7 @@ use Leantime\Domain\Tickets\Events\MilestoneCreated;
 use Leantime\Domain\Tickets\Events\MilestoneDeleted;
 use Leantime\Domain\Tickets\Events\MilestoneUpdated;
 use Leantime\Domain\Tickets\Events\StatusLabelsUpdated;
+use Leantime\Domain\Tickets\Events\SubtasksUpdated;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
 use Leantime\Domain\Tickets\Events\TicketCompleted;
 use Leantime\Domain\Tickets\Events\TicketCreated;
@@ -4604,6 +4605,8 @@ class Tickets extends BaseService
             }
         }
 
+        SubtasksUpdated::dispatch(parentTicketId: $parentTicketId);
+
         return true;
     }
 
@@ -4963,6 +4966,11 @@ class Tickets extends BaseService
         if ($this->ticketRepository->delticket($id)) {
 
             TicketDeleted::dispatch(ticketId: (int) $id, legacyHook: __FUNCTION__);
+
+            // The parent's subtask list selects children by dependingTicketId, whatever their type.
+            if ((int) ($ticket->dependingTicketId ?? 0) > 0) {
+                SubtasksUpdated::dispatch(parentTicketId: (int) $ticket->dependingTicketId);
+            }
 
             return true;
         }
