@@ -21,6 +21,7 @@
                         <li><a href="#settings">{!! __('tabs.settings') !!}</a></li>
                         <li><a href="#notifications">{!! __('tabs.notifications') !!}</a></li>
                         <li><a href="#theme">{!! __('tabs.theme') !!}</a></li>
+                        <li><a href="#background">{!! __('tabs.background') !!}</a></li>
                         @dispatchEvent('tabs')
                     </ul>
 
@@ -346,6 +347,10 @@
                         </form>
 
                         @dispatchEvent('themecontent')
+                    </div>
+
+                    <div id="background">
+                        <x-global::hx endpoint="users/background" trigger="load" wrapperId="backgroundSettings" />
                     </div>
 
                     <div id="notifications">

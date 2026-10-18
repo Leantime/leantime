@@ -26,6 +26,11 @@
                 {!! __("menu.theme") !!}
             </a>
         </li>
+        <li>
+            <a href='{{ BASE_URL }}/users/editOwn#background' preload="mouseover">
+                {!! __("menu.background") !!}
+            </a>
+        </li>
         @dispatchEvent('afterTheme')
         <li>
             <a href='{{ BASE_URL }}/users/editOwn#settings' preload="mouseover">

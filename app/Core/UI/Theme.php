@@ -113,6 +113,63 @@ class Theme
     private array|false $iniData;
 
     private array $colorSchemes = [
+        'themeDefault' => 'themeDefault',
+        'companyColors' => 'companyColors',
+        'copper' => [
+            'name' => 'Copper',
+            'primaryColor' => '#894329',
+            'secondaryColor' => '#12727d',
+        ],
+        'mustard' => [
+            'name' => 'Mustard',
+            'primaryColor' => '#99472f',
+            'secondaryColor' => '#f3aa38',
+        ],
+        'nebular' => [
+            'name' => 'Nebula',
+            'primaryColor' => '#d18475',
+            'secondaryColor' => '#0f1b31',
+        ],
+        'fuchsia' => [
+            'name' => 'Fuchsia',
+            'primaryColor' => '#b2104f',
+            'secondaryColor' => '#81adc4',
+        ],
+        'fruit' => [
+            'name' => 'Fruit',
+            'primaryColor' => '#3a5a81',
+            'secondaryColor' => '#d31336',
+        ],
+        'highlands' => [
+            'name' => 'Highlands',
+            'primaryColor' => '#33697b',
+            'secondaryColor' => '#fc9885',
+        ],
+        'moss' => [
+            'name' => 'Moss',
+            'primaryColor' => '#696c29',
+            'secondaryColor' => '#84bd26',
+        ],
+        'morning' => [
+            'name' => 'Morning',
+            'primaryColor' => '#58607b',
+            'secondaryColor' => '#F3AA34',
+        ],
+        'ocean' => [
+            'name' => 'Ocean',
+            'primaryColor' => '#73ccd5',
+            'secondaryColor' => '#fdd78c',
+        ],
+        'energy' => [
+            'name' => 'Energy',
+            'primaryColor' => '#FA6821',
+            'secondaryColor' => '#91372b',
+        ],
+        'forrest' => [
+            'name' => 'Forest',
+            'primaryColor' => '#74211c',
+            'secondaryColor' => '#32251e',
+        ],
         'grayscale1' => [
             'name' => 'Grayscale',
             'primaryColor' => '#000000',
@@ -123,8 +180,6 @@ class Theme
             'primaryColor' => '#d1d1d1',
             'secondaryColor' => '#000000',
         ],
-        'themeDefault' => 'themeDefault',
-        'companyColors' => 'companyColors',
     ];
 
     /**
