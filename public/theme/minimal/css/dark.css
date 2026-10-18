@@ -113,6 +113,8 @@
     /* Inner padding of the page header and the content box (.maincontentinner), so their
        contents line up. */
     --box-padding: 16px;
+    /* Background of the content box's sidebars (layout.content-box): a step off the box. */
+    --content-sidebar-bg: #222222;
     --element-radius: 15px;
     --input-radius: 15px;
     --input-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);
