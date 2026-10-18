@@ -69,18 +69,18 @@
             const taskContent = taskDiv.innerHTML;
 
             // Find existing group's sortable container
-            const existingGroup = document.querySelector(`[id*="ticketBox1-${groupKey}-"] .sortable-list`);
+            const groupSelector = `[data-todo-group="${CSS.escape(String(groupKey))}"]`;
+            const existingGroup = document.querySelector(`${groupSelector} .sortable-list[data-container-type="section"]`);
 
             if (existingGroup) {
                 // Append task to existing group
                 existingGroup.insertAdjacentHTML('beforeend', taskContent);
 
-                // Update counter
-                const counter = document.querySelector(`#task-count-${groupKey}`);
+                // Update the group's counter badge
+                const counter = document.querySelector(`${groupSelector} .lt-badge--count`);
                 if (counter) {
-                    const currentText = counter.textContent;
-                    const currentCount = parseInt(currentText.match(/\d+/)[0]) || 0;
-                    counter.textContent = `(${currentCount + 1})`;
+                    const currentCount = parseInt(counter.textContent, 10) || 0;
+                    counter.textContent = String(currentCount + 1);
                 }
             } else {
                 // Group doesn't exist yet - this shouldn't happen with global pagination,

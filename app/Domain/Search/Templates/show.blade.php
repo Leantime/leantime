@@ -111,21 +111,21 @@
             <div class="searchPage__panels">
                 @foreach ($selectedTypes as $key)
                     @php $provider = $providers[$key]; @endphp
-                    <x-global::accordion id="search-{{ $key }}" class="searchPage__panel">
-                        <x-slot name="title" id="searchPanel-{{ $key }}">
-                            <span class="{{ $provider->icon() }} searchPage__panelIcon" aria-hidden="true"></span>{{ $provider->label() }}
-                            <span class="searchPage__count" id="searchCount-{{ $key }}"></span>
-                        </x-slot>
-                        <x-slot name="content">
-                            <x-global::hx
-                                endpoint="search/results/get"
-                                :vals="$panelVals + ['type' => $key]"
-                                trigger="load"
-                                loader="line"
-                                :loaderCount="3"
-                            />
-                        </x-slot>
-                    </x-global::accordion>
+                    <x-global::elements.accordion :id="'search-' . $key" open class="searchPage__panel">
+                        <x-slot:title>
+                            <span class="{{ $provider->icon() }} searchPage__panelIcon" aria-hidden="true"></span>
+                            <span id="searchPanel-{{ $key }}">{{ $provider->label() }}</span>
+                            {{-- The accordion's count badge, filled by search/results/get (hx-swap-oob on this id). --}}
+                            <span class="lt-badge lt-badge--count searchPage__count" id="searchCount-{{ $key }}"></span>
+                        </x-slot:title>
+                        <x-global::hx
+                            endpoint="search/results/get"
+                            :vals="$panelVals + ['type' => $key]"
+                            trigger="load"
+                            loader="line"
+                            :loaderCount="3"
+                        />
+                    </x-global::elements.accordion>
                 @endforeach
             </div>
         @endif

@@ -453,7 +453,8 @@ dl.lt-details--inline {
 /* elements.accordion — <details> section: chevron + 16 / bold title, optional counter and actions. */
 .lt-accordion {
     position: relative;
-    margin-bottom: 12px;
+    /* Collapsed sections stack tight; an open one gets its space from the body's bottom padding. */
+    margin-bottom: 4px;
 }
 
 .lt-accordion-summary {
@@ -462,7 +463,9 @@ dl.lt-details--inline {
     gap: 8px;
     min-height: 32px;
     padding: 4px 0;
-    color: var(--primary-color);
+    /* Plain text colour: a section title isn't an action. --lt-accordion-title-color is the
+       `color` prop (a milestone or status colour). */
+    color: var(--lt-accordion-title-color, var(--primary-font-color));
     font-size: var(--font-size-l);
     font-weight: 700;
     list-style: none;
@@ -482,7 +485,8 @@ dl.lt-details--inline {
 /* Room for the actions, which sit over the summary row but outside <summary>. core/snippets.js
    sets the real width (--lt-accordion-actions-w) from the rendered actions; 120px until then. */
 .lt-accordion-summary--actions {
-    min-height: var(--lt-accordion-actions-h, 32px);
+    /* The measured height is the whole row; min-height excludes the 4px + 4px padding. */
+    min-height: calc(var(--lt-accordion-actions-h, 40px) - 8px);
     padding-right: calc(var(--lt-accordion-actions-w, 120px) + 12px);
 }
 
@@ -491,19 +495,45 @@ dl.lt-details--inline {
     width: 1em;
     font-size: var(--font-size-s);
     text-align: center;
-    transition: transform .15s ease;
+    transition: transform .15s ease, background-color .15s ease, box-shadow .15s ease;
 }
 
 .lt-accordion details[open] > .lt-accordion-summary .lt-accordion-chevron {
     transform: rotate(90deg);
 }
 
+/* Hover: a soft tile behind the chevron (as the old accordion had). The box-shadow ring makes
+   the tile larger than the 1em icon box without moving the title. */
+.lt-accordion-summary:hover .lt-accordion-chevron {
+    border-radius: var(--box-radius-small);
+    background: var(--col-hover-bg);
+    box-shadow: 0 0 0 4px var(--col-hover-bg);
+    color: var(--interactive-icon-color);
+}
+
 .lt-accordion-title {
     min-width: 0;
 }
 
+/* Title with a `subtitle` line under it. */
+.lt-accordion-heading {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.lt-accordion-subtitle {
+    color: var(--primary-font-color);
+    font-size: var(--font-size-s);
+    font-weight: 400;
+}
+
 .lt-accordion-body {
-    padding: 8px 0 4px;
+    /* <details> wraps its content in a UA slot that the global `* { box-sizing: inherit }` rule
+       doesn't reach, so without this everything inside falls back to content-box (Bootstrap
+       columns then overflow their row and wrap). */
+    box-sizing: border-box;
+    padding: 8px 0 12px;
 }
 
 .lt-accordion-actions {
@@ -520,10 +550,11 @@ dl.lt-details--inline {
 }
 
 .lt-accordion--on-page .lt-accordion-summary {
-    color: var(--main-titles-color);
+    color: var(--lt-accordion-title-color, var(--main-titles-color));
 }
 
 .lt-accordion--card {
+    margin-bottom: 12px;
     border: 1px solid var(--main-border-color);
     border-radius: var(--card-radius, var(--box-radius));
     background: var(--card-bg, var(--secondary-background));
@@ -534,6 +565,7 @@ dl.lt-details--inline {
 }
 
 .lt-accordion--card .lt-accordion-summary--actions {
+    min-height: calc(var(--lt-accordion-actions-h, 48px) - 16px);
     padding-right: calc(var(--lt-accordion-actions-w, 120px) + 28px);
 }
 

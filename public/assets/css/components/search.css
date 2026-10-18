@@ -343,11 +343,14 @@
     gap: 6px;
 }
 
-.searchPage__panel .accordionTitle {
+.searchPage__panel {
+    margin-bottom: 0;
+}
+
+.searchPage__panel .lt-accordion-title {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 0;
 }
 
 .searchPage__panelIcon {
@@ -357,23 +360,12 @@
     text-align: center;
 }
 
-.searchPage__count {
-    min-width: 1.5em;
-    padding: 0 7px;
-    border-radius: 999px;
-    background: var(--light-layered-background);
-    color: var(--secondary-font-color);
-    font-size: var(--font-size-s);
-    font-weight: 600;
-    line-height: 1.6;
-    text-align: center;
-}
-
+/* The panel counter is the accordion's count badge; hidden until the results report a number. */
 .searchPage__count:empty {
     display: none;
 }
 
-.searchPage__panel .simpleAccordionContainer {
+.searchPage__panel .lt-accordion-body {
     padding: 0 0 8px;
 }
 

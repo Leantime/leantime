@@ -207,6 +207,12 @@
 }
 
 /* Quick Add Form Styles */
+/* My ToDos groups (elements.accordion): indent the body under the title so the subtask
+   expand arrows, which sit left of each card, stay inside the group. */
+.lt-accordion.todo-group > details > .lt-accordion-body {
+    padding-left: 20px;
+}
+
 .add-task-button {
     display: inline-block;
     margin-left: 10px;
