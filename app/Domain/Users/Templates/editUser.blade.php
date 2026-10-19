@@ -16,7 +16,7 @@
         <div class="maincontent">
             <div class="row">
                 <div class="col-md-7">
-                    <div class="maincontentinner">
+                    <x-global::layout.content-box>
                     <x-global::elements.section-header>{!! __('label.profile_information') !!}</x-global::elements.section-header>
 
                     <x-global::forms.label for="firstname">{!! __('label.firstname') !!}</x-global::forms.label> <x-global::forms.text-input
@@ -156,10 +156,10 @@
                     <p class="stdformbutton">
                         <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="save" />
                     </p>
-                    </div>
+                    </x-global::layout.content-box>
                 </div>
                 <div class="col-md-5">
-                    <div class="maincontentinner">
+                    <x-global::layout.content-box>
                     <x-global::elements.section-header>{!! __('label.project_assignment') !!}</x-global::elements.section-header>
 
                     <div class="scrollableItemList">
@@ -193,7 +193,7 @@
                             </x-global::elements.accordion>
                         @endforeach
                     </div>
-                    </div>
+                    </x-global::layout.content-box>
 
                 </div>
             </div>

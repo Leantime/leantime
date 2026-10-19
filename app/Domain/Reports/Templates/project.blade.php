@@ -66,13 +66,13 @@
             </div>
         </div>
 
-        <div class="maincontentinner">
+        <x-global::layout.content-box>
 
             {!! $tpl->displayNotification() !!}
 
             @include('reports::partials.projectReportBody', ['report' => $report, 'period' => $period, 'projectId' => $projectId])
 
-        </div>
+        </x-global::layout.content-box>
     </div>
 
 @endsection

@@ -107,7 +107,4 @@
         </x-slot:actions>
     </x-global::navigation.view-tabs>
 
-    <div class="maincontentinner">
-
-        {!! $tpl->displayNotification() !!}
-
+    {{-- The page (showCanvas) opens the content box and closes .maincontent. --}}

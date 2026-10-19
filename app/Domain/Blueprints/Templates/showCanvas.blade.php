@@ -3,6 +3,10 @@
 
 @include('blueprints::showCanvasTop', ['canvasSlug' => $canvasSlug])
 
+    <x-global::layout.content-box>
+
+        {!! $tpl->displayNotification() !!}
+
 @if(count($allCanvas) > 0)
     <div id="sortableCanvasKanban" class="sortableTicketList disabled">
         <div class="row-fluid">
@@ -76,5 +80,8 @@
 @endif
 
 @include('blueprints::showCanvasBottom', ['canvasSlug' => $canvasSlug])
+
+    </x-global::layout.content-box>
+</div>
 
 @endsection

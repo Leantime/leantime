@@ -11,11 +11,11 @@
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         @include('connector::submodules.importProgress')
-    </div>
+    </x-global::layout.content-box>
 
-    <div class="maincontentinner center">
+    <x-global::layout.content-box class="center">
 
         {!! $tpl->displayNotification() !!}
 
@@ -27,7 +27,7 @@
 
         <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=connect" contentRole="primary">{{ __('buttons.click_to_connect') }}</x-global::forms.button>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

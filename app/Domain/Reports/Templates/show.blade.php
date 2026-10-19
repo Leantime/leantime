@@ -20,7 +20,7 @@
         </nav>
     </div>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -163,6 +163,7 @@
                             @if (count($milestones) == 0)
                                 <div class='center'><br /><h4>{!! __('headlines.no_milestones') !!}</h4>
                                 {!! __('text.milestones_help_organize_projects') !!}<br /><br /><a href="{{ BASE_URL }}/tickets/roadmap">{!! __('links.goto_milestones') !!}</a>
+                                </div>
                             @endif
                             @foreach ($milestones as $row)
                                     <li class="ui-state-default" id="milestone_{{ $row->id }}" >
@@ -201,7 +202,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

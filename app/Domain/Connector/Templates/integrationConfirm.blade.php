@@ -20,10 +20,10 @@
 {!! $tpl->displayNotification() !!}
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         @include('connector::submodules.importProgress')
-    </div>
-    <div class="maincontentinner">
+    </x-global::layout.content-box>
+    <x-global::layout.content-box>
         <div class='center'>
             <div style='width:30%' class='svgContainer'>
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_party_re_nmwj.svg') !!}
@@ -34,7 +34,7 @@
             <br />
             <a class='btn btn-default' href='{{ BASE_URL }}/connector/show'>{{ __('links.back_to_integrations') }}</a>
         </div>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

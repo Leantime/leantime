@@ -7,7 +7,7 @@
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <div class="row">
             <div class="col-md-12">
 
@@ -237,7 +237,7 @@
             </div>
         </div>
     </div>
-</div>
+    </x-global::layout.content-box>
 
 
 

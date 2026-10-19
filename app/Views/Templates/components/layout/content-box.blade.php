@@ -10,7 +10,8 @@
     content, and the sidebars give up width before the main pane drops under 320px.
 
     Props:
-      id          string  Remembers the sidebar widths per user (UiState: "content-box_{id}_left|right").
+      id          string  The box's HTML id; also remembers the sidebar widths per user (UiState:
+                          "content-box_{id}_left|right").
       leftWidth   int     Default width of the left sidebar in px (260).
       rightWidth  int     Default width of the right sidebar in px (300).
       resizable   bool    Show the resize handles (default true).
@@ -47,16 +48,17 @@
 
         return is_numeric($saved) ? max($minWidth, min($maxWidth, (int) $saved)) : $default;
     };
-    $leftW = $widthFor('left', (int) $leftWidth);
-    $rightW = $widthFor('right', (int) $rightWidth);
+    $leftW = $hasLeft ? $widthFor('left', (int) $leftWidth) : (int) $leftWidth;
+    $rightW = $hasRight ? $widthFor('right', (int) $rightWidth) : (int) $rightWidth;
+    $htmlId = $id === null ? [] : ['id' => $id];
 @endphp
 
 @if (! $hasLeft && ! $hasRight)
-    <div {{ $attributes->class(['maincontentinner']) }}>
+    <div {{ $attributes->class(['maincontentinner'])->merge($htmlId) }}>
         {{ $slot }}
     </div>
 @else
-    <div {{ $attributes->class(['maincontentinner', 'lt-content', 'lt-content--stack-lg' => $stack === 'lg'])->merge([
+    <div {{ $attributes->class(['maincontentinner', 'lt-content', 'lt-content--stack-lg' => $stack === 'lg'])->merge($htmlId + [
             'style' => ($hasLeft ? '--lt-content-left-w: ' . $leftW . 'px;' : '') . ($hasRight ? ' --lt-content-right-w: ' . $rightW . 'px;' : ''),
         ]) }} @if ($stateId !== null) data-lt-content="{{ $stateId }}" @endif>
         @if ($hasLeft)

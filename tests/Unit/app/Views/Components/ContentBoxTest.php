@@ -69,6 +69,17 @@ class ContentBoxTest extends TestCase
         $this->assertMatchesRegularExpression('/^<div class="maincontentinner project-progress">\s*Body\s*<\/div>$/', trim($html));
     }
 
+    public function test_the_id_is_the_box_html_id(): void
+    {
+        $plain = $this->render('<x-global::layout.content-box id="ideaBoards" style="min-height:350px;">Body</x-global::layout.content-box>');
+        $this->assertStringContainsString('id="ideaBoards"', $plain);
+        $this->assertStringContainsString('class="maincontentinner"', $plain);
+        $this->assertStringContainsString('style="min-height:350px;"', $plain);
+
+        $split = $this->render('<x-global::layout.content-box id="tickets-list"><x-slot:left>L</x-slot:left> M</x-global::layout.content-box>');
+        $this->assertStringContainsString('id="tickets-list"', $split);
+    }
+
     public function test_a_left_sidebar_splits_the_box_with_a_resize_handle(): void
     {
         $html = $this->render('<x-global::layout.content-box id="tickets-list" :leftWidth="320"><x-slot:left class="ticketList">List</x-slot:left> Detail</x-global::layout.content-box>');

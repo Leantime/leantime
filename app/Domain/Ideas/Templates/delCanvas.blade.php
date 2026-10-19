@@ -7,7 +7,7 @@
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <x-global::elements.card>
             <x-slot:title>{!! __('subtitles.delete') !!}</x-slot:title>
             <form method="post" action="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->escape($_GET['id']) }}">
@@ -16,7 +16,7 @@
                 <x-global::forms.button tag="a" contentRole="tertiary" link="{{ BASE_URL }}/ideas/showBoards">{!! __('buttons.back') !!}</x-global::forms.button>
             </form>
         </x-global::elements.card>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

@@ -20,12 +20,12 @@
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         @include('connector::submodules.importProgress')
-    </div>
+    </x-global::layout.content-box>
     <div class="row">
         <div class="col-md-9">
-            <div class="maincontentinner center">
+            <x-global::layout.content-box class="center">
 
                 {!! $tpl->displayNotification() !!}
                 <x-global::elements.section-header as="h5">{{ __('headlines.integration_match_fields') }}</x-global::elements.section-header>
@@ -65,17 +65,17 @@
                     </div>
                     <div class="clearall"></div>
                 </form>
-            </div>
+            </x-global::layout.content-box>
         </div>
         <div class="col-md-3">
-            <div class="maincontentinner">
+            <x-global::layout.content-box>
             <x-global::elements.section-header as="h5">{{ __('headlines.integration_requirements') }}</x-global::elements.section-header>
             <p>{{ __('text.integration_requirements') }}</p>
             @foreach ($flags as $flag)
                 <hr />
                 <p style="padding-left:10px"><strong>{{ $flag }}</strong></p>
             @endforeach
-            </div>
+            </x-global::layout.content-box>
         </div>
 
     </div>

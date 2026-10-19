@@ -33,7 +33,7 @@
 
     @include('tickets::submodules.ticketBoardTabs')
 
-    <div class="maincontentinner kanban-board-wrapper" >
+    <x-global::layout.content-box class="kanban-board-wrapper">
 
         {{-- Board actions (New / Filter / Group By) moved into the nav bar
              (ticketBoardTabs) so there's no separate toolbar row here. --}}
@@ -297,7 +297,7 @@
 
         @endforeach
 
-    </div>
+    </x-global::layout.content-box>
 
 </div>
 

@@ -23,9 +23,6 @@
 
 @include('blueprints::modals')
 
-    </div>
-</div>
-
 @once @push('scripts')
 <script type="text/javascript">
 

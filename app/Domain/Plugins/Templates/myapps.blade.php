@@ -12,7 +12,7 @@
 
         @include('plugins::partials.plugintabs',  ["currentUrl" => "installed"])
 
-        <div class="maincontentinner">
+        <x-global::layout.content-box>
 
             <div class="row">
                 <div class="col-lg-12">
@@ -81,7 +81,7 @@
                     </ul>
                 </div>
             </div>
-        </div>
+        </x-global::layout.content-box>
     </div>
 @endsection
 

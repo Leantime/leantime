@@ -12,7 +12,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="maincontentinner">
+            <x-global::layout.content-box>
                 <div class="tabbedwidget tab-primary accountTabs">
 
                     <ul>
@@ -496,7 +496,7 @@
                         <x-global::hx endpoint="auth/personalTokens" trigger="load" />
                     </div>
                 </div>
-            </div>
+            </x-global::layout.content-box>
         </div>
     </div>
 </div>

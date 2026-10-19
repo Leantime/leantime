@@ -62,7 +62,7 @@
         @endif
     </x-global::navigation.view-tabs>
 
-    <div class="maincontentinner" id="ideaBoards" style="min-height:350px;">
+    <x-global::layout.content-box id="ideaBoards" style="min-height:350px;">
         {!! $tpl->displayNotification() !!}
 
         @if (count($allCanvas) > 0)
@@ -215,7 +215,7 @@
 
         <div class="clearfix"></div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

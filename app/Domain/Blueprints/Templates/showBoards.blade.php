@@ -12,7 +12,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="maincontentinner">
+            <x-global::layout.content-box>
                 <x-global::elements.section-header as="h5">{{ __('headlines.jump_right_back_in') }}</x-global::elements.section-header>
                 <div class="row">
                 @foreach ($recentProgressCanvas as $canvasType => $board)
@@ -58,14 +58,14 @@
                 @endif
                 </div>
 
-            </div>
+            </x-global::layout.content-box>
         </div>
     </div>
 
     @if ($login::userIsAtLeast($roles::$editor))
     <div class="row">
         <div class="col-md-12">
-            <div class="maincontentinner">
+            <x-global::layout.content-box>
                 <x-global::elements.accordion id="blueprints-templates" :title="__('label.templates')" open>
                 <p>{!! __('description.other_tools') !!}</p>
                 <div class="row teamBox">
@@ -93,7 +93,7 @@
                 </div>
                 </x-global::elements.accordion>
 
-            </div>
+            </x-global::layout.content-box>
         </div>
     </div>
     @endif

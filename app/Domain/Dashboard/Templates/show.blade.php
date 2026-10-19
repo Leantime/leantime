@@ -22,7 +22,7 @@
 
         <div class="col-md-8">
 
-            <div class="maincontentinner tw-z-20">
+            <x-global::layout.content-box class="tw-z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
                     <x-global::actions.dropdown variant="panel" menu-as="ul" class="pull-right dropdownWrapper">
@@ -86,9 +86,9 @@
 
                 <br/>
 
-            </div>
+            </x-global::layout.content-box>
 
-            <div class="maincontentinner tw-z-10 latest-todos">
+            <x-global::layout.content-box class="tw-z-10 latest-todos">
                 <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> {{ __('links.create_todo') }}</x-global::forms.button>
                 <x-global::elements.section-header as="h5">{{ __('headlines.latest_todos') }}</x-global::elements.section-header>
                 <br/>
@@ -146,9 +146,9 @@
                         </li>
                     @endforeach
                 </ul>
-            </div>
+            </x-global::layout.content-box>
 
-            <div class="maincontentinner team-container">
+            <x-global::layout.content-box class="team-container">
                 @dispatchEvent('teamBoxBeginning', ['project' => $project])
 
                 <x-global::elements.section-header as="h5">{{ __('tabs.team') }}</x-global::elements.section-header>
@@ -191,13 +191,13 @@
                         </div>
                     @endif
                 </div>
-            </div>
+            </x-global::layout.content-box>
 
         </div>
 
         <div class="col-md-4">
 
-            <div class="maincontentinner project-updates">
+            <x-global::layout.content-box class="project-updates">
                 <div class="pull-right">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <x-global::forms.button
@@ -334,9 +334,9 @@
                     <div class="clearall"></div>
                 </form>
                 <div class="clearall"></div>
-            </div>
+            </x-global::layout.content-box>
 
-            <div class="maincontentinner project-progress">
+            <x-global::layout.content-box class="project-progress">
                 <div class="row" id="projectProgressContainer">
                     <div class="col-md-12">
                         <x-global::elements.section-header as="h5">{{ __('subtitles.project_progress') }}</x-global::elements.section-header>
@@ -383,7 +383,7 @@
                         </ul>
                     </div>
                 </div>
-            </div>
+            </x-global::layout.content-box>
         </div>
     </div>
 </div>

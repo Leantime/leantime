@@ -6,7 +6,7 @@
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -113,7 +113,7 @@
 
                 </form>
             </x-global::elements.card>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

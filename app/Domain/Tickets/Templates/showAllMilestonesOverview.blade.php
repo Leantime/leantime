@@ -26,7 +26,7 @@
             </x-slot:actions>
         </x-tickets::portfolio-tabs>
 
-        <div class="maincontentinner">
+        <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -169,7 +169,7 @@
             </table>
             @dispatchEvent('allTicketsTable.afterClose', ['tickets' => $allTickets])
 
-    </div>
+        </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

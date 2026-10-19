@@ -7,7 +7,7 @@
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
         <x-global::elements.section-header as="h5">{{ __('headlines.integrations_sync') }}</x-global::elements.section-header>
@@ -40,7 +40,7 @@
             @endforeach
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 
     {{-- Existing Integrations section placeholder --}}
 

@@ -15,7 +15,7 @@
 
 
     <div id="fileManager">
-        <div class="maincontentinner">
+        <x-global::layout.content-box>
             {!! $tpl->displayNotification() !!}
             <x-global::elements.section-header as="h5">{!! __('headline.browse_files_headline') !!}</x-global::elements.section-header>
 
@@ -40,8 +40,8 @@
 
         </div>
         @endif
-        </div>
-        <div class="maincontentinner">
+        </x-global::layout.content-box>
+        <x-global::layout.content-box>
 
         <div class='mediamgr'>
 
@@ -86,7 +86,7 @@
 
             <br class="clearall" />
         </div><!--mediamgr-->
-    </div>
+        </x-global::layout.content-box>
 
     </div>
 </div>

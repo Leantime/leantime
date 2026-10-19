@@ -16,7 +16,7 @@
 
     @include('tickets::submodules.timelineTabs', ['tableButtons' => true])
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -163,7 +163,7 @@
             </x-tickets::group-section>
         @endforeach
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')
