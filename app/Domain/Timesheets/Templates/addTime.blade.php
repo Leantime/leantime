@@ -15,7 +15,7 @@ $values = $values ?? [];
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
 
         <div class="fail">
@@ -150,7 +150,7 @@ $values = $values ?? [];
                 </div>
             </div>
         </form>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

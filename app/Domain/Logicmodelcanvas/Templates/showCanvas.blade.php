@@ -96,7 +96,7 @@
         </x-global::navigation.view-tabs>
     @endif
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -212,7 +212,7 @@
         {{-- Plugin panel containers (filled by HTMX when plugin is active) --}}
         <div id="templateSelectorContainer"></div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 <script type="text/javascript">

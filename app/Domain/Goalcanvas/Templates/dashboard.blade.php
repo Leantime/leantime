@@ -87,7 +87,7 @@ foreach ($allCanvas as $canvasRow) {
     </div>
 </div>
 
-<div class="maincontentinner">
+<x-global::layout.content-box>
     <div class="row">
         <div class="col-md-6"></div>
     </div>
@@ -211,7 +211,7 @@ foreach ($allCanvas as $canvasRow) {
             </div>
         @endforeach
     @endif
-</div>
+</x-global::layout.content-box>
 
 
 

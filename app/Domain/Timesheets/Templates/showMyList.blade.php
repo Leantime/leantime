@@ -39,7 +39,7 @@
         </x-slot:actions>
     </x-global::navigation.view-tabs>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="form" name="form">
@@ -147,7 +147,7 @@
                 </tfoot>
             </table>
         </form>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

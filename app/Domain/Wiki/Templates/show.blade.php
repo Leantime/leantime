@@ -96,14 +96,14 @@
 
     @if((! $currentArticle || $currentArticle->id != null) && (! $wikis || count($wikis) == 0))
         <!-- No wikis exist - show empty state -->
-        <div class="maincontentinner wiki-empty-state">
+        <x-global::layout.content-box class="wiki-empty-state">
             <div class="wiki-empty-state-icon svgContainer">
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
             </div>
             <h3 class="wiki-empty-state-title">{!! __('headlines.no_articles_yet') !!}</h3>
             <p class="wiki-empty-state-text">{!! __('text.create_new_wiki') !!}</p>
             <x-global::forms.button tag="a" link="#/wiki/wikiModal/" class="inlineEdit" contentRole="primary">{!! __('links.icon.create_new_board') !!}</x-global::forms.button>
-        </div>
+        </x-global::layout.content-box>
 
     @elseif($wikis && count($wikis) > 0)
 
@@ -383,7 +383,7 @@
 
         @else
             <!-- Wiki exists but no articles yet -->
-            <div class="maincontentinner wiki-empty-state">
+            <x-global::layout.content-box class="wiki-empty-state">
                 <div class="wiki-empty-state-icon svgContainer">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
                 </div>
@@ -394,7 +394,7 @@
                         hx-swap="none">
                     <i class="fa fa-plus"></i> {!! __('link.create_article') !!}
                 </x-global::forms.button>
-            </div>
+            </x-global::layout.content-box>
         @endif
 
     @endif

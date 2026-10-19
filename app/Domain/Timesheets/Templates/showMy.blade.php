@@ -186,7 +186,7 @@ jQuery(document).ready(function(){
         </x-slot:actions>
     </x-global::navigation.view-tabs>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMy" method="post" id="timesheetList">
@@ -364,7 +364,7 @@ jQuery(document).ready(function(){
             </div>
             <div class="clearall"></div>
         </form>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

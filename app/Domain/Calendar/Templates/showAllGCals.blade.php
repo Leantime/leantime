@@ -12,7 +12,7 @@
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <form action="">
 
             @dispatchEvent('afterFormOpen')
@@ -45,6 +45,8 @@
             @dispatchEvent('beforeFormClose')
 
         </form>
+    </x-global::layout.content-box>
+</div>
 
 @once
 @push('scripts')

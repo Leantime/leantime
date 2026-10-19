@@ -7,7 +7,7 @@
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -20,7 +20,7 @@
                 <x-global::forms.button tag="a" link="{{ BASE_URL }}/setting/editCompanySettings/#apiKeys" contentRole="tertiary">{!! __('buttons.back') !!}</x-global::forms.button>
             </form>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

@@ -215,7 +215,7 @@
         </x-slot:actions>
     </x-global::navigation.view-tabs>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <form action="{{ BASE_URL }}/timesheets/showAll" method="post" id="form" name="form">
 
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
@@ -355,7 +355,7 @@
                 </tfoot>
             </table>
         </form>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

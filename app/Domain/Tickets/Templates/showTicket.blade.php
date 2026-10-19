@@ -15,7 +15,7 @@
 
 <div class="maincontent">
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -65,14 +65,14 @@
             </div>
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#comments" class="formModal">
             <input type="hidden" name="comment" value="1" />
             @include('comments::submodules.generalComment', ['formUrl' => BASE_URL.'/tickets/showTicket/'.$ticket->id])
         </form>
-    </div>
+    </x-global::layout.content-box>
 
 </div>
 

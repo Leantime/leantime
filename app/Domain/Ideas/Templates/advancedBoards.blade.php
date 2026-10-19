@@ -66,7 +66,7 @@
         @endif
     </x-global::navigation.view-tabs>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         {!! $tpl->displayNotification() !!}
 
         @if (count($allCanvas) > 0)
@@ -231,7 +231,7 @@
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

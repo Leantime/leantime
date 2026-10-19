@@ -19,10 +19,10 @@
 </x-global::layout.page-header>
 
     <div class="maincontent">
-        <div class="maincontentinner">
+        <x-global::layout.content-box>
             @include('connector::submodules.importProgress')
-        </div>
-        <div class="maincontentinner center">
+        </x-global::layout.content-box>
+        <x-global::layout.content-box class="center">
 
         {!! $tpl->displayNotification() !!}
 
@@ -69,7 +69,7 @@
                 </div>
                 <div class="clearall"></div>
             </form>
-        </div>
+        </x-global::layout.content-box>
     </div>
 
 @endsection

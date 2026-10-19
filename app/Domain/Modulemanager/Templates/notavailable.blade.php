@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="maincontent">
-    <div class="maincontentinner tw-text-center tw-py-12">
+    <x-global::layout.content-box class="tw-text-center tw-py-12">
 
         <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="260px" />
 
@@ -17,7 +17,7 @@
             @endif
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

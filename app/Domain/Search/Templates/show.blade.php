@@ -8,7 +8,7 @@
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
 
-    <div class="maincontentinner searchPage">
+    <x-global::layout.content-box class="searchPage">
 
         @php
             $activeFilterCount = count(array_filter([
@@ -130,6 +130,6 @@
             </div>
         @endif
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 @endsection

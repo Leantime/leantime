@@ -14,7 +14,7 @@
 
     @include('tickets::submodules.timelineTabs')
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         @php
         if (
@@ -32,7 +32,7 @@
             <svg id="gantt"></svg>
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

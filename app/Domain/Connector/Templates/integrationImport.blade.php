@@ -21,10 +21,10 @@
 </x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         @include('connector::submodules.importProgress')
-    </div>
-    <div class="maincontentinner center">
+    </x-global::layout.content-box>
+    <x-global::layout.content-box class="center">
         {!! $tpl->displayNotification() !!}
 
         <x-global::elements.section-header as="h5">{{ __('headlines.integration_review') }}</x-global::elements.section-header>
@@ -71,7 +71,7 @@
 
         <div class="clearall"></div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

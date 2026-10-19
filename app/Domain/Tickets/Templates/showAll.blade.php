@@ -19,7 +19,7 @@
 
     @include('tickets::submodules.ticketBoardTabs', ['tableButtons' => true])
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         @if (isset($availableProjects))
             {{-- Program (cross-project) board: consistent inline quick-add with a required
@@ -216,7 +216,7 @@
 
 
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

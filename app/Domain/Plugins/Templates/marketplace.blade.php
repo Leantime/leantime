@@ -12,7 +12,7 @@
 
         @include('plugins::partials.plugintabs',  ["currentUrl" => "marketplace"])
 
-       <div class="maincontentinner">
+       <x-global::layout.content-box>
 
            <div class="tw-w-full"
                 hx-get="{{ BASE_URL }}/hx/plugins/marketplaceplugins/getlist"
@@ -28,7 +28,7 @@
                </div>
            </div>
 
-       </div>
+       </x-global::layout.content-box>
 
     </div>
 

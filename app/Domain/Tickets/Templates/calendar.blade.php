@@ -14,7 +14,7 @@
 
 <div class="maincontent">
     @include('tickets::submodules.timelineTabs')
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {{-- New / Filter moved into the nav bar (timelineTabs). The month
              title and the FullCalendar prev/next controls remain here. --}}
@@ -54,7 +54,7 @@
             <div id="calendar"></div>
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

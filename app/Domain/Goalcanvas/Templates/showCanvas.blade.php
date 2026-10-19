@@ -152,7 +152,7 @@
             </x-slot:actions>
         </x-global::navigation.view-tabs>
 
-        <div class="maincontentinner">
+        <x-global::layout.content-box>
 
             <?php echo $tpl->displayNotification(); ?>
 
@@ -312,7 +312,7 @@
             @endif
 
             {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}
-        </div>
+        </x-global::layout.content-box>
     </div>
 
 
