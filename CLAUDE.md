@@ -170,7 +170,7 @@ Common commands:
   - `Unit/` - Unit tests (extending Laravel TestCase)
 
 ### General Architecture Overview
-The application is built on Laravel 11 with significant custom components. It uses a plugin system for extensibility.
+The application is built on Laravel 12 with significant custom components. It uses a plugin system for extensibility.
 Leantime follows a domain-driven architecture:
 
 **Core**

@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Tickets\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
@@ -26,7 +27,7 @@ class StatusSummaryQueryTest extends TestCase
         session(['userdata' => ['id' => 4, 'clientId' => 2]]);
 
         $connection = Mockery::mock(ConnectionInterface::class);
-        $connection->shouldReceive('table')->andReturnUsing(fn ($table) => (new Builder($connection, new MySqlGrammar, new Processor))->from($table));
+        $connection->shouldReceive('table')->andReturnUsing(fn ($table) => (new Builder($connection, new MySqlGrammar(new MySqlConnection(fn () => null)), new Processor))->from($table));
         $connection->shouldReceive('raw')->andReturnUsing(fn ($value) => new Expression($value));
 
         $repo = (new \ReflectionClass(Tickets::class))->newInstanceWithoutConstructor();

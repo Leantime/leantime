@@ -414,7 +414,15 @@ class Language
         }
     }
 
-    public function get(string $index, $default = '', $locale = '')
+    /**
+     * Translator-style lookup (`__()`, `trans()`): the string for $index, with the first
+     * element of $default as the replacement.
+     *
+     * @param  string  $index  Language key.
+     * @param  mixed  $default  Replacement values; only the first is used.
+     * @param  string  $locale  Unused, the current language is always used.
+     */
+    public function get(string $index, $default = '', $locale = ''): string
     {
         $contentReplacement = '';
         if (is_array($default) && count($default) > 0) {
