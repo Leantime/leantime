@@ -323,7 +323,9 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * Channels: queued email, project messengers, mobile push, in-app
      * notifications and — last — queued rows for the personal webhooks of
-     * recipients who opted in (delivered later by the webhook queue).
+     * recipients who opted in (delivered later by the webhook queue). Webhooks
+     * ignore the email switch and include the author's own changes (see
+     * personalWebhookCandidates()).
      *
      * @param  Notification  $notification  The notification object to send.
      *
@@ -346,19 +348,26 @@ class Projects extends BaseService implements ChecksProjectAccess
             $notification->url['url'] = app()->make(TrustedAppUrl::class)->rebase($notification->url['url']);
         }
 
-        // Email
-        $users = $this->getUsersToNotify($notification->projectId);
+        // One read of the team serves email and personal webhooks.
+        $activeMembers = array_values(array_filter(
+            $this->projectRepository->getUsersAssignedToProject($notification->projectId) ?: [],
+            fn (array $member) => strtolower((string) $member['status']) === 'a'
+        ));
         $projectName = $this->getProjectName($notification->projectId);
 
-        // Exclude the author
-        $users = array_filter($users, function ($user) use ($notification) {
-            return $user != $notification->authorId;
-        }, ARRAY_FILTER_USE_BOTH);
-        $users = array_values($users);
+        // Email goes to members who kept email notifications on, never to the author.
+        $users = [];
+        foreach ($activeMembers as $member) {
+            if ($member['notifications'] != 0 && $member['id'] != $notification->authorId) {
+                $users[] = $member['id'];
+            }
+        }
 
-        // Batch-load notification preferences for all candidate users
+        $webhookCandidates = $this->personalWebhookCandidates($activeMembers, $notification);
+
+        // Batch-load notification preferences for every candidate of either channel
         $settingKeys = [];
-        foreach ($users as $userId) {
+        foreach (array_unique(array_merge($users, $webhookCandidates)) as $userId) {
             $settingKeys[] = 'usersettings.'.$userId.'.projectNotificationLevels';
             $settingKeys[] = 'usersettings.'.$userId.'.projectMutedNotifications'; // legacy format
             $settingKeys[] = 'usersettings.'.$userId.'.notificationEventTypes';
@@ -489,14 +498,21 @@ class Projects extends BaseService implements ChecksProjectAccess
          */
         self::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => array_values($filteredUsersToNotify), 'url' => $notification->url['url']], 'leantime.domain.projects.services.projects.notifyProjectUsers');
 
-        // Personal webhooks go last, to the same filtered recipients as email (relevance,
-        // category, mentions, collaborators). This only queues one row per recipient: the
-        // scheduler's WebhookQueue posts later, so no endpoint is contacted during this
-        // request. Queueing reads only the recipients' opt-in; Webhooks checks each queued
-        // recipient's opt-in, account and project access itself when the row is posted. The
-        // catch is a last guard so this step can never break the dispatch path.
+        // Personal webhooks go last, filtered like email (relevance, category, mentions,
+        // collaborators) but from their own candidates: see personalWebhookCandidates(). This
+        // only queues one row per recipient: the scheduler's WebhookQueue posts later, so no
+        // endpoint is contacted during this request. Queueing reads only the recipients'
+        // opt-in; Webhooks checks each queued recipient's opt-in, account and project access
+        // itself when the row is posted. The catch is a last guard so this step can never
+        // break the dispatch path.
+        $webhookRecipients = $this->filterUsersByProjectRelevance($webhookCandidates, $notification, $preloadedSettings);
+        $webhookRecipients = $this->filterUsersByEventType($webhookRecipients, $notification->module, $preloadedSettings);
+        // The author is a candidate already, so a mention or collaboration never brings them back past their own filters.
+        $webhookRecipients = $this->addBypassRecipients($webhookRecipients, $mentionedUserIds, $notification->authorId);
+        $webhookRecipients = $this->addBypassRecipients($webhookRecipients, $collaboratorIds, $notification->authorId);
+
         try {
-            $this->webhookService->queueToUsers($notification, $users);
+            $this->webhookService->queueToUsers($notification, $webhookRecipients);
         } catch (\Throwable $e) {
             Log::warning('Personal webhook dispatch failed', ['exception' => get_class($e)]);
         }
@@ -775,6 +791,29 @@ class Projects extends BaseService implements ChecksProjectAccess
         $ids = array_filter(array_map('intval', $scalarNumeric), fn ($id) => $id > 0);
 
         return array_values(array_unique($ids));
+    }
+
+    /**
+     * Who may get a notification on their personal webhook before the relevance and category
+     * filters: every active team member and the author. Unlike email, the email switch
+     * (zp_user.notifications) plays no part, so a user can move their notifications from email to
+     * a webhook; and the author's own changes are included, since a webhook usually feeds an
+     * integration that keeps a full record of the user's work.
+     *
+     * @param  array<int, array<string, mixed>>  $activeMembers  Active users assigned to the project.
+     * @param  Notification  $notification  The notification being dispatched.
+     * @return array<int, int> Candidate user ids, without repeats.
+     */
+    private function personalWebhookCandidates(array $activeMembers, Notification $notification): array
+    {
+        $candidates = array_map(fn (array $member) => (int) $member['id'], $activeMembers);
+
+        $authorId = (int) $notification->authorId;
+        if ($authorId > 0) {
+            $candidates[] = $authorId;
+        }
+
+        return array_values(array_unique($candidates));
     }
 
     /**

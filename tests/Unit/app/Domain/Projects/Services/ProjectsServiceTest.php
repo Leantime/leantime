@@ -132,9 +132,10 @@ class ProjectsServiceTest extends TestCase
      * @param  array<int>  $usersWithProjectAccess  Who ProjectRepository::isUserAssignedToProject() lets into project 5.
      * @param  array<int, array<string, mixed>|false>  $userOverrides  zp_user column overrides by user id; false = user deleted.
      * @param  Webhooks|null  $webhooks  Replaces the real Webhooks service (built over a recording transport) when given.
+     * @param  array<int>  $collaborators  Collaborators on the to-do the notification is about.
      * @return array{emailRecipients: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null}
      */
-    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null): array
+    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, array $collaborators = []): array
     {
         $seen = ['emailRecipients' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null];
         $this->queueTable = [];
@@ -227,7 +228,7 @@ class ProjectsServiceTest extends TestCase
         $notification->subject = 'To-Do updated';
         $notification->message = 'Ada updated "Ship it"';
         $notification->url = ['url' => 'https://leantime.example.com/tickets/showTicket/42', 'text' => 'Open'];
-        $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review'];
+        $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review', 'collaborators' => $collaborators];
 
         $this->makeService(
             projectRepo: $projectRepo,
@@ -286,17 +287,17 @@ class ProjectsServiceTest extends TestCase
         $this->assertNotNull($seen['inAppNotifications'], 'In-app notifications are still created');
         $this->assertSame([], $this->webhookPosts, 'No webhook is sent while the request is running');
         $queuedRows = array_values($this->queueTable);
-        $this->assertSame([Workers::WEBHOOKS->value, Workers::WEBHOOKS->value], array_column($queuedRows, 'channel'), 'One webhooks-channel row per recipient, nothing on DEFAULT');
+        $this->assertSame(array_fill(0, 3, Workers::WEBHOOKS->value), array_column($queuedRows, 'channel'), 'One webhooks-channel row per recipient, nothing on DEFAULT');
         $this->assertSame(
-            [[2], [6]],
+            [[1], [2], [6]],
             array_map(fn (array $row) => unserialize($row['message'], ['allowed_classes' => false])['recipientIds'], $queuedRows),
-            'Only filtered recipients who opted in (5 did not) are queued'
+            'Only filtered recipients who opted in (5 did not) are queued, the author included'
         );
 
         $this->runWebhookQueue();
 
         $this->assertSame(
-            ['https://1.1.1.1/hooks/user-2', 'https://1.1.1.1/hooks/user-6'],
+            ['https://1.1.1.1/hooks/user-1', 'https://1.1.1.1/hooks/user-2', 'https://1.1.1.1/hooks/user-6'],
             $this->webhookPosts,
             'Every queued recipient is delivered in one run'
         );
@@ -327,8 +328,73 @@ class ProjectsServiceTest extends TestCase
         return [
             'mentioned user who lost access to the restricted project' => [[1, 2, 3, 4, 5], []],
             'mentioned user who was deactivated' => [[1, 2, 3, 4, 5, 6], [6 => ['status' => 'i']]],
-            'mentioned user who switched notifications off' => [[1, 2, 3, 4, 5, 6], [6 => ['notifications' => 0]]],
             'mentioned user who was deleted' => [[1, 2, 3, 4, 5, 6], [6 => false]],
+        ];
+    }
+
+    /**
+     * "Receive email notifications" is about email. A user who moved their notifications to a
+     * webhook and switched email off still gets the webhook, whether they are on the team or
+     * reach the notification through a mention.
+     */
+    public function test_notify_project_users_sends_personal_webhooks_to_users_who_switched_email_off(): void
+    {
+        $seen = $this->runNotifyProjectUsers(
+            $this->optedInWebhooks([2, 6]),
+            usersWithProjectAccess: [1, 2, 3, 4, 5, 6],
+            userOverrides: [2 => ['notifications' => 0], 6 => ['notifications' => 0]],
+        );
+        $this->runWebhookQueue();
+
+        $this->assertNotContains(2, $seen['emailRecipients'], 'No email for a user who switched email off');
+        $this->assertSame(['https://1.1.1.1/hooks/user-2', 'https://1.1.1.1/hooks/user-6'], $this->webhookPosts);
+    }
+
+    /**
+     * The author's own changes reach their webhook (an integration keeping a full record), but
+     * never their email, and their own relevance and category settings still apply.
+     */
+    public function test_notify_project_users_sends_the_authors_own_change_to_their_webhook_only(): void
+    {
+        $seen = $this->runNotifyProjectUsers($this->optedInWebhooks([1]));
+        $this->runWebhookQueue();
+
+        $this->assertNotContains(1, $seen['emailRecipients']);
+        $this->assertSame(['https://1.1.1.1/hooks/user-1'], $this->webhookPosts);
+
+        $this->runNotifyProjectUsers($this->optedInWebhooks([1]) + ['usersettings.1.projectNotificationLevels' => json_encode([5 => 'muted'])]);
+        $this->runWebhookQueue();
+
+        $this->assertSame([], $this->webhookPosts, 'An author who muted the project gets nothing');
+    }
+
+    /**
+     * Collaborators bypass the filters, but an author who collaborates on the to-do is a candidate
+     * already: being a collaborator must not bring their own change back past their mute or
+     * category choice. Other collaborators keep the bypass.
+     *
+     * @dataProvider authorFilterSettingsProvider
+     */
+    public function test_an_author_who_collaborates_on_the_to_do_still_gets_nothing_past_their_own_filters(array $authorSettings): void
+    {
+        $settings = $this->optedInWebhooks([1, 2]) + $authorSettings + [
+            'usersettings.2.projectNotificationLevels' => json_encode([5 => 'muted']),
+        ];
+
+        $this->runNotifyProjectUsers($settings, collaborators: [1, 2]);
+        $this->runWebhookQueue();
+
+        $this->assertSame(['https://1.1.1.1/hooks/user-2'], $this->webhookPosts, 'Collaborator 2 keeps the bypass; author 1 does not');
+    }
+
+    /**
+     * @return array<string, array{array<string, string>}>
+     */
+    public static function authorFilterSettingsProvider(): array
+    {
+        return [
+            'author muted the project' => [['usersettings.1.projectNotificationLevels' => json_encode([5 => 'muted'])]],
+            'author switched the tasks category off' => [['usersettings.1.notificationEventTypes' => json_encode(['comments'])]],
         ];
     }
 
