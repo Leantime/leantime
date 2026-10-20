@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Tickets\Services\Tickets;
 
@@ -30,6 +31,14 @@ class GetStatusLabelsTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Get Status Labels';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -39,24 +48,31 @@ class GetStatusLabelsTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID to get status labels for.')->required();
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID to get status labels for.')
+                ->required(),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
 
         // Only for a project the caller can view: getProject() returns false otherwise, so a
         // foreign project id must not expose its status configuration.
         if ($projectId <= 0 || ! $this->projectService->getProject($projectId)) {
-            return ToolResult::error("Project {$projectId} was not found or you do not have access to it.");
+            return Response::error("Project {$projectId} was not found or you do not have access to it.");
         }
 
         $status = $this->ticketsService->getStatusLabels($projectId);
@@ -73,6 +89,6 @@ class GetStatusLabelsTool extends Tool
             $statusAIString .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($statusAIString);
+        return Response::text($statusAIString);
     }
 }

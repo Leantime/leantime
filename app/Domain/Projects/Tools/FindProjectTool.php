@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
@@ -19,16 +20,26 @@ class FindProjectTool extends Tool
         private Projects $projectService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('term')->description('Search term to find in project names.')
-            ->required();
+        return [
+            'term' => $schema->string()
+                ->description('Search term to find in project names.')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'findProject';
+    }
+
+    public function title(): string
+    {
+        return 'Find Project';
     }
 
     public function description(): string
@@ -39,13 +50,15 @@ class FindProjectTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $term = $arguments['term'];
         $projects = $this->projectService->findProject($term);
 
         if (empty($projects)) {
-            return ToolResult::text("No projects found matching: '$term'.");
+            return Response::text("No projects found matching: '$term'.");
         }
 
         $response = "## Projects Matching: '$term'\n";
@@ -60,6 +73,6 @@ class FindProjectTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

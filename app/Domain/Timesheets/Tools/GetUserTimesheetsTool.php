@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
@@ -19,19 +20,31 @@ class GetUserTimesheetsTool extends Tool
         private Timesheets $timesheetsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('dateFrom')->description('Start date in ISO8601 format.')
-            ->required()
-            ->string('dateTo')->description('End date in ISO8601 format.')
-            ->required()
-            ->integer('projectId')->description('Project ID to filter by (optional).');
+        return [
+            'dateFrom' => $schema->string()
+                ->description('Start date in ISO8601 format.')
+                ->required(),
+            'dateTo' => $schema->string()
+                ->description('End date in ISO8601 format.')
+                ->required(),
+            'projectId' => $schema->integer()
+                ->description('Project ID to filter by (optional).'),
+        ];
     }
 
     public function name(): string
     {
         return 'getUserTimesheets';
+    }
+
+    public function title(): string
+    {
+        return 'Get User Timesheets';
     }
 
     public function description(): string
@@ -42,8 +55,10 @@ class GetUserTimesheetsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $fromDate = dtHelper()->parseUserDateTime($arguments['dateFrom']);
         $toDate = dtHelper()->parseUserDateTime($arguments['dateTo']);
 
@@ -58,7 +73,7 @@ class GetUserTimesheetsTool extends Tool
         );
 
         if (empty($timesheets)) {
-            return ToolResult::text('No timesheet entries found for the specified date range.');
+            return Response::text('No timesheet entries found for the specified date range.');
         }
 
         $response = "## Your Timesheet Entries\n";
@@ -106,6 +121,6 @@ class GetUserTimesheetsTool extends Tool
             $response .= '- **'.$project['name'].'**: '.number_format($project['hours'], 2)." hours\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

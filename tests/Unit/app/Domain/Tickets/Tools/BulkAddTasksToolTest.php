@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Tickets\Tools;
 
+use Laravel\Mcp\Request;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Tickets\Tools\BulkAddTasksTool;
 use Unit\TestCase;
@@ -22,10 +23,10 @@ class BulkAddTasksToolTest extends TestCase
                 : 42,
         ]);
 
-        $text = (new BulkAddTasksTool($tickets))->handle(['tasks' => [
+        $text = (string) (new BulkAddTasksTool($tickets))->handle(new Request(['tasks' => [
             ['headline' => 'Valid', 'projectId' => 9],
             ['headline' => '', 'projectId' => 9],
-        ]])->toArray()['content'][0]['text'];
+        ]]))->content();
 
         $this->assertStringContainsString('Success: 1, Failed: 1', $text);
         $this->assertStringContainsString('Headline Missing', $text);

@@ -3,9 +3,10 @@
 namespace Leantime\Domain\Calendar\Tools;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Tickets\Services\Tickets;
 
@@ -19,20 +20,35 @@ class ScheduleDayTool extends Tool
         private Tickets $ticketService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('date')->description('Date to schedule in user timezone in ISO8601 format (example: 2024-04-30T15:00:00-04:00).')
-            ->required()
-            ->raw('events', ['type' => 'array', 'description' => 'Array of events to schedule. Each should have title, duration (in minutes), and optional priority (1-20).'])->required()
-            ->string('workingHoursStart')->description('Start of working hours in 24-hour format (HH:MM), if none available use 09:00.')
-            ->string('workingHoursEnd')->description('End of working hours in 24-hour format (HH:MM), if none available use 18:00.')
-            ->raw('taskIds', ['type' => 'array', 'description' => 'Array of task IDs to schedule instead of creating events. If provided, these tasks will be scheduled rather than creating new events.']);
+        return [
+            'date' => $schema->string()
+                ->description('Date to schedule in user timezone in ISO8601 format (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+            'events' => $schema->array()->items($schema->object())
+                ->description('Array of events to schedule. Each should have title, duration (in minutes), and optional priority (1-20).')
+                ->required(),
+            'workingHoursStart' => $schema->string()
+                ->description('Start of working hours in 24-hour format (HH:MM), if none available use 09:00.'),
+            'workingHoursEnd' => $schema->string()
+                ->description('End of working hours in 24-hour format (HH:MM), if none available use 18:00.'),
+            'taskIds' => $schema->array()->items($schema->integer())
+                ->description('Array of task IDs to schedule instead of creating events. If provided, these tasks will be scheduled rather than creating new events.'),
+        ];
     }
 
     public function name(): string
     {
         return 'scheduleDay';
+    }
+
+    public function title(): string
+    {
+        return 'Schedule Day';
     }
 
     public function description(): string
@@ -43,8 +59,10 @@ class ScheduleDayTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $date = $arguments['date'];
         $events = ($arguments['events'] ?? []);
         $workingHoursStart = ($arguments['workingHoursStart'] ?? '');
@@ -108,7 +126,7 @@ class ScheduleDayTool extends Tool
                 }
             }
 
-            return ToolResult::text("Day scheduling completed for {$date}.\n\nTask scheduling: Success: {$successCount}, Failed: {$failureCount}");
+            return Response::text("Day scheduling completed for {$date}.\n\nTask scheduling: Success: {$successCount}, Failed: {$failureCount}");
         }
 
         $scheduledEvents = $this->scheduleItemsInSlots($availableSlots, $events);
@@ -135,7 +153,7 @@ class ScheduleDayTool extends Tool
             }
         }
 
-        return ToolResult::text("Day scheduling completed for {$date}.\n\nEvent creation: Success: {$successCount}, Failed: {$failureCount}");
+        return Response::text("Day scheduling completed for {$date}.\n\nEvent creation: Success: {$successCount}, Failed: {$failureCount}");
     }
 
     /**

@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Goalcanvas\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 /**
@@ -19,17 +20,28 @@ class GetAllGoalsTool extends Tool
         private Goalcanvas $goalcanvasService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID to get goals for.')
-            ->required()
-            ->integer('boardId')->description('Specific goal board ID to filter by.');
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID to get goals for.')
+                ->required(),
+            'boardId' => $schema->integer()
+                ->description('Specific goal board ID to filter by.'),
+        ];
     }
 
     public function name(): string
     {
         return 'getAllGoals';
+    }
+
+    public function title(): string
+    {
+        return 'Get All Goals';
     }
 
     public function description(): string
@@ -40,15 +52,17 @@ class GetAllGoalsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
         $boardId = ($arguments['boardId'] ?? null);
 
         $goals = $this->goalcanvasService->pollGoals($projectId, $boardId);
 
         if (empty($goals)) {
-            return ToolResult::text("No goals found for project ID: {$projectId}");
+            return Response::text("No goals found for project ID: {$projectId}");
         }
 
         // Milestone links come from the tracked_by edge model (many-to-many),
@@ -82,6 +96,6 @@ class GetAllGoalsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

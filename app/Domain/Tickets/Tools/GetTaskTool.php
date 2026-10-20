@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Tickets\Support\TicketFormatter;
 
@@ -28,6 +29,14 @@ class GetTaskTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Get Task';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -37,27 +46,34 @@ class GetTaskTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('ID of the task to retrieve.')->required();
+        return [
+            'id' => $schema->integer()
+                ->description('ID of the task to retrieve.')
+                ->required(),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $id = (int) ($arguments['id'] ?? 0);
         $ticket = $this->ticketsService->getTicket($id);
 
         if ($ticket) {
             $formatter = new TicketFormatter($ticket);
 
-            return ToolResult::text($formatter->format());
+            return Response::text($formatter->format());
         }
 
-        return ToolResult::error("Could not find task with id {$id}");
+        return Response::error("Could not find task with id {$id}");
     }
 }

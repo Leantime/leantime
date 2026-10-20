@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
@@ -19,19 +20,32 @@ class GetProjectsAssignedToUserTool extends Tool
         private Projects $projectService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('userId')->description('User ID to get projects for.')
-            ->required()
-            ->string('projectStatus')->description('Filter by project status (open, closed, all).')
-            ->integer('clientId')->description('Filter by client ID.')
-            ->string('projectTypes')->description('Filter by project types (comma-separated: project, program, etc.). Use "all" for all project types.');
+        return [
+            'userId' => $schema->integer()
+                ->description('User ID to get projects for.')
+                ->required(),
+            'projectStatus' => $schema->string()
+                ->description('Filter by project status (open, closed, all).'),
+            'clientId' => $schema->integer()
+                ->description('Filter by client ID.'),
+            'projectTypes' => $schema->string()
+                ->description('Filter by project types (comma-separated: project, program, etc.). Use "all" for all project types.'),
+        ];
     }
 
     public function name(): string
     {
         return 'getProjectsAssignedToUser';
+    }
+
+    public function title(): string
+    {
+        return 'Get Projects Assigned To User';
     }
 
     public function description(): string
@@ -42,8 +56,10 @@ class GetProjectsAssignedToUserTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $userId = (int) ($arguments['userId'] ?? 0);
         $projectStatus = ($arguments['projectStatus'] ?? 'open');
         $clientId = ($arguments['clientId'] ?? null);
@@ -70,9 +86,9 @@ class GetProjectsAssignedToUserTool extends Tool
         }
 
         if (empty($projects)) {
-            return ToolResult::text('No projects found.');
+            return Response::text('No projects found.');
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

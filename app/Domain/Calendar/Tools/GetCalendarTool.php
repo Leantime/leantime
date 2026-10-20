@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Calendar\Support\CalendarEventFormatter;
 
@@ -19,18 +20,29 @@ class GetCalendarTool extends Tool
         private Calendar $calendarService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('from')->description('Starting date of the date range to look for. In user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-            ->required()
-            ->string('until')->description('End date of the date range to look for. In user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-            ->required();
+        return [
+            'from' => $schema->string()
+                ->description('Starting date of the date range to look for. In user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+            'until' => $schema->string()
+                ->description('End date of the date range to look for. In user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'getCalendar';
+    }
+
+    public function title(): string
+    {
+        return 'Get Calendar';
     }
 
     public function description(): string
@@ -41,8 +53,10 @@ class GetCalendarTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $from = $arguments['from'];
         $until = $arguments['until'];
 
@@ -79,9 +93,9 @@ class GetCalendarTool extends Tool
         }
 
         if ($numEvents === 0) {
-            return ToolResult::text('No calendar events found for the specified date range.');
+            return Response::text('No calendar events found for the specified date range.');
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

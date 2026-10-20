@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Tickets\Tools;
 
+use Laravel\Mcp\Request;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Tickets\Tools\GetStatusLabelsTool;
@@ -23,9 +24,9 @@ class GetStatusLabelsToolTest extends TestCase
         ]);
         $projects = $this->make(Projects::class, ['getProject' => fn () => false]);
 
-        $result = (new GetStatusLabelsTool($tickets, $projects))->handle(['projectId' => 77])->toArray();
+        $result = (new GetStatusLabelsTool($tickets, $projects))->handle(new Request(['projectId' => 77]));
 
-        $this->assertTrue($result['isError']);
+        $this->assertTrue($result->isError());
     }
 
     public function test_returns_labels_of_a_visible_project(): void
@@ -35,9 +36,9 @@ class GetStatusLabelsToolTest extends TestCase
         ]);
         $projects = $this->make(Projects::class, ['getProject' => fn () => ['id' => 9]]);
 
-        $result = (new GetStatusLabelsTool($tickets, $projects))->handle(['projectId' => 9])->toArray();
+        $result = (new GetStatusLabelsTool($tickets, $projects))->handle(new Request(['projectId' => 9]));
 
-        $this->assertFalse($result['isError']);
-        $this->assertStringContainsString('NEW', $result['content'][0]['text']);
+        $this->assertFalse($result->isError());
+        $this->assertStringContainsString('NEW', (string) $result->content());
     }
 }

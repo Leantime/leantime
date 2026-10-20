@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Goalcanvas\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Services\Projects;
 
@@ -21,16 +22,26 @@ class GetParentKPIsTool extends Tool
         private Projects $projectService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID to get parent KPIs for.')
-            ->required();
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID to get parent KPIs for.')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'getParentKPIs';
+    }
+
+    public function title(): string
+    {
+        return 'Get Parent KPIs';
     }
 
     public function description(): string
@@ -41,20 +52,22 @@ class GetParentKPIsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
 
         // Only for a project the caller can view: getProject() returns false otherwise, so a
         // foreign project id must not expose its KPIs.
         if ($projectId <= 0 || ! $this->projectService->getProject($projectId)) {
-            return ToolResult::error("Project {$projectId} was not found or you do not have access to it.");
+            return Response::error("Project {$projectId} was not found or you do not have access to it.");
         }
 
         $parentKPIs = $this->goalcanvasService->getParentKPIs($projectId);
 
         if (empty($parentKPIs)) {
-            return ToolResult::text("No parent KPIs found for project ID: {$projectId}");
+            return Response::text("No parent KPIs found for project ID: {$projectId}");
         }
 
         $response = "## Available Parent KPIs for Project ID: {$projectId}\n";
@@ -68,6 +81,6 @@ class GetParentKPIsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

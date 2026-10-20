@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Projects\Tools;
 
+use Laravel\Mcp\Request;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Projects\Tools\GetUsersAssignedToProjectTool;
 use Unit\TestCase;
@@ -23,9 +24,9 @@ class GetUsersAssignedToProjectToolTest extends TestCase
             },
         ]);
 
-        $result = (new GetUsersAssignedToProjectTool($projects))->handle(['projectId' => 77])->toArray();
+        $result = (new GetUsersAssignedToProjectTool($projects))->handle(new Request(['projectId' => 77]));
 
-        $this->assertTrue($result['isError']);
+        $this->assertTrue($result->isError());
     }
 
     public function test_lists_members_of_a_visible_project(): void
@@ -35,9 +36,9 @@ class GetUsersAssignedToProjectToolTest extends TestCase
             'getUsersAssignedToProject' => fn () => [['id' => 1, 'firstname' => 'A', 'lastname' => 'B', 'username' => 'a@b.c', 'role' => 'editor']],
         ]);
 
-        $result = (new GetUsersAssignedToProjectTool($projects))->handle(['projectId' => 9])->toArray();
+        $result = (new GetUsersAssignedToProjectTool($projects))->handle(new Request(['projectId' => 9]));
 
-        $this->assertFalse($result['isError']);
-        $this->assertStringContainsString('a@b.c', $result['content'][0]['text']);
+        $this->assertFalse($result->isError());
+        $this->assertStringContainsString('a@b.c', (string) $result->content());
     }
 }

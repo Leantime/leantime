@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
@@ -19,17 +20,28 @@ class GetUsersAssignedToProjectTool extends Tool
         private Projects $projectService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('ID of the project to get users for.')
-            ->required()
-            ->boolean('teamOnly')->description('Whether to only include direct team members.');
+        return [
+            'projectId' => $schema->integer()
+                ->description('ID of the project to get users for.')
+                ->required(),
+            'teamOnly' => $schema->boolean()
+                ->description('Whether to only include direct team members.'),
+        ];
     }
 
     public function name(): string
     {
         return 'getUsersAssignedToProject';
+    }
+
+    public function title(): string
+    {
+        return 'Get Users Assigned To Project';
     }
 
     public function description(): string
@@ -40,21 +52,23 @@ class GetUsersAssignedToProjectTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
         $teamOnly = $arguments['teamOnly'] ?? false;
 
         // Only for a project the caller can view: getProject() returns false otherwise, so a
         // foreign project id must not expose its member list (names, emails, roles).
         if ($projectId <= 0 || ! $this->projectService->getProject($projectId)) {
-            return ToolResult::error("Project {$projectId} was not found or you do not have access to it.");
+            return Response::error("Project {$projectId} was not found or you do not have access to it.");
         }
 
         $users = $this->projectService->getUsersAssignedToProject($projectId, $teamOnly);
 
         if (empty($users)) {
-            return ToolResult::text('No users assigned to this project.');
+            return Response::text('No users assigned to this project.');
         }
 
         $response = "## Users Assigned to Project\n";
@@ -69,6 +83,6 @@ class GetUsersAssignedToProjectTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

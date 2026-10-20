@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Projects\Services\Projects;
 
@@ -21,16 +22,27 @@ class GetAllProjectsTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->boolean('showClosedProjects')->description('Whether to include closed projects in the results.')
-            ->boolean('includeProgressDetails')->description('Whether to include detailed progress information (RAG status, completion dates, recent comments).');
+        return [
+            'showClosedProjects' => $schema->boolean()
+                ->description('Whether to include closed projects in the results.'),
+            'includeProgressDetails' => $schema->boolean()
+                ->description('Whether to include detailed progress information (RAG status, completion dates, recent comments).'),
+        ];
     }
 
     public function name(): string
     {
         return 'getAllProjects';
+    }
+
+    public function title(): string
+    {
+        return 'Get All Projects';
     }
 
     public function description(): string
@@ -41,8 +53,10 @@ class GetAllProjectsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $showClosedProjects = $arguments['showClosedProjects'] ?? false;
         $includeProgressDetails = $arguments['includeProgressDetails'] ?? true;
 
@@ -51,7 +65,7 @@ class GetAllProjectsTool extends Tool
         $response = "## All Projects Overview\n";
 
         if (empty($projects)) {
-            return ToolResult::text('No projects found.');
+            return Response::text('No projects found.');
         }
 
         foreach ($projects as $project) {
@@ -100,7 +114,7 @@ class GetAllProjectsTool extends Tool
             $response .= Str::toMarkdown($result)."\n\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 
     /**

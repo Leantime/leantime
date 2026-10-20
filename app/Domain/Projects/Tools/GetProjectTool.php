@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Projects\Services\Projects;
 
@@ -21,16 +22,26 @@ class GetProjectTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('ID of the project to retrieve.')
-            ->required();
+        return [
+            'projectId' => $schema->integer()
+                ->description('ID of the project to retrieve.')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'getProject';
+    }
+
+    public function title(): string
+    {
+        return 'Get Project';
     }
 
     public function description(): string
@@ -41,13 +52,15 @@ class GetProjectTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
         $project = $this->projectService->getProject($projectId);
 
         if (! $project) {
-            return ToolResult::error('Project not found.');
+            return Response::error('Project not found.');
         }
 
         $progress = $this->projectService->getProjectProgress($projectId);
@@ -81,6 +94,6 @@ class GetProjectTool extends Tool
         ];
         $response .= Str::toMarkdown($result)."\n";
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

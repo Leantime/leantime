@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Comments\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 
 /**
@@ -19,16 +20,26 @@ class GetAllProjectCommentsTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID to get status updates for.')
-            ->required();
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID to get status updates for.')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'getAllProjectComments';
+    }
+
+    public function title(): string
+    {
+        return 'Get All Project Comments';
     }
 
     public function description(): string
@@ -39,13 +50,15 @@ class GetAllProjectCommentsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
         $comments = $this->commentsService->getComments('project', $projectId);
 
         if (empty($comments)) {
-            return ToolResult::text("No status updates found for project ID: {$projectId}");
+            return Response::text("No status updates found for project ID: {$projectId}");
         }
 
         $response = "## Project Status Updates\n";
@@ -67,6 +80,6 @@ class GetAllProjectCommentsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }
