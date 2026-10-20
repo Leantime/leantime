@@ -185,11 +185,12 @@ class Webhooks
 
     /**
      * Narrows recipients to those who may receive a personal webhook for the
-     * project right now: webhook enabled with a URL, account active with
-     * notifications switched on, and access to the project — which must still
-     * exist. The only place these are checked: the ids include
-     * mention/collaborator bypasses that skipped the project's member filters,
-     * and queueToUsers() checks nothing but the opt-in. Access follows the
+     * project right now: webhook enabled with a URL, account active, and access
+     * to the project — which must still exist. The email switch
+     * (zp_user.notifications) is not checked: it governs email only. The only
+     * place these are checked: the ids include mention/collaborator bypasses
+     * that skipped the project's member filters, and queueToUsers() checks
+     * nothing but the opt-in. Access follows the
      * project's own rules (team, client, everyone, admin/owner) for the
      * recipient, never the session user.
      *
@@ -218,8 +219,8 @@ class Webhooks
 
     /**
      * Whether the user's account currently allows project notifications to reach
-     * them: it exists, is active, has notifications switched on, and can access
-     * the project. Re-reads the user row, past the repository's memo.
+     * their webhook: it exists, is active, and can access the project. The email
+     * switch plays no part. Re-reads the user row, past the repository's memo.
      *
      * @param  int  $userId  The recipient.
      * @param  int  $projectId  The project the notification belongs to.
@@ -230,9 +231,7 @@ class Webhooks
         // with isUserAssignedToProject() below, access is judged by the current role too.
         $user = $this->userRepo->getUser($userId, useCache: false);
 
-        if ($user === false
-            || strtolower((string) ($user['status'] ?? '')) !== 'a'
-            || (int) ($user['notifications'] ?? 0) === 0) {
+        if ($user === false || strtolower((string) ($user['status'] ?? '')) !== 'a') {
             return false;
         }
 

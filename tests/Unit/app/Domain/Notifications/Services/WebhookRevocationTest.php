@@ -29,9 +29,9 @@ use Unit\TestCase;
  * repositories for every row of the batch, and those repositories cache: the user repository
  * memoizes getUser(), and each SettingCache keeps an in-memory copy of every key it read. So
  * two rows for the same recipient run in one batch, and right after the first post another
- * request changes something: the user switches the webhook off, rotates its URL, turns
- * notifications off, is deactivated, deleted, demoted or taken off the project team. The
- * second row must follow that change.
+ * request changes something: the user switches the webhook off, rotates its URL, is
+ * deactivated, deleted, demoted or taken off the project team. The second row must follow
+ * that change. Switching email notifications off is not such a change: it governs email only.
  *
  * Nor does the queue fold two rows into one: the same notification raised twice in one second
  * is posted twice.
@@ -264,11 +264,12 @@ class WebhookRevocationTest extends TestCase
         $this->assertSame([self::OLD_ENDPOINT, self::NEW_ENDPOINT], $this->postedUrls());
     }
 
-    public function test_turning_notifications_off_stops_the_next_row(): void
+    public function test_turning_email_notifications_off_does_not_stop_the_webhook(): void
     {
+        // "Receive email notifications" governs email only; the webhook has its own switch.
         $this->deliverTwoQueuedNotifications(fn () => $this->webUsers->patchUser(self::RECIPIENT_ID, ['notifications' => 0]));
 
-        $this->assertSame([self::OLD_ENDPOINT], $this->postedUrls());
+        $this->assertSame([self::OLD_ENDPOINT, self::OLD_ENDPOINT], $this->postedUrls());
     }
 
     public function test_deactivating_the_account_stops_the_next_row(): void
