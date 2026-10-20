@@ -1,5 +1,5 @@
 # Build stage
-FROM --platform=$TARGETPLATFORM php:8.3-fpm-alpine AS builder
+FROM --platform=$TARGETPLATFORM php:8.4.26-fpm-alpine AS builder
 
 # Add QEMU for cross-platform builds
 COPY --from=tonistiigi/binfmt:latest /usr/bin/qemu-* /usr/bin/
@@ -51,7 +51,7 @@ RUN set -ex; \
 
 
 # Production stage
-FROM --platform=$TARGETPLATFORM php:8.3-fpm-alpine
+FROM --platform=$TARGETPLATFORM php:8.4.26-fpm-alpine
 
 # Add production dependencies
 RUN apk add --no-cache \
