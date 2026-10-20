@@ -55,9 +55,11 @@ class Auth
      */
     public function invalidateSession(string $sessionId): bool
     {
-        return $this->db->table('zp_user')
+        $this->db->table('zp_user')
             ->where('session', $sessionId)
-            ->update(['session' => '']) >= 0;
+            ->update(['session' => '']);
+
+        return true;
     }
 
     /**
@@ -84,7 +86,7 @@ class Auth
      */
     public function updateUserSession(int $userId, string $sessionid, string $time): bool
     {
-        return $this->db->table('zp_user')
+        $this->db->table('zp_user')
             ->where('id', $userId)
             ->update([
                 'lastlogin' => now(),
@@ -92,7 +94,9 @@ class Auth
                 'sessiontime' => $time,
                 'pwReset' => null,
                 'pwResetExpiration' => null,
-            ]) >= 0;
+            ]);
+
+        return true;
     }
 
     /**
@@ -123,14 +127,16 @@ class Auth
 
     public function setPWResetLink(string $username, string $resetLink): bool
     {
-        return $this->db->table('zp_user')
+        $this->db->table('zp_user')
             ->where('username', $username)
             ->update([
                 'pwReset' => $resetLink,
                 // Store the EXPIRY moment (not creation): the reset link is valid for 1 hour.
                 'pwResetExpiration' => now()->addHours(1),
                 'pwResetCount' => $this->db->raw('COALESCE('.$this->dbHelper->wrapColumn('pwResetCount').', 0) + 1'),
-            ]) >= 0;
+            ]);
+
+        return true;
     }
 
     public function changePW(string $password, string $hash): bool
@@ -154,7 +160,7 @@ class Auth
             return false;
         }
 
-        return $this->db->table('zp_user')
+        $this->db->table('zp_user')
             ->where('id', $userId)
             ->update([
                 'password' => password_hash($password, PASSWORD_DEFAULT),
@@ -162,6 +168,8 @@ class Auth
                 'pwResetExpiration' => '',
                 'lastpwd_change' => now(),
                 'pwResetCount' => 0,
-            ]) >= 0;
+            ]);
+
+        return true;
     }
 }

@@ -68,7 +68,7 @@ class Search
 
     public function __construct(
         private ProjectService $projectService,
-        private ?ProjectModules $projectModules = null,
+        private ProjectModules $projectModules,
     ) {}
 
     /**
@@ -173,7 +173,7 @@ class Search
     {
         $target = $this->getProvider($type)?->resolveTarget($id);
 
-        if ($target === null || $target->projectId === null || $this->projectModules === null) {
+        if ($target === null || $target->projectId === null) {
             return $target;
         }
 
@@ -191,10 +191,6 @@ class Search
      */
     private function withoutSwitchedOffProjects(SearchQuery $query, string $providerKey): SearchQuery
     {
-        if ($this->projectModules === null) {
-            return $query;
-        }
-
         $moduleId = self::moduleFor($providerKey);
 
         if ($moduleId === null) {

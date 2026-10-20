@@ -38,6 +38,7 @@ class LoadConfig extends LoadConfiguration
     public function bootstrap(Application $app)
     {
         $items = [];
+        $loadedFromCache = false;
 
         // First we will see if we have a cache configuration file. If we do, we'll load
         // the configuration items from that file so that it is very quick. Otherwise
@@ -48,12 +49,14 @@ class LoadConfig extends LoadConfiguration
             $loadedFromCache = true;
         }
 
+        $app->instance('config_loaded_from_cache', $loadedFromCache);
+
         // Next we will spin through all of the configuration files in the configuration
         // directory and load each one into the repository. This will make all of the
         // options available to the developer for use in various parts of this app.
         $app->instance('config', $config = new Environment($items));
 
-        if (! isset($loadedFromCache)) {
+        if (! $loadedFromCache) {
             $this->loadConfigurationFiles($app, $config);
 
             // Now extend config with laravel configs if they exist

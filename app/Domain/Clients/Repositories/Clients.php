@@ -168,7 +168,7 @@ class Clients extends Repository
      */
     public function editClient(array $values, int|string $id): bool
     {
-        return $this->db->table('zp_clients')
+        $this->db->table('zp_clients')
             ->where('id', $id)
             ->update([
                 'name' => $values['name'],
@@ -180,7 +180,9 @@ class Clients extends Repository
                 'phone' => $values['phone'],
                 'internet' => $values['internet'],
                 'email' => $values['email'],
-            ]) >= 0;
+            ]);
+
+        return true;
     }
 
     /**

@@ -86,20 +86,4 @@ class PermissionServiceModulesTest extends \Unit\TestCase
         $this->assertTrue($service->currentUserCan('wiki.view', 7, true));
         $this->assertTrue($service->currentUserCan('timesheets.view', 7));
     }
-
-    public function test_the_service_still_works_without_modules_wired(): void
-    {
-        $repo = $this->make(PermissionRepository::class, [
-            'getRolePermissionMap' => fn (): array => ['admin' => ['wiki.view', 'projects.viewAll']],
-            'getAllPermissions' => fn (): array => [['permissionKey' => 'wiki.view', 'isProjectScoped' => 1]],
-        ]);
-
-        $service = new PermissionService(
-            $repo,
-            $this->makeEmpty(RoleResolver::class, ['effectiveRoleForProject' => 'admin', 'globalRole' => 'admin']),
-            $this->makeEmpty(ChecksProjectAccess::class),
-        );
-
-        $this->assertTrue($service->currentUserCan('wiki.view', 7));
-    }
 }

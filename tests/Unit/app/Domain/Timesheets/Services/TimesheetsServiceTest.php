@@ -106,7 +106,7 @@ class TimesheetsServiceTest extends TestCase
             $timesheetsRepo ?? $this->make(TimesheetRepository::class),
             $userRepo ?? $this->make(UserRepository::class),
             $ticketRepo ?? $this->make(TicketRepository::class),
-            $projectModules,
+            $projectModules ?? $this->allModulesOn(),
         );
         $service->setPermissionService($perms ?? $this->allowingPermissions());
 

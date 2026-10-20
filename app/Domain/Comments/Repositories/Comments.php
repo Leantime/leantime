@@ -189,9 +189,11 @@ class Comments
 
     public function editComment(string $text, int $id): bool
     {
-        return $this->db->table('zp_comment')
+        $this->db->table('zp_comment')
             ->where('id', $id)
-            ->update(['text' => $text]) >= 0;
+            ->update(['text' => $text]);
+
+        return true;
     }
 
     public function getAllAccountComments(?int $projectId, ?int $moduleId): array|false

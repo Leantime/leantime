@@ -203,7 +203,7 @@ class Sprints
 
     public function editSprint(SprintsModel $sprint): bool
     {
-        return $this->db->table('zp_sprints')
+        $this->db->table('zp_sprints')
             ->where('id', $sprint->id)
             ->update([
                 'name' => $sprint->name,
@@ -211,7 +211,9 @@ class Sprints
                 'startDate' => $sprint->startDate,
                 'endDate' => $sprint->endDate,
                 'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
-            ]) >= 0;
+            ]);
+
+        return true;
     }
 
     public function delSprint(int|string $id): void

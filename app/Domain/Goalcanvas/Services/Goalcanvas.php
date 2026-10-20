@@ -48,7 +48,7 @@ class Goalcanvas extends BaseService
     public function __construct(
         GoalcanvaRepository $goalRepository,
         ProjectService $projectService,
-        private ?ProjectModules $projectModules = null,
+        private ProjectModules $projectModules,
     ) {
         $this->goalRepository = $goalRepository;
         $this->projectService = $projectService;
@@ -60,7 +60,7 @@ class Goalcanvas extends BaseService
      */
     private function goalsEnabledIn(int $projectId): bool
     {
-        return $this->projectModules === null || $this->projectModules->isEnabled('goalcanvas', $projectId);
+        return $this->projectModules->isEnabled('goalcanvas', $projectId);
     }
 
     /**
@@ -71,10 +71,6 @@ class Goalcanvas extends BaseService
      */
     private function withoutSwitchedOffProjects(array $rows): array
     {
-        if ($this->projectModules === null) {
-            return $rows;
-        }
-
         return $this->projectModules->withoutSwitchedOffProjects('goalcanvas', $rows);
     }
 
@@ -154,7 +150,7 @@ class Goalcanvas extends BaseService
 
         // Linked goals can live in other projects: those with the Goals module off don't count
         // towards the roll-up, same as they are left out of getChildrenbyKPI().
-        $this->projectModules?->preload(array_merge(array_column($goals, 'projectId'), array_column($goals, 'childProjectId')));
+        $this->projectModules->preload(array_merge(array_column($goals, 'projectId'), array_column($goals, 'childProjectId')));
 
         $currentValueSum = 0;
         $countedChildIds = [];
@@ -209,7 +205,7 @@ class Goalcanvas extends BaseService
 
         // Linked goals can live in other projects: leave out those with the Goals module off. A
         // switched-off first-level goal takes its own children with it.
-        $this->projectModules?->preload(array_merge(array_column($children, 'projectId'), array_column($children, 'childProjectId')));
+        $this->projectModules->preload(array_merge(array_column($children, 'projectId'), array_column($children, 'childProjectId')));
 
         foreach ($children as $child) {
             if (! $this->goalsEnabledIn((int) ($child['projectId'] ?? 0))) {

@@ -97,7 +97,7 @@ class Tickets extends BaseService
      * @param  DateTimeHelper  $dateTimeHelper  The date time helper instance.
      * @param  CommentService  $commentService  The comments service instance.
      * @param  ClientService  $clientService  The clients service instance.
-     * @param  ProjectModules|null  $projectModules  Per-project module switches.
+     * @param  ProjectModules  $projectModules  Per-project module switches.
      */
     public function __construct(
         private LanguageCore $language,
@@ -112,7 +112,7 @@ class Tickets extends BaseService
         private DateTimeHelper $dateTimeHelper,
         private CommentService $commentService,
         private ClientService $clientService,
-        private ?ProjectModules $projectModules = null,
+        private ProjectModules $projectModules,
     ) {}
 
     /**
@@ -5894,7 +5894,7 @@ class Tickets extends BaseService
         foreach ($tickets as $shownGroup) {
             $projectIdsShown = [...$projectIdsShown, ...array_column($shownGroup['tickets'] ?? [], 'projectId')];
         }
-        $this->projectModules?->preload($projectIdsShown);
+        $this->projectModules->preload($projectIdsShown);
 
         // Process tickets to build hierarchical structure
         foreach ($tickets as $groupKey => &$ticketGroup) {

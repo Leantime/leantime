@@ -22,7 +22,8 @@ class CheckPermissions
 
     public function handle(Request $request, Closure $next): Response
     {
-        $route = $request->route();
+        // Not $request->route(): Laravel documents it as never null, but it is null until a route matched.
+        $route = call_user_func($request->getRouteResolver());
 
         if ($route instanceof \Illuminate\Routing\Route) {
             $controller = $route->getControllerClass();

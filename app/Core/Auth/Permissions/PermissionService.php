@@ -43,7 +43,7 @@ class PermissionService
         private PermissionRepository $repo,
         private RoleResolver $roles,
         private ChecksProjectAccess $projectAccess,
-        private ?ProjectModules $projectModules = null,
+        private ProjectModules $projectModules,
     ) {}
 
     /**
@@ -69,7 +69,7 @@ class PermissionService
         $projectScoped = $this->isProjectScoped($permissionKey);
         $useGlobal = $forceGlobal === true || ! $projectScoped;
 
-        if (! $useGlobal && $this->projectModules !== null && ! $this->projectModules->allowsPermission($permissionKey, $projectId)) {
+        if (! $useGlobal && ! $this->projectModules->allowsPermission($permissionKey, $projectId)) {
             return false;
         }
 

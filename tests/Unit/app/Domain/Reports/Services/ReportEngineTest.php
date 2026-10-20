@@ -71,6 +71,7 @@ class ReportEngineTest extends TestCase
             $this->ticketRepository,
             $this->projectService,
             $this->goalService,
+            $this->allModulesOn(),
         );
 
         $permissionService = $this->createMock(PermissionService::class);

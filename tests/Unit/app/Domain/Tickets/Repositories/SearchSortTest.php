@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Tickets\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Processors\Processor;
@@ -20,7 +21,7 @@ class SearchSortTest extends TestCase
     private function orderSqlFor(string $sort): string
     {
         $connection = $this->createMock(ConnectionInterface::class);
-        $grammar = new MySqlGrammar;
+        $grammar = new MySqlGrammar(new MySqlConnection(fn () => null));
         $query = (new Builder($connection, $grammar, new Processor))->from('zp_tickets');
 
         $dbHelper = $this->createMock(DatabaseHelper::class);

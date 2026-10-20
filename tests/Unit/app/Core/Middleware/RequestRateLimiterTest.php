@@ -170,11 +170,12 @@ class RequestRateLimiterTest extends \Unit\TestCase
     {
         Request::setTrustedProxies(TrustProxies::resolveTrustedProxies(''), Request::HEADER_X_FORWARDED_FOR);
 
+        // A routable address: Symfony counts the documentation ranges (203.0.113.0/24 etc.) as private.
         $direct = IncomingRequest::create('/auth/login', 'POST', [], [], [], [
-            'REMOTE_ADDR' => '203.0.113.10',
+            'REMOTE_ADDR' => '8.8.8.8',
             'HTTP_X_FORWARDED_FOR' => '1.2.3.4',
         ]);
-        $this->assertSame('203.0.113.10', $direct->getClientIp(), 'a public client cannot spoof its IP');
+        $this->assertSame('8.8.8.8', $direct->getClientIp(), 'a public client cannot spoof its IP');
 
         $viaDockerProxy = IncomingRequest::create('/auth/login', 'POST', [], [], [], [
             'REMOTE_ADDR' => '172.18.0.2',
@@ -194,7 +195,7 @@ class RequestRateLimiterTest extends \Unit\TestCase
         Request::setTrustedProxies(TrustProxies::resolveTrustedProxies(''), Request::HEADER_X_FORWARDED_FOR);
 
         $middleware = new TrustProxies($this->make(Environment::class, ['get' => fn ($key, $default = null) => '']));
-        $request = IncomingRequest::create('/', 'GET', [], [], [], ['REMOTE_ADDR' => '203.0.113.10']);
+        $request = IncomingRequest::create('/', 'GET', [], [], [], ['REMOTE_ADDR' => '8.8.8.8']);
 
         $this->assertSame(200, $middleware->handle($request, fn () => new Response('ok'))->getStatusCode());
     }

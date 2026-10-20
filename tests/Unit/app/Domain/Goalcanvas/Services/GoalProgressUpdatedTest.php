@@ -58,7 +58,7 @@ class GoalProgressUpdatedTest extends TestCase
             'editCanvasItem' => fn () => null,
         ]);
 
-        $service = new GoalcanvasService($repo, $this->make(ProjectService::class));
+        $service = new GoalcanvasService($repo, $this->make(ProjectService::class), $this->allModulesOn());
         $service->setPermissionService($this->make(PermissionService::class, [
             'authorize' => fn () => null,
             'currentUserCan' => fn () => true,

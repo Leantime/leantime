@@ -49,6 +49,7 @@ class PermissionServiceCacheTest extends \Unit\TestCase
             $repo,
             $this->makeEmpty(RoleResolver::class),
             $this->makeEmpty(ChecksProjectAccess::class),
+            $this->allModulesOn(),
         );
     }
 
