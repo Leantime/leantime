@@ -507,8 +507,9 @@ class Projects extends BaseService implements ChecksProjectAccess
         // break the dispatch path.
         $webhookRecipients = $this->filterUsersByProjectRelevance($webhookCandidates, $notification, $preloadedSettings);
         $webhookRecipients = $this->filterUsersByEventType($webhookRecipients, $notification->module, $preloadedSettings);
-        $webhookRecipients = $this->addBypassRecipients($webhookRecipients, $mentionedUserIds, authorId: null);
-        $webhookRecipients = $this->addBypassRecipients($webhookRecipients, $collaboratorIds, authorId: null);
+        // The author is a candidate already, so a mention or collaboration never brings them back past their own filters.
+        $webhookRecipients = $this->addBypassRecipients($webhookRecipients, $mentionedUserIds, $notification->authorId);
+        $webhookRecipients = $this->addBypassRecipients($webhookRecipients, $collaboratorIds, $notification->authorId);
 
         try {
             $this->webhookService->queueToUsers($notification, $webhookRecipients);
