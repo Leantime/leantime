@@ -77,7 +77,8 @@ class TicketsApiContractTest extends TestCase
             goalcanvasService: $this->make(Goalcanvas::class),
             dateTimeHelper: $this->make(DateTimeHelper::class, ['userNow' => fn () => CarbonImmutable::now('UTC')]),
             commentService: $this->make(CommentService::class),
-            clientService: $this->make(ClientService::class)
+            clientService: $this->make(ClientService::class),
+            projectModules: $this->allModulesOn(),
         );
 
         $service->setPermissionService($permissions ?? $this->make(PermissionService::class, [

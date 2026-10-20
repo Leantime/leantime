@@ -48,6 +48,7 @@ class IdeasServiceTest extends TestCase
             $projects ?? $this->make(ProjectService::class),
             $this->make(TicketService::class),
             $language ?? $this->make(LanguageCore::class),
+            $this->allModulesOn(),
         );
         $service->setPermissionService($perms ?? $this->allowingPermissions());
 

@@ -36,7 +36,7 @@ class GoalcanvasServiceTest extends TestCase
 
     private function service(GoalcanvaRepository $repo, ?PermissionService $perms = null, ?ProjectService $projects = null): GoalcanvasService
     {
-        $service = new GoalcanvasService($repo, $projects ?? $this->projectsWithAccess([]));
+        $service = new GoalcanvasService($repo, $projects ?? $this->projectsWithAccess([]), $this->allModulesOn());
         $service->setPermissionService($perms ?? $this->allowingPermissions());
 
         return $service;

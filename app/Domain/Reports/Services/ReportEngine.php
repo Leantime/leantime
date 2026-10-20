@@ -35,7 +35,7 @@ class ReportEngine extends BaseService
         private TicketRepository $ticketRepository,
         private ProjectService $projectService,
         private GoalcanvasService $goalService,
-        private ?ProjectModules $projectModules = null,
+        private ProjectModules $projectModules,
     ) {}
 
     /**
@@ -231,7 +231,7 @@ class ReportEngine extends BaseService
         // Projects with the Goals module switched off have no goals to report.
         $goalProjectIds = array_values(array_filter(
             $projectIds,
-            fn (int $projectId) => $this->projectModules === null || $this->projectModules->isEnabled('goalcanvas', $projectId)
+            fn (int $projectId) => $this->projectModules->isEnabled('goalcanvas', $projectId)
         ));
 
         $goals = $this->reportEngineRepository->getGoalsForProjects($goalProjectIds, $userId, $clientId);
@@ -394,7 +394,7 @@ class ReportEngine extends BaseService
         $projectIds = array_values(array_unique(array_map('intval', $projectIds)));
 
         // The permission check reads each project's module switches: load them in one query.
-        $this->projectModules?->preload($projectIds);
+        $this->projectModules->preload($projectIds);
 
         return array_values(array_filter(
             $projectIds,

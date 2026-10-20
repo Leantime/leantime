@@ -58,7 +58,7 @@ class PermissionServiceViewAllTest extends \Unit\TestCase
             },
         ]);
 
-        return new PermissionService($repo, $roles, $projectAccess);
+        return new PermissionService($repo, $roles, $projectAccess, $this->allModulesOn());
     }
 
     public function test_a_custom_role_with_view_all_reads_projects_it_is_not_a_member_of(): void

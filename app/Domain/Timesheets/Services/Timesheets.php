@@ -75,7 +75,7 @@ class Timesheets extends BaseService
         TimesheetRepository $timesheetsRepo,
         Users $userRepo,
         TicketRepository $ticketRepo,
-        private ?ProjectModules $projectModules = null,
+        private ProjectModules $projectModules,
     ) {
         $this->timesheetsRepo = $timesheetsRepo;
         $this->userRepo = $userRepo;
@@ -628,7 +628,7 @@ class Timesheets extends BaseService
 
         $this->authorize(TicketsPermissions::VIEW, (int) $ticket->projectId);
 
-        if ($this->projectModules !== null && ! $this->projectModules->isEnabled('timesheets', (int) $ticket->projectId)) {
+        if (! $this->projectModules->isEnabled('timesheets', (int) $ticket->projectId)) {
             throw new AuthorizationException(app(Language::class)->__('notifications.timesheets_switched_off'));
         }
 

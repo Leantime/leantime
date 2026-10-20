@@ -93,7 +93,8 @@ class TicketsServiceTest extends TestCase
             goalcanvasService: $goalcanvasService,
             dateTimeHelper: $dateTimeHelper,
             commentService: $commentService,
-            clientService: $clientService
+            clientService: $clientService,
+            projectModules: $this->allModulesOn(),
         );
     }
 
@@ -409,7 +410,8 @@ class TicketsServiceTest extends TestCase
             goalcanvasService: $this->make(Goalcanvas::class),
             dateTimeHelper: $this->make(DateTimeHelper::class),
             commentService: $this->make(CommentService::class),
-            clientService: $clientService
+            clientService: $clientService,
+            projectModules: $this->allModulesOn(),
         );
     }
 
@@ -431,7 +433,8 @@ class TicketsServiceTest extends TestCase
             goalcanvasService: $this->make(Goalcanvas::class),
             dateTimeHelper: $this->make(DateTimeHelper::class),
             commentService: $this->make(CommentService::class),
-            clientService: $this->make(ClientService::class)
+            clientService: $this->make(ClientService::class),
+            projectModules: $this->allModulesOn(),
         );
     }
 
@@ -483,6 +486,7 @@ class TicketsServiceTest extends TestCase
                 $this->make(DateTimeHelper::class),
                 $this->make(CommentService::class),
                 $this->make(ClientService::class),
+                $this->allModulesOn(),
             ],
             ['getTicket' => fn () => $this->make(TicketModel::class, ['id' => 5, 'projectId' => 9])],
         );
@@ -522,7 +526,8 @@ class TicketsServiceTest extends TestCase
             goalcanvasService: $this->make(Goalcanvas::class),
             dateTimeHelper: $this->make(DateTimeHelper::class, ['userNow' => fn () => CarbonImmutable::now('UTC')]),
             commentService: $this->make(CommentService::class),
-            clientService: $this->make(ClientService::class)
+            clientService: $this->make(ClientService::class),
+            projectModules: $this->allModulesOn(),
         );
         $service->setPermissionService($permissions);
 
@@ -1233,7 +1238,8 @@ class TicketsServiceTest extends TestCase
             goalcanvasService: $this->make(Goalcanvas::class),
             dateTimeHelper: $this->make(DateTimeHelper::class),
             commentService: $this->make(CommentService::class),
-            clientService: $this->make(ClientService::class)
+            clientService: $this->make(ClientService::class),
+            projectModules: $this->allModulesOn(),
         );
     }
 
@@ -1472,7 +1478,8 @@ class TicketsServiceTest extends TestCase
             goalcanvasService: $this->make(Goalcanvas::class),
             dateTimeHelper: $this->make(DateTimeHelper::class),
             commentService: $this->make(CommentService::class),
-            clientService: $this->make(ClientService::class)
+            clientService: $this->make(ClientService::class),
+            projectModules: $this->allModulesOn(),
         );
         $service->setPermissionService($this->make(PermissionService::class, [
             'currentUserCan' => fn (string $key, ?int $projectId = null) => in_array($projectId, $viewableProjects, true),

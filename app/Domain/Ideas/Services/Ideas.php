@@ -44,7 +44,7 @@ class Ideas extends BaseService
         ProjectService $projectService,
         TicketService $ticketService,
         LanguageCore $language,
-        private ?ProjectModules $projectModules = null,
+        private ProjectModules $projectModules,
     ) {
         $this->ideasRepository = $ideasRepository;
         $this->commentsRepository = $commentsRepository;
@@ -231,10 +231,6 @@ class Ideas extends BaseService
      */
     private function withoutSwitchedOffProjects(array $ideas): array
     {
-        if ($this->projectModules === null) {
-            return $ideas;
-        }
-
         return $this->projectModules->withoutSwitchedOffProjects('ideas', $ideas);
     }
 
