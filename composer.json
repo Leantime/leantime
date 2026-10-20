@@ -102,7 +102,7 @@
         "hkulekci/qdrant": "^0.5.8",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-path-prefixing": "^3.0",
-        "laravel/mcp": "^0.1.1",
+        "laravel/mcp": "^1.0",
         "composer/semver": "^3.4"
     },
     "require-dev": {

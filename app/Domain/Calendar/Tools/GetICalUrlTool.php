@@ -2,10 +2,9 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Calendar\Services\Calendar;
 
 /**
@@ -18,14 +17,14 @@ class GetICalUrlTool extends Tool
         private Calendar $calendarService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
-    {
-        return $schema;
-    }
-
     public function name(): string
     {
         return 'getICalUrl';
+    }
+
+    public function title(): string
+    {
+        return 'Get iCal URL';
     }
 
     public function description(): string
@@ -36,14 +35,14 @@ class GetICalUrlTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(): Response
     {
         try {
             $url = $this->calendarService->getICalUrl();
 
-            return ToolResult::text($url);
+            return Response::text($url);
         } catch (\Exception $e) {
-            return ToolResult::error('No iCal URL available. Generate one first using generateIcalHash.');
+            return Response::error('No iCal URL available. Generate one first using generateIcalHash.');
         }
     }
 }

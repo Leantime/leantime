@@ -2,15 +2,18 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Create a new task.
  */
+#[IsDestructive(false)]
 class AddTaskTool extends Tool
 {
     public function __construct(
@@ -26,6 +29,14 @@ class AddTaskTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Add Task';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -35,28 +46,45 @@ class AddTaskTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('headline')->description('Title of the task.')->required()
-            ->string('description')->description('Task description.')
-            ->integer('projectId')->description('Project ID.')
-            ->integer('editorId')->description('Assigned user ID.')
-            ->integer('userId')->description('Creator user ID.')
-            ->string('dateToFinish')->description('Due date in ISO8601 format.')
-            ->raw('status', ['type' => ['integer', 'string'], 'description' => 'Status id (see getStatusLabels), status name ("New") or status type (new, inprogress, done). Defaults to the project\'s NEW status.'])
-            ->integer('sprint')->description('Sprint ID.')
-            ->string('editFrom')->description('Scheduled start date in ISO8601 format.')
-            ->string('editTo')->description('Scheduled end date in ISO8601 format.')
-            ->integer('milestone')->description('Milestone ID.');
+        return [
+            'headline' => $schema->string()
+                ->description('Title of the task.')
+                ->required(),
+            'description' => $schema->string()
+                ->description('Task description.'),
+            'projectId' => $schema->integer()
+                ->description('Project ID.'),
+            'editorId' => $schema->integer()
+                ->description('Assigned user ID.'),
+            'userId' => $schema->integer()
+                ->description('Creator user ID.'),
+            'dateToFinish' => $schema->string()
+                ->description('Due date in ISO8601 format.'),
+            'status' => $schema->union(['integer', 'string'])
+                ->description('Status id (see getStatusLabels), status name ("New") or status type (new, inprogress, done). Defaults to the project\'s NEW status.'),
+            'sprint' => $schema->integer()
+                ->description('Sprint ID.'),
+            'editFrom' => $schema->string()
+                ->description('Scheduled start date in ISO8601 format.'),
+            'editTo' => $schema->string()
+                ->description('Scheduled end date in ISO8601 format.'),
+            'milestone' => $schema->integer()
+                ->description('Milestone ID.'),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $params = [
             'headline' => $arguments['headline'],
             'description' => ($arguments['description'] ?? ''),
@@ -76,17 +104,17 @@ class AddTaskTool extends Tool
             $params['origin'] = 'mcp';
             $result = $this->ticketsService->quickAddTicket($params);
         } catch (LeantimeExceptionInterface $e) {
-            return ToolResult::error($e->getClientMessage());
+            return Response::error($e->getClientMessage());
         }
 
         if (is_array($result)) {
-            return ToolResult::error((string) ($result['message'] ?? $result['msg'] ?? 'Failed to create the task.'));
+            return Response::error((string) ($result['message'] ?? $result['msg'] ?? 'Failed to create the task.'));
         }
 
         if ($result) {
-            return ToolResult::text("Task created successfully. ID: {$result}");
+            return Response::text("Task created successfully. ID: {$result}");
         }
 
-        return ToolResult::error('Failed to create task.');
+        return Response::error('Failed to create task.');
     }
 }

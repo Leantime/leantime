@@ -2,15 +2,18 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 use Leantime\Domain\Modulemanager\Services\Modulemanager;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Updates specific fields of an existing project.
  */
+#[IsIdempotent]
 class PatchProjectTool extends Tool
 {
     public function __construct(
@@ -18,17 +21,29 @@ class PatchProjectTool extends Tool
         private Modulemanager $moduleManager,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('ID of the project to update.')
-            ->required()
-            ->raw('params', ['type' => 'object', 'description' => 'Key-value pairs of fields to update. Example: {"name": "New name", "state": 0}'])->required();
+        return [
+            'id' => $schema->integer()
+                ->description('ID of the project to update.')
+                ->required(),
+            'params' => $schema->object()
+                ->description('Key-value pairs of fields to update. Example: {"name": "New name", "state": 0}')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'patchProject';
+    }
+
+    public function title(): string
+    {
+        return 'Patch Project';
     }
 
     public function description(): string
@@ -39,15 +54,17 @@ class PatchProjectTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $id = (int) ($arguments['id'] ?? 0);
         $params = ($arguments['params'] ?? null);
 
         // Get current project to ensure it exists
         $currentProject = $this->projectService->getProject($id);
         if (! $currentProject) {
-            return ToolResult::error('Project not found.');
+            return Response::error('Project not found.');
         }
 
         // Check if $params is array of arrays (AI sometimes does this)
@@ -56,7 +73,7 @@ class PatchProjectTool extends Tool
         }
 
         if (! is_array($params)) {
-            return ToolResult::error('The params parameter is not a valid object. Please provide an object of key-value pairs.');
+            return Response::error('The params parameter is not a valid object. Please provide an object of key-value pairs.');
         }
 
         // Handle parent field if PgmPro plugin is active
@@ -67,9 +84,9 @@ class PatchProjectTool extends Tool
         $result = $this->projectService->patch($id, $params);
 
         if ($result) {
-            return ToolResult::text('Project updated successfully.');
+            return Response::text('Project updated successfully.');
         }
 
-        return ToolResult::error('Failed to update project. Please check the provided information.');
+        return Response::error('Failed to update project. Please check the provided information.');
     }
 }

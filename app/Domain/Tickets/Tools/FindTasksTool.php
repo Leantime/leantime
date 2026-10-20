@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -30,6 +31,14 @@ class FindTasksTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Find Tasks';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -39,26 +48,40 @@ class FindTasksTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->raw('projectIds', ['type' => 'array', 'description' => 'Array of project IDs (numbers) to search. For multiple projects use [1,3,4,5]. This is more efficient than separate calls. Omit to search all accessible projects.'])
-            ->string('modifiedAfter')->description('Only tasks modified (or created, if never modified) at or after this time. ISO8601 format (e.g. 2024-04-30T15:00:00-04:00).')
-            ->string('modifiedBefore')->description('Only tasks modified at or before this time. ISO8601 format.')
-            ->string('dateRangeFrom')->description('Alias of modifiedAfter.')
-            ->string('dateRangeTo')->description('Alias of modifiedBefore.')
-            ->integer('userId')->description('User ID to filter by. Empty for all users. 0 for current user.')
-            ->string('status')->description('Status filter: open (not completed), done (completed), all (everything). Default is all.')
-            ->string('statusType')->description('Status type filter, comma separated: NEW, INPROGRESS, DONE, NOT_DONE. Resolved per project, e.g. INPROGRESS for everything in progress.')
-            ->integer('limit')->description('Maximum tasks per project (or in total when projectIds is omitted). Default 20.');
+        return [
+            'projectIds' => $schema->array()->items($schema->integer())
+                ->description('Array of project IDs (numbers) to search. For multiple projects use [1,3,4,5]. This is more efficient than separate calls. Omit to search all accessible projects.'),
+            'modifiedAfter' => $schema->string()
+                ->description('Only tasks modified (or created, if never modified) at or after this time. ISO8601 format (e.g. 2024-04-30T15:00:00-04:00).'),
+            'modifiedBefore' => $schema->string()
+                ->description('Only tasks modified at or before this time. ISO8601 format.'),
+            'dateRangeFrom' => $schema->string()
+                ->description('Alias of modifiedAfter.'),
+            'dateRangeTo' => $schema->string()
+                ->description('Alias of modifiedBefore.'),
+            'userId' => $schema->integer()
+                ->description('User ID to filter by. Empty for all users. 0 for current user.'),
+            'status' => $schema->string()
+                ->description('Status filter: open (not completed), done (completed), all (everything). Default is all.'),
+            'statusType' => $schema->string()
+                ->description('Status type filter, comma separated: NEW, INPROGRESS, DONE, NOT_DONE. Resolved per project, e.g. INPROGRESS for everything in progress.'),
+            'limit' => $schema->integer()
+                ->description('Maximum tasks per project (or in total when projectIds is omitted). Default 20.'),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectIds = is_array($arguments['projectIds'] ?? null) ? $arguments['projectIds'] : [];
         $userId = ($arguments['userId'] ?? null);
         $status = ($arguments['status'] ?? 'all');
@@ -102,7 +125,7 @@ class FindTasksTool extends Tool
             try {
                 $tickets = $this->ticketsService->getAll($searchCriteria, $limit);
             } catch (LeantimeExceptionInterface $e) {
-                return ToolResult::error($e->getClientMessage());
+                return Response::error($e->getClientMessage());
             }
 
             foreach ($tickets ?: [] as $ticket) {
@@ -112,7 +135,7 @@ class FindTasksTool extends Tool
         }
 
         if (empty($allResults)) {
-            return ToolResult::text('No tasks found for the specified criteria.');
+            return Response::text('No tasks found for the specified criteria.');
         }
 
         $response = "## TASK RESULTS ACROSS PROJECTS\n";
@@ -134,6 +157,6 @@ class FindTasksTool extends Tool
             $response .= "---\n\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

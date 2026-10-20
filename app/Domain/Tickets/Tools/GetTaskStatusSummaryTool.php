@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
@@ -28,6 +29,14 @@ class GetTaskStatusSummaryTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Get Task Status Summary';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -37,22 +46,32 @@ class GetTaskStatusSummaryTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Limit to one project. Omit for every project you can access.')
-            ->string('statusType')->description('Which tasks to list as active (comma separated): NEW, INPROGRESS, DONE, NOT_DONE. Default INPROGRESS.')
-            ->string('modifiedAfter')->description('Only count and list tasks changed at or after this time. ISO8601 format.')
-            ->boolean('includeSubtasks')->description('Include subtasks. Default true.')
-            ->integer('limit')->description('Maximum active tasks to return (1-500). Default 50.');
+        return [
+            'projectId' => $schema->integer()
+                ->description('Limit to one project. Omit for every project you can access.'),
+            'statusType' => $schema->string()
+                ->description('Which tasks to list as active (comma separated): NEW, INPROGRESS, DONE, NOT_DONE. Default INPROGRESS.'),
+            'modifiedAfter' => $schema->string()
+                ->description('Only count and list tasks changed at or after this time. ISO8601 format.'),
+            'includeSubtasks' => $schema->boolean()
+                ->description('Include subtasks. Default true.'),
+            'limit' => $schema->integer()
+                ->description('Maximum active tasks to return (1-500). Default 50.'),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = isset($arguments['projectId']) && (int) $arguments['projectId'] > 0 ? (int) $arguments['projectId'] : null;
 
         try {
@@ -64,9 +83,9 @@ class GetTaskStatusSummaryTool extends Tool
                 activeLimit: (int) ($arguments['limit'] ?? 50),
             );
         } catch (LeantimeExceptionInterface $e) {
-            return ToolResult::error($e->getClientMessage());
+            return Response::error($e->getClientMessage());
         }
 
-        return ToolResult::text((string) json_encode($summary, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        return Response::text((string) json_encode($summary, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 }

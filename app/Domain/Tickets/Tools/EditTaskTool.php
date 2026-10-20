@@ -2,15 +2,18 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Update an existing task.
  */
+#[IsIdempotent]
 class EditTaskTool extends Tool
 {
     public function __construct(
@@ -26,6 +29,14 @@ class EditTaskTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Edit Task';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -35,19 +46,28 @@ class EditTaskTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('ID of the task to update.')->required()
-            ->raw('params', ['type' => 'object', 'description' => 'Key-value pairs of fields to update. Example: {"headline": "New title", "status": 3}'])->required();
+        return [
+            'id' => $schema->integer()
+                ->description('ID of the task to update.')
+                ->required(),
+            'params' => $schema->object()
+                ->description('Key-value pairs of fields to update. Example: {"headline": "New title", "status": 3}')
+                ->required(),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $id = (int) ($arguments['id'] ?? 0);
         $params = ($arguments['params'] ?? null);
 
@@ -56,7 +76,7 @@ class EditTaskTool extends Tool
         }
 
         if (! is_array($params)) {
-            return ToolResult::error('The params parameter is not a valid object. Provide key-value pairs.');
+            return Response::error('The params parameter is not a valid object. Provide key-value pairs.');
         }
 
         // patchTicket() reports a missing/inaccessible task, a denied edit, an invalid status or
@@ -65,17 +85,17 @@ class EditTaskTool extends Tool
             $ignoredFields = $this->ticketsService->getIgnoredPatchFields($params);
             $updated = $this->ticketsService->patchTicket($id, $params);
         } catch (LeantimeExceptionInterface $e) {
-            return ToolResult::error($e->getClientMessage());
+            return Response::error($e->getClientMessage());
         }
 
         if (! $updated) {
-            return ToolResult::error('Failed to update task.');
+            return Response::error('Failed to update task.');
         }
 
         if ($ignoredFields !== []) {
-            return ToolResult::text('Task updated. Ignored unknown fields: '.implode(', ', $ignoredFields).'.');
+            return Response::text('Task updated. Ignored unknown fields: '.implode(', ', $ignoredFields).'.');
         }
 
-        return ToolResult::text('Task updated successfully.');
+        return Response::text('Task updated successfully.');
     }
 }

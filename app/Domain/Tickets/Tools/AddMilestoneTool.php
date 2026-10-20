@@ -2,14 +2,17 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Add a new milestone to a project.
  */
+#[IsDestructive(false)]
 class AddMilestoneTool extends Tool
 {
     public function __construct(
@@ -25,6 +28,14 @@ class AddMilestoneTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Add Milestone';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -34,24 +45,42 @@ class AddMilestoneTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('headline')->description('Title of the milestone.')->required()
-            ->string('color')->description('Choose a color for this milestone using a hex code.')->required()
-            ->string('editFrom')->description('Start date of the milestone in ISO8601 format (example: 2024-04-30T15:00:00-04:00).')->required()
-            ->string('editTo')->description('End date of the milestone in ISO8601 format (example: 2024-04-30T15:00:00-04:00).')->required()
-            ->integer('projectId')->description('Project ID.')->required()
-            ->integer('editorId')->description('Editor ID.')->required()
-            ->integer('dependentMilestone')->description('Dependent milestone ID.');
+        return [
+            'headline' => $schema->string()
+                ->description('Title of the milestone.')
+                ->required(),
+            'color' => $schema->string()
+                ->description('Choose a color for this milestone using a hex code.')
+                ->required(),
+            'editFrom' => $schema->string()
+                ->description('Start date of the milestone in ISO8601 format (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+            'editTo' => $schema->string()
+                ->description('End date of the milestone in ISO8601 format (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+            'projectId' => $schema->integer()
+                ->description('Project ID.')
+                ->required(),
+            'editorId' => $schema->integer()
+                ->description('Editor ID.')
+                ->required(),
+            'dependentMilestone' => $schema->integer()
+                ->description('Dependent milestone ID.'),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $params = [
             'headline' => $arguments['headline'],
             'projectId' => (int) ($arguments['projectId'] ?? 0),
@@ -66,9 +95,9 @@ class AddMilestoneTool extends Tool
         $result = $this->ticketsService->quickAddMilestone($params);
 
         if ($result) {
-            return ToolResult::text("Milestone created successfully with ID: {$result}");
+            return Response::text("Milestone created successfully with ID: {$result}");
         }
 
-        return ToolResult::error('Failed to create milestone.');
+        return Response::error('Failed to create milestone.');
     }
 }

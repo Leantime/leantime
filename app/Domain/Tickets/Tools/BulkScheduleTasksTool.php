@@ -2,15 +2,18 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Schedule multiple tasks by setting editFrom and editTo dates.
  */
+#[IsIdempotent]
 class BulkScheduleTasksTool extends Tool
 {
     public function __construct(
@@ -26,6 +29,14 @@ class BulkScheduleTasksTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Bulk Schedule Tasks';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -35,18 +46,25 @@ class BulkScheduleTasksTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->raw('schedules', ['type' => 'array', 'description' => 'Array of schedule objects. Each must have taskId, editFrom (ISO8601), and editTo (ISO8601).'])->required();
+        return [
+            'schedules' => $schema->array()->items($schema->object())
+                ->description('Array of schedule objects. Each must have taskId, editFrom (ISO8601), and editTo (ISO8601).')
+                ->required(),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $schedules = ($arguments['schedules'] ?? []);
         $results = [];
         $successCount = 0;
@@ -79,7 +97,7 @@ class BulkScheduleTasksTool extends Tool
         }
 
         if (! empty($validationErrors)) {
-            return ToolResult::error("Validation failed:\n- ".implode("\n- ", $validationErrors));
+            return Response::error("Validation failed:\n- ".implode("\n- ", $validationErrors));
         }
 
         foreach ($schedules as $schedule) {
@@ -98,7 +116,7 @@ class BulkScheduleTasksTool extends Tool
             }
         }
 
-        return ToolResult::text(
+        return Response::text(
             "Bulk task scheduling completed. Success: {$successCount}, Failed: {$failureCount}\n\n".
             Str::toMarkdown($results)
         );

@@ -2,30 +2,43 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 use Leantime\Domain\Calendar\Services\Calendar;
 
 /**
  * Delete a calendar event.
  */
+#[IsDestructive]
 class DeleteCalendarEventTool extends Tool
 {
     public function __construct(
         private Calendar $calendarService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('Event ID to delete.')
-            ->required();
+        return [
+            'id' => $schema->integer()
+                ->description('Event ID to delete.')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'deleteEvent';
+    }
+
+    public function title(): string
+    {
+        return 'Delete Event';
     }
 
     public function description(): string
@@ -36,15 +49,17 @@ class DeleteCalendarEventTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $id = (int) ($arguments['id'] ?? 0);
         $result = $this->calendarService->delEvent($id);
 
         if ($result) {
-            return ToolResult::text('Event deleted successfully.');
+            return Response::text('Event deleted successfully.');
         }
 
-        return ToolResult::error('Failed to delete event.');
+        return Response::error('Failed to delete event.');
     }
 }

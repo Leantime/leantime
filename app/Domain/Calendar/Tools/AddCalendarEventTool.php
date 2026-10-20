@@ -2,35 +2,51 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 use Leantime\Domain\Calendar\Services\Calendar;
 
 /**
  * Add a new calendar event.
  */
+#[IsDestructive(false)]
 class AddCalendarEventTool extends Tool
 {
     public function __construct(
         private Calendar $calendarService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('eventTitle')->description('Title of the event.')
-            ->required()
-            ->string('dateFrom')->description('Start date in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-            ->required()
-            ->string('dateTo')->description('End date in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-            ->required()
-            ->boolean('allDay')->description('Whether this is an all-day event or not.');
+        return [
+            'eventTitle' => $schema->string()
+                ->description('Title of the event.')
+                ->required(),
+            'dateFrom' => $schema->string()
+                ->description('Start date in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+            'dateTo' => $schema->string()
+                ->description('End date in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+            'allDay' => $schema->boolean()
+                ->description('Whether this is an all-day event or not.'),
+        ];
     }
 
     public function name(): string
     {
         return 'addEvent';
+    }
+
+    public function title(): string
+    {
+        return 'Add Event';
     }
 
     public function description(): string
@@ -41,8 +57,10 @@ class AddCalendarEventTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $result = $this->calendarService->addEvent([
             'description' => $arguments['eventTitle'],
             'dateFrom' => $arguments['dateFrom'],
@@ -51,9 +69,9 @@ class AddCalendarEventTool extends Tool
         ]);
 
         if ($result) {
-            return ToolResult::text("Event added successfully with ID: {$result}");
+            return Response::text("Event added successfully with ID: {$result}");
         }
 
-        return ToolResult::error('Failed to add event.');
+        return Response::error('Failed to add event.');
     }
 }

@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
@@ -18,18 +19,30 @@ class GetWeeklyTimesheetsTool extends Tool
         private Timesheets $timesheetsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('weekStart')->description('Start date of the week in ISO8601 format.')
-            ->required()
-            ->integer('projectId')->description('Project ID to filter by (optional).')
-            ->integer('userId')->description('User ID to filter by (optional, managers only).');
+        return [
+            'weekStart' => $schema->string()
+                ->description('Start date of the week in ISO8601 format.')
+                ->required(),
+            'projectId' => $schema->integer()
+                ->description('Project ID to filter by (optional).'),
+            'userId' => $schema->integer()
+                ->description('User ID to filter by (optional, managers only).'),
+        ];
     }
 
     public function name(): string
     {
         return 'getWeeklyTimesheets';
+    }
+
+    public function title(): string
+    {
+        return 'Get Weekly Timesheets';
     }
 
     public function description(): string
@@ -40,8 +53,10 @@ class GetWeeklyTimesheetsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $currentUserId = (int) session('userdata.id');
         $userRole = session('userdata.role');
 
@@ -49,7 +64,7 @@ class GetWeeklyTimesheetsTool extends Tool
         $userId = (int) ($arguments['userId'] ?? 0) ?: $currentUserId;
 
         if ($userId !== $currentUserId && ! in_array($userRole, ['admin', 'manager', 'owner'])) {
-            return ToolResult::error("You don't have permission to view other users' timesheet data.");
+            return Response::error("You don't have permission to view other users' timesheet data.");
         }
 
         $fromDate = dtHelper()->parseUserDateTime($arguments['weekStart'])->startOfWeek();
@@ -63,7 +78,7 @@ class GetWeeklyTimesheetsTool extends Tool
         );
 
         if (empty($timesheetGroups)) {
-            return ToolResult::text('No timesheet entries found for the specified week.');
+            return Response::text('No timesheet entries found for the specified week.');
         }
 
         $weekEnd = $fromDate->addDays(6);
@@ -97,6 +112,6 @@ class GetWeeklyTimesheetsTool extends Tool
         }
         $response .= '**'.number_format($grandTotal, 1)."** |\n\n";
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Goalcanvas\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 /**
@@ -19,16 +20,26 @@ class GetChildGoalsTool extends Tool
         private Goalcanvas $goalcanvasService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('parentId')->description('ID of the parent goal to get children for.')
-            ->required();
+        return [
+            'parentId' => $schema->integer()
+                ->description('ID of the parent goal to get children for.')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'getChildGoals';
+    }
+
+    public function title(): string
+    {
+        return 'Get Child Goals';
     }
 
     public function description(): string
@@ -39,13 +50,15 @@ class GetChildGoalsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $parentId = (int) ($arguments['parentId'] ?? 0);
         $childGoals = $this->goalcanvasService->getChildrenbyKPI($parentId);
 
         if (empty($childGoals)) {
-            return ToolResult::text("No child goals found for parent goal ID: {$parentId}");
+            return Response::text("No child goals found for parent goal ID: {$parentId}");
         }
 
         $response = "## Child Goals for Parent ID: {$parentId}\n";
@@ -64,6 +77,6 @@ class GetChildGoalsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }
