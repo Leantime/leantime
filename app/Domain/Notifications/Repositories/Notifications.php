@@ -101,9 +101,11 @@ class Notifications
 
     public function markAllNotificationRead(int $userId): bool
     {
-        return $this->db->table('zp_notifications')
+        $this->db->table('zp_notifications')
             ->where('userId', $userId)
-            ->update(['read' => 1]) >= 0;
+            ->update(['read' => 1]);
+
+        return true;
     }
 
     /**

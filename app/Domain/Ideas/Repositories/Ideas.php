@@ -207,9 +207,11 @@ class Ideas
             $updateData[$sanitizedKey] = $value;
         }
 
-        return $this->db->table('zp_canvas_items')
+        $this->db->table('zp_canvas_items')
             ->where('id', $id)
-            ->update($updateData) >= 0;
+            ->update($updateData);
+
+        return true;
     }
 
     public function updateIdeaSorting(array $sortingArray): bool
@@ -335,9 +337,11 @@ class Ideas
 
     public function updateIdeaStatus(int $ideaId, string $status): bool
     {
-        return $this->db->table('zp_canvas_items')
+        $this->db->table('zp_canvas_items')
             ->where('id', $ideaId)
-            ->update(['box' => $status]) >= 0;
+            ->update(['box' => $status]);
+
+        return true;
     }
 
     /**

@@ -107,7 +107,7 @@ class Wiki extends Blueprints
         }
 
         $article = new Article;
-        foreach ($result as $key => $value) {
+        foreach (get_object_vars($result) as $key => $value) {
             if (property_exists($article, $key)) {
                 $article->$key = $value;
             }
@@ -220,10 +220,12 @@ class Wiki extends Blueprints
     {
         // type guard: zp_canvas is shared across all canvas types (one id sequence), so scope the
         // write to wiki rows — a non-wiki id can never rename another project's canvas board.
-        return $this->dbConnection->table('zp_canvas')
+        $this->dbConnection->table('zp_canvas')
             ->where('id', $wikiId)
             ->where('type', 'wiki')
-            ->update(['title' => $wiki->title]) >= 0;
+            ->update(['title' => $wiki->title]);
+
+        return true;
     }
 
     public function createArticle(Article $article): false|string
@@ -250,7 +252,7 @@ class Wiki extends Blueprints
     {
         // box guard: zp_canvas_items is shared across all canvas types (one id sequence), so scope
         // the write to article rows — a non-article id can never touch a goal/SWOT/risk item.
-        return $this->dbConnection->table('zp_canvas_items')
+        $this->dbConnection->table('zp_canvas_items')
             ->where('id', $article->id)
             ->where('box', 'article')
             ->update([
@@ -262,7 +264,9 @@ class Wiki extends Blueprints
                 'status' => $article->status,
                 'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'milestoneId' => $article->milestoneId,
-            ]) >= 0;
+            ]);
+
+        return true;
     }
 
     public function delArticle(int $id): void

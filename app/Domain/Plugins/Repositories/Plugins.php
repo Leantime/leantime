@@ -152,7 +152,9 @@ class Plugins
             $values['license'] = $plugin->license;
         }
 
-        return $this->db->table('zp_plugins')->where('id', $id)->update($values) >= 0;
+        $this->db->table('zp_plugins')->where('id', $id)->update($values);
+
+        return true;
     }
 
     /**

@@ -1228,9 +1228,7 @@ class Timesheets extends BaseService
                 $values['paid'] = 1;
             }
             if (! empty($post['paidDate'])) {
-                $date = dtHelper()->parseUserDateTime($post['paidDate'], 'start');
-                $date->setTimezone('UTC');
-                $values['paidDate'] = $date->formatDateTimeForDb();
+                $values['paidDate'] = dtHelper()->parseUserDateTime($post['paidDate'], 'start')->formatDateTimeForDb();
             } else {
                 $values['paidDate'] = dtHelper()->userNow()->formatDateTimeForDb();
             }

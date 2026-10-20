@@ -1157,9 +1157,11 @@ class Projects implements StoresProjectModules
 
         $updateData['modified'] = date('Y-m-d H:i:s');
 
-        return $this->connection->table('zp_projects')
+        $this->connection->table('zp_projects')
             ->where('id', $id)
-            ->update($updateData) >= 0;
+            ->update($updateData);
+
+        return true;
     }
 
     /**
@@ -1312,12 +1314,14 @@ class Projects implements StoresProjectModules
      */
     public function setPicture($fileId, $id): bool
     {
-        return $this->connection->table('zp_projects')
+        $this->connection->table('zp_projects')
             ->where('id', $id)
             ->update([
                 'avatar' => $fileId,
                 'modified' => date('Y-m-d H:i:s'),
-            ]) >= 0;
+            ]);
+
+        return true;
     }
 
     /**
