@@ -10,6 +10,7 @@ use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\CarbonMacros;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
@@ -135,25 +136,29 @@ class ProjectsServiceTest extends TestCase
      * @param  array<int>  $collaborators  Collaborators on the to-do the notification is about.
      * @return array{emailRecipients: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null}
      */
-    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, array $collaborators = []): array
+    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, ?array $recipientIds = null, array $collaborators = []): array
     {
         $seen = ['emailRecipients' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null];
         $this->queueTable = [];
         $this->webhookPosts = [];
 
         $users = [];
-        foreach ([1, 2, 3, 4, 5, 6] as $userId) {
-            $users[$userId] = ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a', 'role' => 20, 'clientId' => 0];
+        foreach ([1, 2, 3, 4, 5, 6, 7] as $userId) {
+            $users[$userId] = ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a', 'role' => 20, 'clientId' => 0, 'modified' => null];
         }
         foreach ($userOverrides as $userId => $columns) {
-            $users[$userId] = $columns === false ? false : $columns + $users[$userId];
+            $users[$userId] = $columns === false ? false : $columns + ($users[$userId] ?? ['id' => $userId, 'username' => "user{$userId}@example.com", 'notifications' => 1, 'status' => 'a', 'role' => 20, 'clientId' => 0, 'modified' => null]);
         }
         $team = array_map(fn (int $userId) => $users[$userId], [1, 2, 3, 4, 5]);
 
         $projectRepo = $this->make(ProjectRepository::class, [
             'getUsersAssignedToProject' => fn () => $team,
+            'getUsersWithAccessToProject' => fn () => array_values(array_filter($users, fn ($u) => $u !== false && in_array($u['id'], $usersWithProjectAccess, true))),
             'getProject' => fn ($projectId) => $projectId == 5 ? ['id' => 5, 'name' => 'Acme', 'psettings' => 'restricted', 'clientId' => 3] : false,
-            'isUserAssignedToProject' => fn ($userId, $projectId) => $projectId == 5 && in_array((int) $userId, $usersWithProjectAccess, true),
+            'isUserAssignedToProject' => fn ($userId, $projectId) => $projectId == 5 && (
+                in_array((int) $userId, $usersWithProjectAccess, true)
+                || (isset($users[(int) $userId]['role']) && in_array(Roles::getRoleString($users[(int) $userId]['role']), [Roles::$admin, Roles::$owner], true))
+            ),
         ]);
         $userRepo = $this->make(UserRepository::class, [
             'getUser' => fn ($userId) => $users[(int) $userId] ?? false,
@@ -229,6 +234,7 @@ class ProjectsServiceTest extends TestCase
         $notification->message = 'Ada updated "Ship it"';
         $notification->url = ['url' => 'https://leantime.example.com/tickets/showTicket/42', 'text' => 'Open'];
         $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review', 'collaborators' => $collaborators];
+        $notification->recipientIds = $recipientIds;
 
         $this->makeService(
             projectRepo: $projectRepo,
@@ -240,6 +246,94 @@ class ProjectsServiceTest extends TestCase
         )->notifyProjectUsers($notification);
 
         return $seen;
+    }
+
+    public function test_notify_project_users_with_targeted_recipient_ids_only_delivers_to_allowlisted_users(): void
+    {
+        // When recipientIds is set (e.g. task assigned to user 2), only user 2 should receive notifications.
+        // User 6 is @mentioned in the description but must NOT bypass into recipients.
+        // Project messengers must NOT be called for targeted notifications.
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], recipientIds: [2]);
+
+        $this->assertSame([2], $seen['emailRecipients']);
+        $this->assertSame([2], $seen['pushRecipients']);
+        $this->assertSame([2], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+        $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
+    }
+
+    public function test_notify_project_users_delivers_targeted_notification_to_user_with_indirect_project_access(): void
+    {
+        // User 6 is NOT on the direct project team (not in getUsersAssignedToProject / $team),
+        // but has indirect project access (in usersWithProjectAccess, e.g. via 'all' or 'clients' settings).
+        // When assigned a task (recipientIds = [6]), they should receive the targeted notification.
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], recipientIds: [6]);
+
+        $this->assertSame([6], $seen['emailRecipients']);
+        $this->assertSame([6], $seen['pushRecipients']);
+        $this->assertSame([6], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+        $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
+    }
+
+    public function test_notify_project_users_delivers_targeted_notification_to_unassigned_admin_or_owner(): void
+    {
+        // User 7 is an admin (role 40) who is NOT on the direct team ($team is 1..5)
+        // and NOT explicitly listed in usersWithProjectAccess.
+        // Because admins/owners have implicit access to all projects in Leantime,
+        // assigning a task to them must deliver the targeted notification.
+        $seen = $this->runNotifyProjectUsers(
+            [],
+            usersWithProjectAccess: [1, 2, 3, 4, 5],
+            userOverrides: [7 => ['role' => 40]],
+            recipientIds: [7],
+        );
+
+        $this->assertSame([7], $seen['emailRecipients']);
+        $this->assertSame([7], $seen['pushRecipients']);
+        $this->assertSame([7], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+        $this->assertSame(0, $seen['messengerCalls'], 'Project messengers are not notified for targeted notifications');
+    }
+
+    public function test_notify_project_users_drops_targeted_recipient_without_project_access(): void
+    {
+        // User 7 is a regular editor (role 20) with no direct or indirect access to project 5.
+        // Targeted notification to user 7 must be dropped.
+        $seen = $this->runNotifyProjectUsers(
+            [],
+            usersWithProjectAccess: [1, 2, 3, 4, 5],
+            userOverrides: [7 => ['role' => 20]],
+            recipientIds: [7],
+        );
+
+        $this->assertSame([], $seen['emailRecipients'] ?? []);
+        $this->assertSame([], $seen['pushRecipients'] ?? []);
+        $this->assertSame([], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+        $this->assertSame(0, $seen['messengerCalls']);
+    }
+
+    public function test_notify_project_users_with_targeted_recipient_omits_author_self_notification(): void
+    {
+        // Author is user 1. When user 1 assigns a task to themselves (recipientIds = [1]),
+        // author exclusion must ensure no notifications are dispatched.
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5], recipientIds: [1]);
+
+        $this->assertSame([], $seen['emailRecipients'] ?? []);
+        $this->assertSame([], $seen['pushRecipients'] ?? []);
+        $this->assertSame([], array_column($seen['inAppNotifications'] ?? [], 'userId'));
+        $this->assertSame(0, $seen['messengerCalls']);
+    }
+
+    public function test_notify_project_users_rejects_malformed_allowlist_entries_without_coercion(): void
+    {
+        // Malformed entries like '2abc', true, 1.5, etc. must be rejected and not coerced into user IDs.
+        $seen = $this->runNotifyProjectUsers(
+            [],
+            usersWithProjectAccess: [1, 2, 3, 4, 5],
+            recipientIds: ['2abc', true, 0, -1, 1.5],
+        );
+
+        $this->assertSame([], $seen['emailRecipients'] ?? []);
+        $this->assertSame([], $seen['pushRecipients'] ?? []);
+        $this->assertSame([], array_column($seen['inAppNotifications'] ?? [], 'userId'));
     }
 
     /**

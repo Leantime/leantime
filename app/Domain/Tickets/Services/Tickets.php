@@ -2261,6 +2261,11 @@ class Tickets extends BaseService
             $notification->authorId = session('userdata.id') ?? -1;
             $notification->message = $message;
 
+            $assigneeId = (int) ($values['editorId'] ?? 0);
+            if ($assigneeId > 0) {
+                $notification->recipientIds = [$assigneeId];
+            }
+
             $this->projectService->notifyProjectUsers($notification);
 
             return $result;
@@ -2446,6 +2451,11 @@ class Tickets extends BaseService
                 $notification->authorId = session('userdata.id') ?? -1;
                 $notification->message = $message;
 
+                $assigneeId = (int) ($values['editorId'] ?? 0);
+                if ($assigneeId > 0) {
+                    $notification->recipientIds = [$assigneeId];
+                }
+
                 $this->projectService->notifyProjectUsers($notification);
 
                 return $addTicketResponse;
@@ -2609,6 +2619,16 @@ class Tickets extends BaseService
 
         // Update Ticket
         if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
+            $incomingEditorId = array_key_exists('editorId', $values)
+                && $values['editorId'] !== ''
+                && $values['editorId'] !== null
+                    ? (int) $values['editorId']
+                    : (int) $currentTicket->editorId;
+
+            $assigneeChanged =
+                $incomingEditorId > 0
+                && $incomingEditorId !== (int) $currentTicket->editorId;
+
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], strip_tags($values['headline']));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
             $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($values['headline']));
@@ -2620,11 +2640,17 @@ class Tickets extends BaseService
             ];
             $notification->entity = $values;
             $notification->module = 'tickets';
-            $notification->action = 'updated';
+            $notification->action = $assigneeChanged
+                ? 'assigned'
+                : 'updated';
             $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id') ?? -1;
             $notification->message = $message;
+
+            if ($assigneeChanged) {
+                $notification->recipientIds = [$incomingEditorId];
+            }
 
             $this->projectService->notifyProjectUsers($notification);
 

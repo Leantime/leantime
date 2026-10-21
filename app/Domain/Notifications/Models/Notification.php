@@ -89,6 +89,16 @@ class Notification
     public string $action = '';
 
     /**
+     * Optional explicit recipient allow-list (user IDs).
+     *
+     * When null, the notification enters the normal project-wide notification pipeline.
+     * When set, recipient candidates are restricted to this allow-list.
+     *
+     * @var array<int>|null
+     */
+    public ?array $recipientIds = null;
+
+    /**
      * Maps a notification module value to its user-facing category key.
      *
      * @param  string  $module  The module value from the notification (e.g. 'tickets', 'comments', 'goalcanvas').
