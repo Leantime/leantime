@@ -16,7 +16,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: redis, gd, ldap, mbstring, pdo_mysql, zip, bcmath, exif, pcntl
 
       - name: Run Unit Tests
