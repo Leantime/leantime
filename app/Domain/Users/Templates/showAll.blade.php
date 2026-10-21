@@ -1,17 +1,12 @@
 @extends($layout)
 @section('content')
 
-<div class="pageheader">
-
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headlines.users') !!}</h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('label.administration')">
+    {!! __('headlines.users') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -55,7 +50,7 @@
                         </td>
                         <td><a href="{{ BASE_URL }}/users/editUser/{{ $row['id'] }}">{{ $row['username'] }}</a></td>
                         <td>{{ $row['clientName'] }}</td>
-                        <td>{!! __('label.roles.' . $roles[$row['role']]) !!}</td>
+                        <td>{{ \Leantime\Domain\Auth\Models\Roles::label($row['role']) }}</td>
                         <td>@if (strtolower($row['status']) == 'a')
                             {!! __('label.active') !!}
                         @elseif (strtolower($row['status']) == 'i')
@@ -73,7 +68,7 @@
             @endforeach
             </tbody>
         </table>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

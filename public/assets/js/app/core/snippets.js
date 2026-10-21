@@ -96,7 +96,7 @@ leantime.snippets = (function () {
             element._tippy.destroy();
         }
     });
-    document.addEventListener('lt:ui:modal.loaded', function (event) { initInfoTips(event.detail.root); });
+    document.addEventListener('lt:ui:content.loaded', function (event) { initInfoTips(event.detail.root); });
 
     // forms.button-group segmented: expose the starting choice to assistive tech on render.
     var initSegmentedGroups = function (root) {
@@ -108,8 +108,8 @@ leantime.snippets = (function () {
         });
     };
     htmx.onLoad(initSegmentedGroups);
-    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
-    document.addEventListener('lt:ui:modal.loaded', function (event) { initSegmentedGroups(event.detail.root); });
+    // Content inserted outside an htmx swap (dialogs …): see leantime.initLoadedContent in app.js.
+    document.addEventListener('lt:ui:content.loaded', function (event) { initSegmentedGroups(event.detail.root); });
 
     // forms.button-group segmented: one picked option. Moves .active / aria-pressed to the clicked
     // button; the page's own click handler reacts to the choice.
@@ -130,7 +130,16 @@ leantime.snippets = (function () {
     // <details open> first renders; data-lt-open holds the rendered state so only a real change saves.
     document.addEventListener('toggle', function (event) {
         var details = event.target;
-        if (!details || !details.matches || !details.matches('details[data-lt-accordion]')) {
+        if (!details || !details.matches || !details.matches('.lt-accordion > details')) {
+            return;
+        }
+        // A DataTable set up while its section was closed has no column widths yet.
+        if (details.open && window.jQuery && jQuery.fn.dataTable) {
+            jQuery(details).find('table.dataTable').each(function () {
+                jQuery(this).DataTable().columns.adjust();
+            });
+        }
+        if (!details.hasAttribute('data-lt-accordion')) {
             return;
         }
         var state = details.open ? 'open' : 'closed';
@@ -166,8 +175,8 @@ leantime.snippets = (function () {
         });
     };
     htmx.onLoad(observeAccordionActions);
-    // Dialogs aren't htmx swaps; modals.js announces their content (lt:ui:modal.loaded).
-    document.addEventListener('lt:ui:modal.loaded', function (event) { observeAccordionActions(event.detail.root); });
+    // Content inserted outside an htmx swap (dialogs …): see leantime.initLoadedContent in app.js.
+    document.addEventListener('lt:ui:content.loaded', function (event) { observeAccordionActions(event.detail.root); });
     document.addEventListener('htmx:beforeCleanupElement', function (event) {
         if (accordionActionsObserver && event.target.matches && event.target.matches('.lt-accordion > .lt-accordion-actions')) {
             accordionActionsObserver.unobserve(event.target);
@@ -209,11 +218,43 @@ leantime.snippets = (function () {
 
     };
 
+    // Relative luminance (WCAG) of a #rrggbb color, null when it can't be parsed.
+    var relativeLuminance = function (hexColor) {
+        var match = /^#?([0-9a-f]{6})$/i.exec(hexColor || '');
+        if (!match) {
+            return null;
+        }
+
+        var channels = [0, 2, 4].map(function (offset) {
+            var value = parseInt(match[1].substr(offset, 2), 16) / 255;
+            return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
+        });
+
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    };
+
+    // Live preview of a color scheme. Applies the same contrast rules as sections/header.blade.php:
+    // a nav scrim when white text is below AA on an accent, and a dark primary-button label when
+    // white is below AA on accent1 and dark text reads better.
     var toggleColors = function (accent1, accent2) {
 
-        jQuery("#colorSchemeSetter").html(":root { --accent1: "+accent1+"; --accent2: "+accent2+"}")
+        var navNeedsScrim = [accent1, accent2].some(function (accent) {
+            var luminance = relativeLuminance(accent);
+            return luminance === null || 1.05 / (luminance + 0.05) < 4.5;
+        });
 
+        var css = ":root { --accent1: " + accent1 + "; --accent2: " + accent2 + "; --nav-scrim: " + (navNeedsScrim ? "0.22" : "0") + ";";
 
+        var primaryLuminance = relativeLuminance(accent1);
+        if (primaryLuminance !== null) {
+            var whiteLabelContrast = 1.05 / (primaryLuminance + 0.05);
+            var darkLabelContrast = (primaryLuminance + 0.05) / (0.0103 + 0.05);
+            if (whiteLabelContrast < 4.5 && darkLabelContrast > whiteLabelContrast) {
+                css += " --main-action-label-color: #1a1a1a;";
+            }
+        }
+
+        jQuery("#colorSchemeSetter").html(css + " }");
     };
 
 

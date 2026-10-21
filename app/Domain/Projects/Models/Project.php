@@ -31,8 +31,6 @@ class Project
 
     public $state;
 
-    public $menuType;
-
     public $numberOfTickets;
 
     public $sortIndex;
@@ -75,7 +73,6 @@ class Project
         // Project metadata
         $this->type = $data['type'] ?? '';
         $this->state = $data['state'] ?? '';
-        $this->menuType = $data['menuType'] ?? '';
         $this->status = $data['status'] ?? '';
 
         // Project metrics

@@ -8,6 +8,10 @@ use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Modules\Contracts\StoresProjectModules;
+use Leantime\Core\Modules\Module;
+use Leantime\Core\Modules\ModuleRegistry;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
@@ -96,11 +100,13 @@ class TimesheetsServiceTest extends TestCase
         ?UserRepository $userRepo = null,
         ?TicketRepository $ticketRepo = null,
         ?PermissionService $perms = null,
+        ?ProjectModules $projectModules = null,
     ): TimesheetService {
         $service = new TimesheetService(
             $timesheetsRepo ?? $this->make(TimesheetRepository::class),
             $userRepo ?? $this->make(UserRepository::class),
             $ticketRepo ?? $this->make(TicketRepository::class),
+            $projectModules ?? $this->allModulesOn(),
         );
         $service->setPermissionService($perms ?? $this->allowingPermissions());
 
@@ -860,5 +866,138 @@ class TimesheetsServiceTest extends TestCase
         $service = $this->makeService(timesheetsRepo: $repo, ticketRepo: $ticketRepo);
 
         $this->assertSame([], $this->collectEvents(TimerStopped::class, fn () => $service->punchOut(3)));
+    }
+
+    /** Project modules where project 9 has the Timesheets module switched off. */
+    private function timesheetsOffInProject9(): ProjectModules
+    {
+        $registry = new ModuleRegistry;
+        $registry->register(new Module(id: 'timesheets', title: 'Time tracking'));
+
+        $store = $this->makeEmpty(StoresProjectModules::class, [
+            'getModuleOverrides' => fn (int $projectId): array => $projectId === 9 ? ['timesheets' => false] : [],
+        ]);
+
+        return new ProjectModules($registry, $store);
+    }
+
+    public function test_time_writes_are_refused_in_a_project_with_timesheets_switched_off(): void
+    {
+        $repo = $this->make(TimesheetRepository::class, [
+            'addTime' => function () {
+                $this->fail('no time may be added in a project with Timesheets off');
+            },
+            'upsertTimesheetEntry' => function () {
+                $this->fail('no time may be upserted in a project with Timesheets off');
+            },
+            'updateTime' => function () {
+                $this->fail('no entry may be written in a project with Timesheets off');
+            },
+            'punchIn' => function () {
+                $this->fail('no timer may start in a project with Timesheets off');
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 9]),
+        ]);
+        // A project member (tickets.view) with full time rights: only the module says no.
+        $service = $this->makeService(
+            timesheetsRepo: $repo,
+            ticketRepo: $ticketRepo,
+            perms: $this->permissionsGranting([...self::EDITOR_KEYS, TimesheetsPermissions::MANAGE, 'tickets.view']),
+            projectModules: $this->timesheetsOffInProject9(),
+        );
+
+        $calls = [
+            'logTime' => fn () => $service->logTime(3, ['date' => '2026-01-01', 'hours' => 1, 'kind' => 'GENERAL_BILLABLE']),
+            'upsertTime' => fn () => $service->upsertTime(3, ['date' => '2026-01-01', 'hours' => 1, 'kind' => 'GENERAL_BILLABLE']),
+            'addTime' => fn () => $service->addTime(['ticket' => 3, 'hours' => 1]),
+            'updateTime' => fn () => $service->updateTime(['ticket' => 3, 'hours' => 1]),
+            'punchIn' => fn () => $service->punchIn(3),
+        ];
+
+        foreach ($calls as $method => $call) {
+            try {
+                $call();
+                $this->fail("$method must throw in a project with Timesheets off");
+            } catch (AuthorizationException $e) {
+                $this->assertSame('notifications.timesheets_switched_off', $e->getMessage());
+            }
+        }
+    }
+
+    public function test_time_is_booked_in_a_project_with_timesheets_on(): void
+    {
+        $added = [];
+        $repo = $this->make(TimesheetRepository::class, [
+            'addTime' => function (array $values) use (&$added) {
+                $added[] = $values;
+
+                return true;
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 4, 'projectId' => 1]),
+        ]);
+        $service = $this->makeService(
+            timesheetsRepo: $repo,
+            ticketRepo: $ticketRepo,
+            perms: $this->permissionsGranting([...self::EDITOR_KEYS, 'tickets.view']),
+            projectModules: $this->timesheetsOffInProject9(),
+        );
+
+        $service->addTime(['ticket' => 4, 'hours' => 2]);
+
+        $this->assertCount(1, $added);
+    }
+
+    public function test_stopping_a_timer_in_a_project_with_timesheets_switched_off_discards_it(): void
+    {
+        $discarded = [];
+        $repo = $this->make(TimesheetRepository::class, [
+            'punchOut' => function () {
+                $this->fail('no time may be booked in a project with Timesheets off');
+            },
+            'discardPunch' => function ($ticketId) use (&$discarded) {
+                $discarded[] = $ticketId;
+
+                return true;
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 9]),
+        ]);
+        $service = $this->makeService(
+            timesheetsRepo: $repo,
+            ticketRepo: $ticketRepo,
+            perms: $this->permissionsGranting([...self::EDITOR_KEYS, 'tickets.view']),
+            projectModules: $this->timesheetsOffInProject9(),
+        );
+
+        $this->assertFalse($service->punchOut(3));
+        $this->assertSame([3], $discarded);
+    }
+
+    public function test_entries_in_a_project_with_timesheets_switched_off_can_still_be_deleted(): void
+    {
+        $deleted = [];
+        $repo = $this->make(TimesheetRepository::class, [
+            'getTimesheet' => fn () => ['id' => 7, 'userId' => 1, 'ticketId' => 3],
+            'deleteTime' => function ($id) use (&$deleted) {
+                $deleted[] = $id;
+            },
+        ]);
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getTicket' => fn () => new TicketModel(['id' => 3, 'projectId' => 9]),
+        ]);
+        $service = $this->makeService(
+            timesheetsRepo: $repo,
+            ticketRepo: $ticketRepo,
+            perms: $this->permissionsGranting([...self::EDITOR_KEYS, 'tickets.view']),
+            projectModules: $this->timesheetsOffInProject9(),
+        );
+
+        $this->assertTrue($service->deleteTime(7));
+        $this->assertSame([7], $deleted);
     }
 }

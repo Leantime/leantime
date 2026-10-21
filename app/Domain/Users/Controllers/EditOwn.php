@@ -44,7 +44,7 @@ class EditOwn extends Controller
 
     /**
      * Saves the submitted section of the own-profile form (profile, password,
-     * theme, locale or notifications) and redirects back to its tab with a
+     * theme, locale, notifications or webhook) and redirects back to its tab with a
      * success or error notification.
      *
      * @throws \Exception
@@ -120,12 +120,21 @@ class EditOwn extends Controller
             if (isset($_POST['savenotifications'])) {
                 $tab = '#notifications';
 
+                $this->userService->saveOwnNotificationPreferences($this->userId, $_POST);
+
+                $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
+            }
+
+            // Save personal webhook
+            if (isset($_POST['savewebhooks'])) {
+                $tab = '#webhooks';
+
                 try {
-                    $this->userService->saveOwnNotificationPreferences($this->userId, $_POST);
+                    $this->userService->saveOwnWebhookSettings($this->userId, $_POST);
 
                     $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
                 } catch (ValidationException $e) {
-                    // The only validated field is the personal webhook URL; nothing was saved.
+                    // The only validated field is the webhook URL; nothing was saved.
                     $this->tpl->setNotification($this->language->__('notification.invalid_webhook_url'), 'error');
                 } catch (WebhookSettingNotSavedException $e) {
                     // Already logged without the URL; nothing was saved.

@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -23,19 +24,32 @@ class GetFullProjectOverviewTool extends Tool
         private Tickets $ticketsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID to get full overview for.')
-            ->required()
-            ->boolean('includeTimesheets')->description('Whether to include timesheet data in the overview. Default false.')
-            ->string('dateFrom')->description('Start date for timesheet data if included. ISO8601 format (example: 2024-04-30T15:00:00-04:00).')
-            ->string('dateTo')->description('End date for timesheet data if included. ISO8601 format (example: 2024-04-30T15:00:00-04:00).');
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID to get full overview for.')
+                ->required(),
+            'includeTimesheets' => $schema->boolean()
+                ->description('Whether to include timesheet data in the overview. Default false.'),
+            'dateFrom' => $schema->string()
+                ->description('Start date for timesheet data if included. ISO8601 format (example: 2024-04-30T15:00:00-04:00).'),
+            'dateTo' => $schema->string()
+                ->description('End date for timesheet data if included. ISO8601 format (example: 2024-04-30T15:00:00-04:00).'),
+        ];
     }
 
     public function name(): string
     {
         return 'getFullProjectOverview';
+    }
+
+    public function title(): string
+    {
+        return 'Get Full Project Overview';
     }
 
     public function description(): string
@@ -46,8 +60,10 @@ class GetFullProjectOverviewTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
         $includeTimesheets = $arguments['includeTimesheets'] ?? false;
         $dateFrom = ($arguments['dateFrom'] ?? '');
@@ -60,7 +76,7 @@ class GetFullProjectOverviewTool extends Tool
             // Get project details (equivalent to getProject tool)
             $project = $this->projectService->getProject($projectId);
             if (! $project) {
-                return ToolResult::error("Project with ID {$projectId} not found.");
+                return Response::error("Project with ID {$projectId} not found.");
             }
 
             $response .= "## Project Details\n";
@@ -156,10 +172,10 @@ class GetFullProjectOverviewTool extends Tool
                 $response .= "*Could not retrieve task statistics.*\n\n";
             }
 
-            return ToolResult::text($response);
+            return Response::text($response);
 
         } catch (\Exception $e) {
-            return ToolResult::error('Error retrieving project overview: '.$e->getMessage());
+            return Response::error('Error retrieving project overview: '.$e->getMessage());
         }
     }
 

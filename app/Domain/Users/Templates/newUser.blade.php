@@ -15,30 +15,30 @@
 
                 <x-global::elements.section-header>{!! __('label.profile_information') !!}</x-global::elements.section-header>
 
-                    <label for="firstname">{!! __('label.firstname') !!}</label> <x-global::forms.text-input
+                    <x-global::forms.label for="firstname">{!! __('label.firstname') !!}</x-global::forms.label> <x-global::forms.text-input
                         name="firstname" id="firstname"
                         value="{{ $values['firstname'] }}" /><br />
 
-                    <label for="lastname">{!! __('label.lastname') !!}</label> <x-global::forms.text-input
+                    <x-global::forms.label for="lastname">{!! __('label.lastname') !!}</x-global::forms.label> <x-global::forms.text-input
                         name="lastname" id="lastname"
                         value="{{ $values['lastname'] }}" /><br />
 
-            <label for="role">{!! __('label.role') !!}</label>
+            <x-global::forms.label for="role">{!! __('label.role') !!}</x-global::forms.label>
             <x-global::forms.select name="role" id="role">
 
                 @foreach ($roles as $key => $role)
-                    @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30)
+                    @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && \Leantime\Domain\Auth\Models\Roles::getRoleLevel($key) > 30)
                         @continue
                     @endif
                         <option value="{{ $key }}"
                         @if ($key == $values['role']) selected="selected" @endif>
-                        {!! __('label.roles.' . $role) !!}
+                        {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
                     </option>
                 @endforeach
 
             </x-global::forms.select> <br />
 
-            <label for="client">{!! __('label.client') !!}</label>
+            <x-global::forms.label for="client">{!! __('label.client') !!}</x-global::forms.label>
             <x-global::forms.select name='client' id="client">
                 @if ($login::userIsAtLeast('admin'))
                     <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
@@ -57,22 +57,22 @@
                 <x-global::elements.section-header>{!! __('label.contact_information') !!}</x-global::elements.section-header>
 
 
-                    <label for="user">{!! __('label.email') !!}</label> <x-global::forms.text-input
+                    <x-global::forms.label for="user">{!! __('label.email') !!}</x-global::forms.label> <x-global::forms.text-input
                         name="user" id="user" value="{{ $values['user'] }}" /><br />
 
-                    <label for="phone">{!! __('label.phone') !!}</label> <x-global::forms.text-input
+                    <x-global::forms.label for="phone">{!! __('label.phone') !!}</x-global::forms.label> <x-global::forms.text-input
                         name="phone" id="phone"
                         value="{{ $values['phone'] }}" /><br />
             <br/>
 
             <x-global::elements.section-header>{!! __('label.employee_information') !!}</x-global::elements.section-header>
-                <label for="jobTitle">{!! __('label.jobTitle') !!}</label> <x-global::forms.text-input
+                <x-global::forms.label for="jobTitle">{!! __('label.jobTitle') !!}</x-global::forms.label> <x-global::forms.text-input
                     name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
 
-                <label for="jobLevel">{!! __('label.jobLevel') !!}</label> <x-global::forms.text-input
+                <x-global::forms.label for="jobLevel">{!! __('label.jobLevel') !!}</x-global::forms.label> <x-global::forms.text-input
                     name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" /><br />
 
-                <label for="department">{!! __('label.department') !!}</label> <x-global::forms.text-input
+                <x-global::forms.label for="department">{!! __('label.department') !!}</x-global::forms.label> <x-global::forms.text-input
                     name="department" id="department" value="{{ $values['department'] }}" /><br />
 
 
@@ -88,47 +88,37 @@
 
                 <div class="scrollableItemList">
                     @php
-                        $currentClient = '';
-                        $i = 0;
-                    @endphp
-                    @foreach ($allProjects as $row)
-                        @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $row['clientId'] !== session('userdata.clientId'))
-                            @continue
-                        @endif
-
-                        @php
-                            if ($row['clientName'] == '') {
-                                $row['clientName'] = 'Not assigned to client';
+                        // One collapsible section per client; projects without a client go under "Not assigned to a client".
+                        $projectsByClient = [];
+                        foreach ($allProjects as $row) {
+                            if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $row['clientId'] !== session('userdata.clientId')) {
+                                continue;
                             }
-                        @endphp
-                        @if ($currentClient != $row['clientName'])
-                            @if ($i > 0)
+                            $clientName = (string) ($row['clientName'] ?? '') !== '' ? $row['clientName'] : __('label.no_clients');
+                            $projectsByClient[$clientName][] = $row;
+                        }
+                    @endphp
+                    @foreach ($projectsByClient as $clientName => $clientProjects)
+                        <x-global::elements.accordion :title="$clientName" open>
+                            @foreach ($clientProjects as $row)
+                                <div class="item" style="padding:10px 0px;">
+                                    <input type="checkbox" name="projects[]" id='project_{{ $row['id'] }}' value="{{ $row['id'] }}"
+                                    @if (is_array($projects) === true && in_array($row['id'], $projects) === true)
+                                        checked='checked'
+                                    @endif
+                                    />
+                                    <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
+                                        <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}' />
+                                    </span>
+
+                                    <x-global::forms.label for="project_{{ $row['id'] }}" style="margin-top:-11px">
+                                        <small>{{ $row['type'] }}</small><br />
+                                        {{ $row['name'] }}</x-global::forms.label>
+                                    <div class="clearall"></div>
                                 </div>
-                            @endif
-                            <h3 id='accordion_link_{{ $i }}'>
-                                <a href='#' onclick='accordionToggle({{ $i }});' id='accordion_toggle_{{ $i }}'><i class='fa fa-angle-down'></i> {{ $row['clientName'] }}</a>
-                            </h3>
-                            <div id='accordion_{{ $i }}' class='simpleAccordionContainer'>
-                            @php $currentClient = $row['clientName']; @endphp
-                        @endif
-                        <div class="item" style="padding:10px 0px;">
-                            <input type="checkbox" name="projects[]" id='project_{{ $row['id'] }}' value="{{ $row['id'] }}"
-                            @if (is_array($projects) === true && in_array($row['id'], $projects) === true)
-                                checked='checked'
-                            @endif
-                            />
-                            <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
-                                <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}' />
-                            </span>
-
-                            <label for="project_{{ $row['id'] }}" style="margin-top:-11px">
-                                <small>{{ $row['type'] }}</small><br />
-                                {{ $row['name'] }}</label>
-                            <div class="clearall"></div>
-                        </div>
-                        @php $i++; @endphp
+                            @endforeach
+                        </x-global::elements.accordion>
                     @endforeach
-
                 </div>
 
 
@@ -196,23 +186,6 @@
 
 </script>
 
-<script>
-    function accordionToggle(id) {
-
-        let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
-
-        if(currentLink.hasClass("fa-angle-right")){
-            currentLink.removeClass("fa-angle-right");
-            currentLink.addClass("fa-angle-down");
-            jQuery('#accordion_'+id).slideDown("fast");
-        }else{
-            currentLink.removeClass("fa-angle-down");
-            currentLink.addClass("fa-angle-right");
-            jQuery('#accordion_'+id).slideUp("fast");
-        }
-
-    }
-</script>
 @endpush
 @endonce
 

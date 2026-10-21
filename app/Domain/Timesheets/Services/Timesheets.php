@@ -11,6 +11,8 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\MissingParameterException;
+use Leantime\Core\Language;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
@@ -41,6 +43,11 @@ use Leantime\Domain\Users\Repositories\Users;
  * ticket view (ShowTicket, reachable by readonly users). They are scoped instead by
  * {@see authorizeTicketView()}: tickets.view on the ticket's REAL project, so a caller-supplied
  * ticket id cannot read hours across projects the caller is not a member of.
+ *
+ * Project modules: when a project has the Timesheets module switched off, no time can be booked
+ * on its tickets (log, add, edit, timer start/stop all go through
+ * {@see authorizeTicketForTimeEntry()}). Existing entries stay readable, deletable and
+ * invoiceable: they are payroll and billing records.
  */
 class Timesheets extends BaseService
 {
@@ -67,7 +74,8 @@ class Timesheets extends BaseService
     public function __construct(
         TimesheetRepository $timesheetsRepo,
         Users $userRepo,
-        TicketRepository $ticketRepo
+        TicketRepository $ticketRepo,
+        private ProjectModules $projectModules,
     ) {
         $this->timesheetsRepo = $timesheetsRepo;
         $this->userRepo = $userRepo;
@@ -544,7 +552,7 @@ class Timesheets extends BaseService
                 $kind = $postData['kindId'];
 
                 if ($ticketId == 0 && $hours > 0) {
-                    $notifications[] = ['type' => 'error', 'message' => 'Task ID is required for new entries'];
+                    $notifications[] = ['type' => 'error', 'message' => __('notifications.task_id_required_new_entries')];
 
                     return $notifications;
                 }
@@ -571,9 +579,9 @@ class Timesheets extends BaseService
 
             try {
                 $this->upsertTime((int) $ticketId, $values);
-                $notifications[] = ['type' => 'success', 'message' => 'Timesheet saved successfully'];
+                $notifications[] = ['type' => 'success', 'message' => __('notifications.timesheet_saved_successfully')];
             } catch (\Exception $e) {
-                $notifications[] = ['type' => 'error', 'message' => 'Error logging time: '.$e->getMessage()];
+                $notifications[] = ['type' => 'error', 'message' => sprintf(__('notifications.error_logging_time'), $e->getMessage())];
                 report($e);
             }
         }
@@ -596,12 +604,15 @@ class Timesheets extends BaseService
      *
      * The timesheets.* capabilities are GLOBAL (they carry no project membership), so on their
      * own they would let a caller book time onto any ticket id in any project. This loads the
-     * ticket server-side and requires tickets.view (role + membership) in ITS project.
+     * ticket server-side and requires tickets.view (role + membership) in ITS project, and the
+     * Timesheets module to be on there (Project settings -> Modules). The module check comes
+     * after the membership check, so a non-member learns nothing about the project's settings.
      *
      * @param  mixed  $ticketId  The ticket id from the payload.
      * @return int The ticket's project id.
      *
-     * @throws AuthorizationException When the id is invalid, the ticket is unknown, or not accessible.
+     * @throws AuthorizationException When the id is invalid, the ticket is unknown, not accessible,
+     *                                or its project has Timesheets switched off.
      */
     private function authorizeTicketForTimeEntry(mixed $ticketId): int
     {
@@ -616,6 +627,10 @@ class Timesheets extends BaseService
         }
 
         $this->authorize(TicketsPermissions::VIEW, (int) $ticket->projectId);
+
+        if (! $this->projectModules->isEnabled('timesheets', (int) $ticket->projectId)) {
+            throw new AuthorizationException(app(Language::class)->__('notifications.timesheets_switched_off'));
+        }
 
         return (int) $ticket->projectId;
     }
@@ -1213,9 +1228,7 @@ class Timesheets extends BaseService
                 $values['paid'] = 1;
             }
             if (! empty($post['paidDate'])) {
-                $date = dtHelper()->parseUserDateTime($post['paidDate'], 'start');
-                $date->setTimezone('UTC');
-                $values['paidDate'] = $date->formatDateTimeForDb();
+                $values['paidDate'] = dtHelper()->parseUserDateTime($post['paidDate'], 'start')->formatDateTimeForDb();
             } else {
                 $values['paidDate'] = dtHelper()->userNow()->formatDateTimeForDb();
             }

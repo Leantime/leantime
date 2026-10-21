@@ -3,9 +3,11 @@
 namespace Leantime\Core\Auth\Permissions;
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\ServiceProvider;
 use Leantime\Core\Auth\Contracts\ChecksProjectAccess;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
@@ -34,6 +36,19 @@ class PermissionServiceProvider extends ServiceProvider
     {
         $this->registerPermissionGate();
         $this->injectBaseServiceDependencies();
+        $this->forgetRolesBetweenQueuedJobs();
+    }
+
+    /**
+     * A queue worker lives across many jobs, so its in-memory role table could outlast a role
+     * change made elsewhere (a lowered level would keep its old rank). Start every job from the
+     * shared cache, which role writes flush. Web requests start fresh anyway.
+     */
+    protected function forgetRolesBetweenQueuedJobs(): void
+    {
+        $this->app->make('events')->listen(JobProcessing::class, function (): void {
+            Roles::forgetLoadedRoles();
+        });
     }
 
     /**

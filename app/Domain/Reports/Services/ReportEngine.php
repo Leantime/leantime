@@ -7,6 +7,7 @@ namespace Leantime\Domain\Reports\Services;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Models\ReportPeriod;
@@ -34,6 +35,7 @@ class ReportEngine extends BaseService
         private TicketRepository $ticketRepository,
         private ProjectService $projectService,
         private GoalcanvasService $goalService,
+        private ProjectModules $projectModules,
     ) {}
 
     /**
@@ -213,7 +215,8 @@ class ReportEngine extends BaseService
     }
 
     /**
-     * Goals of the given projects with metric progress and roll-up values resolved.
+     * Goals of the given projects with metric progress and roll-up values resolved. Projects with
+     * the Goals module switched off are left out.
      *
      * @param  int[]  $projectIds
      * @return array{goals: array<int, object>, byProject: array<int, array<int, object>>, counts: array<string, int>}
@@ -225,7 +228,13 @@ class ReportEngine extends BaseService
         $projectIds = $this->filterAuthorizedProjects($projectIds);
         [$userId, $clientId] = $this->requestContext();
 
-        $goals = $this->reportEngineRepository->getGoalsForProjects($projectIds, $userId, $clientId);
+        // Projects with the Goals module switched off have no goals to report.
+        $goalProjectIds = array_values(array_filter(
+            $projectIds,
+            fn (int $projectId) => $this->projectModules->isEnabled('goalcanvas', $projectId)
+        ));
+
+        $goals = $this->reportEngineRepository->getGoalsForProjects($goalProjectIds, $userId, $clientId);
 
         $byProject = [];
         $counts = ['ontrack' => 0, 'atrisk' => 0, 'miss' => 0];
@@ -383,6 +392,9 @@ class ReportEngine extends BaseService
     private function filterAuthorizedProjects(array $projectIds): array
     {
         $projectIds = array_values(array_unique(array_map('intval', $projectIds)));
+
+        // The permission check reads each project's module switches: load them in one query.
+        $this->projectModules->preload($projectIds);
 
         return array_values(array_filter(
             $projectIds,

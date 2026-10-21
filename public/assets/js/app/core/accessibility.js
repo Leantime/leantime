@@ -23,7 +23,7 @@ leantime.accessibilityController = (function () {
 
             var inputId = $originalInput.attr('id');
             var $label = jQuery('label[for="' + inputId + '"]');
-            var labelText = $label.length ? $label.text().trim() : 'Enter tags';
+            var labelText = $label.length ? $label.text().trim() : leantime.i18n.__('label.enter_tags');
 
             $tagsInput.attr({
                 'role': 'list',
@@ -38,7 +38,7 @@ leantime.accessibilityController = (function () {
             // Make tag input accessible
             var $input = $tagsInput.find('input');
             $input.attr({
-                'aria-label': 'Add new tag',
+                'aria-label': leantime.i18n.__('label.add_new_tag'),
                 'aria-describedby': inputId + '-help'
             });
 
@@ -46,7 +46,7 @@ leantime.accessibilityController = (function () {
             if (inputId && !jQuery('#' + inputId + '-help').length) {
                 $tagsInput.after(
                     '<span id="' + inputId + '-help" class="sr-only">' +
-                    'Type and press enter to add tags. Press backspace to remove the last tag.' +
+                    leantime.i18n.__('text.tags_input_help') +
                     '</span>'
                 );
             }
@@ -65,7 +65,7 @@ leantime.accessibilityController = (function () {
 
             $input.attr({
                 'role': 'textbox',
-                'aria-label': labelText || 'Select date',
+                'aria-label': labelText || leantime.i18n.__('label.select_date'),
                 'aria-describedby': inputId + '-help'
             });
 
@@ -73,7 +73,7 @@ leantime.accessibilityController = (function () {
             if (inputId && !jQuery('#' + inputId + '-help').length) {
                 $input.after(
                     '<span id="' + inputId + '-help" class="sr-only">' +
-                    'Date input. Use arrow keys to navigate calendar. Press enter to select date.' +
+                    leantime.i18n.__('text.date_input_help') +
                     '</span>'
                 );
             }
@@ -86,7 +86,7 @@ leantime.accessibilityController = (function () {
                 if ($widget.is(':visible')) {
                     $widget.attr({
                         'role': 'dialog',
-                        'aria-label': 'Choose date',
+                        'aria-label': leantime.i18n.__('label.choose_date'),
                         'aria-modal': 'true'
                     });
                 }
@@ -108,12 +108,12 @@ leantime.accessibilityController = (function () {
 
             // If no label exists, create ARIA label from context
             if (!jQuery('label[for="' + id + '"]').length) {
-                var labelText = 'Time';
+                var labelText = leantime.i18n.__('label.time');
 
                 // Try to infer from nearby elements
                 var $prevLabel = $timeInput.closest('.form-group').find('label').first();
                 if ($prevLabel.length) {
-                    labelText = $prevLabel.text().trim() + ' time';
+                    labelText = leantime.i18n.__('label.field_time').replace('%s', function () { return $prevLabel.text().trim(); });
                 }
 
                 $timeInput.attr('aria-label', labelText);
@@ -136,7 +136,7 @@ leantime.accessibilityController = (function () {
             if (headline) {
                 $card.attr({
                     'role': 'article',
-                    'aria-label': 'Task: ' + headline
+                    'aria-label': leantime.i18n.__('label.task_aria').replace('%s', function () { return headline; })
                 });
             }
 

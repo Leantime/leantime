@@ -2,19 +2,16 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
-    <div class="pagetitle">
-       <h1>Integrations</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-circle-nodes">
+    {{ __('headlines.integrations') }}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
-        <h5 class="subtitle">Sync Leantime with your external applications</h5>
-        <p>Available Integrations</p>
+        <x-global::elements.section-header as="h5">{{ __('headlines.integrations_sync') }}</x-global::elements.section-header>
+        <p>{{ __('label.available_integrations') }}</p>
 
         <div class="row">
             @foreach ($providers as $provider)
@@ -25,7 +22,7 @@
                         </div>
                         <span class="userName">
                             <strong>{{ $provider->name }}</strong>
-                            <br /><small>Available methods: {{ implode(', ', $provider->methods) }}</small>
+                            <br /><small>{{ sprintf(__('label.available_methods'), implode(', ', $provider->methods)) }}</small>
                             <br /><br />
                             {!! $provider->description !!}
                         </span>
@@ -34,7 +31,7 @@
                         @if (isset($provider->button))
                             <x-global::forms.button tag="a" link="{{ $provider->button['url'] }}" contentRole="primary">{{ $provider->button['text'] }}</x-global::forms.button>
                         @else
-                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" contentRole="primary">Create New Integration</x-global::forms.button>
+                            <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" contentRole="primary">{{ __('buttons.create_new_integration') }}</x-global::forms.button>
                         @endif
 
                         <div class="clearall"></div>
@@ -43,7 +40,7 @@
             @endforeach
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 
     {{-- Existing Integrations section placeholder --}}
 

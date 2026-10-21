@@ -5,6 +5,10 @@ namespace Unit\app\Domain\Goalcanvas\Services;
 use Codeception\Stub\Expected;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Modules\Contracts\StoresProjectModules;
+use Leantime\Core\Modules\Module;
+use Leantime\Core\Modules\ModuleRegistry;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -32,7 +36,7 @@ class GoalcanvasServiceTest extends TestCase
 
     private function service(GoalcanvaRepository $repo, ?PermissionService $perms = null, ?ProjectService $projects = null): GoalcanvasService
     {
-        $service = new GoalcanvasService($repo, $projects ?? $this->projectsWithAccess([]));
+        $service = new GoalcanvasService($repo, $projects ?? $this->projectsWithAccess([]), $this->allModulesOn());
         $service->setPermissionService($perms ?? $this->allowingPermissions());
 
         return $service;
@@ -132,14 +136,34 @@ class GoalcanvasServiceTest extends TestCase
         $repo = $this->make(GoalcanvaRepository::class, [
             'getCanvasItemProjectId' => fn () => 9,
             'getCanvasItemsByKPI' => fn () => [
-                ['setting' => 'linkonly', 'currentValue' => 10.0, 'childCurrentValue' => 999.0],
-                ['setting' => 'linkAndReport', 'currentValue' => 0.0, 'childCurrentValue' => 5.0],
+                ['id' => 2, 'setting' => 'linkonly', 'currentValue' => 10.0, 'childCurrentValue' => 999.0],
+                ['id' => 3, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'childCurrentValue' => 5.0],
             ],
         ]);
 
         $sum = $this->service($repo)->getChildGoalsForReporting(1);
 
         $this->assertEqualsWithDelta(15.0, $sum, 0.01);
+    }
+
+    public function test_child_goal_reporting_counts_a_linkonly_goal_once_whatever_its_own_children(): void
+    {
+        // The KPI query returns one row per (linked goal, goal linked to it). A linkonly goal with
+        // two goals under it comes back twice but its own value counts once; a linkAndReport goal
+        // contributes each of its children.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 9,
+            'getCanvasItemsByKPI' => fn () => [
+                ['id' => 2, 'setting' => 'linkonly', 'currentValue' => 10.0, 'childId' => 20, 'childCurrentValue' => 1.0],
+                ['id' => 2, 'setting' => 'linkonly', 'currentValue' => 10.0, 'childId' => 21, 'childCurrentValue' => 2.0],
+                ['id' => 3, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'childId' => 30, 'childCurrentValue' => 4.0],
+                ['id' => 3, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'childId' => 31, 'childCurrentValue' => 5.0],
+            ],
+        ]);
+
+        $sum = $this->service($repo)->getChildGoalsForReporting(1);
+
+        $this->assertEqualsWithDelta(19.0, $sum, 0.01);
     }
 
     // ---------------------------------------------------------------------
@@ -950,5 +974,87 @@ class GoalcanvasServiceTest extends TestCase
         $this->service($repo)->createGoalboard(['title' => 'Q4', 'projectId' => 3, 'author' => 999]);
 
         $this->assertSame(42, $captured['author']);
+    }
+
+    /** Project modules where project 5 has the Goals module switched off. */
+    private function goalsOffInProject5(): ProjectModules
+    {
+        $registry = new ModuleRegistry;
+        $registry->register(new Module(id: 'goalcanvas', title: 'Goals', routes: ['goalcanvas'], permissionDomain: 'goals'));
+
+        $store = $this->makeEmpty(StoresProjectModules::class, [
+            'getModuleOverrides' => fn (int $projectId): array => $projectId === 5 ? ['goalcanvas' => false] : [],
+        ]);
+
+        return new ProjectModules($registry, $store);
+    }
+
+    public function test_goal_reads_across_projects_skip_projects_with_goals_switched_off(): void
+    {
+        // MCP tools call these in-process, past the permission hook, so the service filters itself.
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getAllAccountGoals' => fn () => [
+                ['id' => 1, 'projectId' => 5, 'startDate' => null, 'endDate' => null, 'created' => null, 'modified' => '2026-10-17 10:00:00'],
+                ['id' => 2, 'projectId' => 6, 'startDate' => null, 'endDate' => null, 'created' => null, 'modified' => '2026-10-17 10:00:00'],
+            ],
+            'getAllAvailableKPIs' => fn () => [
+                ['id' => 3, 'projectId' => 5, 'description' => 'KPI in 5', 'projectName' => 'P5', 'boardTitle' => 'B'],
+                ['id' => 4, 'projectId' => 6, 'description' => 'KPI in 6', 'projectName' => 'P6', 'boardTitle' => 'B'],
+            ],
+        ]);
+
+        $service = new GoalcanvasService($repo, $this->projectsWithAccess([5, 6]), $this->goalsOffInProject5());
+        $service->setPermissionService($this->allowingPermissions());
+
+        $goals = $service->pollGoals();
+        $this->assertSame([0], array_keys($goals), 'stays a list, so JSON-RPC returns an array');
+        $this->assertSame(2, $goals[0]['id']);
+        $this->assertSame([4], array_keys($service->getParentKPIs(6)));
+        $this->assertSame([], $service->getParentKPIs(5));
+    }
+
+    public function test_linked_goals_skip_projects_with_goals_switched_off(): void
+    {
+        $child = fn (int $id, int $projectId, string $childId = '', int $childProjectId = 0): array => [
+            'id' => $id, 'title' => "Goal $id", 'startValue' => 0, 'endValue' => 10, 'currentValue' => 5,
+            'metricType' => 'number', 'boardTitle' => 'B', 'canvasId' => 1, 'projectName' => "P$projectId",
+            'projectId' => $projectId,
+            'childId' => $childId, 'childTitle' => "Goal $childId", 'childStartValue' => 0, 'childEndValue' => 10,
+            'childCurrentValue' => 5, 'childMetricType' => 'number', 'childBoardTitle' => 'B', 'childCanvasId' => 1,
+            'childProjectName' => "P$childProjectId", 'childProjectId' => $childProjectId,
+        ];
+
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 6,
+            'getCanvasItemsByKPI' => fn () => [
+                $child(10, 6, '20', 5),   // child in an enabled project, grandchild in project 5 (off)
+                $child(11, 5, '21', 6),   // child in project 5 (off): skipped with its own child
+                $child(12, 6, '22', 6),
+            ],
+        ]);
+
+        $service = new GoalcanvasService($repo, $this->projectsWithAccess([5, 6]), $this->goalsOffInProject5());
+        $service->setPermissionService($this->allowingPermissions());
+
+        $this->assertSame([10, 12, 22], array_keys($service->getChildrenbyKPI(1)));
+    }
+
+    public function test_child_goal_reporting_skips_projects_with_goals_switched_off(): void
+    {
+        $repo = $this->make(GoalcanvaRepository::class, [
+            'getCanvasItemProjectId' => fn () => 6,
+            'getCanvasItemsByKPI' => fn () => [
+                ['id' => 2, 'setting' => 'linkonly', 'currentValue' => 10.0, 'projectId' => 6, 'childCurrentValue' => null, 'childProjectId' => null],
+                ['id' => 3, 'setting' => 'linkonly', 'currentValue' => 100.0, 'projectId' => 5, 'childCurrentValue' => null, 'childProjectId' => null],
+                ['id' => 4, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'projectId' => 6, 'childCurrentValue' => 3.0, 'childProjectId' => 6],
+                ['id' => 4, 'setting' => 'linkAndReport', 'currentValue' => 0.0, 'projectId' => 6, 'childCurrentValue' => 1000.0, 'childProjectId' => 5],
+            ],
+        ]);
+
+        $service = new GoalcanvasService($repo, $this->projectsWithAccess([5, 6]), $this->goalsOffInProject5());
+        $service->setPermissionService($this->allowingPermissions());
+
+        // Only the project-6 goals count: 10 (linkonly) + 3 (rolled-up grandchild in project 6).
+        $this->assertEqualsWithDelta(13.0, $service->getChildGoalsForReporting(1), 0.01);
     }
 }

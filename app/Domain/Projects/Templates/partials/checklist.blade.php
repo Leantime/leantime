@@ -3,7 +3,7 @@
 ])
 
 @if ($includeTitle)
-    <h5 class="subtitle">Project Checklist <x-global::elements.info-tip text="The project checklist is a list of activities you should do to ensure your projects are well defined, planned and executed." /> </h5><br/>
+    <x-global::elements.section-header as="h5">{{ __('headlines.project_checklist') }} <x-global::elements.info-tip :text="__('text.project_checklist_help')" /> </x-global::elements.section-header><br/>
 
 @endif
 
@@ -53,7 +53,7 @@
                             />
                             <label for="progress_{{ $key }}"
                                    @if (! in_array($step['stepType'], ['complete', 'current']))
-                                       data-tippy-content="Finish the previous steps first"
+                                       data-tippy-content="{{ __('text.finish_previous_steps') }}"
 
                                    @endif
 
@@ -61,7 +61,7 @@
                             <span class="clearall"></span>
                             <span class="taskDescription">
                             {{ __($task['description'] ?? '') }}<br />
-                            <a href="{{ $task['link'] ?? '#' }}"><i class="fa fa-external-link"></i> Take me there</a>
+                            <a href="{{ $task['link'] ?? '#' }}"><i class="fa fa-external-link"></i> {{ __('links.take_me_there') }}</a>
                             </span>
 
 

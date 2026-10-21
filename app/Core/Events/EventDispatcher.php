@@ -12,8 +12,10 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\Contracts\EmitsClientEvent;
 use Leantime\Core\Events\Contracts\LeantimeEvent;
 use Leantime\Core\Events\Contracts\LeantimeFilter;
+use Leantime\Core\Events\Htmx\HtmxEvents;
 use Leantime\Core\Routing\RouteLoader;
 
 /**
@@ -206,6 +208,9 @@ class EventDispatcher implements Dispatcher
      * path as string events, receiving today's array payload built from the event's
      * public properties — existing string/wildcard listeners (plugins) keep working
      * unchanged during the migration window.
+     *
+     * Events that implement EmitsClientEvent also queue their client event names on the
+     * HX-Trigger header of the current htmx response (see HtmxEvents::queueFor()).
      */
     private static function executeClassEventHandlers(LeantimeEvent $event): void
     {
@@ -216,6 +221,10 @@ class EventDispatcher implements Dispatcher
             if (! in_array($name, self::$available_hooks['events'])) {
                 self::$available_hooks['events'][] = $name;
             }
+        }
+
+        if ($event instanceof EmitsClientEvent) {
+            HtmxEvents::queueFor($event);
         }
 
         $matched = self::findEventListeners($fqcn, self::$eventRegistry);

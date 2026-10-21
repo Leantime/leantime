@@ -6,7 +6,7 @@
           hx-target="#tokenModal" id="newToken">
 
         <div class="form-group">
-            <label for="tokenName">{{ __('label.token_name') }}</label>
+            <x-global::forms.label for="tokenName">{{ __('label.token_name') }}</x-global::forms.label>
             <x-global::forms.text-input id="tokenName" name="name" required />
             <small class="form-text text-muted">
                 <br/>{{ __('text.token_name_description') }}

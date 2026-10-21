@@ -2,13 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-chart-bar"></span></div>
-    <div class="pagetitle">
-        <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
-        <h1>{!! __('headlines.reports') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa fa-chart-bar" :eyebrow="session('currentProjectClient') . ' // ' . session('currentProjectName')">
+    {!! __('headlines.reports') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
 
@@ -24,7 +20,7 @@
         </nav>
     </div>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -34,7 +30,7 @@
                 <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
 
-                            <h5 class="subtitle">{!! __('subtitles.summary') !!} @if ($fullReportLatest)({{ format($fullReportLatest['date'])->date() }})@endif </h5>
+                            <x-global::elements.section-header as="h5">{!! __('subtitles.summary') !!} @if ($fullReportLatest)({{ format($fullReportLatest['date'])->date() }})@endif </x-global::elements.section-header>
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="boxedHighlight">
@@ -86,7 +82,7 @@
                                  buttons + empty canvas with no chart underneath — read as broken
                                  in the audit. --}}
                             @if ($allSprints !== false && count($allSprints) > 0)
-                                <h5 class="subtitle">{!! __('subtitles.sprint_burndown') !!}</h5>
+                                <x-global::elements.section-header as="h5">{!! __('subtitles.sprint_burndown') !!}</x-global::elements.section-header>
                                 <br />
                                 <span class="pull-left">
                                 @if (true)
@@ -125,7 +121,7 @@
                         <div class="clearall"></div>
                         <br />
                         <br />
-                        <h5 class="subtitle">{!! __('subtitles.cummulative_flow') !!}</h5>
+                        <x-global::elements.section-header as="h5">{!! __('subtitles.cummulative_flow') !!}</x-global::elements.section-header>
 
                         <div class="pull-right">
                             <x-global::forms.button-group segmented :label="__('label.chart_metric')">
@@ -152,7 +148,7 @@
                 <div class="row" id="projectProgressContainer">
                     <div class="col-md-12">
 
-                        <h5 class="subtitle">{!! __('subtitles.project_progress') !!}</h5>
+                        <x-global::elements.section-header as="h5">{!! __('subtitles.project_progress') !!}</x-global::elements.section-header>
 
                         <div id="canvas-holder" style="width:100%; height:250px;">
                             <canvas id="chart-area" ></canvas>
@@ -162,11 +158,12 @@
                 </div>
                 <div class="row" id="milestoneProgressContainer">
                     <div class="col-md-12">
-                        <h5 class="subtitle">{!! __('headline.milestones') !!}</h5>
+                        <x-global::elements.section-header as="h5">{!! __('headline.milestones') !!}</x-global::elements.section-header>
                         <ul class="sortableTicketList" >
                             @if (count($milestones) == 0)
                                 <div class='center'><br /><h4>{!! __('headlines.no_milestones') !!}</h4>
                                 {!! __('text.milestones_help_organize_projects') !!}<br /><br /><a href="{{ BASE_URL }}/tickets/roadmap">{!! __('links.goto_milestones') !!}</a>
+                                </div>
                             @endif
                             @foreach ($milestones as $row)
                                     <li class="ui-state-default" id="milestone_{{ $row->id }}" >
@@ -205,7 +202,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

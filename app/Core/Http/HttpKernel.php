@@ -76,6 +76,7 @@ class HttpKernel extends Kernel
         \Leantime\Core\Middleware\Localization::class,
 
         \Leantime\Domain\Projects\Middleware\CurrentProject::class,
+        \Leantime\Core\Modules\Middleware\ProjectModuleGate::class,
 
     ];
 

@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
@@ -21,21 +22,34 @@ class GetProjectTimesheetsTool extends Tool
         private Projects $projectsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID to get timesheets for.')
-            ->required()
-            ->string('dateFrom')->description('Start date in ISO8601 format.')
-            ->required()
-            ->string('dateTo')->description('End date in ISO8601 format.')
-            ->required()
-            ->integer('userId')->description('Filter by specific user ID (optional).');
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID to get timesheets for.')
+                ->required(),
+            'dateFrom' => $schema->string()
+                ->description('Start date in ISO8601 format.')
+                ->required(),
+            'dateTo' => $schema->string()
+                ->description('End date in ISO8601 format.')
+                ->required(),
+            'userId' => $schema->integer()
+                ->description('Filter by specific user ID (optional).'),
+        ];
     }
 
     public function name(): string
     {
         return 'getProjectTimesheets';
+    }
+
+    public function title(): string
+    {
+        return 'Get Project Timesheets';
     }
 
     public function description(): string
@@ -46,12 +60,14 @@ class GetProjectTimesheetsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
 
         $globalRole = session('userdata.role');
-        if (! in_array($globalRole, [Roles::$manager, Roles::$admin, Roles::$owner], true)) {
+        if (! Roles::isAtLeast($globalRole, Roles::$manager)) {
             // getProjectRole() returns a stored role key (usually a numeric string like "30");
             // resolve it to a role name before comparing (same pattern as
             // Tickets::userIsAtLeastForProject).
@@ -60,8 +76,8 @@ class GetProjectTimesheetsTool extends Tool
                 ? Roles::getRoleString((int) $projectRoleKey)
                 : $projectRoleKey;
 
-            if ($projectRole !== Roles::$manager) {
-                return ToolResult::error("You don't have permission to view project-wide timesheet data. This requires a manager role or above, or a manager role in this project.");
+            if ($projectRole === false || ! Roles::isAtLeast($projectRole, Roles::$manager)) {
+                return Response::error("You don't have permission to view project-wide timesheet data. This requires a manager role or above, or a manager role in this project.");
             }
         }
 
@@ -77,7 +93,7 @@ class GetProjectTimesheetsTool extends Tool
         );
 
         if (empty($timesheets)) {
-            return ToolResult::text('No timesheet entries found for this project in the specified date range.');
+            return Response::text('No timesheet entries found for this project in the specified date range.');
         }
 
         $project = $this->projectsService->getProject($projectId);
@@ -140,6 +156,6 @@ class GetProjectTimesheetsTool extends Tool
             $response .= '- **'.$kindLabel.'**: '.number_format($hours, 2)." hours\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

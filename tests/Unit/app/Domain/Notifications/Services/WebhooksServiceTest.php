@@ -405,14 +405,14 @@ namespace Unit\app\Domain\Notifications\Services {
             }
         }
 
-        public function test_only_opted_in_recipients_are_queued_and_only_active_notifiable_users_with_project_access_are_posted(): void
+        public function test_only_opted_in_recipients_are_queued_and_only_active_users_with_project_access_are_posted(): void
         {
             $this->addTeamMember(7);                              // eligible
             $this->addTeamMember(8);                              // webhook switched off
             $this->addTeamMember(9);
             $this->world->users[9]['status'] = 'i';               // deactivated
             $this->addTeamMember(10);
-            $this->world->users[10]['notifications'] = 0;         // master notification switch off
+            $this->world->users[10]['notifications'] = 0;         // email switched off: governs email only
             $this->world->teams['11:'.self::PROJECT_ID] = true;   // deleted user, relation row left behind
             $this->addUser(12);                                   // @mentioned, but not on this restricted project
             foreach ([7, 9, 10, 11, 12] as $userId) {
@@ -425,7 +425,7 @@ namespace Unit\app\Domain\Notifications\Services {
 
             $this->runWebhookQueue();
 
-            $this->assertSame(['https://1.1.1.1/hooks/user-7'], $this->postedUrls(), 'Deactivated, notifications off, deleted and outside the project: never posted');
+            $this->assertSame(['https://1.1.1.1/hooks/user-7', 'https://1.1.1.1/hooks/user-10'], $this->postedUrls(), 'Deactivated, deleted and outside the project: never posted; email switched off still gets the webhook');
             $this->assertSame([], $this->queuedRows(), 'A row with nothing left to send is still handled, never left in the queue');
         }
 
@@ -570,7 +570,6 @@ namespace Unit\app\Domain\Notifications\Services {
                 'user deleted' => [function (object $world) {
                     unset($world->users[7]);
                 }],
-                'notifications switched off' => [fn (object $world) => $world->users[7]['notifications'] = 0],
                 'removed from the restricted project' => [function (object $world) {
                     unset($world->teams['7:5']);
                 }],

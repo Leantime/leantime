@@ -8,6 +8,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
+use Leantime\Domain\Auth\Models\Roles;
 
 /**
  * Bulk, session-free queries backing the report engine.
@@ -16,7 +17,7 @@ use Leantime\Core\Db\Db as DbCore;
  * (user id, client id) so the engine can serve project, plan, strategy and — later —
  * company-level reports without depending on session('currentProject'). The access
  * predicate mirrors Tickets\Repositories\Tickets::getAllMilestones: assigned via
- * zp_relationuserproject, open to all, open to the user's client, or requestor role >= 40.
+ * zp_relationuserproject, open to all, open to the user's client, or requestor role that sees all projects.
  */
 class ReportEngine
 {
@@ -335,7 +336,7 @@ class ReportEngine
 
     /**
      * Applies the standard project access predicate: project assigned to the user, open to
-     * everyone, open to the user's client, or the requesting user is admin/owner (role >= 40).
+     * everyone, open to the user's client, or the requesting user is admin/owner (role that sees all projects).
      * The query must already join zp_projects.
      */
     private function applyAccessPredicate(Builder $query, int $userId, int $clientId): void
@@ -355,7 +356,7 @@ class ReportEngine
                     $q2->where('zp_projects.psettings', 'clients')
                         ->where('zp_projects.clientId', $clientId);
                 })
-                ->orWhere('requestor.role', '>=', 40);
+                ->orWhereIn('requestor.role', Roles::keysThatSeeAllProjects());
         });
     }
 }

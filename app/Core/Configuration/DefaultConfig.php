@@ -65,15 +65,16 @@ class DefaultConfig
     public string $secondarycolor;
 
     /**
+     * @var string Unsplash API access key. Users can pick Unsplash photos as their background
+     *             when this is set; without it only uploaded images are offered.
+     */
+    public string $unsplashAccessKey = '';
+
+    /**
      * @var string Default timezone
      */
     #[LaravelConfig('app.timezone')]
     public string $defaultTimezone = 'America/Los_Angeles';
-
-    /**
-     * @var bool Enable to specifiy menu on a project by project basis
-     */
-    public bool $enableMenuType = false;
 
     /**
      * @var bool|int Debug flag

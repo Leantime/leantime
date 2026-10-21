@@ -103,6 +103,9 @@ class Install
         30528,
         30529,
         30530,
+        30531,
+        30532,
+        30533,
     ];
 
     /**
@@ -567,6 +570,7 @@ class Install
                     `active` int(11) DEFAULT NULL,
                     `menuType` MEDIUMTEXT DEFAULT NULL,
                     `psettings` MEDIUMTEXT NULL,
+                    `metadata` TEXT NULL,
                     `parent` INT(11) NULL,
                     `type` VARCHAR(45) NULL,
                     `start` DATETIME NULL,
@@ -3477,6 +3481,130 @@ class Install
             Log::error('Migration 30530: '.$e->getMessage());
 
             return ['Migration 30530 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30531 — database update for v3.5.31.
+     *
+     * Adds `zp_projects.metadata`, a JSON column for structured project settings. It starts with
+     * the per-project module switches (`{"modules": {"wiki": false}}`). The old `menuType` column
+     * is no longer read or written by core; it stays until the plugins that still select it have
+     * been updated.
+     */
+    public function update_sql_30531(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if ($schema->hasTable('zp_projects') && ! $schema->hasColumn('zp_projects', 'metadata')) {
+                $schema->table('zp_projects', function (Blueprint $table): void {
+                    $table->text('metadata')->nullable();
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30531: '.$e->getMessage());
+
+            return ['Migration 30531 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30532 — database update for v3.5.32.
+     *
+     * Splits a role's stored key from its rank so custom roles can exist: adds `zp_roles.roleKey`
+     * (the value kept in zp_user.role / zp_relationuserproject.projectRole) and `zp_roles.baseRole`
+     * (the built-in role a custom role acts as wherever code checks a role by name). Built-in roles
+     * keep their keys 5..50, which equal their levels, so no user row changes.
+     */
+    public function update_sql_30532(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_roles')) {
+                Log::info('Migration 30532 skipped: zp_roles missing (30518 not applied?)');
+
+                return true;
+            }
+
+            if (! $schema->hasColumn('zp_roles', 'roleKey')) {
+                $schema->table('zp_roles', function (Blueprint $table): void {
+                    $table->integer('roleKey')->nullable();
+                    $table->string('baseRole', 50)->nullable();
+                });
+            }
+
+            $builtInRoleKeys = [
+                'readonly' => 5,
+                'commenter' => 10,
+                'editor' => 20,
+                'manager' => 30,
+                'admin' => 40,
+                'owner' => 50,
+            ];
+
+            foreach ($builtInRoleKeys as $roleName => $roleKey) {
+                $connection->table('zp_roles')
+                    ->where('name', $roleName)
+                    ->whereNull('roleKey')
+                    ->update(['roleKey' => $roleKey]);
+            }
+
+            if (! $schema->hasIndex('zp_roles', ['roleKey'], 'unique')) {
+                $schema->table('zp_roles', function (Blueprint $table): void {
+                    $table->unique(['roleKey'], 'idx_roles_roleKey');
+                });
+            }
+
+            \Leantime\Domain\Auth\Models\Roles::flushCache();
+        } catch (\Exception $e) {
+            Log::error('Migration 30532: '.$e->getMessage());
+
+            return ['Migration 30532 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * update_sql_30533 — database update for v3.5.33.
+     *
+     * Adds two permissions: `projects.viewAll` (see every project without being a member; replaces
+     * the hard-coded "admin and above" rule) and `roles.manage` (for the custom roles plugin). The
+     * sync grants new permissions only: both go to admins and owners, the roles that had these
+     * abilities before, and to custom roles whose base role gets them. No other grant changes, so
+     * permissions an administrator removed stay removed. The provider cache is flushed first
+     * because `roles.manage` comes from a new provider class.
+     */
+    public function update_sql_30533(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_roles') || ! $schema->hasTable('zp_permissions')) {
+                Log::info('Migration 30533 skipped: permission tables missing (30518 not applied?)');
+
+                return true;
+            }
+
+            app(\Leantime\Core\Auth\Permissions\PermissionRegistry::class)->flush();
+
+            app(\Leantime\Core\Auth\Permissions\PermissionSeeder::class)->syncDiscoveredPermissions();
+        } catch (\Exception $e) {
+            Log::error('Migration 30533: '.$e->getMessage());
+
+            return ['Migration 30533 failed: '.$e->getMessage()];
         }
 
         return true;

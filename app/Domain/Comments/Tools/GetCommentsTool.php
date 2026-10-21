@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Comments\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Comments\Services\Comments;
 
@@ -20,19 +21,31 @@ class GetCommentsTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('module')->description('Module type (ticket, project, goal, etc.).')
-            ->required()
-            ->integer('entityId')->description('ID of the entity to get comments for.')
-            ->required()
-            ->integer('commentOrder')->description('Order of comments (0 = newest first, 1 = oldest first).');
+        return [
+            'module' => $schema->string()
+                ->description('Module type (ticket, project, goal, etc.).')
+                ->required(),
+            'entityId' => $schema->integer()
+                ->description('ID of the entity to get comments for.')
+                ->required(),
+            'commentOrder' => $schema->integer()
+                ->description('Order of comments (0 = newest first, 1 = oldest first).'),
+        ];
     }
 
     public function name(): string
     {
         return 'getComments';
+    }
+
+    public function title(): string
+    {
+        return 'Get Comments';
     }
 
     public function description(): string
@@ -43,8 +56,10 @@ class GetCommentsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $module = $arguments['module'];
         $entityId = (int) ($arguments['entityId'] ?? 0);
         $commentOrder = (int) ($arguments['commentOrder'] ?? 0);
@@ -53,11 +68,11 @@ class GetCommentsTool extends Tool
         try {
             $comments = $this->commentsService->getComments($module, $entityId, $commentOrder, strict: true);
         } catch (LeantimeExceptionInterface $e) {
-            return ToolResult::error($e->getClientMessage());
+            return Response::error($e->getClientMessage());
         }
 
         if (empty($comments)) {
-            return ToolResult::text("No comments found for {$module} ID: {$entityId}");
+            return Response::text("No comments found for {$module} ID: {$entityId}");
         }
 
         $response = "## Comments for {$module} #{$entityId}\n";
@@ -73,6 +88,6 @@ class GetCommentsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

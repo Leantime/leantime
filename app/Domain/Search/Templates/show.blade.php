@@ -1,15 +1,14 @@
 @extends($layout)
 
 @section('content')
-<x-global::pageheader :icon="'fa-solid fa-magnifying-glass'">
-    <h5>{{ __('search.headline') }}</h5>
-    <h1>{{ __('search.results_for') }} “{{ $term }}”</h1>
-</x-global::pageheader>
+<x-global::layout.page-header icon="fa-solid fa-magnifying-glass" :eyebrow="__('search.headline')">
+    {{ __('search.results_for') }} “{{ $term }}”
+</x-global::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
 
-    <div class="maincontentinner searchPage">
+    <x-global::layout.content-box class="searchPage">
 
         @php
             $activeFilterCount = count(array_filter([
@@ -112,25 +111,25 @@
             <div class="searchPage__panels">
                 @foreach ($selectedTypes as $key)
                     @php $provider = $providers[$key]; @endphp
-                    <x-global::accordion id="search-{{ $key }}" class="searchPage__panel">
-                        <x-slot name="title" id="searchPanel-{{ $key }}">
-                            <span class="{{ $provider->icon() }} searchPage__panelIcon" aria-hidden="true"></span>{{ $provider->label() }}
-                            <span class="searchPage__count" id="searchCount-{{ $key }}"></span>
-                        </x-slot>
-                        <x-slot name="content">
-                            <x-global::hx
-                                endpoint="search/results/get"
-                                :vals="$panelVals + ['type' => $key]"
-                                trigger="load"
-                                loader="line"
-                                :loaderCount="3"
-                            />
-                        </x-slot>
-                    </x-global::accordion>
+                    <x-global::elements.accordion :id="'search-' . $key" open class="searchPage__panel">
+                        <x-slot:title>
+                            <span class="{{ $provider->icon() }} searchPage__panelIcon" aria-hidden="true"></span>
+                            <span id="searchPanel-{{ $key }}">{{ $provider->label() }}</span>
+                            {{-- The accordion's count badge, filled by search/results/get (hx-swap-oob on this id). --}}
+                            <span class="lt-badge lt-badge--count searchPage__count" id="searchCount-{{ $key }}"></span>
+                        </x-slot:title>
+                        <x-global::hx
+                            endpoint="search/results/get"
+                            :vals="$panelVals + ['type' => $key]"
+                            trigger="load"
+                            loader="line"
+                            :loaderCount="3"
+                        />
+                    </x-global::elements.accordion>
                 @endforeach
             </div>
         @endif
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 @endsection

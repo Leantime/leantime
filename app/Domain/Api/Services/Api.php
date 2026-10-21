@@ -152,7 +152,7 @@ class Api
             return false;
         }
 
-        UserCreated::dispatch(userId: (int) $values['id'], role: (int) Roles::getRoleLevel($values['role'] ?? ''), source: 'api');
+        UserCreated::dispatch(userId: (int) $values['id'], role: (int) Roles::getRoleKey($values['role'] ?? ''), source: 'api');
         ApiKeyCreated::dispatch(apiUserId: (int) $values['id']);
 
         return $values;
@@ -512,8 +512,8 @@ class Api
             return false;
         }
 
-        if (Str::contains($fullpath, '.phar') && ! Str::startsWith($fullpath, 'phar://')) {
-            $fullpath = 'phar://'.$fullpath;
+        if ($fullpath->contains('.phar') && ! $fullpath->startsWith('phar://')) {
+            $fullpath = $fullpath->prepend('phar://');
         }
 
         /** @var StaticAssetType $type */

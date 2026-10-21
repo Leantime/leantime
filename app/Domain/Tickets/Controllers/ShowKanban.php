@@ -85,7 +85,7 @@ class ShowKanban extends Controller
             if ($result['success'] === false) {
                 $this->tpl->setNotification($result['message'], 'error');
             } else {
-                $this->tpl->setNotification('Task created: '.htmlspecialchars($result['headline']), 'success');
+                $this->tpl->setNotification(sprintf($this->language->__('notification.task_created'), htmlspecialchars($result['headline'])), 'success');
             }
 
             return Frontcontroller::redirect(CURRENT_URL.'#status-'.$result['status']);

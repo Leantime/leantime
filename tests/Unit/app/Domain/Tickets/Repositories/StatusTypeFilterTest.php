@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Tickets\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Processors\Processor;
@@ -23,7 +24,7 @@ class StatusTypeFilterTest extends TestCase
     private function applyFilter(array $projectIds, string $statusTypes): Builder
     {
         $connection = Mockery::mock(ConnectionInterface::class);
-        $query = (new Builder($connection, new MySqlGrammar, new Processor))->from('zp_tickets');
+        $query = (new Builder($connection, new MySqlGrammar(new MySqlConnection(fn () => null)), new Processor))->from('zp_tickets');
 
         $labelsByProject = [
             // Project 1: default seed.

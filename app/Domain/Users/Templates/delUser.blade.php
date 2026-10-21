@@ -1,16 +1,12 @@
 @extends($layout)
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1><h1>{!! __('headlines.delete_user') !!}</h1></h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('label.administration')">
+    {!! __('headlines.delete_user') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -27,7 +23,7 @@
 
 
         </x-global::elements.card>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

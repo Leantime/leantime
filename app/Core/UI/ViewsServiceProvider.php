@@ -40,6 +40,12 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
         $this->registerBladeCompiler();
         $this->registerEngineResolver();
 
+        // Per-user UI states (accordions, sidebar widths …): one instance per request so the
+        // states load once (UiState::all()).
+        // Built without a connection on purpose: it connects on first use, so pages and tests
+        // without a usable database still render (with default states).
+        $this->app->scoped(UiState::class, fn () => new UiState);
+
         $this->app->terminating(static function () {
             \Illuminate\View\Component::flushCache();
         });

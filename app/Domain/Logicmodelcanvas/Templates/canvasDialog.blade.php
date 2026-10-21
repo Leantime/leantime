@@ -81,14 +81,14 @@
                     placeholder="{{ $tpl->__('input.placeholders.short_name') }}" /><br /><br />
 
                 @if ($dataLabels[1]['active'])
-                    <label>{{ $tpl->__($dataLabels[1]['title']) }}</label>
+                    <x-global::forms.label>{{ $tpl->__($dataLabels[1]['title']) }}</x-global::forms.label>
                     <textarea style="width:100%" rows="5" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
                 @else
                     <input type="hidden" name="{{ $dataLabels[1]['field'] }}" value="" />
                 @endif
 
                 @if ($dataLabels[2]['active'])
-                    <label>{{ $tpl->__($dataLabels[2]['title']) }}</label>
+                    <x-global::forms.label>{{ $tpl->__($dataLabels[2]['title']) }}</x-global::forms.label>
                     <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
                 @else
                     <input type="hidden" name="{{ $dataLabels[2]['field'] }}" value="" />
@@ -110,7 +110,7 @@
                 @endphp
 
                 @if ($showWhy)
-                    <label for="whyThisMatters" style="display:block;margin-top:8px;">{{ $tpl->__('logicmodel.field.why_this_matters') }}</label>
+                    <x-global::forms.label for="whyThisMatters" style="display:block;margin-top:8px;">{{ $tpl->__('logicmodel.field.why_this_matters') }}</x-global::forms.label>
                     <textarea id="whyThisMatters" style="width:100%" rows="3" name="why_this_matters"
                         maxlength="500"
                         placeholder="{{ $tpl->__('logicmodel.field.why_this_matters.placeholder') }}"
@@ -134,7 +134,7 @@
                 @endif
 
                 @if ($showStart)
-                    <label for="startingPicture" style="display:block;margin-top:8px;">{{ $tpl->__('logicmodel.field.starting_picture') }}</label>
+                    <x-global::forms.label for="startingPicture" style="display:block;margin-top:8px;">{{ $tpl->__('logicmodel.field.starting_picture') }}</x-global::forms.label>
                     <textarea id="startingPicture" style="width:100%" rows="3" name="starting_picture"
                         maxlength="500"
                         placeholder="{{ $tpl->__('logicmodel.field.starting_picture.placeholder') }}"

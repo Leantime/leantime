@@ -3,6 +3,7 @@
 namespace Unit\app\Core\Events;
 
 use Codeception\Test\Unit;
+use Leantime\Core\Events\Contracts\EmitsClientEvent;
 use Leantime\Core\Events\Contracts\LeantimeEvent;
 use Leantime\Core\Events\Contracts\LeantimeFilter;
 use Leantime\Core\Events\EventVerb;
@@ -63,6 +64,41 @@ class EventVocabularyTest extends Unit
         }
 
         $this->assertSame([], $violations, "Event vocabulary violations:\n".implode("\n", $violations));
+    }
+
+    public function test_client_event_names_follow_the_wire_convention(): void
+    {
+        $verbs = implode('|', array_map(fn (EventVerb $verb) => $verb->value, EventVerb::cases()));
+        $pattern = '/^lt:[a-z]+:[a-z]+\.('.$verbs.')$/';
+
+        $clientEventClasses = array_values(array_filter(
+            $this->discoverEventClasses(),
+            fn (string $class) => is_subclass_of($class, EmitsClientEvent::class)
+        ));
+
+        $this->assertContains(
+            \Leantime\Domain\Tickets\Events\TicketUpdated::class,
+            $clientEventClasses,
+            'Client event discovery found nothing — the wire-name check would pass vacuously.'
+        );
+
+        $violations = [];
+
+        foreach ($clientEventClasses as $class) {
+            $constant = $class.'::CLIENT_EVENT';
+
+            if (! defined($constant)) {
+                $violations[] = "$class — EmitsClientEvent classes must declare a CLIENT_EVENT constant";
+
+                continue;
+            }
+
+            if (! preg_match($pattern, constant($constant))) {
+                $violations[] = "$class — CLIENT_EVENT '".constant($constant)."' must be lt:{domain}:{entity}.{verb} with a verb from EventVerb";
+            }
+        }
+
+        $this->assertSame([], $violations, "Client event name violations:\n".implode("\n", $violations));
     }
 
     /**

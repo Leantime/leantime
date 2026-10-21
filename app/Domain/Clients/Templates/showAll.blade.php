@@ -1,20 +1,12 @@
 @extends($layout)
 @section('content')
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa fa-address-book"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headline.all_clients') !!}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header icon="fa fa-address-book" :eyebrow="__('label.administration')">
+    {!! __('headline.all_clients') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -52,7 +44,7 @@
             </tbody>
         </table>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

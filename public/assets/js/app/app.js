@@ -77,6 +77,22 @@ leantime.initTooltips = function (root) {
     });
 };
 
+// Content put on the page outside an htmx swap (a dialog, the List view's to-do detail) gets what
+// htmx.onLoad gives a swap: htmx attributes, tooltips, enhanced selects, and lt:ui:content.loaded
+// for the components that init on htmx.onLoad (date pickers, snippets). Not htmx:load itself:
+// some page onLoad handlers aren't idempotent.
+leantime.initLoadedContent = function (root) {
+    if (!root) {
+        return;
+    }
+    htmx.process(root);
+    leantime.initTooltips(root);
+    if (leantime.selectController) {
+        leantime.selectController.init(root);
+    }
+    document.dispatchEvent(new CustomEvent('lt:ui:content.loaded', { detail: { root: root } }));
+};
+
 jQuery(document).ready(function () {
 
     leantime.replaceSVGColors();
@@ -174,6 +190,33 @@ leantime.htmxProgress = (function () {
 // every request regardless of which element triggered it.
 document.addEventListener('htmx:beforeRequest', function () { leantime.htmxProgress.start(); });
 document.addEventListener('htmx:afterRequest', function () { leantime.htmxProgress.done(); });
+
+// Data events (lt:{domain}:{entity}.{verb}, optionally scoped with #{id}) arrive on the
+// HX-Trigger header of the response and are fired on the element that made the request. A
+// component listening for them must not refetch itself when that element sits inside it: its
+// own request already rendered the change (the to-do widget's inline title edit would otherwise
+// reload the whole widget). Components elsewhere on the page still refresh. Only that exact
+// format counts: UI commands (lt:ui:notify) and client-only events (lt:chip:changed, which
+// chips.js fires after a JSON-RPC save) have no entity.verb part and are never suppressed.
+// A control whose response does NOT render everything it affects opts out with
+// data-lt-refresh-container (the to-do widget's due-date picker: the task has to move to its
+// new date group, so the widget reloads).
+var leantimeDataEventPattern = /^lt:[a-z]+:[a-z]+\.[a-z]+(#.+)?$/;
+
+document.addEventListener('htmx:confirm', function (evt) {
+    var triggeringEvent = evt.detail.triggeringEvent;
+    if (!triggeringEvent || typeof triggeringEvent.type !== 'string') {
+        return;
+    }
+
+    var isDataEvent = leantimeDataEventPattern.test(triggeringEvent.type) && triggeringEvent.type.indexOf('lt:ui:') !== 0;
+    var cameFromInside = triggeringEvent.target instanceof Element && evt.detail.elt.contains(triggeringEvent.target);
+    var wantsContainerRefresh = cameFromInside && triggeringEvent.target.closest('[data-lt-refresh-container]') !== null;
+
+    if (isDataEvent && cameFromInside && !wantsContainerRefresh) {
+        evt.preventDefault();
+    }
+});
 
 leantime.showNotification = function (evt) {
     jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){

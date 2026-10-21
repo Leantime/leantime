@@ -449,7 +449,7 @@ class Users extends BaseService
             return false;
         }
 
-        UserCreated::dispatch(userId: (int) $result, role: (int) Roles::getRoleLevel($values['role'] ?? ''), source: 'invite');
+        UserCreated::dispatch(userId: (int) $result, role: (int) Roles::getRoleKey($values['role'] ?? ''), source: 'invite');
 
         $emailSent = $this->sendUserInvite($inviteCode, $values['user']);
 
@@ -623,7 +623,7 @@ class Users extends BaseService
         $newUserId = $this->userRepo->addUser($values);
 
         if ($newUserId !== false) {
-            UserCreated::dispatch(userId: (int) $newUserId, role: (int) Roles::getRoleLevel($values['role']), source: 'admin');
+            UserCreated::dispatch(userId: (int) $newUserId, role: (int) Roles::getRoleKey($values['role']), source: 'admin');
         }
 
         return $newUserId;
@@ -1310,24 +1310,10 @@ class Users extends BaseService
      * per-project notification levels (validated against the known relevance
      * levels). Cleans up the legacy muted-projects format when present.
      *
-     * Also stores the personal webhook: webhookUrl (https only, validated
-     * before anything is written) and the webhookEnabled checkbox. An empty
-     * URL disables the webhook; unchecking the box keeps the URL on file.
-     * Both go into one setting (Webhooks::settingKey()), written before any
-     * other preference and verified, so a failed save never leaves an old URL
-     * or opt-in live behind a success message.
-     *
-     * Omitting the webhookUrl key leaves the stored webhook unchanged, and any
-     * webhookEnabled sent without it is ignored. Sending webhookUrl, even as an
-     * empty string, sets the URL and the opt-in together, with a missing
-     * webhookEnabled meaning unchecked. API clients that change only the opt-in
-     * must therefore send the current URL as well.
+     * The personal webhook is saved separately, with saveOwnWebhookSettings().
      *
      * @param  int  $userId  The id of the user being edited.
      * @param  array<string, mixed>  $post  Raw request input.
-     *
-     * @throws ValidationException When webhookUrl is not an acceptable endpoint; nothing is saved.
-     * @throws WebhookSettingNotSavedException When the webhook setting could not be persisted; nothing is saved.
      *
      * @api
      */
@@ -1335,37 +1321,6 @@ class Users extends BaseService
     {
         // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
         $userId = (int) session('userdata.id');
-
-        // A payload without webhookUrl (API clients predating the webhook) leaves the webhook as it is.
-        if (array_key_exists('webhookUrl', $post)) {
-            // Validate the webhook first so a rejected URL leaves every preference untouched.
-            $webhookUrl = is_string($post['webhookUrl']) ? trim($post['webhookUrl']) : null;
-            if ($webhookUrl === null || ($webhookUrl !== '' && ! Webhooks::isValidEndpointUrl($webhookUrl))) {
-                throw ValidationException::withMessages(['webhookUrl' => ['notification.invalid_webhook_url']]);
-            }
-            $webhookEnabled = $webhookUrl !== '' && filter_var($post['webhookEnabled'] ?? false, FILTER_VALIDATE_BOOLEAN);
-
-            // Persist the webhook first: if it can't be saved, fail before any other preference is touched.
-            $webhookSettingKey = Webhooks::settingKey($userId);
-            $webhookSetting = Webhooks::encodeSetting($webhookUrl, $webhookEnabled);
-            $webhookSaveException = null;
-            try {
-                // updateOrInsert also reports false when the row already held this exact value, so a
-                // false result only counts as a failure when reading the setting back shows otherwise.
-                $webhookSaved = $this->settingsService->saveSetting($webhookSettingKey, $webhookSetting)
-                    || $this->settingsService->getSetting($webhookSettingKey) === $webhookSetting;
-            } catch (\Throwable $e) {
-                $webhookSaved = false;
-                $webhookSaveException = get_class($e);
-            }
-
-            if (! $webhookSaved) {
-                // Class name only: the setting value and DB exception messages carry the URL and its secret.
-                Log::error('Personal webhook setting could not be saved', ['userId' => $userId, 'exception' => $webhookSaveException]);
-
-                throw new WebhookSettingNotSavedException;
-            }
-        }
 
         $row = $this->getUser($userId);
 
@@ -1418,6 +1373,59 @@ class Users extends BaseService
                 'usersettings.'.$userId.'.projectMutedNotifications',
                 ''
             );
+        }
+    }
+
+    /**
+     * Stores the current user's personal webhook: webhookUrl (https only,
+     * validated before anything is written) and the webhookEnabled checkbox.
+     * An empty or missing URL disables the webhook; unchecking the box keeps the URL on
+     * file. Both go into one setting (Webhooks::settingKey()), which is read
+     * back when the write reports no change, so a failed save never leaves an
+     * old URL or opt-in live behind a success message.
+     *
+     * A missing webhookEnabled means unchecked, so API clients that change
+     * only the opt-in must send the current URL as well.
+     *
+     * @param  int  $userId  The id of the user being edited.
+     * @param  array<string, mixed>  $post  Raw request input.
+     *
+     * @throws ValidationException When webhookUrl is not an acceptable endpoint; nothing is saved.
+     * @throws WebhookSettingNotSavedException When the webhook setting could not be persisted.
+     *
+     * @api
+     */
+    public function saveOwnWebhookSettings(int $userId, array $post): void
+    {
+        // Self-service: pin to the authenticated user (ignore any caller-supplied id — prevents RPC IDOR).
+        $userId = (int) session('userdata.id');
+
+        // A cleared field arrives as null (ConvertEmptyStringsToNull), so null clears the webhook too.
+        $rawWebhookUrl = $post['webhookUrl'] ?? '';
+        $webhookUrl = is_string($rawWebhookUrl) ? trim($rawWebhookUrl) : null;
+        if ($webhookUrl === null || ($webhookUrl !== '' && ! Webhooks::isValidEndpointUrl($webhookUrl))) {
+            throw ValidationException::withMessages(['webhookUrl' => ['notification.invalid_webhook_url']]);
+        }
+        $webhookEnabled = $webhookUrl !== '' && filter_var($post['webhookEnabled'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        $webhookSettingKey = Webhooks::settingKey($userId);
+        $webhookSetting = Webhooks::encodeSetting($webhookUrl, $webhookEnabled);
+        $webhookSaveException = null;
+        try {
+            // updateOrInsert also reports false when the row already held this exact value, so a
+            // false result only counts as a failure when reading the setting back shows otherwise.
+            $webhookSaved = $this->settingsService->saveSetting($webhookSettingKey, $webhookSetting)
+                || $this->settingsService->getSetting($webhookSettingKey) === $webhookSetting;
+        } catch (\Throwable $e) {
+            $webhookSaved = false;
+            $webhookSaveException = get_class($e);
+        }
+
+        if (! $webhookSaved) {
+            // Class name only: the setting value and DB exception messages carry the URL and its secret.
+            Log::error('Personal webhook setting could not be saved', ['userId' => $userId, 'exception' => $webhookSaveException]);
+
+            throw new WebhookSettingNotSavedException;
         }
     }
 

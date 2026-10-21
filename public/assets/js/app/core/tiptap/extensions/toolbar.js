@@ -39,25 +39,25 @@
     var toolbarButtons = {
         bold: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg>',
-            title: 'Bold (Ctrl+B)',
+            get title() { return leantime.i18n.__('tiptap.toolbar.bold'); },
             command: function(editor) { editor.chain().focus().toggleBold().run(); },
             isActive: function(editor) { return editor.isActive('bold'); }
         },
         italic: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"></line><line x1="14" y1="20" x2="5" y2="20"></line><line x1="15" y1="4" x2="9" y2="20"></line></svg>',
-            title: 'Italic (Ctrl+I)',
+            get title() { return leantime.i18n.__('tiptap.toolbar.italic'); },
             command: function(editor) { editor.chain().focus().toggleItalic().run(); },
             isActive: function(editor) { return editor.isActive('italic'); }
         },
         strike: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><path d="M16 6C16 6 14.5 4 12 4C9.5 4 7 6 7 8.5C7 11 9 12 12 12"></path><path d="M8 18C8 18 9.5 20 12 20C14.5 20 17 18 17 15.5C17 13 15 12 12 12"></path></svg>',
-            title: 'Strikethrough',
+            get title() { return leantime.i18n.__('tiptap.label.strikethrough'); },
             command: function(editor) { editor.chain().focus().toggleStrike().run(); },
             isActive: function(editor) { return editor.isActive('strike'); }
         },
         heading: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16"></path><path d="M18 4v16"></path><path d="M6 12h12"></path></svg>',
-            title: 'Heading',
+            get title() { return leantime.i18n.__('tiptap.label.heading'); },
             command: function(editor, button) {
                 // Don't run in inline-only contexts (like detailsSummary)
                 if (isInInlineOnlyContext(editor)) {
@@ -70,7 +70,7 @@
         },
         quote: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"></path><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"></path></svg>',
-            title: 'Quote',
+            get title() { return leantime.i18n.__('tiptap.label.quote'); },
             command: function(editor) {
                 if (isInInlineOnlyContext(editor)) {
                     return;
@@ -82,7 +82,7 @@
         },
         bulletList: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"></line><line x1="9" y1="12" x2="20" y2="12"></line><line x1="9" y1="18" x2="20" y2="18"></line><circle cx="4" cy="6" r="1" fill="currentColor"></circle><circle cx="4" cy="12" r="1" fill="currentColor"></circle><circle cx="4" cy="18" r="1" fill="currentColor"></circle></svg>',
-            title: 'Bullet List',
+            get title() { return leantime.i18n.__('tiptap.label.bullet_list'); },
             command: function(editor) {
                 if (isInInlineOnlyContext(editor)) {
                     return;
@@ -94,7 +94,7 @@
         },
         orderedList: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>',
-            title: 'Numbered List',
+            get title() { return leantime.i18n.__('tiptap.label.numbered_list'); },
             command: function(editor) {
                 if (isInInlineOnlyContext(editor)) {
                     return;
@@ -106,7 +106,7 @@
         },
         taskList: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="6" height="6" rx="1"></rect><path d="M5 11V8h2"></path><line x1="12" y1="8" x2="21" y2="8"></line><rect x="3" y="13" width="6" height="6" rx="1"></rect><path d="M5 16l1.5 1.5L9 14"></path><line x1="12" y1="16" x2="21" y2="16"></line></svg>',
-            title: 'Checklist',
+            get title() { return leantime.i18n.__('tiptap.label.checklist'); },
             command: function(editor) {
                 if (isInInlineOnlyContext(editor)) {
                     return;
@@ -118,7 +118,7 @@
         },
         link: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>',
-            title: 'Link (Ctrl+K)',
+            get title() { return leantime.i18n.__('tiptap.toolbar.link'); },
             command: function(editor) {
                 // Check if we're already on a link (to unlink)
                 if (editor.isActive('link')) {
@@ -132,7 +132,7 @@
 
                 // Use setTimeout to ensure prompt appears above modal
                 setTimeout(function() {
-                    var url = window.prompt('Enter URL:', 'https://');
+                    var url = window.prompt(leantime.i18n.__('tiptap.toolbar.enter_url'), 'https://');
                     if (url === null) return; // User cancelled
 
                     if (url && url !== 'https://') {
@@ -146,7 +146,7 @@
                             editor.chain().focus().setLink({ href: url }).run();
                         } else {
                             // No selection - prompt for link text
-                            var linkText = window.prompt('Enter link text:', url);
+                            var linkText = window.prompt(leantime.i18n.__('tiptap.toolbar.enter_link_text'), url);
                             if (linkText) {
                                 editor.chain().focus()
                                     .insertContent(linkText)
@@ -165,7 +165,7 @@
         },
         image: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>',
-            title: 'Image',
+            get title() { return leantime.i18n.__('tiptap.label.image'); },
             command: function(editor, button) {
                 // Show image options popover
                 showImagePopover(editor, button);
@@ -174,7 +174,7 @@
         },
         table: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>',
-            title: 'Table',
+            get title() { return leantime.i18n.__('tiptap.label.table'); },
             command: function(editor, button) {
                 // Inside a table the button opens the row/column/cell actions instead of nesting a new table
                 if (editor.isActive('table')) {
@@ -187,55 +187,55 @@
         },
         code: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>',
-            title: 'Code Block',
+            get title() { return leantime.i18n.__('tiptap.label.code_block'); },
             command: function(editor) { editor.chain().focus().toggleCodeBlock().run(); },
             isActive: function(editor) { return editor.isActive('codeBlock'); }
         },
         undo: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>',
-            title: 'Undo (Ctrl+Z)',
+            get title() { return leantime.i18n.__('tiptap.toolbar.undo'); },
             command: function(editor) { editor.chain().focus().undo().run(); },
             isActive: function() { return false; }
         },
         redo: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"></path></svg>',
-            title: 'Redo (Ctrl+Shift+Z)',
+            get title() { return leantime.i18n.__('tiptap.toolbar.redo'); },
             command: function(editor) { editor.chain().focus().redo().run(); },
             isActive: function() { return false; }
         },
         superscript: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 19 5-5"/><path d="m9 19-5-5"/><path d="M19 9h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>',
-            title: 'Superscript',
+            get title() { return leantime.i18n.__('tiptap.label.superscript'); },
             command: function(editor) { editor.chain().focus().toggleSuperscript().run(); },
             isActive: function(editor) { return editor.isActive('superscript'); }
         },
         subscript: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 5 5 5"/><path d="m9 5-5 5"/><path d="M19 21h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>',
-            title: 'Subscript',
+            get title() { return leantime.i18n.__('tiptap.label.subscript'); },
             command: function(editor) { editor.chain().focus().toggleSubscript().run(); },
             isActive: function(editor) { return editor.isActive('subscript'); }
         },
         alignLeft: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>',
-            title: 'Align Left',
+            get title() { return leantime.i18n.__('tiptap.label.align_left'); },
             command: function(editor) { editor.chain().focus().setTextAlign('left').run(); },
             isActive: function(editor) { return editor.isActive({ textAlign: 'left' }); }
         },
         alignCenter: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg>',
-            title: 'Align Center',
+            get title() { return leantime.i18n.__('tiptap.label.align_center'); },
             command: function(editor) { editor.chain().focus().setTextAlign('center').run(); },
             isActive: function(editor) { return editor.isActive({ textAlign: 'center' }); }
         },
         alignRight: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>',
-            title: 'Align Right',
+            get title() { return leantime.i18n.__('tiptap.label.align_right'); },
             command: function(editor) { editor.chain().focus().setTextAlign('right').run(); },
             isActive: function(editor) { return editor.isActive({ textAlign: 'right' }); }
         },
         textColor: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="m6 16 6-12 6 12"/><path d="M8 12h8"/></svg>',
-            title: 'Text Color',
+            get title() { return leantime.i18n.__('tiptap.label.text_color'); },
             command: function(editor, button) {
                 showColorPopover(editor, button);
             },
@@ -243,7 +243,7 @@
         },
         highlight: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg>',
-            title: 'Highlight',
+            get title() { return leantime.i18n.__('tiptap.label.highlight'); },
             command: function(editor, button) {
                 showHighlightPopover(editor, button);
             },
@@ -251,7 +251,7 @@
         },
         fontFamily: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><text x="4" y="17" font-size="14" font-family="serif" fill="currentColor" stroke="none">Aa</text></svg>',
-            title: 'Font Family',
+            get title() { return leantime.i18n.__('tiptap.label.font_family'); },
             command: function(editor, button) {
                 showFontFamilyPopover(editor, button);
             },
@@ -259,7 +259,7 @@
         },
         fontSize: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>',
-            title: 'Font Size',
+            get title() { return leantime.i18n.__('tiptap.label.font_size'); },
             command: function(editor, button) {
                 showFontSizePopover(editor, button);
             },
@@ -267,7 +267,7 @@
         },
         more: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>',
-            title: 'More options',
+            get title() { return leantime.i18n.__('tiptap.label.more_options'); },
             command: function(editor, button) {
                 showMoreMenu(editor, button);
             },
@@ -275,7 +275,7 @@
         },
         sourceCode: {
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline><line x1="12" y1="2" x2="12" y2="22" stroke-width="1" stroke-dasharray="2,2"></line></svg>',
-            title: 'Edit HTML Source',
+            get title() { return leantime.i18n.__('tiptap.toolbar.edit_html_source'); },
             command: function(editor, button) {
                 toggleSourceCodePanel(editor, button);
             },
@@ -291,15 +291,15 @@
      * Items in the "More" dropdown menu
      */
     var moreMenuItems = [
-        { key: 'superscript', label: 'Superscript', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 19 5-5"/><path d="m9 19-5-5"/><path d="M19 9h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>' },
-        { key: 'subscript', label: 'Subscript', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 5 5 5"/><path d="m9 5-5 5"/><path d="M19 21h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>' },
+        { key: 'superscript', get label() { return leantime.i18n.__('tiptap.label.superscript'); }, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 19 5-5"/><path d="m9 19-5-5"/><path d="M19 9h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>' },
+        { key: 'subscript', get label() { return leantime.i18n.__('tiptap.label.subscript'); }, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 5 5 5"/><path d="m9 5-5 5"/><path d="M19 21h-4l3.5-4a1.5 1.5 0 0 0-3-1"/></svg>' },
         { type: 'divider' },
-        { key: 'alignLeft', label: 'Align Left', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>' },
-        { key: 'alignCenter', label: 'Align Center', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg>' },
-        { key: 'alignRight', label: 'Align Right', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>' },
+        { key: 'alignLeft', get label() { return leantime.i18n.__('tiptap.label.align_left'); }, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>' },
+        { key: 'alignCenter', get label() { return leantime.i18n.__('tiptap.label.align_center'); }, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="5" y1="18" x2="19" y2="18"/></svg>' },
+        { key: 'alignRight', get label() { return leantime.i18n.__('tiptap.label.align_right'); }, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>' },
         { type: 'divider' },
-        { key: 'horizontalRule', label: 'Horizontal Line', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg>' },
-        { key: 'clearFormatting', label: 'Clear Formatting', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/><line x1="2" y1="2" x2="22" y2="22" stroke-width="2"/></svg>' }
+        { key: 'horizontalRule', get label() { return leantime.i18n.__('tiptap.label.horizontal_line'); }, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg>' },
+        { key: 'clearFormatting', get label() { return leantime.i18n.__('tiptap.label.clear_formatting'); }, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/><line x1="2" y1="2" x2="22" y2="22" stroke-width="2"/></svg>' }
     ];
 
     /**
@@ -362,7 +362,7 @@
             textarea.value = html;
             textarea.setAttribute('spellcheck', 'false');
             textarea.setAttribute('autocomplete', 'off');
-            textarea.setAttribute('aria-label', 'HTML source code');
+            textarea.setAttribute('aria-label', leantime.i18n.__('tiptap.toolbar.html_source_code'));
 
             panel.appendChild(textarea);
 
@@ -563,15 +563,15 @@
         closeColorPopover();
 
         var colors = [
-            { name: 'Default', value: null },
-            { name: 'Gray', value: '#6b7280' },
-            { name: 'Red', value: '#ef4444' },
-            { name: 'Orange', value: '#f97316' },
-            { name: 'Yellow', value: '#eab308' },
-            { name: 'Green', value: '#22c55e' },
-            { name: 'Blue', value: '#3b82f6' },
-            { name: 'Purple', value: '#a855f7' },
-            { name: 'Pink', value: '#ec4899' }
+            { name: leantime.i18n.__('label.default'), value: null },
+            { name: leantime.i18n.__('tiptap.color.gray'), value: '#6b7280' },
+            { name: leantime.i18n.__('label.red'), value: '#ef4444' },
+            { name: leantime.i18n.__('tiptap.color.orange'), value: '#f97316' },
+            { name: leantime.i18n.__('label.yellow'), value: '#eab308' },
+            { name: leantime.i18n.__('label.green'), value: '#22c55e' },
+            { name: leantime.i18n.__('label.blue'), value: '#3b82f6' },
+            { name: leantime.i18n.__('label.purple'), value: '#a855f7' },
+            { name: leantime.i18n.__('label.pink'), value: '#ec4899' }
         ];
 
         var popover = document.createElement('div');
@@ -637,13 +637,13 @@
         closeColorPopover();
 
         var highlightColors = [
-            { name: 'Remove', value: null },
-            { name: 'Yellow', value: '#fef08a' },
-            { name: 'Green', value: '#bbf7d0' },
-            { name: 'Blue', value: '#bfdbfe' },
-            { name: 'Purple', value: '#e9d5ff' },
-            { name: 'Pink', value: '#fbcfe8' },
-            { name: 'Orange', value: '#fed7aa' }
+            { name: leantime.i18n.__('buttons.remove'), value: null },
+            { name: leantime.i18n.__('label.yellow'), value: '#fef08a' },
+            { name: leantime.i18n.__('label.green'), value: '#bbf7d0' },
+            { name: leantime.i18n.__('label.blue'), value: '#bfdbfe' },
+            { name: leantime.i18n.__('label.purple'), value: '#e9d5ff' },
+            { name: leantime.i18n.__('label.pink'), value: '#fbcfe8' },
+            { name: leantime.i18n.__('tiptap.color.orange'), value: '#fed7aa' }
         ];
 
         var popover = document.createElement('div');
@@ -727,11 +727,11 @@
         closeFontPopover();
 
         var headings = [
-            { name: 'Paragraph', level: 0 },
-            { name: 'Heading 1', level: 1 },
-            { name: 'Heading 2', level: 2 },
-            { name: 'Heading 3', level: 3 },
-            { name: 'Heading 4', level: 4 }
+            { name: leantime.i18n.__('tiptap.label.paragraph'), level: 0 },
+            { name: leantime.i18n.__('tiptap.label.heading_1'), level: 1 },
+            { name: leantime.i18n.__('tiptap.label.heading_2'), level: 2 },
+            { name: leantime.i18n.__('tiptap.label.heading_3'), level: 3 },
+            { name: leantime.i18n.__('tiptap.label.heading_4'), level: 4 }
         ];
 
         var popover = document.createElement('div');
@@ -811,19 +811,19 @@
         closeFontPopover();
 
         var tableActions = [
-            { label: 'Add row above', run: function(chain) { return chain.addRowBefore(); } },
-            { label: 'Add row below', run: function(chain) { return chain.addRowAfter(); } },
-            { label: 'Delete row', run: function(chain) { return chain.deleteRow(); } },
+            { label: leantime.i18n.__('tiptap.table.add_row_above'), run: function(chain) { return chain.addRowBefore(); } },
+            { label: leantime.i18n.__('tiptap.table.add_row_below'), run: function(chain) { return chain.addRowAfter(); } },
+            { label: leantime.i18n.__('tiptap.table.delete_row'), run: function(chain) { return chain.deleteRow(); } },
             { separator: true },
-            { label: 'Add column left', run: function(chain) { return chain.addColumnBefore(); } },
-            { label: 'Add column right', run: function(chain) { return chain.addColumnAfter(); } },
-            { label: 'Delete column', run: function(chain) { return chain.deleteColumn(); } },
+            { label: leantime.i18n.__('tiptap.table.add_column_left'), run: function(chain) { return chain.addColumnBefore(); } },
+            { label: leantime.i18n.__('tiptap.table.add_column_right'), run: function(chain) { return chain.addColumnAfter(); } },
+            { label: leantime.i18n.__('tiptap.table.delete_column'), run: function(chain) { return chain.deleteColumn(); } },
             { separator: true },
-            { label: 'Merge cells', run: function(chain) { return chain.mergeCells(); } },
-            { label: 'Split cell', run: function(chain) { return chain.splitCell(); } },
-            { label: 'Toggle header row', run: function(chain) { return chain.toggleHeaderRow(); } },
+            { label: leantime.i18n.__('tiptap.table.merge_cells'), run: function(chain) { return chain.mergeCells(); } },
+            { label: leantime.i18n.__('tiptap.table.split_cell'), run: function(chain) { return chain.splitCell(); } },
+            { label: leantime.i18n.__('tiptap.table.toggle_header_row'), run: function(chain) { return chain.toggleHeaderRow(); } },
             { separator: true },
-            { label: 'Delete table', run: function(chain) { return chain.deleteTable(); } }
+            { label: leantime.i18n.__('tiptap.table.delete_table'), run: function(chain) { return chain.deleteTable(); } }
         ];
 
         var popover = document.createElement('div');
@@ -896,7 +896,7 @@
         closeFontPopover();
 
         var fonts = [
-            { name: 'Default', value: null },
+            { name: leantime.i18n.__('label.default'), value: null },
             { name: 'Arial', value: 'Arial, sans-serif' },
             { name: 'Georgia', value: 'Georgia, serif' },
             { name: 'Times New Roman', value: '"Times New Roman", serif' },
@@ -969,8 +969,8 @@
         closeFontPopover();
 
         var sizes = [
-            { name: 'Small', value: '12px' },
-            { name: 'Normal', value: null },
+            { name: leantime.i18n.__('tiptap.font_size.small'), value: '12px' },
+            { name: leantime.i18n.__('tiptap.font_size.normal'), value: null },
             { name: '14px', value: '14px' },
             { name: '16px', value: '16px' },
             { name: '18px', value: '18px' },
@@ -1094,12 +1094,12 @@
                     '<span class="tiptap-image-popover__icon">' +
                         '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
                     '</span>' +
-                    '<span>Upload image</span>' +
+                    '<span>' + leantime.i18n.__('tiptap.image.upload') + '</span>' +
                 '</div>' +
                 '<div class="tiptap-image-popover__divider"></div>' +
                 '<div class="tiptap-image-popover__url-section">' +
-                    '<input type="text" placeholder="Or paste image URL..." class="tiptap-image-popover__url-input" />' +
-                    '<button type="button" class="tiptap-image-popover__url-btn">Insert</button>' +
+                    '<input type="text" placeholder="' + leantime.i18n.__('tiptap.image.url_placeholder') + '" class="tiptap-image-popover__url-input" />' +
+                    '<button type="button" class="tiptap-image-popover__url-btn">' + leantime.i18n.__('tiptap.dialog.insert') + '</button>' +
                 '</div>' +
             '</div>';
 
@@ -1128,7 +1128,7 @@
             if (!file) return;
 
             // Show loading state
-            uploadOption.innerHTML = '<span class="tiptap-image-popover__loading">Uploading...</span>';
+            uploadOption.innerHTML = '<span class="tiptap-image-popover__loading">' + leantime.i18n.__('tiptap.image.uploading') + '</span>';
 
             // Upload to Leantime API
             var formData = new FormData();
@@ -1164,7 +1164,7 @@
             })
             .catch(function(err) {
                 console.error('Image upload failed:', err);
-                uploadOption.innerHTML = '<span style="color: var(--error-color)">Upload failed. Try again.</span>';
+                uploadOption.innerHTML = '<span style="color: var(--error-color)">' + leantime.i18n.__('tiptap.image.upload_failed') + '</span>';
                 setTimeout(function() {
                     closeImagePopover();
                 }, 2000);
@@ -1223,7 +1223,7 @@
         var toolbar = document.createElement('div');
         toolbar.className = 'tiptap-toolbar tiptap-toolbar--' + toolbarConfig.position;
         toolbar.setAttribute('role', 'toolbar');
-        toolbar.setAttribute('aria-label', 'Text formatting');
+        toolbar.setAttribute('aria-label', leantime.i18n.__('tiptap.toolbar.aria_label'));
 
         // Create button group
         var buttonGroup = document.createElement('div');

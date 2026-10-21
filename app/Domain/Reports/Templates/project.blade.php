@@ -10,9 +10,9 @@
          actions sit in .pageheader-right as a SIBLING of .pagetitle — never in a
          bootstrap .row inside it, which added the grid's negative margins and
          pushed the card's content out of line with the content card below. --}}
-    <x-global::pageheader :icon="'fa fa-chart-bar'">
-        <h5>{{ session('currentProjectClient') ? session('currentProjectClient') . ' // ' : '' }}{{ session('currentProjectName') }}</h5>
-        <h1>{!! __('headlines.status_report') !!}</h1>
+    <x-global::layout.page-header icon="fa fa-chart-bar"
+        :eyebrow="(session('currentProjectClient') ? session('currentProjectClient') . ' // ' : '') . session('currentProjectName')">
+        {!! __('headlines.status_report') !!}
 
         {{-- Verdict lives in the header, matching the strategy/program report
              decks (rd-hdr .verdict). It was buried in a text line inside the
@@ -32,7 +32,7 @@
                                     class="hideOnPrint"
                                     leadingVisual="fa fa-print" :labelText="__('label.print_report')" />
         </x-slot:actions>
-    </x-global::pageheader>
+    </x-global::layout.page-header>
 
     <div class="maincontent">
 
@@ -66,13 +66,13 @@
             </div>
         </div>
 
-        <div class="maincontentinner">
+        <x-global::layout.content-box>
 
             {!! $tpl->displayNotification() !!}
 
             @include('reports::partials.projectReportBody', ['report' => $report, 'period' => $period, 'projectId' => $projectId])
 
-        </div>
+        </x-global::layout.content-box>
     </div>
 
 @endsection

@@ -53,7 +53,9 @@ leantime.ticketsController = (function () {
 
             // Update the aria-label for accessibility
             var currentLabel = $sidebar.attr('aria-label') || '';
-            var newLabel = currentLabel.replace(/\d+ tasks/, ticketCount + ' tasks');
+            var taskCountLabel = leantime.i18n.__('label.task_count');
+            var taskCountPattern = new RegExp(taskCountLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace('%s', '\\d+'));
+            var newLabel = currentLabel.replace(taskCountPattern, taskCountLabel.replace('%s', ticketCount));
             $sidebar.attr('aria-label', newLabel);
         });
 
@@ -126,7 +128,7 @@ leantime.ticketsController = (function () {
                     // Update tooltip - only show if count > 0
                     var currentTooltip = $segment.attr('data-tippy-content') || '';
                     var labelMatch = currentTooltip.match(/^([^:]+):/);
-                    var label = labelMatch ? labelMatch[1] : 'Status ' + statusId;
+                    var label = labelMatch ? labelMatch[1] : leantime.i18n.__('label.status') + ' ' + statusId;
                     $segment.attr('data-tippy-content', count > 0 ? label + ': ' + count : '');
                 }
             });
@@ -233,6 +235,20 @@ leantime.ticketsController = (function () {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
+        // The Gantt formats month names with Intl.DateTimeFormat, which needs the whole language
+        // code: the first two letters of "kaa" (Karakalpak) are "ka" (Georgian). A code the browser
+        // doesn't support (or that isn't a valid tag) falls back to English.
+        function ganttLanguage()
+        {
+            var languageCode = leantime.i18n.__("language.code");
+
+            try {
+                return Intl.DateTimeFormat.supportedLocalesOf([languageCode]).length > 0 ? languageCode : 'en';
+            } catch (error) {
+                return 'en';
+            }
+        }
+
         jQuery(document).ready(
             function () {
 
@@ -257,7 +273,7 @@ leantime.ticketsController = (function () {
                             padding:20,
                             view_mode: viewMode,
                             date_format: leantime.i18n.__("language.momentJSDate"),
-                            language: leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
+                            language: ganttLanguage(),
                             additional_rows: 5,
                             custom_popup_html: function (task) {
 
@@ -1228,12 +1244,12 @@ leantime.ticketsController = (function () {
                             $container.removeClass("empty-column");
                             $container.attr("data-empty-text", "");
                             var currentLabel = $container.attr("aria-label") || "";
-                            $container.attr("aria-label", currentLabel.replace("Empty column", "") + " column items");
+                            $container.attr("aria-label", leantime.i18n.__("label.column_items").replace("%s", currentLabel.replace(leantime.i18n.__("label.empty_column"), "")));
                         } else {
                             // Column is empty - add empty state
                             $container.addClass("empty-column");
                             $container.attr("data-empty-text", "Empty");
-                            $container.attr("aria-label", "Empty column");
+                            $container.attr("aria-label", leantime.i18n.__("label.empty_column"));
                         }
                     });
 
@@ -1345,7 +1361,7 @@ leantime.ticketsController = (function () {
 
                                     // Get the new user's name from swimlane header
                                     var $newSwimlaneHeader = jQuery('#swimlane-row-' + newGroupValue + ' .swimlane-header-label');
-                                    var newUserName = $newSwimlaneHeader.text() || leantime.i18n.__("label.not_assigned");
+                                    var newUserName = $newSwimlaneHeader.text() || leantime.i18n.__("label.not_assigned_to_user");
                                     $userDropdown.find('span.text span#user' + ticketId).text(newUserName);
                                 }
 
@@ -1381,12 +1397,12 @@ leantime.ticketsController = (function () {
                                     // Clear the date display for "No Due Date"
                                     $dateDisplay.contents().filter(function() {
                                         return this.nodeType === 3;
-                                    }).first().replaceWith(' No due date');
+                                    }).first().replaceWith(' ' + leantime.i18n.__("text.no_due_date"));
                                 }
                             }
 
                             // Show success notification immediately for better perceived speed
-                            jQuery.growl({message: "To-Do Updated", style: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.todo_updated"), style: "success"});
 
                             var swimlaneValues = {};
                             swimlaneValues[fieldName] = newGroupValue;
@@ -1637,7 +1653,7 @@ leantime.ticketsController = (function () {
 
 
                     // Update footer by showing the total with the reference of the column index
-                    jQuery(api.column(9).footer()).html('Total');
+                    jQuery(api.column(9).footer()).html(leantime.i18n.__("label.total"));
                     jQuery(api.column(10).footer()).html(plannedHours);
                     jQuery(api.column(11).footer()).html(hoursLeft);
                     jQuery(api.column(12).footer()).html(loggedHours);
@@ -1872,7 +1888,28 @@ leantime.ticketsController = (function () {
         jQuery(".ticketRows").removeClass("active");
         jQuery("#row-" + id).addClass("active");
 
-        jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px' /></div>");
+        var loadingHtml = "<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px' /></div>";
+
+        // The detail goes in with jQuery, not htmx: release the old content's enhanced selects
+        // (their dropdown panels sit on <body>) before replacing it.
+        function replaceContent(html)
+        {
+            var container = jQuery(element)[0];
+            if (container && leantime.selectController) {
+                leantime.selectController.destroyWithin(container);
+            }
+            jQuery(element).html(html);
+        }
+
+        // ... and initialize the new content the way an htmx swap would (selects, tags, dates).
+        function showTicket(html)
+        {
+            replaceContent(html);
+            leantime.initLoadedContent(jQuery(element)[0]);
+            formSubmitHandler(element);
+        }
+
+        replaceContent(loadingHtml);
 
         function formSubmitHandler(element)
         {
@@ -1888,18 +1925,18 @@ leantime.ticketsController = (function () {
                         leantime.tiptapController.registry.destroyAll();
                     }
 
-                    jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px'/></div>");
-
                     var data = jQuery(this).serialize();
+                    var action = jQuery(this).attr("action");
+
+                    replaceContent(loadingHtml);
 
                     jQuery.ajax({
-                        url: jQuery(this).attr("action"),
+                        url: action,
                         data: data,
                         type: "post",
                         success: function (data) {
 
-                            jQuery(element).html(data);
-                            formSubmitHandler(element);
+                            showTicket(data);
 
                         },
                         error: function () {
@@ -1915,8 +1952,7 @@ leantime.ticketsController = (function () {
 
         jQuery.get(leantime.appUrl + '/tickets/showTicket/' + id, function ( data ) {
 
-            jQuery(element).html(data);
-            formSubmitHandler(element);
+            showTicket(data);
 
         });
 
@@ -1924,7 +1960,7 @@ leantime.ticketsController = (function () {
 
 
     var addCommentTimesheetContent = function (commentId, taskId) {
-        var content = "Discussion on To-Do #" + taskId + ":"
+        var content = leantime.i18n.__("text.discussion_on_todo").replace("%s", taskId)
         + "\n\r"
         + jQuery("#commentText-" + commentId).text();
 

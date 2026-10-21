@@ -6,24 +6,19 @@
     $state = $state ?? null;
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-suitcase"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! sprintf(__('headline.project'), $tpl->escape($project['name'])) !!}
-        </h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa fa-suitcase" :eyebrow="__('label.administration')">
+    {!! sprintf(__('headline.project'), $tpl->escape($project['name'])) !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
         <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
-            <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" contentRole="default" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}"><i class="fa-regular fa-copy"></i> Copy</x-global::forms.button>
-            <x-global::forms.button tag="a" state="danger" variant="outline" class="delete" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('link.delete_project') }}"><i class="fa fa-trash"></i> Delete</x-global::forms.button>
+            <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}" contentRole="default" class="duplicateProjectModal" data-tippy-content="{{ __('link.duplicate_project') }}"><i class="fa-regular fa-copy"></i> {{ __('buttons.clone') }}</x-global::forms.button>
+            <x-global::forms.button tag="a" state="danger" variant="outline" class="delete" link="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}" data-tippy-content="{{ __('label.deleteProject') }}"><i class="fa fa-trash"></i> {{ __('buttons.delete') }}</x-global::forms.button>
 
 
         </div>
@@ -32,6 +27,7 @@
             <ul>
                 <li><a href="#projectdetails"><span class="fa fa-leaf"></span> {!! __('tabs.projectdetails') !!}</a></li>
                 <li><a href="#team"><span class="fa fa-group"></span> {!! __('tabs.team') !!}</a></li>
+                <li><a href="#modules"><span class="fa fa-puzzle-piece"></span> {{ __('tabs.modules') }}</a></li>
 
                 <li><a href="#integrations"> <span class="fa fa-asterisk"></span> {!! __('tabs.Integrations') !!}</a></li>
                 <li><a href="#todosettings"><span class="fa fa-list-ul"></span> {!! __('tabs.todosettings') !!}</a></li>
@@ -70,7 +66,7 @@
                                             <div class="commentImage">
                                                 <img src="{{ BASE_URL }}/api/users?profileImage={{ $assignedUser['id'] }}&v={{ format($assignedUser['modified'])->timestamp() }}"/>
                                             </div>
-                                            <label for="user-{{ $assignedUser['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])) !!}
+                                            <x-global::forms.label for="user-{{ $assignedUser['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])) !!}
                                                 @if ($assignedUser['jobTitle'] != '')
                                                     <small>
                                                         {{ $assignedUser['jobTitle'] }}
@@ -79,38 +75,26 @@
                                                 @endif
                                                 @if ($assignedUser['source'] == 'api')
                                                     <small>
-                                                        API Access
+                                                        {{ __('label.api_access') }}
                                                     </small>
                                                     <br/>
                                                 @endif
                                                 @if ($assignedUser['status'] == 'i')
                                                     <small>{!! __('label.invited') !!}</small>
                                                 @endif
-                                            </label>
-                                            @php
-                                            if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) {
-                                            @endphp
-                                                <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$assignedUser['role']]) }}" />
-                                            @php
-                                            } else {
-                                            @endphp
+                                            </x-global::forms.label>
+                                            @if ($roles::isAtLeast($assignedUser['role'], $roles::$admin))
+                                                <x-global::forms.text-input readonly disabled value="{{ $roles::label($assignedUser['role']) }}" />
+                                            @else
                                                 <x-global::forms.select name="userProjectRole-{{ $assignedUser['id'] }}">
-                                                    <option value="inherit">Inherit</option>
-                                                    <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
-                                                        @if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) selected='selected' @endif
-                                                    >{!! __('label.roles.'.$roles::$readonly) !!}</option>
-
-                                                    <option value="{{ array_search($roles::$commenter, $roles::getRoles()) }}"
-                                                        @if ($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) selected='selected' @endif
-                                                    >{!! __('label.roles.'.$roles::$commenter) !!}</option>
-                                                    <option value="{{ array_search($roles::$editor, $roles::getRoles()) }}"
-                                                        @if ($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) selected='selected' @endif
-                                                    >{!! __('label.roles.'.$roles::$editor) !!}</option>
-                                                    <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
-                                                        @if ($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) selected='selected' @endif
-                                                    >{!! __('label.roles.'.$roles::$manager) !!}</option>
+                                                    <option value="inherit">{{ __('label.inherit') }}</option>
+                                                    @foreach ($roles::getProjectAssignableRoles() as $projectRoleKey => $projectRoleName)
+                                                        <option value="{{ $projectRoleKey }}"
+                                                            @if ($assignedUser['projectRole'] == $projectRoleKey) selected='selected' @endif
+                                                        >{{ $roles::label($projectRoleKey) }}</option>
+                                                    @endforeach
                                                 </x-global::forms.select>
-                                            @php } @endphp
+                                            @endif
                                             <div class="clearall"></div>
                                         </x-global::elements.card>
                                     </div>
@@ -135,26 +119,18 @@
                                                 <div class="commentImage">
                                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $row['id'] }}&v={{ format($row['modified'])->timestamp() }}"/>
                                                 </div>
-                                                <label for="user-{{ $row['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) !!}</label>
-                                                @if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner)
-                                                    <x-global::forms.text-input readonly disabled value="{{ __('label.roles.'.$roles::getRoles()[$row['role']]) }}" />
+                                                <x-global::forms.label for="user-{{ $row['id'] }}" >{!! sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) !!}</x-global::forms.label>
+                                                @if ($roles::isAtLeast($row['role'], $roles::$admin))
+                                                    <x-global::forms.text-input readonly disabled value="{{ $roles::label($row['role']) }}" />
                                                 @else
                                                     @php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); @endphp
                                                     <x-global::forms.select name="userProjectRole-{{ $row['id'] }}">
-                                                        <option value="inherit">Inherit</option>
-                                                        <option value="{{ array_search($roles::$readonly, $roles::getRoles()) }}"
-                                                        @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) selected='selected' @endif
-                                                            >{!! __('label.roles.'.$roles::$readonly) !!}</option>
-
-                                                        <option value="{{ array_search($roles::$commenter, $roles::getRoles()) }}"
-                                                            @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) selected='selected' @endif
-                                                        >{!! __('label.roles.'.$roles::$commenter) !!}</option>
-                                                        <option value="{{ array_search($roles::$editor, $roles::getRoles()) }}"
-                                                            @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$editor, $roles::getRoles())) selected='selected' @endif
-                                                        >{!! __('label.roles.'.$roles::$editor) !!}</option>
-                                                        <option value="{{ array_search($roles::$manager, $roles::getRoles()) }}"
-                                                            @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$manager, $roles::getRoles())) selected='selected' @endif
-                                                        >{!! __('label.roles.'.$roles::$manager) !!}</option>
+                                                        <option value="inherit">{{ __('label.inherit') }}</option>
+                                                        @foreach ($roles::getProjectAssignableRoles() as $projectRoleKey => $projectRoleName)
+                                                            <option value="{{ $projectRoleKey }}"
+                                                                @if ($assignedUserMatch && $assignedUserMatch['projectRole'] == $projectRoleKey) selected='selected' @endif
+                                                            >{{ $roles::label($projectRoleKey) }}</option>
+                                                        @endforeach
                                                     </x-global::forms.select>
                                                 @endif
                                                 <div class="clearall"></div>
@@ -191,6 +167,10 @@
 
                 </form>
 
+            </div>
+
+            <div id="modules">
+                <x-global::hx endpoint="modulemanager/projectModules/get/{{ $project['id'] }}" trigger="load" loaderCount="4" />
             </div>
 
             <div id="integrations">
@@ -271,7 +251,7 @@
                 <x-global::elements.section-header icon="fa fa-leaf">Telegram</x-global::elements.section-header>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="{{ BASE_URL }}/dist/images/telegram-logo.svg" width="130" alt="Telegram logo" />
+                        <img src="{{ BASE_URL }}/dist/images/telegram-logo.svg" width="130" alt="Telegram" />
                     </div>
 
                     <div class="col-md-5">
@@ -332,17 +312,17 @@
                                             <span class="fa fa-sort"></span>
                                         </div>
                                         <div class="col-md-1">
-                                            <label>{!! __('label.sortindex') !!}</label>
+                                            <x-global::forms.label>{!! __('label.sortindex') !!}</x-global::forms.label>
                                             <input type="text" name="labelSort-{{ $key }}" class="sorter" id="labelSort-{{ $key }}" value="{{ $ticketStatus['sortKey'] }}" style="width:50px;"/>
                                         </div>
                                         <div class="col-md-2">
 
-                                            <label>{!! __('label.label') !!}</label>
+                                            <x-global::forms.label>{!! __('label.label') !!}</x-global::forms.label>
                                             <input type="text" name="label-{{ $key }}" {{ $key == -1 ? 'readonly' : '' }} id="label-{{ $key }}" value="{{ $ticketStatus['name'] }}" />
 
                                         </div>
                                         <div class="col-md-2">
-                                            <label>{!! __('label.color') !!}</label>
+                                            <x-global::forms.label>{!! __('label.color') !!}</x-global::forms.label>
                                             <x-global::forms.select name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen" enhanced :search="false">
                                                 <x-global::forms.select.option value="label-purple" color-class="label-purple" :selected="$ticketStatus['class'] == 'label-purple'">{!! __('label.purple') !!}</x-global::forms.select.option>
                                                 <x-global::forms.select.option value="label-pink" color-class="label-pink" :selected="$ticketStatus['class'] == 'label-pink'">{!! __('label.pink') !!}</x-global::forms.select.option>
@@ -362,7 +342,7 @@
                                             </x-global::forms.select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label>{!! __('label.reportType') !!}</label>
+                                            <x-global::forms.label>{!! __('label.reportType') !!}</x-global::forms.label>
                                             <x-global::forms.select name="labelType-{{ $key }}" id="labelType-{{ $key }}">
                                                 <option value="NEW" {{ ($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : '' }}>{!! __('status.new') !!}</option>
                                                 <option value="INPROGRESS" {{ ($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : '' }}>{!! __('status.in_progress') !!}</option>
@@ -371,7 +351,7 @@
                                             </x-global::forms.select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label for="">{!! __('label.showInKanban') !!}</label>
+                                            <x-global::forms.label for="">{!! __('label.showInKanban') !!}</x-global::forms.label>
                                             <input type="checkbox" name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" {{ $ticketStatus['kanbanCol'] ? 'checked="checked"' : '' }}/>
                                         </div>
                                         <div class="remove">
@@ -383,7 +363,7 @@
                                     </div>
 
                                     @if ($key == -1)
-                                        <em>* the archive status is protected cannot be renamed or removed.</em>
+                                        <em>{{ __('text.archive_status_protected') }}</em>
                                     @endif
                                 </x-global::elements.card>
                             </li>
@@ -399,7 +379,7 @@
 
             @dispatchEvent('projectTabsContent')
         </div>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 
@@ -413,16 +393,16 @@
             <span class="fa fa-sort"></span>
         </div>
         <div class="col-md-1">
-            <label>{!! __('label.sortindex') !!}</label>
+            <x-global::forms.label>{!! __('label.sortindex') !!}</x-global::forms.label>
             <input type="text" name="labelSort-XXNEWKEYXX" class="sorter" id="labelSort-XXNEWKEYXX" value="" style="width:50px;"/>
         </div>
         <div class="col-md-2">
-            <label>{!! __('label.label') !!}</label>
+            <x-global::forms.label>{!! __('label.label') !!}</x-global::forms.label>
             <input type="text" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
 
         </div>
         <div class="col-md-2">
-            <label>{!! __('label.color') !!}</label>
+            <x-global::forms.label>{!! __('label.color') !!}</x-global::forms.label>
             <x-global::forms.select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen" enhanced :search="false">
                 <x-global::forms.select.option value="label-blue" color-class="label-blue">{!! __('label.blue') !!}</x-global::forms.select.option>
                 <x-global::forms.select.option value="label-info" color-class="label-info">{!! __('label.dark-blue') !!}</x-global::forms.select.option>
@@ -439,7 +419,7 @@
             </x-global::forms.select>
         </div>
         <div class="col-md-2">
-            <label>{!! __('label.reportType') !!}</label>
+            <x-global::forms.label>{!! __('label.reportType') !!}</x-global::forms.label>
             <x-global::forms.select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW">{!! __('status.new') !!}</option>
                 <option value="INPROGRESS">{!! __('status.in_progress') !!}</option>
@@ -448,7 +428,7 @@
             </x-global::forms.select>
         </div>
         <div class="col-md-2">
-            <label for="">{!! __('label.showInKanban') !!}</label>
+            <x-global::forms.label for="">{!! __('label.showInKanban') !!}</x-global::forms.label>
             <input type="checkbox" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"/>
         </div>
         <div class="remove">

@@ -2,11 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pagetitle">
-        <h1>{!! __('headlines.twoFA_login') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header>
+    {!! __('headlines.twoFA_login') !!}
+</x-global::layout.page-header>
 <div class="regcontent">
     <form id="login" action="{{ BASE_URL }}/twoFA/verify" method="post">
         <input type="hidden" name="redirectUrl" value="{{ $redirectUrl }}"/>

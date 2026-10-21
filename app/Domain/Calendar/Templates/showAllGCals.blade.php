@@ -2,24 +2,17 @@
 
 @section('content')
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
-        <x-global::forms.text-input name="term" placeholder="To search type and hit enter..." />
-    </form>
-
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('OVERVIEW') !!}</h5>
-        <h1>{!! __('ALL_GCCALS') !!}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('label.overview')">
+    {!! __('label.connected_calendars') !!}
+    <x-slot:actions>
+        <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
+            <x-global::forms.text-input name="term" :placeholder="__('input.placeholders.search_type_hit_enter')" />
+        </form>
+    </x-slot:actions>
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <form action="">
 
             @dispatchEvent('afterFormOpen')
@@ -29,9 +22,9 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>{!! __('NAME') !!}</th>
-                        <th>{!! __('URL') !!}</th>
-                        <th>{!! __('COLOR') !!}</th>
+                        <th>{!! __('label.name') !!}</th>
+                        <th>{!! __('label.calendar_url') !!}</th>
+                        <th>{!! __('label.color') !!}</th>
                     </tr>
                 </thead>
 
@@ -52,6 +45,8 @@
             @dispatchEvent('beforeFormClose')
 
         </form>
+    </x-global::layout.content-box>
+</div>
 
 @once
 @push('scripts')

@@ -52,7 +52,7 @@
     @include('reports::partials.needsAttention', ['needsAttention' => $report['needsAttention'], 'showProjects' => false])
 
     <div class="reportSection">
-        <h5 class="subtitle">{{ __('subtitles.accomplished_this_period') }} <span class="sectionCount">{{ count($report['milestones']['completed']) }}</span></h5>
+        <x-global::elements.section-header as="h5">{{ __('subtitles.accomplished_this_period') }} <span class="sectionCount">{{ count($report['milestones']['completed']) }}</span></x-global::elements.section-header>
         @include('reports::partials.milestoneList', [
             'milestones' => $report['milestones']['completed'],
             'mode' => 'completed',
@@ -66,7 +66,7 @@
     </div>
 
     <div class="reportSection">
-        <h5 class="subtitle">{{ __('subtitles.in_flight') }} <span class="sectionCount">{{ count($inFlightMilestones) }}</span></h5>
+        <x-global::elements.section-header as="h5">{{ __('subtitles.in_flight') }} <span class="sectionCount">{{ count($inFlightMilestones) }}</span></x-global::elements.section-header>
         @include('reports::partials.milestoneList', [
             'milestones' => $inFlightMilestones,
             'mode' => 'inflight',
@@ -77,7 +77,7 @@
     </div>
 
     <div class="reportSection">
-        <h5 class="subtitle">{{ __('subtitles.coming_up') }}</h5>
+        <x-global::elements.section-header as="h5">{{ __('subtitles.coming_up') }}</x-global::elements.section-header>
         @if (count($report['milestones']['upcomingByQuarter']) === 0)
             <div class="tw-opacity-60 tw-text-sm tw-py-2">{{ __('text.report_no_upcoming_milestones') }}</div>
         @else
@@ -94,7 +94,7 @@
     </div>
 
     <div class="reportSection">
-        <h5 class="subtitle">{{ __('subtitles.goals_kpis') }}</h5>
+        <x-global::elements.section-header as="h5">{{ __('subtitles.goals_kpis') }}</x-global::elements.section-header>
         @include('reports::partials.goalTable', [
             'goals' => $report['goals']['goals'],
             'emptyText' => __('text.report_no_goals'),
@@ -102,7 +102,7 @@
     </div>
 
     <div class="reportSection">
-        <h5 class="subtitle">{{ __('subtitles.status_narrative') }}</h5>
+        <x-global::elements.section-header as="h5">{{ __('subtitles.status_narrative') }}</x-global::elements.section-header>
         @include('reports::partials.statusNarrative', [
             'updatesByProject' => $report['statusUpdates'],
             'summaries' => $report['summaries'],

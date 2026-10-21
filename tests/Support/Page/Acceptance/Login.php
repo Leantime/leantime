@@ -51,6 +51,12 @@ class Login
             return false;
         }
 
+        // Leave the previous test's page first. Codeception clears cookies between tests but keeps
+        // that page open, so its background requests (HTMX widgets, polling, follow-ups of a drag)
+        // can go out without a session cookie, get a new guest session, and overwrite the cookie
+        // set below before the test's first page loads. A static file runs no scripts and sets no
+        // cookie.
+        $this->I->amOnPage('/robots.txt');
         $this->I->setCookie($name, Fixtures::get($name));
 
         return true;

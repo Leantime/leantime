@@ -4,7 +4,14 @@ namespace Leantime\Core\Events;
 
 trait DispatchesEvents
 {
-    private static string $event_context = '';
+    /**
+     * Event context per class. Keyed by class because subclasses share their parent's statics:
+     * a single cached string would name every BaseService/Repository/Controller subclass's
+     * events after whichever subclass dispatched first in the request.
+     *
+     * @var array<class-string, string>
+     */
+    private static array $event_contexts = [];
 
     /**
      * dispatches an event with context
@@ -41,11 +48,7 @@ trait DispatchesEvents
      */
     protected static function get_event_context($function): string
     {
-        if (empty(self::$event_context)) {
-            self::$event_context = static::set_class_context();
-        }
-
-        $eventContext = self::$event_context.'.';
+        $eventContext = (self::$event_contexts[static::class] ??= static::set_class_context()).'.';
 
         if (! empty($function) && is_string($function) && ! is_numeric($function)) {
 

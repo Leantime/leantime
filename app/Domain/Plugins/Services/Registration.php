@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
+use Leantime\Core\Modules\Module;
+use Leantime\Core\Modules\ModuleRegistry;
 
 class Registration
 {
@@ -164,6 +166,35 @@ class Registration
 
         return '/';
 
+    }
+
+    /**
+     * Register the plugin as a module that projects can switch on or off
+     * (Project settings → Modules). A switched-off module disappears from the project menu and its
+     * pages are blocked in that project.
+     *
+     * Menu items added with {@see addMenuItem()} carry the plugin id as their module, so with the
+     * defaults the plugin's menu items and its /{pluginid}/* pages follow the switch.
+     *
+     * Every key is optional: `id`, `title` and `routes` default to the plugin id; `title` and
+     * `description` may be language keys. See {@see Module} for what each key does.
+     *
+     * @param  array{id?: string, title?: string, description?: string, icon?: string, enabledByDefault?: bool, routes?: array<int, string>, permissionDomain?: string|null}  $module
+     */
+    public function registerModule(array $module = []): void
+    {
+        $moduleId = $module['id'] ?? $this->pluginId;
+
+        app()->make(ModuleRegistry::class)->register(new Module(
+            id: $moduleId,
+            title: $module['title'] ?? $this->pluginId,
+            description: $module['description'] ?? '',
+            icon: $module['icon'] ?? 'fa fa-puzzle-piece',
+            enabledByDefault: $module['enabledByDefault'] ?? true,
+            routes: $module['routes'] ?? [$this->pluginId],
+            permissionDomain: $module['permissionDomain'] ?? null,
+            source: $this->pluginId,
+        ));
     }
 
     public function addMenuItem(array $item, string $section, array $location)

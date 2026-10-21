@@ -7,6 +7,7 @@ use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Blueprints\Events\CanvasCreated;
 use Leantime\Domain\Blueprints\Events\CanvasItemCreated;
 use Leantime\Domain\Comments\Events\CommentAdded;
@@ -42,7 +43,8 @@ class Ideas extends BaseService
         CommentRepository $commentsRepository,
         ProjectService $projectService,
         TicketService $ticketService,
-        LanguageCore $language
+        LanguageCore $language,
+        private ProjectModules $projectModules,
     ) {
         $this->ideasRepository = $ideasRepository;
         $this->commentsRepository = $commentsRepository;
@@ -188,7 +190,7 @@ class Ideas extends BaseService
     #[RequiresPermission(IdeasPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForNewIdeas(?int $projectId = null, ?int $board = null): array
     {
-        $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
+        $ideas = $this->withoutSwitchedOffProjects($this->ideasRepository->getAllIdeas($projectId, $board) ?: []);
 
         foreach ($ideas as $key => $idea) {
             $ideas[$key] = $this->prepareDatesForApiResponse($idea);
@@ -209,7 +211,7 @@ class Ideas extends BaseService
     #[RequiresPermission(IdeasPermissions::VIEW, projectIdParam: 'projectId')]
     public function pollForUpdatedIdeas(?int $projectId = null, ?int $board = null): array
     {
-        $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
+        $ideas = $this->withoutSwitchedOffProjects($this->ideasRepository->getAllIdeas($projectId, $board) ?: []);
 
         foreach ($ideas as $key => $idea) {
             $ideas[$key] = $this->prepareDatesForApiResponse($idea);
@@ -217,6 +219,19 @@ class Ideas extends BaseService
         }
 
         return $ideas;
+    }
+
+    /**
+     * Drop ideas of projects that have the Ideas module switched off. The polling reads span
+     * projects (and authorize against the session project when none is given), so they filter
+     * by each idea's own project.
+     *
+     * @param  array<int|string, array<string, mixed>>  $ideas  Idea rows carrying a `projectId`.
+     * @return array<int|string, array<string, mixed>>
+     */
+    private function withoutSwitchedOffProjects(array $ideas): array
+    {
+        return $this->projectModules->withoutSwitchedOffProjects('ideas', $ideas);
     }
 
     /**

@@ -33,7 +33,7 @@
 
     @include('tickets::submodules.ticketBoardTabs')
 
-    <div class="maincontentinner kanban-board-wrapper" >
+    <x-global::layout.content-box class="kanban-board-wrapper">
 
         {{-- Board actions (New / Filter / Group By) moved into the nav bar
              (ticketBoardTabs) so there's no separate toolbar row here. --}}
@@ -149,7 +149,7 @@
                             <div class="column">
                                 <div class="contentInner status_{{ $key }} {{ isset($emptyColumns[$key]) ? 'empty-column' : '' }}"
                                      data-empty-text="{{ isset($emptyColumns[$key]) ? 'Empty' : '' }}"
-                                     aria-label="{{ isset($emptyColumns[$key]) ? 'Empty column' : htmlspecialchars($statusRow['name']).' column items' }}"
+                                     aria-label="{{ isset($emptyColumns[$key]) ? __('label.empty_column') : sprintf(__('label.column_items'), $statusRow['name']) }}"
                                      role="list">
 
                                     @include('tickets::partials.quickadd-form', [
@@ -297,7 +297,7 @@
 
         @endforeach
 
-    </div>
+    </x-global::layout.content-box>
 
 </div>
 

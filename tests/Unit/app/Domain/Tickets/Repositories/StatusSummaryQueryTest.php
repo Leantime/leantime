@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Tickets\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
@@ -26,7 +27,7 @@ class StatusSummaryQueryTest extends TestCase
         session(['userdata' => ['id' => 4, 'clientId' => 2]]);
 
         $connection = Mockery::mock(ConnectionInterface::class);
-        $connection->shouldReceive('table')->andReturnUsing(fn ($table) => (new Builder($connection, new MySqlGrammar, new Processor))->from($table));
+        $connection->shouldReceive('table')->andReturnUsing(fn ($table) => (new Builder($connection, new MySqlGrammar(new MySqlConnection(fn () => null)), new Processor))->from($table));
         $connection->shouldReceive('raw')->andReturnUsing(fn ($value) => new Expression($value));
 
         $repo = (new \ReflectionClass(Tickets::class))->newInstanceWithoutConstructor();
@@ -45,7 +46,7 @@ class StatusSummaryQueryTest extends TestCase
         $sql = $this->baseQuery(null, true)->toSql();
 
         $this->assertStringContainsString('left join `zp_relationuserproject` as `rup`', $sql);
-        $this->assertStringContainsString('`requestor`.`role` >= ?', $sql);
+        $this->assertStringContainsString('`requestor`.`role` in (?, ?)', $sql);
         $this->assertStringContainsString('`zp_projects`.`state` <> ?', $sql);
         $this->assertStringContainsString('`zp_tickets`.`type` <> ?', $sql);
         $this->assertStringNotContainsString('`zp_tickets`.`projectId` = ?', $sql);

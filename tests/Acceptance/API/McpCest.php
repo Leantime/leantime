@@ -9,7 +9,7 @@ use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Install;
 
 /**
- * MCP server contract test (laravel/mcp over the /mcp HTTP transport).
+ * MCP server contract test (laravel/mcp 1.x over the /mcp HTTP transport).
  *
  * Sibling to BearerApiCest: same Bearer-token mint (a row in zp_access_tokens), but against the
  * MCP endpoint the McpServer plugin registers instead of the JSON-RPC API. Exists because the MCP
@@ -17,6 +17,10 @@ use Tests\Support\Page\Acceptance\Install;
  * nothing else in CI notices when it breaks — e.g. tools calling since-removed service methods, or
  * the protocol-version handshake rejecting current clients (both happened in 2026-07 and were only
  * caught by live testing).
+ *
+ * Two client eras are covered: legacy clients (initialize handshake, 2025-11-25 and older) and
+ * 2026-07-28 clients (no handshake; protocol version + capabilities in every request's _meta,
+ * mirrored in the MCP-Protocol-Version / Mcp-Method / Mcp-Name headers).
  *
  * Group `mcp` is NOT part of the default CI groups: the McpServer plugin lives in the private
  * app/Plugins submodule, which is absent in OSS CI. Every test therefore skips itself when the
@@ -30,6 +34,27 @@ use Tests\Support\Page\Acceptance\Install;
 class McpCest
 {
     private const MCP_PATH = '/mcp';
+
+    private const MODERN_PROTOCOL = '2026-07-28';
+
+    /**
+     * Every core tool (the Tools folders in app/Domain) plus the McpServer plugin's own docs search.
+     * PgmPro's seedResourcesFromProjects is only registered when that plugin is present.
+     */
+    private const EXPECTED_TOOLS = [
+        'getStatusLabels', 'getAllStatusLabelsByUserId', 'findTasks', 'getTicket', 'editTask', 'addTask',
+        'addSubtask', 'bulkAddTasks', 'bulkEditTasks', 'bulkScheduleTasks', 'createSubtasksForTask',
+        'getTaskStatusSummary', 'findMilestones', 'getMilestone', 'editMilestone', 'addMilestone',
+        'addMilestonesForProject', 'getAllProjects', 'getFullProjectOverview', 'getProject',
+        'getProjectsAssignedToUser', 'addProject', 'editProject', 'patchProject', 'getUsersAssignedToProject',
+        'findProject', 'getAllGoals', 'getGoal', 'createGoal', 'editGoal', 'createGoalboard',
+        'getGoalsByMilestone', 'getChildGoals', 'getParentKPIs', 'getCalendar', 'addEvent', 'editEvent',
+        'deleteEvent', 'getICalUrl', 'scheduleTaskOnCalendar', 'bulkAddEvents', 'bulkEditEvents',
+        'scheduleDay', 'breakdownTask', 'getComments', 'addComment', 'getAllProjectComments',
+        'addProjectStatusUpdate', 'pollComments', 'startTimer', 'stopTimer', 'getUserTimesheets',
+        'getProjectTimesheets', 'logTime', 'getTimesheetSummary', 'getWeeklyTimesheets', 'search',
+        'searchLeantimeDocumentation',
+    ];
 
     public function _before(AcceptanceTester $I, Install $installPage)
     {
@@ -53,21 +78,26 @@ class McpCest
         $this->enableMcpPluginOrSkip($I, $scenario);
         $this->mintBearerToken($I);
 
-        // Baseline: a revision from laravel/mcp v0.1.1's built-in list.
+        // Clients that still open with initialize get the revision they asked for, if supported.
         $response = $this->mcp($I, $this->initializeRequest('2025-06-18'));
         Assert::assertSame('2025-06-18', $response['result']['protocolVersion'] ?? null, 'initialize failed: '.json_encode($response));
         Assert::assertNotEmpty($response['result']['serverInfo']['name'] ?? null);
 
         // Regression gate for the Claude Code handshake: current clients request 2025-11-25.
-        // v0.1.1 rejects unknown revisions instead of downgrading (spec says downgrade), so the
-        // server class must keep newer revisions in $supportedProtocolVersion (plugins#60).
         $response = $this->mcp($I, $this->initializeRequest('2025-11-25'));
-        Assert::assertArrayNotHasKey(
-            'error',
-            $response,
-            'Server rejected protocol 2025-11-25 — Claude Code cannot connect. '
-                .'LeantimeMcpServer::$supportedProtocolVersion must include it: '.json_encode($response)
-        );
+        Assert::assertSame('2025-11-25', $response['result']['protocolVersion'] ?? null, 'Claude Code cannot connect: '.json_encode($response));
+    }
+
+    #[Group('mcp')]
+    public function mcpDiscoveryAdvertisesTheCurrentProtocol(AcceptanceTester $I, Scenario $scenario)
+    {
+        $this->enableMcpPluginOrSkip($I, $scenario);
+        $this->mintBearerToken($I);
+
+        $response = $this->modernMcp($I, 'server/discover');
+
+        Assert::assertContains(self::MODERN_PROTOCOL, $response['result']['supportedVersions'] ?? [], 'server/discover: '.json_encode($response));
+        Assert::assertSame('complete', $response['result']['resultType'] ?? null);
     }
 
     #[Group('mcp')]
@@ -76,29 +106,19 @@ class McpCest
         $this->enableMcpPluginOrSkip($I, $scenario);
         $this->mintBearerToken($I);
 
-        // tools/list paginates (15 per page in v0.1.1) — walk every cursor.
-        $toolNames = [];
-        $cursor = null;
-        $guard = 0;
-        do {
-            $params = $cursor === null ? new \stdClass : ['cursor' => $cursor];
-            $response = $this->mcp($I, [
-                'jsonrpc' => '2.0',
-                'id' => 2,
-                'method' => 'tools/list',
-                'params' => $params,
-            ]);
-            Assert::assertArrayNotHasKey('error', $response, 'tools/list failed: '.json_encode($response));
-            foreach ($response['result']['tools'] ?? [] as $tool) {
-                $toolNames[] = $tool['name'];
-            }
-            $cursor = $response['result']['nextCursor'] ?? null;
-        } while ($cursor !== null && ++$guard < 20);
+        $response = $this->modernMcp($I, 'tools/list');
+        Assert::assertArrayNotHasKey('error', $response, 'tools/list failed: '.json_encode($response));
 
-        Assert::assertGreaterThanOrEqual(56, count($toolNames), 'Expected the full tool catalog, got: '.implode(', ', $toolNames));
+        // One page holds every tool: clients that ignore nextCursor must still see them all.
+        Assert::assertArrayNotHasKey('nextCursor', $response['result'], 'tools/list paginated');
 
-        // One representative per domain — catches a whole domain falling out of the registry.
-        foreach (['findTasks', 'getAllProjects', 'getAllGoals', 'getCalendar', 'getComments', 'logTime'] as $expected) {
+        // The list is the same for every user, but /mcp is authenticated: cacheable privately only.
+        Assert::assertSame('complete', $response['result']['resultType'] ?? null);
+        Assert::assertSame('private', $response['result']['cacheScope'] ?? null);
+        Assert::assertGreaterThan(0, $response['result']['ttlMs'] ?? 0);
+
+        $toolNames = array_column($response['result']['tools'] ?? [], 'name');
+        foreach (self::EXPECTED_TOOLS as $expected) {
             Assert::assertContains($expected, $toolNames, "Tool {$expected} missing from tools/list");
         }
     }
@@ -140,10 +160,23 @@ class McpCest
         $this->enableMcpPluginOrSkip($I, $scenario);
         $this->mintBearerToken($I);
 
-        // laravel/mcp reports unknown tools as an isError tool result ("Tool not found"),
-        // not a JSON-RPC error object.
-        $response = $this->callTool($I, 'definitelyNotATool', []);
-        Assert::assertTrue($response['result']['isError'] ?? false, 'Unknown tool should produce an error result: '.json_encode($response));
+        // An unknown tool is a JSON-RPC error (invalid params), answered with HTTP 400.
+        $response = $this->mcp($I, $this->toolCallRequest('definitelyNotATool', []), 400);
+        Assert::assertSame(-32602, $response['error']['code'] ?? null, 'Unknown tool should be a JSON-RPC error: '.json_encode($response));
+    }
+
+    #[Group('mcp')]
+    public function mcpCallsToolsWithTheCurrentProtocol(AcceptanceTester $I, Scenario $scenario)
+    {
+        $this->enableMcpPluginOrSkip($I, $scenario);
+        $this->mintBearerToken($I);
+
+        $response = $this->modernMcp($I, 'tools/call', ['name' => 'getAllProjects', 'arguments' => new \stdClass]);
+        Assert::assertFalse($response['result']['isError'] ?? true, 'getAllProjects errored: '.json_encode($response));
+
+        // The Mcp-Name header has to match the tool named in the body.
+        $response = $this->modernMcp($I, 'tools/call', ['name' => 'getAllProjects', 'arguments' => new \stdClass], 400, 'getProject');
+        Assert::assertSame(-32020, $response['error']['code'] ?? null, 'Header mismatch not rejected: '.json_encode($response));
     }
 
     /**
@@ -196,23 +229,59 @@ class McpCest
     /**
      * POST a JSON-RPC payload to /mcp and return the decoded response.
      */
-    private function mcp(AcceptanceTester $I, array $payload): array
+    private function mcp(AcceptanceTester $I, array $payload, int $expectedStatus = 200): array
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->haveHttpHeader('Accept', 'application/json');
         $I->sendPost(self::MCP_PATH, json_encode($payload, JSON_THROW_ON_ERROR));
-        $I->seeResponseCodeIs(200);
+        $I->seeResponseCodeIs($expectedStatus);
         $I->seeResponseIsJson();
 
         return json_decode($I->grabResponse(), true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
-     * Invoke an MCP tool via tools/call.
+     * Send a 2026-07-28 request: protocol version and client capabilities in params._meta,
+     * mirrored in the MCP headers (Mcp-Name defaults to the tool named in the body).
+     */
+    private function modernMcp(AcceptanceTester $I, string $method, array $params = [], int $expectedStatus = 200, ?string $nameHeader = null): array
+    {
+        $params['_meta'] = [
+            'io.modelcontextprotocol/protocolVersion' => self::MODERN_PROTOCOL,
+            'io.modelcontextprotocol/clientCapabilities' => new \stdClass,
+        ];
+
+        $I->haveHttpHeader('MCP-Protocol-Version', self::MODERN_PROTOCOL);
+        $I->haveHttpHeader('Mcp-Method', $method);
+        $nameHeader ??= $params['name'] ?? null;
+        if ($nameHeader !== null) {
+            $I->haveHttpHeader('Mcp-Name', $nameHeader);
+        }
+
+        try {
+            return $this->mcp($I, ['jsonrpc' => '2.0', 'id' => 4, 'method' => $method, 'params' => $params], $expectedStatus);
+        } finally {
+            // The headers stick to the REST module; a legacy request carrying them would be refused.
+            $I->deleteHeader('MCP-Protocol-Version');
+            $I->deleteHeader('Mcp-Method');
+            $I->deleteHeader('Mcp-Name');
+        }
+    }
+
+    /**
+     * Invoke an MCP tool via tools/call (legacy client: no _meta, no MCP headers).
      */
     private function callTool(AcceptanceTester $I, string $name, array $arguments): array
     {
-        return $this->mcp($I, [
+        return $this->mcp($I, $this->toolCallRequest($name, $arguments));
+    }
+
+    /**
+     * A legacy tools/call request.
+     */
+    private function toolCallRequest(string $name, array $arguments): array
+    {
+        return [
             'jsonrpc' => '2.0',
             'id' => 3,
             'method' => 'tools/call',
@@ -220,7 +289,7 @@ class McpCest
                 'name' => $name,
                 'arguments' => $arguments === [] ? new \stdClass : $arguments,
             ],
-        ]);
+        ];
     }
 
     /**

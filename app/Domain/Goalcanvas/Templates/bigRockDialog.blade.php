@@ -5,7 +5,7 @@
     action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock['id']) ? $bigRock['id'] : '' }}">
 
     <br />
-    <label>{{ __('label.goal_description') }}</label>
+    <x-global::forms.label>{{ __('label.goal_description') }}</x-global::forms.label>
     <x-global::forms.text-input width="full" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" /><br />
 
     <br />

@@ -6,23 +6,16 @@
     $projectData = $projectData ?? [];
 @endphp
 
-<div class="pageheader">
-
-    <div class="pull-right padding-top">
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="session('currentProjectClient').' // '.session('currentProjectName')">
+    {!! __('headlines.edit_todo') !!}
+    <x-slot:actions>
         <a href="{{ session('lastPage') }}" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> {!! __('links.go_back') !!}</a>
-    </div>
-
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{{ session('currentProjectClient').' // '.session('currentProjectName') }}</h5>
-        <h1>{!! __('headlines.edit_todo') !!}</h1>
-    </div>
-
-</div><!--pageheader-->
+    </x-slot:actions>
+</x-global::layout.page-header>
 
 <div class="maincontent">
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -33,7 +26,9 @@
                 <li><a href="#subtasks"><span class="fa fa-list-check"></span> {!! __('tabs.subtasks') !!} ({{ $numSubTasks }})</a></li>
                 <li><a href="#files"><span class="fa fa-file"></span> {!! __('tabs.files') !!} ({{ $numFiles }})</a></li>
                 @if (session('userdata.role') != 'client')
-                    <li><a href="#timesheet" id="timesheetTab"><span class="fa fa-clock"></span> {!! __('tabs.time_tracking') !!}</a></li>
+                    @module('timesheets', $ticket->projectId)
+                        <li><a href="#timesheet" id="timesheetTab"><span class="fa fa-clock"></span> {!! __('tabs.time_tracking') !!}</a></li>
+                    @endmodule
                 @endif
                 <li><a href="#history"><span class="fa fa-clock-rotate-left"></span> {!! __('tabs.history') !!}</a></li>
             </ul>
@@ -58,9 +53,11 @@
 
 
             @if (session('userdata.role') != 'client')
-                <div id="timesheet">
-                    @include('tickets::submodules.timesheet')
-                </div>
+                @module('timesheets', $ticket->projectId)
+                    <div id="timesheet">
+                        @include('tickets::submodules.timesheet')
+                    </div>
+                @endmodule
             @endif
 
             <div id="history">
@@ -68,14 +65,14 @@
             </div>
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#comments" class="formModal">
             <input type="hidden" name="comment" value="1" />
             @include('comments::submodules.generalComment', ['formUrl' => BASE_URL.'/tickets/showTicket/'.$ticket->id])
         </form>
-    </div>
+    </x-global::layout.content-box>
 
 </div>
 

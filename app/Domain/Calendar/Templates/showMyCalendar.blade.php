@@ -3,93 +3,75 @@
 @section('content')
 
 @php
-if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
-    session(['usersettings.submenuToggle.myCalendarView' => 'dayGridMonth']);
-}
+    // The calendar's last view (saved by the view select via Api.Api.setSubmenuState).
+    $myCalendarView = app(\Leantime\Core\UI\UiState::class)->get('myCalendarView', 'dayGridMonth');
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('headline.calendar') !!}</h5>
-        <h1>{!! __('headline.my_calendar') !!}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="__('headline.calendar')">
+    {!! __('headline.my_calendar') !!}
+</x-global::layout.page-header>
 
 {!! $tpl->displayNotification() !!}
 
 <div class="maincontent">
 
-    <div class="row">
-        <div class="col-md-2">
-            <div class="maincontentinner">
-                <h5 class="subtitle tw-pb-m">Calendars</h5>
+    <x-global::layout.content-box id="my-calendar" :leftWidth="240">
+        <x-slot:left>
+            <x-global::elements.section-header as="h5" class="tw-pb-m">{{ __('label.calendars') }}</x-global::elements.section-header>
 
-                <ul class="simpleList">
-                    <li><span class="indicatorCircle" style="background:var(--accent1)"></span>Events</li>
-                    <li><span class="indicatorCircle" style="background:var(--accent2)"></span>Projects & Tasks</li>
+            <ul class="simpleList">
+                <li><span class="indicatorCircle" style="background:var(--accent1)"></span>{{ __('label.events') }}</li>
+                <li><span class="indicatorCircle" style="background:var(--accent2)"></span>{{ __('label.projects_and_tasks') }}</li>
 
-                @foreach ($externalCalendars as $calendars)
-                    <li>
-                        @if (empty($calendars['managedByPlugin']))
-                        <x-global::actions.dropdown icon="fa fa-ellipsis-h" trigger-class="editHeadline" style="float:right;">
-                            <li>
-                                <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><i class="fa-solid fa-pen-to-square"></i> {!! __('links.edit_calendar') !!}</a>
-                            </li>
-                            <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete_external_calendar') !!}</a></li>
+            @foreach ($externalCalendars as $calendars)
+                <li>
+                    @if (empty($calendars['managedByPlugin']))
+                    <x-global::actions.dropdown icon="fa fa-ellipsis-h" trigger-class="editHeadline" style="float:right;">
+                        <li>
+                            <a href="#/calendar/editExternal/{{ $calendars['id'] }}"><i class="fa-solid fa-pen-to-square"></i> {!! __('links.edit_calendar') !!}</a>
+                        </li>
+                        <li><a href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete_external_calendar') !!}</a></li>
 
-                        </x-global::actions.dropdown>
-                        @endif
-                        <span class="indicatorCircle" style="background:{{ $calendars['colorClass'] }}"></span>{{ $calendars['name'] }}
+                    </x-global::actions.dropdown>
+                    @endif
+                    <span class="indicatorCircle" style="background:{{ $calendars['colorClass'] }}"></span>{{ $calendars['name'] }}
 
-                    </li>
-                @endforeach
+                </li>
+            @endforeach
 
-                </ul>
-                <hr />
-                <a href="#/calendar/connectCalendar" class="formModal" style="display:block; margin-bottom:8px; margin-left:-5px;"><i class="fa-regular fa-calendar-plus" style="width:16px;"></i> {!! __('label.connect_calendar') !!}</a>
-                <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><i class="fa fa-cog" style="width:16px;"></i> {!! __('label.calendar_settings') !!}</a>
+            </ul>
+            <hr />
+            <a href="#/calendar/connectCalendar" class="formModal" style="display:block; margin-bottom:8px; margin-left:-5px;"><i class="fa-regular fa-calendar-plus" style="width:16px;"></i> {!! __('label.connect_calendar') !!}</a>
+            <a href="#/calendar/calendarSettings" class="formModal" style="margin-left:-5px;"><i class="fa fa-cog" style="width:16px;"></i> {!! __('label.calendar_settings') !!}</a>
+        </x-slot:left>
+        {{-- One toolbar row: the two outer groups share the free space, so the title stays centred
+             and the view controls stay on one line. --}}
+        <div class="calendarToolbar tw-flex tw-flex-wrap tw-items-center tw-gap-sm tw-mb-m">
+            <div class="tw-flex-1">
+                <x-global::forms.button tag="a" link="#/calendar/addEvent" contentRole="primary" class="formModal"><i class='fa fa-plus'></i> {!! __('buttons.add_event') !!}</x-global::forms.button>
+            </div>
+            <div class="fc-center center" id="calendarTitle">
+                <h2>..</h2>
+            </div>
+            <div class="tw-flex-1 tw-flex tw-items-center tw-justify-end tw-gap-xs">
+                <x-global::forms.select id="my-select" width="sm" class="tw-mb-none">
+                    <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ $myCalendarView == 'timeGridDay' ? 'selected' : '' }}>{{ __('buttons.day') }}</option>
+                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ $myCalendarView == 'timeGridWeek' ? 'selected' : '' }}>{{ __('buttons.week') }}</option>
+                    <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ $myCalendarView == 'dayGridMonth' ? 'selected' : '' }}>{{ __('buttons.month') }}</option>
+                    <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ $myCalendarView == 'multiMonthYear' ? 'selected' : '' }}>{{ __('label.year') }}</option>
+                </x-global::forms.select>
+                <button class="fc-today-button btn btn-default" type="button">{{ __('label.today_lowercase') }}</button>
+                <button class="fc-prev-button btn btn-default" type="button">
+                    <span class="fc-icon fc-icon-chevron-left"></span>
+                </button>
+                <button class="fc-next-button btn btn-default" type="button">
+                    <span class="fc-icon fc-icon-chevron-right"></span>
+                </button>
+                <x-global::forms.button tag="a" link="#/calendar/export" contentRole="default">{{ __('links.export') }}</x-global::forms.button>
             </div>
         </div>
-        <div class="col-md-10">
-            <div class="maincontentinner">
-                <div class="row">
-                    <div class="col-md-4">
-                        <x-global::forms.button tag="a" link="#/calendar/addEvent" contentRole="primary" class="formModal"><i class='fa fa-plus'></i> {!! __('buttons.add_event') !!}</x-global::forms.button>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
-                            <h2>..</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <x-global::forms.button tag="a" link="#/calendar/export" contentRole="default" class="right">Export</x-global::forms.button>
-                        <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
-                            <span class="fc-icon fc-icon-chevron-right"></span>
-                        </button>
-                        <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px;">
-                            <span class="fc-icon fc-icon-chevron-left"></span>
-                        </button>
-
-                        <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
-
-
-                        <x-global::forms.select id="my-select" style="margin-right:5px;" class="right">
-                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' }}>Day</option>
-                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>Week</option>
-                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>Month</option>
-                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>Year</option>
-                        </x-global::forms.select>
-                    </div>
-                </div>
-                <div id="calendar"></div>
-            </div>
-        </div>
-    </div>
+        <div id="calendar"></div>
+    </x-global::layout.content-box>
 
 
 </div>
@@ -164,9 +146,9 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
                 timeZone: leantime.i18n.__("usersettings.timezone"),
-                height: 'calc(100% - 40px)',
+                height: '100%',
                 stickyHeaderDates: true,
-                initialView: '{{ session('usersettings.submenuToggle.myCalendarView') }}',
+                initialView: '{{ $myCalendarView }}',
                 eventSources:eventSources,
                 editable: true,
                 headerToolbar: false,
@@ -344,6 +326,28 @@ if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
 <style type="text/css">
     .maincontent .maincontentinner {
         height:calc(100vh - 165px);
+    }
+
+    /* The calendar takes the height the toolbar leaves (the toolbar wraps on narrow screens). */
+    .maincontent .lt-content .lt-content-main {
+        display:flex;
+        flex-direction:column;
+    }
+
+    .maincontent .lt-content .lt-content-main #calendar {
+        flex:1 1 0;
+        min-height:0;
+    }
+
+    /* Stacked (narrow screens): the calendar pane gets the full height, below the calendar list. */
+    @media (max-width: 991px) {
+        .maincontent .maincontentinner.lt-content {
+            height:auto;
+        }
+
+        .maincontent .lt-content .lt-content-main {
+            height:calc(100vh - 165px);
+        }
     }
 </style>
 

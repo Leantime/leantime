@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Setting\Repositories\Setting;
 
 class Helper
@@ -373,35 +374,35 @@ class Helper
         $checklist = [
             'step1' => [
                 'completed' => true,
-                'label' => 'Create your first task',
+                'label' => __('label.onboarding_create_first_task'),
             ],
             'step2' => [
                 'completed' => false,
-                'label' => 'Complete the My Work Dashboard Tour',
+                'label' => __('label.onboarding_checklist_dashboard_tour'),
             ],
             'step3' => [
                 'completed' => false,
-                'label' => 'Review your personal project',
+                'label' => __('label.onboarding_checklist_personal_project'),
                 'url' => '',
             ],
             'step4' => [
                 'completed' => false,
-                'label' => 'Review your project',
+                'label' => __('label.onboarding_checklist_project'),
                 'url' => '',
             ],
             'step5' => [
                 'completed' => false,
-                'label' => 'Create a milestone',
+                'label' => __('label.onboarding_checklist_milestone'),
                 'url' => '',
             ],
             'step6' => [
                 'completed' => false,
-                'label' => 'Create a goal',
+                'label' => __('label.onboarding_checklist_goal'),
                 'url' => '',
             ],
             'step7' => [
                 'completed' => false,
-                'label' => 'Comment on a task',
+                'label' => __('label.onboarding_checklist_comment'),
                 'url' => '',
             ],
 
@@ -418,8 +419,8 @@ class Helper
         $projectService = app()->make(\Leantime\Domain\Projects\Services\Projects::class);
 
         $values = [
-            'name' => 'My Project',
-            'details' => 'Welcome to your first project in Leantime!<br />This is your space to organize tasks, track goals, and plan your work. Feel free to modify anything here or create additional projects as you grow. This project is just for you to get started',
+            'name' => __('label.onboarding_default_project_name'),
+            'details' => __('text.onboarding_default_project_details'),
             'clientId' => 0,
             'hourBudget' => 0,
             'assignedUsers' => [['id' => $userId, 'projectRole' => '']],
@@ -444,7 +445,7 @@ class Helper
         // Create Milestone
         $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
         $values = [
-            'headline' => '🚀 Getting Started',
+            'headline' => '🚀 '.__('label.onboarding_milestone_getting_started'),
             'projectId' => $projectId,
             'editorId' => $userId,
             'userId' => $userId,
@@ -469,45 +470,45 @@ class Helper
             'origin' => 'onboarding_seed',
         ];
 
-        $values['headline'] = '💬 Join our community chat';
-        $values['description'] = 'Our community chat is a great resource to ask questions and get feedback on project set up. <a href="https://discord.gg/4zMzJtAq9z" target="_blank">Community Chat</a>';
+        $values['headline'] = '💬 '.__('label.onboarding_task_community_chat');
+        $values['description'] = __('text.onboarding_task_community_chat');
         $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
         $ticketService->quickAddTicket($values);
 
-        if (in_array($role, ['admin', 'owner', 'manager'])) {
+        if (Roles::isAtLeast($role, Roles::$manager)) {
 
-            $values['headline'] = '👥 Invite your team mates';
-            $values['description'] = 'Whether you are working with someone or just need an accountability buddy. Using Leantime as a group helps to stay on track and motivated <a href="'.BASE_URL.'/users/showAll">User Management</a>';
+            $values['headline'] = '👥 '.__('label.onboarding_task_invite_team');
+            $values['description'] = sprintf(__('text.onboarding_task_invite_team'), BASE_URL.'/users/showAll');
             $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
             $ticketService->quickAddTicket($values);
         }
 
-        $values['headline'] = '🎯 Learn More about Leantime\'s Project Structure';
-        $values['description'] = 'We have a lot of additional resources on our help documentation. To learn more about project structure in Leantime and best practices visit: <a href="https://support.leantime.io/en/article/getting-started-in-leantime-an-introduction-to-setting-structure-to-the-work-14t1qip/" target="_blank">https://help.leantime.io</a>';
+        $values['headline'] = '🎯 '.__('label.onboarding_task_project_structure');
+        $values['description'] = __('text.onboarding_task_project_structure');
         $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
         $ticketService->quickAddTicket($values);
 
-        $values['headline'] = '🎯 Create a Goal';
-        $values['description'] = 'Goals are used to track and measure long term objectives. They should be measurable using metrics you can update on a regular basis. Goals and Milestones can be connected to view the execution progress while viewing the metric progress <a href="'.BASE_URL.'/goalcanvas/dashboard">Project Goals</a>';
+        $values['headline'] = '🎯 '.__('label.onboarding_task_create_goal');
+        $values['description'] = sprintf(__('text.onboarding_task_create_goal'), BASE_URL.'/goalcanvas/dashboard');
         $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
         $ticketService->quickAddTicket($values);
 
-        $values['headline'] = '🚩 Create a Milestone';
-        $values['description'] = 'Milestones allow you to categorize phases of your projects into discrete outcomes. Each milestone has a start and end date and should deliver some output <a href="'.BASE_URL.'/tickets/roadmap/">Project Milestone</a>';
+        $values['headline'] = '🚩 '.__('label.onboarding_task_create_milestone');
+        $values['description'] = sprintf(__('text.onboarding_task_create_milestone'), BASE_URL.'/tickets/roadmap/');
         $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
         $ticketService->quickAddTicket($values);
 
-        $values['headline'] = '🗺️ Explore your Personal Project';
-        $values['description'] = 'Your personal project is a space where you can organize your tasks, goals and work. You can access it via the project selector on the top or by clicking this link here: <a href="'.BASE_URL.'/projects/changeCurrentProject/'.$projectId.'/">My Project</a>';
+        $values['headline'] = '🗺️ '.__('label.onboarding_task_personal_project');
+        $values['description'] = sprintf(__('text.onboarding_task_personal_project'), BASE_URL.'/projects/changeCurrentProject/'.$projectId.'/');
         $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
         $ticketService->quickAddTicket($values);
 
-        $values['headline'] = '🖼️ Complete my Leantime profile';
-        $values['description'] = 'Update profile picture and complete work preferences to personalize my experience. <a href="'.BASE_URL.'/users/editOwn/">My Profile</a>';
+        $values['headline'] = '🖼️ '.__('label.onboarding_task_complete_profile');
+        $values['description'] = sprintf(__('text.onboarding_task_complete_profile'), BASE_URL.'/users/editOwn/');
         $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
         $ticketService->quickAddTicket($values);
 
-        $values['headline'] = '📌 Create your first task';
+        $values['headline'] = '📌 '.__('label.onboarding_create_first_task');
         $values['description'] = '';
         $values['dateToFinish'] = dtHelper()->userNow();
         $values['status'] = 0;
@@ -520,15 +521,15 @@ class Helper
         // landmine pattern as Wiki's default-notebook / Ideas' default-board bootstrap.)
         $goalRepo = app()->make(\Leantime\Domain\Goalcanvas\Repositories\Goalcanvas::class);
         $values = [
-            'title' => 'My Goals',
+            'title' => __('label.onboarding_goalboard_title'),
             'author' => $userId,
             'projectId' => $projectId,
         ];
         $currentCanvasId = $goalRepo->addCanvas($values);
 
         $values = [
-            'description' => 'Tasks completed on time', // Metric
-            'title' => 'Build My Productivity System', // Objective
+            'description' => __('label.onboarding_goal_metric'), // Metric
+            'title' => __('label.onboarding_goal_objective'), // Objective
             'box' => 'goal',
             'author' => $userId,
             'canvasId' => $currentCanvasId,

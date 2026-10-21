@@ -16,7 +16,7 @@
 
     @include('tickets::submodules.timelineTabs', ['tableButtons' => true])
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -25,14 +25,7 @@
         @endif
 
         @foreach ($allTicketGroups as $group)
-            @if ($group['label'] != 'all')
-        <h5 class="accordionTitle {{ $group['class'] }}" @if (!empty($group['color'])) style="color:{{ htmlspecialchars($group['color']) }}" @endif id="accordion_link_{{ $group['id'] }}">
-            <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}" onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                <i class="fa fa-angle-down"></i>{!! $group['label'] !!} ({{ count($group['items']) }})
-            </a>
-        </h5>
-        <div class="simpleAccordionContainer" id="accordion_content-{{ $group['id'] }}">
-            @endif
+            <x-tickets::group-section :group="$group" :groupBy="$searchCriteria['groupBy'] ?? ''">
 
             @php $allTickets = $group['items']; @endphp
 
@@ -167,12 +160,10 @@
             </table>
             @dispatchEvent('allTicketsTable.afterClose', ['tickets' => $allTickets])
 
-            @if ($group['label'] != 'all')
-                </div>
-            @endif
+            </x-tickets::group-section>
         @endforeach
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

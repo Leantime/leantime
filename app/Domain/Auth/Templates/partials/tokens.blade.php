@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-md-12">
         <div>
-            <h5 class="subtitle">{{ __('headlines.personal_access_tokens') }}</h5>
+            <x-global::elements.section-header as="h5">{{ __('headlines.personal_access_tokens') }}</x-global::elements.section-header>
             <p>{{ __('text.create_tokens_to_authenticate') }}</p>
             <br />
 

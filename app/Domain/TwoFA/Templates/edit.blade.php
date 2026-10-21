@@ -2,15 +2,12 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-lock"></span></div>
-    <div class="pagetitle">
-        <h1>{!! __('label.twoFA') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa fa-lock">
+    {!! __('label.twoFA') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -25,7 +22,7 @@
                             <h5>1. {!! __('text.twoFA_qr') !!}</h5>
                             <br />
                             <img src="{{ $qrData }}" style="border-radius: var(--box-radius);"/><br />
-                            Secret: <p>{{ $secret }}</p><br/>
+                            {{ __('label.secret_colon') }} <p>{{ $secret }}</p><br/>
                             <form action="" method="post" class='stdform'>
                                 <h5>2. {!! __('text.twoFA_verify_code') !!}</h5>
                                 <p>
@@ -53,7 +50,7 @@
 
             </div>
         </div>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

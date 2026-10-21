@@ -2,30 +2,44 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 use Leantime\Domain\Calendar\Services\Calendar;
 
 /**
  * Update multiple calendar events in a single operation.
  */
+#[IsIdempotent]
 class BulkEditCalendarEventsTool extends Tool
 {
     public function __construct(
         private Calendar $calendarService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->raw('updates', ['type' => 'array', 'description' => 'Array of updates. Each element must have id and the fields to update.'])->required();
+        return [
+            'updates' => $schema->array()->items($schema->object())
+                ->description('Array of updates. Each element must have id and the fields to update.')
+                ->required(),
+        ];
     }
 
     public function name(): string
     {
         return 'bulkEditEvents';
+    }
+
+    public function title(): string
+    {
+        return 'Bulk Edit Events';
     }
 
     public function description(): string
@@ -36,8 +50,10 @@ class BulkEditCalendarEventsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $updates = ($arguments['updates'] ?? []);
         $results = [];
         $successCount = 0;
@@ -100,7 +116,7 @@ class BulkEditCalendarEventsTool extends Tool
             }
         }
 
-        return ToolResult::text(
+        return Response::text(
             "Bulk event update completed. Success: {$successCount}, Failed: {$failureCount}\n\n".
             Str::toMarkdown($results)
         );

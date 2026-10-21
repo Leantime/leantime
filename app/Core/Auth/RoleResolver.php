@@ -61,14 +61,12 @@ class RoleResolver
             return false;
         }
 
-        $roles = Roles::getRoles();
-        $globalKey = array_search($globalRole, $roles, true);
-        $managerKey = array_search(Roles::$manager, $roles, true);
-
         // Manager and above keep their global role across every project.
-        if ($globalKey !== false && $managerKey !== false && $globalKey >= $managerKey) {
+        if (Roles::isAtLeast($globalRole, Roles::$manager)) {
             return $globalRole;
         }
+
+        $roles = Roles::getRoles();
 
         $projectRole = $this->projectAccess->getProjectRole((int) session('userdata.id'), $projectId);
 
@@ -89,8 +87,8 @@ class RoleResolver
     }
 
     /**
-     * True when $effectiveRole ranks at or above $requiredRole in the role hierarchy,
-     * using the same ordering as {@see Roles::getRoles()}.
+     * True when $effectiveRole ranks at or above $requiredRole in the role hierarchy
+     * (by level, see {@see Roles::isAtLeast()}).
      */
     public function atLeast(string $requiredRole, string|false $effectiveRole): bool
     {
@@ -98,10 +96,6 @@ class RoleResolver
             return false;
         }
 
-        $roles = Roles::getRoles();
-        $requiredKey = array_search($requiredRole, $roles, true);
-        $effectiveKey = array_search($effectiveRole, $roles, true);
-
-        return $requiredKey !== false && $effectiveKey !== false && $effectiveKey >= $requiredKey;
+        return Roles::isAtLeast($effectiveRole, $requiredRole);
     }
 }

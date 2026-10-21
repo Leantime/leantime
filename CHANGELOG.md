@@ -1,3 +1,41 @@
+# Version: 3.12.0
+
+## Highlights
+
+### Safer, self-updating plugins
+Plugins now update from right inside Leantime: update notices surface available versions, a one-click update applies them with automatic rollback if something goes wrong, and you can opt in to fully automatic plugin updates. A new version guard and crash breaker keep an incompatible or failing plugin from taking down the rest of your workspace. (#3920, #3921, #3922)
+
+### A refreshed, consistent interface
+A new shared component library brings cards, dialogs, forms, menus, tabs and more onto one consistent look and type scale across the whole app - from reports and My Work to kanban boards, goals, ideas and plugin screens. Dialog titles, close buttons and Delete actions now live in a standard modal header, and menus, filters and panels all use one dropdown. (#3887, #3900, #3901, #3881, #3884)
+
+## Upgrade Notes
+- **Database update:** 3.12 runs a small migration (db version 3.5.30) that merges duplicate plugin rows left by older plugin updates. After upgrading, log in as an admin and confirm the database update screen, or run `php bin/leantime db:migrate`.
+- **Plugin compatibility:** plugins can now declare the Leantime versions they support (`"extra": {"leantime": {"requires": ">=3.12 <4.0"}}` in their composer.json). Plugins that don't declare a range are treated as supporting 3.x. A plugin that doesn't support the running version is skipped instead of loaded, shown as "Not compatible" in My Apps, and admins get a notification. `system:update` lists such plugins before updating. Plugins configured via `LEAN_PLUGINS` are not checked.
+- **Crash breaker:** a plugin that causes 5 failing requests within 10 minutes is disabled automatically (its license stays active) and admins are notified.
+- **One-click plugin updates** reuse the stored license key and verify the new version in a separate PHP process before keeping it. The server needs a PHP command line available; without one the update is rolled back. Automatic plugin updates are off by default and only install minor/patch releases.
+- **Installing from git:** a new Composer dependency (`composer/semver`) was added. The release packages include it; git-based installs need to run `composer install`.
+- New plugin and component strings are English-only for now.
+
+## New Features
+- **One-click and automatic plugin updates** - Update notices, one-click updates with rollback, and opt-in automatic updates, with duplicate plugin rows merged (#3921, #3922)
+- **Plugin stability safeguards** - A version guard and crash breaker isolate incompatible or failing plugins (#3920)
+- **Enhanced select fields** - All selects moved to a faster enhanced picker (SlimSelect v2), including a new tag field and in-field tag entry, replacing Chosen (#3873, #3874, #3904)
+- **New UI building blocks** - Added date picker, button groups, checkboxes and toggles, radios, accordions, info tips, empty states, avatars, badges, status dots, tags, progress bars, alerts, steps and more (#3918, #3914, #3908, #3911, #3919, #3912, #3913, #3906, #3905, #3910, #3917, #3915)
+- **Table view-bar actions** - Export and Columns moved into the view bar, with Show Tasks inside the Filter menu (#3898)
+- **Delete in the dialog header** - Delete actions now live in the dialog header's ⋮ menu instead of the body (#3902)
+
+## Bug Fixes
+- Plugin notices now display their text instead of a raw language key (#3924)
+- Docs page polish: header rules, Delete placement, save status and title field, and the empty page now sits in a proper card (#3903, #3886)
+- Composer lists built while plugins were unavailable are no longer cached (#3883)
+- Core component text, tabs and view-bar labels now follow the type scale, with chip hover, height and Edit-label fixes in dialogs, tables and row menus (#3897, #3896, #3895)
+
+## Dependency Updates
+- Bumped plugins adding a 50% retention offer on cancel (#3878)
+- Bumped plugins with enhanced selects for CustomFields and the StrategyPro goal KPI picker (#3875)
+
+---
+
 # Version: 3.11.0
 
 ## Highlights

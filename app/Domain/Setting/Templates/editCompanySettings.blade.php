@@ -1,18 +1,13 @@
 @extends($layout)
 @section('content')
 
-<div class="pageheader">
-
-    <div class="pageicon"><span class="fa fa-cogs"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headlines.company_settings') !!}</h1>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa fa-cogs" :eyebrow="__('label.administration')">
+    {!! __('headlines.company_settings') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <div class="row">
             <div class="col-md-12">
 
@@ -38,7 +33,7 @@
                                     <x-global::elements.section-header icon="fa fa-building">{!! __('subtitles.companydetails') !!}</x-global::elements.section-header>
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>{!! __('label.language') !!}</label>
+                                            <x-global::forms.label>{!! __('label.language') !!}</x-global::forms.label>
                                         </div>
                                         <div class="col-md-8">
                                             <x-global::forms.select name="language" id="language">
@@ -55,7 +50,7 @@
 
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>{!! __('label.company_name') !!}</label>
+                                            <x-global::forms.label>{!! __('label.company_name') !!}</x-global::forms.label>
                                         </div>
                                         <div class="col-md-8">
                                             <x-global::forms.text-input name="name" id="companyName"  value="{{ $companySettings['name'] }}" class="pull-left" />
@@ -82,7 +77,7 @@
                                     <x-global::elements.section-header icon="fa fa-cog">{!! __('subtitles.defaults') !!}</x-global::elements.section-header>
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label for="messageFrequency">{!! __('label.messages_frequency') !!}</label>
+                                            <x-global::forms.label for="messageFrequency">{!! __('label.messages_frequency') !!}</x-global::forms.label>
                                         </div>
                                         <div class="col-md-8">
                                                             <span class='field'>
@@ -166,7 +161,7 @@
 
                                         <div class="col-md-12">
                                             @if ($companySettings['logo'] != '')
-                                            <img src='{{ $companySettings['logo'] }}'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
+                                            <img src='{{ $companySettings['logo'] }}'  class='logoImg' alt='{{ __('label.logo') }}' id="previousImage" width="260"/>
                                             @else
                                                 {!! __('text.no_logo') !!}
                                             @endif
@@ -175,7 +170,7 @@
                                             <br />
                                             <div class="par">
 
-                                                <label>{!! __('label.upload_new_logo') !!}</label>
+                                                <x-global::forms.label>{!! __('label.upload_new_logo') !!}</x-global::forms.label>
 
                                                 <div class='fileupload fileupload-new' data-provides='fileupload'>
                                                     <input type="hidden"/>
@@ -213,7 +208,7 @@
                 </div>
 
                     <div id="apiKeys">
-                        <x-global::forms.button tag="a" link="#/api/newApiKey" contentRole="primary">Generate API Key</x-global::forms.button>
+                        <x-global::forms.button tag="a" link="#/api/newApiKey" contentRole="primary">{{ __('buttons.generate_api_key') }}</x-global::forms.button>
                         <br /> <br />
                         <ul class="sortableTicketList">
 
@@ -222,8 +217,8 @@
                             <li>
                                 <x-global::elements.card compact class="apiKeyCard" style="margin-bottom:10px;">
                                       <x-global::actions.dropdown>
-                                          <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> Edit Key</a></li>
-                                          <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
+                                          <li><a href="#/api/apiKey/{{ $apiKey['id'] }}"><i class="fa fa-edit"></i> {{ __('links.edit_api_key') }}</a></li>
+                                          <li><a href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}" class="delete"><i class="fa fa-trash"></i> {{ __('links.delete_api_key') }}</a></li>
 
                                       </x-global::actions.dropdown>
                                     <a href="#/api/apiKey/{{ $apiKey['id'] }}"><strong>{{ $apiKey['firstname'] }}</strong></a><br />
@@ -242,7 +237,7 @@
             </div>
         </div>
     </div>
-</div>
+    </x-global::layout.content-box>
 
 
 

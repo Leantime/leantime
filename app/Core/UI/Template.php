@@ -212,18 +212,25 @@ class Template
     }
 
     /**
-     * Sets the response header to trigger an htmx event
+     * Queue a client (HTMX) event on the HX-Trigger response header.
      *
-     **/
+     * @param  HtmxEvent|string  $eventName  An HtmxEvent enum case, an EmitsClientEvent class name
+     *                                       (TicketUpdated::class) or a raw event name.
+     */
     public function setHTMXEvent(HtmxEvent|string $eventName): void
     {
         $this->headers['HX-Trigger'] ??= [];
-        $this->headers['HX-Trigger'][] = $eventName instanceof HtmxEvent ? $eventName->event() : $eventName;
+        $this->headers['HX-Trigger'][] = HtmxEvents::name($eventName);
     }
 
     /**
      * Queue one or more client (HTMX) events on the HX-Trigger response header.
-     * Accepts HtmxEvent enum cases (preferred) or raw strings.
+     *
+     * Domain data events usually need no call here: dispatching an EmitsClientEvent domain event
+     * during an htmx request queues it automatically. Use this for UI commands (HtmxUiEvents) and
+     * for responses that should announce a change no domain event covers.
+     *
+     * @param  HtmxEvent|string  ...$events  HtmxEvent enum cases, EmitsClientEvent class names or raw names.
      */
     public function emit(HtmxEvent|string ...$events): void
     {
@@ -676,20 +683,16 @@ class Template
     }
 
     /**
-     * getToggleState - retrieves the toggle state of a submenu by name from the session
+     * getToggleState - a saved UI state of the current user (accordion / submenu open or closed …)
      *
-     * @param  string  $name  - the name of the submenu toggle
-     * @return string|false - the toggle state of the submenu ("true"/"false"), or false if unset
+     * @param  string  $name  - the name of the state
+     * @return string|false - the saved value ("open", "closed" …), or false if never saved
      *
      * @deprecated this should be in a component
      */
     public function getToggleState(string $name): string|false
     {
-        if (session()->exists('usersettings.submenuToggle.'.$name)) {
-            return session('usersettings.submenuToggle.'.$name);
-        }
-
-        return false;
+        return app(UiState::class)->get($name) ?? false;
     }
 
     /**

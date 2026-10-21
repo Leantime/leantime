@@ -222,6 +222,31 @@ class Language
     }
 
     /**
+     * Cache key of the list of selectable languages for the running app version.
+     *
+     * Versioned like the language strings: a release that adds a language to languagelist.ini
+     * without a database update would otherwise keep serving the old list, so the new language
+     * could not be selected and failed isValidLanguage().
+     */
+    public static function languageListCacheKey(): string
+    {
+        return 'languages.langlist_'.app(\Leantime\Core\Configuration\AppSettings::class)->appVersion;
+    }
+
+    /**
+     * Remove the cached list of selectable languages: the key of the running app version plus the
+     * legacy unversioned key.
+     *
+     * @return bool true when the current version's key was removed
+     */
+    public static function forgetCachedLanguageList(): bool
+    {
+        Cache::store('installation')->forget('languages.langlist');
+
+        return Cache::store('installation')->forget(self::languageListCacheKey());
+    }
+
+    /**
      * Read and load the language resources from the ini files.
      *
      * @return array The array of language resources loaded from the ini files.
@@ -323,8 +348,8 @@ class Language
      */
     public function getLanguageList(): bool|array
     {
-        if (Cache::store('installation')->has('languages.langlist')) {
-            return Cache::store('installation')->get('languages.langlist');
+        if (Cache::store('installation')->has(self::languageListCacheKey())) {
+            return Cache::store('installation')->get(self::languageListCacheKey());
         }
 
         $langlist = false;
@@ -345,7 +370,7 @@ class Language
         }
 
         $parsedLangList = self::dispatchFilter('languages', $langlist);
-        Cache::store('installation')->set('languages.langlist', $parsedLangList);
+        Cache::store('installation')->set(self::languageListCacheKey(), $parsedLangList);
 
         return $parsedLangList;
     }
@@ -389,7 +414,15 @@ class Language
         }
     }
 
-    public function get(string $index, $default = '', $locale = '')
+    /**
+     * Translator-style lookup (`__()`, `trans()`): the string for $index, with the first
+     * element of $default as the replacement.
+     *
+     * @param  string  $index  Language key.
+     * @param  mixed  $default  Replacement values; only the first is used.
+     * @param  string  $locale  Unused, the current language is always used.
+     */
+    public function get(string $index, $default = '', $locale = ''): string
     {
         $contentReplacement = '';
         if (is_array($default) && count($default) > 0) {

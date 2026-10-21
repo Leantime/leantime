@@ -2,16 +2,12 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-trash"></span></div>
-    <div class="pagetitle">
-        <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
-        <h1>{!! __('headline.delete_board') !!}</h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa fa-trash" :eyebrow="session('currentProjectClient') . ' // ' . session('currentProjectName')">
+    {!! __('headline.delete_board') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         <x-global::elements.card>
             <x-slot:title>{!! __('subtitles.delete') !!}</x-slot:title>
             <form method="post" action="{{ BASE_URL }}/ideas/delCanvas/{{ $tpl->escape($_GET['id']) }}">
@@ -20,7 +16,7 @@
                 <x-global::forms.button tag="a" contentRole="tertiary" link="{{ BASE_URL }}/ideas/showBoards">{!! __('buttons.back') !!}</x-global::forms.button>
             </form>
         </x-global::elements.card>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

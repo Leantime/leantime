@@ -295,7 +295,7 @@ var EditorRegistry = (function() {
  * Default editor options
  */
 var defaultOptions = {
-    placeholder: "Type '/' for commands or start writing...",
+    get placeholder() { return leantime.i18n.__('tiptap.placeholder.default'); },
     autosave: false,
     autosaveKey: null,
     autosaveInterval: 30000,
@@ -703,7 +703,7 @@ function createTiptapEditor(elementOrSelector, options) {
                 if (file) {
                     uploadImage(file, function(err, url, name) {
                         if (!err && url) {
-                            editor.chain().focus().setImage({ src: url, alt: name || 'Pasted image' }).run();
+                            editor.chain().focus().setImage({ src: url, alt: name || leantime.i18n.__('tiptap.image.pasted_alt') }).run();
                         }
                     });
                 }
@@ -738,7 +738,7 @@ function createTiptapEditor(elementOrSelector, options) {
             if (file.type.indexOf('image') !== -1) {
                 uploadImage(file, function(err, url, name) {
                     if (!err && url) {
-                        editor.chain().focus().setImage({ src: url, alt: name || 'Dropped image' }).run();
+                        editor.chain().focus().setImage({ src: url, alt: name || leantime.i18n.__('tiptap.image.dropped_alt') }).run();
                     }
                 });
             }
@@ -881,7 +881,7 @@ var tiptapController = {
         var path = window.location.pathname;
 
         var mergedOptions = Object.assign({
-            placeholder: "Start writing your description...\nType '/' for commands",
+            placeholder: leantime.i18n.__('tiptap.placeholder.description') + '\n' + leantime.i18n.__('tiptap.placeholder.slash_hint'),
             autosave: true,
             autosaveKey: 'leantime-tiptap-complex-' + path + '-' + projectId + '-' + entityId,
             tables: true,
@@ -896,7 +896,7 @@ var tiptapController = {
         var path = window.location.pathname;
 
         var mergedOptions = Object.assign({
-            placeholder: 'Write a comment...',
+            placeholder: leantime.i18n.__('tiptap.placeholder.comment'),
             autosave: true,
             autosaveKey: 'leantime-tiptap-simple-' + path + '-' + formId,
             tables: false,
@@ -914,7 +914,7 @@ var tiptapController = {
             (document.querySelector('input[name="canvasId"]') ? document.querySelector('input[name="canvasId"]').value : '');
 
         var mergedOptions = Object.assign({
-            placeholder: "Start writing your note...\nType '/' for commands",
+            placeholder: leantime.i18n.__('tiptap.placeholder.note') + '\n' + leantime.i18n.__('tiptap.placeholder.slash_hint'),
             autosave: true,
             autosaveKey: 'leantime-tiptap-notes-' + notebookId + '-' + noteId,
             tables: true,
@@ -926,7 +926,7 @@ var tiptapController = {
 
     initInline: function(elementOrSelector, options) {
         var mergedOptions = Object.assign({
-            placeholder: 'Click to edit...',
+            placeholder: leantime.i18n.__('tiptap.placeholder.inline'),
             autosave: false,
             tables: false,
             toolbar: false,
@@ -978,7 +978,7 @@ var tiptapController = {
     // Backwards compatibility methods
     initComplexEditor: function() {
         return initEditorsBySelector('textarea.tiptapComplex', {
-            placeholder: "Start writing your description...",
+            placeholder: leantime.i18n.__('tiptap.placeholder.description'),
             tables: true,
             toolbar: 'complex',
         });
@@ -986,7 +986,7 @@ var tiptapController = {
 
     initSimpleEditor: function(callback) {
         var editors = initEditorsBySelector('textarea.tiptapSimple', {
-            placeholder: 'Write a comment...',
+            placeholder: leantime.i18n.__('tiptap.placeholder.comment'),
             tables: false,
             toolbar: 'simple',
         });
@@ -998,7 +998,7 @@ var tiptapController = {
 
     initNotesEditor: function(callback) {
         var editors = initEditorsBySelector('textarea.tiptapNotes', {
-            placeholder: "Type '/' for commands or start writing...",
+            placeholder: leantime.i18n.__('tiptap.placeholder.default'),
             toolbar: 'notes',
             tables: true,
             onBlur: callback,

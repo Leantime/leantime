@@ -1,19 +1,19 @@
 @extends($layout)
 
 @section('content')
-<x-global::pageheader :icon="'fa fa-gauge-high'">
+<x-global::layout.page-header icon="fa fa-gauge-high" :eyebrow="session('currentProjectClient')">
+    {!! __('headlines.project_dashboard') !!}
     @if (count($allUsers) == 1)
-        <a href="#/users/newUser" class="headerCTA">
-            <i class="fa fa-users"></i>
-            <span class="tw-text-[14px] tw-leading-[25px]">
-                {{ __('links.dont_do_it_alone') }}
-            </span>
-        </a>
+        <x-slot:actions>
+            <a href="#/users/newUser" class="headerCTA">
+                <i class="fa fa-users"></i>
+                <span class="tw-text-[14px] tw-leading-[25px]">
+                    {{ __('links.dont_do_it_alone') }}
+                </span>
+            </a>
+        </x-slot:actions>
     @endif
-
-    <h5>{{ session("currentProjectClient") }}</h5>
-    <h1>{!! __('headlines.project_dashboard') !!}</h1>
-</x-global::pageheader>
+</x-global::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
@@ -22,7 +22,7 @@
 
         <div class="col-md-8">
 
-            <div class="maincontentinner tw-z-20">
+            <x-global::layout.content-box class="tw-z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
                     <x-global::actions.dropdown variant="panel" menu-as="ul" class="pull-right dropdownWrapper">
@@ -86,15 +86,15 @@
 
                 <br/>
 
-            </div>
+            </x-global::layout.content-box>
 
-            <div class="maincontentinner tw-z-10 latest-todos">
-                <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</x-global::forms.button>
-                <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
+            <x-global::layout.content-box class="tw-z-10 latest-todos">
+                <x-global::forms.button tag="a" link="#/tickets/newTicket" contentRole="link" class="action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> {{ __('links.create_todo') }}</x-global::forms.button>
+                <x-global::elements.section-header as="h5">{{ __('headlines.latest_todos') }}</x-global::elements.section-header>
                 <br/>
                 <ul class="sortableTicketList">
                     @if (count($tickets) == 0)
-                        <em>Nothing to see here. Move on.</em><br/><br/>
+                        <em>{{ __('text.nothing_to_see_here') }}</em><br/><br/>
                     @endif
 
                     @foreach($tickets as $row)
@@ -146,12 +146,12 @@
                         </li>
                     @endforeach
                 </ul>
-            </div>
+            </x-global::layout.content-box>
 
-            <div class="maincontentinner team-container">
+            <x-global::layout.content-box class="team-container">
                 @dispatchEvent('teamBoxBeginning', ['project' => $project])
 
-                <h5 class="subtitle">{{ __('tabs.team') }}</h5>
+                <x-global::elements.section-header as="h5">{{ __('tabs.team') }}</x-global::elements.section-header>
 
                 <div class="row teamBox">
                     @foreach ($project['assignedUsers'] as $userId => $assignedUser)
@@ -191,13 +191,13 @@
                         </div>
                     @endif
                 </div>
-            </div>
+            </x-global::layout.content-box>
 
         </div>
 
         <div class="col-md-4">
 
-            <div class="maincontentinner project-updates">
+            <x-global::layout.content-box class="project-updates">
                 <div class="pull-right">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <x-global::forms.button
@@ -212,13 +212,13 @@
                     @endif
                 </div>
 
-                <h5 class="subtitle">{{ __('subtitles.project_updates') }}</h5>
+                <x-global::elements.section-header as="h5">{{ __('subtitles.project_updates') }}</x-global::elements.section-header>
 
                 <form method="post" action="{{ BASE_URL }}/dashboard/show">
                     <input type="hidden" name="comment" value="1" />
                         @if ($login::userIsAtLeast($roles::$editor))
                             <div id="comment0" class="commentBox tw-hidden">
-                                <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
+                                <x-global::forms.label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</x-global::forms.label>
 
                                 <x-global::forms.select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
                                     <option value="green">{{ __('label.project_status_green') }}</option>
@@ -334,12 +334,12 @@
                     <div class="clearall"></div>
                 </form>
                 <div class="clearall"></div>
-            </div>
+            </x-global::layout.content-box>
 
-            <div class="maincontentinner project-progress">
+            <x-global::layout.content-box class="project-progress">
                 <div class="row" id="projectProgressContainer">
                     <div class="col-md-12">
-                        <h5 class="subtitle">{{ __('subtitles.project_progress') }}</h5>
+                        <x-global::elements.section-header as="h5">{{ __('subtitles.project_progress') }}</x-global::elements.section-header>
 
                         <div id="canvas-holder" class="tw-w-full tw-h-[250px]">
                             <canvas id="chart-area"></canvas>
@@ -351,7 +351,7 @@
 
                 <div class="row" id="milestoneProgressContainer">
                     <div class="col-md-12">
-                        <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
+                        <x-global::elements.section-header as="h5">{{ __('headline.milestones') }}</x-global::elements.section-header>
                         <ul class="sortableTicketList">
                             @if (count($milestones) == 0)
                                 <div class="center">
@@ -383,7 +383,7 @@
                         </ul>
                     </div>
                 </div>
-            </div>
+            </x-global::layout.content-box>
         </div>
     </div>
 </div>

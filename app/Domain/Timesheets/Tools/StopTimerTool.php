@@ -2,9 +2,10 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
@@ -16,15 +17,25 @@ class StopTimerTool extends Tool
         private Timesheets $timesheetsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('ticketId')->description('Ticket ID to stop the timer for. Omit to stop the active timer.');
+        return [
+            'ticketId' => $schema->integer()
+                ->description('Ticket ID to stop the timer for. Omit to stop the active timer.'),
+        ];
     }
 
     public function name(): string
     {
         return 'stopTimer';
+    }
+
+    public function title(): string
+    {
+        return 'Stop Timer';
     }
 
     public function description(): string
@@ -35,8 +46,10 @@ class StopTimerTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $ticketId = ($arguments['ticketId'] ?? null);
 
         if ($ticketId !== null && (int) $ticketId > 0) {
@@ -45,6 +58,6 @@ class StopTimerTool extends Tool
             $this->timesheetsService->stopActiveTimer();
         }
 
-        return ToolResult::text('Timer stopped successfully.');
+        return Response::text('Timer stopped successfully.');
     }
 }

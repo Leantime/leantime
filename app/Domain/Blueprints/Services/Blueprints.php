@@ -930,6 +930,7 @@ class Blueprints extends BaseService
     {
         return [
             'logicmodelcanvas' => ['module' => 'logicmodelcanvas',  'name' => 'label.logicmodelcanvas', 'description' => 'description.logicmodelcanvas', 'icon' => 'fa-solid fa-diagram-project', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
+            'retroscanvas' => ['module' => 'blueprints/retros',     'name' => 'label.retroscanvas', 'description' => 'description.retroscanvas', 'icon' => 'fa-solid fa-hand-spock', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
             'valuecanvas' => ['module' => 'blueprints/value',       'name' => 'label.valuecanvas',  'description' => 'description.valuecanvas', 'icon' => 'fa-solid fa-ranking-star',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
             'swotcanvas' => ['module' => 'blueprints/swot',     'name' => 'label.swotcanvas', 'description' => 'description.swotcanvas', 'icon' => 'fa-solid fa-dumbbell',  'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
             'obmcanvas' => ['module' => 'blueprints/obm',     'name' => 'label.obmcanvas',       'description' => 'description.obmcanvas', 'icon' => 'fa-solid fa-object-group', 'numberOfBoards' => '', 'lastTitle' => '', 'lastCanvasId' => '', 'lastUpdate' => ''],
@@ -958,7 +959,7 @@ class Blueprints extends BaseService
         return [
             'emcanvas', 'smcanvas', 'cpcanvas', 'insightscanvas',
             'sqcanvas', 'dbmcanvas', 'lbmcanvas', 'eacanvas', 'riskscanvas', 'sbcanvas',
-            'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas',
+            'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas', 'retroscanvas',
         ];
         // Note: logicmodelcanvas is intentionally absent. It is its own domain (no
         // Blueprints YAML template), so it can't go through the template-based

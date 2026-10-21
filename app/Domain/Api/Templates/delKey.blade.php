@@ -2,20 +2,16 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-key"></i></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headlines.delete_key') !!}</h1>
-    </div>
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa-solid fa-key" :eyebrow="__('label.administration')">
+    {!! __('headlines.delete_key') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
-        <h5 class="subtitle">{!! __('subtitles.delete_key') !!}</h5>
+        <x-global::elements.section-header as="h5">{!! __('subtitles.delete_key') !!}</x-global::elements.section-header>
 
             <form method="post">
                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
@@ -24,7 +20,7 @@
                 <x-global::forms.button tag="a" link="{{ BASE_URL }}/setting/editCompanySettings/#apiKeys" contentRole="tertiary">{!! __('buttons.back') !!}</x-global::forms.button>
             </form>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

@@ -4,9 +4,8 @@
 
 @php
     $milestones = $milestones ?? [];
-    if (! session()->exists('usersettings.submenuToggle.myProjectCalendarView')) {
-        session(['usersettings.submenuToggle.myProjectCalendarView' => 'dayGridMonth']);
-    }
+    // The calendar's last view (saved by the view select via Api.Api.setSubmenuState).
+    $projectCalendarView = app(\Leantime\Core\UI\UiState::class)->get('myProjectCalendarView', 'dayGridMonth');
 @endphp
 
 {!! $tpl->displayNotification() !!}
@@ -15,7 +14,7 @@
 
 <div class="maincontent">
     @include('tickets::submodules.timelineTabs')
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {{-- New / Filter moved into the nav bar (timelineTabs). The month
              title and the FullCalendar prev/next controls remain here. --}}
@@ -38,14 +37,14 @@
                     <span class="fc-icon fc-icon-chevron-left"></span>
                 </button>
 
-                <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
+                <button class="fc-today-button btn btn-default right" style="margin-right:5px;">{{ __('label.today_lowercase') }}</button>
 
 
-                <x-global::forms.select id="my-select" style="margin-right:5px;" class="right">
-                    <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridDay' ? 'selected' : '' }}>{{ __('buttons.day', 'Day') }}</option>
-                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridWeek' ? 'selected' : '' }}>{{ __('buttons.week', 'Week') }}</option>
-                    <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'dayGridMonth' ? 'selected' : '' }}>{{ __('buttons.month', 'Month') }}</option>
-                    <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ session('usersettings.submenuToggle.myProjectCalendarView') == 'multiMonthYear' ? 'selected' : '' }}>{{ __('label.year', 'Year') }}</option>
+                <x-global::forms.select id="my-select" width="sm" style="margin-right:5px;" class="right">
+                    <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" {{ $projectCalendarView == 'timeGridDay' ? 'selected' : '' }}>{{ __('buttons.day', 'Day') }}</option>
+                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" {{ $projectCalendarView == 'timeGridWeek' ? 'selected' : '' }}>{{ __('buttons.week', 'Week') }}</option>
+                    <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" {{ $projectCalendarView == 'dayGridMonth' ? 'selected' : '' }}>{{ __('buttons.month', 'Month') }}</option>
+                    <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" {{ $projectCalendarView == 'multiMonthYear' ? 'selected' : '' }}>{{ __('label.year', 'Year') }}</option>
                 </x-global::forms.select>
 
             </div>
@@ -55,7 +54,7 @@
             <div id="calendar"></div>
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')
@@ -146,7 +145,7 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
                 timeZone: leantime.i18n.__("usersettings.timezone"),
                 height:heightWindow,
-                initialView: '{{ session('usersettings.submenuToggle.myProjectCalendarView') }}',
+                initialView: '{{ $projectCalendarView }}',
                 events: events,
                 editable: true,
                 headerToolbar: false,

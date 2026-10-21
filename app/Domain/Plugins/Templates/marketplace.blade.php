@@ -2,9 +2,9 @@
 
 @section('content')
 
-    <x-global::pageheader :icon="'fa fa-puzzle-piece'">
-        <h1>App Marketplace</h1>
-    </x-global::pageheader>
+    <x-global::layout.page-header icon="fa fa-puzzle-piece">
+        {{ __('headlines.app_marketplace') }}
+    </x-global::layout.page-header>
 
     @displayNotification()
 
@@ -12,7 +12,7 @@
 
         @include('plugins::partials.plugintabs',  ["currentUrl" => "marketplace"])
 
-       <div class="maincontentinner">
+       <x-global::layout.content-box>
 
            <div class="tw-w-full"
                 hx-get="{{ BASE_URL }}/hx/plugins/marketplaceplugins/getlist"
@@ -28,7 +28,7 @@
                </div>
            </div>
 
-       </div>
+       </x-global::layout.content-box>
 
     </div>
 

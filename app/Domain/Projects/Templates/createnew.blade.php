@@ -2,7 +2,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h1 style="font-size:var(--font-size-xxxl);">Create something new</h1><br />
+            <h1 style="font-size:var(--font-size-xxxl);">{{ __('headlines.create_something_new') }}</h1><br />
             {!!  __("text.creation_hub") !!}
 
             <br />
@@ -25,7 +25,7 @@
                 @if($projectType["active"] == true )
                     <x-global::forms.button tag="a" link="{{ BASE_URL }}/{{ $projectType['url'] }}" contentRole="primary">{{  __($projectType['btnLabel'])  }}</x-global::forms.button>
                 @else
-                    <x-global::forms.button tag="a" link="#" contentRole="primary" class="disabled">Not Available in this plan</x-global::forms.button>
+                    <x-global::forms.button tag="a" link="#" contentRole="primary" class="disabled">{{ __('label.not_available_in_plan') }}</x-global::forms.button>
                 @endif
                 <div class="clearall"></div>
 

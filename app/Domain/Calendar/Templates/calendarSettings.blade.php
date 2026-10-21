@@ -6,7 +6,7 @@
 <br />
 
 {{-- Connected Calendars Section --}}
-<h5 class="subtitle">{{ __('label.connected_calendars') }}</h5>
+<x-global::elements.section-header as="h5">{{ __('label.connected_calendars') }}</x-global::elements.section-header>
 
 @if(count($externalCalendars) > 0)
     <ul class="simpleList" style="margin-bottom: 20px;">
@@ -36,7 +36,7 @@
                             <i class="fa fa-pen"></i>
                         </a>
                         &nbsp;
-                        <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('label.delete') }}">
+                        <a href="#/calendar/delExternalCalendar/{{ $calendar['id'] }}" class="delete" data-tippy-content="{{ __('buttons.delete') }}">
                             <i class="fa fa-trash"></i>
                         </a>
                     @endif
@@ -56,7 +56,7 @@
 @foreach($pluginSections as $section)
     <hr style="margin: 20px 0;" />
 
-    <h5 class="subtitle">
+    <x-global::elements.section-header as="h5">
         @if(isset($section['icon']))
             @if(($section['iconType'] ?? 'fontawesome') === 'svg')
                 <span style="display: inline-block; width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">{!! $section['icon'] !!}</span>
@@ -65,7 +65,7 @@
             @endif
         @endif
         {{ $section['title'] }}
-    </h5>
+    </x-global::elements.section-header>
 
     @if(isset($section['description']))
         <p class="text-muted small">{{ $section['description'] }}</p>

@@ -5,20 +5,12 @@
     $values = $client;
 @endphp
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa fa-address-book"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{{ $values['name'] }}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header icon="fa fa-address-book" :eyebrow="__('label.administration')">
+    {{ $values['name'] }}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         {!! $tpl->displayNotification() !!}
 
         <div class="tabbedwidget tab-primary clientTabs">
@@ -37,28 +29,28 @@
                             <x-global::elements.section-header icon="fa fa-leaf">{!! __('subtitle.details') !!}</x-global::elements.section-header>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.client_id') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.client_id') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input name="id" id="id" value="{{ $values['id'] }}" readonly />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.name') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.name') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input name="name" id="name" value="{{ $values['name'] }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.email') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.email') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input name="email" id="email" value="{{ $values['email'] }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.url') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.url') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input
                                              name="internet" id="internet"
@@ -67,7 +59,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.street') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.street') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input
                                              name="street" id="street"
@@ -76,7 +68,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.zip') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.zip') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input
                                     name="zip" id="zip" value="{{ $values['zip'] }}" />
@@ -84,7 +76,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.city') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.city') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input
                                            name="city" id="city" value="{{ $values['city'] }}" />
@@ -92,7 +84,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.state') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.state') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input
                                              name="state" id="state"
@@ -101,7 +93,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.country') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.country') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input
                                              name="country" id="country"
@@ -110,7 +102,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label">{!! __('label.phone') !!}</label>
+                                <x-global::forms.label class=" control-label">{!! __('label.phone') !!}</x-global::forms.label>
                                 <div class="">
                                     <x-global::forms.text-input
                                              name="phone" id="phone"
@@ -146,7 +138,7 @@
                                         <td><a href='mailto:{{ $user['username'] }}'>{{ $user['username'] }}</a></td>
                                         <td>{{ $user['phone'] }}</td>
                                         <td>
-                                            <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('buttons.edit') }}">
+                                            <a href="{{ BASE_URL }}/users/editUser/{{ $user['id'] }}" title="{{ __('label.edit') }}">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             <form method="post" action="{{ BASE_URL }}/clients/removeUser" style="display:inline;"
@@ -257,7 +249,7 @@
 
             </div>
         </div>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

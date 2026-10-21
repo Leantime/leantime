@@ -18,6 +18,7 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Plugins\PluginCompatibility;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Notifications\Services\Notifications;
 use Leantime\Domain\Plugins\Events\PluginDisabled;
 use Leantime\Domain\Plugins\Events\PluginEnabled;
@@ -1622,7 +1623,7 @@ class Plugins
         $this->notifyAdmins(
             $plugin->id,
             'plugin_failing',
-            sprintf(__('notification.plugin_disabled_after_errors'), $plugin->name, Str::limit($lastError, 200))
+            sprintf(self::translatedOr('notification.plugin_disabled_after_errors', "The plugin '%s' was disabled because it kept causing errors: %s"), $plugin->name, Str::limit($lastError, 200))
         );
 
         return true;
@@ -1726,13 +1727,27 @@ class Plugins
             $this->notifyAdmins(
                 $plugin->id,
                 'plugin_incompatible',
-                sprintf(__('notification.plugin_incompatible_paused'), $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
+                sprintf(
+                    self::translatedOr('notification.plugin_incompatible_paused', "The plugin '%s' (v%s) doesn't support Leantime %s (it supports %s), so it is not being loaded. Update the plugin to turn it back on."),
+                    $plugin->name, $plugin->version, $this->appSettings->appVersion, $plugin->requires)
             );
             // Only after the notification went out, so a failed send is retried on the next rebuild.
             $this->settingsService->saveSetting($settingKey, $marker);
         } finally {
             $lock->release();
         }
+    }
+
+    /**
+     * The translation of $key, or $english when the language isn't loaded yet (an error early in a
+     * request or console boot): an admin notification must never read as a bare language key.
+     */
+    private static function translatedOr(string $key, string $english): string
+    {
+        // Without a loaded language the lookup gives the bare key (or nothing at all).
+        $text = (string) __($key);
+
+        return $text !== '' && $text !== $key ? $text : $english;
     }
 
     /**
@@ -1743,7 +1758,7 @@ class Plugins
         $userService = app()->make(UsersService::class);
         $notificationService = app()->make(Notifications::class);
 
-        $admins = collect($userService->getAll())->filter(fn ($user) => in_array($user['role'], [40, 50]));
+        $admins = collect($userService->getAll())->filter(fn ($user) => in_array((string) $user['role'], Roles::keysAtLeast(Roles::$admin), true));
 
         $notifications = $admins->map(fn ($admin) => [
             'userId' => $admin['id'],

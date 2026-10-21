@@ -2,21 +2,15 @@
 
 @section('content')
 
-<div class="pageheader">
-
-    <div class="pull-right padding-top">
+<x-global::layout.page-header icon="fa {{ $tpl->getModulePicture() }}" :eyebrow="session('currentProjectClient').' // '.session('currentProjectName')">
+    {!! __('headlines.new_to_do') !!}
+    <x-slot:actions>
         <a href="{{ session('lastPage') }}" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> {!! __('links.go_back') !!}</a>
-    </div>
-
-    <div class="pageicon"><span class="fa {{ $tpl->getModulePicture() }}"></span></div>
-    <div class="pagetitle">
-        <h5>{{ session('currentProjectClient').' // '.session('currentProjectName') }}</h5>
-        <h1>{!! __('headlines.new_to_do') !!}</h1>
-    </div>
-</div><!--pageheader-->
+    </x-slot:actions>
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -35,7 +29,7 @@
             </div>
 
         </div>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

@@ -2,9 +2,10 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
@@ -16,19 +17,30 @@ class StartTimerTool extends Tool
         private Timesheets $timesheetsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('duration')->description('Duration in format like "25m" or "1h30m".')
-            ->required()
-            ->integer('taskId')->description('Task ID to associate timer with.')
-            ->string('type')
-            ->description('Timer type (work/break).');
+        return [
+            'duration' => $schema->string()
+                ->description('Duration in format like "25m" or "1h30m".')
+                ->required(),
+            'taskId' => $schema->integer()
+                ->description('Task ID to associate timer with.'),
+            'type' => $schema->string()
+                ->description('Timer type (work/break).'),
+        ];
     }
 
     public function name(): string
     {
         return 'startTimer';
+    }
+
+    public function title(): string
+    {
+        return 'Start Timer';
     }
 
     public function description(): string
@@ -39,8 +51,10 @@ class StartTimerTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $duration = $arguments['duration'];
         $taskId = ($arguments['taskId'] ?? null);
         $type = ($arguments['type'] ?? 'work');
@@ -55,13 +69,13 @@ class StartTimerTool extends Tool
         }
 
         if ($minutes <= 0) {
-            return ToolResult::error('Invalid duration format. Use format like "25m" or "1h30m".');
+            return Response::error('Invalid duration format. Use format like "25m" or "1h30m".');
         }
 
         if ($taskId !== null && (int) $taskId > 0) {
             $this->timesheetsService->punchIn((int) $taskId);
         }
 
-        return ToolResult::text("[timer startTime='".(time() + 10)."' duration='".($minutes * 60)."' type='".$type."']");
+        return Response::text("[timer startTime='".(time() + 10)."' duration='".($minutes * 60)."' type='".$type."']");
     }
 }

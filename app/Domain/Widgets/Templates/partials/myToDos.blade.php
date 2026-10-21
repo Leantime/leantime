@@ -27,7 +27,7 @@
 
 <div id="yourToDoContainer"
      hx-get="{{BASE_URL}}/widgets/myToDos/get"
-     hx-trigger="{{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE }} from:body, {{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::SUBTASK_UPDATE }} from:body"
+     hx-trigger="{{ \Leantime\Domain\Tickets\Events\TicketCreated::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Tickets\Events\TicketUpdated::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Tickets\Events\TicketDeleted::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Tickets\Events\SubtasksUpdated::CLIENT_EVENT }} from:body"
      class="clear"
      hx-swap="outerHTML"
      hx-ext="json-enc"
@@ -194,7 +194,7 @@
                                     <input type="hidden" name="dateToFinish"
                                            value="{{ dtHelper()->userNow()->next(\Carbon\CarbonInterface::FRIDAY)->format('Y-m-d') }}"/>
                                     <x-global::forms.textarea name="description" class="description-input" style="display:none;"
-                                              placeholder="{{ __('input.placeholders.description') }}"></x-global::forms.textarea>
+                                              placeholder="{{ __('label.description') }}"></x-global::forms.textarea>
                                 </div>
                                 <div>
                                     <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.save')" name="create"
@@ -225,18 +225,12 @@
                     }
                 @endphp
 
-                <x-global::accordion id="ticketBox1-{{ $groupKey }}-{{ $loop->index }}">
-                    <x-slot name="title">
-                        {!!  __($ticketGroup["labelName"]) !!}
-                        <span class="task-count" id="task-count-{{ $groupKey }}">
-                            ({{ count($ticketGroup["tickets"]) }})
-                        </span>
-                    </x-slot>
-                    <x-slot name="actionlink">
+                <x-global::elements.accordion :id="'ticketBox1-' . $groupKey . '-' . $loop->index" open :count="count($ticketGroup['tickets'])" class="todo-group" data-todo-group="{{ $groupKey }}">
+                    <x-slot:title>{!! __($ticketGroup["labelName"]) !!}</x-slot:title>
+                    <x-slot:actions>
                         <x-global::forms.button tag="a" link="javascript:void(0);" contentRole="link" class="add-task-button" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}">
                             <i class="fa-solid fa-circle-plus"></i></x-global::forms.button>
-                    </x-slot>
-                    <x-slot name="content">
+                    </x-slot:actions>
                         <!-- Quick Add Form for this group -->
                         <div class="quickAddForm" id="quickAddForm-{{ $groupKey }}"
                              style="display:none; margin-bottom:15px; padding-bottom:5px; padding-left:5px;">
@@ -279,7 +273,7 @@
                                         <input type="hidden" name="dateToFinish"
                                                value="{{ $dueDate }}"/>
                                         <x-global::forms.textarea name="description" class="description-input" style="display:none;"
-                                                  placeholder="{{ __('input.placeholders.description') }}"></x-global::forms.textarea>
+                                                  placeholder="{{ __('label.description') }}"></x-global::forms.textarea>
                                     </div>
                                     <div>
                                         <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.save')" name="create"
@@ -296,9 +290,8 @@
                                 @include('widgets::partials.todoItem', ['ticket' => $row, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => 0, 'groupKey' => $groupKey])
                             @endforeach
                         </div>
-                    </x-slot>
 
-                </x-global::accordion>
+                </x-global::elements.accordion>
 
             @endforeach
 
@@ -393,6 +386,8 @@
             // Show the quick add form when the + button is clicked
             jQuery('.add-task-button').on('click', function () {
                 var groupKey = jQuery(this).data('group');
+                // The form sits inside the group: open it if it is collapsed.
+                jQuery(this).closest('.lt-accordion').children('details').prop('open', true);
                 jQuery('#quickAddForm-' + groupKey).show();
                 jQuery('#quickAddForm-' + groupKey + ' .main-title-input').focus();
             });

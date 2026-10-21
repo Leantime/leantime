@@ -266,7 +266,7 @@ class EditCanvasItem extends Controller
                     $id = $this->blueprintsService->createCanvasItem($canvasItem, $canvasType);
                     $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
-                    $this->tpl->setNotification($canvasTypes[$params['box']]['title'].' successfully created', 'success', ''.$params['box'].'_item_created');
+                    $this->tpl->setNotification(sprintf($this->language->__('notification.canvas_item_created'), $canvasTypes[$params['box']]['title']), 'success', ''.$params['box'].'_item_created');
 
                     $subject = $this->language->__('email_notifications.canvas_board_item_created');
                     $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'#/editCanvasItem/'.(int) ($params['itemId'] ?? $id);

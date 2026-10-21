@@ -2,12 +2,9 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pagetitle">
-        <h1>{!! __('headlines.installation') !!}</h1>
-    </div>
-
-</div>
+<x-global::layout.page-header>
+    {!! __('headlines.installation') !!}
+</x-global::layout.page-header>
 <div class="regcontent" id="login">
     <p>{!! __('text.this_script_will_set_up_leantime') !!}</p><br />
 

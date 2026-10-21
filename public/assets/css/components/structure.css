@@ -454,7 +454,8 @@ body {
        only adjusts padding/min-height, not the flex behavior. */
     flex-wrap: wrap;
     gap: 12px;
-    padding: 8px 18px;
+    /* Same inner padding as the content box below it, so both line up (theme token). */
+    padding: 8px var(--box-padding, 16px);
     height: auto;
     line-height: 1.3;
     position: relative;
@@ -548,7 +549,7 @@ body {
     border-radius:var(--box-radius);
     background:var(--glass-background);
     position:relative;
-    padding:14px; /* account for 1px border */
+    padding: var(--box-padding, 16px); /* same as the page header (theme token) */
     margin-bottom:10px;
     box-shadow: var(--large-shadow);
 

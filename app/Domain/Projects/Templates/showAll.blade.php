@@ -6,18 +6,12 @@
     $showClosedProjects = $showClosedProjects ?? false;
 @endphp
 
-<div class="pageheader">
-
-    <div class="pageicon"><span class="fa fa-suitcase"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headline.all_projects') !!}</h1>
-    </div>
-
-</div><!--pageheader-->
+<x-global::layout.page-header icon="fa fa-suitcase" :eyebrow="__('label.administration')">
+    {!! __('headline.all_projects') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -80,7 +74,7 @@
             </tbody>
         </table>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

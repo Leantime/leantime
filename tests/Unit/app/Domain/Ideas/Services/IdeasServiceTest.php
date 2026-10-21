@@ -5,6 +5,10 @@ namespace Unit\app\Domain\Ideas\Services;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Modules\Contracts\StoresProjectModules;
+use Leantime\Core\Modules\Module;
+use Leantime\Core\Modules\ModuleRegistry;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeasRepository;
 use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
@@ -44,6 +48,7 @@ class IdeasServiceTest extends TestCase
             $projects ?? $this->make(ProjectService::class),
             $this->make(TicketService::class),
             $language ?? $this->make(LanguageCore::class),
+            $this->allModulesOn(),
         );
         $service->setPermissionService($perms ?? $this->allowingPermissions());
 
@@ -564,5 +569,39 @@ class IdeasServiceTest extends TestCase
 
         $this->assertSame(0, $service->updateIdeaItem(['itemId' => 5, 'box' => 'idea', 'description' => 'x', 'status' => 'idea', 'data' => '', 'tags' => '', 'canvasId' => 99, 'milestoneId' => ''], 9, self::SESSION_USER));
         $this->assertFalse($edited, 'A non-idea target board must never receive the relocated item');
+    }
+
+    public function test_idea_polling_skips_projects_with_ideas_switched_off(): void
+    {
+        // Polling without a projectId authorizes against the session project, so the service
+        // filters by each idea's own project.
+        $registry = new ModuleRegistry;
+        $registry->register(new Module(id: 'ideas', title: 'Ideas', routes: ['ideas'], permissionDomain: 'ideas'));
+        $store = $this->makeEmpty(StoresProjectModules::class, [
+            'getModuleOverrides' => fn (int $projectId): array => $projectId === 5 ? ['ideas' => false] : [],
+        ]);
+
+        $repo = $this->make(IdeasRepository::class, [
+            'getAllIdeas' => fn () => [
+                ['id' => 1, 'projectId' => 5, 'created' => null, 'modified' => '2026-10-17 10:00:00'],
+                ['id' => 2, 'projectId' => 6, 'created' => null, 'modified' => '2026-10-17 10:00:00'],
+            ],
+        ]);
+
+        $service = new IdeaService(
+            $repo,
+            $this->make(CommentRepository::class),
+            $this->make(ProjectService::class),
+            $this->make(TicketService::class),
+            $this->make(LanguageCore::class),
+            new ProjectModules($registry, $store),
+        );
+        $service->setPermissionService($this->allowingPermissions());
+
+        $ideas = $service->pollForNewIdeas();
+
+        $this->assertSame([0], array_keys($ideas), 'stays a list, so JSON-RPC returns an array');
+        $this->assertSame(2, $ideas[0]['id']);
+        $this->assertSame(['2-2026-10-17 10:00:00'], array_column($service->pollForUpdatedIdeas(), 'id'));
     }
 }

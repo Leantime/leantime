@@ -29,7 +29,7 @@
              next to the next dropdown: whitespace between them adds an inline-block gap. --}}
         <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" menu-style="width:250px;" keep-open>
             <x-slot:trigger class="btn-link" style="margin-right:5px;" data-tippy-content="{{ __('popover.filter') }}">
-                <i class="fas fa-filter"></i> Filter{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
+                <i class="fas fa-filter"></i> {{ __('label.filter') }}{!! $numOfFilters > 0 ? "  <span class='badge badge-primary'>" . $numOfFilters . '</span> ' : '' !!}
             </x-slot:trigger>
             <div class="row-fluid">
 
@@ -37,7 +37,7 @@
 
                 @if ($showProjectFilter)
                     <div class="">
-                        <label class="inline">{!! __('label.project') !!}</label>
+                        <x-global::forms.label class="inline">{!! __('label.project') !!}</x-global::forms.label>
                         <div class="form-group">
                             <x-global::forms.select enhanced data-placeholder="{{ __('label.project') }}" title="{{ __('label.project') }}" name="projects" multiple="multiple" class="project-select" id="projectsSelect">
                                 <option value="" data-placeholder="true">{!! __('label.project') !!}</option>
@@ -52,7 +52,7 @@
                 @endif
 
                 <div class="">
-                    <label class="inline">{!! __('label.user') !!}</label>
+                    <x-global::forms.label class="inline">{!! __('label.user') !!}</x-global::forms.label>
                     <div class="form-group">
                         <x-global::forms.select enhanced data-placeholder="{{ __('input.placeholders.filter_by_user') }}"  title="{{ __('input.placeholders.filter_by_user') }}" name="users" multiple="multiple" class="user-select" id="userSelect">
                             <option value="" data-placeholder="true">{{ __('label.allUsers', 'All Users') }}</option>
@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="">
-                    <label class="inline">{!! __('label.milestone') !!}</label>
+                    <x-global::forms.label class="inline">{!! __('label.milestone') !!}</x-global::forms.label>
                     <div class="form-group">
                         <x-global::forms.select enhanced data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}" multiple="multiple" title="{{ __('input.placeholders.filter_by_milestone') }}" name="milestone" id="milestoneSelect">
                             <option value="" data-placeholder="true">{!! __('label.all_milestones') !!}</option>
@@ -83,7 +83,7 @@
                 </div>
 
                 <div class="">
-                    <label class="inline">{!! __('label.todo_type') !!}</label>
+                    <x-global::forms.label class="inline">{!! __('label.todo_type') !!}</x-global::forms.label>
                     <div class="form-group">
                         <x-global::forms.select enhanced multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_type') }}" title="{{ __('input.placeholders.filter_by_type') }}" name="type" id="typeSelect">
                             <option value="" data-placeholder="true">{!! __('label.all_types') !!}</option>
@@ -97,7 +97,7 @@
                 </div>
 
                 <div class="">
-                    <label class="inline">{!! __('label.todo_priority') !!}</label>
+                    <x-global::forms.label class="inline">{!! __('label.todo_priority') !!}</x-global::forms.label>
                     <div class="form-group">
                         <x-global::forms.select enhanced multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_priority') }}" title="{{ __('input.placeholders.filter_by_priority') }}" name="priority" id="prioritySelect">
                             <option value="" data-placeholder="true">{!! __('label.all_priorities') !!}</option>
@@ -111,7 +111,7 @@
                 </div>
 
                 <div class="">
-                    <label class="inline">{!! __('label.todo_status') !!}</label>
+                    <x-global::forms.label class="inline">{!! __('label.todo_status') !!}</x-global::forms.label>
                     <div class="form-group">
                         <x-global::forms.select enhanced multiple="multiple"  data-placeholder="{{ __('input.placeholders.filter_by_status') }}" name="status" class="status-select" id="statusSelect">
                             <option value="" data-placeholder="true">{{ __('label.allStatuses', 'All Statuses') }}</option>
@@ -127,7 +127,7 @@
 
                 <div class="">
                     <div class="form-group">
-                        <label class="inline">{!! __('label.search_term') !!}</label>
+                        <x-global::forms.label class="inline">{!! __('label.search_term') !!}</x-global::forms.label>
                         <x-global::forms.text-input name="termInput" id="termInput"
                         value="{{ $searchCriteria['term'] }}"
                         placeholder="{{ __('label.search_term') }}" />
@@ -149,7 +149,7 @@
 
         </x-global::actions.dropdown>@if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar')<x-global::actions.dropdown variant="filter">
             <x-slot:trigger class="btn-link" data-tippy-content="{{ __('popover.group_by') }}">
-                <span class="fa-solid fa-diagram-project"></span> Group By
+                <span class="fa-solid fa-diagram-project"></span> {{ __('text.group_by') }}
                 @if ($searchCriteria['groupBy'] != 'all' && $searchCriteria['groupBy'] != '')
                     <span class="badge badge-primary">1</span>
                 @endif
@@ -172,7 +172,7 @@
                             id="{{ $input['id'] }}"
                             onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $searchFormUrl }}')"
                         />
-                        <label for="{{ $input['id'] }}">{!! __("label.{$input['label']}") !!}</label>
+                        <x-global::forms.label for="{{ $input['id'] }}">{!! __("label.{$input['label']}") !!}</x-global::forms.label>
                     </span>
                 </li>
             @endforeach

@@ -2,15 +2,18 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Create multiple milestones for a project in a single operation.
  */
+#[IsDestructive(false)]
 class AddMilestonesForProjectTool extends Tool
 {
     public function __construct(
@@ -26,6 +29,14 @@ class AddMilestonesForProjectTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Add Milestones For Project';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -35,20 +46,31 @@ class AddMilestonesForProjectTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID where milestones will be created.')->required()
-            ->integer('editorId')->description('User ID who will be the editor/creator of these milestones.')->required()
-            ->raw('milestones', ['type' => 'array', 'description' => 'Array of milestone definitions. Each element should contain: headline, color (hex), editFrom (ISO8601), editTo (ISO8601), and optionally dependentMilestone (ID). Example: [{"headline": "Phase 1", "color": "#FF0000", "editFrom": "2024-01-01T09:00:00Z", "editTo": "2024-01-31T17:00:00Z"}]'])->required();
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID where milestones will be created.')
+                ->required(),
+            'editorId' => $schema->integer()
+                ->description('User ID who will be the editor/creator of these milestones.')
+                ->required(),
+            'milestones' => $schema->array()->items($schema->object())
+                ->description('Array of milestone definitions. Each element should contain: headline, color (hex), editFrom (ISO8601), editTo (ISO8601), and optionally dependentMilestone (ID). Example: [{"headline": "Phase 1", "color": "#FF0000", "editFrom": "2024-01-01T09:00:00Z", "editTo": "2024-01-31T17:00:00Z"}]')
+                ->required(),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
         $editorId = (int) ($arguments['editorId'] ?? 0);
         $milestones = ($arguments['milestones'] ?? []);
@@ -109,7 +131,7 @@ class AddMilestonesForProjectTool extends Tool
             }
         }
 
-        return ToolResult::text(
+        return Response::text(
             "Milestone creation completed. Success: {$successCount}, Failed: {$failureCount}\n\n".
             Str::toMarkdown($results)
         );

@@ -2,15 +2,18 @@
 
 namespace Leantime\Domain\Projects\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 use Leantime\Domain\Modulemanager\Services\Modulemanager;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**
  * Creates a new project with the specified details.
  */
+#[IsDestructive(false)]
 class AddProjectTool extends Tool
 {
     public function __construct(
@@ -18,23 +21,39 @@ class AddProjectTool extends Tool
         private Modulemanager $moduleManager,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('name')->description('Name of the project.')
-            ->required()
-            ->integer('clientId')->description('ID of the client for this project.')
-            ->required()
-            ->string('details')->description('Project description.')
-            ->string('start')->description('Start date in ISO 8601 format.')
-            ->string('end')->description('End date in ISO 8601 format.')
-            ->integer('hourBudget')->description('Hour budget for the project.')
-            ->integer('parent')->description('ID of the parent program or plan (only works if PgmPro plugin is active).');
+        return [
+            'name' => $schema->string()
+                ->description('Name of the project.')
+                ->required(),
+            'clientId' => $schema->integer()
+                ->description('ID of the client for this project.')
+                ->required(),
+            'details' => $schema->string()
+                ->description('Project description.'),
+            'start' => $schema->string()
+                ->description('Start date in ISO 8601 format.'),
+            'end' => $schema->string()
+                ->description('End date in ISO 8601 format.'),
+            'hourBudget' => $schema->integer()
+                ->description('Hour budget for the project.'),
+            'parent' => $schema->integer()
+                ->description('ID of the parent program or plan (only works if PgmPro plugin is active).'),
+        ];
     }
 
     public function name(): string
     {
         return 'addProject';
+    }
+
+    public function title(): string
+    {
+        return 'Add Project';
     }
 
     public function description(): string
@@ -45,8 +64,10 @@ class AddProjectTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $values = [
             'name' => $arguments['name'],
             'details' => ($arguments['details'] ?? ''),
@@ -65,9 +86,9 @@ class AddProjectTool extends Tool
         $projectId = $this->projectService->addProject($values);
 
         if ($projectId) {
-            return ToolResult::text("Project created successfully with ID: $projectId");
+            return Response::text("Project created successfully with ID: $projectId");
         }
 
-        return ToolResult::error('Failed to create project. Please check the provided information.');
+        return Response::error('Failed to create project. Please check the provided information.');
     }
 }

@@ -2,38 +2,55 @@
 
 namespace Leantime\Domain\Timesheets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Log;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
  * Log time for a specific ticket.
  */
+#[IsDestructive(false)]
 class LogTimeTool extends Tool
 {
     public function __construct(
         private Timesheets $timesheetsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('ticketId')->description('ID of the ticket to log time for.')
-            ->required()
-            ->number('hours')->description('Number of hours to log.')
-            ->required()
-            ->string('date')->description('Date for the time entry in ISO8601 format.')
-            ->required()
-            ->string('kind')->description('Type of work (e.g., GENERAL_BILLABLE, DEVELOPMENT).')
-            ->required()
-            ->string('description')->description('Description of the work performed.');
+        return [
+            'ticketId' => $schema->integer()
+                ->description('ID of the ticket to log time for.')
+                ->required(),
+            'hours' => $schema->number()
+                ->description('Number of hours to log.')
+                ->required(),
+            'date' => $schema->string()
+                ->description('Date for the time entry in ISO8601 format.')
+                ->required(),
+            'kind' => $schema->string()
+                ->description('Type of work (e.g., GENERAL_BILLABLE, DEVELOPMENT).')
+                ->required(),
+            'description' => $schema->string()
+                ->description('Description of the work performed.'),
+        ];
     }
 
     public function name(): string
     {
         return 'logTime';
+    }
+
+    public function title(): string
+    {
+        return 'Log Time';
     }
 
     public function description(): string
@@ -44,8 +61,10 @@ class LogTimeTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         try {
             $ticketId = (int) ($arguments['ticketId'] ?? 0);
             $params = [
@@ -60,14 +79,14 @@ class LogTimeTool extends Tool
             if ($result) {
                 $hours = ($arguments['hours'] ?? null);
 
-                return ToolResult::text("Time entry successfully logged: {$hours} hours on ticket #{$ticketId}.");
+                return Response::text("Time entry successfully logged: {$hours} hours on ticket #{$ticketId}.");
             }
 
-            return ToolResult::error('Failed to log time entry. Please check the provided information.');
+            return Response::error('Failed to log time entry. Please check the provided information.');
         } catch (\Exception $e) {
             Log::error('Error logging time: '.$e->getMessage());
 
-            return ToolResult::error('Failed to log time entry. Please try again.');
+            return Response::error('Failed to log time entry. Please try again.');
         }
     }
 }

@@ -170,7 +170,7 @@ Common commands:
   - `Unit/` - Unit tests (extending Laravel TestCase)
 
 ### General Architecture Overview
-The application is built on Laravel 11 with significant custom components. It uses a plugin system for extensibility.
+The application is built on Laravel 12 with significant custom components. It uses a plugin system for extensibility.
 Leantime follows a domain-driven architecture:
 
 **Core**
@@ -469,43 +469,51 @@ class MyController extends HtmxController
 
     public function save(): void
     {
-        // Process $_POST
+        $this->service->save($_POST);                        // dispatches TicketUpdated → HX-Trigger lt:tickets:ticket.updated
         $this->tpl->setNotification('Saved!', 'success');   // already emits HtmxUiEvents::Notify
-        $this->tpl->emit(HtmxTicketEvents::UPDATE);          // tell listeners the entity changed
     }
 }
 ```
 
 **Client (HTMX) event naming convention** — events travel server→browser on the `HX-Trigger` header. Two planes, kept separate from the backend `leantime.*` events:
-- **Data events** (`lt:{domain}:{entity}.{verb}`, past tense): "entity X changed → refresh". Consumed declaratively via `hx-trigger="lt:tickets:ticket.updated from:body"`. Backed by per-domain enums `app/Domain/{D}/Htmx/Htmx{D}Events.php`.
+- **Data events** (`lt:{domain}:{entity}.{verb}`, past tense): "entity X changed → refresh". Consumed declaratively via `hx-trigger="lt:tickets:ticket.updated from:body"`. Declared on the backend domain event class itself (see below): one class per fact, no separate client enum.
 - **UI command events** (`lt:ui:{command}`): "do a UI thing" (toast, close modal). Backed by the single core enum `Leantime\Core\Events\Htmx\HtmxUiEvents` (Notify, ModalClose, …) — consumed by JS listeners in `app.js`/`modals.js`. Plugins reuse these, never mint their own `lt:ui:*`.
 
-Enums implement `HtmxEvent` via the `InteractsWithHtmxEvents` trait (gives `event()`→wire value, `scoped($id)` for per-entity events, `trigger()` for `hx-trigger` strings). PHP enums can't implement `__toString`, so use `event()`/`->value` in PHP; Blade `{{ Events::Case }}` renders the value via Laravel's `e()`. Emit with `$this->tpl->emit(...)` / `$this->setHTMXEvent(...)` (both accept `HtmxEvent|string`).
+**Data events come from domain events** (the `ShouldBroadcast` idea, delivered over `HX-Trigger`). A class-based domain event that implements `EmitsClientEvent` declares its wire name in a `CLIENT_EVENT` constant. When it is dispatched during an **htmx request**, `EventDispatcher` queues the name (plus `#{id}` when `clientScope()` returns one) on the response via `HtmxEvents::queueFor()`. JSON-RPC, MCP, full page loads and queue jobs never get the header. Controllers don't emit data events by hand. `EventVocabularyTest` enforces the `lt:{domain}:{entity}.{verb}` format.
+
+**Self-refresh rule** (`app.js`, `htmx:confirm`): a component doesn't refetch on a data event that its own request caused (the request's element sits inside it), because that response already rendered the change. Other components on the page still refresh. That is why emitting from the service is safe for widgets with inline edits. A control whose response doesn't render everything it affects opts back in with `data-lt-refresh-container` (e.g. the to-do widget's due-date picker, where the task has to move to its new date group). Only `lt:{domain}:{entity}.{verb}(#id)` events are affected, never `lt:ui:*` or client-only events like `lt:chip:changed`.
+
+UI commands stay an enum: `HtmxUiEvents` implements `HtmxEvent` via `InteractsWithHtmxEvents` (`event()`→wire value, `scoped($id)`, `trigger()`). PHP enums can't implement `__toString`, so use `event()`/`->value` in PHP; Blade `{{ Events::Case }}` renders the value via Laravel's `e()`. `$this->tpl->emit(...)` / `$this->setHTMXEvent(...)` accept an `HtmxEvent` case, an `EmitsClientEvent` class name or a raw string (all resolved by `HtmxEvents::name()`).
 
 > Migration window: legacy DOMAIN-event strings (`ticket_update`, `subtasks_update`, etc.) are bidirectionally dual-emitted with their `lt:` replacement via `HtmxEvents::LEGACY_ALIASES`, so old and new declarative `hx-trigger` listeners both fire. Remove that map once every emitter + listener is migrated. UI command events (`lt:ui:*`) are NOT dual-emitted — they're consumed by JS `addEventListener` handlers that listen for each legacy name directly, so aliasing them would invoke the handler once per alias (double growl / multiple modal-close).
 
 ```php
-// Per-domain data-event enum
-use Leantime\Core\Events\Htmx\{HtmxEvent, InteractsWithHtmxEvents};
+// app/Domain/Tickets/Events/TicketUpdated.php
+final class TicketUpdated implements EmitsClientEvent, LeantimeEvent {
+    use InteractsWithClientEvents, InteractsWithEvents;
 
-enum HtmxTicketEvents: string implements HtmxEvent {
-    use InteractsWithHtmxEvents;
-    case UPDATE = 'lt:tickets:ticket.updated';
-    case SUBTASK_UPDATE = 'lt:tickets:subtask.updated';
+    public const CLIENT_EVENT = 'lt:tickets:ticket.updated';
+
+    public function __construct(public readonly ?int $ticketId = null) {}
+
+    // also emits "lt:tickets:ticket.updated#42" for components mounted for one ticket
+    public function clientScope(): ?int { return $this->ticketId; }
 }
 
-// Emit from an HxController action
-$this->tpl->emit(HtmxTicketEvents::UPDATE);
+// The service dispatches it; the htmx response carries it. Nothing to emit in the controller.
+TicketUpdated::dispatch(ticketId: $id);
 ```
 
-**HTMX-backed components** — declare the event contract on an `HxComponent` and mount with `<x-global::hx>` (no hand-written boilerplate). The mount reads `listensTo()` so the emit side and the listen side reference the SAME enum and cannot drift apart:
+Plugins reference the event class with `::class` (`setHTMXEvent(TicketUpdated::class)`, `htmxEvent: TicketUpdated::class`). `::class` compiles to a plain string without loading the class, so it never crashes. Core resolves it to the wire name in `HtmxEvents::name()`. Where a plugin needs the wire string itself, it calls `HtmxEvents::name(TicketUpdated::class)` and declares the core version that has it in `extra.leantime.requires`. Avoid `TicketUpdated::CLIENT_EVENT` in plugins: it fatals on a core without the constant, and system plugins skip the version guard.
+
+**HTMX-backed components** — declare the event contract on an `HxComponent` and mount with `<x-global::hx>` (no hand-written boilerplate). The mount reads `listensTo()` so the emit side and the listen side reference the SAME event class and cannot drift apart:
 ```php
 class Subtasks extends \Leantime\Core\Controller\HxComponent {
     protected static string $view = 'tickets::partials.subtasks';
     public static string $swap = 'innerHTML';
     public static function route(): string { return 'tickets/subtasks'; }
-    public static function listensTo(): array { return [HtmxTicketEvents::SUBTASK_UPDATE]; }
-    public static function emits(): array { return [HtmxTicketEvents::SUBTASK_UPDATE]; }
+    public static function listensTo(): array { return [SubtasksUpdated::class]; }
+    public static function emits(): array { return [SubtasksUpdated::class]; }
 }
 ```
 ```blade
@@ -513,7 +521,7 @@ class Subtasks extends \Leantime\Core\Controller\HxComponent {
 <x-global::hx :for="\Leantime\Domain\Tickets\Hxcontrollers\Subtasks::class" :id="$ticket->id" trigger="load" />
 
 {{-- attribute-driven escape hatch (one-offs / plugins) --}}
-<x-global::hx endpoint="comments/reactions/get" :listen="[HtmxTicketEvents::UPDATE]" />
+<x-global::hx endpoint="comments/reactions/get" :listen="[TicketUpdated::class]" />
 ```
 
 Common HTMX patterns used:
@@ -547,6 +555,17 @@ System admins and users can create API Keys. There are 2 types of keys:
 
 **Additional Auth providers**
 Leantime supports LDAP and OIDC authentication natively but can also integrate additional providers via Laravel Socialite (Authentik, Auth0, Gitea, GitHub, GitLab, Google, Keycloak, Microsoft, Okta, PropelAuth, EduID, SAML2).
+
+#### Project Modules (per-project feature switches)
+Admins switch features on or off per project (Project settings → Modules). It is a blanket switch, not role-based: off means off for everyone in that project, and no role can grant past it. Content is never deleted.
+- **Infra in Core** (`app/Core/Modules`): `ModuleRegistry` (the switchable modules), `ProjectModules` (state per project), `Middleware/ProjectModuleGate` (blocks pages + `/hx` fragments of switched-off modules, after `CurrentProject`), the `@module('id', $projectId)` Blade condition, and a hook in `PermissionService::currentUserCan` (denies project-scoped permissions of the module's `permissionDomain` in that project, which covers JSON-RPC/MCP).
+- **UI/API in Domain** (`app/Domain/Modulemanager`): the settings tab, the `getProjectModules`/`saveProjectModules` `@api` methods, the "not available" page, and `register.php`, which registers the core modules (Goals, Ideas, Blueprints, Docs, Files library, Reports, Time tracking). To-Dos, Milestones, the dashboard and comments are always on.
+- **Storage**: `zp_projects.metadata` JSON, `{"modules": {"wiki": false}}`, holding only choices that differ from a module's default. Copied by `duplicateProject()`.
+- **Plugins**: `$registration->registerModule([...])` in `register.php`. Menu items carry `module` (set automatically by `addMenuItem()`); a menu item whose `module` is off is hidden in project menus.
+- A module's `permissionDomain` stays null when that domain also guards things that must keep working: `files.*` backs ticket attachments and editor uploads (so Files claims only the library route `files.browse`; `files/showAll` is the to-do attachment list), and `blueprints.*` backs every canvas type (Logic Model, whiteboards).
+- **Global-permission domains** (Timesheets) can't use the permission hook, since their permissions carry no project. The service enforces the switch itself: `Timesheets::authorizeTicketForTimeEntry()` refuses to book time on a switched-off project's tickets, and the ticket screens wrap the timer and time tab in `@module('timesheets', $ticket->projectId)`. Existing entries stay readable, deletable and invoiceable.
+- Cross-project reads that services serve in-process (MCP tools, polling) filter rows with `ProjectModules::withoutSwitchedOffProjects()`, which bulk-loads the switches in one query.
+- The old per-project `menuType` column is retired: core no longer reads or writes it. It stays in the schema until the plugins that still select it are updated.
 
 ## Frontend Architecture
 

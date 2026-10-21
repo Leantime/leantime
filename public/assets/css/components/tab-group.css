@@ -131,6 +131,12 @@
     margin: 0 0 8px;
     position: relative;
 }
+/* The view bar sits between the page header and the content box: same 10px gap below it as above
+   (.maincontent's padding-top), so every page has one rhythm between boxes. */
+.lt-tabs--floating.lt-tabs--links {
+    margin-bottom: 10px;
+}
+
 .lt-tabs--floating .lt-tabs-group {
     gap: 2px;
     padding: 4px;
@@ -527,8 +533,15 @@ body .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a {
 
 a.lt-step-link:hover .lt-step-label,
 a.lt-step-link:focus-visible .lt-step-label {
-    color: var(--accent1);
-    text-decoration: underline;
+    color: var(--primary-font-color);
+}
+
+/* The link is `display: contents` (no box for the global a:focus-visible outline), so the label
+   carries the keyboard focus ring. */
+a.lt-step-link:focus-visible .lt-step-label {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: var(--box-radius-small);
 }
 
 /* Vertical rail */

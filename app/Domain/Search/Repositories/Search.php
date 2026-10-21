@@ -77,7 +77,7 @@ class Search
         $results = [];
 
         if ($textLimit > 0) {
-            $textQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, $textLimit, max(0, $query->offset - $reservedSlots), $query->filters);
+            $textQuery = new SearchQuery($query->term, $query->userId, $query->accessibleProjectIds, $textLimit, max(0, $query->offset - $reservedSlots), $query->filters, $query->excludedProjectIds);
 
             $results = $this->runTextSearch($textQuery, function (bool $fullText) use ($textQuery, $exact): Builder {
                 $builder = $this->ticketBaseQuery($textQuery);
@@ -630,7 +630,7 @@ class Search
      *
      * Closed projects (state = -1) are never searched. The accessible id list already
      * excludes them for regular users; the explicit state check keeps admins (unrestricted
-     * scope) consistent.
+     * scope) consistent. Projects the query excludes (module switched off) are left out too.
      */
     private function applyProjectScope(Builder $builder, string $projectAlias, string $projectIdColumn, SearchQuery $query): void
     {
@@ -648,6 +648,10 @@ class Search
         // driver's bound-parameter limit (2,100 on SQL Server).
         if ($query->accessibleProjectIds !== null) {
             $builder->whereIntegerInRaw($projectIdColumn, $query->accessibleProjectIds);
+        }
+
+        if ($query->excludedProjectIds !== []) {
+            $builder->whereIntegerNotInRaw($projectIdColumn, $query->excludedProjectIds);
         }
     }
 

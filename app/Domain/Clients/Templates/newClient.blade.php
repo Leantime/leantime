@@ -1,20 +1,12 @@
 @extends($layout)
 @section('content')
 
-@dispatchEvent('beforePageHeaderOpen')
-<div class="pageheader">
-    @dispatchEvent('afterPageHeaderOpen')
-    <div class="pageicon"><span class="fa fa-address-book"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('label.administration') !!}</h5>
-        <h1>{!! __('headline.new_client') !!}</h1>
-    </div>
-    @dispatchEvent('beforePageHeaderClose')
-</div><!--pageheader-->
-@dispatchEvent('afterPageHeaderClose')
+<x-global::layout.page-header icon="fa fa-address-book" :eyebrow="__('label.administration')">
+    {!! __('headline.new_client') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -29,21 +21,21 @@
                     <div class="row row-fluid">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.name') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.name') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input name="name" id="name" value="{{ $values['name'] }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.email') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.email') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input name="email" id="email" value="{{ $values['email'] }}" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.url') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.url') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input
                                             name="internet" id="internet"
@@ -52,7 +44,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.street') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.street') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input
                                             name="street" id="street"
@@ -61,7 +53,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.zip') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.zip') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input
                                            name="zip" id="zip" value="{{ $values['zip'] }}" />
@@ -69,7 +61,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.city') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.city') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input
                                            name="city" id="city" value="{{ $values['city'] }}" />
@@ -77,7 +69,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.state') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.state') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input
                                             name="state" id="state"
@@ -86,7 +78,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.country') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.country') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input
                                             name="country" id="country"
@@ -95,7 +87,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{!! __('label.phone') !!}</label>
+                                <x-global::forms.label class="span4 control-label">{!! __('label.phone') !!}</x-global::forms.label>
                                 <div class="span6">
                                     <x-global::forms.text-input
                                             name="phone" id="phone"
@@ -121,7 +113,7 @@
 
                 </form>
             </x-global::elements.card>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

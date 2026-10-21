@@ -6,15 +6,9 @@
     use Leantime\Core\Support\FromFormat;
 @endphp
 
-<!-- page header -->
-<div class="pageheader">
-    <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
-    <div class="pagetitle">
-        <h5>{!! __('headline.overview') !!}</h5>
-        <h1>{!! __('headline.my_timesheets') !!}</h1>
-    </div>
-</div>
-<!-- page header -->
+<x-global::layout.page-header icon="fa-regular fa-clock" :eyebrow="__('headline.overview')">
+    {!! __('headline.my_timesheets') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
     <x-global::navigation.view-tabs :tabs="[
@@ -25,11 +19,11 @@
             {{-- The filter fields belong to the #form form below (form="…"). --}}
             <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" menu-style="width:250px;" keep-open class="filterWrapper">
                 <x-slot:trigger class="btn-link">{!! __('links.filter') !!} <span class="badge badge-primary">1</span></x-slot:trigger>
-                <label for="dateFrom">{!! __('label.date_from') !!}</label>
+                <x-global::forms.label for="dateFrom">{!! __('label.date_from') !!}</x-global::forms.label>
                 <input type="text" id="dateFrom" class="dateFrom" name="dateFrom" form="form" value="{{ $dateFrom->formatDateForUser() }}" />
-                <label for="dateTo">{!! __('label.until') !!}</label>
+                <x-global::forms.label for="dateTo">{!! __('label.until') !!}</x-global::forms.label>
                 <input type="text" id="dateTo" class="dateTo" name="dateTo" form="form" value="{{ $dateTo->formatDateForUser() }}" />
-                <label for="kind">{!! __('label.type') !!}</label>
+                <x-global::forms.label for="kind">{!! __('label.type') !!}</x-global::forms.label>
                 <x-global::forms.select id="kind" name="kind" form="form" onchange="this.form.submit();">
                     <option value="all">{!! __('label.all_types') !!}</option>
                     @foreach($kind as $key => $row)
@@ -45,7 +39,7 @@
         </x-slot:actions>
     </x-global::navigation.view-tabs>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         {!! $tpl->displayNotification() !!}
 
         <form action="{{ BASE_URL }}/timesheets/showMyList" method="post" id="form" name="form">
@@ -153,7 +147,7 @@
                 </tfoot>
             </table>
         </form>
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

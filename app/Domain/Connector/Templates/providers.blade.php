@@ -2,23 +2,16 @@
 
 @section('content')
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-plug"></span></div>
-    <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{!! __('headlines.providers') !!}</h1>
-            </div>
-        </div>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa fa-plug">
+    {!! __('headlines.providers') !!}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once

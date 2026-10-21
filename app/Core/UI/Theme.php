@@ -113,6 +113,63 @@ class Theme
     private array|false $iniData;
 
     private array $colorSchemes = [
+        'themeDefault' => 'themeDefault',
+        'companyColors' => 'companyColors',
+        'copper' => [
+            'name' => 'Copper',
+            'primaryColor' => '#894329',
+            'secondaryColor' => '#12727d',
+        ],
+        'mustard' => [
+            'name' => 'Mustard',
+            'primaryColor' => '#99472f',
+            'secondaryColor' => '#f3aa38',
+        ],
+        'nebular' => [
+            'name' => 'Nebula',
+            'primaryColor' => '#bf5440',
+            'secondaryColor' => '#0f1b31',
+        ],
+        'fuchsia' => [
+            'name' => 'Fuchsia',
+            'primaryColor' => '#b2104f',
+            'secondaryColor' => '#81adc4',
+        ],
+        'fruit' => [
+            'name' => 'Fruit',
+            'primaryColor' => '#3a5a81',
+            'secondaryColor' => '#d31336',
+        ],
+        'highlands' => [
+            'name' => 'Highlands',
+            'primaryColor' => '#33697b',
+            'secondaryColor' => '#fc9885',
+        ],
+        'moss' => [
+            'name' => 'Moss',
+            'primaryColor' => '#696c29',
+            'secondaryColor' => '#84bd26',
+        ],
+        'morning' => [
+            'name' => 'Morning',
+            'primaryColor' => '#58607b',
+            'secondaryColor' => '#F3AA34',
+        ],
+        'ocean' => [
+            'name' => 'Ocean',
+            'primaryColor' => '#298089',
+            'secondaryColor' => '#fdd78c',
+        ],
+        'energy' => [
+            'name' => 'Energy',
+            'primaryColor' => '#cf4705',
+            'secondaryColor' => '#91372b',
+        ],
+        'forrest' => [
+            'name' => 'Forest',
+            'primaryColor' => '#74211c',
+            'secondaryColor' => '#32251e',
+        ],
         'grayscale1' => [
             'name' => 'Grayscale',
             'primaryColor' => '#000000',
@@ -123,8 +180,6 @@ class Theme
             'primaryColor' => '#d1d1d1',
             'secondaryColor' => '#000000',
         ],
-        'themeDefault' => 'themeDefault',
-        'companyColors' => 'companyColors',
     ];
 
     /**
@@ -137,30 +192,34 @@ class Theme
      *
      * @api
      */
+    /**
+     * Dark-mode colors of the predefined schemes. In dark mode the primary color is also text on
+     * dark panels (active menu and dropdown items, links), so each one reaches about 4.5:1 on
+     * #404040. Primary buttons switch to a dark label on these light accents (sections/header).
+     */
+    private const DARK_MODE_COLOR_SCHEMES = [
+        'grayscale1' => ['primaryColor' => '#e8e8e8', 'secondaryColor' => '#b0b0b0'],
+        'grayscale2' => ['primaryColor' => '#a0a0a0', 'secondaryColor' => '#d1d1d1'],
+        'copper' => ['primaryColor' => '#dc9f89', 'secondaryColor' => '#1ebfd2'],
+        'mustard' => ['primaryColor' => '#dc9f8d', 'secondaryColor' => '#f3aa38'],
+        'nebular' => ['primaryColor' => '#db9e92', 'secondaryColor' => '#94aede'],
+        'fuchsia' => ['primaryColor' => '#f58db5', 'secondaryColor' => '#81adc4'],
+        'fruit' => ['primaryColor' => '#96b0d0', 'secondaryColor' => '#f58fa2'],
+        'highlands' => ['primaryColor' => '#7eb6c9', 'secondaryColor' => '#fc9885'],
+        'moss' => ['primaryColor' => '#afb444', 'secondaryColor' => '#84bd26'],
+        'morning' => ['primaryColor' => '#a7adc0', 'secondaryColor' => '#f3aa34'],
+        'ocean' => ['primaryColor' => '#4abdc9', 'secondaryColor' => '#fdd78c'],
+        'energy' => ['primaryColor' => '#fb9360', 'secondaryColor' => '#df9d94'],
+        'forrest' => ['primaryColor' => '#e59a95', 'secondaryColor' => '#c2a89a'],
+    ];
+
     private function getColorSchemeForMode(string $schemeName, array $scheme): array
     {
-        $colorMode = $this->getColorMode();
-
-        // Adjust grayscale schemes for dark mode to ensure readability
-        if ($colorMode === 'dark') {
-            if ($schemeName === 'grayscale1') {
-                return [
-                    'name' => $scheme['name'],
-                    'primaryColor' => '#e8e8e8',   // Light gray - 8.5:1 contrast on #292929
-                    'secondaryColor' => '#b0b0b0', // Medium gray - 4.2:1 contrast
-                ];
-            }
-            if ($schemeName === 'grayscale2') {
-                return [
-                    'name' => $scheme['name'],
-                    'primaryColor' => '#a0a0a0',   // Light gray - 5.0:1 contrast on #292929
-                    'secondaryColor' => '#d1d1d1', // Light gray - 9.1:1 contrast
-                ];
-            }
+        if ($this->getColorMode() !== 'dark' || ! isset(self::DARK_MODE_COLOR_SCHEMES[$schemeName])) {
+            return $scheme;
         }
 
-        // Light mode: use original values
-        return $scheme;
+        return ['name' => $scheme['name']] + self::DARK_MODE_COLOR_SCHEMES[$schemeName];
     }
 
     /**
@@ -298,13 +357,10 @@ class Theme
      */
     public function getBackgroundImage(): ?string
     {
+        // Read from the settings cache on every request, not a session copy: a change made in
+        // another session (which may delete the old uploaded image) has to show up here too.
         if (Auth::isLoggedIn()) {
-            if (session()->exists('usersettings.backgroundImage')) {
-                return session('usersettings.backgroundImage') ?: null;
-            }
-
             $image = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundImage');
-            session(['usersettings.backgroundImage' => $image ?: '']);
 
             return $image ?: null;
         }
@@ -317,8 +373,6 @@ class Theme
         if (Auth::isLoggedIn()) {
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', 'image');
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundImage', $url);
-            session(['usersettings.backgroundType' => 'image']);
-            session(['usersettings.backgroundImage' => $url]);
         }
     }
 
@@ -331,12 +385,7 @@ class Theme
     public function getBackgroundType(): string
     {
         if (Auth::isLoggedIn()) {
-            if (session()->exists('usersettings.backgroundType')) {
-                return session('usersettings.backgroundType') ?: 'gradient';
-            }
-
             $type = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundType');
-            session(['usersettings.backgroundType' => $type ?: 'gradient']);
 
             return $type ?: 'gradient';
         }
@@ -348,10 +397,8 @@ class Theme
     {
         if (Auth::isLoggedIn()) {
             $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', $type);
-            session(['usersettings.backgroundType' => $type]);
             if ($type == 'gradient') {
                 $this->settingsRepo->deleteSetting('usersettings.'.session('userdata.id').'.backgroundImage');
-                session(['usersettings.backgroundImage' => '']);
             }
         }
     }
@@ -1098,7 +1145,5 @@ class Theme
         session()->forget('usersettings.colorScheme');
         session()->forget('usersettings.themeFont');
         session()->forget('usersettings.theme');
-        session()->forget('usersettings.backgroundType');
-        session()->forget('usersettings.backgroundImage');
     }
 }

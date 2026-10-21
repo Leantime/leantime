@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Search\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Search\Models\SearchResult;
 use Leantime\Domain\Search\Services\Search;
 
@@ -31,6 +32,11 @@ class SearchTool extends Tool
         return 'search';
     }
 
+    public function title(): string
+    {
+        return 'Search';
+    }
+
     public function description(): string
     {
         return 'Global search across to-dos, projects, docs (wiki), ideas, goals, blueprints, comments, files and people (and plugin types such as notes). '
@@ -39,26 +45,42 @@ class SearchTool extends Tool
             .'Returns results grouped by type with ids you can pass to the type-specific tools (findTasks, getTask, getProject, …).';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('term')->description('Search words (at least 2 characters). Every word must match.')->required()
-            ->raw('types', ['type' => 'array', 'items' => ['type' => 'string'], 'description' => 'Restrict to result types, e.g. ["tickets","wiki"]. Available: '.implode(', ', array_keys($this->searchService->getProviders())).'. Omit for all.'])
-            ->integer('projectId')->description('Only results from this project.')
-            ->string('modifiedAfter')->description('Only results changed on or after this date (YYYY-MM-DD, user timezone).')
-            ->string('modifiedBefore')->description('Only results changed on or before this date (YYYY-MM-DD, user timezone).')
-            ->raw('mine', ['type' => 'boolean', 'description' => 'Only items the current user authored or owns.'])
-            ->integer('limit')->description('Maximum results per type. Default '.self::DEFAULT_LIMIT.', max '.self::MAX_LIMIT.'.');
+        $availableTypes = implode(', ', array_keys($this->searchService->getProviders()));
+
+        return [
+            'term' => $schema->string()
+                ->description('Search words (at least 2 characters). Every word must match.')
+                ->required(),
+            'types' => $schema->array()->items($schema->string())
+                ->description('Restrict to result types, e.g. ["tickets","wiki"]. Available: '.$availableTypes.'. Omit for all.'),
+            'projectId' => $schema->integer()
+                ->description('Only results from this project.'),
+            'modifiedAfter' => $schema->string()
+                ->description('Only results changed on or after this date (YYYY-MM-DD, user timezone).'),
+            'modifiedBefore' => $schema->string()
+                ->description('Only results changed on or before this date (YYYY-MM-DD, user timezone).'),
+            'mine' => $schema->boolean()
+                ->description('Only items the current user authored or owns.'),
+            'limit' => $schema->integer()
+                ->description('Maximum results per type. Default '.self::DEFAULT_LIMIT.', max '.self::MAX_LIMIT.'.'),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $term = trim((string) ($arguments['term'] ?? ''));
         if (mb_strlen($term) < 2) {
-            return ToolResult::error('The search term must be at least 2 characters long.');
+            return Response::error('The search term must be at least 2 characters long.');
         }
 
         $limit = max(1, min(self::MAX_LIMIT, (int) ($arguments['limit'] ?? self::DEFAULT_LIMIT)));
@@ -67,7 +89,7 @@ class SearchTool extends Tool
         $requestedTypes = is_array($arguments['types'] ?? null) ? array_map('strval', $arguments['types']) : [];
         $unknownTypes = array_diff($requestedTypes, array_keys($providers));
         if ($unknownTypes !== []) {
-            return ToolResult::error('Unknown result types: '.implode(', ', $unknownTypes).'. Available: '.implode(', ', array_keys($providers)).'.');
+            return Response::error('Unknown result types: '.implode(', ', $unknownTypes).'. Available: '.implode(', ', array_keys($providers)).'.');
         }
         $types = $requestedTypes !== [] ? $requestedTypes : array_keys($providers);
 
@@ -96,10 +118,10 @@ class SearchTool extends Tool
         }
 
         if ($total === 0) {
-            return ToolResult::text("No results found for '".Str::sanitizeForLLM($term, true)."'.");
+            return Response::text("No results found for '".Str::sanitizeForLLM($term, true)."'.");
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 
     /**

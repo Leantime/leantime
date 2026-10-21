@@ -14,37 +14,30 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
-    <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{!! __('headlines.connector') !!} // {{ $provider->name }}</h1>
-            </div>
-        </div>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-circle-nodes">
+    {!! __('headlines.connector') !!} // {{ $provider->name }}
+</x-global::layout.page-header>
 
     <div class="maincontent">
-        <div class="maincontentinner">
+        <x-global::layout.content-box>
             @include('connector::submodules.importProgress')
-        </div>
-        <div class="maincontentinner center">
+        </x-global::layout.content-box>
+        <x-global::layout.content-box class="center">
 
         {!! $tpl->displayNotification() !!}
 
-            <h5 class="subtitle">What are you importing?</h5>
+            <x-global::elements.section-header as="h5">{{ __('headlines.integration_what_importing') }}</x-global::elements.section-header>
             <br />
-            On this screen you can choose what you would like to synchronize. Choose an entity on the left and map it to someting in Leantime on the right.
-            The arrow indicates that we will synchronize from one location to the other.<br /><br />
+            {{ __('text.integration_choose_entity') }}
+            {{ __('text.integration_arrow_direction') }}<br /><br />
 
             <form method="post" action="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}&step=fields{{ $urlAppend }}">
 
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-2 right">
-                        <h1>From (your integration)</h1>
-                        <label for="providerEntities">{{ $provider->name }}</label>
+                        <h1>{{ __('headlines.integration_from') }}</h1>
+                        <x-global::forms.label for="providerEntities">{{ $provider->name }}</x-global::forms.label>
                         <x-global::forms.select width="full" name="providerEntities" id="providerEntities">
                             @foreach ($providerEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
@@ -55,9 +48,9 @@
                         <i class="fa fa-arrow-right"></i>
                     </div>
                     <div class="col-md-2">
-                        <h1>To (Leantime)</h1>
+                        <h1>{{ __('headlines.integration_to') }}</h1>
 
-                        <label for="leantimeEntities">Leantime</label>
+                        <x-global::forms.label for="leantimeEntities">Leantime</x-global::forms.label>
                         <x-global::forms.select width="full" name="leantimeEntities" id="leantimeEntities">
                             @foreach ($leantimeEntities as $key => $entity)
                                 <option value="{{ $key }}">{{ $entity['name'] }}</option>
@@ -68,15 +61,15 @@
                 </div>
 
                 <div class="left">
-                    <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="tertiary" class="pull-left">Back</x-global::forms.button>
+                    <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration/?provider={{ $provider->id }}" contentRole="tertiary" class="pull-left">{{ __('buttons.back') }}</x-global::forms.button>
                 </div>
 
                 <div class="right">
-                    <x-global::forms.button tag="input" inputType="submit" labelText="Next" />
+                    <x-global::forms.button tag="input" inputType="submit" :labelText="__('buttons.next')" />
                 </div>
                 <div class="clearall"></div>
             </form>
-        </div>
+        </x-global::layout.content-box>
     </div>
 
 @endsection

@@ -6,6 +6,10 @@ use Carbon\CarbonImmutable;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Language;
+use Leantime\Core\Modules\Contracts\StoresProjectModules;
+use Leantime\Core\Modules\Module;
+use Leantime\Core\Modules\ModuleRegistry;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;
@@ -67,6 +71,7 @@ class ReportEngineTest extends TestCase
             $this->ticketRepository,
             $this->projectService,
             $this->goalService,
+            $this->allModulesOn(),
         );
 
         $permissionService = $this->createMock(PermissionService::class);
@@ -334,5 +339,37 @@ class ReportEngineTest extends TestCase
         $this->assertCount(1, $report['needsAttention']['goalsAtRisk']);
         // No status update ever -> the project is flagged as silent.
         $this->assertCount(1, $report['needsAttention']['staleProjects']);
+    }
+
+    public function test_goal_report_reads_module_switches_once_and_skips_projects_with_goals_off(): void
+    {
+        $registry = new ModuleRegistry;
+        $registry->register(new Module(id: 'goalcanvas', title: 'Goals', routes: ['goalcanvas'], permissionDomain: 'goals'));
+
+        $store = $this->createMock(StoresProjectModules::class);
+        $store->expects($this->once())->method('getModuleOverridesForProjects')
+            ->with([10, 11])
+            ->willReturn([10 => [], 11 => ['goalcanvas' => false]]);
+        $store->expects($this->never())->method('getModuleOverrides');
+
+        $service = new ReportEngine(
+            $this->repository,
+            $this->ticketRepository,
+            $this->projectService,
+            $this->goalService,
+            new ProjectModules($registry, $store),
+        );
+        $permissionService = $this->createMock(PermissionService::class);
+        $permissionService->method('currentUserCan')->willReturn(true);
+        $service->setPermissionService($permissionService);
+
+        $this->repository->expects($this->once())->method('getGoalsForProjects')
+            ->with([10], $this->anything(), $this->anything())
+            ->willReturn([]);
+        $this->goalService->method('getMilestonesForGoals')->willReturn([]);
+
+        $report = $service->getGoalReportForProjects([10, 11]);
+
+        $this->assertSame([], $report['goals']);
     }
 }

@@ -16,28 +16,21 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
-    <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>{!! __('headlines.integrations') !!} // {{ $provider->name }} </h1>
-            </div>
-        </div>
-    </div>
-</div>
+<x-global::layout.page-header icon="fa-solid fa-circle-nodes">
+    {!! __('headlines.integrations') !!} // {{ $provider->name }}
+</x-global::layout.page-header>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
         @include('connector::submodules.importProgress')
-    </div>
-    <div class="maincontentinner center">
+    </x-global::layout.content-box>
+    <x-global::layout.content-box class="center">
         {!! $tpl->displayNotification() !!}
 
-        <h5 class="subtitle">Review</h5>
+        <x-global::elements.section-header as="h5">{{ __('headlines.integration_review') }}</x-global::elements.section-header>
 
         @if (!empty($flags))
-            <p style="font-style: oblique">Please resolve the following errors and reconnect your integration:</p>
+            <p style="font-style: oblique">{{ __('text.integration_resolve_errors') }}</p>
             <ul style="padding-left: 20px; margin-bottom: 20px;">
                 @php $messages = []; @endphp
                 @foreach ($flags as $flag)
@@ -47,13 +40,13 @@
                     @endif
                 @endforeach
             </ul>
-            <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">Go Back</x-global::forms.button>
+            <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">{{ __('links.go_back') }}</x-global::forms.button>
         @else
-            <x-global::forms.button tag="a" class="right" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" contentRole="primary">Confirm</x-global::forms.button>
+            <x-global::forms.button tag="a" class="right" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" contentRole="primary">{{ __('buttons.confirm') }}</x-global::forms.button>
         @endif
         <div class="clearall"></div>
 
-        <p>All set, we are importing the data you see below.</p>
+        <p>{{ __('text.integration_importing') }}</p>
         <br />
 
         <table width="100%">
@@ -78,7 +71,7 @@
 
         <div class="clearall"></div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @endsection

@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Comments\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Comments\Services\Comments;
 
 /**
@@ -19,16 +20,27 @@ class PollCommentsTool extends Tool
         private Comments $commentsService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID to filter comments by.')
-            ->integer('moduleId')->description('Module ID to filter comments by.');
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID to filter comments by.'),
+            'moduleId' => $schema->integer()
+                ->description('Module ID to filter comments by.'),
+        ];
     }
 
     public function name(): string
     {
         return 'pollComments';
+    }
+
+    public function title(): string
+    {
+        return 'Poll Comments';
     }
 
     public function description(): string
@@ -39,15 +51,17 @@ class PollCommentsTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = ($arguments['projectId'] ?? null);
         $moduleId = ($arguments['moduleId'] ?? null);
 
         $comments = $this->commentsService->pollComments($projectId, $moduleId);
 
         if (empty($comments)) {
-            return ToolResult::text('No comments found');
+            return Response::text('No comments found');
         }
 
         $response = "## Comments\n";
@@ -74,6 +88,6 @@ class PollCommentsTool extends Tool
             $response .= Str::toMarkdown($result)."\n";
         }
 
-        return ToolResult::text($response);
+        return Response::text($response);
     }
 }

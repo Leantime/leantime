@@ -375,6 +375,7 @@ class SchemaBuilder
             $table->integer('active')->nullable();
             $table->text('menuType')->nullable();
             $table->text('psettings')->nullable();
+            $table->text('metadata')->nullable();
             $table->integer('parent')->nullable();
             $table->string('type', 45)->nullable();
             $table->dateTime('start')->nullable();
@@ -691,7 +692,9 @@ class SchemaBuilder
      * Create zp_roles table — the DB-backed role definitions for the native
      * permission engine. Ships the six built-in roles (seeded separately) and is
      * extensible with custom roles. `level` preserves the legacy "at least"
-     * hierarchy (5..50); `isSystem` flags the built-ins as protected.
+     * hierarchy (5..50); `isSystem` flags the built-ins as protected. `roleKey` is the
+     * value stored in zp_user.role (built-ins 5..50, custom roles 100+); `baseRole` is the
+     * built-in role a custom role acts as for checks by role name.
      */
     private function createRolesTable(): void
     {
@@ -699,13 +702,16 @@ class SchemaBuilder
             $table->id();
             $table->string('name', 50);
             $table->string('displayName', 100)->nullable();
+            $table->integer('roleKey')->nullable();
             $table->integer('level');
+            $table->string('baseRole', 50)->nullable();
             $table->tinyInteger('isSystem')->default(0);
             $table->text('description')->nullable();
             $table->dateTime('createdOn')->nullable();
             $table->dateTime('modified')->nullable();
 
             $table->unique(['name'], 'idx_roles_name');
+            $table->unique(['roleKey'], 'idx_roles_roleKey');
             $table->index(['level'], 'idx_roles_level');
         });
     }

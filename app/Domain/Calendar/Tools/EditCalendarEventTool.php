@@ -2,37 +2,54 @@
 
 namespace Leantime\Domain\Calendar\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 use Leantime\Domain\Calendar\Services\Calendar;
 
 /**
  * Edit an existing calendar event.
  */
+#[IsIdempotent]
 class EditCalendarEventTool extends Tool
 {
     public function __construct(
         private Calendar $calendarService,
     ) {}
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    /**
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
+     */
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('Event ID to edit.')
-            ->required()
-            ->string('eventTitle')->description('Title of the event.')
-            ->required()
-            ->string('dateFrom')->description('Start date in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-            ->required()
-            ->string('dateTo')->description('End date in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
-            ->required()
-            ->boolean('allDay')->description('Whether this is an all-day event.');
+        return [
+            'id' => $schema->integer()
+                ->description('Event ID to edit.')
+                ->required(),
+            'eventTitle' => $schema->string()
+                ->description('Title of the event.')
+                ->required(),
+            'dateFrom' => $schema->string()
+                ->description('Start date in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+            'dateTo' => $schema->string()
+                ->description('End date in user timezone format ISO8601 (example: 2024-04-30T15:00:00-04:00).')
+                ->required(),
+            'allDay' => $schema->boolean()
+                ->description('Whether this is an all-day event.'),
+        ];
     }
 
     public function name(): string
     {
         return 'editEvent';
+    }
+
+    public function title(): string
+    {
+        return 'Edit Event';
     }
 
     public function description(): string
@@ -43,8 +60,10 @@ class EditCalendarEventTool extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $result = $this->calendarService->editEvent([
             'id' => (int) ($arguments['id'] ?? 0),
             'description' => $arguments['eventTitle'],
@@ -54,9 +73,9 @@ class EditCalendarEventTool extends Tool
         ]);
 
         if ($result) {
-            return ToolResult::text('Event updated successfully.');
+            return Response::text('Event updated successfully.');
         }
 
-        return ToolResult::error('Failed to update event.');
+        return Response::error('Failed to update event.');
     }
 }

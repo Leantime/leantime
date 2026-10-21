@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Goalcanvas\Tools;
 
+use Laravel\Mcp\Request;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Goalcanvas\Tools\GetParentKPIsTool;
 use Leantime\Domain\Projects\Services\Projects;
@@ -23,9 +24,9 @@ class GetParentKPIsToolTest extends TestCase
         ]);
         $projects = $this->make(Projects::class, ['getProject' => fn () => false]);
 
-        $result = (new GetParentKPIsTool($goalcanvas, $projects))->handle(['projectId' => 77])->toArray();
+        $result = (new GetParentKPIsTool($goalcanvas, $projects))->handle(new Request(['projectId' => 77]));
 
-        $this->assertTrue($result['isError']);
+        $this->assertTrue($result->isError());
     }
 
     public function test_returns_kpis_of_a_visible_project(): void
@@ -35,9 +36,9 @@ class GetParentKPIsToolTest extends TestCase
         ]);
         $projects = $this->make(Projects::class, ['getProject' => fn () => ['id' => 9]]);
 
-        $result = (new GetParentKPIsTool($goalcanvas, $projects))->handle(['projectId' => 9])->toArray();
+        $result = (new GetParentKPIsTool($goalcanvas, $projects))->handle(new Request(['projectId' => 9]));
 
-        $this->assertFalse($result['isError']);
-        $this->assertStringContainsString('Revenue', $result['content'][0]['text']);
+        $this->assertFalse($result->isError());
+        $this->assertStringContainsString('Revenue', (string) $result->content());
     }
 }

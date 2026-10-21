@@ -15,7 +15,7 @@
     margin-bottom: 32px;
 }
 
-.reportSection h5.subtitle {
+.reportSection .lt-section-hd {
     display: flex;
     align-items: baseline;
     gap: 8px;
@@ -24,7 +24,7 @@
     border-bottom: 1px solid var(--main-border-color);
 }
 
-.reportSection h5.subtitle .sectionCount {
+.reportSection .lt-section-hd .sectionCount {
     font-size: var(--font-size-s);
     font-weight: normal;
     color: var(--color-text-secondary);
@@ -36,7 +36,7 @@
     margin-bottom: 24px;
 }
 
-.reportNeedsAttention h5.subtitle {
+.reportNeedsAttention .lt-section-hd {
     border-bottom: 0;
     padding-bottom: 0;
     margin-bottom: 8px;

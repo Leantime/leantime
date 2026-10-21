@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -28,6 +29,14 @@ class GetAllStatusLabelsByUserIdTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Get All Status Labels By User ID';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -37,18 +46,25 @@ class GetAllStatusLabelsByUserIdTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('userId')->description('User ID to get status labels for.')->required();
+        return [
+            'userId' => $schema->integer()
+                ->description('User ID to get status labels for.')
+                ->required(),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $userId = (int) ($arguments['userId'] ?? 0);
         if ($userId === 0) {
             $userId = session('userdata.id');
@@ -71,6 +87,6 @@ class GetAllStatusLabelsByUserIdTool extends Tool
             }
         }
 
-        return ToolResult::text($statusAIString);
+        return Response::text($statusAIString);
     }
 }

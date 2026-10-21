@@ -56,10 +56,9 @@
     }
 @endphp
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-book"></span></div>
-    <div class="pagetitle">
-        @if(count($wikis) > 0)
+<x-global::layout.page-header icon="fa fa-book">
+    @if(count($wikis) > 0)
+        <x-slot:switcher>
             <x-global::subjectSwitcher
                 :parent="__('headlines.documents')"
                 :current="$currentWiki !== false ? $currentWiki->title : __('label.select_board')">
@@ -71,14 +70,12 @@
                     </li>
                 @endforeach
             </x-global::subjectSwitcher>
-        @else
-            <h1>{!! __('headlines.documents') !!}</h1>
-        @endif
-    </div>
-    {{-- Header rule (2026-08-03): actions ⋮ sits in the right cluster,
-         vertically centered — never floated inside the title block. --}}
+        </x-slot:switcher>
+    @else
+        {!! __('headlines.documents') !!}
+    @endif
     @if(count($wikis) > 0)
-        <div class="pageheader-right">
+        <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
                 @if($login::userIsAtLeast($roles::$editor) && $currentWiki)
                     <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{!! __('link.edit_wiki') !!}</a></li>
@@ -90,23 +87,23 @@
                 @endif
 
             </x-global::actions.dropdown>
-        </div>
+        </x-slot:actions>
     @endif
-</div>
+</x-global::layout.page-header>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
 
     @if((! $currentArticle || $currentArticle->id != null) && (! $wikis || count($wikis) == 0))
         <!-- No wikis exist - show empty state -->
-        <div class="maincontentinner wiki-empty-state">
+        <x-global::layout.content-box class="wiki-empty-state">
             <div class="wiki-empty-state-icon svgContainer">
                 {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
             </div>
             <h3 class="wiki-empty-state-title">{!! __('headlines.no_articles_yet') !!}</h3>
             <p class="wiki-empty-state-text">{!! __('text.create_new_wiki') !!}</p>
             <x-global::forms.button tag="a" link="#/wiki/wikiModal/" class="inlineEdit" contentRole="primary">{!! __('links.icon.create_new_board') !!}</x-global::forms.button>
-        </div>
+        </x-global::layout.content-box>
 
     @elseif($wikis && count($wikis) > 0)
 
@@ -123,8 +120,8 @@
                         <!-- Left: Contents Sidebar -->
                         <div class="wiki-contents-panel" id="contentsPanel">
                             <div class="wiki-panel-header">
-                                <x-global::elements.section-header icon="fa fa-list">Contents</x-global::elements.section-header>
-                                <button class="wiki-collapse-btn" id="toggleContents" title="Collapse">
+                                <x-global::elements.section-header icon="fa fa-list">{{ __('label.contents') }}</x-global::elements.section-header>
+                                <button class="wiki-collapse-btn" id="toggleContents" title="{{ __('label.collapse') }}">
                                     <i class="fa fa-chevron-left"></i>
                                 </button>
                             </div>
@@ -144,14 +141,14 @@
                         </div>
 
                         <!-- Toggle for collapsed Contents -->
-                        <button class="wiki-panel-toggle left" id="showContentsBtn" title="Show Contents">
+                        <button class="wiki-panel-toggle left" id="showContentsBtn" title="{{ __('label.show_contents') }}">
                             <i class="fa fa-chevron-right"></i>
                         </button>
 
                         <div class="wiki-content-inner">
 
                         <!-- Toggle for collapsed Details -->
-                        <button class="wiki-panel-toggle right" id="showPropertiesBtn" title="Show Details">
+                        <button class="wiki-panel-toggle right" id="showPropertiesBtn" title="{{ __('label.show_details') }}">
                             <i class="fa fa-chevron-left"></i>
                         </button>
 
@@ -256,8 +253,8 @@
                         <!-- Properties Panel (inside content area) -->
                         <div class="wiki-properties-panel" id="propertiesPanel">
                             <div class="wiki-panel-header">
-                                <x-global::elements.section-header icon="fa fa-info-circle">Details</x-global::elements.section-header>
-                                <button class="wiki-collapse-btn" id="collapseProperties" title="Collapse">
+                                <x-global::elements.section-header icon="fa fa-info-circle">{{ __('label.details') }}</x-global::elements.section-header>
+                                <button class="wiki-collapse-btn" id="collapseProperties" title="{{ __('label.collapse') }}">
                                     <i class="fa fa-chevron-right"></i>
                                 </button>
                             </div>
@@ -271,8 +268,8 @@
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     <x-global::forms.select width="full" id="wikiStatusSelect">
-                                        <option value="draft" @selected($currentArticle->status === 'draft')>Draft</option>
-                                        <option value="published" @selected($currentArticle->status !== 'draft')>Published</option>
+                                        <option value="draft" @selected($currentArticle->status === 'draft')>{{ __('label.draft') }}</option>
+                                        <option value="published" @selected($currentArticle->status !== 'draft')>{{ __('label.published') }}</option>
                                     </x-global::forms.select>
                                 @else
                                     {{ ucfirst($currentArticle->status) }}
@@ -282,7 +279,7 @@
 
                         @php
                             // Find parent article name
-                            $parentName = 'None';
+                            $parentName = __('label.none');
                             if ($currentArticle->parent && $currentArticle->parent > 0) {
                                 foreach ($wikiHeadlines as $headline) {
                                     if ($headline->id == $currentArticle->parent) {
@@ -295,7 +292,7 @@
 
                         <!-- Parent -->
                         <div class="form-group">
-                            <x-global::forms.label>Parent</x-global::forms.label>
+                            <x-global::forms.label>{{ __('label.parent') }}</x-global::forms.label>
                             <div class="">
                                 @if($login::userIsAtLeast($roles::$editor))
                                     @php
@@ -304,7 +301,7 @@
                                         });
                                     @endphp
                                     <x-global::forms.select width="full" id="wikiParentSelect">
-                                        <option value="0" @selected(! $currentArticle->parent || $currentArticle->parent == 0)>None</option>
+                                        <option value="0" @selected(! $currentArticle->parent || $currentArticle->parent == 0)>{{ __('label.none') }}</option>
                                         @foreach($parentOptions as $headline)
                                             <option value="{{ $headline->id }}" @selected($currentArticle->parent == $headline->id)>{{ $headline->title }}@if($headline->status === 'draft') ({!! __('label.draft') !!})@endif</option>
                                         @endforeach
@@ -366,14 +363,14 @@
 
                     <!-- Activity Section -->
                     <div class="wiki-properties-section wiki-activity-section">
-                        <x-global::elements.section-header icon="fa fa-clock-rotate-left">Activity</x-global::elements.section-header>
+                        <x-global::elements.section-header icon="fa fa-clock-rotate-left">{{ __('label.activity') }}</x-global::elements.section-header>
 
                         <div id="wikiActivityContainer"
                              hx-get="{{ BASE_URL }}/hx/wiki/articleActivity?articleId={{ $currentArticle->id }}"
                              hx-trigger="load, refreshActivity from:body"
                              hx-swap="innerHTML">
                             <div class="wiki-activity-loading">
-                                <i class="fa fa-circle-notch fa-spin"></i> Loading activity...
+                                <i class="fa fa-circle-notch fa-spin"></i> {{ __('text.loading_activity') }}
                             </div>
                         </div>
                     </div>
@@ -386,7 +383,7 @@
 
         @else
             <!-- Wiki exists but no articles yet -->
-            <div class="maincontentinner wiki-empty-state">
+            <x-global::layout.content-box class="wiki-empty-state">
                 <div class="wiki-empty-state-icon svgContainer">
                     {!! file_get_contents(ROOT . '/dist/images/svg/undraw_book_reading_re_fu2c.svg') !!}
                 </div>
@@ -397,7 +394,7 @@
                         hx-swap="none">
                     <i class="fa fa-plus"></i> {!! __('link.create_article') !!}
                 </x-global::forms.button>
-            </div>
+            </x-global::layout.content-box>
         @endif
 
     @endif

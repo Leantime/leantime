@@ -124,9 +124,26 @@
             break;
         }
     }
+
+    // Primary buttons put a white label on the first accent. Where that is below AA and dark
+    // text reads better (light accents, e.g. Forest in dark mode), the label turns dark.
+    $mainActionLabelColor = null;
+    if (is_string($accents[0] ?? null) && preg_match('/^#?([0-9a-fA-F]{6})$/', $accents[0], $primaryHex)) {
+        [$pr, $pg, $pb] = sscanf($primaryHex[1], '%02x%02x%02x');
+        $linChannel = static fn ($v) => ($v /= 255) <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
+        $primaryLum = 0.2126 * $linChannel($pr) + 0.7152 * $linChannel($pg) + 0.0722 * $linChannel($pb);
+        $whiteLabelContrast = 1.05 / ($primaryLum + 0.05);
+        $darkLabelContrast = ($primaryLum + 0.05) / (0.0103 + 0.05); // #1a1a1a
+        if ($whiteLabelContrast < 4.5 && $darkLabelContrast > $whiteLabelContrast) {
+            $mainActionLabelColor = '#1a1a1a';
+        }
+    }
 @endphp
 <style id="colorSchemeSetter">
     :root { --nav-scrim: {{ $navNeedsScrim ? '0.22' : '0' }}; }
+    @if($mainActionLabelColor)
+        :root { --main-action-label-color: {{ $mainActionLabelColor }}; }
+    @endif
     @foreach ($accents as $accent)
         @if($accent !== false)
             :root {
@@ -143,24 +160,7 @@
 </style>
 
 
-<style id="backgroundImageSetter">
-    @if(!empty($themeBg))
-            .rightpanel {
-                background-image: url({!! $themeBgCss ?? '""' !!});
-                opacity: {{ $themeOpacity }};
-                mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
-                background-size: var(--background-size, cover);
-                background-position: center;
-                background-attachment: fixed;
-            }
-
-    @if($themeType === 'image')
-        .rightpanel:before {
-            background: none;
-        }
-    @endif
-    @endif
-</style>
+@include('global::sections.backgroundStyle')
 
 
 @dispatchEvent('afterThemeColors')

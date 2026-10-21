@@ -29,7 +29,8 @@
 
     @php
         $accordionId = 'task-children-'.$groupKey.$ticket['id'];
-        $accordionState = $tpl->getToggleState($tpl->getToggleState("accordion_content-".$accordionId) === 'closed' ? 'closed' : 'open');
+        // The subtask list's saved open/closed state (stored by snippets.accordionToggle).
+        $accordionState = $tpl->getToggleState('accordion_content-'.$accordionId) === 'closed' ? 'closed' : 'open';
     @endphp
 
     @php
@@ -79,7 +80,9 @@
             <div class="tw-flex tw-flex-row">
                 <div class="tw-content-center">
                     <div class="tw-content-center tw-mr-[10px]">
-                        @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
+                        @module('timesheets', $ticket['projectId'] ?? null)
+                            @include('tickets::partials.timerButton', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
+                        @endmodule
                     </div>
                 </div>
 
@@ -144,6 +147,8 @@
                                    data-id="{{ $ticket['id'] }}"
                                    onchange="jQuery('#due-date-picker-trigger-{{ $ticket['id'] }}').text(this.value);"
                                    name="date"
+                                   {{-- reload the widget afterwards so the task moves to its new date group --}}
+                                   data-lt-refresh-container
                                    hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
                                    hx-trigger="change"
                                    hx-vals='{"id": "{{ $ticket['id'] }}"}'
@@ -151,6 +156,7 @@
                             <button class="reset-button"
                                     data-id="{{ $ticket['id'] }}"
                                     id="reset-date-{{ $ticket['id'] }}"
+                                    data-lt-refresh-container
                                     hx-post="{{ BASE_URL }}/widgets/myToDos/updateDueDate"
                                     hx-vals='{"id": "{{ $ticket['id'] }}", "date": ""}'
                                     hx-indicator=".htmx-indicator-ticket-{{ $ticket['id'] }}">

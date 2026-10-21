@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Auth\Permissions;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
 use Leantime\Core\Db\Db as DbCore;
 
@@ -18,9 +19,27 @@ class PermissionRepository
 {
     private ConnectionInterface $db;
 
+    /** Custom role keys are this plus the role's id, so they never overlap the built-in keys (5..50). */
+    public const CUSTOM_ROLE_KEY_OFFSET = 100;
+
+    private ?bool $roleKeyColumnsExist = null;
+
     public function __construct(DbCore $db)
     {
         $this->db = $db->getConnection();
+    }
+
+    /**
+     * Run several writes as one unit on the permission tables' connection.
+     *
+     * @template T
+     *
+     * @param  \Closure(): T  $writes
+     * @return T
+     */
+    public function transaction(\Closure $writes): mixed
+    {
+        return $this->db->transaction($writes);
     }
 
     // ------------------------------------------------------------------
@@ -60,45 +79,91 @@ class PermissionRepository
     /**
      * Insert or update a role keyed by its (unique) name. Returns the role id.
      * Built-in roles pass isSystem=true so the admin UI can protect them.
+     *
+     * @param  int|null  $roleKey  Value stored in zp_user.role for this role; null leaves it unchanged.
+     * @param  string|null  $baseRole  Built-in role a custom role acts as for checks by role name.
      */
-    public function upsertRole(string $name, string $displayName, int $level, bool $isSystem = false, ?string $description = null): int
-    {
+    public function upsertRole(
+        string $name,
+        string $displayName,
+        int $level,
+        bool $isSystem = false,
+        ?string $description = null,
+        ?int $roleKey = null,
+        ?string $baseRole = null,
+    ): int {
         $now = dtHelper()->userNow()->formatDateTimeForDb();
-        $existing = $this->getRoleByName($name);
 
-        if ($existing !== null) {
-            $this->db->table('zp_roles')->where('id', $existing['id'])->update([
-                'displayName' => $displayName,
-                'level' => $level,
-                'isSystem' => $isSystem ? 1 : 0,
-                'description' => $description,
-                'modified' => $now,
-            ]);
-
-            return (int) $existing['id'];
-        }
-
-        return (int) $this->db->table('zp_roles')->insertGetId([
-            'name' => $name,
+        $row = [
             'displayName' => $displayName,
             'level' => $level,
             'isSystem' => $isSystem ? 1 : 0,
             'description' => $description,
-            'createdOn' => $now,
             'modified' => $now,
+        ];
+
+        // Older migrations seed roles before update_sql_30532 adds these columns.
+        if ($this->hasRoleKeyColumns()) {
+            if ($roleKey !== null) {
+                $row['roleKey'] = $roleKey;
+            }
+            $row['baseRole'] = $baseRole;
+        }
+
+        $existing = $this->getRoleByName($name);
+
+        if ($existing !== null) {
+            $this->db->table('zp_roles')->where('id', $existing['id'])->update($row);
+
+            return (int) $existing['id'];
+        }
+
+        return (int) $this->db->table('zp_roles')->insertGetId($row + [
+            'name' => $name,
+            'createdOn' => $now,
         ]);
     }
 
-    /** @param  array<string, mixed>  $data */
+    /**
+     * Create (or update by name) a role from an array. A new role without a `roleKey` gets a
+     * custom key derived from its row id (100 + id): ids are never reused, so neither are keys,
+     * and two roles created at the same time can't get the same key.
+     *
+     * @param  array<string, mixed>  $data
+     */
     public function createRole(array $data): int
     {
-        return $this->upsertRole(
+        $existing = $this->getRoleByName((string) $data['name']);
+
+        $roleId = $this->upsertRole(
             (string) $data['name'],
             (string) ($data['displayName'] ?? $data['name']),
             (int) ($data['level'] ?? 20),
             (bool) ($data['isSystem'] ?? false),
             $data['description'] ?? null,
+            isset($data['roleKey']) ? (int) $data['roleKey'] : null,
+            $data['baseRole'] ?? null,
         );
+
+        $needsCustomKey = ! isset($data['roleKey']) && ($existing['roleKey'] ?? null) === null;
+
+        if ($needsCustomKey && $this->hasRoleKeyColumns()) {
+            $this->db->table('zp_roles')
+                ->where('id', $roleId)
+                ->update(['roleKey' => self::CUSTOM_ROLE_KEY_OFFSET + $roleId]);
+        }
+
+        return $roleId;
+    }
+
+    private function hasRoleKeyColumns(): bool
+    {
+        if ($this->roleKeyColumnsExist === null) {
+            $this->roleKeyColumnsExist = $this->db instanceof Connection
+                && $this->db->getSchemaBuilder()->hasColumn('zp_roles', 'roleKey');
+        }
+
+        return $this->roleKeyColumnsExist;
     }
 
     /** @param  array<string, mixed>  $data */
@@ -109,12 +174,49 @@ class PermissionRepository
         return (bool) $this->db->table('zp_roles')->where('id', $id)->update($data);
     }
 
-    /** Deletes a role and its grants. Callers must block deletion of isSystem roles. */
+    /**
+     * Deletes a role and its grants. Refuses (returns false) for built-in roles and for roles
+     * that a user, API key or project membership still holds: those rows store the role's key,
+     * and must be moved to another role first.
+     */
     public function deleteRole(int $id): bool
     {
+        $role = $this->getRoleById($id);
+
+        if ($role === null || ! empty($role['isSystem'])) {
+            return false;
+        }
+
+        if ($this->isRoleAssigned($role)) {
+            return false;
+        }
+
         $this->db->table('zp_role_permissions')->where('roleId', $id)->delete();
 
         return (bool) $this->db->table('zp_roles')->where('id', $id)->delete();
+    }
+
+    /**
+     * Whether any user (incl. API keys) or project membership stores this role's key.
+     *
+     * @param  array<string, mixed>  $role  A zp_roles row.
+     */
+    public function isRoleAssigned(array $role): bool
+    {
+        $roleKey = $role['roleKey'] ?? null;
+
+        if ($roleKey === null) {
+            return false;
+        }
+
+        $storedRoleKey = (string) $roleKey;
+
+        $heldByUser = $this->db->table('zp_user')->where('role', $storedRoleKey)->exists();
+        if ($heldByUser) {
+            return true;
+        }
+
+        return $this->db->table('zp_relationuserproject')->where('projectRole', $storedRoleKey)->exists();
     }
 
     // ------------------------------------------------------------------

@@ -37,7 +37,7 @@
         </x-slot:actions>
     </x-tickets::portfolio-tabs>
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -56,7 +56,7 @@
             <svg id="gantt"></svg>
         </div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')

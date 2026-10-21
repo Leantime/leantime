@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -27,6 +28,14 @@ class FindMilestonesTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Find Milestones';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -36,18 +45,25 @@ class FindMilestonesTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('projectId')->description('Project ID of the milestones to retrieve.')->required();
+        return [
+            'projectId' => $schema->integer()
+                ->description('Project ID of the milestones to retrieve.')
+                ->required(),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $projectId = (int) ($arguments['projectId'] ?? 0);
         $milestones = $this->ticketsService->getAllMilestones(['currentProject' => $projectId, 'type' => 'milestone']);
 
@@ -56,7 +72,7 @@ class FindMilestonesTool extends Tool
         if (empty($milestones)) {
             $results .= 'No Milestones found for this project.';
 
-            return ToolResult::text($results);
+            return Response::text($results);
         }
 
         foreach ($milestones as $milestone) {
@@ -68,6 +84,6 @@ class FindMilestonesTool extends Tool
             $results .= 'Progress: '.$progress."% completed\n";
         }
 
-        return ToolResult::text($results);
+        return Response::text($results);
     }
 }

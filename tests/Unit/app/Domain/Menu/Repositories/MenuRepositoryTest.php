@@ -4,6 +4,10 @@ namespace Unit\app\Domain\Menu\Repositories;
 
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Language;
+use Leantime\Core\Modules\Contracts\StoresProjectModules;
+use Leantime\Core\Modules\Module;
+use Leantime\Core\Modules\ModuleRegistry;
+use Leantime\Core\Modules\ProjectModules;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -19,6 +23,9 @@ class MenuRepositoryTest extends TestCase
      * @var Menu
      */
     protected $menu;
+
+    /** @var array<int, array<string, bool>> Module switches per project, as the store returns them. */
+    private array $moduleOverrides = [];
 
     protected function setUp(): void
     {
@@ -42,12 +49,22 @@ class MenuRepositoryTest extends TestCase
             },
         ]);
 
+        $moduleRegistry = new ModuleRegistry;
+        foreach (['ideas', 'blueprints', 'wiki', 'files', 'timesheets'] as $moduleId) {
+            $moduleRegistry->register(new Module(id: $moduleId, title: $moduleId, routes: [$moduleId]));
+        }
+
+        $moduleStore = $this->makeEmpty(StoresProjectModules::class, [
+            'getModuleOverrides' => fn (int $projectId): array => $this->moduleOverrides[$projectId] ?? [],
+        ]);
+
         // Load class to be tested
         $this->menu = new Menu(
             settingsRepo: $settingsRepo,
             language: $language,
             config: $config,
-            ticketsService: $ticketService
+            ticketsService: $ticketService,
+            projectModules: new ProjectModules($moduleRegistry, $moduleStore),
         );
 
     }
@@ -58,22 +75,6 @@ class MenuRepositoryTest extends TestCase
     }
 
     // Write tests below
-
-    /**
-     * Test GetMenuTypes method
-     */
-    public function test_get_menu_types()
-    {
-        $result = $this->menu->getMenuTypes();
-
-        // Assert that the result is an array
-        $this->assertIsArray($result);
-
-        // Assert that menu types have the expected keys
-        $this->assertContains(Menu::DEFAULT_MENU, array_keys($result));
-
-        // Further assertions can be done depending on use case and requirements
-    }
 
     public function test_get_default_menu_structure()
     {
@@ -88,13 +89,39 @@ class MenuRepositoryTest extends TestCase
         $this->assertEquals($this->menu->menuStructures[$expected], $defaultStructure, 'Default menu structure does not match the expected structure');
     }
 
-    public function test_get_full_menu_structure()
+    public function test_items_of_modules_switched_off_in_the_current_project_are_hidden()
     {
-        $expected = 'full_menu';
-        $fullMenuStructure = $this->menu->getMenuStructure('full_menu');
-        $this->menu->menuStructures[$expected][80]['submenu'][83]['type'] = 'disabled';
+        session(['currentProject' => 7]);
+        $this->moduleOverrides[7] = ['wiki' => false];
 
-        $this->assertEquals($this->menu->menuStructures[$expected], $fullMenuStructure, 'Full menu structure does not match the expected structure');
+        $menuStructure = $this->menu->getMenuStructure();
+
+        $this->assertArrayNotHasKey(60, $menuStructure[40]['submenu'], 'Docs should be hidden');
+        $this->assertArrayHasKey(70, $menuStructure[40]['submenu'], 'Files should stay');
+    }
+
+    public function test_a_submenu_whose_items_are_all_switched_off_is_hidden()
+    {
+        session(['currentProject' => 7]);
+        $this->moduleOverrides[7] = ['ideas' => false, 'blueprints' => false];
+
+        $menuStructure = $this->menu->getMenuStructure();
+
+        $this->assertArrayNotHasKey(30, $menuStructure, 'The "Think" submenu should be gone');
+        $this->assertArrayHasKey(10, $menuStructure);
+    }
+
+    public function test_module_switches_do_not_apply_to_other_projects_or_the_personal_menu()
+    {
+        session(['currentProject' => 8]);
+        $this->moduleOverrides[7] = ['wiki' => false];
+
+        $this->assertArrayHasKey(60, $this->menu->getMenuStructure()[40]['submenu']);
+
+        session(['currentProject' => 7]);
+        $this->moduleOverrides[7] = ['timesheets' => false];
+
+        $this->assertArrayHasKey(15, $this->menu->getMenuStructure('personal'));
     }
 
     public function test_get_invalid_menu_structure()

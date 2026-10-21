@@ -34,11 +34,9 @@
 
 @include('global::components.stageflow.styles')
 
-{{-- ── Page Header ───────────────────────────────────────────── --}}
-<div class="pageheader">
-    <div class="pageicon"><span class="fas {{ $canvasIcon }}"></span></div>
-    <div class="pagetitle">
-        @if (count($allCanvas) > 0)
+<x-global::layout.page-header icon="fas {{ $canvasIcon }}">
+    @if (count($allCanvas) > 0)
+        <x-slot:switcher>
             <x-global::subjectSwitcher
                 :parent="$tpl->__('headline.logicmodel.board')"
                 :current="$canvasTitle">
@@ -50,12 +48,12 @@
                     <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
                 @endforeach
             </x-global::subjectSwitcher>
-        @else
-            <h1>{{ $tpl->__('headline.logicmodel.board') }}</h1>
-        @endif
-    </div>
+        </x-slot:switcher>
+    @else
+        {{ $tpl->__('headline.logicmodel.board') }}
+    @endif
     @if (count($allCanvas) > 0)
-        <div class="pageheader-right">
+        <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
                 @if ($login::userIsAtLeast($roles::$editor))
                     <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $currentCanvas }}" class="editCanvasLink">{!! $tpl->__('links.icon.edit') !!}</a></li>
@@ -68,9 +66,9 @@
                 @endif
 
             </x-global::actions.dropdown>
-        </div>
+        </x-slot:actions>
     @endif
-</div>
+</x-global::layout.page-header>
 
 <div class="maincontent">
     @if (count($allCanvas) > 0 && ! empty($statusLabels))
@@ -98,7 +96,7 @@
         </x-global::navigation.view-tabs>
     @endif
 
-    <div class="maincontentinner">
+    <x-global::layout.content-box>
 
         {!! $tpl->displayNotification() !!}
 
@@ -214,7 +212,7 @@
         {{-- Plugin panel containers (filled by HTMX when plugin is active) --}}
         <div id="templateSelectorContainer"></div>
 
-    </div>
+    </x-global::layout.content-box>
 </div>
 
 <script type="text/javascript">

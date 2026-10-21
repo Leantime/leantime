@@ -110,7 +110,7 @@ class Auth implements Authenticatable
         } elseif (! session()->exists('userdata.projectRole') || session('userdata.projectRole') == 'inherited' || session('userdata.projectRole') == '') {
             $roleToCheck = session('userdata.role');
             // Do not overwrite admin or owner roles
-        } elseif (session('userdata.role') == Roles::$owner || session('userdata.role') == Roles::$admin || session('userdata.role') == Roles::$manager) {
+        } elseif (Roles::isAtLeast(session('userdata.role'), Roles::$manager)) {
             $roleToCheck = session('userdata.role');
             // In all other cases check the project role
         } else {
@@ -753,21 +753,13 @@ class Auth implements Authenticatable
             return false;
         }
 
-        $testKey = array_search($role, Roles::getRoles());
-
-        if ($role == '' || $testKey === false) {
+        if ($role == '' || Roles::getRoleLevel($role) === false) {
             Log::warning('Check for invalid role detected: '.$role);
 
             return false;
         }
 
-        $currentUserKey = array_search($roleToCheck, Roles::getRoles());
-
-        if ($testKey <= $currentUserKey) {
-            return true;
-        } else {
-            return false;
-        }
+        return Roles::isAtLeast($roleToCheck, $role);
     }
 
     /**
@@ -791,9 +783,12 @@ class Auth implements Authenticatable
         // Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
         $roleToCheck = self::getRoleToCheck($forceGlobalRoleCheck);
 
-        if (is_array($role) && in_array($roleToCheck, $role)) {
+        // A custom role counts as the built-in role it is based on.
+        $baseRole = $roleToCheck === false ? false : Roles::getBaseRole($roleToCheck);
+
+        if (is_array($role) && (in_array($roleToCheck, $role) || in_array($baseRole, $role, true))) {
             return true;
-        } elseif ($role == $roleToCheck) {
+        } elseif ($role == $roleToCheck || ($baseRole !== false && $role === $baseRole)) {
             return true;
         }
 

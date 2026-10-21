@@ -23,7 +23,7 @@ $hasError = $isActive && !empty($reopenState['error']);
        aria-controls="quickadd-form-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}"
        style="{{ $isActive ? 'display:none;' : '' }}">
         <i class="fa-solid fa-plus"></i>
-        <span>Add To-Do</span>
+        <span>{{ __('links.add_todo_no_icon') }}</span>
     </a>
 
     <form method="post"

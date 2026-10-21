@@ -175,6 +175,24 @@ class BlueprintsServiceTest extends TestCase
         $this->assertSame(1, $result['swotcanvas']['lastCanvasId']);
     }
 
+    public function test_every_blueprint_template_is_listed_on_the_boards_overview(): void
+    {
+        // Regression: retros lost its only entry point when its menu link was
+        // dropped, because the overview never listed it. Every YAML template
+        // must be a board type with metadata so the overview can link to it.
+        $service = $this->service();
+        $boardTypes = $service->getBoardTypes();
+        $boardMetadata = $service->getBoardMetadata();
+
+        foreach ((new TemplateRegistry)->slugs() as $slug) {
+            $boardType = $slug.'canvas';
+
+            $this->assertContains($boardType, $boardTypes, "Blueprint '{$slug}' is missing from getBoardTypes()");
+            $this->assertArrayHasKey($boardType, $boardMetadata, "Blueprint '{$slug}' is missing from getBoardMetadata()");
+            $this->assertSame('blueprints/'.$slug, $boardMetadata[$boardType]['module']);
+        }
+    }
+
     public function test_build_recent_progress_with_empty_input_returns_empty(): void
     {
         $service = $this->service();

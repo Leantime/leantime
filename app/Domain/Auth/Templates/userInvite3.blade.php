@@ -4,8 +4,8 @@
 
 <x-auth::onboardingProgress current="personalization" />
 
-<h2>🎨 Creating A Comfortable View</h2>
-<p>Your favorite color mode and scheme.<br /></p>
+<h2>🎨 {{ __('headlines.onboarding_comfortable_view') }}</h2>
+<p>{{ __('text.onboarding_color_mode_and_scheme') }}<br /></p>
 
 <div class="regcontent">
 
@@ -18,7 +18,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <label for="colormode" >{{ __('label.colormode') }}</label>
+                <x-global::forms.label for="colormode" >{{ __('label.colormode') }}</x-global::forms.label>
 
                 <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                     <label for="colormode-light" class="tw-w-[200px]">
@@ -36,7 +36,7 @@
         <br />
         <div class="row">
             <div class="col-md-12">
-                <label>Color Scheme</label>
+                <x-global::forms.label>{{ __('label.color_scheme') }}</x-global::forms.label>
                 @foreach($availableColorSchemes as $key => $scheme )
                     <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
                         <label for="color-{{ $key }}" class="colorCircle"
@@ -49,7 +49,7 @@
         </div>
         <br /> <br />
         <div class="tw-text-right">
-            <x-global::forms.button tag="a" link="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=2" contentRole="tertiary" style="width:auto; margin-right:10px">Back</x-global::forms.button>
+            <x-global::forms.button tag="a" link="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=2" contentRole="tertiary" style="width:auto; margin-right:10px">{{ __('buttons.back') }}</x-global::forms.button>
             <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
         </div>
 

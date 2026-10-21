@@ -2,14 +2,17 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  * Update an existing milestone.
  */
+#[IsIdempotent]
 class EditMilestoneTool extends Tool
 {
     public function __construct(
@@ -25,6 +28,14 @@ class EditMilestoneTool extends Tool
     }
 
     /**
+     * Get the tool's display title.
+     */
+    public function title(): string
+    {
+        return 'Edit Milestone';
+    }
+
+    /**
      * Get the tool description.
      */
     public function description(): string
@@ -34,19 +45,28 @@ class EditMilestoneTool extends Tool
 
     /**
      * Define the tool input schema.
+     *
+     * @return array<string, \Illuminate\JsonSchema\Types\Type>
      */
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('ID of the milestone to update.')->required()
-            ->raw('params', ['type' => 'object', 'description' => 'Key-value pairs of fields to update. Example: {"headline": "New title", "editFrom": "2024-04-30T15:00:00-04:00"}'])->required();
+        return [
+            'id' => $schema->integer()
+                ->description('ID of the milestone to update.')
+                ->required(),
+            'params' => $schema->object()
+                ->description('Key-value pairs of fields to update. Example: {"headline": "New title", "editFrom": "2024-04-30T15:00:00-04:00"}')
+                ->required(),
+        ];
     }
 
     /**
      * Handle the tool request.
      */
-    public function handle(array $arguments): ToolResult
+    public function handle(Request $request): Response
     {
+        $arguments = $request->all();
+
         $id = (int) ($arguments['id'] ?? 0);
         $params = ($arguments['params'] ?? null);
 
@@ -55,13 +75,13 @@ class EditMilestoneTool extends Tool
         }
 
         if (! is_array($params)) {
-            return ToolResult::error('The params parameter is not a valid object. Provide key-value pairs.');
+            return Response::error('The params parameter is not a valid object. Provide key-value pairs.');
         }
 
         if ($this->ticketsService->patch($id, $params)) {
-            return ToolResult::text('Milestone updated successfully.');
+            return Response::text('Milestone updated successfully.');
         }
 
-        return ToolResult::error('Failed to update milestone.');
+        return Response::error('Failed to update milestone.');
     }
 }

@@ -25,7 +25,7 @@
 
         <div class="welcomeContent">
                 <h1 class="mainWelcome">
-                    Oops, something is off.
+                    {{ __('headlines.oops_something_off') }}
                 </h1>
         </div>
     </div>
