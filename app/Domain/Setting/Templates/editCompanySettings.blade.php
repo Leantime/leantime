@@ -147,6 +147,32 @@
                                             </div>
                                         </div>
                                     </div>
+                                    @if (! $pushDirectConfigured)
+                                        <br />
+                                        <x-global::elements.section-header icon="fa fa-mobile">{!! __('label.push_relay') !!}</x-global::elements.section-header>
+                                        <p>{!! __('label.push_relay_description') !!}</p>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; padding:4px 0;">
+                                                        <input type="checkbox" name="pushRelayEnabled" value="1" style="margin-top:3px;" @if ($pushRelayEnabled) checked="checked" @endif />
+                                                        <span>
+                                                            <strong>{!! __('label.push_relay_enable') !!}</strong><br />
+                                                            <small style="color:#888;">{!! __('label.push_relay_enable_description') !!}</small>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="pushRelayContent">{!! __('label.push_relay_content') !!}</label>
+                                                    <x-global::forms.select name="pushRelayContent" id="pushRelayContent" class="form-control">
+                                                        <option value="full" @if ($pushRelayContent === 'full') selected @endif>{!! __('label.push_relay_content_full') !!}</option>
+                                                        <option value="minimal" @if ($pushRelayContent === 'minimal') selected @endif>{!! __('label.push_relay_content_minimal') !!}</option>
+                                                    </x-global::forms.select>
+                                                    <small style="color:#888;">{!! __('label.push_relay_content_description') !!}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
                                 </form>
                             </div>
