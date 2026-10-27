@@ -125,39 +125,77 @@ class Push
         $title = $notification->subject !== '' ? $notification->subject : 'Leantime';
         $body = $notification->message !== '' ? $notification->message : '';
 
-        // Module is a literal string ('tickets'/'comments'/'goalcanvas'/…)
-        // on the NotificationModel — see Models/Notification.php:81.
-        $module = $notification->module ?? '';
+        $this->send($userIds, $title, $body, self::buildData($notification));
+    }
 
-        // Entity id is nested inside the entity payload, which can be
-        // either an array or an object (legacy: pre-model entities are
-        // arrays, newer ones are objects). Projects::notifyProjectUsers
-        // handles both shapes the same way at lines 334-357; we mirror
-        // that so the mobile deeplink can route by module + id.
-        $moduleId = '';
-        if (isset($notification->entity)) {
-            if (is_array($notification->entity) && isset($notification->entity['id'])) {
-                $moduleId = (string) $notification->entity['id'];
-            } elseif (is_object($notification->entity) && isset($notification->entity->id)) {
-                $moduleId = (string) $notification->entity->id;
+    /**
+     * The custom data payload for a notification: everything the app needs to route a tap
+     * and group related notifications, as strings (FCM data values must be strings).
+     *
+     *   module          'tickets' | 'comments' | 'goalcanvas' | ...
+     *   moduleId        the entity id (for comments: the comment's id)
+     *   parentTicketId  comments on a task: the task's id, so a tap can open the task
+     *   projectId       the project the notification belongs to
+     *   type            the action that triggered it ('commented', 'assigned', ...), if set
+     *   threadId        grouping key, one thread per task ('ticket-<id>'), when it has one
+     *   url             web fallback URL
+     *
+     * Empty values are left out so the app can tell "missing" from "zero".
+     *
+     * @return array<string, string>
+     */
+    public static function buildData(NotificationModel $notification): array
+    {
+        // Module is a literal string ('tickets'/'comments'/'goalcanvas'/…) on the model.
+        $module = (string) ($notification->module ?? '');
+
+        // The entity is an array (legacy) or an object (newer models); read both the same way.
+        $entity = $notification->entity ?? null;
+        $field = static function (string $key) use ($entity): mixed {
+            if (is_array($entity)) {
+                return $entity[$key] ?? null;
             }
+            if (is_object($entity)) {
+                return $entity->{$key} ?? null;
+            }
+
+            return null;
+        };
+
+        $moduleId = (string) ($field('id') ?? '');
+
+        // A comment's own id doesn't open anything in the app; its host task does. Comments
+        // carry the host module ('ticket' after normalization) and the host id in moduleId.
+        $parentTicketId = '';
+        if ($module === 'comments' && in_array($field('module'), ['ticket', 'tickets'], true)) {
+            $parentTicketId = (string) ($field('moduleId') ?? '');
         }
 
-        // url is bool|array on the model: false when there's no web
-        // link, ['url' => …, 'text' => …] when there is. Extract the
-        // bare URL string so mobile receives a usable href.
-        $url = '';
-        if (is_array($notification->url) && isset($notification->url['url'])) {
-            $url = (string) $notification->url['url'];
-        }
+        $taskId = $module === 'tickets' ? $moduleId : $parentTicketId;
+
+        // url is false when there's no web link, ['url' => …, 'text' => …] when there is.
+        $url = is_array($notification->url) && isset($notification->url['url'])
+            ? (string) $notification->url['url']
+            : '';
+
+        $projectId = isset($notification->projectId) ? (int) $notification->projectId : 0;
 
         $data = [
             'module' => $module,
             'moduleId' => $moduleId,
+            'parentTicketId' => $parentTicketId,
+            'projectId' => $projectId > 0 ? (string) $projectId : '',
+            'type' => $notification->action,
+            'threadId' => $taskId !== '' ? 'ticket-'.$taskId : '',
             'url' => $url,
         ];
 
-        $this->send($userIds, $title, $body, $data);
+        // module and moduleId stay even when empty: the app's router expects them.
+        return array_filter(
+            $data,
+            static fn (string $value, string $key): bool => $value !== '' || in_array($key, ['module', 'moduleId', 'url'], true),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 
     /**
@@ -196,6 +234,13 @@ class Push
                 'data' => $stringData,
             ],
         ];
+
+        // Group a task's notifications together in Notification Center.
+        if (($stringData['threadId'] ?? '') !== '') {
+            $payload['message']['apns'] = [
+                'payload' => ['aps' => ['thread-id' => $stringData['threadId']]],
+            ];
+        }
 
         try {
             $this->httpClient->post(

@@ -301,6 +301,9 @@ class Comments extends BaseService
 
             if ($comment) {
                 $mapper['id'] = $comment;
+                // The host entity's module ('ticket', 'project', ...), so notification channels
+                // can tell what moduleId points at. Push uses it to open a ticket comment's task.
+                $mapper['module'] = $module;
 
                 CommentAdded::dispatch(
                     commentId: (int) $comment,
