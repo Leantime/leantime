@@ -919,11 +919,20 @@ class SchemaBuilder
             $table->text('abilities')->nullable();
             $table->timestamp('last_used_at')->nullable();
             $table->timestamp('expires_at')->nullable();
+            // Push notification registration (see update_sql_30504, which adds the same
+            // columns to upgraded installs). A fresh install never runs that migration, so
+            // without these it can't store a device token and mobile push never arrives.
+            $table->string('push_token', 255)->nullable();
+            $table->string('push_platform', 16)->nullable();
+            $table->string('push_provider', 8)->nullable();
+            $table->timestamp('push_token_updated_at')->nullable();
+            $table->timestamp('push_invalidated_at')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
 
             $table->unique(['token'], 'personal_access_tokens_token_unique');
             $table->index(['tokenable_type', 'tokenable_id'], 'personal_access_tokens_tokenable_type_tokenable_id_index');
+            $table->index(['tokenable_id', 'push_invalidated_at'], 'idx_access_tokens_tokenable_push');
         });
     }
 
