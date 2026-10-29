@@ -17,6 +17,7 @@ use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Notifications\Services\Push;
+use Leantime\Domain\Notifications\Services\PushPreferences;
 use Leantime\Domain\Notifications\Services\WebhookQueue;
 use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Notifications\Services\WebhookTransport;
@@ -412,6 +413,55 @@ class ProjectsServiceTest extends TestCase
         $this->assertSame([2, 3, 4, 5, 6], $seen['pushRecipients']);
         $this->assertSame(1, $seen['messengerCalls']);
         $this->assertNotNull($seen['inAppNotifications'], 'In-app notifications are still created');
+    }
+
+    // ---------------------------------------------------------------------
+    // notifyProjectUsers() → push. Push has its own switch (PushPreferences):
+    // "Receive email notifications" no longer decides who gets a push.
+    // ---------------------------------------------------------------------
+
+    /**
+     * Switching email off used to silence push as well. Now each channel follows its own switch.
+     */
+    public function test_notify_project_users_pushes_to_users_who_switched_email_off(): void
+    {
+        $seen = $this->runNotifyProjectUsers([], userOverrides: [2 => ['notifications' => 0]]);
+
+        $this->assertSame([3, 4, 5, 6], $seen['emailRecipients'], 'No email for a user who switched email off');
+        $this->assertSame([2, 3, 4, 5, 6], $seen['pushRecipients'], 'Push still goes to them');
+    }
+
+    public function test_notify_project_users_never_pushes_to_users_who_switched_push_off(): void
+    {
+        $seen = $this->runNotifyProjectUsers([
+            PushPreferences::settingKey(2) => '0',
+            PushPreferences::settingKey(3) => '1',
+        ]);
+
+        $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients'], 'The push switch never touches email');
+        $this->assertSame([3, 4, 5, 6], $seen['pushRecipients']);
+    }
+
+    /**
+     * A mention gets past the relevance and category filters, not past the push switch.
+     */
+    public function test_notify_project_users_push_switch_is_final_even_for_a_mention(): void
+    {
+        $seen = $this->runNotifyProjectUsers([
+            PushPreferences::settingKey(6) => '0',
+            'usersettings.3.projectNotificationLevels' => json_encode([5 => 'muted']),
+            'usersettings.4.notificationEventTypes' => json_encode(['comments']),
+        ]);
+
+        $this->assertSame([2, 5, 6], $seen['emailRecipients'], 'Email keeps the mention bypass');
+        $this->assertSame([2, 5], $seen['pushRecipients'], 'Muted and category filters apply to push too; the mentioned user switched push off');
+    }
+
+    public function test_notify_project_users_never_pushes_to_the_author(): void
+    {
+        $seen = $this->runNotifyProjectUsers([PushPreferences::settingKey(1) => '1']);
+
+        $this->assertNotContains(1, $seen['pushRecipients']);
     }
 
     public function test_get_project_hub_data_builds_unique_client_map_and_returns_all_projects_when_no_filter(): void

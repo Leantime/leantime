@@ -364,6 +364,11 @@
                                     <x-global::forms.checkbox name="notifications" value="on" id="notifications" :checked="$values['notifications'] == '1'">{{ __('label.receive_notifications') }}</x-global::forms.checkbox>
                                 </div>
                                 <div class="form-group">
+                                    {{-- The hidden 0 makes "off" an explicit value: the service leaves the switch alone when the key is missing. --}}
+                                    <input type="hidden" name="pushNotifications" value="0" />
+                                    <x-global::forms.checkbox name="pushNotifications" value="1" id="pushNotifications" :checked="! empty($pushEnabled)" :description="__('label.receive_push_notifications_description')">{{ __('label.receive_push_notifications') }}</x-global::forms.checkbox>
+                                </div>
+                                <div class="form-group">
                                     <x-global::forms.label for="messagesfrequency" >{{ __('label.messages_frequency') }}</x-global::forms.label>
                                     <span>
                                         <x-global::forms.select enhanced name="messagesfrequency" class="input" id="messagesfrequency">

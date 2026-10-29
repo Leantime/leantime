@@ -24,6 +24,7 @@ use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Ldap\Services\Ldap as LdapService;
 use Leantime\Domain\Notifications\Models\Notification;
+use Leantime\Domain\Notifications\Services\PushPreferences;
 use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -1057,7 +1058,8 @@ class Users extends BaseService
      * applying company defaults and the per-project notification levels
      * (including the lazy migration from the legacy muted-projects format),
      * plus the personal webhook endpoint (webhookUrl) and its opt-in
-     * (webhookEnabled, only true while a URL is stored).
+     * (webhookEnabled, only true while a URL is stored) and the mobile push
+     * switch (pushEnabled, on until the user switches it off).
      *
      * @param  int  $userId  The id of the user whose preferences are loaded.
      * @return array<string, mixed> Template-ready notification preference data.
@@ -1097,6 +1099,9 @@ class Users extends BaseService
 
         $webhook = Webhooks::decodeSetting($this->settingsService->getSetting(Webhooks::settingKey($userId)));
 
+        $pushSetting = $this->settingsService->getSetting(PushPreferences::settingKey($userId));
+        $pushEnabled = PushPreferences::isEnabled($userId, [PushPreferences::settingKey($userId) => $pushSetting]);
+
         return [
             'notificationCategories' => Notification::NOTIFICATION_CATEGORIES,
             'enabledEventTypes' => $enabledEventTypes,
@@ -1106,6 +1111,7 @@ class Users extends BaseService
             'userProjects' => $userProjects,
             'webhookUrl' => $webhook['url'],
             'webhookEnabled' => $webhook['enabled'],
+            'pushEnabled' => $pushEnabled,
         ];
     }
 
@@ -1304,11 +1310,14 @@ class Users extends BaseService
     }
 
     /**
-     * Persists the current user's notification preferences: the master
+     * Persists the current user's notification preferences: the email
      * notifications toggle, message frequency, the enabled event-type
      * categories (validated against the known category keys) and the
      * per-project notification levels (validated against the known relevance
      * levels). Cleans up the legacy muted-projects format when present.
+     *
+     * The mobile push switch (pushNotifications, any boolean-ish value) is saved
+     * only when the key is present; a missing key leaves it as it was.
      *
      * The personal webhook is saved separately, with saveOwnWebhookSettings().
      *
@@ -1337,6 +1346,14 @@ class Users extends BaseService
 
         // Storing option messagefrequency
         $this->settingsService->saveSetting('usersettings.'.$userId.'.messageFrequency', (int) ($post['messagesfrequency'] ?? 3600));
+
+        // The push switch is its own channel setting. Unlike the email checkbox, a missing key
+        // leaves it unchanged, so clients that predate the switch never turn it off by omission;
+        // the web form posts a hidden '0' under the checkbox to say "off" explicitly.
+        if (array_key_exists('pushNotifications', $post)) {
+            $pushEnabled = filter_var($post['pushNotifications'], FILTER_VALIDATE_BOOLEAN);
+            $this->settingsService->saveSetting(PushPreferences::settingKey($userId), $pushEnabled ? '1' : '0');
+        }
 
         // Save event-type preferences
         $enabledEventTypes = $post['enabledEventTypes'] ?? [];
