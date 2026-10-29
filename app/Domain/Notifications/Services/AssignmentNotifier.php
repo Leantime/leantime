@@ -2,11 +2,14 @@
 
 namespace Leantime\Domain\Notifications\Services;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Support\NameSanitizer;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
@@ -29,7 +32,13 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  *   - mobile push: the per-user push switch (usersettings.{id}.pushNotifications)
  *
  * Nothing is sent when someone assigns a to-do to themselves, when the assignee
- * is deactivated, or when the to-do can't be read back.
+ * is deactivated or has no access to the to-do's project (skipping the
+ * preference filters never skips authorization), or when the to-do can't be
+ * read back.
+ *
+ * The due date in the push is formatted for the assignee: their timezone,
+ * date format and language, not the acting user's. A calendar-only due date
+ * (stored as midnight, see Tickets::prepareTicketDates) is never shifted.
  */
 class AssignmentNotifier
 {
@@ -38,12 +47,14 @@ class AssignmentNotifier
     public function __construct(
         private TicketRepository $ticketRepository,
         private UserRepository $userRepository,
+        private ProjectRepository $projectRepository,
         private Notifications $notificationService,
         private QueueRepository $queueRepository,
         private SettingRepository $settingsRepository,
         private LanguageCore $language,
         private Push $push,
         private TrustedAppUrl $trustedAppUrl,
+        private Environment $config,
     ) {}
 
     public function notify(TicketAssigned $event): void
@@ -62,10 +73,16 @@ class AssignmentNotifier
             return;
         }
 
+        // The assignee must be able to see the to-do: an assignment can name anyone, and the
+        // headline and due date must not leak to someone outside the project.
+        $projectId = (int) ($ticket->projectId ?: ($event->projectId ?? 0));
+        if ($projectId <= 0 || ! $this->projectRepository->isUserAssignedToProject($event->assigneeId, $projectId)) {
+            return;
+        }
+
         $actorId = (int) session('userdata.id');
         $actorName = $this->actorName($actorId);
         $headline = trim(strip_tags((string) $ticket->headline));
-        $projectId = (int) ($event->projectId ?? $ticket->projectId ?? 0);
 
         // The link is emailed and pushed: point it at the trusted app URL, not the request host.
         $url = $this->trustedAppUrl->rebase(BASE_URL.'/dashboard/home#/tickets/showTicket/'.$event->ticketId);
@@ -103,7 +120,7 @@ class AssignmentNotifier
 
         try {
             $body = sprintf($this->language->__('notification.push_assigned_body'), $actorName);
-            $due = $this->dueText($ticket->dateToFinish);
+            $due = $this->dueText($ticket->dateToFinish, $event->assigneeId);
             if ($due !== '') {
                 $body .= ' · '.$due;
             }
@@ -111,7 +128,7 @@ class AssignmentNotifier
             $this->push->send([$event->assigneeId], $headline !== '' ? $headline : 'Leantime', $body, [
                 'module' => 'tickets',
                 'moduleId' => (string) $event->ticketId,
-                'projectId' => $projectId > 0 ? (string) $projectId : '',
+                'projectId' => (string) $projectId,
                 'type' => self::TYPE,
                 'threadId' => 'ticket-'.$event->ticketId,
                 'url' => $url,
@@ -142,20 +159,42 @@ class AssignmentNotifier
     }
 
     /**
-     * "Due <date>" in the acting user's date format, or '' when there is no due date.
+     * "Due <date>" for the assignee, or '' when there is no due date.
+     *
+     * A due date saved without a time is stored as midnight (Y-m-d 00:00:00) and means that
+     * calendar day everywhere, so it is formatted as-is. A timed deadline is stored in UTC and
+     * shown in the assignee's timezone. Format and language are the assignee's settings, with
+     * the same fallbacks DateTimeHelper uses for the session user.
      */
-    private function dueText(mixed $dateToFinish): string
+    private function dueText(mixed $dateToFinish, int $assigneeId): string
     {
         if (! is_string($dateToFinish) || $dateToFinish === '' || str_starts_with($dateToFinish, '0000-00-00')) {
             return '';
         }
 
+        $keys = [
+            'timezone' => 'usersettings.'.$assigneeId.'.timezone',
+            'date_format' => 'usersettings.'.$assigneeId.'.date_format',
+            'language' => 'usersettings.'.$assigneeId.'.language',
+        ];
+        $settings = $this->settingsRepository->getSettingsForKeys(array_values($keys));
+        $setting = static fn (string $name): ?string => is_string($settings[$keys[$name]] ?? null) && $settings[$keys[$name]] !== '' ? $settings[$keys[$name]] : null;
+
+        $timezone = $setting('timezone') ?? (string) $this->config->defaultTimezone;
+        $format = $setting('date_format') ?? (string) $this->language->__('language.dateformat');
+        $locale = str_replace('-', '_', $setting('language') ?? (string) $this->config->language);
+
         try {
-            $date = dtHelper()->parseDbDateTime($dateToFinish)->formatDateForUser();
+            if (preg_match('/^(\d{4}-\d{2}-\d{2}) 00:00:00$/', $dateToFinish, $m) === 1) {
+                $date = CarbonImmutable::createFromFormat('!Y-m-d', $m[1], 'UTC');
+            } else {
+                $date = CarbonImmutable::parse($dateToFinish, 'UTC')->setTimezone($timezone);
+            }
+            $formatted = $date->locale($locale)->translatedFormat($format);
         } catch (\Throwable) {
             return '';
         }
 
-        return sprintf($this->language->__('notification.push_due'), $date);
+        return sprintf($this->language->__('notification.push_due'), $formatted);
     }
 }

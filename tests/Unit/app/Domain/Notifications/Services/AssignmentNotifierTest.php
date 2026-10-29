@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Notifications\Services;
 
 use Carbon\CarbonImmutable;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
@@ -11,6 +12,7 @@ use Leantime\Domain\Notifications\Listeners\NotifyAssignee;
 use Leantime\Domain\Notifications\Services\AssignmentNotifier;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Notifications\Services\Push;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
@@ -35,6 +37,7 @@ class AssignmentNotifierTest extends TestCase
         'notification.push_assigned_body' => '%s assigned this to you',
         'notification.push_due' => 'Due %s',
         'label.someone' => 'Someone',
+        'language.dateformat' => 'M j',
     ];
 
     /** @var array<int, array<string, mixed>|false> zp_user rows by id */
@@ -93,12 +96,16 @@ class AssignmentNotifierTest extends TestCase
 
     /**
      * @param  array<string, string>  $settings  Stored zp_settings by key.
+     * @param  array<int>|null  $usersWithAccess  Who may see project 5; null = everyone.
      */
-    private function notifier(TicketModel|false $ticket, array $settings = []): AssignmentNotifier
+    private function notifier(TicketModel|false $ticket, array $settings = [], ?array $usersWithAccess = null): AssignmentNotifier
     {
         return new AssignmentNotifier(
             $this->make(TicketRepository::class, ['getTicket' => fn () => $ticket]),
             $this->make(UserRepository::class, ['getUser' => fn ($id) => $this->users[(int) $id] ?? false]),
+            $this->make(ProjectRepository::class, [
+                'isUserAssignedToProject' => fn ($userId, $projectId) => (int) $projectId === 5 && ($usersWithAccess === null || in_array((int) $userId, $usersWithAccess, true)),
+            ]),
             $this->make(NotificationService::class, [
                 'addNotifications' => function (array $rows) {
                     array_push($this->inbox, ...$rows);
@@ -111,7 +118,10 @@ class AssignmentNotifierTest extends TestCase
                     $this->emails[] = compact('recipients', 'message', 'subject', 'projectId');
                 },
             ]),
-            $this->make(SettingRepository::class, ['getSetting' => fn ($key, $default = false) => $settings[$key] ?? $default]),
+            $this->make(SettingRepository::class, [
+                'getSetting' => fn ($key, $default = false) => $settings[$key] ?? $default,
+                'getSettingsForKeys' => fn (array $keys) => array_intersect_key($settings, array_flip($keys)),
+            ]),
             $this->make(LanguageCore::class, ['__' => fn ($key) => self::STRINGS[$key] ?? $key]),
             $this->make(Push::class, [
                 'send' => function (array $userIds, string $title, string $body, array $data = []) {
@@ -123,6 +133,7 @@ class AssignmentNotifierTest extends TestCase
             ]),
             // BASE_URL differs per environment (localhost here, leantime-dev on CI): swap whatever host it has.
             $this->make(TrustedAppUrl::class, ['rebase' => fn (string $url) => preg_replace('#^https?://[^/]+#', 'https://app.example.com', $url)]),
+            $this->make(Environment::class, ['defaultTimezone' => 'UTC', 'language' => 'en-US']),
         );
     }
 
@@ -193,6 +204,77 @@ class AssignmentNotifierTest extends TestCase
             'zero date' => ['0000-00-00 00:00:00'],
             'junk' => ['not a date'],
         ];
+    }
+
+    /**
+     * Skipping the notification preference filters never skips authorization: an assignment
+     * can name anyone, but someone outside the project must not learn the to-do's headline
+     * or deadline through any channel.
+     */
+    public function test_an_assignee_without_access_to_the_project_gets_nothing(): void
+    {
+        $this->notifier($this->ticket(), [], usersWithAccess: [1])->notify($this->assigned());
+
+        $this->assertSame([], $this->inbox);
+        $this->assertSame([], $this->emails);
+        $this->assertSame([], $this->pushes);
+    }
+
+    public function test_a_todo_without_a_project_sends_nothing(): void
+    {
+        $this->notifier($this->ticket(['projectId' => 0]))->notify(new TicketAssigned(ticketId: 42, projectId: null, assigneeId: 2, previousAssigneeId: null, assignedToSelf: false));
+
+        $this->assertSame([], $this->inbox);
+        $this->assertSame([], $this->pushes);
+    }
+
+    /**
+     * A due date saved without a time is stored as midnight and means that calendar day for
+     * everyone: neither the actor's nor the assignee's timezone may shift it.
+     */
+    public function test_a_calendar_only_due_date_is_never_shifted_by_a_timezone(): void
+    {
+        session(['usersettings.timezone' => 'America/Los_Angeles']);
+        CarbonImmutable::mixin(new CarbonMacros('America/Los_Angeles', 'en-US', 'M j', 'H:i'));
+
+        $this->notifier($this->ticket(['dateToFinish' => '2026-10-31 00:00:00']), ['usersettings.2.timezone' => 'Pacific/Auckland'])->notify($this->assigned());
+
+        $this->assertSame('Sam assigned this to you · Due Oct 31', $this->pushes[0]['body']);
+    }
+
+    /**
+     * @dataProvider timedDeadlineProvider
+     */
+    public function test_a_timed_deadline_is_shown_in_the_assignees_timezone(string $assigneeTimezone, string $expected): void
+    {
+        session(['usersettings.timezone' => 'UTC']);
+
+        $this->notifier($this->ticket(['dateToFinish' => '2026-10-31 02:00:00']), ['usersettings.2.timezone' => $assigneeTimezone])->notify($this->assigned());
+
+        $this->assertSame('Sam assigned this to you · Due '.$expected, $this->pushes[0]['body']);
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function timedDeadlineProvider(): array
+    {
+        return [
+            'west of UTC, still the day before' => ['America/Los_Angeles', 'Oct 30'],
+            'east of UTC, same day' => ['Europe/Berlin', 'Oct 31'],
+        ];
+    }
+
+    public function test_the_due_date_uses_the_assignees_own_date_format_and_language(): void
+    {
+        $this->notifier($this->ticket(), [
+            'usersettings.2.date_format' => 'd.m.Y',
+            'usersettings.2.language' => 'de-DE',
+        ])->notify($this->assigned());
+        $this->notifier($this->ticket(), ['usersettings.2.language' => 'de-DE'])->notify($this->assigned());
+
+        $this->assertSame('Sam assigned this to you · Due 31.10.2026', $this->pushes[0]['body']);
+        $this->assertSame('Sam assigned this to you · Due Okt 31', $this->pushes[1]['body'], 'Month names follow the assignee\'s language');
     }
 
     public function test_assigning_to_yourself_sends_nothing(): void
