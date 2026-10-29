@@ -37,7 +37,8 @@ class AssignmentNotifierTest extends TestCase
         'notification.push_assigned_body' => '%s assigned this to you',
         'notification.push_due' => 'Due %s',
         'label.someone' => 'Someone',
-        'language.dateformat' => 'M j',
+        // Deliberately NOT a real format: the assignee's fallback must come from the language files, never the translator (which reads the assigner's session).
+        'language.dateformat' => 'STUB-FORMAT',
     ];
 
     /** @var array<int, array<string, mixed>|false> zp_user rows by id */
@@ -63,7 +64,7 @@ class AssignmentNotifierTest extends TestCase
         session(['userdata' => ['id' => 1, 'name' => 'Sam']]);
         session(['usersettings.timezone' => 'UTC']);
         session(['usersettings.language' => 'en-US']);
-        session(['usersettings.date_format' => 'Y-m-d']);
+        session(['usersettings.date_format' => 'd/m/Y']); // the ASSIGNER's format; it must never reach the assignee's push
         session(['usersettings.time_format' => 'H:i']);
         CarbonImmutable::mixin(new CarbonMacros('UTC', 'en-US', 'M j', 'H:i'));
 
@@ -172,7 +173,7 @@ class AssignmentNotifierTest extends TestCase
         $push = $this->pushes[0];
         $this->assertSame([2], $push['userIds']);
         $this->assertSame('Fix login', $push['title'], 'The title names the to-do');
-        $this->assertSame('Sam assigned this to you · Due Oct 31', $push['body']);
+        $this->assertSame('Sam assigned this to you · Due 10/31/2026', $push['body']);
         $this->assertSame([
             'module' => 'tickets',
             'moduleId' => '42',
@@ -239,7 +240,7 @@ class AssignmentNotifierTest extends TestCase
 
         $this->notifier($this->ticket(['dateToFinish' => '2026-10-31 00:00:00']), ['usersettings.2.timezone' => 'Pacific/Auckland'])->notify($this->assigned());
 
-        $this->assertSame('Sam assigned this to you · Due Oct 31', $this->pushes[0]['body']);
+        $this->assertSame('Sam assigned this to you · Due 10/31/2026', $this->pushes[0]['body']);
     }
 
     /**
@@ -260,21 +261,47 @@ class AssignmentNotifierTest extends TestCase
     public static function timedDeadlineProvider(): array
     {
         return [
-            'west of UTC, still the day before' => ['America/Los_Angeles', 'Oct 30'],
-            'east of UTC, same day' => ['Europe/Berlin', 'Oct 31'],
+            'west of UTC, still the day before' => ['America/Los_Angeles', '10/30/2026'],
+            'east of UTC, same day' => ['Europe/Berlin', '10/31/2026'],
         ];
     }
 
     public function test_the_due_date_uses_the_assignees_own_date_format_and_language(): void
     {
         $this->notifier($this->ticket(), [
-            'usersettings.2.date_format' => 'd.m.Y',
+            'usersettings.2.date_format' => 'D j. M',
             'usersettings.2.language' => 'de-DE',
         ])->notify($this->assigned());
-        $this->notifier($this->ticket(), ['usersettings.2.language' => 'de-DE'])->notify($this->assigned());
 
-        $this->assertSame('Sam assigned this to you · Due 31.10.2026', $this->pushes[0]['body']);
-        $this->assertSame('Sam assigned this to you · Due Okt 31', $this->pushes[1]['body'], 'Month names follow the assignee\'s language');
+        $this->assertSame('Sam assigned this to you · Due Sa. 31. Okt', $this->pushes[0]['body'], 'The assignee\'s own format, in the assignee\'s language');
+    }
+
+    /**
+     * With no date format of their own, the assignee gets their language's default from the
+     * language files, never the assigner's session format (which Language::__() would return).
+     *
+     * @dataProvider languageDefaultFormatProvider
+     */
+    public function test_without_a_saved_format_the_assignees_language_decides_not_the_assigners_session(array $settings, string $expected): void
+    {
+        session(['usersettings.date_format' => 'd/m/Y']);
+
+        $this->notifier($this->ticket(), $settings)->notify($this->assigned());
+
+        $this->assertSame('Sam assigned this to you · Due '.$expected, $this->pushes[0]['body']);
+    }
+
+    /**
+     * @return array<string, array{array<string, string>, string}>
+     */
+    public static function languageDefaultFormatProvider(): array
+    {
+        return [
+            'de-DE (d.m.Y in de-DE.ini)' => [['usersettings.2.language' => 'de-DE'], '31.10.2026'],
+            'en-US (m/d/Y in en-US.ini)' => [['usersettings.2.language' => 'en-US'], '10/31/2026'],
+            'no language either: instance default en-US' => [[], '10/31/2026'],
+            'unknown language code falls back to en-US' => [['usersettings.2.language' => '../../etc/passwd'], '10/31/2026'],
+        ];
     }
 
     public function test_assigning_to_yourself_sends_nothing(): void
@@ -350,7 +377,7 @@ class AssignmentNotifierTest extends TestCase
         $this->notifier($this->ticket())->notify($this->assigned());
 
         $this->assertSame("Someone assigned you 'Fix login'", $this->inbox[0]['message']);
-        $this->assertSame('Someone assigned this to you · Due Oct 31', $this->pushes[0]['body']);
+        $this->assertSame('Someone assigned this to you · Due 10/31/2026', $this->pushes[0]['body']);
     }
 
     /**

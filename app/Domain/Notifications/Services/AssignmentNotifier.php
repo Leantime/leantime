@@ -181,8 +181,14 @@ class AssignmentNotifier
         $setting = static fn (string $name): ?string => is_string($settings[$keys[$name]] ?? null) && $settings[$keys[$name]] !== '' ? $settings[$keys[$name]] : null;
 
         $timezone = $setting('timezone') ?? (string) $this->config->defaultTimezone;
-        $format = $setting('date_format') ?? (string) $this->language->__('language.dateformat');
-        $locale = str_replace('-', '_', $setting('language') ?? (string) $this->config->language);
+        $languageCode = $setting('language') ?? (string) $this->config->language;
+        if (preg_match('/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})?$/', $languageCode) !== 1) {
+            $languageCode = 'en-US';
+        }
+        // Not Language::__('language.dateformat'): that returns the SESSION user's format when
+        // one is set, i.e. the assigner's. The assignee's own language file decides instead.
+        $format = $setting('date_format') ?? $this->defaultDateFormat($languageCode);
+        $locale = str_replace('-', '_', $languageCode);
 
         try {
             if (preg_match('/^(\d{4}-\d{2}-\d{2}) 00:00:00$/', $dateToFinish, $m) === 1) {
@@ -196,5 +202,37 @@ class AssignmentNotifier
         }
 
         return sprintf($this->language->__('notification.push_due'), $formatted);
+    }
+
+    /** @var array<string, string> language code → its ini date format, per request */
+    private static array $iniDateFormats = [];
+
+    /**
+     * The `language.dateformat` of a language's ini files (custom/Language overriding
+     * app/Language), falling back to en-US and then to ISO. Reads the files directly so no
+     * session setting can get in between; Language::__() would.
+     */
+    private function defaultDateFormat(string $languageCode): string
+    {
+        if (isset(self::$iniDateFormats[$languageCode])) {
+            return self::$iniDateFormats[$languageCode];
+        }
+
+        $format = '';
+        foreach ([APP_ROOT.'/app/Language/', APP_ROOT.'/custom/Language/'] as $folder) {
+            $file = $folder.$languageCode.'.ini';
+            if (! is_file($file)) {
+                continue;
+            }
+            $ini = @parse_ini_file($file, false, INI_SCANNER_RAW);
+            if (is_array($ini) && ! empty($ini['language.dateformat'])) {
+                $format = (string) $ini['language.dateformat'];
+            }
+        }
+        if ($format === '' && $languageCode !== 'en-US') {
+            $format = $this->defaultDateFormat('en-US');
+        }
+
+        return self::$iniDateFormats[$languageCode] = $format !== '' ? $format : 'Y-m-d';
     }
 }
