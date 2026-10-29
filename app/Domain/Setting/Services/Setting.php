@@ -436,14 +436,18 @@ class Setting
             }
             $this->settingsRepo->saveSetting('companysettings.defaultNotificationRelevance', $defaultRelevance);
 
-            // Mobile push relay: opt-in, and what leaves the server. An unchecked box
-            // isn't posted, so a missing key means off.
-            $this->settingsRepo->saveSetting(PushRelay::SETTING_ENABLED, isset($params['pushRelayEnabled']) ? '1' : '0');
-            $relayContent = $params['pushRelayContent'] ?? PushRelay::CONTENT_FULL;
-            $this->settingsRepo->saveSetting(
-                PushRelay::SETTING_CONTENT,
-                $relayContent === PushRelay::CONTENT_MINIMAL ? PushRelay::CONTENT_MINIMAL : PushRelay::CONTENT_FULL
-            );
+            // Mobile push relay: opt-in, and what leaves the server. The value is read as a
+            // boolean (an RPC caller may send false or '0'); an unchecked box isn't posted, so a
+            // missing key means off. The content level is written only when sent, so a save
+            // without it keeps the stored choice (PushRelay::contentLevel() reads full by default).
+            $relayEnabled = isset($params['pushRelayEnabled']) && filter_var($params['pushRelayEnabled'], FILTER_VALIDATE_BOOLEAN);
+            $this->settingsRepo->saveSetting(PushRelay::SETTING_ENABLED, $relayEnabled ? '1' : '0');
+            if (array_key_exists('pushRelayContent', $params)) {
+                $this->settingsRepo->saveSetting(
+                    PushRelay::SETTING_CONTENT,
+                    $params['pushRelayContent'] === PushRelay::CONTENT_MINIMAL ? PushRelay::CONTENT_MINIMAL : PushRelay::CONTENT_FULL
+                );
+            }
 
             session(['companysettings.sitename' => htmlspecialchars(addslashes($params['name']))]);
             session(['companysettings.language' => htmlentities(addslashes($params['language']))]);

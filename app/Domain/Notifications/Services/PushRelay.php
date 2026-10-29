@@ -106,7 +106,7 @@ class PushRelay
         }
 
         $messages = [];
-        $rowsById = [];
+        $rowsByToken = [];
         foreach ($rows as $row) {
             $messages[] = [
                 'token' => $row->push_token,
@@ -116,19 +116,20 @@ class PushRelay
                 'data' => $data,
                 'threadId' => $data['threadId'] ?? '',
             ];
-            $rowsById[$row->push_token] = (int) $row->id;
+            // The same device token can sit on several rows (one per sign-in); a dead token kills them all.
+            $rowsByToken[$row->push_token][] = (int) $row->id;
         }
 
         foreach (array_chunk($messages, self::MAX_MESSAGES_PER_REQUEST) as $chunk) {
-            $this->post($chunk, $license, $rowsById);
+            $this->post($chunk, $license, $rowsByToken);
         }
     }
 
     /**
      * @param  array<int, array<string, mixed>>  $messages
-     * @param  array<string, int>  $rowsById  push_token → zp_access_tokens.id
+     * @param  array<string, array<int, int>>  $rowsByToken  push_token → every zp_access_tokens.id holding it
      */
-    private function post(array $messages, string $license, array $rowsById): void
+    private function post(array $messages, string $license, array $rowsByToken): void
     {
         $url = (string) env('LEAN_PUSH_RELAY_URL', '') ?: self::DEFAULT_RELAY_URL;
 
@@ -144,7 +145,9 @@ class PushRelay
                     'Content-Type' => 'application/json',
                 ],
                 'json' => ['messages' => $messages],
-                'timeout' => 10,
+                // The relay forwards up to MAX_MESSAGES_PER_REQUEST messages to Firebase before it
+                // answers, so this is the budget for a whole batch, not one request.
+                'timeout' => 30,
             ]);
         } catch (RequestException $e) {
             $status = $e->getResponse()?->getStatusCode();
@@ -165,16 +168,26 @@ class PushRelay
         $results = is_array($decoded['results'] ?? null) ? $decoded['results'] : [];
 
         // One result per token: sent | invalid_token | rate_limited | error.
-        // Dead tokens are marked exactly as the direct FCM path marks them.
+        // Dead tokens are marked exactly as the direct FCM path marks them, on every row holding them.
         $dead = [];
         foreach ($results as $result) {
-            if (($result['status'] ?? '') === 'invalid_token' && isset($rowsById[$result['token'] ?? ''])) {
-                $dead[] = $rowsById[$result['token']];
+            if (($result['status'] ?? '') === 'invalid_token' && isset($rowsByToken[$result['token'] ?? ''])) {
+                $dead = array_merge($dead, $rowsByToken[$result['token']]);
             }
         }
         if ($dead !== []) {
-            DB::table('zp_access_tokens')->whereIn('id', $dead)->update(['push_invalidated_at' => now()]);
+            $this->invalidateRows(array_values(array_unique($dead)));
         }
+    }
+
+    /**
+     * Mark access-token rows' push registration dead. Only the push fields are touched.
+     *
+     * @param  array<int, int>  $rowIds
+     */
+    protected function invalidateRows(array $rowIds): void
+    {
+        DB::table('zp_access_tokens')->whereIn('id', $rowIds)->update(['push_invalidated_at' => now()]);
     }
 
     /**

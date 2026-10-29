@@ -28,8 +28,13 @@ class PushRelayTest extends TestCase
     /** @var array<int, \Psr\Http\Message\RequestInterface> */
     private array $requests = [];
 
-    /** @param array<string, mixed> $settings */
-    private function relay(array $settings, bool $pluginEnabled, ?string $license, array $responses = []): PushRelay
+    /**
+     * Constructor arguments for a relay over a mocked HTTP stack.
+     *
+     * @param  array<string, mixed>  $settings
+     * @return array<int, mixed>
+     */
+    private function relayDependencies(array $settings, bool $pluginEnabled, ?string $license, array $responses = []): array
     {
         $mock = new MockHandler($responses ?: [new Response(200, [], json_encode(['results' => []]))]);
         $stack = HandlerStack::create($mock);
@@ -39,7 +44,7 @@ class PushRelayTest extends TestCase
         $plugin->foldername = 'AdvancedAuth';
         $plugin->license = $license;
 
-        return new PushRelay(
+        return [
             new Client(['handler' => $stack]),
             $this->make(SettingRepository::class, ['getSetting' => fn ($key) => $settings[$key] ?? false]),
             $this->make(SettingService::class, ['getCompanyId' => fn () => 'instance-uuid']),
@@ -49,7 +54,13 @@ class PushRelayTest extends TestCase
             ]),
             $this->make(UserService::class, ['getNumberOfUsers' => fn () => 7]),
             $this->make(AppSettings::class, ['appVersion' => '3.12.0']),
-        );
+        ];
+    }
+
+    /** @param array<string, mixed> $settings */
+    private function relay(array $settings, bool $pluginEnabled, ?string $license, array $responses = []): PushRelay
+    {
+        return new PushRelay(...$this->relayDependencies($settings, $pluginEnabled, $license, $responses));
     }
 
     private function rows(int $n): array
@@ -119,5 +130,35 @@ class PushRelayTest extends TestCase
         $relay = $this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'LIC', [new Response(403, [], '{"error":"license"}')]);
         $relay->send($this->rows(1), 't', 'b', []);
         $this->assertCount(1, $this->requests);
+    }
+
+    /**
+     * One device token can sit on several access-token rows (one per sign-in). When the relay
+     * reports it dead, every row holding it is marked, not just the last one seen.
+     */
+    public function test_a_dead_token_invalidates_every_row_holding_it(): void
+    {
+        $results = ['results' => [
+            ['token' => 'tok-dup', 'status' => 'invalid_token'],
+            ['token' => 'tok-ok', 'status' => 'sent'],
+            ['token' => 'tok-unknown', 'status' => 'invalid_token'],
+        ]];
+        $invalidated = null;
+        $relay = $this->construct(
+            PushRelay::class,
+            $this->relayDependencies([PushRelay::SETTING_ENABLED => '1'], true, 'LIC', [new Response(200, [], json_encode($results))]),
+            ['invalidateRows' => function (array $rowIds) use (&$invalidated) {
+                $invalidated = $rowIds;
+            }]
+        );
+
+        $rows = [
+            (object) ['id' => 1, 'push_token' => 'tok-dup', 'push_platform' => 'ios'],
+            (object) ['id' => 2, 'push_token' => 'tok-ok', 'push_platform' => 'ios'],
+            (object) ['id' => 3, 'push_token' => 'tok-dup', 'push_platform' => 'android'],
+        ];
+        $relay->send($rows, 't', 'b', []);
+
+        $this->assertSame([1, 3], $invalidated, 'Both rows with the dead token, nothing for the healthy or unknown ones');
     }
 }
