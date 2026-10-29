@@ -121,7 +121,8 @@ class AssignmentNotifierTest extends TestCase
                     $this->pushes[] = compact('userIds', 'title', 'body', 'data');
                 },
             ]),
-            $this->make(TrustedAppUrl::class, ['rebase' => fn (string $url) => str_replace('http://localhost', 'https://app.example.com', $url)]),
+            // BASE_URL differs per environment (localhost here, leantime-dev on CI): swap whatever host it has.
+            $this->make(TrustedAppUrl::class, ['rebase' => fn (string $url) => preg_replace('#^https?://[^/]+#', 'https://app.example.com', $url)]),
         );
     }
 

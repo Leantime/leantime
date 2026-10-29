@@ -14,6 +14,11 @@ class NotifyAssignee
 {
     public function handle(TicketAssigned $event): void
     {
+        // Nothing to tell anyone; decided here so the notifier and its repositories aren't even built.
+        if ($event->assignedToSelf) {
+            return;
+        }
+
         try {
             app()->make(AssignmentNotifier::class)->notify($event);
         } catch (\Throwable $e) {
