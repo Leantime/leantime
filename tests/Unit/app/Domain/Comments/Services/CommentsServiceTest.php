@@ -139,6 +139,52 @@ class CommentsServiceTest extends TestCase
     }
 
     /**
+     * The notification's entity names the host module so push can open a task comment's task.
+     * Milestones are commented through the 'ticket' module too (Tickets::addMilestoneComment),
+     * but the app has no task to open for them, so they are marked 'milestone' instead.
+     *
+     * @dataProvider ticketCommentHostProvider
+     */
+    public function test_add_comment_marks_the_host_module_on_the_notification(string $ticketType, string $expectedModule): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        $notified = null;
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => 9,
+            'addComment' => fn () => '504',
+        ]);
+        $projects = $this->make(ProjectService::class, [
+            'notifyProjectUsers' => function ($notification) use (&$notified) {
+                $notified = $notification;
+            },
+        ]);
+        // addComment() loads the host itself (the caller-supplied entity is never trusted).
+        $host = new \Leantime\Domain\Tickets\Models\Tickets(['id' => 31, 'projectId' => 9, 'type' => $ticketType, 'headline' => 'H']);
+        $this->app->instance(\Leantime\Domain\Tickets\Services\Tickets::class, $this->make(\Leantime\Domain\Tickets\Services\Tickets::class, [
+            'getTicket' => fn () => $host,
+        ]));
+
+        $this->makeService($this->noopReactions(), $repo, null, $projects)->addComment(['text' => 'hi'], 'ticket', 31);
+
+        $this->assertSame($expectedModule, $notified->entity['module']);
+        $this->assertSame(31, $notified->entity['moduleId']);
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function ticketCommentHostProvider(): array
+    {
+        return [
+            'task' => ['task', 'ticket'],
+            'bug' => ['bug', 'ticket'],
+            'milestone' => ['milestone', 'milestone'],
+            'milestone, mixed case' => ['Milestone', 'milestone'],
+        ];
+    }
+
+    /**
      * The notification goes to the project the comment was authorized against, not the ambient
      * session project (a browser session can be "in" project A while commenting on B over RPC).
      */

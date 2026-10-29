@@ -50,14 +50,29 @@ class PushDataTest extends TestCase
         $this->assertSame('commented', $data['type']);
     }
 
-    public function test_comment_on_something_else_has_no_task_link(): void
+    /**
+     * @dataProvider commentsWithoutATaskProvider
+     */
+    public function test_comment_on_something_else_has_no_task_link(string $hostModule): void
     {
-        $entity = ['id' => 456, 'module' => 'project', 'moduleId' => 9];
+        $entity = ['id' => 456, 'module' => $hostModule, 'moduleId' => 9];
         $data = Push::buildData($this->notification('comments', $entity, 'commented'));
 
         $this->assertArrayNotHasKey('parentTicketId', $data);
         $this->assertArrayNotHasKey('threadId', $data);
         $this->assertSame('https://example.test/x', $data['url']);
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function commentsWithoutATaskProvider(): array
+    {
+        return [
+            'project' => ['project'],
+            // Milestones are tickets in the database, but the app opens tasks, not milestones.
+            'milestone' => ['milestone'],
+        ];
     }
 
     public function test_object_entities_and_missing_values(): void
