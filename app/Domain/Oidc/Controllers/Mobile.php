@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
+use Leantime\Domain\Auth\Services\SecondFactor;
 use Leantime\Domain\Oidc\Services\OidcMobileCode;
 use Leantime\Domain\Plugins\Services\Plugins;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -18,12 +19,25 @@ use Symfony\Component\HttpFoundation\Response;
  * POST /oidc/mobile/exchange. Public (no session/cookie): the validated,
  * single-use one-time code IS the authorization. See OidcMobileCode.
  *
+ * Second factor: the identity provider vouches for the person, not for
+ * Leantime's own 2FA. When the code's user has it enabled, the exchange
+ * answers the first PKCE-verified request with 401 {"error":"two_factor_required"}
+ * and leaves the code alive for OidcMobileCode::SECOND_FACTOR_TTL_SECONDS; the
+ * app then repeats the POST with `twofaCode`. A wrong code is 401
+ * {"error":"two_factor_invalid"}; after MAX_SECOND_FACTOR_ATTEMPTS wrong codes
+ * the one-time code is burned and the app has to start over (401 invalid_code).
+ * Same keys and field as the AdvancedAuth password endpoint, so the app runs
+ * one second-factor step for both. /status advertises `mobileSsoSecondFactor`.
+ *
  * This route must be allow-listed in AuthCheck::$publicActions as 'oidc.mobile'.
  */
 class Mobile extends Controller
 {
     /** Per-IP cap on exchange attempts per minute — throttles code/verifier guessing. */
     private const MAX_ATTEMPTS_PER_MINUTE = 10;
+
+    /** Wrong second-factor codes one one-time code may absorb before it is burned. */
+    private const MAX_SECOND_FACTOR_ATTEMPTS = 5;
 
     /** Mobile SSO bearer lifetime. Deliberately NOT non-expiring; a lost device's
      *  token self-expires, and it can be revoked early via AccessTokenRepository::deleteToken. */
@@ -39,18 +53,22 @@ class Mobile extends Controller
 
     private Plugins $plugins;
 
+    private SecondFactor $secondFactor;
+
     public function init(
         OidcMobileCode $codes,
         AccessTokenRepository $tokens,
         UserRepository $userRepo,
         IncomingRequest $request,
-        Plugins $plugins
+        Plugins $plugins,
+        SecondFactor $secondFactor
     ): void {
         $this->codes = $codes;
         $this->tokens = $tokens;
         $this->userRepo = $userRepo;
         $this->request = $request;
         $this->plugins = $plugins;
+        $this->secondFactor = $secondFactor;
     }
 
     /**
@@ -128,6 +146,35 @@ class Mobile extends Controller
         $user = $this->userRepo->getUser($userId);
         if (! is_array($user) || empty($user)) {
             return new JsonResponse(['error' => 'invalid_user'], 401);
+        }
+
+        // Leantime's own second factor. The provider vouched for the person; a
+        // 2FA account must also present its code here, since this request is
+        // where the bearer token is minted and no web session ever asks for it.
+        // Read from the POST body only, like the code and verifier.
+        if (! empty($user['twoFAEnabled'])) {
+            $twofaCode = $this->bodyParam('twofaCode');
+
+            if ($twofaCode === '') {
+                // Not consumed: the app shows the code field and repeats the
+                // exchange. The code gets a longer life once, now that PKCE has
+                // proved the caller is the app that started the sign-in.
+                $this->codes->extendForSecondFactor($code);
+
+                return new JsonResponse(['error' => 'two_factor_required'], 401);
+            }
+
+            if (! $this->secondFactor->verify((string) ($user['twoFASecret'] ?? ''), $twofaCode)) {
+                // Count it against the code; a handful of wrong codes burns it so
+                // the one-time code can't be used to guess the second factor.
+                if ($this->codes->recordSecondFactorFailure($code) >= self::MAX_SECOND_FACTOR_ATTEMPTS) {
+                    $this->codes->consumeCode($code);
+
+                    return new JsonResponse(['error' => 'invalid_code'], 401);
+                }
+
+                return new JsonResponse(['error' => 'two_factor_invalid'], 401);
+            }
         }
 
         // All checks passed — atomically burn the code. consumeCode() returns

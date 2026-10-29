@@ -88,6 +88,12 @@ class Index extends Controller
 
         $payload = [
             'mobileAuthEnabled' => $mobileGate,
+            // This core verifies Leantime's own second factor at the mobile SSO
+            // exchange (Oidc\Controllers\Mobile): a 2FA account gets
+            // two_factor_required and finishes with its code. The AdvancedAuth
+            // plugin and the app read this to decide whether 2FA accounts may use
+            // SSO on the phone.
+            'mobileSsoSecondFactor' => true,
             'instanceName' => (string) ($this->config->sitename ?: 'Leantime'),
             'version' => $this->appSettings->appVersion,
             'minAppVersion' => null,
