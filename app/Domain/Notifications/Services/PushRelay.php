@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
@@ -29,6 +30,10 @@ use Leantime\Domain\Users\Services\Users as UserService;
  * Opt-in: an administrator turns the relay on in company settings, since it
  * means notification content leaves their server. They also choose whether
  * the relay gets full content or a content-free "New activity" message.
+ * Full content forwards the notification as the instance built it, link
+ * included. Content-free mode forwards no text at all: the link is rebuilt
+ * from the routing ids, because a notification link can carry text itself
+ * (a comment posted over a JSON-RPC GET keeps its params in the URL).
  *
  * Configuration (env / .env), optional:
  *   - LEAN_PUSH_RELAY_URL — the relay endpoint; defaults to Leantime's.
@@ -57,6 +62,7 @@ class PushRelay
         private PluginService $pluginService,
         private UserService $userService,
         private AppSettings $appSettings,
+        private TrustedAppUrl $trustedAppUrl,
     ) {}
 
     /**
@@ -101,8 +107,14 @@ class PushRelay
         if ($this->contentLevel() === self::CONTENT_MINIMAL) {
             $title = 'Leantime';
             $body = __('notification.push_minimal_body');
-            // Keep only what the app needs to open the right screen.
-            $data = array_intersect_key($data, array_flip(['module', 'moduleId', 'parentTicketId', 'projectId', 'type', 'threadId', 'url']));
+            // Keep only what the app needs to open the right screen. The caller's url is
+            // never forwarded: it can carry text (query parameters of the request that made
+            // the change); a link is rebuilt from the ids instead.
+            $data = array_intersect_key($data, array_flip(['module', 'moduleId', 'parentTicketId', 'projectId', 'type', 'threadId']));
+            $canonical = $this->canonicalUrl($data);
+            if ($canonical !== null) {
+                $data['url'] = $canonical;
+            }
         }
 
         $messages = [];
@@ -178,6 +190,28 @@ class PushRelay
         if ($dead !== []) {
             $this->invalidateRows(array_values(array_unique($dead)));
         }
+    }
+
+    /**
+     * A link built only from the trusted app URL and the routing ids: the task
+     * for a task or a comment on one, otherwise the app itself. Null when the
+     * app URL is unknown or an id isn't a plain number.
+     *
+     * @param  array<string, string>  $data
+     */
+    private function canonicalUrl(array $data): ?string
+    {
+        $base = rtrim((string) ($this->trustedAppUrl->get() ?? (defined('BASE_URL') ? BASE_URL : '')), '/');
+        if ($base === '') {
+            return null;
+        }
+
+        $taskId = (string) (($data['module'] ?? '') === 'tickets' ? ($data['moduleId'] ?? '') : ($data['parentTicketId'] ?? ''));
+        if ($taskId === '') {
+            return $base;
+        }
+
+        return ctype_digit($taskId) ? $base.'/dashboard/home#/tickets/showTicket/'.$taskId : null;
     }
 
     /**

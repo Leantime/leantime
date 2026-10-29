@@ -8,6 +8,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Domain\Notifications\Services\PushRelay;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
@@ -54,7 +55,13 @@ class PushRelayTest extends TestCase
             ]),
             $this->make(UserService::class, ['getNumberOfUsers' => fn () => 7]),
             $this->make(AppSettings::class, ['appVersion' => '3.12.0']),
+            $this->make(TrustedAppUrl::class, ['get' => fn () => 'https://app.example.com/']),
         ];
+    }
+
+    private function minimalRelay(): PushRelay
+    {
+        return $this->relay([PushRelay::SETTING_ENABLED => '1', PushRelay::SETTING_CONTENT => 'minimal'], true, 'LIC');
     }
 
     /** @param array<string, mixed> $settings */
@@ -106,6 +113,43 @@ class PushRelayTest extends TestCase
         $this->assertStringNotContainsString('Fix login', json_encode($msg));
         $this->assertSame('9', $msg['data']['parentTicketId']);
         $this->assertSame('comments', $msg['data']['module']);
+    }
+
+    /**
+     * A notification's own link can carry text: a comment posted over a JSON-RPC GET keeps
+     * its params (base64 of the comment) in the URL. Content-free mode never forwards it.
+     */
+    public function test_content_free_mode_rebuilds_the_link_from_the_ids(): void
+    {
+        $leaky = 'https://host/api/jsonrpc?method=comments.addComment&params=eyJ0ZXh0Ijoic2VjcmV0In0=';
+        $this->minimalRelay()->send($this->rows(1), 'Fix login', 'Sam: secret', ['module' => 'comments', 'moduleId' => '4', 'parentTicketId' => '42', 'url' => $leaky]);
+
+        $posted = (string) $this->requests[0]['request']->getBody();
+        $msg = json_decode($posted, true)['messages'][0];
+        $this->assertSame('https://app.example.com/dashboard/home#/tickets/showTicket/42', $msg['data']['url']);
+        $this->assertStringNotContainsString('jsonrpc', $posted);
+        $this->assertStringNotContainsString('params=', $posted);
+        $this->assertStringNotContainsString('secret', $posted);
+
+        $this->requests = [];
+        $this->minimalRelay()->send($this->rows(1), 'Fix login', 'x', ['module' => 'tickets', 'moduleId' => '7', 'url' => $leaky]);
+        $this->assertSame('https://app.example.com/dashboard/home#/tickets/showTicket/7', json_decode((string) $this->requests[0]['request']->getBody(), true)['messages'][0]['data']['url']);
+    }
+
+    public function test_content_free_mode_links_the_app_itself_for_everything_else(): void
+    {
+        $this->minimalRelay()->send($this->rows(1), 'Goal', 'x', ['module' => 'goalcanvas', 'moduleId' => '5', 'url' => 'https://host/goals?projectId=3']);
+
+        $this->assertSame('https://app.example.com', json_decode((string) $this->requests[0]['request']->getBody(), true)['messages'][0]['data']['url']);
+    }
+
+    public function test_content_free_mode_sends_no_link_for_an_id_that_is_not_a_number(): void
+    {
+        $this->minimalRelay()->send($this->rows(1), 'Fix login', 'x', ['module' => 'tickets', 'moduleId' => '7?x=1', 'url' => 'https://host/x']);
+
+        $msg = json_decode((string) $this->requests[0]['request']->getBody(), true)['messages'][0];
+        $this->assertArrayNotHasKey('url', $msg['data']);
+        $this->assertStringNotContainsString('host/x', json_encode($msg));
     }
 
     public function test_no_license_means_no_request(): void
