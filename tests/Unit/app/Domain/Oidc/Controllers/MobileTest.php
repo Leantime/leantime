@@ -10,6 +10,7 @@ use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
+use Leantime\Domain\Auth\Services\SecondFactor;
 use Leantime\Domain\Oidc\Controllers\Mobile;
 use Leantime\Domain\Oidc\Services\OidcMobileCode;
 use Leantime\Domain\Plugins\Services\Plugins;
@@ -30,6 +31,8 @@ class MobileTest extends \Unit\TestCase
 
     private UserRepository $userRepo;
 
+    private SecondFactor $secondFactor;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,6 +50,10 @@ class MobileTest extends \Unit\TestCase
         $this->app->instance(OidcMobileCode::class, $this->codes);
         $this->app->instance(AccessTokenRepository::class, $this->tokens);
         $this->app->instance(UserRepository::class, $this->userRepo);
+        // Stubbed so no real TOTP codes are needed: the contract under test is
+        // what the exchange does with "right" and "wrong", not the arithmetic.
+        $this->secondFactor = $this->createMock(SecondFactor::class);
+        $this->app->instance(SecondFactor::class, $this->secondFactor);
 
         // Mobile SSO is gated on AdvancedAuth (see Mobile::exchange). Mock the
         // plugin as installed so these exchange-contract tests run past the gate;
@@ -166,7 +173,7 @@ class MobileTest extends \Unit\TestCase
         $this->codes->method('peekCode')->with('good')->willReturn(['userId' => 7, 'challenge' => $challenge]);
         $this->userRepo->method('getUser')->with(7)->willReturn([
             'id' => 7, 'firstname' => 'A', 'lastname' => 'B', 'username' => 'a@b',
-            'password' => 'SHOULD_NOT_APPEAR', 'twoFAEnabled' => 1,
+            'password' => 'SHOULD_NOT_APPEAR', 'twoFAEnabled' => 0,
         ]);
         // Code consumed exactly once, AFTER all validation; returns true (this
         // caller won the single-use race), so minting proceeds.
@@ -240,5 +247,160 @@ class MobileTest extends \Unit\TestCase
 
         $this->assertSame(401, $response->getStatusCode());
         $this->assertSame('invalid_code', $this->bodyOf($response)['error']);
+    }
+
+    // ---------------------------------------------------------------------
+    // Second factor: a 2FA account must present its TOTP code at the exchange,
+    // the one place the bearer token is minted. Same keys/field as the
+    // AdvancedAuth password endpoint (two_factor_required / two_factor_invalid,
+    // POST twofaCode).
+    // ---------------------------------------------------------------------
+
+    private const VERIFIER = 'testverifier';
+
+    /** Wires a PKCE-valid code 'good' for user 7 with 2FA on (secret 'SEED'). */
+    private function twoFactorUser(int $failuresSoFar = 0): void
+    {
+        $challenge = rtrim(strtr(base64_encode(hash('sha256', self::VERIFIER, true)), '+/', '-_'), '=');
+        $this->codes->method('peekCode')->with('good')->willReturn([
+            'userId' => 7, 'challenge' => $challenge, 'secondFactorFailures' => $failuresSoFar,
+        ]);
+        $this->userRepo->method('getUser')->with(7)->willReturn([
+            'id' => 7, 'firstname' => 'A', 'lastname' => 'B', 'username' => 'a@b',
+            'twoFAEnabled' => 1, 'twoFASecret' => 'SEED',
+        ]);
+    }
+
+    public function test_two_factor_account_without_a_code_is_asked_for_one_and_keeps_its_code(): void
+    {
+        $this->twoFactorUser();
+        $this->codes->expects($this->once())->method('extendForSecondFactor')->with('good')->willReturn(true);
+        $this->codes->expects($this->never())->method('consumeCode');
+        $this->secondFactor->expects($this->never())->method('verify');
+        $this->tokens->expects($this->never())->method('createToken');
+
+        $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER])->exchange([]);
+
+        $this->assertSame(401, $response->getStatusCode());
+        $this->assertSame('two_factor_required', $this->bodyOf($response)['error']);
+    }
+
+    public function test_two_factor_required_is_only_answered_after_pkce(): void
+    {
+        // A scheme-hijacker holding the code but not the verifier learns nothing
+        // about 2FA and cannot extend the code's life.
+        $this->twoFactorUser();
+        $this->codes->expects($this->never())->method('extendForSecondFactor');
+
+        $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => 'wrong'])->exchange([]);
+
+        $this->assertSame('invalid_verifier', $this->bodyOf($response)['error']);
+    }
+
+    /**
+     * The store runs the verifier inside the code's lock and reports $outcome; the
+     * verifier is executed here so the wiring to SecondFactor::verify is covered.
+     */
+    private function secondFactorOutcome(string $outcome, bool $expectVerifier): void
+    {
+        $this->codes->expects($this->once())->method('checkSecondFactor')
+            ->with('good', $this->callback('is_callable'))
+            ->willReturnCallback(function (string $code, callable $verify) use ($outcome, $expectVerifier): string {
+                $this->assertSame($expectVerifier, $verify(), 'the verifier runs under the store\'s lock');
+
+                return $outcome;
+            });
+    }
+
+    public function test_wrong_second_factor_code_is_counted_and_the_code_survives(): void
+    {
+        $this->twoFactorUser();
+        $this->secondFactor->expects($this->once())->method('verify')->with('SEED', '000000')->willReturn(false);
+        $this->secondFactorOutcome(OidcMobileCode::SECOND_FACTOR_WRONG, false);
+        $this->codes->expects($this->never())->method('consumeCode');
+        $this->tokens->expects($this->never())->method('createToken');
+
+        $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER, 'twofaCode' => '000000'])->exchange([]);
+
+        $this->assertSame(401, $response->getStatusCode());
+        $this->assertSame('two_factor_invalid', $this->bodyOf($response)['error']);
+    }
+
+    public function test_fifth_wrong_second_factor_code_burns_the_code(): void
+    {
+        $this->twoFactorUser(4);
+        $this->secondFactor->method('verify')->willReturn(false);
+        // The store counts and burns in one locked step; the controller never consumes separately.
+        $this->secondFactorOutcome(OidcMobileCode::SECOND_FACTOR_BURNED, false);
+        $this->codes->expects($this->never())->method('consumeCode');
+        $this->tokens->expects($this->never())->method('createToken');
+
+        $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER, 'twofaCode' => '000000'])->exchange([]);
+
+        $this->assertSame(401, $response->getStatusCode());
+        $this->assertSame('invalid_code', $this->bodyOf($response)['error'], 'the app has to start the sign-in over');
+    }
+
+    /**
+     * Two exchanges for the same code at once: the one that can't take the code's lock
+     * is rejected before the second factor is checked, so it never gets a free guess.
+     */
+    public function test_a_concurrent_exchange_for_the_same_code_is_rejected_before_any_guess(): void
+    {
+        $this->twoFactorUser();
+        $this->secondFactor->expects($this->never())->method('verify');
+        $this->codes->expects($this->once())->method('checkSecondFactor')->with('good', $this->callback('is_callable'))->willReturn(OidcMobileCode::SECOND_FACTOR_REFUSED);
+        $this->codes->expects($this->never())->method('consumeCode');
+        $this->tokens->expects($this->never())->method('createToken');
+
+        $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER, 'twofaCode' => '123456'])->exchange([]);
+
+        $this->assertSame(401, $response->getStatusCode());
+        $this->assertSame('invalid_code', $this->bodyOf($response)['error']);
+    }
+
+    public function test_right_second_factor_code_mints_the_token(): void
+    {
+        $this->twoFactorUser();
+        $this->secondFactor->expects($this->once())->method('verify')->with('SEED', '123456')->willReturn(true);
+        $this->secondFactorOutcome(OidcMobileCode::SECOND_FACTOR_OK, true);
+        // The right code consumed the one-time code inside the same locked step.
+        $this->codes->expects($this->never())->method('consumeCode');
+        $this->tokens->expects($this->once())->method('createToken')->willReturn(['token' => 'the-token']);
+
+        $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER, 'twofaCode' => '123456'])->exchange([]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = $this->bodyOf($response);
+        $this->assertSame('the-token', $body['token']);
+        $this->assertSame(['id', 'firstname', 'lastname', 'username'], array_keys($body['user']), 'never the 2FA seed');
+    }
+
+    public function test_second_factor_code_in_the_query_string_is_ignored(): void
+    {
+        $this->twoFactorUser();
+        $this->secondFactor->expects($this->never())->method('verify');
+        $this->codes->method('extendForSecondFactor')->willReturn(true);
+
+        $request = IncomingRequest::create('/oidc/mobile/exchange?twofaCode=123456', 'POST', ['code' => 'good', 'code_verifier' => self::VERIFIER]);
+        $this->app->instance(IncomingRequest::class, $request);
+        $response = (new Mobile($request, $this->createMock(Template::class), $this->createMock(Language::class)))->exchange([]);
+
+        $this->assertSame('two_factor_required', $this->bodyOf($response)['error']);
+    }
+
+    public function test_account_without_two_factor_ignores_a_stray_code(): void
+    {
+        $challenge = rtrim(strtr(base64_encode(hash('sha256', self::VERIFIER, true)), '+/', '-_'), '=');
+        $this->codes->method('peekCode')->with('good')->willReturn(['userId' => 7, 'challenge' => $challenge]);
+        $this->userRepo->method('getUser')->with(7)->willReturn(['id' => 7, 'firstname' => 'A', 'lastname' => 'B', 'username' => 'a@b', 'twoFAEnabled' => 0]);
+        $this->secondFactor->expects($this->never())->method('verify');
+        $this->codes->expects($this->never())->method('extendForSecondFactor');
+        $this->codes->method('consumeCode')->willReturn(true);
+        $this->tokens->method('createToken')->willReturn(['token' => 't']);
+
+        $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER, 'twofaCode' => '999999'])->exchange([]);
+
+        $this->assertSame(200, $response->getStatusCode());
     }
 }

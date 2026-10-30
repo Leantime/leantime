@@ -25,7 +25,6 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Events\UserCreated;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Ramsey\Uuid\Uuid;
-use RobThree\Auth\TwoFactorAuth;
 
 class Auth implements Authenticatable
 {
@@ -814,9 +813,7 @@ class Auth implements Authenticatable
 
     public function verify2FA(string $code): bool
     {
-        $twoFactorAuthentication = new TwoFactorAuth('Leantime');
-
-        return $twoFactorAuthentication->verifyCode(session('userdata.twoFASecret'), $code);
+        return app()->make(SecondFactor::class)->verify((string) session('userdata.twoFASecret'), $code);
     }
 
     public function get2FAVerified(): mixed

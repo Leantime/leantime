@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
+use Leantime\Domain\Auth\Services\SecondFactor;
 use Leantime\Domain\Oidc\Services\OidcMobileCode;
 use Leantime\Domain\Plugins\Services\Plugins;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -17,6 +18,16 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * POST /oidc/mobile/exchange. Public (no session/cookie): the validated,
  * single-use one-time code IS the authorization. See OidcMobileCode.
+ *
+ * Second factor: the identity provider vouches for the person, not for
+ * Leantime's own 2FA. When the code's user has it enabled, the exchange
+ * answers the first PKCE-verified request with 401 {"error":"two_factor_required"}
+ * and leaves the code alive for OidcMobileCode::SECOND_FACTOR_TTL_SECONDS; the
+ * app then repeats the POST with `twofaCode`. A wrong code is 401
+ * {"error":"two_factor_invalid"}; after OidcMobileCode::MAX_SECOND_FACTOR_ATTEMPTS wrong codes
+ * the one-time code is burned and the app has to start over (401 invalid_code).
+ * Same keys and field as the AdvancedAuth password endpoint, so the app runs
+ * one second-factor step for both. /status advertises `mobileSsoSecondFactor`.
  *
  * This route must be allow-listed in AuthCheck::$publicActions as 'oidc.mobile'.
  */
@@ -39,18 +50,22 @@ class Mobile extends Controller
 
     private Plugins $plugins;
 
+    private SecondFactor $secondFactor;
+
     public function init(
         OidcMobileCode $codes,
         AccessTokenRepository $tokens,
         UserRepository $userRepo,
         IncomingRequest $request,
-        Plugins $plugins
+        Plugins $plugins,
+        SecondFactor $secondFactor
     ): void {
         $this->codes = $codes;
         $this->tokens = $tokens;
         $this->userRepo = $userRepo;
         $this->request = $request;
         $this->plugins = $plugins;
+        $this->secondFactor = $secondFactor;
     }
 
     /**
@@ -130,10 +145,49 @@ class Mobile extends Controller
             return new JsonResponse(['error' => 'invalid_user'], 401);
         }
 
-        // All checks passed — atomically burn the code. consumeCode() returns
-        // false if a concurrent exchange already consumed it, so only the winner
-        // of that race mints (no double-mint from one single-use code).
-        if (! $this->codes->consumeCode($code)) {
+        // Leantime's own second factor. The provider vouched for the person; a
+        // 2FA account must also present its code here, since this request is
+        // where the bearer token is minted and no web session ever asks for it.
+        // Read from the POST body only, like the code and verifier.
+        if (! empty($user['twoFAEnabled'])) {
+            $twofaCode = $this->bodyParam('twofaCode');
+
+            if ($twofaCode === '') {
+                // Not consumed: the app shows the code field and repeats the
+                // exchange. The code gets a longer life once, now that PKCE has
+                // proved the caller is the app that started the sign-in.
+                $this->codes->extendForSecondFactor($code);
+
+                return new JsonResponse(['error' => 'two_factor_required'], 401);
+            }
+
+            // Verified and settled under the code's lock in one step (see
+            // OidcMobileCode::checkSecondFactor): the TOTP check only runs while
+            // this request holds the lock, so concurrent exchanges can't each spend
+            // a free guess; a handful of wrong codes burns the one-time code so it
+            // can't be used to guess the second factor; and a right code consumes
+            // it right there, so nothing is consumed separately below.
+            $secret = (string) ($user['twoFASecret'] ?? '');
+            $outcome = $this->codes->checkSecondFactor($code, fn (): bool => $this->secondFactor->verify($secret, $twofaCode));
+
+            if ($outcome === OidcMobileCode::SECOND_FACTOR_WRONG) {
+                return new JsonResponse(['error' => 'two_factor_invalid'], 401);
+            }
+
+            if ($outcome !== OidcMobileCode::SECOND_FACTOR_OK) {
+                // Burned (limit reached, expired) or refused (a concurrent exchange
+                // for the same code is in flight): the app starts the sign-in over.
+                return new JsonResponse(['error' => 'invalid_code'], 401);
+            }
+
+            $consumed = true;
+        }
+
+        // All checks passed — atomically burn the code, unless the second-factor
+        // step already did. consumeCode() returns false if a concurrent exchange
+        // already consumed it, so only the winner of that race mints (no
+        // double-mint from one single-use code).
+        if (! ($consumed ?? false) && ! $this->codes->consumeCode($code)) {
             return new JsonResponse(['error' => 'invalid_code'], 401);
         }
 

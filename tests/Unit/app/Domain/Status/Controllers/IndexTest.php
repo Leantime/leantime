@@ -74,6 +74,7 @@ class IndexTest extends \Unit\TestCase
         $this->assertArrayNotHasKey('oidcLoginUrl', $body);
         $this->assertSame('Acme', $body['instanceName']);
         $this->assertTrue($body['mobileAuthEnabled']);
+        $this->assertTrue($body['mobileSsoSecondFactor'], 'advertises that the exchange verifies the second factor');
     }
 
     public function test_oidc_enabled_advertises_oidc_and_login_url(): void
