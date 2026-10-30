@@ -15,9 +15,9 @@
                 </span><br />
                 <span style="font-size:18px; color:var(--main-titles-color););">
                    {{ __("text.project_hub_intro") }}
-                    @if ($login::userIsAtLeast("manager"))
+                    @can('projects.create')
                         <br /><br /><x-global::forms.button tag="a" link="#/projects/createnew" contentRole="default">{!! __("menu.create_something_new") !!}</x-global::forms.button>
-                    @endif
+                    @endcan
                 </span>
                 <br />
                 <br />
@@ -65,10 +65,10 @@
                 <div class='center'>
                     <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
                         {{ __('notifications.not_assigned_to_any_project') }}
-                        @if($login::userIsAtLeast($roles::$manager))
+                        @can('projects.create')
                             <br /><br />
                             <x-global::forms.button tag="a" link="{{ BASE_URL }}/projects/newProject" contentRole="primary">{{ __('link.new_project') }}</x-global::forms.button>
-                        @endif
+                        @endcan
                     </div>
                 </div>
             @endif

@@ -10,6 +10,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\UI\Theme as ThemeCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -189,7 +190,7 @@ class UsersServiceTest extends TestCase
         $result = $service->inviteNewUser(
             ['user' => 'nope'],
             sessionClientId: null,
-            isManager: false
+            staysInOwnClient: false
         );
 
         $this->assertSame('no_valid_email', $result);
@@ -205,7 +206,7 @@ class UsersServiceTest extends TestCase
         $result = $service->inviteNewUser(
             ['user' => 'taken@example.com'],
             sessionClientId: null,
-            isManager: false
+            staysInOwnClient: false
         );
 
         $this->assertSame('user_exists', $result);
@@ -369,6 +370,41 @@ class UsersServiceTest extends TestCase
         return $this->make(PermissionService::class, [
             'currentUserCan' => fn () => true,
             'authorize' => fn () => null,
+        ]);
+    }
+
+    public function test_callers_without_clients_view_only_see_and_invite_within_their_own_client(): void
+    {
+        session(['userdata.clientId' => 7]);
+        $requestedClientIds = [];
+        $userRepo = $this->make(UserRepository::class, [
+            'getAll' => [['id' => 1], ['id' => 2]],
+            'getAllClientUsers' => function ($clientId) use (&$requestedClientIds) {
+                $requestedClientIds[] = $clientId;
+
+                return [['id' => 2]];
+            },
+        ]);
+
+        $withinClient = $this->makeService($userRepo);
+        $withinClient->setPermissionService($this->permissionsGranting([]));
+        $this->assertTrue($withinClient->invitesStayInOwnClient());
+        $this->assertSame([['id' => 2]], $withinClient->getAllVisibleToUser());
+        $this->assertSame([7], $requestedClientIds);
+
+        $acrossClients = $this->makeService($userRepo);
+        $acrossClients->setPermissionService($this->permissionsGranting([ClientsPermissions::VIEW]));
+        $this->assertFalse($acrossClients->invitesStayInOwnClient());
+        $this->assertSame([['id' => 1], ['id' => 2]], $acrossClients->getAllVisibleToUser());
+    }
+
+    /**
+     * @param  array<int, string>  $grantedKeys
+     */
+    private function permissionsGranting(array $grantedKeys): PermissionService
+    {
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $permissionKey) => in_array($permissionKey, $grantedKeys, true),
         ]);
     }
 

@@ -21,7 +21,6 @@ use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\OutboundUrlGuard;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
@@ -926,11 +925,11 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller is an
-     * admin/owner querying someone else — closing the cross-user param spoof on these @api reads (an
-     * RPC caller could otherwise list another user's projects by passing a foreign id). Mirrors the
-     * inline override in getProjectsUserHasAccessTo(). Recursion-safe: a global role check only,
-     * never project membership.
+     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller sees
+     * all projects (projects.viewAll) and asks about someone else — closing the cross-user param spoof
+     * on these @api reads (an RPC caller could otherwise list another user's projects by passing a
+     * foreign id). Mirrors the inline override in getProjectsUserHasAccessTo(). Recursion-safe: it
+     * reads the grant map of the global role only, never project membership.
      *
      * @param  int|string|null  $userId
      */
@@ -938,7 +937,7 @@ class Projects extends BaseService implements ChecksProjectAccess
     {
         $sessionUser = (int) session('userdata.id');
 
-        if ((int) $userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+        if ((int) $userId !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
             return $sessionUser;
         }
 
@@ -1317,9 +1316,9 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * Role-based authorization on $userId, per @marcelfolaron review:
      *   - Not passed (null/0): use the authenticated session user
-     *   - Passed AND caller is admin/owner: honor the requested user id
+     *   - Passed AND caller sees all projects (projects.viewAll): honor the requested user id
      *     (admin tooling, "show me Alice's projects" workflows)
-     *   - Passed by a non-admin AND differs from session: ignored and
+     *   - Passed by anyone else AND differs from session: ignored and
      *     overridden to the session user (prevents IDOR via the optional
      *     param)
      *
@@ -1335,7 +1334,7 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         if ($userId === null || $userId === 0) {
             $userId = $sessionUser;
-        } elseif ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+        } elseif ($userId !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
             $userId = $sessionUser;
         }
 
@@ -2904,7 +2903,7 @@ class Projects extends BaseService implements ChecksProjectAccess
     #[RequiresPermission(ProjectsPermissions::DELETE, global: true)]
     public function deleteProject(int $id): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        if (! $this->can(ProjectsPermissions::DELETE)) {
             return false;
         }
 
@@ -3026,8 +3025,9 @@ class Projects extends BaseService implements ChecksProjectAccess
      * Authorization gate for managing (sorting/restatusing/patching) a project.
      *
      * The project kanban/timeline management UI (Projects\Controllers\ShowAll) is
-     * gated on manager+, so the JSON-RPC entry points below must enforce the same.
-     * Admins and owners can manage every project; managers must be assigned to it.
+     * gated on projects.edit, so the JSON-RPC entry points below must enforce the same.
+     * Roles that see all projects (projects.viewAll) manage every project; others must be
+     * assigned to it.
      * Not @api: this is an internal authorization helper, reachable by the relocated
      * image controllers, never callable over JSON-RPC.
      *
@@ -3036,11 +3036,11 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function userCanManageProject(int $projectId): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        if (! $this->can(ProjectsPermissions::EDIT)) {
             return false;
         }
 
-        if (Auth::userIsAtLeast(Roles::$admin)) {
+        if (Roles::seesAllProjects(session('userdata.role'))) {
             return true;
         }
 
@@ -3158,8 +3158,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     /**
      * Retrieves the projects for a client manager.
      *
-     * Non-admins are pinned to their own user id AND their own session client — a caller can
-     * never list another client's projects by passing a foreign clientId.
+     * Callers without projects.viewAll are pinned to their own user id AND their own session
+     * client — they can never list another client's projects by passing a foreign clientId.
      *
      * @param  int  $userId  The ID of the user.
      * @param  int  $clientId  The ID of the client.
@@ -3171,7 +3171,7 @@ class Projects extends BaseService implements ChecksProjectAccess
     {
         $userId = $this->resolveScopedUserId($userId);
 
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
+        if (! Roles::seesAllProjects(session('userdata.role'))) {
             $clientId = (int) session('userdata.clientId');
         }
 

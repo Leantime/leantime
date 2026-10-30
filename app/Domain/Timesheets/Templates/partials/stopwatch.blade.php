@@ -1,4 +1,4 @@
-@if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor, true))
+@can('timesheets.create')
     @php
         // Re-render on every timer change; while a timer runs, also refresh the running time once a minute.
         $timerRefreshTrigger = $onTheClock !== false ? 'timerUpdate from:body, every 60s' : 'timerUpdate from:body';
@@ -31,4 +31,4 @@
         {{-- No timer running: an empty swap target that re-renders when a timer starts. --}}
         <li class="timerHeadMenu" id="timerHeadMenu" hx-get="{{ BASE_URL }}/timesheets/stopwatch/get-status" hx-trigger="{{ $timerRefreshTrigger }}" hx-swap="outerHTML"></li>
     @endif
-@endif
+@endcan

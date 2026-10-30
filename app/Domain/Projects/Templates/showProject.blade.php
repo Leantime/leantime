@@ -142,7 +142,7 @@
 
                                     @endif
                                 @endforeach
-                                @if ($login::userIsAtLeast($roles::$manager))
+                                @can('users.create')
                                     <div class="col-md-4">
 
                                         <x-global::elements.card compact class="userBox">
@@ -150,7 +150,7 @@
                                             <div class="clearall"></div>
                                         </x-global::elements.card>
                                     </div>
-                                @endif
+                                @endcan
                             </div>
                              <div class="row">
                                  <div class="col-md-12">

@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,14 +26,9 @@ class DelProject extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::DELETE, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
@@ -59,14 +54,9 @@ class DelProject extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::DELETE, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
