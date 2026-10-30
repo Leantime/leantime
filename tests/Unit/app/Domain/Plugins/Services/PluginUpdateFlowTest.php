@@ -183,6 +183,25 @@ class PluginUpdateFlowTest extends TestCase
         Http::assertNotSent(fn ($request) => str_contains($request->url(), '/ltmp-api/install-result/'));
     }
 
+    public function test_a_download_that_is_not_a_zip_is_reported(): void
+    {
+        Http::swap(new \Illuminate\Http\Client\Factory);
+        Http::fake([
+            'https://marketplace.test/ltmp-api/download/*' => Http::response('<html>maintenance</html>', 200, ['Content-Type' => 'text/html']),
+            'https://marketplace.test/ltmp-api/install-result/*' => Http::response(null, 204),
+        ]);
+
+        try {
+            $this->service([$this->composer('1.5.0'), null])->installMarketplacePlugin($this->notes(), '1.5.0');
+            $this->fail('A download that is not a zip must fail the install');
+        } catch (\Illuminate\Http\Client\RequestException) {
+        }
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/ltmp-api/install-result/leantime_notes')
+            && $request['outcome'] === 'failed'
+            && $request['stage'] === 'download');
+    }
+
     public function test_an_update_that_does_not_load_is_rolled_back(): void
     {
         try {

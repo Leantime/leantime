@@ -831,20 +831,21 @@ class Plugins
     {
         // Two installs of the same plugin at once would share the kept previous version (and the
         // second could restore the first one's files): one at a time per plugin.
+        // Before the lock: if this lookup fails, no lock is left behind.
+        $wasInstalled = $expectedFolder !== null || $this->findInstalledMarketplacePlugin((string) $plugin->identifier) !== null;
+
         $lock = Cache::lock('plugins.install.'.strtolower((string) $plugin->identifier), 900);
         if (! $lock->get()) {
             throw new \RuntimeException(__('notification.plugin_update_busy'));
         }
 
-        $wasInstalled = $expectedFolder !== null || $this->findInstalledMarketplacePlugin((string) $plugin->identifier) !== null;
-
         try {
             $this->installMarketplacePluginLocked($plugin, $version, $expectedFolder);
         } catch (\Throwable $e) {
             // Refusals before the download (files missing, not newer) are local decisions, and the
-            // marketplace already knows why it refused a download (wrong key, user limit, ...).
-            // Everything after the download only happens here, so that is reported.
-            if ($this->installStage !== 'prepare' && ! $e instanceof RequestException) {
+            // marketplace already recorded why it refused a download (wrong key, user limit, ...).
+            // Everything else only happens here, so that is reported.
+            if ($this->installStage !== 'prepare' && ! self::isMarketplaceRefusal($e)) {
                 $this->reportInstallResult($plugin, $version, 'failed', $this->installStage, $e->getMessage());
             }
 
@@ -981,6 +982,17 @@ class Plugins
     }
 
     /**
+     * A download the marketplace itself refused: its JSON `{"error": ...}` answer. Not a response
+     * that only looked wrong here (a 200 that isn't a zip, an error from a redirect host).
+     */
+    private static function isMarketplaceRefusal(\Throwable $exception): bool
+    {
+        return $exception instanceof RequestException
+            && ! $exception->response->successful()
+            && is_string($exception->response->json('error'));
+    }
+
+    /**
      * Tells the marketplace how an install or update ended (POST /ltmp-api/install-result/{plugin}).
      * The marketplace only sees the download; whatever goes wrong after it (signature check, unzip,
      * the plugin not loading) only shows up here. Never throws and never slows an install down by
@@ -1004,7 +1016,8 @@ class Plugins
                     'outcome' => $outcome,
                     'stage' => $stage,
                     'error' => Str::limit($error, 1000, ''),
-                ]);
+                ])
+                ->throw();
         } catch (\Throwable $e) {
             Log::info('Could not report the plugin install result to the marketplace: '.$e->getMessage());
         }
