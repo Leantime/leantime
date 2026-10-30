@@ -1474,6 +1474,30 @@ class ProjectsServiceTest extends TestCase
         }
     }
 
+    public function test_user_managers_cannot_read_full_projects_through_another_account(): void
+    {
+        session(['userdata.id' => 1, 'userdata.role' => 'editor']);
+
+        $capturedUserIds = [];
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjects' => function (...$arguments) use (&$capturedUserIds) {
+                $capturedUserIds[] = $arguments['userId'] ?? $arguments[0];
+
+                return [];
+            },
+        ]);
+        $service = $this->makeService(
+            projectRepo: $projectRepo,
+            permissions: $this->permissionsGranting([UsersPermissions::VIEW, UsersPermissions::EDIT])
+        );
+
+        // Project records and budgets stay scoped to the caller's own access.
+        $service->getProjectsUserHasAccessTo(99);
+        $service->getProjectsAssignedToUser(99);
+
+        $this->assertSame([1, 1], $capturedUserIds);
+    }
+
     // ---- Project hierarchy safety (#3540: cyclic parents hung every page via the project selector) ----
 
     public function test_find_my_children_builds_nested_hierarchy(): void

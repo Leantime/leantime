@@ -925,11 +925,11 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller may
-     * read other accounts' projects — closing the cross-user param spoof on these @api reads (an RPC
-     * caller could otherwise list another user's projects by passing a foreign id). Mirrors the inline
-     * override in getProjectsUserHasAccessTo(). Recursion-safe: global checks only, never project
-     * membership.
+     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller sees
+     * all projects (projects.viewAll) and asks about someone else — closing the cross-user param spoof
+     * on these @api reads (an RPC caller could otherwise list another user's projects by passing a
+     * foreign id). Mirrors the inline override in getProjectsUserHasAccessTo(). Recursion-safe: it
+     * reads the grant map of the global role only, never project membership.
      *
      * @param  int|string|null  $userId
      */
@@ -937,7 +937,7 @@ class Projects extends BaseService implements ChecksProjectAccess
     {
         $sessionUser = (int) session('userdata.id');
 
-        if ((int) $userId !== $sessionUser && ! $this->mayReadOtherUsersProjects()) {
+        if ((int) $userId !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
             return $sessionUser;
         }
 
@@ -945,15 +945,21 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * Roles that see every project (projects.viewAll) may read anyone's projects, and so may user
-     * managers (users.view or users.edit): the user editor shows and saves the edited account's
-     * memberships.
+     * Like resolveScopedUserId(), for reads that return membership rows only (project id, name,
+     * project role), never project records. User managers (users.view or users.edit) may read
+     * another account's memberships too: the user editor shows and saves them.
+     *
+     * @param  int|string|null  $userId
      */
-    private function mayReadOtherUsersProjects(): bool
+    private function resolveMembershipUserId($userId): int
     {
-        return Roles::seesAllProjects(session('userdata.role'))
-            || $this->can(UsersPermissions::VIEW)
-            || $this->can(UsersPermissions::EDIT);
+        $isForeignUser = (int) $userId !== (int) session('userdata.id');
+
+        if ($isForeignUser && ($this->can(UsersPermissions::VIEW) || $this->can(UsersPermissions::EDIT))) {
+            return (int) $userId;
+        }
+
+        return $this->resolveScopedUserId($userId);
     }
 
     /**
@@ -966,7 +972,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function getProjectIdAssignedToUser($userId): false|array
     {
-        $userId = $this->resolveScopedUserId($userId);
+        $userId = $this->resolveMembershipUserId($userId);
 
         $projects = $this->projectRepository->getUserProjectRelation($userId);
 
@@ -1328,8 +1334,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * Role-based authorization on $userId, per @marcelfolaron review:
      *   - Not passed (null/0): use the authenticated session user
-     *   - Passed AND caller sees all projects (projects.viewAll) or manages users (users.view,
-     *     users.edit): honor the requested user id
+     *   - Passed AND caller sees all projects (projects.viewAll): honor the requested user id
      *     (admin tooling, "show me Alice's projects" workflows)
      *   - Passed by anyone else AND differs from session: ignored and
      *     overridden to the session user (prevents IDOR via the optional
@@ -1347,7 +1352,7 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         if ($userId === null || $userId === 0) {
             $userId = $sessionUser;
-        } elseif ($userId !== $sessionUser && ! $this->mayReadOtherUsersProjects()) {
+        } elseif ($userId !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
             $userId = $sessionUser;
         }
 
@@ -2757,7 +2762,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     /**
      * Retrieves the project relations for a given user.
      *
-     * Non-admins may only read their OWN relations (the userId is pinned to the session user).
+     * Callers read their OWN relations (the userId is pinned to the session user) unless they see all
+     * projects or manage users, see resolveMembershipUserId().
      *
      * @param  int  $userId  The user ID
      * @param  int|null  $projectId  Optional project ID filter
@@ -2767,7 +2773,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function getUserProjectRelation(int $userId, ?int $projectId = null): array
     {
-        $userId = $this->resolveScopedUserId($userId);
+        $userId = $this->resolveMembershipUserId($userId);
 
         return $this->projectRepository->getUserProjectRelation($userId, $projectId);
     }
