@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
  * answers the first PKCE-verified request with 401 {"error":"two_factor_required"}
  * and leaves the code alive for OidcMobileCode::SECOND_FACTOR_TTL_SECONDS; the
  * app then repeats the POST with `twofaCode`. A wrong code is 401
- * {"error":"two_factor_invalid"}; after MAX_SECOND_FACTOR_ATTEMPTS wrong codes
+ * {"error":"two_factor_invalid"}; after OidcMobileCode::MAX_SECOND_FACTOR_ATTEMPTS wrong codes
  * the one-time code is burned and the app has to start over (401 invalid_code).
  * Same keys and field as the AdvancedAuth password endpoint, so the app runs
  * one second-factor step for both. /status advertises `mobileSsoSecondFactor`.
@@ -35,9 +35,6 @@ class Mobile extends Controller
 {
     /** Per-IP cap on exchange attempts per minute — throttles code/verifier guessing. */
     private const MAX_ATTEMPTS_PER_MINUTE = 10;
-
-    /** Wrong second-factor codes one one-time code may absorb before it is burned. */
-    private const MAX_SECOND_FACTOR_ATTEMPTS = 5;
 
     /** Mobile SSO bearer lifetime. Deliberately NOT non-expiring; a lost device's
      *  token self-expires, and it can be revoked early via AccessTokenRepository::deleteToken. */
@@ -166,10 +163,10 @@ class Mobile extends Controller
 
             if (! $this->secondFactor->verify((string) ($user['twoFASecret'] ?? ''), $twofaCode)) {
                 // Count it against the code; a handful of wrong codes burns it so
-                // the one-time code can't be used to guess the second factor.
-                if ($this->codes->recordSecondFactorFailure($code) >= self::MAX_SECOND_FACTOR_ATTEMPTS) {
-                    $this->codes->consumeCode($code);
-
+                // the one-time code can't be used to guess the second factor. The
+                // store counts and burns in one locked step, so the limit holds
+                // under concurrent guesses and nothing is consumed separately here.
+                if ($this->codes->recordSecondFactorFailure($code) >= OidcMobileCode::MAX_SECOND_FACTOR_ATTEMPTS) {
                     return new JsonResponse(['error' => 'invalid_code'], 401);
                 }
 

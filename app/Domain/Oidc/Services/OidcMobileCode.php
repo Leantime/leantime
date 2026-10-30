@@ -49,6 +49,9 @@ class OidcMobileCode
     /** Lifetime once the exchange is waiting for the user's second factor. */
     public const SECOND_FACTOR_TTL_SECONDS = 180;
 
+    /** Wrong second-factor codes a one-time code survives; the limit burns it. */
+    public const MAX_SECOND_FACTOR_ATTEMPTS = 5;
+
     private const LOCK_SECONDS = 5;
 
     /**
@@ -103,36 +106,55 @@ class OidcMobileCode
     public function extendForSecondFactor(string $rawCode): bool
     {
         $key = $this->key($rawCode);
-        $data = $this->payload($key);
 
-        if ($data === null || ! empty($data['secondFactorExtended'])) {
-            return false;
-        }
+        // Same per-code lock as consumeCode(): the payload is re-read inside it, so
+        // a code consumed meanwhile is never written back into existence.
+        return $this->withCodeLock($key, false, function () use ($key): bool {
+            $data = $this->payload($key);
 
-        $data['secondFactorExtended'] = true;
-        $data['expiresAt'] = time() + self::SECOND_FACTOR_TTL_SECONDS;
-        $this->store($key, $data);
+            if ($data === null || ! empty($data['secondFactorExtended'])) {
+                return false;
+            }
 
-        return true;
+            $data['secondFactorExtended'] = true;
+            $data['expiresAt'] = time() + self::SECOND_FACTOR_TTL_SECONDS;
+            $this->store($key, $data);
+
+            return true;
+        });
     }
 
     /**
      * Count a wrong second-factor code against this code, keeping its remaining
-     * lifetime. Returns the new count (0 when the code is unknown or expired).
+     * lifetime. Returns the new count (0 when the code is unknown, expired, or
+     * another request holds its lock). Reaching MAX_SECOND_FACTOR_ATTEMPTS burns
+     * the code in the same locked step, so callers never consume it separately
+     * and concurrent wrong codes can't push the count past the limit.
      */
     public function recordSecondFactorFailure(string $rawCode): int
     {
         $key = $this->key($rawCode);
-        $data = $this->payload($key);
 
-        if ($data === null) {
-            return 0;
-        }
+        return $this->withCodeLock($key, 0, function () use ($key): int {
+            $data = $this->payload($key);
 
-        $data['secondFactorFailures'] = (int) ($data['secondFactorFailures'] ?? 0) + 1;
-        $this->store($key, $data);
+            if ($data === null) {
+                return 0;
+            }
 
-        return $data['secondFactorFailures'];
+            $count = (int) ($data['secondFactorFailures'] ?? 0) + 1;
+
+            if ($count >= self::MAX_SECOND_FACTOR_ATTEMPTS) {
+                Cache::forget($key);
+
+                return $count;
+            }
+
+            $data['secondFactorFailures'] = $count;
+            $this->store($key, $data);
+
+            return $count;
+        });
     }
 
     /**
@@ -153,30 +175,46 @@ class OidcMobileCode
     {
         $key = $this->key($rawCode);
 
-        // Fail CLOSED: without atomic locks we cannot guarantee single-use, so
-        // refuse rather than fall back to a racy non-atomic consume (which would
-        // reintroduce the double-mint window this method exists to prevent). All
-        // default Leantime stores implement LockProvider; a store here that
-        // doesn't is a misconfiguration worth surfacing loudly, not degrading to.
-        if (! Cache::getStore() instanceof LockProvider) {
-            Log::error('OidcMobileCode: cache store does not support atomic locks; refusing mobile SSO code consume. Configure a lock-capable cache store (file/redis/memcached/database).');
-
-            return false;
-        }
-
-        $lock = Cache::lock($key.'.lock', self::LOCK_SECONDS);
-
-        // Non-blocking: the loser of a concurrent consume gets false immediately
-        // instead of waiting, and its exchange is rejected.
-        if (! $lock->get()) {
-            return false;
-        }
-
-        try {
+        return $this->withCodeLock($key, false, function () use ($key): bool {
             $existed = $this->payload($key) !== null;
             Cache::forget($key);
 
             return $existed;
+        });
+    }
+
+    /**
+     * Run a read-modify-write on one code under its non-blocking cache lock.
+     *
+     * Fail CLOSED: without atomic locks we cannot guarantee single-use or an
+     * honest attempt count, so refuse rather than fall back to a racy write
+     * (which would reintroduce the double-mint window). All default Leantime
+     * stores implement LockProvider; a store here that doesn't is a
+     * misconfiguration worth surfacing loudly, not degrading to. The loser of a
+     * concurrent attempt gets $refused immediately instead of waiting.
+     *
+     * @template T
+     *
+     * @param  T  $refused  Returned when no lock can be taken.
+     * @param  callable(): T  $operation
+     * @return T
+     */
+    private function withCodeLock(string $key, mixed $refused, callable $operation): mixed
+    {
+        if (! Cache::getStore() instanceof LockProvider) {
+            Log::error('OidcMobileCode: cache store does not support atomic locks; refusing the mobile SSO code operation. Configure a lock-capable cache store (file/redis/memcached/database).');
+
+            return $refused;
+        }
+
+        $lock = Cache::lock($key.'.lock', self::LOCK_SECONDS);
+
+        if (! $lock->get()) {
+            return $refused;
+        }
+
+        try {
+            return $operation();
         } finally {
             $lock->release();
         }

@@ -315,8 +315,9 @@ class MobileTest extends \Unit\TestCase
     {
         $this->twoFactorUser(4);
         $this->secondFactor->method('verify')->willReturn(false);
-        $this->codes->method('recordSecondFactorFailure')->with('good')->willReturn(5);
-        $this->codes->expects($this->once())->method('consumeCode')->with('good')->willReturn(true);
+        // The store counts and burns in one locked step; the controller never consumes separately.
+        $this->codes->method('recordSecondFactorFailure')->with('good')->willReturn(OidcMobileCode::MAX_SECOND_FACTOR_ATTEMPTS);
+        $this->codes->expects($this->never())->method('consumeCode');
         $this->tokens->expects($this->never())->method('createToken');
 
         $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER, 'twofaCode' => '000000'])->exchange([]);
