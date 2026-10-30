@@ -225,7 +225,9 @@ class EmailWorkerTest extends TestCase
     public function test_an_earlier_read_does_not_hide_a_newer_unread_update_on_the_same_entity(): void
     {
         $queuedAt = time() - 120;
-        $this->inbox('tickets:12', read: gmdate('Y-m-d H:i:s', $queuedAt - 60), unread: gmdate('Y-m-d H:i:s', $queuedAt));
+        // The read row sits INSIDE the grace before the queue time, so the read check alone would
+        // pass: only the unread guard keeps this update new.
+        $this->inbox('tickets:12', read: gmdate('Y-m-d H:i:s', $queuedAt - EmailWorker::SEEN_GRACE_SECONDS + 1), unread: gmdate('Y-m-d H:i:s', $queuedAt));
 
         $this->worker()->handleQueue([$this->row('h1', 2, 'Ticket updated', 'tickets', 12, gmdate('Y-m-d H:i:s', $queuedAt))]);
 
