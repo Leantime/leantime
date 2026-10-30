@@ -44,6 +44,14 @@ class Details extends HtmxController
             $this->tpl->assign('formError', $this->pluginService->parseMarketplaceError($e));
 
             return 'plugin-installation';
+        } catch (\Exception $e) {
+            // Failures after the download (signature check, unzip, file permissions) carry a message
+            // meant for the admin; without this they ended in an error response and no message.
+            report($e);
+
+            $this->tpl->assign('formError', $e->getMessage());
+
+            return 'plugin-installation';
         }
 
         if ($this->pluginService->isEnabled($pluginModel->identifier)) {

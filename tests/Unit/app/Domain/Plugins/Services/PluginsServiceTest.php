@@ -118,6 +118,23 @@ class PluginsServiceTest extends TestCase
         $this->assertSame('Version 1.4.5 of this plugin does not support Leantime 2.0.0', $service->parseMarketplaceError($exception));
     }
 
+    /**
+     * Laravel cuts the response body in the exception message to 120 characters, so a longer
+     * marketplace message must be read from the response itself, not from the message.
+     */
+    public function test_parse_marketplace_error_reads_messages_longer_than_the_exception_summary(): void
+    {
+        /** @var PluginService $service */
+        $service = $this->make(PluginService::class);
+
+        $licenseNotFound = 'We could not find this license key. Please copy the key shown next to this plugin in My Account > License Keys on marketplace.leantime.io, or contact us at support@leantime.io';
+        $exception = new RequestException(
+            new HttpResponse(new PsrResponse(500, ['Content-Type' => 'application/json'], json_encode(['error' => $licenseNotFound, 'activated' => false])))
+        );
+
+        $this->assertSame($licenseNotFound, $service->parseMarketplaceError($exception));
+    }
+
     public function test_parse_marketplace_error_falls_back_to_generic_message(): void
     {
         /** @var PluginService $service */
