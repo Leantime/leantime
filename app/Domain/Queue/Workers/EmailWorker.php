@@ -4,54 +4,84 @@ namespace Leantime\Domain\Queue\Workers;
 
 use Leantime\Core\Language;
 use Leantime\Core\Mailer;
+use Leantime\Domain\Notifications\Repositories\Notifications as NotificationsRepository;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Repositories\Users;
 
+/**
+ * Sends the email digest: everything queued for a person since their last email, in one mail.
+ *
+ * The digest has two parts. "New" holds what the person has not seen yet, with the full text and
+ * link as before. "Already seen" holds what they already read in the inbox (web or app) since it
+ * was queued: one quiet line each, no link. A digest with nothing new is not sent at all; the seen
+ * rows wait for the next digest that has news, and are dropped after {@see MAX_AGE_DAYS} like any
+ * other row. Rows queued without an entity (module / moduleId) are always new.
+ *
+ * How often a person gets a digest is their own setting. The company setting is the shortest wait
+ * between two digests for everyone: it fills in for a person who chose nothing, and it wins over a
+ * shorter personal wait, never over a longer one. Admins can make email quieter, not louder.
+ */
 class EmailWorker
 {
+    /** Queued rows older than this are dropped unsent. */
+    public const MAX_AGE_DAYS = 14;
+
+    /** Wait between two digests when neither the person nor the company chose one. */
+    public const DEFAULT_FREQUENCY_SECONDS = 900;
+
+    /**
+     * An inbox row read this many seconds before the email was queued still counts as read for
+     * it: the inbox row and the queue row of one event are written by the same request, but by
+     * two clocks.
+     */
+    public const SEEN_GRACE_SECONDS = 120;
+
     public function __construct(
         private Users $userRepo,
         private Setting $settingsRepo,
         private Mailer $mailer,
         private Queue $queue,
-        private Language $language
+        private Language $language,
+        private NotificationsRepository $notifications
     ) {}
 
-    public function handleQueue($messages)
+    /**
+     * @param  array<int, array<string, mixed>>  $messages  zp_queue rows of the email channel.
+     */
+    public function handleQueue($messages): void
     {
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
 
-        $allMessagesToSend = [];
-        $allMessagesToDelete = [];
-        $n = 0;
+        $messagesByUser = [];
+        $expiredHashes = [];
         foreach ($messages as $message) {
-            $n++;
-            $currentUserId = $message['userId'];
+            $messageDate = $this->utc((string) $message['thedate']);
 
-            // Don't send messages older than 2 weeks.
-            $fromTz = new \DateTimeZone('UTC');
-            $messageDate = \DateTime::createFromFormat('Y-m-d H:i:s', $message['thedate'], $fromTz);
+            // Don't send messages older than two weeks. Expired rows go regardless of whether
+            // their owner gets a digest this run, so they never pile up behind seen ones.
+            if ($messageDate === null || $messageDate->diff($now)->days > self::MAX_AGE_DAYS) {
+                $expiredHashes[] = $message['msghash'];
 
-            $today = new \DateTime(datetime: 'now', timezone: $fromTz);
-
-            if ($messageDate->diff($today)->days <= 14) {
-
-                $allMessagesToSend[$currentUserId][$message['msghash']] = [
-                    'thedate' => $message['thedate'],
-                    'subject' => $message['subject'],
-                    'message' => $message['message'],
-                    'projectId' => $message['projectId'],
-                ];
-
+                continue;
             }
-            // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
-            // and here we need to group the messages in an array to know which messages are grouped to group-delete them
-            // Discard all messages
-            $allMessagesToDelete[$currentUserId][] = $message['msghash'];
+
+            $messagesByUser[(int) $message['userId']][$message['msghash']] = [
+                'thedate' => $message['thedate'],
+                'subject' => $message['subject'],
+                'message' => $message['message'],
+                'projectId' => $message['projectId'],
+                'module' => $message['module'] ?? null,
+                'moduleId' => $message['moduleId'] ?? null,
+            ];
         }
 
-        foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser) {
-            $theuser = $this->userRepo->getUser($currentUserId);
+        if ($expiredHashes !== []) {
+            $this->queue->deleteMessageInQueue($expiredHashes);
+        }
+
+        foreach ($messagesByUser as $userId => $userMessages) {
+            $theuser = $this->userRepo->getUser($userId);
 
             if ($theuser === false) {
                 continue;
@@ -59,77 +89,166 @@ class EmailWorker
 
             $recipient = $theuser['username'];
 
-            // DONE : Deal with users parameters to allow them define a maximum (and minimum ?) frequency to receive mails
-            $lastMessageDate = strtotime($this->settingsRepo->getSetting('usersettings.'.$theuser['id'].'.lastMessageDate'));
-            $nowDate = time();
+            $lastMessageDate = strtotime((string) $this->settingsRepo->getSetting('usersettings.'.$theuser['id'].'.lastMessageDate'));
+            $timeSince = abs(time() - (int) $lastMessageDate);
 
-            // echo for DEBUG PURPOSE
-            // debug_print("Last message to " . $recipient . " was on " . date('Y-m-d H:i:s', $lastMessageDate));
-            $timeSince = abs($nowDate - $lastMessageDate);
-
-            // Get company message frequency default
-            $messageFrequency = $this->settingsRepo->getSetting('companysettings.messageFrequency');
-
-            // Check if user has frequency set
-            if (empty($messageFrequency)) {
-                $messageFrequency = $this->settingsRepo->getSetting('usersettings.'.$theuser['id'].'.messageFrequency');
-            }
-
-            // Last security to avoid flooding people.
-            if (empty($messageFrequency)) {
-                $messageFrequency = 900;
-            }
-            // echo for DEBUG PURPOSE
-            // debug_print("The message frequency for " . $recipient . " : " . $messageFrequency);
-
-            if ($timeSince < $messageFrequency) {
-                // echo for DEBUG PURPOSE
-                // debug_print("Elapsed time not enough for " . $recipient . " : skipping till " . date("Y-m-d H:i:s", $lastMessageDate + $messageFrequency));
+            if ($timeSince < $this->frequencyFor((int) $theuser['id'])) {
                 continue;
             }
 
-            // TODO here : set up a true templating system to format the messages
-            $formattedHTML = $this->doFormatMail($messageToSendToUser);
+            [$new, $seen] = $this->splitBySeen((int) $theuser['id'], $userMessages);
 
-            // DONE Tranlastion needed somewhere ?
+            // Nothing new: no email. The seen rows stay queued and ride along with the next
+            // digest that has news, so the person still gets a complete record.
+            if ($new === []) {
+                continue;
+            }
 
-            // DONE : Send the message with PHPMailer here
             $this->mailer->setContext('latest_updates');
-            if (count($messageToSendToUser) == 1) {
-                reset($messageToSendToUser);
-                $this->mailer->setSubject(current($messageToSendToUser)['subject']);
+            if (count($new) == 1) {
+                $this->mailer->setSubject(current($new)['subject']);
             } else {
                 $this->mailer->setSubject($this->language->__('email_notifications.latest_updates_subject'));
             }
-            $this->mailer->setHtml($formattedHTML);
-            $to = [$recipient];
+            $this->mailer->setHtml($this->doFormatMail($new, $seen));
 
-            $this->mailer->sendMail($to, 'Leantime System');
+            $this->mailer->sendMail([$recipient], 'Leantime System');
 
             // Delete the corresponding messages from the queue when the mail is sent
             // TODO here : only delete these if the send was successful
-            // echo for DEBUG PURPOSE
-            // debug_print("Messages send (about to delete) :");
-
-            $this->queue->deleteMessageInQueue($allMessagesToDelete[$currentUserId]);
+            $this->queue->deleteMessageInQueue(array_keys($userMessages));
 
             // Store the last time a mail was sent to $recipient email
-            $thedate = date('Y-m-d H:i:s');
-            $this->settingsRepo->saveSetting('usersettings.'.$theuser['id'].'.lastMessageDate', $thedate);
+            $this->settingsRepo->saveSetting('usersettings.'.$theuser['id'].'.lastMessageDate', date('Y-m-d H:i:s'));
         }
     }
 
-    // Fake template to be replaced by something better
-    // TODO : Rework email templating system
-    private function doFormatMail($messageToSendToUser): string
+    /**
+     * The shortest wait, in seconds, between two digests for this person.
+     *
+     * The person's own choice, with the company value as the floor: it stands in when they chose
+     * nothing and wins when theirs is shorter. Neither set means {@see DEFAULT_FREQUENCY_SECONDS}.
+     */
+    public function frequencyFor(int $userId): int
+    {
+        $own = (int) $this->settingsRepo->getSetting('usersettings.'.$userId.'.messageFrequency');
+        $company = (int) $this->settingsRepo->getSetting('companysettings.messageFrequency');
+
+        if ($own > 0 && $company > 0) {
+            return max($own, $company);
+        }
+
+        if ($own > 0) {
+            return $own;
+        }
+
+        if ($company > 0) {
+            return $company;
+        }
+
+        return self::DEFAULT_FREQUENCY_SECONDS;
+    }
+
+    /**
+     * Splits a person's queued rows into [new, seen], each keyed by msghash in queue order.
+     *
+     * A row is seen when the person read an inbox notification about the same entity (module +
+     * moduleId) at or after the row was queued, within {@see SEEN_GRACE_SECONDS}. Rows without an
+     * entity are new.
+     *
+     * @param  array<string, array<string, mixed>>  $userMessages
+     * @return array{0: array<string, array<string, mixed>>, 1: array<string, array<string, mixed>>}
+     */
+    private function splitBySeen(int $userId, array $userMessages): array
+    {
+        $entities = [];
+        foreach ($userMessages as $message) {
+            if (! empty($message['module']) && $message['moduleId'] !== null) {
+                $entities[] = ['module' => (string) $message['module'], 'moduleId' => (int) $message['moduleId']];
+            }
+        }
+
+        $lastRead = $entities === [] ? [] : $this->notifications->lastReadByEntity($userId, $entities);
+
+        $new = [];
+        $seen = [];
+        foreach ($userMessages as $hash => $message) {
+            if ($this->wasSeen($message, $lastRead)) {
+                $seen[$hash] = $message;
+            } else {
+                $new[$hash] = $message;
+            }
+        }
+
+        return [$new, $seen];
+    }
+
+    /**
+     * @param  array<string, mixed>  $message  A queued row.
+     * @param  array<string, string>  $lastRead  From {@see NotificationsRepository::lastReadByEntity()}.
+     */
+    private function wasSeen(array $message, array $lastRead): bool
+    {
+        if (empty($message['module']) || $message['moduleId'] === null) {
+            return false;
+        }
+
+        $key = $message['module'].':'.(int) $message['moduleId'];
+        if (! isset($lastRead[$key])) {
+            return false;
+        }
+
+        $readAt = $this->utc($lastRead[$key]);
+        $queuedAt = $this->utc((string) $message['thedate']);
+        if ($readAt === null || $queuedAt === null) {
+            return false;
+        }
+
+        return $readAt->getTimestamp() >= $queuedAt->getTimestamp() - self::SEEN_GRACE_SECONDS;
+    }
+
+    /** Parses a UTC `Y-m-d H:i:s` database timestamp; null when it isn't one. */
+    private function utc(string $dateTime): ?\DateTimeImmutable
+    {
+        $parsed = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dateTime, new \DateTimeZone('UTC'));
+
+        return $parsed === false ? null : $parsed;
+    }
+
+    /**
+     * The digest body: the new items in full, then, when there are any, the seen items as one
+     * line each.
+     *
+     * @param  array<string, array<string, mixed>>  $new
+     * @param  array<string, array<string, mixed>>  $seen
+     */
+    private function doFormatMail(array $new, array $seen): string
     {
         $outputHTML = $this->language->__('text.here_are_news')."<br/>\n";
-        foreach ($messageToSendToUser as $chunk) {
+
+        if ($seen !== []) {
+            $outputHTML .= '<h3 style="margin: 12px 0 3px 3px; font-size: 14px;">'.$this->language->__('email_notifications.digest_new_heading').'</h3>';
+        }
+
+        foreach ($new as $chunk) {
             $outputHTML .= '<div style="border-top: 1px solid #ddd; margin: 3px; padding: 3px;">';
             $outputHTML .= '<div style="margin: 0px; padding: 0px; float : right">'.$chunk['thedate'].'</div>';
             $outputHTML .= '<div><p><em>'.$chunk['subject'].'</em></p>';
             $outputHTML .= $chunk['message'].'</div>';
             $outputHTML .= '</div>';
+        }
+
+        if ($seen !== []) {
+            $outputHTML .= '<h3 style="margin: 18px 0 0 3px; font-size: 14px; color: #666;">'.$this->language->__('email_notifications.digest_seen_heading').'</h3>';
+            $outputHTML .= '<p style="margin: 0 3px 3px 3px; color: #888; font-size: 12px;">'.$this->language->__('email_notifications.digest_seen_hint').'</p>';
+            foreach ($seen as $chunk) {
+                // One quiet line: when, and what it was about. The subject is plain text; the
+                // body, with its link, stays out.
+                $outputHTML .= '<div style="border-top: 1px solid #eee; margin: 3px; padding: 3px; color: #888; font-size: 12px;">';
+                $outputHTML .= '<span style="float: right;">'.$chunk['thedate'].'</span>';
+                $outputHTML .= htmlspecialchars(strip_tags((string) $chunk['subject']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $outputHTML .= '</div>';
+            }
         }
 
         return $outputHTML;

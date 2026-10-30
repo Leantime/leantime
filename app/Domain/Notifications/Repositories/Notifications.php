@@ -83,6 +83,50 @@ class Notifications
         return $this->db->table('zp_notifications')->insert($insertData);
     }
 
+    /**
+     * When the user last read an inbox notification about each of the given entities.
+     *
+     * @param  int  $userId  The inbox owner.
+     * @param  array<int, array{module: string, moduleId: int}>  $entities  Entities to look up.
+     * @return array<string, string> "module:moduleId" => the newest `datetime` (UTC, Y-m-d H:i:s)
+     *                               among that entity's READ notifications. Entities with no read
+     *                               notification are absent.
+     */
+    public function lastReadByEntity(int $userId, array $entities): array
+    {
+        $pairs = [];
+        foreach ($entities as $entity) {
+            $pairs[$entity['module'].':'.(int) $entity['moduleId']] = ['module' => $entity['module'], 'moduleId' => (int) $entity['moduleId']];
+        }
+
+        if ($pairs === []) {
+            return [];
+        }
+
+        $rows = $this->db->table('zp_notifications')
+            ->selectRaw('module, moduleId, MAX(datetime) as lastRead')
+            ->where('userId', $userId)
+            ->where('read', 1)
+            ->where(function ($query) use ($pairs) {
+                foreach ($pairs as $pair) {
+                    $query->orWhere(function ($entity) use ($pair) {
+                        $entity->where('module', $pair['module'])->where('moduleId', $pair['moduleId']);
+                    });
+                }
+            })
+            ->groupBy('module', 'moduleId')
+            ->get();
+
+        $lastRead = [];
+        foreach ($rows as $row) {
+            if ($row->lastRead !== null) {
+                $lastRead[$row->module.':'.(int) $row->moduleId] = (string) $row->lastRead;
+            }
+        }
+
+        return $lastRead;
+    }
+
     public function markNotificationRead(int $id, int $userId): bool
     {
         return $this->db->table('zp_notifications')

@@ -337,6 +337,24 @@ class Projects extends BaseService implements ChecksProjectAccess
      *           webhooks. It must only run as the last step after the calling service or
      *           controller has already authorized the change being announced.
      */
+    /**
+     * The id the inbox records a notification under: the entity's id when the notification
+     * carries an entity, else the project's. The same value goes on the queued email, so the
+     * digest can match it against the inbox row.
+     */
+    private function notificationEntityId(Notification $notification): int
+    {
+        if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
+            return (int) $notification->entity['id'];
+        }
+
+        if (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
+            return (int) $notification->entity->id;
+        }
+
+        return (int) $notification->projectId;
+    }
+
     public function notifyProjectUsers(Notification $notification): void
     {
 
@@ -419,8 +437,12 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         // NEW Queuing messaging system
+        // The entity the notification is about, in the inbox's terms, so the digest can tell an
+        // email the person already read in the inbox from a new one.
+        $entityId = $this->notificationEntityId($notification);
+
         $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId);
+        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId);
 
         // Send to messengers
         $this->messengerService->sendNotificationToMessengers($notification, $projectName);
@@ -449,11 +471,9 @@ class Projects extends BaseService implements ChecksProjectAccess
         ];
 
         $contentToCheck = '';
-        // Find entity ID & content
+        // Find mentionable content
         // Todo once all entities are models this if statement can be reduced
         if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
-            $entityId = $notification->entity['id'];
-
             if (isset($mentionFields[$notification->module])) {
                 $fields = $mentionFields[$notification->module];
 
@@ -464,8 +484,6 @@ class Projects extends BaseService implements ChecksProjectAccess
                 }
             }
         } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
-            $entityId = $notification->entity->id;
-
             if (isset($mentionFields[$notification->module])) {
                 $fields = $mentionFields[$notification->module];
 
@@ -475,9 +493,6 @@ class Projects extends BaseService implements ChecksProjectAccess
                     }
                 }
             }
-        } else {
-            // Entity id not set use project id
-            $entityId = $notification->projectId;
         }
 
         if ($contentToCheck != '') {
