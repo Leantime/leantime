@@ -1,3 +1,55 @@
+# Version: 3.13.0
+
+## Highlights
+
+### Mobile push notifications
+Leantime can now send push notifications to the mobile apps, with its own on/off switch separate from email, routing data so taps open the right item, and a relay send path plus admin settings for self-hosted servers. (#3966, #3969, #3964, #3974)
+
+### Per-project modules
+Each project can now switch individual modules - including Time Tracking - on or off, and projects with a module turned off are left out of search, goal roll-ups and reports. (#3928, #3935, #3937, #3932)
+
+## Upgrade Notes
+- **Database update:** 3.13 runs three migrations (db version 3.5.33). They add a `metadata` column to projects for the module switches, give roles a separate key and base role so custom roles can exist, and grant the new permissions to existing roles. After upgrading, log in as an admin and confirm the database update screen, or run `php bin/leantime db:migrate`.
+- **Laravel 12:** Leantime now runs on Laravel 12. PHP 8.2 is still the minimum; the Docker images move to PHP 8.4. The release packages include the new dependencies; git-based installs need to run `composer install`.
+- **McpServer plugin:** update to McpServer 2.0. Core now ships laravel/mcp 1.x, which McpServer 1.x can't run on.
+- **Other plugins:** the 3.13 releases of CustomFields, Notes, PgmPro, StrategyPro and Whiteboards require Leantime 3.13. Update Leantime first, then the plugins.
+- **MCP clients:** `/mcp` speaks the MCP 2026-07-28 protocol and still answers `initialize` for 2025-03-26 to 2025-11-25 clients. Errors now come back with HTTP 400/404/500 instead of 200.
+- **Plugin authors:** htmx client events are now declared on the domain event classes (`CLIENT_EVENT`), and the `HtmxTicketEvents` enum is gone. Reference events by class, e.g. `TicketUpdated::class` (#3949).
+
+## New Features
+- **Mobile push notifications** - Delivery tier, category and routing data in push payloads, a dedicated mobile push toggle, and a relay send path with admin settings for self-hosted servers (#3966, #3969, #3964, #3974)
+- **Two-factor at mobile SSO** - OIDC now verifies the second factor during the mobile SSO exchange (#3972)
+- **"Assigned to you" notifications** - Ticket assignment now sends an "Assigned to you" notification (#3970)
+- **Per-project modules** - Turn individual modules, including Time Tracking, on or off per project (#3928, #3935, #3937)
+- **Expanded roles and permissions** - New `projects.viewAll` and `roles.manage` permissions reach custom roles, with roles stored as data keyed by level and base role (#3944, #3940)
+- **Color schemes and backgrounds** - Core color schemes and backgrounds with a tidied account settings tab, plus links that turn to the text colour on hover without an underline (#3945, #3946)
+- **MCP 1.x support** - Upgraded to laravel/mcp 1.x and the MCP 2026-07-28 protocol (#3957)
+- **Shared layout components** - Content boxes, page headers, section titles, field labels, accordions and resizable sidebars now use shared components for a consistent layout (#3954, #3948, #3950, #3942, #3930, #3926)
+
+## Bug Fixes
+- Personal webhooks no longer follow the email switch and now include your own changes (#3955)
+- Fresh installs create the access tokens table with the push columns (#3963)
+- List view detail now initializes its fields and the My Calendar toolbar stays on one line (#3953)
+- UI states are stored per row so saves apply immediately and can't overwrite each other (#3947)
+- Link-only goals are counted once in roll-ups (#3934)
+- Removed the empty view bar and set a single 10px gap between page boxes (#3933)
+- Restored the Retrospectives menu entry (#3926)
+- Dashboard Month view events and the "+N more" popover are readable again (#3880)
+- Each class's events are now named after that class (#3936)
+
+## Localization
+- **All 43 languages updated** - Brought every language up to date with en-US, added ten more selectable languages, and translated JS/PHP and project module strings across all languages (#3931, #3941, #3938)
+- **English strings centralized** - Moved hard-coded English out of JavaScript, PHP and core templates into en-US.ini (#3938, #3929)
+
+## Dependency Updates
+- Upgraded to Laravel 12 (#3956)
+- Docker images, dev environment and CI now run on PHP 8.4 (#3959)
+- Bumped DOMPurify to 3.4.17 and fast-uri to 3.1.9 (#3965)
+- Bumped markdown-it to 14.3.3 for DoS advisories (#3960)
+- Bumped bundled plugins for project modules, menuType retirement and laravel/mcp 1.x (#3958, #3939)
+
+---
+
 # Version: 3.12.0
 
 ## Highlights
