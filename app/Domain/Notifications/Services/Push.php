@@ -380,8 +380,8 @@ class Push
      *    fields the system needs to show buttons and rank the alert: 'category'
      *    (leantime-comment | leantime-task, omitted for 'none'), 'thread-id' for
      *    grouping, 'interruption-level' (active for tier 1, passive for tier 2 so it
-     *    makes no sound and leaves the screen dark) and 'relevance-score' (what the
-     *    scheduled summary features first).
+     *    leaves the screen dark), 'sound' (default, tier 1 only; tier 2 stays silent)
+     *    and 'relevance-score' (what the scheduled summary features first).
      *
      * The PushRelay plugin builds the same shape for self-hosted instances; keep
      * the two in step.
@@ -409,6 +409,11 @@ class Push
             'interruption-level' => $direct ? 'active' : 'passive',
             'relevance-score' => self::relevanceScore($data),
         ];
+        // 'active' alone is silent: the sound is its own key. Tier 1 plays the default
+        // sound; tier 2 omits it so a quiet alert stays quiet.
+        if ($direct) {
+            $aps['sound'] = 'default';
+        }
         if (($data['threadId'] ?? '') !== '') {
             $aps['thread-id'] = $data['threadId'];
         }

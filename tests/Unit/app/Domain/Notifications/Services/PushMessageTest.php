@@ -36,9 +36,10 @@ class PushMessageTest extends TestCase
         $this->assertSame([
             'interruption-level' => 'active',
             'relevance-score' => 1.0,
+            'sound' => 'default',
             'thread-id' => 'ticket-42',
             'category' => 'leantime-task',
-        ], $message['apns']['payload']['aps']);
+        ], $message['apns']['payload']['aps'], "tier 1 plays a sound; 'active' alone is silent");
         $this->assertArrayNotHasKey('android', $message);
     }
 
@@ -49,6 +50,7 @@ class PushMessageTest extends TestCase
 
         $this->assertSame('passive', $aps['interruption-level']);
         $this->assertSame(0.2, $aps['relevance-score']);
+        $this->assertArrayNotHasKey('sound', $aps, 'quiet means no sound');
         $this->assertArrayNotHasKey('category', $aps, "'none' registers no buttons");
         $this->assertArrayNotHasKey('thread-id', $aps);
         $this->assertSame('2', $message['data']['tier']);
