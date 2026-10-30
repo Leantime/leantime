@@ -161,23 +161,33 @@ class Mobile extends Controller
                 return new JsonResponse(['error' => 'two_factor_required'], 401);
             }
 
-            if (! $this->secondFactor->verify((string) ($user['twoFASecret'] ?? ''), $twofaCode)) {
-                // Count it against the code; a handful of wrong codes burns it so
-                // the one-time code can't be used to guess the second factor. The
-                // store counts and burns in one locked step, so the limit holds
-                // under concurrent guesses and nothing is consumed separately here.
-                if ($this->codes->recordSecondFactorFailure($code) >= OidcMobileCode::MAX_SECOND_FACTOR_ATTEMPTS) {
-                    return new JsonResponse(['error' => 'invalid_code'], 401);
-                }
+            // Verified and settled under the code's lock in one step (see
+            // OidcMobileCode::checkSecondFactor): the TOTP check only runs while
+            // this request holds the lock, so concurrent exchanges can't each spend
+            // a free guess; a handful of wrong codes burns the one-time code so it
+            // can't be used to guess the second factor; and a right code consumes
+            // it right there, so nothing is consumed separately below.
+            $secret = (string) ($user['twoFASecret'] ?? '');
+            $outcome = $this->codes->checkSecondFactor($code, fn (): bool => $this->secondFactor->verify($secret, $twofaCode));
 
+            if ($outcome === OidcMobileCode::SECOND_FACTOR_WRONG) {
                 return new JsonResponse(['error' => 'two_factor_invalid'], 401);
             }
+
+            if ($outcome !== OidcMobileCode::SECOND_FACTOR_OK) {
+                // Burned (limit reached, expired) or refused (a concurrent exchange
+                // for the same code is in flight): the app starts the sign-in over.
+                return new JsonResponse(['error' => 'invalid_code'], 401);
+            }
+
+            $consumed = true;
         }
 
-        // All checks passed — atomically burn the code. consumeCode() returns
-        // false if a concurrent exchange already consumed it, so only the winner
-        // of that race mints (no double-mint from one single-use code).
-        if (! $this->codes->consumeCode($code)) {
+        // All checks passed — atomically burn the code, unless the second-factor
+        // step already did. consumeCode() returns false if a concurrent exchange
+        // already consumed it, so only the winner of that race mints (no
+        // double-mint from one single-use code).
+        if (! ($consumed ?? false) && ! $this->codes->consumeCode($code)) {
             return new JsonResponse(['error' => 'invalid_code'], 401);
         }
 

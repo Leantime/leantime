@@ -67,32 +67,46 @@ class OidcMobileCodeTest extends \Unit\TestCase
         $this->assertFalse($this->codes->extendForSecondFactor('never-minted'));
     }
 
-    public function test_failures_count_up_and_keep_the_deadline(): void
+    public function test_wrong_codes_count_up_and_keep_the_deadline(): void
     {
         $code = $this->codes->createCode(42, 'ch');
         $this->codes->extendForSecondFactor($code);
         $deadline = $this->stored($code)['expiresAt'];
+        $wrong = static fn (): bool => false;
 
-        $this->assertSame(1, $this->codes->recordSecondFactorFailure($code));
-        $this->assertSame(2, $this->codes->recordSecondFactorFailure($code));
+        $this->assertSame(OidcMobileCode::SECOND_FACTOR_WRONG, $this->codes->checkSecondFactor($code, $wrong));
+        $this->assertSame(OidcMobileCode::SECOND_FACTOR_WRONG, $this->codes->checkSecondFactor($code, $wrong));
         $this->assertSame(2, $this->codes->peekCode($code)['secondFactorFailures'], 'the count survives a peek');
         $this->assertSame($deadline, $this->stored($code)['expiresAt'], 'counting never moves the deadline');
-        $this->assertSame(0, $this->codes->recordSecondFactorFailure('never-minted'));
+        $this->assertSame(OidcMobileCode::SECOND_FACTOR_BURNED, $this->codes->checkSecondFactor('never-minted', $wrong));
     }
 
     public function test_the_limit_burns_the_code_in_the_same_step(): void
     {
         $code = $this->codes->createCode(42, 'ch');
         $this->codes->extendForSecondFactor($code);
+        $wrong = static fn (): bool => false;
 
         for ($i = 1; $i < OidcMobileCode::MAX_SECOND_FACTOR_ATTEMPTS; $i++) {
-            $this->assertSame($i, $this->codes->recordSecondFactorFailure($code));
-            $this->assertNotNull($this->codes->peekCode($code), 'the code survives below the limit');
+            $this->assertSame(OidcMobileCode::SECOND_FACTOR_WRONG, $this->codes->checkSecondFactor($code, $wrong));
+            $this->assertSame($i, $this->codes->peekCode($code)['secondFactorFailures'], 'the code survives below the limit');
         }
 
-        $this->assertSame(OidcMobileCode::MAX_SECOND_FACTOR_ATTEMPTS, $this->codes->recordSecondFactorFailure($code));
+        $this->assertSame(OidcMobileCode::SECOND_FACTOR_BURNED, $this->codes->checkSecondFactor($code, $wrong));
         $this->assertNull($this->codes->peekCode($code), 'the limit burns the code at once; nothing to consume afterwards');
         $this->assertFalse($this->codes->consumeCode($code));
+    }
+
+    public function test_a_right_code_consumes_the_one_time_code_in_the_same_step(): void
+    {
+        $code = $this->codes->createCode(42, 'ch');
+        $this->codes->extendForSecondFactor($code);
+        $right = static fn (): bool => true;
+
+        $this->assertSame(OidcMobileCode::SECOND_FACTOR_OK, $this->codes->checkSecondFactor($code, $right));
+        $this->assertNull($this->codes->peekCode($code), 'nothing is left to consume separately');
+        $this->assertFalse($this->codes->consumeCode($code));
+        $this->assertSame(OidcMobileCode::SECOND_FACTOR_BURNED, $this->codes->checkSecondFactor($code, $right), 'a replay with the right code finds nothing');
     }
 
     public function test_a_consumed_code_is_never_written_back_by_a_late_failure_or_extend(): void
@@ -100,30 +114,43 @@ class OidcMobileCodeTest extends \Unit\TestCase
         $code = $this->codes->createCode(42, 'ch');
         $this->assertTrue($this->codes->consumeCode($code));
 
-        $this->assertSame(0, $this->codes->recordSecondFactorFailure($code));
+        $this->assertSame(OidcMobileCode::SECOND_FACTOR_BURNED, $this->codes->checkSecondFactor($code, static fn (): bool => false));
         $this->assertNull($this->codes->peekCode($code), 'a stale failure does not recreate the code');
 
         $this->assertFalse($this->codes->extendForSecondFactor($code));
         $this->assertNull($this->codes->peekCode($code), 'a stale extend does not recreate the code');
     }
 
-    public function test_second_factor_writes_wait_their_turn_behind_the_codes_lock(): void
+    /**
+     * Two exchanges racing on one code: the one that doesn't hold the lock is refused
+     * before the second factor is even checked, so it can't spend an uncounted guess.
+     */
+    public function test_a_concurrent_exchange_is_refused_before_any_guess(): void
     {
         $code = $this->codes->createCode(42, 'ch');
         $held = \Illuminate\Support\Facades\Cache::lock('oidc.mobile.code.'.hash('sha256', $code).'.lock', 5);
         $this->assertTrue($held->get(), 'the test holds the lock another request would hold');
+        $verifyRan = false;
 
         try {
             $this->assertFalse($this->codes->extendForSecondFactor($code), 'refused while another request holds the lock');
-            $this->assertSame(0, $this->codes->recordSecondFactorFailure($code), 'refused, not counted');
-            $this->assertSame(0, $this->stored($code)['secondFactorFailures'], 'nothing was written');
+            $outcome = $this->codes->checkSecondFactor($code, function () use (&$verifyRan): bool {
+                $verifyRan = true;
+
+                return true;
+            });
+            $this->assertSame(OidcMobileCode::SECOND_FACTOR_REFUSED, $outcome);
+            $this->assertFalse($verifyRan, 'the second factor is never checked outside the lock');
+            $this->assertSame(0, $this->stored($code)['secondFactorFailures'], 'nothing was counted');
+            $this->assertNotNull($this->codes->peekCode($code), 'nothing was consumed');
             $this->assertFalse(! empty($this->stored($code)['secondFactorExtended']), 'nothing was extended');
         } finally {
             $held->release();
         }
 
         $this->assertTrue($this->codes->extendForSecondFactor($code), 'works again once the lock is free');
-        $this->assertSame(1, $this->codes->recordSecondFactorFailure($code));
+        $this->assertSame(OidcMobileCode::SECOND_FACTOR_WRONG, $this->codes->checkSecondFactor($code, static fn (): bool => false));
+        $this->assertSame(1, $this->codes->peekCode($code)['secondFactorFailures']);
     }
 
     public function test_an_expired_code_cannot_be_extended_or_read(): void

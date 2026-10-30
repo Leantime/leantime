@@ -124,22 +124,45 @@ class OidcMobileCode
         });
     }
 
+    public const SECOND_FACTOR_OK = 'ok';
+
+    public const SECOND_FACTOR_WRONG = 'wrong';
+
+    public const SECOND_FACTOR_BURNED = 'burned';
+
+    public const SECOND_FACTOR_REFUSED = 'refused';
+
     /**
-     * Count a wrong second-factor code against this code, keeping its remaining
-     * lifetime. Returns the new count (0 when the code is unknown, expired, or
-     * another request holds its lock). Reaching MAX_SECOND_FACTOR_ATTEMPTS burns
-     * the code in the same locked step, so callers never consume it separately
-     * and concurrent wrong codes can't push the count past the limit.
+     * Check a second-factor code against this one-time code and settle the
+     * outcome in ONE locked step: $verify runs only while this request holds
+     * the code's lock, so concurrent exchanges can't each spend a free guess
+     * and the attempt limit holds.
+     *
+     *  - OK: the second factor verified and the one-time code is consumed right
+     *    here (never separately), so a replay with the same code finds nothing.
+     *  - WRONG: counted against the code, which keeps its remaining lifetime.
+     *  - BURNED: unknown, expired, or this wrong code reached
+     *    MAX_SECOND_FACTOR_ATTEMPTS; the code is gone and the sign-in starts over.
+     *  - REFUSED: another exchange holds the code's lock right now; $verify did
+     *    not run and nothing was counted. Callers reject, they don't wait.
+     *
+     * @param  callable(): bool  $verify
      */
-    public function recordSecondFactorFailure(string $rawCode): int
+    public function checkSecondFactor(string $rawCode, callable $verify): string
     {
         $key = $this->key($rawCode);
 
-        return $this->withCodeLock($key, 0, function () use ($key): int {
+        return $this->withCodeLock($key, self::SECOND_FACTOR_REFUSED, function () use ($key, $verify): string {
             $data = $this->payload($key);
 
             if ($data === null) {
-                return 0;
+                return self::SECOND_FACTOR_BURNED;
+            }
+
+            if ($verify()) {
+                Cache::forget($key);
+
+                return self::SECOND_FACTOR_OK;
             }
 
             $count = (int) ($data['secondFactorFailures'] ?? 0) + 1;
@@ -147,13 +170,13 @@ class OidcMobileCode
             if ($count >= self::MAX_SECOND_FACTOR_ATTEMPTS) {
                 Cache::forget($key);
 
-                return $count;
+                return self::SECOND_FACTOR_BURNED;
             }
 
             $data['secondFactorFailures'] = $count;
             $this->store($key, $data);
 
-            return $count;
+            return self::SECOND_FACTOR_WRONG;
         });
     }
 

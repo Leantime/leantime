@@ -297,11 +297,26 @@ class MobileTest extends \Unit\TestCase
         $this->assertSame('invalid_verifier', $this->bodyOf($response)['error']);
     }
 
+    /**
+     * The store runs the verifier inside the code's lock and reports $outcome; the
+     * verifier is executed here so the wiring to SecondFactor::verify is covered.
+     */
+    private function secondFactorOutcome(string $outcome, bool $expectVerifier): void
+    {
+        $this->codes->expects($this->once())->method('checkSecondFactor')
+            ->with('good', $this->callback('is_callable'))
+            ->willReturnCallback(function (string $code, callable $verify) use ($outcome, $expectVerifier): string {
+                $this->assertSame($expectVerifier, $verify(), 'the verifier runs under the store\'s lock');
+
+                return $outcome;
+            });
+    }
+
     public function test_wrong_second_factor_code_is_counted_and_the_code_survives(): void
     {
         $this->twoFactorUser();
         $this->secondFactor->expects($this->once())->method('verify')->with('SEED', '000000')->willReturn(false);
-        $this->codes->expects($this->once())->method('recordSecondFactorFailure')->with('good')->willReturn(1);
+        $this->secondFactorOutcome(OidcMobileCode::SECOND_FACTOR_WRONG, false);
         $this->codes->expects($this->never())->method('consumeCode');
         $this->tokens->expects($this->never())->method('createToken');
 
@@ -316,7 +331,7 @@ class MobileTest extends \Unit\TestCase
         $this->twoFactorUser(4);
         $this->secondFactor->method('verify')->willReturn(false);
         // The store counts and burns in one locked step; the controller never consumes separately.
-        $this->codes->method('recordSecondFactorFailure')->with('good')->willReturn(OidcMobileCode::MAX_SECOND_FACTOR_ATTEMPTS);
+        $this->secondFactorOutcome(OidcMobileCode::SECOND_FACTOR_BURNED, false);
         $this->codes->expects($this->never())->method('consumeCode');
         $this->tokens->expects($this->never())->method('createToken');
 
@@ -326,12 +341,31 @@ class MobileTest extends \Unit\TestCase
         $this->assertSame('invalid_code', $this->bodyOf($response)['error'], 'the app has to start the sign-in over');
     }
 
+    /**
+     * Two exchanges for the same code at once: the one that can't take the code's lock
+     * is rejected before the second factor is checked, so it never gets a free guess.
+     */
+    public function test_a_concurrent_exchange_for_the_same_code_is_rejected_before_any_guess(): void
+    {
+        $this->twoFactorUser();
+        $this->secondFactor->expects($this->never())->method('verify');
+        $this->codes->expects($this->once())->method('checkSecondFactor')->with('good', $this->callback('is_callable'))->willReturn(OidcMobileCode::SECOND_FACTOR_REFUSED);
+        $this->codes->expects($this->never())->method('consumeCode');
+        $this->tokens->expects($this->never())->method('createToken');
+
+        $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER, 'twofaCode' => '123456'])->exchange([]);
+
+        $this->assertSame(401, $response->getStatusCode());
+        $this->assertSame('invalid_code', $this->bodyOf($response)['error']);
+    }
+
     public function test_right_second_factor_code_mints_the_token(): void
     {
         $this->twoFactorUser();
         $this->secondFactor->expects($this->once())->method('verify')->with('SEED', '123456')->willReturn(true);
-        $this->codes->expects($this->never())->method('recordSecondFactorFailure');
-        $this->codes->expects($this->once())->method('consumeCode')->with('good')->willReturn(true);
+        $this->secondFactorOutcome(OidcMobileCode::SECOND_FACTOR_OK, true);
+        // The right code consumed the one-time code inside the same locked step.
+        $this->codes->expects($this->never())->method('consumeCode');
         $this->tokens->expects($this->once())->method('createToken')->willReturn(['token' => 'the-token']);
 
         $response = $this->makeController('POST', ['code' => 'good', 'code_verifier' => self::VERIFIER, 'twofaCode' => '123456'])->exchange([]);
