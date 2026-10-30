@@ -946,11 +946,14 @@ class Projects extends BaseService implements ChecksProjectAccess
 
     /**
      * Roles that see every project (projects.viewAll) may read anyone's projects, and so may user
-     * managers (users.view): the user editor shows and saves the edited account's memberships.
+     * managers (users.view or users.edit): the user editor shows and saves the edited account's
+     * memberships.
      */
     private function mayReadOtherUsersProjects(): bool
     {
-        return Roles::seesAllProjects(session('userdata.role')) || $this->can(UsersPermissions::VIEW);
+        return Roles::seesAllProjects(session('userdata.role'))
+            || $this->can(UsersPermissions::VIEW)
+            || $this->can(UsersPermissions::EDIT);
     }
 
     /**
@@ -1325,8 +1328,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * Role-based authorization on $userId, per @marcelfolaron review:
      *   - Not passed (null/0): use the authenticated session user
-     *   - Passed AND caller sees all projects (projects.viewAll) or manages users (users.view):
-     *     honor the requested user id
+     *   - Passed AND caller sees all projects (projects.viewAll) or manages users (users.view,
+     *     users.edit): honor the requested user id
      *     (admin tooling, "show me Alice's projects" workflows)
      *   - Passed by anyone else AND differs from session: ignored and
      *     overridden to the session user (prevents IDOR via the optional

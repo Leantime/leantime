@@ -36,11 +36,14 @@ class ShowAll extends Controller
         $this->tpl->assign('role', session('userdata.role'));
 
         // getAll() returns only the projects this user may see (all of them with projects.viewAll),
-        // so it is safe for any admin-level role. Others see their client's projects.
-        if (Roles::isAtLeast(session('userdata.role'), Roles::$admin) || Roles::seesAllProjects(session('userdata.role'))) {
+        // so it is safe for any admin-level role and for callers without a client. Others see their
+        // client's projects.
+        $role = session('userdata.role');
+        $clientId = (int) session('userdata.clientId');
+        if (Roles::isAtLeast($role, Roles::$admin) || Roles::seesAllProjects($role) || $clientId <= 0) {
             $this->tpl->assign('allProjects', $this->projectService->getAll(session('showClosedProjects')));
         } else {
-            $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects(session('userdata.id'), session('userdata.clientId')));
+            $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects((int) session('userdata.id'), $clientId));
         }
 
         $this->tpl->assign('showClosedProjects', session('showClosedProjects'));

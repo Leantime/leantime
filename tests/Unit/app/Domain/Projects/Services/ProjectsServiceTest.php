@@ -1453,7 +1453,7 @@ class ProjectsServiceTest extends TestCase
 
     public function test_user_managers_read_the_edited_users_project_assignments(): void
     {
-        // The user editor runs as a role that may not see every project but holds users.view.
+        // The user editor runs as a role that may not see every project but manages users.
         session(['userdata.id' => 1, 'userdata.role' => 'editor']);
 
         $capturedUserId = null;
@@ -1465,10 +1465,13 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $this->makeService(projectRepo: $projectRepo, permissions: $this->permissionsGranting([UsersPermissions::VIEW]))
-            ->getProjectIdAssignedToUser(99);
+        foreach ([UsersPermissions::VIEW, UsersPermissions::EDIT] as $userManagementGrant) {
+            $capturedUserId = null;
+            $this->makeService(projectRepo: $projectRepo, permissions: $this->permissionsGranting([$userManagementGrant]))
+                ->getProjectIdAssignedToUser(99);
 
-        $this->assertSame(99, $capturedUserId, 'saving the user editor must not replace the edited user\'s memberships with the caller\'s');
+            $this->assertSame(99, $capturedUserId, "with {$userManagementGrant}, saving the user editor must not replace the edited user's memberships with the caller's");
+        }
     }
 
     // ---- Project hierarchy safety (#3540: cyclic parents hung every page via the project selector) ----

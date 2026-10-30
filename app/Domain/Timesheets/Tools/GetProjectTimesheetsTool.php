@@ -101,7 +101,8 @@ class GetProjectTimesheetsTool extends Tool
 
         $project = $this->projectsService->getProject($projectId);
 
-        $response = '## Project Timesheet Summary: '.$project['name']."\n";
+        $projectName = is_array($project) ? ($project['name'] ?? '') : '';
+        $response = '## Project Timesheet Summary: '.($projectName !== '' ? $projectName : 'Project #'.$projectId)."\n";
         $response .= 'From: '.$fromDate->formatDateForUser().' to '.$toDate->formatDateForUser()."\n\n";
 
         $totalHours = 0;
