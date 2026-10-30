@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
@@ -17,15 +18,19 @@ class NewProject extends Controller
 
     private ProjectService $projectService;
 
+    private PermissionService $permissionService;
+
     /**
      * Initializes dependencies.
      */
     public function init(
         ClientService $clientService,
-        ProjectService $projectService
+        ProjectService $projectService,
+        PermissionService $permissionService
     ): void {
         $this->clientService = $clientService;
         $this->projectService = $projectService;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -136,6 +141,11 @@ class NewProject extends Controller
                 'success',
                 'project_created'
             );
+
+            // Project settings need projects.edit; create-only callers go to their own projects.
+            if (! $this->permissionService->currentUserCan(ProjectsPermissions::EDIT)) {
+                return Frontcontroller::redirect(BASE_URL.'/projects/showMy');
+            }
 
             return Frontcontroller::redirect(BASE_URL.'/projects/showProject/'.$id);
         }

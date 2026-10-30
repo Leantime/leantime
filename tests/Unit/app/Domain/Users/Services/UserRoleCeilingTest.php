@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Users\Services;
 
 use Illuminate\Support\Facades\RateLimiter;
+use Leantime\Core\Auth\Permissions\DefaultRolePermissions;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\ValidationException;
@@ -10,11 +11,13 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\UI\Theme as ThemeCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Unit\TestCase;
@@ -45,8 +48,9 @@ class UserRoleCeilingTest extends TestCase
      * A real Users service over a stubbed repository; the invitation email is stubbed out.
      *
      * @param  array<string, mixed>  $repoMethods
+     * @param  array<int, string>|null  $grantedKeys  Exact capability grants, like a custom role; null = the role's built-in defaults.
      */
-    private function makeService(array $repoMethods): UserService
+    private function makeService(array $repoMethods, ?array $grantedKeys = null): UserService
     {
         $service = $this->construct(UserService::class, [
             $this->make(UserRepository::class, $repoMethods),
@@ -63,8 +67,17 @@ class UserRoleCeilingTest extends TestCase
             'sendUserInvite' => fn () => true,
         ]);
 
+        // Capability checks answer from the caller's built-in defaults (clients.view is admin+, so a
+        // manager stays in their own client); authorization itself is allowed so the ceiling is what's tested.
         $service->setPermissionService($this->make(PermissionService::class, [
-            'currentUserCan' => fn () => true,
+            'currentUserCan' => fn (string $permissionKey) => in_array(
+                $permissionKey,
+                $grantedKeys ?? DefaultRolePermissions::grantsFor(
+                    (string) session('userdata.role'),
+                    [...(new UsersPermissions)->permissions(), ...(new ClientsPermissions)->permissions()]
+                ),
+                true
+            ),
             'authorize' => fn () => null,
         ]));
 
@@ -124,6 +137,29 @@ class UserRoleCeilingTest extends TestCase
         $this->assertNotSame('Known!Pass1', $stored['password'], 'a manager cannot choose the password');
         $this->assertNotEmpty($stored['pwReset']);
         $this->assertSame(3, $stored['clientId'], 'a manager can only create users in their own client');
+    }
+
+    public function test_the_invite_client_follows_clients_view_not_the_role_rank(): void
+    {
+        $storedClientIds = [];
+        $repoMethods = [
+            'addUser' => function (array $values) use (&$storedClientIds) {
+                $storedClientIds[] = $values['clientId'];
+
+                return '502';
+            },
+        ];
+        $invite = ['user' => 'dev@example.com', 'role' => 20, 'status' => 'a', 'clientId' => 99];
+
+        // A manager-ranked role that was given clients.view may invite into another client...
+        $this->actAs('manager', clientId: 3);
+        $this->makeService($repoMethods, grantedKeys: [ClientsPermissions::VIEW])->createUserInvite($invite);
+
+        // ...and an admin-ranked role without it stays in its own client.
+        $this->actAs('admin', clientId: 3);
+        $this->makeService($repoMethods, grantedKeys: [])->createUserInvite($invite);
+
+        $this->assertSame([99, 3], $storedClientIds);
     }
 
     public function test_admin_add_user_keeps_direct_creation(): void

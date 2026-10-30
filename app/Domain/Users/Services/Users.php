@@ -424,7 +424,7 @@ class Users extends BaseService
         $this->authorize(UsersPermissions::CREATE, forceGlobal: true);
         $this->assertRoleAssignable($values['role'] ?? '');
 
-        if ($this->callerIsBelowAdmin()) {
+        if ($this->invitesStayInOwnClient()) {
             $values['clientId'] = session('userdata.clientId') ?? '';
         }
 

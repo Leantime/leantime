@@ -81,7 +81,7 @@
 
         leantime.timesheetsController.initTimesheetsTable();
 
-        @can('timesheets.manage')
+        @can('timesheets.edit')
             leantime.timesheetsController.initEditTimeModal();
         @endcan
 
@@ -269,7 +269,7 @@
                     @php $sum = $sum + $row['hours']; @endphp
                     <tr>
                         <td data-order="{{ $row['id'] }}">
-                                @can('timesheets.manage')
+                                @can('timesheets.edit')
                                 <a href="{{ BASE_URL }}/timesheets/editTime/{{ $row['id'] }}" class="editTimeModal">#{{ $row['id'] . ' - ' . __('label.edit') }} </a>
                                 @else
                                 #{{ $row['id'] }}
