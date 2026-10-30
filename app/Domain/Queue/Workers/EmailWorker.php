@@ -32,11 +32,13 @@ class EmailWorker
     public const DEFAULT_FREQUENCY_SECONDS = 900;
 
     /**
-     * The inbox row and the queue row of one event are written by the same request, but stamped
-     * by two clocks, so the inbox row may carry a slightly earlier time than the queue row. Inbox
-     * rows this many seconds before the queue time are still taken as "since the email was queued".
+     * The inbox row of an event is written just before its queue row, by the same request, and
+     * stamped separately, so it may carry a slightly earlier time. Inbox rows this many seconds
+     * before the queue time still count as "since the email was queued". Kept short on purpose:
+     * every second of grace is a second in which a read of an EARLIER notification about the same
+     * entity could pass for a read of this one.
      */
-    public const SEEN_GRACE_SECONDS = 120;
+    public const SEEN_GRACE_SECONDS = 10;
 
     public function __construct(
         private Users $userRepo,

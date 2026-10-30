@@ -436,13 +436,10 @@ class Projects extends BaseService implements ChecksProjectAccess
             $emailMessage .= " <a href='".$emailUrl."'>".$notification->url['text'].'</a>';
         }
 
-        // NEW Queuing messaging system
         // The entity the notification is about, in the inbox's terms, so the digest can tell an
-        // email the person already read in the inbox from a new one.
+        // email the person already read in the inbox from a new one. The email itself is queued
+        // below, after the inbox rows exist (see there).
         $entityId = $this->notificationEntityId($notification);
-
-        $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId);
 
         // Send to messengers
         $this->messengerService->sendNotificationToMessengers($notification, $projectName);
@@ -537,6 +534,12 @@ class Projects extends BaseService implements ChecksProjectAccess
          * @context domain.services.projects
          */
         self::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => array_values($filteredUsersToNotify), 'url' => $notification->url['url']], 'leantime.domain.projects.services.projects.notifyProjectUsers');
+
+        // Email, through the digest queue, AFTER the inbox rows above are written: the digest reads
+        // the inbox to tell an already-read email from a new one, so a queued row must never be
+        // visible before the unread inbox row of the same event. (The listener runs in-process.)
+        $queue = app()->make(QueueRepository::class);
+        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId);
 
         // Personal webhooks go last, filtered like email (relevance, category, mentions,
         // collaborators) but from their own candidates: see personalWebhookCandidates(). This
