@@ -95,6 +95,33 @@ class NotificationsRepositoryTest extends TestCase
         $this->assertDoesNotMatchRegularExpression('/(?<=[\s(,])(moduleId|lastRead|lastUnread|datetime)(?=[\s),])/', $sql, 'no bare camelCase identifier anywhere');
     }
 
+    public function test_a_large_backlog_is_asked_in_bounded_chunks_and_merged(): void
+    {
+        $count = NotificationsRepository::ENTITY_QUERY_CHUNK * 2 + 50;
+        $entities = [];
+        for ($i = 1; $i <= $count; $i++) {
+            $entities[] = ['module' => 'tickets', 'moduleId' => $i];
+        }
+        // Rows for the first, a middle and the last entity, each landing in a different chunk.
+        $this->insert(2, 1, 'tickets', 1, '2026-10-30 10:00:00');
+        $this->insert(2, 0, 'tickets', NotificationsRepository::ENTITY_QUERY_CHUNK + 1, '2026-10-30 10:00:00');
+        $this->insert(2, 1, 'tickets', $count, '2026-10-30 10:00:00');
+        $this->connection->enableQueryLog();
+
+        $result = $this->repo->latestByEntity(2, $entities);
+
+        $this->assertCount(3, $this->connection->getQueryLog(), 'three chunks, three queries; SQLite caps the expression depth at 1000');
+        foreach ($this->connection->getQueryLog() as $query) {
+            $this->assertLessThanOrEqual(NotificationsRepository::ENTITY_QUERY_CHUNK, substr_count($query['query'], '"moduleId" = ?'));
+        }
+        ksort($result);
+        $this->assertSame([
+            'tickets:1' => ['read' => '2026-10-30 10:00:00', 'unread' => null],
+            'tickets:'.(NotificationsRepository::ENTITY_QUERY_CHUNK + 1) => ['read' => null, 'unread' => '2026-10-30 10:00:00'],
+            'tickets:'.$count => ['read' => '2026-10-30 10:00:00', 'unread' => null],
+        ], $result, 'results from every chunk are merged');
+    }
+
     public function test_no_entities_means_no_query_and_an_empty_result(): void
     {
         $this->connection->enableQueryLog();

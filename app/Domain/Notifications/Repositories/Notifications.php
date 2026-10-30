@@ -83,6 +83,9 @@ class Notifications
         return $this->db->table('zp_notifications')->insert($insertData);
     }
 
+    /** Entities per query in {@see latestByEntity()}: two WHERE terms each, well under SQLite's depth limit. */
+    public const ENTITY_QUERY_CHUNK = 200;
+
     /**
      * For each given entity, when the user's newest READ and newest UNREAD inbox notifications
      * about it were created.
@@ -116,27 +119,31 @@ class Notifications
         $read = $grammar->wrap('read');
         $datetime = $grammar->wrap('datetime');
 
-        $rows = $this->db->table('zp_notifications')
-            ->select('module', 'moduleId')
-            ->selectRaw('MAX(CASE WHEN '.$read.' = 1 THEN '.$datetime.' END) as '.$grammar->wrap('lastRead'))
-            ->selectRaw('MAX(CASE WHEN '.$read.' = 1 THEN NULL ELSE '.$datetime.' END) as '.$grammar->wrap('lastUnread'))
-            ->where('userId', $userId)
-            ->where(function ($query) use ($pairs) {
-                foreach ($pairs as $pair) {
-                    $query->orWhere(function ($entity) use ($pair) {
-                        $entity->where('module', $pair['module'])->where('moduleId', $pair['moduleId']);
-                    });
-                }
-            })
-            ->groupBy('module', 'moduleId')
-            ->get();
-
         $latest = [];
-        foreach ($rows as $row) {
-            $latest[$row->module.':'.(int) $row->moduleId] = [
-                'read' => $row->lastRead === null ? null : (string) $row->lastRead,
-                'unread' => $row->lastUnread === null ? null : (string) $row->lastUnread,
-            ];
+        // One OR branch per entity, so a large backlog is asked in bounded chunks: SQLite refuses
+        // an expression tree deeper than 1000 and the other engines have their own limits.
+        foreach (array_chunk(array_values($pairs), self::ENTITY_QUERY_CHUNK) as $chunk) {
+            $rows = $this->db->table('zp_notifications')
+                ->select('module', 'moduleId')
+                ->selectRaw('MAX(CASE WHEN '.$read.' = 1 THEN '.$datetime.' END) as '.$grammar->wrap('lastRead'))
+                ->selectRaw('MAX(CASE WHEN '.$read.' = 1 THEN NULL ELSE '.$datetime.' END) as '.$grammar->wrap('lastUnread'))
+                ->where('userId', $userId)
+                ->where(function ($query) use ($chunk) {
+                    foreach ($chunk as $pair) {
+                        $query->orWhere(function ($entity) use ($pair) {
+                            $entity->where('module', $pair['module'])->where('moduleId', $pair['moduleId']);
+                        });
+                    }
+                })
+                ->groupBy('module', 'moduleId')
+                ->get();
+
+            foreach ($rows as $row) {
+                $latest[$row->module.':'.(int) $row->moduleId] = [
+                    'read' => $row->lastRead === null ? null : (string) $row->lastRead,
+                    'unread' => $row->lastUnread === null ? null : (string) $row->lastUnread,
+                ];
+            }
         }
 
         return $latest;
