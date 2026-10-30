@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Install\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Domain\Install\Repositories\Install as InstallRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
@@ -81,7 +83,8 @@ class Install
      * runInstall - executes the database setup for a fresh installation.
      *
      * The installer seeds the first (owner) account with id 1 (see SchemaBuilder), reported as
-     * {@see UserCreated} with source 'install' once the setup succeeded.
+     * {@see UserCreated} with source 'install' once the setup succeeded. That report is a side
+     * effect: a failing listener is logged and does not turn a finished installation into an error.
      *
      * @param  array  $values  Validated install values (email, firstname, lastname, company).
      * @return bool True on successful setup, false otherwise.
@@ -92,11 +95,90 @@ class Install
     {
         $installed = $this->installRepo->setupDB($values);
 
-        if ($installed) {
-            UserCreated::dispatch(userId: 1, role: 50, source: 'install');
+        if (! $installed) {
+            return false;
         }
 
-        return $installed;
+        try {
+            UserCreated::dispatch(userId: 1, role: 50, source: 'install');
+        } catch (\Throwable $e) {
+            Log::error($e);
+        }
+
+        return true;
+    }
+
+    /**
+     * resumeOwnerSetup - returns the onboarding token of an owner the installer created but nobody
+     * ever finished setting up, so /install can send the visitor back into that setup.
+     *
+     * The installer creates the owner without a password (status 'i') and only the onboarding
+     * reached through the redirect after the install activates it. When that redirect never
+     * arrives (the install request outlived a proxy timeout, the tab was closed, the redirect
+     * pointed at an unreachable URL), the instance is left with an owner that cannot log in or
+     * reset a password, while /install refuses to run again. As long as that owner is the only
+     * account and has never signed in, the instance is as unclaimed as before the install, so
+     * handing out its setup link exposes nothing an uninstalled instance wouldn't.
+     *
+     * @return string|null The token for /auth/userInvite/{token}, or null when there is no such owner.
+     *
+     * @internal Not exposed over JSON-RPC: only the Install controller may hand out the owner setup.
+     */
+    public function resumeOwnerSetup(): ?string
+    {
+        try {
+            $firstUsers = $this->installRepo->getFirstUsers(2);
+
+            if (! self::isOwnerSetupPending($firstUsers)) {
+                return null;
+            }
+
+            $owner = $firstUsers[0];
+            $existingToken = (string) ($owner['pwReset'] ?? '');
+            if ($existingToken !== '') {
+                return $existingToken;
+            }
+
+            $newToken = Str::random(32);
+            if (! $this->installRepo->setInviteToken((int) $owner['id'], $newToken)) {
+                return null;
+            }
+
+            return $newToken;
+        } catch (\Throwable $e) {
+            // Fail closed: when we can't tell, nobody is sent into the owner's setup.
+            Log::error($e);
+
+            return null;
+        }
+    }
+
+    /**
+     * isOwnerSetupPending - whether the user rows show an installer-created owner that was never set up.
+     *
+     * True only when the owner is the ONLY account, is still pending (status 'i') and has never
+     * signed in. Any second account (an SSO/LDAP user, an API key, an invited user) or any sign-in
+     * means the instance is in use, and its owner account must not be handed out.
+     *
+     * @param  array<int, array<string, mixed>>  $firstUsers  The first user rows (at least two requested).
+     */
+    public static function isOwnerSetupPending(array $firstUsers): bool
+    {
+        if (count($firstUsers) !== 1) {
+            return false;
+        }
+
+        $owner = $firstUsers[0];
+
+        if ((int) ($owner['role'] ?? 0) !== 50) {
+            return false;
+        }
+
+        if (strtolower((string) ($owner['status'] ?? '')) !== 'i') {
+            return false;
+        }
+
+        return empty($owner['lastlogin']);
     }
 
     /**
