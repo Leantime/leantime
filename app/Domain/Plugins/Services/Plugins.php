@@ -748,10 +748,10 @@ class Plugins
      * Parses a marketplace download/install RequestException into a clean,
      * user-facing error message.
      *
-     * The marketplace responds with status-code prefixes (e.g.
-     * "HTTP request returned status code 500:") wrapped around a JSON body. This
-     * strips those prefixes, decodes the JSON and returns the most specific
-     * message available, falling back to a generic installation error.
+     * The marketplace answers with a JSON body ({"error": "..."}). It is read from the response
+     * itself: the exception message carries only the first 120 characters of the body, which cut
+     * the longer marketplace messages (license key not found, user limit, ...) into invalid JSON.
+     * Falls back to a generic installation error.
      *
      * @param  RequestException  $exception  The exception thrown while installing.
      * @return string A clean error message safe to show to the user.
@@ -761,10 +761,11 @@ class Plugins
     public function parseMarketplaceError(RequestException $exception): string
     {
         // Any status: the marketplace also answers 409 for a release that doesn't support this version.
-        $errorJson = (string) preg_replace('/^HTTP request returned status code \d+:\s*/', '', $exception->getMessage());
-        $errors = json_decode(trim($errorJson));
+        $errors = json_decode(trim($exception->response->body()));
 
-        return $errors->error ?? $errors->message ?? 'There was an error installing the plugin';
+        $message = $errors->error ?? $errors->message ?? null;
+
+        return is_string($message) && $message !== '' ? $message : 'There was an error installing the plugin';
     }
 
     /**
