@@ -1,3 +1,10 @@
+# Version: 3.13.1
+
+## Bug Fixes
+- **Clearer plugin install errors** - Plugin installation now shows the marketplace's actual error message instead of a generic one (#3977)
+
+---
+
 # Version: 3.13.0
 
 ## Highlights
