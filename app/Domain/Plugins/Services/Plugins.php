@@ -837,7 +837,6 @@ class Plugins
         }
 
         $wasInstalled = $expectedFolder !== null || $this->findInstalledMarketplacePlugin((string) $plugin->identifier) !== null;
-        $this->installStage = 'prepare';
 
         try {
             $this->installMarketplacePluginLocked($plugin, $version, $expectedFolder);
@@ -862,6 +861,7 @@ class Plugins
      */
     private function installMarketplacePluginLocked(MarketplacePlugin $plugin, string $version, ?string $expectedFolder): void
     {
+        $this->installStage = 'prepare';
 
         $this->clearCache();
 
