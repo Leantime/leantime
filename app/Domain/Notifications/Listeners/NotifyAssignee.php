@@ -22,7 +22,9 @@ class NotifyAssignee
         try {
             app()->make(AssignmentNotifier::class)->notify($event);
         } catch (\Throwable $e) {
-            Log::warning('Assignment notification failed for to-do #'.$event->ticketId.': '.$e->getMessage());
+            // Class and code only: a QueryException's message carries the bound SQL values,
+            // i.e. the actor's name and the to-do's headline.
+            Log::warning('Assignment notification failed for to-do #'.$event->ticketId.' ('.get_class($e).($e->getCode() ? ' '.$e->getCode() : '').')');
         }
     }
 }

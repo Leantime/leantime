@@ -4,15 +4,18 @@ namespace Leantime\Domain\Notifications\Services;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Support\NameSanitizer;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -55,6 +58,7 @@ class AssignmentNotifier
         private Push $push,
         private TrustedAppUrl $trustedAppUrl,
         private Environment $config,
+        private PermissionService $permissions,
     ) {}
 
     public function notify(TicketAssigned $event): void
@@ -74,9 +78,13 @@ class AssignmentNotifier
         }
 
         // The assignee must be able to see the to-do: an assignment can name anyone, and the
-        // headline and due date must not leak to someone outside the project.
+        // headline and due date must not leak to someone outside the project, or to a member
+        // whose role in it can't view to-dos.
         $projectId = (int) ($ticket->projectId ?: ($event->projectId ?? 0));
         if ($projectId <= 0 || ! $this->projectRepository->isUserAssignedToProject($event->assigneeId, $projectId)) {
+            return;
+        }
+        if (! $this->canViewTodos($assignee, $event->assigneeId, $projectId)) {
             return;
         }
 
@@ -138,6 +146,36 @@ class AssignmentNotifier
         }
     }
 
+    /**
+     * Whether the assignee's effective role in the project holds tickets.view. Resolved for
+     * the ASSIGNEE, not the session user: PermissionService::currentUserCan() and
+     * RoleResolver answer for whoever is logged in (the assigner), and Projects::getProjectRole()
+     * pins a non-admin caller to their own id. Same resolution as RoleResolver::effectiveRoleForProject():
+     * manager and above keep their global role; otherwise an explicit, assignable project role
+     * wins and anything else inherits the global role.
+     *
+     * @param  array<string, mixed>  $assignee  zp_user row
+     */
+    private function canViewTodos(array $assignee, int $userId, int $projectId): bool
+    {
+        $globalRole = Roles::getRoleString((int) ($assignee['role'] ?? 0));
+        if ($globalRole === false) {
+            return false;
+        }
+
+        $role = $globalRole;
+        if (! Roles::isAtLeast($globalRole, Roles::$manager)) {
+            $projectRole = (string) ($this->projectRepository->getUserProjectRelation($userId, $projectId)[0]['projectRole'] ?? '');
+            if (ctype_digit($projectRole) && isset(Roles::getProjectAssignableRoles()[(int) $projectRole])) {
+                $role = Roles::getProjectAssignableRoles()[(int) $projectRole];
+            } elseif ($projectRole !== '' && in_array($projectRole, Roles::getRoles(), true)) {
+                $role = $projectRole;
+            }
+        }
+
+        return $this->permissions->roleHasPermission($role, TicketsPermissions::VIEW);
+    }
+
     private function actorName(int $actorId): string
     {
         $actor = $actorId > 0 ? $this->userRepository->getUser($actorId) : false;
@@ -161,10 +199,9 @@ class AssignmentNotifier
     /**
      * "Due <date>" for the assignee, or '' when there is no due date.
      *
-     * A due date saved without a time is stored as midnight (Y-m-d 00:00:00) and means that
-     * calendar day everywhere, so it is formatted as-is. A timed deadline is stored in UTC and
-     * shown in the assignee's timezone. Format and language are the assignee's settings, with
-     * the same fallbacks DateTimeHelper uses for the session user.
+     * The stored UTC value shown in the assignee's timezone, the same day the assignee sees
+     * on the web (which converts every due date the same way). Format and language are the
+     * assignee's settings, with the same fallbacks DateTimeHelper uses for the session user.
      */
     private function dueText(mixed $dateToFinish, int $assigneeId): string
     {
@@ -182,7 +219,9 @@ class AssignmentNotifier
 
         $timezone = $setting('timezone') ?? (string) $this->config->defaultTimezone;
         $languageCode = $setting('language') ?? (string) $this->config->language;
-        if (preg_match('/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})?$/', $languageCode) !== 1) {
+        // Letters, digits and hyphens only (it names a file below); any number of subtags, so
+        // de-DE-inf keeps its own format.
+        if (preg_match('/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/', $languageCode) !== 1) {
             $languageCode = 'en-US';
         }
         // Not Language::__('language.dateformat'): that returns the SESSION user's format when
@@ -191,12 +230,14 @@ class AssignmentNotifier
         $locale = str_replace('-', '_', $languageCode);
 
         try {
-            if (preg_match('/^(\d{4}-\d{2}-\d{2}) 00:00:00$/', $dateToFinish, $m) === 1) {
-                $date = CarbonImmutable::createFromFormat('!Y-m-d', $m[1], 'UTC');
-            } else {
-                $date = CarbonImmutable::parse($dateToFinish, 'UTC')->setTimezone($timezone);
-            }
-            $formatted = $date->locale($locale)->translatedFormat($format);
+            // Exactly what the web shows for this user (Format::date → formatDateForUser):
+            // the stored UTC value in the assignee's timezone. A midnight value is not treated
+            // as a calendar-only date, because a timed deadline can land on UTC midnight too
+            // (17:00 in Los Angeles) and the web makes no such distinction either.
+            $formatted = CarbonImmutable::parse($dateToFinish, 'UTC')
+                ->setTimezone($timezone)
+                ->locale($locale)
+                ->translatedFormat($format);
         } catch (\Throwable) {
             return '';
         }

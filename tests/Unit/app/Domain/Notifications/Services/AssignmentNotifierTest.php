@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Notifications\Services;
 
 use Carbon\CarbonImmutable;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\TrustedAppUrl;
@@ -55,6 +56,12 @@ class AssignmentNotifierTest extends TestCase
 
     private ?\Closure $pushBehaviour = null;
 
+    /** @var array<int, string> Role names holding tickets.view in this test's grant map. */
+    private array $rolesWithView = ['readonly', 'commenter', 'editor', 'manager', 'admin', 'owner'];
+
+    /** @var array<int, string> Explicit project role (zp_relationuserproject.projectRole) by user id. */
+    private array $projectRoles = [];
+
     private array $dispatcherSnapshot = [];
 
     protected function setUp(): void
@@ -68,12 +75,15 @@ class AssignmentNotifierTest extends TestCase
         session(['usersettings.time_format' => 'H:i']);
         CarbonImmutable::mixin(new CarbonMacros('UTC', 'en-US', 'M j', 'H:i'));
 
+        // role 20 = editor (zp_user.role holds the numeric key)
         $this->users = [
-            1 => ['id' => 1, 'firstname' => 'Sam', 'status' => 'a', 'notifications' => 1],
-            2 => ['id' => 2, 'firstname' => 'Ada', 'status' => 'a', 'notifications' => 1],
-            3 => ['id' => 3, 'firstname' => 'Gone', 'status' => 'i', 'notifications' => 1],
-            4 => ['id' => 4, 'firstname' => 'Quiet', 'status' => 'A', 'notifications' => 0],
+            1 => ['id' => 1, 'firstname' => 'Sam', 'status' => 'a', 'notifications' => 1, 'role' => '20'],
+            2 => ['id' => 2, 'firstname' => 'Ada', 'status' => 'a', 'notifications' => 1, 'role' => '20'],
+            3 => ['id' => 3, 'firstname' => 'Gone', 'status' => 'i', 'notifications' => 1, 'role' => '20'],
+            4 => ['id' => 4, 'firstname' => 'Quiet', 'status' => 'A', 'notifications' => 0, 'role' => '20'],
         ];
+        $this->rolesWithView = ['readonly', 'commenter', 'editor', 'manager', 'admin', 'owner'];
+        $this->projectRoles = [];
         $this->pushes = [];
         $this->emails = [];
         $this->inbox = [];
@@ -106,6 +116,7 @@ class AssignmentNotifierTest extends TestCase
             $this->make(UserRepository::class, ['getUser' => fn ($id) => $this->users[(int) $id] ?? false]),
             $this->make(ProjectRepository::class, [
                 'isUserAssignedToProject' => fn ($userId, $projectId) => (int) $projectId === 5 && ($usersWithAccess === null || in_array((int) $userId, $usersWithAccess, true)),
+                'getUserProjectRelation' => fn ($userId, $projectId = null) => isset($this->projectRoles[(int) $userId]) ? [['projectRole' => $this->projectRoles[(int) $userId]]] : [],
             ]),
             $this->make(NotificationService::class, [
                 'addNotifications' => function (array $rows) {
@@ -135,6 +146,9 @@ class AssignmentNotifierTest extends TestCase
             // BASE_URL differs per environment (localhost here, leantime-dev on CI): swap whatever host it has.
             $this->make(TrustedAppUrl::class, ['rebase' => fn (string $url) => preg_replace('#^https?://[^/]+#', 'https://app.example.com', $url)]),
             $this->make(Environment::class, ['defaultTimezone' => 'UTC', 'language' => 'en-US']),
+            $this->make(PermissionService::class, [
+                'roleHasPermission' => fn (string $role, string $permission) => $permission === 'tickets.view' && in_array($role, $this->rolesWithView, true),
+            ]),
         );
     }
 
@@ -221,6 +235,43 @@ class AssignmentNotifierTest extends TestCase
         $this->assertSame([], $this->pushes);
     }
 
+    /**
+     * Project membership is not enough: the assignee's effective role in the project must hold
+     * tickets.view, resolved for the assignee (an explicit assignable project role, else their
+     * global role; manager and above always keep the global role).
+     *
+     * @dataProvider viewCapabilityProvider
+     */
+    public function test_a_project_member_whose_role_cannot_view_todos_gets_nothing(string $globalRoleKey, ?string $projectRole, bool $expectsNotification): void
+    {
+        $this->rolesWithView = ['editor', 'manager', 'admin', 'owner']; // commenter and readonly can't see to-dos here
+        $this->users[2]['role'] = $globalRoleKey;
+        if ($projectRole !== null) {
+            $this->projectRoles[2] = $projectRole;
+        }
+
+        $this->notifier($this->ticket())->notify($this->assigned());
+
+        $this->assertCount($expectsNotification ? 1 : 0, $this->inbox);
+        $this->assertCount($expectsNotification ? 1 : 0, $this->emails);
+        $this->assertCount($expectsNotification ? 1 : 0, $this->pushes);
+    }
+
+    /**
+     * @return array<string, array{string, ?string, bool}>
+     */
+    public static function viewCapabilityProvider(): array
+    {
+        return [
+            'global editor, no project role: inherits and sees' => ['20', null, true],
+            'global editor demoted to commenter in this project' => ['20', '10', false],
+            'global commenter promoted to editor in this project' => ['10', '20', true],
+            'global commenter, legacy inherit sentinel' => ['10', 'inherit', false],
+            'manager keeps the global role whatever the project says' => ['30', '10', true],
+            'unknown global role key' => ['0', null, false],
+        ];
+    }
+
     public function test_a_todo_without_a_project_sends_nothing(): void
     {
         $this->notifier($this->ticket(['projectId' => 0]))->notify(new TicketAssigned(ticketId: 42, projectId: null, assigneeId: 2, previousAssigneeId: null, assignedToSelf: false));
@@ -230,17 +281,33 @@ class AssignmentNotifierTest extends TestCase
     }
 
     /**
-     * A due date saved without a time is stored as midnight and means that calendar day for
-     * everyone: neither the actor's nor the assignee's timezone may shift it.
+     * A stored UTC midnight is shown in the assignee's timezone, exactly as the web shows it
+     * (Format::date converts every due date the same way): a deadline of 17:00 on October 30 in
+     * Los Angeles is stored as 2026-10-31 00:00:00 and must read October 30 there. The actor's
+     * timezone plays no part.
+     *
+     * @dataProvider midnightDeadlineProvider
      */
-    public function test_a_calendar_only_due_date_is_never_shifted_by_a_timezone(): void
+    public function test_a_midnight_utc_deadline_reads_as_the_web_shows_it_to_the_assignee(string $assigneeTimezone, string $expected): void
     {
-        session(['usersettings.timezone' => 'America/Los_Angeles']);
-        CarbonImmutable::mixin(new CarbonMacros('America/Los_Angeles', 'en-US', 'M j', 'H:i'));
+        session(['usersettings.timezone' => 'Pacific/Auckland']);
+        CarbonImmutable::mixin(new CarbonMacros('Pacific/Auckland', 'en-US', 'M j', 'H:i'));
 
-        $this->notifier($this->ticket(['dateToFinish' => '2026-10-31 00:00:00']), ['usersettings.2.timezone' => 'Pacific/Auckland'])->notify($this->assigned());
+        $this->notifier($this->ticket(['dateToFinish' => '2026-10-31 00:00:00']), ['usersettings.2.timezone' => $assigneeTimezone])->notify($this->assigned());
 
-        $this->assertSame('Sam assigned this to you · Due 10/31/2026', $this->pushes[0]['body']);
+        $this->assertSame('Sam assigned this to you · Due '.$expected, $this->pushes[0]['body']);
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function midnightDeadlineProvider(): array
+    {
+        return [
+            '17:00 the day before in Los Angeles' => ['America/Los_Angeles', '10/30/2026'],
+            'same day in Berlin' => ['Europe/Berlin', '10/31/2026'],
+            'same day in UTC' => ['UTC', '10/31/2026'],
+        ];
     }
 
     /**
@@ -298,6 +365,7 @@ class AssignmentNotifierTest extends TestCase
     {
         return [
             'de-DE (d.m.Y in de-DE.ini)' => [['usersettings.2.language' => 'de-DE'], '31.10.2026'],
+            'de-DE-inf (two subtags; d.m.Y in de-DE-inf.ini)' => [['usersettings.2.language' => 'de-DE-inf'], '31.10.2026'],
             'en-US (m/d/Y in en-US.ini)' => [['usersettings.2.language' => 'en-US'], '10/31/2026'],
             'no language either: instance default en-US' => [[], '10/31/2026'],
             'unknown language code falls back to en-US' => [['usersettings.2.language' => '../../etc/passwd'], '10/31/2026'],
