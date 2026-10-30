@@ -165,6 +165,7 @@ class InstallServiceTest extends TestCase
             'status' => 'i',
             'lastlogin' => null,
             'pwReset' => 'installer-token',
+            'password' => '',
         ], $overrides);
     }
 
@@ -193,6 +194,19 @@ class InstallServiceTest extends TestCase
 
         // The only account is not an owner.
         $this->assertFalse(InstallService::isOwnerSetupPending([$this->installerOwnerRow(['role' => '40'])]));
+    }
+
+    public function test_owner_setup_is_not_resumed_for_a_later_owner(): void
+    {
+        // A replacement owner invited before the installer's account was deleted: their invite link is private.
+        $this->assertFalse(InstallService::isOwnerSetupPending([$this->installerOwnerRow(['id' => 7])]));
+    }
+
+    public function test_owner_setup_is_not_resumed_once_onboarding_stored_a_password(): void
+    {
+        // Onboarding step 1 saved the password but the owner hasn't finished yet: resuming from the
+        // public /install page would let anyone redo step 1 and overwrite it.
+        $this->assertFalse(InstallService::isOwnerSetupPending([$this->installerOwnerRow(['password' => '$2y$10$hashedPassword'])]));
     }
 
     public function test_resume_owner_setup_returns_the_installer_token_without_changing_it(): void

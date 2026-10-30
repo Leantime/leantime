@@ -156,9 +156,11 @@ class Install
     /**
      * isOwnerSetupPending - whether the user rows show an installer-created owner that was never set up.
      *
-     * True only when the owner is the ONLY account, is still pending (status 'i') and has never
-     * signed in. Any second account (an SSO/LDAP user, an API key, an invited user) or any sign-in
-     * means the instance is in use, and its owner account must not be handed out.
+     * True only when the installer's owner (id 1) is the ONLY account, is still pending (status 'i'),
+     * has never signed in and has no password yet. Any second account (an SSO/LDAP user, an API key,
+     * an invited user) or any sign-in means the instance is in use, and its owner account must not be
+     * handed out. Once onboarding stored a password (step 1), resuming would let anyone reach the
+     * remaining steps and overwrite it, so the owner then has to finish through their own link.
      *
      * @param  array<int, array<string, mixed>>  $firstUsers  The first user rows (at least two requested).
      */
@@ -170,7 +172,13 @@ class Install
 
         $owner = $firstUsers[0];
 
-        if ((int) ($owner['role'] ?? 0) !== 50) {
+        // Only the account the installer created, never a later owner (e.g. a replacement owner
+        // invited before the original was deleted): their invite link is private.
+        if ((int) ($owner['id'] ?? 0) !== 1 || (int) ($owner['role'] ?? 0) !== 50) {
+            return false;
+        }
+
+        if (! empty($owner['password'])) {
             return false;
         }
 

@@ -242,14 +242,14 @@ class Install
      * is still the only account.
      *
      * @param  int  $limit  How many rows to read at most.
-     * @return array<int, array<string, mixed>> Rows with id, role, status, lastlogin and pwReset.
+     * @return array<int, array<string, mixed>> Rows with id, role, status, lastlogin, pwReset and password (the hash; only checked for being empty).
      */
     public function getFirstUsers(int $limit = 2): array
     {
         $this->selectDatabase($this->config->dbDatabase);
 
         return $this->connection->table('zp_user')
-            ->select(['id', 'role', 'status', 'lastlogin', 'pwReset'])
+            ->select(['id', 'role', 'status', 'lastlogin', 'pwReset', 'password'])
             ->orderBy('id')
             ->limit($limit)
             ->get()
