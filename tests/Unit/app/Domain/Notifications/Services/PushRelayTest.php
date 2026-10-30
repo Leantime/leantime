@@ -105,7 +105,7 @@ class PushRelayTest extends TestCase
     public function test_content_free_mode_strips_text_but_keeps_routing(): void
     {
         $relay = $this->relay([PushRelay::SETTING_ENABLED => '1', PushRelay::SETTING_CONTENT => 'minimal'], true, 'LIC');
-        $relay->send($this->rows(1), 'Fix login', 'Sam: looks good', ['module' => 'comments', 'moduleId' => '4', 'parentTicketId' => '9', 'url' => 'https://x']);
+        $relay->send($this->rows(1), 'Fix login', 'Sam: looks good', ['module' => 'comments', 'moduleId' => '4', 'parentTicketId' => '9', 'url' => 'https://x', 'tier' => '1', 'category' => 'comment']);
 
         $msg = json_decode((string) $this->requests[0]['request']->getBody(), true)['messages'][0];
         $this->assertSame('Leantime', $msg['title']);
@@ -113,6 +113,8 @@ class PushRelayTest extends TestCase
         $this->assertStringNotContainsString('Fix login', json_encode($msg));
         $this->assertSame('9', $msg['data']['parentTicketId']);
         $this->assertSame('comments', $msg['data']['module']);
+        $this->assertSame('1', $msg['data']['tier'], 'delivery fields are not text and survive content-free mode');
+        $this->assertSame('comment', $msg['data']['category']);
     }
 
     /**

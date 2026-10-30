@@ -195,7 +195,9 @@ class AssignmentNotifierTest extends TestCase
             'type' => 'assigned',
             'threadId' => 'ticket-42',
             'url' => $row['url'],
-        ], $push['data']);
+            'tier' => Push::TIER_DIRECT,
+            'category' => Push::CATEGORY_TASK,
+        ], $push['data'], 'Directly for one person: tier 1 with the task actions');
     }
 
     /**
