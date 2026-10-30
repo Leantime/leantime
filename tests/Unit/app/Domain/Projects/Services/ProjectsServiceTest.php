@@ -30,6 +30,7 @@ use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Queue\Workers\Workers;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Unit\TestCase;
 
@@ -1448,6 +1449,26 @@ class ProjectsServiceTest extends TestCase
         $this->makeService(projectRepo: $projectRepo)->getProjectIdAssignedToUser(99);
 
         $this->assertSame(1, $capturedUserId, 'a non-admin must not be able to read another user\'s project assignments');
+    }
+
+    public function test_user_managers_read_the_edited_users_project_assignments(): void
+    {
+        // The user editor runs as a role that may not see every project but holds users.view.
+        session(['userdata.id' => 1, 'userdata.role' => 'editor']);
+
+        $capturedUserId = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjectRelation' => function ($userId) use (&$capturedUserId) {
+                $capturedUserId = $userId;
+
+                return [];
+            },
+        ]);
+
+        $this->makeService(projectRepo: $projectRepo, permissions: $this->permissionsGranting([UsersPermissions::VIEW]))
+            ->getProjectIdAssignedToUser(99);
+
+        $this->assertSame(99, $capturedUserId, 'saving the user editor must not replace the edited user\'s memberships with the caller\'s');
     }
 
     // ---- Project hierarchy safety (#3540: cyclic parents hung every page via the project selector) ----

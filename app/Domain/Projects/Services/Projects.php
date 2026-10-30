@@ -925,11 +925,11 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller sees
-     * all projects (projects.viewAll) and asks about someone else — closing the cross-user param spoof
-     * on these @api reads (an RPC caller could otherwise list another user's projects by passing a
-     * foreign id). Mirrors the inline override in getProjectsUserHasAccessTo(). Recursion-safe: it
-     * reads the grant map of the global role only, never project membership.
+     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller may
+     * read other accounts' projects — closing the cross-user param spoof on these @api reads (an RPC
+     * caller could otherwise list another user's projects by passing a foreign id). Mirrors the inline
+     * override in getProjectsUserHasAccessTo(). Recursion-safe: global checks only, never project
+     * membership.
      *
      * @param  int|string|null  $userId
      */
@@ -937,11 +937,20 @@ class Projects extends BaseService implements ChecksProjectAccess
     {
         $sessionUser = (int) session('userdata.id');
 
-        if ((int) $userId !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
+        if ((int) $userId !== $sessionUser && ! $this->mayReadOtherUsersProjects()) {
             return $sessionUser;
         }
 
         return (int) $userId;
+    }
+
+    /**
+     * Roles that see every project (projects.viewAll) may read anyone's projects, and so may user
+     * managers (users.view): the user editor shows and saves the edited account's memberships.
+     */
+    private function mayReadOtherUsersProjects(): bool
+    {
+        return Roles::seesAllProjects(session('userdata.role')) || $this->can(UsersPermissions::VIEW);
     }
 
     /**
@@ -1316,7 +1325,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * Role-based authorization on $userId, per @marcelfolaron review:
      *   - Not passed (null/0): use the authenticated session user
-     *   - Passed AND caller sees all projects (projects.viewAll): honor the requested user id
+     *   - Passed AND caller sees all projects (projects.viewAll) or manages users (users.view):
+     *     honor the requested user id
      *     (admin tooling, "show me Alice's projects" workflows)
      *   - Passed by anyone else AND differs from session: ignored and
      *     overridden to the session user (prevents IDOR via the optional
@@ -1334,7 +1344,7 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         if ($userId === null || $userId === 0) {
             $userId = $sessionUser;
-        } elseif ($userId !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
+        } elseif ($userId !== $sessionUser && ! $this->mayReadOtherUsersProjects()) {
             $userId = $sessionUser;
         }
 
