@@ -107,6 +107,16 @@ class PushRelay
         if ($this->contentLevel() === self::CONTENT_MINIMAL) {
             $title = 'Leantime';
             $body = __('notification.push_minimal_body');
+            // A comment's host task is the only thing worth linking. Callers that predate
+            // the routing-data change don't send parentTicketId, but the comment's own url
+            // names the task in its path, so read the id from there before the url is
+            // dropped. Only the path segment counts; nothing from a query string.
+            if (($data['module'] ?? '') === 'comments' && ! ctype_digit((string) ($data['parentTicketId'] ?? ''))) {
+                $hostTask = self::ticketIdFromUrl((string) ($data['url'] ?? ''));
+                if ($hostTask !== null) {
+                    $data['parentTicketId'] = $hostTask;
+                }
+            }
             // Keep only what the app needs to open the right screen. The caller's url is
             // never forwarded: it can carry text (query parameters of the request that made
             // the change); a link is rebuilt from the ids instead.
@@ -190,6 +200,43 @@ class PushRelay
         if ($dead !== []) {
             $this->invalidateRows(array_values(array_unique($dead)));
         }
+    }
+
+    /**
+     * The task id named in a Leantime task link's PATH (…/tickets/showTicket/<id>),
+     * or null. The query string is never read, so text smuggled in parameters
+     * can't become an id.
+     */
+    public static function ticketIdFromUrl(string $url): ?string
+    {
+        if ($url === '') {
+            return null;
+        }
+
+        $parts = parse_url($url);
+        if ($parts === false) {
+            return null;
+        }
+
+        // Leantime links carry the route in the path or, on the dashboard, in the
+        // fragment (…/home#/tickets/showTicket/42?projectId=5). Either way only the
+        // route part is read; a fragment's own query is cut off, and the URL's
+        // query string is never looked at.
+        $routes = [];
+        if (! empty($parts['path'])) {
+            $routes[] = $parts['path'];
+        }
+        if (! empty($parts['fragment'])) {
+            $routes[] = explode('?', $parts['fragment'], 2)[0];
+        }
+
+        foreach ($routes as $route) {
+            if (preg_match('~/tickets/showTicket/(\d+)(?:/|$)~', $route, $m)) {
+                return $m[1];
+            }
+        }
+
+        return null;
     }
 
     /**

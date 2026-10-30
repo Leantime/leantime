@@ -136,6 +136,27 @@ class PushRelayTest extends TestCase
         $this->assertSame('https://app.example.com/dashboard/home#/tickets/showTicket/7', json_decode((string) $this->requests[0]['request']->getBody(), true)['messages'][0]['data']['url']);
     }
 
+    /**
+     * Callers that predate the routing-data change send no parentTicketId for a comment;
+     * the task id is read from the comment url's path (never its query) before the url is dropped.
+     */
+    public function test_content_free_mode_finds_a_comments_task_in_its_own_link(): void
+    {
+        $url = 'https://host/dashboard/home#/tickets/showTicket/42?projectId=5&text=secret';
+        $this->minimalRelay()->send($this->rows(1), 'Fix login', 'Sam: secret', ['module' => 'comments', 'moduleId' => '4', 'url' => $url]);
+
+        $posted = (string) $this->requests[0]['request']->getBody();
+        $message = json_decode($posted, true)['messages'][0];
+        $this->assertSame('42', $message['data']['parentTicketId']);
+        $this->assertSame('https://app.example.com/dashboard/home#/tickets/showTicket/42', $message['data']['url']);
+        $this->assertStringNotContainsString('secret', $posted);
+
+        // A task id that only appears in a query parameter is not trusted.
+        $this->assertNull(PushRelay::ticketIdFromUrl('https://host/api/jsonrpc?url=/tickets/showTicket/42'));
+        $this->assertNull(PushRelay::ticketIdFromUrl('https://host/dashboard/home#/tickets/showTicket/42abc'));
+        $this->assertSame('7', PushRelay::ticketIdFromUrl('https://host/tickets/showTicket/7'));
+    }
+
     public function test_content_free_mode_links_the_app_itself_for_everything_else(): void
     {
         $this->minimalRelay()->send($this->rows(1), 'Goal', 'x', ['module' => 'goalcanvas', 'moduleId' => '5', 'url' => 'https://host/goals?projectId=3']);
