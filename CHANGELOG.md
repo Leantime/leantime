@@ -8,6 +8,14 @@ Leantime can now send push notifications to the mobile apps, with its own on/off
 ### Per-project modules
 Each project can now switch individual modules - including Time Tracking - on or off, and projects with a module turned off are left out of search, goal roll-ups and reports. (#3928, #3935, #3937, #3932)
 
+## Upgrade Notes
+- **Database update:** 3.13 runs three migrations (db version 3.5.33). They add a `metadata` column to projects for the module switches, give roles a separate key and base role so custom roles can exist, and grant the new permissions to existing roles. After upgrading, log in as an admin and confirm the database update screen, or run `php bin/leantime db:migrate`.
+- **Laravel 12:** Leantime now runs on Laravel 12. PHP 8.2 is still the minimum; the Docker images move to PHP 8.4. The release packages include the new dependencies; git-based installs need to run `composer install`.
+- **McpServer plugin:** update to McpServer 2.0. Core now ships laravel/mcp 1.x, which McpServer 1.x can't run on.
+- **Other plugins:** the 3.13 releases of CustomFields, Notes, PgmPro, StrategyPro and Whiteboards require Leantime 3.13. Update Leantime first, then the plugins.
+- **MCP clients:** `/mcp` speaks the MCP 2026-07-28 protocol and still answers `initialize` for 2025-03-26 to 2025-11-25 clients. Errors now come back with HTTP 400/404/500 instead of 200.
+- **Plugin authors:** htmx client events are now declared on the domain event classes (`CLIENT_EVENT`), and the `HtmxTicketEvents` enum is gone. Reference events by class, e.g. `TicketUpdated::class` (#3949).
+
 ## New Features
 - **Mobile push notifications** - Delivery tier, category and routing data in push payloads, a dedicated mobile push toggle, and a relay send path with admin settings for self-hosted servers (#3966, #3969, #3964, #3974)
 - **Two-factor at mobile SSO** - OIDC now verifies the second factor during the mobile SSO exchange (#3972)
