@@ -13,8 +13,9 @@ use Leantime\Domain\Users\Repositories\Users;
  * Sends the email digest: everything queued for a person since their last email, in one mail.
  *
  * The digest has two parts. "New" holds what the person has not seen yet, with the full text and
- * link as before. "Already seen" holds what they already read in the inbox (web or app) since it
- * was queued: one quiet line each, no link. A digest with nothing new is not sent at all; the seen
+ * link as before. "Already seen" holds what they already read in the inbox (web or app): an email
+ * whose entity has a read inbox notification from when it was queued or later, and no unread one
+ * since. One quiet line each, no link. A digest with nothing new is not sent at all; the seen
  * rows wait for the next digest that has news, and are dropped after {@see MAX_AGE_DAYS} like any
  * other row. Rows queued without an entity (module / moduleId) are always new.
  *
@@ -31,9 +32,9 @@ class EmailWorker
     public const DEFAULT_FREQUENCY_SECONDS = 900;
 
     /**
-     * An inbox row read this many seconds before the email was queued still counts as read for
-     * it: the inbox row and the queue row of one event are written by the same request, but by
-     * two clocks.
+     * The inbox row and the queue row of one event are written by the same request, but stamped
+     * by two clocks, so the inbox row may carry a slightly earlier time than the queue row. Inbox
+     * rows this many seconds before the queue time are still taken as "since the email was queued".
      */
     public const SEEN_GRACE_SECONDS = 120;
 
@@ -152,9 +153,10 @@ class EmailWorker
     /**
      * Splits a person's queued rows into [new, seen], each keyed by msghash in queue order.
      *
-     * A row is seen when the person read an inbox notification about the same entity (module +
-     * moduleId) at or after the row was queued, within {@see SEEN_GRACE_SECONDS}. Rows without an
-     * entity are new.
+     * A row is seen when an inbox notification about the same entity (module + moduleId) created
+     * since the row was queued (less {@see SEEN_GRACE_SECONDS}) was read, and none created since
+     * then is still unread: an earlier read never hides a later update. Rows without an entity
+     * are new.
      *
      * @param  array<string, array<string, mixed>>  $userMessages
      * @return array{0: array<string, array<string, mixed>>, 1: array<string, array<string, mixed>>}
@@ -168,12 +170,12 @@ class EmailWorker
             }
         }
 
-        $lastRead = $entities === [] ? [] : $this->notifications->lastReadByEntity($userId, $entities);
+        $latest = $entities === [] ? [] : $this->notifications->latestByEntity($userId, $entities);
 
         $new = [];
         $seen = [];
         foreach ($userMessages as $hash => $message) {
-            if ($this->wasSeen($message, $lastRead)) {
+            if ($this->wasSeen($message, $latest)) {
                 $seen[$hash] = $message;
             } else {
                 $new[$hash] = $message;
@@ -185,26 +187,35 @@ class EmailWorker
 
     /**
      * @param  array<string, mixed>  $message  A queued row.
-     * @param  array<string, string>  $lastRead  From {@see NotificationsRepository::lastReadByEntity()}.
+     * @param  array<string, array{read: string|null, unread: string|null}>  $latest  From {@see NotificationsRepository::latestByEntity()}.
      */
-    private function wasSeen(array $message, array $lastRead): bool
+    private function wasSeen(array $message, array $latest): bool
     {
         if (empty($message['module']) || $message['moduleId'] === null) {
             return false;
         }
 
         $key = $message['module'].':'.(int) $message['moduleId'];
-        if (! isset($lastRead[$key])) {
+        if (! isset($latest[$key]) || $latest[$key]['read'] === null) {
             return false;
         }
 
-        $readAt = $this->utc($lastRead[$key]);
         $queuedAt = $this->utc((string) $message['thedate']);
-        if ($readAt === null || $queuedAt === null) {
+        $readAt = $this->utc($latest[$key]['read']);
+        if ($queuedAt === null || $readAt === null) {
             return false;
         }
 
-        return $readAt->getTimestamp() >= $queuedAt->getTimestamp() - self::SEEN_GRACE_SECONDS;
+        $since = $queuedAt->getTimestamp() - self::SEEN_GRACE_SECONDS;
+        if ($readAt->getTimestamp() < $since) {
+            return false;
+        }
+
+        // Something about this entity arrived since the email was queued and is still unread: the
+        // read row is an earlier one, and this update has not been seen.
+        $unreadAt = $latest[$key]['unread'] === null ? null : $this->utc($latest[$key]['unread']);
+
+        return $unreadAt === null || $unreadAt->getTimestamp() < $since;
     }
 
     /** Parses a UTC `Y-m-d H:i:s` database timestamp; null when it isn't one. */

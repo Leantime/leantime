@@ -37,11 +37,11 @@ class EmailWorkerTest extends TestCase
     /** @var array<int, array<int, string>> Each deleteMessageInQueue() call's hashes. */
     private array $deleted = [];
 
-    /** @var array<string, string> "module:moduleId" => last read datetime, as the repository returns it. */
-    private array $lastRead = [];
+    /** @var array<string, array{read: string|null, unread: string|null}> "module:moduleId" => newest read / unread datetimes, as the repository returns them. */
+    private array $latest = [];
 
     /** @var array<int, array{userId: int, entities: array}> */
-    private array $lastReadLookups = [];
+    private array $lookups = [];
 
     protected function setUp(): void
     {
@@ -50,8 +50,8 @@ class EmailWorkerTest extends TestCase
         $this->settings = [];
         $this->sent = [];
         $this->deleted = [];
-        $this->lastRead = [];
-        $this->lastReadLookups = [];
+        $this->latest = [];
+        $this->lookups = [];
     }
 
     private function worker(): EmailWorker
@@ -94,10 +94,10 @@ class EmailWorkerTest extends TestCase
             ]),
             $this->make(LanguageCore::class, ['__' => fn ($key) => self::STRINGS[$key] ?? $key]),
             $this->make(NotificationsRepository::class, [
-                'lastReadByEntity' => function (int $userId, array $entities) {
-                    $this->lastReadLookups[] = compact('userId', 'entities');
+                'latestByEntity' => function (int $userId, array $entities) {
+                    $this->lookups[] = compact('userId', 'entities');
 
-                    return $this->lastRead;
+                    return $this->latest;
                 },
             ]),
         );
@@ -119,6 +119,12 @@ class EmailWorkerTest extends TestCase
             'module' => $module,
             'moduleId' => $moduleId,
         ];
+    }
+
+    /** The inbox's state for one entity: newest read row, and newest unread row if any. */
+    private function inbox(string $key, ?string $read, ?string $unread = null): void
+    {
+        $this->latest[$key] = ['read' => $read, 'unread' => $unread];
     }
 
     private function deletedHashes(): array
@@ -157,7 +163,7 @@ class EmailWorkerTest extends TestCase
 
     public function test_a_row_read_in_the_inbox_after_it_was_queued_moves_to_already_seen_without_its_link(): void
     {
-        $this->lastRead = ['tickets:12' => gmdate('Y-m-d H:i:s', time() - 60)];
+        $this->inbox('tickets:12', gmdate('Y-m-d H:i:s', time() - 60));
 
         $this->worker()->handleQueue([
             $this->row('seen', 2, 'Ticket updated', 'tickets', 12),
@@ -174,12 +180,12 @@ class EmailWorkerTest extends TestCase
         $this->assertLessThan(strpos($html, 'Ticket updated'), strpos($html, 'Already seen'), 'the seen item sits under its heading');
         $this->assertStringContainsString('You already read these in Leantime.', $html);
         $this->assertSame(['seen', 'fresh'], $this->deletedHashes(), 'both rows leave the queue with the digest');
-        $this->assertSame([['userId' => 2, 'entities' => [['module' => 'tickets', 'moduleId' => 12], ['module' => 'comments', 'moduleId' => 77]]]], $this->lastReadLookups);
+        $this->assertSame([['userId' => 2, 'entities' => [['module' => 'tickets', 'moduleId' => 12], ['module' => 'comments', 'moduleId' => 77]]]], $this->lookups);
     }
 
     public function test_nothing_new_means_no_email_and_the_rows_wait(): void
     {
-        $this->lastRead = ['tickets:12' => gmdate('Y-m-d H:i:s')];
+        $this->inbox('tickets:12', gmdate('Y-m-d H:i:s'));
 
         $this->worker()->handleQueue([$this->row('seen', 2, 'Ticket updated', 'tickets', 12)]);
 
@@ -191,7 +197,7 @@ class EmailWorkerTest extends TestCase
     public function test_a_read_older_than_the_queued_row_does_not_count(): void
     {
         // Read five minutes ago; the row was queued two minutes ago (grace is two minutes).
-        $this->lastRead = ['tickets:12' => gmdate('Y-m-d H:i:s', time() - 300)];
+        $this->inbox('tickets:12', gmdate('Y-m-d H:i:s', time() - 300));
 
         $this->worker()->handleQueue([$this->row('h1', 2, 'Ticket updated', 'tickets', 12)]);
 
@@ -202,7 +208,7 @@ class EmailWorkerTest extends TestCase
     public function test_a_read_just_before_the_row_was_queued_counts_within_the_grace(): void
     {
         $queuedAt = time() - 120;
-        $this->lastRead = ['tickets:12' => gmdate('Y-m-d H:i:s', $queuedAt - EmailWorker::SEEN_GRACE_SECONDS + 1)];
+        $this->inbox('tickets:12', gmdate('Y-m-d H:i:s', $queuedAt - EmailWorker::SEEN_GRACE_SECONDS + 1));
 
         $this->worker()->handleQueue([
             $this->row('seen', 2, 'Ticket updated', 'tickets', 12, gmdate('Y-m-d H:i:s', $queuedAt)),
@@ -212,19 +218,58 @@ class EmailWorkerTest extends TestCase
         $this->assertStringContainsString('Already seen', $this->sent[0]['html']);
     }
 
+    /**
+     * The person read an earlier notification about the task; then a new update was queued, and
+     * its own inbox row is still unread. The earlier read must not hide the new update.
+     */
+    public function test_an_earlier_read_does_not_hide_a_newer_unread_update_on_the_same_entity(): void
+    {
+        $queuedAt = time() - 120;
+        $this->inbox('tickets:12', read: gmdate('Y-m-d H:i:s', $queuedAt - 60), unread: gmdate('Y-m-d H:i:s', $queuedAt));
+
+        $this->worker()->handleQueue([$this->row('h1', 2, 'Ticket updated', 'tickets', 12, gmdate('Y-m-d H:i:s', $queuedAt))]);
+
+        $this->assertCount(1, $this->sent, 'the update is new and the digest goes out');
+        $this->assertStringNotContainsString('Already seen', $this->sent[0]['html']);
+    }
+
+    public function test_an_unread_row_older_than_the_queued_email_does_not_block_seen(): void
+    {
+        $queuedAt = time() - 120;
+        // An old unread row about the task from yesterday; today's update was read.
+        $this->inbox('tickets:12', read: gmdate('Y-m-d H:i:s', $queuedAt + 30), unread: gmdate('Y-m-d H:i:s', $queuedAt - 86400));
+
+        $this->worker()->handleQueue([
+            $this->row('seen', 2, 'Ticket updated', 'tickets', 12, gmdate('Y-m-d H:i:s', $queuedAt)),
+            $this->row('fresh', 2, 'New comment', 'comments', 77),
+        ]);
+
+        $this->assertStringContainsString('Already seen', $this->sent[0]['html']);
+    }
+
+    public function test_an_entity_with_only_unread_rows_is_new(): void
+    {
+        $this->inbox('tickets:12', read: null, unread: gmdate('Y-m-d H:i:s'));
+
+        $this->worker()->handleQueue([$this->row('h1', 2, 'Ticket updated', 'tickets', 12)]);
+
+        $this->assertCount(1, $this->sent);
+        $this->assertStringNotContainsString('Already seen', $this->sent[0]['html']);
+    }
+
     public function test_rows_without_an_entity_are_always_new_and_never_looked_up(): void
     {
-        $this->lastRead = ['tickets:12' => gmdate('Y-m-d H:i:s')];
+        $this->inbox('tickets:12', gmdate('Y-m-d H:i:s'));
 
         $this->worker()->handleQueue([$this->row('legacy', 2, 'Project created', null, null)]);
 
         $this->assertCount(1, $this->sent);
-        $this->assertSame([], $this->lastReadLookups, 'no entity, nothing to ask the inbox');
+        $this->assertSame([], $this->lookups, 'no entity, nothing to ask the inbox');
     }
 
     public function test_the_seen_subject_is_escaped(): void
     {
-        $this->lastRead = ['tickets:12' => gmdate('Y-m-d H:i:s')];
+        $this->inbox('tickets:12', gmdate('Y-m-d H:i:s'));
 
         $this->worker()->handleQueue([
             $this->row('seen', 2, 'Tom & Jerry <b>', 'tickets', 12),
@@ -311,7 +356,7 @@ class EmailWorkerTest extends TestCase
 
     public function test_each_person_gets_their_own_digest(): void
     {
-        $this->lastRead = ['tickets:12' => gmdate('Y-m-d H:i:s')];
+        $this->inbox('tickets:12', gmdate('Y-m-d H:i:s'));
 
         $this->worker()->handleQueue([
             $this->row('a', 2, 'Ticket updated', 'tickets', 12),

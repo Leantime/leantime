@@ -84,15 +84,22 @@ class Notifications
     }
 
     /**
-     * When the user last read an inbox notification about each of the given entities.
+     * For each given entity, when the user's newest READ and newest UNREAD inbox notifications
+     * about it were created.
+     *
+     * The digest worker reads both: an email counts as seen only when a notification about its
+     * entity was read AND nothing unread about that entity has arrived since the email was queued,
+     * so an earlier read never hides a later update.
      *
      * @param  int  $userId  The inbox owner.
      * @param  array<int, array{module: string, moduleId: int}>  $entities  Entities to look up.
-     * @return array<string, string> "module:moduleId" => the newest `datetime` (UTC, Y-m-d H:i:s)
-     *                               among that entity's READ notifications. Entities with no read
-     *                               notification are absent.
+     * @return array<string, array{read: string|null, unread: string|null}> "module:moduleId" => the
+     *                                                                      newest `datetime` (UTC, Y-m-d H:i:s) among
+     *                                                                      that entity's read rows and among its unread
+     *                                                                      rows (null when there are none). Entities
+     *                                                                      with no notification at all are absent.
      */
-    public function lastReadByEntity(int $userId, array $entities): array
+    public function latestByEntity(int $userId, array $entities): array
     {
         $pairs = [];
         foreach ($entities as $entity) {
@@ -103,10 +110,17 @@ class Notifications
             return [];
         }
 
+        // Identifiers go through the grammar: zp_notifications is created with quoted camelCase
+        // columns, which PostgreSQL would otherwise fold to lower case.
+        $grammar = $this->db->getQueryGrammar();
+        $read = $grammar->wrap('read');
+        $datetime = $grammar->wrap('datetime');
+
         $rows = $this->db->table('zp_notifications')
-            ->selectRaw('module, moduleId, MAX(datetime) as lastRead')
+            ->select('module', 'moduleId')
+            ->selectRaw('MAX(CASE WHEN '.$read.' = 1 THEN '.$datetime.' END) as '.$grammar->wrap('lastRead'))
+            ->selectRaw('MAX(CASE WHEN '.$read.' = 1 THEN NULL ELSE '.$datetime.' END) as '.$grammar->wrap('lastUnread'))
             ->where('userId', $userId)
-            ->where('read', 1)
             ->where(function ($query) use ($pairs) {
                 foreach ($pairs as $pair) {
                     $query->orWhere(function ($entity) use ($pair) {
@@ -117,14 +131,15 @@ class Notifications
             ->groupBy('module', 'moduleId')
             ->get();
 
-        $lastRead = [];
+        $latest = [];
         foreach ($rows as $row) {
-            if ($row->lastRead !== null) {
-                $lastRead[$row->module.':'.(int) $row->moduleId] = (string) $row->lastRead;
-            }
+            $latest[$row->module.':'.(int) $row->moduleId] = [
+                'read' => $row->lastRead === null ? null : (string) $row->lastRead,
+                'unread' => $row->lastUnread === null ? null : (string) $row->lastUnread,
+            ];
         }
 
-        return $lastRead;
+        return $latest;
     }
 
     public function markNotificationRead(int $id, int $userId): bool
