@@ -35,6 +35,12 @@ use Leantime\Domain\Users\Services\Users as UserService;
  * from the routing ids, because a notification link can carry text itself
  * (a comment posted over a JSON-RPC GET keeps its params in the URL).
  *
+ * Delivery fields ride in data and are never text: 'tier' ('1' direct with
+ * sound, '2' quiet) and 'category' ('comment' | 'task' | 'none', which action
+ * buttons the app shows). The relay turns them into the per-platform FCM shape
+ * exactly as Push::fcmMessage() does (APNs interruption level, relevance score
+ * and category; data-only messages for Android). Both survive content-free mode.
+ *
  * Configuration (env / .env), optional:
  *   - LEAN_PUSH_RELAY_URL — the relay endpoint; defaults to Leantime's.
  */
@@ -120,7 +126,7 @@ class PushRelay
             // Keep only what the app needs to open the right screen. The caller's url is
             // never forwarded: it can carry text (query parameters of the request that made
             // the change); a link is rebuilt from the ids instead.
-            $data = array_intersect_key($data, array_flip(['module', 'moduleId', 'parentTicketId', 'projectId', 'type', 'threadId']));
+            $data = array_intersect_key($data, array_flip(['module', 'moduleId', 'parentTicketId', 'projectId', 'type', 'threadId', 'tier', 'category']));
             $canonical = $this->canonicalUrl($data);
             if ($canonical !== null) {
                 $data['url'] = $canonical;

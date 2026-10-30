@@ -35,6 +35,8 @@ class PushDataTest extends TestCase
             'type' => 'updated',
             'threadId' => 'ticket-123',
             'url' => 'https://example.test/x',
+            'category' => 'task',
+            'tier' => '2',
         ], $data);
     }
 
@@ -48,6 +50,8 @@ class PushDataTest extends TestCase
         $this->assertSame('123', $data['parentTicketId']);
         $this->assertSame('ticket-123', $data['threadId']);
         $this->assertSame('commented', $data['type']);
+        $this->assertSame('comment', $data['category'], 'comments carry the reply action');
+        $this->assertSame('2', $data['tier'], 'project fan-out is quiet by default');
     }
 
     /**
@@ -80,6 +84,6 @@ class PushDataTest extends TestCase
         $n = $this->notification('goalcanvas', (object) ['id' => 5], '', 0);
         $n->url = false;
 
-        $this->assertSame(['module' => 'goalcanvas', 'moduleId' => '5', 'url' => ''], Push::buildData($n));
+        $this->assertSame(['module' => 'goalcanvas', 'moduleId' => '5', 'url' => '', 'category' => 'none', 'tier' => '2'], Push::buildData($n));
     }
 }

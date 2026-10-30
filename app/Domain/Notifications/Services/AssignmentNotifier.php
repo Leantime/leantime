@@ -140,6 +140,9 @@ class AssignmentNotifier
                 'type' => self::TYPE,
                 'threadId' => 'ticket-'.$event->ticketId,
                 'url' => $url,
+                // Directly for one person: arrives with sound and ranks first in a summary.
+                'tier' => Push::TIER_DIRECT,
+                'category' => Push::CATEGORY_TASK,
             ]);
         } catch (\Throwable $e) {
             Log::warning('Assignment push failed: '.$e->getMessage());

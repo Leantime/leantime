@@ -53,6 +53,32 @@ class Push
 
     private const FCM_TOKEN_CACHE_TTL = 3540;
 
+    /**
+     * Delivery tier, carried in data as 'tier'. Tier 1 is directly for the person
+     * (assigned to you, mentioned, a reply, a comment on your task, added to a
+     * project) and arrives with sound. Tier 2 is everything else and arrives
+     * quietly (no sound, screen stays dark). Project fan-out defaults to tier 2.
+     */
+    public const TIER_DIRECT = '1';
+
+    public const TIER_QUIET = '2';
+
+    /**
+     * Notification category, carried in data as 'category'. The app registers
+     * action buttons per category (reply on a comment, done / start timer on a
+     * task); 'none' gets no buttons.
+     */
+    public const CATEGORY_COMMENT = 'comment';
+
+    public const CATEGORY_TASK = 'task';
+
+    public const CATEGORY_NONE = 'none';
+
+    /** Android notification channels the app creates, one per tier. */
+    private const ANDROID_CHANNEL_DIRECT = 'leantime-direct';
+
+    private const ANDROID_CHANNEL_QUIET = 'leantime-quiet';
+
     private Client $httpClient;
 
     private PushRelay $relay;
@@ -104,6 +130,9 @@ class Push
      *                       moduleId        => entity id (string|int)
      *                       parentTicketId  => for comments: their ticket id
      *                       url             => web fallback URL
+     *                       tier            => TIER_DIRECT | TIER_QUIET (default quiet)
+     *                       category        => comment | task | none (derived from
+     *                       module when missing)
      *                       Values get string-cast for FCM compatibility
      *                       (FCM data fields must be strings).
      */
@@ -133,6 +162,7 @@ class Push
         foreach ($data as $k => $v) {
             $stringData[(string) $k] = is_scalar($v) ? (string) $v : json_encode($v);
         }
+        $stringData = self::withDefaults($stringData);
 
         if ($path === 'relay') {
             // One request for the whole fan-out; the relay reports dead tokens back.
@@ -185,6 +215,9 @@ class Push
      *   type            the action that triggered it ('commented', 'assigned', ...), if set
      *   threadId        grouping key, one thread per task ('ticket-<id>'), when it has one
      *   url             web fallback URL
+     *   category        'comment' | 'task' | 'none' — which action buttons the app offers
+     *   tier            '2' here: project fan-out is quiet. Listeners for things directly
+     *                   for one person (AssignmentNotifier) send tier '1' themselves.
      *
      * Empty values are left out so the app can tell "missing" from "zero".
      *
@@ -234,6 +267,8 @@ class Push
             'type' => $notification->action,
             'threadId' => $taskId !== '' ? 'ticket-'.$taskId : '',
             'url' => $url,
+            'category' => self::categoryFor($module),
+            'tier' => self::TIER_QUIET,
         ];
 
         // module and moduleId stay even when empty: the app's router expects them.
@@ -263,26 +298,11 @@ class Push
             return;
         }
 
-        // $data is already string-valued (cast in send()).
-        $stringData = $data;
-
+        // $data is already string-valued with tier/category defaults (see send()).
         $payload = [
-            'message' => [
-                'token' => $row->push_token,
-                'notification' => [
-                    'title' => $title,
-                    'body' => $body,
-                ],
-                'data' => $stringData,
-            ],
+            'message' => ['token' => $row->push_token]
+                + self::fcmMessage((string) ($row->push_platform ?? ''), $title, $body, $data),
         ];
-
-        // Group a task's notifications together in Notification Center.
-        if (($stringData['threadId'] ?? '') !== '') {
-            $payload['message']['apns'] = [
-                'payload' => ['aps' => ['thread-id' => $stringData['threadId']]],
-            ];
-        }
 
         try {
             $this->httpClient->post(
@@ -315,6 +335,115 @@ class Push
 
             throw $e;
         }
+    }
+
+    /**
+     * Fill the delivery fields a caller may leave out: 'tier' defaults to quiet and
+     * is coerced to '1' | '2'; 'category' is derived from the module when missing
+     * or unknown. Values stay strings.
+     *
+     * @param  array<string, string>  $data
+     * @return array<string, string>
+     */
+    public static function withDefaults(array $data): array
+    {
+        $data['tier'] = ($data['tier'] ?? '') === self::TIER_DIRECT ? self::TIER_DIRECT : self::TIER_QUIET;
+        if (! in_array($data['category'] ?? '', [self::CATEGORY_COMMENT, self::CATEGORY_TASK, self::CATEGORY_NONE], true)) {
+            $data['category'] = self::categoryFor((string) ($data['module'] ?? ''));
+        }
+
+        return $data;
+    }
+
+    /**
+     * Which action buttons a notification about this module can carry: comments
+     * (incl. mentions and replies) → 'comment', tasks → 'task', anything else → 'none'.
+     */
+    public static function categoryFor(string $module): string
+    {
+        return match ($module) {
+            'comments' => self::CATEGORY_COMMENT,
+            'tickets' => self::CATEGORY_TASK,
+            default => self::CATEGORY_NONE,
+        };
+    }
+
+    /**
+     * The FCM v1 message for one device, minus the token. The shape depends on the
+     * device platform:
+     *
+     *  - Android: DATA-ONLY (no 'notification' block) at high priority, with title,
+     *    body and the tier's channelId inside data. The app renders it itself so it
+     *    can attach action buttons; a 'notification' block would be drawn by the
+     *    system tray without them.
+     *  - iOS (and unknown platforms): the usual notification + data, plus APNs
+     *    fields the system needs to show buttons and rank the alert: 'category'
+     *    (leantime-comment | leantime-task, omitted for 'none'), 'thread-id' for
+     *    grouping, 'interruption-level' (active for tier 1, passive for tier 2 so it
+     *    leaves the screen dark), 'sound' (default, tier 1 only; tier 2 stays silent)
+     *    and 'relevance-score' (what the scheduled summary features first).
+     *
+     * The PushRelay plugin builds the same shape for self-hosted instances; keep
+     * the two in step.
+     *
+     * @param  array<string, string>  $data  String-valued, with tier/category set (see withDefaults())
+     * @return array<string, mixed>
+     */
+    public static function fcmMessage(string $platform, string $title, string $body, array $data): array
+    {
+        $data = self::withDefaults($data);
+        $direct = $data['tier'] === self::TIER_DIRECT;
+
+        if ($platform === 'android') {
+            // Generated values win over same-named data keys, matching the relay's
+            // FcmSender: the title/body shown and the tier-derived channel are ours.
+            return [
+                'data' => [
+                    'title' => $title,
+                    'body' => $body,
+                    'channelId' => $direct ? self::ANDROID_CHANNEL_DIRECT : self::ANDROID_CHANNEL_QUIET,
+                ] + $data,
+                'android' => ['priority' => 'high'],
+            ];
+        }
+
+        $aps = [
+            'interruption-level' => $direct ? 'active' : 'passive',
+            'relevance-score' => self::relevanceScore($data),
+        ];
+        // 'active' alone is silent: the sound is its own key. Tier 1 plays the default
+        // sound; tier 2 omits it so a quiet alert stays quiet.
+        if ($direct) {
+            $aps['sound'] = 'default';
+        }
+        if (($data['threadId'] ?? '') !== '') {
+            $aps['thread-id'] = $data['threadId'];
+        }
+        if ($data['category'] !== self::CATEGORY_NONE) {
+            $aps['category'] = 'leantime-'.$data['category'];
+        }
+
+        return [
+            'notification' => ['title' => $title, 'body' => $body],
+            'data' => $data,
+            'apns' => ['payload' => ['aps' => $aps]],
+        ];
+    }
+
+    /**
+     * How prominently iOS features the alert in a scheduled summary: 1.0 for the
+     * things someone is most likely waiting on (assigned, mentioned, a reply),
+     * 0.5 for the rest of tier 1, 0.2 for quiet tier 2.
+     *
+     * @param  array<string, string>  $data
+     */
+    private static function relevanceScore(array $data): float
+    {
+        if (($data['tier'] ?? '') !== self::TIER_DIRECT) {
+            return 0.2;
+        }
+
+        return in_array($data['type'] ?? '', ['assigned', 'mentioned', 'mention', 'replied', 'reply'], true) ? 1.0 : 0.5;
     }
 
     /**
