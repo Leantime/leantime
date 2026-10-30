@@ -55,9 +55,37 @@ class Push
 
     private Client $httpClient;
 
-    public function __construct(Client $httpClient)
+    private PushRelay $relay;
+
+    public function __construct(Client $httpClient, PushRelay $relay)
     {
         $this->httpClient = $httpClient;
+        $this->relay = $relay;
+    }
+
+    /**
+     * Which path delivers push on this instance:
+     *   - 'direct' — Firebase credentials are configured (Cloud)
+     *   - 'relay'  — the administrator turned on Leantime's relay and AdvancedAuth is enabled
+     *   - 'off'    — neither; sends no-op
+     *
+     * Direct wins when both are set, so Cloud never routes through the relay.
+     */
+    public function sendPath(): string
+    {
+        if ($this->fcmConfigured()) {
+            return 'direct';
+        }
+
+        return $this->relay->isEnabled() ? 'relay' : 'off';
+    }
+
+    private function fcmConfigured(): bool
+    {
+        $credentialsPath = (string) env('LEAN_PUSH_FCM_CREDENTIALS_PATH', '');
+        $projectId = (string) env('LEAN_PUSH_FCM_PROJECT_ID', '');
+
+        return $credentialsPath !== '' && $projectId !== '' && is_readable($credentialsPath);
     }
 
     /**
@@ -85,6 +113,11 @@ class Push
             return;
         }
 
+        $path = $this->sendPath();
+        if ($path === 'off') {
+            return;
+        }
+
         $rows = \Illuminate\Support\Facades\DB::table('zp_access_tokens')
             ->whereIn('tokenable_id', $userIds)
             ->whereNotNull('push_token')
@@ -92,6 +125,19 @@ class Push
             ->get(['id', 'push_token', 'push_provider', 'push_platform', 'tokenable_id']);
 
         if ($rows->isEmpty()) {
+            return;
+        }
+
+        // FCM data fields must be strings; the relay forwards them as-is, so cast once here.
+        $stringData = [];
+        foreach ($data as $k => $v) {
+            $stringData[(string) $k] = is_scalar($v) ? (string) $v : json_encode($v);
+        }
+
+        if ($path === 'relay') {
+            // One request for the whole fan-out; the relay reports dead tokens back.
+            $this->relay->send($rows->where('push_provider', 'fcm'), $title, $body, $stringData);
+
             return;
         }
 
@@ -105,7 +151,7 @@ class Push
             }
 
             try {
-                $this->sendFcm($row, $title, $body, $data);
+                $this->sendFcm($row, $title, $body, $stringData);
             } catch (\Throwable $e) {
                 // One bad row doesn't kill the broadcast. sendFcm marks
                 // push_invalidated_at on known-dead tokens (UNREGISTERED
@@ -217,12 +263,8 @@ class Push
             return;
         }
 
-        // FCM data fields must be strings. Cast everything explicitly
-        // — easy to forget and surface as "InvalidValue" errors later.
-        $stringData = [];
-        foreach ($data as $k => $v) {
-            $stringData[(string) $k] = is_scalar($v) ? (string) $v : json_encode($v);
-        }
+        // $data is already string-valued (cast in send()).
+        $stringData = $data;
 
         $payload = [
             'message' => [

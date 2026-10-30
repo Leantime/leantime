@@ -4,6 +4,7 @@ namespace Unit\app\Domain\Setting\Services;
 
 use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Leantime\Domain\Notifications\Services\PushRelay;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
@@ -150,5 +151,78 @@ class SettingServiceTest extends TestCase
 
         $this->assertSame([], $result['calls']);
         $this->assertFalse($result['saved']);
+    }
+
+    // ---------------------------------------------------------------------
+    // Mobile push relay settings, saved with the main company details.
+    // ---------------------------------------------------------------------
+
+    /**
+     * Runs saveCompanySettings() with the required main details plus $extra and returns every
+     * setting it wrote, keyed by setting name.
+     *
+     * @param  array<string, mixed>  $extra
+     * @return array<string, mixed>
+     */
+    private function saveMainDetails(array $extra): array
+    {
+        $saved = [];
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn () => false,
+            'saveSetting' => function ($key, $value) use (&$saved) {
+                $saved[$key] = $value;
+
+                return true;
+            },
+        ]);
+
+        $this->makeService(settingsRepo: $settingsRepo)->saveCompanySettings($extra + ['name' => 'Acme', 'language' => 'en-US', 'messageFrequency' => 3600]);
+
+        return $saved;
+    }
+
+    /**
+     * The relay switch is read as a boolean: an RPC caller sending false or '0' must switch it
+     * off, not on. A missing key (unchecked box) is off.
+     *
+     * @dataProvider relaySwitchProvider
+     */
+    public function test_the_relay_switch_is_read_as_a_boolean(array $params, string $stored): void
+    {
+        $this->assertSame($stored, $this->saveMainDetails($params)[PushRelay::SETTING_ENABLED]);
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, string}>
+     */
+    public static function relaySwitchProvider(): array
+    {
+        return [
+            'true' => [['pushRelayEnabled' => true], '1'],
+            'checkbox' => [['pushRelayEnabled' => 'on'], '1'],
+            '"1"' => [['pushRelayEnabled' => '1'], '1'],
+            'false' => [['pushRelayEnabled' => false], '0'],
+            '"0"' => [['pushRelayEnabled' => '0'], '0'],
+            '"false"' => [['pushRelayEnabled' => 'false'], '0'],
+            'missing' => [[], '0'],
+        ];
+    }
+
+    /**
+     * The content level is only written when sent: a save that doesn't carry it keeps whatever
+     * was stored, so it can't silently flip a content-free relay back to full content.
+     */
+    public function test_a_save_without_the_content_level_leaves_it_alone(): void
+    {
+        $saved = $this->saveMainDetails(['pushRelayEnabled' => true]);
+
+        $this->assertArrayNotHasKey(PushRelay::SETTING_CONTENT, $saved);
+    }
+
+    public function test_the_content_level_accepts_minimal_and_falls_back_to_full(): void
+    {
+        $this->assertSame(PushRelay::CONTENT_MINIMAL, $this->saveMainDetails(['pushRelayContent' => 'minimal'])[PushRelay::SETTING_CONTENT]);
+        $this->assertSame(PushRelay::CONTENT_FULL, $this->saveMainDetails(['pushRelayContent' => 'full'])[PushRelay::SETTING_CONTENT]);
+        $this->assertSame(PushRelay::CONTENT_FULL, $this->saveMainDetails(['pushRelayContent' => 'everything'])[PushRelay::SETTING_CONTENT]);
     }
 }
