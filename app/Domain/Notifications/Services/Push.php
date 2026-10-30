@@ -395,12 +395,14 @@ class Push
         $direct = $data['tier'] === self::TIER_DIRECT;
 
         if ($platform === 'android') {
+            // Generated values win over same-named data keys, matching the relay's
+            // FcmSender: the title/body shown and the tier-derived channel are ours.
             return [
-                'data' => $data + [
+                'data' => [
                     'title' => $title,
                     'body' => $body,
                     'channelId' => $direct ? self::ANDROID_CHANNEL_DIRECT : self::ANDROID_CHANNEL_QUIET,
-                ],
+                ] + $data,
                 'android' => ['priority' => 'high'],
             ];
         }

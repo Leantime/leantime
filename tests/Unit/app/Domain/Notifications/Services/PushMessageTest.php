@@ -79,8 +79,9 @@ class PushMessageTest extends TestCase
         $this->assertSame('comment', $message['data']['category']);
         $this->assertSame('42', $message['data']['parentTicketId']);
 
-        $quiet = Push::fcmMessage('android', 't', 'b', ['module' => 'tickets']);
-        $this->assertSame('leantime-quiet', $quiet['data']['channelId']);
+        $quiet = Push::fcmMessage('android', 't', 'b', ['module' => 'tickets', 'title' => 'spoofed', 'channelId' => 'leantime-direct']);
+        $this->assertSame('leantime-quiet', $quiet['data']['channelId'], 'the channel follows the tier, never a data key');
+        $this->assertSame('t', $quiet['data']['title'], 'the shown title is ours, never a data key');
         foreach ($quiet['data'] as $value) {
             $this->assertIsString($value, 'FCM data values must be strings');
         }
