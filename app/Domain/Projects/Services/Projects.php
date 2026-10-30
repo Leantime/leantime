@@ -31,6 +31,7 @@ use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
+use Leantime\Domain\Notifications\Services\PushPreferences;
 use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Events\ProjectArchived;
 use Leantime\Domain\Projects\Events\ProjectCreated;
@@ -325,7 +326,8 @@ class Projects extends BaseService implements ChecksProjectAccess
      * notifications and — last — queued rows for the personal webhooks of
      * recipients who opted in (delivered later by the webhook queue). Webhooks
      * ignore the email switch and include the author's own changes (see
-     * personalWebhookCandidates()).
+     * personalWebhookCandidates()). Push ignores the email switch too and has
+     * its own, applied last (see PushPreferences).
      *
      * @param  Notification  $notification  The notification object to send.
      *
@@ -365,16 +367,33 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         $webhookCandidates = $this->personalWebhookCandidates($activeMembers, $notification);
 
-        // Batch-load notification preferences for every candidate of either channel
+        // Push has its own switch (PushPreferences), so its candidates are the team minus the
+        // author whatever their email setting; the switch itself is applied last, below.
+        $pushCandidates = [];
+        foreach ($activeMembers as $member) {
+            if ($member['id'] != $notification->authorId) {
+                $pushCandidates[] = (int) $member['id'];
+            }
+        }
+
+        // Mentions and collaborators bypass the relevance and category filters on every channel.
+        $mentionedUserIds = $this->extractMentionedUserIds($notification);
+        $collaboratorIds = $this->extractCollaboratorIds($notification);
+
+        // Batch-load notification preferences for every candidate of any channel
         $settingKeys = [];
-        foreach (array_unique(array_merge($users, $webhookCandidates)) as $userId) {
+        foreach (array_unique(array_merge($users, $webhookCandidates, $pushCandidates)) as $userId) {
             $settingKeys[] = 'usersettings.'.$userId.'.projectNotificationLevels';
             $settingKeys[] = 'usersettings.'.$userId.'.projectMutedNotifications'; // legacy format
             $settingKeys[] = 'usersettings.'.$userId.'.notificationEventTypes';
         }
+        // The push switch is read for bypass recipients too: a mention gets past the filters, not the switch.
+        foreach (array_unique(array_merge($pushCandidates, $mentionedUserIds, $collaboratorIds)) as $userId) {
+            $settingKeys[] = PushPreferences::settingKey((int) $userId);
+        }
         $settingKeys[] = 'companysettings.defaultNotificationEventTypes';
         $settingKeys[] = 'companysettings.defaultNotificationRelevance';
-        $preloadedSettings = $this->settingsRepo->getSettingsForKeys($settingKeys);
+        $preloadedSettings = $this->settingsRepo->getSettingsForKeys(array_values(array_unique($settingKeys)));
 
         // Layer 1: Filter by per-project relevance level (all / my_work / muted)
         $users = $this->filterUsersByProjectRelevance($users, $notification, $preloadedSettings);
@@ -383,10 +402,15 @@ class Projects extends BaseService implements ChecksProjectAccess
         $users = $this->filterUsersByEventType($users, $notification->module, $preloadedSettings);
 
         // Mentions and collaborators both bypass the two filter layers above.
-        $mentionedUserIds = $this->extractMentionedUserIds($notification);
-        $collaboratorIds = $this->extractCollaboratorIds($notification);
         $users = $this->addBypassRecipients($users, $mentionedUserIds, $notification->authorId);
         $users = $this->addBypassRecipients($users, $collaboratorIds, $notification->authorId);
+
+        // Push: the same two layers and bypasses, then the user's own push switch, which is final.
+        $pushRecipients = $this->filterUsersByProjectRelevance($pushCandidates, $notification, $preloadedSettings);
+        $pushRecipients = $this->filterUsersByEventType($pushRecipients, $notification->module, $preloadedSettings);
+        $pushRecipients = $this->addBypassRecipients($pushRecipients, $mentionedUserIds, $notification->authorId);
+        $pushRecipients = $this->addBypassRecipients($pushRecipients, $collaboratorIds, $notification->authorId);
+        $pushRecipients = PushPreferences::filter($pushRecipients, $preloadedSettings);
 
         $emailMessage = $notification->message;
         if ($notification->url !== false) {
@@ -402,14 +426,15 @@ class Projects extends BaseService implements ChecksProjectAccess
         $this->messengerService->sendNotificationToMessengers($notification, $projectName);
 
         // Send mobile push notifications to recipients with a registered
-        // device token. No-op for users with no mobile token; no-op for
-        // FCM-provider rows when LEAN_PUSH_FCM_CREDENTIALS_PATH /
-        // LEAN_PUSH_FCM_PROJECT_ID aren't configured. Wrapped in try
-        // so a push outage never breaks the rest of the notification
-        // dispatch path (queued emails + messengers still fire).
+        // device token. Push recipients are filtered like email but gated by
+        // the push switch, not the email one (see PushPreferences). No-op for
+        // users with no mobile token; no-op for FCM-provider rows when
+        // LEAN_PUSH_FCM_CREDENTIALS_PATH / LEAN_PUSH_FCM_PROJECT_ID aren't
+        // configured. Wrapped in try so a push outage never breaks the rest
+        // of the notification dispatch path (queued emails + messengers still fire).
         try {
             $pushService = app()->make(\Leantime\Domain\Notifications\Services\Push::class);
-            $pushService->sendFromNotification($notification, $users);
+            $pushService->sendFromNotification($notification, $pushRecipients);
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Push dispatch failed: '.$e->getMessage());
         }
