@@ -301,6 +301,13 @@ class Comments extends BaseService
 
             if ($comment) {
                 $mapper['id'] = $comment;
+                // The host entity's module ('ticket', 'project', ...), so notification channels
+                // can tell what moduleId points at. Push uses it to open a ticket comment's task.
+                // Milestones are stored as tickets and commented through the 'ticket' module
+                // (Tickets::addMilestoneComment), but the app has no task to open for them, so
+                // they are marked apart and keep the web URL fallback.
+                $isMilestone = $module === 'ticket' && is_object($entity) && strtolower((string) ($entity->type ?? '')) === 'milestone';
+                $mapper['module'] = $isMilestone ? 'milestone' : $module;
 
                 CommentAdded::dispatch(
                     commentId: (int) $comment,
