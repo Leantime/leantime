@@ -16,7 +16,21 @@
 
             <form method="post">
                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
-                <p>{!! __('text.confirm_user_deletion') !!}</p><br />
+                @php
+                    $userFullName = trim(($user['firstname'] ?? '').' '.($user['lastname'] ?? ''));
+                    $userLogin = (string) ($user['username'] ?? '');
+                @endphp
+                <p>{!! __('text.confirm_user_deletion') !!}</p>
+                <p data-testid="user-to-delete">
+                    @if ($userFullName !== '')
+                        <strong>{{ $userFullName }}</strong>
+                        @if ($userLogin !== '')
+                            ({{ $userLogin }})
+                        @endif
+                    @else
+                        <strong>{{ $userLogin }}</strong>
+                    @endif
+                </p><br />
                 <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.yes_delete')" name="del" />
                 <x-global::forms.button tag="a" contentRole="tertiary" link="{{ BASE_URL }}/users/showAll">{!! __('buttons.back') !!}</x-global::forms.button>
             </form>
