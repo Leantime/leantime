@@ -378,6 +378,10 @@ class Language
     /**
      * Get a translated string or a default value if the index is not found.
      *
+     * language.dateformat / language.timeformat return the user's own format when they chose one
+     * (session usersettings.date_format / time_format) and otherwise the default of the language
+     * currently loaded.
+     *
      * @param  string  $index  The index of the translated string.
      * @param  string  $default  The default value to return if the index is not found. Defaults to an empty string.
      * @return string The translated string or the default value if the index is not found.
@@ -398,8 +402,8 @@ class Language
         }
 
         $returnValue = match (trim($index)) {
-            'language.dateformat' => session('usersettings.date_format') ?? $this->ini_array['language.dateformat'],
-            'language.timeformat' => session('usersettings.time_format') ?? $this->ini_array['language.timeformat'],
+            'language.dateformat' => session('usersettings.date_format') ?: $this->ini_array['language.dateformat'],
+            'language.timeformat' => session('usersettings.time_format') ?: $this->ini_array['language.timeformat'],
             default => $this->ini_array[$index],
         };
 

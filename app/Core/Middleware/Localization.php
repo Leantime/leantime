@@ -80,15 +80,22 @@ class Localization
         session()->put('usersettings.language', ($settings["usersettings.$userId.language"] ?? false) ?: session('companysettings.language'));
         session()->put('usersettings.timezone', ($settings["usersettings.$userId.timezone"] ?? false) ?: $this->config->defaultTimezone);
 
-        session()->put('usersettings.date_format', ($settings["usersettings.$userId.date_format"] ?? false) ?: $this->language->__('language.dateformat'));
-        session()->put('usersettings.time_format', ($settings["usersettings.$userId.time_format"] ?? false) ?: $this->language->__('language.timeformat'));
+        // Only the formats the user chose go into the session. Without a choice the session holds null
+        // and Language::__('language.timeformat') answers with the default of the language loaded for
+        // that request. Storing the language default here instead froze it: Language::__ prefers the
+        // session value, so the next recompute (e.g. after the language changed to French) read the
+        // old English "h:i A" back and kept it for the rest of the session (#3877).
+        $userDateFormat = ($settings["usersettings.$userId.date_format"] ?? null) ?: null;
+        $userTimeFormat = ($settings["usersettings.$userId.time_format"] ?? null) ?: null;
+        session()->put('usersettings.date_format', $userDateFormat);
+        session()->put('usersettings.time_format', $userTimeFormat);
 
         // Set macros for CarbonImmutable date handling
         CarbonImmutable::mixin(new CarbonMacros(
             session('usersettings.timezone'),
             str_replace('-', '_', session('usersettings.language')),
-            session('usersettings.date_format'),
-            session('usersettings.time_format')
+            $this->language->__('language.dateformat'),
+            $this->language->__('language.timeformat')
         ));
 
         session()->put('localization.cached', true);
