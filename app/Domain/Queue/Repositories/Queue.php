@@ -22,7 +22,19 @@ class Queue
         $this->users = $users;
     }
 
-    public function queueMessageToUsers(array $recipients, string $message, string $subject = '', int $projectId = 0): void
+    /**
+     * Queues one email per recipient for the digest.
+     *
+     * $module and $moduleId name the entity the email is about, in the same terms the inbox
+     * (zp_notifications.module / moduleId) uses for the same event. The digest worker uses them
+     * to tell emails the person has already read in the inbox from new ones; an email queued
+     * without them is always treated as new.
+     *
+     * @param  array<int, int|string>  $recipients  User ids or email addresses.
+     * @param  string|null  $module  The entity's module as the inbox records it, e.g. 'tickets'.
+     * @param  int|null  $moduleId  The entity's id as the inbox records it.
+     */
+    public function queueMessageToUsers(array $recipients, string $message, string $subject = '', int $projectId = 0, ?string $module = null, ?int $moduleId = null): void
     {
         $recipients = array_unique($recipients);
 
@@ -60,6 +72,8 @@ class Queue
                     'message' => $message,
                     'thedate' => $thedate,
                     'projectId' => $projectId,
+                    'module' => $module,
+                    'moduleId' => $moduleId,
                 ]);
             } catch (UniqueConstraintViolationException $e) {
                 continue;

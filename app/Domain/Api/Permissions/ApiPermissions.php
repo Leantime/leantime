@@ -10,7 +10,7 @@ use Leantime\Core\Auth\Permissions\ProvidesPermissions;
  *
  * Leantime API keys act as service accounts (a key IS a user row with a role), so creating,
  * listing, and editing them is an installation-wide administrative capability — the management
- * UI (ApiKey / NewApiKey / DelAPIKey controllers) is already `authOrRedirect([owner, admin])`.
+ * UI (ApiKey / NewApiKey / DelAPIKey controllers) is gated on this permission too.
  * The single verb below is therefore COMPANY-WIDE (`projectScoped = false`); call sites gate with
  * `#[RequiresPermission(ApiPermissions::MANAGE, global: true)]`, which by the default role map
  * lands on admin/owner only.

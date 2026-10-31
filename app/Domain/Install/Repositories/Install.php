@@ -106,6 +106,7 @@ class Install
         30531,
         30532,
         30533,
+        30534,
     ];
 
     /**
@@ -235,6 +236,45 @@ class Install
 
             return false;
         }
+    }
+
+    /**
+     * getFirstUsers - returns the first user rows, enough to tell whether the installer's owner
+     * is still the only account.
+     *
+     * @param  int  $limit  How many rows to read at most.
+     * @return array<int, array<string, mixed>> Rows with id, role, status, lastlogin, pwReset and password (the hash; only checked for being empty).
+     */
+    public function getFirstUsers(int $limit = 2): array
+    {
+        $this->selectDatabase($this->config->dbDatabase);
+
+        return $this->connection->table('zp_user')
+            ->select(['id', 'role', 'status', 'lastlogin', 'pwReset', 'password'])
+            ->orderBy('id')
+            ->limit($limit)
+            ->get()
+            ->map(fn ($row): array => (array) $row)
+            ->all();
+    }
+
+    /**
+     * setInviteToken - stores a new invite token on a user that has not been activated yet.
+     *
+     * @param  int  $userId  The user to update.
+     * @param  string  $token  The token the onboarding link (/auth/userInvite/{token}) carries.
+     * @return bool True when the token was stored.
+     */
+    public function setInviteToken(int $userId, string $token): bool
+    {
+        $this->selectDatabase($this->config->dbDatabase);
+
+        $updatedRows = $this->connection->table('zp_user')
+            ->where('id', $userId)
+            ->whereRaw('LOWER(status) = ?', ['i'])
+            ->update(['pwReset' => $token]);
+
+        return $updatedRows > 0;
     }
 
     /**
@@ -3605,6 +3645,45 @@ class Install
             Log::error('Migration 30533: '.$e->getMessage());
 
             return ['Migration 30533 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30534 — zp_queue.module / moduleId, the entity an email is about.
+     *
+     * The digest worker reads them to split a digest into "New" and "Already seen" against the
+     * inbox's read state (see {@see \Leantime\Domain\Queue\Workers\EmailWorker}). Both are
+     * nullable: rows queued before this migration, and emails that are about no entity, stay
+     * "new" as they always were. Fresh installs get the columns from
+     * {@see \Leantime\Domain\Install\Services\SchemaBuilder}.
+     */
+    public function update_sql_30534(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_queue')) {
+                Log::info('Migration 30534 skipped: zp_queue table missing (partial install?)');
+
+                return true;
+            }
+
+            $schema->table('zp_queue', function (Blueprint $table) use ($schema): void {
+                if (! $schema->hasColumn('zp_queue', 'module')) {
+                    $table->string('module', 45)->nullable()->after('projectId');
+                }
+                if (! $schema->hasColumn('zp_queue', 'moduleId')) {
+                    $table->integer('moduleId')->nullable()->after('module');
+                }
+            });
+        } catch (\Exception $e) {
+            Log::error('Migration 30534: '.$e->getMessage());
+
+            return ['Migration 30534 failed: '.$e->getMessage()];
         }
 
         return true;

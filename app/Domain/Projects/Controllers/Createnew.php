@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Modulemanager\Services\Modulemanager;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Symfony\Component\HttpFoundation\Response;
 
 class Createnew extends Controller
@@ -26,10 +26,9 @@ class Createnew extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::CREATE, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
         $projectTypes = [
             'strategy' => [
                 'label' => 'label.set_direction',

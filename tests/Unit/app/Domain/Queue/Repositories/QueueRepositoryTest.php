@@ -56,7 +56,9 @@ class QueueRepositoryTest extends TestCase
             subject VARCHAR(255) NULL,
             message TEXT NOT NULL,
             thedate DATETIME NOT NULL,
-            projectId INTEGER NOT NULL
+            projectId INTEGER NOT NULL,
+            module VARCHAR(45) NULL,
+            moduleId INTEGER NULL
         )');
 
         $this->queueRepo = new QueueRepository(
@@ -271,5 +273,25 @@ class QueueRepositoryTest extends TestCase
         $queueRepo->queueMessageToUsers([3], 'Ticket #12 was updated', 'Ticket updated', 5);
 
         $this->assertSame(1, $this->connection->table('zp_queue')->where('channel', Workers::EMAILS->value)->count());
+    }
+
+    /**
+     * The entity an email is about rides on the row in the inbox's terms, so the digest worker
+     * can check whether the person already read it there. Without one the columns stay NULL.
+     */
+    public function test_an_email_records_the_entity_it_is_about_when_given_one(): void
+    {
+        CarbonImmutable::setTestNow('2026-10-08 12:00:00');
+        $queueRepo = new QueueRepository(
+            $this->make(DbCore::class, ['getConnection' => fn () => $this->connection]),
+            $this->make(UserRepo::class, ['getUser' => fn () => ['id' => 3, 'username' => 'person@example.com']]),
+        );
+
+        $queueRepo->queueMessageToUsers([3], 'Ticket #12 was updated', 'Ticket updated', 5, 'tickets', 12);
+        $queueRepo->queueMessageToUsers([3], 'Project created', 'Project created', 5);
+
+        $rows = $this->connection->table('zp_queue')->where('channel', Workers::EMAILS->value)->orderBy('subject')->get();
+        $this->assertSame([null, null], [$rows[0]->module, $rows[0]->moduleId], 'no entity given: nothing recorded');
+        $this->assertSame(['tickets', 12], [$rows[1]->module, (int) $rows[1]->moduleId]);
     }
 }

@@ -7,8 +7,10 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Projects\Services\Projects;
+use Leantime\Domain\Timesheets\Permissions\TimesheetsPermissions;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
@@ -20,6 +22,7 @@ class GetProjectTimesheetsTool extends Tool
     public function __construct(
         private Timesheets $timesheetsService,
         private Projects $projectsService,
+        private PermissionService $permissionService,
     ) {}
 
     /**
@@ -66,8 +69,8 @@ class GetProjectTimesheetsTool extends Tool
 
         $projectId = (int) ($arguments['projectId'] ?? 0);
 
-        $globalRole = session('userdata.role');
-        if (! Roles::isAtLeast($globalRole, Roles::$manager)) {
+        // Company-wide timesheet managers read any project; otherwise a manager role in this project is needed.
+        if (! $this->permissionService->currentUserCan(TimesheetsPermissions::MANAGE)) {
             // getProjectRole() returns a stored role key (usually a numeric string like "30");
             // resolve it to a role name before comparing (same pattern as
             // Tickets::userIsAtLeastForProject).
@@ -98,7 +101,8 @@ class GetProjectTimesheetsTool extends Tool
 
         $project = $this->projectsService->getProject($projectId);
 
-        $response = '## Project Timesheet Summary: '.$project['name']."\n";
+        $projectName = is_array($project) ? ($project['name'] ?? '') : '';
+        $response = '## Project Timesheet Summary: '.($projectName !== '' ? $projectName : 'Project #'.$projectId)."\n";
         $response .= 'From: '.$fromDate->formatDateForUser().' to '.$toDate->formatDateForUser()."\n\n";
 
         $totalHours = 0;

@@ -21,7 +21,6 @@ use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\OutboundUrlGuard;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Blueprints\Repositories\Blueprints as BlueprintsRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
@@ -337,6 +336,24 @@ class Projects extends BaseService implements ChecksProjectAccess
      *           webhooks. It must only run as the last step after the calling service or
      *           controller has already authorized the change being announced.
      */
+    /**
+     * The id the inbox records a notification under: the entity's id when the notification
+     * carries an entity, else the project's. The same value goes on the queued email, so the
+     * digest can match it against the inbox row.
+     */
+    private function notificationEntityId(Notification $notification): int
+    {
+        if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
+            return (int) $notification->entity['id'];
+        }
+
+        if (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
+            return (int) $notification->entity->id;
+        }
+
+        return (int) $notification->projectId;
+    }
+
     public function notifyProjectUsers(Notification $notification): void
     {
 
@@ -418,9 +435,10 @@ class Projects extends BaseService implements ChecksProjectAccess
             $emailMessage .= " <a href='".$emailUrl."'>".$notification->url['text'].'</a>';
         }
 
-        // NEW Queuing messaging system
-        $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId);
+        // The entity the notification is about, in the inbox's terms, so the digest can tell an
+        // email the person already read in the inbox from a new one. The email itself is queued
+        // below, after the inbox rows exist (see there).
+        $entityId = $this->notificationEntityId($notification);
 
         // Send to messengers
         $this->messengerService->sendNotificationToMessengers($notification, $projectName);
@@ -449,11 +467,9 @@ class Projects extends BaseService implements ChecksProjectAccess
         ];
 
         $contentToCheck = '';
-        // Find entity ID & content
+        // Find mentionable content
         // Todo once all entities are models this if statement can be reduced
         if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
-            $entityId = $notification->entity['id'];
-
             if (isset($mentionFields[$notification->module])) {
                 $fields = $mentionFields[$notification->module];
 
@@ -464,8 +480,6 @@ class Projects extends BaseService implements ChecksProjectAccess
                 }
             }
         } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
-            $entityId = $notification->entity->id;
-
             if (isset($mentionFields[$notification->module])) {
                 $fields = $mentionFields[$notification->module];
 
@@ -475,9 +489,6 @@ class Projects extends BaseService implements ChecksProjectAccess
                     }
                 }
             }
-        } else {
-            // Entity id not set use project id
-            $entityId = $notification->projectId;
         }
 
         if ($contentToCheck != '') {
@@ -522,6 +533,12 @@ class Projects extends BaseService implements ChecksProjectAccess
          * @context domain.services.projects
          */
         self::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => array_values($filteredUsersToNotify), 'url' => $notification->url['url']], 'leantime.domain.projects.services.projects.notifyProjectUsers');
+
+        // Email, through the digest queue, AFTER the inbox rows above are written: the digest reads
+        // the inbox to tell an already-read email from a new one, so a queued row must never be
+        // visible before the unread inbox row of the same event. (The listener runs in-process.)
+        $queue = app()->make(QueueRepository::class);
+        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId);
 
         // Personal webhooks go last, filtered like email (relevance, category, mentions,
         // collaborators) but from their own candidates: see personalWebhookCandidates(). This
@@ -926,11 +943,11 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller is an
-     * admin/owner querying someone else — closing the cross-user param spoof on these @api reads (an
-     * RPC caller could otherwise list another user's projects by passing a foreign id). Mirrors the
-     * inline override in getProjectsUserHasAccessTo(). Recursion-safe: a global role check only,
-     * never project membership.
+     * Resolves the userId for an "assigned-to-user" read to the SESSION user unless the caller sees
+     * all projects (projects.viewAll) and asks about someone else — closing the cross-user param spoof
+     * on these @api reads (an RPC caller could otherwise list another user's projects by passing a
+     * foreign id). Mirrors the inline override in getProjectsUserHasAccessTo(). Recursion-safe: it
+     * reads the grant map of the global role only, never project membership.
      *
      * @param  int|string|null  $userId
      */
@@ -938,11 +955,29 @@ class Projects extends BaseService implements ChecksProjectAccess
     {
         $sessionUser = (int) session('userdata.id');
 
-        if ((int) $userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+        if ((int) $userId !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
             return $sessionUser;
         }
 
         return (int) $userId;
+    }
+
+    /**
+     * Like resolveScopedUserId(), for reads that return membership rows only (project id, name,
+     * project role), never project records. User managers (users.view or users.edit) may read
+     * another account's memberships too: the user editor shows and saves them.
+     *
+     * @param  int|string|null  $userId
+     */
+    private function resolveMembershipUserId($userId): int
+    {
+        $isForeignUser = (int) $userId !== (int) session('userdata.id');
+
+        if ($isForeignUser && ($this->can(UsersPermissions::VIEW) || $this->can(UsersPermissions::EDIT))) {
+            return (int) $userId;
+        }
+
+        return $this->resolveScopedUserId($userId);
     }
 
     /**
@@ -955,7 +990,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function getProjectIdAssignedToUser($userId): false|array
     {
-        $userId = $this->resolveScopedUserId($userId);
+        $userId = $this->resolveMembershipUserId($userId);
 
         $projects = $this->projectRepository->getUserProjectRelation($userId);
 
@@ -1317,9 +1352,9 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * Role-based authorization on $userId, per @marcelfolaron review:
      *   - Not passed (null/0): use the authenticated session user
-     *   - Passed AND caller is admin/owner: honor the requested user id
+     *   - Passed AND caller sees all projects (projects.viewAll): honor the requested user id
      *     (admin tooling, "show me Alice's projects" workflows)
-     *   - Passed by a non-admin AND differs from session: ignored and
+     *   - Passed by anyone else AND differs from session: ignored and
      *     overridden to the session user (prevents IDOR via the optional
      *     param)
      *
@@ -1335,7 +1370,7 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         if ($userId === null || $userId === 0) {
             $userId = $sessionUser;
-        } elseif ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+        } elseif ($userId !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
             $userId = $sessionUser;
         }
 
@@ -2745,7 +2780,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     /**
      * Retrieves the project relations for a given user.
      *
-     * Non-admins may only read their OWN relations (the userId is pinned to the session user).
+     * Callers read their OWN relations (the userId is pinned to the session user) unless they see all
+     * projects or manage users, see resolveMembershipUserId().
      *
      * @param  int  $userId  The user ID
      * @param  int|null  $projectId  Optional project ID filter
@@ -2755,7 +2791,7 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function getUserProjectRelation(int $userId, ?int $projectId = null): array
     {
-        $userId = $this->resolveScopedUserId($userId);
+        $userId = $this->resolveMembershipUserId($userId);
 
         return $this->projectRepository->getUserProjectRelation($userId, $projectId);
     }
@@ -2904,7 +2940,7 @@ class Projects extends BaseService implements ChecksProjectAccess
     #[RequiresPermission(ProjectsPermissions::DELETE, global: true)]
     public function deleteProject(int $id): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        if (! $this->can(ProjectsPermissions::DELETE)) {
             return false;
         }
 
@@ -3026,8 +3062,9 @@ class Projects extends BaseService implements ChecksProjectAccess
      * Authorization gate for managing (sorting/restatusing/patching) a project.
      *
      * The project kanban/timeline management UI (Projects\Controllers\ShowAll) is
-     * gated on manager+, so the JSON-RPC entry points below must enforce the same.
-     * Admins and owners can manage every project; managers must be assigned to it.
+     * gated on projects.edit, so the JSON-RPC entry points below must enforce the same.
+     * Roles that see all projects (projects.viewAll) manage every project; others must be
+     * assigned to it.
      * Not @api: this is an internal authorization helper, reachable by the relocated
      * image controllers, never callable over JSON-RPC.
      *
@@ -3036,11 +3073,11 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function userCanManageProject(int $projectId): bool
     {
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
+        if (! $this->can(ProjectsPermissions::EDIT)) {
             return false;
         }
 
-        if (Auth::userIsAtLeast(Roles::$admin)) {
+        if (Roles::seesAllProjects(session('userdata.role'))) {
             return true;
         }
 
@@ -3158,8 +3195,8 @@ class Projects extends BaseService implements ChecksProjectAccess
     /**
      * Retrieves the projects for a client manager.
      *
-     * Non-admins are pinned to their own user id AND their own session client — a caller can
-     * never list another client's projects by passing a foreign clientId.
+     * Callers without projects.viewAll are pinned to their own user id AND their own session
+     * client — they can never list another client's projects by passing a foreign clientId.
      *
      * @param  int  $userId  The ID of the user.
      * @param  int  $clientId  The ID of the client.
@@ -3171,7 +3208,7 @@ class Projects extends BaseService implements ChecksProjectAccess
     {
         $userId = $this->resolveScopedUserId($userId);
 
-        if (! Auth::userIsAtLeast(Roles::$admin)) {
+        if (! Roles::seesAllProjects(session('userdata.role'))) {
             $clientId = (int) session('userdata.clientId');
         }
 

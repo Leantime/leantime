@@ -94,6 +94,7 @@
                                                                     <option value="172800" @if ($companySettings['messageFrequency'] == '172800') selected @endif>{!! __('label.48h') !!}</option>
                                                                     <option value="604800" @if ($companySettings['messageFrequency'] == '604800') selected @endif>{!! __('label.1w') !!}</option>
                                                                 </x-global::forms.select> <br/>
+                                                                <small style="color: var(--color-text-muted); font-size: var(--font-size-s);">{!! __('label.messages_frequency_company_description') !!}</small>
                                                             </span>
                                         </div>
                                     </div>

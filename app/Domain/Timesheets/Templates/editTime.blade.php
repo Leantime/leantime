@@ -112,7 +112,7 @@ use Leantime\Core\Support\FromFormat;
 
 
 
-    @if ($login::userIsAtLeast($roles::$manager))
+    @can('timesheets.manage')
         <input style="float:left; margin-right:5px;"
                 type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
             @if (isset($values['invoicedEmpl']) && $values['invoicedEmpl'] == '1')
@@ -154,7 +154,7 @@ use Leantime\Core\Support\FromFormat;
                                                       name="paidDate"
                                                       value="{{ format(value: $values['paidDate'], fromFormat: FromFormat::DbDate)->date() }}"
                                                       size="7"/><br/>
-    @endif
+    @endcan
 
 
 

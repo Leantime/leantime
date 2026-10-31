@@ -2,12 +2,14 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Domain\Api\Permissions\ApiPermissions;
 use Leantime\Domain\Api\Services\Api as ApiService;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Setting\Permissions\SettingPermissions;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,13 +22,16 @@ class DelAPIKey extends Controller
 
     private ApiService $apiService;
 
+    private PermissionService $permissionService;
+
     /**
      * Initializes dependencies.
      */
-    public function init(UserService $userService, ApiService $apiService): void
+    public function init(UserService $userService, ApiService $apiService, PermissionService $permissionService): void
     {
         $this->userService = $userService;
         $this->apiService = $apiService;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -36,10 +41,9 @@ class DelAPIKey extends Controller
      *
      * @throws \Exception
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
             return $this->tpl->display('errors.error403');
@@ -58,10 +62,9 @@ class DelAPIKey extends Controller
      *
      * @throws \Exception
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
             return $this->tpl->display('errors.error403');
@@ -73,7 +76,12 @@ class DelAPIKey extends Controller
                     $this->apiService->deleteApiKey($id);
                     $this->tpl->setNotification($this->language->__('notifications.key_deleted'), 'success', 'apikey_deleted');
 
-                    return Frontcontroller::redirect(BASE_URL.'/setting/editCompanySettings/#apiKeys');
+                    // The key list lives in company settings, which is a separate permission.
+                    if ($this->permissionService->currentUserCan(SettingPermissions::COMPANY_VIEW)) {
+                        return Frontcontroller::redirect(BASE_URL.'/setting/editCompanySettings/#apiKeys');
+                    }
+
+                    return Frontcontroller::redirect(BASE_URL.'/dashboard/home');
                 } catch (AuthorizationException $e) {
                     $this->tpl->setNotification($this->language->__('notification.apikey_update_not_allowed'), 'error');
                 }

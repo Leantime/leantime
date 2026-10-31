@@ -118,7 +118,7 @@ $values = $values ?? [];
                                                                       size="7"/><br/>
 
 
-                            @if ($login::userIsAtLeast($roles::$manager))
+                            @can('timesheets.manage')
                                 <br/>
                                 <label for="invoicedComp">{!! __('label.invoiced_comp') !!}</label> <input
                                         type="checkbox" name="invoicedComp" id="invoicedComp"
@@ -144,7 +144,7 @@ $values = $values ?? [];
 
 
 
-                            @endif <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" /> <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save_and_new')" name="saveNew" />
+                            @endcan <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" /> <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save_and_new')" name="saveNew" />
 
                     </x-global::elements.card>
                 </div>

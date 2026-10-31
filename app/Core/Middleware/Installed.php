@@ -58,12 +58,8 @@ class Installed
 
         self::dispatchEvent('after_install');
 
-        $route = $request->getCurrentRoute();
-
-        if ($session_says && $route == 'install') {
-            return Frontcontroller::redirect(BASE_URL.'/auth/logout');
-        }
-
+        // /install on an installed instance is handled by the Install controller: it sends the
+        // visitor to the start page, or back into the owner's setup when that was never finished.
         return $next($request);
     }
 

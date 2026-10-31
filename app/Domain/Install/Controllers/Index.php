@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Install\Controllers;
 
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Http\TrustedAppUrl;
@@ -16,24 +16,24 @@ class Index extends Controller
     /**
      * init - initialize private variables
      *
-     * @throws HttpResponseException
+     * @param  InstallService  $installService  The install service.
      */
-    public function init(InstallService $installService)
+    public function init(InstallService $installService): void
     {
         $this->installService = $installService;
-
-        if ($this->installService->isInstalled()) {
-            return FrontcontrollerCore::redirect(BASE_URL.'/');
-        }
     }
 
     /**
-     * get - handle get requests
+     * get - shows the installation form, or sends the visitor on when Leantime is already installed
      *
-     * @param  $params  parameters or body of the request
+     * @param  array  $params  parameters or body of the request
      */
-    public function get($params)
+    public function get($params): Response
     {
+        if ($this->installService->isInstalled()) {
+            return $this->redirectInstalled();
+        }
+
         return $this->tpl->display('install.new', 'entry');
     }
 
@@ -44,6 +44,10 @@ class Index extends Controller
      */
     public function post($params): Response
     {
+        if ($this->installService->isInstalled()) {
+            return $this->redirectInstalled();
+        }
+
         if (isset($_POST['install'])) {
             $values = [
                 'email' => ($params['email']),
@@ -62,7 +66,12 @@ class Index extends Controller
 
             if ($this->installService->runInstall($values)) {
                 // The installer is the first trustworthy moment to learn the URL email links use.
-                app()->make(TrustedAppUrl::class)->learnFromInstall($this->incomingRequest);
+                // Optional: the installation is done, so a failure here must not hide the setup link.
+                try {
+                    app()->make(TrustedAppUrl::class)->learnFromInstall($this->incomingRequest);
+                } catch (\Throwable $e) {
+                    Log::error($e);
+                }
 
                 $this->tpl->setNotification(sprintf($this->language->__('notifications.installation_success_setup_account'), BASE_URL), 'success');
 
@@ -75,5 +84,23 @@ class Index extends Controller
         }
 
         return FrontcontrollerCore::redirect(BASE_URL.'/install');
+    }
+
+    /**
+     * redirectInstalled - where /install sends a visitor once Leantime is installed.
+     *
+     * Normally to the start page. When the owner the installer created was never set up (the
+     * redirect after the install got lost, e.g. to a proxy timeout), back into that owner's
+     * onboarding, which is the only way the owner can get a password and become active.
+     */
+    private function redirectInstalled(): Response
+    {
+        $ownerSetupToken = $this->installService->resumeOwnerSetup();
+
+        if ($ownerSetupToken !== null) {
+            return FrontcontrollerCore::redirect(BASE_URL.'/auth/userInvite/'.$ownerSetupToken);
+        }
+
+        return FrontcontrollerCore::redirect(BASE_URL.'/');
     }
 }

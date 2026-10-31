@@ -27,9 +27,6 @@
             <x-global::forms.select name="role" id="role">
 
                 @foreach ($roles as $key => $role)
-                    @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && \Leantime\Domain\Auth\Models\Roles::getRoleLevel($key) > 30)
-                        @continue
-                    @endif
                         <option value="{{ $key }}"
                         @if ($key == $values['role']) selected="selected" @endif>
                         {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
@@ -40,11 +37,11 @@
 
             <x-global::forms.label for="client">{!! __('label.client') !!}</x-global::forms.label>
             <x-global::forms.select name='client' id="client">
-                @if ($login::userIsAtLeast('admin'))
+                @unless ($staysInOwnClient)
                     <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
-                @endif
+                @endunless
                 @foreach ($clients as $clientItem)
-                    @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $clientItem['id'] !== session('userdata.clientId'))
+                    @if ($staysInOwnClient && $clientItem['id'] !== session('userdata.clientId'))
                         @continue
                     @endif
                     <option value="{{ $clientItem['id'] }}"
@@ -91,7 +88,7 @@
                         // One collapsible section per client; projects without a client go under "Not assigned to a client".
                         $projectsByClient = [];
                         foreach ($allProjects as $row) {
-                            if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $row['clientId'] !== session('userdata.clientId')) {
+                            if ($staysInOwnClient && $row['clientId'] !== session('userdata.clientId')) {
                                 continue;
                             }
                             $clientName = (string) ($row['clientName'] ?? '') !== '' ? $row['clientName'] : __('label.no_clients');

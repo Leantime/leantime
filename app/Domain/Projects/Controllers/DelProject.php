@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,12 +14,15 @@ class DelProject extends Controller
 {
     private ProjectService $projectService;
 
+    private PermissionService $permissionService;
+
     /**
      * Initializes dependencies.
      */
-    public function init(ProjectService $projectService): void
+    public function init(ProjectService $projectService, PermissionService $permissionService): void
     {
         $this->projectService = $projectService;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -26,14 +30,9 @@ class DelProject extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::DELETE, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
@@ -59,14 +58,9 @@ class DelProject extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::DELETE, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (! isset($params['id'])) {
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
@@ -78,7 +72,7 @@ class DelProject extends Controller
         if ($result === false) {
             $this->tpl->setNotification($this->language->__('notification.no_permission'), 'error');
 
-            return Frontcontroller::redirect(BASE_URL.'/projects/showAll');
+            return Frontcontroller::redirect(BASE_URL.$this->projectListPath());
         }
 
         $this->projectService->resetCurrentProject();
@@ -86,6 +80,14 @@ class DelProject extends Controller
 
         $this->tpl->setNotification($this->language->__('notification.project_deleted'), 'success');
 
-        return Frontcontroller::redirect(BASE_URL.'/projects/showAll');
+        return Frontcontroller::redirect(BASE_URL.$this->projectListPath());
+    }
+
+    /**
+     * Where to go after deleting: All Projects needs projects.edit, so delete-only callers go to their own projects.
+     */
+    private function projectListPath(): string
+    {
+        return $this->permissionService->currentUserCan(ProjectsPermissions::EDIT) ? '/projects/showAll' : '/projects/showMy';
     }
 }

@@ -186,10 +186,21 @@ leantime.htmxProgress = (function () {
     };
 })();
 
-// htmx request events bubble to document, so a single document-level listener covers
-// every request regardless of which element triggered it.
-document.addEventListener('htmx:beforeRequest', function () { leantime.htmxProgress.start(); });
-document.addEventListener('htmx:afterRequest', function () { leantime.htmxProgress.done(); });
+// Count each request by its XHR, not by htmx's request events, so start and done always pair up:
+// - start on htmx:beforeSend, not beforeRequest: a beforeRequest listener can cancel the request
+//   (the search box does for one character), and then no completion event ever follows.
+// - done on the XHR's own loadend, which fires once after load, error, abort or timeout. htmx
+//   fires htmx:afterRequest on the element that made the request; when that element left the page
+//   mid-request (a modal closing right after "Save & Close" while its comment reactions were
+//   still loading, or an in-place page refresh), the event never bubbles up to document.
+document.addEventListener('htmx:beforeSend', function (event) {
+    var xhr = event.detail && event.detail.xhr;
+    if (!xhr) {
+        return;
+    }
+    leantime.htmxProgress.start();
+    xhr.addEventListener('loadend', leantime.htmxProgress.done, { once: true });
+});
 
 // Data events (lt:{domain}:{entity}.{verb}, optionally scoped with #{id}) arrive on the
 // HX-Trigger header of the response and are fired on the element that made the request. A

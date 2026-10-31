@@ -126,8 +126,8 @@ class AssignmentNotifierTest extends TestCase
                 },
             ]),
             $this->make(QueueRepository::class, [
-                'queueMessageToUsers' => function (array $recipients, string $message, string $subject = '', int $projectId = 0) {
-                    $this->emails[] = compact('recipients', 'message', 'subject', 'projectId');
+                'queueMessageToUsers' => function (array $recipients, string $message, string $subject = '', int $projectId = 0, ?string $module = null, ?int $moduleId = null) {
+                    $this->emails[] = compact('recipients', 'message', 'subject', 'projectId', 'module', 'moduleId');
                 },
             ]),
             $this->make(SettingRepository::class, [
@@ -182,6 +182,7 @@ class AssignmentNotifierTest extends TestCase
         $this->assertSame('Assigned to you: Fix login', $this->emails[0]['subject']);
         $this->assertStringContainsString("Sam assigned you 'Fix login' <a href=\"https://app.example.com/", $this->emails[0]['message']);
         $this->assertSame(5, $this->emails[0]['projectId']);
+        $this->assertSame(['tickets', 42], [$this->emails[0]['module'], $this->emails[0]['moduleId']], 'the entity, as the inbox records it, so the digest can tell read from new');
 
         $this->assertCount(1, $this->pushes);
         $push = $this->pushes[0];
