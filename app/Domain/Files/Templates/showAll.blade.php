@@ -45,7 +45,7 @@
                                     <li class="nav-header">{!! __('subtitles.file') !!}</li>
                                     <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
 
-                                    @if ($login::userIsAtLeast($roles::$editor))
+                                    @if ($file['userId'] == session('userdata.id') || can('files.delete'))
                                         <li>
                                             <form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
                                                 @csrf

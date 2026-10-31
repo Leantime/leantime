@@ -6,8 +6,9 @@ use DateTimeInterface;
 use Illuminate\Validation\UnauthorizedException;
 use Laravel\Sanctum\Contracts\HasAbilities;
 use Laravel\Sanctum\HasApiTokens;
-use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 
 class AccessToken implements HasAbilities
 {
@@ -65,7 +66,7 @@ class AccessToken implements HasAbilities
     public function createToken($userId, $name = null)
     {
 
-        if ($userId == session('userdata.id') || Auth::userIsAtLeast(Roles::$admin)) {
+        if ($userId == session('userdata.id') || $this->callerManagesUsers()) {
 
             $token = $this->tokenRepo->createToken($userId, $name ?? 'personal-token');
 
@@ -114,7 +115,7 @@ class AccessToken implements HasAbilities
     public function getUserTokens(int $userId)
     {
 
-        if (Auth::userIsAtLeast(Roles::$admin) || $userId == session('userdata.id')) {
+        if ($this->callerManagesUsers() || $userId == session('userdata.id')) {
 
             return $this->tokenRepo->getAllTokensByUserId($userId) ?? [];
 
@@ -134,7 +135,7 @@ class AccessToken implements HasAbilities
 
         $token = $this->getTokenById($tokenId);
 
-        if (Auth::userIsAtLeast(Roles::$admin) || $token['tokenable_id'] == session('userdata.id')) {
+        if ($this->callerManagesUsers() || $token['tokenable_id'] == session('userdata.id')) {
 
             return $this->tokenRepo->deleteToken($tokenId);
 
@@ -180,5 +181,16 @@ class AccessToken implements HasAbilities
         }
 
         return $this->tokenRepo->deleteToken((int) $token['id']);
+    }
+
+    /**
+     * Whether the caller may manage other users' tokens. Editing users (`users.edit`, admin+ by
+     * default) covers their access tokens; everyone else only manages their own.
+     *
+     * Resolved here rather than injected: findToken() builds instances with `new self`.
+     */
+    private function callerManagesUsers(): bool
+    {
+        return app()->make(PermissionService::class)->currentUserCan(UsersPermissions::EDIT);
     }
 }

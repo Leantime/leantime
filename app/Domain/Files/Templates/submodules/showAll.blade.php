@@ -38,7 +38,7 @@
                             <li class="nav-header">{!! __('subtitles.file') !!}</li>
                             <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
 
-                            @if ($login::userIsAtLeast($roles::$editor))
+                            @if ($file['userId'] == session('userdata.id') || can('files.delete', isset($ticket->projectId) ? (int) $ticket->projectId : null))
                                 <li>
                                     <form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
                                         @csrf
@@ -241,9 +241,8 @@
                                 '<ul class="dropdown-menu">' +
                                     '<li class="nav-header">{!! __('subtitles.file') !!}</li>' +
                                     '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{!! str_replace("'", '"', __('links.download')) !!}</a></li>'+
-                                    @if ($login::userIsAtLeast($roles::$editor))
-                                        '<li><form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
-                                    @endif
+                                    {{-- The uploader may always delete the file they just added (Files::deleteFile). --}}
+                                    '<li><form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
                                 '</ul>'+
                             '</div>'+
                             '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+

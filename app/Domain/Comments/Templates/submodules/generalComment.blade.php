@@ -13,7 +13,7 @@
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}" id="commentForm-{{ $formHash }}" class="formModal">
 
-    @if ($login::userIsAtLeast($roles::$commenter))
+    @can('comments.create')
         <div class="mainToggler-{{ $formHash }}" id="">
             <div class="commentImage">
                 <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}" />
@@ -38,7 +38,7 @@
             <input type="hidden" name="edit-comment-helper" class="commenterField" id="edit-comment-helper-{{ $formHash }}" />
             <br/>
         </div>
-    @endif
+    @endcan
 
     <div id="comments-{{ $formHash }}">
         <div>
@@ -51,21 +51,25 @@
                         <x-global::elements.card compact class="commentContent" id="comment-to-hide-on-edit-{{ $formHash }}-{{ $row['id'] }}">
                             <div class="right commentDate">
                                 {!! sprintf(__('text.written_on'), format($row['date'])->date(), format($row['date'])->time()) !!}
-                                    @if ($login::userIsAtLeast($roles::$editor))
+                                    @php
+                                        // Same rule as Comments::canModifyComment(): post comments, and either wrote it or moderate.
+                                        $canModifyComment = can('comments.create')
+                                            && (($row['userId'] == session('userdata.id')) || can('comments.moderate'));
+                                        $canAddToTimesheet = isset($ticket->id) && can('timesheets.create');
+                                    @endphp
+                                    @if ($canModifyComment || $canAddToTimesheet)
                                         <x-global::actions.dropdown style="float:right; margin-left:10px;">
-                                            @if (($row['userId'] == session('userdata.id')) || can('comments.moderate'))
+                                            @if ($canModifyComment)
                                                 <li><a href="javascript:void(0);" class="deleteComment" data-post-field="delComment" data-post-value="{{ $row['id'] }}">
                                                     <span class="fa fa-trash"></span> {!! __('links.delete') !!}
                                                 </a></li>
-                                            @endif
-                                            @if (($row['userId'] == session('userdata.id')) || can('comments.moderate'))
                                                 <li>
                                                     <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}', true)">
                                                         <span class="fa fa-edit"></span> {!! __('label.edit') !!}
                                                     </a>
                                                 </li>
                                             @endif
-                                            @if (isset($ticket->id))
+                                            @if ($canAddToTimesheet)
                                                     <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $ticket->id }});">{!! __('links.add_to_timesheets') !!}</a></li>
                                             @endif
 
@@ -78,12 +82,12 @@
                             </div>
                         </x-global::elements.card>
                         <div class="commentLinks" id="comment-link-to-hide-on-edit-{{ $formHash }}-{{ $row['id'] }}">
-                            @if ($login::userIsAtLeast($roles::$commenter))
+                            @can('comments.create')
                                 <a href="javascript:void(0);"
                                    onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
                                     <span class="fa fa-reply"></span> {!! __('links.reply') !!}
                                 </a>
-                            @endif
+                            @endcan
                             <span class="comment-reactions" id="reactions-{{ $row['id'] }}"
                                  hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $row['id'] }}"
                                  hx-trigger="load"
@@ -122,7 +126,7 @@
                                             </x-global::elements.card>
 
                                             <div class="commentLinks">
-                                                @if ($login::userIsAtLeast($roles::$commenter))
+                                                @can('comments.create')
                                                     <a href="javascript:void(0);"
                                                        onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
                                                         <span class="fa fa-reply"></span> {!! __('links.reply') !!}
@@ -136,7 +140,7 @@
                                                             <span class="fa fa-edit"></span> {!! __('label.edit') !!}
                                                         </a>
                                                     @endif
-                                                @endif
+                                                @endcan
                                                 <span class="comment-reactions" id="reactions-{{ $comment['id'] }}"
                                                      hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $comment['id'] }}"
                                                      hx-trigger="load"
@@ -167,7 +171,7 @@
     });
 
     function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
-        @if ($login::userIsAtLeast($roles::$commenter))
+        @can('comments.create')
 
             if (parseInt(id, 10) === 0) {
                 jQuery(`.mainToggler-${formHash}`).hide();
@@ -216,16 +220,16 @@
             jQuery(`#comment-${formHash}-${id}`).show();
             jQuery(`#father-${formHash}`).val(id);
 
-        @endif
+        @endcan
     }
     function cancel(id, formHash) {
-        @if ($login::userIsAtLeast($roles::$commenter))
+        @can('comments.create')
             jQuery(`#comment-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`.commentBox-${formHash} textarea`).remove();
             jQuery(`#comment-link-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`#comment-image-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`#comment-${formHash}-${id}`).hide();
-        @endif
+        @endcan
     }
 
     jQuery(".confetti").click(function(){
