@@ -7,7 +7,7 @@
 
     {!! $tpl->displayNotification() !!}
 
-    <div class="uploadWrapper">
+    <div class="uploadWrapper" @if (can('files.upload', isset($ticket->projectId) ? (int) $ticket->projectId : null)) data-lt-permitted @endif>
 
         <x-global::forms.button tag="a" contentRole="default" id="cancelLink" link="javascript:void(0);" style="display:none;">{!! __('links.cancel') !!}</x-global::forms.button>
         <div class="extra" style="margin-top:5px;"></div>
@@ -40,7 +40,7 @@
 
                             @if ($file['userId'] == session('userdata.id') || can('files.delete', isset($ticket->projectId) ? (int) $ticket->projectId : null))
                                 <li>
-                                    <form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
+                                    <form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" data-lt-permitted onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
                                         @csrf
                                         <input type="hidden" name="delFile" value="{{ $file['id'] }}" />
                                         <button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</button>
@@ -242,7 +242,7 @@
                                     '<li class="nav-header">{!! __('subtitles.file') !!}</li>' +
                                     '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{!! str_replace("'", '"', __('links.download')) !!}</a></li>'+
                                     {{-- The uploader may always delete the file they just added (Files::deleteFile). --}}
-                                    '<li><form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
+                                    '<li><form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" data-lt-permitted onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
                                 '</ul>'+
                             '</div>'+
                             '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
