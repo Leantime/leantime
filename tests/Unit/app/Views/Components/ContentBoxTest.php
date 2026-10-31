@@ -147,6 +147,44 @@ class ContentBoxTest extends TestCase
         $this->assertStringContainsString('<div class="lt-content-main hidden-sm">', $html);
     }
 
+    public function test_collapsible_puts_a_toggle_on_each_divider(): void
+    {
+        $html = $this->render('<x-global::layout.content-box id="wikiContent" collapsible><x-slot:left id="contentsPanel">L</x-slot:left> M <x-slot:right>R</x-slot:right> </x-global::layout.content-box>');
+
+        $this->assertStringContainsString('lt-content--collapsible', $html);
+        $this->assertSame(2, substr_count($html, 'class="lt-content-toggle"'));
+        // The left sidebar keeps its own id; the right one gets a generated one to point at.
+        $this->assertStringContainsString('aria-controls="contentsPanel" aria-expanded="true"', $html);
+        $this->assertMatchesRegularExpression('/<aside id="lt-content-side-[0-9a-f]{8}" class="lt-content-side lt-content-side--right">R<\/aside>/', $html);
+        preg_match('/<aside id="(lt-content-side-[0-9a-f]{8})"/', $html, $rightId);
+        $this->assertStringContainsString('aria-controls="'.$rightId[1].'"', $html);
+        $this->assertStringContainsString('aria-label="Hide sidebar"', $html);
+        $this->assertStringNotContainsString('-collapsed', $html);
+    }
+
+    public function test_a_saved_hidden_sidebar_renders_hidden(): void
+    {
+        $this->savedStates(['content-box_wikiContent_right_collapsed' => 'closed']);
+
+        $html = $this->render('<x-global::layout.content-box id="wikiContent" collapsible><x-slot:left>L</x-slot:left> M <x-slot:right>R</x-slot:right> </x-global::layout.content-box>');
+
+        $this->assertStringContainsString('lt-content--right-collapsed', $html);
+        $this->assertStringNotContainsString('lt-content--left-collapsed', $html);
+        $this->assertMatchesRegularExpression('/aria-expanded="false"\s+aria-label="Show sidebar"/', $html);
+        $this->assertSame(1, substr_count($html, 'aria-expanded="false"'));
+    }
+
+    public function test_without_collapsible_there_is_no_toggle_and_saved_states_are_ignored(): void
+    {
+        $this->savedStates(['content-box_tickets-list_left_collapsed' => 'closed']);
+
+        $html = $this->render('<x-global::layout.content-box id="tickets-list"><x-slot:left>L</x-slot:left> M</x-global::layout.content-box>');
+
+        $this->assertStringNotContainsString('lt-content-toggle', $html);
+        $this->assertStringNotContainsString('-collapsed', $html);
+        $this->assertStringContainsString('<aside class="lt-content-side lt-content-side--left">L</aside>', $html);
+    }
+
     public function test_resizable_off_renders_no_handles(): void
     {
         $html = $this->render('<x-global::layout.content-box :resizable="false"><x-slot:left>L</x-slot:left> M</x-global::layout.content-box>');

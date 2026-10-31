@@ -108,49 +108,25 @@
     @elseif($wikis && count($wikis) > 0)
 
         @if($currentArticle && $currentArticle->id != null)
-            <!-- Single Panel Layout: Contents | Document | Properties (all inside) -->
-            <div class="wiki-layout">
+            {{-- Contents | document | details. The sidebars resize and hide (remembered per user); below 1200px they open over the document. --}}
+            <x-global::layout.content-box id="wikiContent" class="wiki-box" role="main" stack="lg" collapsible
+                                          :leftWidth="280" :rightWidth="280" mainClass="wiki-content-inner">
+                <x-slot:left class="wiki-contents-panel" id="contentsPanel">
+                    <x-global::elements.section-header icon="fa fa-list">{{ __('label.contents') }}</x-global::elements.section-header>
 
-                <!-- Main Content Area (contains everything) -->
-                <main class="wiki-content">
+                    <nav id="article-toc-wrapper">
+                        @php createModernTreeView($wikiHeadlines, 0, $currentArticle->id, 0, $tpl); @endphp
+                    </nav>
 
-                    <!-- Three-panel layout inside -->
-                    <div class="wiki-content-layout">
-
-                        <!-- Left: Contents Sidebar -->
-                        <div class="wiki-contents-panel" id="contentsPanel">
-                            <div class="wiki-panel-header">
-                                <x-global::elements.section-header icon="fa fa-list">{{ __('label.contents') }}</x-global::elements.section-header>
-                                <button class="wiki-collapse-btn" id="toggleContents" title="{{ __('label.collapse') }}">
-                                    <i class="fa fa-chevron-left"></i>
-                                </button>
-                            </div>
-
-                            <nav id="article-toc-wrapper">
-                                @php createModernTreeView($wikiHeadlines, 0, $currentArticle->id, 0, $tpl); @endphp
-                            </nav>
-
-                            @if($login::userIsAtLeast($roles::$editor))
-                                <button class="wiki-create-btn"
-                                        hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
-                                        hx-swap="none">
-                                    <i class="fa fa-plus"></i>
-                                    <span>{!! __('link.create_article') !!}</span>
-                                </button>
-                            @endif
-                        </div>
-
-                        <!-- Toggle for collapsed Contents -->
-                        <button class="wiki-panel-toggle left" id="showContentsBtn" title="{{ __('label.show_contents') }}">
-                            <i class="fa fa-chevron-right"></i>
+                    @if($login::userIsAtLeast($roles::$editor))
+                        <button class="wiki-create-btn"
+                                hx-post="{{ BASE_URL }}/hx/wiki/articleContent/create"
+                                hx-swap="none">
+                            <i class="fa fa-plus"></i>
+                            <span>{!! __('link.create_article') !!}</span>
                         </button>
-
-                        <div class="wiki-content-inner">
-
-                        <!-- Toggle for collapsed Details -->
-                        <button class="wiki-panel-toggle right" id="showPropertiesBtn" title="{{ __('label.show_details') }}">
-                            <i class="fa fa-chevron-left"></i>
-                        </button>
+                    @endif
+                </x-slot:left>
 
                             <!-- Document Header -->
                             <header class="wiki-document-header">
@@ -248,16 +224,8 @@
                             </form>
                         </section>
 
-                        </div><!-- /.wiki-content-inner -->
-
-                        <!-- Properties Panel (inside content area) -->
-                        <div class="wiki-properties-panel" id="propertiesPanel">
-                            <div class="wiki-panel-header">
-                                <x-global::elements.section-header icon="fa fa-info-circle">{{ __('label.details') }}</x-global::elements.section-header>
-                                <button class="wiki-collapse-btn" id="collapseProperties" title="{{ __('label.collapse') }}">
-                                    <i class="fa fa-chevron-right"></i>
-                                </button>
-                            </div>
+                <x-slot:right class="wiki-properties-panel" id="propertiesPanel">
+                    <x-global::elements.section-header icon="fa fa-info-circle">{{ __('label.details') }}</x-global::elements.section-header>
 
                     <!-- Properties Section -->
                     <div class="wiki-properties-section">
@@ -375,11 +343,8 @@
                         </div>
                     </div>
 
-                        </div><!-- /.wiki-properties-panel -->
-                    </div><!-- /.wiki-content-layout -->
-                </main>
-
-            </div>
+                </x-slot:right>
+            </x-global::layout.content-box>
 
         @else
             <!-- Wiki exists but no articles yet -->
@@ -404,64 +369,6 @@
 @once @push('scripts')
 <script type="text/javascript">
 jQuery(document).ready(function() {
-
-    jQuery('#toggleContents').on('click', function() {
-        var panel = jQuery('#contentsPanel');
-        var showBtn = jQuery('#showContentsBtn');
-        panel.addClass('collapsed');
-        showBtn.addClass('visible');
-        localStorage.setItem('wikiContentsCollapsed', 'true');
-    });
-
-    jQuery('#showContentsBtn').on('click', function() {
-        var panel = jQuery('#contentsPanel');
-        var showBtn = jQuery('#showContentsBtn');
-        panel.removeClass('collapsed');
-        showBtn.removeClass('visible');
-        localStorage.setItem('wikiContentsCollapsed', 'false');
-    });
-
-    jQuery('#collapseProperties').on('click', function() {
-        var panel = jQuery('#propertiesPanel');
-        var showBtn = jQuery('#showPropertiesBtn');
-        panel.addClass('collapsed');
-        showBtn.addClass('visible');
-        localStorage.setItem('wikiPropertiesCollapsed', 'true');
-    });
-
-    jQuery('#showPropertiesBtn').on('click', function() {
-        var panel = jQuery('#propertiesPanel');
-        var showBtn = jQuery('#showPropertiesBtn');
-        panel.removeClass('collapsed');
-        showBtn.removeClass('visible');
-        localStorage.setItem('wikiPropertiesCollapsed', 'false');
-    });
-
-    var isSmallScreen = window.innerWidth <= 1280;
-
-    if (isSmallScreen || localStorage.getItem('wikiContentsCollapsed') === 'true') {
-        jQuery('#contentsPanel').addClass('collapsed');
-        jQuery('#showContentsBtn').addClass('visible');
-    }
-
-    if (isSmallScreen || localStorage.getItem('wikiPropertiesCollapsed') === 'true') {
-        jQuery('#propertiesPanel').addClass('collapsed');
-        jQuery('#showPropertiesBtn').addClass('visible');
-    }
-
-    var resizeTimeout;
-    jQuery(window).on('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
-            var nowSmall = window.innerWidth <= 1280;
-            if (nowSmall) {
-                jQuery('#contentsPanel').addClass('collapsed');
-                jQuery('#showContentsBtn').addClass('visible');
-                jQuery('#propertiesPanel').addClass('collapsed');
-                jQuery('#showPropertiesBtn').addClass('visible');
-            }
-        }, 150);
-    });
 
     @if($currentArticle && $login::userIsAtLeast($roles::$editor))
     (function() {

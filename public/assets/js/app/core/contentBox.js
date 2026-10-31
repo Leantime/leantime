@@ -4,6 +4,11 @@
  * (data-lt-content) the width is saved per user in the accordion-state store, and the component
  * renders it on the next load.
  *
+ * collapsible boxes: the button on a divider hides / shows its sidebar, saved per user the same
+ * way. Where the CSS puts the box in overlay mode (narrow screens, --lt-content-overlay: 1) the
+ * sidebars start hidden and the button opens one over the main content; Escape or a click
+ * outside closes it again. That is not saved.
+ *
  * Delegated on document, so boxes added by htmx or dialogs need no setup.
  */
 leantime.contentBox = (function () {
@@ -61,7 +66,8 @@ leantime.contentBox = (function () {
         ['left', 'right'].forEach(function (side) {
             var sidebar = sidebarOf(box, side);
             var resizer = resizerOf(box, side);
-            if (!sidebar || !resizer) {
+            // A collapsed sidebar renders nothing: keep its saved width for when it comes back.
+            if (!sidebar || !resizer || sidebar.getClientRects().length === 0) {
                 return;
             }
             // Rounded down, so the pinned widths never add up to more than the box holds.
@@ -194,14 +200,149 @@ leantime.contentBox = (function () {
         });
     };
 
+    var isOverlay = function (box) {
+        return getComputedStyle(box).getPropertyValue('--lt-content-overlay').trim() === '1';
+    };
+
+    var toggleOf = function (box, side) {
+        return box.querySelector(':scope > .lt-content-edge > .lt-content-toggle[data-lt-side="' + side + '"]');
+    };
+
+    var isShown = function (box, side) {
+        if (isOverlay(box)) {
+            return box.classList.contains('lt-content--' + side + '-shown');
+        }
+        return !box.classList.contains('lt-content--' + side + '-collapsed');
+    };
+
+    // The sidebar that last took the focus. When a breakpoint change hides it, the browser may
+    // already have dropped the focus to <body> by the time the resize handler runs.
+    var focusedSidebar = null;
+    document.addEventListener('focusin', function (event) {
+        focusedSidebar = event.target.closest ? event.target.closest('.lt-content--collapsible > .lt-content-side') : null;
+    });
+
+    var holdsFocus = function (sidebar) {
+        var active = document.activeElement;
+        if (active && active !== document.body) {
+            return sidebar.contains(active);
+        }
+        return focusedSidebar === sidebar;
+    };
+
+    // aria-expanded, label and chevron follow what is on screen, which depends on the mode. A
+    // sidebar that gets hidden while it holds the focus (toggle, Escape, click outside, breakpoint
+    // change) hands the focus to its toggle, so keyboard users keep their place.
+    var syncToggle = function (box, side) {
+        var toggle = toggleOf(box, side);
+        if (!toggle) {
+            return;
+        }
+        if (!isOverlay(box)) {
+            box.classList.remove('lt-content--' + side + '-shown');
+        }
+        var shown = isShown(box, side);
+        var label = toggle.getAttribute(shown ? 'data-lt-label-hide' : 'data-lt-label-show');
+        toggle.setAttribute('aria-expanded', shown ? 'true' : 'false');
+        toggle.setAttribute('aria-label', label);
+        toggle.setAttribute('title', label);
+
+        var sidebar = sidebarOf(box, side);
+        if (!shown && sidebar && holdsFocus(sidebar)) {
+            toggle.focus();
+        }
+    };
+
+    var syncToggles = function (root) {
+        var scope = root && root.querySelectorAll ? root : document;
+        var boxes = Array.prototype.slice.call(scope.querySelectorAll('.lt-content--collapsible'));
+        // An outerHTML swap hands htmx.onLoad the box itself, which querySelectorAll leaves out.
+        if (scope.matches && scope.matches('.lt-content--collapsible')) {
+            boxes.push(scope);
+        }
+        boxes.forEach(function (box) {
+            syncToggle(box, 'left');
+            syncToggle(box, 'right');
+        });
+    };
+
+    var showOverlay = function (box, side, show) {
+        box.classList.toggle('lt-content--' + side + '-shown', show);
+        syncToggle(box, side);
+    };
+
+    var closeOverlays = function (keepOpen) {
+        document.querySelectorAll('.lt-content--left-shown, .lt-content--right-shown').forEach(function (box) {
+            ['left', 'right'].forEach(function (side) {
+                var sidebar = sidebarOf(box, side);
+                if (box.classList.contains('lt-content--' + side + '-shown') && !(keepOpen && keepOpen(sidebar))) {
+                    showOverlay(box, side, false);
+                }
+            });
+        });
+    };
+
+    var saveCollapsed = function (box, side, collapsed) {
+        // The main pane changed width: charts, calendars and DataTables re-measure.
+        window.dispatchEvent(new Event('resize'));
+
+        var id = box.getAttribute('data-lt-content');
+        if (!id) {
+            return;
+        }
+        leantime.rpc('Api.Api.setSubmenuState', {
+            submenu: 'content-box_' + id + '_' + side + '_collapsed',
+            state: collapsed ? 'closed' : 'open'
+        }).catch(function (e) { console.error('Could not save the sidebar state', e); });
+    };
+
+    document.addEventListener('click', function (event) {
+        var toggle = event.target.closest && event.target.closest('.lt-content-toggle');
+        if (!toggle) {
+            // Overlay mode: a click outside an open sidebar closes it.
+            closeOverlays(function (sidebar) { return sidebar && sidebar.contains(event.target); });
+            return;
+        }
+        var box = boxOf(toggle);
+        var side = toggle.getAttribute('data-lt-side');
+
+        if (isOverlay(box)) {
+            var show = !isShown(box, side);
+            closeOverlays();
+            showOverlay(box, side, show);
+            return;
+        }
+
+        var collapse = !box.classList.contains('lt-content--' + side + '-collapsed');
+        box.classList.toggle('lt-content--' + side + '-collapsed', collapse);
+        syncToggle(box, side);
+        saveCollapsed(box, side, collapse);
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape' || !document.querySelector('.lt-content--left-shown, .lt-content--right-shown')) {
+            return;
+        }
+        closeOverlays();
+    });
+
+    var syncAll = function (root) {
+        syncValues(root);
+        syncToggles(root);
+    };
+
     var resizeTimer = null;
     window.addEventListener('resize', function () {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () { syncValues(document); }, 150);
+        resizeTimer = setTimeout(function () { syncAll(document); }, 150);
     });
-    document.addEventListener('DOMContentLoaded', function () { syncValues(document); });
+    document.addEventListener('DOMContentLoaded', function () { syncAll(document); });
+    // Content inserted outside htmx swaps (dialogs, List view detail) and in-place page refreshes
+    // after a modal save.
+    document.addEventListener('lt:ui:content.loaded', function (event) { syncAll(event.detail && event.detail.root); });
+    document.addEventListener('lt:ui:page.refreshed', function () { syncAll(document); });
     if (window.htmx) {
-        htmx.onLoad(syncValues);
+        htmx.onLoad(syncAll);
     }
 
     return {};
