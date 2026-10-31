@@ -10,7 +10,8 @@
                'onTheClock' => $onTheClock
            ])
 
-    @if ($login::userIsAtLeast("manager", true))
+    {{-- Plugin news is shown to manager-level roles and above. --}}
+    @if (\Leantime\Domain\Auth\Models\Roles::isAtLeast(session('userdata.role'), \Leantime\Domain\Auth\Models\Roles::$manager))
         <x-global::actions.dropdown variant="panel" as="li" menu-class="tw-p-m tw-h-screen tw-overflow-y-auto" menu-id="pluginNewsDropdown" class="notificationDropdown appsLink" keep-open>
             <x-slot:trigger class="profileHandler newsDropDownHandler" hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest" hx-target="#pluginNewsDropdown" hx-indicator=".htmx-news-indicator" hx-trigger="click" preload="mouseover" data-tippy-content="{{ __('popover.latest_plugins') }}"><i class="fa-solid fa-puzzle-piece"></i></x-slot:trigger>
             <div class="htmx-indicator htmx-news-indicator">
@@ -187,25 +188,16 @@
             data-tippy-content="{{ __('popover.my_work') }}"
         >{!! __('menu.my_work') !!}</a>
     </li>
-    @if ($login::userIsAtLeast("manager", true))
+    {{-- companyLink: the first company page the user may open (HeadMenu composer) --}}
+    @if ($companyLink !== null)
         <li>
-            @if($login::userHasRole("manager"))
-                <a
-                    href="{{ BASE_URL }}/projects/showAll/"
-                    @if ($menuType == 'company')
-                        class="active"
-                    @endif
-                    data-tippy-content="{{ __('popover.company') }}"
-                >{!! __('menu.company') !!}</a>
-            @else
             <a
-                href="{{ BASE_URL }}/setting/editCompanySettings/"
+                href="{{ BASE_URL }}{{ $companyLink }}"
                 @if ($menuType == 'company')
                     class="active"
                 @endif
                 data-tippy-content="{{ __('popover.company') }}"
             >{!! __('menu.company') !!}</a>
-            @endif
         </li>
     @endif
 

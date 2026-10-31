@@ -2,17 +2,16 @@
 
 namespace Leantime\Domain\Plugins\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Plugins\Permissions\PluginsPermissions;
 use Symfony\Component\HttpFoundation\Response;
 
 class Marketplace extends Controller
 {
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function get(): Response
     {
-
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
         $this->tpl->assign('plugins', []);
 

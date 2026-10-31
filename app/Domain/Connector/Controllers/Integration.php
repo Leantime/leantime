@@ -2,11 +2,11 @@
 
 namespace Leantime\Domain\Connector\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
+use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services\Connector;
 use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
 use Leantime\Domain\Connector\Services\Providers;
@@ -28,8 +28,6 @@ class Integration extends Controller
         IntegrationService $integrationService,
         Connector $connectorService
     ): void {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
         $this->providerService = $providerService;
         $this->integrationService = $integrationService;
         $this->connectorService = $connectorService;
@@ -40,6 +38,7 @@ class Integration extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function get(array $params): Response
     {
         return $this->handleIntegration($params);
@@ -50,6 +49,7 @@ class Integration extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function post(array $params): Response
     {
         return $this->handleIntegration($params);

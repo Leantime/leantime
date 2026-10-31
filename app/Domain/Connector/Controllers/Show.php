@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Connector\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services;
 
 class Show extends Controller
@@ -16,13 +16,13 @@ class Show extends Controller
      */
     public function init(Services\Providers $projectService)
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
         $this->providerService = $projectService;
     }
 
     /**
      * get - handle get requests
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function get($params)
     {
         $providers = $this->providerService->getProviders();
@@ -35,6 +35,7 @@ class Show extends Controller
     /**
      * post - handle post requests
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function post($params)
     {
         // Redirect.

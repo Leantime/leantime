@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Plugins\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Plugins\Permissions\PluginsPermissions;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,10 +14,10 @@ class CssLoader extends Controller
 
     public function init(PluginService $pluginService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin]);
         $this->pluginService = $pluginService;
     }
 
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function get(): Response
     {
         $response = new Response($this->pluginService->getAggregatedPluginCss());
