@@ -6,7 +6,6 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Reactions\Services\Reactions;
 
 class ProjectCard extends HtmxController
 {
@@ -16,23 +15,18 @@ class ProjectCard extends HtmxController
 
     private Menu $menuService;
 
-    private Reactions $reactionService;
-
     /**
      * Controller constructor
      *
      * @param  \Leantime\Domain\Projects\Services\Projects  $projectsService  The projects domain service.
      * @param  \Leantime\Domain\Menu\Services\Menu  $menuService  The menu domain service.
-     * @param  \Leantime\Domain\Reactions\Services\Reactions  $reactionService  The reactions domain service.
      */
     public function init(
         ProjectService $projectsService,
-        Menu $menuService,
-        Reactions $reactionService
+        Menu $menuService
     ): void {
         $this->projectsService = $projectsService;
         $this->menuService = $menuService;
-        $this->reactionService = $reactionService;
     }
 
     public function get() {}
@@ -47,14 +41,12 @@ class ProjectCard extends HtmxController
         $projectId = (int) ($projectData['projectId'] ?? 0);
         $isFavorite = $projectData['isFavorite'] ?? false;
 
-        // react()/unreact() act as the session user and require access to the project.
+        // Both act as the session user, require access to the project and tell the project lists.
         if ($isFavorite) {
-            $this->reactionService->unreact('project', $projectId, 'favorite');
+            $this->projectsService->unfavorite($projectId);
         } else {
-            $this->reactionService->react('project', $projectId, 'favorite');
+            $this->projectsService->favorite($projectId);
         }
-
-        $this->tpl->setHTMXEvent('HTMX.updateProjectList');
 
         $this->tpl->assign('project', $this->projectsService->getProject($projectId));
     }

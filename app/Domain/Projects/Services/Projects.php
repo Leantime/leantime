@@ -34,10 +34,13 @@ use Leantime\Domain\Notifications\Services\PushPreferences;
 use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Events\ProjectArchived;
 use Leantime\Domain\Projects\Events\ProjectCreated;
+use Leantime\Domain\Projects\Events\ProjectFavoriteAdded;
+use Leantime\Domain\Projects\Events\ProjectFavoriteRemoved;
 use Leantime\Domain\Projects\Events\ProjectMemberAdded;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
@@ -1845,6 +1848,43 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         return $projectId;
+    }
+
+    /**
+     * Mark a project as a favorite of the session user.
+     *
+     * The favorite is stored as a "favorite" reaction; react() checks that the user can see
+     * the project.
+     *
+     * @param  int  $projectId  The project to favorite.
+     * @return bool True when the favorite was added.
+     */
+    public function favorite(int $projectId): bool
+    {
+        $favorited = app()->make(ReactionsService::class)->react('project', $projectId, 'favorite');
+
+        if ($favorited) {
+            ProjectFavoriteAdded::dispatch(projectId: $projectId, userId: (int) session('userdata.id'));
+        }
+
+        return $favorited;
+    }
+
+    /**
+     * Remove a project from the session user's favorites.
+     *
+     * @param  int  $projectId  The project to unfavorite.
+     * @return bool True when the favorite was removed.
+     */
+    public function unfavorite(int $projectId): bool
+    {
+        $unfavorited = app()->make(ReactionsService::class)->unreact('project', $projectId, 'favorite');
+
+        if ($unfavorited) {
+            ProjectFavoriteRemoved::dispatch(projectId: $projectId, userId: (int) session('userdata.id'));
+        }
+
+        return $unfavorited;
     }
 
     /**
