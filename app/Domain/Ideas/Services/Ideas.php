@@ -574,6 +574,9 @@ class Ideas extends BaseService
             $canvasItem['box'] = 'idea';
         }
 
+        // The dialog checks edit/comment rights against the idea's own project, not the session's.
+        $canvasItem['projectId'] = $projectId;
+
         return $canvasItem;
     }
 

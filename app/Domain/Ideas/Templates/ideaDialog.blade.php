@@ -14,7 +14,7 @@
 
 <x-global::actions.modal-header icon="fa fa-lightbulb" :title="__('headline.idea')">
     @if ($id != '')
-    @can('ideas.delete')
+    @can('ideas.delete', $canvasItem['projectId'] ?? null)
         <x-slot:actions>
             <li><a href="#/ideas/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
         </x-slot:actions>
@@ -56,7 +56,7 @@
             <input type="hidden" name="comment" value="1"/>
 
             <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
-            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/ideas/ideaDialog/' . $id])
+            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/ideas/ideaDialog/' . $id, 'commentProjectId' => $canvasItem['projectId'] ?? null])
         @endif
 
     </div>
@@ -72,9 +72,9 @@
                         <h4>{!! __('headlines.no_milestone_link') !!}</h4>
                         {!! __('text.use_milestone_to_track_idea') !!}<br/>
                         <div class="row" id="milestoneSelectors">
-                            @can('ideas.edit')
+                            @can('ideas.edit', $canvasItem['projectId'] ?? null)
                                 <div class="col-md-12">
-                                    @can('tickets.create')
+                                    @can('tickets.create', $canvasItem['projectId'] ?? null)
                                         <a href="javascript:void(0);"
                                            onclick="leantime.ideasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
                                         |
@@ -167,9 +167,9 @@
             leantime.tiptapController.initComplexEditor();
         }
 
-        @cannot($id === '' ? 'ideas.create' : 'ideas.edit')
+        @cannot($id === '' ? 'ideas.create' : 'ideas.edit', $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly(".nyroModalCont");
-            @can('comments.create')
+            @can('comments.create', $canvasItem['projectId'] ?? null)
                 leantime.commentsController.enableCommenterForms();
             @endcan
         @endcannot

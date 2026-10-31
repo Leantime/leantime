@@ -122,6 +122,12 @@ class IdeasServiceTest extends TestCase
         $this->assertSame('prototype', $this->makeService(ideasRepo: $repo)->getIdeaItem(7)['box']);
     }
 
+    public function test_get_idea_item_carries_the_boards_project(): void
+    {
+        // The dialog checks edit/comment rights against this, not the session project.
+        $this->assertSame(9, $this->makeService(ideasRepo: $this->ideaRepoInProject9())->getIdeaItem(5)['projectId']);
+    }
+
     public function test_ensure_board_exists_returns_zero_when_boards_present(): void
     {
         $addCalls = 0;
