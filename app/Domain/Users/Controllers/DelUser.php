@@ -34,8 +34,11 @@ class DelUser extends Controller
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
 
-        $id = (int) $params['id'];
-        $user = $this->userService->getUser($id);
+        $user = $this->findUser($params['id']);
+
+        if ($user === false) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
+        }
 
         $this->generateFormTokens();
 
@@ -56,8 +59,13 @@ class DelUser extends Controller
             return $this->tpl->display('errors.error403', responseCode: 403);
         }
 
-        $id = (int) $params['id'];
-        $user = $this->userService->getUser($id);
+        $user = $this->findUser($params['id']);
+
+        if ($user === false) {
+            return $this->tpl->display('errors.error404', responseCode: 404);
+        }
+
+        $id = (int) $user['id'];
 
         if (isset($_POST['del'])) {
             if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
@@ -79,6 +87,27 @@ class DelUser extends Controller
         $this->tpl->assign('user', $user);
 
         return $this->tpl->display('users.delUser');
+    }
+
+    /**
+     * Loads the user the confirmation is about, so the page can name them.
+     *
+     * The service resolves id 0 to the logged-in user, so a non-positive id is
+     * treated as "not found" rather than silently showing someone else.
+     *
+     * @param  mixed  $rawId  The id from the route
+     * @return array<string, mixed>|false The user row, or false when there is no such user
+     */
+    private function findUser(mixed $rawId): array|false
+    {
+        $id = (int) $rawId;
+        if ($id <= 0) {
+            return false;
+        }
+
+        $user = $this->userService->getUser($id);
+
+        return is_array($user) ? $user : false;
     }
 
     /**
