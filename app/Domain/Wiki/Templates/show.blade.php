@@ -78,14 +78,14 @@
         <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
                 @if($currentWiki)
-                    @can('wiki.edit')
+                    @can('wiki.edit', $currentWiki->projectId ?? null)
                         <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{!! __('link.edit_wiki') !!}</a></li>
                     @endcan
-                    @can('wiki.delete')
+                    @can('wiki.delete', $currentWiki->projectId ?? null)
                         <li><a class="delete" data-lt-permitted href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_wiki') !!}</a></li>
                     @endcan
                 @endif
-                @if(\Illuminate\Support\Facades\Gate::allows('wiki.delete') && isset($currentArticle->id) && $currentArticle->id)
+                @if(\Illuminate\Support\Facades\Gate::allows('wiki.delete', $currentArticle->projectId ?? null) && isset($currentArticle->id) && $currentArticle->id)
                     <li class="nav-header border">{!! __('label.article') !!}</li>
                     <li><a class="delete" data-lt-permitted href="#/wiki/delArticle/{{ $currentArticle->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</a></li>
                 @endif
@@ -224,7 +224,7 @@
 
                             <form method="post" action="{{ BASE_URL }}/wiki/show/{{ $currentArticle->id }}#comment">
                                 <input type="hidden" name="comment" value="1" />
-                                @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/wiki/show/' . $currentArticle->id])
+                                @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/wiki/show/' . $currentArticle->id, 'commentProjectId' => $currentArticle->projectId ?? null])
                             </form>
                         </section>
 
@@ -374,7 +374,7 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 
-    @if($currentArticle && \Illuminate\Support\Facades\Gate::allows('wiki.edit'))
+    @if($currentArticle && \Illuminate\Support\Facades\Gate::allows('wiki.edit', $currentArticle->projectId ?? null))
     (function() {
         var articleId = @json($currentArticle->id);
         var wrapper = document.getElementById('wikiDocumentWrapper');
@@ -759,7 +759,7 @@ jQuery(document).ready(function() {
     }
     @endif
 
-    @cannot('wiki.edit') @can('comments.create')
+    @cannot('wiki.edit', $currentArticle->projectId ?? null) @can('comments.create', $currentArticle->projectId ?? null)
     leantime.commentsController.enableCommenterForms();
     @endcan @endcannot
 
