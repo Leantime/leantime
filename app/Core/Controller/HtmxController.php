@@ -152,9 +152,9 @@ abstract class HtmxController
         }
 
         $triggerEvents = array_merge(
-            $existingTrigger === '' ? [] : array_map('trim', explode(',', $existingTrigger)),
-            $this->headers['HX-Trigger'] ?? [],
-            (array) ($templateHeaders['HX-Trigger'] ?? [])
+            self::triggerNames($existingTrigger),
+            self::triggerNames($this->headers['HX-Trigger'] ?? []),
+            self::triggerNames($templateHeaders['HX-Trigger'] ?? [])
         );
 
         if (! empty($triggerEvents)) {
@@ -162,6 +162,22 @@ abstract class HtmxController
         }
 
         return $response;
+    }
+
+    /**
+     * The event names in a queued HX-Trigger value: a list of names, or a comma-separated string
+     * (set with setResponseHeader() or straight on a header bag).
+     *
+     * @param  array<int, mixed>|string  $value
+     * @return array<int, mixed>
+     */
+    private static function triggerNames(array|string $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return array_values(array_filter(array_map('trim', explode(',', $value)), fn (string $name) => $name !== ''));
     }
 
     /**

@@ -55,6 +55,16 @@ class HtmxControllerHeadersTest extends TestCase
         $this->assertSame('lt:chip:changed,lt:projects:favorite.added,lt:ui:notify', $response->headers->get('HX-Trigger'));
     }
 
+    public function test_a_comma_separated_trigger_set_on_the_template_is_not_doubled(): void
+    {
+        $template = $this->templateWithQueuedEvents([]);
+        $template->setResponseHeader('HX-Trigger', 'lt:ui:notify,lt:chip:changed');
+
+        $response = $this->controller($template)->callAction('rawTitle', []);
+
+        $this->assertSame('lt:ui:notify,lt:chip:changed,lt:projects:favorite.added', $response->headers->get('HX-Trigger'));
+    }
+
     public function test_a_json_trigger_set_by_hand_is_left_alone(): void
     {
         $controller = $this->controller($this->templateWithQueuedEvents(['lt:ui:notify']));
