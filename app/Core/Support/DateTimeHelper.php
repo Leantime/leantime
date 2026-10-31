@@ -55,8 +55,8 @@ class DateTimeHelper extends CarbonImmutable
             static::mixin(new CarbonMacros(
                 session('usersettings.timezone') ?? app()->make(Environment::class)->defaultTimezone,
                 str_replace('-', '_', session('usersettings.language') ?? app()->make(Environment::class)->language),
-                session('usersettings.date_format') ?? app()->make(Language::class)->__('language.dateformat'),
-                session('usersettings.time_format') ?? app()->make(Language::class)->__('language.timeformat')
+                session('usersettings.date_format') ?: app()->make(Language::class)->__('language.dateformat'),
+                session('usersettings.time_format') ?: app()->make(Language::class)->__('language.timeformat')
             ));
         }
 
@@ -72,8 +72,8 @@ class DateTimeHelper extends CarbonImmutable
         $this->userTimezone = session('usersettings.timezone') ?? $config->defaultTimezone;
         $this->userLanguage = str_replace('-', '_', (session('usersettings.language') ?? $config->language));
 
-        $this->userDateFormat = session('usersettings.date_format') ?? $language->__('language.dateformat');
-        $this->userTimeFormat = session('usersettings.time_format') ?? $language->__('language.timeformat');
+        $this->userDateFormat = session('usersettings.date_format') ?: $language->__('language.dateformat');
+        $this->userTimeFormat = session('usersettings.time_format') ?: $language->__('language.timeformat');
     }
 
     /**
