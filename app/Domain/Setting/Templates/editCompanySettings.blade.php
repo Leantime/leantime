@@ -115,18 +115,9 @@
                                             @endphp
                                             @foreach ($notificationCategories as $categoryKey => $config)
                                                 <div class="form-group">
-                                                    <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; padding:4px 0;">
-                                                        <input type="checkbox"
-                                                               name="defaultNotificationEventTypes[]"
-                                                               value="{{ $categoryKey }}"
-                                                               style="margin-top:3px;"
-                                                               @if (in_array($categoryKey, $defaultNotificationTypes)) checked="checked" @endif
-                                                        />
-                                                        <span>
-                                                            <strong>{!! __($categoryLabels[$categoryKey] ?? $categoryKey) !!}</strong><br />
-                                                            <small style="color:#888;">{!! __($config['description'] ?? '') !!}</small>
-                                                        </span>
-                                                    </label>
+                                                    <x-global::forms.checkbox variant="toggle" name="defaultNotificationEventTypes[]" :value="$categoryKey"
+                                                        :checked="in_array($categoryKey, $defaultNotificationTypes)"
+                                                        :description="__($config['description'] ?? '')">{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</x-global::forms.checkbox>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -155,13 +146,9 @@
                                         <div class="row">
                                             <div class="col-md-8">
                                                 <div class="form-group">
-                                                    <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; padding:4px 0;">
-                                                        <input type="checkbox" name="pushRelayEnabled" value="1" style="margin-top:3px;" @if ($pushRelayEnabled) checked="checked" @endif />
-                                                        <span>
-                                                            <strong>{!! __('label.push_relay_enable') !!}</strong><br />
-                                                            <small style="color:#888;">{!! __('label.push_relay_enable_description') !!}</small>
-                                                        </span>
-                                                    </label>
+                                                    <x-global::forms.checkbox variant="toggle" name="pushRelayEnabled" value="1"
+                                                        :checked="(bool) $pushRelayEnabled"
+                                                        :description="__('label.push_relay_enable_description')">{{ __('label.push_relay_enable') }}</x-global::forms.checkbox>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="pushRelayContent">{!! __('label.push_relay_content') !!}</label>
