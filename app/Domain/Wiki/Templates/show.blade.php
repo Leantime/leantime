@@ -109,7 +109,7 @@
 
         @if($currentArticle && $currentArticle->id != null)
             {{-- Contents | document | details. The sidebars resize and hide (remembered per user); below 1200px they open over the document. --}}
-            <x-global::layout.content-box id="wikiContent" class="wiki-box" stack="lg" collapsible
+            <x-global::layout.content-box id="wikiContent" class="wiki-box" role="main" stack="lg" collapsible
                                           :leftWidth="280" :rightWidth="280" mainClass="wiki-content-inner">
                 <x-slot:left class="wiki-contents-panel" id="contentsPanel">
                     <x-global::elements.section-header icon="fa fa-list">{{ __('label.contents') }}</x-global::elements.section-header>
