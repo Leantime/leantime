@@ -2,19 +2,23 @@
     layout.content-box — the page's content box (.maincontentinner), optionally split into a left
     sidebar, the main content and a right sidebar. Sidebars sit on a light grey background and are
     resizable: drag the divider, or focus it and use the arrow keys (Home / End: narrowest / widest,
-    double-click: default width). With an `id` the widths are remembered per user, in the same
+    double-click: default width). With `collapsible` each sidebar also gets a button on its divider
+    that hides it. With an `id` the widths and hidden sidebars are remembered per user, in the same
     store as accordion states.
 
     Without sidebars it renders the plain content box, so every `.maincontentinner` style keeps
     applying. Below 992px (or 1200px with stack="lg") the sidebars stack above / below the main
-    content, and the sidebars give up width before the main pane drops under 320px.
+    content, and the sidebars give up width before the main pane drops under 320px. Collapsible
+    sidebars don't stack: there they start hidden and open over the main content (not remembered).
 
     Props:
       id          string  The box's HTML id; also remembers the sidebar widths per user (UiState:
-                          "content-box_{id}_left|right").
+                          "content-box_{id}_left|right") and, when collapsible, which sidebars are
+                          hidden ("content-box_{id}_left|right_collapsed" = "closed").
       leftWidth   int     Default width of the left sidebar in px (260).
       rightWidth  int     Default width of the right sidebar in px (300).
       resizable   bool    Show the resize handles (default true).
+      collapsible bool    A button on each divider hides / shows its sidebar (default false).
       stack       string  Below which width the sidebars stack: 'md' (992px, default) or 'lg' (1200px,
                           for pages whose main pane is hidden on smaller screens anyway).
       mainClass   string  Classes for the main pane (e.g. "hidden-sm" to hide it on small screens).
@@ -31,6 +35,7 @@
     'leftWidth' => 260,
     'rightWidth' => 300,
     'resizable' => true,
+    'collapsible' => false,
     'stack' => 'md',
     'mainClass' => '',
 ])
@@ -51,6 +56,18 @@
     $leftW = $hasLeft ? $widthFor('left', (int) $leftWidth) : (int) $leftWidth;
     $rightW = $hasRight ? $widthFor('right', (int) $rightWidth) : (int) $rightWidth;
     $htmlId = $id === null ? [] : ['id' => $id];
+
+    $collapsedFor = fn (string $side): bool => $collapsible && $stateId !== null
+        && app(\Leantime\Core\UI\UiState::class)->get('content-box_' . $stateId . '_' . $side . '_collapsed') === 'closed';
+    $leftCollapsed = $hasLeft && $collapsedFor('left');
+    $rightCollapsed = $hasRight && $collapsedFor('right');
+
+    // The toggle buttons point at their sidebar (aria-controls), so each sidebar needs an id.
+    $sideId = fn ($sidebar) => $sidebar->attributes->get('id') ?: 'lt-content-side-' . bin2hex(random_bytes(4));
+    $leftId = $collapsible && $hasLeft ? $sideId($left) : null;
+    $rightId = $collapsible && $hasRight ? $sideId($right) : null;
+    $showLabel = __('label.show_sidebar');
+    $hideLabel = __('label.hide_sidebar');
 @endphp
 
 @if (! $hasLeft && ! $hasRight)
@@ -58,29 +75,56 @@
         {{ $slot }}
     </div>
 @else
-    <div {{ $attributes->class(['maincontentinner', 'lt-content', 'lt-content--stack-lg' => $stack === 'lg'])->merge($htmlId + [
+    <div {{ $attributes->class([
+            'maincontentinner',
+            'lt-content',
+            'lt-content--stack-lg' => $stack === 'lg',
+            'lt-content--collapsible' => $collapsible,
+            'lt-content--left-collapsed' => $leftCollapsed,
+            'lt-content--right-collapsed' => $rightCollapsed,
+        ])->merge($htmlId + [
             'style' => ($hasLeft ? '--lt-content-left-w: ' . $leftW . 'px;' : '') . ($hasRight ? ' --lt-content-right-w: ' . $rightW . 'px;' : ''),
         ]) }} @if ($stateId !== null) data-lt-content="{{ $stateId }}" @endif>
         @if ($hasLeft)
-            <aside {{ $left->attributes->class(['lt-content-side', 'lt-content-side--left']) }}>{{ $left }}</aside>
+            <aside {{ $left->attributes->class(['lt-content-side', 'lt-content-side--left'])->merge($leftId === null ? [] : ['id' => $leftId]) }}>{{ $left }}</aside>
             @if ($resizable)
                 <div class="lt-content-resizer" role="separator" tabindex="0" aria-orientation="vertical"
                      aria-label="{{ __('label.resize_sidebar') }}" aria-valuenow="{{ $leftW }}"
                      aria-valuemin="{{ $minWidth }}" aria-valuemax="{{ $maxWidth }}"
                      data-lt-side="left" data-lt-default="{{ (int) $leftWidth }}"></div>
             @endif
+            @if ($collapsible)
+                <div class="lt-content-edge lt-content-edge--left">
+                    <button type="button" class="lt-content-toggle" data-lt-side="left"
+                            aria-controls="{{ $leftId }}" aria-expanded="{{ $leftCollapsed ? 'false' : 'true' }}"
+                            aria-label="{{ $leftCollapsed ? $showLabel : $hideLabel }}" title="{{ $leftCollapsed ? $showLabel : $hideLabel }}"
+                            data-lt-label-show="{{ $showLabel }}" data-lt-label-hide="{{ $hideLabel }}">
+                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                </div>
+            @endif
         @endif
         <div @class(['lt-content-main', $mainClass => $mainClass !== ''])>
             {{ $slot }}
         </div>
         @if ($hasRight)
+            @if ($collapsible)
+                <div class="lt-content-edge lt-content-edge--right">
+                    <button type="button" class="lt-content-toggle" data-lt-side="right"
+                            aria-controls="{{ $rightId }}" aria-expanded="{{ $rightCollapsed ? 'false' : 'true' }}"
+                            aria-label="{{ $rightCollapsed ? $showLabel : $hideLabel }}" title="{{ $rightCollapsed ? $showLabel : $hideLabel }}"
+                            data-lt-label-show="{{ $showLabel }}" data-lt-label-hide="{{ $hideLabel }}">
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            @endif
             @if ($resizable)
                 <div class="lt-content-resizer" role="separator" tabindex="0" aria-orientation="vertical"
                      aria-label="{{ __('label.resize_sidebar') }}" aria-valuenow="{{ $rightW }}"
                      aria-valuemin="{{ $minWidth }}" aria-valuemax="{{ $maxWidth }}"
                      data-lt-side="right" data-lt-default="{{ (int) $rightWidth }}"></div>
             @endif
-            <aside {{ $right->attributes->class(['lt-content-side', 'lt-content-side--right']) }}>{{ $right }}</aside>
+            <aside {{ $right->attributes->class(['lt-content-side', 'lt-content-side--right'])->merge($rightId === null ? [] : ['id' => $rightId]) }}>{{ $right }}</aside>
         @endif
     </div>
 @endif

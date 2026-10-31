@@ -6,264 +6,25 @@
  */
 
 /* ==========================================================================
-   Layout Structure
+   Layout: layout.content-box with the contents (left) and details (right)
+   sidebars, both collapsible. The box fills the window; each pane scrolls
+   on its own.
    ========================================================================== */
 
-.wiki-layout {
-    display: flex;
-    gap: 0;
-    height: calc(100vh - 120px);
-    position: relative;
+.wiki-box {
+    /* Header, page header and paddings: the same 165px My Calendar leaves. */
+    height: calc(100vh - 165px);
+    height: calc(100dvh - 165px);
+    margin-bottom: 0;
 }
 
-/* Left Sidebar - Contents/Tree (collapsible to icons) */
-.wiki-sidebar {
-    width: 200px;
-    flex-shrink: 0;
-    padding: 16px;
-    margin: 12px;
-    margin-right: 0;
-    border-radius: var(--box-radius-large, 20px);
-    background: var(--layered-background);
-    position: sticky;
-    top: 82px;
-    height: calc(100vh - 94px);
+.wiki-box > .lt-content-side,
+.wiki-box > .lt-content-main {
     overflow-y: auto;
-    overflow-x: hidden;
-    transition: width 0.25s ease, padding 0.25s ease;
 }
 
-/* Collapsed sidebar - icon only mode */
-.wiki-sidebar.collapsed {
-    width: 56px;
-    padding: 12px 8px;
-}
-
-.wiki-sidebar.collapsed .wiki-sidebar-header {
-    padding-bottom: 8px;
-    margin-bottom: 8px;
-}
-
-.wiki-sidebar.collapsed .wiki-sidebar-title {
-    display: none;
-}
-
-.wiki-sidebar.collapsed .wiki-collapse-btn i {
-    transform: rotate(180deg);
-}
-
-.wiki-sidebar.collapsed .wiki-tree-link {
-    justify-content: center;
-    padding: 10px;
-}
-
-.wiki-sidebar.collapsed .wiki-tree-link span,
-.wiki-sidebar.collapsed .wiki-tree-draft {
-    display: none;
-}
-
-.wiki-sidebar.collapsed .wiki-tree-link i {
-    font-size: var(--font-size-xl);
-    opacity: 1;
-}
-
-.wiki-sidebar.collapsed .wiki-create-btn {
-    justify-content: center;
-    padding: 10px;
-}
-
-.wiki-sidebar.collapsed .wiki-create-btn span {
-    display: none;
-}
-
-.wiki-sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-}
-
-.wiki-sidebar-title {
-    font-size: var(--font-size-s);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--secondary-font-color);
-    margin: 0;
-}
-
-/* Collapse button */
-.wiki-collapse-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: transparent;
-    border: none;
-    color: var(--secondary-font-color);
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.wiki-collapse-btn:hover {
-    background: var(--secondary-background);
-    color: var(--primary-font-color);
-}
-
-
-/* Main Content Area */
-.wiki-content {
-    flex: 1;
-    min-width: 0;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    background: var(--secondary-background);
-    border-radius: var(--box-radius);
-    position: relative;
-}
-
-/* Properties Toggle Button (top right corner) */
-.wiki-properties-toggle-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--layered-background);
-    border: 1px solid var(--main-border-color);
-    border-radius: 10px;
-    color: var(--secondary-font-color);
-    cursor: pointer;
-    z-index: 10;
-    transition: all 0.15s ease;
-}
-
-.wiki-properties-toggle-btn:hover {
-    background: var(--accent1);
-    border-color: var(--accent1);
-    color: white;
-}
-
-.wiki-properties-toggle-btn.active {
-    background: var(--accent1);
-    border-color: var(--accent1);
-    color: white;
-}
-
-/* Content Layout - Contents | Document | Properties side by side */
-.wiki-content-layout {
-    display: flex;
-    flex: 1;
-    min-height: 0;
-    position: relative;
-}
-
-/* Contents Panel (inside content area, left side) */
-.wiki-contents-panel {
-    width: 320px;
-    flex-shrink: 0;
-    padding: 20px;
-    border-right: 1px solid var(--main-border-color);
-    overflow-y: auto;
-    transition: width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
-}
-
-.wiki-contents-panel.collapsed {
-    width: 0;
-    padding: 0;
-    opacity: 0;
-    overflow: hidden;
-    border-right: none;
-}
-
-.wiki-panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    
-}
-
-.wiki-panel-header .widgettitle {
-    margin: 0;
-    padding: 0;
-    border-bottom: none;
-}
-
-/* Panel Toggle Buttons (caret buttons to show collapsed panels) */
-.wiki-panel-toggle {
-    position: absolute;
-    top: 20px;
-    width: 24px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--layered-background);
-    border: 1px solid var(--main-border-color);
-    color: var(--secondary-font-color);
-    cursor: pointer;
-    z-index: 10;
-    transition: all 0.15s ease, opacity 0.25s ease;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.wiki-panel-toggle.left {
-    left: 0;
-    border-radius: 0 8px 8px 0;
-    border-left: none;
-}
-
-.wiki-panel-toggle.right {
-    right: 0;
-    border-radius: 8px 0 0 8px;
-    border-right: none;
-}
-
-.wiki-panel-toggle.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.wiki-panel-toggle:hover {
-    background: var(--accent1);
-    border-color: var(--accent1);
-    color: white;
-}
-
-.wiki-content-inner {
-    flex: 1;
+.wiki-box > .wiki-content-inner {
     padding: 32px 48px;
-    max-width: 100%;
-    overflow-y: auto;
-    position: relative;
-}
-
-/* Properties Panel (inside content area) */
-.wiki-properties-panel {
-    width: 280px;
-    flex-shrink: 0;
-    padding: 20px 24px 20px 20px;
-    border-left: 1px solid var(--main-border-color);
-    overflow: hidden;
-    transition: width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.wiki-properties-panel.collapsed {
-    width: 0;
-    padding: 0;
-    opacity: 0;
-    overflow: hidden;
-    border-left: none;
 }
 
 /* ==========================================================================
@@ -672,71 +433,12 @@
 
 
 
-/* Actions Section */
-.wiki-actions-section {
-    padding-top: 16px;
-    border-top: 1px solid var(--main-border-color);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.wiki-action-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-size: var(--base-font-size);
-    font-weight: 500;
-    text-decoration: none;
-    color: var(--primary-font-color);
-    background: transparent;
-    border: none;
-    transition: all 0.15s ease;
-}
-
-.wiki-action-btn:hover {
-    background: var(--layered-background);
-    text-decoration: none;
-}
-
-.wiki-action-btn.delete {
-    color: var(--red, #dc3545);
-}
-
-.wiki-action-btn.delete:hover {
-    background: var(--red-bg, rgba(220, 53, 69, 0.1));
-}
-
 /* ==========================================================================
    Activity Feed
    ========================================================================== */
 
-/* Activity section grows to fill available space */
-.wiki-activity-section {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-#wikiActivityContainer {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-}
-
 .wiki-activity-feed {
     /* Content rendered inside #wikiActivityContainer via HTMX */
-}
-
-/* Delete button pinned to bottom */
-.wiki-properties-footer {
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid var(--main-border-color);
 }
 
 .wiki-activity-item {
@@ -908,43 +610,6 @@
 }
 
 /* ==========================================================================
-   Properties Toggle Button
-   ========================================================================== */
-
-.wiki-header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.wiki-properties-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-    background: var(--layered-background);
-    border: 1px solid var(--main-border-color);
-    color: var(--secondary-font-color);
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.wiki-properties-toggle:hover {
-    background: var(--accent1);
-    border-color: var(--accent1);
-    color: white;
-    border-radius: 12px;
-}
-
-.wiki-properties-toggle.active {
-    background: var(--accent1);
-    border-color: var(--accent1);
-    color: white;
-}
-
-/* ==========================================================================
    Milestone Card (in document area)
    ========================================================================== */
 
@@ -1021,112 +686,20 @@
    Responsive Design
    ========================================================================== */
 
-/* Large screens - slightly smaller panels */
 @media (max-width: 1400px) {
-    .wiki-properties-panel {
-        width: 240px;
-    }
-
-    .wiki-contents-panel {
-        width: 280px;
-    }
-
-    .wiki-content-inner {
+    .wiki-box > .wiki-content-inner {
         padding: 28px 36px;
     }
 }
 
-/* Medium screens (12-13" laptops) - auto-collapse both panels */
 @media (max-width: 1280px) {
-    /* Auto-collapse contents panel */
-    .wiki-contents-panel {
-        width: 0;
-        padding: 0;
-        opacity: 0;
-        overflow: hidden;
-        border-right: none;
-    }
-
-    .wiki-panel-toggle.left {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    /* Auto-collapse properties panel */
-    .wiki-properties-panel {
-        width: 0;
-        padding: 0;
-        opacity: 0;
-        overflow: hidden;
-        border-left: none;
-    }
-
-    .wiki-panel-toggle.right {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .wiki-content-inner {
+    .wiki-box > .wiki-content-inner {
         padding: 24px 32px;
     }
-
 }
 
-/* Small-medium screens - overlay panels when shown */
-@media (max-width: 1200px) {
-    /* Contents panel as overlay */
-    .wiki-contents-panel:not(.collapsed) {
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 280px;
-        padding: 20px;
-        opacity: 1;
-        background: var(--secondary-background);
-        border-right: 1px solid var(--main-border-color);
-        box-shadow: var(--large-shadow);
-        z-index: 20;
-    }
-
-    /* Properties panel as overlay */
-    .wiki-properties-panel:not(.collapsed) {
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 100%;
-        width: 260px;
-        padding: 20px;
-        opacity: 1;
-        background: var(--secondary-background);
-        border-left: 1px solid var(--main-border-color);
-        box-shadow: var(--large-shadow);
-        z-index: 20;
-    }
-}
-
-/* Small screens - stack layout */
 @media (max-width: 992px) {
-    .wiki-layout {
-        flex-direction: column;
-    }
-
-    .wiki-sidebar {
-        width: auto;
-        max-width: none;
-        height: auto;
-        position: relative;
-        top: 0;
-        margin: 12px;
-        padding: 16px;
-        border-radius: var(--box-radius-large, 20px);
-    }
-
-    .wiki-content {
-        margin: 0 12px 12px;
-    }
-
-    .wiki-content-inner {
+    .wiki-box > .wiki-content-inner {
         padding: 20px;
     }
 
@@ -1137,7 +710,17 @@
     .wiki-document-wrapper .tiptap-editor {
         padding: 12px 16px;
     }
+}
 
+/* Phones: the page scrolls instead of the panes. */
+@media (max-width: 575px) {
+    .wiki-box {
+        height: auto;
+    }
+
+    .wiki-box > .lt-content-main {
+        overflow-y: visible;
+    }
 }
 
 /* ==========================================================================
@@ -1157,10 +740,6 @@
 }
 
 /* Dark mode status colors handled by theme CSS variables */
-
-[data-theme="dark"] .wiki-properties-panel {
-    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
-}
 
 /* Title field: icon picker inside the title's border, one control.
    The headline input loses its own border; the wrapper draws it. */
@@ -1183,6 +762,14 @@
 .wiki-title-field .inlineDropDownContainerLeft {
     float: none;
     flex: none;
+}
+
+/* The tablet rule that stretches every .btn / .btn-group in a content box (mobile.css) would push the
+   title out of its own field. */
+.wiki-title-field .btn-group.inlineDropDownContainerLeft,
+.wiki-title-field .btn-group .btn.titleIconPicker {
+    width: auto;
+    margin-bottom: 0;
 }
 
 .wiki-title-field .btn.titleIconPicker,

@@ -163,3 +163,234 @@
         border-radius: calc(var(--box-radius) - 1px);
     }
 }
+
+/*
+ * collapsible: a round button on each divider hides its sidebar; hidden, the button sits on the
+ * box edge as a tab. Below the stack breakpoint collapsible sidebars don't stack: they start
+ * hidden and the tab opens them over the main content (core/contentBox.js reads
+ * --lt-content-overlay to tell the two modes apart).
+ */
+.lt-content-edge {
+    position: relative;
+    z-index: 3;
+    flex: 0 0 0px;
+    width: 0;
+}
+
+.lt-content-toggle {
+    position: absolute;
+    top: var(--box-padding, 16px);
+    inset-inline-start: -12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid var(--main-border-color);
+    border-radius: 12px;
+    background: var(--secondary-background);
+    color: var(--secondary-font-color);
+    font-size: var(--font-size-xs);
+    box-shadow: var(--min-shadow);
+    cursor: pointer;
+}
+
+.lt-content-toggle:hover,
+.lt-content-toggle:focus-visible {
+    border-color: var(--accent1);
+    background: var(--accent1);
+    color: var(--accent1-color);
+    outline: none;
+}
+
+.lt-content-toggle[aria-expanded="false"] i {
+    transform: rotate(180deg);
+}
+
+/* RTL draws the "left" sidebar on the right: the chevrons point the other way. */
+.lt-content-toggle:dir(rtl) i {
+    transform: scaleX(-1);
+}
+
+.lt-content-toggle[aria-expanded="false"]:dir(rtl) i {
+    transform: none;
+}
+
+.lt-content--left-collapsed > .lt-content-side--left,
+.lt-content--left-collapsed > .lt-content-resizer[data-lt-side="left"],
+.lt-content--right-collapsed > .lt-content-side--right,
+.lt-content--right-collapsed > .lt-content-resizer[data-lt-side="right"] {
+    display: none;
+}
+
+/* Hidden sidebar: the button becomes a tab on the box edge, inside the box. */
+.lt-content--left-collapsed > .lt-content-edge--left .lt-content-toggle {
+    inset-inline-start: 0;
+    border-inline-start: 0;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+}
+
+.lt-content--right-collapsed > .lt-content-edge--right .lt-content-toggle {
+    inset-inline-start: -24px;
+    border-inline-end: 0;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+}
+
+@media (max-width: 991px) {
+    .maincontentinner.lt-content--collapsible {
+        --lt-content-overlay: 1;
+    }
+
+    .lt-content--collapsible > .lt-content-side,
+    .lt-content--collapsible > .lt-content-resizer {
+        display: none;
+    }
+
+    .lt-content--collapsible.lt-content--left-shown > .lt-content-side--left,
+    .lt-content--collapsible.lt-content--right-shown > .lt-content-side--right {
+        display: block;
+        position: absolute;
+        inset-block: 0;
+        z-index: 20;
+        overflow-y: auto;
+        /* The sidebar grey is translucent: lay it on the solid surface so the content doesn't show through. */
+        background: linear-gradient(var(--content-sidebar-bg, var(--color-surface-inset)), var(--content-sidebar-bg, var(--color-surface-inset))), var(--secondary-background);
+        box-shadow: var(--large-shadow);
+    }
+
+    .lt-content--collapsible.lt-content--left-shown > .lt-content-side--left {
+        inset-inline-start: 0;
+        width: min(var(--lt-content-left-w, 260px), 85%);
+        border: 0;
+        border-inline-end: 1px solid var(--main-border-color);
+        border-radius: 0;
+        border-start-start-radius: calc(var(--box-radius) - 1px);
+        border-end-start-radius: calc(var(--box-radius) - 1px);
+    }
+
+    .lt-content--collapsible.lt-content--right-shown > .lt-content-side--right {
+        inset-inline-end: 0;
+        width: min(var(--lt-content-right-w, 300px), 85%);
+        border: 0;
+        border-inline-start: 1px solid var(--main-border-color);
+        border-radius: 0;
+        border-start-end-radius: calc(var(--box-radius) - 1px);
+        border-end-end-radius: calc(var(--box-radius) - 1px);
+    }
+
+    /* The tabs position against the box: on its edge, or on the open overlay's edge. */
+    .lt-content--collapsible > .lt-content-edge {
+        position: static;
+    }
+
+    .lt-content--collapsible > .lt-content-edge .lt-content-toggle {
+        z-index: 21;
+    }
+
+    .lt-content--collapsible > .lt-content-edge--left .lt-content-toggle {
+        inset-inline-start: 0;
+        border-inline-start: 0;
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+    }
+
+    .lt-content--collapsible > .lt-content-edge--right .lt-content-toggle {
+        inset-inline-start: auto;
+        inset-inline-end: 0;
+        border-inline-start: 1px solid var(--main-border-color);
+        border-inline-end: 0;
+        border-start-start-radius: 12px;
+        border-end-start-radius: 12px;
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
+    }
+
+    .lt-content--collapsible.lt-content--left-shown > .lt-content-edge--left .lt-content-toggle {
+        inset-inline-start: min(var(--lt-content-left-w, 260px), 85%);
+    }
+
+    .lt-content--collapsible.lt-content--right-shown > .lt-content-edge--right .lt-content-toggle {
+        inset-inline-end: min(var(--lt-content-right-w, 300px), 85%);
+    }
+}
+
+/* stack="lg": the same overlay mode, already below 1200px. */
+@media (max-width: 1200px) {
+    .maincontentinner.lt-content--collapsible.lt-content--stack-lg {
+        --lt-content-overlay: 1;
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg > .lt-content-side,
+    .lt-content--collapsible.lt-content--stack-lg > .lt-content-resizer {
+        display: none;
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg.lt-content--left-shown > .lt-content-side--left,
+    .lt-content--collapsible.lt-content--stack-lg.lt-content--right-shown > .lt-content-side--right {
+        display: block;
+        position: absolute;
+        inset-block: 0;
+        z-index: 20;
+        overflow-y: auto;
+        /* The sidebar grey is translucent: lay it on the solid surface so the content doesn't show through. */
+        background: linear-gradient(var(--content-sidebar-bg, var(--color-surface-inset)), var(--content-sidebar-bg, var(--color-surface-inset))), var(--secondary-background);
+        box-shadow: var(--large-shadow);
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg.lt-content--left-shown > .lt-content-side--left {
+        inset-inline-start: 0;
+        width: min(var(--lt-content-left-w, 260px), 85%);
+        border: 0;
+        border-inline-end: 1px solid var(--main-border-color);
+        border-radius: 0;
+        border-start-start-radius: calc(var(--box-radius) - 1px);
+        border-end-start-radius: calc(var(--box-radius) - 1px);
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg.lt-content--right-shown > .lt-content-side--right {
+        inset-inline-end: 0;
+        width: min(var(--lt-content-right-w, 300px), 85%);
+        border: 0;
+        border-inline-start: 1px solid var(--main-border-color);
+        border-radius: 0;
+        border-start-end-radius: calc(var(--box-radius) - 1px);
+        border-end-end-radius: calc(var(--box-radius) - 1px);
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg > .lt-content-edge {
+        position: static;
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg > .lt-content-edge .lt-content-toggle {
+        z-index: 21;
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg > .lt-content-edge--left .lt-content-toggle {
+        inset-inline-start: 0;
+        border-inline-start: 0;
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg > .lt-content-edge--right .lt-content-toggle {
+        inset-inline-start: auto;
+        inset-inline-end: 0;
+        border-inline-start: 1px solid var(--main-border-color);
+        border-inline-end: 0;
+        border-start-start-radius: 12px;
+        border-end-start-radius: 12px;
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg.lt-content--left-shown > .lt-content-edge--left .lt-content-toggle {
+        inset-inline-start: min(var(--lt-content-left-w, 260px), 85%);
+    }
+
+    .lt-content--collapsible.lt-content--stack-lg.lt-content--right-shown > .lt-content-edge--right .lt-content-toggle {
+        inset-inline-end: min(var(--lt-content-right-w, 300px), 85%);
+    }
+}
