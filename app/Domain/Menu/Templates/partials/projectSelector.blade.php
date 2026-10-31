@@ -17,7 +17,7 @@
                     <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> {{ __('links.open_project_hub') }}</strong></a>
                 </li>
 
-                @if ($login::userIsAtLeast("manager"))
+                @can('projects.create')
                     @dispatchEvent('beforeProjectCreateLink')
                     <li><a href="{{ $startSomethingUrl }}">
                             <span class="fancyLink">
@@ -26,7 +26,7 @@
                         </a>
                     </li>
                     @dispatchEvent('afterProjectCreateLink')
-                @endif
+                @endcan
 
             </ul>
             </div>
@@ -96,7 +96,7 @@
         <div class="projectSelectorFooter">
             <ul class="selectorList projectList">
 
-                @if ($login::userIsAtLeast("manager"))
+                @can('projects.create')
                     @dispatchEvent('beforeProjectCreateLink')
                     <li><a href="{{ $startSomethingUrl }}">
                             <span class="fancyLink">
@@ -105,7 +105,7 @@
                         </a>
                     </li>
                     @dispatchEvent('afterProjectCreateLink')
-                @endif
+                @endcan
 
 
                     <li>

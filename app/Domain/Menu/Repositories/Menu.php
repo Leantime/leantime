@@ -6,11 +6,13 @@
 
 namespace Leantime\Domain\Menu\Repositories;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Modules\ProjectModules;
 use Leantime\Core\UI\UiState;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -50,7 +52,7 @@ class Menu
                 'submenu' => [
                     60 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'icon' => 'fa fa-fw fa-book', 'tooltip' => 'menu.wiki_tooltip', 'href' => '/wiki/show'],
                     70 => ['type' => 'item', 'module' => 'files', 'title' => 'menu.files', 'icon' => 'fa fa-fw fa-file', 'tooltip' => 'menu.files_tooltip', 'href' => '/files/browse'],
-                    80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/project', 'active' => ['project', 'show'], 'role' => 'editor'],
+                    80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/project', 'active' => ['project', 'show'], 'permission' => 'reports.view'],
                 ],
             ],
         ],
@@ -65,20 +67,20 @@ class Menu
         ],
         'company' => [
             10 => [
-                'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'role' => 'manager',
+                'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'itemRole' => 'manager',
                 'submenu' => [
-                    5 => ['type' => 'item', 'module' => 'timesheets', 'role' => 'manager', 'title' => 'menu.all_timesheets', 'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'menu.all_timesheets_tooltip', 'href' => '/timesheets/showAll', 'active' => ['showAll']],
-                    10 => ['type' => 'item', 'module' => 'projects', 'role' => 'manager', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
-                    15 => ['type' => 'item', 'module' => 'clients', 'role' => 'admin', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
-                    20 => ['type' => 'item', 'module' => 'users', 'role' => 'admin', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],
+                    5 => ['type' => 'item', 'module' => 'timesheets', 'permission' => 'timesheets.manage', 'title' => 'menu.all_timesheets', 'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'menu.all_timesheets_tooltip', 'href' => '/timesheets/showAll', 'active' => ['showAll']],
+                    10 => ['type' => 'item', 'module' => 'projects', 'permission' => 'projects.edit', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
+                    15 => ['type' => 'item', 'module' => 'clients', 'permission' => 'clients.view', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
+                    20 => ['type' => 'item', 'module' => 'users', 'permission' => 'users.view', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],
                 ],
             ],
             15 => [
-                'type' => 'submenu', 'id' => 'administration', 'title' => 'menu.sidemenu_administration', 'visual' => 'open', 'role' => 'admin',
+                'type' => 'submenu', 'id' => 'administration', 'title' => 'menu.sidemenu_administration', 'visual' => 'open', 'itemRole' => 'admin',
                 'submenu' => [
-                    5 => ['type' => 'item', 'module' => 'plugins', 'title' => 'menu.leantime_apps', 'icon' => 'fa fa-fw fa-puzzle-piece', 'tooltip' => 'menu.leantime_apps_tooltip', 'href' => '/plugins/marketplace', 'active' => ['marketplace', 'myapps']],
-                    10 => ['type' => 'item', 'module' => 'connector', 'title' => 'menu.integrations', 'icon' => 'fa fa-fw fa-circle-nodes', 'tooltip' => 'menu.connector_tooltip', 'href' => '/connector/show', 'active' => ['show']],
-                    15 => ['type' => 'item', 'module' => 'setting', 'title' => 'menu.company_settings', 'icon' => 'fa fa-fw fa-cogs', 'tooltip' => 'menu.company_settings_tooltip', 'href' => '/setting/editCompanySettings', 'active' => ['editCompanySettings']],
+                    5 => ['type' => 'item', 'module' => 'plugins', 'permission' => 'plugins.manage', 'title' => 'menu.leantime_apps', 'icon' => 'fa fa-fw fa-puzzle-piece', 'tooltip' => 'menu.leantime_apps_tooltip', 'href' => '/plugins/marketplace', 'active' => ['marketplace', 'myapps']],
+                    10 => ['type' => 'item', 'module' => 'connector', 'permission' => 'connector.manage', 'title' => 'menu.integrations', 'icon' => 'fa fa-fw fa-circle-nodes', 'tooltip' => 'menu.connector_tooltip', 'href' => '/connector/show', 'active' => ['show']],
+                    15 => ['type' => 'item', 'module' => 'setting', 'permission' => 'company.settings.view', 'title' => 'menu.company_settings', 'icon' => 'fa fa-fw fa-cogs', 'tooltip' => 'menu.company_settings_tooltip', 'href' => '/setting/editCompanySettings', 'active' => ['editCompanySettings']],
 
                 ],
             ],
@@ -95,6 +97,7 @@ class Menu
         /** @var TicketService */
         private TicketService $ticketsService,
         private ProjectModules $projectModules,
+        private PermissionService $permissions,
     ) {}
 
     /**
@@ -210,6 +213,11 @@ class Menu
                     break;
 
                 case 'submenu':
+                    if (! $this->mayShow($element)) {
+                        unset($menuStructure[$key]);
+                        break;
+                    }
+
                     if (isset($element['submenuFunction'])) {
                         if (method_exists($this, $this->{$element['submenuFunction']})) {
                             $menuStructure[$key]['submenu'] = $this->{$element['submenuFunction']}();
@@ -239,6 +247,12 @@ class Menu
                                     break;
                                 }
 
+                                // Items that declare neither a permission nor a role (plugin items)
+                                // need the submenu's itemRole, as they did when the submenu had a role.
+                                if (isset($element['itemRole']) && ! isset($subelement['permission']) && ! isset($subelement['role'])) {
+                                    $subelement['role'] = $element['itemRole'];
+                                }
+
                                 $this->processMenuItem($subelement, $menuStructure[$key]['submenu'][$subkey]);
                                 break;
 
@@ -247,8 +261,12 @@ class Menu
                         }
                     }
 
-                    // A submenu whose items all belong to switched-off modules goes too
-                    if (empty($menuStructure[$key]['submenu'])) {
+                    // A submenu without a visible item (switched-off modules, missing permissions) goes too
+                    $visibleItems = array_filter(
+                        $menuStructure[$key]['submenu'] ?? [],
+                        fn (array $submenuElement) => $submenuElement['type'] === 'item'
+                    );
+                    if ($visibleItems === []) {
                         unset($menuStructure[$key]);
                     }
 
@@ -262,6 +280,30 @@ class Menu
         // TODO: Add menu filter here!
 
         return $menuStructure;
+    }
+
+    /**
+     * Whether the current user may see a menu item or submenu. `permission` names the permission
+     * the item's page needs. `role` (still used by plugins) is a minimum role level, checked against
+     * the global role and the role in the current project.
+     *
+     * @param  array<string, mixed>  $element  The menu item or submenu.
+     */
+    private function mayShow(array $element): bool
+    {
+        if (isset($element['permission']) && ! $this->permissions->currentUserCan((string) $element['permission'])) {
+            return false;
+        }
+
+        if (! isset($element['role'])) {
+            return true;
+        }
+
+        $roleInCurrentProject = AuthService::getRoleToCheck(false);
+
+        return Roles::isAtLeast(session('userdata.role'), $element['role'])
+            && $roleInCurrentProject !== false
+            && Roles::isAtLeast($roleInCurrentProject, $element['role']);
     }
 
     /**
@@ -281,14 +323,8 @@ class Menu
 
     public function processMenuItem($element, &$structure): void
     {
-
-        // Update security
-        if (isset($element['role'])) {
-            $accessGranted = AuthService::userIsAtLeast($element['role'], true);
-
-            if (! $accessGranted) {
-                $structure['type'] = 'disabled';
-            }
+        if (! $this->mayShow($element)) {
+            $structure['type'] = 'disabled';
         }
 
         if (isset($element['hrefFunction'])) {

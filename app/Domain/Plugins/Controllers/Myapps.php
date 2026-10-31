@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Plugins\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Plugins\Permissions\PluginsPermissions;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +16,6 @@ class Myapps extends Controller
 
     public function init(PluginService $pluginService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
         $this->pluginService = $pluginService;
     }
 
@@ -25,6 +24,7 @@ class Myapps extends Controller
      *
      * @throws BindingResolutionException
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function get(): Response
     {
         $this->tpl->assign('newPlugins', $this->pluginService->discoverNewPlugins());
@@ -41,6 +41,7 @@ class Myapps extends Controller
      * @param  array  $params  Request parameters; one of install/enable/disable/remove/update => plugin id,
      *                         checkUpdates, or autoUpdateShown (+ autoUpdate when switched on).
      */
+    #[RequiresPermission(PluginsPermissions::MANAGE, global: true)]
     public function post($params): Response
     {
         if ($this->incomingRequest->request->has('autoUpdateShown')) {

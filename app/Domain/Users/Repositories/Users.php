@@ -270,10 +270,10 @@ class Users
                 'jobTitle',
                 'jobLevel',
                 'department',
-                'modified',
+                'zp_user.modified',
             ])
             ->leftJoin('zp_clients', 'zp_clients.id', '=', 'zp_user.clientId')
-            ->where('clientId', $clientId)
+            ->where('zp_user.clientId', $clientId)
             ->orderBy('lastname')
             ->get();
 
