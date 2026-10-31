@@ -27,7 +27,7 @@
                 <div class="col-md-2 tw-text-right">
                     <a  href="javascript:void(0);"
                         hx-patch="{{ BASE_URL }}/hx/projects/projectCard/toggleFavorite"
-                        hx-vals='{"isFavorite": {{ $project['isFavorite'] }}, "projectId": {{ $project['id'] }}}'
+                        hx-vals='{"isFavorite": {{ $project['isFavorite'] }}, "projectId": {{ $project['id'] }}, "type": "{{ $type === 'simple' ? 'simple' : 'detailed' }}"}'
                         hx-target="#projectBox-{{ $project['id'] }}"
                         onclick="jQuery(this).addClass('go')"
                         hx-swap="none"

@@ -59,10 +59,12 @@ class ProjectCard extends HtmxController
 
         // A refused change (no access, another reaction of the same kind) reports no event, so
         // nothing refreshes: swap in the freshly rendered card instead (the star sends
-        // hx-swap="none") and say why.
+        // hx-swap="none"), rendered like the original, and say why.
         if (! $changed) {
             $this->tpl->setResponseHeader('HX-Reswap', 'outerHTML');
             $this->tpl->setNotification($this->language->__('notifications.favorite_not_saved'), 'error');
+            $this->tpl->assign('type', ($projectData['type'] ?? 'simple') === 'simple' ? 'simple' : 'detailed');
+            $this->tpl->assign('projectTypeAvatars', $this->menuService->getProjectTypeAvatars());
         }
 
         $this->tpl->assign('project', $this->projectsService->getProject($projectId));
