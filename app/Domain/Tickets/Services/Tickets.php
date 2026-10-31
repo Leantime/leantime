@@ -2774,6 +2774,25 @@ class Tickets extends BaseService
     }
 
     /**
+     * Rename patch fields to the column names the repository writes ("projectid" → "projectId").
+     * Fields that aren't columns (collaborators) keep their name.
+     *
+     * @param  array<string, mixed>  $params  Field => value pairs as submitted.
+     * @return array<string, mixed>
+     */
+    private function canonicalPatchFields(array $params): array
+    {
+        $canonicalParams = [];
+
+        foreach ($params as $field => $value) {
+            $canonicalField = TicketRepository::canonicalPatchField((string) $field) ?? $field;
+            $canonicalParams[$canonicalField] = $value;
+        }
+
+        return $canonicalParams;
+    }
+
+    /**
      * Tell the subtask lists of the given parent tickets that one of their children changed
      * ({@see SubtasksUpdated}). Pass the parent before and after a write: a reparented ticket
      * tells both parents, an unchanged one tells its parent once, and empty ids are skipped.
@@ -3863,6 +3882,10 @@ class Tickets extends BaseService
             $params['saveTicket'],
             $params['saveAndCloseTicket'],
         );
+
+        // The repository matches field names case-insensitively. Use its canonical names from
+        // here on, so every check below sees the fields exactly as they will be written.
+        $params = $this->canonicalPatchFields($params);
 
         $ticket = $this->getTicket($id);
 

@@ -2059,6 +2059,26 @@ class Tickets
     ];
 
     /**
+     * The canonical name of a patchable zp_tickets column for a submitted field name, matched
+     * case-insensitively like patchTicket() does (e.g. "milestoneId" → "milestoneid").
+     *
+     * @param  string  $field  The submitted field name.
+     * @return string|null The column name patchTicket() writes, or null when it would ignore the field.
+     */
+    public static function canonicalPatchField(string $field): ?string
+    {
+        $wanted = strtolower(DbCore::sanitizeToColumnString($field));
+
+        foreach (array_keys(self::PATCHABLE_COLUMNS) as $column) {
+            if (strtolower($column) === $wanted) {
+                return $column;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Whether a patch field name maps to a patchable zp_tickets column (case-insensitive, same
      * matching as patchTicket()). Lets the service tell callers which fields would be ignored.
      *
@@ -2067,15 +2087,7 @@ class Tickets
      */
     public static function isPatchableField(string $field): bool
     {
-        $wanted = strtolower(DbCore::sanitizeToColumnString($field));
-
-        foreach (array_keys(self::PATCHABLE_COLUMNS) as $column) {
-            if (strtolower($column) === $wanted) {
-                return true;
-            }
-        }
-
-        return false;
+        return self::canonicalPatchField($field) !== null;
     }
 
     /**
