@@ -18,7 +18,8 @@
         <div class="pull-right">
             <form action="" method="post">
                 <input type="hidden" name="hideClosedProjects" value="1" />
-                <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" @if ($showClosedProjects) checked='checked' @endif />&nbsp;<label for="showClosed" class="pull-right">{{ __('label.showClosedProjects', 'Show Closed Projects') }}</label>
+                <x-global::forms.checkbox variant="toggle" name="showClosedProjects" id="showClosed" value="on" :checked="(bool) $showClosedProjects"
+                                          onclick="form.submit();">{{ __('label.showClosedProjects', 'Show Closed Projects') }}</x-global::forms.checkbox>
             </form>
         </div>
 

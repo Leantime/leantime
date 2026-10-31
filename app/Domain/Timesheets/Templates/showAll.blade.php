@@ -188,23 +188,14 @@
                         <option value="0" @if ($invEmpl == '0') selected="selected" @endif>{!! __('label.invoiced_not') !!}</option>
                     </x-global::forms.select>
                 </div>
-                <span class="checkbox">
-                    <input form="form" type="checkbox" value="on" name="invComp" id="invComp" onclick="this.form.submit();"
-                        @if ($invComp == '1')
-                            checked="checked"
-                        @endif
-                    />
-                    <x-global::forms.label for="invEmpl">{!! __('label.invoiced_comp') !!}</x-global::forms.label>
-                </span>
-
-                <span class="checkbox">
-                    <input form="form" type="checkbox" value="on" name="paid" id="paid" onclick="this.form.submit();"
-                        @if ($paid == '1')
-                            checked="checked"
-                        @endif
-                    />
-                    <label for="paid">{!! __('label.paid') !!}</label>
-                </span>
+                <div>
+                    <x-global::forms.checkbox variant="toggle" form="form" value="on" name="invComp" id="invComp" onclick="this.form.submit();"
+                                              :checked="$invComp == '1'">{!! __('label.invoiced_comp') !!}</x-global::forms.checkbox>
+                </div>
+                <div>
+                    <x-global::forms.checkbox variant="toggle" form="form" value="on" name="paid" id="paid" onclick="this.form.submit();"
+                                              :checked="$paid == '1'">{!! __('label.paid') !!}</x-global::forms.checkbox>
+                </div>
                 <div class="tw-mb-2">
                     <input form="form" type="hidden" name='filterSubmit' value="1"/>
                     <x-global::forms.button form="form" tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.search')" class="reload" />

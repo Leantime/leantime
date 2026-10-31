@@ -351,8 +351,8 @@
                                             </x-global::forms.select>
                                         </div>
                                         <div class="col-md-2">
-                                            <x-global::forms.label for="">{!! __('label.showInKanban') !!}</x-global::forms.label>
-                                            <input type="checkbox" name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" {{ $ticketStatus['kanbanCol'] ? 'checked="checked"' : '' }}/>
+                                            <x-global::forms.label for="labelKanbanCol-{{ $key }}">{!! __('label.showInKanban') !!}</x-global::forms.label>
+                                            <x-global::forms.checkbox variant="toggle" name="labelKanbanCol-{{ $key }}" id="labelKanbanCol-{{ $key }}" value="on" :checked="(bool) $ticketStatus['kanbanCol']" />
                                         </div>
                                         <div class="remove">
                                             <br />
@@ -428,8 +428,8 @@
             </x-global::forms.select>
         </div>
         <div class="col-md-2">
-            <x-global::forms.label for="">{!! __('label.showInKanban') !!}</x-global::forms.label>
-            <input type="checkbox" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"/>
+            <x-global::forms.label for="labelKanbanCol-XXNEWKEYXX">{!! __('label.showInKanban') !!}</x-global::forms.label>
+            <x-global::forms.checkbox variant="toggle" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX" value="on" />
         </div>
         <div class="remove">
             <br />

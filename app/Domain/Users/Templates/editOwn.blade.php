@@ -361,12 +361,12 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <x-global::forms.checkbox name="notifications" value="on" id="notifications" :checked="$values['notifications'] == '1'">{{ __('label.receive_notifications') }}</x-global::forms.checkbox>
+                                    <x-global::forms.checkbox variant="toggle" name="notifications" value="on" id="notifications" :checked="$values['notifications'] == '1'">{{ __('label.receive_notifications') }}</x-global::forms.checkbox>
                                 </div>
                                 <div class="form-group">
                                     {{-- The hidden 0 makes "off" an explicit value: the service leaves the switch alone when the key is missing. --}}
                                     <input type="hidden" name="pushNotifications" value="0" />
-                                    <x-global::forms.checkbox name="pushNotifications" value="1" id="pushNotifications" :checked="! empty($pushEnabled)" :description="__('label.receive_push_notifications_description')">{{ __('label.receive_push_notifications') }}</x-global::forms.checkbox>
+                                    <x-global::forms.checkbox variant="toggle" name="pushNotifications" value="1" id="pushNotifications" :checked="! empty($pushEnabled)" :description="__('label.receive_push_notifications_description')">{{ __('label.receive_push_notifications') }}</x-global::forms.checkbox>
                                 </div>
                                 <div class="form-group">
                                     <x-global::forms.label for="messagesfrequency" >{{ __('label.messages_frequency') }}</x-global::forms.label>
@@ -428,9 +428,11 @@
                                     ];
                                 @endphp
                                 @foreach ($notificationCategories as $categoryKey => $config)
-                                    <x-global::forms.checkbox name="enabledEventTypes[]" :value="$categoryKey" wrapperClass="tw-flex"
-                                        :checked="in_array($categoryKey, $enabledEventTypes)"
-                                        :description="__($config['description'] ?? '')">{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</x-global::forms.checkbox>
+                                    <div>
+                                        <x-global::forms.checkbox variant="toggle" name="enabledEventTypes[]" :value="$categoryKey"
+                                            :checked="in_array($categoryKey, $enabledEventTypes)"
+                                            :description="__($config['description'] ?? '')">{{ __($categoryLabels[$categoryKey] ?? $categoryKey) }}</x-global::forms.checkbox>
+                                    </div>
                                 @endforeach
                             </div>
 
@@ -477,7 +479,7 @@
                             <p>{{ __('label.webhook_notifications_description') }}</p>
                             <br />
                             <div class="form-group">
-                                <x-global::forms.checkbox name="webhookEnabled" id="webhookEnabled" :checked="! empty($webhookEnabled)">{{ __('label.enable_webhook_notifications') }}</x-global::forms.checkbox>
+                                <x-global::forms.checkbox variant="toggle" name="webhookEnabled" id="webhookEnabled" :checked="! empty($webhookEnabled)">{{ __('label.enable_webhook_notifications') }}</x-global::forms.checkbox>
                             </div>
                             <div class="form-group">
                                 <x-global::forms.label for="webhookUrl">{{ __('label.webhook_url') }}</x-global::forms.label>

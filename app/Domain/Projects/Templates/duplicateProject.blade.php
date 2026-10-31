@@ -19,9 +19,7 @@
         @endforeach
     </x-global::forms.select>
     <br />
-    <input style="float:left; margin-right:5px;"
-           type="checkbox" name="assignSameUsers" id="assignSameUsers"/>
-    <label for="assignSameUsers">{!! __('label.assignSameUsers') !!}</label>
+    <x-global::forms.checkbox variant="toggle" name="assignSameUsers" id="assignSameUsers" value="on">{!! __('label.assignSameUsers') !!}</x-global::forms.checkbox>
 
     <br />
 

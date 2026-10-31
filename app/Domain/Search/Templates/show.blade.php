@@ -84,10 +84,9 @@
                         <input type="date" name="to" form="searchPageForm" value="{{ $filterValues['to'] }}" onchange="document.getElementById('searchPageForm').submit()" />
                     </label>
 
-                    <label class="searchPage__filter searchPage__filter--check">
-                        <input type="checkbox" name="mine" value="1" form="searchPageForm" @checked($filterValues['mine']) onchange="document.getElementById('searchPageForm').submit()" />
-                        <span>{{ __('search.filter.mine') }}</span>
-                    </label>
+                    <x-global::forms.checkbox variant="toggle" name="mine" value="1" form="searchPageForm" :checked="(bool) $filterValues['mine']"
+                                              onchange="document.getElementById('searchPageForm').submit()"
+                                              wrapperClass="searchPage__filter searchPage__filter--check">{{ __('search.filter.mine') }}</x-global::forms.checkbox>
 
                     @if ($anyFilterActive)
                         <a class="searchPage__reset" href="{{ BASE_URL }}/search/show?q={{ urlencode($term) }}">{{ __('search.filter.reset') }}</a>

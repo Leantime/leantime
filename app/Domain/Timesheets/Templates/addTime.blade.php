@@ -107,11 +107,9 @@ $values = $values ?? [];
                                     name="description">{{ $values['description'] }}</x-global::forms.textarea><br/>
                             <br/>
                             <br/>
-                            <label for="invoicedEmpl">{!! __('label.invoiced') !!}</label> <input
-                                    type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
-                                @if (isset($values['invoicedEmpl']) && $values['invoicedEmpl'] == '1')
-                                    checked="checked"
-                                @endif />
+                            <x-global::forms.label for="invoicedEmpl">{!! __('label.invoiced') !!}</x-global::forms.label>
+                            <x-global::forms.checkbox variant="toggle" name="invoicedEmpl" id="invoicedEmpl" value="on"
+                                :checked="isset($values['invoicedEmpl']) && $values['invoicedEmpl'] == '1'" />
                             {!! __('label.ondate') !!}&nbsp;<input type="text"
                                                                       id="invoicedEmplDate" name="invoicedEmplDate"
                                                                       value="{{ $values['invoicedEmplDate'] }}"
@@ -120,22 +118,18 @@ $values = $values ?? [];
 
                             @can('timesheets.manage')
                                 <br/>
-                                <label for="invoicedComp">{!! __('label.invoiced_comp') !!}</label> <input
-                                        type="checkbox" name="invoicedComp" id="invoicedComp"
-                                    @if ($values['invoicedComp'] == '1')
-                                        checked="checked"
-                                    @endif />
+                                <x-global::forms.label for="invoicedComp">{!! __('label.invoiced_comp') !!}</x-global::forms.label>
+                                <x-global::forms.checkbox variant="toggle" name="invoicedComp" id="invoicedComp" value="on"
+                                    :checked="$values['invoicedComp'] == '1'" />
                                 {!! __('label.ondate') !!}&nbsp;<input type="text" autocomplete="off"
                                                                           id="invoicedCompDate"
                                                                           name="invoicedCompDate"
                                                                           value="{{ $values['invoicedCompDate'] }}"
                                                                           size="7"/><br/>
 
-                                <label for="paid">{!! __('label.paid') !!}</label> <input
-                                    type="checkbox" name="paid" id="paid"
-                                    @if ($values['paid'] == '1')
-                                        checked="checked"
-                                    @endif />
+                                <x-global::forms.label for="paid">{!! __('label.paid') !!}</x-global::forms.label>
+                                <x-global::forms.checkbox variant="toggle" name="paid" id="paid" value="on"
+                                    :checked="$values['paid'] == '1'" />
                                 {!! __('label.ondate') !!}&nbsp;<input type="text" autocomplete="off"
                                                                           id="paidDate"
                                                                           name="paidDate"

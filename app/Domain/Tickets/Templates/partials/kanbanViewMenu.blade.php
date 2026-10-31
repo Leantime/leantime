@@ -21,14 +21,10 @@
         <input type="hidden" name="projectId" value="{{ (int) ($kanbanViewProjectId ?? 0) }}" />
         <div class="tw-font-bold tw-mb-1">{{ __('label.kanban_card_fields') }}</div>
         @foreach ($kanbanFields as $fieldName => $isVisible)
-            <span class="checkbox tw-block">
-                <input type="checkbox"
-                       name="fields[]"
-                       value="{{ $fieldName }}"
-                       id="kanbanField-{{ $fieldName }}"
-                       @checked($isVisible) />
-                <x-global::forms.label for="kanbanField-{{ $fieldName }}">{{ __('label.kanban_field_'.$fieldName) }}</x-global::forms.label>
-            </span>
+            <div>
+                <x-global::forms.checkbox variant="toggle" name="fields[]" :value="$fieldName" :id="'kanbanField-'.$fieldName"
+                                          :checked="(bool) $isVisible">{{ __('label.kanban_field_'.$fieldName) }}</x-global::forms.checkbox>
+            </div>
         @endforeach
 
         <div class="tw-font-bold tw-mb-1 tw-mt-2">{{ __('label.kanban_sort') }}</div>
