@@ -32,8 +32,7 @@
 .nav-list > .active > a,
 .nav-list > .active > a:hover,
 .nav-list > .active > a:focus,
-.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last,
-div.tagsinput span.tag{ background-color: var(--primary-color) }
+.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last{ background-color: var(--primary-color) }
 
 
 
@@ -134,8 +133,7 @@ span.btn-white:hover{
 .nav-tabs.nav-stacked > li > a:focus,
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover,
-.nav-tabs > .active > a:focus,
-div.tagsinput span.tag
+.nav-tabs > .active > a:focus
 { border-color: var(--main-border-color) }
 
 
@@ -286,11 +284,6 @@ body .widgettitle.title-light {
     padding-top: 5px;
     font-size: var(--font-size-l);
 }
-
-div.tagsinput {
-    border:1px solid var(--main-border-color);
-}
-
 
 body .tox .tox-edit-area__iframe,
 body .tox .tox-toolbar-overlord{

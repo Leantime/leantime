@@ -39,7 +39,7 @@
       • date pickers: .dates .duedates .quickDueDates .dateFrom .dateTo .editFrom .editTo
         .startDate .endDate .projectDateFrom .projectDateTo .week-picker .hasDatepicker
         #deadline #sprintStart #sprintEnd #event_date_* #date #startDate #endDate #timesheetdate …
-      • time: .timepicker, type="time"        • tags: #tags .tagsinputField data-role="tagsinput"
+      • time: .timepicker, type="time"        • tags: use forms.tags
       • inline-edit: .secretInput .asyncInputUpdate (+ data-label / data-id)
       • color: .simpleColorPicker              • any inline onchange/onblur/onkeyup/oninput handler
     See COMPONENTS.md for the full do-not-touch list.
