@@ -129,9 +129,9 @@ abstract class HtmxController
      * Put the headers queued on this controller and on the template onto a response.
      *
      * HX-Trigger events from the response itself, the controller and the template are merged
-     * (setting each bag separately would let the last one overwrite the others), legacy
-     * aliases are expanded, and the list is sent once. A JSON HX-Trigger value set by hand
-     * is left alone, since it can't be merged with a list of names.
+     * (setting each bag separately would let the last one overwrite the others) and sent once.
+     * A JSON HX-Trigger value set by hand is left alone, since it can't be merged with a list
+     * of names.
      */
     private function withQueuedHeaders(Response $response): Response
     {
