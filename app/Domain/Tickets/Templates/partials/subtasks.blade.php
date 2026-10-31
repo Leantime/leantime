@@ -52,17 +52,26 @@
 
         @endphp
 
-    <li class="ui-state-default" id="ticket_{{ $subticket['id'] }}" >
+    @php
+        // A subtask can sit in another project than its parent (moving a parent leaves its
+        // subtasks behind), so each row checks its own project, once per project.
+        $subtaskProjectId = (int) $subticket['projectId'];
+        $subtaskPermissions[$subtaskProjectId] ??= [
+            'edit' => can('tickets.edit', $subtaskProjectId),
+            'delete' => can('tickets.delete', $subtaskProjectId),
+        ];
+    @endphp
+    <li class="ui-state-default @unless ($subtaskPermissions[$subtaskProjectId]['edit']) subtaskRowReadonly @endunless" id="ticket_{{ $subticket['id'] }}" @if ($subtaskPermissions[$subtaskProjectId]['edit']) data-lt-permitted @endif >
         <x-global::elements.card compact class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}">
 
             <div class="row">
                 <div class="col-md-12" style="padding:0 15px;">
-                    @can('tickets.delete', $ticket->projectId)
+                    @if ($subtaskPermissions[$subtaskProjectId]['delete'])
                         <x-global::actions.dropdown>
                             <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete" data-lt-permitted><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
 
                         </x-global::actions.dropdown>
-                   @endcan
+                   @endif
 
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
@@ -109,17 +118,11 @@
 
 <script>
     jQuery(document).ready(function(){
-        @can('tickets.edit', $ticket->projectId)
-
-            leantime.ticketsController.initAsyncInputChange();
-            leantime.ticketsController.initDueDateTimePickers();
-
-
-        @else
-
-            leantime.authController.makeInputReadonly(".nyroModalCont");
-
-        @endcan
+        // Each row follows its own project: rows the user can edit are marked permitted (so the
+        // ticket modal's read-only pass leaves them), the others go read-only here.
+        leantime.ticketsController.initAsyncInputChange();
+        leantime.ticketsController.initDueDateTimePickers();
+        leantime.authController.makeInputReadonly(".subtaskRowReadonly");
 
     });
 

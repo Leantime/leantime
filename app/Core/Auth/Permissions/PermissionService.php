@@ -39,6 +39,22 @@ class PermissionService
     /** Set once this request found the role tables unseeded, see {@see map()}. */
     private bool $grantMapIsEmpty = false;
 
+    /**
+     * Effective role per user and project, resolved once per request: lists check a permission
+     * for every row, and each resolution queries the project relation.
+     *
+     * @var array<string, string|false>
+     */
+    private array $projectRoles = [];
+
+    /**
+     * Projects the user is known to be assigned to, per request. Only memberships are kept, so a
+     * user added to a project mid-request is never refused from a stale miss.
+     *
+     * @var array<string, true>
+     */
+    private array $projectMemberships = [];
+
     public function __construct(
         private PermissionRepository $repo,
         private RoleResolver $roles,
@@ -76,7 +92,7 @@ class PermissionService
         if ($useGlobal) {
             $role = $this->roles->effectiveRole(true);
         } elseif ($projectId !== null) {
-            $role = $this->roles->effectiveRoleForProject($projectId);
+            $role = $this->roleForProject($projectId);
         } else {
             $role = $this->roles->effectiveRole(false);
         }
@@ -87,10 +103,51 @@ class PermissionService
 
         // Capability granted. Enforce project data access for project-scoped checks.
         if ($projectScoped && $projectId !== null && ! $this->canAccessAllProjects()) {
-            return $this->projectAccess->isUserAssignedToProject((int) session('userdata.id'), $projectId);
+            return $this->isAssignedToProject($projectId);
         }
 
         return true;
+    }
+
+    /** The current user's effective role in $projectId, memoized for the request. */
+    private function roleForProject(int $projectId): string|false
+    {
+        $memoKey = session('userdata.id').'|'.session('userdata.role').'|'.$projectId;
+
+        if (! array_key_exists($memoKey, $this->projectRoles)) {
+            $this->projectRoles[$memoKey] = $this->roles->effectiveRoleForProject($projectId);
+        }
+
+        return $this->projectRoles[$memoKey];
+    }
+
+    /** Whether the current user is assigned to $projectId; memberships are memoized for the request. */
+    private function isAssignedToProject(int $projectId): bool
+    {
+        $userId = (int) session('userdata.id');
+        $memoKey = $userId.'|'.$projectId;
+
+        if (isset($this->projectMemberships[$memoKey])) {
+            return true;
+        }
+
+        if (! $this->projectAccess->isUserAssignedToProject($userId, $projectId)) {
+            return false;
+        }
+
+        $this->projectMemberships[$memoKey] = true;
+
+        return true;
+    }
+
+    /**
+     * Drop the per-request project roles and memberships. Called when grants change and between
+     * queued jobs, where one worker process serves many users and requests.
+     */
+    public function forgetResolvedProjects(): void
+    {
+        $this->projectRoles = [];
+        $this->projectMemberships = [];
     }
 
     /**
@@ -129,6 +186,7 @@ class PermissionService
     public function flushCache(): void
     {
         $this->grantMapIsEmpty = false;
+        $this->forgetResolvedProjects();
         Cache::store()->forget(self::MAP_CACHE_KEY);
         Cache::store()->forget(self::META_CACHE_KEY);
         Roles::flushCache();
