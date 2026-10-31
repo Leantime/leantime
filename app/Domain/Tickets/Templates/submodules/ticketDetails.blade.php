@@ -73,9 +73,9 @@
                         </x-global::forms.select>&nbsp;
                     </div>
                     <div style="padding-top:6px;">
-                        @if ($login::userIsAtLeast($roles::$editor))
+                        @can('tickets.edit', $ticket->projectId ?: null)
                            <a href="javascript:void(0);" onclick="leantime.selectController.setValue(document.getElementById('editorId'), '{{ (int) session('userdata.id') }}');">{!! __('label.assign_to_me') !!}</a>
-                        @endif
+                        @endcan
                     </div>
                 </div>
 

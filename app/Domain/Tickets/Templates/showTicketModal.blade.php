@@ -33,11 +33,16 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
         <x-slot:meta>
             {{ __('label.created_by') }} {{ $ticket->userFirstname }} {{ $ticket->userLastname }} | {{ __('label.last_updated') }}: {{ format(! empty($ticket->modified) ? $ticket->modified : $ticket->date)->date() }}
         </x-slot:meta>
-        @if ($login::userIsAtLeast($roles::$editor))
+        @canany(['tickets.edit', 'tickets.delete', 'timesheets.create'], $ticket->projectId)
             <x-slot:actions>
                 <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
+                        @can('tickets.edit', $ticket->projectId)
                         <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
+                        @endcan
+                        @can('tickets.delete', $ticket->projectId)
                         <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
+                        @endcan
+                        @can('timesheets.create')
                         @module('timesheets', $ticket->projectId)
                         <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                         <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
@@ -78,19 +83,20 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                             @endif
                         </li>
                         @endmodule
+                        @endcan
             </x-slot:actions>
-        @endif
+        @endcanany
     </x-global::actions.modal-header>
     <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 
         <ul>
             <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
             <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $numFiles; ?>)</a></li>
-            @if ($login::userIsAtLeast($roles::$editor))
+            @can('timesheets.create')
                 @module('timesheets', $ticket->projectId)
                     <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
                 @endmodule
-            @endif
+            @endcan
             <li><a href="#history"><span class="fa fa-clock-rotate-left"></span> <?php echo $tpl->__('tabs.history') ?></a></li>
             <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
         </ul>
@@ -105,13 +111,13 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
             @include('files::submodules.showAll')
         </div>
 
-        @if($login::userIsAtLeast($roles::$editor))
+        @can('timesheets.create')
             @module('timesheets', $ticket->projectId)
                 <div id="timesheet">
                     @include('tickets::submodules.timesheet')
                 </div>
             @endmodule
-        @endif
+        @endcan
 
         <div id="history">
             {{-- Fetched only when the tab is first shown, so the modal does not load the history up front. --}}
@@ -133,7 +139,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
 
         leantime.ticketsController.initTicketTabs();
 
-        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+        @can('tickets.edit', $ticket->projectId)
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
 
@@ -143,14 +149,12 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
 
 
 
-        <?php } else { ?>
+        @else
             leantime.authController.makeInputReadonly(".nyroModalCont");
-
-        <?php } ?>
-
-        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-            leantime.commentsController.enableCommenterForms();
-        <?php }?>
+            @can('comments.create')
+                leantime.commentsController.enableCommenterForms();
+            @endcan
+        @endcan
 
     });
 

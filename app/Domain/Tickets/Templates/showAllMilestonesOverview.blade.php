@@ -148,17 +148,19 @@
                                 </div>
                             </td>
                             <td>
-                                @if ($login::userIsAtLeast($roles::$editor))
+                                @can('tickets.edit', $row->projectId)
                                     <x-global::actions.dropdown>
                                         <li class="nav-header">{!! __('subtitles.todo') !!}</li>
                                         <li><a href="#/tickets/editMilestone/{{ $row->id }}" class='ticketModal'><i class="fa fa-edit"></i> {!! __('links.edit_milestone') !!}</a></li>
                                         <li><a href="#/tickets/moveTicket/{{ $row->id }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> {!! __('links.move_milestone') !!}</a></li>
+                                        @can('tickets.delete', $row->projectId)
                                         <li><a href="#/tickets/delMilestone/{{ $row->id }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
+                                        @endcan
                                         <li class="nav-header border"></li>
                                         <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row->id }}">{!! __('links.view_todos') !!}</a></li>
 
                                     </x-global::actions.dropdown>
-                                @endif
+                                @endcan
                             </td>
                             @dispatchEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum])
                         </tr>
@@ -180,12 +182,12 @@
     jQuery(document).ready(function(){
     });
 
-    @if ($login::userIsAtLeast($roles::$editor))
+    @can('tickets.edit')
     leantime.ticketsController.initMilestoneDatesAsyncUpdate();
 
     @else
         leantime.authController.makeInputReadonly(".maincontentinner");
-    @endif
+    @endcan
 
     leantime.ticketsController.initMilestoneTable("{{ $searchCriteria['groupBy'] }}");
 

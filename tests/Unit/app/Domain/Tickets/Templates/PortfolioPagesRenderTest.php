@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Tickets\Templates;
 
+use Illuminate\Contracts\Auth\Access\Gate;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
@@ -35,15 +36,20 @@ class PortfolioPagesRenderTest extends TestCase
             define('BASE_URL', 'http://localhost');
         }
 
-        // The view factory discovers plugin composer paths and can() checks the
+        // The view factory discovers plugin composer paths and @can checks the
         // permission engine; both hit the database, which unit tests do not have.
         $plugins = $this->createMock(Plugins::class);
         $plugins->method('getEnabledPluginPaths')->willReturn([]);
         app()->instance(Plugins::class, $plugins);
 
         $permissions = $this->createMock(PermissionService::class);
+        $permissions->method('isManagedPermission')->willReturn(true);
         $permissions->method('currentUserCan')->willReturn(true);
         app()->instance(PermissionService::class, $permissions);
+
+        // @can asks the Gate, which would load the user through the auth guard (database).
+        // forUser() keeps the permission bridge and hands it a session user instead.
+        app()->instance(Gate::class, app(Gate::class)->forUser((object) ['id' => 1]));
     }
 
     public function test_roadmap_all_renders_with_portfolio_tabs(): void
@@ -91,6 +97,7 @@ class PortfolioPagesRenderTest extends TestCase
         ]);
         $tickets->method('getAllMilestonesOverview')->willReturn([(object) [
             'id' => 5,
+            'projectId' => 1,
             'headline' => 'Launch',
             'projectName' => 'Project A',
             'status' => 3,

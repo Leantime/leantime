@@ -55,12 +55,12 @@
 
             <div class="row">
                 <div class="col-md-12" style="padding:0 15px;">
-                    @if($login::userIsAtLeast($roles::$editor))
+                    @can('tickets.delete', $ticket->projectId)
                         <x-global::actions.dropdown>
                             <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
 
                         </x-global::actions.dropdown>
-                   @endif
+                   @endcan
 
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
@@ -107,17 +107,17 @@
 
 <script>
     jQuery(document).ready(function(){
-        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+        @can('tickets.edit', $ticket->projectId)
 
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
 
 
-        <?php } else { ?>
+        @else
 
             leantime.authController.makeInputReadonly(".nyroModalCont");
 
-        <?php } ?>
+        @endcan
 
     });
 

@@ -2,12 +2,12 @@
 
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Exceptions\ValidationException;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Widgets\Services\Dashboard as DashboardService;
 
@@ -24,6 +24,8 @@ class MyToDos extends HtmxController
 
     private DashboardService $dashboardService;
 
+    private PermissionService $permissionService;
+
     private int $limit = 50;
 
     /**
@@ -31,13 +33,16 @@ class MyToDos extends HtmxController
      *
      * @param  TicketService  $ticketsService  The tickets service.
      * @param  DashboardService  $dashboardService  The dashboard orchestration service.
+     * @param  PermissionService  $permissionService  Decides who may quick-add to-dos.
      */
     public function init(
         TicketService $ticketsService,
         DashboardService $dashboardService,
+        PermissionService $permissionService,
     ): void {
         $this->ticketsService = $ticketsService;
         $this->dashboardService = $dashboardService;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -199,7 +204,7 @@ class MyToDos extends HtmxController
     {
         $params = $this->incomingRequest->request->all();
 
-        if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor])) {
+        if ($this->permissionService->currentUserCan(TicketsPermissions::CREATE)) {
             if (isset($params['quickadd']) == true) {
                 $result = $this->dashboardService->addTodo($params);
 

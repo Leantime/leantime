@@ -633,6 +633,44 @@ class TicketsServiceTest extends TestCase
     }
 
     /**
+     * A manager-level role used to keep edit rights in every project. Now tickets.edit in the
+     * ticket's own project decides, so a custom role based on manager without that grant is refused.
+     */
+    public function test_update_ticket_requires_edit_in_the_tickets_project_even_for_managers(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'manager']]);
+
+        $checks = [];
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7),
+            'updateTicket' => function () {
+                throw new \RuntimeException('must not write without tickets.edit in project 7');
+            },
+        ], $this->permissionsForProjects([9], $checks));
+
+        $result = $service->updateTicket(['id' => 5, 'headline' => 'x']);
+
+        $this->assertSame('notifications.ticket_save_error_no_access', $result['msg']);
+        $this->assertContains(['tickets.edit', 7], $checks);
+    }
+
+    public function test_quick_update_milestone_refuses_a_move_into_a_project_without_edit(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'manager']]);
+
+        $service = $this->buildAuthzService([
+            'getTicket' => fn ($id) => $this->ticketIn((int) $id, 7, ['type' => 'milestone']),
+            'updateTicket' => function () {
+                throw new \RuntimeException('must not write a milestone moved into project 8');
+            },
+        ], $this->permissionsForProjects([7]));
+
+        $result = $service->quickUpdateMilestone(['id' => 5, 'headline' => 'M', 'projectId' => 8]);
+
+        $this->assertSame('You are not allowed to move this milestone to that project.', $result['message']);
+    }
+
+    /**
      * Service whose ticket 5 (project 7) is patchable, with the session user's timer on $clockedTicketId.
      *
      * @param  array<int, int>  $punchedOut  Collects the ticket ids punchOut() was called with.
@@ -1210,12 +1248,58 @@ class TicketsServiceTest extends TestCase
         ]);
 
         $service = $this->buildServiceWithTicketRepository($ticketRepository);
+        $service->setPermissionService($this->permissionsGranting([]));
 
         // Caller supplies SOMEONE ELSE's id — the IDOR guard must force it back
         // to the session user before any query runs.
         $service->getMyClosedTicketsForRange(999, '2026-07-01', '2026-07-10');
 
         $this->assertSame(1, $capturedUserId, 'a non-admin must not read another user\'s closures — userId is forced to the session user');
+    }
+
+    /**
+     * The grant decides, not the role rank: a role below admin that holds projects.viewAll may
+     * read another user's closures.
+     */
+    public function test_closed_tickets_range_reads_another_user_with_projects_view_all(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+        $capturedUserId = 'unset';
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => function (...$args) use (&$capturedUserId) {
+                $capturedUserId = $args[0] ?? null;
+
+                return [];
+            },
+            'getStateLabels' => fn (...$args) => [],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+        $service->setPermissionService($this->permissionsGranting(['projects.viewAll']));
+
+        $service->getMyClosedTicketsForRange(999, '2026-07-01', '2026-07-10');
+
+        $this->assertSame(999, $capturedUserId);
+    }
+
+    /**
+     * Permission stub that grants exactly $grantedKeys, whatever the project.
+     *
+     * @param  array<int, string>  $grantedKeys
+     */
+    private function permissionsGranting(array $grantedKeys): PermissionService
+    {
+        $decide = fn (string $key, ?int $projectId = null): bool => in_array($key, $grantedKeys, true);
+
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => $decide,
+            'authorize' => function (string $key, ?int $projectId = null) use ($decide): void {
+                if (! $decide($key, $projectId)) {
+                    throw new AuthorizationException;
+                }
+            },
+        ]);
     }
 
     /**
@@ -1311,11 +1395,36 @@ class TicketsServiceTest extends TestCase
         ]);
 
         $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+        $service->setPermissionService($this->permissionsGranting([]));
 
         // Non-admin supplies someone else's id — forced back to the session user.
         $service->getMyCommentedTicketsForRange(999, '2026-07-01', '2026-07-07');
 
         $this->assertSame(1, $capturedUserId, 'a non-admin must not read another user\'s comment activity — userId forced to session user');
+    }
+
+    public function test_commented_tickets_range_reads_another_user_with_projects_view_all(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'editor']]);
+        $capturedUserId = 'unset';
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'getTicketIdsCommentedByUser' => function (...$args) use (&$capturedUserId) {
+                $capturedUserId = $args[0] ?? null;
+
+                return [];
+            },
+        ]);
+        $projectService = $this->make(ProjectService::class, [
+            'getProjectsUserHasAccessTo' => fn (...$args) => [['id' => 5]],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepoAndProjectService($ticketRepository, $projectService);
+        $service->setPermissionService($this->permissionsGranting(['projects.viewAll']));
+
+        $service->getMyCommentedTicketsForRange(999, '2026-07-01', '2026-07-07');
+
+        $this->assertSame(999, $capturedUserId);
     }
 
     public function test_commented_tickets_range_normalizes_reversed_range(): void

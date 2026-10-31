@@ -71,13 +71,19 @@
         @foreach ($allKanbanColumns as $key => $statusRow)
             <div class="column">
                 <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
-                    @if ($login::userIsAtLeast($roles::$manager) && ! $programBoard)
+                    @if (! $programBoard)
+                    @canany(['projectsettings.labels.manage', 'projects.edit'])
                         <x-global::actions.dropdown trigger-class="editHeadline" style="float:right;">
+                            @can('projectsettings.labels.manage')
                             <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{!! __('headlines.edit_label') !!}</a>
                             </li>
+                            @endcan
+                            @can('projects.edit')
                             <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{!! __('links.add_remove_col') !!}</a></li>
+                            @endcan
 
                         </x-global::actions.dropdown>
+                    @endcanany
                     @endif
                     <strong class="count">0</strong>
                     {{ $statusRow['name'] }}

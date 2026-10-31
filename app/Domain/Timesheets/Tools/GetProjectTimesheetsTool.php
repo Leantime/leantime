@@ -72,8 +72,7 @@ class GetProjectTimesheetsTool extends Tool
         // Company-wide timesheet managers read any project; otherwise a manager role in this project is needed.
         if (! $this->permissionService->currentUserCan(TimesheetsPermissions::MANAGE)) {
             // getProjectRole() returns a stored role key (usually a numeric string like "30");
-            // resolve it to a role name before comparing (same pattern as
-            // Tickets::userIsAtLeastForProject).
+            // resolve it to a role name before comparing.
             $projectRoleKey = $this->projectsService->getProjectRole(session('userdata.id'), $projectId);
             $projectRole = ctype_digit((string) $projectRoleKey)
                 ? Roles::getRoleString((int) $projectRoleKey)

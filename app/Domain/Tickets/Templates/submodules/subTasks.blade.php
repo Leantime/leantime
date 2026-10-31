@@ -44,13 +44,13 @@ $sumEstHours = 0;
 
             <div class="row">
                 <div class="col-md-12" style="padding:0 15px;">
-                    @if ($login::userIsAtLeast($roles::$editor))
+                    @can('tickets.delete', $ticket->projectId)
                         <x-global::actions.dropdown>
                             <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delSubtask={{ $subticket['id'] }}" class="delete formModal"><i class="fa fa-trash"></i> {!! __('links.delete_todo') !!}</a></li>
 
 
                         </x-global::actions.dropdown>
-                    @endif
+                    @endcan
 
                     <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $tpl->escape($subticket['headline']) }}</a>
 
