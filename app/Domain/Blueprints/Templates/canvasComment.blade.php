@@ -44,13 +44,13 @@
             leantime.tiptapController.initSimpleEditor();
         }
 
-        @if(! $login::userIsAtLeast($roles::$editor))
+        @cannot('blueprints.edit')
             leantime.authController.makeInputReadonly(".nyroModalCont");
-        @endif
+        @endcannot
 
-        @if($login::userHasRole([$roles::$commenter]))
+        @cannot('blueprints.edit') @can('comments.create')
             leantime.commentsController.enableCommenterForms();
-        @endif
+        @endcan @endcannot
 
     })
 </script>

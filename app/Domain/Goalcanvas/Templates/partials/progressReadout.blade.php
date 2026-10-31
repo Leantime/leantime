@@ -31,7 +31,7 @@
     $roRemaining = abs($roGoal - $roCur);
     // linkAndReport current values are computed from children; viewers can't
     // write — both render the number as static text instead of an input.
-    $roEditable = $login::userIsAtLeast($roles::$editor) && ($canvasItem['setting'] ?? '') !== 'linkAndReport';
+    $roEditable = \Illuminate\Support\Facades\Gate::allows('goals.edit', $canvasItem['projectId'] ?? null) && ($canvasItem['setting'] ?? '') !== 'linkAndReport';
     // Inline blur-save needs a PERSISTED goal: on the create form (id empty)
     // an hx-post with itemId=0 would swap the readout back to zeros and wipe
     // the value the user just typed — new goals get a plain input that

@@ -188,7 +188,7 @@
     <div class="gvDialog">
 
         <x-global::actions.modal-header :icon="'fas '.$canvasTypes[$canvasItem['box']]['icon']" :title="$canvasTypes[$canvasItem['box']]['title']">
-            @if ($login::userIsAtLeast($roles::$editor) && $id != '')
+            @if (\Illuminate\Support\Facades\Gate::allows('goals.delete', $canvasItem['projectId'] ?? null) && $id != '')
                 <x-slot:actions>
                     <li class="nav-header">{{ $canvasTypes[$canvasItem['box']]['title'] }}</li>
                     <li>
@@ -279,7 +279,7 @@
                     <div class="gv-ms-bars-section">
                         @include('goalcanvas::partials.milestonesSection')
 
-                        @if ($login::userIsAtLeast($roles::$editor))
+                        @can('goals.edit', $canvasItem['projectId'] ?? null)
                             <div class="row" id="newMilestone" style="display:none;">
                                 <div class="col-md-12">
                                     <x-global::forms.text-input width="50%" name="newMilestone" /><br />
@@ -303,19 +303,19 @@
                                     <x-global::forms.button tag="input" inputType="button" :labelText="__('buttons.cancel')" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" contentRole="tertiary" />
                                 </div>
                             </div>
-                        @endif
+                        @endcan
                     </div>
                 @endif
             </div>
 
             {{-- ── Actions (main column; Delete lives in the top-right actions menu) ── --}}
-            @if ($login::userIsAtLeast($roles::$editor))
+            @can('goals.edit', $canvasItem['projectId'] ?? null)
                 <div class="gv-actions">
                     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
                     <x-global::forms.button inputType="submit" contentRole="secondary" id="saveAndClose" value="closeModal"
                         onclick="leantime.goalCanvasController.setCloseModal();">{{ __('buttons.save_and_close') }}</x-global::forms.button>
                 </div>
-            @endif
+            @endcan
 
             </div>{{-- /gv-main --}}
 
@@ -414,13 +414,13 @@
                 leantime.tiptapController.initSimpleEditor();
             }
 
-            @if (!$login::userIsAtLeast($roles::$editor))
+            @cannot('goals.edit', $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly(".nyroModalCont");
-            @endif
+            @endcannot
 
-            @if ($login::userHasRole([$roles::$commenter]))
+            @cannot('goals.edit', $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
             leantime.commentsController.enableCommenterForms();
-            @endif
+            @endcan @endcannot
 
         });
     </script>

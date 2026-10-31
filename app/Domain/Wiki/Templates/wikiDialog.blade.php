@@ -8,7 +8,7 @@
 
 <x-global::actions.modal-header>
     <x-slot:title><i class="fa fa-book"></i> {!! __('label.wiki') !!} {{ $tpl->escape($currentWiki->title) }}</x-slot:title>
-    @if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor))
+    @if (isset($currentWiki->id) && $currentWiki->id != '' && \Illuminate\Support\Facades\Gate::allows('wiki.delete'))
         <x-slot:actions>
             <li><a href="#/wiki/delWiki/{{ $currentWiki->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_wiki') !!}</a></li>
         </x-slot:actions>

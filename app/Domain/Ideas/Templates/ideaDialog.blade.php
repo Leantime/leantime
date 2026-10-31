@@ -70,14 +70,17 @@
                         <h4>{!! __('headlines.no_milestone_link') !!}</h4>
                         {!! __('text.use_milestone_to_track_idea') !!}<br/>
                         <div class="row" id="milestoneSelectors">
-                            @if ($login::userIsAtLeast($roles::$editor))
+                            @can('ideas.edit')
                                 <div class="col-md-12">
+                                    @can('tickets.create')
+                                        <a href="javascript:void(0);"
+                                           onclick="leantime.ideasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
+                                        |
+                                    @endcan
                                     <a href="javascript:void(0);"
-                                       onclick="leantime.ideasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
-                                    | <a href="javascript:void(0);"
-                                         onclick="leantime.ideasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
+                                       onclick="leantime.ideasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
                                 </div>
-                            @endif
+                            @endcan
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
                             <div class="col-md-12">
@@ -162,13 +165,13 @@
             leantime.tiptapController.initComplexEditor();
         }
 
-        @if (!$login::userIsAtLeast($roles::$editor))
+        @cannot('ideas.edit')
             leantime.authController.makeInputReadonly(".nyroModalCont");
-        @endif
+        @endcannot
 
-        @if ($login::userHasRole([$roles::$commenter]))
+        @cannot('ideas.edit') @can('comments.create')
         leantime.submodules.generalCommentController.enableCommenterForms();
-        @endif
+        @endcan @endcannot
 
     })
 </script>

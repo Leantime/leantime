@@ -23,17 +23,21 @@
             <x-global::elements.card compact class="ticketBox" id="item_{{ $row['id'] }}">
                 <div class="row">
                     <div class="col-md-12">
-                        @if($login::userIsAtLeast($roles::$editor))
+                        @canany(['blueprints.edit', 'blueprints.delete'])
                             <x-global::actions.dropdown style="float:right;">
                                 <li class="nav-header">{!! __('subtitles.edit') !!}</li>
-                                <li><a href="#/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $row['id'] }}"
-                                       data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
-                                <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $row['id'] }}"
-                                       class="delete"
-                                       data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
+                                @can('blueprints.edit')
+                                    <li><a href="#/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $row['id'] }}"
+                                           data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
+                                @endcan
+                                @can('blueprints.delete')
+                                    <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $row['id'] }}"
+                                           class="delete"
+                                           data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
+                                @endcan
 
                             </x-global::actions.dropdown>
-                        @endif
+                        @endcanany
 
                         <h4><a href="#/blueprints/{{ $canvasSlug }}/editCanvasItem/{{ $row['id'] }}"
                                data="item_{{ $row['id'] }}">{{ $row['description'] }}</a></h4>
@@ -73,9 +77,9 @@
         @endif
     @endforeach
     <br />
-    @if($login::userIsAtLeast($roles::$editor))
+    @can('blueprints.create')
         <a href="#/blueprints/{{ $canvasSlug }}/editCanvasItem?type={{ $elementName }}"
            class="" id="{{ $elementName }}"
            style="padding-bottom: 10px;">{!! __('links.add_new_canvas_item') !!}</a>
-    @endif
+    @endcan
 </div>

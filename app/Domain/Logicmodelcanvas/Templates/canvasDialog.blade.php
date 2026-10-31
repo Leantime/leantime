@@ -273,10 +273,10 @@
 
         {{-- ═══ Bottom: Actions ═══ --}}
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
-            @if ($login::userIsAtLeast($roles::$editor))
+            @can('blueprints.edit')
                 <x-global::forms.button tag="input" inputType="submit" :labelText="$tpl->__('buttons.save')" id="primaryCanvasSubmitButton" contentRole="primary"/>
                 <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</x-global::forms.button>
-            @endif
+            @endcan
 
         </div>
 
@@ -352,13 +352,13 @@
             leantime.tiptapController.initSimpleEditor();
         }
 
-        @if (! $login::userIsAtLeast($roles::$editor))
+        @cannot('blueprints.edit')
             leantime.authController.makeInputReadonly("#global-modal-content");
-        @endif
+        @endcannot
 
-        @if ($login::userHasRole([$roles::$commenter]))
+        @cannot('blueprints.edit') @can('comments.create')
             leantime.commentsController.enableCommenterForms();
-        @endif
+        @endcan @endcannot
 
     })
 </script>

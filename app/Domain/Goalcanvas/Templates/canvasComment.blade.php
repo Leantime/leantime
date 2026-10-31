@@ -42,14 +42,14 @@ jQuery(document).ready(function() {
        leantime.tiptapController.initSimpleEditor();
    }
 
-   @if(!$login::userIsAtLeast($roles::$editor))
+   @cannot('goals.edit')
        leantime.authController.makeInputReadonly(".nyroModalCont");
 
-   @endif;
+   @endcannot;
 
-   @if($login::userHasRole([$roles::$commenter]))
+   @cannot('goals.edit') @can('comments.create')
        leantime.commentsController.enableCommenterForms();
-   @endif;
+   @endcan @endcannot;
 
 })
 </script>

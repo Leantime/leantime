@@ -24,12 +24,14 @@
         <x-global::elements.section-header class="gv-ms-bars-head" icon="fa fa-flag-checkered">{{ __('headlines.milestones') }}</x-global::elements.section-header>
 
         <span class="gv-ms-actions">
-            @if ($login::userIsAtLeast($roles::$editor))
-                <button type="button" class="gv-ms-act helperTooltip" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');" data-tippy-content="{{ __('goalcanvas.ms_new') }}" title="{{ __('goalcanvas.ms_new') }}" aria-label="{{ __('goalcanvas.ms_new') }}"><i class="fa fa-plus" aria-hidden="true"></i></button>
+            @can('goals.edit', $canvasItem['projectId'] ?? null)
+                @can('tickets.create', $canvasItem['projectId'] ?? null)
+                    <button type="button" class="gv-ms-act helperTooltip" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');" data-tippy-content="{{ __('goalcanvas.ms_new') }}" title="{{ __('goalcanvas.ms_new') }}" aria-label="{{ __('goalcanvas.ms_new') }}"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                @endcan
                 @if (count($milestones) > 0)
                     <button type="button" class="gv-ms-act helperTooltip" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');" data-tippy-content="{{ __('goalcanvas.ms_link') }}" title="{{ __('goalcanvas.ms_link') }}" aria-label="{{ __('goalcanvas.ms_link') }}"><i class="fa fa-link" aria-hidden="true"></i></button>
                 @endif
-            @endif
+            @endcan
             <x-global::elements.info-tip :text="__('tooltip.link_milestones_tooltip')" />
         </span>
     </div>
@@ -65,7 +67,7 @@
                     <div class="gv-msb-track"><div class="gv-msb-fill" style="width:{{ $msPct }}%;background:{{ $ms['color'] }};"></div></div>
                     <span class="gv-msb-pct">{{ $msPct }}%</span>
 
-                    @if ($login::userIsAtLeast($roles::$editor))
+                    @can('goals.edit', $canvasItem['projectId'] ?? null)
                         <button type="button"
                                 hx-post="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}"
                                 hx-vals='{"removeMilestone": {{ (int) $ms['id'] }}}'
@@ -76,7 +78,7 @@
                                 aria-label="{{ __("links.remove") }}: {{ $ms['headline'] }}" title="{{ __("links.remove") }}"><i class="fa fa-close" aria-hidden="true"></i></button>
                     @else
                         <span></span>
-                    @endif
+                    @endcan
                 </div>
             @endforeach
         </div>
