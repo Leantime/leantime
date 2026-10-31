@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Canvas\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
@@ -34,9 +35,19 @@ class DelCanvasItem extends Controller
      *
      * @param  array  $params  Request parameters
      */
-    #[RequiresPermission(BlueprintsPermissions::DELETE)]
+    #[RequiresPermission(BlueprintsPermissions::DELETE, entityScoped: true)]
     public function get(array $params): Response
     {
+        $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
+
+        // The dialog offers Delete by the item's own project; authorize the confirmation there.
+        $canvasItem = $this->blueprintsService->getCanvasItem($id, static::CANVAS_NAME.'canvas');
+        if (! $canvasItem) {
+            return $this->tpl->displayPartial('errors.error404', responseCode: 404);
+        }
+
+        app()->make(PermissionService::class)->authorize(BlueprintsPermissions::DELETE, (int) $canvasItem['projectId']);
+
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvasItem');
     }
 

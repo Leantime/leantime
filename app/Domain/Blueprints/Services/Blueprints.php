@@ -80,7 +80,8 @@ class Blueprints extends BaseService
      *
      * @param  int  $id  Canvas item id
      * @param  string  $canvasType  Board type the item must belong to (e.g. "swotcanvas")
-     * @return array<string, mixed>|false The item, or false when missing/foreign/unauthorized
+     * @return array<string, mixed>|false The item with its real `projectId`, or false when
+     *                                    missing/foreign/unauthorized
      */
     public function getCanvasItem(int $id, string $canvasType): array|false
     {
@@ -89,7 +90,15 @@ class Blueprints extends BaseService
             return false;
         }
 
-        return $this->blueprintsRepo->getSingleCanvasItem($id);
+        $canvasItem = $this->blueprintsRepo->getSingleCanvasItem($id);
+        if (! is_array($canvasItem)) {
+            return false;
+        }
+
+        // The dialog checks edit/comment rights against the item's own project, not the session's.
+        $canvasItem['projectId'] = $projectId;
+
+        return $canvasItem;
     }
 
     /**

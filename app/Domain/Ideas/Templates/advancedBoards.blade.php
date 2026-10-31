@@ -26,9 +26,9 @@
             <x-global::subjectSwitcher
                 :parent="__('headlines.idea_management')"
                 :current="$canvasTitle">
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('ideas.create')
                     <li><a href="javascript:void(0)" class="addCanvasLink">{!! __('links.icon.create_new_board') !!}</a></li>
-                @endif
+                @endcan
                 <li class="border"></li>
                 @foreach ($allCanvas as $canvasRow)
                     <li><a href='{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow['id'] }}'>{{ $tpl->escape($canvasRow['title']) }}</a></li>
@@ -41,10 +41,14 @@
     @if (count($allCanvas) > 0)
         <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
-                @if ($login::userIsAtLeast($roles::$editor))
-                    <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
-                    <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
-                @endif
+                @canany(['ideas.edit', 'ideas.delete'])
+                    @can('ideas.edit')
+                        <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
+                    @endcan
+                    @can('ideas.delete')
+                        <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete" data-lt-permitted>{!! __('links.icon.delete') !!}</a></li>
+                    @endcan
+                @endcanany
 
             </x-global::actions.dropdown>
         </x-slot:actions>
@@ -59,7 +63,7 @@
         ['url' => BASE_URL.'/ideas/showBoards'.$canvasSuffix, 'label' => __('links.wall'), 'active' => false],
         ['url' => BASE_URL.'/ideas/advancedBoards'.$canvasSuffix, 'label' => __('links.kanban'), 'active' => true],
     ]">
-        @if ($login::userIsAtLeast($roles::$editor) && count($allCanvas) > 0)
+        @if (\Illuminate\Support\Facades\Gate::allows('ideas.create') && count($allCanvas) > 0)
             <x-slot:actions>
                 <x-global::forms.button tag="a" link="#/ideas/ideaDialog?type=idea" contentRole="primary" id="customersegment"><span class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}</x-global::forms.button>
             </x-slot:actions>
@@ -78,10 +82,10 @@
                     <div class="column" style="width:{{ $size }}%;">
 
                         <h4 class="widgettitle title-primary">
-                            @if ($login::userIsAtLeast($roles::$manager))
+                            @can('projectsettings.labels.manage')
                                 <a href="#/setting/editBoxLabel?module=idealabels&label={{ $key }}"
                                    class="editHeadline"><i class="fas fa-edit"></i></a>
-                            @endif
+                            @endcan
                             {{ $statusRow['name'] }}
                         </h4>
 
@@ -94,13 +98,17 @@
                                         <div class="row">
                                             <div class="col-md-12">
 
-                                                @if ($login::userIsAtLeast($roles::$editor))
+                                                @canany(['ideas.edit', 'ideas.delete'])
                                                     <x-global::actions.dropdown style="float:right;">
                                                         <li class="nav-header">{!! __('subtitles.edit') !!}</li>
-                                                        <li><a href="#/ideas/ideaDialog/{{ $row['id'] }}" class="" data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
-                                                        <li><a href="#/ideas/delCanvasItem/{{ $row['id'] }}" class="delete" data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
+                                                        @can('ideas.edit')
+                                                            <li><a href="#/ideas/ideaDialog/{{ $row['id'] }}" class="" data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
+                                                        @endcan
+                                                        @can('ideas.delete')
+                                                            <li><a href="#/ideas/delCanvasItem/{{ $row['id'] }}" class="delete" data-lt-permitted data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
+                                                        @endcan
                                                     </x-global::actions.dropdown>
-                                                @endif
+                                                @endcanany
 
                                                 <h4><a href="{{ BASE_URL }}/ideas/advancedBoards/#/ideas/ideaDialog/{{ $row['id'] }}" class=""
                                                        data="item_{{ $row['id'] }}">{{ $tpl->escape($row['description']) }}</a></h4>
@@ -175,10 +183,10 @@
 
                 <br/><h4>{!! __('headlines.have_an_idea') !!}</h4><br/>
                 {!! __('subtitles.start_collecting_ideas') !!}<br/><br/>
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('ideas.create')
                 <x-global::forms.button tag="a" link="javascript:void(0);"
                    class="addCanvasLink" contentRole="primary">{!! __('buttons.start_new_idea_board') !!}</x-global::forms.button>
-                @endif
+                @endcan
             </div>
 
         @endif
@@ -243,12 +251,12 @@
         leantime.ideasController.initBoardControlModal();
         leantime.ideasController.setKanbanHeights();
 
-        @if ($login::userIsAtLeast($roles::$editor))
+        @can('ideas.edit')
         var ideaStatusList = [@foreach ($canvasLabels as $key => $statusRow)'{{ $key }}',@endforeach];
             leantime.ideasController.initIdeaKanban(ideaStatusList);
         @else
             leantime.authController.makeInputReadonly(".maincontentinner");
-        @endif
+        @endcan
 
     });
 

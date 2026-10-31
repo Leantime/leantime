@@ -55,9 +55,11 @@
         </span>
         </x-slot:title>
         @if ($id != '')
+    @can('blueprints.delete', $canvasItem['projectId'] ?? null)
         <x-slot:actions>
-            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a></li>
+            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
 
@@ -273,10 +275,10 @@
 
         {{-- ═══ Bottom: Actions ═══ --}}
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
-            @if ($login::userIsAtLeast($roles::$editor))
+            @can('blueprints.edit', $canvasItem['projectId'] ?? null)
                 <x-global::forms.button tag="input" inputType="submit" :labelText="$tpl->__('buttons.save')" id="primaryCanvasSubmitButton" contentRole="primary"/>
                 <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</x-global::forms.button>
-            @endif
+            @endcan
 
         </div>
 
@@ -288,7 +290,7 @@
         <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
             <x-global::elements.section-header icon="fa fa-comments">{{ $tpl->__('subtitles.discussion') }}</x-global::elements.section-header>
             <input type="hidden" name="comment" value="1" />
-            @include('comments::submodules.generalComment', ['formUrl' => '/' . $canvasName . 'canvas/editCanvasItem/' . $id])
+            @include('comments::submodules.generalComment', ['formUrl' => '/' . $canvasName . 'canvas/editCanvasItem/' . $id, 'commentProjectId' => $canvasItem['projectId'] ?? null])
         </div>
     @endif
 
@@ -352,13 +354,13 @@
             leantime.tiptapController.initSimpleEditor();
         }
 
-        @if (! $login::userIsAtLeast($roles::$editor))
+        @cannot('blueprints.edit', $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly("#global-modal-content");
-        @endif
+        @endcannot
 
-        @if ($login::userHasRole([$roles::$commenter]))
+        @cannot('blueprints.edit', $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
             leantime.commentsController.enableCommenterForms();
-        @endif
+        @endcan @endcannot
 
     })
 </script>

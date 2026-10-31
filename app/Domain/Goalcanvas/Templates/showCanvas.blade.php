@@ -46,9 +46,9 @@
             <x-global::subjectSwitcher
                 :parent="__('headline.goal.board')"
                 :current="$canvasTitle">
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('goals.create')
                     <li><a href="#/goalcanvas/bigRock">{!! __('links.icon.create_new_bigrock') !!}</a></li>
-                @endif
+                @endcan
                 <li class="border"></li>
                 @foreach ($allCanvas as $canvasRow)
                     <li><a
@@ -63,21 +63,25 @@
     @if (count($allCanvas) > 0)
         <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('goals.edit')
                     <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
+                    @can('goals.create')
                     <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
+                    @endcan
                     <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
+                    @can('blueprints.create')
                     <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a>
                     </li>
-                @endif
+                    @endcan
+                @endcan
                 <li><a
                         href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
                 </li>
                 <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('goals.delete')
                     <li><a href="#/goalcanvas/delCanvas/{{ $currentCanvas }}"
-                            class="delete">{!!__('links.icon.delete') !!}</a></li>
-                @endif
+                            class="delete" data-lt-permitted>{!!__('links.icon.delete') !!}</a></li>
+                @endcan
 
             </x-global::actions.dropdown>
         </x-slot:actions>
@@ -88,7 +92,7 @@
     <div class="maincontent">
         <x-global::navigation.view-tabs>
             <x-slot:actions>
-                @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
+                @if (\Illuminate\Support\Facades\Gate::allows('goals.create') && count($canvasTypes) == 1 && count($allCanvas) > 0)
                     <x-global::forms.button tag="a" link="#/goalcanvas/editCanvasItem?type={{ $elementName }}" contentRole="primary"
                         id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</x-global::forms.button>
                 @endif
@@ -181,18 +185,22 @@
                                             <x-global::elements.card compact class="ticketBox" id="item_{{ $row['id'] }}">
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        @if ($login::userIsAtLeast($roles::$editor))
+                                                        @canany(['goals.edit', 'goals.delete'])
                                                             <x-global::actions.dropdown style="float:right;">
                                                                 <li class="nav-header">{{ __('subtitles.edit') }}</li>
-                                                                <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
+                                                                @can('goals.edit')
+                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
                                                                         data="item_{{ $row['id'] }}">
                                                                         {!!   __('links.edit_canvas_item') !!}</a></li>
-                                                                <li><a href="#/goalcanvas/delCanvasItem/{{ $row['id'] }}"
+                                                                @endcan
+                                                                @can('goals.delete')
+                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row['id'] }}"
                                                                         data="item_{{ $row['id'] }}">
                                                                     {!!  __('links.delete_canvas_item') !!}</a></li>
+                                                                @endcan
 
                                                             </x-global::actions.dropdown>
-                                                        @endif
+                                                        @endcanany
 
                                             <h4><strong>{{ __('label.goal_colon') }}</strong> <a
                                                     href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
@@ -298,12 +306,12 @@
                     <h3>{{ __('headlines.goal.analysis') }}</h3>
                     <br />{{ __('text.goal.helper_content') }}
 
-                    @if ($login::userIsAtLeast($roles::$editor))
+                    @can('goals.create')
                         <br /><br />
                         <x-global::forms.button tag="a" link="javascript:void(0)" class="addCanvasLink" contentRole="primary">
                             {{ __('links.icon.create_new_board') }}
                         </x-global::forms.button>
-                    @endif
+                    @endcan
                 </div>
             @endif
 
@@ -322,11 +330,12 @@
             leantime.canvasController.setCanvasName('goal');
             leantime.canvasController.initFilterBar();
 
-            @if ($login::userIsAtLeast($roles::$editor))
+            @canany(['goals.create', 'goals.edit'])
                 leantime.canvasController.initCanvasLinks();
-            @else
+            @endcanany
+            @cannot('goals.edit')
                 leantime.authController.makeInputReadonly(".maincontentinner");
-            @endif
+            @endcannot
 
             @if (isset($_GET['showModal']))
                 @php

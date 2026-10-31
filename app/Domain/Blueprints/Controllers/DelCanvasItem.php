@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Leantime\Domain\Blueprints\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
@@ -34,6 +35,7 @@ class DelCanvasItem
         private Template $tpl,
         private Language $language,
         private BlueprintsService $blueprintsService,
+        private PermissionService $permissionService,
         TemplateRegistry $templateRegistry,
     ) {
         $this->canvasSlug = strip_tags((string) ($request->route('canvasSlug') ?? ''));
@@ -46,7 +48,7 @@ class DelCanvasItem
      * @param  string|null  $canvasSlug  Canvas type slug from the route (resolved in the constructor)
      * @param  string|null  $id  Canvas item id from the route
      */
-    #[RequiresPermission(BlueprintsPermissions::DELETE)]
+    #[RequiresPermission(BlueprintsPermissions::DELETE, entityScoped: true)]
     public function get(?string $canvasSlug = null, ?string $id = null): Response
     {
         if ($this->template === null) {
@@ -62,6 +64,14 @@ class DelCanvasItem
         if ($canvasId === false) {
             return $this->tpl->displayPartial('errors.error404');
         }
+
+        // The dialog offers Delete by the item's own project; authorize the confirmation there.
+        $canvasItem = $this->blueprintsService->getCanvasItem($canvasId, $this->template->getDatabaseType());
+        if (! $canvasItem) {
+            return $this->tpl->displayPartial('errors.error404', responseCode: 404);
+        }
+
+        $this->permissionService->authorize(BlueprintsPermissions::DELETE, (int) $canvasItem['projectId']);
 
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
         $this->tpl->assign('id', $canvasId);
