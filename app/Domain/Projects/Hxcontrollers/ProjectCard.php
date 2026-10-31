@@ -53,10 +53,16 @@ class ProjectCard extends HtmxController
 
         // react()/unreact() act as the session user, require access to the project and report
         // ProjectFavoriteAdded/Removed, which refresh the project lists.
-        if ($isFavorite) {
-            $this->reactionService->unreact('project', $projectId, 'favorite');
-        } else {
-            $this->reactionService->react('project', $projectId, 'favorite');
+        $changed = $isFavorite
+            ? $this->reactionService->unreact('project', $projectId, 'favorite')
+            : $this->reactionService->react('project', $projectId, 'favorite');
+
+        // A refused change (no access, another reaction of the same kind) reports no event, so
+        // nothing refreshes: swap in the freshly rendered card instead (the star sends
+        // hx-swap="none") and say why.
+        if (! $changed) {
+            $this->tpl->setResponseHeader('HX-Reswap', 'outerHTML');
+            $this->tpl->setNotification($this->language->__('notifications.favorite_not_saved'), 'error');
         }
 
         $this->tpl->assign('project', $this->projectsService->getProject($projectId));
