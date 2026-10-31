@@ -1,6 +1,7 @@
 
 <ul class="sortableTicketList" style="margin-bottom:120px;">
-    <li class="">
+    @can('tickets.create', $ticket->projectId)
+    <li class="" data-lt-permitted>
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> {{ __("links.add_task") }}</a>
         <x-global::elements.card compact class="ticketBox hideOnLoad" id="subticket_new">
 
@@ -26,6 +27,7 @@
             <div class="clearfix"></div>
         </x-global::elements.card>
     </li>
+    @endcan
 
 
     @php
@@ -57,7 +59,7 @@
                 <div class="col-md-12" style="padding:0 15px;">
                     @can('tickets.delete', $ticket->projectId)
                         <x-global::actions.dropdown>
-                            <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
+                            <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete" data-lt-permitted><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
 
                         </x-global::actions.dropdown>
                    @endcan

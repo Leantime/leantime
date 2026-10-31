@@ -209,6 +209,7 @@
                             link="javascript:void(0);"
                             onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
                             id="mainToggler"
+                            data-lt-permitted
                             contentRole="link"
                             class="action-link"
                             style="margin-top:-7px;"
@@ -218,7 +219,7 @@
 
                 <x-global::elements.section-header as="h5">{{ __('subtitles.project_updates') }}</x-global::elements.section-header>
 
-                <form method="post" action="{{ BASE_URL }}/dashboard/show">
+                <form method="post" action="{{ BASE_URL }}/dashboard/show" @can('comments.create') data-lt-permitted @endcan>
                     <input type="hidden" name="comment" value="1" />
                         @can('comments.create')
                             <div id="comment0" class="commentBox tw-hidden">

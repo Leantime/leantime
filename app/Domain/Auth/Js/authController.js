@@ -5,21 +5,28 @@ leantime.authController = (function () {
             container = "body";
         }
 
-        jQuery(container).find("input").not(".filterBar input").prop("readonly", true);
-        jQuery(container).find("input").not(".filterBar input").prop("disabled", true);
+        // A control the server rendered because the user holds its own permission (marked
+        // data-lt-permitted, on the element or a wrapper) stays usable: read-only mode only
+        // takes away what editing grants.
+        var editable = function (selector) {
+            return jQuery(container).find(selector).not("[data-lt-permitted], [data-lt-permitted] *");
+        };
 
-        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("readonly", true);
-        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("disabled", true);
+        editable("input").not(".filterBar input").prop("readonly", true);
+        editable("input").not(".filterBar input").prop("disabled", true);
 
-        jQuery(container).find("textarea").not(".filterBar textarea").prop("disabled", true);
+        editable("select").not(".filterBar select, .mainSprintSelector").prop("readonly", true);
+        editable("select").not(".filterBar select, .mainSprintSelector").prop("disabled", true);
 
-        jQuery(container).find("a.delete").remove();
+        editable("textarea").not(".filterBar textarea").prop("disabled", true);
 
-        jQuery(container).find(".quickAddLink").hide();
+        editable("a.delete").remove();
+
+        editable(".quickAddLink").hide();
 
         // Make Tiptap editors readonly
-        if (jQuery(container).find(".tiptap-editor").length && window.leantime && window.leantime.tiptapController) {
-            jQuery(container).find(".tiptap-editor").each(function () {
+        if (editable(".tiptap-editor").length && window.leantime && window.leantime.tiptapController) {
+            editable(".tiptap-editor").each(function () {
                 var editor = leantime.tiptapController.registry.get(this);
                 if (editor) {
                     editor.setEditable(false);
@@ -28,11 +35,11 @@ leantime.authController = (function () {
         }
 
         // Hide Tiptap toolbar
-        jQuery(container).find(".tiptap-toolbar").hide();
+        editable(".tiptap-toolbar").hide();
 
         jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
 
-        jQuery("#mainToggler").hide();
+        jQuery("#mainToggler").not("[data-lt-permitted]").hide();
         jQuery(".commentBox").hide();
         jQuery(".deleteComment, .replyButton").hide();
 

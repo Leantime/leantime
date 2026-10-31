@@ -46,7 +46,7 @@ $sumEstHours = 0;
                 <div class="col-md-12" style="padding:0 15px;">
                     @can('tickets.delete', $ticket->projectId)
                         <x-global::actions.dropdown>
-                            <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delSubtask={{ $subticket['id'] }}" class="delete formModal"><i class="fa fa-trash"></i> {!! __('links.delete_todo') !!}</a></li>
+                            <li><a href="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}?delSubtask={{ $subticket['id'] }}" class="delete formModal" data-lt-permitted><i class="fa fa-trash"></i> {!! __('links.delete_todo') !!}</a></li>
 
 
                         </x-global::actions.dropdown>

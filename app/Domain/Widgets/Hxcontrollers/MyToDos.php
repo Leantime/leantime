@@ -204,7 +204,10 @@ class MyToDos extends HtmxController
     {
         $params = $this->incomingRequest->request->all();
 
-        if ($this->permissionService->currentUserCan(TicketsPermissions::CREATE)) {
+        // The form picks a project; check that one, with quickAddTicket()'s fallback to the session project.
+        $targetProjectId = $params['projectId'] ?? session('currentProject');
+
+        if ($this->permissionService->currentUserCan(TicketsPermissions::CREATE, is_numeric($targetProjectId) ? (int) $targetProjectId : null)) {
             if (isset($params['quickadd']) == true) {
                 $result = $this->dashboardService->addTodo($params);
 

@@ -19,7 +19,7 @@
         @can('tickets.delete', $currentMilestone->projectId)
         <x-slot:actions>
             <li class="nav-header">{!! __('headline.milestone') !!}</li>
-            <li><a href="#/tickets/delMilestone/{{ $currentMilestone->id }}" class="delete"><i class="fa fa-trash-can"></i> {{ __('links.delete') }}</a></li>
+            <li><a href="#/tickets/delMilestone/{{ $currentMilestone->id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {{ __('links.delete') }}</a></li>
         </x-slot:actions>
         @endcan
     @endif
@@ -110,7 +110,7 @@
     <br />
     <input type="hidden" name="comment" value="1" />
 
-        @include('comments::submodules.generalComment', ['formUrl' => '/tickets/editMilestone/'.$currentMilestone->id])
+        @include('comments::submodules.generalComment', ['formUrl' => '/tickets/editMilestone/'.$currentMilestone->id, 'commentProjectId' => $currentMilestone->projectId ?? null])
     @endif
 
 <script type="text/javascript">
@@ -124,9 +124,9 @@
         leantime.ticketsController.initSimpleColorPicker();
         leantime.ticketsController.initMilestoneDates();
 
-        @cannot('tickets.edit', $currentMilestone->projectId ?? null)
+        @cannot(empty($currentMilestone->id) ? 'tickets.create' : 'tickets.edit', $currentMilestone->projectId ?? null)
             leantime.authController.makeInputReadonly(".nyroModalCont");
-            @can('comments.create')
+            @can('comments.create', $currentMilestone->projectId ?? null)
                 leantime.commentsController.enableCommenterForms();
             @endcan
         @endcannot

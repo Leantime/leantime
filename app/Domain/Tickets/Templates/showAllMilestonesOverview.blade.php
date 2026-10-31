@@ -123,11 +123,11 @@
                             </td>
 
                             <td data-order="{{ $row->editFrom }}" >
-                                {!! __('label.due_icon') !!}<input type="text" title="{{ __('label.planned_start_date') }}" value="{{ format($row->editFrom)->date() }}" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row->id }}" data-id="{{ $row->id }}" name="editFrom" class=""/>
+                                {!! __('label.due_icon') !!}<input type="text" title="{{ __('label.planned_start_date') }}" value="{{ format($row->editFrom)->date() }}" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row->id }}" data-id="{{ $row->id }}" name="editFrom" @cannot('tickets.edit', $row->projectId) disabled @endcannot class=""/>
                             </td>
 
                             <td data-order="{{ $row->editTo }}" >
-                                {!! __('label.due_icon') !!}<input type="text" title="{{ __('label.planned_end_date') }}" value="{{ format($row->editTo)->date() }}" class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row->id }}" data-id="{{ $row->id }}" name="editTo" class="" />
+                                {!! __('label.due_icon') !!}<input type="text" title="{{ __('label.planned_end_date') }}" value="{{ format($row->editTo)->date() }}" class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row->id }}" data-id="{{ $row->id }}" name="editTo" @cannot('tickets.edit', $row->projectId) disabled @endcannot class="" />
                             </td>
 
                             <td data-order="{{ $row->planHours }}" >
@@ -148,19 +148,21 @@
                                 </div>
                             </td>
                             <td>
-                                @can('tickets.edit', $row->projectId)
+                                @canany(['tickets.edit', 'tickets.delete'], $row->projectId)
                                     <x-global::actions.dropdown>
                                         <li class="nav-header">{!! __('subtitles.todo') !!}</li>
+                                        @can('tickets.edit', $row->projectId)
                                         <li><a href="#/tickets/editMilestone/{{ $row->id }}" class='ticketModal'><i class="fa fa-edit"></i> {!! __('links.edit_milestone') !!}</a></li>
                                         <li><a href="#/tickets/moveTicket/{{ $row->id }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> {!! __('links.move_milestone') !!}</a></li>
+                                        @endcan
                                         @can('tickets.delete', $row->projectId)
-                                        <li><a href="#/tickets/delMilestone/{{ $row->id }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
+                                        <li><a href="#/tickets/delMilestone/{{ $row->id }}" class="delete" data-lt-permitted><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
                                         @endcan
                                         <li class="nav-header border"></li>
                                         <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row->id }}">{!! __('links.view_todos') !!}</a></li>
 
                                     </x-global::actions.dropdown>
-                                @endcan
+                                @endcanany
                             </td>
                             @dispatchEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum])
                         </tr>
@@ -182,12 +184,8 @@
     jQuery(document).ready(function(){
     });
 
-    @can('tickets.edit')
+    // Each row's date inputs are disabled server-side unless the user can edit that row's project.
     leantime.ticketsController.initMilestoneDatesAsyncUpdate();
-
-    @else
-        leantime.authController.makeInputReadonly(".maincontentinner");
-    @endcan
 
     leantime.ticketsController.initMilestoneTable("{{ $searchCriteria['groupBy'] }}");
 

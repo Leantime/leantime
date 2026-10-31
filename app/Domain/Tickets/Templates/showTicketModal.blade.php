@@ -40,7 +40,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                         <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                         @endcan
                         @can('tickets.delete', $ticket->projectId)
-                        <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
+                        <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete" data-lt-permitted><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
                         @endcan
                         @can('timesheets.create')
                         @module('timesheets', $ticket->projectId)
@@ -113,7 +113,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
 
         @can('timesheets.create')
             @module('timesheets', $ticket->projectId)
-                <div id="timesheet">
+                <div id="timesheet" data-lt-permitted>
                     @include('tickets::submodules.timesheet')
                 </div>
             @endmodule
@@ -151,7 +151,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
 
         @else
             leantime.authController.makeInputReadonly(".nyroModalCont");
-            @can('comments.create')
+            @can('comments.create', $ticket->projectId)
                 leantime.commentsController.enableCommenterForms();
             @endcan
         @endcan
