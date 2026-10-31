@@ -18,6 +18,9 @@
     }
 
     $boxMeta = $canvasTypes[$canvasItem['box']] ?? ['icon' => '', 'title' => ''];
+
+    // Saving a new item needs blueprints.create, an existing one blueprints.edit (as the services check).
+    $itemSavePermission = ($id ?? '') === '' ? 'blueprints.create' : 'blueprints.edit';
 @endphp
 
 <script type="text/javascript">
@@ -34,9 +37,11 @@
     <x-global::actions.modal-header>
     <x-slot:title><i class="fas {{ $boxMeta['icon'] }}"></i> {{ $boxMeta['title'] }}</x-slot:title>
     @if ($id != '')
+    @can('blueprints.delete', $canvasItem['projectId'] ?? null)
         <x-slot:actions>
-            <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+            <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
     {!! $tpl->displayNotification() !!}
@@ -120,10 +125,10 @@
         <input type="hidden" name="changeItem" value="1" />
 
 
-        @if($login::userIsAtLeast($roles::$editor))
+        @can($itemSavePermission, $canvasItem['projectId'] ?? null)
             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
             <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.blueprintsController.setCloseModal();">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
-        @endif
+        @endcan
 
         @if($id !== '')
             <br /><br />
@@ -134,14 +139,16 @@
                     <h4>{!! __('headlines.no_milestone_link') !!}</h4>
 
                     <div class="row" id="milestoneSelectors">
-                        @if($login::userIsAtLeast($roles::$editor))
+                        @can('blueprints.edit', $canvasItem['projectId'] ?? null)
                             <div class="col-md-12">
-                                <a href="javascript:void(0);" onclick="leantime.blueprintsController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
+                                @can('tickets.create', $canvasItem['projectId'] ?? null)
+                                    <a href="javascript:void(0);" onclick="leantime.blueprintsController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
+                                @endcan
                                 @if(count($milestones) > 0)
-                                    | <a href="javascript:void(0);" onclick="leantime.blueprintsController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
+                                    @can('tickets.create', $canvasItem['projectId'] ?? null) | @endcan<a href="javascript:void(0);" onclick="leantime.blueprintsController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
                                 @endif
                             </div>
-                        @endif
+                        @endcan
                     </div>
                     <div class="row" id="newMilestone" style="display:none;">
                         <div class="col-md-12">
@@ -188,7 +195,7 @@
         <br />
         <input type="hidden" name="comment" value="1" />
         <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
-        @include('comments::submodules.generalComment', ['formUrl' => '/blueprints/' . $canvasSlug . '/editCanvasItem/' . $id])
+        @include('comments::submodules.generalComment', ['formUrl' => '/blueprints/' . $canvasSlug . '/editCanvasItem/' . $id, 'commentProjectId' => $canvasItem['projectId'] ?? null])
     @endif
 </div>
 
@@ -201,13 +208,13 @@
             leantime.tiptapController.initSimpleEditor();
         }
 
-        @if(! $login::userIsAtLeast($roles::$editor))
+        @cannot($itemSavePermission, $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly(".nyroModalCont");
-        @endif
+        @endcannot
 
-        @if($login::userHasRole([$roles::$commenter]))
+        @cannot($itemSavePermission, $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
             leantime.commentsController.enableCommenterForms();
-        @endif
+        @endcan @endcannot
 
     })
 </script>

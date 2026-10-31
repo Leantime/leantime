@@ -33,7 +33,7 @@
         <br />
         <input type="hidden" name="comment" value="1" />
         <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
-        @include('comments::submodules.generalComment', ['formUrl' => '/blueprints/' . $canvasSlug . '/editCanvasComment/' . $id])
+        @include('comments::submodules.generalComment', ['formUrl' => '/blueprints/' . $canvasSlug . '/editCanvasComment/' . $id, 'commentProjectId' => $canvasItem['projectId'] ?? null])
     @endif
 </div>
 
@@ -44,13 +44,13 @@
             leantime.tiptapController.initSimpleEditor();
         }
 
-        @if(! $login::userIsAtLeast($roles::$editor))
+        @cannot('blueprints.edit', $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly(".nyroModalCont");
-        @endif
+        @endcannot
 
-        @if($login::userHasRole([$roles::$commenter]))
+        @cannot('blueprints.edit', $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
             leantime.commentsController.enableCommenterForms();
-        @endif
+        @endcan @endcannot
 
     })
 </script>

@@ -109,7 +109,8 @@ class EditCanvasItem extends Controller
 
         $this->tpl->assign('comments', $comments);
 
-        $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
+        // Milestones are linked within the item's own project (new items: the session project).
+        $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $canvasItem['projectId'] ?? session('currentProject')]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasItem', $canvasItem);
         $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
@@ -168,7 +169,13 @@ class EditCanvasItem extends Controller
 
             if (isset($params['itemId']) && ! empty($params['itemId'])) {
                 if (isset($params['description']) && ! empty($params['description'])) {
-                    $currentCanvasId = (int) session('current'.strtoupper(static::CANVAS_NAME).'Canvas');
+                    // An existing item stays on its own board and project, whatever board the
+                    // session has open (the dialog can be reached from another project's link).
+                    $existingItem = $this->blueprintsService->getCanvasItem((int) $params['itemId'], $canvasType);
+                    if (! $existingItem) {
+                        return $this->tpl->displayPartial('errors.error404');
+                    }
+                    $currentCanvasId = (int) $existingItem['canvasId'];
 
                     $canvasItem = [
                         'box' => $params['box'],
@@ -192,6 +199,7 @@ class EditCanvasItem extends Controller
                         $params['editFrom'] = dtHelper()->userNow()->formatDateForUser();
                         $params['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
                         $params['dependentMilestone'] = '';
+                        $params['projectId'] = (int) $existingItem['projectId'];
                         $id = $this->ticketService->quickAddMilestone($params);
 
                         if ($id !== false) {
@@ -351,8 +359,6 @@ class EditCanvasItem extends Controller
             return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$itemId);
         }
 
-        $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
-        $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
         $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
@@ -382,8 +388,10 @@ class EditCanvasItem extends Controller
             ];
             $comments = [];
             $this->tpl->assign('canvasItem', $value);
+            $canvasItem = $value;
         }
         $this->tpl->assign('comments', $comments);
+        $this->tpl->assign('milestones', $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $canvasItem['projectId'] ?? session('currentProject')]));
         $this->tpl->assign('currentCanvas', (int) session('current'.strtoupper(static::CANVAS_NAME).'Canvas'));
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas'.'.canvasDialog');

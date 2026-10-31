@@ -38,9 +38,9 @@
             <x-global::subjectSwitcher
                 :parent="__('headline.' . $canvasName . '.board')"
                 :current="$canvasTitle">
-                @if($login::userIsAtLeast($roles::$editor))
+                @can('blueprints.create')
                     <li><a href="#/{{ $canvasName }}canvas/boardDialog">{!! __('links.icon.create_new_board') !!}</a></li>
-                @endif
+                @endcan
                 <li class="border"></li>
                 @foreach($allCanvas as $canvasRow)
                     <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ e($canvasRow['title']) }}</a></li>
@@ -53,14 +53,14 @@
     @if(count($allCanvas) > 0)
         <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
-                @if($login::userIsAtLeast($roles::$editor))
+                @can('blueprints.edit')
                     <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $currentCanvas }}" class="editCanvasLink ">{!! __('links.icon.edit') !!}</a></li>
-                @endif
+                @endcan
                 <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a></li>
                 <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
-                @if($login::userIsAtLeast($roles::$editor))
-                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
-                @endif
+                @can('blueprints.delete')
+                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete" data-lt-permitted>{!! __('links.icon.delete') !!}</a></li>
+                @endcan
 
             </x-global::actions.dropdown>
         </x-slot:actions>
@@ -70,7 +70,7 @@
 <div class="maincontent">
     <x-global::navigation.view-tabs>
         <x-slot:actions>
-            @if($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
+            @if(\Illuminate\Support\Facades\Gate::allows('blueprints.create') && count($canvasTypes) == 1 && count($allCanvas) > 0)
                 <x-global::forms.button tag="a" link="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}"
                    contentRole="primary" id="{{ $elementName }}">{!! __('links.add_new_canvas_item' . $canvasName) !!}</x-global::forms.button>
             @endif

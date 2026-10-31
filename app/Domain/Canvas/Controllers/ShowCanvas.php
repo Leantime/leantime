@@ -70,9 +70,13 @@ class ShowCanvas extends Controller
     /**
      * Handles canvas mutations (create, edit, clone, merge, import).
      *
+     * The services check each action's own permission (create for new, clone and import;
+     * edit for rename and merge), so this only requires view: a role that may create
+     * boards but not edit them can still add one.
+     *
      * @param  array  $params  Request parameters
      */
-    #[RequiresPermission(BlueprintsPermissions::EDIT)]
+    #[RequiresPermission(BlueprintsPermissions::VIEW)]
     public function post(array $params): Response
     {
         $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));

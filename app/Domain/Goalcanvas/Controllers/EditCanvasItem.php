@@ -154,6 +154,7 @@ class EditCanvasItem extends Controller
 
             $goalMilestones = $this->goalService->getGoalMilestones($itemId);
             $this->tpl->assign('id', $itemId);
+            $this->tpl->assign('canvasItem', $canvasItem);
             $this->tpl->assign('goalMilestones', $goalMilestones['milestones']);
             $this->tpl->assign('milestoneSummary', $goalMilestones['summary']);
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones([

@@ -40,9 +40,9 @@
             <x-global::subjectSwitcher
                 :parent="$tpl->__('headline.logicmodel.board')"
                 :current="$canvasTitle">
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('blueprints.create')
                     <li><a href="#/{{ $canvasName }}canvas/boardDialog">{!! $tpl->__('links.icon.create_new_board') !!}</a></li>
-                @endif
+                @endcan
                 <li class="border"></li>
                 @foreach ($allCanvas as $canvasRow)
                     <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
@@ -55,15 +55,15 @@
     @if (count($allCanvas) > 0)
         <x-slot:actions>
             <x-global::actions.dropdown variant="header-menu">
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('blueprints.edit')
                     <li><a href="#/{{ $canvasName }}canvas/boardDialog/{{ $currentCanvas }}" class="editCanvasLink">{!! $tpl->__('links.icon.edit') !!}</a></li>
-                @endif
+                @endcan
                 <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $currentCanvas }}" hx-boost="false">{!! $tpl->__('links.icon.export') !!}</a></li>
                 <li><a href="javascript:window.print();">{!! $tpl->__('links.icon.print') !!}</a></li>
                 @dispatchEvent('logicmodel.headerActions', ['canvasId' => $currentCanvas])
-                @if ($login::userIsAtLeast($roles::$editor))
-                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
-                @endif
+                @can('blueprints.delete')
+                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete" data-lt-permitted>{!! $tpl->__('links.icon.delete') !!}</a></li>
+                @endcan
 
             </x-global::actions.dropdown>
         </x-slot:actions>
@@ -152,13 +152,13 @@
                                 :title="$row['description']"
                                 :description="$row['conclusion'] ?? ''"
                                 :editUrl="'#/' . $canvasName . 'canvas/editCanvasItem/' . $row['id']"
-                                :deleteUrl="'#/' . $canvasName . 'canvas/delCanvasItem/' . $row['id']"
+                                :deleteUrl="\Illuminate\Support\Facades\Gate::allows('blueprints.delete') ? '#/' . $canvasName . 'canvas/delCanvasItem/' . $row['id'] : ''"
                                 :commentUrl="'#/' . $canvasName . 'canvas/editCanvasComment/' . $row['id']"
                                 :commentCount="$nbcomments"
                                 :authorId="$row['author']"
                                 :authorName="trim(($row['authorFirstname'] ?? '') . ' ' . ($row['authorLastname'] ?? ''))"
                                 :dotColor="$statusColor"
-                                :canEdit="$login::userIsAtLeast($roles::$editor)"
+                                :canEdit="\Illuminate\Support\Facades\Gate::allows('blueprints.edit')"
                             >
                                 @dispatchEvent('logicmodel.itemCardFooter', ['item' => $row, 'canvasId' => $currentCanvas])
                             </x-global::stageflow.item>
@@ -171,11 +171,11 @@
                             </div>
                         @endif
 
-                        @if ($login::userIsAtLeast($roles::$editor))
+                        @can('blueprints.create')
                             <a class="sf-add" href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $boxKey }}">
                                 <i class="fa fa-plus"></i> {{ $tpl->__('logicmodel.add_' . $stage['key']) }}
                             </a>
-                        @endif
+                        @endcan
                     </x-global::stageflow.card>
                 @endforeach
             </div>
@@ -194,12 +194,12 @@
                 </div>
                 <h3>{{ $tpl->__('headlines.logicmodel.analysis') }}</h3>
                 <br />{!! $tpl->__('text.logicmodel.helper_content') !!}
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('blueprints.create')
                     <br /><br />
                     <x-global::forms.button tag="a" link="javascript:void(0)" class="addCanvasLink" contentRole="primary">
                         {{ $tpl->__('links.icon.create_new_board') }}
                     </x-global::forms.button>
-                @endif
+                @endcan
             </div>
         @endif
 
@@ -225,11 +225,12 @@
         leantime.canvasController.setCanvasName('logicmodel');
         leantime.canvasController.initFilterBar();
 
-        @if ($login::userIsAtLeast($roles::$editor))
+        @canany(['blueprints.create', 'blueprints.edit'])
             leantime.canvasController.initCanvasLinks();
-        @else
+        @endcanany
+        @cannot('blueprints.edit')
             leantime.authController.makeInputReadonly(".maincontentinner");
-        @endif
+        @endcannot
 
         @if (isset($_GET['showModal']))
             @php
