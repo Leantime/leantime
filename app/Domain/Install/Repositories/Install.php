@@ -106,6 +106,7 @@ class Install
         30531,
         30532,
         30533,
+        30534,
     ];
 
     /**
@@ -3644,6 +3645,45 @@ class Install
             Log::error('Migration 30533: '.$e->getMessage());
 
             return ['Migration 30533 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30534 — zp_queue.module / moduleId, the entity an email is about.
+     *
+     * The digest worker reads them to split a digest into "New" and "Already seen" against the
+     * inbox's read state (see {@see \Leantime\Domain\Queue\Workers\EmailWorker}). Both are
+     * nullable: rows queued before this migration, and emails that are about no entity, stay
+     * "new" as they always were. Fresh installs get the columns from
+     * {@see \Leantime\Domain\Install\Services\SchemaBuilder}.
+     */
+    public function update_sql_30534(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_queue')) {
+                Log::info('Migration 30534 skipped: zp_queue table missing (partial install?)');
+
+                return true;
+            }
+
+            $schema->table('zp_queue', function (Blueprint $table) use ($schema): void {
+                if (! $schema->hasColumn('zp_queue', 'module')) {
+                    $table->string('module', 45)->nullable()->after('projectId');
+                }
+                if (! $schema->hasColumn('zp_queue', 'moduleId')) {
+                    $table->integer('moduleId')->nullable()->after('module');
+                }
+            });
+        } catch (\Exception $e) {
+            Log::error('Migration 30534: '.$e->getMessage());
+
+            return ['Migration 30534 failed: '.$e->getMessage()];
         }
 
         return true;

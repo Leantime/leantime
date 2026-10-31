@@ -134,11 +134,11 @@ class ProjectsServiceTest extends TestCase
      * @param  array<int, array<string, mixed>|false>  $userOverrides  zp_user column overrides by user id; false = user deleted.
      * @param  Webhooks|null  $webhooks  Replaces the real Webhooks service (built over a recording transport) when given.
      * @param  array<int>  $collaborators  Collaborators on the to-do the notification is about.
-     * @return array{emailRecipients: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null}
+     * @return array{emailRecipients: array|null, emailEntity: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null, order: array<int, string>}
      */
     private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, array $collaborators = []): array
     {
-        $seen = ['emailRecipients' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null];
+        $seen = ['emailRecipients' => null, 'emailEntity' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null, 'order' => []];
         $this->queueTable = [];
         $this->webhookPosts = [];
 
@@ -165,8 +165,10 @@ class ProjectsServiceTest extends TestCase
 
         // Email rows and the webhook rows share the zp_queue table; the email queue is resolved from the container.
         $this->fakeQueueRepo = $this->make(QueueRepository::class, [
-            'queueMessageToUsers' => function ($recipients) use (&$seen) {
+            'queueMessageToUsers' => function ($recipients, $message = '', $subject = '', $projectId = 0, $module = null, $moduleId = null) use (&$seen) {
                 $seen['emailRecipients'] = array_values($recipients);
+                $seen['emailEntity'] = ['module' => $module, 'moduleId' => $moduleId];
+                $seen['order'][] = 'email';
             },
             'addMessageToQueue' => function (Workers $channel, string $subject, string $message, int $userId, int $projectId = 0) {
                 $msghash = md5(count($this->queueTable).$subject.$message);
@@ -198,6 +200,7 @@ class ProjectsServiceTest extends TestCase
             'processMentions' => fn () => null,
             'addNotifications' => function ($notifications) use (&$seen) {
                 $seen['inAppNotifications'] = $notifications;
+                $seen['order'][] = 'inbox';
             },
         ]);
         app()->instance(NotificationService::class, $notificationService);
@@ -303,6 +306,22 @@ class ProjectsServiceTest extends TestCase
             'Every queued recipient is delivered in one run'
         );
         $this->assertSame([], $this->queueTable, 'The run removes the handled rows');
+    }
+
+    /**
+     * The digest tells an already-read email from a new one by matching the queued row to the
+     * inbox row of the same event, so both must name the entity the same way.
+     */
+    public function test_notify_project_users_queues_the_email_with_the_same_entity_the_inbox_records(): void
+    {
+        $seen = $this->runNotifyProjectUsers([]);
+
+        $this->assertSame(['module' => 'tickets', 'moduleId' => 42], $seen['emailEntity']);
+        $this->assertNotEmpty($seen['inAppNotifications']);
+        foreach ($seen['inAppNotifications'] as $row) {
+            $this->assertSame(['tickets', 42], [$row['module'], $row['moduleId']]);
+        }
+        $this->assertSame(['inbox', 'email'], $seen['order'], 'the unread inbox row exists before the queued email, so a digest run in between can never take the email for an already-read one');
     }
 
     /**

@@ -117,7 +117,9 @@ class AssignmentNotifier
                 [$event->assigneeId],
                 $message.' <a href="'.$emailUrl.'">'.$this->language->__('text.click_here').'</a>',
                 sprintf($this->language->__('email_notifications.assigned_subject'), $headline),
-                $projectId
+                $projectId,
+                'tickets',
+                $event->ticketId
             );
         }
 

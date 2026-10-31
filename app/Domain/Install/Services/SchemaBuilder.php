@@ -789,6 +789,10 @@ class SchemaBuilder
             $table->text('message');
             $table->dateTime('thedate');
             $table->integer('projectId');
+            // The entity an email is about, in the inbox's terms (zp_notifications.module /
+            // moduleId), so the digest can tell already-read items from new ones.
+            $table->string('module', 45)->nullable();
+            $table->integer('moduleId')->nullable();
 
             $table->index(['projectId'], 'idx_queue_projectId');
             $table->index(['userId'], 'idx_queue_userId');

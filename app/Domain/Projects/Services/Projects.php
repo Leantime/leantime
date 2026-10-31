@@ -337,6 +337,24 @@ class Projects extends BaseService implements ChecksProjectAccess
      *           webhooks. It must only run as the last step after the calling service or
      *           controller has already authorized the change being announced.
      */
+    /**
+     * The id the inbox records a notification under: the entity's id when the notification
+     * carries an entity, else the project's. The same value goes on the queued email, so the
+     * digest can match it against the inbox row.
+     */
+    private function notificationEntityId(Notification $notification): int
+    {
+        if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
+            return (int) $notification->entity['id'];
+        }
+
+        if (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
+            return (int) $notification->entity->id;
+        }
+
+        return (int) $notification->projectId;
+    }
+
     public function notifyProjectUsers(Notification $notification): void
     {
 
@@ -418,9 +436,10 @@ class Projects extends BaseService implements ChecksProjectAccess
             $emailMessage .= " <a href='".$emailUrl."'>".$notification->url['text'].'</a>';
         }
 
-        // NEW Queuing messaging system
-        $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId);
+        // The entity the notification is about, in the inbox's terms, so the digest can tell an
+        // email the person already read in the inbox from a new one. The email itself is queued
+        // below, after the inbox rows exist (see there).
+        $entityId = $this->notificationEntityId($notification);
 
         // Send to messengers
         $this->messengerService->sendNotificationToMessengers($notification, $projectName);
@@ -449,11 +468,9 @@ class Projects extends BaseService implements ChecksProjectAccess
         ];
 
         $contentToCheck = '';
-        // Find entity ID & content
+        // Find mentionable content
         // Todo once all entities are models this if statement can be reduced
         if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
-            $entityId = $notification->entity['id'];
-
             if (isset($mentionFields[$notification->module])) {
                 $fields = $mentionFields[$notification->module];
 
@@ -464,8 +481,6 @@ class Projects extends BaseService implements ChecksProjectAccess
                 }
             }
         } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
-            $entityId = $notification->entity->id;
-
             if (isset($mentionFields[$notification->module])) {
                 $fields = $mentionFields[$notification->module];
 
@@ -475,9 +490,6 @@ class Projects extends BaseService implements ChecksProjectAccess
                     }
                 }
             }
-        } else {
-            // Entity id not set use project id
-            $entityId = $notification->projectId;
         }
 
         if ($contentToCheck != '') {
@@ -522,6 +534,12 @@ class Projects extends BaseService implements ChecksProjectAccess
          * @context domain.services.projects
          */
         self::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => array_values($filteredUsersToNotify), 'url' => $notification->url['url']], 'leantime.domain.projects.services.projects.notifyProjectUsers');
+
+        // Email, through the digest queue, AFTER the inbox rows above are written: the digest reads
+        // the inbox to tell an already-read email from a new one, so a queued row must never be
+        // visible before the unread inbox row of the same event. (The listener runs in-process.)
+        $queue = app()->make(QueueRepository::class);
+        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId);
 
         // Personal webhooks go last, filtered like email (relevance, category, mentions,
         // collaborators) but from their own candidates: see personalWebhookCandidates(). This
