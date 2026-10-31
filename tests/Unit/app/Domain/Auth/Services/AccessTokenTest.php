@@ -161,4 +161,15 @@ class AccessTokenTest extends TestCase
 
         $this->assertFalse($this->makeAccessToken($repo)->createToken(404, 'ci'));
     }
+
+    public function test_deleting_a_token_that_no_longer_exists_returns_false(): void
+    {
+        $this->grantPermissions([]);
+        $repo = $this->make(AccessTokenRepository::class, [
+            'findTokenById' => fn () => null,
+            'deleteToken' => fn () => $this->fail('nothing to delete'),
+        ]);
+
+        $this->assertFalse($this->makeAccessToken($repo)->deleteToken(5));
+    }
 }

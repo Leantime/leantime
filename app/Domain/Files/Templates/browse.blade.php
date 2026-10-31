@@ -171,7 +171,8 @@
     }
 
 
-    if (typeof uppy === 'undefined') {
+    // No upload controls without files.upload, so no uploader either.
+    if ({{ can('files.upload') ? 'true' : 'false' }} && typeof uppy === 'undefined') {
 
 
     const uppy = new Uppy.Uppy({

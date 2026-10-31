@@ -137,6 +137,11 @@ class AccessToken implements HasAbilities
 
         $token = $this->getTokenById($tokenId);
 
+        // Already gone (e.g. revoked in another tab): nothing to delete.
+        if (empty($token)) {
+            return false;
+        }
+
         if ($token['tokenable_id'] == session('userdata.id') || $this->callerManagesTokensOf((int) $token['tokenable_id'])) {
 
             return $this->tokenRepo->deleteToken($tokenId);
