@@ -34,6 +34,9 @@
     }
 
     $currentImpact = (string) ($canvasItem['impact'] ?? '');
+
+    // Saving a new item needs blueprints.create, an existing one blueprints.edit (as the services check).
+    $itemSavePermission = ($id ?? '') === '' ? 'blueprints.create' : 'blueprints.edit';
 @endphp
 
 <script type="text/javascript">
@@ -275,7 +278,7 @@
 
         {{-- ═══ Bottom: Actions ═══ --}}
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
-            @can('blueprints.edit', $canvasItem['projectId'] ?? null)
+            @can($itemSavePermission, $canvasItem['projectId'] ?? null)
                 <x-global::forms.button tag="input" inputType="submit" :labelText="$tpl->__('buttons.save')" id="primaryCanvasSubmitButton" contentRole="primary"/>
                 <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</x-global::forms.button>
             @endcan
@@ -354,11 +357,11 @@
             leantime.tiptapController.initSimpleEditor();
         }
 
-        @cannot('blueprints.edit', $canvasItem['projectId'] ?? null)
+        @cannot($itemSavePermission, $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly("#global-modal-content");
         @endcannot
 
-        @cannot('blueprints.edit', $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
+        @cannot($itemSavePermission, $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
             leantime.commentsController.enableCommenterForms();
         @endcan @endcannot
 

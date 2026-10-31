@@ -3,6 +3,9 @@
     @php
         $hiddenRelatesLabels = $relatesLabels ?? [];
 
+        // Saving a new item needs goals.create, an existing one goals.edit (as the services check).
+        $itemSavePermission = ($id ?? '') === '' ? 'goals.create' : 'goals.edit';
+
         // Metric preview — from the SAVED values; re-renders on save.
         $mType  = $canvasItem['metricType'] ?: 'number';  // new goals default to # (no math)
         $mStart = (float) ($canvasItem['startValue'] ?? 0);
@@ -309,7 +312,7 @@
             </div>
 
             {{-- ── Actions (main column; Delete lives in the top-right actions menu) ── --}}
-            @can('goals.edit', $canvasItem['projectId'] ?? null)
+            @can($itemSavePermission, $canvasItem['projectId'] ?? null)
                 <div class="gv-actions">
                     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
                     <x-global::forms.button inputType="submit" contentRole="secondary" id="saveAndClose" value="closeModal"
@@ -414,11 +417,11 @@
                 leantime.tiptapController.initSimpleEditor();
             }
 
-            @cannot('goals.edit', $canvasItem['projectId'] ?? null)
+            @cannot($itemSavePermission, $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly(".nyroModalCont");
             @endcannot
 
-            @cannot('goals.edit', $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
+            @cannot($itemSavePermission, $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
             leantime.commentsController.enableCommenterForms();
             @endcan @endcannot
 
