@@ -38,10 +38,10 @@ class PluginUpdatesTest extends TestCase
     /**
      * @param  array<int, array<string, string>>  $releases  The marketplace compatibility list.
      */
-    private function service(array $installed, array $releases, array $repositoryCalls = []): Plugins
+    private function service(array $installed, array $releases, array $repositoryCalls = [], string $leantimeVersion = '3.12.0'): Plugins
     {
         $appSettings = new AppSettings;
-        $appSettings->appVersion = '3.12.0';
+        $appSettings->appVersion = $leantimeVersion;
 
         // The update check asks the marketplace itself (verified TLS): batch "not offered", details answers.
         \Illuminate\Support\Facades\Http::fake([
@@ -78,6 +78,34 @@ class PluginUpdatesTest extends TestCase
 
         $this->assertSame(['updates' => ['Notes' => '1.5.0'], 'failed' => []], $plugins->checkForUpdates());
         $this->assertSame(json_encode(['Notes' => '1.5.0']), $this->savedSettings['plugins.availableUpdates']);
+    }
+
+    private function installedCustomFields(string $version): InstalledPlugin
+    {
+        $customFields = $this->marketplacePlugin(1, 'CustomFields', $version);
+        $customFields->name = 'leantime/customFields';
+
+        return $customFields;
+    }
+
+    /** A release core lists as broken (PluginCompatibility::BROKEN_RELEASES) is skipped despite its marketplace range. */
+    public function test_a_broken_release_is_never_offered(): void
+    {
+        $plugins = $this->service([$this->installedCustomFields('1.5.0')], [
+            ['version_number' => '1.5.1', 'supported_version_from' => 'v3.13.0', 'supported_version_to' => 'latest'],
+        ], leantimeVersion: '3.13.3');
+
+        $this->assertSame(['updates' => [], 'failed' => []], $plugins->checkForUpdates());
+    }
+
+    public function test_the_fixed_release_is_offered_over_a_broken_one(): void
+    {
+        $plugins = $this->service([$this->installedCustomFields('1.5.0')], [
+            ['version_number' => '1.5.1', 'supported_version_from' => 'v3.13.0', 'supported_version_to' => 'latest'],
+            ['version_number' => '1.6.0', 'supported_version_from' => 'v3.13.0', 'supported_version_to' => 'latest'],
+        ], leantimeVersion: '3.13.3');
+
+        $this->assertSame(['updates' => ['CustomFields' => '1.6.0'], 'failed' => []], $plugins->checkForUpdates());
     }
 
     public function test_an_up_to_date_plugin_has_no_update(): void

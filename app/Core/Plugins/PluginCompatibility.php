@@ -66,7 +66,21 @@ class PluginCompatibility
     {
         $range = $this->declaredRange($composer) ?? self::UNDECLARED_RANGE;
 
-        $lastLeantimeVersion = $this->lastLeantimeVersionForBrokenRelease($composer);
+        return $this->capBrokenRelease($range, (string) ($composer['name'] ?? ''), (string) ($composer['version'] ?? ''));
+    }
+
+    /**
+     * A release's range, capped at the last Leantime version it runs on when the release is listed
+     * in {@see BROKEN_RELEASES}. Used for installed plugins ({@see rangeFor()}) and for marketplace
+     * releases offered as updates.
+     *
+     * @param  string  $range  The release's own range.
+     * @param  string  $packageName  The plugin's composer package name, e.g. "leantime/customFields".
+     * @param  string  $pluginVersion  The release's version.
+     */
+    public function capBrokenRelease(string $range, string $packageName, string $pluginVersion): string
+    {
+        $lastLeantimeVersion = $this->lastLeantimeVersionForBrokenRelease($packageName, $pluginVersion);
         if ($lastLeantimeVersion === null) {
             return $range;
         }
@@ -80,13 +94,11 @@ class PluginCompatibility
     /**
      * The last Leantime version a plugin release runs on when it is listed in
      * {@see BROKEN_RELEASES}, or null when it isn't.
-     *
-     * @param  array<string, mixed>  $composer  The plugin's decoded composer.json.
      */
-    private function lastLeantimeVersionForBrokenRelease(array $composer): ?string
+    private function lastLeantimeVersionForBrokenRelease(string $packageName, string $pluginVersion): ?string
     {
-        $packageName = strtolower((string) ($composer['name'] ?? ''));
-        $pluginVersion = ltrim((string) ($composer['version'] ?? ''), 'v');
+        $packageName = strtolower($packageName);
+        $pluginVersion = ltrim($pluginVersion, 'v');
 
         if (! isset(self::BROKEN_RELEASES[$packageName]) || $pluginVersion === '') {
             return null;

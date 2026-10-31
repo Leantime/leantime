@@ -1318,7 +1318,9 @@ class Plugins
 
     /**
      * The newest marketplace version of a plugin that supports this Leantime version and is newer
-     * than the installed one, or null when there is none.
+     * than the installed one, or null when there is none. A release core knows is broken on this
+     * version ({@see PluginCompatibility::BROKEN_RELEASES}) is never offered, whatever its
+     * marketplace range says.
      *
      * @param  array<int, array<string, mixed>>|null  $releases  The plugin's releases, when already
      *                                                           fetched in a batch; null asks the marketplace.
@@ -1341,7 +1343,11 @@ class Plugins
 
         $latest = collect($releases)
             ->filter(fn ($release) => is_array($release) && ! empty($release['version_number']))
-            ->filter(fn ($release) => $this->compatibility->isCompatible($this->releaseRange($release)))
+            ->filter(fn ($release) => $this->compatibility->isCompatible($this->compatibility->capBrokenRelease(
+                $this->releaseRange($release),
+                (string) $plugin->name,
+                (string) $release['version_number'],
+            )))
             ->map(fn ($release) => ltrim((string) $release['version_number'], 'v'))
             ->sort(fn ($a, $b) => version_compare($b, $a))
             ->first();
