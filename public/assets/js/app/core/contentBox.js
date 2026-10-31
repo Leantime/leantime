@@ -233,13 +233,24 @@ leantime.contentBox = (function () {
 
     var syncToggles = function (root) {
         var scope = root && root.querySelectorAll ? root : document;
-        scope.querySelectorAll('.lt-content--collapsible').forEach(function (box) {
+        var boxes = Array.prototype.slice.call(scope.querySelectorAll('.lt-content--collapsible'));
+        // An outerHTML swap hands htmx.onLoad the box itself, which querySelectorAll leaves out.
+        if (scope.matches && scope.matches('.lt-content--collapsible')) {
+            boxes.push(scope);
+        }
+        boxes.forEach(function (box) {
             syncToggle(box, 'left');
             syncToggle(box, 'right');
         });
     };
 
     var showOverlay = function (box, side, show) {
+        // Hiding the sidebar that holds the focus would drop keyboard users back at the page start.
+        var sidebar = sidebarOf(box, side);
+        var toggle = toggleOf(box, side);
+        if (!show && toggle && sidebar && sidebar.contains(document.activeElement)) {
+            toggle.focus();
+        }
         box.classList.toggle('lt-content--' + side + '-shown', show);
         syncToggle(box, side);
     };
@@ -299,23 +310,23 @@ leantime.contentBox = (function () {
         closeOverlays();
     });
 
+    var syncAll = function (root) {
+        syncValues(root);
+        syncToggles(root);
+    };
+
     var resizeTimer = null;
     window.addEventListener('resize', function () {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () {
-            syncValues(document);
-            syncToggles(document);
-        }, 150);
+        resizeTimer = setTimeout(function () { syncAll(document); }, 150);
     });
-    document.addEventListener('DOMContentLoaded', function () {
-        syncValues(document);
-        syncToggles(document);
-    });
+    document.addEventListener('DOMContentLoaded', function () { syncAll(document); });
+    // Content inserted outside htmx swaps (dialogs, List view detail) and in-place page refreshes
+    // after a modal save.
+    document.addEventListener('lt:ui:content.loaded', function (event) { syncAll(event.detail && event.detail.root); });
+    document.addEventListener('lt:ui:page.refreshed', function () { syncAll(document); });
     if (window.htmx) {
-        htmx.onLoad(function (root) {
-            syncValues(root);
-            syncToggles(root);
-        });
+        htmx.onLoad(syncAll);
     }
 
     return {};
