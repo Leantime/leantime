@@ -103,9 +103,9 @@
                                         @endforeach
 
                                     </x-global::forms.select>
-                                    @if ($login::userIsAtLeast('manager'))
+                                    @can('clients.create')
                                         <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank">{!! __('label.client_not_listed') !!}</a>
-                                    @endif
+                                    @endcan
 
 
                                 </div>

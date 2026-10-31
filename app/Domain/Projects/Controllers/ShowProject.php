@@ -2,11 +2,12 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,8 +28,6 @@ class ShowProject extends Controller
         TicketService $ticketService,
         ClientService $clientService
     ): void {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
-
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->clientService = $clientService;
@@ -43,6 +42,7 @@ class ShowProject extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function get(array $params): Response
     {
         if (! isset($params['id'])) {
@@ -51,10 +51,9 @@ class ShowProject extends Controller
 
         $id = (int) $params['id'];
 
-        if (Auth::userHasRole(Roles::$manager)) {
-            if ($this->projectService->isUserAssignedToProject(session('userdata.id'), $id) === false) {
-                return Frontcontroller::redirect(BASE_URL.'/errors/error403');
-            }
+        $userSeesAllProjects = Roles::seesAllProjects(session('userdata.role'));
+        if (! $userSeesAllProjects && ! $this->projectService->isUserAssignedToProject(session('userdata.id'), $id)) {
+            return Frontcontroller::redirect(BASE_URL.'/errors/error403');
         }
 
         $project = $this->projectService->getProject($id);
@@ -82,6 +81,7 @@ class ShowProject extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function post(array $params): Response
     {
         if (! isset($params['id'])) {
@@ -90,10 +90,9 @@ class ShowProject extends Controller
 
         $id = (int) $params['id'];
 
-        if (Auth::userHasRole(Roles::$manager)) {
-            if ($this->projectService->isUserAssignedToProject(session('userdata.id'), $id) === false) {
-                return Frontcontroller::redirect(BASE_URL.'/errors/error403');
-            }
+        $userSeesAllProjects = Roles::seesAllProjects(session('userdata.role'));
+        if (! $userSeesAllProjects && ! $this->projectService->isUserAssignedToProject(session('userdata.id'), $id)) {
+            return Frontcontroller::redirect(BASE_URL.'/errors/error403');
         }
 
         $project = $this->projectService->getProject($id);

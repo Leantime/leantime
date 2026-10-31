@@ -4,8 +4,6 @@ namespace Leantime\Domain\Users\Controllers;
 
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
@@ -69,7 +67,7 @@ class NewUser extends Controller
         $projectrelation = [];
 
         if (isset($_POST['save'])) {
-            $isManager = Auth::userHasRole(Roles::$manager);
+            $staysInOwnClient = $this->userService->invitesStayInOwnClient();
 
             $values = [
                 'firstname' => $_POST['firstname'],
@@ -83,7 +81,7 @@ class NewUser extends Controller
                 'jobTitle' => $_POST['jobTitle'],
                 'jobLevel' => $_POST['jobLevel'],
                 'department' => $_POST['department'],
-                'clientId' => $isManager ? session('userdata.clientId') : $_POST['client'],
+                'clientId' => $staysInOwnClient ? session('userdata.clientId') : $_POST['client'],
             ];
 
             if (isset($_POST['projects']) && is_array($_POST['projects'])) {
@@ -92,7 +90,7 @@ class NewUser extends Controller
                 }
             }
 
-            $result = $this->userService->inviteNewUser($_POST, session('userdata.clientId'), $isManager);
+            $result = $this->userService->inviteNewUser($_POST, session('userdata.clientId'), $staysInOwnClient);
 
             if ($result === 'enter_email') {
                 $this->tpl->setNotification($this->language->__('notification.enter_email'), 'error');
@@ -146,5 +144,6 @@ class NewUser extends Controller
         $this->tpl->assign('clients', $this->clientService->getAll());
         $this->tpl->assign('allProjects', $this->projectService->getAll());
         $this->tpl->assign('roles', $this->userService->getAssignableRoles());
+        $this->tpl->assign('staysInOwnClient', $this->userService->invitesStayInOwnClient());
     }
 }

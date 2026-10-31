@@ -33,14 +33,6 @@
                     <x-global::forms.select name="role" id="role">
 
                         @foreach ($roles as $key => $role)
-                            {{-- Privilege ceiling (parity with newUser): a manager may never
-                                 assign the admin(40)/owner(50) roles. Editing users is admin+
-                                 today, so this is defense-in-depth against any future widening
-                                 of who can reach this screen — a lower role must never be able
-                                 to escalate an account above its own authority. --}}
-                            @if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && \Leantime\Domain\Auth\Models\Roles::getRoleLevel($key) > 30)
-                                @continue
-                            @endif
                             <option value="{{ $key }}"
                                 @if ($key == $values['role']) selected="selected" @endif>
                                 {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
@@ -86,9 +78,7 @@
 
                     <x-global::forms.label for="client">{!! __('label.client') !!}</x-global::forms.label>
                     <x-global::forms.select name='client' id="client">
-                        @if ($login::userIsAtLeast('manager'))
-                            <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
-                        @endif
+                        <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
                         @foreach ($clients as $clientItem)
                             <option value="{{ $clientItem['id'] }}" @if ($clientItem['id'] == $values['clientId']) selected="selected" @endif>{{ $clientItem['name'] }}</option>
                         @endforeach
@@ -116,8 +106,8 @@
                             name="department" id="department" value="{{ $values['department'] }}" /><br />
 
 
-                        @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin))
-                            {{-- Capacity attributes — admin-only. Weekly hours is what
+                        @can('users.edit')
+                            {{-- Capacity attributes, for whoever may edit users. Weekly hours is what
                                  downstream resource-planning surfaces (Resource
                                  Allocation, cross-program warnings, portfolio
                                  rollups) use to answer "how much of this person
@@ -150,7 +140,7 @@
                                 @endforeach
                             </x-global::forms.select><br />
                             <span class="hint">{!! __('label.employment_type_hint') !!}</span><br /><br />
-                        @endif
+                        @endcan
 
 
                     <p class="stdformbutton">

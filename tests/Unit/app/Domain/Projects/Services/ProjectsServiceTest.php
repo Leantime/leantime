@@ -5,6 +5,8 @@ namespace Unit\app\Domain\Projects\Services;
 use Carbon\CarbonImmutable;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use Leantime\Core\Auth\Permissions\DefaultRolePermissions;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Language as LanguageCore;
@@ -21,12 +23,14 @@ use Leantime\Domain\Notifications\Services\PushPreferences;
 use Leantime\Domain\Notifications\Services\WebhookQueue;
 use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Notifications\Services\WebhookTransport;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Queue\Workers\Workers;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Unit\TestCase;
 
@@ -77,12 +81,13 @@ class ProjectsServiceTest extends TestCase
         ?Messengers $messengers = null,
         ?NotificationService $notificationService = null,
         ?Webhooks $webhooks = null,
+        ?PermissionService $permissions = null,
     ): ProjectService {
         $language ??= $this->make(LanguageCore::class, [
             '__' => fn ($key) => $key,
         ]);
 
-        return new ProjectService(
+        $service = new ProjectService(
             $projectRepo ?? $this->make(ProjectRepository::class),
             $ticketRepo ?? $this->make(TicketRepository::class),
             $settingsRepo ?? $this->make(SettingRepository::class),
@@ -98,6 +103,37 @@ class ProjectsServiceTest extends TestCase
             $httpClient ?? $this->make(Client::class),
             $webhooks ?? $this->make(Webhooks::class),
         );
+        $service->setPermissionService($permissions ?? $this->permissionsGranting(null));
+
+        return $service;
+    }
+
+    /**
+     * A permission engine answering for the session role. With $grantedKeys null it uses the
+     * built-in defaults of that role (so manager and above hold projects.edit), otherwise exactly
+     * the given keys, like a custom role would.
+     *
+     * @param  array<int, string>|null  $grantedKeys
+     */
+    private function permissionsGranting(?array $grantedKeys): PermissionService
+    {
+        $decide = function (string $permissionKey) use ($grantedKeys): bool {
+            $keys = $grantedKeys ?? DefaultRolePermissions::grantsFor(
+                (string) session('userdata.role'),
+                (new ProjectsPermissions)->permissions()
+            );
+
+            return in_array($permissionKey, $keys, true);
+        };
+
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => $decide,
+            'authorize' => function (string $permissionKey) use ($decide): void {
+                if (! $decide($permissionKey)) {
+                    throw new AuthorizationException('denied');
+                }
+            },
+        ]);
     }
 
     // ---------------------------------------------------------------------
@@ -1088,6 +1124,44 @@ class ProjectsServiceTest extends TestCase
         $this->assertFalse($this->makeService(projectRepo: $projectRepo)->userCanManageProject(99));
     }
 
+    public function test_user_can_manage_project_follows_the_grant_not_the_role_rank(): void
+    {
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        // An editor-ranked role that was given projects.edit manages its projects...
+        session(['userdata.role' => 'editor']);
+        $grantedEditor = $this->makeService(projectRepo: $projectRepo, permissions: $this->permissionsGranting([ProjectsPermissions::EDIT]));
+        $this->assertTrue($grantedEditor->userCanManageProject(99));
+
+        // ...and a manager whose projects.edit was taken away does not.
+        session(['userdata.role' => 'manager']);
+        $revokedManager = $this->makeService(projectRepo: $projectRepo, permissions: $this->permissionsGranting([]));
+        $this->assertFalse($revokedManager->userCanManageProject(99));
+    }
+
+    public function test_delete_project_follows_the_grant_not_the_role_rank(): void
+    {
+        $deletedIds = [];
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'deleteProject' => function ($id) use (&$deletedIds) {
+                $deletedIds[] = $id;
+            },
+            'deleteAllUserRelations' => null,
+        ]);
+
+        session(['userdata.role' => 'manager']);
+        $revokedManager = $this->makeService(projectRepo: $projectRepo, permissions: $this->permissionsGranting([]));
+        $this->assertFalse($revokedManager->deleteProject(5));
+
+        session(['userdata.role' => 'editor']);
+        $grantedEditor = $this->makeService(projectRepo: $projectRepo, permissions: $this->permissionsGranting([ProjectsPermissions::DELETE]));
+        $this->assertTrue($grantedEditor->deleteProject(5));
+
+        $this->assertSame([5], $deletedIds);
+    }
+
     public function test_patch_project_status_and_sorting_rejects_non_manager(): void
     {
         session(['userdata.role' => 'editor']);
@@ -1394,6 +1468,53 @@ class ProjectsServiceTest extends TestCase
         $this->makeService(projectRepo: $projectRepo)->getProjectIdAssignedToUser(99);
 
         $this->assertSame(1, $capturedUserId, 'a non-admin must not be able to read another user\'s project assignments');
+    }
+
+    public function test_user_managers_read_the_edited_users_project_assignments(): void
+    {
+        // The user editor runs as a role that may not see every project but manages users.
+        session(['userdata.id' => 1, 'userdata.role' => 'editor']);
+
+        $capturedUserId = null;
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjectRelation' => function ($userId) use (&$capturedUserId) {
+                $capturedUserId = $userId;
+
+                return [];
+            },
+        ]);
+
+        foreach ([UsersPermissions::VIEW, UsersPermissions::EDIT] as $userManagementGrant) {
+            $capturedUserId = null;
+            $this->makeService(projectRepo: $projectRepo, permissions: $this->permissionsGranting([$userManagementGrant]))
+                ->getProjectIdAssignedToUser(99);
+
+            $this->assertSame(99, $capturedUserId, "with {$userManagementGrant}, saving the user editor must not replace the edited user's memberships with the caller's");
+        }
+    }
+
+    public function test_user_managers_cannot_read_full_projects_through_another_account(): void
+    {
+        session(['userdata.id' => 1, 'userdata.role' => 'editor']);
+
+        $capturedUserIds = [];
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjects' => function (...$arguments) use (&$capturedUserIds) {
+                $capturedUserIds[] = $arguments['userId'] ?? $arguments[0];
+
+                return [];
+            },
+        ]);
+        $service = $this->makeService(
+            projectRepo: $projectRepo,
+            permissions: $this->permissionsGranting([UsersPermissions::VIEW, UsersPermissions::EDIT])
+        );
+
+        // Project records and budgets stay scoped to the caller's own access.
+        $service->getProjectsUserHasAccessTo(99);
+        $service->getProjectsAssignedToUser(99);
+
+        $this->assertSame([1, 1], $capturedUserIds);
     }
 
     // ---- Project hierarchy safety (#3540: cyclic parents hung every page via the project selector) ----

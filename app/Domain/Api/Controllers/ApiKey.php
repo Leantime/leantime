@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Domain\Api\Permissions\ApiPermissions;
 use Leantime\Domain\Api\Services\Api as ApiService;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,10 +40,9 @@ class ApiKey extends Controller
      *
      * @throws \Exception
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
         if ($id <= 0) {
             return $this->tpl->display('errors.error403');
@@ -63,10 +62,9 @@ class ApiKey extends Controller
      *
      * @throws \Exception
      */
+    #[RequiresPermission(ApiPermissions::MANAGE, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
         if ($id <= 0) {
             return $this->tpl->display('errors.error403');

@@ -2,9 +2,10 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,14 +26,9 @@ class ShowAll extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function get(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
-        if (! Auth::userIsAtLeast(Roles::$manager)) {
-            return $this->tpl->display('errors.error403', responseCode: 403);
-        }
-
         if (! session()->exists('showClosedProjects')) {
             session(['showClosedProjects' => false]);
         }
@@ -40,11 +36,14 @@ class ShowAll extends Controller
         $this->tpl->assign('role', session('userdata.role'));
 
         // getAll() returns only the projects this user may see (all of them with projects.viewAll),
-        // so it is safe for any admin-level role. Others see their client's projects.
-        if (Auth::userIsAtLeast(Roles::$admin) || Roles::seesAllProjects(session('userdata.role'))) {
+        // so it is safe for any admin-level role and for callers without a client. Others see their
+        // client's projects.
+        $role = session('userdata.role');
+        $clientId = (int) session('userdata.clientId');
+        if (Roles::isAtLeast($role, Roles::$admin) || Roles::seesAllProjects($role) || $clientId <= 0) {
             $this->tpl->assign('allProjects', $this->projectService->getAll(session('showClosedProjects')));
         } else {
-            $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects(session('userdata.id'), session('userdata.clientId')));
+            $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects((int) session('userdata.id'), $clientId));
         }
 
         $this->tpl->assign('showClosedProjects', session('showClosedProjects'));
@@ -57,10 +56,9 @@ class ShowAll extends Controller
      *
      * @param  array  $params  Request parameters
      */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
     public function post(array $params): Response
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
         if (isset($_POST['hideClosedProjects'])) {
             session(['showClosedProjects' => false]);
         }

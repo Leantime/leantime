@@ -20,6 +20,7 @@ use Leantime\Core\UI\Theme as ThemeCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Ldap\Services\Ldap as LdapService;
@@ -423,7 +424,7 @@ class Users extends BaseService
         $this->authorize(UsersPermissions::CREATE, forceGlobal: true);
         $this->assertRoleAssignable($values['role'] ?? '');
 
-        if ($this->callerIsBelowAdmin()) {
+        if ($this->invitesStayInOwnClient()) {
             $values['clientId'] = session('userdata.clientId') ?? '';
         }
 
@@ -760,7 +761,7 @@ class Users extends BaseService
 
         if ($currentUser === null || $currentUser === 0) {
             $currentUser = $sessionUser;
-        } elseif ($currentUser !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+        } elseif ($currentUser !== $sessionUser && ! Roles::seesAllProjects(session('userdata.role'))) {
             $currentUser = $sessionUser;
         }
 
@@ -888,9 +889,8 @@ class Users extends BaseService
     /**
      * Returns the list of users visible to the current session user.
      *
-     * Admins/owners see every user. Anyone else is scoped to the users that
-     * belong to their own client. This encapsulates the role-based data
-     * scoping that previously lived in the controller.
+     * Callers who work across clients (clients.view, admin+ by default) see every
+     * user. Anyone else is scoped to the users that belong to their own client.
      *
      * @return array<int, array<string, mixed>> Array of user rows.
      *
@@ -899,7 +899,7 @@ class Users extends BaseService
     #[RequiresPermission(UsersPermissions::VIEW, global: true)]
     public function getAllVisibleToUser(): array
     {
-        if (Auth::userIsAtLeast(Roles::$admin)) {
+        if (! $this->invitesStayInOwnClient()) {
             return $this->getAll();
         }
 
@@ -1697,18 +1697,18 @@ class Users extends BaseService
      *   - 'invite_email_failed' the user was created but the invitation email could not be sent
      *
      * @param  array<string, mixed>  $post  Raw request input.
-     * @param  int|string|null  $sessionClientId  The session user's client id (used for managers).
-     * @param  bool  $isManager  Whether the inviting user holds the manager role.
+     * @param  int|string|null  $sessionClientId  The session user's client id (used when the invite stays in it).
+     * @param  bool  $staysInOwnClient  Whether the invite goes into the inviting user's own client, see invitesStayInOwnClient().
      * @return string Status code described above.
      *
      * @throws BindingResolutionException
      *
-     * @internal Not exposed over JSON-RPC: the manager flag and client id are supplied by the
+     * @internal Not exposed over JSON-RPC: the own-client flag and client id are supplied by the
      *           NewUser controller from the session. The role ceiling is enforced here (and in
      *           createUserInviteWithStatus()).
      */
     #[RequiresPermission(UsersPermissions::CREATE, global: true)]
-    public function inviteNewUser(array $post, int|string|null $sessionClientId, bool $isManager): string
+    public function inviteNewUser(array $post, int|string|null $sessionClientId, bool $staysInOwnClient): string
     {
         $values = [
             'firstname' => NameSanitizer::clean($post['firstname'] ?? ''),
@@ -1722,7 +1722,7 @@ class Users extends BaseService
             'jobTitle' => $post['jobTitle'] ?? '',
             'jobLevel' => $post['jobLevel'] ?? '',
             'department' => $post['department'] ?? '',
-            'clientId' => $isManager ? $sessionClientId : ($post['client'] ?? ''),
+            'clientId' => $staysInOwnClient ? $sessionClientId : ($post['client'] ?? ''),
         ];
 
         if ($values['user'] === '') {
@@ -1827,6 +1827,18 @@ class Users extends BaseService
     public function getAssignableRoles(): array
     {
         return $this->roleCeiling()->assignableRoles();
+    }
+
+    /**
+     * Whether the current user only works within their own client: they invite users into it and
+     * see its users only. Callers who can see every client (clients.view, admin+ by default) work
+     * across clients.
+     *
+     * @internal Not exposed over JSON-RPC; used by the user screens.
+     */
+    public function invitesStayInOwnClient(): bool
+    {
+        return ! $this->can(ClientsPermissions::VIEW);
     }
 
     /**
