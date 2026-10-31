@@ -18,8 +18,7 @@ use Leantime\Domain\Auth\Services\Auth as AuthService;
  *    duplication). Use it for "is the current screen allowed" checks.
  *  - {@see effectiveRoleForProject()} resolves the role for a SPECIFIC project — the
  *    only correct basis for authorizing a mutation on an entity that may live outside
- *    the session project. It centralizes the logic previously private to
- *    `Tickets::userIsAtLeastForProject()`.
+ *    the session project. `PermissionService::currentUserCan($key, $projectId)` uses it.
  *
  * This is infrastructure shared across every domain, hence it lives in Core/Auth. It
  * still references the Domain-layer `Roles` definitions and `Projects` service for now;

@@ -3,8 +3,6 @@
 namespace Leantime\Domain\Widgets\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Widgets\Services\Widgets;
 use Symfony\Component\HttpFoundation;
 
@@ -26,8 +24,6 @@ class WidgetManager extends Controller
     public function init(Widgets $widgetService)
     {
         $this->widgetService = $widgetService;
-
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
     }
 
     /**

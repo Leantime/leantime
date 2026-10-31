@@ -24,15 +24,18 @@
 
             <x-global::layout.content-box class="tw-z-20">
 
-                @if ($login::userIsAtLeast($roles::$admin))
+                @canany(['projects.edit', 'projects.delete'])
                     <x-global::actions.dropdown variant="panel" menu-as="ul" class="pull-right dropdownWrapper">
                         <x-slot:trigger class="btn round-button" data-tippy-content="{{ __('label.edit_project') }}" href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"><i class="fa fa-ellipsis"></i></x-slot:trigger>
+                            @can('projects.edit')
                             <li class="dropdown-item">
                                 <a
                                     href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
 
                                 ><i class="fa fa-edit"></i> {{ __('label.edit_project', 'Edit Project') }}</a>
                             </li>
+                            @endcan
+                            @can('projects.delete')
                             <li class="dropdown-item">
                                 <a
                                     href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}"
@@ -40,9 +43,10 @@
 
                                 ><i class="fa fa-trash"></i> {{ __('label.deleteProject', 'Delete Project') }}</a>
                             </li>
+                            @endcan
 
                     </x-global::actions.dropdown>
-                @endif
+                @endcanany
 
                 <x-global::actions.dropdown variant="panel" menu-class="padding-md" keep-open class="pull-right dropdownWrapper tw-mr-[5px]">
                     <x-slot:trigger class="btn round-button" data-tippy-content="{{ __('label.copy_url_tooltip') }}" href="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}"><i class="fa fa-link"></i></x-slot:trigger>
@@ -181,7 +185,7 @@
                         </div>
                     @endforeach
 
-                    @if ($login::userIsAtLeast($roles::$manager))
+                    @can('users.create')
                         <div class="col-md-3">
                             <x-users::profile-box>
                                 <a href="#/users/newUser?preSelectProjectId={{ $project['id'] }}">
@@ -189,7 +193,7 @@
                                 </a><br/>&nbsp;
                             </x-users::profile-box>
                         </div>
-                    @endif
+                    @endcan
                 </div>
             </x-global::layout.content-box>
 
@@ -199,24 +203,25 @@
 
             <x-global::layout.content-box class="project-updates">
                 <div class="pull-right">
-                    @if ($login::userIsAtLeast($roles::$editor))
+                    @can('comments.create')
                         <x-global::forms.button
                             tag="a"
                             link="javascript:void(0);"
                             onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
                             id="mainToggler"
+                            data-lt-permitted
                             contentRole="link"
                             class="action-link"
                             style="margin-top:-7px;"
                         ><span class="fa fa-plus"></span> {{ __('links.add_new_report') }}</x-global::forms.button>
-                    @endif
+                    @endcan
                 </div>
 
                 <x-global::elements.section-header as="h5">{{ __('subtitles.project_updates') }}</x-global::elements.section-header>
 
-                <form method="post" action="{{ BASE_URL }}/dashboard/show">
+                <form method="post" action="{{ BASE_URL }}/dashboard/show" @can('comments.create') data-lt-permitted @endcan>
                     <input type="hidden" name="comment" value="1" />
-                        @if ($login::userIsAtLeast($roles::$editor))
+                        @can('comments.create')
                             <div id="comment0" class="commentBox tw-hidden">
                                 <x-global::forms.label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</x-global::forms.label>
 
@@ -245,7 +250,7 @@
                                     <input type="hidden" name="father" id="father" value="0"/>
                                 </div>
                             </div>
-                        @endif
+                        @endcan
 
                         <div id="comments">
                             @foreach ($comments as $row)
@@ -265,7 +270,7 @@
                                                     format($row['date'])->time()
                                                 ) }}
                                             </strong>
-                                                @if ($login::userIsAtLeast($roles::$editor))
+                                                @can('comments.create')
                                                     <x-global::actions.dropdown class="tw-float-right tw-ml-[10px]">
                                                         @if ($row['userId'] == session("userdata.id"))
                                                             <li>
@@ -284,7 +289,7 @@
                                                             </li>
                                                         @endif
                                                     </x-global::actions.dropdown>
-                                                @endif
+                                                @endcan
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
                                         </x-global::elements.card>
@@ -300,13 +305,13 @@
                                                 ) !!}
                                             </small>
 
-                                            @if ($login::userIsAtLeast($roles::$commenter))
+                                            @can('comments.create')
                                                 <a
                                                     href="javascript:void(0);"
                                                     onclick="leantime.commentsController.toggleCommentBoxes({{ $row['id'] }});"
                                                 ><span class="fa fa-reply"></span> {{ __('links.reply') }}
                                                 </a>
-                                            @endif
+                                            @endcan
                                         </div>
 
                                         <div class="replies">
@@ -428,12 +433,15 @@
             e.stopPropagation();
         });
 
-        @if ($login::userIsAtLeast($roles::$editor))
+        @can('tickets.edit')
             leantime.dashboardController.prepareHiddenDueDate();
             leantime.usersController.initUserEditModal();
         @else
             leantime.authController.makeInputReadonly(".maincontentinner");
-        @endif
+            @can('comments.create')
+                leantime.commentsController.enableCommenterForms();
+            @endcan
+        @endcan
 
         leantime.dashboardController.initProgressChart(
             "chart-area",

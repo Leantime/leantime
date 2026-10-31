@@ -19,12 +19,11 @@ use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Modules\ProjectModules;
 use Leantime\Core\Support\DateTimeHelper;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -1385,36 +1384,6 @@ class Tickets extends BaseService
     }
 
     /**
-     * Whether the current user holds at least the given role IN a specific project.
-     *
-     * Leantime roles are project-scoped: Auth::userIsAtLeast() evaluates the role
-     * for the current *session* project, so it can't be trusted to authorize an
-     * action on an entity that lives in a different project. This resolves the
-     * user's effective role for $projectId — managers/admins/owners keep their
-     * global role across every project; otherwise the project role applies,
-     * falling back to the global role when no explicit project role is set — and
-     * compares it against the required role using the same ordering as Roles.
-     *
-     * @param  string  $role  Minimum role (a Roles::$* string).
-     * @param  int  $projectId  The project that owns the entity being changed.
-     */
-    private function userIsAtLeastForProject(string $role, int $projectId): bool
-    {
-        $globalRole = session('userdata.role');
-
-        // Manager+ (manager, admin, owner) keep their global role everywhere.
-        if (Roles::isAtLeast($globalRole, Roles::$manager)) {
-            $effectiveRole = $globalRole;
-        } else {
-            $projectRole = $this->projectService->getProjectRole(session('userdata.id'), $projectId);
-            // No explicit project role -> inherit the global role.
-            $effectiveRole = $projectRole === '' ? $globalRole : Roles::getRoleString((int) $projectRole);
-        }
-
-        return Roles::isAtLeast($effectiveRole, $role);
-    }
-
-    /**
      * @api
      */
     #[RequiresPermission(TicketsPermissions::VIEW, projectIdParam: 'projectId')]
@@ -2499,7 +2468,7 @@ class Tickets extends BaseService
         //
         // Authorize against the ticket's CURRENT project, not the session project.
         // getTicket() returns false unless the user is assigned to the ticket's
-        // project, and the editor check is then evaluated against THAT project's
+        // project, and tickets.edit is then evaluated against THAT project's
         // role. Leantime roles are project-scoped, so an editor in project A who is
         // only a commenter in project B must not be able to edit B's ticket by
         // keeping the session on A and posting B's ticket id. (#3376 + review)
@@ -2509,7 +2478,7 @@ class Tickets extends BaseService
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
-        if (! $this->userIsAtLeastForProject(Roles::$editor, (int) $currentTicket->projectId)) {
+        if (! $this->can(TicketsPermissions::EDIT, (int) $currentTicket->projectId)) {
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
@@ -3443,7 +3412,7 @@ class Tickets extends BaseService
      * swapped rather than returning nothing). So passing only one bound yields
      * the span between that date and today, in date order.
      *
-     * A non-admin may only read their OWN closures: a caller-supplied $userId
+     * Without projects.viewAll a caller may only read their OWN closures: a caller-supplied $userId
      * for someone else is forced back to the session user (IDOR guard).
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
@@ -3451,8 +3420,8 @@ class Tickets extends BaseService
     {
         $sessionUser = (int) session('userdata.id');
         $userId = $userId ?: $sessionUser;
-        // IDOR guard: reading another user's closures requires admin.
-        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+        // IDOR guard: reading another user's closures requires seeing every project.
+        if ($userId !== $sessionUser && ! $this->can(ProjectsPermissions::VIEW_ALL)) {
             $userId = $sessionUser;
         }
         if ($userId === 0) {
@@ -3521,7 +3490,7 @@ class Tickets extends BaseService
      * ownership filter then drops tickets the user is the editor of — those are
      * "your work," not support. Defaults either bound to today.
      *
-     * A non-admin may only read their OWN commented tickets: a caller-supplied
+     * Without projects.viewAll a caller may only read their OWN commented tickets: a caller-supplied
      * $userId for someone else is forced back to the session user (IDOR guard,
      * matching Projects::getProjectsUserHasAccessTo()).
      *
@@ -3536,8 +3505,8 @@ class Tickets extends BaseService
     {
         $sessionUser = (int) session('userdata.id');
         $userId = $userId ?: $sessionUser;
-        // IDOR guard: reading someone else's comment activity requires admin.
-        if ($userId !== $sessionUser && ! Auth::userIsAtLeast(Roles::$admin)) {
+        // IDOR guard: reading someone else's comment activity requires seeing every project.
+        if ($userId !== $sessionUser && ! $this->can(ProjectsPermissions::VIEW_ALL)) {
             $userId = $sessionUser;
         }
         if ($userId === 0) {
@@ -4024,10 +3993,10 @@ class Tickets extends BaseService
 
         $currentProjectId = (int) $existingMilestone->projectId;
 
-        // Editing a milestone is an edit op: require editor+ in the milestone's
+        // Editing a milestone is an edit op: require tickets.edit in the milestone's
         // OWN project, evaluated project-scoped rather than against the session
         // project's role. (review)
-        if (! $this->userIsAtLeastForProject(Roles::$editor, $currentProjectId)) {
+        if (! $this->can(TicketsPermissions::EDIT, $currentProjectId)) {
             return ['status' => 'error', 'message' => 'You are not allowed to edit this milestone.'];
         }
 
@@ -4037,10 +4006,10 @@ class Tickets extends BaseService
         $targetProjectId = (int) ($params['projectId'] ?? $currentProjectId);
 
         if ($targetProjectId !== $currentProjectId) {
-            // The projectId is caller-supplied: require editor+ in the target
+            // The projectId is caller-supplied: require tickets.edit in the target
             // project too, so a milestone can't be moved into a project where the
             // user lacks edit rights. (#3294 review / IDOR)
-            if (! $this->userIsAtLeastForProject(Roles::$editor, $targetProjectId)) {
+            if (! $this->can(TicketsPermissions::EDIT, $targetProjectId)) {
                 return ['status' => 'error', 'message' => 'You are not allowed to move this milestone to that project.'];
             }
 

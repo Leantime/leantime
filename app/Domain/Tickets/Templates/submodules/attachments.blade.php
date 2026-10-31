@@ -35,9 +35,9 @@
                 <li class="nav-header">{!! __('subtitles.file') !!}</li>
                 <li><a href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}" target="_blank">{!! __('links.download') !!}</a></li>
 
-                @if ($login::userIsAtLeast($roles::$editor))
+                @can('files.delete', $ticket->projectId)
                     <li><a href="javascript:void(0);" data-post-url="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" data-post-field="delFile" data-post-value="{{ $file['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
-                @endif
+                @endcan
 
 
             </x-global::actions.dropdown>

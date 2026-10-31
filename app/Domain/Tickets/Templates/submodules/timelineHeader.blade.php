@@ -67,9 +67,13 @@
             <x-global::actions.dropdown variant="header-menu">
                 {{-- Inherited (program-owned) sprints are managed at the program level only.
                      $sprint can be false (stale/deleted currentSprint), so guard the object access. --}}
-                @if ($login::userIsAtLeast($roles::$editor) && (! is_object($sprint) || empty($sprint->isInherited)))
+                @if (! is_object($sprint) || empty($sprint->isInherited))
+                    @can('sprints.edit')
                     <li><a href="#/sprints/editSprint/{{ $currentSprint }}">{!! __('link.edit_sprint') !!}</a></li>
+                    @endcan
+                    @can('sprints.delete')
                     <li><a href="#/sprints/delSprint/{{ $currentSprint }}" class="delete">{!! __('links.delete_sprint') !!}</a></li>
+                    @endcan
                 @endif
 
             </x-global::actions.dropdown>
