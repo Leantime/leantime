@@ -123,28 +123,35 @@ class PermissionSeeder
     /**
      * Upsert the six built-in roles and additively grant their default permissions from the
      * central {@see DefaultRolePermissions} matrix.
+     *
+     * All writes run in one transaction: a few hundred grants committed one by one each wait for
+     * a disk flush, which on slow storage (e.g. Docker volumes) adds noticeably to the install
+     * request (#3968). It also means a failed seed leaves no half-seeded roles behind.
      */
     public function seedBuiltInRoles(): void
     {
         $catalog = array_values($this->registry->all());
-        $roleIds = [];
 
-        foreach (DefaultRolePermissions::roles() as $role) {
-            $roleIds[$role['name']] = $this->repo->upsertRole(
-                $role['name'],
-                $role['displayName'],
-                $role['level'],
-                isSystem: true,
-                // Built-in roles are stored in zp_user.role by their level (5..50).
-                roleKey: $role['level'],
-            );
-        }
+        $this->repo->transaction(function () use ($catalog): void {
+            $roleIds = [];
 
-        foreach (DefaultRolePermissions::roles() as $role) {
-            foreach (DefaultRolePermissions::grantsFor($role['name'], $catalog) as $permissionKey) {
-                $this->repo->grant($roleIds[$role['name']], $permissionKey);
+            foreach (DefaultRolePermissions::roles() as $role) {
+                $roleIds[$role['name']] = $this->repo->upsertRole(
+                    $role['name'],
+                    $role['displayName'],
+                    $role['level'],
+                    isSystem: true,
+                    // Built-in roles are stored in zp_user.role by their level (5..50).
+                    roleKey: $role['level'],
+                );
             }
-        }
+
+            foreach (DefaultRolePermissions::roles() as $role) {
+                foreach (DefaultRolePermissions::grantsFor($role['name'], $catalog) as $permissionKey) {
+                    $this->repo->grant($roleIds[$role['name']], $permissionKey);
+                }
+            }
+        });
 
         $this->permissions->flushCache();
     }

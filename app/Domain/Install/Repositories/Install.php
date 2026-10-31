@@ -238,6 +238,45 @@ class Install
     }
 
     /**
+     * getFirstUsers - returns the first user rows, enough to tell whether the installer's owner
+     * is still the only account.
+     *
+     * @param  int  $limit  How many rows to read at most.
+     * @return array<int, array<string, mixed>> Rows with id, role, status, lastlogin, pwReset and password (the hash; only checked for being empty).
+     */
+    public function getFirstUsers(int $limit = 2): array
+    {
+        $this->selectDatabase($this->config->dbDatabase);
+
+        return $this->connection->table('zp_user')
+            ->select(['id', 'role', 'status', 'lastlogin', 'pwReset', 'password'])
+            ->orderBy('id')
+            ->limit($limit)
+            ->get()
+            ->map(fn ($row): array => (array) $row)
+            ->all();
+    }
+
+    /**
+     * setInviteToken - stores a new invite token on a user that has not been activated yet.
+     *
+     * @param  int  $userId  The user to update.
+     * @param  string  $token  The token the onboarding link (/auth/userInvite/{token}) carries.
+     * @return bool True when the token was stored.
+     */
+    public function setInviteToken(int $userId, string $token): bool
+    {
+        $this->selectDatabase($this->config->dbDatabase);
+
+        $updatedRows = $this->connection->table('zp_user')
+            ->where('id', $userId)
+            ->whereRaw('LOWER(status) = ?', ['i'])
+            ->update(['pwReset' => $token]);
+
+        return $updatedRows > 0;
+    }
+
+    /**
      * Select/switch to a specific database
      * Handles database-specific syntax for MySQL vs PostgreSQL
      */
