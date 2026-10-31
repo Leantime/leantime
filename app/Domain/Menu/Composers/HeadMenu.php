@@ -47,6 +47,8 @@ class HeadMenu extends Composer
         'timesheets.manage' => '/timesheets/showAll/',
         'users.view' => '/users/showAll/',
         'clients.view' => '/clients/showAll/',
+        'plugins.manage' => '/plugins/myapps/',
+        'connector.manage' => '/connector/show/',
     ];
 
     public function init(
