@@ -65,14 +65,16 @@
             <x-global::actions.dropdown variant="header-menu">
                 @can('goals.edit')
                     <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
-                    @can('goals.create')
+                @endcan
+                @can('goals.create')
                     <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
-                    @endcan
+                @endcan
+                @can('goals.edit')
                     <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
-                    @can('blueprints.create')
+                @endcan
+                @can('blueprints.create')
                     <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a>
                     </li>
-                    @endcan
                 @endcan
                 <li><a
                         href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
