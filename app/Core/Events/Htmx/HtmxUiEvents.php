@@ -10,9 +10,6 @@ namespace Leantime\Core\Events\Htmx;
  * classes themselves ({@see \Leantime\Core\Events\Contracts\EmitsClientEvent}, e.g. TicketUpdated).
  * There is exactly one home for UI commands so casing/naming never drifts again — plugins
  * reuse these cases rather than minting their own `lt:ui:*` strings.
- *
- * Legacy string equivalents (e.g. HTMX.ShowNotification, closeModal) are dual-emitted during the
- * migration window via {@see HtmxEvents::expand()} so existing listeners keep working.
  */
 enum HtmxUiEvents: string implements HtmxEvent
 {
