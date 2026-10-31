@@ -265,6 +265,34 @@ class IdeasServiceTest extends TestCase
         $service->updateIdeaItem($input, 9, self::SESSION_USER);
     }
 
+    public function test_update_idea_item_creates_a_new_milestone_in_the_ideas_project(): void
+    {
+        // Session on project 4; the idea's board lives in project 9. The quick-added milestone
+        // must land in 9, where the dialog checked tickets.create.
+        session(['currentProject' => 4]);
+        $quickAdded = null;
+        $tickets = $this->make(TicketService::class, [
+            'quickAddMilestone' => function (array $milestone) use (&$quickAdded) {
+                $quickAdded = $milestone;
+
+                return 77;
+            },
+        ]);
+        $service = new IdeaService(
+            $this->ideaRepoInProject9(['editCanvasItem' => fn () => null]),
+            $this->make(CommentRepository::class),
+            $this->make(ProjectService::class, ['notifyProjectUsers' => fn () => null]),
+            $tickets,
+            $this->make(LanguageCore::class),
+            $this->allModulesOn(),
+        );
+        $service->setPermissionService($this->allowingPermissions());
+
+        $service->updateIdeaItem(['itemId' => 5, 'box' => 'idea', 'description' => 'x', 'status' => 'idea', 'data' => '', 'tags' => '', 'canvasId' => 3, 'milestoneId' => '', 'newMilestone' => 'Launch'], 4, self::SESSION_USER);
+
+        $this->assertSame(9, $quickAdded['projectId'] ?? null);
+    }
+
     public function test_create_idea_item_is_denied_without_create(): void
     {
         $service = $this->makeService(ideasRepo: $this->ideaRepoInProject9(), perms: $this->denyingPermissions());

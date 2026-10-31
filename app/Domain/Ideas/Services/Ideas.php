@@ -759,6 +759,8 @@ class Ideas extends BaseService
             $milestone['tags'] = '#ccc';
             $milestone['editFrom'] = dtHelper()->userNow()->formatDateForUser();
             $milestone['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
+            // In the idea's (authorized) board project, not whichever project the session has open.
+            $milestone['projectId'] = $projectId;
             $milestoneId = $this->ticketService->quickAddMilestone($milestone);
             if ($milestoneId !== false) {
                 $canvasItem['milestoneId'] = $milestoneId;

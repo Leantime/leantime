@@ -30,7 +30,8 @@
 
     <div class="col-md-8">
 
-        <input type="hidden" value="{{ $currentCanvas }}" name="canvasId"/>
+        {{-- An existing idea stays on its own board; only new ideas go to the open board. --}}
+        <input type="hidden" value="{{ $id !== '' && ! empty($canvasItem['canvasId']) ? $canvasItem['canvasId'] : $currentCanvas }}" name="canvasId"/>
         <input type="hidden" value="{{ $tpl->escape($canvasItem['box']) }}" name="box" id="box"/>
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
         <input type="hidden" name="status" value="{{ $canvasItem['status'] }}" />
