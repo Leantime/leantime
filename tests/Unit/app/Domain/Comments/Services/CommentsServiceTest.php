@@ -419,8 +419,8 @@ class CommentsServiceTest extends TestCase
 
     public function test_delete_comment_denies_non_author_moderation_cross_project(): void
     {
-        // Comment belongs to another user; the session user is NOT a moderator in the comment's
-        // project (denying engine) -> deleteComment must refuse and never reach the repo delete.
+        // Comment belongs to another user; the session user may comment but is NOT a moderator in
+        // the comment's project -> deleteComment must refuse and never reach the repo delete.
         $repo = $this->make(CommentRepository::class, [
             'getComment' => fn () => ['id' => 99, 'userId' => 7, 'module' => 'ticket', 'moduleId' => 1],
             'resolveModuleProjectId' => fn () => 9,
@@ -428,9 +428,11 @@ class CommentsServiceTest extends TestCase
                 throw new \RuntimeException('delete must not run when moderation is denied');
             },
         ]);
-        $service = $this->makeService($this->noopReactions(), $repo, $this->denyingPermissions());
+        $checks = [];
+        $service = $this->makeService($this->noopReactions(), $repo, $this->grantingOnly(['comments.create'], $checks));
 
         $this->assertFalse($service->deleteComment(99));
+        $this->assertContains(['comments.moderate', 9], $checks, 'refused by the moderation check, not before it');
     }
 
     public function test_delete_comment_allows_the_author_without_moderation(): void
