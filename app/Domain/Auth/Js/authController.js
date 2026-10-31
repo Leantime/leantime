@@ -39,9 +39,11 @@ leantime.authController = (function () {
 
         jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
 
-        jQuery("#mainToggler").not("[data-lt-permitted]").hide();
-        jQuery(".commentBox").hide();
-        jQuery(".deleteComment, .replyButton").hide();
+        // Comment controls inside the container only: a fragment (e.g. subtask rows) going
+        // read-only must not hide the rest of the page's comments.
+        editable("#mainToggler").hide();
+        editable(".commentBox").hide();
+        editable(".deleteComment, .replyButton").hide();
 
         jQuery(container).find(".dropdown i").removeClass('fa-caret-down');
     };

@@ -151,6 +151,18 @@ class PermissionService
     }
 
     /**
+     * Repositories call this after writing what project access depends on (memberships and
+     * project roles, a project's sharing settings or client, a user's client), so later checks
+     * in the same request or JSON-RPC batch see the change.
+     */
+    public static function projectAccessChanged(): void
+    {
+        if (app()->resolved(self::class)) {
+            app(self::class)->forgetResolvedProjects();
+        }
+    }
+
+    /**
      * Authorize or throw. Services should call this instead of returning false on denial,
      * so the failure maps cleanly to 403 (web) / RPC -32001.
      *

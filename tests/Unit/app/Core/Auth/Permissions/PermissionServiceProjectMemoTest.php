@@ -119,4 +119,19 @@ class PermissionServiceProjectMemoTest extends \Unit\TestCase
         $this->assertSame(2, $this->roleLookups);
         $this->assertSame(2, $this->membershipLookups);
     }
+
+    public function test_project_access_writes_forget_resolved_projects(): void
+    {
+        // Repositories call projectAccessChanged() after membership/role/settings writes, so a
+        // later call in the same JSON-RPC batch sees a downgrade or a removal.
+        $service = $this->service();
+        $this->app->instance(PermissionService::class, $service);
+        $service->currentUserCan('tickets.edit', 7);
+
+        PermissionService::projectAccessChanged();
+        $this->isMember = false;
+
+        $this->assertFalse($service->currentUserCan('tickets.edit', 7));
+        $this->assertSame(2, $this->roleLookups);
+    }
 }
