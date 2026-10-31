@@ -50,6 +50,37 @@ class PluginCompatibilityTest extends TestCase
         $this->assertTrue($compatibility->isCompatible('^3.12', 'v3.12.4'));
     }
 
+    public function test_a_broken_release_is_capped_at_the_last_leantime_version_it_runs_on(): void
+    {
+        $compatibility = $this->compatibility('3.13.3');
+        $customFields151 = ['name' => 'leantime/customFields', 'version' => '1.5.1', 'extra' => ['leantime' => ['requires' => '>=3.13 <4.0']]];
+
+        $range = $compatibility->rangeFor($customFields151);
+
+        $this->assertSame('>=3.13 <4.0 <=3.13.2', $range);
+        $this->assertFalse($compatibility->isCompatible($range));
+        $this->assertTrue($compatibility->isCompatible($range, '3.13.2'));
+    }
+
+    public function test_the_fixed_release_and_other_plugins_keep_their_declared_range(): void
+    {
+        $compatibility = $this->compatibility('3.13.3');
+
+        $this->assertSame('>=3.13 <4.0', $compatibility->rangeFor(['name' => 'leantime/customFields', 'version' => 'v1.6.0', 'extra' => ['leantime' => ['requires' => '>=3.13 <4.0']]]));
+        $this->assertSame('>=3.13 <4.0', $compatibility->rangeFor(['name' => 'leantime/notes', 'version' => '1.5.1', 'extra' => ['leantime' => ['requires' => '>=3.13 <4.0']]]));
+        // No version to compare: nothing to cap.
+        $this->assertSame(PluginCompatibility::UNDECLARED_RANGE, $compatibility->rangeFor(['name' => 'leantime/customfields']));
+    }
+
+    public function test_the_cap_applies_to_every_alternative_of_a_range(): void
+    {
+        $range = $this->compatibility()->rangeFor(['name' => 'leantime/customfields', 'version' => '1.5.0', 'extra' => ['leantime' => ['requires' => '^3.12 || ^4.0']]]);
+
+        $this->assertSame('^3.12 <=3.13.2 || ^4.0 <=3.13.2', $range);
+        $this->assertFalse($this->compatibility()->isCompatible($range, '4.1.0'));
+        $this->assertTrue($this->compatibility()->isCompatible($range, '3.13.0'));
+    }
+
     public function test_an_unreadable_range_is_incompatible(): void
     {
         $this->assertFalse($this->compatibility()->isCompatible('not a version range'));
