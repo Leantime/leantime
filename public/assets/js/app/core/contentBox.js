@@ -215,7 +215,24 @@ leantime.contentBox = (function () {
         return !box.classList.contains('lt-content--' + side + '-collapsed');
     };
 
-    // aria-expanded, label and chevron follow what is on screen, which depends on the mode.
+    // The sidebar that last took the focus. When a breakpoint change hides it, the browser may
+    // already have dropped the focus to <body> by the time the resize handler runs.
+    var focusedSidebar = null;
+    document.addEventListener('focusin', function (event) {
+        focusedSidebar = event.target.closest ? event.target.closest('.lt-content--collapsible > .lt-content-side') : null;
+    });
+
+    var holdsFocus = function (sidebar) {
+        var active = document.activeElement;
+        if (active && active !== document.body) {
+            return sidebar.contains(active);
+        }
+        return focusedSidebar === sidebar;
+    };
+
+    // aria-expanded, label and chevron follow what is on screen, which depends on the mode. A
+    // sidebar that gets hidden while it holds the focus (toggle, Escape, click outside, breakpoint
+    // change) hands the focus to its toggle, so keyboard users keep their place.
     var syncToggle = function (box, side) {
         var toggle = toggleOf(box, side);
         if (!toggle) {
@@ -229,6 +246,11 @@ leantime.contentBox = (function () {
         toggle.setAttribute('aria-expanded', shown ? 'true' : 'false');
         toggle.setAttribute('aria-label', label);
         toggle.setAttribute('title', label);
+
+        var sidebar = sidebarOf(box, side);
+        if (!shown && sidebar && holdsFocus(sidebar)) {
+            toggle.focus();
+        }
     };
 
     var syncToggles = function (root) {
@@ -245,12 +267,6 @@ leantime.contentBox = (function () {
     };
 
     var showOverlay = function (box, side, show) {
-        // Hiding the sidebar that holds the focus would drop keyboard users back at the page start.
-        var sidebar = sidebarOf(box, side);
-        var toggle = toggleOf(box, side);
-        if (!show && toggle && sidebar && sidebar.contains(document.activeElement)) {
-            toggle.focus();
-        }
         box.classList.toggle('lt-content--' + side + '-shown', show);
         syncToggle(box, side);
     };
