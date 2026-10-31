@@ -146,13 +146,15 @@ abstract class HtmxController
             }
         }
 
-        $existingTrigger = trim((string) $response->headers->get('HX-Trigger', ''));
-        if (str_starts_with($existingTrigger, '{')) {
-            return $response;
+        $existingTriggers = array_map(fn ($value) => trim((string) $value), $response->headers->all('HX-Trigger'));
+        foreach ($existingTriggers as $existingTrigger) {
+            if (str_starts_with($existingTrigger, '{')) {
+                return $response;
+            }
         }
 
         $triggerEvents = array_merge(
-            self::triggerNames($existingTrigger),
+            self::triggerNames(implode(',', $existingTriggers)),
             self::triggerNames($this->headers['HX-Trigger'] ?? []),
             self::triggerNames($templateHeaders['HX-Trigger'] ?? [])
         );

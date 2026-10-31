@@ -65,6 +65,15 @@ class HtmxControllerHeadersTest extends TestCase
         $this->assertSame('lt:ui:notify,lt:chip:changed,lt:projects:favorite.added', $response->headers->get('HX-Trigger'));
     }
 
+    public function test_every_hx_trigger_value_on_a_hand_built_response_is_kept(): void
+    {
+        $controller = $this->controller($this->templateWithQueuedEvents([]));
+
+        $response = $controller->callAction('multipleTriggerValues', []);
+
+        $this->assertSame('lt:chip:changed,lt:ui:notify', $response->headers->get('HX-Trigger'));
+    }
+
     public function test_a_json_trigger_set_by_hand_is_left_alone(): void
     {
         $controller = $this->controller($this->templateWithQueuedEvents(['lt:ui:notify']));
@@ -116,6 +125,14 @@ class HeaderTestController extends HtmxController
         $this->headers['HX-Refresh'] = 'true';
 
         return new Response('', 200, ['HX-Trigger' => 'lt:chip:changed']);
+    }
+
+    public function multipleTriggerValues(): Response
+    {
+        $response = new Response('', 200);
+        $response->headers->set('HX-Trigger', ['lt:chip:changed', 'lt:ui:notify']);
+
+        return $response;
     }
 
     public function jsonTrigger(): Response
