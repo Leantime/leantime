@@ -1,3 +1,17 @@
+# Version: 3.13.2
+
+## New Features
+- **Marketplace install reporting** - Plugin installations now report their results and server details back to the marketplace (#3979)
+
+## Bug Fixes
+- **Top loader clears after Save & Close** - The loading indicator no longer stays active after using Save & Close in a modal (#3984)
+- **Resume owner setup during install** - The /install flow can now resume owner setup even after the post-install redirect is lost (#3983)
+- **Correct calendar event times** - Event times now follow the user's current time format instead of a stale session copy (#3982)
+- **More reliable OIDC login** - OIDC authentication now sends PKCE and displays provider errors instead of crashing the callback (#3981)
+- **User named on delete confirmation** - The delete confirmation page now shows the name of the user being removed (#3980)
+
+---
+
 # Version: 3.13.1
 
 ## Bug Fixes
