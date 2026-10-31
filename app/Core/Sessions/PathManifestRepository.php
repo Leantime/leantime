@@ -5,7 +5,18 @@ namespace Leantime\Core\Sessions;
 use Exception;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Filesystem\Filesystem;
+use Leantime\Core\Configuration\AppSettings;
 
+/**
+ * Cached path lists in storage/framework (viewPaths, composerPaths).
+ *
+ * They never expire on their own: plugin changes, `system:update` and `cache:clearAll` delete
+ * them. Each one is stamped with the Leantime version that wrote it, and a manifest from another
+ * version counts as missing. Which plugins load depends on the version (the compatibility guard
+ * leaves out plugins that don't support it), and an update finished in the web updater deletes
+ * neither file, so a plugin that becomes compatible again would otherwise stay without its views
+ * or composers.
+ */
 class PathManifestRepository
 {
     /**
@@ -34,7 +45,7 @@ class PathManifestRepository
      *
      * @return void
      */
-    public function __construct(ApplicationContract $app, Filesystem $files)
+    public function __construct(ApplicationContract $app, Filesystem $files, private AppSettings $appSettings)
     {
         $this->app = $app;
         $this->files = $files;
@@ -43,22 +54,29 @@ class PathManifestRepository
     }
 
     /**
-     * Load the service provider manifest JSON file.
+     * Load a manifest written by {@see writeManifest()} for the running Leantime version.
      *
-     * @return array|null
+     * @return array|null Null when there is none, or it was written by another version.
      */
     public function loadManifest(string $manifestName)
     {
+        $manifestFile = $this->manifestPath.'/'.$manifestName.'.php';
 
-        if ($this->files->exists($this->manifestPath.'/'.$manifestName.'.php')) {
-            $manifest = $this->files->getRequire($this->manifestPath.'/'.$manifestName.'.php');
-
-            if ($manifest) {
-                return array_merge(['when' => []], $manifest[$manifestName]);
-            }
+        if (! $this->files->exists($manifestFile)) {
+            return null;
         }
 
-        return null;
+        $manifest = $this->files->getRequire($manifestFile);
+
+        if (! is_array($manifest) || ! isset($manifest[$manifestName])) {
+            return null;
+        }
+
+        if (($manifest['appVersion'] ?? null) !== $this->appSettings->appVersion) {
+            return null;
+        }
+
+        return array_merge(['when' => []], $manifest[$manifestName]);
     }
 
     /**
@@ -81,7 +99,7 @@ class PathManifestRepository
      */
     protected function freshManifest($manifestName, array $paths)
     {
-        return [$manifestName => $paths];
+        return [$manifestName => $paths, 'appVersion' => $this->appSettings->appVersion];
     }
 
     /**
