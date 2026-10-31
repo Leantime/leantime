@@ -70,7 +70,7 @@
     <x-global::layout.content-box>
         <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#comments" class="formModal">
             <input type="hidden" name="comment" value="1" />
-            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL.'/tickets/showTicket/'.$ticket->id])
+            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL.'/tickets/showTicket/'.$ticket->id, 'commentProjectId' => $ticket->projectId])
         </form>
     </x-global::layout.content-box>
 

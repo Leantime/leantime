@@ -119,10 +119,9 @@
         @dispatchEvent('scripts.afterOpen')
 
 
-        @if ($login::userIsAtLeast($roles::$editor))
-        @else
+        @cannot('tickets.edit')
         leantime.authController.makeInputReadonly(".maincontentinner");
-        @endif
+        @endcannot
 
 
 

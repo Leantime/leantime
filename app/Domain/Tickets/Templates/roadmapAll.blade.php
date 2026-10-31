@@ -132,11 +132,15 @@
             @endphp
         ];
 
-        @if ($login::userIsAtLeast($roles::$editor))
-        leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', false);
-        @else
-        leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', true);
-        @endif
+        @php
+            // The chart takes one read-only flag, and these milestones span projects: allow dragging
+            // only when the user can edit every project shown, so no drag hits a refused update.
+            $ganttReadonly = collect($milestones)
+                ->map(fn ($milestone) => is_numeric($milestone->projectId ?? null) ? (int) $milestone->projectId : null)
+                ->unique()
+                ->contains(fn ($projectId) => ! can('tickets.edit', $projectId));
+        @endphp
+        leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', {{ $ganttReadonly ? 'true' : 'false' }});
 
     @endif
 
