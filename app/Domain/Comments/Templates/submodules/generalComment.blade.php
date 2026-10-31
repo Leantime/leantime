@@ -9,11 +9,17 @@
     $commentsRepo = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
     $formUrl = CURRENT_URL;
     $formHash = md5($formUrl);
+
+    // Comments are authorized against the host entity's project. Hosts that know it pass
+    // 'commentProjectId'; without it the session project applies.
+    $commentProjectId = isset($commentProjectId) && is_numeric($commentProjectId) ? (int) $commentProjectId : null;
+    $canComment = can('comments.create', $commentProjectId);
+    $canModerate = can('comments.moderate', $commentProjectId);
 @endphp
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}" id="commentForm-{{ $formHash }}" class="formModal">
 
-    @can('comments.create')
+    @if ($canComment)
         <div class="mainToggler-{{ $formHash }}" id="">
             <div class="commentImage">
                 <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}" />
@@ -38,7 +44,7 @@
             <input type="hidden" name="edit-comment-helper" class="commenterField" id="edit-comment-helper-{{ $formHash }}" />
             <br/>
         </div>
-    @endcan
+    @endif
 
     <div id="comments-{{ $formHash }}">
         <div>
@@ -53,9 +59,11 @@
                                 {!! sprintf(__('text.written_on'), format($row['date'])->date(), format($row['date'])->time()) !!}
                                     @php
                                         // Same rule as Comments::canModifyComment(): post comments, and either wrote it or moderate.
-                                        $canModifyComment = can('comments.create')
-                                            && (($row['userId'] == session('userdata.id')) || can('comments.moderate'));
-                                        $canAddToTimesheet = isset($ticket->id) && can('timesheets.create');
+                                        $canModifyComment = $canComment
+                                            && (($row['userId'] == session('userdata.id')) || $canModerate);
+                                        // The time tab this link fills only exists where the ticket's project has Timesheets on.
+                                        $canAddToTimesheet = isset($ticket->id) && can('timesheets.create')
+                                            && app(\Leantime\Core\Modules\ProjectModules::class)->isEnabled('timesheets', (int) $ticket->projectId);
                                     @endphp
                                     @if ($canModifyComment || $canAddToTimesheet)
                                         <x-global::actions.dropdown style="float:right; margin-left:10px;">
@@ -82,12 +90,12 @@
                             </div>
                         </x-global::elements.card>
                         <div class="commentLinks" id="comment-link-to-hide-on-edit-{{ $formHash }}-{{ $row['id'] }}">
-                            @can('comments.create')
+                            @if ($canComment)
                                 <a href="javascript:void(0);"
                                    onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
                                     <span class="fa fa-reply"></span> {!! __('links.reply') !!}
                                 </a>
-                            @endcan
+                            @endif
                             <span class="comment-reactions" id="reactions-{{ $row['id'] }}"
                                  hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $row['id'] }}"
                                  hx-trigger="load"
@@ -126,7 +134,7 @@
                                             </x-global::elements.card>
 
                                             <div class="commentLinks">
-                                                @can('comments.create')
+                                                @if ($canComment)
                                                     <a href="javascript:void(0);"
                                                        onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
                                                         <span class="fa fa-reply"></span> {!! __('links.reply') !!}
@@ -140,7 +148,7 @@
                                                             <span class="fa fa-edit"></span> {!! __('label.edit') !!}
                                                         </a>
                                                     @endif
-                                                @endcan
+                                                @endif
                                                 <span class="comment-reactions" id="reactions-{{ $comment['id'] }}"
                                                      hx-get="{{ BASE_URL }}/hx/comments/reactions/get?commentId={{ $comment['id'] }}"
                                                      hx-trigger="load"
@@ -171,7 +179,7 @@
     });
 
     function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
-        @can('comments.create')
+        @if ($canComment)
 
             if (parseInt(id, 10) === 0) {
                 jQuery(`.mainToggler-${formHash}`).hide();
@@ -220,16 +228,16 @@
             jQuery(`#comment-${formHash}-${id}`).show();
             jQuery(`#father-${formHash}`).val(id);
 
-        @endcan
+        @endif
     }
     function cancel(id, formHash) {
-        @can('comments.create')
+        @if ($canComment)
             jQuery(`#comment-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`.commentBox-${formHash} textarea`).remove();
             jQuery(`#comment-link-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`#comment-image-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`#comment-${formHash}-${id}`).hide();
-        @endcan
+        @endif
     }
 
     jQuery(".confetti").click(function(){

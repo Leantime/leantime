@@ -4,14 +4,17 @@ namespace Unit\app\Domain\Auth\Services;
 
 use Illuminate\Validation\UnauthorizedException;
 use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Auth\RoleCeiling;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
 use Leantime\Domain\Auth\Services\AccessToken;
 use Leantime\Domain\Users\Permissions\UsersPermissions;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Unit\TestCase;
 
 /**
  * Personal access tokens: everyone manages their own; managing another user's tokens follows
- * the `users.edit` grant (admin+ by default), not the admin rank.
+ * the `users.edit` grant (admin+ by default), not the admin rank, and only for accounts whose
+ * role the caller could assign (RoleCeiling).
  */
 class AccessTokenTest extends TestCase
 {
@@ -26,6 +29,18 @@ class AccessTokenTest extends TestCase
 
         session(['userdata.id' => 1]);
         $this->checkedPermissions = [];
+
+        // User 2 is an editor; the caller's ceiling allows every role except owner.
+        $this->app->instance(UserRepository::class, $this->make(UserRepository::class, [
+            'getUser' => fn (int $id) => match ($id) {
+                2 => ['id' => 2, 'role' => 'editor'],
+                3 => ['id' => 3, 'role' => 'owner'],
+                default => false,
+            },
+        ]));
+        $this->app->instance(RoleCeiling::class, $this->make(RoleCeiling::class, [
+            'canAssign' => fn (mixed $role) => $role !== 'owner',
+        ]));
     }
 
     private function grantPermissions(array $grantedKeys): void
@@ -116,5 +131,34 @@ class AccessTokenTest extends TestCase
         $this->grantPermissions([]);
         $this->expectException(UnauthorizedException::class);
         $this->makeAccessToken($repo)->deleteToken(5);
+    }
+
+    /**
+     * users.edit alone is not enough for an account above the caller's ceiling: an admin-level
+     * custom role must not mint or revoke an owner's tokens.
+     */
+    public function test_tokens_of_an_account_above_the_callers_ceiling_are_refused(): void
+    {
+        $this->grantPermissions([UsersPermissions::EDIT]);
+        $repo = $this->make(AccessTokenRepository::class, [
+            'createToken' => fn () => $this->fail('no token may be created for an owner account'),
+            'findTokenById' => fn () => ['id' => 9, 'tokenable_id' => 3],
+            'deleteToken' => fn () => $this->fail('an owner token must not be revoked'),
+        ]);
+
+        $this->assertFalse($this->makeAccessToken($repo)->createToken(3, 'ci'));
+
+        $this->expectException(UnauthorizedException::class);
+        $this->makeAccessToken($repo)->deleteToken(9);
+    }
+
+    public function test_tokens_of_an_unknown_account_are_refused(): void
+    {
+        $this->grantPermissions([UsersPermissions::EDIT]);
+        $repo = $this->make(AccessTokenRepository::class, [
+            'createToken' => fn () => $this->fail('no token may be created for a missing account'),
+        ]);
+
+        $this->assertFalse($this->makeAccessToken($repo)->createToken(404, 'ci'));
     }
 }
