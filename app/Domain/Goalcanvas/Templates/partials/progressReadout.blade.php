@@ -29,14 +29,15 @@
     $roReached = $roHasRange && $roPct >= 100;
     // Works for decreasing goals too (goal < start): distance left to travel.
     $roRemaining = abs($roGoal - $roCur);
-    // linkAndReport current values are computed from children; viewers can't
-    // write — both render the number as static text instead of an input.
-    $roEditable = \Illuminate\Support\Facades\Gate::allows('goals.edit', $canvasItem['projectId'] ?? null) && ($canvasItem['setting'] ?? '') !== 'linkAndReport';
     // Inline blur-save needs a PERSISTED goal: on the create form (id empty)
     // an hx-post with itemId=0 would swap the readout back to zeros and wipe
     // the value the user just typed — new goals get a plain input that
     // submits with the create form instead.
     $roLive = (int) ($canvasItem['id'] ?? 0) > 0;
+    // linkAndReport current values are computed from children; viewers can't
+    // write — both render the number as static text instead of an input.
+    // A new goal is saved under goals.create, an existing one under goals.edit.
+    $roEditable = \Illuminate\Support\Facades\Gate::allows($roLive ? 'goals.edit' : 'goals.create', $canvasItem['projectId'] ?? null) && ($canvasItem['setting'] ?? '') !== 'linkAndReport';
 @endphp
 <div class="gv-metric-bar" id="gvReadout">
     {{-- WHAT is being measured — without it the tab is a bare number. --}}
