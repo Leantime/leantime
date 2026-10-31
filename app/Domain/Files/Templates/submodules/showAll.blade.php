@@ -2,12 +2,19 @@
     $module = \Leantime\Core\Controller\Frontcontroller::getModuleName('');
     $maxSize = \Leantime\Core\Files\FileManager::getMaximumFileUploadSize();
     $moduleId = $_GET['id'] ?? '';
+
+    // In the ticket modal, files belong to the ticket's project: check that project, and delete
+    // through the ticket's own handler so the session project doesn't decide.
+    $filesProjectId = isset($ticket->projectId) ? (int) $ticket->projectId : null;
+    $canUploadFiles = can('files.upload', $filesProjectId);
+    $deleteFileUrl = isset($ticket->id) ? BASE_URL.'/tickets/showTicket/'.(int) $ticket->id : BASE_URL.'/files/showAll';
 @endphp
 <div id="fileManager">
 
     {!! $tpl->displayNotification() !!}
 
-    <div class="uploadWrapper" @if (can('files.upload', isset($ticket->projectId) ? (int) $ticket->projectId : null)) data-lt-permitted @endif>
+    @if ($canUploadFiles)
+    <div class="uploadWrapper" data-lt-permitted>
 
         <x-global::forms.button tag="a" contentRole="default" id="cancelLink" link="javascript:void(0);" style="display:none;">{!! __('links.cancel') !!}</x-global::forms.button>
         <div class="extra" style="margin-top:5px;"></div>
@@ -26,6 +33,7 @@
         <form id="upload-form"></form>
 
     </div>
+    @endif
 
     <div class='mediamgr'>
 
@@ -38,9 +46,9 @@
                             <li class="nav-header">{!! __('subtitles.file') !!}</li>
                             <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
 
-                            @if ($file['userId'] == session('userdata.id') || can('files.delete', isset($ticket->projectId) ? (int) $ticket->projectId : null))
+                            @if ($file['userId'] == session('userdata.id') || can('files.delete', $filesProjectId))
                                 <li>
-                                    <form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" data-lt-permitted onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
+                                    <form method="post" action="{{ $deleteFileUrl }}" class="deleteFile" data-lt-permitted onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
                                         @csrf
                                         <input type="hidden" name="delFile" value="{{ $file['id'] }}" />
                                         <button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</button>
@@ -151,7 +159,8 @@
     }
 
 
-    if (typeof uppy === 'undefined') {
+    // No upload controls without files.upload, so no uploader either.
+    if ({{ $canUploadFiles ? 'true' : 'false' }} && typeof uppy === 'undefined') {
 
 
     const uppy = new Uppy.Uppy({
@@ -242,7 +251,7 @@
                                     '<li class="nav-header">{!! __('subtitles.file') !!}</li>' +
                                     '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{!! str_replace("'", '"', __('links.download')) !!}</a></li>'+
                                     {{-- The uploader may always delete the file they just added (Files::deleteFile). --}}
-                                    '<li><form method="post" action="{{ BASE_URL }}/files/showAll" class="deleteFile" data-lt-permitted onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
+                                    '<li><form method="post" action="{{ $deleteFileUrl }}" class="deleteFile" data-lt-permitted onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
                                 '</ul>'+
                             '</div>'+
                             '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
