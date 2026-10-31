@@ -9,11 +9,17 @@
     $commentsRepo = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
     $formUrl = CURRENT_URL;
     $formHash = md5($formUrl);
+
+    // Comments are authorized against the host entity's project. Hosts that know it pass
+    // 'commentProjectId'; without it the session project applies.
+    $commentProjectId = isset($commentProjectId) && is_numeric($commentProjectId) ? (int) $commentProjectId : null;
+    $canComment = can('comments.create', $commentProjectId);
+    $canModerate = can('comments.moderate', $commentProjectId);
 @endphp
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}" id="commentForm-{{ $formHash }}" class="formModal">
 
-    @if ($login::userIsAtLeast($roles::$commenter))
+    @if ($canComment)
         <div class="mainToggler-{{ $formHash }}" id="">
             <div class="commentImage">
                 <img src="{{ BASE_URL }}/api/users?profileImage={{ session('userdata.id') }}&v={{ format(session('userdata.modified'))->timestamp() }}" />
@@ -51,21 +57,27 @@
                         <x-global::elements.card compact class="commentContent" id="comment-to-hide-on-edit-{{ $formHash }}-{{ $row['id'] }}">
                             <div class="right commentDate">
                                 {!! sprintf(__('text.written_on'), format($row['date'])->date(), format($row['date'])->time()) !!}
-                                    @if ($login::userIsAtLeast($roles::$editor))
+                                    @php
+                                        // Same rule as Comments::canModifyComment(): post comments, and either wrote it or moderate.
+                                        $canModifyComment = $canComment
+                                            && (($row['userId'] == session('userdata.id')) || $canModerate);
+                                        // The time tab this link fills only exists where the ticket's project has Timesheets on.
+                                        $canAddToTimesheet = isset($ticket->id) && can('timesheets.create')
+                                            && app(\Leantime\Core\Modules\ProjectModules::class)->isEnabled('timesheets', (int) $ticket->projectId);
+                                    @endphp
+                                    @if ($canModifyComment || $canAddToTimesheet)
                                         <x-global::actions.dropdown style="float:right; margin-left:10px;">
-                                            @if (($row['userId'] == session('userdata.id')) || can('comments.moderate'))
+                                            @if ($canModifyComment)
                                                 <li><a href="javascript:void(0);" class="deleteComment" data-post-field="delComment" data-post-value="{{ $row['id'] }}">
                                                     <span class="fa fa-trash"></span> {!! __('links.delete') !!}
                                                 </a></li>
-                                            @endif
-                                            @if (($row['userId'] == session('userdata.id')) || can('comments.moderate'))
                                                 <li>
                                                     <a href="javascript:void(0);" onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}', true)">
                                                         <span class="fa fa-edit"></span> {!! __('label.edit') !!}
                                                     </a>
                                                 </li>
                                             @endif
-                                            @if (isset($ticket->id))
+                                            @if ($canAddToTimesheet)
                                                     <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $row['id'] }}, {{ $ticket->id }});">{!! __('links.add_to_timesheets') !!}</a></li>
                                             @endif
 
@@ -78,7 +90,7 @@
                             </div>
                         </x-global::elements.card>
                         <div class="commentLinks" id="comment-link-to-hide-on-edit-{{ $formHash }}-{{ $row['id'] }}">
-                            @if ($login::userIsAtLeast($roles::$commenter))
+                            @if ($canComment)
                                 <a href="javascript:void(0);"
                                    onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
                                     <span class="fa fa-reply"></span> {!! __('links.reply') !!}
@@ -122,7 +134,7 @@
                                             </x-global::elements.card>
 
                                             <div class="commentLinks">
-                                                @if ($login::userIsAtLeast($roles::$commenter))
+                                                @if ($canComment)
                                                     <a href="javascript:void(0);"
                                                        onclick="toggleCommentBoxes({{ $row['id'] }}, null, '{{ $formHash }}')">
                                                         <span class="fa fa-reply"></span> {!! __('links.reply') !!}
@@ -167,7 +179,7 @@
     });
 
     function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
-        @if ($login::userIsAtLeast($roles::$commenter))
+        @if ($canComment)
 
             if (parseInt(id, 10) === 0) {
                 jQuery(`.mainToggler-${formHash}`).hide();
@@ -219,7 +231,7 @@
         @endif
     }
     function cancel(id, formHash) {
-        @if ($login::userIsAtLeast($roles::$commenter))
+        @if ($canComment)
             jQuery(`#comment-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`.commentBox-${formHash} textarea`).remove();
             jQuery(`#comment-link-to-hide-on-edit-${formHash}-${id}`).show();
