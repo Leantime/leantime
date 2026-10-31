@@ -50,8 +50,6 @@ class Stopwatch extends HtmxController
             $hoursBooked = $this->timesheetService->punchOut($ticketId);
         }
 
-        $this->tpl->setHTMXEvent('timerUpdate');
-
         $onTheClock = session()->exists('userdata') ? $this->timesheetService->isClocked(session('userdata.id')) : false;
         $this->tpl->assign('onTheClock', $onTheClock);
     }
@@ -78,8 +76,6 @@ class Stopwatch extends HtmxController
                 }
             }
         }
-
-        $this->tpl->setHTMXEvent('timerUpdate');
 
         $onTheClock = session()->exists('userdata') ? $this->timesheetService->isClocked(session('userdata.id')) : false;
         $this->tpl->assign('onTheClock', $onTheClock);

@@ -3,7 +3,8 @@
 @can('timesheets.view')
     @php
         // Re-render on every timer change; while a timer runs, also refresh the running time once a minute.
-        $timerRefreshTrigger = $onTheClock !== false ? 'timerUpdate from:body, every 60s' : 'timerUpdate from:body';
+        $timerEvents = \Leantime\Domain\Timesheets\Events\TimerStarted::CLIENT_EVENT.' from:body, '.\Leantime\Domain\Timesheets\Events\TimerStopped::CLIENT_EVENT.' from:body';
+        $timerRefreshTrigger = $onTheClock !== false ? $timerEvents.', every 60s' : $timerEvents;
     @endphp
 
     @if ($onTheClock !== false)

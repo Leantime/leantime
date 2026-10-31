@@ -42,13 +42,14 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                         <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                         <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
                             hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
-                            hx-trigger="timerUpdate from:body"
+                            hx-trigger="{{ \Leantime\Domain\Timesheets\Events\TimerStarted::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Timesheets\Events\TimerStopped::CLIENT_EVENT }} from:body"
                             hx-swap="outerHTML"
                             class="timerContainer">
 
                             @if ($onTheClock === false)
                                 <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
                                    hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
+                                   data-lt-refresh-container
                                    hx-target="#timerHeadMenu"
                                    hx-swap="outerHTML"
                                    hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"start"}'>
@@ -59,6 +60,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                             @if ($onTheClock !== false && $onTheClock["id"] == $ticket->id)
                                 <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
                                    hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
+                                   data-lt-refresh-container
                                    hx-target="#timerHeadMenu"
                                    hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"stop"}'
                                    hx-swap="outerHTML">

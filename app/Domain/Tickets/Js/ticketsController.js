@@ -780,7 +780,7 @@ leantime.ticketsController = (function () {
         }
 
         if (String(runningTimer.ticketId) === String(ticketId)) {
-            htmx.trigger(document.body, 'timerUpdate');
+            htmx.trigger(document.body, 'lt:timesheets:timer.stopped');
         }
     };
 
