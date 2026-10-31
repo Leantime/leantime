@@ -29,11 +29,11 @@ class HtmxControllerHeadersTest extends TestCase
 
     public function test_display_json_carries_the_events_queued_on_the_template(): void
     {
-        $template = $this->templateWithQueuedEvents(['lt:tickets:ticket.updated']);
+        $template = $this->templateWithQueuedEvents(['lt:projects:favorite.added']);
 
         $response = $template->displayJson(['ok' => true]);
 
-        $this->assertSame('lt:tickets:ticket.updated,ticket_update', $response->headers->get('HX-Trigger'));
+        $this->assertSame('lt:projects:favorite.added', $response->headers->get('HX-Trigger'));
     }
 
     public function test_action_returning_a_template_response_keeps_template_and_controller_events(): void
@@ -42,7 +42,7 @@ class HtmxControllerHeadersTest extends TestCase
 
         $response = $controller->callAction('rawTitle', []);
 
-        $this->assertSame('lt:ui:notify,lt:tickets:subtask.updated,subtasks_update,subtasksUpdated', $response->headers->get('HX-Trigger'));
+        $this->assertSame('lt:ui:notify,lt:projects:favorite.added', $response->headers->get('HX-Trigger'));
     }
 
     public function test_action_returning_a_hand_built_response_merges_its_own_trigger_with_queued_events(): void
@@ -52,7 +52,7 @@ class HtmxControllerHeadersTest extends TestCase
         $response = $controller->callAction('handBuilt', []);
 
         $this->assertSame('true', $response->headers->get('HX-Refresh'));
-        $this->assertSame('lt:chip:changed,lt:tickets:subtask.updated,subtasks_update,subtasksUpdated,lt:ui:notify', $response->headers->get('HX-Trigger'));
+        $this->assertSame('lt:chip:changed,lt:projects:favorite.added,lt:ui:notify', $response->headers->get('HX-Trigger'));
     }
 
     public function test_a_json_trigger_set_by_hand_is_left_alone(): void
@@ -95,14 +95,14 @@ class HeaderTestController extends HtmxController
 
     public function rawTitle(): Response
     {
-        $this->setHTMXEvent('lt:tickets:subtask.updated');
+        $this->setHTMXEvent('lt:projects:favorite.added');
 
         return $this->tpl->displayRaw('Saved title');
     }
 
     public function handBuilt(): Response
     {
-        $this->setHTMXEvent('lt:tickets:subtask.updated');
+        $this->setHTMXEvent('lt:projects:favorite.added');
         $this->headers['HX-Refresh'] = 'true';
 
         return new Response('', 200, ['HX-Trigger' => 'lt:chip:changed']);
