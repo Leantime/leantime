@@ -32,9 +32,11 @@
     <x-global::actions.modal-header>
     <x-slot:title><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i> {{ $canvasTypes[$canvasItem['box']]['title'] }}</x-slot:title>
     @if ($id != '')
+    @can('blueprints.delete')
         <x-slot:actions>
-            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
     {!! $tpl->displayNotification() !!}

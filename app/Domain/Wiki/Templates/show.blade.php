@@ -82,12 +82,12 @@
                         <li><a class="inlineEdit" href="#/wiki/wikiModal/{{ $currentWiki->id }}">{!! __('link.edit_wiki') !!}</a></li>
                     @endcan
                     @can('wiki.delete')
-                        <li><a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_wiki') !!}</a></li>
+                        <li><a class="delete" data-lt-permitted href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_wiki') !!}</a></li>
                     @endcan
                 @endif
                 @if(\Illuminate\Support\Facades\Gate::allows('wiki.delete') && isset($currentArticle->id) && $currentArticle->id)
                     <li class="nav-header border">{!! __('label.article') !!}</li>
-                    <li><a class="delete" href="#/wiki/delArticle/{{ $currentArticle->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</a></li>
+                    <li><a class="delete" data-lt-permitted href="#/wiki/delArticle/{{ $currentArticle->id }}"><i class="fa fa-trash"></i> {!! __('links.delete_article') !!}</a></li>
                 @endif
 
             </x-global::actions.dropdown>

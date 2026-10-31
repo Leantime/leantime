@@ -32,7 +32,7 @@
                                 @endcan
                                 @can('blueprints.delete')
                                     <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $row['id'] }}"
-                                           class="delete"
+                                           class="delete" data-lt-permitted
                                            data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
                                 @endcan
 

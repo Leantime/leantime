@@ -14,9 +14,11 @@
 
 <x-global::actions.modal-header icon="fa fa-lightbulb" :title="__('headline.idea')">
     @if ($id != '')
+    @can('ideas.delete')
         <x-slot:actions>
-            <li><a href="#/ideas/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+            <li><a href="#/ideas/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
 

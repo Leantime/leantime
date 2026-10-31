@@ -136,7 +136,7 @@ foreach ($allCanvas as $canvasRow) {
                                                                     <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.edit_canvas_item") !!}</a></li>
                                                                 @endcan
                                                                 @can('goals.delete')
-                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
+                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data-lt-permitted data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
                                                                 @endcan
 
                                                             </x-global::actions.dropdown>

@@ -59,7 +59,7 @@
                 <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a></li>
                 <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
                 @can('blueprints.delete')
-                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
+                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete" data-lt-permitted>{!! __('links.icon.delete') !!}</a></li>
                 @endcan
 
             </x-global::actions.dropdown>

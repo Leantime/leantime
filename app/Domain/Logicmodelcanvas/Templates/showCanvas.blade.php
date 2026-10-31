@@ -62,7 +62,7 @@
                 <li><a href="javascript:window.print();">{!! $tpl->__('links.icon.print') !!}</a></li>
                 @dispatchEvent('logicmodel.headerActions', ['canvasId' => $currentCanvas])
                 @can('blueprints.delete')
-                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete">{!! $tpl->__('links.icon.delete') !!}</a></li>
+                    <li><a href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}" class="delete" data-lt-permitted>{!! $tpl->__('links.icon.delete') !!}</a></li>
                 @endcan
 
             </x-global::actions.dropdown>

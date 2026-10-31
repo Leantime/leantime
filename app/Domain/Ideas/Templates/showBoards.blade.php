@@ -42,7 +42,7 @@
                         <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
                     @endcan
                     @can('ideas.delete')
-                        <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">{!! __('links.icon.delete') !!}</a></li>
+                        <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete" data-lt-permitted>{!! __('links.icon.delete') !!}</a></li>
                     @endcan
                 @endcanany
 
@@ -85,7 +85,7 @@
                                             <li><a href="#/ideas/ideaDialog/{{ $row['id'] }}" class="" data="item_{{ $row['id'] }}"> {!! __('links.edit_canvas_item') !!}</a></li>
                                         @endcan
                                         @can('ideas.delete')
-                                            <li><a href="#/ideas/delCanvasItem/{{ $row['id'] }}" class="delete" data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
+                                            <li><a href="#/ideas/delCanvasItem/{{ $row['id'] }}" class="delete" data-lt-permitted data="item_{{ $row['id'] }}"> {!! __('links.delete_canvas_item') !!}</a></li>
                                         @endcan
                                     </x-global::actions.dropdown>
                                 @endcanany

@@ -34,9 +34,11 @@
     <x-global::actions.modal-header>
     <x-slot:title><i class="fas {{ $boxMeta['icon'] }}"></i> {{ $boxMeta['title'] }}</x-slot:title>
     @if ($id != '')
+    @can('blueprints.delete')
         <x-slot:actions>
-            <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+            <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
     {!! $tpl->displayNotification() !!}

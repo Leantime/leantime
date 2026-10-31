@@ -55,9 +55,11 @@
         </span>
         </x-slot:title>
         @if ($id != '')
+    @can('blueprints.delete')
         <x-slot:actions>
-            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a></li>
+            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
 

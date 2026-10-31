@@ -13,7 +13,8 @@
     correct with the removal.
 
     Expects: $id, $goalMilestones, $milestoneSummary, $milestones (project
-    milestone options — drives the "link existing" button visibility).
+    milestone options — drives the "link existing" button visibility), and
+    $canvasItem (the goal; its projectId scopes the edit/create checks).
 --}}
 <div id="goalMsSection">
     {{-- Heading row = title + actions. The counts sit on their OWN line beneath

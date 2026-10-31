@@ -385,7 +385,7 @@
             <div class="gv-discussion">
                 <hr />
                 <x-global::elements.section-header icon="fa-solid fa-comments">{{ __('subtitles.discussion') }}</x-global::elements.section-header>
-                @include('comments::submodules.generalComment', ['formUrl' => '/goalcanvas/editCanvasItem/' . $id])
+                @include('comments::submodules.generalComment', ['formUrl' => '/goalcanvas/editCanvasItem/' . $id, 'commentProjectId' => $canvasItem['projectId'] ?? null])
             </div>
         @endif
 

@@ -65,10 +65,14 @@
             <x-global::actions.dropdown variant="header-menu">
                 @can('goals.edit')
                     <li><a href="#/goalcanvas/bigRock/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
+                    @can('goals.create')
                     <li><a href="javascript:void(0)" class="cloneCanvasLink ">{!! __('links.icon.clone') !!}</a></li>
+                    @endcan
                     <li><a href="javascript:void(0)" class="mergeCanvasLink ">{!! __('links.icon.merge') !!}</a></li>
+                    @can('blueprints.create')
                     <li><a href="javascript:void(0)" class="importCanvasLink ">{!! __('links.icon.import') !!}</a>
                     </li>
+                    @endcan
                 @endcan
                 <li><a
                         href="{{ BASE_URL }}/goalcanvas/export/{{ $currentCanvas }}">{!! __('links.icon.export') !!}</a>
@@ -76,7 +80,7 @@
                 <li><a href="javascript:window.print();">{!! __('links.icon.print') !!}</a></li>
                 @can('goals.delete')
                     <li><a href="#/goalcanvas/delCanvas/{{ $currentCanvas }}"
-                            class="delete">{!!__('links.icon.delete') !!}</a></li>
+                            class="delete" data-lt-permitted>{!!__('links.icon.delete') !!}</a></li>
                 @endcan
 
             </x-global::actions.dropdown>

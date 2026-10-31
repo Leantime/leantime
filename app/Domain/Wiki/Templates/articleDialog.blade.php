@@ -47,7 +47,7 @@
 <x-global::actions.modal-header icon="fa fa-file-lines" :title="__('headline.doc')">
     @if (isset($currentArticle->id) && $currentArticle->id != '' && \Illuminate\Support\Facades\Gate::allows('wiki.delete'))
         <x-slot:actions>
-            <li><a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_article') !!}</a></li>
+            <li><a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete_article') !!}</a></li>
         </x-slot:actions>
     @endif
 </x-global::actions.modal-header>
