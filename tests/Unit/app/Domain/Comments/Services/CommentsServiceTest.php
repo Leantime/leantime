@@ -446,11 +446,53 @@ class CommentsServiceTest extends TestCase
                 return true;
             },
         ]);
-        // Denying engine proves the author path does NOT depend on comments.moderate.
-        $service = $this->makeService($this->noopReactions(), $repo, $this->denyingPermissions());
+        // Only comments.create granted: the author path does NOT depend on comments.moderate.
+        $service = $this->makeService($this->noopReactions(), $repo, $this->grantingOnly(['comments.create']));
 
         $this->assertTrue($service->deleteComment(99));
         $this->assertSame(99, $deleted);
+    }
+
+    public function test_delete_comment_refuses_an_author_who_can_no_longer_comment(): void
+    {
+        // deleteComment/editComment declare comments.create; an author whose role lost it in the
+        // comment's project can't change the comment any more.
+        $repo = $this->make(CommentRepository::class, [
+            'getComment' => fn () => ['id' => 99, 'userId' => self::SESSION_USER, 'module' => 'ticket', 'moduleId' => 1],
+            'resolveModuleProjectId' => fn () => 9,
+            'deleteComment' => function (): bool {
+                throw new \RuntimeException('delete must not run without comments.create');
+            },
+        ]);
+        $checks = [];
+        $service = $this->makeService($this->noopReactions(), $repo, $this->grantingOnly(['comments.moderate'], $checks));
+
+        $this->assertFalse($service->deleteComment(99));
+        $this->assertContains(['comments.create', 9], $checks);
+    }
+
+    /**
+     * Permission stub granting exactly $grantedKeys and recording each check.
+     *
+     * @param  array<int, string>  $grantedKeys
+     * @param  array<int, array{0: string, 1: int|null}>  $checks
+     */
+    private function grantingOnly(array $grantedKeys, array &$checks = []): PermissionService
+    {
+        $decide = function (string $key, ?int $projectId = null) use ($grantedKeys, &$checks): bool {
+            $checks[] = [$key, $projectId];
+
+            return in_array($key, $grantedKeys, true);
+        };
+
+        return $this->make(PermissionService::class, [
+            'currentUserCan' => $decide,
+            'authorize' => function (string $key, ?int $projectId = null) use ($decide): void {
+                if (! $decide($key, $projectId)) {
+                    throw new AuthorizationException;
+                }
+            },
+        ]);
     }
 
     public function test_get_comment_reactions_is_denied_for_a_foreign_project(): void
