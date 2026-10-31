@@ -6,6 +6,7 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Reactions\Services\Reactions;
 
 class ProjectCard extends HtmxController
 {
@@ -15,18 +16,23 @@ class ProjectCard extends HtmxController
 
     private Menu $menuService;
 
+    private Reactions $reactionService;
+
     /**
      * Controller constructor
      *
      * @param  \Leantime\Domain\Projects\Services\Projects  $projectsService  The projects domain service.
      * @param  \Leantime\Domain\Menu\Services\Menu  $menuService  The menu domain service.
+     * @param  \Leantime\Domain\Reactions\Services\Reactions  $reactionService  The reactions domain service.
      */
     public function init(
         ProjectService $projectsService,
-        Menu $menuService
+        Menu $menuService,
+        Reactions $reactionService
     ): void {
         $this->projectsService = $projectsService;
         $this->menuService = $menuService;
+        $this->reactionService = $reactionService;
     }
 
     public function get() {}
@@ -39,13 +45,18 @@ class ProjectCard extends HtmxController
         $projectData = $this->incomingRequest->request->all();
 
         $projectId = (int) ($projectData['projectId'] ?? 0);
-        $isFavorite = $projectData['isFavorite'] ?? false;
 
-        // Both act as the session user, require access to the project and tell the project lists.
+        // Toggle the stored state, not the one the card posted: a card that went stale (favorited
+        // in another tab) would otherwise repeat a change that can't apply, and nothing refreshes.
+        $project = $this->projectsService->getProject($projectId);
+        $isFavorite = is_array($project) && ! empty($project['isFavorite']);
+
+        // react()/unreact() act as the session user, require access to the project and report
+        // ProjectFavoriteAdded/Removed, which refresh the project lists.
         if ($isFavorite) {
-            $this->projectsService->unfavorite($projectId);
+            $this->reactionService->unreact('project', $projectId, 'favorite');
         } else {
-            $this->projectsService->favorite($projectId);
+            $this->reactionService->react('project', $projectId, 'favorite');
         }
 
         $this->tpl->assign('project', $this->projectsService->getProject($projectId));

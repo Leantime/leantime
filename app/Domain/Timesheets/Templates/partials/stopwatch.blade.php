@@ -3,7 +3,7 @@
 @can('timesheets.view')
     @php
         // Re-render on every timer change; while a timer runs, also refresh the running time once a minute.
-        $timerEvents = \Leantime\Domain\Timesheets\Events\TimerStarted::CLIENT_EVENT.' from:body, '.\Leantime\Domain\Timesheets\Events\TimerStopped::CLIENT_EVENT.' from:body';
+        $timerEvents = \Leantime\Domain\Timesheets\Events\TimerStarted::CLIENT_EVENT.' from:body, '.\Leantime\Domain\Timesheets\Events\TimerStopped::CLIENT_EVENT.' from:body, '.\Leantime\Core\Events\Htmx\HtmxUiEvents::TimerRefresh->value.' from:body';
         $timerRefreshTrigger = $onTheClock !== false ? $timerEvents.', every 60s' : $timerEvents;
     @endphp
 

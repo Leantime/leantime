@@ -1,27 +1,26 @@
 <?php
 
-namespace Unit\app\Domain\Projects\Services;
+namespace Unit\app\Domain\Reactions\Services;
 
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Projects\Events\ProjectFavoriteAdded;
 use Leantime\Domain\Projects\Events\ProjectFavoriteRemoved;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Reactions\Repositories\Reactions as ReactionsRepository;
 use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
 use Unit\TestCase;
 
 /**
- * Favoriting a project stores a "favorite" reaction and reports it as ProjectFavoriteAdded /
- * ProjectFavoriteRemoved (lt:projects:favorite.added / .removed), so project lists re-sort.
+ * Every reaction write goes through addReaction()/removeReaction(), so a project favorite is
+ * reported there (ProjectFavoriteAdded / ProjectFavoriteRemoved → lt:projects:favorite.added /
+ * .removed), whether the htmx project card or a JSON-RPC client changed it.
  */
-class ProjectFavoritesTest extends TestCase
+class ProjectFavoriteEventsTest extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
 
     /** @var array<int, object> The favorite events dispatched. */
     private array $events = [];
-
-    /** @var array<int, array<int, mixed>> The reaction calls the stubbed Reactions service received. */
-    private array $reactionCalls = [];
 
     private array $dispatcherSnapshot = [];
 
@@ -39,15 +38,12 @@ class ProjectFavoritesTest extends TestCase
     {
         parent::setUp();
 
-        session(['userdata' => ['id' => 3, 'role' => 'editor', 'name' => 'Caller']]);
-
         $reflection = new \ReflectionClass(EventDispatcher::class);
         foreach (self::DISPATCHER_PROPS as $prop) {
             $this->dispatcherSnapshot[$prop] = $reflection->getProperty($prop)->getValue();
         }
 
         $this->events = [];
-        $this->reactionCalls = [];
         EventDispatcher::add_event_listener(ProjectFavoriteAdded::class, function (ProjectFavoriteAdded $event) {
             $this->events[] = $event;
         });
@@ -62,18 +58,14 @@ class ProjectFavoritesTest extends TestCase
         foreach ($this->dispatcherSnapshot as $prop => $value) {
             $reflection->getProperty($prop)->setValue(null, $value);
         }
-        app()->forgetInstance(ReactionsService::class);
 
         parent::tearDown();
     }
 
-    public function test_favorite_stores_the_reaction_and_reports_it(): void
+    public function test_adding_a_project_favorite_reports_it(): void
     {
-        $this->useReactions(succeeds: true);
+        $this->assertTrue($this->service(writeSucceeds: true)->addReaction(3, 'project', 12, 'favorite'));
 
-        $this->assertTrue($this->service()->favorite(12));
-
-        $this->assertSame([['react', 'project', 12, 'favorite']], $this->reactionCalls);
         $this->assertCount(1, $this->events);
         $this->assertInstanceOf(ProjectFavoriteAdded::class, $this->events[0]);
         $this->assertSame(12, $this->events[0]->projectId);
@@ -81,45 +73,44 @@ class ProjectFavoritesTest extends TestCase
         $this->assertSame(['lt:projects:favorite.added', 'lt:projects:favorite.added#12'], $this->events[0]->clientEvents());
     }
 
-    public function test_unfavorite_removes_the_reaction_and_reports_it(): void
+    public function test_removing_a_project_favorite_reports_it(): void
     {
-        $this->useReactions(succeeds: true);
+        $this->assertTrue($this->service(writeSucceeds: true)->removeReaction(3, 'project', 12, 'favorite'));
 
-        $this->assertTrue($this->service()->unfavorite(12));
-
-        $this->assertSame([['unreact', 'project', 12, 'favorite']], $this->reactionCalls);
         $this->assertCount(1, $this->events);
         $this->assertInstanceOf(ProjectFavoriteRemoved::class, $this->events[0]);
+        $this->assertSame(12, $this->events[0]->projectId);
     }
 
-    public function test_a_denied_or_failed_favorite_reports_nothing(): void
+    public function test_a_failed_write_reports_nothing(): void
     {
-        $this->useReactions(succeeds: false);
+        $service = $this->service(writeSucceeds: false);
 
-        $this->assertFalse($this->service()->favorite(12));
-        $this->assertFalse($this->service()->unfavorite(12));
+        $service->addReaction(3, 'project', 12, 'favorite');
+        $service->removeReaction(3, 'project', 12, 'favorite');
 
         $this->assertSame([], $this->events);
     }
 
-    private function useReactions(bool $succeeds): void
+    public function test_other_reactions_are_not_project_favorites(): void
     {
-        app()->instance(ReactionsService::class, $this->make(ReactionsService::class, [
-            'react' => function (string $module, int $moduleId, string $reaction) use ($succeeds) {
-                $this->reactionCalls[] = ['react', $module, $moduleId, $reaction];
+        $service = $this->service(writeSucceeds: true);
 
-                return $succeeds;
-            },
-            'unreact' => function (string $module, int $moduleId, string $reaction) use ($succeeds) {
-                $this->reactionCalls[] = ['unreact', $module, $moduleId, $reaction];
+        $service->addReaction(3, 'ticket', 12, 'favorite');
+        $service->addReaction(3, 'project', 12, 'like');
+        $service->removeReaction(3, 'comment', 12, 'favorite');
 
-                return $succeeds;
-            },
-        ]));
+        $this->assertSame([], $this->events);
     }
 
-    private function service(): ProjectService
+    private function service(bool $writeSucceeds): ReactionsService
     {
-        return $this->make(ProjectService::class);
+        $repository = $this->make(ReactionsRepository::class, [
+            'getUserReactions' => fn () => [],
+            'addReaction' => fn () => $writeSucceeds,
+            'removeUserReaction' => fn () => $writeSucceeds,
+        ]);
+
+        return new ReactionsService($repository, $this->make(CommentRepository::class));
     }
 }

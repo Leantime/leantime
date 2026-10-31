@@ -7,7 +7,7 @@
      carry data-lt-refresh-container: this container still refreshes on the timer event its own click caused. --}}
 <li id="timerContainer-{{ $parentTicketId }}"
     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $parentTicketId }}"
-    hx-trigger="{{ \Leantime\Domain\Timesheets\Events\TimerStarted::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Timesheets\Events\TimerStopped::CLIENT_EVENT }} from:body"
+    hx-trigger="{{ \Leantime\Domain\Timesheets\Events\TimerStarted::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Timesheets\Events\TimerStopped::CLIENT_EVENT }} from:body, {{ \Leantime\Core\Events\Htmx\HtmxUiEvents::TimerRefresh->value }} from:body"
     hx-swap="outerHTML"
     class="timerContainer">
 
