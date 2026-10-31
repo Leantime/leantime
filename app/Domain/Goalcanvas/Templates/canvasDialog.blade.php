@@ -192,7 +192,7 @@
                 <x-slot:actions>
                     <li class="nav-header">{{ $canvasTypes[$canvasItem['box']]['title'] }}</li>
                     <li>
-                        <a href="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete">
+                        <a href="{{ BASE_URL }}/goalcanvas/delCanvasItem/{{ $id }}" class="formModal delete" data-lt-permitted>
                             <i class="fa fa-trash-can"></i> {{ __('links.delete') }}
                         </a>
                     </li>

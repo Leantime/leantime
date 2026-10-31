@@ -167,13 +167,12 @@
             leantime.tiptapController.initComplexEditor();
         }
 
-        @cannot('ideas.edit')
+        @cannot($id === '' ? 'ideas.create' : 'ideas.edit')
             leantime.authController.makeInputReadonly(".nyroModalCont");
+            @can('comments.create')
+                leantime.commentsController.enableCommenterForms();
+            @endcan
         @endcannot
-
-        @cannot('ideas.edit') @can('comments.create')
-        leantime.submodules.generalCommentController.enableCommenterForms();
-        @endcan @endcannot
 
     })
 </script>
