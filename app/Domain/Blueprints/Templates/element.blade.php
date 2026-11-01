@@ -1,9 +1,6 @@
-<h4 class="widgettitle title-primary">
-    @if(isset($canvasTypes[$elementName]['icon']))
-        <i class="fas {{ $canvasTypes[$elementName]['icon'] }}"></i>
-    @endif
+<x-global::elements.board-column-header :icon="isset($canvasTypes[$elementName]['icon']) ? 'fas '.$canvasTypes[$elementName]['icon'] : null">
     {{ $canvasTypes[$elementName]['title'] }}
-</h4>
+</x-global::elements.board-column-header>
 <div class="contentInner even status_{{ $elementName }}"
      {!! isset($canvasTypes[$elementName]['color']) ? 'style="background: ' . $canvasTypes[$elementName]['color'] . ';"' : '' !!}>
 

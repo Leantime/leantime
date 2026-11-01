@@ -2,7 +2,7 @@
     @foreach($row['columns'] as $col)
         <div class="column" style="width: {{ $col['width'] }}%">
             @if(isset($col['title']))
-                <h4 class="widgettitle title-primary center"><i class="{{ $col['icon'] ?? '' }}"></i> {!! __($col['title']) !!}</h4>
+                <x-global::elements.board-column-header align="center" :icon="$col['icon'] ?? null">{!! __($col['title']) !!}</x-global::elements.board-column-header>
             @endif
             @if(isset($col['content']))
                 <div class="contentInner even" style="padding-top: 10px;">
