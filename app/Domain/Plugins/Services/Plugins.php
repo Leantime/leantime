@@ -925,6 +925,13 @@ class Plugins
             throw new \RuntimeException(sprintf(__('notification.plugin_update_wrong_package'), $expectedFolder, $foldername));
         }
 
+        // The download name only matches the folder case-insensitively: a lowercased identifier comes
+        // back as "recurringtasks" -> "Recurringtasks", while the archive holds RecurringTasks.phar.
+        // An update installs into the folder that is there.
+        if ($expectedFolder !== null) {
+            $foldername = $expectedFolder;
+        }
+
         // A private, unpredictable temp path for the download, always removed afterwards.
         $temporaryFile = Str::finish(sys_get_temp_dir(), '/').'leantime-plugin-'.bin2hex(random_bytes(16)).'.zip';
         $pluginDir = "{$this->pluginDirectory}{$foldername}";
