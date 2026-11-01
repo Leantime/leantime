@@ -34,37 +34,25 @@
                                     <x-global::elements.section-header><?php echo $tpl->__('label.profile_information'); ?></x-global::elements.section-header>
                                     <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                     <div class="row-fluid">
-                                        <div class="form-group">
-                                            <x-global::forms.label for="firstname" >{{ __('label.firstname') }}</x-global::forms.label>
-                                            <span>
-                                                <input type="text" class="input" name="firstname" id="firstname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                                value="{{ $values['firstname'] }}"/><br/>
-                                            </span>
-                                        </div>
+                                        <x-global::forms.field for="firstname" :label="__('label.firstname')">
+                                            <input type="text" class="input" name="firstname" id="firstname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                            value="{{ $values['firstname'] }}"/>
+                                        </x-global::forms.field>
 
-                                        <div class="form-group">
-                                            <x-global::forms.label for="lastname" >{{ __('label.lastname') }}</x-global::forms.label>
-                                            <span>
-                                                <input type="text" name="lastname" class="input" id="lastname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                                value="{{ $values['lastname']  }}"/><br/>
-                                            </span>
-                                        </div>
+                                        <x-global::forms.field for="lastname" :label="__('label.lastname')">
+                                            <input type="text" name="lastname" class="input" id="lastname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                            value="{{ $values['lastname']  }}"/>
+                                        </x-global::forms.field>
 
-                                        <div class="form-group">
-                                            <x-global::forms.label for="user" >{{ __('label.email') }}</x-global::forms.label>
-                                            <span>
-                                                <input type="text" name="user" class="input" id="user" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                                value="{{ $values['user']  }}"/><br/>
-                                            </span>
-                                        </div>
+                                        <x-global::forms.field for="user" :label="__('label.email')">
+                                            <input type="text" name="user" class="input" id="user" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                            value="{{ $values['user']  }}"/>
+                                        </x-global::forms.field>
 
-                                        <div class="form-group">
-                                            <x-global::forms.label for="phone" >{{ __('label.phone') }}</x-global::forms.label>
-                                            <span>
-                                                <input type="text" name="phone" class="input" id="phone" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                                value="{{ $values['phone']  }}"/><br/>
-                                            </span>
-                                        </div>
+                                        <x-global::forms.field for="phone" :label="__('label.phone')">
+                                            <input type="text" name="phone" class="input" id="phone" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                            value="{{ $values['phone']  }}"/>
+                                        </x-global::forms.field>
                                         <p class='stdformbutton'>
                                             <input type="hidden" name="profileInfo" value="1" />
 
@@ -73,29 +61,20 @@
                                         <br />
                                         <x-global::elements.section-header>{{ __('label.employee_information') }}</x-global::elements.section-header>
                                         <em>{{ __('text.only_admins_can_change_user_info') }}</em><br /><br />
-                                        <div class="form-group">
-                                            <x-global::forms.label for="phone" >{{ __('label.jobTitle') }}</x-global::forms.label>
-                                            <span>
-                                                <input type="text" name="jobTitle" readonly class="input" id="jobTitle"}}
-                                                value="{{ $values['jobTitle']  }}"/><br/>
-                                            </span>
-                                        </div>
+                                        <x-global::forms.field for="jobTitle" :label="__('label.jobTitle')">
+                                            <input type="text" name="jobTitle" readonly class="input" id="jobTitle"
+                                            value="{{ $values['jobTitle']  }}"/>
+                                        </x-global::forms.field>
 
-                                        <div class="form-group">
-                                            <x-global::forms.label for="phone" >{{ __('label.jobLevel') }}</x-global::forms.label>
-                                            <span>
-                                                <input type="text" name="jobLevel" readonly class="input" id="jobLevel"}}
-                                                       value="{{ $values['jobLevel']  }}"/><br/>
-                                            </span>
-                                        </div>
+                                        <x-global::forms.field for="jobLevel" :label="__('label.jobLevel')">
+                                            <input type="text" name="jobLevel" readonly class="input" id="jobLevel"
+                                                   value="{{ $values['jobLevel']  }}"/>
+                                        </x-global::forms.field>
 
-                                        <div class="form-group">
-                                            <x-global::forms.label for="phone" >{{ __('label.department') }}</x-global::forms.label>
-                                            <span>
-                                                <input type="text" name="department" readonly class="input" id="department"}}
-                                                       value="{{ $values['department']  }}"/><br/>
-                                            </span>
-                                        </div>
+                                        <x-global::forms.field for="department" :label="__('label.department')">
+                                            <input type="text" name="department" readonly class="input" id="department"
+                                                   value="{{ $values['department']  }}"/>
+                                        </x-global::forms.field>
 
                                     </div>
 
@@ -152,35 +131,21 @@
                         <form method="post">
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
-                                <div class="form-group">
-                                    <x-global::forms.label for="currentPassword" >{{ __('label.old_password') }}</x-global::forms.label>
-                                    <span>
-                                        <input type='password' value="" name="currentPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                               id="currentPassword"/><br/>
-                                    </span>
-                                </div>
+                                <x-global::forms.field for="currentPassword" :label="__('label.old_password')">
+                                    <input type='password' value="" name="currentPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                           id="currentPassword"/>
+                                </x-global::forms.field>
 
-                                <div class="form-group">
-                                    <x-global::forms.label for="newPassword" >{{ __('label.new_password') }}</x-global::forms.label>
-                                    <span>
-                                        <input type='password' value="" name="newPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                               id="newPassword"/>
-                                        <span id="pwStrength"></span>
+                                <x-global::forms.field for="newPassword" :label="__('label.new_password')">
+                                    <input type='password' value="" name="newPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                           id="newPassword"/>
+                                    <span id="pwStrength"></span>
+                                </x-global::forms.field>
 
-                                    </span>
-                                </div>
-
-                                <div class="form-group">
-                                    <x-global::forms.label for="confirmPassword" >{{ __('label.password_repeat') }}</x-global::forms.label>
-                                    <span>
-                                        <input type="password" value="" name="confirmPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                               id="confirmPassword"/><br/>
-                                        @if (!session("userdata.isExternalAuth") )
-                                        <small>{{ __('label.passwordRequirements') }}</small>
-                                       @endif
-                                    </span>
-
-                                </div>
+                                <x-global::forms.field for="confirmPassword" :label="__('label.password_repeat')" :help="session('userdata.isExternalAuth') ? null : __('label.passwordRequirements')">
+                                    <input type="password" value="" name="confirmPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                           id="confirmPassword"/>
+                                </x-global::forms.field>
                             </div>
                             @if (!session("userdata.isExternalAuth") )
                                 <input type="hidden" name="savepw" value="1" />
@@ -201,72 +166,55 @@
                         <form action="" method="post">
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
-                                <div class="form-group">
-                                    <x-global::forms.label for="language" >{{ __('label.language') }}</x-global::forms.label>
-                                    <span class='field'>
-                                        <x-global::forms.select enhanced name="language" id="language">
-                                            @foreach ($languageList as $languagKey => $languageValue )
-                                                <option value="{{ $languagKey }}"
-                                                        @if ($userLang == $languagKey )
-                                                            selected='selected'
-                                                         @endif >{{ $languageValue }}</option>
-                                             @endforeach
-                                        </x-global::forms.select>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <x-global::forms.label for="date_format" >{{ __('label.date_format') }}</x-global::forms.label>
-                                    <span>
-                                        <x-global::forms.select name="date_format" id="date_format">
-                                           @php
-                                            $dateFormats = $dateTimeValues['dates'];
+                                <x-global::forms.field for="language" :label="__('label.language')">
+                                    <x-global::forms.select enhanced name="language" id="language">
+                                        @foreach ($languageList as $languagKey => $languageValue )
+                                            <option value="{{ $languagKey }}"
+                                                    @if ($userLang == $languagKey )
+                                                        selected='selected'
+                                                     @endif >{{ $languageValue }}</option>
+                                         @endforeach
+                                    </x-global::forms.select>
+                                </x-global::forms.field>
+                                <x-global::forms.field for="date_format" :label="__('label.date_format')">
+                                    <x-global::forms.select name="date_format" id="date_format">
+                                       @php
+                                        $dateFormats = $dateTimeValues['dates'];
+                                        $dateTimeNow = dtHelper()->userNow();
+                                       @endphp
+                                        @foreach ($dateFormats as $format)
+                                            <option value="{{ $format }}"
+                                                    @if ($dateFormat == $format)
+                                                        selected='selected'
+                                                    @endif >{{ date_format($dateTimeNow, $format) }}</option>
+                                        @endforeach
+                                    </x-global::forms.select>
+                                </x-global::forms.field>
+                                <x-global::forms.field for="time_format" :label="__('label.time_format')">
+                                    <x-global::forms.select name="time_format" id="time_format">
+                                        @php
+                                            $timeFormats = $dateTimeValues['times'];
                                             $dateTimeNow = dtHelper()->userNow();
-                                           @endphp
-
-                                            @foreach ($dateFormats as $format)
-
-                                                <option value="{{ $format }}"
-                                                        @if ($dateFormat == $format)
-                                                            selected='selected'
-                                                        @endif >{{ date_format($dateTimeNow, $format) }}</option>
-                                            @endforeach
-                                        </x-global::forms.select>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <x-global::forms.label for="time_format" >{{ __('label.time_format') }}</x-global::forms.label>
-                                    <span>
-                                        <x-global::forms.select name="time_format" id="time_format">
-                                            @php
-                                                $timeFormats = $dateTimeValues['times'];
-                                                $dateTimeNow = dtHelper()->userNow();
-                                            @endphp
-
-                                            @foreach ($timeFormats as $format)
-
-                                                <option value="{{ $format }}"
-                                                        @if ($timeFormat == $format)
-                                                            selected='selected'
-                                                        @endif>{{ date_format($dateTimeNow, $format) }}</option>
-                                            @endforeach
-                                        </x-global::forms.select>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <x-global::forms.label for="timezone" >{{ __('label.timezone') }}</x-global::forms.label>
-                                    <span>
-                                        <x-global::forms.select name="timezone" id="timezone">
-
-                                            @foreach ($timezoneOptions as $tz)
-                                                <option value="{{ $tz }}"
-                                                        @if ($timezone === $tz )
-                                                            selected='selected'
-                                                        @endif
-                                                        >{{ $tz }}</option>
-                                            @endforeach
-                                        </x-global::forms.select>
-                                    </span>
-                                </div>
+                                        @endphp
+                                        @foreach ($timeFormats as $format)
+                                            <option value="{{ $format }}"
+                                                    @if ($timeFormat == $format)
+                                                        selected='selected'
+                                                    @endif>{{ date_format($dateTimeNow, $format) }}</option>
+                                        @endforeach
+                                    </x-global::forms.select>
+                                </x-global::forms.field>
+                                <x-global::forms.field for="timezone" :label="__('label.timezone')">
+                                    <x-global::forms.select name="timezone" id="timezone">
+                                        @foreach ($timezoneOptions as $tz)
+                                            <option value="{{ $tz }}"
+                                                    @if ($timezone === $tz )
+                                                        selected='selected'
+                                                    @endif
+                                                    >{{ $tz }}</option>
+                                        @endforeach
+                                    </x-global::forms.select>
+                                </x-global::forms.field>
                             </div>
                             <input type="hidden" name="saveSettings" value="1" />
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" id="saveSettings" />
@@ -368,48 +316,45 @@
                                     <input type="hidden" name="pushNotifications" value="0" />
                                     <x-global::forms.checkbox variant="toggle" name="pushNotifications" value="1" id="pushNotifications" :checked="! empty($pushEnabled)" :description="__('label.receive_push_notifications_description')">{{ __('label.receive_push_notifications') }}</x-global::forms.checkbox>
                                 </div>
-                                <div class="form-group">
-                                    <x-global::forms.label for="messagesfrequency" >{{ __('label.messages_frequency') }}</x-global::forms.label>
-                                    <span>
-                                        <x-global::forms.select enhanced name="messagesfrequency" class="input" id="messagesfrequency">
-                                            <option value="">--{{ __('label.choose_option') }}--</option>
-                                             <option value="60"
-                                                     @if ($values['messagesfrequency'] == "60" )
-                                                 selected="selected"
-                                             @endif>{{ __('label.1min') }}</option>
-                                            <option value="300" @if ($values['messagesfrequency'] == "300" )
-                                                selected="selected"
-                                                                @endif>{{ __('label.5min') }}</option>
-                                            <option value="900" @if ($values['messagesfrequency'] == "900" )
-                                                selected="selected"
-                                                                @endif>{{ __('label.15min') }}</option>
-                                            <option value="1800" @if ($values['messagesfrequency'] == "1800" )
-                                                selected="selected"
-                                                                 @endif>{{ __('label.30min') }}</option>
-                                            <option value="3600" @if ($values['messagesfrequency'] == "3600" )
-                                                selected="selected"
-                                                                 @endif>{{ __('label.1h') }}</option>
-                                            <option value="10800" @if ($values['messagesfrequency'] == "10800" )
-                                                selected="selected"
-                                                                  @endif>{{ __('label.3h') }}</option>
-                                            <option value="36000" @if ($values['messagesfrequency'] == "36000" )
-                                                selected="selected"
-                                                                  @endif>{{ __('label.6h') }}</option>
-                                            <option value="43200" @if ($values['messagesfrequency'] == "43200" )
-                                                selected="selected"
-                                                                  @endif>{{ __('label.12h') }}</option>
-                                            <option value="86400" @if ($values['messagesfrequency'] == "86400" )
-                                                selected="selected"
-                                                                  @endif>{{ __('label.24h') }}</option>
-                                            <option value="172800" @if ($values['messagesfrequency'] == "172800" )
-                                                selected="selected"
-                                                                   @endif>{{ __('label.48h') }}</option>
-                                            <option value="604800" @if ($values['messagesfrequency'] == "604800" )
-                                                selected="selected"
-                                                                   @endif>{{ __('label.1w') }}</option>
-                                        </x-global::forms.select> <br/>
-                                    </span>
-                                </div>
+                                <x-global::forms.field for="messagesfrequency" :label="__('label.messages_frequency')">
+                                    <x-global::forms.select enhanced name="messagesfrequency" class="input" id="messagesfrequency">
+                                        <option value="">--{{ __('label.choose_option') }}--</option>
+                                         <option value="60"
+                                                 @if ($values['messagesfrequency'] == "60" )
+                                             selected="selected"
+                                         @endif>{{ __('label.1min') }}</option>
+                                        <option value="300" @if ($values['messagesfrequency'] == "300" )
+                                            selected="selected"
+                                                            @endif>{{ __('label.5min') }}</option>
+                                        <option value="900" @if ($values['messagesfrequency'] == "900" )
+                                            selected="selected"
+                                                            @endif>{{ __('label.15min') }}</option>
+                                        <option value="1800" @if ($values['messagesfrequency'] == "1800" )
+                                            selected="selected"
+                                                             @endif>{{ __('label.30min') }}</option>
+                                        <option value="3600" @if ($values['messagesfrequency'] == "3600" )
+                                            selected="selected"
+                                                             @endif>{{ __('label.1h') }}</option>
+                                        <option value="10800" @if ($values['messagesfrequency'] == "10800" )
+                                            selected="selected"
+                                                              @endif>{{ __('label.3h') }}</option>
+                                        <option value="36000" @if ($values['messagesfrequency'] == "36000" )
+                                            selected="selected"
+                                                              @endif>{{ __('label.6h') }}</option>
+                                        <option value="43200" @if ($values['messagesfrequency'] == "43200" )
+                                            selected="selected"
+                                                              @endif>{{ __('label.12h') }}</option>
+                                        <option value="86400" @if ($values['messagesfrequency'] == "86400" )
+                                            selected="selected"
+                                                              @endif>{{ __('label.24h') }}</option>
+                                        <option value="172800" @if ($values['messagesfrequency'] == "172800" )
+                                            selected="selected"
+                                                               @endif>{{ __('label.48h') }}</option>
+                                        <option value="604800" @if ($values['messagesfrequency'] == "604800" )
+                                            selected="selected"
+                                                               @endif>{{ __('label.1w') }}</option>
+                                    </x-global::forms.select>
+                                </x-global::forms.field>
                             </div>
 
                             <hr />
@@ -481,16 +426,11 @@
                             <div class="form-group">
                                 <x-global::forms.checkbox variant="toggle" name="webhookEnabled" id="webhookEnabled" :checked="! empty($webhookEnabled)">{{ __('label.enable_webhook_notifications') }}</x-global::forms.checkbox>
                             </div>
-                            <div class="form-group">
-                                <x-global::forms.label for="webhookUrl">{{ __('label.webhook_url') }}</x-global::forms.label>
-                                <span>
-                                    <x-global::forms.text-input type="url" name="webhookUrl" id="webhookUrl" class="input"
-                                                                placeholder="https://example.com/webhook"
-                                                                value="{{ $webhookUrl ?? '' }}" />
-                                    <br/>
-                                    <small class="tw-text-gray-500">{{ __('label.webhook_url_hint') }}</small>
-                                </span>
-                            </div>
+                            <x-global::forms.field for="webhookUrl" :label="__('label.webhook_url')" :help="__('label.webhook_url_hint')">
+                                <x-global::forms.text-input type="url" name="webhookUrl" id="webhookUrl" class="input"
+                                                            placeholder="https://example.com/webhook"
+                                                            value="{{ $webhookUrl ?? '' }}" />
+                            </x-global::forms.field>
 
                             <input type="hidden" name="savewebhooks" value="1" />
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
