@@ -2598,6 +2598,7 @@ class Tickets extends BaseService
             $this->projectService->notifyProjectUsers($notification);
 
             TicketUpdated::dispatch(ticketId: (int) $values['id'], legacyHook: __FUNCTION__);
+            $this->dispatchSubtasksUpdatedForParents($currentTicket->dependingTicketId ?? 0, $values['dependingTicketId'] ?? 0);
 
             $this->dispatchTicketChangeEvents((int) $values['id'], $currentTicket, $values);
 
@@ -2738,6 +2739,45 @@ class Tickets extends BaseService
             return CarbonImmutable::parse($value, 'UTC');
         } catch (\Throwable) {
             return null;
+        }
+    }
+
+    /**
+     * Rename patch fields to the column names the repository writes ("projectid" → "projectId").
+     * Fields that aren't columns (collaborators) keep their name.
+     *
+     * @param  array<string, mixed>  $params  Field => value pairs as submitted.
+     * @return array<string, mixed>
+     */
+    private function canonicalPatchFields(array $params): array
+    {
+        $canonicalParams = [];
+
+        foreach ($params as $field => $value) {
+            $canonicalField = TicketRepository::canonicalPatchField((string) $field) ?? $field;
+            $canonicalParams[$canonicalField] = $value;
+        }
+
+        return $canonicalParams;
+    }
+
+    /**
+     * Tell the subtask lists of the given parent tickets that one of their children changed
+     * ({@see SubtasksUpdated}). Pass the parent before and after a write: a reparented ticket
+     * tells both parents, an unchanged one tells its parent once, and empty ids are skipped.
+     *
+     * @param  mixed  ...$parentIds  Parent ticket ids (dependingTicketId values, possibly null or '').
+     */
+    private function dispatchSubtasksUpdatedForParents(mixed ...$parentIds): void
+    {
+        $parentTicketIds = array_unique(array_map('intval', $parentIds));
+
+        foreach ($parentTicketIds as $parentTicketId) {
+            if ($parentTicketId <= 0) {
+                continue;
+            }
+
+            SubtasksUpdated::dispatch(parentTicketId: $parentTicketId);
         }
     }
 
@@ -3812,6 +3852,10 @@ class Tickets extends BaseService
             $params['saveAndCloseTicket'],
         );
 
+        // The repository matches field names case-insensitively. Use its canonical names from
+        // here on, so every check below sees the fields exactly as they will be written.
+        $params = $this->canonicalPatchFields($params);
+
         $ticket = $this->getTicket($id);
 
         if (! $ticket) {
@@ -3880,6 +3924,10 @@ class Tickets extends BaseService
         }
 
         TicketUpdated::dispatch(ticketId: (int) $id, legacyHook: __FUNCTION__);
+
+        $parentBefore = $ticketBefore->dependingTicketId ?? 0;
+        $parentAfter = array_key_exists('dependingTicketId', $params) ? $params['dependingTicketId'] : $parentBefore;
+        $this->dispatchSubtasksUpdatedForParents($parentBefore, $parentAfter);
 
         if ($return) {
             $this->dispatchTicketChangeEvents((int) $id, $ticketBefore, $params);
@@ -4937,9 +4985,7 @@ class Tickets extends BaseService
             TicketDeleted::dispatch(ticketId: (int) $id, legacyHook: __FUNCTION__);
 
             // The parent's subtask list selects children by dependingTicketId, whatever their type.
-            if ((int) ($ticket->dependingTicketId ?? 0) > 0) {
-                SubtasksUpdated::dispatch(parentTicketId: (int) $ticket->dependingTicketId);
-            }
+            $this->dispatchSubtasksUpdatedForParents($ticket->dependingTicketId ?? 0);
 
             return true;
         }
