@@ -5,13 +5,9 @@
 <form hx-post="{{ BASE_URL }}/hx/auth/personalTokens/create"
           hx-target="#tokenModal" id="newToken">
 
-        <div class="form-group">
-            <x-global::forms.label for="tokenName">{{ __('label.token_name') }}</x-global::forms.label>
+        <x-global::forms.field for="tokenName" :label="__('label.token_name')" :help="__('text.token_name_description')">
             <x-global::forms.text-input id="tokenName" name="name" required />
-            <small class="form-text text-muted">
-                <br/>{{ __('text.token_name_description') }}
-            </small>
-        </div>
+        </x-global::forms.field>
         <br />
         <div class="align-right">
             <x-global::forms.button inputType="button" contentRole="default" onclick="jQuery('#modal').modal('hide');">{{ __('buttons.close') }}</x-global::forms.button>

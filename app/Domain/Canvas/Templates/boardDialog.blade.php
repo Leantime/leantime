@@ -8,8 +8,9 @@
     <x-slot:title><i class='fa fa-plus'></i> {!! __('subtitles.create_new_board') !!}</x-slot:title>
 </x-global::actions.modal-header>
     <div class="modal-body">
-        <x-global::forms.label>{!! __('label.title_new') !!}</x-global::forms.label><br />
-        <x-global::forms.text-input width="full" name="canvastitle" value="{{ $canvasTitle }}" placeholder="{{ __('input.placeholders.enter_title_for_board') }}" />
+        <x-global::forms.field for="canvastitle" :label="__('label.title_new')">
+            <x-global::forms.text-input width="full" name="canvastitle" id="canvastitle" value="{{ $canvasTitle }}" placeholder="{{ __('input.placeholders.enter_title_for_board') }}" />
+        </x-global::forms.field>
     </div>
     <div class="modal-footer">
         @if(isset($_GET['id']))

@@ -223,13 +223,13 @@
                     <input type="hidden" name="comment" value="1" />
                         @can('comments.create')
                             <div id="comment0" class="commentBox tw-hidden">
-                                <x-global::forms.label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</x-global::forms.label>
-
-                                <x-global::forms.select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
-                                    <option value="green">{{ __('label.project_status_green') }}</option>
-                                    <option value="yellow">{{ __('label.project_status_yellow') }}</option>
-                                    <option value="red">{{ __('label.project_status_red') }}</option>
-                                </x-global::forms.select>
+                                <x-global::forms.field for="projectStatus" :label="__('label.project_status_is')">
+                                    <x-global::forms.select name="status" id="projectStatus" class="tw-ml-0">
+                                        <option value="green">{{ __('label.project_status_green') }}</option>
+                                        <option value="yellow">{{ __('label.project_status_yellow') }}</option>
+                                        <option value="red">{{ __('label.project_status_red') }}</option>
+                                    </x-global::forms.select>
+                                </x-global::forms.field>
 
                                 <div class="commentReply">
                                     <textarea rows="5" cols="50" class="tiptapSimple tw-w-full" name="text"></textarea>
