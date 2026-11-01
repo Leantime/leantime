@@ -14,16 +14,19 @@
 
         <form action="{{ BASE_URL }}/calendar/connectCalendar" method="post" class="formModal">
             @csrf
-            <x-global::forms.label for="ical_name">{{ __('label.calendar_name') }}:</x-global::forms.label>
-            <x-global::forms.text-input id="ical_name" name="name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" /><br />
+            <x-global::forms.field for="ical_name" :label="__('label.calendar_name')">
+                <x-global::forms.text-input id="ical_name" name="name" autocomplete="off" placeholder="{{ __('label.calendar_name') }}" />
+            </x-global::forms.field>
 
-            <x-global::forms.label for="ical_url">{{ __('label.ical_url') }}:</x-global::forms.label>
-            <x-global::forms.text-input width="full" id="ical_url" name="url" autocomplete="off" placeholder="https://example.com/calendar.ics" /><br />
+            <x-global::forms.field for="ical_url" :label="__('label.ical_url')">
+                <x-global::forms.text-input width="full" id="ical_url" name="url" autocomplete="off" placeholder="https://example.com/calendar.ics" />
+            </x-global::forms.field>
 
-            <x-global::forms.label for="ical_color">{{ __('label.color') }}:</x-global::forms.label>
-            <input type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
+            <x-global::forms.field for="ical_color" :label="__('label.color')">
+                <input type="text" id="ical_color" name="colorClass" autocomplete="off" value="#082236" class="simpleColorPicker"/>
+            </x-global::forms.field>
 
-            <br /><br />
+            <br />
             <x-global::forms.button tag="input" inputType="submit" name="save" contentRole="primary" :labelText="__('label.import_ical_button')" />
         </form>
     </x-global::elements.accordion>

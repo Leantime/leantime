@@ -15,28 +15,29 @@
 
     @dispatchEvent('afterFormOpen')
 
-    <x-global::forms.label for="description">{!! __('label.title') !!}</x-global::forms.label>
-    <x-global::forms.text-input id="description" name="description" value="{{ $tpl->escape($values['description']) }}" /><br />
+    <x-global::forms.field for="description" :label="__('label.title')">
+        <x-global::forms.text-input id="description" name="description" value="{{ $tpl->escape($values['description']) }}" />
+    </x-global::forms.field>
 
-    <x-global::forms.label for="dateFrom">{!! __('label.start_date') !!}</x-global::forms.label>
-    <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="{{ format($values['dateFrom'])->date() }}" />
+    <x-global::forms.field for="event_date_from" :label="__('label.start_date')">
+        <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="{{ format($values['dateFrom'])->date() }}" />
+    </x-global::forms.field>
 
-    <div class="par">
-        <x-global::forms.label> {!! __('label.start_time') !!}</x-global::forms.label>
+    <x-global::forms.field for="event_time_from" :label="__('label.start_time')">
         <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_from" name="timeFrom" value="{{ format($values['dateFrom'])->time24() }}" />
-           </div>
-    </div>
+            <input type="time" id="event_time_from" name="timeFrom" value="{{ format($values['dateFrom'])->time24() }}" />
+        </div>
+    </x-global::forms.field>
 
-    <x-global::forms.label for="dateTo">{!! __('label.end_date') !!}</x-global::forms.label>
-    <input type="text" id="event_date_to" autocomplete="off" name="dateTo" value="{{ format($values['dateTo'])->date() }}" />
+    <x-global::forms.field for="event_date_to" :label="__('label.end_date')">
+        <input type="text" id="event_date_to" autocomplete="off" name="dateTo" value="{{ format($values['dateTo'])->date() }}" />
+    </x-global::forms.field>
 
-    <div class="par">
-        <x-global::forms.label for="">{!! __('label.end_time') !!} </x-global::forms.label>
+    <x-global::forms.field for="event_time_to" :label="__('label.end_time')">
         <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_to" name="timeTo" value="{{ format($values['dateTo'])->time24() }}" />
-           </div>
-    </div>
+            <input type="time" id="event_time_to" name="timeTo" value="{{ format($values['dateTo'])->time24() }}" />
+        </div>
+    </x-global::forms.field>
 
     <x-global::forms.checkbox variant="toggle" id="allDay" name="allDay" value="on"
         :checked="$values['allDay'] === 'true'">{!! __('label.all_day') !!}</x-global::forms.checkbox>
