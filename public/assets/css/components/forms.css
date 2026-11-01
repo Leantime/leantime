@@ -40,6 +40,56 @@ form label {
     color: var(--feedback-error-color);
 }
 
+/* forms.field: label + control + help. The field owns the gap to the next field, so the
+   control's own bottom margin goes (Bootstrap gives inputs 10px). */
+.lt-field {
+    margin-bottom: 10px;
+}
+
+.lt-field > .lt-field-label {
+    display: block;
+    float: none;
+    width: auto;
+    padding: 5px 0;
+    text-align: start;
+}
+
+.lt-field-control > input,
+.lt-field-control > select,
+.lt-field-control > textarea,
+.lt-field-control > .ss-main {
+    margin-bottom: 0;
+}
+
+.lt-field .lt-field-help {
+    margin: 4px 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    line-height: 16px;
+}
+
+.lt-field--inline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0 16px;
+}
+
+.lt-field--inline > .lt-field-label {
+    flex: 0 0 var(--lt-field-label-w, 150px);
+    margin-bottom: 0;
+}
+
+.lt-field--inline > .lt-field-control {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+@media (max-width: 575px) {
+    .lt-field--inline {
+        display: block;
+    }
+}
+
 form .switchery {
     margin-top:5px;
 }
