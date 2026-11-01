@@ -764,7 +764,8 @@ leantime.ticketsController = (function () {
     /**
      * A status change to a done status stops the user's timer on that To-Do server-side (#415).
      * When the header stopwatch shows the timer running on this ticket, ask every timer control
-     * to refresh so the header and the other cards' Start buttons reflect it.
+     * to refresh so the header and the other cards' Start buttons reflect it. This runs after
+     * any status change, so it sends the refresh command, not a timer.stopped that may not have happened.
      */
     var refreshTimerIfRunningOn = function (ticketId) {
         var stopTimerLink = document.querySelector('#timerHeadMenu .punchOut');
@@ -780,7 +781,7 @@ leantime.ticketsController = (function () {
         }
 
         if (String(runningTimer.ticketId) === String(ticketId)) {
-            htmx.trigger(document.body, 'timerUpdate');
+            htmx.trigger(document.body, 'lt:ui:timer.refresh');
         }
     };
 
