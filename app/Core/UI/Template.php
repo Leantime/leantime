@@ -375,7 +375,7 @@ class Template
      */
     public function displayJson(array|object|string $jsonContent, int $statusCode = 200): Response
     {
-        $response = new Response(json_encode(['error' => 'Invalid Json']), 500);
+        $response = new Response(json_encode(['error' => 'Invalid Json']), 500, $this->responseHeaders());
         $response->headers->set('Content-Type', 'application/json; charset=utf-8');
 
         if (is_array($jsonContent) || is_object($jsonContent)) {
@@ -394,17 +394,18 @@ class Template
     }
 
     /**
-     * Display JSON content with an optional response code.
+     * Display plain text content with an optional response code. Queued headers (HX-Trigger
+     * events, notifications) travel with it.
      *
      * @param  string  $content  The content to be displayed.
      * @param  int  $statusCode  The HTTP response code to be returned (default: 200).
-     * @return Response The response object after displaying the JSON content.
+     * @return Response The response object after displaying the text content.
      *
      * @deprecated
      */
     public function displayRaw(string $content, int $statusCode = 200): Response
     {
-        $response = new Response($content, 200);
+        $response = new Response($content, 200, $this->responseHeaders());
         $response->headers->set('Content-Type', 'text/plain; charset=utf-8');
 
         $response = $response->setStatusCode($statusCode);
@@ -425,7 +426,7 @@ class Template
     }
 
     /**
-     * gives HTMX response
+     * Render a Blade view (or one of its fragments) for an HTMX response, with the queued headers.
      *
      * @param  string  $viewPath  The blade view path.
      * @param  string  $fragment  The fragment key.
@@ -444,7 +445,7 @@ class Template
 
         $this->setHookContext(['module' => $viewPathExplode[0], 'path' => $viewPathExplode[1] ?? ''], $path);
 
-        return new Response($view->fragmentIf(! empty($fragment), $fragment));
+        return new Response($view->fragmentIf(! empty($fragment), $fragment), 200, $this->responseHeaders());
     }
 
     /**

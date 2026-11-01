@@ -99,45 +99,87 @@ abstract class HtmxController
      **/
     public function getResponse($fragment): Response
     {
-        $this->response = tap(
-            $this->tpl->displayFragment($this::$view, $fragment ?? ''),
-            function (Response $response): void {
-                // Merge queued HX-Trigger events from BOTH the controller and the template
-                // (set()ing each bag separately would let the second silently overwrite the
-                // first), expand legacy aliases, and emit the comma-separated list once.
-                $triggerEvents = array_merge(
-                    $this->headers['HX-Trigger'] ?? [],
-                    (array) ($this->tpl->getHeaders()['HX-Trigger'] ?? [])
-                );
-
-                foreach ([$this->headers, $this->tpl->getHeaders()] as $headerBag) {
-                    foreach ($headerBag as $key => $value) {
-                        if ($key === 'HX-Trigger') {
-                            continue;
-                        }
-                        $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
-                    }
-                }
-
-                if (! empty($triggerEvents)) {
-                    $response->headers->set('HX-Trigger', HtmxEvents::triggerHeader($triggerEvents));
-                }
-            },
+        $this->response = $this->withQueuedHeaders(
+            $this->tpl->displayFragment($this::$view, $fragment ?? '')
         );
 
         return $this->response;
     }
 
     /**
-     * Execute an action on the controller.
+     * Execute an action on the controller. An action that builds its own Response
+     * (displayRaw, emptyResponse, new Response, ...) still gets the queued headers.
      *
      * @param  string  $method
      * @param  array  $parameters
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return mixed A Response, or the fragment key for getResponse()
      */
     public function callAction($method, $parameters)
     {
-        return $this->{$method}($parameters);
+        $result = $this->{$method}($parameters);
+
+        if ($result instanceof Response) {
+            return $this->withQueuedHeaders($result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Put the headers queued on this controller and on the template onto a response.
+     *
+     * HX-Trigger events from the response itself, the controller and the template are merged
+     * (setting each bag separately would let the last one overwrite the others) and sent once.
+     * A JSON HX-Trigger value set by hand is left alone, since it can't be merged with a list
+     * of names.
+     */
+    private function withQueuedHeaders(Response $response): Response
+    {
+        $templateHeaders = $this->tpl->getHeaders();
+
+        foreach ([$this->headers, $templateHeaders] as $headerBag) {
+            foreach ($headerBag as $key => $value) {
+                if ($key === 'HX-Trigger') {
+                    continue;
+                }
+                $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+            }
+        }
+
+        $existingTriggers = array_map(fn ($value) => trim((string) $value), $response->headers->all('HX-Trigger'));
+        foreach ($existingTriggers as $existingTrigger) {
+            if (str_starts_with($existingTrigger, '{')) {
+                return $response;
+            }
+        }
+
+        $triggerEvents = array_merge(
+            self::triggerNames(implode(',', $existingTriggers)),
+            self::triggerNames($this->headers['HX-Trigger'] ?? []),
+            self::triggerNames($templateHeaders['HX-Trigger'] ?? [])
+        );
+
+        if (! empty($triggerEvents)) {
+            $response->headers->set('HX-Trigger', HtmxEvents::triggerHeader($triggerEvents));
+        }
+
+        return $response;
+    }
+
+    /**
+     * The event names in a queued HX-Trigger value: a list of names, or a comma-separated string
+     * (set with setResponseHeader() or straight on a header bag).
+     *
+     * @param  array<int, mixed>|string  $value
+     * @return array<int, mixed>
+     */
+    private static function triggerNames(array|string $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return array_values(array_filter(array_map('trim', explode(',', $value)), fn (string $name) => $name !== ''));
     }
 
     /**
