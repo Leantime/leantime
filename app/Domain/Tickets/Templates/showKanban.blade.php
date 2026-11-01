@@ -70,24 +70,25 @@
             ">
         @foreach ($allKanbanColumns as $key => $statusRow)
             <div class="column">
-                <h4 class="widgettitle title-primary title-border-{{ $statusRow['class'] }}">
+                <x-global::elements.board-column-header :count="0" :statusClass="$statusRow['class']">
                     @if (! $programBoard)
                     @canany(['projectsettings.labels.manage', 'projects.edit'])
-                        <x-global::actions.dropdown trigger-class="editHeadline" style="float:right;">
-                            @can('projectsettings.labels.manage')
-                            <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{!! __('headlines.edit_label') !!}</a>
-                            </li>
-                            @endcan
-                            @can('projects.edit')
-                            <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{!! __('links.add_remove_col') !!}</a></li>
-                            @endcan
+                        <x-slot:actions>
+                            <x-global::actions.dropdown trigger-class="editHeadline" style="float:right;">
+                                @can('projectsettings.labels.manage')
+                                <li><a href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}" class="editLabelModal">{!! __('headlines.edit_label') !!}</a>
+                                </li>
+                                @endcan
+                                @can('projects.edit')
+                                <li><a href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">{!! __('links.add_remove_col') !!}</a></li>
+                                @endcan
 
-                        </x-global::actions.dropdown>
+                            </x-global::actions.dropdown>
+                        </x-slot:actions>
                     @endcanany
                     @endif
-                    <strong class="count">0</strong>
                     {{ $statusRow['name'] }}
-                </h4>
+                </x-global::elements.board-column-header>
             </div>
         @endforeach
         </div>

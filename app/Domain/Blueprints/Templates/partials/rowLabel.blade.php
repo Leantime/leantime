@@ -1,4 +1,4 @@
-<h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
+<x-global::elements.board-column-header align="center" class="canvas-element-title-empty">&nbsp;</x-global::elements.board-column-header>
 <div class="contentInner even canvas-element-center-middle">
     <strong>{!! __($label) !!}</strong>
 </div>
