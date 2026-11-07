@@ -9,12 +9,13 @@ use Illuminate\Support\Str;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Domains\BaseService;
-use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Calendar\Events\CalendarConnected;
 use Leantime\Domain\Calendar\Events\CalendarEventCreated;
+use Leantime\Domain\Calendar\Events\CalendarEventDeleted;
+use Leantime\Domain\Calendar\Events\CalendarEventUpdated;
 use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -102,11 +103,17 @@ class Calendar extends BaseService
         }
 
         // The event's owner can always change it; a cross-user override needs calendar.manage (admin+).
-        if ($this->userIsAllowedToUpdate($id)) {
-            return $this->calendarRepo->patch($id, $params);
+        if (! $this->userIsAllowedToUpdate($id)) {
+            return false;
         }
 
-        return false;
+        $patched = $this->calendarRepo->patch($id, $params);
+
+        if ($patched) {
+            CalendarEventUpdated::dispatch(eventId: $id);
+        }
+
+        return $patched;
     }
 
     /**
@@ -169,9 +176,6 @@ class Calendar extends BaseService
 
         if ($values['description'] !== '') {
             $result = $this->calendarRepo->addEvent($values);
-
-            // Trigger event for plugins
-            EventDispatcher::dispatch_event('afterCalendarSave', ['eventId' => $result, 'values' => $values]);
 
             if ($result !== false && (int) $result > 0) {
                 CalendarEventCreated::dispatch(
@@ -267,8 +271,7 @@ class Calendar extends BaseService
             if ($values['description'] !== '') {
                 $this->calendarRepo->editEvent($values, $id);
 
-                // Trigger event for plugins
-                EventDispatcher::dispatch_event('afterCalendarSave', ['eventId' => $id, 'values' => $values]);
+                CalendarEventUpdated::dispatch(eventId: (int) $id);
 
                 return true;
             }
@@ -289,10 +292,13 @@ class Calendar extends BaseService
     #[RequiresPermission(CalendarPermissions::DELETE)]
     public function delEvent(int $id): int|false
     {
-        // Trigger event for plugins
-        EventDispatcher::dispatch_event('afterCalendarDelete', ['eventId' => $id]);
+        $deleted = $this->calendarRepo->delPersonalEvent($id);
 
-        return $this->calendarRepo->delPersonalEvent($id);
+        if ($deleted) {
+            CalendarEventDeleted::dispatch(eventId: $id);
+        }
+
+        return $deleted;
     }
 
     /**
