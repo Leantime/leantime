@@ -6,7 +6,7 @@
 
 <div id="myProjectsWidget"
      hx-get="{{BASE_URL}}/widgets/myProjects/get"
-     hx-trigger="HTMX.updateProjectList from:body"
+     hx-trigger="{{ \Leantime\Domain\Projects\Events\ProjectFavoriteAdded::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Projects\Events\ProjectFavoriteRemoved::CLIENT_EVENT }} from:body"
      hx-target="#myProjectsWidget"
      hx-swap="outerHTML">
     @if (count($allProjects) == 0)
@@ -14,10 +14,10 @@
             <div class='center'>
                 <div style='width:70%' class='svgContainer'>
                     {{ __('notifications.not_assigned_to_any_project') }}
-                    @if($login::userIsAtLeast($roles::$manager))
+                    @can('projects.create')
                         <br /><br />
                         <a href='{{ BASE_URL }}/projects/newProject' class='btn btn-primary'>{{ __('link.new_project') }}</a>
-                    @endif
+                    @endcan
                 </div>
             </div>
     @endif

@@ -272,6 +272,31 @@ class PluginUpdateFlowTest extends TestCase
         $this->assertSame([], $this->rowUpdates);
     }
 
+    public function test_an_update_installs_into_the_installed_folder_when_the_download_name_differs_in_case(): void
+    {
+        // A lowercased identifier ("leantime_recurringtasks") comes back as "recurringtasks.zip" -> "Recurringtasks",
+        // but the archive holds RecurringTasks.phar: unpacking into the download's name fails ("unexpected file").
+        rename($this->pluginDir.'Notes', $this->pluginDir.'NoteS');
+        Http::fake([
+            'https://marketplace.test/ltmp-api/download/*' => Http::response('zip-bytes', 200, [
+                'Content-Type' => 'application/zip',
+                'Content-Disposition' => 'attachment; filename="notes"',
+            ]),
+            'https://marketplace.test/ltmp-api/install-result/*' => Http::response(null, 204),
+        ]);
+
+        try {
+            $this->service([$this->composer('1.5.0'), null])->installMarketplacePlugin($this->notes(), '1.5.0', 'NoteS');
+        } finally {
+            rename($this->pluginDir.'NoteS', $this->pluginDir.'Notes');
+        }
+
+        $this->assertCount(1, $this->archiveInstalls);
+        $this->assertSame('NoteS', $this->archiveInstalls[0][1], 'The archive must hold the installed folder\'s phar');
+        $this->assertSame($this->pluginDir.'NoteS', $this->archiveInstalls[0][2]);
+        $this->assertSame([[3, '1.5.0']], $this->rowUpdates);
+    }
+
     public function test_a_different_version_than_requested_is_rolled_back(): void
     {
         $this->expectException(\RuntimeException::class);

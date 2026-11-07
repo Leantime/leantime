@@ -127,8 +127,6 @@
     --kanban-card-hover: var(--col-title-bg);
 
     --accordion-header-bg: var(--secondary-action-bg);
-    --accordion-header-radius: 10px;
-    --accordion-header-radius: 10px;
 
     --interactive-icon-color: #aaa;
 
@@ -722,20 +720,6 @@ input.hasDatepicker:focus-visible {
 /* jQuery UI Datepicker Widget - when opened */
 .ui-datepicker .ui-state-active:focus-visible,
 .ui-datepicker .ui-datepicker-current-day a:focus-visible {
-    outline: 2px solid var(--accent1);
-    outline-offset: 1px;
-}
-
-/* TagsInput Container */
-div.tagsinput:focus-within {
-    outline: 2px solid var(--accent1);
-    outline-offset: 2px;
-    border-color: var(--accent1);
-    box-shadow: 0 0 0 4px rgba(var(--accent1-hsl), 0.1);
-}
-
-/* TagsInput Individual Tags */
-.tagsinput span.tag a:focus-visible {
     outline: 2px solid var(--accent1);
     outline-offset: 1px;
 }

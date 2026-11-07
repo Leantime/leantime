@@ -1,6 +1,7 @@
 
 <ul class="sortableTicketList" style="margin-bottom:120px;">
-    <li class="">
+    @can('tickets.create', $ticket->projectId)
+    <li class="" data-lt-permitted>
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> {{ __("links.add_task") }}</a>
         <x-global::elements.card compact class="ticketBox hideOnLoad" id="subticket_new">
 
@@ -26,6 +27,7 @@
             <div class="clearfix"></div>
         </x-global::elements.card>
     </li>
+    @endcan
 
 
     @php
@@ -50,14 +52,23 @@
 
         @endphp
 
-    <li class="ui-state-default" id="ticket_{{ $subticket['id'] }}" >
+    @php
+        // A subtask can sit in another project than its parent (moving a parent leaves its
+        // subtasks behind), so each row checks its own project, once per project.
+        $subtaskProjectId = (int) $subticket['projectId'];
+        $subtaskPermissions[$subtaskProjectId] ??= [
+            'edit' => can('tickets.edit', $subtaskProjectId),
+            'delete' => can('tickets.delete', $subtaskProjectId),
+        ];
+    @endphp
+    <li class="ui-state-default @unless ($subtaskPermissions[$subtaskProjectId]['edit']) subtaskRowReadonly @endunless" id="ticket_{{ $subticket['id'] }}" @if ($subtaskPermissions[$subtaskProjectId]['edit']) data-lt-permitted @endif >
         <x-global::elements.card compact class="ticketBox fixed priority-border-{{ $subticket['priority'] }}" data-val="{{ $subticket['id'] }}">
 
             <div class="row">
                 <div class="col-md-12" style="padding:0 15px;">
-                    @if($login::userIsAtLeast($roles::$editor))
+                    @if ($subtaskPermissions[$subtaskProjectId]['delete'])
                         <x-global::actions.dropdown>
-                            <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
+                            <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete" data-lt-permitted><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
 
                         </x-global::actions.dropdown>
                    @endif
@@ -107,17 +118,11 @@
 
 <script>
     jQuery(document).ready(function(){
-        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-
-            leantime.ticketsController.initAsyncInputChange();
-            leantime.ticketsController.initDueDateTimePickers();
-
-
-        <?php } else { ?>
-
-            leantime.authController.makeInputReadonly(".nyroModalCont");
-
-        <?php } ?>
+        // Each row follows its own project: rows the user can edit are marked permitted (so the
+        // ticket modal's read-only pass leaves them), the others go read-only here.
+        leantime.ticketsController.initAsyncInputChange();
+        leantime.ticketsController.initDueDateTimePickers();
+        leantime.authController.makeInputReadonly(".subtaskRowReadonly");
 
     });
 

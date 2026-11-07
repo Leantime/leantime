@@ -161,7 +161,7 @@ var TableOfContents = Node.create({
                     '</select>' +
                 '</label>' +
                 '<label class="tiptap-toc__setting">' +
-                    '<input type="checkbox" class="tiptap-toc__numbered-check"> ' +
+                    '<input type="checkbox" class="tiptap-toc__numbered-check toggle"> ' +
                     '<span>' + leantime.i18n.__('tiptap.toc.show_numbers') + '</span>' +
                 '</label>';
             container.appendChild(settingsPanel);

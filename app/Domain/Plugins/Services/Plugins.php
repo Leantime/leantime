@@ -925,6 +925,13 @@ class Plugins
             throw new \RuntimeException(sprintf(__('notification.plugin_update_wrong_package'), $expectedFolder, $foldername));
         }
 
+        // The download name only matches the folder case-insensitively: a lowercased identifier comes
+        // back as "recurringtasks" -> "Recurringtasks", while the archive holds RecurringTasks.phar.
+        // An update installs into the folder that is there.
+        if ($expectedFolder !== null) {
+            $foldername = $expectedFolder;
+        }
+
         // A private, unpredictable temp path for the download, always removed afterwards.
         $temporaryFile = Str::finish(sys_get_temp_dir(), '/').'leantime-plugin-'.bin2hex(random_bytes(16)).'.zip';
         $pluginDir = "{$this->pluginDirectory}{$foldername}";
@@ -1318,7 +1325,9 @@ class Plugins
 
     /**
      * The newest marketplace version of a plugin that supports this Leantime version and is newer
-     * than the installed one, or null when there is none.
+     * than the installed one, or null when there is none. A release core knows is broken on this
+     * version ({@see PluginCompatibility::BROKEN_RELEASES}) is never offered, whatever its
+     * marketplace range says.
      *
      * @param  array<int, array<string, mixed>>|null  $releases  The plugin's releases, when already
      *                                                           fetched in a batch; null asks the marketplace.
@@ -1341,7 +1350,11 @@ class Plugins
 
         $latest = collect($releases)
             ->filter(fn ($release) => is_array($release) && ! empty($release['version_number']))
-            ->filter(fn ($release) => $this->compatibility->isCompatible($this->releaseRange($release)))
+            ->filter(fn ($release) => $this->compatibility->isCompatible($this->compatibility->capBrokenRelease(
+                $this->releaseRange($release),
+                (string) $plugin->name,
+                (string) $release['version_number'],
+            )))
             ->map(fn ($release) => ltrim((string) $release['version_number'], 'v'))
             ->sort(fn ($a, $b) => version_compare($b, $a))
             ->first();
