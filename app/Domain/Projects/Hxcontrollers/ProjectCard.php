@@ -45,16 +45,27 @@ class ProjectCard extends HtmxController
         $projectData = $this->incomingRequest->request->all();
 
         $projectId = (int) ($projectData['projectId'] ?? 0);
-        $isFavorite = $projectData['isFavorite'] ?? false;
 
-        // react()/unreact() act as the session user and require access to the project.
-        if ($isFavorite) {
-            $this->reactionService->unreact('project', $projectId, 'favorite');
-        } else {
-            $this->reactionService->react('project', $projectId, 'favorite');
+        // Toggle the stored state, not the one the card posted: a card that went stale (favorited
+        // in another tab) would otherwise repeat a change that can't apply, and nothing refreshes.
+        $project = $this->projectsService->getProject($projectId);
+        $isFavorite = is_array($project) && ! empty($project['isFavorite']);
+
+        // react()/unreact() act as the session user, require access to the project and report
+        // ProjectFavoriteAdded/Removed, which refresh the project lists.
+        $changed = $isFavorite
+            ? $this->reactionService->unreact('project', $projectId, 'favorite')
+            : $this->reactionService->react('project', $projectId, 'favorite');
+
+        // A refused change (no access, another reaction of the same kind) reports no event, so
+        // nothing refreshes: swap in the freshly rendered card instead (the star sends
+        // hx-swap="none"), rendered like the original, and say why.
+        if (! $changed) {
+            $this->tpl->setResponseHeader('HX-Reswap', 'outerHTML');
+            $this->tpl->setNotification($this->language->__('notifications.favorite_not_saved'), 'error');
+            $this->tpl->assign('type', ($projectData['type'] ?? 'simple') === 'simple' ? 'simple' : 'detailed');
+            $this->tpl->assign('projectTypeAvatars', $this->menuService->getProjectTypeAvatars());
         }
-
-        $this->tpl->setHTMXEvent('HTMX.updateProjectList');
 
         $this->tpl->assign('project', $this->projectsService->getProject($projectId));
     }

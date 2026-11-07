@@ -81,13 +81,15 @@
                     @foreach ($canvasLabels as $key => $statusRow)
                     <div class="column" style="width:{{ $size }}%;">
 
-                        <h4 class="widgettitle title-primary">
+                        <x-global::elements.board-column-header>
                             @can('projectsettings.labels.manage')
-                                <a href="#/setting/editBoxLabel?module=idealabels&label={{ $key }}"
-                                   class="editHeadline"><i class="fas fa-edit"></i></a>
+                                <x-slot:actions>
+                                    <a href="#/setting/editBoxLabel?module=idealabels&label={{ $key }}"
+                                       class="editHeadline"><i class="fas fa-edit"></i></a>
+                                </x-slot:actions>
                             @endcan
                             {{ $statusRow['name'] }}
-                        </h4>
+                        </x-global::elements.board-column-header>
 
                         <div class="contentInner status_{{ $key }}">
 

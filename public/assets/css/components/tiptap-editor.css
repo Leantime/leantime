@@ -3316,6 +3316,12 @@ div[id^="comments-"] > div > .clearall {
     margin-bottom: 0;
 }
 
+/* The "show numbers" switch: centred by the row, not pushed down by .toggle's margin. */
+.tiptap-toc__setting input.toggle {
+    flex: none;
+    margin-top: 0;
+}
+
 .tiptap-toc__depth-select {
     padding: 4px 8px;
     font-size: var(--base-font-size);

@@ -38,7 +38,7 @@
 
         leantime.ticketsController.initTicketTabs();
 
-        @if ($login::userIsAtLeast($roles::$editor))
+        @can('tickets.create')
 
             leantime.ticketsController.initDueDateTimePickers();
 
@@ -50,12 +50,10 @@
 
         @else
             leantime.authController.makeInputReadonly(".nyroModalCont");
-
-        @endif
-
-        @if ($login::userHasRole([$roles::$commenter]))
-            leantime.commentsController.enableCommenterForms();
-        @endif
+            @can('comments.create')
+                leantime.commentsController.enableCommenterForms();
+            @endcan
+        @endcan
 
     });
 

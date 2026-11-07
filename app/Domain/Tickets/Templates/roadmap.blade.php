@@ -112,11 +112,11 @@
             @endphp
         ];
 
-        @if ($login::userIsAtLeast($roles::$editor))
+        @can('tickets.edit')
         leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', false);
         @else
         leantime.ticketsController.initGanttChart(tasks, '{{ $roadmapView }}', true);
-        @endif
+        @endcan
 
     @php } @endphp
 

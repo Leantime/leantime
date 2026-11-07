@@ -13,10 +13,12 @@
 
 <x-global::actions.modal-header>
     <x-slot:title><i class="fa fa-list-1-2"></i> {!! __('label.sprint') !!} {{ $currentSprint->name }}</x-slot:title>
-    @if (isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor))
+    @if (isset($currentSprint->id) && $currentSprint->id != '')
+        @can('sprints.delete', $currentSprint->projectId ?? null)
         <x-slot:actions>
             <li><a href="#/sprints/delSprint/{{ $currentSprint->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_sprint') !!}</a></li>
         </x-slot:actions>
+        @endcan
     @endif
 </x-global::actions.modal-header>{!! $tpl->displayNotification() !!}
 
