@@ -27,11 +27,8 @@
             <div class="row mt-3">
                 <div class="col-md-12 tw-text-center">
                     <form hx-post="{{ BASE_URL }}/help/helperModal/dontShowAgain" hx-trigger="change" hx-swap="none">
-                        <label class="tw-text-sm tw-mt-sm" >
-                            <input type="hidden" name="modalId" value="home" />
-                            <input type="checkbox" id="dontShowAgain" name="hidePermanently"  style="margin-top:-2px;">
-                            {{ __('label.dont_show_this_again') }}
-                        </label>
+                        <input type="hidden" name="modalId" value="home" />
+                        <x-global::forms.checkbox variant="toggle" id="dontShowAgain" name="hidePermanently" value="on" wrapperClass="tw-mt-sm">{{ __('label.dont_show_this_again') }}</x-global::forms.checkbox>
                     </form>
                 </div>
             </div>

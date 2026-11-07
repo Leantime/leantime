@@ -1,6 +1,6 @@
 <div id="myProjectsHub"
      hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
-     hx-trigger="HTMX.updateProjectList from:body"
+     hx-trigger="{{ \Leantime\Domain\Projects\Events\ProjectFavoriteAdded::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Projects\Events\ProjectFavoriteRemoved::CLIENT_EVENT }} from:body"
      hx-target="#myProjectsHub"
      hx-swap="outerHTML">
 

@@ -8,6 +8,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
@@ -901,6 +902,8 @@ class Projects implements StoresProjectModules
             ]);
 
         static::dispatch_event('editProject', ['values' => $values, 'oldProject' => $oldProject]);
+
+        PermissionService::projectAccessChanged();
     }
 
     /**
@@ -946,6 +949,8 @@ class Projects implements StoresProjectModules
         $this->connection->table('zp_tickets')
             ->where('projectId', $id)
             ->delete();
+
+        PermissionService::projectAccessChanged();
     }
 
     /**
@@ -1110,6 +1115,8 @@ class Projects implements StoresProjectModules
             ->where('projectId', $projectId)
             ->where('userId', $userId)
             ->delete();
+
+        PermissionService::projectAccessChanged();
     }
 
     public function deleteAllProjectRelations($userId): void
@@ -1117,6 +1124,8 @@ class Projects implements StoresProjectModules
         $this->connection->table('zp_relationuserproject')
             ->where('userId', $userId)
             ->delete();
+
+        PermissionService::projectAccessChanged();
     }
 
     public function deleteAllUserRelations($projectId): void
@@ -1124,6 +1133,8 @@ class Projects implements StoresProjectModules
         $this->connection->table('zp_relationuserproject')
             ->where('projectId', $projectId)
             ->delete();
+
+        PermissionService::projectAccessChanged();
     }
 
     public function addProjectRelation($userId, $projectId, $projectRole): void
@@ -1137,6 +1148,8 @@ class Projects implements StoresProjectModules
         ]);
 
         static::dispatch_event('userAddedToProject', ['userId' => $userId, 'projectId' => $projectId, 'projectRole' => $projectRole, 'oldProject' => $oldProject]);
+
+        PermissionService::projectAccessChanged();
     }
 
     public function patch($id, $params): bool
@@ -1160,6 +1173,8 @@ class Projects implements StoresProjectModules
         $this->connection->table('zp_projects')
             ->where('id', $id)
             ->update($updateData);
+
+        PermissionService::projectAccessChanged();
 
         return true;
     }

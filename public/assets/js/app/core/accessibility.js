@@ -10,50 +10,6 @@
 leantime.accessibilityController = (function () {
 
     /**
-     * Enhance TagsInput with ARIA attributes
-     */
-    var enhanceTagsInputAccessibility = function() {
-        jQuery('div.tagsinput').each(function() {
-            var $tagsInput = jQuery(this);
-            var $originalInput = $tagsInput.next('input[type="text"]');
-
-            if (!$originalInput.length) {
-                return;
-            }
-
-            var inputId = $originalInput.attr('id');
-            var $label = jQuery('label[for="' + inputId + '"]');
-            var labelText = $label.length ? $label.text().trim() : leantime.i18n.__('label.enter_tags');
-
-            $tagsInput.attr({
-                'role': 'list',
-                'aria-label': labelText
-            });
-
-            // Set role on individual tags
-            $tagsInput.find('span.tag').each(function() {
-                jQuery(this).attr('role', 'listitem');
-            });
-
-            // Make tag input accessible
-            var $input = $tagsInput.find('input');
-            $input.attr({
-                'aria-label': leantime.i18n.__('label.add_new_tag'),
-                'aria-describedby': inputId + '-help'
-            });
-
-            // Add help text if doesn't exist
-            if (inputId && !jQuery('#' + inputId + '-help').length) {
-                $tagsInput.after(
-                    '<span id="' + inputId + '-help" class="sr-only">' +
-                    leantime.i18n.__('text.tags_input_help') +
-                    '</span>'
-                );
-            }
-        });
-    };
-
-    /**
      * Enhance Datepickers with ARIA attributes
      */
     var enhanceDatepickerAccessibility = function() {
@@ -170,7 +126,6 @@ leantime.accessibilityController = (function () {
      */
     var init = function() {
         // Run immediately on page load
-        enhanceTagsInputAccessibility();
         enhanceDatepickerAccessibility();
         fixTimepickerLabels();
         enhanceKanbanCardAccessibility();
@@ -178,7 +133,6 @@ leantime.accessibilityController = (function () {
         // Re-run when new content is loaded (HTMX, modals, etc.)
         jQuery(document).on('htmx:afterSwap shown.bs.modal', function() {
             setTimeout(function() {
-                enhanceTagsInputAccessibility();
                 enhanceDatepickerAccessibility();
                 fixTimepickerLabels();
                 enhanceKanbanCardAccessibility();
@@ -190,7 +144,6 @@ leantime.accessibilityController = (function () {
     // Public API
     return {
         init: init,
-        enhanceTagsInputAccessibility: enhanceTagsInputAccessibility,
         enhanceDatepickerAccessibility: enhanceDatepickerAccessibility,
         fixTimepickerLabels: fixTimepickerLabels,
         enhanceKanbanCardAccessibility: enhanceKanbanCardAccessibility

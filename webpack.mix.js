@@ -85,7 +85,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/app/core/touchDrag.js",
         "./public/assets/js/libs/jquery.growl.js",
         "./public/assets/js/libs/jquery.form.js",
-        "./public/assets/js/libs/jquery.tagsinput.min.js",
         "./public/assets/js/libs/bootstrap-fileupload.min.js",
         "./node_modules/jquery-is-in-viewport/dist/isInViewport.jquery.js",
         "./public/assets/js/app/core/nestedSortable.js",

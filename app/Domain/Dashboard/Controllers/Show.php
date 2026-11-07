@@ -3,14 +3,14 @@
 namespace Leantime\Domain\Dashboard\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Dashboard\Services\Dashboard as DashboardService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
@@ -31,6 +31,8 @@ class Show extends Controller
 
     private Setting $settingsSvc;
 
+    private PermissionService $permissionService;
+
     /**
      * @throws BindingResolutionException
      */
@@ -40,7 +42,8 @@ class Show extends Controller
         UserService $userService,
         TimesheetService $timesheetService,
         DashboardService $dashboardService,
-        Setting $settingsSvc
+        Setting $settingsSvc,
+        PermissionService $permissionService
     ): void {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
@@ -48,6 +51,7 @@ class Show extends Controller
         $this->timesheetService = $timesheetService;
         $this->dashboardService = $dashboardService;
         $this->settingsSvc = $settingsSvc;
+        $this->permissionService = $permissionService;
 
         session(['lastPage' => BASE_URL.'/dashboard/show']);
     }
@@ -128,7 +132,7 @@ class Show extends Controller
             return Frontcontroller::redirect(BASE_URL.'/dashboard/show');
         }
 
-        if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
+        if ($this->permissionService->currentUserCan(TicketsPermissions::CREATE)) {
             if (isset($params['quickadd'])) {
                 $result = $this->ticketService->quickAddTicket($params);
 

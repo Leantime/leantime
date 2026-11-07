@@ -42,12 +42,17 @@ class PermissionServiceProvider extends ServiceProvider
     /**
      * A queue worker lives across many jobs, so its in-memory role table could outlast a role
      * change made elsewhere (a lowered level would keep its old rank). Start every job from the
-     * shared cache, which role writes flush. Web requests start fresh anyway.
+     * shared cache, which role writes flush, and with no remembered project roles or
+     * memberships. Web requests start fresh anyway.
      */
     protected function forgetRolesBetweenQueuedJobs(): void
     {
         $this->app->make('events')->listen(JobProcessing::class, function (): void {
             Roles::forgetLoadedRoles();
+
+            if ($this->app->resolved(PermissionService::class)) {
+                $this->app->make(PermissionService::class)->forgetResolvedProjects();
+            }
         });
     }
 

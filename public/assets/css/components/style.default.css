@@ -2254,24 +2254,6 @@ body .widgettitle .editHeadline:hover {
     opacity:0.7;
 }
 
-.articleMeta .tagsinput.readonly {
-    width:auto !important;
-    height:auto !important;
-    margin: 0px 0px;
-    vertical-align: middle;
-    color:var(--primary-font-color);
-    opacity:0.7;
-}
-
-.articleMeta div.tagsinput.readonly span.tag {
-    margin:0px 5px;
-    margin-left:0px;
-    padding:0px;
-    background:none;
-    color:var(--primary-font-color);
-    opacity:0.7;
-}
-
 .articleBody {
     margin-bottom:25px;
 }

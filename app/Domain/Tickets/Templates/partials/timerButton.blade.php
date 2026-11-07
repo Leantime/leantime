@@ -4,9 +4,11 @@
     'style' => 'simple' //simple just the button, full witrh button text
  ])
 
+{{-- The start/stop links swap the header stopwatch (#timerHeadMenu), not this container, so they
+     carry data-lt-refresh-container: this container still refreshes on the timer event its own click caused. --}}
 <div id="timer-button-container-{{ $parentTicketId }}"
     hx-get="{{BASE_URL}}/tickets/timerButton/get-status-button/{{ $parentTicketId }}"
-    hx-trigger="timerUpdate from:body"
+    hx-trigger="{{ \Leantime\Domain\Timesheets\Events\TimerStarted::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Timesheets\Events\TimerStopped::CLIENT_EVENT }} from:body, {{ \Leantime\Core\Events\Htmx\HtmxUiEvents::TimerRefresh->value }} from:body"
     hx-swap="outerHTML"
 
     class="tw-relative timerContainer">
@@ -14,6 +16,7 @@
     @if ($onTheClock === false)
         <a href="javascript:void(0);" data-value="{{ $parentTicketId }}"
            hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
+           data-lt-refresh-container
            hx-target="#timerHeadMenu"
            hx-swap="outerHTML"
            onclick="this.classList.add('starting');"
@@ -33,6 +36,7 @@
         <a href="javascript:void(0);" data-value="{{ $parentTicketId }}"
             hx-trigger="click delay:500ms"
            hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
+           data-lt-refresh-container
            hx-target="#timerHeadMenu"
            hx-vals='{"ticketId": "{{ $parentTicketId }}", "action":"stop"}'
            hx-swap="outerHTML"

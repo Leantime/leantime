@@ -72,82 +72,10 @@ body input:focus {
 
 
 
-/* Tags */
-
-body div.tagsinput {
-    border:1px solid transparent;
-    overflow:hidden;
-}
-
-body div.tagsinput:hover,
-body div.tagsinput:focus,
 body input[type=text].main-title-input.main-title-input:hover,
 body input[type=text].main-title-input.main-title-input:focus{
     border: 1px solid var(--main-border-color-hover);
     border-radius:var(--box-radius);
-}
-
-body div.tagsinput.readonly {
-    display:inline-block;
-    width:auto;
-    padding:0px;
-    border:0px !important;
-    height:auto !important;
-    background:none;
-}
-
-body .ticketBox div.tagsinput.readonly {
-    background:none !important;
-    margin-bottom:0px !important;
-}
-
-body div.tagsinput {
-    background-color: var(--input-background);
-    color:var(--primary-font-color);
-    font-family: var(--primary-font-family);
-    width:100% !important;
-    height:auto !important;
-    border-radius:var(--input-radius);
-    box-shadow: none;
-    padding:var(--input-padding);
-    border:0px;
-}
-
-body div.tagsinput input {
-    font-size: var(--base-font-size);
-    color:var(--primary-font-color) !important;
-    width:auto;
-    padding:0px;
-    margin-bottom:0px;
-    font-family: var(--primary-font-family);
-}
-
-body div.tagsinput span.tag {
-    border-radius: 12px;
-    padding: 0px 10px;
-    border: 0px solid var(--primary-color);
-}
-
-div.tagsinput span.tag {
-    font-size: var(--font-size-m);
-}
-
-div.tagsinput span.tag a {
-    vertical-align: text-bottom;
-}
-
-/* Tags input in article/wiki dialogs - proper spacing */
-.formModal div.tagsinput {
-    margin-top: 15px;
-    margin-bottom: 15px;
-    display: block;
-    clear: both;
-}
-
-/* Ensure tags input doesn't overlap with Tiptap editor */
-.formModal div.tagsinput + .tiptap-wrapper,
-.formModal div.tagsinput + .tiptap-editor {
-    clear: both;
 }
 
 
@@ -1521,33 +1449,10 @@ body a.textInputSwitch {
 
 }
 
-body .noteContainer div.tagsinput,
-body .clearForm div.tagsinput {
-    background:transparent;
-    border:none;
-    width:100%;
-}
-
-body div.tagsinput input,
 body div.clearForm input
 {
     width:50% !important;
     border:0px;
-}
-
-body .noteContainer div.tagsinput input,
-body .clearForm div.tagsinput input {
-    padding-left:7px;
-    color:var(--secondary-font-color);
-}
-
-body .noteContainer div.tagsinput input:focus,
-body .clearForm div.tagsinput input:focus{
-    border:none;
-}
-
-div.tagsinput span.tag {
-    margin-bottom:0px;
 }
 
 .headerEditDropdown {

@@ -99,6 +99,7 @@
                         <form class="tw-flex tw-flex-row tw-items-center tw-gap-2"
                               hx-post="{{ BASE_URL }}/hx/widgets/myToDos/updateTitle"
                               hx-target=".ticket-headline-{{ $ticket['id'] }}"
+                              hx-swap="innerHTML"
                               onsubmit="jQuery(this).closest('.edit-form').find('.cancel-edit-task').click();"
                         >
                             <input type="hidden" name="id" value="{{ $ticket['id'] }}"/>

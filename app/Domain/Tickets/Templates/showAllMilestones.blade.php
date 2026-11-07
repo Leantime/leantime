@@ -68,7 +68,17 @@
                 <tbody>
                     @dispatchEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets])
                     @foreach ($allTickets as $rowNum => $row)
-                        <tr>
+                        @php
+                            // One permission lookup per project, not per control: rows share projects.
+                            $rowProjectId = (int) $row['projectId'];
+                            $milestonePermissions[$rowProjectId] ??= [
+                                'edit' => can('tickets.edit', $rowProjectId),
+                                'delete' => can('tickets.delete', $rowProjectId),
+                            ];
+                            $rowCanEdit = $milestonePermissions[$rowProjectId]['edit'];
+                            $rowCanDelete = $milestonePermissions[$rowProjectId]['delete'];
+                        @endphp
+                        <tr @unless ($rowCanEdit) class="milestoneRowReadonly" @endunless>
                             @dispatchEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets])
                             <td data-order="{{ $row['headline'] }}">
                                 @if ($row['type'] == 'milestone')
@@ -121,11 +131,11 @@
                             </td>
 
                             <td data-order="{{ $row['editFrom'] }}" >
-                                {!! __('label.due_icon') !!}<input type="text" title="{{ __('label.planned_start_date') }}" value="{{ format($row['editFrom'])->date() }}" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row['id'] }}" data-id="{{ $row['id'] }}" name="editFrom" class=""/>
+                                {!! __('label.due_icon') !!}<input type="text" title="{{ __('label.planned_start_date') }}" value="{{ format($row['editFrom'])->date() }}" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row['id'] }}" data-id="{{ $row['id'] }}" name="editFrom" @unless ($rowCanEdit) disabled @endunless class=""/>
                             </td>
 
                             <td data-order="{{ $row['editTo'] }}" >
-                                {!! __('label.due_icon') !!}<input type="text" title="{{ __('label.planned_end_date') }}" value="{{ format($row['editTo'])->date() }}" class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row['id'] }}" data-id="{{ $row['id'] }}" name="editTo" class="" />
+                                {!! __('label.due_icon') !!}<input type="text" title="{{ __('label.planned_end_date') }}" value="{{ format($row['editTo'])->date() }}" class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row['id'] }}" data-id="{{ $row['id'] }}" name="editTo" @unless ($rowCanEdit) disabled @endunless class="" />
                             </td>
 
                             <td data-order="{{ $row['planHours'] }}" >
@@ -139,12 +149,16 @@
                             </td>
 
                             <td>
-                                @if ($login::userIsAtLeast($roles::$editor))
+                                @if ($rowCanEdit || $rowCanDelete)
                                     <x-global::actions.dropdown>
                                         <li class="nav-header">{!! __('subtitles.todo') !!}</li>
+                                        @if ($rowCanEdit)
                                         <li><a href="{{ BASE_URL }}/tickets/editMilestone/{{ $row['id'] }}" class='ticketModal'><i class="fa fa-edit"></i> {!! __('links.edit_milestone') !!}</a></li>
                                         <li><a href="{{ BASE_URL }}/tickets/moveTicket/{{ $row['id'] }}" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> {!! __('links.move_milestone') !!}</a></li>
-                                        <li><a href="{{ BASE_URL }}/tickets/delMilestone/{{ $row['id'] }}" class="delete"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
+                                        @endif
+                                        @if ($rowCanDelete)
+                                        <li><a href="{{ BASE_URL }}/tickets/delMilestone/{{ $row['id'] }}" class="delete" data-lt-permitted><i class="fa fa-trash"></i> {!! __('links.delete') !!}</a></li>
+                                        @endif
                                         <li class="nav-header border"></li>
                                         <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone={{ $row['id'] }}">{!! __('links.view_todos') !!}</a></li>
 
@@ -173,12 +187,10 @@
 
     jQuery(document).ready(function(){
 
-        @if ($login::userIsAtLeast($roles::$editor))
+        // Each row's date inputs are disabled server-side unless the user can edit that row's project.
         leantime.ticketsController.initMilestoneDatesAsyncUpdate();
-
-        @else
-            leantime.authController.makeInputReadonly(".maincontentinner");
-        @endif
+        // Rows the user can't edit (their project's tickets.edit) go read-only; a permitted delete link stays.
+        leantime.authController.makeInputReadonly(".milestoneRowReadonly");
 
         leantime.ticketsController.initMilestoneTable("{{ $searchCriteria['groupBy'] }}");
 
