@@ -1,3 +1,28 @@
+# Version: 3.14.0
+
+## Highlights
+
+### Granular permission checks across the app
+Projects, Timesheets, Users, API keys, to-dos, milestones, sprints, the dashboard, and menu items now check specific permissions rather than relying on role rank, giving administrators finer control over what each user can access (#3985, #3988, #3992).
+
+## New Features
+- **Calendar plugin extensibility** - Calendar events and filters are now class-based, making it easier for calendar plugins to hook in (#4017)
+- **Domain-driven client events** - Timesheets and Projects client events are now derived from domain events (#3995)
+- **Board column header component** - Board column titles are now available via elements.board-column-header for customization (#4002)
+- **Toggle checkboxes** - On/off checkboxes now render as toggles (#3999)
+- **Collapsible content-box sidebars** - Content-box sidebars can now collapse, with Docs built on layout.content-box (#3991)
+
+## Bug Fixes
+- **Updates install to the correct folder** - Plugin updates now install into the existing installed folder instead of one named after the download's casing (#4001)
+- **Subtask list stays in sync** - A parent's subtask list is now notified when a child is edited or moved (#3990)
+- **Queued HTMX headers delivered** - Queued headers are now sent on responses that actions build themselves (#3989)
+- **Fresh path caches after upgrades** - View and composer path caches are rebuilt after a Leantime version change (#3998)
+
+## Improvements
+- **Component cleanup** - Removed the old x-global::accordion and jQuery tagsInput, and marked CustomFields versions below 1.6.0 as incompatible (#3997)
+
+---
+
 # Version: 3.13.2
 
 ## New Features
