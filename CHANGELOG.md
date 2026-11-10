@@ -6,7 +6,8 @@
 Projects, Timesheets, Users, API keys, to-dos, milestones, sprints, the dashboard, and menu items now check specific permissions rather than relying on role rank, giving administrators finer control over what each user can access (#3985, #3988, #3992).
 
 ## New Features
-- **Calendar plugin extensibility** - Calendar events and filters are now class-based, making it easier for calendar plugins to hook in (#4017)
+- **Calendar plugin extensibility** - Calendar events and filters are now class-based, so calendar plugins can hook in reliably. Moving or resizing an event in the calendar now also notifies plugins (#4017)
+- **CalDAV Calendar Sync plugin** - New on the marketplace and requires this release: two-way sync with Nextcloud, ownCloud, Baikal or Radicale, and Leantime as a calendar account in Apple Calendar, Thunderbird or DAVx⁵
 - **Domain-driven client events** - Timesheets and Projects client events are now derived from domain events (#3995)
 - **Board column header component** - Board column titles are now available via elements.board-column-header for customization (#4002)
 - **Toggle checkboxes** - On/off checkboxes now render as toggles (#3999)
@@ -21,12 +22,22 @@ Projects, Timesheets, Users, API keys, to-dos, milestones, sprints, the dashboar
 ## Improvements
 - **Component cleanup** - Removed the old x-global::accordion and jQuery tagsInput, and marked CustomFields versions below 1.6.0 as incompatible (#3997)
 
+## Upgrade Notes
+- **No database changes** in this release.
+- **Custom Fields:** versions below 1.6.0 no longer load on 3.14. Update Custom Fields to 1.6.0 or newer from My Apps.
+- **For plugin developers:** the calendar string hooks are gone.
+  - `afterCalendarSave` and `afterCalendarDelete` are replaced by the event classes `CalendarEventCreated`, `CalendarEventUpdated` and `CalendarEventDeleted`.
+  - The `connectOptions.providers`, `calendarSettings.sections` and `externalCalendars` filters are replaced by `CalendarProvidersFilter`, `CalendarSettingsSectionsFilter` and `ExternalCalendarsFilter`.
+  - All of these live in `Leantime\Domain\Calendar\Events`. Subscribe with `EventDispatcher::add_event_listener(Class::class, ...)`.
+- **For plugin developers:** `x-global::accordion` and the jQuery tagsInput plugin were removed. Use `x-global::elements.accordion` and `x-global::forms.tags`.
+
 ---
 
 # Version: 3.13.2
 
 ## New Features
 - **Marketplace install reporting** - Plugin installations now report their results and server details back to the marketplace (#3979)
+- **Email digest split** - The email digest separates "New" from "Already seen", and the company email frequency becomes a floor for personal settings (#3986)
 
 ## Bug Fixes
 - **Top loader clears after Save & Close** - The loading indicator no longer stays active after using Save & Close in a modal (#3984)
