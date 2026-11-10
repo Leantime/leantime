@@ -102,6 +102,10 @@ class Calendar extends BaseService
             return false;
         }
 
+        if ($this->calendarRepo->getEvent($id) === false) {
+            return false;
+        }
+
         // The event's owner can always change it; a cross-user override needs calendar.manage (admin+).
         if (! $this->userIsAllowedToUpdate($id)) {
             return false;
@@ -232,7 +236,8 @@ class Calendar extends BaseService
 
             $row = $this->calendarRepo->getEvent($id);
 
-            if ($row === false) {
+            // The repository only updates the session user's own events.
+            if ($row === false || (int) ($row['userId'] ?? 0) !== $this->currentUserId()) {
                 return false;
             }
 

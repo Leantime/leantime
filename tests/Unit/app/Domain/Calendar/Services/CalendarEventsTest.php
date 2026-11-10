@@ -80,6 +80,17 @@ class CalendarEventsTest extends TestCase
         $this->assertSame(5, $this->received[0]->eventId);
     }
 
+    public function test_editing_someone_elses_event_fires_nothing(): void
+    {
+        $service = $this->service([
+            'getEvent' => fn () => ['id' => 5, 'userId' => 2],
+            'editEvent' => fn () => null,
+        ]);
+
+        $this->assertFalse($service->editEvent(['id' => 5, 'description' => 'Standup']));
+        $this->assertSame([], $this->received);
+    }
+
     public function test_moving_an_event_fires_calendar_event_updated(): void
     {
         $service = $this->service([
@@ -100,6 +111,19 @@ class CalendarEventsTest extends TestCase
             'getEvent' => fn () => ['id' => 5, 'userId' => 2],
             'patch' => fn () => true,
         ]);
+
+        $this->assertFalse($service->patch(5, ['dateFrom' => '2026-11-09 10:00:00']));
+        $this->assertSame([], $this->received);
+    }
+
+    public function test_moving_a_missing_event_fires_nothing_even_for_an_admin(): void
+    {
+        // calendar.manage skips the owner check, and the repository's patch() reports success
+        // without matching a row.
+        $service = $this->service([
+            'getEvent' => fn () => false,
+            'patch' => fn () => true,
+        ], canManage: true);
 
         $this->assertFalse($service->patch(5, ['dateFrom' => '2026-11-09 10:00:00']));
         $this->assertSame([], $this->received);
@@ -127,9 +151,9 @@ class CalendarEventsTest extends TestCase
     }
 
     /**
-     * A Calendar service over a stubbed repository, for session user 1 without calendar.manage.
+     * A Calendar service over a stubbed repository, for session user 1.
      */
-    private function service(array $repositoryMethods): Calendar
+    private function service(array $repositoryMethods, bool $canManage = false): Calendar
     {
         $service = new Calendar(
             calendarRepo: $this->make(CalendarRepository::class, $repositoryMethods),
@@ -139,7 +163,7 @@ class CalendarEventsTest extends TestCase
             outboundHttpClient: $this->make(OutboundHttpClient::class),
         );
         $service->setPermissionService($this->make(PermissionService::class, [
-            'currentUserCan' => fn () => false,
+            'currentUserCan' => fn () => $canManage,
             'authorize' => fn () => null,
         ]));
 
