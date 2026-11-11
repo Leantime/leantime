@@ -23,7 +23,7 @@
 
         </x-global::elements.card>
         <div class="commentLinks">
-            @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$commenter))
+            @can('comments.create')
                 <a href="javascript:void(0);"
                    onclick="leantime.commentsController.toggleCommentBoxes({{ $comment['commentParent'] }})">
                     <span class="fa fa-reply"></span> {{ __('links.reply') }}
@@ -34,7 +34,7 @@
                         <span class="fa fa-trash"></span> {{ __('links.delete') }}
                     </a>
                 @endif
-            @endif
+            @endcan
         </div>
     </div>
     <div class="clearall"></div>

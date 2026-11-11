@@ -3,9 +3,9 @@
 namespace Leantime\Domain\CsvImport\Controllers;
 
 use League\Csv\Exception;
+use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\CsvImport\Services\CsvImport as CsvImportService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,8 +21,6 @@ class Upload extends Controller
      */
     public function init(CsvImportService $providerService): void
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         $this->providerService = $providerService;
     }
 
@@ -32,6 +30,7 @@ class Upload extends Controller
      * @throws \Exception
      * @throws \Exception
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function get(): Response
     {
         return $this->tpl->displayPartial('csvImport.upload');
@@ -40,6 +39,7 @@ class Upload extends Controller
     /**
      * post - process uploaded file
      */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function post(array $params): Response
     {
         $file = $this->incomingRequest->file('file');

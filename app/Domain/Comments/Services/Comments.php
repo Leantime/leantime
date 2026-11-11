@@ -380,8 +380,13 @@ class Comments extends BaseService
     }
 
     /**
-     * Checks whether the current user is authorized to modify a comment.
-     * The caller must be the comment author or have at least manager role.
+     * Checks whether the current user is authorized to modify a comment: they must be able to
+     * post comments where it lives (`comments.create`, which editComment/deleteComment declare)
+     * and be its author or hold `comments.moderate` there.
+     *
+     * Both checks are scoped to the comment's OWN project, so a manager in project A cannot
+     * moderate a comment on an entity in project B by id. A null project (client/company-scoped
+     * or unknown module) falls back to a session-scoped check (unchanged behavior for those targets).
      *
      * @param  int  $commentId  The comment ID to check
      * @return bool True if authorized, false otherwise
@@ -394,21 +399,18 @@ class Comments extends BaseService
             return false;
         }
 
-        $currentUserId = session('userdata.id');
-
-        // Comment author can always modify their own comment.
-        if ((int) $comment['userId'] === (int) $currentUserId) {
-            return true;
-        }
-
-        // Otherwise moderation (editing/deleting someone else's comment) is a manager+ capability,
-        // scoped to the comment's OWN project so a manager in project A cannot moderate a comment on
-        // an entity in project B by id. A null project (client/company-scoped or unknown module)
-        // falls back to a session-scoped moderate check (unchanged behavior for those targets).
         $projectId = $this->commentRepository->resolveModuleProjectId(
             (string) ($comment['module'] ?? ''),
             (int) ($comment['moduleId'] ?? 0)
         );
+
+        if (! $this->can(CommentsPermissions::CREATE, $projectId)) {
+            return false;
+        }
+
+        if ((int) $comment['userId'] === (int) session('userdata.id')) {
+            return true;
+        }
 
         return $this->can(CommentsPermissions::MODERATE, $projectId);
     }

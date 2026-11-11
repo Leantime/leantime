@@ -124,7 +124,7 @@
     }
 
     function toggleCommentBoxes(id) {
-        @if ($login::userIsAtLeast($roles::$commenter))
+        @can('comments.create')
             if (id == 0) {
                 jQuery('#mainToggler').hide();
             } else {
@@ -155,7 +155,7 @@
 
             jQuery('#comment' + id + '').show('fast');
             jQuery('#father').val(id);
-        @endif
+        @endcan
     }
 
     // Reaction emoji picker - uses keys that map to the Reactions model

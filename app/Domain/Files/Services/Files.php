@@ -9,8 +9,6 @@ use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Files\Exceptions\FileValidationException;
 use Leantime\Core\Files\FileManager;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Files\Events\FileUploaded;
 use Leantime\Domain\Files\Permissions\FilesPermissions;
@@ -273,14 +271,20 @@ class Files extends BaseService
         return false;
     }
 
+    /**
+     * The file modules the current user can pick from. Client and lead files are a company
+     * resource, so those modules are listed only for callers who can see clients.
+     *
+     * @param  mixed  $id  Unused; kept for existing callers.
+     * @return array<string, string> Module key => label
+     */
     public function getModules($id): array
     {
-        $modules = $this->fileRepository->userModules;
-        if (Auth::userIsAtLeast(Roles::$admin)) {
-            $modules = $this->fileRepository->adminModules;
+        if ($this->can(ClientsPermissions::VIEW)) {
+            return $this->fileRepository->adminModules;
         }
 
-        return $modules;
+        return $this->fileRepository->userModules;
     }
 
     /**

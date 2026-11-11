@@ -839,4 +839,37 @@ class FilesServiceTest extends TestCase
         $this->assertSame('upload', $result['action']);
         $this->assertFalse($result['success']);
     }
+
+    // ---- getModules -------------------------------------------------------
+
+    public function test_get_modules_lists_client_and_lead_modules_for_clients_view(): void
+    {
+        $checked = [];
+        $perms = $this->make(PermissionService::class, [
+            'currentUserCan' => function (string $permission) use (&$checked) {
+                $checked[] = $permission;
+
+                return $permission === ClientsPermissions::VIEW;
+            },
+        ]);
+        $repo = $this->make(FileRepository::class);
+
+        $modules = $this->makeService($repo, null, $perms)->getModules(1);
+
+        // The grant decides, not the admin rank: a role holding clients.view gets the client modules.
+        $this->assertSame($repo->adminModules, $modules);
+        $this->assertArrayHasKey('client', $modules);
+        $this->assertSame([ClientsPermissions::VIEW], $checked);
+    }
+
+    public function test_get_modules_hides_client_and_lead_modules_without_clients_view(): void
+    {
+        $repo = $this->make(FileRepository::class);
+
+        $modules = $this->makeService($repo, null, $this->denyingPermissions())->getModules(1);
+
+        $this->assertSame($repo->userModules, $modules);
+        $this->assertArrayNotHasKey('client', $modules);
+        $this->assertArrayNotHasKey('lead', $modules);
+    }
 }

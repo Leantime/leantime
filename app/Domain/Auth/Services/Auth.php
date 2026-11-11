@@ -741,6 +741,9 @@ class Auth implements Authenticatable
 
     /**
      * @throws BindingResolutionException
+     *
+     * @deprecated Role ranks no longer decide access in core: check the permission the action
+     *             needs instead (`#[RequiresPermission]`, `BaseService::can()`, `@can` in Blade). Kept for plugins.
      */
     public static function userIsAtLeast(string $role, bool $forceGlobalRoleCheck = false): bool
     {
@@ -763,6 +766,9 @@ class Auth implements Authenticatable
 
     /**
      * @throws HttpResponseException
+     *
+     * @deprecated Role ranks no longer decide access in core: check the permission the action
+     *             needs instead (`#[RequiresPermission]`, `BaseService::can()`, `@can` in Blade). Kept for plugins.
      */
     public static function authOrRedirect(array|string $role, bool $forceGlobalRoleCheck = false): bool
     {
@@ -775,6 +781,9 @@ class Auth implements Authenticatable
 
     /**
      * @throws BindingResolutionException
+     *
+     * @deprecated Role ranks no longer decide access in core: check the permission the action
+     *             needs instead (`#[RequiresPermission]`, `BaseService::can()`, `@can` in Blade). Kept for plugins.
      */
     public static function userHasRole(string|array $role, bool $forceGlobalRoleCheck = false): bool
     {
