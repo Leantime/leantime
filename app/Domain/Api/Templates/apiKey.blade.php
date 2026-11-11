@@ -17,49 +17,53 @@
 
                 <x-global::elements.section-header>{!! __('label.basic_information') !!}</x-global::elements.section-header>
 
-                <x-global::forms.label>{!! __('label.key') !!}</x-global::forms.label><div class="clearfix"></div>
-                lt_{{ substr($values['user'], 0, 5) }}***<br /><br />
+                <x-global::forms.field :label="__('label.key')">
+                    lt_{{ substr($values['user'], 0, 5) }}***
+                </x-global::forms.field>
 
-                <x-global::forms.label for="firstname">{!! __('label.key_name') !!}</x-global::forms.label><div class="clearfix"></div>
+                <x-global::forms.field for="firstname" :label="__('label.key_name')">
                     <x-global::forms.text-input
-                    name="firstname" id="firstname"
-                    value="{{ $values['firstname'] }}" /><br />
+                        name="firstname" id="firstname"
+                        value="{{ $values['firstname'] }}" />
+                </x-global::forms.field>
 
 
-                <x-global::forms.label for="role">{!! __('label.role') !!}</x-global::forms.label><div class="clearfix"></div>
-                <x-global::forms.select name="role" id="role">
+                <x-global::forms.field for="role" :label="__('label.role')">
+                    <x-global::forms.select name="role" id="role">
 
-                    @foreach ($roles as $key => $role)
-                        <option value="{{ $key }}"
-                            @if ($key == $values['role'])
+                        @foreach ($roles as $key => $role)
+                            <option value="{{ $key }}"
+                                @if ($key == $values['role'])
+                                    selected="selected"
+                                @endif
+                            >
+                                {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
+                            </option>
+                        @endforeach
+
+                    </x-global::forms.select>
+                </x-global::forms.field>
+
+                <x-global::forms.field for="status" :label="__('label.status')">
+                    <x-global::forms.select name="status" id="status">
+                        <option value="a"
+                            @if (strtolower($values['status']) == 'a')
                                 selected="selected"
                             @endif
                         >
-                            {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
+                            {!! __('label.active') !!}
                         </option>
-                    @endforeach
 
-                </x-global::forms.select> <br />
+                        <option value=""
+                            @if (strtolower($values['status']) == '')
+                                selected="selected"
+                            @endif
+                        >
+                            {!! __('label.deactivated') !!}
+                        </option>
 
-                <x-global::forms.label for="status">{!! __('label.status') !!}</x-global::forms.label><div class="clearfix"></div>
-                <x-global::forms.select name="status" id="status">
-                    <option value="a"
-                        @if (strtolower($values['status']) == 'a')
-                            selected="selected"
-                        @endif
-                    >
-                        {!! __('label.active') !!}
-                    </option>
-
-                    <option value=""
-                        @if (strtolower($values['status']) == '')
-                            selected="selected"
-                        @endif
-                    >
-                        {!! __('label.deactivated') !!}
-                    </option>
-
-                </x-global::forms.select>
+                    </x-global::forms.select>
+                </x-global::forms.field>
 
                     <div class="clearfix"></div>
 

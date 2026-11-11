@@ -20,80 +20,53 @@
 
                     <div class="row row-fluid">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.name') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input name="name" id="name" value="{{ $values['name'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="name" :label="__('label.name')">
+                                <x-global::forms.text-input name="name" id="name" value="{{ $values['name'] }}" />
+                            </x-global::forms.field>
 
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.email') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input name="email" id="email" value="{{ $values['email'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="email" :label="__('label.email')">
+                                <x-global::forms.text-input name="email" id="email" value="{{ $values['email'] }}" />
+                            </x-global::forms.field>
 
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.url') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input
-                                            name="internet" id="internet"
-                                            value="{{ $values['internet'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="internet" :label="__('label.url')">
+                                <x-global::forms.text-input
+                                        name="internet" id="internet"
+                                        value="{{ $values['internet'] }}" />
+                            </x-global::forms.field>
 
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.street') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input
-                                            name="street" id="street"
-                                            value="{{ $values['street'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="street" :label="__('label.street')">
+                                <x-global::forms.text-input
+                                        name="street" id="street"
+                                        value="{{ $values['street'] }}" />
+                            </x-global::forms.field>
 
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.zip') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input
-                                           name="zip" id="zip" value="{{ $values['zip'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="zip" :label="__('label.zip')">
+                                <x-global::forms.text-input
+                                       name="zip" id="zip" value="{{ $values['zip'] }}" />
+                            </x-global::forms.field>
 
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.city') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input
-                                           name="city" id="city" value="{{ $values['city'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="city" :label="__('label.city')">
+                                <x-global::forms.text-input
+                                       name="city" id="city" value="{{ $values['city'] }}" />
+                            </x-global::forms.field>
 
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.state') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input
-                                            name="state" id="state"
-                                            value="{{ $values['state'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="state" :label="__('label.state')">
+                                <x-global::forms.text-input
+                                        name="state" id="state"
+                                        value="{{ $values['state'] }}" />
+                            </x-global::forms.field>
 
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.country') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input
-                                            name="country" id="country"
-                                            value="{{ $values['country'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="country" :label="__('label.country')">
+                                <x-global::forms.text-input
+                                        name="country" id="country"
+                                        value="{{ $values['country'] }}" />
+                            </x-global::forms.field>
 
-                            <div class="form-group">
-                                <x-global::forms.label class="span4 control-label">{!! __('label.phone') !!}</x-global::forms.label>
-                                <div class="span6">
-                                    <x-global::forms.text-input
-                                            name="phone" id="phone"
-                                            value="{{ $values['phone'] }}" />
-                                </div>
-                            </div>
+                            <x-global::forms.field for="phone" :label="__('label.phone')">
+                                <x-global::forms.text-input
+                                        name="phone" id="phone"
+                                        value="{{ $values['phone'] }}" />
+                            </x-global::forms.field>
 
                             @dispatchEvent('beforeSubmitButton')
 

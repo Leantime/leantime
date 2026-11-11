@@ -19,48 +19,44 @@
                     <x-global::layout.content-box>
                     <x-global::elements.section-header>{!! __('label.profile_information') !!}</x-global::elements.section-header>
 
-                    <x-global::forms.label for="firstname">{!! __('label.firstname') !!}</x-global::forms.label> <x-global::forms.text-input
-                        name="firstname" id="firstname"
-                        value="{{ $values['firstname'] }}" /><br />
+                    <x-global::forms.field layout="inline" for="firstname" :label="__('label.firstname')">
+                        <x-global::forms.text-input name="firstname" id="firstname" value="{{ $values['firstname'] }}" />
+                    </x-global::forms.field>
 
-                    <x-global::forms.label for="lastname">{!! __('label.lastname') !!}</x-global::forms.label> <x-global::forms.text-input
-                        name="lastname" id="lastname"
-                        value="{{ $values['lastname'] }}" /><br />
+                    <x-global::forms.field layout="inline" for="lastname" :label="__('label.lastname')">
+                        <x-global::forms.text-input name="lastname" id="lastname" value="{{ $values['lastname'] }}" />
+                    </x-global::forms.field>
 
+                    <x-global::forms.field layout="inline" for="role" :label="__('label.role')">
+                        <x-global::forms.select name="role" id="role">
+                            @foreach ($roles as $key => $role)
+                                <option value="{{ $key }}"
+                                    @if ($key == $values['role']) selected="selected" @endif>
+                                    {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
+                                </option>
+                            @endforeach
+                        </x-global::forms.select>
+                    </x-global::forms.field>
 
+                    <x-global::forms.field layout="inline" for="status" :label="__('label.status')">
+                        <x-global::forms.select name="status" id="status" class="pull-left">
 
-                    <x-global::forms.label for="role">{!! __('label.role') !!}</x-global::forms.label>
-                    <x-global::forms.select name="role" id="role">
-
-                        @foreach ($roles as $key => $role)
-                            <option value="{{ $key }}"
-                                @if ($key == $values['role']) selected="selected" @endif>
-                                {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
+                            <option value="a"
+                                @if (strtolower($values['status']) == 'a') selected="selected" @endif>
+                                {!! __('label.active') !!}
                             </option>
-                        @endforeach
 
-                    </x-global::forms.select> <br />
+                            <option value="i"
+                                @if (strtolower($values['status']) == 'i') selected="selected" @endif>
+                                {!! __('label.invited') !!}
+                            </option>
 
-                    <x-global::forms.label for="status">{!! __('label.status') !!}</x-global::forms.label>
-                    <x-global::forms.select name="status" id="status" class="pull-left">
+                            <option value="0"
+                                @if (strtolower($values['status']) === '' || $values['status'] === 0 || $values['status'] === '0') selected="selected" @endif>
+                                {!! __('label.deactivated') !!}
+                            </option>
 
-                        <option value="a"
-                            @if (strtolower($values['status']) == 'a') selected="selected" @endif>
-                            {!! __('label.active') !!}
-                        </option>
-
-                        <option value="i"
-                            @if (strtolower($values['status']) == 'i') selected="selected" @endif>
-                            {!! __('label.invited') !!}
-                        </option>
-
-                        <option value="0"
-                            @if (strtolower($values['status']) === '' || $values['status'] === 0 || $values['status'] === '0') selected="selected" @endif>
-                            {!! __('label.deactivated') !!}
-                        </option>
-
-
-                    </x-global::forms.select>
+                        </x-global::forms.select>
                         @if ($values['status'] == 'i')
                         <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
                             <x-global::actions.dropdown variant="panel" as="span" class="dropdown" menu-class="padding-md" keep-open>
@@ -72,53 +68,57 @@
                         </div>
                         @endif
                         <div class="clearfix"></div>
+                    </x-global::forms.field>
 
+                    <x-global::forms.field layout="inline" for="client" :label="__('label.client')">
+                        <x-global::forms.select name='client' id="client">
+                            <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
+                            @foreach ($clients as $clientItem)
+                                <option value="{{ $clientItem['id'] }}" @if ($clientItem['id'] == $values['clientId']) selected="selected" @endif>{{ $clientItem['name'] }}</option>
+                            @endforeach
+                        </x-global::forms.select>
+                    </x-global::forms.field>
+                    <br/>
 
+                    <x-global::elements.section-header>{!! __('label.contact_information') !!}</x-global::elements.section-header>
 
+                    <x-global::forms.field layout="inline" for="user" :label="__('label.email')">
+                        <x-global::forms.text-input name="user" id="user" value="{{ $values['user'] }}" />
+                    </x-global::forms.field>
 
-                    <x-global::forms.label for="client">{!! __('label.client') !!}</x-global::forms.label>
-                    <x-global::forms.select name='client' id="client">
-                        <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
-                        @foreach ($clients as $clientItem)
-                            <option value="{{ $clientItem['id'] }}" @if ($clientItem['id'] == $values['clientId']) selected="selected" @endif>{{ $clientItem['name'] }}</option>
-                        @endforeach
-                    </x-global::forms.select><br/>
+                    <x-global::forms.field layout="inline" for="phone" :label="__('label.phone')">
+                        <x-global::forms.text-input name="phone" id="phone" value="{{ $values['phone'] }}" />
+                    </x-global::forms.field>
+                    <br/>
+
+                    <x-global::elements.section-header>{!! __('label.employee_information') !!}</x-global::elements.section-header>
+
+                    <x-global::forms.field layout="inline" for="jobTitle" :label="__('label.jobTitle')">
+                        <x-global::forms.text-input name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" />
+                    </x-global::forms.field>
+
+                    <x-global::forms.field layout="inline" for="jobLevel" :label="__('label.jobLevel')">
+                        <x-global::forms.text-input name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" />
+                    </x-global::forms.field>
+
+                    <x-global::forms.field layout="inline" for="department" :label="__('label.department')">
+                        <x-global::forms.text-input name="department" id="department" value="{{ $values['department'] }}" />
+                    </x-global::forms.field>
+
+                    @can('users.edit')
+                        {{-- Capacity attributes, for whoever may edit users. Weekly hours is what
+                             downstream resource-planning surfaces (Resource
+                             Allocation, cross-program warnings, portfolio
+                             rollups) use to answer "how much of this person
+                             is available to plan against?". Employment type
+                             sets the semantic (target vs ceiling vs cap vs
+                             best-effort). Both nullable — until an admin
+                             sets them, capacity math treats this user as
+                             unconfigured and skips warnings. --}}
                         <br/>
+                        <x-global::elements.section-header>{!! __('label.capacity') !!}</x-global::elements.section-header>
 
-                        <x-global::elements.section-header>{!! __('label.contact_information') !!}</x-global::elements.section-header>
-
-                        <x-global::forms.label for="user">{!! __('label.email') !!}</x-global::forms.label> <x-global::forms.text-input
-                            name="user" id="user" value="{{ $values['user'] }}" /><br />
-
-                        <x-global::forms.label for="phone">{!! __('label.phone') !!}</x-global::forms.label> <x-global::forms.text-input
-                            name="phone" id="phone"
-                            value="{{ $values['phone'] }}" /><br /><br />
-
-
-                        <x-global::elements.section-header>{!! __('label.employee_information') !!}</x-global::elements.section-header>
-                        <x-global::forms.label for="jobTitle">{!! __('label.jobTitle') !!}</x-global::forms.label> <x-global::forms.text-input
-                            name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
-
-                        <x-global::forms.label for="jobLevel">{!! __('label.jobLevel') !!}</x-global::forms.label> <x-global::forms.text-input
-                            name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" /><br />
-
-                        <x-global::forms.label for="department">{!! __('label.department') !!}</x-global::forms.label> <x-global::forms.text-input
-                            name="department" id="department" value="{{ $values['department'] }}" /><br />
-
-
-                        @can('users.edit')
-                            {{-- Capacity attributes, for whoever may edit users. Weekly hours is what
-                                 downstream resource-planning surfaces (Resource
-                                 Allocation, cross-program warnings, portfolio
-                                 rollups) use to answer "how much of this person
-                                 is available to plan against?". Employment type
-                                 sets the semantic (target vs ceiling vs cap vs
-                                 best-effort). Both nullable — until an admin
-                                 sets them, capacity math treats this user as
-                                 unconfigured and skips warnings. --}}
-                            <x-global::elements.section-header>{!! __('label.capacity') !!}</x-global::elements.section-header>
-
-                            <x-global::forms.label for="weekly_hours">{!! __('label.weekly_hours') !!}</x-global::forms.label>
+                        <x-global::forms.field layout="inline" for="weekly_hours" :label="__('label.weekly_hours')" :help="__('label.weekly_hours_hint')">
                             <x-global::forms.text-input
                                 name="weekly_hours"
                                 id="weekly_hours"
@@ -126,10 +126,10 @@
                                 min="0"
                                 max="168"
                                 :value="$values['weekly_hours'] ?? ''"
-                                placeholder="{{ __('label.weekly_hours_placeholder') }}" /><br />
-                            <span class="hint">{!! __('label.weekly_hours_hint') !!}</span><br /><br />
+                                placeholder="{{ __('label.weekly_hours_placeholder') }}" />
+                        </x-global::forms.field>
 
-                            <x-global::forms.label for="employment_type">{!! __('label.employment_type') !!}</x-global::forms.label>
+                        <x-global::forms.field layout="inline" for="employment_type" :label="__('label.employment_type')" :help="__('label.employment_type_hint')">
                             <x-global::forms.select name="employment_type" id="employment_type">
                                 <option value="">{!! __('label.employment_type.unset') !!}</option>
                                 @foreach (\Leantime\Domain\Users\Enums\EmploymentType::cases() as $type)
@@ -138,9 +138,10 @@
                                         {!! __($type->langKey()) !!}
                                     </option>
                                 @endforeach
-                            </x-global::forms.select><br />
-                            <span class="hint">{!! __('label.employment_type_hint') !!}</span><br /><br />
-                        @endcan
+                            </x-global::forms.select>
+                        </x-global::forms.field>
+                        <br/>
+                    @endcan
 
 
                     <p class="stdformbutton">

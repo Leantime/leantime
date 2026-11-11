@@ -15,63 +15,65 @@
 
                 <x-global::elements.section-header>{!! __('label.profile_information') !!}</x-global::elements.section-header>
 
-                    <x-global::forms.label for="firstname">{!! __('label.firstname') !!}</x-global::forms.label> <x-global::forms.text-input
-                        name="firstname" id="firstname"
-                        value="{{ $values['firstname'] }}" /><br />
+                <x-global::forms.field layout="inline" for="firstname" :label="__('label.firstname')">
+                    <x-global::forms.text-input name="firstname" id="firstname" value="{{ $values['firstname'] }}" />
+                </x-global::forms.field>
 
-                    <x-global::forms.label for="lastname">{!! __('label.lastname') !!}</x-global::forms.label> <x-global::forms.text-input
-                        name="lastname" id="lastname"
-                        value="{{ $values['lastname'] }}" /><br />
+                <x-global::forms.field layout="inline" for="lastname" :label="__('label.lastname')">
+                    <x-global::forms.text-input name="lastname" id="lastname" value="{{ $values['lastname'] }}" />
+                </x-global::forms.field>
 
-            <x-global::forms.label for="role">{!! __('label.role') !!}</x-global::forms.label>
-            <x-global::forms.select name="role" id="role">
+                <x-global::forms.field layout="inline" for="role" :label="__('label.role')">
+                    <x-global::forms.select name="role" id="role">
+                        @foreach ($roles as $key => $role)
+                            <option value="{{ $key }}"
+                            @if ($key == $values['role']) selected="selected" @endif>
+                            {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
+                        </option>
+                        @endforeach
+                    </x-global::forms.select>
+                </x-global::forms.field>
 
-                @foreach ($roles as $key => $role)
-                        <option value="{{ $key }}"
-                        @if ($key == $values['role']) selected="selected" @endif>
-                        {{ \Leantime\Domain\Auth\Models\Roles::label($key) }}
-                    </option>
-                @endforeach
-
-            </x-global::forms.select> <br />
-
-            <x-global::forms.label for="client">{!! __('label.client') !!}</x-global::forms.label>
-            <x-global::forms.select name='client' id="client">
-                @unless ($staysInOwnClient)
-                    <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
-                @endunless
-                @foreach ($clients as $clientItem)
-                    @if ($staysInOwnClient && $clientItem['id'] !== session('userdata.clientId'))
-                        @continue
-                    @endif
-                    <option value="{{ $clientItem['id'] }}"
-                            @if ($clientItem['id'] == $values['clientId'] || $preSelectedClient == $clientItem['id']) selected="selected" @endif>{{ $clientItem['name'] }}</option>
-                @endforeach
-            </x-global::forms.select><br/>
-            <br/>
-
+                <x-global::forms.field layout="inline" for="client" :label="__('label.client')">
+                    <x-global::forms.select name='client' id="client">
+                        @unless ($staysInOwnClient)
+                            <option value="0" selected="selected">{!! __('label.no_clients') !!}</option>
+                        @endunless
+                        @foreach ($clients as $clientItem)
+                            @if ($staysInOwnClient && $clientItem['id'] !== session('userdata.clientId'))
+                                @continue
+                            @endif
+                            <option value="{{ $clientItem['id'] }}"
+                                    @if ($clientItem['id'] == $values['clientId'] || $preSelectedClient == $clientItem['id']) selected="selected" @endif>{{ $clientItem['name'] }}</option>
+                        @endforeach
+                    </x-global::forms.select>
+                </x-global::forms.field>
+                <br/>
 
                 <x-global::elements.section-header>{!! __('label.contact_information') !!}</x-global::elements.section-header>
 
+                <x-global::forms.field layout="inline" for="user" :label="__('label.email')">
+                    <x-global::forms.text-input name="user" id="user" value="{{ $values['user'] }}" />
+                </x-global::forms.field>
 
-                    <x-global::forms.label for="user">{!! __('label.email') !!}</x-global::forms.label> <x-global::forms.text-input
-                        name="user" id="user" value="{{ $values['user'] }}" /><br />
+                <x-global::forms.field layout="inline" for="phone" :label="__('label.phone')">
+                    <x-global::forms.text-input name="phone" id="phone" value="{{ $values['phone'] }}" />
+                </x-global::forms.field>
+                <br/>
 
-                    <x-global::forms.label for="phone">{!! __('label.phone') !!}</x-global::forms.label> <x-global::forms.text-input
-                        name="phone" id="phone"
-                        value="{{ $values['phone'] }}" /><br />
-            <br/>
+                <x-global::elements.section-header>{!! __('label.employee_information') !!}</x-global::elements.section-header>
 
-            <x-global::elements.section-header>{!! __('label.employee_information') !!}</x-global::elements.section-header>
-                <x-global::forms.label for="jobTitle">{!! __('label.jobTitle') !!}</x-global::forms.label> <x-global::forms.text-input
-                    name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" /><br />
+                <x-global::forms.field layout="inline" for="jobTitle" :label="__('label.jobTitle')">
+                    <x-global::forms.text-input name="jobTitle" id="jobTitle" value="{{ $values['jobTitle'] }}" />
+                </x-global::forms.field>
 
-                <x-global::forms.label for="jobLevel">{!! __('label.jobLevel') !!}</x-global::forms.label> <x-global::forms.text-input
-                    name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" /><br />
+                <x-global::forms.field layout="inline" for="jobLevel" :label="__('label.jobLevel')">
+                    <x-global::forms.text-input name="jobLevel" id="jobLevel" value="{{ $values['jobLevel'] }}" />
+                </x-global::forms.field>
 
-                <x-global::forms.label for="department">{!! __('label.department') !!}</x-global::forms.label> <x-global::forms.text-input
-                    name="department" id="department" value="{{ $values['department'] }}" /><br />
-
+                <x-global::forms.field layout="inline" for="department" :label="__('label.department')">
+                    <x-global::forms.text-input name="department" id="department" value="{{ $values['department'] }}" />
+                </x-global::forms.field>
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />
