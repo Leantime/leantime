@@ -45,9 +45,9 @@
 @endphp
 
 <x-global::actions.modal-header icon="fa fa-file-lines" :title="__('headline.doc')">
-    @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
+    @if (isset($currentArticle->id) && $currentArticle->id != '' && \Illuminate\Support\Facades\Gate::allows('wiki.delete', $currentArticle->projectId ?? null))
         <x-slot:actions>
-            <li><a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_article') !!}</a></li>
+            <li><a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete_article') !!}</a></li>
         </x-slot:actions>
     @endif
 </x-global::actions.modal-header>
@@ -85,12 +85,14 @@
                             <h4>{!! __('headlines.no_milestone_link') !!}</h4>
                             {!! __('text.use_milestone_to_track_leancanvas') !!}<br />
                             <div class="row" id="milestoneSelectors">
-                                @if ($login::userIsAtLeast($roles::$editor))
+                                @can('wiki.edit')
                                     <div class="col-md-12">
-                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
-                                        | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
+                                        @can('tickets.create')
+                                            <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a> |
+                                        @endcan
+                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
                                     </div>
-                                @endif
+                                @endcan
                             </div>
                             <div class="row" id="newMilestone" style="display:none;">
                                 <div class="col-md-12">

@@ -9,11 +9,11 @@
         <h3>{!! __("headlines.$canvasSlug.analysis") !!}</h3>
         <br />{!! __("text.$canvasSlug.helper_content") !!}
 
-        @if($login::userIsAtLeast($roles::$editor))
+        @can('blueprints.create')
             <br /><br />
             <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
                 {!! __('links.icon.create_new_board') !!}</a>.
-        @endif
+        @endcan
     </div>
 @endif
 
@@ -36,11 +36,12 @@
         leantime.blueprintsController.setCanvasName('{{ $canvasSlug }}');
         leantime.blueprintsController.initFilterBar();
 
-        @if($login::userIsAtLeast($roles::$editor))
+        @canany(['blueprints.create', 'blueprints.edit'])
             leantime.blueprintsController.initCanvasLinks();
-        @else
+        @endcanany
+        @cannot('blueprints.edit')
             leantime.authController.makeInputReadonly(".maincontentinner");
-        @endif
+        @endcannot
 
         @if(isset($_GET['showModal']))
             @php

@@ -131,10 +131,11 @@ class EditCanvasItem
 
         $this->tpl->assign('comments', $comments);
 
+        // Milestones are linked within the item's own project (new items: the session project).
         $allProjectMilestones = $this->ticketService->getAllMilestones([
             'sprint' => '',
             'type' => 'milestone',
-            'currentProject' => session('currentProject'),
+            'currentProject' => $canvasItem['projectId'] ?? session('currentProject'),
         ]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasItem', $canvasItem);
@@ -208,7 +209,13 @@ class EditCanvasItem
         if (isset($data['changeItem'])) {
             if (isset($data['itemId']) && ! empty($data['itemId'])) {
                 if (isset($data['description']) && ! empty($data['description'])) {
-                    $currentCanvasId = (int) session($sessionKey);
+                    // An existing item stays on its own board and project, whatever board the
+                    // session has open (the dialog can be reached from another project's link).
+                    $existingItem = $this->blueprintsService->getCanvasItem((int) $data['itemId'], $canvasType);
+                    if (! $existingItem) {
+                        return $this->tpl->displayPartial('errors.error404');
+                    }
+                    $currentCanvasId = (int) $existingItem['canvasId'];
 
                     $canvasItem = [
                         'box' => $data['box'],
@@ -232,6 +239,7 @@ class EditCanvasItem
                         $data['editFrom'] = dtHelper()->userNow()->formatDateForUser();
                         $data['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
                         $data['dependentMilestone'] = '';
+                        $data['projectId'] = (int) $existingItem['projectId'];
                         $id = $this->ticketService->quickAddMilestone($data);
 
                         if ($id !== false) {
@@ -400,12 +408,6 @@ class EditCanvasItem
         $statusLabels = $this->blueprintsService->getTranslatedStatusLabels($this->template);
         $relatesLabels = $this->blueprintsService->getTranslatedRelatesLabels($this->template);
 
-        $allProjectMilestones = $this->ticketService->getAllMilestones([
-            'sprint' => '',
-            'type' => 'milestone',
-            'currentProject' => session('currentProject'),
-        ]);
-        $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasTypes', $this->blueprintsService->getTranslatedBoxes($this->template));
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('relatesLabels', $relatesLabels);
@@ -413,7 +415,8 @@ class EditCanvasItem
         if (isset($data['id'])) {
             $canvasItemId = (int) $data['id'];
             $comments = $this->commentsRepo->getComments($commentModule, $canvasItemId);
-            $this->tpl->assign('canvasItem', $this->blueprintsService->getCanvasItem($canvasItemId, $canvasType));
+            $value = $this->blueprintsService->getCanvasItem($canvasItemId, $canvasType);
+            $this->tpl->assign('canvasItem', $value);
         } else {
             $value = [
                 'id' => '',
@@ -432,6 +435,11 @@ class EditCanvasItem
             $this->tpl->assign('canvasItem', $value);
         }
         $this->tpl->assign('comments', $comments);
+        $this->tpl->assign('milestones', $this->ticketService->getAllMilestones([
+            'sprint' => '',
+            'type' => 'milestone',
+            'currentProject' => is_array($value) ? ($value['projectId'] ?? session('currentProject')) : session('currentProject'),
+        ]));
         $this->tpl->assign('canvasSlug', $this->canvasSlug);
 
         return $this->tpl->displayPartial('blueprints.canvasDialog');

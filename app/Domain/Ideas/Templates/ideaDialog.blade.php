@@ -14,9 +14,11 @@
 
 <x-global::actions.modal-header icon="fa fa-lightbulb" :title="__('headline.idea')">
     @if ($id != '')
+    @can('ideas.delete', $canvasItem['projectId'] ?? null)
         <x-slot:actions>
-            <li><a href="#/ideas/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+            <li><a href="#/ideas/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
 
@@ -28,7 +30,8 @@
 
     <div class="col-md-8">
 
-        <input type="hidden" value="{{ $currentCanvas }}" name="canvasId"/>
+        {{-- An existing idea stays on its own board; only new ideas go to the open board. --}}
+        <input type="hidden" value="{{ $id !== '' && ! empty($canvasItem['canvasId']) ? $canvasItem['canvasId'] : $currentCanvas }}" name="canvasId"/>
         <input type="hidden" value="{{ $tpl->escape($canvasItem['box']) }}" name="box" id="box"/>
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
         <input type="hidden" name="status" value="{{ $canvasItem['status'] }}" />
@@ -54,7 +57,7 @@
             <input type="hidden" name="comment" value="1"/>
 
             <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
-            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/ideas/ideaDialog/' . $id])
+            @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/ideas/ideaDialog/' . $id, 'commentProjectId' => $canvasItem['projectId'] ?? null])
         @endif
 
     </div>
@@ -70,14 +73,17 @@
                         <h4>{!! __('headlines.no_milestone_link') !!}</h4>
                         {!! __('text.use_milestone_to_track_idea') !!}<br/>
                         <div class="row" id="milestoneSelectors">
-                            @if ($login::userIsAtLeast($roles::$editor))
+                            @can('ideas.edit', $canvasItem['projectId'] ?? null)
                                 <div class="col-md-12">
+                                    @can('tickets.create', $canvasItem['projectId'] ?? null)
+                                        <a href="javascript:void(0);"
+                                           onclick="leantime.ideasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
+                                        |
+                                    @endcan
                                     <a href="javascript:void(0);"
-                                       onclick="leantime.ideasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
-                                    | <a href="javascript:void(0);"
-                                         onclick="leantime.ideasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
+                                       onclick="leantime.ideasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
                                 </div>
-                            @endif
+                            @endcan
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
                             <div class="col-md-12">
@@ -162,13 +168,12 @@
             leantime.tiptapController.initComplexEditor();
         }
 
-        @if (!$login::userIsAtLeast($roles::$editor))
+        @cannot($id === '' ? 'ideas.create' : 'ideas.edit', $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly(".nyroModalCont");
-        @endif
-
-        @if ($login::userHasRole([$roles::$commenter]))
-        leantime.submodules.generalCommentController.enableCommenterForms();
-        @endif
+            @can('comments.create', $canvasItem['projectId'] ?? null)
+                leantime.commentsController.enableCommenterForms();
+            @endcan
+        @endcannot
 
     })
 </script>

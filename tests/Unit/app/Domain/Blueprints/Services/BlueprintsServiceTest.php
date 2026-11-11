@@ -350,6 +350,7 @@ class BlueprintsServiceTest extends TestCase
         $item = $service->getCanvasItem(7, 'swotcanvas');
 
         $this->assertSame(7, $item['id']);
+        $this->assertSame(9, $item['projectId'], 'The item carries its real project, which the dialog checks permissions against');
         $this->assertSame('swotcanvas', $resolvedType, 'The resolver must be type-scoped so a foreign canvas type cannot match');
     }
 

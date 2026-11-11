@@ -24,12 +24,15 @@
 @endphp
 
 <div class="sf-item" id="item_{{ $itemId }}">
-    @if ($canEdit && $editUrl)
+    {{-- deleteUrl is only passed when the caller may delete, so it stands on its own. --}}
+    @if (($canEdit && $editUrl) || $deleteUrl)
         <x-global::actions.dropdown style="float:right; margin-left:4px;">
             <li class="nav-header">{{ __('subtitles.edit') }}</li>
-            <li><a href="{{ $editUrl }}" data="item_{{ $itemId }}">{!! __('links.edit_canvas_item') !!}</a></li>
+            @if ($canEdit && $editUrl)
+                <li><a href="{{ $editUrl }}" data="item_{{ $itemId }}">{!! __('links.edit_canvas_item') !!}</a></li>
+            @endif
             @if ($deleteUrl)
-                <li><a href="{{ $deleteUrl }}" class="delete" data="item_{{ $itemId }}">{!! __('links.delete_canvas_item') !!}</a></li>
+                <li><a href="{{ $deleteUrl }}" class="delete" data-lt-permitted data="item_{{ $itemId }}">{!! __('links.delete_canvas_item') !!}</a></li>
             @endif
 
         </x-global::actions.dropdown>
