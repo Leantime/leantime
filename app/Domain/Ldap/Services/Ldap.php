@@ -199,7 +199,7 @@ class Ldap
             }
         }
 
-        return isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
+        return $this->firstAttributeValue($entries[0] ?? [], $this->ldapKeys->email);
     }
 
     public function getSingleUser(string $username): array|false
@@ -231,17 +231,7 @@ class Ldap
         }
 
         // Find Role
-        $role = $this->defaultRoleKey;
-
-        if (isset($entries[0][$this->ldapKeys->groups]) && is_array($entries[0][$this->ldapKeys->groups])) {
-            foreach ($entries[0][$this->ldapKeys->groups] as $grps) {
-                foreach ($this->ldapLtGroupAssignments as $key => $row) {
-                    if ($row->ldapRole !== '' && (int) $key > $role && strpos($grps, $row->ldapRole) !== false) {
-                        $role = $key;
-                    }
-                }
-            }
-        }
+        $role = $this->roleFromGroups($entries[0] ?? []);
 
         /*
          *  The ldap_get_entries function returns all LDAP atribute names in lowercase to insure consistency.
@@ -365,5 +355,57 @@ class Ldap
         }
 
         return true;
+    }
+
+    /**
+     * First value of an attribute on an ldap_get_entries() entry.
+     *
+     * ldap_get_entries() returns attribute names in lowercase, but admins configure them as
+     * the directory spells them (userPrincipalName, memberOf). Looking them up as configured
+     * missed every camelCase attribute: the email came back empty and login failed.
+     *
+     * @param  array  $entry  One entry from ldap_get_entries().
+     * @param  string  $attribute  Attribute name as configured in LEAN_LDAP_KEYS.
+     * @return string The first value, or '' when the attribute is absent.
+     */
+    private function firstAttributeValue(array $entry, string $attribute): string
+    {
+        $values = $entry[strtolower($attribute)] ?? null;
+
+        return is_array($values) && isset($values[0]) ? (string) $values[0] : '';
+    }
+
+    /**
+     * Highest Leantime role granted by the user's LDAP groups, never below the default role.
+     *
+     * Group attribute names are lowercased like every other attribute (memberOf never matched
+     * before), and DNs are compared case-insensitively, as LDAP itself does.
+     *
+     * @param  array  $entry  One entry from ldap_get_entries().
+     * @return int Role key.
+     */
+    private function roleFromGroups(array $entry): int
+    {
+        $role = $this->defaultRoleKey;
+        $groups = $entry[strtolower($this->ldapKeys->groups)] ?? null;
+
+        if (! is_array($groups)) {
+            return $role;
+        }
+
+        foreach ($groups as $index => $groupDn) {
+            // ldap_get_entries() adds a "count" key next to the values.
+            if ($index === 'count' || ! is_string($groupDn)) {
+                continue;
+            }
+
+            foreach ($this->ldapLtGroupAssignments as $key => $row) {
+                if ($row->ldapRole !== '' && (int) $key > $role && stripos($groupDn, $row->ldapRole) !== false) {
+                    $role = (int) $key;
+                }
+            }
+        }
+
+        return $role;
     }
 }
