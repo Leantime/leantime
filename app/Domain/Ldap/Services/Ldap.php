@@ -36,6 +36,22 @@ class Ldap
         'department' => 'department',
     ];
 
+    /**
+     * Attribute mapping used when LEAN_LDAP_KEYS is unset or invalid, and to fill keys a
+     * configured mapping leaves out.
+     */
+    private const DEFAULT_LDAP_KEYS = [
+        'username' => 'uid',
+        'groups' => 'memberof',
+        'email' => 'mail',
+        'firstname' => 'displayname',
+        'lastname' => '',
+        'phone' => 'telephonenumber',
+        'jobTitle' => 'title',
+        'jobLevel' => 'level',
+        'department' => 'department',
+    ];
+
     private mixed $ldapLtGroupAssignments = [];
 
     private mixed $settingsRepo;
@@ -87,17 +103,11 @@ class Ldap
 
             if (! is_object($this->ldapKeys) || json_last_error() !== JSON_ERROR_NONE) {
                 Log::error('LDAP: Ldap Keys failed to parse. Please check for valid json. Error: '.json_last_error_msg());
-                $this->ldapKeys = (object) [
-                    'username' => 'uid',
-                    'groups' => 'memberof',
-                    'email' => 'mail',
-                    'firstname' => 'displayname',
-                    'lastname' => '',
-                    'phone' => 'telephonenumber',
-                    'jobTitle' => 'title',
-                    'jobLevel' => 'level',
-                    'department' => 'department',
-                ];
+                $this->ldapKeys = (object) self::DEFAULT_LDAP_KEYS;
+            } else {
+                // A mapping that leaves keys out (e.g. only username/email/groups) used to hit
+                // "Undefined property" on every login, which Laravel turns into a 500.
+                $this->ldapKeys = self::withDefaultKeys($this->ldapKeys);
             }
         }
 
@@ -407,5 +417,16 @@ class Ldap
         }
 
         return $role;
+    }
+
+    /**
+     * Fill the keys a configured attribute mapping leaves out with the defaults.
+     *
+     * @param  object  $configured  Decoded LEAN_LDAP_KEYS (or the companysettings override).
+     * @return object Mapping with every key the service reads.
+     */
+    private static function withDefaultKeys(object $configured): object
+    {
+        return (object) array_merge(self::DEFAULT_LDAP_KEYS, array_filter((array) $configured, 'is_string'));
     }
 }

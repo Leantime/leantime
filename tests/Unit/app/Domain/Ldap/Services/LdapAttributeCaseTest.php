@@ -93,4 +93,19 @@ class LdapAttributeCaseTest extends TestCase
         $this->assertSame(20, $this->call($ldap, 'roleFromGroups', $this->entry(['CN=Staff,OU=Groups,DC=corp'])));
         $this->assertSame(20, $this->call($ldap, 'roleFromGroups', ['count' => 0]));
     }
+
+    /**
+     * The documented mappings leave out jobTitle/jobLevel/department; reading a missing key
+     * was an "Undefined property" warning, which Laravel turns into a 500 on login.
+     */
+    public function test_a_partial_key_mapping_is_filled_with_the_defaults(): void
+    {
+        $keys = $this->call($this->ldap(), 'withDefaultKeys', (object) ['username' => 'sAMAccountName', 'email' => 'userPrincipalName']);
+
+        $this->assertSame('sAMAccountName', $keys->username);
+        $this->assertSame('userPrincipalName', $keys->email);
+        $this->assertSame('title', $keys->jobTitle);
+        $this->assertSame('department', $keys->department);
+        $this->assertSame('memberof', $keys->groups);
+    }
 }
