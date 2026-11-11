@@ -64,6 +64,10 @@ class EditMilestone extends Controller
 
         $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
         $this->tpl->assign('milestones', $allProjectMilestones);
+        $this->tpl->assign(
+            'milestoneDependents',
+            isset($milestone->id) && $milestone->id != '' ? $this->ticketService->getMilestoneDependents((int) $milestone->id, $allProjectMilestones) : []
+        );
         $this->tpl->assign('users', $this->projectService->getUsersWithAccessToProject((int) session('currentProject')));
         $this->tpl->assign('milestone', $milestone);
 

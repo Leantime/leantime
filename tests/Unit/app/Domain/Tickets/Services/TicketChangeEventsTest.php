@@ -149,6 +149,7 @@ class TicketChangeEventsTest extends TestCase
             'patchTicket' => fn () => true,
             'addTicket' => fn () => 42,
             'updateTicket' => fn () => $this->updateTicketResult,
+            'setAdditionalMilestoneDependencies' => fn () => true,
             'updateTicketStatus' => fn () => true,
             'getStateLabels' => fn () => [
                 0 => ['name' => 'Done', 'statusType' => 'DONE'],
