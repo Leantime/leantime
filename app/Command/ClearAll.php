@@ -4,6 +4,7 @@ namespace Leantime\Command;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Language;
@@ -13,12 +14,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Class BackupDbCommand
- *
- * Command to back up the database.
+ * Clears every Leantime cache: compiled views, language files, bootstrap files, and the
+ * per-domain data caches (settings and other cached values).
  *
  * Usage:
- *   php bin/console db:backup
+ *   php bin/leantime cache:clearAll
  */
 #[AsCommand(
     name: 'cache:clearAll',
@@ -70,8 +70,47 @@ class ClearAll extends Command
         $commandOut = exec('rm -rf ./bootstrap/cache/*.php');
         $this->components->info('bootstrap cache cleared');
 
+        // Data caches (settings and more) live in one directory per domain, keyed by app URL.
+        // Without LEAN_APP_URL the web uses the request host and the CLI uses localhost, so
+        // clearing only the CLI's own store left the site serving stale settings.
+        $io->text('Clear Domain Data Caches');
+        $cleared = $this->flushDomainCaches(storage_path('framework/cache'));
+        $this->components->info("cleared {$cleared} domain data cache(s)");
+
         $io->success('All Caches cleared');
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Empty the data directory of every per-domain file cache under $cacheRoot.
+     *
+     * Domain caches are named by get_domain_key() (an md5 hash), so only 32-hex-character
+     * directories are touched; avatars, installation and anything else are left alone.
+     *
+     * @param  string  $cacheRoot  Usually storage/framework/cache.
+     * @return int Number of domain caches emptied.
+     */
+    public function flushDomainCaches(string $cacheRoot): int
+    {
+        $files = new Filesystem;
+
+        if (! $files->isDirectory($cacheRoot)) {
+            return 0;
+        }
+
+        $cleared = 0;
+        foreach ($files->directories($cacheRoot) as $directory) {
+            if (preg_match('/^[a-f0-9]{32}$/', basename($directory)) !== 1) {
+                continue;
+            }
+
+            if ($files->isDirectory($directory.'/data')) {
+                $files->cleanDirectory($directory.'/data');
+                $cleared++;
+            }
+        }
+
+        return $cleared;
     }
 }
