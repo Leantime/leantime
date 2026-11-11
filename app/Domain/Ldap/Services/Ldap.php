@@ -241,7 +241,7 @@ class Ldap
         }
 
         // Find Role
-        $role = $this->roleFromGroups($entries[0] ?? []);
+        $role = $this->roleFromGroups($entries[0]);
 
         /*
          *  The ldap_get_entries function returns all LDAP atribute names in lowercase to insure consistency.
