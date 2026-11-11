@@ -89,7 +89,10 @@
                 // Use explicit > 0 checks: new milestones store dependingTicketId as an empty
                 // string, and under PHP 8 `'' != 0` is true — which pushed an empty dependency and
                 // skipped the real milestoneid, so a dependency set in table mode never rendered here.
-                if ((int) $mlst->dependingTicketId > 0) {
+                if ($mlst->type == 'milestone' && ! empty($mlst->milestoneDependencies)) {
+                    // A milestone can depend on several milestones.
+                    $dependencyList = $mlst->milestoneDependencies;
+                } elseif ((int) $mlst->dependingTicketId > 0) {
                     $dependencyList[] = $mlst->dependingTicketId;
                 } elseif ((int) $mlst->milestoneid > 0) {
                     $dependencyList[] = $mlst->milestoneid;

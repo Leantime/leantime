@@ -2246,7 +2246,7 @@ class Tickets extends BaseService
      *                         - 'projectId': int|null, The ID of the project associated with the milestone (optional).
      *                         - 'editorId': int|null, The user ID of the editor creating the milestone (optional).
      *                         - 'userId': int|null, The user ID associated with the milestone (optional).
-     *                         - 'dependentMilestone': int|null, The ID of a milestone it depends on (optional).
+     *                         - 'dependentMilestone': int|array|null, The ID(s) of the milestone(s) it depends on, from the same project (optional).
      *                         - 'tags': string|null, Tags related to the milestone (optional).
      *                         - 'editFrom': string|null, Start time of editing (optional).
      *                         - 'editTo': string|null, End time of editing (optional).
@@ -2260,6 +2260,9 @@ class Tickets extends BaseService
         $projectId = $params['projectId'] ?? session('currentProject');
 
         $this->authorize(TicketsPermissions::CREATE, $projectId !== null ? (int) $projectId : null);
+
+        // A new milestone has no dependents yet, so its dependencies cannot form a cycle.
+        $dependencies = $this->resolveMilestoneDependencies(0, $params['dependentMilestone'] ?? [], (int) $projectId) ?: [];
 
         $values = [
             'headline' => $params['headline'],
@@ -2277,7 +2280,7 @@ class Tickets extends BaseService
             'sprint' => '',
             'priority' => 3,
             'dependingTicketId' => '',
-            'milestoneid' => $params['dependentMilestone'] ?? '',
+            'milestoneid' => $dependencies[0] ?? '',
             'acceptanceCriteria' => '',
             'outcomeImpact' => $params['outcomeImpact'] ?? '',
             'tags' => $params['tags'] ?? '',
@@ -2295,6 +2298,14 @@ class Tickets extends BaseService
 
         // $params is an array of field names. Exclude id
         $result = $this->ticketRepository->addTicket($values);
+
+        if (is_int($result) && $result > 0 && count($dependencies) > 1) {
+            $this->ticketRepository->setAdditionalMilestoneDependencies(
+                $result,
+                array_slice($dependencies, 1),
+                session('userdata.id') === null ? null : (int) session('userdata.id')
+            );
+        }
 
         MilestoneCreated::dispatch(
             milestoneId: is_int($result) && $result > 0 ? $result : null,
@@ -4060,7 +4071,21 @@ class Tickets extends BaseService
             if (! $this->can(TicketsPermissions::EDIT, $targetProjectId)) {
                 return ['status' => 'error', 'message' => 'You are not allowed to move this milestone to that project.'];
             }
+        }
 
+        // Callers without the field (e.g. inline kanban edits) keep the saved dependencies. Resolved
+        // before anything is written so a circular dependency rejects the whole update.
+        $dependencies = $this->resolveMilestoneDependencies(
+            $milestoneId,
+            array_key_exists('dependentMilestone', $params) ? $params['dependentMilestone'] : ($existingMilestone->milestoneDependencies ?? []),
+            $targetProjectId
+        );
+
+        if ($dependencies === false) {
+            return ['status' => 'error', 'message' => 'A milestone cannot depend on a milestone that depends on it.'];
+        }
+
+        if ($targetProjectId !== $currentProjectId) {
             // Moving a milestone must take its tasks with it, otherwise they're
             // left orphaned referencing a milestone in another project. moveTicket()
             // already moves the milestone's children and the milestone row. (#3294 review)
@@ -4086,7 +4111,7 @@ class Tickets extends BaseService
             'acceptanceCriteria' => '',
             'priority' => 3,
             'dependingTicketId' => '',
-            'milestoneid' => $params['dependentMilestone'],
+            'milestoneid' => $dependencies[0] ?? '',
             'tags' => $params['tags'],
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
@@ -4103,6 +4128,12 @@ class Tickets extends BaseService
         $updated = $this->ticketRepository->updateTicket($values, $milestoneId);
 
         if ($updated) {
+            $this->ticketRepository->setAdditionalMilestoneDependencies(
+                $milestoneId,
+                array_slice($dependencies, 1),
+                session('userdata.id') === null ? null : (int) session('userdata.id')
+            );
+
             // Only after a successful write: the event means "fired after a milestone was updated".
             MilestoneUpdated::dispatch(milestoneId: $milestoneId, projectId: $targetProjectId, legacyHook: __FUNCTION__);
 
@@ -4117,6 +4148,97 @@ class Tickets extends BaseService
         }
 
         return $updated;
+    }
+
+    /**
+     * Lists the milestones that depend on the given milestone, directly or through other milestones.
+     * The milestone dialog leaves them out of its dependency choices: depending on one of them would
+     * create a circular dependency.
+     *
+     * @param  int  $milestoneId  The milestone whose dependents are wanted.
+     * @param  array<int, TicketModel>  $milestones  The project's milestones, as returned by getAllMilestones().
+     * @return array<int, int> The ids of the dependent milestones.
+     */
+    public function getMilestoneDependents(int $milestoneId, array $milestones): array
+    {
+        $graph = [];
+
+        foreach ($milestones as $milestone) {
+            $graph[(int) $milestone->id] = $milestone->milestoneDependencies ?? [];
+        }
+
+        return $this->findTransitiveDependents($graph, $milestoneId);
+    }
+
+    /**
+     * Turns the dependencies a caller asked for into the list that is stored: whole numbers only,
+     * no duplicates, no self reference and only milestones of the milestone's own project. The first
+     * entry becomes the primary dependency (zp_tickets.milestoneid), the rest are stored as
+     * depends_on relationships.
+     *
+     * @param  int  $milestoneId  The dependent milestone (0 while it is being created).
+     * @param  mixed  $requested  A milestone id, a list or comma separated string of ids, or empty.
+     * @param  int  $projectId  The project the milestone belongs to.
+     * @return array<int, int>|false The dependency ids, or false when they would form a cycle.
+     */
+    private function resolveMilestoneDependencies(int $milestoneId, mixed $requested, int $projectId): array|false
+    {
+        if (! is_array($requested)) {
+            $requested = explode(',', (string) $requested);
+        }
+
+        $dependencyIds = [];
+        foreach ($requested as $dependencyId) {
+            $dependencyId = (int) $dependencyId;
+
+            if ($dependencyId > 0 && $dependencyId !== $milestoneId) {
+                $dependencyIds[] = $dependencyId;
+            }
+        }
+
+        $dependencyIds = $this->ticketRepository->filterMilestoneIdsInProject(array_values(array_unique($dependencyIds)), $projectId);
+
+        if ($milestoneId > 0 && $dependencyIds !== []) {
+            $dependents = $this->findTransitiveDependents($this->ticketRepository->getProjectMilestoneDependencies($projectId), $milestoneId);
+
+            if (array_intersect($dependencyIds, $dependents) !== []) {
+                return false;
+            }
+        }
+
+        return $dependencyIds;
+    }
+
+    /**
+     * Walks a dependency graph backwards from a milestone.
+     *
+     * @param  array<int, array<int, int>>  $graph  Dependency ids keyed by milestone id.
+     * @return array<int, int> Every milestone that depends on $milestoneId, directly or indirectly.
+     */
+    private function findTransitiveDependents(array $graph, int $milestoneId): array
+    {
+        $dependentsOf = [];
+        foreach ($graph as $id => $dependencyIds) {
+            foreach ($dependencyIds as $dependencyId) {
+                $dependentsOf[(int) $dependencyId][] = (int) $id;
+            }
+        }
+
+        $found = [];
+        $queue = [$milestoneId];
+
+        while ($queue !== []) {
+            $current = array_shift($queue);
+
+            foreach ($dependentsOf[$current] ?? [] as $dependentId) {
+                if (! isset($found[$dependentId])) {
+                    $found[$dependentId] = $dependentId;
+                    $queue[] = $dependentId;
+                }
+            }
+        }
+
+        return array_values($found);
     }
 
     /**

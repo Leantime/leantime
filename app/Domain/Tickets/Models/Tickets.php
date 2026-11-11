@@ -66,6 +66,14 @@ class Tickets
 
     public mixed $milestoneid = null;
 
+    /**
+     * Ids of every milestone this milestone depends on (primary dependency first). Only
+     * populated for milestones.
+     *
+     * @var array<int, int>|null
+     */
+    public ?array $milestoneDependencies = null;
+
     public ?string $projectName = '';
 
     public ?string $clientName = '';
