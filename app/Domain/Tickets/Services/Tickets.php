@@ -4952,6 +4952,11 @@ class Tickets extends BaseService
 
     // Delete
     /**
+     * Deletes a To-Do.
+     *
+     * @param  mixed  $id  The To-Do to delete.
+     * @param  bool  $deleteSubtasks  Also delete the To-Do's subtasks (and their subtasks). Nothing is deleted
+     *                                unless the user may delete every one of them and none has logged time.
      * @return bool|string[]
      *
      * @throws BindingResolutionException
@@ -4959,7 +4964,7 @@ class Tickets extends BaseService
      * @api
      */
     #[RequiresPermission(TicketsPermissions::DELETE, entityScoped: true)]
-    public function delete($id): array|bool
+    public function delete($id, bool $deleteSubtasks = false): array|bool
     {
 
         $ticket = $this->getTicket($id);
@@ -4979,6 +4984,22 @@ class Tickets extends BaseService
         // Editor+ in the ticket's project AND access to it (was access-only, no role gate).
         $this->authorize(TicketsPermissions::DELETE, (int) $ticket->projectId);
 
+        // Check every subtask before deleting anything, so a refusal never leaves a half-deleted tree.
+        $subtasks = $deleteSubtasks ? $this->getSubtasksDeepestFirst((int) $id) : [];
+
+        foreach ($subtasks as $subtask) {
+            if (! $this->can(TicketsPermissions::DELETE, (int) $subtask['projectId'])
+                || $this->timesheetsRepo->getTimesheetsByTicket($subtask['id'])) {
+                return ['msg' => 'notifications.ticket_delete_subtasks_error', 'type' => 'error'];
+            }
+        }
+
+        foreach ($subtasks as $subtask) {
+            if ($this->ticketRepository->delticket($subtask['id'])) {
+                TicketDeleted::dispatch(ticketId: (int) $subtask['id'], legacyHook: __FUNCTION__);
+            }
+        }
+
         // Collaborator relationship rows are cleaned up inside the repository's delticket().
         if ($this->ticketRepository->delticket($id)) {
 
@@ -4991,6 +5012,43 @@ class Tickets extends BaseService
         }
 
         return false;
+    }
+
+    /**
+     * Number of subtasks a To-Do has, counting the subtasks of subtasks. The delete dialog offers to
+     * delete them together with the To-Do when there are any.
+     *
+     * @param  int  $ticketId  The parent To-Do.
+     */
+    public function countSubtasks(int $ticketId): int
+    {
+        return count($this->getSubtasksDeepestFirst($ticketId));
+    }
+
+    /**
+     * Collects the subtasks of a To-Do, children before their parents, so they can be deleted in
+     * that order. Milestones are not subtasks and are skipped.
+     *
+     * @param  int  $ticketId  The parent To-Do.
+     * @param  array<int, bool>  $visited  Ids already collected, guards against circular parent links.
+     * @return array<int, array<string, mixed>> Ticket rows.
+     */
+    private function getSubtasksDeepestFirst(int $ticketId, array &$visited = []): array
+    {
+        $visited[$ticketId] = true;
+        $subtasks = [];
+
+        foreach ($this->ticketRepository->getSubtasksByParent($ticketId) as $child) {
+            $childId = (int) $child['id'];
+
+            if (isset($visited[$childId]) || ($child['type'] ?? '') === 'milestone') {
+                continue;
+            }
+
+            $subtasks = array_merge($subtasks, $this->getSubtasksDeepestFirst($childId, $visited), [$child]);
+        }
+
+        return $subtasks;
     }
 
     public function canDelete($id)
