@@ -240,8 +240,8 @@ class Template
     }
 
     /**
-     * Finalize queued headers for a response: expand legacy event aliases on HX-Trigger and
-     * collapse the queued event list to the comma-separated string htmx expects.
+     * Finalize queued headers for a response: collapse the queued HX-Trigger event list to the
+     * comma-separated string htmx expects.
      *
      * @return array<string, mixed>
      */

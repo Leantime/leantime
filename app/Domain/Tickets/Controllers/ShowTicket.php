@@ -136,10 +136,7 @@ class ShowTicket extends Controller
         $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'));
         $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
-        $response = $this->tpl->displayPartial('tickets.showTicketModal');
-        $response->headers->set('HX-Trigger', 'ticketUpdate');
-
-        return $response;
+        return $this->tpl->displayPartial('tickets.showTicketModal');
     }
 
     /**
@@ -178,10 +175,7 @@ class ShowTicket extends Controller
                 $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');
             }
 
-            $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
-            $response->headers->set('HX-Trigger', 'ticketUpdate');
-
-            return $response;
+            return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
         }
 
         // Upload File
@@ -244,16 +238,10 @@ class ShowTicket extends Controller
             }
 
             if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
-                $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'?closeModal=1');
-                $response->headers->set('HX-Trigger', 'ticketUpdate');
-
-                return $response;
+                return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'?closeModal=1');
             }
         }
 
-        $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.''.$tab);
-        $response->headers->set('HX-Trigger', 'ticketUpdate');
-
-        return $response;
+        return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.''.$tab);
     }
 }
