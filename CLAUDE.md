@@ -52,11 +52,10 @@ make clean build
 make run-dev
 ```
 
-This starts a development server on port 8090 with:
-- Leantime app: http://localhost:8090
-- MailDev (for email testing): http://localhost:8081
-- phpMyAdmin: http://localhost:8082 (auth: leantime/leantime)
-- S3Ninja (for S3 testing): http://localhost:8083
+This starts the containers in `.dev/docker-compose.yaml`:
+- Leantime app: http://localhost:5080 (https: 5443)
+- MySQL 8.4 (`leantime-db`; database, user and password `leantime`), MailDev (web UI on container port 8081), Redis and S3Ninja. These publish random host ports: `docker compose --file .dev/docker-compose.yaml port maildev 8081` shows MailDev's. There is no phpMyAdmin.
+- The test compose file (`make unit-test` / `make acceptance-test`) serves Leantime on port 8002.
 
 ### Manual Local Development
 ```bash
@@ -68,7 +67,7 @@ make build-dev
 
 # Point your web server to the public/ directory
 # Create MySQL database
-# Copy config/.env.sample to config/.env and configure your database
+# Copy config/sample.env to config/.env and configure your database
 # Navigate to <localdomain>/install
 ```
 
@@ -159,7 +158,7 @@ Common commands:
   - `Plugins/` - Extension plugins (git submodule to private repo)
   - `Language/` - Internationalization files (INI-based)
 - `bootstrap/` - Application bootstrap files
-- `config/` - Configuration files (.env, .env.sample)
+- `config/` - Configuration files (.env, sample.env)
 - `public/` - Web root directory
   - `assets/` - Static assets (CSS, JS, images, fonts)
   - `dist/` - Built/compiled assets (output of `npx mix`)
@@ -234,7 +233,7 @@ System Administrators can configure Leantime using .env files or Environment var
 
 **Important**: The list of ServiceProviders is stored in `laravelConfig.php`. ALL Laravel config (database, cache, session, auth, etc.) lives in this single file, not in separate `config/*.php` files. Standard `artisan publish` will NOT work correctly.
 
-User-editable variables should be added to `config/.env.sample` and exposed via `LEAN_*` prefix.
+User-editable variables should be added to `config/sample.env` and exposed via `LEAN_*` prefix.
 
 #### Data Layer Architecture (To Be Refactored)
 
