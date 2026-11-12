@@ -172,6 +172,37 @@ class CommentsServiceTest extends TestCase
     }
 
     /**
+     * "My work" decides on the task's people, so a task comment names them apart from the
+     * comment (whose own userId is the commenter). The entity push uses stays as it was.
+     */
+    public function test_add_comment_names_the_tasks_people_as_involved(): void
+    {
+        session(['userdata.id' => self::SESSION_USER, 'userdata.name' => 'Tester', 'currentProject' => 9]);
+
+        $notified = null;
+        $repo = $this->make(CommentRepository::class, [
+            'resolveModuleProjectId' => fn () => 9,
+            'addComment' => fn () => '505',
+        ]);
+        $projects = $this->make(ProjectService::class, [
+            'notifyProjectUsers' => function ($notification) use (&$notified) {
+                $notified = $notification;
+            },
+        ]);
+        $host = new \Leantime\Domain\Tickets\Models\Tickets(['id' => 31, 'projectId' => 9, 'type' => 'task', 'headline' => 'H', 'editorId' => '7', 'userId' => '8']);
+        $host->collaborators = [7, 11, '12'];
+        $this->app->instance(\Leantime\Domain\Tickets\Services\Tickets::class, $this->make(\Leantime\Domain\Tickets\Services\Tickets::class, [
+            'getTicket' => fn () => $host,
+        ]));
+
+        $this->makeService($this->noopReactions(), $repo, null, $projects)->addComment(['text' => 'hi'], 'ticket', 31);
+
+        $this->assertSame([7, 8, 11, 12], $notified->involvedUserIds);
+        $this->assertSame(self::SESSION_USER, $notified->entity['userId'], 'The entity still names the commenter');
+        $this->assertSame(31, $notified->entity['moduleId']);
+    }
+
+    /**
      * @return array<string, array{string, string}>
      */
     public static function ticketCommentHostProvider(): array
