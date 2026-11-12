@@ -397,7 +397,7 @@ leantime.rpc.{domain}.{servicename}.{methodname}     # 5 segments
 
 **Authentication**: Two types:
 1. **Leantime API Keys** (`x-api-key` header): Format `lt_{user}_{key}`, acts as service account
-2. **Laravel Sanctum** (Bearer tokens): Personal access tokens (requires AdvancedAuth plugin)
+2. **Laravel Sanctum** (Bearer tokens): Personal access tokens, created by each user in core (My Profile → Personal Access Tokens, `Auth/Hxcontrollers/PersonalTokens.php`)
 
 **Deprecated API controllers**: The `app/Domain/Api/Controllers/` directory contains legacy REST-like controllers (Tickets.php, Projects.php, etc.) that return JSON. These are deprecated -- all new JS API calls should go through the JSON-RPC endpoint.
 
@@ -551,10 +551,11 @@ array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
 
 System admins and users can create API Keys. There are 2 types of keys:
 1. Leantime API Keys which act as service accounts and are handled like a regular user. Format: `lt_{user}_{key}`. The username is the api key name and password is the api-secret
-2. Personal Access Tokens can be created by users (if the AdvancedAuth plugin is installed). Tokens can be used to authenticate the user owning them. We use Laravel Sanctum for this.
+2. Personal Access Tokens can be created by any user in core (My Profile → Personal Access Tokens); no plugin is needed. Tokens authenticate the user owning them. We use Laravel Sanctum for this.
 
 **Additional Auth providers**
 Leantime supports LDAP and OIDC authentication natively but can also integrate additional providers via Laravel Socialite (Authentik, Auth0, Gitea, GitHub, GitLab, Google, Keycloak, Microsoft, Okta, PropelAuth, EduID, SAML2).
+These additional providers are switched on by the AdvancedAuth plugin. Signing in from the Leantime mobile app also needs AdvancedAuth: `Oidc/Controllers/Mobile.php` returns 404 without it.
 
 #### Project Modules (per-project feature switches)
 Admins switch features on or off per project (Project settings → Modules). It is a blanket switch, not role-based: off means off for everyone in that project, and no role can grant past it. Content is never deleted.
