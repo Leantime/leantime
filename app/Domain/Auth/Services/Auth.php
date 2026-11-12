@@ -504,6 +504,40 @@ class Auth implements Authenticatable
     }
 
     /**
+     * getPendingInviteToken - the invite token of an account whose owner chose a password in the
+     * first onboarding step but left before the last one, so the account is still pending.
+     *
+     * Such an account can't sign in (only active accounts can), and before this the login page
+     * answered "Username or password incorrect!" although both were right. The token is handed
+     * out only when the password matches the one the person chose, so it never reveals more than
+     * the account owner already knows.
+     *
+     * @internal Not exposed over JSON-RPC; only the login flow resumes an onboarding.
+     *
+     * @param  string  $username  the email address entered on the login page
+     * @param  string  $password  the password entered on the login page
+     * @return string|null the token for /auth/userInvite/{token}, or null when there is no such account
+     */
+    public function getPendingInviteToken(string $username, string $password): ?string
+    {
+        if ($username === '' || $password === '') {
+            return null;
+        }
+
+        $user = $this->userRepo->getUserByEmail($username, 'i');
+
+        if ($user === false || empty($user['password']) || empty($user['pwReset'])) {
+            return null;
+        }
+
+        if (! password_verify($password, (string) $user['password'])) {
+            return null;
+        }
+
+        return (string) $user['pwReset'];
+    }
+
+    /**
      * generateLinkAndSendEmail - generates a password reset link and emails it to the user
      *
      * The link is built from the trusted application URL ({@see TrustedAppUrl}), never from the

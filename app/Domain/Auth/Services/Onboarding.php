@@ -353,7 +353,8 @@ class Onboarding
     /**
      * completeOnboarding - final onboarding step: activates the user, dispatches the
      * onboarding-finished and signup-success events, then logs the user in using the
-     * temporary password captured during account setup.
+     * temporary password captured during account setup. Changes nothing and returns false when
+     * this session doesn't hold that password ({@see self::canCompleteOnboarding()}).
      *
      * @param  array  $userInvite  the invited user record
      * @return bool true if the user was successfully logged in, false otherwise
@@ -366,6 +367,13 @@ class Onboarding
      */
     public function completeOnboarding(array $userInvite): bool
     {
+        // Without the password from this session nobody can be logged in, and the sign-up
+        // listeners (the default project) need a logged-in user. Change nothing; the controller
+        // sends the person to the login page, which resumes the onboarding (resumeOnboarding()).
+        if (! $this->canCompleteOnboarding($userInvite)) {
+            return false;
+        }
+
         $userInvite['status'] = 'A';
         $userInvite['password'] = '';
         $userInvite['user'] = $userInvite['username'];
@@ -383,5 +391,55 @@ class Onboarding
         UserRegistered::dispatch(userId: (int) $userInvite['id']);
 
         return $loggedIn;
+    }
+
+    /**
+     * canCompleteOnboarding - whether this session holds the password the invited user chose in
+     * step 1, which the last step needs to log them in.
+     *
+     * It doesn't when the steps were split across browser sessions: the person set a password,
+     * left, and came back through the invite link later.
+     *
+     * @param  array  $userInvite  the invited user record (resolved from the invite link)
+     *
+     * @internal Not exposed over JSON-RPC. The $user/$userInvite record is resolved from the
+     *           invite link by the UserInvite controller; an authenticated caller must never
+     *           be able to supply one (it carries the id, role and status that get persisted).
+     */
+    public function canCompleteOnboarding(array $userInvite): bool
+    {
+        $tempPassword = session('tempPassword');
+
+        return is_string($tempPassword)
+            && $tempPassword !== ''
+            && ! empty($userInvite['password'])
+            && password_verify($tempPassword, (string) $userInvite['password']);
+    }
+
+    /**
+     * resumeOnboarding - lets someone who set their password in step 1 but left before the last
+     * step pick the onboarding up again from the login page.
+     *
+     * Their account is still pending, so a normal login fails. When the password matches the one
+     * they chose, it is kept for the last step (as saveAccount() does) and the invite token is
+     * returned so the login can send them back into the onboarding.
+     *
+     * @param  string  $username  the email address entered on the login page
+     * @param  string  $password  the password entered on the login page
+     * @return string|null the token for /auth/userInvite/{token}, or null when there is nothing to resume
+     *
+     * @internal Not exposed over JSON-RPC; only the Login controller resumes an onboarding.
+     */
+    public function resumeOnboarding(string $username, string $password): ?string
+    {
+        $token = $this->authService->getPendingInviteToken($username, $password);
+
+        if ($token === null) {
+            return null;
+        }
+
+        session(['tempPassword' => $password]);
+
+        return $token;
     }
 }
