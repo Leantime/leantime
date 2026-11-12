@@ -13,7 +13,7 @@
         <input type="hidden" name="step" value="5"/>
         <input type="hidden" name="complete" value="1"/>
 
-        {{  $tpl->displayInlineNotification() }}
+        {!! $tpl->displayInlineNotification() !!}
 
         <div class="row">
             <div class="col-md-6">

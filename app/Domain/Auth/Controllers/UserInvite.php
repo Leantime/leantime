@@ -154,6 +154,17 @@ class UserInvite extends Controller
 
         if (isset($_POST['step']) && $_POST['step'] == 5) {
 
+            // The password from step 1 isn't in this session (the steps were finished in another
+            // browser session). Logging in with it resumes the onboarding (see Login::post()).
+            if (! $this->onboardingService->canCompleteOnboarding($userInvite)) {
+                $this->tpl->setNotification(
+                    $this->language->__('notifications.log_in_to_finish_setup'),
+                    'info'
+                );
+
+                return FrontcontrollerCore::redirect(BASE_URL.'/auth/login');
+            }
+
             $this->tpl->setNotification(
                 $this->language->__('notifications.you_are_active'),
                 'success',
