@@ -654,6 +654,11 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     private function isUserInvolvedInNotification(int $userId, Notification $notification): bool
     {
+        // People the notification names apart from its entity (e.g. a ticket comment's ticket people).
+        if (in_array($userId, array_map('intval', $notification->involvedUserIds), true)) {
+            return true;
+        }
+
         $entity = $notification->entity;
 
         if (is_array($entity)) {

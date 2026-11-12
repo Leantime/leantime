@@ -79,6 +79,30 @@ class Comments extends BaseService
     }
 
     /**
+     * The people a ticket comment concerns besides the commenter: the ticket's assignee, creator
+     * and collaborators. "My work" checks these, so a comment on your task reaches you.
+     *
+     * @param  string  $module  The comment module.
+     * @param  mixed  $entity  The loaded host entity.
+     * @return array<int>
+     */
+    private function ticketPeople(string $module, mixed $entity): array
+    {
+        if ($module !== 'ticket' || ! is_object($entity)) {
+            return [];
+        }
+
+        $ids = [$entity->editorId ?? null, $entity->userId ?? null];
+        foreach (is_array($entity->collaborators ?? null) ? $entity->collaborators : [] as $collaborator) {
+            $ids[] = $collaborator;
+        }
+
+        $ids = array_map('intval', array_filter($ids, fn ($id) => is_scalar($id) && is_numeric($id)));
+
+        return array_values(array_unique(array_filter($ids, fn ($id) => $id > 0)));
+    }
+
+    /**
      * Get the comments of an entity.
      *
      * Accepts the same module aliases as addComment() (e.g. "tickets"), so a comment written
@@ -363,6 +387,7 @@ class Comments extends BaseService
                 ];
 
                 $notification->entity = $mapper;
+                $notification->involvedUserIds = $this->ticketPeople($module, $entity);
                 $notification->module = 'comments';
                 $notification->action = 'commented';
                 $notification->projectId = $notificationProjectId;

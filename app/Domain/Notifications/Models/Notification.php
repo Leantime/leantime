@@ -89,6 +89,16 @@ class Notification
     public string $action = '';
 
     /**
+     * Users the notification is about beyond what the entity itself names, for the "My work"
+     * level. A comment's entity is the comment, so a ticket comment lists the ticket's
+     * assignee, creator and collaborators here. Kept apart from the entity so the payload
+     * channels send stays the same.
+     *
+     * @var array<int>
+     */
+    public array $involvedUserIds = [];
+
+    /**
      * Maps a notification module value to its user-facing category key.
      *
      * @param  string  $module  The module value from the notification (e.g. 'tickets', 'comments', 'goalcanvas').

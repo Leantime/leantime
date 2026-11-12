@@ -172,7 +172,7 @@ class ProjectsServiceTest extends TestCase
      * @param  array<int>  $collaborators  Collaborators on the to-do the notification is about.
      * @return array{emailRecipients: array|null, emailEntity: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null, order: array<int, string>}
      */
-    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, array $collaborators = []): array
+    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, array $collaborators = [], ?\Closure $adjustNotification = null): array
     {
         $seen = ['emailRecipients' => null, 'emailEntity' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null, 'order' => []];
         $this->queueTable = [];
@@ -269,6 +269,9 @@ class ProjectsServiceTest extends TestCase
         $notification->message = 'Ada updated "Ship it"';
         $notification->url = ['url' => 'https://leantime.example.com/tickets/showTicket/42', 'text' => 'Open'];
         $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review', 'collaborators' => $collaborators];
+        if ($adjustNotification) {
+            $adjustNotification($notification);
+        }
 
         $this->makeService(
             projectRepo: $projectRepo,
@@ -517,6 +520,47 @@ class ProjectsServiceTest extends TestCase
         $seen = $this->runNotifyProjectUsers([PushPreferences::settingKey(1) => '1']);
 
         $this->assertNotContains(1, $seen['pushRecipients']);
+    }
+
+    /**
+     * A comment's entity is the comment, so "My work" can only see the task's people through
+     * involvedUserIds. Without them a comment on your task reached nobody on "My work".
+     */
+    public function test_my_work_reaches_the_people_a_comment_names_as_involved(): void
+    {
+        $myWork = [];
+        foreach ([2, 3, 4, 5] as $userId) {
+            $myWork["usersettings.{$userId}.projectNotificationLevels"] = json_encode([5 => 'my_work']);
+        }
+        $asTaskComment = function (array $involved) {
+            return function (Notification $notification) use ($involved) {
+                $notification->module = 'comments';
+                $notification->action = 'commented';
+                $notification->entity = ['id' => 9, 'text' => 'Looks good', 'userId' => 1, 'moduleId' => 42, 'module' => 'ticket'];
+                $notification->involvedUserIds = $involved;
+            };
+        };
+
+        $seen = $this->runNotifyProjectUsers($myWork, adjustNotification: $asTaskComment([]));
+        $this->assertSame([], $seen['emailRecipients'], 'Without the task people, nobody on My work is involved');
+
+        $seen = $this->runNotifyProjectUsers($myWork, adjustNotification: $asTaskComment([3, 5]));
+        $this->assertSame([3, 5], $seen['emailRecipients']);
+        $this->assertSame([3, 5], $seen['pushRecipients']);
+    }
+
+    public function test_involvement_never_gets_past_a_muted_project(): void
+    {
+        $seen = $this->runNotifyProjectUsers([
+            'usersettings.3.projectNotificationLevels' => json_encode([5 => 'my_work']),
+            'usersettings.4.projectNotificationLevels' => json_encode([5 => 'muted']),
+        ], adjustNotification: function (Notification $notification) {
+            $notification->module = 'comments';
+            $notification->entity = ['id' => 9, 'text' => 'Looks good', 'userId' => 1, 'moduleId' => 42, 'module' => 'ticket'];
+            $notification->involvedUserIds = [3, 4];
+        });
+
+        $this->assertSame([2, 3, 5], $seen['emailRecipients']);
     }
 
     public function test_get_project_hub_data_builds_unique_client_map_and_returns_all_projects_when_no_filter(): void

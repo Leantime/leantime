@@ -2580,7 +2580,15 @@ class Tickets extends BaseService
         if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], strip_tags($values['headline']));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
-            $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($values['headline']));
+            [$dueDateChanged, $newDueDate] = $this->dueDateChange($currentTicket, $values);
+            $message = $this->ticketUpdateMessage(
+                (string) $values['headline'],
+                (int) $values['projectId'],
+                $currentTicket->status,
+                array_key_exists('status', $submittedValues) ? $values['status'] : null,
+                $dueDateChanged,
+                $newDueDate
+            );
 
             $notification = new NotificationModel;
             $notification->url = [
@@ -2885,6 +2893,93 @@ class Tickets extends BaseService
     private function normalizedDbDateTime(mixed $value): ?string
     {
         return $this->parseDbDateTimeOrNull($value)?->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * Whether a write changed the due date, and the new one (normalised DB format, null when it
+     * was removed). Only a dateToFinish present in $written counts.
+     *
+     * @param  TicketModel  $ticketBefore  The ticket as read before the write.
+     * @param  array<string, mixed>  $written  The field => value pairs that were written (DB format).
+     * @return array{0: bool, 1: string|null} [changed, new due date]
+     */
+    private function dueDateChange(TicketModel $ticketBefore, array $written): array
+    {
+        if (! array_key_exists('dateToFinish', $written)) {
+            return [false, null];
+        }
+
+        $previous = $this->normalizedDbDateTime($ticketBefore->dateToFinish);
+        $new = $this->normalizedDbDateTime($written['dateToFinish']);
+
+        return [$previous !== $new, $new];
+    }
+
+    /**
+     * The notification line for a ticket write. Says what changed when it is something people
+     * act on: "Sam moved 'X' to Approved" for a status change, "Sam changed the due date of 'X'
+     * to <date>" for a due date. Anything else, or a status whose label can't be found, keeps
+     * the generic "Sam updated the To-Do: 'X'". A status change wins when both changed.
+     *
+     * The due date is shown in the author's timezone and date format: the line is built once
+     * for every recipient, so it can't follow each recipient's settings.
+     *
+     * @param  string  $headline  The ticket headline.
+     * @param  int  $projectId  The ticket's project after the write (status ids are per project).
+     * @param  mixed  $previousStatus  The status before the write.
+     * @param  mixed  $newStatus  The status after the write, or null when the write didn't set one.
+     * @param  bool  $dueDateChanged  Whether the due date changed.
+     * @param  string|null  $newDueDate  The new due date (DB format, UTC), null when removed.
+     */
+    private function ticketUpdateMessage(string $headline, int $projectId, mixed $previousStatus = null, mixed $newStatus = null, bool $dueDateChanged = false, ?string $newDueDate = null): string
+    {
+        $actor = (string) session('userdata.name');
+        $headline = strip_tags($headline);
+
+        if ($newStatus !== null && $newStatus !== '' && (string) $newStatus !== (string) $previousStatus) {
+            $label = $this->statusLabelName($projectId, $newStatus);
+            if ($label !== null) {
+                return sprintf($this->language->__('email_notifications.todo_status_message'), $actor, $headline, $label);
+            }
+        }
+
+        if ($dueDateChanged) {
+            if ($newDueDate === null) {
+                return sprintf($this->language->__('email_notifications.todo_due_date_removed_message'), $actor, $headline);
+            }
+
+            try {
+                $dueDate = dtHelper()->parseDbDateTime($newDueDate)->formatDateForUser();
+            } catch (\Throwable) {
+                $dueDate = '';
+            }
+
+            if ($dueDate !== '') {
+                return sprintf($this->language->__('email_notifications.todo_due_date_message'), $actor, $headline, $dueDate);
+            }
+        }
+
+        return sprintf($this->language->__('email_notifications.todo_update_message'), $actor, $headline);
+    }
+
+    /**
+     * The display name of a project's status, or null when the project has no such status.
+     */
+    private function statusLabelName(int $projectId, mixed $status): ?string
+    {
+        if (! is_numeric($status)) {
+            return null;
+        }
+
+        try {
+            $labels = $this->ticketRepository->getStateLabels($projectId);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        $name = $labels[(int) $status]['name'] ?? null;
+
+        return is_string($name) && trim(strip_tags($name)) !== '' ? trim(strip_tags($name)) : null;
     }
 
     /**
@@ -3933,8 +4028,11 @@ class Tickets extends BaseService
             $this->dispatchTicketChangeEvents((int) $id, $ticketBefore, $params);
         }
 
+        $statusSet = isset($params['status']);
+        [$dueDateChanged, $newDueDate] = $return ? $this->dueDateChange($ticketBefore, $params) : [false, null];
+
         // Todo: create events and move notification logic to notification module
-        if (isset($params['status'])) {
+        if ($statusSet) {
             $this->dispatchTicketCompletedOnTransition(
                 (int) $id,
                 $previousStatus,
@@ -3943,17 +4041,31 @@ class Tickets extends BaseService
                 (int) ($params['projectId'] ?? $previousProjectId),
                 $ticketBefore
             );
+        }
 
+        // A status write notifies as before; a due-date change now does too (it used to reach nobody).
+        if ($statusSet || $dueDateChanged) {
             $ticket = $this->getTicket($id);
             if (! $ticket) {
                 return true;
             }
 
-            $this->stopTimerWhenTicketIsDone((int) $id, $params['status'], (int) $ticket->projectId);
+            if ($statusSet) {
+                $this->stopTimerWhenTicketIsDone((int) $id, $params['status'], (int) $ticket->projectId);
+            }
+
+            $statusChanged = $statusSet && (string) $params['status'] !== (string) $previousStatus;
 
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-            $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
+            $message = $this->ticketUpdateMessage(
+                (string) $ticket->headline,
+                (int) $ticket->projectId,
+                $previousStatus,
+                $statusSet ? $params['status'] : null,
+                $dueDateChanged,
+                $newDueDate
+            );
 
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
@@ -3962,7 +4074,7 @@ class Tickets extends BaseService
             ];
             $notification->entity = $ticket;
             $notification->module = 'tickets';
-            $notification->action = 'status_changed';
+            $notification->action = $statusChanged || ! $dueDateChanged ? 'status_changed' : 'due_date_changed';
             $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id');
@@ -4926,7 +5038,13 @@ class Tickets extends BaseService
             if ($ticket) {
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
+                // Only a card whose column changed says where it went; a re-sort keeps the generic line.
+                $message = $this->ticketUpdateMessage(
+                    (string) $ticket->headline,
+                    (int) $ticket->projectId,
+                    $previousStatusByTicket[(int) $id] ?? null,
+                    $newStatusByTicket[(int) $id] ?? null
+                );
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = [
