@@ -29,10 +29,12 @@ The workflow moves the `cloud-production` branch to that commit, asks Coolify
 to deploy it and waits until app1 and app2 both report finished. Coolify builds
 on app1 (~7 min) and then rolls the image to app2 (~30 s).
 
-`cloud-production` is the last commit *requested*. If that deploy failed,
-production still runs the commit before it: Coolify's Deployments tab, or the
-"Running before this deploy" line in a run summary, shows what is live.
-That line is also the rollback target. Only commits that
+`cloud-production` is the last commit *requested*, not necessarily what runs.
+A failed run can leave app1 and app2 on different commits (app1 updated, app2
+not), so check both in Coolify's Deployments tab. To recover, run the workflow
+again: with a fixed commit, or with the "Last complete rollout" commit from the
+run summary (the newest commit that finished on every server). Every run
+deploys to both servers. Only commits that
 contain `.deploy/Dockerfile` can be deployed (the workflow refuses older ones),
 so the earliest rollback target is the commit that added this folder.
 

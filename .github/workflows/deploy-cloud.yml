@@ -111,13 +111,20 @@ jobs:
             echo "::warning::$target_sha is not on master. Deploying it anyway, as requested."
           fi
 
-          # What production runs now = Coolify's last finished build. Not the branch:
-          # the branch already points at the next commit when a deploy fails.
+          # Rollback target = the newest deploy that finished on app1 AND on every
+          # additional server. Not the branch: it already points at the next commit
+          # when a deploy fails, and a half-finished rollout isn't a safe target.
           previous_sha=$(curl -sS --fail-with-body -H "Authorization: Bearer $COOLIFY_TOKEN" \
-              "$COOLIFY_URL/api/v1/deployments/applications/$COOLIFY_APP_UUID?take=20" \
-            | jq -r '[.deployments[] | select(.status == "finished" and .parent_deployment_uuid == null)][0].commit // "unknown"' \
+              "$COOLIFY_URL/api/v1/deployments/applications/$COOLIFY_APP_UUID?take=30" \
+            | jq -r --argjson servers "$ADDITIONAL_SERVERS" '
+                .deployments as $all
+                | [ $all[]
+                    | select(.parent_deployment_uuid == null and .status == "finished")
+                    | . as $parent
+                    | select(([ $all[] | select(.parent_deployment_uuid == $parent.deployment_uuid and .status == "finished") ] | length) >= $servers)
+                  ][0].commit // "unknown"' \
             || echo "unknown")
-          echo "Running now:         $previous_sha"
+          echo "Last complete rollout: $previous_sha"
           echo "Deploying:           $target_sha ($(git log -1 --format=%s "$target_sha"))"
 
           # Force: a rollback moves the branch backwards
@@ -221,9 +228,9 @@ jobs:
             echo "|---|---|"
             echo "| Requested | \`$REQUESTED_REF\` |"
             echo "| Commit | \`$TARGET_SHA\` |"
-            echo "| Running before this deploy | \`$PREVIOUS_SHA\` |"
+            echo "| Last complete rollout before this run | \`$PREVIOUS_SHA\` |"
             echo "| Coolify deployment | \`$DEPLOYMENT_UUID\` |"
             echo "| Result | $JOB_STATUS |"
             echo ""
-            echo "Rollback: run this workflow again with \`ref\` = the commit that ran before this deploy."
+            echo "Rollback: run this workflow again with \`ref\` = the last complete rollout."
           } >> "$GITHUB_STEP_SUMMARY"
