@@ -21,7 +21,7 @@ Actions → **Deploy Cloud** → Run workflow, or:
 
 ```bash
 gh workflow run deploy-cloud.yml -f ref=master       # latest master
-gh workflow run deploy-cloud.yml -f ref=v3.14.0      # a release
+gh workflow run deploy-cloud.yml -f ref=v3.15.0      # a release (from 3.14.1 on; older tags lack .deploy/)
 gh workflow run deploy-cloud.yml -f ref=<sha>        # rollback / specific commit
 ```
 
@@ -29,8 +29,10 @@ The workflow moves the `cloud-production` branch to that commit, asks Coolify
 to deploy it and waits until app1 and app2 both report finished. Coolify builds
 on app1 (~7 min) and then rolls the image to app2 (~30 s).
 
-`git log origin/cloud-production -1` is what production runs.
-The run summary shows the previous commit for a rollback. Only commits that
+`cloud-production` is the last commit *requested*. If that deploy failed,
+production still runs the commit before it: Coolify's Deployments tab, or the
+"Running before this deploy" line in a run summary, shows what is live.
+That line is also the rollback target. Only commits that
 contain `.deploy/Dockerfile` can be deployed (the workflow refuses older ones),
 so the earliest rollback target is the commit that added this folder.
 

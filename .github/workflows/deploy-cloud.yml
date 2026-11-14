@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'What to deploy: branch, tag (e.g. v3.14.0) or commit SHA'
+        description: 'What to deploy: branch, tag (e.g. v3.15.0) or commit SHA'
         required: true
         default: master
       force_rebuild:
@@ -111,8 +111,13 @@ jobs:
             echo "::warning::$target_sha is not on master. Deploying it anyway, as requested."
           fi
 
-          previous_sha=$(git rev-parse --verify --quiet "origin/$DEPLOY_BRANCH" || echo "none")
-          echo "Previously deployed: $previous_sha"
+          # What production runs now = Coolify's last finished build. Not the branch:
+          # the branch already points at the next commit when a deploy fails.
+          previous_sha=$(curl -sS --fail-with-body -H "Authorization: Bearer $COOLIFY_TOKEN" \
+              "$COOLIFY_URL/api/v1/deployments/applications/$COOLIFY_APP_UUID?take=20" \
+            | jq -r '[.deployments[] | select(.status == "finished" and .parent_deployment_uuid == null)][0].commit // "unknown"' \
+            || echo "unknown")
+          echo "Running now:         $previous_sha"
           echo "Deploying:           $target_sha ($(git log -1 --format=%s "$target_sha"))"
 
           # Force: a rollback moves the branch backwards
@@ -216,9 +221,9 @@ jobs:
             echo "|---|---|"
             echo "| Requested | \`$REQUESTED_REF\` |"
             echo "| Commit | \`$TARGET_SHA\` |"
-            echo "| Previous | \`$PREVIOUS_SHA\` |"
+            echo "| Running before this deploy | \`$PREVIOUS_SHA\` |"
             echo "| Coolify deployment | \`$DEPLOYMENT_UUID\` |"
             echo "| Result | $JOB_STATUS |"
             echo ""
-            echo "Rollback: run this workflow again with \`ref\` = the previous commit."
+            echo "Rollback: run this workflow again with \`ref\` = the commit that ran before this deploy."
           } >> "$GITHUB_STEP_SUMMARY"
