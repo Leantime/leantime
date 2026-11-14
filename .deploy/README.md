@@ -30,7 +30,13 @@ to deploy it and waits until app1 and app2 both report finished. Coolify builds
 on app1 (~7 min) and then rolls the image to app2 (~30 s).
 
 `git log origin/cloud-production -1` is what production runs.
-The run summary shows the previous commit for a rollback.
+The run summary shows the previous commit for a rollback. Only commits that
+contain `.deploy/Dockerfile` can be deployed (the workflow refuses older ones),
+so the earliest rollback target is the commit that added this folder.
+
+`ADDITIONAL_SERVERS` in the workflow is the number of servers besides app1
+(currently 1, app2). The run fails if Coolify doesn't start a rollout on each of
+them, so update it when servers are added to or removed from the Coolify app.
 
 ## Build locally
 

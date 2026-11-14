@@ -34,6 +34,9 @@ permissions:
 env:
   DEPLOY_BRANCH: cloud-production
   EXPECTED_REPOSITORY: Leantime/leantime
+  # Servers besides the build server (app1) that must also roll out: app2.
+  # Change this when servers are added to or removed from the Coolify app.
+  ADDITIONAL_SERVERS: 1
 
 jobs:
   deploy:
@@ -94,6 +97,13 @@ jobs:
             || true)
           if [ -z "$target_sha" ]; then
             echo "::error::Could not resolve '$REQUESTED_REF' to a commit"
+            exit 1
+          fi
+
+          # Coolify builds .deploy/Dockerfile from the branch. Commits from before the
+          # cloud image moved into this repo don't have it and can't be deployed.
+          if ! git cat-file -e "$target_sha:.deploy/Dockerfile" 2>/dev/null; then
+            echo "::error::$target_sha has no .deploy/Dockerfile, so Coolify can't build it. Only commits that contain the cloud image can be deployed or rolled back to."
             exit 1
           fi
 
@@ -164,12 +174,26 @@ jobs:
 
           wait_for "$PARENT_UUID" "first server"
 
-          # Children are queued at the end of the parent's run; give them a moment to appear
-          sleep 15
-          children=$(child_deployments)
-          if [ -z "$children" ]; then
-            echo "No additional-server deployments found (single-server setup?)"
+          if [ "$ADDITIONAL_SERVERS" -eq 0 ]; then
             exit 0
+          fi
+
+          # Children are queued at the end of the parent's run. Wait until every
+          # additional server has one; not finding them means the rollout didn't happen.
+          children=""
+          for attempt in $(seq 1 20); do
+            children=$(child_deployments || true)
+            child_count=$(echo -n "$children" | grep -c . || true)
+            if [ "$child_count" -ge "$ADDITIONAL_SERVERS" ]; then
+              break
+            fi
+            echo "Waiting for additional-server deployments ($child_count of $ADDITIONAL_SERVERS)"
+            sleep 15
+          done
+
+          if [ "$child_count" -lt "$ADDITIONAL_SERVERS" ]; then
+            echo "::error::Expected $ADDITIONAL_SERVERS additional-server deployment(s), Coolify started $child_count. The other servers may still run the old version."
+            exit 1
           fi
 
           echo "$children" | while read -r child_uuid child_status server_name; do
@@ -178,17 +202,23 @@ jobs:
 
       - name: Summary
         if: always()
+        env:
+          REQUESTED_REF: ${{ inputs.ref }}
+          TARGET_SHA: ${{ steps.target.outputs.sha }}
+          PREVIOUS_SHA: ${{ steps.target.outputs.previous_sha }}
+          DEPLOYMENT_UUID: ${{ steps.trigger.outputs.deployment_uuid }}
+          JOB_STATUS: ${{ job.status }}
         run: |
           {
             echo "### Leantime Cloud deploy"
             echo ""
             echo "| | |"
             echo "|---|---|"
-            echo "| Requested | \`${{ inputs.ref }}\` |"
-            echo "| Commit | \`${{ steps.target.outputs.sha }}\` |"
-            echo "| Previous | \`${{ steps.target.outputs.previous_sha }}\` |"
-            echo "| Coolify deployment | \`${{ steps.trigger.outputs.deployment_uuid }}\` |"
-            echo "| Result | ${{ job.status }} |"
+            echo "| Requested | \`$REQUESTED_REF\` |"
+            echo "| Commit | \`$TARGET_SHA\` |"
+            echo "| Previous | \`$PREVIOUS_SHA\` |"
+            echo "| Coolify deployment | \`$DEPLOYMENT_UUID\` |"
+            echo "| Result | $JOB_STATUS |"
             echo ""
             echo "Rollback: run this workflow again with \`ref\` = the previous commit."
           } >> "$GITHUB_STEP_SUMMARY"
