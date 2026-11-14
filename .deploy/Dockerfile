@@ -7,9 +7,9 @@ RUN install-php-extensions pcntl opcache pdo pdo_mysql mysqli intl zip gd exif f
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js using multi-stage approach
-COPY --from=node:18 /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:18 /usr/local/lib/node_modules /usr/local/lib/node_modules
+# Install Node.js using multi-stage approach (same major as the release build on GitHub runners)
+COPY --from=node:20 /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:20 /usr/local/lib/node_modules /usr/local/lib/node_modules
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
     ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 

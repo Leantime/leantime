@@ -70,8 +70,10 @@ jobs:
           configured_branch=$(echo "$app_json" | jq -r '.git_branch')
           echo "Coolify app builds $configured_repository@$configured_branch"
 
-          # Coolify stores either "owner/repo" or a full git URL
-          if ! echo "$configured_repository" | grep -qi "$EXPECTED_REPOSITORY\(\.git\)\?$"; then
+          # Coolify stores "owner/repo" or a full GitHub URL. Anchored on both ends so
+          # a lookalike (e.g. "xLeantime/leantime") doesn't pass.
+          repository_pattern="^(https://github\.com/|git@github\.com:)?${EXPECTED_REPOSITORY}(\.git)?$"
+          if ! echo "$configured_repository" | grep -qiE "$repository_pattern"; then
             echo "::error::Coolify app points at '$configured_repository', expected $EXPECTED_REPOSITORY. Refusing to deploy."
             exit 1
           fi
