@@ -1,3 +1,26 @@
+# Version: 3.15.0
+
+## New Features
+- **Permission-based controls for canvas boards, ideas and docs** - Blueprint boards, goals, ideas and Docs show their create, edit and delete controls by the permissions of the item's own project, so custom roles see only what they can use (#3993)
+- **Permission checks for comments, files, tokens and imports** - Comments, files, personal access tokens, CSV imports and integrations check specific permissions instead of role rank (#3994)
+- **forms.field component** - A new `forms.field` component bundles label, control and help text; user, client, API key and 22 dialog forms use it (#4003, #4004)
+
+## Improvements
+- **Clearer board and table styling** - Kanban headers, lanes, group boxes and table headers now stand off the white card for better contrast (#4063)
+- **Accessible field help** - Help text under a form field is announced by screen readers with its control (#4003)
+- **Cloud deployment** - Leantime Cloud now deploys from this repository through the Deploy Cloud workflow (#4045, #4059)
+
+## Fixes
+- Docs delete confirmations check the notebook's or article's own project, so deleting a doc opened from another project no longer returns 403 (#3993)
+- Update and comment notifications on Blueprint, canvas and goal items go to the item's own project, not to the project that happens to be open (#3993)
+- The idea dialog shows Save only to users who may save; the comment list and the client page show write controls only to users whose posts would be accepted (#3993, #3994)
+
+## Upgrade Notes
+- **No database changes** in this release.
+- **For plugin developers:** the legacy HTMX event aliases are removed (#3996). Listeners for `ticket_update`, `subtasks_update` or `subtasksUpdated` no longer fire. Listen for `lt:tickets:ticket.updated` / `lt:tickets:subtask.updated` instead, or reference the event class (`TicketUpdated::class`, `SubtasksUpdated::class`).
+
+---
+
 # Version: 3.14.0
 
 ## Highlights

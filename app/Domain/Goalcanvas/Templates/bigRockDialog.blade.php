@@ -5,8 +5,9 @@
     action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock['id']) ? $bigRock['id'] : '' }}">
 
     <br />
-    <x-global::forms.label>{{ __('label.goal_description') }}</x-global::forms.label>
-    <x-global::forms.text-input width="full" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" /><br />
+    <x-global::forms.field for="wikiTitle" :label="__('label.goal_description')">
+        <x-global::forms.text-input width="full" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" />
+    </x-global::forms.field>
 
     <br />
     <div class="row">

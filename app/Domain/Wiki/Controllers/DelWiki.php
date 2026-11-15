@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Wiki\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
@@ -13,12 +14,15 @@ class DelWiki extends Controller
 {
     private WikiService $wikiService;
 
+    private PermissionService $permissionService;
+
     /**
      * Initializes dependencies.
      */
-    public function init(WikiService $wikiService): void
+    public function init(WikiService $wikiService, PermissionService $permissionService): void
     {
         $this->wikiService = $wikiService;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -26,9 +30,19 @@ class DelWiki extends Controller
      *
      * @param  array  $params  Request parameters
      */
-    #[RequiresPermission(WikiPermissions::DELETE)]
+    #[RequiresPermission(WikiPermissions::DELETE, entityScoped: true)]
     public function get(array $params): Response
     {
+        $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
+
+        // The Docs screens offer Delete by the notebook's own project; authorize the confirmation there.
+        $wiki = $id > 0 ? $this->wikiService->getWiki($id) : false;
+        if (! $wiki || empty($wiki->projectId)) {
+            return $this->tpl->displayPartial('errors.error404', responseCode: 404);
+        }
+
+        $this->permissionService->authorize(WikiPermissions::DELETE, (int) $wiki->projectId);
+
         return $this->tpl->displayPartial('wiki.delWiki');
     }
 

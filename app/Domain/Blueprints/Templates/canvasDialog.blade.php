@@ -18,6 +18,9 @@
     }
 
     $boxMeta = $canvasTypes[$canvasItem['box']] ?? ['icon' => '', 'title' => ''];
+
+    // Saving a new item needs blueprints.create, an existing one blueprints.edit (as the services check).
+    $itemSavePermission = ($id ?? '') === '' ? 'blueprints.create' : 'blueprints.edit';
 @endphp
 
 <script type="text/javascript">
@@ -34,9 +37,11 @@
     <x-global::actions.modal-header>
     <x-slot:title><i class="fas {{ $boxMeta['icon'] }}"></i> {{ $boxMeta['title'] }}</x-slot:title>
     @if ($id != '')
+    @can('blueprints.delete', $canvasItem['projectId'] ?? null)
         <x-slot:actions>
-            <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
+            <li><a href="#/blueprints/{{ $canvasSlug }}/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete') !!}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
     {!! $tpl->displayNotification() !!}
@@ -48,70 +53,76 @@
         <input type="hidden" value="{{ $id }}" name="itemId" id="itemId"/>
 
         {{-- The item's `description` column is its title; the long text is the data field below. --}}
-        <x-global::forms.label for="canvasItemTitle">{!! __('label.title') !!}</x-global::forms.label>
-        <x-global::forms.text-input name="description" id="canvasItemTitle" value="{{ $canvasItem['description'] }}" width="full" /><br />
+        <x-global::forms.field for="canvasItemTitle" :label="__('label.title')">
+            <x-global::forms.text-input name="description" id="canvasItemTitle" value="{{ $canvasItem['description'] }}" width="full" />
+        </x-global::forms.field>
 
         @if(! empty($statusLabels))
-            <x-global::forms.label>{!! __('label.status') !!}</x-global::forms.label>
-            <x-global::forms.select name="status" style="width: 50%" id="statusCanvas" enhanced :search="false">
-                @foreach($statusLabels as $key => $data)
-                    @if($data['active'])
-                        <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
-                    @endif
-                @endforeach
-            </x-global::forms.select><br />
+            <x-global::forms.field for="statusCanvas" :label="__('label.status')">
+                <x-global::forms.select name="status" style="width: 50%" id="statusCanvas" enhanced :search="false">
+                    @foreach($statusLabels as $key => $data)
+                        @if($data['active'])
+                            <x-global::forms.select.option :value="$key" :selected="$canvasItem['status'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
+                        @endif
+                    @endforeach
+                </x-global::forms.select>
+            </x-global::forms.field>
         @else
             <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
         @endif
 
         @if(! empty($relatesLabels))
-            <x-global::forms.label>{!! __('label.relates') !!}</x-global::forms.label>
-            <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas" enhanced :search="false">
-                @foreach($relatesLabels as $key => $data)
-                    @if($data['active'])
-                        <x-global::forms.select.option :value="$key" :selected="$canvasItem['relates'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
-                    @endif
-                @endforeach
-            </x-global::forms.select><br />
+            <x-global::forms.field for="relatesCanvas" :label="__('label.relates')">
+                <x-global::forms.select name="relates" style="width: 50%" id="relatesCanvas" enhanced :search="false">
+                    @foreach($relatesLabels as $key => $data)
+                        @if($data['active'])
+                            <x-global::forms.select.option :value="$key" :selected="$canvasItem['relates'] == $key" icon="fas {{ $data['icon'] }}">{{ $data['title'] }}</x-global::forms.select.option>
+                        @endif
+                    @endforeach
+                </x-global::forms.select>
+            </x-global::forms.field>
         @else
             <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
         @endif
 
         @if($dataLabels[1]['active'])
-            <x-global::forms.label>{!! __($dataLabels[1]['title']) !!}</x-global::forms.label>
-            @if(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int')
-                <x-global::forms.text-input type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}"/><br />
-            @elseif(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string')
-                <x-global::forms.text-input name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%"/><br />
-            @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
-            @endif
+            <x-global::forms.field for="canvasData1" :label="__($dataLabels[1]['title'])">
+                @if(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int')
+                    <x-global::forms.text-input id="canvasData1" type="number" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}"/>
+                @elseif(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string')
+                    <x-global::forms.text-input id="canvasData1" name="{{ $dataLabels[1]['field'] }}" value="{{ $canvasItem[$dataLabels[1]['field']] }}" style="width:100%"/>
+                @else
+                    <textarea id="canvasData1" style="width:100%" rows="3" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea>
+                @endif
+            </x-global::forms.field>
         @else
             <input type="hidden" name="{{ $dataLabels[1]['field'] }}" value="" />
         @endif
 
         @if($dataLabels[2]['active'])
-            <x-global::forms.label>{!! __($dataLabels[2]['title']) !!}</x-global::forms.label>
-            @if(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int')
-                <x-global::forms.text-input type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}"/><br />
-            @elseif(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string')
-                <x-global::forms.text-input name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%"/><br />
-            @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
-            @endif
+            <x-global::forms.field for="canvasData2" :label="__($dataLabels[2]['title'])">
+                @if(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int')
+                    <x-global::forms.text-input id="canvasData2" type="number" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}"/>
+                @elseif(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string')
+                    <x-global::forms.text-input id="canvasData2" name="{{ $dataLabels[2]['field'] }}" value="{{ $canvasItem[$dataLabels[2]['field']] }}" style="width:100%"/>
+                @else
+                    <textarea id="canvasData2" style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea>
+                @endif
+            </x-global::forms.field>
         @else
             <input type="hidden" name="{{ $dataLabels[2]['field'] }}" value="" />
         @endif
 
         @if($dataLabels[3]['active'])
-            <x-global::forms.label>{!! __($dataLabels[3]['title']) !!}</x-global::forms.label>
-            @if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int')
-                <x-global::forms.text-input type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/><br />
-            @elseif(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string')
-                <x-global::forms.text-input name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/><br />
-            @else
-                <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea><br />
-            @endif
+            <x-global::forms.field for="canvasData3" :label="__($dataLabels[3]['title'])">
+                @if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int')
+                    <x-global::forms.text-input id="canvasData3" type="number" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/>
+                @elseif(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string')
+                    <x-global::forms.text-input id="canvasData3" name="{{ $dataLabels[3]['field'] }}" value="{{ $canvasItem[$dataLabels[3]['field']] }}"/>
+                @else
+                    <textarea id="canvasData3" style="width:100%" rows="3" cols="10" name="{{ $dataLabels[3]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[3]['field']] }}</textarea>
+                @endif
+            </x-global::forms.field>
         @else
             <input type="hidden" name="{{ $dataLabels[3]['field'] }}" value="" />
         @endif
@@ -120,10 +131,10 @@
         <input type="hidden" name="changeItem" value="1" />
 
 
-        @if($login::userIsAtLeast($roles::$editor))
+        @can($itemSavePermission, $canvasItem['projectId'] ?? null)
             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="primaryCanvasSubmitButton" />
             <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.blueprintsController.setCloseModal();">{!! __('buttons.save_and_close') !!}</x-global::forms.button>
-        @endif
+        @endcan
 
         @if($id !== '')
             <br /><br />
@@ -134,14 +145,16 @@
                     <h4>{!! __('headlines.no_milestone_link') !!}</h4>
 
                     <div class="row" id="milestoneSelectors">
-                        @if($login::userIsAtLeast($roles::$editor))
+                        @can('blueprints.edit', $canvasItem['projectId'] ?? null)
                             <div class="col-md-12">
-                                <a href="javascript:void(0);" onclick="leantime.blueprintsController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
+                                @can('tickets.create', $canvasItem['projectId'] ?? null)
+                                    <a href="javascript:void(0);" onclick="leantime.blueprintsController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
+                                @endcan
                                 @if(count($milestones) > 0)
-                                    | <a href="javascript:void(0);" onclick="leantime.blueprintsController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
+                                    @can('tickets.create', $canvasItem['projectId'] ?? null) | @endcan<a href="javascript:void(0);" onclick="leantime.blueprintsController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
                                 @endif
                             </div>
-                        @endif
+                        @endcan
                     </div>
                     <div class="row" id="newMilestone" style="display:none;">
                         <div class="col-md-12">
@@ -188,7 +201,7 @@
         <br />
         <input type="hidden" name="comment" value="1" />
         <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
-        @include('comments::submodules.generalComment', ['formUrl' => '/blueprints/' . $canvasSlug . '/editCanvasItem/' . $id])
+        @include('comments::submodules.generalComment', ['formUrl' => '/blueprints/' . $canvasSlug . '/editCanvasItem/' . $id, 'commentProjectId' => $canvasItem['projectId'] ?? null])
     @endif
 </div>
 
@@ -201,13 +214,13 @@
             leantime.tiptapController.initSimpleEditor();
         }
 
-        @if(! $login::userIsAtLeast($roles::$editor))
+        @cannot($itemSavePermission, $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly(".nyroModalCont");
-        @endif
+        @endcannot
 
-        @if($login::userHasRole([$roles::$commenter]))
+        @cannot($itemSavePermission, $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
             leantime.commentsController.enableCommenterForms();
-        @endif
+        @endcan @endcannot
 
     })
 </script>

@@ -1197,6 +1197,25 @@ class Projects implements StoresProjectModules
     }
 
     /**
+     * Which of the given project ids exist, in one query.
+     *
+     * @param  array<int, int>  $projectIds
+     * @return array<int, int> The ids from $projectIds that have a zp_projects row (unordered).
+     */
+    public function getExistingProjectIds(array $projectIds): array
+    {
+        if ($projectIds === []) {
+            return [];
+        }
+
+        return $this->connection->table('zp_projects')
+            ->whereIn('id', $projectIds)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
      * The module switches of several projects in one query.
      *
      * @param  array<int, int>  $projectIds

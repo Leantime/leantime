@@ -243,6 +243,26 @@ class Wiki extends BaseService
     }
 
     /**
+     * Resolves the project an article belongs to and authorizes VIEW there, so callers can
+     * check further permissions against the article's real project instead of the session one.
+     *
+     * @param  int  $id  Article id
+     * @return int|null The article's project id, or null when the id names no article
+     */
+    public function getArticleProjectId(int $id): ?int
+    {
+        $projectId = $this->wikiRepository->getArticleProjectId($id);
+
+        if ($projectId === null) {
+            return null;
+        }
+
+        $this->authorize(WikiPermissions::VIEW, $projectId);
+
+        return $projectId;
+    }
+
+    /**
      * Delete an article, fencing the operation against the article's project.
      *
      * @api
