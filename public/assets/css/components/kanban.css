@@ -61,6 +61,15 @@
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
 }
 
+/* Without grouping, the lanes sit straight under the column headers (the board's
+   margin-top:-5px pulls them up to the header's rule), so header and lane are one
+   column: square the lane's top corners to meet the header seamlessly. Grouped
+   lanes stand apart from the headers and keep their rounded corners. */
+.kanban-column-headers + .kanbanBoard .column .contentInner {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 .kanbanCardContent {
     overflow:hidden;
 }
