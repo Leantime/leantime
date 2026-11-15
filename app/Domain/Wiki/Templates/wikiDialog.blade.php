@@ -24,8 +24,9 @@
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/wiki/wikiModal/{{ $id }}">
 
-    <x-global::forms.label>{!! __('label.wiki_title') !!}</x-global::forms.label>
-    <x-global::forms.text-input name="title" id="wikiTitle" value="{{ $tpl->escape($currentWiki->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" /><br />
+    <x-global::forms.field for="wikiTitle" :label="__('label.wiki_title')">
+        <x-global::forms.text-input name="title" id="wikiTitle" value="{{ $tpl->escape($currentWiki->title) }}" placeholder="{{ __('input.placeholders.wiki_title') }}" />
+    </x-global::forms.field>
 
     <br />
 

@@ -57,7 +57,8 @@ form label {
 .lt-field-control > input,
 .lt-field-control > select,
 .lt-field-control > textarea,
-.lt-field-control > .ss-main {
+.lt-field-control > .ss-main,
+.lt-field-control > .input-append {
     margin-bottom: 0;
 }
 
