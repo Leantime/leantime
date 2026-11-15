@@ -186,16 +186,13 @@ class Clients extends Repository
     }
 
     /**
-     * deleteClient - delete a client and associated projects
+     * deleteClient - delete the client row.
+     *
+     * Its projects are deleted beforehand by the Clients service, through the Projects service, so
+     * they get the same cleanup as any other deleted project.
      */
     public function deleteClient(int|string $id): bool
     {
-        // Delete projects associated with the client first
-        $this->db->table('zp_projects')
-            ->where('clientId', $id)
-            ->delete();
-
-        // Then delete the client
         return $this->db->table('zp_clients')
             ->where('id', $id)
             ->delete() > 0;
