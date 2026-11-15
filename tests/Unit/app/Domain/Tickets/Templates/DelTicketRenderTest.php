@@ -44,7 +44,7 @@ class DelTicketRenderTest extends TestCase
         $html = $this->render(3);
 
         $this->assertStringContainsString('name="deleteSubtasks"', $html);
-        $this->assertStringContainsString('text.delete_subtasks_too', $html);
+        $this->assertStringContainsString(sprintf(__('text.delete_subtasks_too'), 3), $html);
     }
 
     public function test_the_dialog_has_no_option_without_subtasks(): void
