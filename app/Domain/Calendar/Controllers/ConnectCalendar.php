@@ -5,6 +5,7 @@ namespace Leantime\Domain\Calendar\Controllers;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Domain\Calendar\Events\CalendarProvidersFilter;
 use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,18 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * ConnectCalendar Controller - Displays extensible modal for connecting external calendars.
  *
- * Plugins can register additional calendar providers via the filter:
- * 'leantime.domain.calendar.controllers.connectcalendar.get.connectOptions.providers'
- *
- * Provider array structure:
- *   - id: string (unique identifier)
- *   - icon: string (FontAwesome class or SVG markup)
- *   - iconType: string ('fontawesome'|'svg', default 'fontawesome')
- *   - title: string (display name)
- *   - description: string (short description)
- *   - actionUrl: string (URL to connect)
- *   - actionLabel: string (button text)
- *   - actionType: string ('link'|'modal', default 'link')
+ * Plugins add calendar providers via {@see CalendarProvidersFilter}.
  */
 class ConnectCalendar extends Controller
 {
@@ -43,7 +33,7 @@ class ConnectCalendar extends Controller
     #[RequiresPermission(CalendarPermissions::CREATE)]
     public function get(array $params): Response
     {
-        $providers = self::dispatchFilter('connectOptions.providers', []);
+        $providers = CalendarProvidersFilter::dispatch();
 
         $this->tpl->assign('providers', $providers);
 
