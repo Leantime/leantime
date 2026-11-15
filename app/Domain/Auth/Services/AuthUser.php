@@ -5,6 +5,7 @@ namespace Leantime\Domain\Auth\Services;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Laravel\Sanctum\HasApiTokens;
+use Leantime\Core\Auth\AccountStatus;
 use Leantime\Domain\Auth\Models\AuthenticatableUser;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Events\UserCreated;
@@ -112,11 +113,25 @@ class AuthUser implements UserProvider
         return $existingUser;
     }
 
-    public function setUser($userId)
+    /**
+     * Load the token's user and establish its session (Sanctum guard path).
+     *
+     * Refuses a deleted or deactivated user: no session is built and false is returned.
+     *
+     * @return bool Whether the user is active and the session was established.
+     */
+    public function setUser($userId): bool
     {
-        $this->userdata = $this->userRepo->getUser($userId);
+        $user = $this->userRepo->getUser($userId);
 
+        if (! AccountStatus::isActive($user)) {
+            return false;
+        }
+
+        $this->userdata = $user;
         $this->setUserSession($this->userdata);
+
+        return true;
     }
 
     protected function setUserSession($user)

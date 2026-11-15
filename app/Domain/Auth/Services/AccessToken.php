@@ -79,6 +79,13 @@ class AccessToken implements HasAbilities
         }
     }
 
+    /**
+     * Sanctum's token lookup: build the access token for a plaintext Bearer token.
+     *
+     * Returns false for an unknown token and for a token whose user was deleted or deactivated.
+     *
+     * @return self|false
+     */
     public static function findToken($token)
     {
         $tokenObject = new self;
@@ -92,7 +99,10 @@ class AccessToken implements HasAbilities
         $tokenObject->expires_at = ! empty($tokenData['expires_at']) ? dtHelper()->parseDbDateTime($tokenData['expires_at']) : null;
         $tokenObject->created_at = ! empty($tokenData['created_at']) ? dtHelper()->parseDbDateTime($tokenData['created_at']) : null;
 
-        $tokenObject->tokenable->setUser($tokenData['tokenable_id']);
+        // A token of a deleted or deactivated user does not authenticate.
+        if (! $tokenObject->tokenable->setUser($tokenData['tokenable_id'])) {
+            return false;
+        }
 
         return $tokenObject;
     }
