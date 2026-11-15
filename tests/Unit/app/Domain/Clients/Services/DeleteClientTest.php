@@ -167,6 +167,20 @@ class DeleteClientTest extends TestCase
         $this->assertGreaterThan(0, $this->accessChangedSignals, 'Cached project access must be refreshed');
     }
 
+    public function test_projects_hidden_from_client_lists_are_deleted_with_the_client(): void
+    {
+        // active = -1 projects are skipped by getClientProjects(), but must not outlive their client.
+        $this->connection->table('zp_projects')->insert(['id' => 52, 'name' => 'Acme archive', 'clientId' => 5, 'active' => -1]);
+        $this->connection->table('zp_relationuserproject')->insert(['userId' => 4, 'projectId' => 52]);
+
+        $clientService = $this->makeClientService();
+        $this->assertSame([51, 52, 50], array_column($clientService->getProjectsDeletedWithClient(5), 'id'), 'The dialog lists every project, by name');
+
+        $this->assertTrue($clientService->delete(5));
+        $this->assertSame([60], $this->projectIds());
+        $this->assertSame([60], $this->membershipProjectIds());
+    }
+
     public function test_a_client_without_projects_is_deleted_without_touching_other_projects(): void
     {
         $this->connection->table('zp_clients')->insert(['id' => 7, 'name' => 'Empty client']);

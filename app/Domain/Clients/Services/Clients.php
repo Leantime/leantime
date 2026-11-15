@@ -155,7 +155,7 @@ class Clients extends BaseService
             return false;
         }
 
-        $clientProjects = $this->projectRepository->getClientProjects($id) ?: [];
+        $clientProjects = $this->getProjectsDeletedWithClient($id);
 
         if ($clientProjects !== []) {
             $this->authorize(ProjectsPermissions::DELETE);
@@ -239,6 +239,19 @@ class Clients extends BaseService
     public function getClientProjects(int $clientId): array
     {
         return $this->projectRepository->getClientProjects($clientId);
+    }
+
+    /**
+     * The projects that deleting this client would delete: all of its projects, including ones
+     * that lists like getClientProjects() hide. The delete dialog lists them.
+     *
+     * @param  int  $clientId  Client id
+     * @return array<int, array{id: int, name: string}> The client's projects
+     */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
+    public function getProjectsDeletedWithClient(int $clientId): array
+    {
+        return $this->projectRepository->getAllProjectsOfClient($clientId);
     }
 
     /**

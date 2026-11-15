@@ -89,6 +89,6 @@ class DelClient extends Controller
     private function assignConfirmationData(int $id): void
     {
         $this->tpl->assign('client', $this->clientService->get($id));
-        $this->tpl->assign('clientProjects', $this->clientService->getClientProjects($id));
+        $this->tpl->assign('clientProjects', $this->clientService->getProjectsDeletedWithClient($id));
     }
 }
