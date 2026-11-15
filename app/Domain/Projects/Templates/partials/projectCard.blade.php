@@ -27,10 +27,12 @@
                 <div class="col-md-2 tw-text-right">
                     <a  href="javascript:void(0);"
                         hx-patch="{{ BASE_URL }}/hx/projects/projectCard/toggleFavorite"
-                        hx-vals='{"isFavorite": {{ $project['isFavorite'] }}, "projectId": {{ $project['id'] }}}'
+                        hx-vals='{"isFavorite": {{ $project['isFavorite'] }}, "projectId": {{ $project['id'] }}, "type": "{{ $type === 'simple' ? 'simple' : 'detailed' }}"}'
                         hx-target="#projectBox-{{ $project['id'] }}"
                         onclick="jQuery(this).addClass('go')"
                         hx-swap="none"
+                        {{-- Renders nothing itself: the surrounding project list re-sorts on the favorite event. --}}
+                        data-lt-refresh-container
                         class="favoriteClick favoriteStar pull-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} tw-mr-[5px]"
                         data-tippy-content="{{ __('label.favorite_tooltip') }}">
                             <i class="{{ $project['isFavorite'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>

@@ -29,4 +29,10 @@ enum HtmxUiEvents: string implements HtmxEvent
 
     /** Refresh the main page url in the background. */
     case UrlRefresh = 'lt:ui:url.refresh';
+
+    /**
+     * Re-render every timer control. Sent when a start/stop request changed nothing (a stale
+     * button, a discarded timer), so no TimerStarted/TimerStopped fact exists to refresh them.
+     */
+    case TimerRefresh = 'lt:ui:timer.refresh';
 }

@@ -6,7 +6,7 @@
 
 <div id="myProjectsWidget"
      hx-get="{{BASE_URL}}/widgets/myProjects/get"
-     hx-trigger="HTMX.updateProjectList from:body"
+     hx-trigger="{{ \Leantime\Domain\Projects\Events\ProjectFavoriteAdded::CLIENT_EVENT }} from:body, {{ \Leantime\Domain\Projects\Events\ProjectFavoriteRemoved::CLIENT_EVENT }} from:body"
      hx-target="#myProjectsWidget"
      hx-swap="outerHTML">
     @if (count($allProjects) == 0)
