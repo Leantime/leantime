@@ -39,7 +39,7 @@
         </li>
         @dispatchEvent('afterSettings')
         <li class="border">
-            @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin))
+            @can('plugins.manage')
                 <a href='{{BASE_URL}}/plugins/marketplace#/help/support' >
                     <span class="fa-solid fa-hand-holding-heart" style="color:#f61067;"></span> {{ __('link.support_us') }}
                 </a>
@@ -47,7 +47,7 @@
                 <a href='#/help/support'  >
                     <span class="fa-solid fa-hand-holding-heart" style="color:#f61067;"></span> {{ __('link.support_us') }}
                 </a>
-            @endif
+            @endcan
         </li>
         <li class="border">
             <a href='{{ BASE_URL }}/auth/logout'>

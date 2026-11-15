@@ -58,22 +58,24 @@
         <div class="col-md-2">
             <div class="row-fluid marginBottom">
                 <x-global::elements.section-header icon="fa fa-folder">{!! __('subtitles.organization') !!}</x-global::elements.section-header>
-                <x-global::forms.label>{{ __('label.parent') }}</x-global::forms.label>
-                <x-global::forms.select width="full" name="parent">
-                    <option value="0">{{ __('label.none') }}</option>
-                    @foreach ($wikiHeadlines as $parent)
-                        @if ($id != $parent->id)
-                            <option value="{{ $parent->id }}"
-                                    {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ $tpl->escape($parent->title) }}</option>
-                        @endif
-                    @endforeach
-                </x-global::forms.select>
+                <x-global::forms.field for="articleParent" :label="__('label.parent')">
+                    <x-global::forms.select width="full" name="parent" id="articleParent">
+                        <option value="0">{{ __('label.none') }}</option>
+                        @foreach ($wikiHeadlines as $parent)
+                            @if ($id != $parent->id)
+                                <option value="{{ $parent->id }}"
+                                        {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ $tpl->escape($parent->title) }}</option>
+                            @endif
+                        @endforeach
+                    </x-global::forms.select>
+                </x-global::forms.field>
 
-                <x-global::forms.label>{!! __('label.status') !!}</x-global::forms.label>
-                <x-global::forms.select width="full" name="status">
-                    <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{!! __('label.draft') !!}</option>
-                    <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{!! __('label.published') !!}</option>
-                </x-global::forms.select>
+                <x-global::forms.field for="articleStatus" :label="__('label.status')">
+                    <x-global::forms.select width="full" name="status" id="articleStatus">
+                        <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{!! __('label.draft') !!}</option>
+                        <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{!! __('label.published') !!}</option>
+                    </x-global::forms.select>
+                </x-global::forms.field>
             </div>
 
             @if ($id !== '')
