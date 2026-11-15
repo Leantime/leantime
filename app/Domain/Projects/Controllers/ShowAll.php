@@ -40,10 +40,11 @@ class ShowAll extends Controller
         // client's projects.
         $role = session('userdata.role');
         $clientId = (int) session('userdata.clientId');
+        $showClosedProjects = (bool) session('showClosedProjects');
         if (Roles::isAtLeast($role, Roles::$admin) || Roles::seesAllProjects($role) || $clientId <= 0) {
-            $this->tpl->assign('allProjects', $this->projectService->getAll(session('showClosedProjects')));
+            $this->tpl->assign('allProjects', $this->projectService->getAll($showClosedProjects));
         } else {
-            $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects((int) session('userdata.id'), $clientId));
+            $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects((int) session('userdata.id'), $clientId, $showClosedProjects));
         }
 
         $this->tpl->assign('showClosedProjects', session('showClosedProjects'));

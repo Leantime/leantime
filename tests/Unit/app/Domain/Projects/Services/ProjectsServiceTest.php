@@ -776,6 +776,59 @@ class ProjectsServiceTest extends TestCase
         $this->assertSame(3, $requestedClient, 'A non-admin must only list their own client\'s projects');
     }
 
+    /**
+     * Regression for #4039: "Show Closed Projects" on Company → All Projects had no effect because
+     * getAll() ignored its flag and always asked the repository for every project.
+     */
+    public function test_get_all_leaves_out_closed_projects_unless_asked(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'admin']]);
+
+        $requestedStatuses = [];
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjects' => function (...$args) use (&$requestedStatuses) {
+                $requestedStatuses[] = $args[1] ?? 'all';
+
+                return [];
+            },
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+
+        $service->getAll();
+        $service->getAll(false);
+        $service->getAll(true);
+
+        $this->assertSame(['open', 'open', 'all'], $requestedStatuses);
+    }
+
+    /**
+     * Regression for #4039 (client-manager branch of All Projects): closed projects are dropped when
+     * the toggle is off and kept when it is on, from both the client list and the user's own list.
+     */
+    public function test_get_client_manager_projects_hides_closed_projects_when_asked(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'manager', 'clientId' => 3]]);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getClientProjects' => fn () => [
+                ['id' => 10, 'name' => 'Open client project', 'state' => 0],
+                ['id' => 11, 'name' => 'Closed client project', 'state' => -1],
+            ],
+            'getUserProjects' => fn () => [
+                ['id' => 10, 'name' => 'Open client project', 'state' => 0],
+                ['id' => 20, 'name' => 'Own open project', 'state' => null],
+                ['id' => 21, 'name' => 'Own closed project', 'state' => -1],
+            ],
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+
+        $withoutClosed = $service->getClientManagerProjects(1, 3, showClosedProjects: false);
+        $this->assertSame([10, 20], array_keys($withoutClosed));
+
+        $withClosed = $service->getClientManagerProjects(1, 3, showClosedProjects: true);
+        $this->assertSame([10, 11, 20, 21], array_keys($withClosed));
+    }
+
     public function test_get_user_project_relation_pins_non_admins_to_themselves(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor']]);
