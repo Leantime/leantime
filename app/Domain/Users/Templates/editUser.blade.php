@@ -122,6 +122,7 @@
                             <x-global::forms.text-input
                                 name="weekly_hours"
                                 id="weekly_hours"
+                                aria-describedby="weekly_hours-help"
                                 type="number"
                                 min="0"
                                 max="168"
@@ -130,7 +131,7 @@
                         </x-global::forms.field>
 
                         <x-global::forms.field layout="inline" for="employment_type" :label="__('label.employment_type')" :help="__('label.employment_type_hint')">
-                            <x-global::forms.select name="employment_type" id="employment_type">
+                            <x-global::forms.select name="employment_type" id="employment_type" aria-describedby="employment_type-help">
                                 <option value="">{!! __('label.employment_type.unset') !!}</option>
                                 @foreach (\Leantime\Domain\Users\Enums\EmploymentType::cases() as $type)
                                     <option value="{{ $type->value }}"

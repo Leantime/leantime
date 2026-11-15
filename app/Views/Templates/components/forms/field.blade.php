@@ -13,7 +13,9 @@
       label       string  The label text (escaped). For markup (an icon, a link) use the `label` slot.
       for         string  Id of the control, so clicking the label focuses it.
       required    bool    Required marker after the label.
-      help        string  One muted 12px line under the control (escaped).
+      help        string  One muted 12px line under the control (escaped). With `for` set it gets the
+                          id "{for}-help": put `aria-describedby="{for}-help"` on the control so screen
+                          readers announce it (the field can't reach into the slotted control).
       layout      string  'stacked' (default) or 'inline'.
       labelWidth  int     Label column width in px for `inline` (default 150).
 
@@ -35,6 +37,7 @@
 @php
     $isInline = $layout === 'inline';
     $widthStyle = $isInline && $labelWidth ? ['style' => '--lt-field-label-w: '.(int) $labelWidth.'px'] : [];
+    $helpId = filled((string) $for) ? $for.'-help' : null;
 @endphp
 
 <div {{ $attributes->class(['lt-field', 'lt-field--inline' => $isInline])->merge($widthStyle) }}>
@@ -44,7 +47,11 @@
     <div class="lt-field-control">
         {{ $slot }}
         @if (filled($help))
-            <p class="lt-field-help">{{ $help }}</p>
+            @if ($helpId)
+                <p class="lt-field-help" id="{{ $helpId }}">{{ $help }}</p>
+            @else
+                <p class="lt-field-help">{{ $help }}</p>
+            @endif
         @endif
     </div>
 </div>

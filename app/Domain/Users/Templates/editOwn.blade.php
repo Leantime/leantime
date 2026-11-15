@@ -144,7 +144,7 @@
 
                                 <x-global::forms.field for="confirmPassword" :label="__('label.password_repeat')" :help="session('userdata.isExternalAuth') ? null : __('label.passwordRequirements')">
                                     <input type="password" value="" name="confirmPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
-                                           id="confirmPassword"/>
+                                           id="confirmPassword" aria-describedby="confirmPassword-help"/>
                                 </x-global::forms.field>
                             </div>
                             @if (!session("userdata.isExternalAuth") )
@@ -427,7 +427,7 @@
                                 <x-global::forms.checkbox variant="toggle" name="webhookEnabled" id="webhookEnabled" :checked="! empty($webhookEnabled)">{{ __('label.enable_webhook_notifications') }}</x-global::forms.checkbox>
                             </div>
                             <x-global::forms.field for="webhookUrl" :label="__('label.webhook_url')" :help="__('label.webhook_url_hint')">
-                                <x-global::forms.text-input type="url" name="webhookUrl" id="webhookUrl" class="input"
+                                <x-global::forms.text-input type="url" name="webhookUrl" id="webhookUrl" aria-describedby="webhookUrl-help" class="input"
                                                             placeholder="https://example.com/webhook"
                                                             value="{{ $webhookUrl ?? '' }}" />
                             </x-global::forms.field>
