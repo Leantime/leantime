@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,6 +22,11 @@ class Ical extends Controller
     /**
      * Serves the iCal feed for a given calendar hash.
      *
+     * The route is public: calendar apps fetch it without a session, and the hashes in the
+     * URL are the credential. Any failure (bad token, unknown hashes, an error building the
+     * feed) is logged and answered with a plain 404. A redirect to the 404 page would send a
+     * logged-out client on to the login page, which a calendar app can't use.
+     *
      * @param  array  $params  Request parameters
      */
     public function get(array $params): Response
@@ -37,7 +42,9 @@ class Ical extends Controller
                 'Content-Disposition' => 'attachment; filename="leantime-calendar.ics"',
             ]);
         } catch (\Exception $e) {
-            return Frontcontroller::redirect(BASE_URL.'/errors/404');
+            Log::error($e);
+
+            return new Response('Not Found', Response::HTTP_NOT_FOUND, ['Content-Type' => 'text/plain; charset=utf-8']);
         }
     }
 }

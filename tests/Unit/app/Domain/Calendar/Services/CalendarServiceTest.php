@@ -551,6 +551,32 @@ class CalendarServiceTest extends TestCase
         $this->assertMatchesRegularExpression('/DTSTART[^:\\r\\n]*VALUE=DATE:20250417/', $ics);
     }
 
+    public function test_ical_feed_without_events_is_an_empty_calendar_not_an_error(): void
+    {
+        // #4018: a valid feed with no events yet threw "Calendar could not be retrieved" (404),
+        // so calendar apps could not subscribe.
+        $ics = $this->calendarWithFeedEvents([])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertStringContainsString('BEGIN:VCALENDAR', $ics);
+        $this->assertStringNotContainsString('BEGIN:VEVENT', $ics);
+    }
+
+    public function test_ical_feed_with_hashes_that_match_no_user_throws(): void
+    {
+        $service = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->make(CalendarRepository::class, ['getCalendarBySecretHash' => false]),
+            language: $this->language,
+            settingsRepo: $this->settingsRepository,
+            config: $this->config,
+            outboundHttpClient: $this->make(OutboundHttpClient::class)
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Calendar could not be retrieved');
+
+        $service->getIcalByRequestToken('wrongcal_user');
+    }
+
     public function test_normalize_ical_content_strips_bom_and_leading_whitespace(): void
     {
         $normalized = \Leantime\Domain\Calendar\Services\Calendar::normalizeIcalContent("\xEF\xBB\xBF\r\n BEGIN:VCALENDAR");
