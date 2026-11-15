@@ -86,6 +86,34 @@ class IndexTest extends \Unit\TestCase
         $this->assertSame('https://demo.leantime.io/oidc/login', $body['oidcLoginUrl']);
     }
 
+    public function test_oidc_login_url_keeps_the_subfolder_leantime_runs_in(): void
+    {
+        $this->assertSame(
+            'https://example.com/leantime/oidc/login',
+            Index::oidcLoginUrl('https://example.com', 'https://example.com/leantime/')
+        );
+        $this->assertSame(
+            'https://example.com/tools/leantime/oidc/login',
+            Index::oidcLoginUrl('https://example.com', 'https://example.com/tools/leantime')
+        );
+    }
+
+    public function test_oidc_login_url_at_the_domain_root_has_no_folder(): void
+    {
+        $this->assertSame('https://pm.example.com/oidc/login', Index::oidcLoginUrl('https://pm.example.com', 'https://pm.example.com'));
+        $this->assertSame('https://pm.example.com/oidc/login', Index::oidcLoginUrl('https://pm.example.com/', 'https://pm.example.com/'));
+    }
+
+    public function test_oidc_login_url_uses_the_host_the_app_connected_to(): void
+    {
+        // The folder comes from the app URL; the scheme and host stay the ones
+        // the app reached, as before.
+        $this->assertSame(
+            'https://pm.example.com/leantime/oidc/login',
+            Index::oidcLoginUrl('https://pm.example.com', 'https://internal.example.com/leantime')
+        );
+    }
+
     public function test_response_never_leaks_a_plugin_or_version_inventory(): void
     {
         // The unauthenticated tier must not become a recon gift.
