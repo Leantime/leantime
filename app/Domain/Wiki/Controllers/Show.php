@@ -137,6 +137,11 @@ class Show extends Controller
     }
 
     /**
+     * Deletes or adds a comment on an article. Commenting on an unknown id or on another user's
+     * draft goes to the 404 page.
+     *
+     * @param  array  $params  Route params
+     *
      * @throws BindingResolutionException
      */
     #[RequiresPermission(WikiPermissions::VIEW)]
@@ -156,6 +161,11 @@ class Show extends Controller
         if (isset($_GET['id']) === true) {
             $id = (int) ($_GET['id']);
             $currentArticle = $this->wikiService->getArticle($id, session('currentProject'));
+
+            // Unknown id, or another user's draft: no commenting on what the user cannot open.
+            if ($currentArticle === false) {
+                return Frontcontroller::redirect(BASE_URL.'/errors/error404');
+            }
 
             if (isset($_POST['comment']) === true) {
                 if ($this->commentService->addComment($_POST, 'article', $id, $currentArticle)) {
