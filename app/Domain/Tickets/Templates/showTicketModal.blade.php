@@ -23,12 +23,14 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
         $onTheClock = $onTheClock ?? false;
         $ticketTypeIcon = $todoTypeIcons[strtolower($ticket->type)] ?? 'fa-circle';
     @endphp
-    <x-global::actions.modal-header :icon="'fa '.$ticketTypeIcon">
+    {{-- The headline stays in the header (not only in the editable field of the details tab), so it
+         is visible on every tab and in the browser tab title (#4008). --}}
+    <x-global::actions.modal-header :icon="'fa '.$ticketTypeIcon" data-lt-document-title="{{ $ticket->headline }}">
         <x-slot:title>
             @if ($ticket->dependingTicketId > 0)
                 <a href="#/tickets/showTicket/{{ $ticket->dependingTicketId }}" class="lt-modal-parent">{{ $ticket->parentHeadline }}</a> <span class="lt-modal-parent">//</span>
             @endif
-            {{ __('label.'.strtolower($ticket->type)) }} #{{ $ticket->id }}
+            {{ __('label.'.strtolower($ticket->type)) }} #{{ $ticket->id }} - {{ $ticket->headline }}
         </x-slot:title>
         <x-slot:meta>
             {{ __('label.created_by') }} {{ $ticket->userFirstname }} {{ $ticket->userLastname }} | {{ __('label.last_updated') }}: {{ format(! empty($ticket->modified) ? $ticket->modified : $ticket->date)->date() }}

@@ -425,6 +425,31 @@ leantime.modals = (function () {
         softReload();
     };
 
+    // A modal can name itself in the browser tab (data-lt-document-title, e.g. the to-do headline),
+    // so several tabs with open modals can be told apart. The page title comes back on close.
+    var documentTitleBeforeModal = null;
+
+    var showModalInDocumentTitle = function () {
+        var titledElement = document.querySelector('.nyroModalCont [data-lt-document-title]');
+        if (!titledElement || titledElement.dataset.ltDocumentTitle === '') {
+            return;
+        }
+
+        if (documentTitleBeforeModal === null) {
+            documentTitleBeforeModal = document.title;
+        }
+        document.title = titledElement.dataset.ltDocumentTitle + ' · ' + documentTitleBeforeModal;
+    };
+
+    var restoreDocumentTitle = function () {
+        if (documentTitleBeforeModal === null) {
+            return;
+        }
+
+        document.title = documentTitleBeforeModal;
+        documentTitleBeforeModal = null;
+    };
+
     var setCustomModalCallback = function(callback) {
         if(typeof callback === 'function') {
             window.globalModalCallback = callback;
@@ -464,6 +489,7 @@ leantime.modals = (function () {
                 },
                 afterShowCont: function () {
                     jQuery(".formModal, .modal").nyroModal(modalOptions);
+                    showModalInDocumentTitle();
                     // nyroModal content is not an htmx swap, so htmx.onLoad never sees it.
                     window.leantime.initLoadedContent(document.querySelector('.nyroModalCont'));
 
@@ -479,6 +505,7 @@ leantime.modals = (function () {
                 },
                 beforeClose: function () {
                     currentModalUrl = null;
+                    restoreDocumentTitle();
                     closeUppyInstances('modal');
                     releaseContent(document.querySelector('.nyroModalCont'), false);
                     // The modal content is removed after the close animation.
