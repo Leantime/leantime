@@ -102,9 +102,9 @@
 /* Empty column state - same background as non-empty for consistency */
 .column .contentInner:empty,
 .column .contentInner.empty-column {
-    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
+    /* Same lane tint and corners as a lane with cards (.column .contentInner), so a lane doesn't
+       change shade when its last card moves out. */
     border: none;
-    border-radius: var(--box-radius);
     min-height: 52px;
 }
 
@@ -1111,24 +1111,20 @@ body .maincontent .priority-text-5 a:link {
    not apply there or the two scroll mechanisms fight each other. */
 @media (min-width: 1200px) {
     /* A scroller clips its children's shadows at its edges, so the row gets room for the headers'
-       --large-shadow on every side (padding) and gives it back with negative margins: the headers
-       stay where they were, and the scroller and the board body keep the same max scrollLeft
-       (padding adds the same 32px to both scrollWidth and clientWidth). The padding overlaps the
-       lanes below, so it lets clicks through to them. */
+       --large-shadow at the sides and top (padding) and gives it back with negative margins: the
+       headers stay where they were, and the scroller and the board body keep the same max
+       scrollLeft (padding adds the same 32px to both scrollWidth and clientWidth). No room below:
+       it would overlap the lanes and swallow their clicks, and the row has to stay interactive
+       for its own scrollbar, so the shadow stops at the header's bottom rule. */
     .kanban-column-headers {
         --header-shadow-room: 16px;
         box-sizing: border-box;
         width: calc(100% + 2 * var(--header-shadow-room));
         max-width: calc(100% + 2 * var(--header-shadow-room));
-        padding: 8px var(--header-shadow-room) 24px;
-        margin: -8px calc(-1 * var(--header-shadow-room)) -24px;
+        padding: 8px var(--header-shadow-room) 0;
+        margin: -8px calc(-1 * var(--header-shadow-room)) 0;
         overflow-x: auto;
         overflow-y: hidden;
-        pointer-events: none;
-    }
-
-    .kanban-column-headers > .column {
-        pointer-events: auto;
     }
 
     /* When grouped, the header is shifted right by the sidebar width, so

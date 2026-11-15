@@ -166,11 +166,16 @@
 }
 
 /* The active sort column reads as active: every header label is full colour, so
-   the unsorted columns' arrows are muted and the sorted column's arrow is not. */
+   the unsorted columns' arrows are muted and the sorted column's arrow is not.
+   DataTables keeps .sorting on the sorted header next to .sorting_asc/_desc, so
+   the mute has to exclude those. */
 .dataTable thead th.sorting:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dc";
     font-size: var(--font-size-s);
+}
+
+.dataTable thead th.sorting:not(.sorting_asc):not(.sorting_desc):after {
     opacity: .4;
 }
 
