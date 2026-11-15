@@ -6,7 +6,7 @@
           hx-target="#tokenModal" id="newToken">
 
         <x-global::forms.field for="tokenName" :label="__('label.token_name')" :help="__('text.token_name_description')">
-            <x-global::forms.text-input id="tokenName" name="name" required />
+            <x-global::forms.text-input id="tokenName" name="name" aria-describedby="tokenName-help" required />
         </x-global::forms.field>
         <br />
         <div class="align-right">
