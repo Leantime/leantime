@@ -151,7 +151,7 @@
 
                 <form method="post" action="{{ BASE_URL }}/clients/showClient/{{ $_GET['id'] }}#comment">
                     <input type="hidden" name="comment" value="1" />
-                    @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/clients/showClient/' . e(request()->query('id', ''))])
+                    @include('comments::submodules.generalComment', ['formUrl' => BASE_URL . '/clients/showClient/' . e(request()->query('id', '')), 'commentsWritable' => can('clients.edit')])
                 </form>
 
 
