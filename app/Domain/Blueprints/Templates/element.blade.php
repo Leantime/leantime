@@ -1,5 +1,6 @@
 <x-global::elements.board-column-header :icon="isset($canvasTypes[$elementName]['icon']) ? 'fas '.$canvasTypes[$elementName]['icon'] : null">
-    {{ $canvasTypes[$elementName]['title'] }}
+    {{-- Box titles are translations that carry entities ("Products &amp; Service"): decode, then escape. --}}
+    {{ html_entity_decode($canvasTypes[$elementName]['title'], ENT_QUOTES | ENT_HTML5) }}
 </x-global::elements.board-column-header>
 <div class="contentInner even status_{{ $elementName }}"
      {!! isset($canvasTypes[$elementName]['color']) ? 'style="background: ' . $canvasTypes[$elementName]['color'] . ';"' : '' !!}>
