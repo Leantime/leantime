@@ -1994,31 +1994,41 @@ class Projects extends BaseService implements ChecksProjectAccess
             $ticketIdList[$ticket->id] = $newTicketId;
         }
 
-        // Iterate through all and update relationships
+        // Point each copy at the copies of its milestone and parent. The originals are never
+        // touched: patching $ticket->id here used to move the source project's To-Dos onto the
+        // new project's milestones and left the copies without any.
         foreach ($allTickets as $ticket) {
+
+            $copiedTicketId = $ticketIdList[$ticket->id] ?? null;
+
+            if (empty($copiedTicketId)) {
+                continue;
+            }
 
             $values = [];
 
             if (! empty($ticket->milestoneid)) {
-                $values['milestoneId'] = $ticketIdList[$ticket->milestoneid] ?? null;
+                $copiedMilestoneId = $ticketIdList[$ticket->milestoneid] ?? null;
 
-                if ($values['milestoneId'] === null) {
+                if ($copiedMilestoneId === null) {
                     Log::warning('Issue copying project. New Milestone was not found.');
+                } else {
+                    $values['milestoneid'] = $copiedMilestoneId;
                 }
             }
 
             if (! empty($ticket->dependingTicketId)) {
-                $values['dependingTicketId'] = $ticketIdList[$ticket->dependingTicketId] ?? null;
+                $copiedParentId = $ticketIdList[$ticket->dependingTicketId] ?? null;
 
-                if ($values['dependingTicketId'] === null) {
+                if ($copiedParentId === null) {
                     Log::warning('Issue copying project. New ticket dependency was not found.');
+                } else {
+                    $values['dependingTicketId'] = $copiedParentId;
                 }
             }
 
-            $newTicketId = $ticketIdList[$ticket->id] ?? null;
-
-            if ($newTicketId && ! empty($values)) {
-                $this->ticketRepository->patchTicket($ticket->id, $values);
+            if (! empty($values)) {
+                $this->ticketRepository->patchTicket($copiedTicketId, $values);
             }
         }
 

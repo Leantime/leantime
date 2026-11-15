@@ -1209,6 +1209,62 @@ class ProjectsServiceTest extends TestCase
         $this->assertMatchesRegularExpression('/^\s*\*\s*@api\b/m', (string) $method->getDocComment());
     }
 
+    /**
+     * duplicateProject() copies the To-Dos first, then re-links each copy to the copies of its
+     * milestone and parent. It used to patch the ORIGINAL ticket, which moved the source
+     * project's To-Dos onto the new project's milestones and left the copies unlinked.
+     */
+    public function test_duplicate_project_links_the_copies_and_leaves_the_originals_alone(): void
+    {
+        session(['userdata.role' => 'admin']);
+
+        $sourceTickets = [
+            (object) ['id' => 10, 'type' => 'milestone', 'milestoneid' => '', 'dependingTicketId' => ''],
+            (object) ['id' => 11, 'type' => 'task', 'milestoneid' => 10, 'dependingTicketId' => ''],
+            (object) ['id' => 12, 'type' => 'subtask', 'milestoneid' => '', 'dependingTicketId' => 11],
+            (object) ['id' => 13, 'type' => 'task', 'milestoneid' => 99, 'dependingTicketId' => ''],
+        ];
+        foreach ($sourceTickets as $ticket) {
+            foreach (['headline', 'description', 'editorId', 'status', 'storypoints', 'hourRemaining', 'planHours', 'priority', 'acceptanceCriteria', 'tags', 'editFrom', 'editTo', 'dateToFinish'] as $field) {
+                $ticket->$field = '';
+            }
+        }
+
+        $nextCopyId = 100;
+        $patches = [];
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getAllByProjectId' => fn () => $sourceTickets,
+            'addTicket' => function () use (&$nextCopyId) {
+                return $nextCopyId++;
+            },
+            'patchTicket' => function ($id, array $values) use (&$patches) {
+                $patches[$id] = $values;
+
+                return true;
+            },
+        ]);
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getProject' => fn ($id) => ['id' => $id, 'details' => '', 'state' => 0, 'hourBudget' => 0, 'dollarBudget' => 0, 'psettings' => 'restricted'],
+            'addProject' => fn () => 50,
+            'getModuleOverrides' => fn () => [],
+            'updateModuleOverrides' => fn () => true,
+        ]);
+        $settingsRepo = $this->make(SettingRepository::class, ['getSetting' => fn () => false]);
+
+        // No boards to copy; only the To-Do links are under test.
+        foreach ([\Leantime\Domain\Ideas\Repositories\Ideas::class, \Leantime\Domain\Goalcanvas\Repositories\Goalcanvas::class, \Leantime\Domain\Wiki\Repositories\Wiki::class, \Leantime\Domain\Blueprints\Repositories\Blueprints::class] as $canvasRepository) {
+            app()->instance($canvasRepository, $this->make($canvasRepository, ['getAllCanvas' => fn () => []]));
+        }
+
+        $service = $this->makeService(projectRepo: $projectRepo, ticketRepo: $ticketRepo, settingsRepo: $settingsRepo);
+
+        $this->assertSame(50, $service->duplicateProject(5, 3, 'Copy', '', false));
+
+        // Copies: 10 → 100, 11 → 101, 12 → 102, 13 → 103.
+        $this->assertSame([101 => ['milestoneid' => 100], 102 => ['dependingTicketId' => 101]], $patches);
+        $this->assertEmpty(array_intersect(array_keys($patches), [10, 11, 12, 13]), 'source To-Dos must not be modified');
+    }
+
     // ---------------------------------------------------------------------
     // Authorized JSON-RPC entry points for project sort/status/patch.
     // The /api/projects controller (which had a route-level gate) was retired,
