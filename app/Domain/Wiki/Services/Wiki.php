@@ -39,27 +39,60 @@ class Wiki extends BaseService
      * is passed it is authorized against (closing the explicit-foreign-project RPC read); when it is
      * omitted the call resolves to the caller's session project and can only read articles there.
      *
+     * A draft belongs to its author until it is published: another user's draft is not found
+     * (false), the same rule getAllWikiHeadlines() applies to the Contents list. A null or unknown
+     * id falls back to the project's featured article, under the same rule.
+     *
+     * @param  int|null  $id  Article id (null loads the featured article)
+     * @param  int|null  $projectId  Project id (defaults to the session project)
+     * @return Article|false The article, or false when it does not exist or is not visible
+     *
      * @api
      */
     #[RequiresPermission(WikiPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getArticle(?int $id, ?int $projectId = null): mixed
+    public function getArticle(?int $id, ?int $projectId = null): Article|false
     {
-
         if ($projectId === null) {
             $projectId = session('currentProject');
         }
 
-        if (! is_null($id)) {
+        if ($id !== null) {
             $article = $this->wikiRepository->getArticle($id, $projectId);
 
-            if (! $article) {
-                $article = $this->wikiRepository->getArticle(-1, $projectId);
+            // Found but hidden: report "not found" and do NOT fall back to another article, so a
+            // caller that writes back by id (inline save) never mixes a different article's fields
+            // into this draft.
+            if ($article) {
+                return $this->isVisibleToCurrentUser($article) ? $article : false;
             }
-        } else {
-            $article = $this->wikiRepository->getArticle(-1, $projectId);
         }
 
-        return $article;
+        $featuredArticle = $this->wikiRepository->getArticle(-1, $projectId);
+
+        if (! $featuredArticle || ! $this->isVisibleToCurrentUser($featuredArticle)) {
+            return false;
+        }
+
+        return $featuredArticle;
+    }
+
+    /**
+     * Whether the current user may see an article. Drafts are visible to their author only, until
+     * published; everything else is visible to anyone who can view the project.
+     *
+     * Admins and owners get no exception, matching getAllWikiHeadlines() and search, which list
+     * other users' drafts to nobody. Only the literal 'draft' status is private: articles created
+     * from content templates have no status and have always been readable.
+     *
+     * @param  Article  $article  The loaded article
+     */
+    private function isVisibleToCurrentUser(Article $article): bool
+    {
+        if ($article->status !== 'draft') {
+            return true;
+        }
+
+        return (int) $article->author === (int) session('userdata.id');
     }
 
     /**
@@ -379,6 +412,11 @@ class Wiki extends BaseService
     /**
      * Get combined activity feed for an article (audit events + comments).
      *
+     * Empty for an unknown id and for another user's draft (drafts are author-only, see getArticle()).
+     *
+     * @param  int  $articleId  Article id
+     * @param  int  $limit  Maximum number of entries
+     *
      * @api
      *
      * @return array<int, array<string, mixed>>
@@ -395,6 +433,13 @@ class Wiki extends BaseService
         }
 
         $this->authorize(WikiPermissions::VIEW, $projectId);
+
+        // Another user's draft has no activity for this user: its edit history (titles, status
+        // changes) is as private as the draft itself.
+        $article = $this->wikiRepository->getArticle($articleId, $projectId);
+        if (! $article || ! $this->isVisibleToCurrentUser($article)) {
+            return [];
+        }
 
         $activity = [];
 
