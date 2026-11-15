@@ -1,30 +1,34 @@
 # Version: 3.15.1
 
+## Security
+- **Calendar privacy** - The calendar showed the personal events of every user with a higher user id; it now shows only your own events (#4034)
+- **Deactivated users** - Deactivating a user now ends their open sessions on the next request, and their API keys and access tokens stop working. Setting an API key to "Deactivated" now actually disables it (#4042, #4075)
+- **Draft docs** - A draft in Docs can only be opened by its author until it is published, also through its link, the activity feed and the API (#4056, #4072)
+
 ## New Features
-- **Bulk project card data** - A new `getProjectsCardData` call returns card data for many projects at once (#4026)
+- **Bulk project card data** - A new `getProjectsCardData` API call returns card data for many projects in one request (#4026)
 
 ## Bug Fixes
-- **Client deletion** - Deleting a client now names its projects and cleans them up the same way a project delete does (#4076)
-- **Calendar iCal feed** - The iCal feed works again without an active session (#4018, #4077)
-- **Canvas dialog labels** - The Project Value Canvas and Strategy Message dialogs show their real field labels (#4074)
-- **To-do dialog headline** - The to-do dialog shows its headline again, including in the browser tab (#4071)
-- **Show Closed Projects** - The "Show Closed Projects" toggle on All Projects hides closed projects again (#4039, #4070)
-- **Legacy download links** - Old `/download.php` links keep their subfolder, and the nginx example routes them to `index.php` (#4068)
-- **Goal date drift** - Goal start and end dates are stored in UTC so they no longer drift on save (#4073)
-- **Ticket history length** - Ticket history values are trimmed to the `changeValue` column length to avoid save errors (#4005, #4069)
-- **Project duplication** - Duplicating a project links the copies to each other instead of the originals (#4067)
-- **Calendar event visibility** - The calendar shows only the user's own events (#4034)
-- **MCP priority labels** - Ticket priorities are labelled on the ticket scale (1 = Critical) in MCP formatters (#4030)
-- **Mobile OIDC login** - The mobile OIDC login URL keeps its subfolder (#4065)
-- **nginx subfolder example** - The nginx configuration example works correctly for subfolder installs (#4061)
+- **Calendar iCal feed** - Subscribing to the iCal feed from a calendar app works again, and the feed includes your To-Dos (#4018, #4077)
+- **To-do dialog headline** - The to-do dialog shows the To-Do's title in its header again (#4008, #4071)
+- **Saving descriptions on PostgreSQL** - Saving a To-Do with a long description no longer fails with a server error on PostgreSQL (#4005, #4069)
+- **Goal dates** - Goal start and end dates no longer move by a day each time a goal is saved (#4046, #4073)
+- **Project duplication** - Duplicating a project links the copied To-Dos to the copied milestones and parents, and no longer changes the original project (#4067)
+- **Client deletion** - The delete dialog lists the projects that will be deleted with the client, and they are cleaned up like a normal project delete (#4040, #4076)
+- **Show Closed Projects** - The "Show Closed Projects" toggle on All Projects works again (#4039, #4070)
+- **Canvas field labels** - The Project Value Canvas and Strategy Message dialogs show their field labels instead of translation keys (#4049, #4074)
+- **Subfolder installs** - Old `/download.php` attachment links and the mobile app's SSO login keep the subfolder Leantime runs in, and the nginx examples work for root and subfolder installs (#4062, #4068, #4065, #4061)
+- **MCP priority labels** - MCP tools label ticket priorities correctly (1 = Critical) (#4030)
 
 ## Improvements
-- **LDAP attribute handling** - Email and group attributes are matched case-insensitively, partial `LEAN_LDAP_KEYS` are supported, and `sample.env` shows the JSON format (#4028)
-- **Cache clearing** - `cache:clearAll` now also empties the per-domain data caches (#4027)
+- **LDAP** - Email and group attributes are matched case-insensitively (Active Directory `userPrincipalName`/`memberOf` work), a partial `LEAN_LDAP_KEYS` mapping no longer causes a login error, and `sample.env` shows valid JSON (#4028)
+- **Cache clearing** - `php bin/leantime cache:clearAll` also empties the per-domain data caches (#4027)
 
-## Security
-- **Deactivated users** - Deactivating a user now ends their active sessions and tokens (#4042, #4075)
-- **Draft docs** - Only the author can open a draft until it is published (#4056, #4072)
+## Upgrade Notes
+- No database changes.
+- API keys and users whose status is not active can no longer authenticate with existing sessions, API keys or access tokens.
+- Deleting a client that has projects now also requires permission to delete projects (default roles: manager and above). Over the API, `clients.delete` refuses a client whose projects have To-Dos, as the screen already did.
+- The project pickers when adding a user or adding time no longer list closed projects.
 
 ---
 
