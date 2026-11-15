@@ -35,8 +35,6 @@ final class HtmxEvents
     private const LEGACY_ALIASES = [
         ['lt:tickets:ticket.updated', 'ticket_update'],
         ['lt:tickets:subtask.updated', 'subtasks_update', 'subtasksUpdated'],
-        ['lt:projects:project.updated', 'HTMX.updateProjectList'],
-        ['lt:timesheets:timer.updated', 'timerUpdate'],
     ];
 
     /**

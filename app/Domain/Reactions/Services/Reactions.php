@@ -4,6 +4,8 @@ namespace Leantime\Domain\Reactions\Services;
 
 use Leantime\Core\Domains\BaseService;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Projects\Events\ProjectFavoriteAdded;
+use Leantime\Domain\Projects\Events\ProjectFavoriteRemoved;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 
 /**
@@ -135,6 +137,9 @@ class Reactions extends BaseService
      *
      * Not exposed via JSON-RPC: it accepts an arbitrary $userId. Use the
      * session-scoped react() wrapper for JSON-RPC callers.
+     *
+     * Every reaction write goes through here, so a project favorite is reported here
+     * ({@see ProjectFavoriteAdded}), whichever UI or API client added it.
      */
     public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
     {
@@ -153,7 +158,13 @@ class Reactions extends BaseService
             }
         }
 
-        return $this->reactionsRepo->addReaction($userId, $module, $moduleId, $reaction);
+        $added = $this->reactionsRepo->addReaction($userId, $module, $moduleId, $reaction);
+
+        if ($added && $module === 'project' && $reaction === 'favorite') {
+            ProjectFavoriteAdded::dispatch(projectId: $moduleId, userId: $userId);
+        }
+
+        return $added;
     }
 
     /**
@@ -214,10 +225,18 @@ class Reactions extends BaseService
      *
      * Not exposed via JSON-RPC (accepts an arbitrary $userId). Use the
      * session-scoped unreact() wrapper for JSON-RPC callers.
+     *
+     * Removing a project favorite is reported here ({@see ProjectFavoriteRemoved}).
      */
     public function removeReaction(int $userId, string $module, int $moduleId, string $reaction): bool
     {
-        return $this->reactionsRepo->removeUserReaction($userId, $module, $moduleId, $reaction);
+        $removed = $this->reactionsRepo->removeUserReaction($userId, $module, $moduleId, $reaction);
+
+        if ($removed && $module === 'project' && $reaction === 'favorite') {
+            ProjectFavoriteRemoved::dispatch(projectId: $moduleId, userId: $userId);
+        }
+
+        return $removed;
     }
 
     /**

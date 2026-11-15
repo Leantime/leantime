@@ -1,0 +1,238 @@
+# Deploys Leantime Cloud (production) from this repository.
+#
+# How it works:
+#   1. Moves the `cloud-production` branch to the chosen ref (branch, tag or SHA).
+#   2. Asks Coolify to deploy; Coolify builds .deploy/Dockerfile from that branch
+#      on app1, then rolls the image out to app2.
+#   3. Waits until every server reports finished (or fails the run).
+#
+# Rollback = run it again with an older tag or SHA.
+#
+# Setup (one-time) is described in .deploy/README.md: the `production` environment
+# needs the COOLIFY_TOKEN secret and the COOLIFY_URL / COOLIFY_APP_UUID variables.
+name: Deploy Cloud
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'What to deploy: branch, tag (e.g. v3.15.0) or commit SHA'
+        required: true
+        default: master
+      force_rebuild:
+        description: 'Rebuild without Docker cache'
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-cloud-production
+  cancel-in-progress: false
+
+permissions:
+  contents: write  # move the cloud-production branch
+
+env:
+  DEPLOY_BRANCH: cloud-production
+  EXPECTED_REPOSITORY: Leantime/leantime
+  # Servers besides the build server (app1) that must also roll out: app2.
+  # Change this when servers are added to or removed from the Coolify app.
+  ADDITIONAL_SERVERS: 1
+
+jobs:
+  deploy:
+    name: Deploy to Leantime Cloud
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: production
+    env:
+      COOLIFY_URL: ${{ vars.COOLIFY_URL }}
+      COOLIFY_APP_UUID: ${{ vars.COOLIFY_APP_UUID }}
+      COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+    steps:
+      - name: Check configuration
+        run: |
+          missing=""
+          [ -z "$COOLIFY_URL" ] && missing="$missing COOLIFY_URL(variable)"
+          [ -z "$COOLIFY_APP_UUID" ] && missing="$missing COOLIFY_APP_UUID(variable)"
+          [ -z "$COOLIFY_TOKEN" ] && missing="$missing COOLIFY_TOKEN(secret)"
+          if [ -n "$missing" ]; then
+            echo "::error::The production environment is missing:$missing (see .deploy/README.md)"
+            exit 1
+          fi
+
+      - name: Check the Coolify app builds from this repository
+        run: |
+          app_json=$(curl -sS --fail-with-body --connect-timeout 10 --max-time 30 \
+            -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            "$COOLIFY_URL/api/v1/applications/$COOLIFY_APP_UUID")
+
+          configured_repository=$(echo "$app_json" | jq -r '.git_repository')
+          configured_branch=$(echo "$app_json" | jq -r '.git_branch')
+          echo "Coolify app builds $configured_repository@$configured_branch"
+
+          # Coolify stores "owner/repo" or a full GitHub URL. Anchored on both ends so
+          # a lookalike (e.g. "xLeantime/leantime") doesn't pass.
+          repository_pattern="^(https://github\.com/|git@github\.com:)?${EXPECTED_REPOSITORY}(\.git)?$"
+          if ! echo "$configured_repository" | grep -qiE "$repository_pattern"; then
+            echo "::error::Coolify app points at '$configured_repository', expected $EXPECTED_REPOSITORY. Refusing to deploy."
+            exit 1
+          fi
+          if [ "$configured_branch" != "$DEPLOY_BRANCH" ]; then
+            echo "::error::Coolify app builds branch '$configured_branch', expected $DEPLOY_BRANCH. Refusing to deploy."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Move ${{ env.DEPLOY_BRANCH }} to ${{ inputs.ref }}
+        id: target
+        env:
+          REQUESTED_REF: ${{ inputs.ref }}
+        run: |
+          git fetch --tags --force origin
+
+          # Branch names resolve via origin/, tags and SHAs resolve directly
+          target_sha=$(git rev-parse --verify --quiet "origin/$REQUESTED_REF^{commit}" \
+            || git rev-parse --verify --quiet "$REQUESTED_REF^{commit}" \
+            || true)
+          if [ -z "$target_sha" ]; then
+            echo "::error::Could not resolve '$REQUESTED_REF' to a commit"
+            exit 1
+          fi
+
+          # Coolify builds .deploy/Dockerfile from the branch. Commits from before the
+          # cloud image moved into this repo don't have it and can't be deployed.
+          if ! git cat-file -e "$target_sha:.deploy/Dockerfile" 2>/dev/null; then
+            echo "::error::$target_sha has no .deploy/Dockerfile, so Coolify can't build it. Only commits that contain the cloud image can be deployed or rolled back to."
+            exit 1
+          fi
+
+          if ! git merge-base --is-ancestor "$target_sha" origin/master; then
+            echo "::warning::$target_sha is not on master. Deploying it anyway, as requested."
+          fi
+
+          # Rollback target = the newest deploy that finished on app1 AND on every
+          # additional server. Not the branch: it already points at the next commit
+          # when a deploy fails, and a half-finished rollout isn't a safe target.
+          previous_sha=$(curl -sS --fail-with-body --connect-timeout 10 --max-time 30 -H "Authorization: Bearer $COOLIFY_TOKEN" \
+              "$COOLIFY_URL/api/v1/deployments/applications/$COOLIFY_APP_UUID?take=30" \
+            | jq -r --argjson servers "$ADDITIONAL_SERVERS" '
+                .deployments as $all
+                | [ $all[]
+                    | select(.parent_deployment_uuid == null and .status == "finished")
+                    | . as $parent
+                    | select(([ $all[] | select(.parent_deployment_uuid == $parent.deployment_uuid and .status == "finished") ] | length) >= $servers)
+                  ][0].commit // "unknown"' \
+            || echo "unknown")
+          echo "Last complete rollout: $previous_sha"
+          echo "Deploying:           $target_sha ($(git log -1 --format=%s "$target_sha"))"
+
+          # Force: a rollback moves the branch backwards
+          git push --force origin "$target_sha:refs/heads/$DEPLOY_BRANCH"
+
+          echo "sha=$target_sha" >> "$GITHUB_OUTPUT"
+          echo "previous_sha=$previous_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Coolify deployment
+        id: trigger
+        env:
+          FORCE_REBUILD: ${{ inputs.force_rebuild }}
+        run: |
+          response=$(curl -sS --fail-with-body --connect-timeout 10 --max-time 30 -X POST \
+            -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            "$COOLIFY_URL/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=$FORCE_REBUILD")
+          echo "$response" | jq .
+
+          deployment_uuid=$(echo "$response" | jq -r '.deployments[0].deployment_uuid // empty')
+          if [ -z "$deployment_uuid" ]; then
+            echo "::error::Coolify did not return a deployment"
+            exit 1
+          fi
+          echo "deployment_uuid=$deployment_uuid" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for the deployment to finish on every server
+        env:
+          PARENT_UUID: ${{ steps.trigger.outputs.deployment_uuid }}
+        run: |
+          # The first server (app1) builds the image. Every additional server (app2)
+          # gets its own deployment with parent_deployment_uuid = the first one.
+          deployment_status() {
+            curl -sS --fail-with-body --connect-timeout 10 --max-time 30 -H "Authorization: Bearer $COOLIFY_TOKEN" \
+              "$COOLIFY_URL/api/v1/deployments/$1" | jq -r '.status'
+          }
+
+          child_deployments() {
+            curl -sS --fail-with-body --connect-timeout 10 --max-time 30 -H "Authorization: Bearer $COOLIFY_TOKEN" \
+              "$COOLIFY_URL/api/v1/deployments/applications/$COOLIFY_APP_UUID?take=20" \
+              | jq -r --arg parent "$PARENT_UUID" \
+                '.deployments[] | select(.parent_deployment_uuid == $parent) | "\(.deployment_uuid) \(.status) \(.server_name)"'
+          }
+
+          wait_for() {
+            local uuid=$1 label=$2 status
+            while true; do
+              # A network blip mid-build shouldn't fail the run; keep polling
+              status=$(deployment_status "$uuid" || echo "unreachable")
+              case "$status" in
+                finished) echo "$label: finished"; return 0 ;;
+                failed|cancelled-by-user)
+                  echo "::error::$label: $status (Coolify deployment $uuid, see the app's Deployments tab for logs)"
+                  return 1 ;;
+              esac
+              echo "$label: $status"
+              sleep 20
+            done
+          }
+
+          wait_for "$PARENT_UUID" "first server"
+
+          if [ "$ADDITIONAL_SERVERS" -eq 0 ]; then
+            exit 0
+          fi
+
+          # Children are queued at the end of the parent's run. Wait until every
+          # additional server has one; not finding them means the rollout didn't happen.
+          children=""
+          for attempt in $(seq 1 20); do
+            children=$(child_deployments || true)
+            child_count=$(echo -n "$children" | grep -c . || true)
+            if [ "$child_count" -ge "$ADDITIONAL_SERVERS" ]; then
+              break
+            fi
+            echo "Waiting for additional-server deployments ($child_count of $ADDITIONAL_SERVERS)"
+            sleep 15
+          done
+
+          if [ "$child_count" -lt "$ADDITIONAL_SERVERS" ]; then
+            echo "::error::Expected $ADDITIONAL_SERVERS additional-server deployment(s), Coolify started $child_count. The other servers may still run the old version."
+            exit 1
+          fi
+
+          echo "$children" | while read -r child_uuid child_status server_name; do
+            wait_for "$child_uuid" "$server_name" || exit 1
+          done
+
+      - name: Summary
+        if: always()
+        env:
+          REQUESTED_REF: ${{ inputs.ref }}
+          TARGET_SHA: ${{ steps.target.outputs.sha }}
+          PREVIOUS_SHA: ${{ steps.target.outputs.previous_sha }}
+          DEPLOYMENT_UUID: ${{ steps.trigger.outputs.deployment_uuid }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          {
+            echo "### Leantime Cloud deploy"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Requested | \`$REQUESTED_REF\` |"
+            echo "| Commit | \`$TARGET_SHA\` |"
+            echo "| Last complete rollout before this run | \`$PREVIOUS_SHA\` |"
+            echo "| Coolify deployment | \`$DEPLOYMENT_UUID\` |"
+            echo "| Result | $JOB_STATUS |"
+            echo ""
+            echo "Rollback: run this workflow again with \`ref\` = the last complete rollout."
+          } >> "$GITHUB_STEP_SUMMARY"

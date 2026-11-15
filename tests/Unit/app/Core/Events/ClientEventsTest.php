@@ -86,7 +86,7 @@ class ClientEventsTest extends TestCase
     {
         $this->assertSame('lt:tickets:ticket.updated', HtmxEvents::name(TicketUpdated::class));
         $this->assertSame('lt:ui:notify', HtmxEvents::name(HtmxUiEvents::Notify));
-        $this->assertSame('timerUpdate', HtmxEvents::name('timerUpdate'));
+        $this->assertSame('lt:chip:changed', HtmxEvents::name('lt:chip:changed'));
         $this->assertSame('lt:tickets:subtask.updated#9', HtmxEvents::scoped(SubtasksUpdated::class, 9));
     }
 

@@ -61,7 +61,14 @@ class FieldTest extends TestCase
 
         $this->assertStringContainsString('class="lt-field lt-field--inline hoursField"', $html);
         $this->assertStringContainsString('style="--lt-field-label-w: 120px"', $html);
-        $this->assertStringContainsString('<p class="lt-field-help">Per week &lt;i&gt;</p>', $html);
+        $this->assertStringContainsString('<p class="lt-field-help" id="hours-help">Per week &lt;i&gt;</p>', $html);
+    }
+
+    public function test_help_without_a_control_id_has_no_id(): void
+    {
+        $html = $this->render('<x-global::forms.field label="Hours" help="Per week"><input /></x-global::forms.field>');
+
+        $this->assertStringContainsString('<p class="lt-field-help">Per week</p>', $html);
     }
 
     public function test_the_label_slot_takes_markup(): void
