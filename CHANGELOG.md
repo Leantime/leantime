@@ -1,3 +1,33 @@
+# Version: 3.15.1
+
+## New Features
+- **Bulk project card data** - A new `getProjectsCardData` call returns card data for many projects at once (#4026)
+
+## Bug Fixes
+- **Client deletion** - Deleting a client now names its projects and cleans them up the same way a project delete does (#4076)
+- **Calendar iCal feed** - The iCal feed works again without an active session (#4018, #4077)
+- **Canvas dialog labels** - The Project Value Canvas and Strategy Message dialogs show their real field labels (#4074)
+- **To-do dialog headline** - The to-do dialog shows its headline again, including in the browser tab (#4071)
+- **Show Closed Projects** - The "Show Closed Projects" toggle on All Projects hides closed projects again (#4039, #4070)
+- **Legacy download links** - Old `/download.php` links keep their subfolder, and the nginx example routes them to `index.php` (#4068)
+- **Goal date drift** - Goal start and end dates are stored in UTC so they no longer drift on save (#4073)
+- **Ticket history length** - Ticket history values are trimmed to the `changeValue` column length to avoid save errors (#4005, #4069)
+- **Project duplication** - Duplicating a project links the copies to each other instead of the originals (#4067)
+- **Calendar event visibility** - The calendar shows only the user's own events (#4034)
+- **MCP priority labels** - Ticket priorities are labelled on the ticket scale (1 = Critical) in MCP formatters (#4030)
+- **Mobile OIDC login** - The mobile OIDC login URL keeps its subfolder (#4065)
+- **nginx subfolder example** - The nginx configuration example works correctly for subfolder installs (#4061)
+
+## Improvements
+- **LDAP attribute handling** - Email and group attributes are matched case-insensitively, partial `LEAN_LDAP_KEYS` are supported, and `sample.env` shows the JSON format (#4028)
+- **Cache clearing** - `cache:clearAll` now also empties the per-domain data caches (#4027)
+
+## Security
+- **Deactivated users** - Deactivating a user now ends their active sessions and tokens (#4042, #4075)
+- **Draft docs** - Only the author can open a draft until it is published (#4056, #4072)
+
+---
+
 # Version: 3.15.0
 
 ## New Features
