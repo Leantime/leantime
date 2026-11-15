@@ -90,11 +90,11 @@ class ClientEventsTest extends TestCase
         $this->assertSame('lt:tickets:subtask.updated#9', HtmxEvents::scoped(SubtasksUpdated::class, 9));
     }
 
-    public function test_trigger_header_accepts_event_classes_and_keeps_legacy_aliases(): void
+    public function test_trigger_header_resolves_event_classes_and_drops_duplicates(): void
     {
-        $header = HtmxEvents::triggerHeader([TicketUpdated::class]);
+        $header = HtmxEvents::triggerHeader([TicketUpdated::class, 'lt:tickets:ticket.updated', HtmxUiEvents::Notify, 'lt:tickets:ticket.updated#4']);
 
-        $this->assertSame('lt:tickets:ticket.updated,ticket_update', $header);
+        $this->assertSame('lt:tickets:ticket.updated,lt:ui:notify,lt:tickets:ticket.updated#4', $header);
     }
 
     private function useRequest(bool $htmx): void

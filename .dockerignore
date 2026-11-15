@@ -1,0 +1,52 @@
+# Dependencies
+/node_modules
+/target
+/vendor
+/.pnp
+.pnp.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+/coverage
+
+# Production
+/build
+
+# Development
+/.git
+/.github
+/.vscode
+/.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Laravel specific
+/storage/*.key
+/public/hot
+/public/storage
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+
+# Large files and archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+

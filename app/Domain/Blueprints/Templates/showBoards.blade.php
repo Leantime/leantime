@@ -17,20 +17,18 @@
                 <div class="row">
                 @foreach ($recentProgressCanvas as $canvasType => $board)
                     <div class="col-md-3">
-                        <div class="profileBox">
+                        <x-global::elements.card compact class="profileBox">
                             <div class="commentImage icon">
                                 <i class="{{ $board['icon'] }}"></i>
                             </div>
                             <span class="userName">
-                                    <small>{!! __($board['name']) !!} ({{ $board['count'] }})</small><br />
-
-                                    <a href="{{ BASE_URL }}/{{ $board['module'] }}/showCanvas/{{ $board['lastCanvasId'] }}">
-                                        {{ $tpl->escape($board['lastTitle']) }}
-                                    </a><br />
-                                <small>{!! __('label.last_updated') !!} {{ format($board['lastUpdate'])->date() }} {{ format($board['lastUpdate'])->time() }}</p>
-                                </small>
-                                </span>
-                               <div class="clearall"></div>
+                                <small>{!! __($board['name']) !!} ({{ $board['count'] }})</small><br />
+                                <a href="{{ BASE_URL }}/{{ $board['module'] }}/showCanvas/{{ $board['lastCanvasId'] }}">
+                                    {{ $tpl->escape($board['lastTitle']) }}
+                                </a><br />
+                                <small>{!! __('label.last_updated') !!} {{ format($board['lastUpdate'])->date() }} {{ format($board['lastUpdate'])->time() }}</small>
+                            </span>
+                            <div class="clearall"></div>
                             @php
                                 $percentDone = 0;
                                 if (isset($canvasProgress[$canvasType])) {
@@ -40,9 +38,7 @@
                             <br />
                             <x-global::feedback.progress :value="$percentDone" />
                             {!! sprintf(__('text.percent_complete'), $percentDone) !!}
-
-
-                        </div>
+                        </x-global::elements.card>
                     </div>
                 @endforeach
 
@@ -62,7 +58,7 @@
         </div>
     </div>
 
-    @if ($login::userIsAtLeast($roles::$editor))
+    @can('blueprints.create')
     <div class="row">
         <div class="col-md-12">
             <x-global::layout.content-box>
@@ -73,20 +69,18 @@
                     @foreach ($otherBoards as $board)
                         @if (! isset($board['visible']) || $board['visible'] === 1)
                         <div class="col-md-3">
-                            <div class="profileBox" style="min-height: 125px;">
+                            <x-global::elements.card compact class="profileBox" style="min-height: 125px;">
                                 <div class="commentImage icon">
                                     <i class="{{ $board['icon'] }}"></i>
                                 </div>
                                 <span class="userName">
-                            <a href="{{ BASE_URL }}/{{ $board['module'] }}/showCanvas">
-                                {!! __($board['name']) !!}
-                            </a>
-                        </span>
+                                    <a href="{{ BASE_URL }}/{{ $board['module'] }}/showCanvas">
+                                        {!! __($board['name']) !!}
+                                    </a>
+                                </span>
                                 {!! __($board['description']) !!}
                                 <div class="clearall"></div>
-
-
-                            </div>
+                            </x-global::elements.card>
                         </div>
                         @endif
                     @endforeach
@@ -96,7 +90,7 @@
             </x-global::layout.content-box>
         </div>
     </div>
-    @endif
+    @endcan
 
 </div>
 

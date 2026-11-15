@@ -5,27 +5,31 @@
 @php
     $comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
     $formUrl = CURRENT_URL;
+    // Without comments.create the thread stays readable (and reactable), but nothing offers a write.
+    $canComment = \Illuminate\Support\Facades\Gate::allows('comments.create');
 @endphp
 
 <x-global::elements.section-header icon="fa fa-comments">{!! __('subtitles.discussion') !!}</x-global::elements.section-header>
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}"
       id="commentForm">
-    <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
-       style="display:none;" id="mainToggler"><span
-                class="fa fa-plus-square"></span> {!! __('links.add_new_comment') !!}
-    </a>
+    @if ($canComment)
+        <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
+           style="display:none;" id="mainToggler"><span
+                    class="fa fa-plus-square"></span> {!! __('links.add_new_comment') !!}
+        </a>
 
-    <div id="comment0" class="commentBox">
-        <textarea rows="5" cols="50" class="tiptapSimple"
-                  name="text"></textarea><br/>
-        <input type="submit" value="{{ __('buttons.save') }}"
-               name="comment" class="btn btn-default btn-success"
-               style="margin-left: 0px;"/>
-        <input type="hidden" name="comment" value="1"/>
-        <input type="hidden" name="father" id="father" value="0"/>
-        <br/>
-    </div>
+        <div id="comment0" class="commentBox">
+            <textarea rows="5" cols="50" class="tiptapSimple"
+                      name="text"></textarea><br/>
+            <input type="submit" value="{{ __('buttons.save') }}"
+                   name="comment" class="btn btn-default btn-success"
+                   style="margin-left: 0px;"/>
+            <input type="hidden" name="comment" value="1"/>
+            <input type="hidden" name="father" id="father" value="0"/>
+            <br/>
+        </div>
+    @endif
     <hr/>
 
     <div id="comments">
@@ -41,12 +45,14 @@
                     <div style="margin-left:60px;">{!! $tpl->escapeMinimal($row['text']) !!}</div>
                     <div class="clear"></div>
                     <div style="padding-left:60px" class="commentLinks">
-                        <a href="javascript:void(0);" class="replyButton"
-                           onclick="toggleCommentBoxes({{ $row['id'] }})">
-                            <span class="fa fa-reply"></span> {!! __('links.reply') !!}
-                        </a>
+                        @if ($canComment)
+                            <a href="javascript:void(0);" class="replyButton"
+                               onclick="toggleCommentBoxes({{ $row['id'] }})">
+                                <span class="fa fa-reply"></span> {!! __('links.reply') !!}
+                            </a>
+                        @endif
 
-                        @if ($row['userId'] == session('userdata.id'))
+                        @if ($canComment && $row['userId'] == session('userdata.id'))
                             <a href="javascript:void(0);"
                                class="deleteComment" data-post-field="delComment" data-post-value="{{ $row['id'] }}">
                                 <span class="fa fa-trash"></span> {!! __('links.delete') !!}
@@ -57,13 +63,15 @@
                              hx-trigger="load"
                              hx-swap="outerHTML">
                         </span>
-                        <div style="display:none;"
-                             id="comment{{ $row['id'] }}"
-                             class="commentBox">
-                            <br/><x-global::forms.button tag="input" inputType="submit"
-                                        :labelText="__('links.reply')"
-                                        name="comment" contentRole="primary" />
-                        </div>
+                        @if ($canComment)
+                            <div style="display:none;"
+                                 id="comment{{ $row['id'] }}"
+                                 class="commentBox">
+                                <br/><x-global::forms.button tag="input" inputType="submit"
+                                            :labelText="__('links.reply')"
+                                            name="comment" contentRole="primary" />
+                            </div>
+                        @endif
                     </div>
                     <div class="clear"></div>
                 </div>
@@ -84,7 +92,7 @@
                                 <div class="clear"></div>
 
                                 <div style="padding-left:60px" class="commentLinks">
-                                    @if ($comment['userId'] == session('userdata.id'))
+                                    @if ($canComment && $comment['userId'] == session('userdata.id'))
                                         <a href="javascript:void(0);"
                                            class="deleteComment" data-post-field="delComment" data-post-value="{{ $comment['id'] }}">
                                             <span class="fa fa-trash"></span> {!! __('links.delete') !!}
@@ -124,7 +132,7 @@
     }
 
     function toggleCommentBoxes(id) {
-        @if ($login::userIsAtLeast($roles::$commenter))
+        @if ($canComment)
             if (id == 0) {
                 jQuery('#mainToggler').hide();
             } else {

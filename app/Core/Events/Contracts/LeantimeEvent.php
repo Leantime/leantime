@@ -31,8 +31,7 @@ namespace Leantime\Core\Events\Contracts;
  * events for the pattern).
  *
  * Remove the entries (and eventually the mechanism) once all consumers have migrated
- * to the FQCN. Mirrors the client-side
- * {@see \Leantime\Core\Events\Htmx\HtmxEvents} LEGACY_ALIASES window.
+ * to the FQCN.
  *
  * Use the {@see \Leantime\Core\Events\Concerns\InteractsWithEvents} trait for the
  * static dispatch() ergonomic and the default empty legacyHooks().
