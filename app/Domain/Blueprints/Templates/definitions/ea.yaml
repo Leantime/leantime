@@ -78,7 +78,7 @@ relatesLabels:
 dataLabels:
   1: { title: "label.description", field: "conclusion", active: true }
   2: { title: "label.data", field: "data", active: false }
-  3: { title: "label.assumption", field: "assumptions", active: false }
+  3: { title: "label.assumptions", field: "assumptions", active: false }
 
 layout:
   - type: boxes
