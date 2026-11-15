@@ -9,6 +9,7 @@ use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Unit\TestCase;
 
@@ -31,6 +32,7 @@ class ClientsServiceTest extends TestCase
         ?ProjectRepository $projectRepo = null,
         ?CommentService $commentService = null,
         ?FileService $fileService = null,
+        ?ProjectService $projectService = null,
     ): ClientService {
         return new ClientService(
             $projectRepo ?? $this->make(ProjectRepository::class),
@@ -38,6 +40,7 @@ class ClientsServiceTest extends TestCase
             $commentService ?? $this->make(CommentService::class),
             $fileService ?? $this->make(FileService::class),
             $userRepo ?? $this->make(UserRepository::class),
+            $projectService ?? $this->make(ProjectService::class),
         );
     }
 
