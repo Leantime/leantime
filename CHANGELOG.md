@@ -1,3 +1,18 @@
+# Version: 3.15.0
+
+## New Features
+- **Permission-based controls for canvas boards, ideas and docs** - Canvas boards, ideas and docs now show their controls based on specific permissions (#3993)
+- **Permission checks for comments, files, tokens and imports** - Comments, files, tokens and imports now check specific permissions (#3994)
+- **forms.field component** - A new forms.field component bundles label, control and help text, and supports dialog fields (#4003, #4004)
+
+## Improvements
+- **Clearer board and table styling** - Kanban headers, lanes, group boxes and table headers now stand off the white card for better contrast (#4063)
+
+## Upgrade Notes
+- **For plugin developers:** the legacy HTMX event aliases have been removed (#3996).
+
+---
+
 # Version: 3.14.0
 
 ## Highlights
