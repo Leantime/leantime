@@ -1095,6 +1095,120 @@ class ProjectsServiceTest extends TestCase
         $this->assertSame('', $card['status']);
     }
 
+    /**
+     * A service wired for getProjectsCardData(): projects in $existingIds exist, each has one
+     * status comment "status-<id>", and the caller may view exactly $viewableIds.
+     *
+     * @param  array<int, int>  $existingIds
+     * @param  array<int, int>|null  $viewableIds  Null = every project is viewable.
+     * @param  array<int, array<int, int>>  $existenceQueries  Receives the ids passed to each existence lookup.
+     */
+    private function makeCardBatchService(array $existingIds, ?array $viewableIds = null, array &$existenceQueries = []): ProjectService
+    {
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getAverageTodoSize' => fn () => 0,
+            'getFirstTicket' => fn () => null,
+        ]);
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUsersAssignedToProject' => fn () => [],
+            'getExistingProjectIds' => function (array $ids) use ($existingIds, &$existenceQueries) {
+                $existenceQueries[] = $ids;
+
+                return array_values(array_intersect($existingIds, $ids));
+            },
+        ]);
+        $commentRepo = $this->make(CommentRepository::class, [
+            'getComments' => fn ($module, $id) => [
+                ['id' => 1000 + (int) $id, 'status' => 'status-'.$id],
+            ],
+        ]);
+        $permissions = $this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $key, ?int $projectId = null) => $key === ProjectsPermissions::VIEW
+                && $projectId !== null
+                && ($viewableIds === null || in_array($projectId, $viewableIds, true)),
+        ]);
+
+        return $this->makeService(
+            projectRepo: $projectRepo,
+            ticketRepo: $ticketRepo,
+            commentRepo: $commentRepo,
+            permissions: $permissions,
+        );
+    }
+
+    public function test_get_projects_card_data_returns_same_shape_as_single_card(): void
+    {
+        $service = $this->makeCardBatchService([3, 7]);
+
+        $batch = $service->getProjectsCardData([3, 7]);
+
+        $this->assertSame([0, 1], array_keys($batch), 'result must be a JSON list');
+        $this->assertSame($service->getProjectCardData(3), $batch[0]);
+        $this->assertSame($service->getProjectCardData(7), $batch[1]);
+        $this->assertSame(['id', 'progress', 'team', 'lastUpdate', 'status'], array_keys($batch[0]));
+        $this->assertSame('status-7', $batch[1]['status']);
+    }
+
+    public function test_get_projects_card_data_keeps_requested_order(): void
+    {
+        $batch = $this->makeCardBatchService([1, 2, 3])->getProjectsCardData([3, 1, 2]);
+
+        $this->assertSame([3, 1, 2], array_column($batch, 'id'));
+    }
+
+    public function test_get_projects_card_data_casts_dedupes_and_drops_invalid_ids(): void
+    {
+        $queries = [];
+        $batch = $this->makeCardBatchService([4, 5], null, $queries)
+            ->getProjectsCardData(['5', 4, 5, '4', 0, -2, 'abc', null, [9], true]);
+
+        $this->assertSame([5, 4], array_column($batch, 'id'));
+        $this->assertSame([[5, 4]], $queries, 'only the normalized distinct ids are looked up');
+    }
+
+    public function test_get_projects_card_data_caps_the_number_of_ids(): void
+    {
+        $limit = ProjectService::PROJECT_CARD_BATCH_LIMIT;
+        $all = range(1, $limit + 25);
+
+        $queries = [];
+        $batch = $this->makeCardBatchService($all, null, $queries)->getProjectsCardData($all);
+
+        $this->assertCount($limit, $batch);
+        $this->assertSame(range(1, $limit), array_column($batch, 'id'));
+        $this->assertCount($limit, $queries[0]);
+    }
+
+    public function test_get_projects_card_data_omits_denied_and_missing_projects(): void
+    {
+        // 8 exists but is not viewable; 99 is viewable-by-role but does not exist.
+        $batch = $this->makeCardBatchService([2, 8, 6], [2, 6, 99])->getProjectsCardData([8, 2, 99, 6]);
+
+        $this->assertSame([2, 6], array_column($batch, 'id'));
+    }
+
+    public function test_get_projects_card_data_returns_empty_list_without_valid_ids(): void
+    {
+        $queries = [];
+        $service = $this->makeCardBatchService([1], null, $queries);
+
+        $this->assertSame([], $service->getProjectsCardData([]));
+        $this->assertSame([], $service->getProjectsCardData([0, -1, 'x']));
+        $this->assertSame([], $queries, 'no query when nothing valid was asked for');
+    }
+
+    public function test_get_projects_card_data_is_entity_scoped_and_rpc_exposed(): void
+    {
+        $method = new \ReflectionMethod(ProjectService::class, 'getProjectsCardData');
+        $attrs = $method->getAttributes(\Leantime\Core\Auth\Permissions\RequiresPermission::class);
+
+        $this->assertCount(1, $attrs);
+        $gate = $attrs[0]->newInstance();
+        $this->assertSame(ProjectsPermissions::VIEW, $gate->permission);
+        $this->assertTrue($gate->entityScoped, 'per-project authorization happens in the method body');
+        $this->assertMatchesRegularExpression('/^\s*\*\s*@api\b/m', (string) $method->getDocComment());
+    }
+
     // ---------------------------------------------------------------------
     // Authorized JSON-RPC entry points for project sort/status/patch.
     // The /api/projects controller (which had a route-level gate) was retired,

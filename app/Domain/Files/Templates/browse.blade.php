@@ -19,8 +19,8 @@
             {!! $tpl->displayNotification() !!}
             <x-global::elements.section-header as="h5">{!! __('headline.browse_files_headline') !!}</x-global::elements.section-header>
 
-        @if ($login::userIsAtLeast($roles::$editor))
-        <div class="uploadWrapper">
+        @if (can('files.upload'))
+        <div class="uploadWrapper" data-lt-permitted>
 
             <x-global::forms.button tag="a" contentRole="default" id="cancelLink" link="javascript:void(0);" style="display:none;">{!! __('links.cancel') !!}</x-global::forms.button>
             <div class="extra" style="margin-top:5px;"></div>
@@ -54,9 +54,9 @@
                                 <li class="nav-header">{!! __('subtitles.file') !!}</li>
                                 <li><a target="_blank" href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}">{!! __('links.download') !!}</a></li>
 
-                                @if ($login::userIsAtLeast($roles::$editor))
+                                @if ($file['userId'] == session('userdata.id') || can('files.delete'))
                                     <li>
-                                        <form method="post" action="{{ BASE_URL }}/files/browse{{ $openedAsPopup ? '?modalPopUp=true' : '' }}" class="deleteFile" onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
+                                        <form method="post" action="{{ BASE_URL }}/files/browse{{ $openedAsPopup ? '?modalPopUp=true' : '' }}" class="deleteFile" data-lt-permitted onsubmit="return confirm('{{ __('text.confirm_delete') }}')">
                                             @csrf
                                             <input type="hidden" name="delFile" value="{{ $file['id'] }}" />
                                             <button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! __('links.delete') !!}</button>
@@ -171,7 +171,8 @@
     }
 
 
-    if (typeof uppy === 'undefined') {
+    // No upload controls without files.upload, so no uploader either.
+    if ({{ can('files.upload') ? 'true' : 'false' }} && typeof uppy === 'undefined') {
 
 
     const uppy = new Uppy.Uppy({
@@ -233,9 +234,8 @@
                                 '<ul class="dropdown-menu">' +
                                     '<li class="nav-header">{!! __("subtitles.file") !!}</li>' +
                                     '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">{!! str_replace("'", '"', __("links.download")) !!}</a></li>'+
-                                    @if ($login::userIsAtLeast($roles::$editor))
-                                        '<li><form method="post" action="{{ BASE_URL }}/files/browse{{ $openedAsPopup ? '?modalPopUp=true' : '' }}" class="deleteFile" onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
-                                    @endif
+                                    {{-- The uploader may always delete the file they just added (Files::deleteFile). --}}
+                                    '<li><form method="post" action="{{ BASE_URL }}/files/browse{{ $openedAsPopup ? '?modalPopUp=true' : '' }}" class="deleteFile" data-lt-permitted onsubmit="return confirm(\'{{ __("text.confirm_delete") }}\')"><input type="hidden" name="_token" value="'+ jQuery('meta[name=csrf-token]').attr('content') +'" /><input type="hidden" name="delFile" value="'+ response.fileId +'" /><button type="submit" class="delete" style="background:none;border:none;cursor:pointer;padding:3px 20px;width:100%;text-align:left;"><i class="fa fa-trash"></i> {!! str_replace("'", '"', __("links.delete")) !!}</button></form></li>'+
                                 '</ul>'+
                             '</div>'+
                             '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+

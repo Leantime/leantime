@@ -106,7 +106,7 @@ class Index extends Controller
             // AdvancedAuth is installed. The app opens this in the system auth
             // browser; the mobile branch is triggered by its own query params
             // (see Oidc\Controllers\Login).
-            $payload['oidcLoginUrl'] = $this->request->getSchemeAndHttpHost().'/oidc/login';
+            $payload['oidcLoginUrl'] = self::oidcLoginUrl($this->request->getSchemeAndHttpHost(), BASE_URL);
         }
 
         // AdvancedAuth (or other plugins) can append named SSO providers to the
@@ -124,5 +124,18 @@ class Index extends Controller
         }
 
         return new JsonResponse($payload);
+    }
+
+    /**
+     * The OIDC login URL for the app: the scheme and host the app connected to,
+     * plus the folder Leantime runs in (taken from BASE_URL, which is
+     * LEAN_APP_URL when set), so an install at example.com/leantime advertises
+     * example.com/leantime/oidc/login and not example.com/oidc/login.
+     */
+    public static function oidcLoginUrl(string $schemeAndHost, string $baseUrl): string
+    {
+        $path = trim((string) (parse_url($baseUrl, PHP_URL_PATH) ?: ''), '/');
+
+        return rtrim($schemeAndHost, '/').($path !== '' ? '/'.$path : '').'/oidc/login';
     }
 }

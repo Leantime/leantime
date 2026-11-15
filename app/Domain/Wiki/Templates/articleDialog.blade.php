@@ -45,9 +45,9 @@
 @endphp
 
 <x-global::actions.modal-header icon="fa fa-file-lines" :title="__('headline.doc')">
-    @if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor))
+    @if (isset($currentArticle->id) && $currentArticle->id != '' && \Illuminate\Support\Facades\Gate::allows('wiki.delete', $currentArticle->projectId ?? null))
         <x-slot:actions>
-            <li><a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete"><i class="fa fa-trash-can"></i> {!! __('links.delete_article') !!}</a></li>
+            <li><a href="#/wiki/delArticle/{{ $currentArticle->id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {!! __('links.delete_article') !!}</a></li>
         </x-slot:actions>
     @endif
 </x-global::actions.modal-header>
@@ -58,22 +58,24 @@
         <div class="col-md-2">
             <div class="row-fluid marginBottom">
                 <x-global::elements.section-header icon="fa fa-folder">{!! __('subtitles.organization') !!}</x-global::elements.section-header>
-                <x-global::forms.label>{{ __('label.parent') }}</x-global::forms.label>
-                <x-global::forms.select width="full" name="parent">
-                    <option value="0">{{ __('label.none') }}</option>
-                    @foreach ($wikiHeadlines as $parent)
-                        @if ($id != $parent->id)
-                            <option value="{{ $parent->id }}"
-                                    {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ $tpl->escape($parent->title) }}</option>
-                        @endif
-                    @endforeach
-                </x-global::forms.select>
+                <x-global::forms.field for="articleParent" :label="__('label.parent')">
+                    <x-global::forms.select width="full" name="parent" id="articleParent">
+                        <option value="0">{{ __('label.none') }}</option>
+                        @foreach ($wikiHeadlines as $parent)
+                            @if ($id != $parent->id)
+                                <option value="{{ $parent->id }}"
+                                        {{ ($parent->id == $currentArticle->parent) ? "selected='selected'" : '' }} >{{ $tpl->escape($parent->title) }}</option>
+                            @endif
+                        @endforeach
+                    </x-global::forms.select>
+                </x-global::forms.field>
 
-                <x-global::forms.label>{!! __('label.status') !!}</x-global::forms.label>
-                <x-global::forms.select width="full" name="status">
-                    <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{!! __('label.draft') !!}</option>
-                    <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{!! __('label.published') !!}</option>
-                </x-global::forms.select>
+                <x-global::forms.field for="articleStatus" :label="__('label.status')">
+                    <x-global::forms.select width="full" name="status" id="articleStatus">
+                        <option value="draft" {{ $currentArticle->status == 'draft' ? "selected='selected'" : '' }}>{!! __('label.draft') !!}</option>
+                        <option value="published" {{ $currentArticle->status == 'published' ? "selected='selected'" : '' }}>{!! __('label.published') !!}</option>
+                    </x-global::forms.select>
+                </x-global::forms.field>
             </div>
 
             @if ($id !== '')
@@ -85,12 +87,14 @@
                             <h4>{!! __('headlines.no_milestone_link') !!}</h4>
                             {!! __('text.use_milestone_to_track_leancanvas') !!}<br />
                             <div class="row" id="milestoneSelectors">
-                                @if ($login::userIsAtLeast($roles::$editor))
+                                @can('wiki.edit')
                                     <div class="col-md-12">
-                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
-                                        | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
+                                        @can('tickets.create')
+                                            <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a> |
+                                        @endcan
+                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
                                     </div>
-                                @endif
+                                @endcan
                             </div>
                             <div class="row" id="newMilestone" style="display:none;">
                                 <div class="col-md-12">

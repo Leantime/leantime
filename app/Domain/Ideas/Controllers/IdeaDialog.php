@@ -42,7 +42,8 @@ class IdeaDialog extends Controller
 
         $this->tpl->assign('comments', $comments);
 
-        $this->tpl->assign('milestones', $this->ideaService->getProjectMilestones((int) session('currentProject')));
+        // Milestones are linked within the idea's own project (new ideas: the session project).
+        $this->tpl->assign('milestones', $this->ideaService->getProjectMilestones((int) ($canvasItem['projectId'] ?? session('currentProject'))));
         $this->tpl->assign('canvasTypes', $this->ideaService->getCanvasTypes());
         $this->tpl->assign('canvasItem', $canvasItem);
         $this->tpl->assign('currentCanvas', (int) session('currentIdeaCanvas'));

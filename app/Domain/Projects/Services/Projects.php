@@ -3484,6 +3484,82 @@ class Projects extends BaseService implements ChecksProjectAccess
     #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectCardData(int $projectId): array
     {
+        return $this->buildProjectCardData($projectId);
+    }
+
+    /**
+     * Maximum number of distinct project ids getProjectsCardData() processes per call.
+     */
+    public const PROJECT_CARD_BATCH_LIMIT = 100;
+
+    /**
+     * Builds the progress view-model for several project cards in one call.
+     *
+     * Batch form of getProjectCardData() for clients that render a list of project cards
+     * (one request and one bootstrap instead of one per project). Each entry has exactly the
+     * shape getProjectCardData() returns.
+     *
+     * Ids are int-cast; non-positive and duplicate ids are dropped, and only the first
+     * PROJECT_CARD_BATCH_LIMIT (100) distinct ids are processed — the rest are ignored.
+     *
+     * Authorization is per project: each id is checked for projects.view (role + membership)
+     * on its own. Projects that do not exist or that the caller cannot view are left out of
+     * the result instead of failing the whole batch.
+     *
+     * @param  array<int, mixed>  $projectIds  The project ids to assemble card data for, in display order (JSON ints or numeric strings).
+     * @return array<int, array> A list of project card data (id, progress, team, lastUpdate, status), in the order requested.
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::VIEW, entityScoped: true)]
+    public function getProjectsCardData(array $projectIds): array
+    {
+        $ids = [];
+
+        foreach ($projectIds as $rawId) {
+            if (! is_int($rawId) && ! is_string($rawId) && ! is_float($rawId)) {
+                continue;
+            }
+
+            $id = (int) $rawId;
+
+            if ($id <= 0 || isset($ids[$id])) {
+                continue;
+            }
+
+            $ids[$id] = $id;
+
+            if (count($ids) >= self::PROJECT_CARD_BATCH_LIMIT) {
+                break;
+            }
+        }
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $existing = array_flip($this->projectRepository->getExistingProjectIds(array_values($ids)));
+
+        $cards = [];
+
+        foreach ($ids as $id) {
+            if (! isset($existing[$id]) || ! $this->can(ProjectsPermissions::VIEW, $id)) {
+                continue;
+            }
+
+            $cards[] = $this->buildProjectCardData($id);
+        }
+
+        return $cards;
+    }
+
+    /**
+     * Assembles one project card (progress, team, latest status update). Callers authorize first.
+     *
+     * @return array The project card data including id, progress, team, lastUpdate and status.
+     */
+    private function buildProjectCardData(int $projectId): array
+    {
         $project = ['id' => $projectId];
 
         $project['progress'] = $this->getProjectProgress($projectId);
