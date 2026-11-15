@@ -897,16 +897,28 @@ class Blueprints extends BaseService
     /**
      * Translate the data labels from a CanvasTemplate.
      *
+     * With a box, a label can be worded per box: "{title}.{box}" (for example
+     * label.valueCanvas.assumptions.problem) is used when the language has it, and
+     * "{title}" otherwise.
+     *
      * @param  CanvasTemplate  $template  Canvas template
+     * @param  string  $box  Box of the item the labels are shown for ('' for none)
      * @return array<int, array<string, mixed>> Translated data labels
      */
-    public function getTranslatedDataLabels(CanvasTemplate $template): array
+    public function getTranslatedDataLabels(CanvasTemplate $template, string $box = ''): array
     {
         $dataLabels = $template->dataLabels;
         foreach ($dataLabels as $key => $data) {
-            if (isset($data['title'])) {
-                $dataLabels[$key]['title'] = $this->language->__($data['title']);
+            if (! isset($data['title'])) {
+                continue;
             }
+
+            $translatedTitle = $this->language->__($data['title']);
+            if ($box !== '') {
+                $translatedTitle = $this->language->__($data['title'].'.'.$box, $translatedTitle);
+            }
+
+            $dataLabels[$key]['title'] = $translatedTitle;
         }
 
         return $dataLabels;
