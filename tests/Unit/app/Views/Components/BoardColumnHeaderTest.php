@@ -48,7 +48,7 @@ class BoardColumnHeaderTest extends TestCase
     {
         $html = $this->render('<x-global::elements.board-column-header :count="0" statusClass="label-info"><x-slot:actions><a class="editHeadline">⋮</a></x-slot:actions> {{ $name }}</x-global::elements.board-column-header>', ['name' => 'In <b>Progress</b>']);
 
-        $this->assertStringContainsString('<h4 class="widgettitle title-primary title-border-label-info">', $html);
+        $this->assertStringContainsString('<h4 class="widgettitle title-primary board-column-header title-border-label-info">', $html);
         $this->assertStringContainsString('<strong class="count">0</strong>', $html);
         $this->assertStringContainsString('In &lt;b&gt;Progress&lt;/b&gt;', $html);
         // The menu floats right, so it comes first.
@@ -59,7 +59,7 @@ class BoardColumnHeaderTest extends TestCase
     {
         $html = $this->render('<x-global::elements.board-column-header align="center" class="canvas-title-only" icon="fa fa-user">Customer <em>jobs</em></x-global::elements.board-column-header>');
 
-        $this->assertStringContainsString('<h4 class="widgettitle title-primary center canvas-title-only">', $html);
+        $this->assertStringContainsString('<h4 class="widgettitle title-primary board-column-header center canvas-title-only">', $html);
         $this->assertStringContainsString('<i class="fa fa-user" aria-hidden="true"></i>', $html);
         $this->assertStringContainsString('Customer <em>jobs</em>', $html);
         $this->assertStringNotContainsString('class="count"', $html);
