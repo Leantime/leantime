@@ -1099,11 +1099,25 @@ body .maincontent .priority-text-5 a:link {
    makes .kanban-board-wrapper the single scroller instead, so this must
    not apply there or the two scroll mechanisms fight each other. */
 @media (min-width: 1200px) {
+    /* A scroller clips its children's shadows at its edges, so the row gets room for the headers'
+       --large-shadow on every side (padding) and gives it back with negative margins: the headers
+       stay where they were, and the scroller and the board body keep the same max scrollLeft
+       (padding adds the same 32px to both scrollWidth and clientWidth). The padding overlaps the
+       lanes below, so it lets clicks through to them. */
     .kanban-column-headers {
-        width: 100%;
-        max-width: 100%;
+        --header-shadow-room: 16px;
+        box-sizing: border-box;
+        width: calc(100% + 2 * var(--header-shadow-room));
+        max-width: calc(100% + 2 * var(--header-shadow-room));
+        padding: 8px var(--header-shadow-room) 24px;
+        margin: -8px calc(-1 * var(--header-shadow-room)) -24px;
         overflow-x: auto;
         overflow-y: hidden;
+        pointer-events: none;
+    }
+
+    .kanban-column-headers > .column {
+        pointer-events: auto;
     }
 
     /* When grouped, the header is shifted right by the sidebar width, so
@@ -1112,8 +1126,9 @@ body .maincontent .priority-text-5 a:link {
        scrollLeft values differ and the sync script clamps short of the
        true right edge. */
     .kanban-column-headers.groupby-active {
-        width: calc(100% - 158px);
-        max-width: calc(100% - 158px);
+        width: calc(100% - 158px + 2 * var(--header-shadow-room));
+        max-width: calc(100% - 158px + 2 * var(--header-shadow-room));
+        margin-left: calc(158px - var(--header-shadow-room));
     }
 }
 
