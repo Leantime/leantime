@@ -13,8 +13,11 @@
     // Comments are authorized against the host entity's project. Hosts that know it pass
     // 'commentProjectId'; without it the session project applies.
     $commentProjectId = isset($commentProjectId) && is_numeric($commentProjectId) ? (int) $commentProjectId : null;
-    $canComment = can('comments.create', $commentProjectId);
-    $canModerate = can('comments.moderate', $commentProjectId);
+    // Hosts whose form post needs more than comment rights (e.g. the client page posts through
+    // clients.edit) pass 'commentsWritable' => false so the list shows without write controls.
+    $commentsWritable = ! isset($commentsWritable) || (bool) $commentsWritable;
+    $canComment = $commentsWritable && can('comments.create', $commentProjectId);
+    $canModerate = $commentsWritable && can('comments.moderate', $commentProjectId);
 @endphp
 
 <form method="post" accept-charset="utf-8" action="{{ $formUrl }}" id="commentForm-{{ $formHash }}" class="formModal">
