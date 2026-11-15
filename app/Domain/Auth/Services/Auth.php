@@ -8,6 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
+use Leantime\Core\Auth\AccountStatus;
 use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
@@ -930,6 +931,14 @@ class Auth implements Authenticatable
 
     }
 
+    /**
+     * Resolve the user behind a personal access token (Bearer).
+     *
+     * Returns false for an unknown or expired token, and for a token whose user was deleted or
+     * deactivated. Records the token's last use on success.
+     *
+     * @return array<string, mixed>|false The token user's zp_user row, or false when refused.
+     */
     public function getUserByToken(string $token): array|bool
     {
         $tokenModel = $this->tokenRepo->findToken($token);
@@ -942,9 +951,9 @@ class Auth implements Authenticatable
             return false;
         }
 
-        // Load the user associated with this token
+        // Load the user associated with this token. Tokens of a deactivated user stop working.
         $user = $this->userRepo->getUser($tokenModel['tokenable_id']);
-        if (! $user) {
+        if (! AccountStatus::isActive($user)) {
             return false;
         }
 

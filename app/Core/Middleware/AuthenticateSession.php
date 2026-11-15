@@ -5,6 +5,7 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Contracts\Session\Middleware\AuthenticatesSessions;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\AccountStatus;
 use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\HtmxRequest;
@@ -15,7 +16,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Ends web sessions whose password is no longer current.
+ * Ends web sessions whose user was deactivated or deleted, or whose password is no longer current.
+ *
+ * Login only accepts active accounts, so each request re-checks the account status from the same
+ * user row: once an admin deactivates a user, their open sessions are logged out on the next
+ * request instead of living on until they sign out (#4042).
  *
  * Login pins the session to a fingerprint of the user's password hash
  * ({@see PasswordFingerprint}). Each request compares it with the hash in the database; after a
@@ -36,7 +41,8 @@ class AuthenticateSession implements AuthenticatesSessions
     ) {}
 
     /**
-     * Handle an incoming request.
+     * Handle an incoming request: let it through only when the session's user still exists, is
+     * active and logged in with the password that is current.
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
@@ -55,7 +61,8 @@ class AuthenticateSession implements AuthenticatesSessions
 
         // Requests authenticated by a validated API key / Bearer token rebuild userdata from that
         // credential and never carry a fingerprint. Only AuthCheck's verdict counts — a credential
-        // header that is merely present proves nothing.
+        // header that is merely present proves nothing. Those credentials refuse deactivated
+        // accounts where they are validated (Api::getAPIKeyUser, Auth::getUserByToken).
         if ($storedFingerprint === null && $request->attributes->get(self::TOKEN_AUTHENTICATED) === true) {
             return $next($request);
         }
@@ -64,6 +71,10 @@ class AuthenticateSession implements AuthenticatesSessions
 
         if (! is_array($user)) {
             return $this->endSession($request, 'user no longer exists');
+        }
+
+        if (! AccountStatus::isActive($user)) {
+            return $this->endSession($request, 'user is deactivated');
         }
 
         $currentPasswordHash = $user['password'] ?? '';
