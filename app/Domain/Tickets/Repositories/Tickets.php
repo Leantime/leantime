@@ -20,6 +20,9 @@ class Tickets
 {
     use EventhelperCore;
 
+    /** Length of zp_tickethistory.changeValue (varchar(150)); longer values are cut to fit. */
+    public const HISTORY_VALUE_MAX_LENGTH = 150;
+
     public ?object $result = null;
 
     public ?object $tickets = null;
@@ -2315,6 +2318,8 @@ class Tickets
     /**
      * Records ticket field changes in the history table.
      * Uses a single batch insert instead of individual inserts per changed field.
+     * Values longer than the changeValue column (e.g. a description) are cut to fit:
+     * strict databases such as PostgreSQL reject an over-long value instead of truncating it.
      *
      * @param  int  $userId  The user making the change.
      * @param  int  $ticketId  The ticket being changed.
@@ -2375,7 +2380,7 @@ class Tickets
                     'userId' => $userId,
                     'ticketId' => $ticketId,
                     'changeType' => $enum,
-                    'changeValue' => $values[$dbTable],
+                    'changeValue' => $this->fitHistoryValue($values[$dbTable]),
                     'dateModified' => $now,
                 ];
             }
@@ -2385,6 +2390,23 @@ class Tickets
         if (! empty($historyRows)) {
             $this->connection->table('zp_tickethistory')->insert($historyRows);
         }
+    }
+
+    /**
+     * Cuts a history value to the length of the changeValue column, counting characters (not
+     * bytes) so a multibyte character is never split. Non-string values (ids, numbers) are short
+     * and pass through unchanged.
+     *
+     * @param  mixed  $value  The new value of a tracked field.
+     * @return mixed The value, at most HISTORY_VALUE_MAX_LENGTH characters when it is a string.
+     */
+    private function fitHistoryValue(mixed $value): mixed
+    {
+        if (! is_string($value)) {
+            return $value;
+        }
+
+        return mb_substr($value, 0, self::HISTORY_VALUE_MAX_LENGTH);
     }
 
     /**
