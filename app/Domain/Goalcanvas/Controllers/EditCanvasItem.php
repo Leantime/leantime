@@ -191,8 +191,9 @@ class EditCanvasItem extends Controller
         if (isset($params['comment']) && isset($params['id'])) {
             $itemId = (int) $params['id'];
 
-            // Only allow commenting on a goal item the user can view in their project.
-            if (! $this->goalService->getGoalItem($itemId)) {
+            // Only allow commenting on a goal item the user can view in its project.
+            $commentedGoal = $this->goalService->getGoalItem($itemId);
+            if (! $commentedGoal) {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
@@ -224,7 +225,7 @@ class EditCanvasItem extends Controller
                 $notification->entity = $values;
                 $notification->module = 'goalcanvas';
                 $notification->action = 'commented';
-                $notification->projectId = session('currentProject');
+                $notification->projectId = (int) $commentedGoal['projectId'];
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');
                 $notification->message = $message;
@@ -319,7 +320,8 @@ class EditCanvasItem extends Controller
                     $notification->entity = $canvasItem;
                     $notification->module = 'goalcanvas';
                     $notification->action = 'updated';
-                    $notification->projectId = session('currentProject');
+                    // The goal's own project: a goal opened from another project must not notify this one.
+                    $notification->projectId = (int) ($this->goalService->getGoalItem((int) $params['itemId'])['projectId'] ?? 0);
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');
                     $notification->message = $message;

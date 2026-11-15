@@ -279,7 +279,8 @@ class EditCanvasItem
                     $notification->entity = $canvasItem;
                     $notification->module = $this->canvasSlug.'canvas';
                     $notification->action = 'updated';
-                    $notification->projectId = session('currentProject');
+                    // The item's own project: an item opened from another project must not notify this one.
+                    $notification->projectId = (int) $existingItem['projectId'];
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');
                     $notification->message = $message;
@@ -363,8 +364,9 @@ class EditCanvasItem
         if (isset($data['comment']) && isset($data['id'])) {
             $itemId = (int) $data['id'];
 
-            // Only allow commenting on an item the user can view in their project.
-            if (! $this->blueprintsService->getCanvasItem($itemId, $canvasType)) {
+            // Only allow commenting on an item the user can view in its project.
+            $commentedItem = $this->blueprintsService->getCanvasItem($itemId, $canvasType);
+            if (! $commentedItem) {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
@@ -395,7 +397,7 @@ class EditCanvasItem
             $notification->entity = $values;
             $notification->module = $this->canvasSlug.'canvas';
             $notification->action = 'commented';
-            $notification->projectId = session('currentProject');
+            $notification->projectId = (int) $commentedItem['projectId'];
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id');
             $notification->message = $message;
