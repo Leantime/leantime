@@ -201,10 +201,11 @@ abstract class AbstractEntityFormatter implements EntityFormatterInterface
     protected function formatPriority($priority): string
     {
         return match (strtolower((string) $priority)) {
-            '1', 'low' => '🔵 Low',
-            '2', 'medium', 'normal' => '🟡 Medium',
-            '3', 'high' => '🟠 High',
-            '4', 'urgent', 'critical' => '🔴 Urgent',
+            '1', 'critical', 'urgent' => '🔴 Critical',
+            '2', 'high' => '🟠 High',
+            '3', 'medium', 'normal' => '🟡 Medium',
+            '4', 'low' => '🔵 Low',
+            '5', 'lowest' => '⚪ Lowest',
             default => $this->sanitizeValue($priority) ?: 'Not set'
         };
     }
