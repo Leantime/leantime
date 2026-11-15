@@ -223,8 +223,10 @@ Leantime stores all times in UTC internally and converts for display.
 
 ### Event Hooks
 
-- `afterCalendarSave` - Triggers sync when event created/edited
-- `afterCalendarDelete` - Triggers deletion on external servers
+- `CalendarEventCreated` / `CalendarEventUpdated` - Trigger sync when an event is created, edited or moved
+- `CalendarEventDeleted` - Triggers deletion on external servers
+- `ExternalCalendarsFilter` - Lists CalDAV calendars on the calendar page and in calendar settings
+- `CalendarProvidersFilter` - Adds CalDAV to the "Connect Calendar" modal
 
 ### Database Tables
 

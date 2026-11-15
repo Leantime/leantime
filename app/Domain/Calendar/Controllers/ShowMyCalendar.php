@@ -4,6 +4,7 @@ namespace Leantime\Domain\Calendar\Controllers;
 
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Calendar\Events\ExternalCalendarsFilter;
 use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +34,7 @@ class ShowMyCalendar extends Controller
         session(['lastPage' => BASE_URL.'/calendar/showMyCalendar/']);
 
         $externalCalendars = $this->calendarService->getMyExternalCalendars(session('userdata.id'));
-        $externalCalendars = self::dispatch_filter('showMyCalendar.externalCalendars', $externalCalendars);
+        $externalCalendars = ExternalCalendarsFilter::dispatch(calendars: $externalCalendars ?: []);
         $this->tpl->assign('externalCalendars', $externalCalendars);
 
         return $this->tpl->display('calendar.showMyCalendar');
