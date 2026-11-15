@@ -12,9 +12,8 @@ use Illuminate\View\FileViewFinder;
 use Unit\TestCase;
 
 /**
- * actions.modal-header as the to-do dialog uses it (#4008): the headline is part of the title and
- * travels on data-lt-document-title, which modals.js puts into the browser tab title. A headline is
- * user input, so both must come out escaped.
+ * actions.modal-header as the to-do dialog uses it (#4008): the headline is part of the title. A
+ * headline is user input, so it must come out escaped.
  */
 class ModalHeaderTest extends TestCase
 {
@@ -44,10 +43,10 @@ class ModalHeaderTest extends TestCase
         return (string) $factory->file($file, $data)->render();
     }
 
-    public function test_the_headline_is_in_the_title_and_the_document_title_attribute_escaped(): void
+    public function test_the_headline_is_in_the_title_escaped(): void
     {
         $html = $this->render(
-            '<x-global::actions.modal-header icon="fa fa-list-check" data-lt-document-title="{{ $headline }}">'
+            '<x-global::actions.modal-header icon="fa fa-list-check">'
             .'<x-slot:title>Task #{{ $id }} - {{ $headline }}</x-slot:title>'
             .'</x-global::actions.modal-header>',
             ['id' => 123, 'headline' => 'Log hours "Q4" <script>alert(1)</script>']
@@ -56,10 +55,6 @@ class ModalHeaderTest extends TestCase
         $this->assertStringNotContainsString('<script>alert(1)</script>', $html);
         $this->assertStringContainsString(
             'Task #123 - Log hours &quot;Q4&quot; &lt;script&gt;alert(1)&lt;/script&gt;',
-            $html
-        );
-        $this->assertStringContainsString(
-            'data-lt-document-title="Log hours &quot;Q4&quot; &lt;script&gt;alert(1)&lt;/script&gt;"',
             $html
         );
     }

@@ -24,8 +24,8 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
         $ticketTypeIcon = $todoTypeIcons[strtolower($ticket->type)] ?? 'fa-circle';
     @endphp
     {{-- The headline stays in the header (not only in the editable field of the details tab), so it
-         is visible on every tab and in the browser tab title (#4008). --}}
-    <x-global::actions.modal-header :icon="'fa '.$ticketTypeIcon" data-lt-document-title="{{ $ticket->headline }}">
+         is visible on every tab (#4008). --}}
+    <x-global::actions.modal-header :icon="'fa '.$ticketTypeIcon">
         <x-slot:title>
             @if ($ticket->dependingTicketId > 0)
                 <a href="#/tickets/showTicket/{{ $ticket->dependingTicketId }}" class="lt-modal-parent">{{ $ticket->parentHeadline }}</a> <span class="lt-modal-parent">//</span>
