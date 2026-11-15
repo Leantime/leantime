@@ -56,6 +56,13 @@
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
 }
 
+/* A box straight under its column header (Blueprint boxes, idea columns) is one column with it:
+   square top corners so the box meets the header's rule without notches. */
+.widgettitle.board-column-header + .contentInner {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 /* Without grouping, the lanes sit straight under the column headers (the board's
    margin-top:-5px pulls them up to the header's rule), so header and lane are one
    column: square the lane's top corners to meet the header seamlessly. Grouped

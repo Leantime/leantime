@@ -18,7 +18,8 @@
 @endif
 
 @if(! empty($disclaimer) && count($allCanvas) > 0)
-    <small class="align-center">{{ $disclaimer }}</small>
+    {{-- The licence note is a translation with links and <em> (text.*.disclaimer), never user input. --}}
+    <small class="align-center">{!! $disclaimer !!}</small>
 @endif
 
 @include('blueprints::modals')
