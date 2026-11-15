@@ -646,21 +646,34 @@ class Tickets
     /**
      * getAllBySearchCriteria - get Tickets by search criteria array
      *
-     * @param  null  $limit
-     */
-    /**
-     * getAllBySearchCriteria - get Tickets by search criteria array
+     * The project-access scope (which projects' tickets the result may contain) is the session
+     * user/client. Search criteria can arrive from JSON-RPC, so a caller-supplied
+     * currentUser/currentClient in $searchCriteria never widens it.
      *
+     * $scopeUserId/$scopeClientId replace the session user/client for in-process callers that
+     * have already authenticated a user WITHOUT a session, e.g. the hash-authenticated iCal
+     * feed (#4018). Repositories are not reachable over JSON-RPC, so these can't be spoofed by
+     * a request; never pass request input to them.
+     *
+     * @param  array  $searchCriteria  Filters (currentProject, projects, users, status, type, ...)
      * @param  string  $sort  One of standard, kanbansort, duedate, priority, date, effort, title.
-     * @param  null  $limit
+     * @param  int|null  $limit  Maximum number of rows, null for all
+     * @param  bool  $includeCounts  Include comment/file/subtask counts
+     * @param  int|null  $offset  Rows to skip (only with a limit)
+     * @param  int|null  $scopeUserId  Access-scope user instead of the session user
+     * @param  int|null  $scopeClientId  Access-scope client instead of the session client
      */
-    public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', ?int $limit = null, $includeCounts = true, ?int $offset = null): bool|array
+    public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', ?int $limit = null, $includeCounts = true, ?int $offset = null, ?int $scopeUserId = null, ?int $scopeClientId = null): bool|array
     {
         $requestorId = session()->exists('userdata') ? session('userdata.id') : -1;
-        // The project-membership scope is ALWAYS the session user/client. Search criteria can
-        // arrive from JSON-RPC, so a caller-supplied currentUser/currentClient must never widen it.
         $userId = session('userdata.id') ?? '-1';
         $clientId = session('userdata.clientId') ?? '-1';
+
+        if ($scopeUserId !== null) {
+            $requestorId = $scopeUserId;
+            $userId = $scopeUserId;
+            $clientId = $scopeClientId ?? '-1';
+        }
 
         $query = $this->connection->table('zp_tickets')
             ->select([

@@ -468,6 +468,7 @@ class Calendar extends BaseService
      * @return IcalCalendar The iCal calendar generated from the calendar events.
      *
      * @throws MissingParameterException If either user hash or calendar hash is empty.
+     * @throws \Exception If the hashes don't match a user's iCal feed.
      *
      * Not @api: served by the PUBLIC, hash-authenticated /calendar/ical route (no session). The
      * userHash+calHash secrets ARE the credential; exposing it over JSON-RPC would let a caller
@@ -482,7 +483,9 @@ class Calendar extends BaseService
 
         $calendarEvents = $this->calendarRepo->getCalendarBySecretHash($userHash, $calHash);
 
-        if (! $calendarEvents) {
+        // false = the hashes don't match a feed. An empty array is a valid feed with no events
+        // yet and is served as an empty calendar, so calendar apps keep the subscription.
+        if ($calendarEvents === false) {
             throw new \Exception('Calendar could not be retrieved');
         }
 
