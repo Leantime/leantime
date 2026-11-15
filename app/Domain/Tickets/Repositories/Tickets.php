@@ -972,7 +972,26 @@ class Tickets
 
         $results = $query->get();
 
-        return array_map(fn ($item) => (array) $item, $results->toArray());
+        $rows = array_map(fn ($item) => (array) $item, $results->toArray());
+
+        $milestoneIds = [];
+        foreach ($rows as $row) {
+            if (($row['type'] ?? '') === 'milestone') {
+                $milestoneIds[] = (int) $row['id'];
+            }
+        }
+
+        if ($milestoneIds !== []) {
+            $dependencies = $this->getMilestoneDependencies($milestoneIds);
+            foreach ($rows as &$row) {
+                if (($row['type'] ?? '') === 'milestone') {
+                    $row['milestoneDependencies'] = $dependencies[(int) $row['id']] ?? [];
+                }
+            }
+            unset($row);
+        }
+
+        return $rows;
     }
 
     public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = [], bool $excludeClosedProjects = false): array|false
@@ -1780,14 +1799,14 @@ class Tickets
             $tickets[] = $ticket;
         }
 
-        $primaryDependencies = [];
+        $milestoneIds = [];
         foreach ($tickets as $ticket) {
             if ($ticket->type === 'milestone') {
-                $primaryDependencies[(int) $ticket->id] = $ticket->milestoneid;
+                $milestoneIds[] = (int) $ticket->id;
             }
         }
 
-        $dependencies = $this->getMilestoneDependenciesForPrimaries($primaryDependencies);
+        $dependencies = $this->getMilestoneDependencies($milestoneIds);
         foreach ($tickets as $ticket) {
             if ($ticket->type === 'milestone') {
                 $ticket->milestoneDependencies = $dependencies[(int) $ticket->id] ?? [];
@@ -2602,9 +2621,9 @@ class Tickets
     }
 
     /**
-     * Resolves the milestones the given milestones depend on. A milestone's primary dependency
-     * lives in zp_tickets.milestoneid, every further one is a depends_on relationship; the primary
-     * dependency comes first.
+     * Resolves the milestones the given milestones depend on. Every dependency is a depends_on
+     * relationship (entityA = the dependent milestone, entityB = its prerequisite), listed in the
+     * order they were added.
      *
      * @param  array<int, int|string>  $milestoneIds  Milestone ticket ids.
      * @return array<int, array<int, int>> Dependency ids keyed by milestone id (milestones without dependencies map to an empty array).
@@ -2613,51 +2632,7 @@ class Tickets
     {
         $milestoneIds = array_values(array_unique(array_filter(array_map('intval', $milestoneIds), static fn (int $id) => $id > 0)));
 
-        $primaryDependencies = [];
-
-        foreach (array_chunk($milestoneIds, 500) as $idChunk) {
-            $primaryRows = $this->connection->table('zp_tickets')
-                ->select(['id', 'milestoneid'])
-                ->whereIn('id', $idChunk)
-                ->where('type', 'milestone')
-                ->get();
-
-            foreach ($primaryRows as $row) {
-                $primaryDependencies[(int) $row->id] = (int) $row->milestoneid;
-            }
-        }
-
-        return $this->combineMilestoneDependencies($milestoneIds, $primaryDependencies);
-    }
-
-    /**
-     * Same as getMilestoneDependencies() for callers that already hold the milestones' primary
-     * dependency (zp_tickets.milestoneid), which saves the lookup of the milestone rows.
-     *
-     * @param  array<int, int|string|null>  $primaryDependencies  Primary dependency id (or empty) keyed by milestone id.
-     * @return array<int, array<int, int>> Dependency ids keyed by milestone id.
-     */
-    public function getMilestoneDependenciesForPrimaries(array $primaryDependencies): array
-    {
-        return $this->combineMilestoneDependencies(
-            array_map('intval', array_keys($primaryDependencies)),
-            array_map('intval', $primaryDependencies)
-        );
-    }
-
-    /**
-     * @param  array<int, int>  $milestoneIds
-     * @param  array<int, int>  $primaryDependencies  Primary dependency id keyed by milestone id.
-     * @return array<int, array<int, int>>
-     */
-    private function combineMilestoneDependencies(array $milestoneIds, array $primaryDependencies): array
-    {
-        $dependencies = [];
-
-        foreach ($milestoneIds as $milestoneId) {
-            $primary = $primaryDependencies[$milestoneId] ?? 0;
-            $dependencies[$milestoneId] = $primary > 0 ? [$primary] : [];
-        }
+        $dependencies = array_fill_keys($milestoneIds, []);
 
         foreach (array_chunk($milestoneIds, 500) as $idChunk) {
             $edgeRows = $this->connection->table('zp_entity_relationship')
@@ -2717,14 +2692,13 @@ class Tickets
     }
 
     /**
-     * Replaces the additional (non-primary) dependencies of a milestone. The primary dependency is
-     * stored in zp_tickets.milestoneid by addTicket()/updateTicket().
+     * Replaces the dependencies of a milestone with the given prerequisites.
      *
      * @param  int  $milestoneId  The dependent milestone.
-     * @param  array<int, int>  $dependencyIds  The milestones it additionally depends on.
+     * @param  array<int, int>  $dependencyIds  The milestones it depends on.
      * @param  int|null  $createdBy  The acting user (null when no user is acting).
      */
-    public function setAdditionalMilestoneDependencies(int $milestoneId, array $dependencyIds, ?int $createdBy): bool
+    public function setMilestoneDependencies(int $milestoneId, array $dependencyIds, ?int $createdBy): bool
     {
         $now = dtHelper()->dbNow()->formatDateTimeForDb();
 

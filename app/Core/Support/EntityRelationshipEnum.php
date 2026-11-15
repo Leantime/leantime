@@ -36,10 +36,9 @@ enum EntityRelationshipEnum: string
     case TrackedBy = 'tracked_by';
 
     /**
-     * An additional prerequisite of a milestone. Direction convention: entityA = the dependent
-     * milestone (Ticket), entityB = the milestone it depends on (Ticket). A milestone's primary
-     * dependency stays in zp_tickets.milestoneid; every further dependency is an edge, so a
-     * milestone can depend on many milestones.
+     * A prerequisite of a milestone. Direction convention: entityA = the dependent milestone
+     * (Ticket), entityB = the milestone it depends on (Ticket). Every milestone dependency is an
+     * edge, so a milestone can depend on many milestones.
      */
     case DependsOn = 'depends_on';
 }

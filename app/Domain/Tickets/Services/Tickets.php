@@ -1718,7 +1718,8 @@ class Tickets extends BaseService
 
             $elementParentId = null;
             if ($element->type === 'milestone') {
-                $elementParentId = $element->milestoneid;
+                // A milestone sits under the first milestone it depends on.
+                $elementParentId = $element->milestoneDependencies[0] ?? null;
             } elseif ($element->dependingTicketId > 0) {
                 $elementParentId = $element->dependingTicketId;
             } elseif ($element->milestoneid > 0) {
@@ -1729,7 +1730,7 @@ class Tickets extends BaseService
                 $elementParentId = 0;
             }
 
-            if ($elementParentId === $parentId) {
+            if ((int) $elementParentId === (int) $parentId) {
                 $children = $this->buildTicketTree($elements, $element->id);
                 if ($children) {
                     usort($children, function ($a, $b) {
@@ -2280,7 +2281,7 @@ class Tickets extends BaseService
             'sprint' => '',
             'priority' => 3,
             'dependingTicketId' => '',
-            'milestoneid' => $dependencies[0] ?? '',
+            'milestoneid' => '',
             'acceptanceCriteria' => '',
             'outcomeImpact' => $params['outcomeImpact'] ?? '',
             'tags' => $params['tags'] ?? '',
@@ -2299,10 +2300,10 @@ class Tickets extends BaseService
         // $params is an array of field names. Exclude id
         $result = $this->ticketRepository->addTicket($values);
 
-        if (is_int($result) && $result > 0 && count($dependencies) > 1) {
-            $this->ticketRepository->setAdditionalMilestoneDependencies(
+        if (is_int($result) && $result > 0 && $dependencies !== []) {
+            $this->ticketRepository->setMilestoneDependencies(
                 $result,
-                array_slice($dependencies, 1),
+                $dependencies,
                 session('userdata.id') === null ? null : (int) session('userdata.id')
             );
         }
@@ -4020,12 +4021,19 @@ class Tickets extends BaseService
             }
         }
 
-        return $this->patch($ticket->id, [
+        $moved = $this->patch($ticket->id, [
             'projectId' => $projectId,
             'sprint' => null,
             'dependingTicketId' => null,
             'milestoneid' => null,
         ]);
+
+        // The prerequisites of a milestone live in its old project.
+        if ($moved && $ticket->type == 'milestone' && (int) $ticket->projectId !== $projectId) {
+            $this->ticketRepository->setMilestoneDependencies((int) $ticket->id, [], null);
+        }
+
+        return $moved;
     }
 
     /**
@@ -4111,7 +4119,7 @@ class Tickets extends BaseService
             'acceptanceCriteria' => '',
             'priority' => 3,
             'dependingTicketId' => '',
-            'milestoneid' => $dependencies[0] ?? '',
+            'milestoneid' => '',
             'tags' => $params['tags'],
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
@@ -4128,9 +4136,9 @@ class Tickets extends BaseService
         $updated = $this->ticketRepository->updateTicket($values, $milestoneId);
 
         if ($updated) {
-            $this->ticketRepository->setAdditionalMilestoneDependencies(
+            $this->ticketRepository->setMilestoneDependencies(
                 $milestoneId,
-                array_slice($dependencies, 1),
+                $dependencies,
                 session('userdata.id') === null ? null : (int) session('userdata.id')
             );
 
@@ -4172,9 +4180,8 @@ class Tickets extends BaseService
 
     /**
      * Turns the dependencies a caller asked for into the list that is stored: whole numbers only,
-     * no duplicates, no self reference and only milestones of the milestone's own project. The first
-     * entry becomes the primary dependency (zp_tickets.milestoneid), the rest are stored as
-     * depends_on relationships.
+     * no duplicates, no self reference and only milestones of the milestone's own project. Each one is
+     * stored as a depends_on relationship.
      *
      * @param  int  $milestoneId  The dependent milestone (0 while it is being created).
      * @param  mixed  $requested  A milestone id, a list or comma separated string of ids, or empty.
@@ -4840,14 +4847,16 @@ class Tickets extends BaseService
                 $tickets[$ticketId] = [
                     'id' => $ticket->id,
                     'type' => $ticket->type,
-                    'milestoneid' => $ticket->milestoneid,
+                    // A milestone's parent is the first milestone it depends on, anything else
+                    // belongs to the milestone in milestoneid.
+                    'milestoneid' => $ticket->type === 'milestone' ? ($ticket->milestoneDependencies[0] ?? '') : $ticket->milestoneid,
                     'projectId' => $ticket->projectId,
                 ];
             }
         }
 
         // Separate TOP-LEVEL milestones from other tickets
-        // Top-level milestones have no milestoneid (or milestoneid = 0/null)
+        // Top-level milestones have no parent milestone (no dependency)
         $topLevelMilestones = [];
         $otherTickets = [];
 
@@ -6265,9 +6274,14 @@ class Tickets extends BaseService
                 $ticketMap[$ticket['dependingTicketId']]['children'][] = &$ticketMap[$ticket['id']];
             } // If this ticket belongs to a milestone
             else {
-                if (! empty($ticket['milestoneid']) && isset($ticketMap[$ticket['milestoneid']])) {
+                // A milestone sits under the first milestone it depends on
+                $parentMilestoneId = ($ticket['type'] ?? '') === 'milestone'
+                    ? ($ticket['milestoneDependencies'][0] ?? null)
+                    : ($ticket['milestoneid'] ?? null);
+
+                if (! empty($parentMilestoneId) && isset($ticketMap[$parentMilestoneId])) {
                     // Add this ticket as a child of its milestone
-                    $ticketMap[$ticket['milestoneid']]['children'][] = &$ticketMap[$ticket['id']];
+                    $ticketMap[$parentMilestoneId]['children'][] = &$ticketMap[$ticket['id']];
                 } // Otherwise, it's a root ticket
                 else {
                     $rootTickets[] = &$ticketMap[$ticket['id']];

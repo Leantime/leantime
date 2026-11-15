@@ -23,8 +23,8 @@ use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Unit\TestCase;
 
 /**
- * A milestone can depend on several milestones (#268): the first one is stored in
- * zp_tickets.milestoneid, the others as depends_on relationships. Saving rejects dependencies that
+ * A milestone can depend on several milestones (#268): each one is stored as a depends_on
+ * relationship and zp_tickets.milestoneid stays empty on milestones. Saving rejects dependencies that
  * would form a cycle and drops ids that are not milestones of the milestone's project.
  */
 class MilestoneDependenciesTest extends TestCase
@@ -41,7 +41,7 @@ class MilestoneDependenciesTest extends TestCase
     private array $addedValues = [];
 
     /** @var array<int, array{0: int, 1: array<int, int>}> */
-    private array $storedExtras = [];
+    private array $savedDependencies = [];
 
     protected function setUp(): void
     {
@@ -63,7 +63,7 @@ class MilestoneDependenciesTest extends TestCase
 
         $this->updatedValues = [];
         $this->addedValues = [];
-        $this->storedExtras = [];
+        $this->savedDependencies = [];
     }
 
     /**
@@ -79,7 +79,7 @@ class MilestoneDependenciesTest extends TestCase
                 'type' => 'milestone',
                 'headline' => 'M'.$id,
                 'status' => 3,
-                'milestoneid' => $storedDependencies[0] ?? '',
+                'milestoneid' => '',
                 'milestoneDependencies' => $storedDependencies,
             ]),
             'filterMilestoneIdsInProject' => fn (array $ids, int $projectId) => $projectId === 7
@@ -97,8 +97,8 @@ class MilestoneDependenciesTest extends TestCase
 
                 return 42;
             },
-            'setAdditionalMilestoneDependencies' => function (int $milestoneId, array $dependencyIds) {
-                $this->storedExtras[] = [$milestoneId, $dependencyIds];
+            'setMilestoneDependencies' => function (int $milestoneId, array $dependencyIds) {
+                $this->savedDependencies[] = [$milestoneId, $dependencyIds];
 
                 return true;
             },
@@ -135,46 +135,45 @@ class MilestoneDependenciesTest extends TestCase
         return array_merge(['id' => 9, 'headline' => 'Launch', 'editorId' => 1, 'status' => 3, 'tags' => '#124F7D', 'editFrom' => '', 'editTo' => ''], $overrides);
     }
 
-    public function test_the_first_dependency_is_the_primary_one_and_the_rest_are_stored_separately(): void
+    public function test_every_dependency_is_stored_as_a_relationship(): void
     {
         $result = $this->buildService()->quickUpdateMilestone($this->edit(['dependentMilestone' => ['11', '12', '13']]));
 
         $this->assertTrue($result);
-        $this->assertSame(11, $this->updatedValues[0]['milestoneid']);
-        $this->assertSame([[9, [12, 13]]], $this->storedExtras);
+        $this->assertSame('', $this->updatedValues[0]['milestoneid']);
+        $this->assertSame([[9, [11, 12, 13]]], $this->savedDependencies);
     }
 
-    public function test_clearing_every_dependency_removes_the_primary_and_the_additional_ones(): void
+    public function test_clearing_every_dependency_removes_them_all(): void
     {
         $result = $this->buildService([], [11, 12])->quickUpdateMilestone($this->edit(['dependentMilestone' => ['']]));
 
         $this->assertTrue($result);
         $this->assertSame('', $this->updatedValues[0]['milestoneid']);
-        $this->assertSame([[9, []]], $this->storedExtras);
+        $this->assertSame([[9, []]], $this->savedDependencies);
     }
 
     public function test_a_single_id_still_works_for_callers_that_send_one_dependency(): void
     {
         $this->buildService()->quickUpdateMilestone($this->edit(['dependentMilestone' => '12']));
 
-        $this->assertSame(12, $this->updatedValues[0]['milestoneid']);
-        $this->assertSame([[9, []]], $this->storedExtras);
+        $this->assertSame('', $this->updatedValues[0]['milestoneid']);
+        $this->assertSame([[9, [12]]], $this->savedDependencies);
     }
 
     public function test_an_update_without_the_field_keeps_the_saved_dependencies(): void
     {
         $this->buildService([], [11, 12])->quickUpdateMilestone($this->edit());
 
-        $this->assertSame(11, $this->updatedValues[0]['milestoneid']);
-        $this->assertSame([[9, [12]]], $this->storedExtras);
+        $this->assertSame('', $this->updatedValues[0]['milestoneid']);
+        $this->assertSame([[9, [11, 12]]], $this->savedDependencies);
     }
 
     public function test_self_references_duplicates_and_foreign_milestones_are_dropped(): void
     {
         $this->buildService()->quickUpdateMilestone($this->edit(['dependentMilestone' => [9, 11, 11, 99, 'x', 12]]));
 
-        $this->assertSame(11, $this->updatedValues[0]['milestoneid']);
-        $this->assertSame([[9, [12]]], $this->storedExtras);
+        $this->assertSame([[9, [11, 12]]], $this->savedDependencies);
     }
 
     public function test_a_direct_cycle_is_rejected_without_writing(): void
@@ -184,7 +183,7 @@ class MilestoneDependenciesTest extends TestCase
 
         $this->assertSame('error', $result['status']);
         $this->assertSame([], $this->updatedValues);
-        $this->assertSame([], $this->storedExtras);
+        $this->assertSame([], $this->savedDependencies);
     }
 
     public function test_a_cycle_through_other_milestones_is_rejected(): void
@@ -202,7 +201,7 @@ class MilestoneDependenciesTest extends TestCase
         $result = $this->buildService([9 => [], 20 => [11], 21 => [11], 11 => []])->quickUpdateMilestone($this->edit(['dependentMilestone' => [20, 21]]));
 
         $this->assertTrue($result);
-        $this->assertSame([[9, [21]]], $this->storedExtras);
+        $this->assertSame([[9, [20, 21]]], $this->savedDependencies);
     }
 
     public function test_a_new_milestone_stores_its_dependencies(): void
@@ -210,16 +209,16 @@ class MilestoneDependenciesTest extends TestCase
         $result = $this->buildService()->quickAddMilestone(['headline' => 'Launch', 'projectId' => 7, 'dependentMilestone' => [12, 13, 20]]);
 
         $this->assertSame(42, $result);
-        $this->assertSame(12, $this->addedValues[0]['milestoneid']);
-        $this->assertSame([[42, [13, 20]]], $this->storedExtras);
+        $this->assertSame('', $this->addedValues[0]['milestoneid']);
+        $this->assertSame([[42, [12, 13, 20]]], $this->savedDependencies);
     }
 
-    public function test_a_new_milestone_with_one_dependency_needs_no_additional_rows(): void
+    public function test_a_new_milestone_with_one_dependency_stores_it_as_a_relationship(): void
     {
         $this->buildService()->quickAddMilestone(['headline' => 'Launch', 'projectId' => 7, 'dependentMilestone' => 12]);
 
-        $this->assertSame(12, $this->addedValues[0]['milestoneid']);
-        $this->assertSame([], $this->storedExtras);
+        $this->assertSame('', $this->addedValues[0]['milestoneid']);
+        $this->assertSame([[42, [12]]], $this->savedDependencies);
     }
 
     public function test_a_new_milestone_without_dependencies_has_none(): void
@@ -227,7 +226,7 @@ class MilestoneDependenciesTest extends TestCase
         $this->buildService()->quickAddMilestone(['headline' => 'Launch', 'projectId' => 7]);
 
         $this->assertSame('', $this->addedValues[0]['milestoneid']);
-        $this->assertSame([], $this->storedExtras);
+        $this->assertSame([], $this->savedDependencies);
     }
 
     public function test_dependents_are_found_directly_and_through_other_milestones(): void

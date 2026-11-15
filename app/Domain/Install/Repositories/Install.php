@@ -107,6 +107,7 @@ class Install
         30532,
         30533,
         30534,
+        30535,
     ];
 
     /**
@@ -3684,6 +3685,98 @@ class Install
             Log::error('Migration 30534: '.$e->getMessage());
 
             return ['Migration 30534 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30535 — milestone dependencies move to zp_entity_relationship.
+     *
+     * A milestone's first dependency used to live in zp_tickets.milestoneid; every dependency is
+     * now a `depends_on` relationship (entityA = the dependent milestone, entityB = its
+     * prerequisite). Each milestone's milestoneid becomes such a row, unless one exists already,
+     * and is then cleared. For To-Dos milestoneid still means "belongs to milestone" and is left
+     * alone.
+     */
+    public function update_sql_30535(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_tickets') || ! $schema->hasTable('zp_entity_relationship')) {
+                Log::info('Migration 30535 skipped: zp_tickets or zp_entity_relationship table missing (partial install?)');
+
+                return true;
+            }
+
+            $connection->transaction(function () use ($connection): void {
+                $dependsOn = EntityRelationshipEnum::DependsOn->value;
+                $now = date('Y-m-d H:i:s');
+
+                $milestones = $connection->table('zp_tickets')
+                    ->select(['id', 'milestoneid'])
+                    ->where('type', 'milestone')
+                    ->where('milestoneid', '>', 0)
+                    ->orderBy('id')
+                    ->get();
+
+                $milestoneIds = array_flip($connection->table('zp_tickets')
+                    ->where('type', 'milestone')
+                    ->pluck('id')
+                    ->map(fn ($id) => (int) $id)
+                    ->all());
+
+                $existing = [];
+                $edgeRows = $connection->table('zp_entity_relationship')
+                    ->select(['entityA', 'entityB'])
+                    ->where('entityAType', 'Ticket')
+                    ->where('entityBType', 'Ticket')
+                    ->where('relationship', $dependsOn)
+                    ->get();
+                foreach ($edgeRows as $edge) {
+                    $existing[(int) $edge->entityA.':'.(int) $edge->entityB] = true;
+                }
+
+                $rows = [];
+                foreach ($milestones as $milestone) {
+                    $key = (int) $milestone->id.':'.(int) $milestone->milestoneid;
+
+                    if ((int) $milestone->id === (int) $milestone->milestoneid || isset($existing[$key])) {
+                        continue;
+                    }
+
+                    // The dependency has to be a milestone itself, a dangling id is dropped.
+                    if (! isset($milestoneIds[(int) $milestone->milestoneid])) {
+                        continue;
+                    }
+
+                    $rows[] = [
+                        'entityA' => (int) $milestone->id,
+                        'entityAType' => 'Ticket',
+                        'entityB' => (int) $milestone->milestoneid,
+                        'entityBType' => 'Ticket',
+                        'relationship' => $dependsOn,
+                        'createdOn' => $now,
+                        'createdBy' => null,
+                    ];
+                }
+
+                foreach (array_chunk($rows, 500) as $chunk) {
+                    $connection->table('zp_entity_relationship')->insert($chunk);
+                }
+
+                $connection->table('zp_tickets')
+                    ->where('type', 'milestone')
+                    ->whereNotNull('milestoneid')
+                    ->update(['milestoneid' => null]);
+            });
+        } catch (\Exception $e) {
+            Log::error('Migration 30535: '.$e->getMessage());
+
+            return ['Migration 30535 failed: '.$e->getMessage()];
         }
 
         return true;

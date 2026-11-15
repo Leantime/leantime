@@ -101,7 +101,16 @@
                             </td>
 
                                 @php
-                            if ($row['milestoneid'] != '' && $row['milestoneid'] != 0) {
+                            if ($row['type'] == 'milestone') {
+                                // A milestone's dependencies are relationship rows, a to-do's milestone is its milestoneid.
+                                $dependencyHeadlines = [];
+                                foreach ($milestones as $milestoneOption) {
+                                    if (in_array((int) $milestoneOption->id, array_map('intval', $row['milestoneDependencies'] ?? []), true)) {
+                                        $dependencyHeadlines[] = $milestoneOption->headline;
+                                    }
+                                }
+                                $milestoneHeadline = $dependencyHeadlines !== [] ? implode(', ', $dependencyHeadlines) : __('label.no_dependency');
+                            } elseif ($row['milestoneid'] != '' && $row['milestoneid'] != 0) {
                                 $milestoneHeadline = $tpl->escape($row['milestoneHeadline']);
                             } else {
                                 $milestoneHeadline = __('label.no_milestone');
@@ -109,7 +118,11 @@
                                 @endphp
 
                             <td data-order="{{ $milestoneHeadline }}">
-                                <x-tickets::chip-milestone :float="false" :ticket-id="$row['id']" :milestone-id="$row['milestoneid']" :headline="$row['milestoneHeadline'] ?? ''" :color="$row['milestoneColor'] ?? ''" :milestones="$milestones" />
+                                @if ($row['type'] == 'milestone')
+                                    <x-tickets::milestone-dependencies :dependencies="$row['milestoneDependencies'] ?? []" :milestones="$milestones" />
+                                @else
+                                    <x-tickets::chip-milestone :float="false" :ticket-id="$row['id']" :milestone-id="$row['milestoneid']" :headline="$row['milestoneHeadline'] ?? ''" :color="$row['milestoneColor'] ?? ''" :milestones="$milestones" />
+                                @endif
                             </td>
                             @php
                             if (isset($statusLabels[$row['status']])) {

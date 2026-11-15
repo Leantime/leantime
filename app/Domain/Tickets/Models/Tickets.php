@@ -67,7 +67,7 @@ class Tickets
     public mixed $milestoneid = null;
 
     /**
-     * Ids of every milestone this milestone depends on (primary dependency first). Only
+     * Ids of every milestone this milestone depends on, in the order they were added. Only
      * populated for milestones.
      *
      * @var array<int, int>|null

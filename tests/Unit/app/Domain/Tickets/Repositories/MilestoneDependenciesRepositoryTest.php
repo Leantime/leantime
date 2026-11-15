@@ -14,8 +14,8 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Unit\TestCase;
 
 /**
- * A milestone's primary dependency lives in zp_tickets.milestoneid, its further dependencies are
- * depends_on rows in zp_entity_relationship (#268). Runs against a faked connection — no DB.
+ * Every milestone dependency is a depends_on row in zp_entity_relationship (#268). Runs against a
+ * faked connection — no DB.
  */
 class MilestoneDependenciesRepositoryTest extends TestCase
 {
@@ -64,7 +64,7 @@ class MilestoneDependenciesRepositoryTest extends TestCase
         return $builder;
     }
 
-    public function test_the_primary_dependency_comes_first_followed_by_the_additional_ones(): void
+    public function test_dependencies_are_listed_in_the_order_they_were_added(): void
     {
         $connection = Mockery::mock(ConnectionInterface::class);
         $connection->shouldReceive('table')->with('zp_entity_relationship')->andReturn($this->edgeBuilder([
@@ -74,9 +74,9 @@ class MilestoneDependenciesRepositoryTest extends TestCase
             ['entityA' => 6, 'entityB' => 3],
         ]));
 
-        $dependencies = $this->repoWithConnection($connection)->getMilestoneDependenciesForPrimaries([5 => '3', 6 => '', 7 => null]);
+        $dependencies = $this->repoWithConnection($connection)->getMilestoneDependencies([5, 6, 7]);
 
-        $this->assertSame([5 => [3, 8], 6 => [3], 7 => []], $dependencies);
+        $this->assertSame([5 => [8, 3], 6 => [3], 7 => []], $dependencies);
     }
 
     public function test_no_milestones_means_no_query(): void
@@ -84,11 +84,11 @@ class MilestoneDependenciesRepositoryTest extends TestCase
         $connection = Mockery::mock(ConnectionInterface::class);
         $connection->shouldNotReceive('table');
 
-        $this->assertSame([], $this->repoWithConnection($connection)->getMilestoneDependenciesForPrimaries([]));
+        $this->assertSame([], $this->repoWithConnection($connection)->getMilestoneDependencies([]));
         $this->assertSame([], $this->repoWithConnection($connection)->getMilestoneDependencies([0, '']));
     }
 
-    public function test_additional_dependencies_replace_the_stored_ones(): void
+    public function test_dependencies_replace_the_stored_ones(): void
     {
         $builder = Mockery::mock();
         $builder->shouldReceive('where')->andReturnSelf();
@@ -106,10 +106,10 @@ class MilestoneDependenciesRepositoryTest extends TestCase
         $connection->shouldReceive('table')->with('zp_entity_relationship')->andReturn($builder);
         $connection->shouldReceive('transaction')->once()->andReturnUsing(fn (callable $callback) => $callback());
 
-        $this->assertTrue($this->repoWithConnection($connection)->setAdditionalMilestoneDependencies(5, [8, 9, 8], 1));
+        $this->assertTrue($this->repoWithConnection($connection)->setMilestoneDependencies(5, [8, 9, 8], 1));
     }
 
-    public function test_removing_every_additional_dependency_only_deletes(): void
+    public function test_removing_every_dependency_only_deletes(): void
     {
         $builder = Mockery::mock();
         $builder->shouldReceive('where')->andReturnSelf();
@@ -120,6 +120,6 @@ class MilestoneDependenciesRepositoryTest extends TestCase
         $connection->shouldReceive('table')->with('zp_entity_relationship')->andReturn($builder);
         $connection->shouldReceive('transaction')->once()->andReturnUsing(fn (callable $callback) => $callback());
 
-        $this->assertTrue($this->repoWithConnection($connection)->setAdditionalMilestoneDependencies(5, [], 1));
+        $this->assertTrue($this->repoWithConnection($connection)->setMilestoneDependencies(5, [], 1));
     }
 }
