@@ -295,4 +295,42 @@ class WikiServiceTest extends TestCase
 
         $service->deleteWiki(3);
     }
+
+    public function test_get_article_project_id_authorizes_view_against_the_articles_own_project(): void
+    {
+        $authorizedProjectId = null;
+        $service = $this->makeService(wikiRepo: $this->make(WikiRepository::class, [
+            'getArticleProjectId' => fn () => 9,
+        ]));
+        $service->setPermissionService($this->make(PermissionService::class, [
+            'authorize' => function ($permission, $projectId = null) use (&$authorizedProjectId): void {
+                $authorizedProjectId = $projectId;
+            },
+        ]));
+
+        $this->assertSame(9, $service->getArticleProjectId(42));
+        $this->assertSame(9, $authorizedProjectId);
+    }
+
+    public function test_get_article_project_id_is_denied_when_user_cannot_view_the_project(): void
+    {
+        $service = $this->makeService(wikiRepo: $this->make(WikiRepository::class, [
+            'getArticleProjectId' => fn () => 9,
+        ]));
+        $service->setPermissionService($this->denyingPermissions());
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->getArticleProjectId(42);
+    }
+
+    public function test_get_article_project_id_returns_null_for_unknown_id(): void
+    {
+        $service = $this->makeService(wikiRepo: $this->make(WikiRepository::class, [
+            'getArticleProjectId' => fn () => null,
+        ]));
+        $service->setPermissionService($this->denyingPermissions());
+
+        $this->assertNull($service->getArticleProjectId(999));
+    }
 }

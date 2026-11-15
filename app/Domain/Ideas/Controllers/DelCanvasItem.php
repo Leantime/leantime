@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Ideas\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
@@ -13,12 +14,15 @@ class DelCanvasItem extends Controller
 {
     private IdeaService $ideaService;
 
+    private PermissionService $permissionService;
+
     /**
      * Initializes dependencies.
      */
-    public function init(IdeaService $ideaService): void
+    public function init(IdeaService $ideaService, PermissionService $permissionService): void
     {
         $this->ideaService = $ideaService;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -26,9 +30,19 @@ class DelCanvasItem extends Controller
      *
      * @param  array  $params  Request parameters
      */
-    #[RequiresPermission(IdeasPermissions::DELETE)]
+    #[RequiresPermission(IdeasPermissions::DELETE, entityScoped: true)]
     public function get(array $params): Response
     {
+        $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
+
+        // The dialog offers Delete by the idea's own project; authorize the confirmation there.
+        $idea = $id > 0 ? $this->ideaService->getIdeaItem($id) : [];
+        if (empty($idea['projectId'])) {
+            return $this->tpl->displayPartial('errors.error404', responseCode: 404);
+        }
+
+        $this->permissionService->authorize(IdeasPermissions::DELETE, (int) $idea['projectId']);
+
         return $this->tpl->displayPartial('ideas.delCanvasItem');
     }
 

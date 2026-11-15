@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    @if ($login::userIsAtLeast($roles::$editor))
+    @can('blueprints.create')
     <div class="row">
         <div class="col-md-12">
             <x-global::layout.content-box>
@@ -90,7 +90,7 @@
             </x-global::layout.content-box>
         </div>
     </div>
-    @endif
+    @endcan
 
 </div>
 
