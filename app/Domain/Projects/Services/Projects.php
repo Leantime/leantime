@@ -3210,11 +3210,12 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @param  int  $userId  The ID of the user.
      * @param  int  $clientId  The ID of the client.
+     * @param  bool  $showClosedProjects  (optional) Set to false to leave out closed projects.
      * @return array The projects for the client manager.
      *
      *  @api
      */
-    public function getClientManagerProjects(int $userId, int $clientId): array
+    public function getClientManagerProjects(int $userId, int $clientId, bool $showClosedProjects = true): array
     {
         $userId = $this->resolveScopedUserId($userId);
 
@@ -3222,21 +3223,22 @@ class Projects extends BaseService implements ChecksProjectAccess
             $clientId = (int) session('userdata.clientId');
         }
 
-        $clientProjects = $this->projectRepository->getClientProjects($clientId);
-        $userProjects = $this->projectRepository->getUserProjects($userId);
+        $clientProjects = $this->projectRepository->getClientProjects($clientId) ?: [];
+        $userProjects = $this->projectRepository->getUserProjects($userId) ?: [];
 
         $allProjects = [];
 
-        foreach ($clientProjects as $project) {
-            if (isset($allProjects[$project['id']]) === false) {
-                $allProjects[$project['id']] = $project;
+        foreach ([...$clientProjects, ...$userProjects] as $project) {
+            if (isset($allProjects[$project['id']])) {
+                continue;
             }
-        }
 
-        foreach ($userProjects as $project) {
-            if (isset($allProjects[$project['id']]) === false) {
-                $allProjects[$project['id']] = $project;
+            $projectIsClosed = (int) ($project['state'] ?? 0) === -1;
+            if ($projectIsClosed && ! $showClosedProjects) {
+                continue;
             }
+
+            $allProjects[$project['id']] = $project;
         }
 
         return $allProjects;
@@ -3253,9 +3255,13 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function getAll(bool $showClosedProjects = false): array
     {
-        return $this->projectRepository->getUserProjects(userId: session('userdata.id'),
+        $projectStatus = $showClosedProjects ? 'all' : 'open';
+
+        return $this->projectRepository->getUserProjects(
+            userId: session('userdata.id'),
+            projectStatus: $projectStatus,
             accessStatus: 'all',
-            projectTypes: 'project');
+            projectTypes: 'project') ?: [];
     }
 
     /**

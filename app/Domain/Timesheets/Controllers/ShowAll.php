@@ -142,7 +142,8 @@ class ShowAll extends Controller
         $this->tpl->assign('invComp', $invCompCheck);
         $this->tpl->assign('invEmpl', $invEmplCheck);
         $this->tpl->assign('paid', $paidCheck);
-        $this->tpl->assign('allProjects', $this->projectService->getAll());
+        // The project filter includes closed projects so their past time can still be reported on.
+        $this->tpl->assign('allProjects', $this->projectService->getAll(showClosedProjects: true));
         $this->tpl->assign('projectFilter', $projectFilter);
         $this->tpl->assign('allTickets', ($projectFilter == -1) ? [] : $this->ticketService->getAll(['currentProject' => $projectFilter]));
         $this->tpl->assign('ticketFilter', $ticketFilter);
