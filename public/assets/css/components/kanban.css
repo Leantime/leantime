@@ -17,11 +17,6 @@
     padding-bottom: 0 !important;
 }
 
-/* Ensure clearfix doesn't add extra height */
-.kanban-swimlane-content .row-fluid > .clearfix {
-    display: none !important;
-}
-
 /* Collapsed swimlanes: JS handles height equalization via equalizeColumnHeights() */
 
 .tilt.right {
