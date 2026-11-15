@@ -62,7 +62,7 @@ jobs:
 
       - name: Check the Coolify app builds from this repository
         run: |
-          app_json=$(curl -sS --fail-with-body \
+          app_json=$(curl -sS --fail-with-body --connect-timeout 10 --max-time 30 \
             -H "Authorization: Bearer $COOLIFY_TOKEN" \
             "$COOLIFY_URL/api/v1/applications/$COOLIFY_APP_UUID")
 
@@ -116,7 +116,7 @@ jobs:
           # Rollback target = the newest deploy that finished on app1 AND on every
           # additional server. Not the branch: it already points at the next commit
           # when a deploy fails, and a half-finished rollout isn't a safe target.
-          previous_sha=$(curl -sS --fail-with-body -H "Authorization: Bearer $COOLIFY_TOKEN" \
+          previous_sha=$(curl -sS --fail-with-body --connect-timeout 10 --max-time 30 -H "Authorization: Bearer $COOLIFY_TOKEN" \
               "$COOLIFY_URL/api/v1/deployments/applications/$COOLIFY_APP_UUID?take=30" \
             | jq -r --argjson servers "$ADDITIONAL_SERVERS" '
                 .deployments as $all
@@ -140,7 +140,7 @@ jobs:
         env:
           FORCE_REBUILD: ${{ inputs.force_rebuild }}
         run: |
-          response=$(curl -sS --fail-with-body -X POST \
+          response=$(curl -sS --fail-with-body --connect-timeout 10 --max-time 30 -X POST \
             -H "Authorization: Bearer $COOLIFY_TOKEN" \
             "$COOLIFY_URL/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=$FORCE_REBUILD")
           echo "$response" | jq .
@@ -159,12 +159,12 @@ jobs:
           # The first server (app1) builds the image. Every additional server (app2)
           # gets its own deployment with parent_deployment_uuid = the first one.
           deployment_status() {
-            curl -sS --fail-with-body -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            curl -sS --fail-with-body --connect-timeout 10 --max-time 30 -H "Authorization: Bearer $COOLIFY_TOKEN" \
               "$COOLIFY_URL/api/v1/deployments/$1" | jq -r '.status'
           }
 
           child_deployments() {
-            curl -sS --fail-with-body -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            curl -sS --fail-with-body --connect-timeout 10 --max-time 30 -H "Authorization: Bearer $COOLIFY_TOKEN" \
               "$COOLIFY_URL/api/v1/deployments/applications/$COOLIFY_APP_UUID?take=20" \
               | jq -r --arg parent "$PARENT_UUID" \
                 '.deployments[] | select(.parent_deployment_uuid == $parent) | "\(.deployment_uuid) \(.status) \(.server_name)"'
