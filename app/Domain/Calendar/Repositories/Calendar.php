@@ -76,21 +76,25 @@ class Calendar extends RepositoryCore
     }
 
     /**
-     * Retrieves calendar events based on optional filters.
+     * Retrieves one user's calendar events, optionally limited to a date window.
      *
-     * @param  int|null  $userId  The user ID to filter the results by.
+     * Events are personal: only rows owned by $userId are returned. Without a user id there is
+     * no owner to match, so the result is empty rather than every user's events.
+     *
+     * @param  int|null  $userId  The user whose events to return.
      * @param  CarbonImmutable|null  $dateFrom  The minimum date and time of the events.
      * @param  CarbonImmutable|null  $dateTo  The maximum date and time of the events.
      * @return false|array Returns an array of calendar events if successful, otherwise false.
      */
     public function getAll(?int $userId, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo): false|array
     {
-        $query = $this->db->table('zp_calendar')
-            ->whereNotNull('dateFrom');
-
-        if (! empty($userId)) {
-            $query->where('userId', '>=', $userId);
+        if (empty($userId)) {
+            return [];
         }
+
+        $query = $this->db->table('zp_calendar')
+            ->where('userId', $userId)
+            ->whereNotNull('dateFrom');
 
         if (! empty($dateFrom)) {
             $query->where('dateFrom', '>=', $dateFrom->formatDateTimeForDb());
