@@ -86,6 +86,26 @@ class AppliersTest extends TestCase
         $this->assertSame(0, $applier->apply(0, $this->makeWikiTemplate()));
     }
 
+    public function test_wiki_applier_creates_published_articles(): void
+    {
+        // Articles without a status were left out of the Contents tree and search, which list
+        // published articles and the user's own drafts.
+        $insertedRows = [];
+        $builder = $this->make(\Illuminate\Database\Query\Builder::class, [
+            'insertGetId' => function (array $values) use (&$insertedRows) {
+                $insertedRows[] = $values;
+
+                return count($insertedRows);
+            },
+        ]);
+        $connection = $this->make(\Illuminate\Database\Connection::class, ['table' => fn () => $builder]);
+        $applier = new WikiApplier($this->make(DbCore::class, ['getConnection' => fn () => $connection]));
+
+        $this->assertSame(1, $applier->apply(5, $this->makeWikiTemplate(), ['userId' => 3]));
+        $this->assertSame('published', $insertedRows[0]['status']);
+        $this->assertSame(3, $insertedRows[0]['author']);
+    }
+
     public function test_wiki_applier_returns_zero_for_empty_articles_payload(): void
     {
         $applier = new WikiApplier($this->makeDbCore());

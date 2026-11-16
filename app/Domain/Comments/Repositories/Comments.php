@@ -196,6 +196,14 @@ class Comments
         return true;
     }
 
+    /**
+     * Comments in the projects the session user can access, optionally narrowed to one project
+     * and/or entity id. Comments on other users' draft articles are excluded.
+     *
+     * @param  int|null  $projectId  Only this project (null or 0 for all accessible projects)
+     * @param  int|null  $moduleId  Only comments on this entity id (null or 0 for all)
+     * @return array|false Comment rows as arrays
+     */
     public function getAllAccountComments(?int $projectId, ?int $moduleId): array|false
     {
         $userId = session('userdata.id') ?? -1;
@@ -238,6 +246,16 @@ class Comments
                         }
                     });
             });
+
+        // A comment on a Docs article is as private as the article: another user's draft hides
+        // its comments. Anything but the literal 'draft' status (published, or none for
+        // template-created articles) is visible, matching Wiki::isVisibleToCurrentUser().
+        $query->where(function ($visible) use ($userId) {
+            $visible->where('comment.module', '<>', 'article')
+                ->orWhereNull('zp_canvas_items.status')
+                ->orWhere('zp_canvas_items.status', '<>', 'draft')
+                ->orWhere('zp_canvas_items.author', $userId);
+        });
 
         if (isset($projectId) && $projectId > 0) {
             $query->where('zp_projects.id', $projectId);
