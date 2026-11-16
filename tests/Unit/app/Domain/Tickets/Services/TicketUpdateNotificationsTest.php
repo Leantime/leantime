@@ -38,6 +38,7 @@ class TicketUpdateNotificationsTest extends TestCase
         'email_notifications.todo_status_message' => "%1\$s moved '%2\$s' to %3\$s",
         'email_notifications.todo_due_date_message' => "%1\$s changed the due date of '%2\$s' to %3\$s",
         'email_notifications.todo_due_date_removed_message' => "%1\$s removed the due date of '%2\$s'",
+        'status.archived' => 'Archived',
     ];
 
     /** @var array<int, Notification> */
@@ -60,6 +61,7 @@ class TicketUpdateNotificationsTest extends TestCase
         parent::setUp();
 
         session(['usersettings.timezone' => 'UTC']);
+        app()->forgetInstance(DateTimeHelper::class);
         session(['usersettings.language' => 'en-US']);
         session(['usersettings.date_format' => 'Y-m-d']);
         session(['usersettings.time_format' => 'H:i']);
@@ -111,6 +113,8 @@ class TicketUpdateNotificationsTest extends TestCase
             'updateTicket' => fn () => true,
             'updateTicketStatus' => fn () => true,
             'getStateLabels' => fn () => [
+                // Saved custom labels get the protected Archived status back untranslated.
+                -1 => ['name' => 'status.archived', 'statusType' => 'DONE'],
                 0 => ['name' => 'Done', 'statusType' => 'DONE'],
                 3 => ['name' => 'New', 'statusType' => 'NEW'],
                 4 => ['name' => 'In Progress', 'statusType' => 'INPROGRESS'],
@@ -233,6 +237,55 @@ class TicketUpdateNotificationsTest extends TestCase
         $this->buildService([5 => 3], ['dateToFinish' => '2026-11-01 00:00:00'])->updateTicket(['id' => 5, 'dateToFinish' => '2026-11-20']);
 
         $this->assertSame(["Sam changed the due date of 'Fix login' to Nov 20, 2026"], $this->sentMessages());
+    }
+
+    public function test_the_legacy_no_date_value_counts_as_no_due_date(): void
+    {
+        // The form shows '1969-12-31 00:00:00' as an empty date, so saving it unchanged sends ''.
+        $service = $this->buildService([5 => 3], ['dateToFinish' => '1969-12-31 00:00:00']);
+
+        $service->patch(5, ['dateToFinish' => '']);
+        $this->assertSame([], $this->sent);
+
+        $service->updateTicket(['id' => 5, 'headline' => 'Fix login', 'dateToFinish' => '']);
+        $this->assertSame(["Sam updated the To-Do: 'Fix login'"], $this->sentMessages());
+    }
+
+    public function test_a_calendar_date_keeps_its_day_for_an_author_west_of_utc(): void
+    {
+        $this->useAuthorTimezone('America/Los_Angeles');
+
+        // The mobile app sends a date without a time; it is stored as that day's midnight, unconverted.
+        $this->buildService([5 => 3], ['dateToFinish' => '2026-11-01 00:00:00'])->patch(5, ['dateToFinish' => '2026-11-20']);
+
+        $this->assertSame(["Sam changed the due date of 'Fix login' to Nov 20, 2026"], $this->sentMessages());
+    }
+
+    public function test_a_timed_due_date_is_shown_in_the_authors_timezone(): void
+    {
+        $this->useAuthorTimezone('America/Los_Angeles');
+
+        // 6pm in Los Angeles is stored as 02:00 UTC the next day, and shown as the author's day again.
+        $this->buildService([5 => 3], ['dateToFinish' => '2026-11-01 00:00:00'])->patch(5, ['dateToFinish' => '2026-11-20', 'timeToFinish' => '18:00']);
+
+        $this->assertSame(["Sam changed the due date of 'Fix login' to Nov 20, 2026"], $this->sentMessages());
+    }
+
+    public function test_the_protected_archived_status_is_translated(): void
+    {
+        $this->buildService([5 => 3])->patch(5, ['status' => -1]);
+
+        $this->assertSame(["Sam moved 'Fix login' to Archived"], $this->sentMessages());
+    }
+
+    /**
+     * Make the author's timezone $timezone for date parsing and formatting.
+     */
+    private function useAuthorTimezone(string $timezone): void
+    {
+        session(['usersettings.timezone' => $timezone]);
+        app()->forgetInstance(DateTimeHelper::class);
+        CarbonImmutable::mixin(new CarbonMacros($timezone, 'en-US', 'M j, Y', 'H:i'));
     }
 
     public function test_the_full_edit_of_other_fields_keeps_the_generic_line(): void
