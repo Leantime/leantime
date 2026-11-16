@@ -12,7 +12,7 @@
     <form id="resetPassword" action="" method="post">
         <input type="hidden" name="step" value="3" />
 
-        {{  $tpl->displayInlineNotification() }}
+        {!! $tpl->displayInlineNotification() !!}
 
 
 
