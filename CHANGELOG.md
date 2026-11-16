@@ -1,3 +1,22 @@
+# Version: 3.15.2
+
+## Security
+- **Comment polling** - `comments.pollComments` could return to-do comments from a project you can't access when a canvas item in one of your projects had the same id. Comments are now tied to the entity of their own module (#4084)
+- **Draft docs** - Other users' drafts stay private through comments, comment polling, edits and deletes, including over JSON-RPC (#4083)
+- **Inactive accounts via SSO** - LDAP and OIDC logins refuse deactivated and not-yet-accepted accounts instead of failing on a duplicate account (which showed the database error on the OIDC login page). An LDAP import no longer stops at a deactivated user and leaves them deactivated (#4082)
+
+## Bug Fixes
+- **Docs from templates** - Docs created from a content template show in the Contents tree and search again (#4083)
+- **New project dates** - New projects store their start and end dates in UTC, so they no longer show a day off for users outside UTC. Projects created before this keep their dates (#4081)
+- **Delivery Metrics** - The summary heading shows the user's today instead of the previous UTC day (#4080, fixes #4055)
+- **iCal feed** - Calendar apps polling an old feed URL get a 404 without writing an error to the log each time (#4079)
+
+## Upgrade Notes
+- No database changes.
+- LDAP and OIDC logins are refused for accounts that are deactivated or still pending an invite, the same as the password login.
+
+---
+
 # Version: 3.15.1
 
 ## Security
