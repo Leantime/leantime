@@ -80,7 +80,8 @@ class Blueprints extends BaseService
      *
      * @param  int  $id  Canvas item id
      * @param  string  $canvasType  Board type the item must belong to (e.g. "swotcanvas")
-     * @return array<string, mixed>|false The item, or false when missing/foreign/unauthorized
+     * @return array<string, mixed>|false The item with its real `projectId`, or false when
+     *                                    missing/foreign/unauthorized
      */
     public function getCanvasItem(int $id, string $canvasType): array|false
     {
@@ -89,7 +90,15 @@ class Blueprints extends BaseService
             return false;
         }
 
-        return $this->blueprintsRepo->getSingleCanvasItem($id);
+        $canvasItem = $this->blueprintsRepo->getSingleCanvasItem($id);
+        if (! is_array($canvasItem)) {
+            return false;
+        }
+
+        // The dialog checks edit/comment rights against the item's own project, not the session's.
+        $canvasItem['projectId'] = $projectId;
+
+        return $canvasItem;
     }
 
     /**
@@ -888,16 +897,28 @@ class Blueprints extends BaseService
     /**
      * Translate the data labels from a CanvasTemplate.
      *
+     * With a box, a label can be worded per box: "{title}.{box}" (for example
+     * label.valueCanvas.assumptions.problem) is used when the language has it, and
+     * "{title}" otherwise.
+     *
      * @param  CanvasTemplate  $template  Canvas template
+     * @param  string  $box  Box of the item the labels are shown for ('' for none)
      * @return array<int, array<string, mixed>> Translated data labels
      */
-    public function getTranslatedDataLabels(CanvasTemplate $template): array
+    public function getTranslatedDataLabels(CanvasTemplate $template, string $box = ''): array
     {
         $dataLabels = $template->dataLabels;
         foreach ($dataLabels as $key => $data) {
-            if (isset($data['title'])) {
-                $dataLabels[$key]['title'] = $this->language->__($data['title']);
+            if (! isset($data['title'])) {
+                continue;
             }
+
+            $translatedTitle = $this->language->__($data['title']);
+            if ($box !== '') {
+                $translatedTitle = $this->language->__($data['title'].'.'.$box, $translatedTitle);
+            }
+
+            $dataLabels[$key]['title'] = $translatedTitle;
         }
 
         return $dataLabels;

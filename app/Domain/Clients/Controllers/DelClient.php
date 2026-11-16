@@ -25,7 +25,7 @@ class DelClient extends Controller
     }
 
     /**
-     * Displays the delete client confirmation page.
+     * Displays the delete client confirmation page, listing the projects that are deleted with it.
      *
      * @param  array  $params  Request parameters
      */
@@ -42,7 +42,7 @@ class DelClient extends Controller
             $this->tpl->setNotification($this->language->__('notification.client_has_todos'), 'error');
         }
 
-        $this->tpl->assign('client', $this->clientService->get($id));
+        $this->assignConfirmationData($id);
 
         return $this->tpl->display('clients.delClient');
     }
@@ -63,14 +63,32 @@ class DelClient extends Controller
 
         if ($this->clientService->hasTickets($id)) {
             $this->tpl->setNotification($this->language->__('notification.client_has_todos'), 'error');
-            $this->tpl->assign('client', $this->clientService->get($id));
+            $this->assignConfirmationData($id);
 
             return $this->tpl->display('clients.delClient');
         }
 
-        $this->clientService->delete($id);
+        $clientDeleted = $this->clientService->delete($id);
+        if (! $clientDeleted) {
+            $this->tpl->setNotification($this->language->__('notification.client_not_deleted'), 'error');
+            $this->assignConfirmationData($id);
+
+            return $this->tpl->display('clients.delClient');
+        }
+
         $this->tpl->setNotification($this->language->__('notification.client_deleted'), 'success');
 
         return Frontcontroller::redirect(BASE_URL.'/clients/showAll');
+    }
+
+    /**
+     * Assigns the client and the projects that are deleted along with it.
+     *
+     * @param  int  $id  Client id
+     */
+    private function assignConfirmationData(int $id): void
+    {
+        $this->tpl->assign('client', $this->clientService->get($id));
+        $this->tpl->assign('clientProjects', $this->clientService->getProjectsDeletedWithClient($id));
     }
 }

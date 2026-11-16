@@ -11,7 +11,7 @@ use Leantime\Core\Db\Repository as RepositoryCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Domain\Tickets\Services\Tickets;
+use Leantime\Domain\Tickets\Repositories\Tickets as TicketsRepository;
 use Leantime\Domain\Users\Repositories\Users;
 
 class Calendar extends RepositoryCore
@@ -76,21 +76,25 @@ class Calendar extends RepositoryCore
     }
 
     /**
-     * Retrieves calendar events based on optional filters.
+     * Retrieves one user's calendar events, optionally limited to a date window.
      *
-     * @param  int|null  $userId  The user ID to filter the results by.
+     * Events are personal: only rows owned by $userId are returned. Without a user id there is
+     * no owner to match, so the result is empty rather than every user's events.
+     *
+     * @param  int|null  $userId  The user whose events to return.
      * @param  CarbonImmutable|null  $dateFrom  The minimum date and time of the events.
      * @param  CarbonImmutable|null  $dateTo  The maximum date and time of the events.
      * @return false|array Returns an array of calendar events if successful, otherwise false.
      */
     public function getAll(?int $userId, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo): false|array
     {
-        $query = $this->db->table('zp_calendar')
-            ->whereNotNull('dateFrom');
-
-        if (! empty($userId)) {
-            $query->where('userId', '>=', $userId);
+        if (empty($userId)) {
+            return [];
         }
+
+        $query = $this->db->table('zp_calendar')
+            ->where('userId', $userId)
+            ->whereNotNull('dateFrom');
 
         if (! empty($dateFrom)) {
             $query->where('dateFrom', '>=', $dateFrom->formatDateTimeForDb());
@@ -106,24 +110,38 @@ class Calendar extends RepositoryCore
     }
 
     /**
+     * Builds the iCal feed events (personal calendar events plus To-Do due and planned-edit
+     * events) for the feed owner.
+     *
+     * The feed is fetched without a session, so the To-Dos are scoped to the OWNER's project
+     * access explicitly. The session-scoped Tickets service would scope them to nobody and the
+     * feed lost every To-Do (#4018).
+     *
+     * @param  int  $userId  The feed owner, already authenticated by the feed hashes
+     * @param  int|null  $clientId  The feed owner's client (grants client-visible projects)
+     * @return array<int, array<string, mixed>> Event arrays
+     *
      * @throws BindingResolutionException
      */
-    public function getCalendar(int $userId): array
+    public function getCalendar(int $userId, ?int $clientId = null): array
     {
-        $ticketService = app()->make(Tickets::class);
-        $dbTickets = $ticketService->getOpenUserTicketsThisWeekAndLater($userId, '', true);
+        $ticketRepo = app()->make(TicketsRepository::class);
+        $tickets = $ticketRepo->getAllBySearchCriteria(
+            searchCriteria: [
+                'currentProject' => '',
+                'users' => (string) $userId,
+                'status' => 'all',
+                'sprint' => '',
+                'excludeType' => 'milestone',
+            ],
+            sort: 'duedate',
+            includeCounts: false,
+            scopeUserId: $userId,
+            scopeClientId: $clientId,
+        );
 
-        $tickets = [];
-        if (isset($dbTickets['thisWeek']['tickets'])) {
-            $tickets = array_merge($tickets, $dbTickets['thisWeek']['tickets']);
-        }
-
-        if (isset($dbTickets['later']['tickets'])) {
-            $tickets = array_merge($tickets, $dbTickets['later']['tickets']);
-        }
-
-        if (isset($dbTickets['overdue']['tickets'])) {
-            $tickets = array_merge($tickets, $dbTickets['overdue']['tickets']);
+        if (! is_array($tickets)) {
+            $tickets = [];
         }
 
         $results = $this->db->table('zp_calendar')
@@ -158,18 +176,18 @@ class Calendar extends RepositoryCore
 
             foreach ($tickets as $ticket) {
                 if (! isset($statusLabelsArray[$ticket['projectId']])) {
-                    $statusLabelsArray[$ticket['projectId']] = $ticketService->getStatusLabels(
-                        $ticket['projectId']
-                    );
+                    $statusLabelsArray[$ticket['projectId']] = $ticketRepo->getStateLabels($ticket['projectId']);
                 }
 
-                if (isset($statusLabelsArray[$ticket['projectId']][$ticket['status']])) {
-                    $statusName = $statusLabelsArray[$ticket['projectId']][$ticket['status']]['name'];
-                    $statusColor = $this->classColorMap[$statusLabelsArray[$ticket['projectId']][$ticket['status']]['class']];
-                } else {
-                    $statusName = '';
-                    $statusColor = 'var(--grey)';
+                // A To-Do whose status was removed from its project is left out, as the
+                // My Work lists do.
+                $statusLabel = $statusLabelsArray[$ticket['projectId']][$ticket['status']] ?? null;
+                if ($statusLabel === null) {
+                    continue;
                 }
+
+                $statusName = $statusLabel['name'];
+                $statusColor = $this->classColorMap[$statusLabel['class'] ?? ''] ?? 'var(--grey)';
 
                 $backgroundColor = 'var(--accent2)';
 
@@ -266,6 +284,14 @@ class Calendar extends RepositoryCore
     }
 
     /**
+     * The iCal feed events of the user identified by the feed hashes, or false when the hashes
+     * don't match a user and that user's iCal secret. The hashes are the credential: the feed
+     * is served without a session.
+     *
+     * @param  string  $userHash  sha1 of the user id + session password
+     * @param  string  $calHash  The user's iCal secret
+     * @return false|array<int, array<string, mixed>> Event arrays (possibly empty), or false
+     *
      * @throws BindingResolutionException
      */
     public function getCalendarBySecretHash(string $userHash, string $calHash): false|array
@@ -286,11 +312,11 @@ class Calendar extends RepositoryCore
             'usersettings.timezone' => $settingService->getSetting('usersettings.'.$user['id'].'.timezone') ?: $this->config->defaultTimezone,
         ]);
 
-        if ($hash !== false && $calHash == $hash) {
-            return $this->getCalendar($user['id']);
-        } else {
+        if (empty($hash) || ! hash_equals((string) $hash, $calHash)) {
             return false;
         }
+
+        return $this->getCalendar((int) $user['id'], isset($user['clientId']) ? (int) $user['clientId'] : null);
     }
 
     public function getTicketWishDates(): false|array

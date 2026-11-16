@@ -820,6 +820,59 @@ class ProjectsServiceTest extends TestCase
         $this->assertSame(3, $requestedClient, 'A non-admin must only list their own client\'s projects');
     }
 
+    /**
+     * Regression for #4039: "Show Closed Projects" on Company → All Projects had no effect because
+     * getAll() ignored its flag and always asked the repository for every project.
+     */
+    public function test_get_all_leaves_out_closed_projects_unless_asked(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'admin']]);
+
+        $requestedStatuses = [];
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUserProjects' => function (...$args) use (&$requestedStatuses) {
+                $requestedStatuses[] = $args[1] ?? 'all';
+
+                return [];
+            },
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+
+        $service->getAll();
+        $service->getAll(false);
+        $service->getAll(true);
+
+        $this->assertSame(['open', 'open', 'all'], $requestedStatuses);
+    }
+
+    /**
+     * Regression for #4039 (client-manager branch of All Projects): closed projects are dropped when
+     * the toggle is off and kept when it is on, from both the client list and the user's own list.
+     */
+    public function test_get_client_manager_projects_hides_closed_projects_when_asked(): void
+    {
+        session(['userdata' => ['id' => 1, 'role' => 'manager', 'clientId' => 3]]);
+
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getClientProjects' => fn () => [
+                ['id' => 10, 'name' => 'Open client project', 'state' => 0],
+                ['id' => 11, 'name' => 'Closed client project', 'state' => -1],
+            ],
+            'getUserProjects' => fn () => [
+                ['id' => 10, 'name' => 'Open client project', 'state' => 0],
+                ['id' => 20, 'name' => 'Own open project', 'state' => null],
+                ['id' => 21, 'name' => 'Own closed project', 'state' => -1],
+            ],
+        ]);
+        $service = $this->makeService(projectRepo: $projectRepo);
+
+        $withoutClosed = $service->getClientManagerProjects(1, 3, showClosedProjects: false);
+        $this->assertSame([10, 20], array_keys($withoutClosed));
+
+        $withClosed = $service->getClientManagerProjects(1, 3, showClosedProjects: true);
+        $this->assertSame([10, 11, 20, 21], array_keys($withClosed));
+    }
+
     public function test_get_user_project_relation_pins_non_admins_to_themselves(): void
     {
         session(['userdata' => ['id' => 1, 'role' => 'editor']]);
@@ -1137,6 +1190,176 @@ class ProjectsServiceTest extends TestCase
 
         $this->assertFalse($card['lastUpdate']);
         $this->assertSame('', $card['status']);
+    }
+
+    /**
+     * A service wired for getProjectsCardData(): projects in $existingIds exist, each has one
+     * status comment "status-<id>", and the caller may view exactly $viewableIds.
+     *
+     * @param  array<int, int>  $existingIds
+     * @param  array<int, int>|null  $viewableIds  Null = every project is viewable.
+     * @param  array<int, array<int, int>>  $existenceQueries  Receives the ids passed to each existence lookup.
+     */
+    private function makeCardBatchService(array $existingIds, ?array $viewableIds = null, array &$existenceQueries = []): ProjectService
+    {
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getAverageTodoSize' => fn () => 0,
+            'getFirstTicket' => fn () => null,
+        ]);
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getUsersAssignedToProject' => fn () => [],
+            'getExistingProjectIds' => function (array $ids) use ($existingIds, &$existenceQueries) {
+                $existenceQueries[] = $ids;
+
+                return array_values(array_intersect($existingIds, $ids));
+            },
+        ]);
+        $commentRepo = $this->make(CommentRepository::class, [
+            'getComments' => fn ($module, $id) => [
+                ['id' => 1000 + (int) $id, 'status' => 'status-'.$id],
+            ],
+        ]);
+        $permissions = $this->make(PermissionService::class, [
+            'currentUserCan' => fn (string $key, ?int $projectId = null) => $key === ProjectsPermissions::VIEW
+                && $projectId !== null
+                && ($viewableIds === null || in_array($projectId, $viewableIds, true)),
+        ]);
+
+        return $this->makeService(
+            projectRepo: $projectRepo,
+            ticketRepo: $ticketRepo,
+            commentRepo: $commentRepo,
+            permissions: $permissions,
+        );
+    }
+
+    public function test_get_projects_card_data_returns_same_shape_as_single_card(): void
+    {
+        $service = $this->makeCardBatchService([3, 7]);
+
+        $batch = $service->getProjectsCardData([3, 7]);
+
+        $this->assertSame([0, 1], array_keys($batch), 'result must be a JSON list');
+        $this->assertSame($service->getProjectCardData(3), $batch[0]);
+        $this->assertSame($service->getProjectCardData(7), $batch[1]);
+        $this->assertSame(['id', 'progress', 'team', 'lastUpdate', 'status'], array_keys($batch[0]));
+        $this->assertSame('status-7', $batch[1]['status']);
+    }
+
+    public function test_get_projects_card_data_keeps_requested_order(): void
+    {
+        $batch = $this->makeCardBatchService([1, 2, 3])->getProjectsCardData([3, 1, 2]);
+
+        $this->assertSame([3, 1, 2], array_column($batch, 'id'));
+    }
+
+    public function test_get_projects_card_data_casts_dedupes_and_drops_invalid_ids(): void
+    {
+        $queries = [];
+        $batch = $this->makeCardBatchService([4, 5], null, $queries)
+            ->getProjectsCardData(['5', 4, 5, '4', 0, -2, 'abc', null, [9], true]);
+
+        $this->assertSame([5, 4], array_column($batch, 'id'));
+        $this->assertSame([[5, 4]], $queries, 'only the normalized distinct ids are looked up');
+    }
+
+    public function test_get_projects_card_data_caps_the_number_of_ids(): void
+    {
+        $limit = ProjectService::PROJECT_CARD_BATCH_LIMIT;
+        $all = range(1, $limit + 25);
+
+        $queries = [];
+        $batch = $this->makeCardBatchService($all, null, $queries)->getProjectsCardData($all);
+
+        $this->assertCount($limit, $batch);
+        $this->assertSame(range(1, $limit), array_column($batch, 'id'));
+        $this->assertCount($limit, $queries[0]);
+    }
+
+    public function test_get_projects_card_data_omits_denied_and_missing_projects(): void
+    {
+        // 8 exists but is not viewable; 99 is viewable-by-role but does not exist.
+        $batch = $this->makeCardBatchService([2, 8, 6], [2, 6, 99])->getProjectsCardData([8, 2, 99, 6]);
+
+        $this->assertSame([2, 6], array_column($batch, 'id'));
+    }
+
+    public function test_get_projects_card_data_returns_empty_list_without_valid_ids(): void
+    {
+        $queries = [];
+        $service = $this->makeCardBatchService([1], null, $queries);
+
+        $this->assertSame([], $service->getProjectsCardData([]));
+        $this->assertSame([], $service->getProjectsCardData([0, -1, 'x']));
+        $this->assertSame([], $queries, 'no query when nothing valid was asked for');
+    }
+
+    public function test_get_projects_card_data_is_entity_scoped_and_rpc_exposed(): void
+    {
+        $method = new \ReflectionMethod(ProjectService::class, 'getProjectsCardData');
+        $attrs = $method->getAttributes(\Leantime\Core\Auth\Permissions\RequiresPermission::class);
+
+        $this->assertCount(1, $attrs);
+        $gate = $attrs[0]->newInstance();
+        $this->assertSame(ProjectsPermissions::VIEW, $gate->permission);
+        $this->assertTrue($gate->entityScoped, 'per-project authorization happens in the method body');
+        $this->assertMatchesRegularExpression('/^\s*\*\s*@api\b/m', (string) $method->getDocComment());
+    }
+
+    /**
+     * duplicateProject() copies the To-Dos first, then re-links each copy to the copies of its
+     * milestone and parent. It used to patch the ORIGINAL ticket, which moved the source
+     * project's To-Dos onto the new project's milestones and left the copies unlinked.
+     */
+    public function test_duplicate_project_links_the_copies_and_leaves_the_originals_alone(): void
+    {
+        session(['userdata.role' => 'admin']);
+
+        $sourceTickets = [
+            (object) ['id' => 10, 'type' => 'milestone', 'milestoneid' => '', 'dependingTicketId' => ''],
+            (object) ['id' => 11, 'type' => 'task', 'milestoneid' => 10, 'dependingTicketId' => ''],
+            (object) ['id' => 12, 'type' => 'subtask', 'milestoneid' => '', 'dependingTicketId' => 11],
+            (object) ['id' => 13, 'type' => 'task', 'milestoneid' => 99, 'dependingTicketId' => ''],
+        ];
+        foreach ($sourceTickets as $ticket) {
+            foreach (['headline', 'description', 'editorId', 'status', 'storypoints', 'hourRemaining', 'planHours', 'priority', 'acceptanceCriteria', 'tags', 'editFrom', 'editTo', 'dateToFinish'] as $field) {
+                $ticket->$field = '';
+            }
+        }
+
+        $nextCopyId = 100;
+        $patches = [];
+        $ticketRepo = $this->make(TicketRepository::class, [
+            'getAllByProjectId' => fn () => $sourceTickets,
+            'addTicket' => function () use (&$nextCopyId) {
+                return $nextCopyId++;
+            },
+            'patchTicket' => function ($id, array $values) use (&$patches) {
+                $patches[$id] = $values;
+
+                return true;
+            },
+        ]);
+        $projectRepo = $this->make(ProjectRepository::class, [
+            'getProject' => fn ($id) => ['id' => $id, 'details' => '', 'state' => 0, 'hourBudget' => 0, 'dollarBudget' => 0, 'psettings' => 'restricted'],
+            'addProject' => fn () => 50,
+            'getModuleOverrides' => fn () => [],
+            'updateModuleOverrides' => fn () => true,
+        ]);
+        $settingsRepo = $this->make(SettingRepository::class, ['getSetting' => fn () => false]);
+
+        // No boards to copy; only the To-Do links are under test.
+        foreach ([\Leantime\Domain\Ideas\Repositories\Ideas::class, \Leantime\Domain\Goalcanvas\Repositories\Goalcanvas::class, \Leantime\Domain\Wiki\Repositories\Wiki::class, \Leantime\Domain\Blueprints\Repositories\Blueprints::class] as $canvasRepository) {
+            app()->instance($canvasRepository, $this->make($canvasRepository, ['getAllCanvas' => fn () => []]));
+        }
+
+        $service = $this->makeService(projectRepo: $projectRepo, ticketRepo: $ticketRepo, settingsRepo: $settingsRepo);
+
+        $this->assertSame(50, $service->duplicateProject(5, 3, 'Copy', '', false));
+
+        // Copies: 10 → 100, 11 → 101, 12 → 102, 13 → 103.
+        $this->assertSame([101 => ['milestoneid' => 100], 102 => ['dependingTicketId' => 101]], $patches);
+        $this->assertEmpty(array_intersect(array_keys($patches), [10, 11, 12, 13]), 'source To-Dos must not be modified');
     }
 
     // ---------------------------------------------------------------------
@@ -1770,6 +1993,79 @@ class ProjectsServiceTest extends TestCase
         );
 
         $this->assertSame(0, $added, 'a non-existent user or project must never reach addProjectRelation');
+    }
+
+    /**
+     * Switches the test user to $timezone with US date formats.
+     */
+    private function useUserTimezone(string $timezone): void
+    {
+        session([
+            'usersettings.timezone' => $timezone,
+            'usersettings.date_format' => 'm/d/Y',
+            'usersettings.time_format' => 'h:i A',
+        ]);
+
+        CarbonImmutable::mixin(new CarbonMacros($timezone, 'en-US', 'm/d/Y', 'h:i A'));
+    }
+
+    /**
+     * Creates a project with the given user-entered dates and returns the start/end
+     * values the service handed to the repository.
+     *
+     * @return array{start: mixed, end: mixed}
+     */
+    private function createProjectWithDates(string $start, string $end): array
+    {
+        $stored = [];
+        $projectRepo = $this->makeEmpty(ProjectRepository::class, [
+            'addProject' => function (array $values) use (&$stored) {
+                $stored = $values;
+
+                return 12;
+            },
+        ]);
+
+        $this->makeService($projectRepo)->createProject([
+            'name' => 'Launch',
+            'clientId' => 0,
+            'start' => $start,
+            'end' => $end,
+        ]);
+
+        return ['start' => $stored['start'] ?? null, 'end' => $stored['end'] ?? null];
+    }
+
+    /**
+     * New project dates are entered in the user's timezone and must be stored in UTC, because
+     * everything reads zp_projects.start/end back as UTC. They used to be stored as the user's
+     * local time, so a user behind UTC saw the start date a day early.
+     */
+    public function test_create_project_stores_dates_in_utc_for_a_user_behind_utc(): void
+    {
+        $this->useUserTimezone('America/New_York');
+
+        $stored = $this->createProjectWithDates('11/02/2026', '03/31/2027');
+
+        // Start / end of day in New York (EST, UTC-5), expressed in UTC.
+        $this->assertSame('2026-11-02 05:00:00', $stored['start']);
+        $this->assertSame('2027-04-01 03:59:59', $stored['end']);
+        $this->assertSame('11/02/2026', format($stored['start'])->date());
+        $this->assertSame('03/31/2027', format($stored['end'])->date());
+    }
+
+    /**
+     * Mirror case: ahead of UTC the local end of day used to be read back as the next day.
+     */
+    public function test_create_project_keeps_its_calendar_dates_for_a_user_ahead_of_utc(): void
+    {
+        $this->useUserTimezone('Asia/Tokyo');
+
+        $stored = $this->createProjectWithDates('11/02/2026', '03/31/2027');
+
+        $this->assertSame('2026-11-01 15:00:00', $stored['start']);
+        $this->assertSame('11/02/2026', format($stored['start'])->date());
+        $this->assertSame('03/31/2027', format($stored['end'])->date());
     }
 
     /**

@@ -8,17 +8,20 @@
 <form action="{{ BASE_URL }}/calendar/editExternal/{{ $values['id'] }}" method="post" class="formModal">
 
     <input type="hidden" name="save" value="1" />
-    <x-global::forms.label for="name">{{ $tpl->__('label.calendar_name') }}:</x-global::forms.label>
-    <x-global::forms.text-input id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" /><br />
+    <x-global::forms.field for="name" :label="__('label.calendar_name')">
+        <x-global::forms.text-input id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" />
+    </x-global::forms.field>
 
-    <x-global::forms.label for="url">{{ $tpl->__('label.ical_url') }}:</x-global::forms.label>
-    <x-global::forms.text-input width="lg" id="url" name="url" autocomplete="off" value="{{ $values['url'] }}" /><br />
+    <x-global::forms.field for="url" :label="__('label.ical_url')">
+        <x-global::forms.text-input width="lg" id="url" name="url" autocomplete="off" value="{{ $values['url'] }}" />
+    </x-global::forms.field>
 
-    <x-global::forms.label for="color">{{ $tpl->__('label.color') }}:</x-global::forms.label>
-    <input type="text" name="colorClass" autocomplete="off" value="{{ $values['colorClass'] }}"  class="simpleColorPicker"/>
+    <x-global::forms.field for="colorClass" :label="__('label.color')">
+        <input type="text" id="colorClass" name="colorClass" autocomplete="off" value="{{ $values['colorClass'] }}"  class="simpleColorPicker"/>
+    </x-global::forms.field>
 
     @dispatchEvent('beforeSubmitButton')
-    <br /><br />
+    <br />
     <x-global::forms.button tag="input" inputType="submit" name="save" id="save" :labelText="__('buttons.save')" />
 
 

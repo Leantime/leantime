@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
@@ -21,23 +22,37 @@ class DelCanvasItem extends Controller
 
     private GoalcanvaService $goalService;
 
+    private PermissionService $permissionService;
+
     /**
      * Initializes dependencies.
      */
-    public function init(GoalcanvaService $goalService): void
+    public function init(GoalcanvaService $goalService, PermissionService $permissionService): void
     {
         $this->goalService = $goalService;
+        $this->permissionService = $permissionService;
     }
 
     /**
-     * Displays the delete goal item confirmation.
+     * Displays the delete goal item confirmation, authorized against the goal's own project
+     * (the dialog offers Delete by that project too).
      *
      * @param  array  $params  Request parameters
      */
-    #[RequiresPermission(GoalcanvasPermissions::DELETE)]
+    #[RequiresPermission(GoalcanvasPermissions::DELETE, entityScoped: true)]
     public function get(array $params): Response
     {
         $id = (int) ($params['id'] ?? $_GET['id'] ?? 0);
+
+        // getGoalItem() returns the goal with its real project, or false when it is missing or
+        // not visible to the caller.
+        $goalItem = $this->goalService->getGoalItem($id);
+        if (! $goalItem) {
+            return $this->tpl->displayPartial('errors.error404', responseCode: 404);
+        }
+
+        $this->permissionService->authorize(GoalcanvasPermissions::DELETE, (int) $goalItem['projectId']);
+
         $this->tpl->assign('id', $id);
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvasItem');

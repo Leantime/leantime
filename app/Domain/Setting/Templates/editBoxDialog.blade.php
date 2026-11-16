@@ -7,8 +7,9 @@
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/setting/editBoxLabel?{{ http_build_query(['module' => request()->query('module', ''), 'label' => request()->query('label', '')]) }}">
 
-    <x-global::forms.label>{!! __('label.label') !!}</x-global::forms.label>
-    <x-global::forms.text-input name="newLabel" value="{{ $currentLabel }}" /><br />
+    <x-global::forms.field for="newLabel" :label="__('label.label')">
+        <x-global::forms.text-input name="newLabel" id="newLabel" value="{{ $currentLabel }}" />
+    </x-global::forms.field>
 
     <div class="row">
         <div class="col-md-6">

@@ -1836,11 +1836,12 @@ class Projects extends BaseService implements ChecksProjectAccess
             'start' => $values['start'] ?? null,
             'end' => $values['end'] ?? null,
         ];
+        // User dates arrive in the user's timezone; the database stores UTC.
         if ($values['start'] != null) {
-            $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
+            $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
         }
         if ($values['end'] != null) {
-            $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
+            $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC();
         }
 
         $projectId = $this->projectRepository->addProject($values);
@@ -1999,31 +2000,41 @@ class Projects extends BaseService implements ChecksProjectAccess
             $ticketIdList[$ticket->id] = $newTicketId;
         }
 
-        // Iterate through all and update relationships
+        // Point each copy at the copies of its milestone and parent. The originals are never
+        // touched: patching $ticket->id here used to move the source project's To-Dos onto the
+        // new project's milestones and left the copies without any.
         foreach ($allTickets as $ticket) {
+
+            $copiedTicketId = $ticketIdList[$ticket->id] ?? null;
+
+            if (empty($copiedTicketId)) {
+                continue;
+            }
 
             $values = [];
 
             if (! empty($ticket->milestoneid)) {
-                $values['milestoneId'] = $ticketIdList[$ticket->milestoneid] ?? null;
+                $copiedMilestoneId = $ticketIdList[$ticket->milestoneid] ?? null;
 
-                if ($values['milestoneId'] === null) {
+                if ($copiedMilestoneId === null) {
                     Log::warning('Issue copying project. New Milestone was not found.');
+                } else {
+                    $values['milestoneid'] = $copiedMilestoneId;
                 }
             }
 
             if (! empty($ticket->dependingTicketId)) {
-                $values['dependingTicketId'] = $ticketIdList[$ticket->dependingTicketId] ?? null;
+                $copiedParentId = $ticketIdList[$ticket->dependingTicketId] ?? null;
 
-                if ($values['dependingTicketId'] === null) {
+                if ($copiedParentId === null) {
                     Log::warning('Issue copying project. New ticket dependency was not found.');
+                } else {
+                    $values['dependingTicketId'] = $copiedParentId;
                 }
             }
 
-            $newTicketId = $ticketIdList[$ticket->id] ?? null;
-
-            if ($newTicketId && ! empty($values)) {
-                $this->ticketRepository->patchTicket($ticket->id, $values);
+            if (! empty($values)) {
+                $this->ticketRepository->patchTicket($copiedTicketId, $values);
             }
         }
 
@@ -3205,11 +3216,12 @@ class Projects extends BaseService implements ChecksProjectAccess
      *
      * @param  int  $userId  The ID of the user.
      * @param  int  $clientId  The ID of the client.
+     * @param  bool  $showClosedProjects  (optional) Set to false to leave out closed projects.
      * @return array The projects for the client manager.
      *
      *  @api
      */
-    public function getClientManagerProjects(int $userId, int $clientId): array
+    public function getClientManagerProjects(int $userId, int $clientId, bool $showClosedProjects = true): array
     {
         $userId = $this->resolveScopedUserId($userId);
 
@@ -3217,21 +3229,22 @@ class Projects extends BaseService implements ChecksProjectAccess
             $clientId = (int) session('userdata.clientId');
         }
 
-        $clientProjects = $this->projectRepository->getClientProjects($clientId);
-        $userProjects = $this->projectRepository->getUserProjects($userId);
+        $clientProjects = $this->projectRepository->getClientProjects($clientId) ?: [];
+        $userProjects = $this->projectRepository->getUserProjects($userId) ?: [];
 
         $allProjects = [];
 
-        foreach ($clientProjects as $project) {
-            if (isset($allProjects[$project['id']]) === false) {
-                $allProjects[$project['id']] = $project;
+        foreach ([...$clientProjects, ...$userProjects] as $project) {
+            if (isset($allProjects[$project['id']])) {
+                continue;
             }
-        }
 
-        foreach ($userProjects as $project) {
-            if (isset($allProjects[$project['id']]) === false) {
-                $allProjects[$project['id']] = $project;
+            $projectIsClosed = (int) ($project['state'] ?? 0) === -1;
+            if ($projectIsClosed && ! $showClosedProjects) {
+                continue;
             }
+
+            $allProjects[$project['id']] = $project;
         }
 
         return $allProjects;
@@ -3248,9 +3261,13 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     public function getAll(bool $showClosedProjects = false): array
     {
-        return $this->projectRepository->getUserProjects(userId: session('userdata.id'),
+        $projectStatus = $showClosedProjects ? 'all' : 'open';
+
+        return $this->projectRepository->getUserProjects(
+            userId: session('userdata.id'),
+            projectStatus: $projectStatus,
             accessStatus: 'all',
-            projectTypes: 'project');
+            projectTypes: 'project') ?: [];
     }
 
     /**
@@ -3488,6 +3505,82 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     #[RequiresPermission(ProjectsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getProjectCardData(int $projectId): array
+    {
+        return $this->buildProjectCardData($projectId);
+    }
+
+    /**
+     * Maximum number of distinct project ids getProjectsCardData() processes per call.
+     */
+    public const PROJECT_CARD_BATCH_LIMIT = 100;
+
+    /**
+     * Builds the progress view-model for several project cards in one call.
+     *
+     * Batch form of getProjectCardData() for clients that render a list of project cards
+     * (one request and one bootstrap instead of one per project). Each entry has exactly the
+     * shape getProjectCardData() returns.
+     *
+     * Ids are int-cast; non-positive and duplicate ids are dropped, and only the first
+     * PROJECT_CARD_BATCH_LIMIT (100) distinct ids are processed — the rest are ignored.
+     *
+     * Authorization is per project: each id is checked for projects.view (role + membership)
+     * on its own. Projects that do not exist or that the caller cannot view are left out of
+     * the result instead of failing the whole batch.
+     *
+     * @param  array<int, mixed>  $projectIds  The project ids to assemble card data for, in display order (JSON ints or numeric strings).
+     * @return array<int, array> A list of project card data (id, progress, team, lastUpdate, status), in the order requested.
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::VIEW, entityScoped: true)]
+    public function getProjectsCardData(array $projectIds): array
+    {
+        $ids = [];
+
+        foreach ($projectIds as $rawId) {
+            if (! is_int($rawId) && ! is_string($rawId) && ! is_float($rawId)) {
+                continue;
+            }
+
+            $id = (int) $rawId;
+
+            if ($id <= 0 || isset($ids[$id])) {
+                continue;
+            }
+
+            $ids[$id] = $id;
+
+            if (count($ids) >= self::PROJECT_CARD_BATCH_LIMIT) {
+                break;
+            }
+        }
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $existing = array_flip($this->projectRepository->getExistingProjectIds(array_values($ids)));
+
+        $cards = [];
+
+        foreach ($ids as $id) {
+            if (! isset($existing[$id]) || ! $this->can(ProjectsPermissions::VIEW, $id)) {
+                continue;
+            }
+
+            $cards[] = $this->buildProjectCardData($id);
+        }
+
+        return $cards;
+    }
+
+    /**
+     * Assembles one project card (progress, team, latest status update). Callers authorize first.
+     *
+     * @return array The project card data including id, progress, team, lastUpdate and status.
+     */
+    private function buildProjectCardData(int $projectId): array
     {
         $project = ['id' => $projectId];
 

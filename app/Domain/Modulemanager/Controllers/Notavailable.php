@@ -2,24 +2,27 @@
 
 namespace Leantime\Domain\Modulemanager\Controllers;
 
+use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Modules\ModuleRegistry;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Symfony\Component\HttpFoundation\Response;
 
 class Notavailable extends Controller
 {
     private ModuleRegistry $moduleRegistry;
 
+    private PermissionService $permissionService;
+
     /**
      * Initializes dependencies.
      */
-    public function init(ModuleRegistry $moduleRegistry): void
+    public function init(ModuleRegistry $moduleRegistry, PermissionService $permissionService): void
     {
         $this->moduleRegistry = $moduleRegistry;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -35,7 +38,8 @@ class Notavailable extends Controller
 
         if ($module !== null) {
             $this->tpl->assign('moduleTitle', __($module->title));
-            $this->tpl->assign('projectSettingsUrl', Auth::userIsAtLeast(Roles::$manager)
+            // Link to the Modules tab only for callers who can open project settings.
+            $this->tpl->assign('projectSettingsUrl', $this->permissionService->currentUserCan(ProjectsPermissions::EDIT)
                 ? BASE_URL.'/projects/showProject/'.(int) session('currentProject').'#modules'
                 : null);
 

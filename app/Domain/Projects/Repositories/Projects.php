@@ -600,6 +600,26 @@ class Projects implements StoresProjectModules
         return $query->count();
     }
 
+    /**
+     * Every project of a client (id and name), whatever its state or active flag.
+     *
+     * Unlike getClientProjects(), this does not skip projects with active <= -1: deleting a client
+     * must take all of its projects with it, so none is left pointing at a client that's gone.
+     *
+     * @param  int  $clientId  The client id
+     * @return array<int, array{id: int, name: string}> The client's projects, by name
+     */
+    public function getAllProjectsOfClient(int $clientId): array
+    {
+        return $this->connection->table('zp_projects')
+            ->select(['id', 'name'])
+            ->where('clientId', $clientId)
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($project) => ['id' => (int) $project->id, 'name' => (string) $project->name])
+            ->all();
+    }
+
     // Get all open user projects /param: open, closed, all
 
     public function getClientProjects($clientId): false|array
@@ -1194,6 +1214,25 @@ class Projects implements StoresProjectModules
         }
 
         return array_map(fn ($enabled) => (bool) $enabled, $modules);
+    }
+
+    /**
+     * Which of the given project ids exist, in one query.
+     *
+     * @param  array<int, int>  $projectIds
+     * @return array<int, int> The ids from $projectIds that have a zp_projects row (unordered).
+     */
+    public function getExistingProjectIds(array $projectIds): array
+    {
+        if ($projectIds === []) {
+            return [];
+        }
+
+        return $this->connection->table('zp_projects')
+            ->whereIn('id', $projectIds)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
     }
 
     /**

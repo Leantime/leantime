@@ -17,11 +17,6 @@
     padding-bottom: 0 !important;
 }
 
-/* Ensure clearfix doesn't add extra height */
-.kanban-swimlane-content .row-fluid > .clearfix {
-    display: none !important;
-}
-
 /* Collapsed swimlanes: JS handles height equalization via equalizeColumnHeights() */
 
 .tilt.right {
@@ -51,12 +46,30 @@
 }
 
 .column .contentInner {
-    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
+    /* Twice the old 3% tint: the lane has to read as a lane against the white board, and the
+       white cards in it need something to sit on. */
+    background: color-mix(in srgb, var(--primary-font-color) 6%, transparent);
     border: none;
     padding: 10px 8px;
     min-height: 52px; /* Match collapsed row height */
     border-radius: var(--box-radius);
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
+}
+
+/* A box straight under its column header (Blueprint boxes, idea columns) is one column with it:
+   square top corners so the box meets the header's rule without notches. */
+.widgettitle.board-column-header + .contentInner {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* Without grouping, the lanes sit straight under the column headers (the board's
+   margin-top:-5px pulls them up to the header's rule), so header and lane are one
+   column: square the lane's top corners to meet the header seamlessly. Grouped
+   lanes stand apart from the headers and keep their rounded corners. */
+.kanban-column-headers + .kanbanBoard .column .contentInner {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .kanbanCardContent {
@@ -89,9 +102,9 @@
 /* Empty column state - same background as non-empty for consistency */
 .column .contentInner:empty,
 .column .contentInner.empty-column {
-    background: color-mix(in srgb, var(--primary-font-color) 3%, transparent);
+    /* Same lane tint and corners as a lane with cards (.column .contentInner), so a lane doesn't
+       change shade when its last card moves out. */
     border: none;
-    border-radius: var(--box-radius);
     min-height: 52px;
 }
 
@@ -158,163 +171,32 @@
     height: 50px;
 }
 
-.titleBorderColor1,
-.title-border-label-important {
-    border-bottom:5px solid var(--red);
+/* Status colour of a board column (statusClass on elements.board-column-header). One variable
+   drives the header's rule, its tint and the count, so a new status colour is one line. */
+.title-border-label-important { --status-color: var(--red); }
+.title-border-label-danger { --status-color: var(--dark-red); }
+.title-border-label-info { --status-color: var(--dark-blue); }
+.title-border-label-warning { --status-color: var(--yellow); }
+.title-border-label-success { --status-color: var(--green); }
+.title-border-label-default { --status-color: var(--grey); }
+.title-border-label-purple { --status-color: var(--purple); }
+.title-border-label-pink { --status-color: var(--pink); }
+.title-border-label-brown { --status-color: var(--brown); }
+.title-border-label-blue { --status-color: var(--blue); }
+.title-border-label-dark-blue { --status-color: var(--dark-blue); }
+.title-border-label-darker-blue { --status-color: var(--darker-blue); }
+.title-border-label-green { --status-color: var(--green); }
+.title-border-dark-green { --status-color: var(--dark-green); }
+.title-border-red { --status-color: var(--red); }
+.title-border-dark-red { --status-color: var(--dark-red); }
+.title-border-grey { --status-color: var(--grey); }
+
+[class*="title-border-"] {
+    border-bottom: 3px solid var(--status-color);
 }
 
-.title-border-label-danger {
-    border-bottom:5px solid var(--dark-red);
-}
-
-.titleBorderColor3,
-.title-border-label-info{
-    border-bottom:5px solid var(--dark-blue);
-}
-
-.titleBorderColor4,
-.title-border-label-warning{
-    border-bottom:5px solid var(--yellow);
-}
-
-.titleBorderColor2{
-    border-bottom:5px solid var(--yellow);
-}
-
-.titleBorderColor0,
-.title-border-label-success{
-    border-bottom:5px solid var(--green)
-}
-
-.titleBorderColor-1,
-.title-border-label-default{
-    border-bottom:5px solid var(--grey);
-}
-
-.title-border-label-purple{
-    border-bottom:5px solid var(--purple);
-}
-
-.title-border-label-pink{
-    border-bottom:5px solid var(--pink);
-}
-
-.title-border-label-brown{
-    border-bottom:5px solid var(--brown);
-}
-
-.title-border-label-blue{
-    border-bottom:5px solid var(--blue);
-}
-
-.title-border-label-dark-blue{
-    border-bottom:5px solid var(--dark-blue);
-}
-
-.title-border-label-darker-blue{
-    border-bottom:5px solid var(--darker-blue);
-}
-
-.title-border-label-green{
-    border-bottom:5px solid var(--green);
-}
-
-.title-border-dark-green{
-    border-bottom:5px solid var(--dark-green);
-}
-
-.title-border-red{
-    border-bottom:5px solid var(--red);
-}
-
-.title-border-dark-red{
-    border-bottom:5px solid var(--dark-red);
-}
-
-.title-border-grey{
-    border-bottom:5px solid var(--grey);
-}
-
-/* ============================================
-   COLUMN COUNT COLORS - MATCH BORDER COLORS
-   ============================================ */
-
-/* Match count color to status border color */
-.titleBorderColor1 .count,
-.title-border-label-important .count {
-    color: var(--red);
-}
-
-.title-border-label-danger .count {
-    color: var(--dark-red);
-}
-
-.titleBorderColor3 .count,
-.title-border-label-info .count {
-    color: var(--dark-blue);
-}
-
-.titleBorderColor4 .count,
-.title-border-label-warning .count {
-    color: var(--yellow);
-}
-
-.titleBorderColor2 .count {
-    color: var(--yellow);
-}
-
-.titleBorderColor0 .count,
-.title-border-label-success .count {
-    color: var(--green);
-}
-
-.titleBorderColor-1 .count,
-.title-border-label-default .count {
-    color: var(--grey);
-}
-
-.title-border-label-purple .count {
-    color: var(--purple);
-}
-
-.title-border-label-pink .count {
-    color: var(--pink);
-}
-
-.title-border-label-brown .count {
-    color: var(--brown);
-}
-
-.title-border-label-blue .count {
-    color: var(--blue);
-}
-
-.title-border-label-dark-blue .count {
-    color: var(--dark-blue);
-}
-
-.title-border-label-darker-blue .count {
-    color: var(--darker-blue);
-}
-
-.title-border-label-green .count {
-    color: var(--green);
-}
-
-.title-border-dark-green .count {
-    color: var(--dark-green);
-}
-
-.title-border-red .count {
-    color: var(--red);
-}
-
-.title-border-dark-red .count {
-    color: var(--dark-red);
-}
-
-.title-border-grey .count {
-    color: var(--grey);
+[class*="title-border-"] .count {
+    color: var(--status-color);
 }
 
 .sortableTicketList li{
@@ -540,6 +422,17 @@ body .maincontent .priority-text-5 a:link {
     box-shadow: var(--regular-shadow)
 }
 
+/* Board column headers (elements.board-column-header): the Logic Model column look, so a header
+   reads as a raised card on the white board instead of white on white. Same shadow depth as an
+   active stage card, and the status colour as a faint tint at the top fading to the card colour
+   (columns without a status fade from a neutral grey). */
+.widgettitle.board-column-header {
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--status-color, var(--primary-font-color)) 12%, var(--secondary-background)) 0%,
+        var(--secondary-background) 100%) !important;
+    box-shadow: var(--large-shadow);
+}
+
 .widgettitle span {
     vertical-align: top;
     display: inline-block;
@@ -607,10 +500,14 @@ body .maincontent .priority-text-5 a:link {
     width: 150px;
     min-width: 150px;
     flex-shrink: 0;
-    background: var(--kanban-col-title-bg, #FAFAF5);
+    /* Same card as the column headers (raised, neutral tint fading to the card colour), so the
+       group boxes stand off the white board too. */
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--primary-font-color) 8%, var(--secondary-background)) 0%,
+        var(--secondary-background) 60px);
     border: none;
     border-radius: var(--box-radius);
-    box-shadow: var(--min-shadow);
+    box-shadow: var(--large-shadow);
     align-self: stretch; /* Full height of swimlane */
     cursor: pointer;
     transition: background 150ms ease-out, box-shadow 150ms ease-out;
@@ -628,8 +525,7 @@ body .maincontent .priority-text-5 a:link {
 }
 
 .kanban-swimlane-sidebar:hover {
-    background: var(--kanban-col-title-hover, #F5F5F0);
-    box-shadow: var(--regular-shadow);
+    background: color-mix(in srgb, var(--primary-font-color) 6%, var(--secondary-background));
 }
 
 /* JavaScript-controlled sticky state using transform (keeps element in flow) */
@@ -1214,9 +1110,19 @@ body .maincontent .priority-text-5 a:link {
    makes .kanban-board-wrapper the single scroller instead, so this must
    not apply there or the two scroll mechanisms fight each other. */
 @media (min-width: 1200px) {
+    /* A scroller clips its children's shadows at its edges, so the row gets room for the headers'
+       --large-shadow at the sides and top (padding) and gives it back with negative margins: the
+       headers stay where they were, and the scroller and the board body keep the same max
+       scrollLeft (padding adds the same 32px to both scrollWidth and clientWidth). No room below:
+       it would overlap the lanes and swallow their clicks, and the row has to stay interactive
+       for its own scrollbar, so the shadow stops at the header's bottom rule. */
     .kanban-column-headers {
-        width: 100%;
-        max-width: 100%;
+        --header-shadow-room: 16px;
+        box-sizing: border-box;
+        width: calc(100% + 2 * var(--header-shadow-room));
+        max-width: calc(100% + 2 * var(--header-shadow-room));
+        padding: 8px var(--header-shadow-room) 0;
+        margin: -8px calc(-1 * var(--header-shadow-room)) 0;
         overflow-x: auto;
         overflow-y: hidden;
     }
@@ -1227,8 +1133,9 @@ body .maincontent .priority-text-5 a:link {
        scrollLeft values differ and the sync script clamps short of the
        true right edge. */
     .kanban-column-headers.groupby-active {
-        width: calc(100% - 158px);
-        max-width: calc(100% - 158px);
+        width: calc(100% - 158px + 2 * var(--header-shadow-room));
+        max-width: calc(100% - 158px + 2 * var(--header-shadow-room));
+        margin-left: calc(158px - var(--header-shadow-room));
     }
 }
 

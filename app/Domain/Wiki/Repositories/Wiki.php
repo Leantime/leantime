@@ -179,12 +179,13 @@ class Wiki extends Blueprints
             ->select('id', 'title', 'parent', 'sortindex', 'status', 'data')
             ->where('canvasId', $canvasId)
             ->where('box', 'article')
+            // Same rule as Wiki::isVisibleToCurrentUser(): everything but a draft, or the user's
+            // own drafts. Articles created from content templates before they got a status have
+            // none and are listed.
             ->where(function ($query) use ($userId) {
-                $query->where('status', 'published')
-                    ->orWhere(function ($q) use ($userId) {
-                        $q->where('status', 'draft')
-                            ->where('author', $userId);
-                    });
+                $query->whereNull('status')
+                    ->orWhere('status', '<>', 'draft')
+                    ->orWhere('author', $userId);
             })
             ->orderBy('parent')
             ->orderBy('title')

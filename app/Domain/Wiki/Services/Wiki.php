@@ -39,24 +39,93 @@ class Wiki extends BaseService
      * is passed it is authorized against (closing the explicit-foreign-project RPC read); when it is
      * omitted the call resolves to the caller's session project and can only read articles there.
      *
+     * A draft belongs to its author until it is published: another user's draft is not found
+     * (false), the same rule getAllWikiHeadlines() applies to the Contents list. A null or unknown
+     * id falls back to the project's featured article, under the same rule.
+     *
+     * @param  int|null  $id  Article id (null loads the featured article)
+     * @param  int|null  $projectId  Project id (defaults to the session project)
+     * @return Article|false The article, or false when it does not exist or is not visible
+     *
      * @api
      */
     #[RequiresPermission(WikiPermissions::VIEW, projectIdParam: 'projectId')]
-    public function getArticle(?int $id, ?int $projectId = null): mixed
+    public function getArticle(?int $id, ?int $projectId = null): Article|false
     {
-
         if ($projectId === null) {
             $projectId = session('currentProject');
         }
 
-        if (! is_null($id)) {
+        if ($id !== null) {
             $article = $this->wikiRepository->getArticle($id, $projectId);
 
-            if (! $article) {
-                $article = $this->wikiRepository->getArticle(-1, $projectId);
+            // Found but hidden: report "not found" and do NOT fall back to another article, so a
+            // caller that writes back by id (inline save) never mixes a different article's fields
+            // into this draft.
+            if ($article) {
+                return $this->isVisibleToCurrentUser($article) ? $article : false;
             }
-        } else {
-            $article = $this->wikiRepository->getArticle(-1, $projectId);
+        }
+
+        $featuredArticle = $this->wikiRepository->getArticle(-1, $projectId);
+
+        if (! $featuredArticle || ! $this->isVisibleToCurrentUser($featuredArticle)) {
+            return false;
+        }
+
+        return $featuredArticle;
+    }
+
+    /**
+     * Whether the current user may see an article. Drafts are visible to their author only, until
+     * published; everything else is visible to anyone who can view the project.
+     *
+     * Admins and owners get no exception, matching getAllWikiHeadlines() and search, which list
+     * other users' drafts to nobody. Only the literal 'draft' status is private: articles created
+     * from content templates before they got a status have none and are readable.
+     *
+     * @param  Article  $article  The loaded article
+     */
+    private function isVisibleToCurrentUser(Article $article): bool
+    {
+        if ($article->status !== 'draft') {
+            return true;
+        }
+
+        return (int) $article->author === (int) session('userdata.id');
+    }
+
+    /**
+     * Whether the current user may see the article with this id, under the draft rule of
+     * getArticle(). Lets other domains (comments) hide what hangs off another user's draft.
+     *
+     * Not an API method and no permission check of its own: callers authorize against the
+     * article's project themselves.
+     *
+     * @param  int  $articleId  Article id
+     * @return bool False for an unknown id and for another user's draft
+     */
+    public function isArticleVisibleToCurrentUser(int $articleId): bool
+    {
+        return $this->loadVisibleArticle($articleId) !== null;
+    }
+
+    /**
+     * Loads an article by id from its own project, or null when the id names no article or the
+     * article is another user's draft.
+     *
+     * @param  int  $articleId  Article id
+     */
+    private function loadVisibleArticle(int $articleId): ?Article
+    {
+        $projectId = $this->wikiRepository->getArticleProjectId($articleId);
+        if ($projectId === null) {
+            return null;
+        }
+
+        $article = $this->wikiRepository->getArticle($articleId, $projectId);
+        if (! $article instanceof Article || ! $this->isVisibleToCurrentUser($article)) {
+            return null;
         }
 
         return $article;
@@ -215,6 +284,12 @@ class Wiki extends BaseService
     /**
      * Update an article and record audit events for changed fields.
      *
+     * Another user's draft is refused (false), like an unknown id: drafts belong to their author.
+     *
+     * @param  Article  $article  The article with its new values (id required)
+     * @param  Article|null  $existingArticle  The article before the change, for the audit trail
+     * @return bool True when the article was saved
+     *
      * @api
      */
     #[RequiresPermission(WikiPermissions::EDIT, entityScoped: true)]
@@ -233,6 +308,12 @@ class Wiki extends BaseService
 
         $this->authorize(WikiPermissions::EDIT, $projectId);
 
+        // Another user's draft is not found for this user (getArticle()), so it cannot be
+        // overwritten either, whatever the caller sends.
+        if ($this->loadVisibleArticle((int) $article->id) === null) {
+            return false;
+        }
+
         $result = $this->wikiRepository->updateArticle($article);
 
         if ($result && $existingArticle !== null) {
@@ -243,7 +324,32 @@ class Wiki extends BaseService
     }
 
     /**
+     * Resolves the project an article belongs to and authorizes VIEW there, so callers can
+     * check further permissions against the article's real project instead of the session one.
+     *
+     * @param  int  $id  Article id
+     * @return int|null The article's project id, or null when the id names no article
+     */
+    public function getArticleProjectId(int $id): ?int
+    {
+        $projectId = $this->wikiRepository->getArticleProjectId($id);
+
+        if ($projectId === null) {
+            return null;
+        }
+
+        $this->authorize(WikiPermissions::VIEW, $projectId);
+
+        return $projectId;
+    }
+
+    /**
      * Delete an article, fencing the operation against the article's project.
+     *
+     * Another user's draft is refused (false), like an unknown id: drafts belong to their author.
+     *
+     * @param  int  $id  Article id
+     * @return bool True when the article was deleted
      *
      * @api
      */
@@ -260,6 +366,11 @@ class Wiki extends BaseService
         }
 
         $this->authorize(WikiPermissions::DELETE, $projectId);
+
+        // Another user's draft is not found for this user, so it cannot be deleted either.
+        if ($this->loadVisibleArticle($id) === null) {
+            return false;
+        }
 
         $this->wikiRepository->delArticle($id);
 
@@ -359,6 +470,11 @@ class Wiki extends BaseService
     /**
      * Get combined activity feed for an article (audit events + comments).
      *
+     * Empty for an unknown id and for another user's draft (drafts are author-only, see getArticle()).
+     *
+     * @param  int  $articleId  Article id
+     * @param  int  $limit  Maximum number of entries
+     *
      * @api
      *
      * @return array<int, array<string, mixed>>
@@ -375,6 +491,12 @@ class Wiki extends BaseService
         }
 
         $this->authorize(WikiPermissions::VIEW, $projectId);
+
+        // Another user's draft has no activity for this user: its edit history (titles, status
+        // changes) is as private as the draft itself.
+        if ($this->loadVisibleArticle($articleId) === null) {
+            return [];
+        }
 
         $activity = [];
 

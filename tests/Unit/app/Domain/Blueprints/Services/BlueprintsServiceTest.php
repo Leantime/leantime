@@ -62,6 +62,38 @@ class BlueprintsServiceTest extends TestCase
         $this->assertSame('T:label.assumptions', $service->getTranslatedDataLabels($template)[1]['title']);
     }
 
+    /**
+     * #4049: the Project Value Canvas words its data labels per box
+     * (label.valueCanvas.assumptions.problem). With a box, "{title}.{box}" wins when the
+     * language has it; otherwise the plain title is used.
+     */
+    public function test_data_labels_use_the_per_box_wording_when_the_language_has_it(): void
+    {
+        $knownStrings = [
+            'label.valueCanvas.assumptions.problem' => 'Assumptions about this problem?',
+            'label.assumptions' => 'Assumptions',
+        ];
+        $language = $this->make(LanguageCore::class, [
+            '__' => fn (string $index, string $default = '') => $knownStrings[$index] ?? ($default !== '' ? $default : $index),
+        ]);
+        $service = new BlueprintsService(
+            $this->make(BlueprintsRepository::class),
+            new TemplateRegistry,
+            $language,
+            new ContentTemplateRegistry,
+        );
+
+        $valueTemplate = new CanvasTemplate([
+            'slug' => 'value',
+            'dataLabels' => [1 => ['title' => 'label.valueCanvas.assumptions', 'field' => 'assumptions', 'active' => true]],
+        ]);
+        $plainTemplate = new CanvasTemplate(['slug' => 'x']); // default data labels
+
+        $this->assertSame('Assumptions about this problem?', $service->getTranslatedDataLabels($valueTemplate, 'problem')[1]['title']);
+        $this->assertSame('Assumptions', $service->getTranslatedDataLabels($plainTemplate, 'problem')[1]['title']);
+        $this->assertSame('Assumptions', $service->getTranslatedDataLabels($plainTemplate)[1]['title']);
+    }
+
     public function test_disclaimer_is_empty_when_unset_and_translated_otherwise(): void
     {
         $service = $this->service();
@@ -350,6 +382,7 @@ class BlueprintsServiceTest extends TestCase
         $item = $service->getCanvasItem(7, 'swotcanvas');
 
         $this->assertSame(7, $item['id']);
+        $this->assertSame(9, $item['projectId'], 'The item carries its real project, which the dialog checks permissions against');
         $this->assertSame('swotcanvas', $resolvedType, 'The resolver must be type-scoped so a foreign canvas type cannot match');
     }
 

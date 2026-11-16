@@ -34,6 +34,9 @@
     }
 
     $currentImpact = (string) ($canvasItem['impact'] ?? '');
+
+    // Saving a new item needs blueprints.create, an existing one blueprints.edit (as the services check).
+    $itemSavePermission = ($id ?? '') === '' ? 'blueprints.create' : 'blueprints.edit';
 @endphp
 
 <script type="text/javascript">
@@ -55,9 +58,11 @@
         </span>
         </x-slot:title>
         @if ($id != '')
+    @can('blueprints.delete', $canvasItem['projectId'] ?? null)
         <x-slot:actions>
-            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete"><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a></li>
+            <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="delete" data-lt-permitted><i class="fa fa-trash-can"></i> {{ $tpl->__('links.delete') }}</a></li>
         </x-slot:actions>
+    @endcan
     @endif
 </x-global::actions.modal-header>
 
@@ -81,15 +86,17 @@
                     placeholder="{{ $tpl->__('input.placeholders.short_name') }}" /><br /><br />
 
                 @if ($dataLabels[1]['active'])
-                    <x-global::forms.label>{{ $tpl->__($dataLabels[1]['title']) }}</x-global::forms.label>
-                    <textarea style="width:100%" rows="5" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea><br />
+                    <x-global::forms.field for="canvasData1" :label="__($dataLabels[1]['title'])">
+                        <textarea id="canvasData1" style="width:100%" rows="5" cols="10" name="{{ $dataLabels[1]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[1]['field']] }}</textarea>
+                    </x-global::forms.field>
                 @else
                     <input type="hidden" name="{{ $dataLabels[1]['field'] }}" value="" />
                 @endif
 
                 @if ($dataLabels[2]['active'])
-                    <x-global::forms.label>{{ $tpl->__($dataLabels[2]['title']) }}</x-global::forms.label>
-                    <textarea style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea><br />
+                    <x-global::forms.field for="canvasData2" :label="__($dataLabels[2]['title'])">
+                        <textarea id="canvasData2" style="width:100%" rows="3" cols="10" name="{{ $dataLabels[2]['field'] }}" class="modalTextArea tiptapSimple">{{ $canvasItem[$dataLabels[2]['field']] }}</textarea>
+                    </x-global::forms.field>
                 @else
                     <input type="hidden" name="{{ $dataLabels[2]['field'] }}" value="" />
                 @endif
@@ -110,36 +117,36 @@
                 @endphp
 
                 @if ($showWhy)
-                    <x-global::forms.label for="whyThisMatters" style="display:block;margin-top:8px;">{{ $tpl->__('logicmodel.field.why_this_matters') }}</x-global::forms.label>
-                    <textarea id="whyThisMatters" style="width:100%" rows="3" name="why_this_matters"
-                        maxlength="500"
-                        placeholder="{{ $tpl->__('logicmodel.field.why_this_matters.placeholder') }}"
-                        class="modalTextArea">{{ $canvasItem['why_this_matters'] }}</textarea>
-                    @if (! $isImpact)
-                        {{-- Suggest affordance for Outputs/Outcomes only. Impact
-                             deliberately has none — no draft, no pre-fill. --}}
-                        <div style="margin-top:4px;font-size:12px;color:var(--rd-text-3,#7a8790);">
-                            <button type="button"
-                                    class="lm-suggest-why"
-                                    data-source-title="{{ $tpl->escape($canvasItem['description'] ?? '') }}"
-                                    data-source-body="{{ $tpl->escape($canvasItem['conclusion'] ?? '') }}"
-                                    style="background:none;border:0;padding:0;color:var(--main-titles-color,#004666);cursor:pointer;font-size:12px;font-weight:600;">
-                                <i class="fa fa-lightbulb"></i> {{ $tpl->__('logicmodel.field.why_this_matters.suggest') }}
-                            </button>
-                        </div>
-                    @endif
-                    <br />
+                    <x-global::forms.field for="whyThisMatters" :label="__('logicmodel.field.why_this_matters')">
+                        <textarea id="whyThisMatters" style="width:100%" rows="3" name="why_this_matters"
+                            maxlength="500"
+                            placeholder="{{ $tpl->__('logicmodel.field.why_this_matters.placeholder') }}"
+                            class="modalTextArea">{{ $canvasItem['why_this_matters'] }}</textarea>
+                        @if (! $isImpact)
+                            {{-- Suggest affordance for Outputs/Outcomes only. Impact
+                                 deliberately has none — no draft, no pre-fill. --}}
+                            <div style="margin-top:4px;font-size:12px;color:var(--rd-text-3,#7a8790);">
+                                <button type="button"
+                                        class="lm-suggest-why"
+                                        data-source-title="{{ $tpl->escape($canvasItem['description'] ?? '') }}"
+                                        data-source-body="{{ $tpl->escape($canvasItem['conclusion'] ?? '') }}"
+                                        style="background:none;border:0;padding:0;color:var(--main-titles-color,#004666);cursor:pointer;font-size:12px;font-weight:600;">
+                                    <i class="fa fa-lightbulb"></i> {{ $tpl->__('logicmodel.field.why_this_matters.suggest') }}
+                                </button>
+                            </div>
+                        @endif
+                    </x-global::forms.field>
                 @else
                     <input type="hidden" name="why_this_matters" value="{{ $tpl->escape($canvasItem['why_this_matters'] ?? '') }}" />
                 @endif
 
                 @if ($showStart)
-                    <x-global::forms.label for="startingPicture" style="display:block;margin-top:8px;">{{ $tpl->__('logicmodel.field.starting_picture') }}</x-global::forms.label>
-                    <textarea id="startingPicture" style="width:100%" rows="3" name="starting_picture"
-                        maxlength="500"
-                        placeholder="{{ $tpl->__('logicmodel.field.starting_picture.placeholder') }}"
-                        class="modalTextArea">{{ $canvasItem['starting_picture'] }}</textarea>
-                    <br />
+                    <x-global::forms.field for="startingPicture" :label="__('logicmodel.field.starting_picture')">
+                        <textarea id="startingPicture" style="width:100%" rows="3" name="starting_picture"
+                            maxlength="500"
+                            placeholder="{{ $tpl->__('logicmodel.field.starting_picture.placeholder') }}"
+                            class="modalTextArea">{{ $canvasItem['starting_picture'] }}</textarea>
+                    </x-global::forms.field>
                 @else
                     <input type="hidden" name="starting_picture" value="{{ $tpl->escape($canvasItem['starting_picture'] ?? '') }}" />
                 @endif
@@ -273,10 +280,10 @@
 
         {{-- ═══ Bottom: Actions ═══ --}}
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
-            @if ($login::userIsAtLeast($roles::$editor))
+            @can($itemSavePermission, $canvasItem['projectId'] ?? null)
                 <x-global::forms.button tag="input" inputType="submit" :labelText="$tpl->__('buttons.save')" id="primaryCanvasSubmitButton" contentRole="primary"/>
                 <x-global::forms.button inputType="submit" contentRole="secondary" value="closeModal" id="saveAndClose" onclick="leantime.canvasController.setCloseModal();">{!! $tpl->__('buttons.save_and_close') !!}</x-global::forms.button>
-            @endif
+            @endcan
 
         </div>
 
@@ -288,7 +295,7 @@
         <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--main-border-color);">
             <x-global::elements.section-header icon="fa fa-comments">{{ $tpl->__('subtitles.discussion') }}</x-global::elements.section-header>
             <input type="hidden" name="comment" value="1" />
-            @include('comments::submodules.generalComment', ['formUrl' => '/' . $canvasName . 'canvas/editCanvasItem/' . $id])
+            @include('comments::submodules.generalComment', ['formUrl' => '/' . $canvasName . 'canvas/editCanvasItem/' . $id, 'commentProjectId' => $canvasItem['projectId'] ?? null])
         </div>
     @endif
 
@@ -352,13 +359,13 @@
             leantime.tiptapController.initSimpleEditor();
         }
 
-        @if (! $login::userIsAtLeast($roles::$editor))
+        @cannot($itemSavePermission, $canvasItem['projectId'] ?? null)
             leantime.authController.makeInputReadonly("#global-modal-content");
-        @endif
+        @endcannot
 
-        @if ($login::userHasRole([$roles::$commenter]))
+        @cannot($itemSavePermission, $canvasItem['projectId'] ?? null) @can('comments.create', $canvasItem['projectId'] ?? null)
             leantime.commentsController.enableCommenterForms();
-        @endif
+        @endcan @endcannot
 
     })
 </script>

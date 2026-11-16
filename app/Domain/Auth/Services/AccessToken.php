@@ -6,8 +6,11 @@ use DateTimeInterface;
 use Illuminate\Validation\UnauthorizedException;
 use Laravel\Sanctum\Contracts\HasAbilities;
 use Laravel\Sanctum\HasApiTokens;
-use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Core\Auth\Permissions\PermissionService;
+use Leantime\Core\Auth\RoleCeiling;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
+use Leantime\Domain\Users\Permissions\UsersPermissions;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 class AccessToken implements HasAbilities
 {
@@ -65,7 +68,7 @@ class AccessToken implements HasAbilities
     public function createToken($userId, $name = null)
     {
 
-        if ($userId == session('userdata.id') || Auth::userIsAtLeast(Roles::$admin)) {
+        if ($userId == session('userdata.id') || $this->callerManagesTokensOf((int) $userId)) {
 
             $token = $this->tokenRepo->createToken($userId, $name ?? 'personal-token');
 
@@ -76,6 +79,13 @@ class AccessToken implements HasAbilities
         }
     }
 
+    /**
+     * Sanctum's token lookup: build the access token for a plaintext Bearer token.
+     *
+     * Returns false for an unknown token and for a token whose user was deleted or deactivated.
+     *
+     * @return self|false
+     */
     public static function findToken($token)
     {
         $tokenObject = new self;
@@ -89,7 +99,10 @@ class AccessToken implements HasAbilities
         $tokenObject->expires_at = ! empty($tokenData['expires_at']) ? dtHelper()->parseDbDateTime($tokenData['expires_at']) : null;
         $tokenObject->created_at = ! empty($tokenData['created_at']) ? dtHelper()->parseDbDateTime($tokenData['created_at']) : null;
 
-        $tokenObject->tokenable->setUser($tokenData['tokenable_id']);
+        // A token of a deleted or deactivated user does not authenticate.
+        if (! $tokenObject->tokenable->setUser($tokenData['tokenable_id'])) {
+            return false;
+        }
 
         return $tokenObject;
     }
@@ -114,7 +127,7 @@ class AccessToken implements HasAbilities
     public function getUserTokens(int $userId)
     {
 
-        if (Auth::userIsAtLeast(Roles::$admin) || $userId == session('userdata.id')) {
+        if ($userId == session('userdata.id') || $this->callerManagesTokensOf($userId)) {
 
             return $this->tokenRepo->getAllTokensByUserId($userId) ?? [];
 
@@ -134,7 +147,12 @@ class AccessToken implements HasAbilities
 
         $token = $this->getTokenById($tokenId);
 
-        if (Auth::userIsAtLeast(Roles::$admin) || $token['tokenable_id'] == session('userdata.id')) {
+        // Already gone (e.g. revoked in another tab): nothing to delete.
+        if (empty($token)) {
+            return false;
+        }
+
+        if ($token['tokenable_id'] == session('userdata.id') || $this->callerManagesTokensOf((int) $token['tokenable_id'])) {
 
             return $this->tokenRepo->deleteToken($tokenId);
 
@@ -180,5 +198,28 @@ class AccessToken implements HasAbilities
         }
 
         return $this->tokenRepo->deleteToken((int) $token['id']);
+    }
+
+    /**
+     * Whether the caller may manage another user's tokens: they need `users.edit` (admin+ by
+     * default) and, like editing that account, a role at or above the account's role
+     * ({@see RoleCeiling}), so a lower-ranked role can't mint or revoke an owner's tokens.
+     * Unknown accounts are refused.
+     *
+     * Resolved here rather than injected: findToken() builds instances with `new self`.
+     */
+    private function callerManagesTokensOf(int $userId): bool
+    {
+        if (! app()->make(PermissionService::class)->currentUserCan(UsersPermissions::EDIT)) {
+            return false;
+        }
+
+        $targetUser = app()->make(UserRepository::class)->getUser($userId);
+
+        if (! is_array($targetUser)) {
+            return false;
+        }
+
+        return app()->make(RoleCeiling::class)->canAssign($targetUser['role'] ?? '');
     }
 }

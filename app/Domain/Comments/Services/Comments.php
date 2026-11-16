@@ -15,6 +15,7 @@ use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Events\ProjectStatusUpdatePosted;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
+use Leantime\Domain\Wiki\Services\Wiki as WikiService;
 
 /**
  * @api
@@ -67,6 +68,11 @@ class Comments extends BaseService
             // comment was permission-checked and then silently discarded (#3756). A missing item
             // resolves to no project and stays null.
             if ($module === 'article' || $module === 'idea' || str_ends_with($module, 'canvasitem')) {
+                // Another user's draft is not found for this user, so it takes no comments either.
+                if ($this->isOnHiddenArticle($module, $entityId)) {
+                    return null;
+                }
+
                 $projectId = $this->commentRepository->resolveModuleProjectId($module, $entityId);
 
                 return $projectId !== null ? ['id' => $entityId, 'projectId' => $projectId] : null;
@@ -117,7 +123,8 @@ class Comments extends BaseService
      * @return false|array The comments.
      *
      * @throws ValidationException When $strict and the module is unknown, or the entity id is invalid.
-     * @throws NotFoundException When a ticket/article/idea/canvas item with that id does not exist.
+     * @throws NotFoundException When a ticket/article/idea/canvas item with that id does not exist,
+     *                           or the article is another user's draft.
      *
      * @api
      */
@@ -158,14 +165,46 @@ class Comments extends BaseService
 
         $this->authorize(CommentsPermissions::VIEW, $projectId);
 
+        // The thread of another user's draft is as private as the draft (#4056): not found.
+        if ($this->isOnHiddenArticle((string) $module, (int) $entityId)) {
+            throw new NotFoundException("Could not find {$module} #{$entityId}, or you do not have access to it.");
+        }
+
         return $this->commentRepository->getComments($module, $entityId, $parent, $commentOrder);
+    }
+
+    /**
+     * Whether a comment target is a Docs article the current user cannot see: another user's
+     * draft. Its comments, replies and reactions are as private as the draft itself.
+     *
+     * @param  string  $module  The (normalized) comment module
+     * @param  int  $entityId  The entity id
+     */
+    private function isOnHiddenArticle(string $module, int $entityId): bool
+    {
+        if ($module !== 'article') {
+            return false;
+        }
+
+        // Resolved on use: the wiki service is only needed for article comments.
+        return ! app()->make(WikiService::class)->isArticleVisibleToCurrentUser($entityId);
+    }
+
+    /**
+     * Whether a stored comment hangs off another user's draft article.
+     *
+     * @param  array  $comment  The comment row (module, moduleId)
+     */
+    private function isCommentOnHiddenArticle(array $comment): bool
+    {
+        return $this->isOnHiddenArticle((string) ($comment['module'] ?? ''), (int) ($comment['moduleId'] ?? 0));
     }
 
     /**
      * Map common plural/alias spellings of a comment module to the stored module name.
      *
      * API clients naturally guess "tickets" or "projects"; those used to fail silently (#3704).
-     * Goal comments are stored on the goal canvas item.
+     * Goal comments are stored on the goal canvas item. Known modules come back lowercase.
      */
     private function normalizeCommentModule(mixed $module): mixed
     {
@@ -187,7 +226,14 @@ class Comments extends BaseService
 
         $lowerModule = strtolower(trim($module));
 
-        return $aliases[$lowerModule] ?? $module;
+        if (isset($aliases[$lowerModule])) {
+            return $aliases[$lowerModule];
+        }
+
+        // Known modules are stored lowercase. Canonicalize their spelling too ("ARTICLE"), so a
+        // mixed-case module can't skip the checks below while a case-insensitive collation still
+        // matches the stored rows.
+        return $this->isResolvableCommentModule($lowerModule) ? $lowerModule : $module;
     }
 
     /**
@@ -405,8 +451,14 @@ class Comments extends BaseService
     }
 
     /**
-     * Checks whether the current user is authorized to modify a comment.
-     * The caller must be the comment author or have at least manager role.
+     * Checks whether the current user is authorized to modify a comment: they must be able to
+     * post comments where it lives (`comments.create`, which editComment/deleteComment declare)
+     * and be its author or hold `comments.moderate` there. Comments on another user's draft
+     * article are off limits, like the draft.
+     *
+     * Both checks are scoped to the comment's OWN project, so a manager in project A cannot
+     * moderate a comment on an entity in project B by id. A null project (client/company-scoped
+     * or unknown module) falls back to a session-scoped check (unchanged behavior for those targets).
      *
      * @param  int  $commentId  The comment ID to check
      * @return bool True if authorized, false otherwise
@@ -415,25 +467,22 @@ class Comments extends BaseService
     {
         $comment = $this->commentRepository->getComment($commentId);
 
-        if (! $comment) {
+        if (! $comment || $this->isCommentOnHiddenArticle($comment)) {
             return false;
         }
 
-        $currentUserId = session('userdata.id');
-
-        // Comment author can always modify their own comment.
-        if ((int) $comment['userId'] === (int) $currentUserId) {
-            return true;
-        }
-
-        // Otherwise moderation (editing/deleting someone else's comment) is a manager+ capability,
-        // scoped to the comment's OWN project so a manager in project A cannot moderate a comment on
-        // an entity in project B by id. A null project (client/company-scoped or unknown module)
-        // falls back to a session-scoped moderate check (unchanged behavior for those targets).
         $projectId = $this->commentRepository->resolveModuleProjectId(
             (string) ($comment['module'] ?? ''),
             (int) ($comment['moduleId'] ?? 0)
         );
+
+        if (! $this->can(CommentsPermissions::CREATE, $projectId)) {
+            return false;
+        }
+
+        if ((int) $comment['userId'] === (int) session('userdata.id')) {
+            return true;
+        }
 
         return $this->can(CommentsPermissions::MODERATE, $projectId);
     }
@@ -471,6 +520,9 @@ class Comments extends BaseService
     }
 
     /**
+     * Comments across the projects the user can access, newest data for polling clients.
+     * Comments on other users' draft articles are left out (see the repository).
+     *
      * @param  ?int  $projectId  Project ID
      * @param  ?int  $moduleId  Id of the entity to pull comments from
      * @return array
@@ -530,7 +582,7 @@ class Comments extends BaseService
         // return as a missing comment) rather than throw, so a denied cross-project comment is
         // indistinguishable from a non-existent one — no commentId existence oracle.
         $comment = $this->commentRepository->getComment($commentId);
-        if (! $comment) {
+        if (! $comment || $this->isCommentOnHiddenArticle($comment)) {
             return false;
         }
         if (! $this->can(
@@ -589,7 +641,7 @@ class Comments extends BaseService
         // Hx). SOFT-deny (same empty payload as a missing comment) rather than throw, so a denied
         // cross-project comment is indistinguishable from a non-existent one — no existence oracle.
         $comment = $this->commentRepository->getComment($commentId);
-        if (! $comment) {
+        if (! $comment || $this->isCommentOnHiddenArticle($comment)) {
             return ['reactions' => [], 'userReactions' => []];
         }
         if (! $this->can(

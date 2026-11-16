@@ -24,36 +24,41 @@
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/sprints/editSprint/{{ $id }}">
 
-    <x-global::forms.label>{!! __('label.sprint_name') !!}</x-global::forms.label>
-    <x-global::forms.text-input name="name" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" /><br />
+    <x-global::forms.field for="sprintName" :label="__('label.sprint_name')">
+        <x-global::forms.text-input name="name" id="sprintName" value="{{ $currentSprint->name }}" placeholder="{{ __('label.sprint_name') }}" />
+    </x-global::forms.field>
 
-    <x-global::forms.label>{!! __('label.project') !!}</x-global::forms.label>
-    @if (! empty($lockProject))
-        {{-- Program sprint: project is fixed to the owning program and cannot be reassigned. --}}
-        @php $lockedProject = $allAssignedprojects[0] ?? null; @endphp
-        <input type="hidden" name="projectId" value="{{ $lockedProject['id'] ?? $currentProject }}" />
-        <x-global::forms.select disabled>
-            <option selected>{{ $tpl->escape($lockedProject['name'] ?? '') }}</option>
-        </x-global::forms.select><br />
-    @else
-        <x-global::forms.select name="projectId">
-            @foreach ($allAssignedprojects as $project)
-                <option value="{{ $project['id'] }}"
-                    @if ((isset($currentSprint) && ($currentSprint->projectId == $project['id'] || $currentProject == $project['id'])) || (! isset($currentSprint) && $currentProject == $project['id']))
-                        selected
-                    @endif
-                >{{ $tpl->escape($project['name']) }}</option>
-            @endforeach
-        </x-global::forms.select><br />
-    @endif
+    <x-global::forms.field for="sprintProject" :label="__('label.project')">
+        @if (! empty($lockProject))
+            {{-- Program sprint: project is fixed to the owning program and cannot be reassigned. --}}
+            @php $lockedProject = $allAssignedprojects[0] ?? null; @endphp
+            <input type="hidden" name="projectId" value="{{ $lockedProject['id'] ?? $currentProject }}" />
+            <x-global::forms.select id="sprintProject" disabled>
+                <option selected>{{ $tpl->escape($lockedProject['name'] ?? '') }}</option>
+            </x-global::forms.select>
+        @else
+            <x-global::forms.select name="projectId" id="sprintProject">
+                @foreach ($allAssignedprojects as $project)
+                    <option value="{{ $project['id'] }}"
+                        @if ((isset($currentSprint) && ($currentSprint->projectId == $project['id'] || $currentProject == $project['id'])) || (! isset($currentSprint) && $currentProject == $project['id']))
+                            selected
+                        @endif
+                    >{{ $tpl->escape($project['name']) }}</option>
+                @endforeach
+            </x-global::forms.select>
+        @endif
+    </x-global::forms.field>
 
-    <br /><br />
-    <p>{!! __('label.sprint_dates') !!}</p><br/>
-    <x-global::forms.label>{!! __('label.first_day') !!}</x-global::forms.label>
-    <input type="text" name="startDate" autocomplete="off" value="{{ format($currentSprint->startDate)->date() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" /><br />
+    <br />
+    <p>{!! __('label.sprint_dates') !!}</p>
 
-    <x-global::forms.label>{!! __('label.last_day') !!}</x-global::forms.label>
-    <input type="text" name="endDate" autocomplete="off" value="{{ format($currentSprint->endDate)->date() }} " placeholder="{{ __('language.dateformat') }}" id="sprintEnd" />
+    <x-global::forms.field for="sprintStart" :label="__('label.first_day')">
+        <input type="text" name="startDate" autocomplete="off" value="{{ format($currentSprint->startDate)->date() }}" placeholder="{{ __('language.dateformat') }}" id="sprintStart" />
+    </x-global::forms.field>
+
+    <x-global::forms.field for="sprintEnd" :label="__('label.last_day')">
+        <input type="text" name="endDate" autocomplete="off" value="{{ format($currentSprint->endDate)->date() }} " placeholder="{{ __('language.dateformat') }}" id="sprintEnd" />
+    </x-global::forms.field>
 
     <br />
 

@@ -25,6 +25,11 @@ class ArticleDialog extends Controller
     }
 
     /**
+     * Shows the article dialog, empty for a new article. An unknown id or another user's draft
+     * goes to the 404 page.
+     *
+     * @param  array  $params  Route params (optional article id)
+     *
      * @throws BindingResolutionException
      */
     #[RequiresPermission(WikiPermissions::VIEW)]
@@ -35,7 +40,12 @@ class ArticleDialog extends Controller
         $article->data = 'far fa-file-alt';
 
         if (isset($params['id'])) {
-            $article = $this->wikiService->getArticle($params['id'], session('currentProject'));
+            $article = $this->wikiService->getArticle((int) $params['id'], session('currentProject'));
+
+            // Unknown id, or another user's draft.
+            if ($article === false) {
+                return Frontcontroller::redirect(BASE_URL.'/errors/error404');
+            }
         }
 
         if (session('currentWiki') != '') {
@@ -81,8 +91,13 @@ class ArticleDialog extends Controller
         $article = app()->make(Article::class);
 
         if (isset($_GET['id'])) {
-            $id = $_GET['id'];
+            $id = (int) $_GET['id'];
             $article = $this->wikiService->getArticle($id, session('currentProject'));
+
+            // Unknown id, or another user's draft: nothing to update.
+            if ($article === false) {
+                return Frontcontroller::redirect(BASE_URL.'/errors/error404');
+            }
 
             $article->title = $params['title'];
 
