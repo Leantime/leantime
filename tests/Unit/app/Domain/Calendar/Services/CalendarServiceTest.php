@@ -571,7 +571,7 @@ class CalendarServiceTest extends TestCase
             outboundHttpClient: $this->make(OutboundHttpClient::class)
         );
 
-        $this->expectException(\Exception::class);
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
         $this->expectExceptionMessage('Calendar could not be retrieved');
 
         $service->getIcalByRequestToken('wrongcal_user');
