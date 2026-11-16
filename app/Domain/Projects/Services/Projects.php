@@ -1831,11 +1831,12 @@ class Projects extends BaseService implements ChecksProjectAccess
             'start' => $values['start'] ?? null,
             'end' => $values['end'] ?? null,
         ];
+        // User dates arrive in the user's timezone; the database stores UTC.
         if ($values['start'] != null) {
-            $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
+            $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
         }
         if ($values['end'] != null) {
-            $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
+            $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC();
         }
 
         $projectId = $this->projectRepository->addProject($values);
