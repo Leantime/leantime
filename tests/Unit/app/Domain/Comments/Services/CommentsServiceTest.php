@@ -735,6 +735,22 @@ class CommentsServiceTest extends TestCase
         $service->getComments('article', 140, strict: true);
     }
 
+    public function test_get_comments_of_another_users_draft_is_not_found_whatever_the_module_spelling(): void
+    {
+        // A case-insensitive collation still matches the stored 'article' rows for "ARTICLE".
+        $this->articlesAreVisible(false);
+        $service = $this->makeService($this->noopReactions(), $this->articleCommentRepo());
+
+        foreach (['ARTICLE', ' Article ', 'Articles'] as $module) {
+            try {
+                $service->getComments($module, 140);
+                $this->fail("'$module' must not expose another user's draft thread");
+            } catch (\Leantime\Core\Exceptions\NotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
     public function test_get_comments_of_a_visible_article_are_returned(): void
     {
         $service = $this->makeService($this->noopReactions(), $this->articleCommentRepo());

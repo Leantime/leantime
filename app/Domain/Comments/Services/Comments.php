@@ -180,7 +180,7 @@ class Comments extends BaseService
      * Map common plural/alias spellings of a comment module to the stored module name.
      *
      * API clients naturally guess "tickets" or "projects"; those used to fail silently (#3704).
-     * Goal comments are stored on the goal canvas item.
+     * Goal comments are stored on the goal canvas item. Known modules come back lowercase.
      */
     private function normalizeCommentModule(mixed $module): mixed
     {
@@ -202,7 +202,14 @@ class Comments extends BaseService
 
         $lowerModule = strtolower(trim($module));
 
-        return $aliases[$lowerModule] ?? $module;
+        if (isset($aliases[$lowerModule])) {
+            return $aliases[$lowerModule];
+        }
+
+        // Known modules are stored lowercase. Canonicalize their spelling too ("ARTICLE"), so a
+        // mixed-case module can't skip the checks below while a case-insensitive collation still
+        // matches the stored rows.
+        return $this->isResolvableCommentModule($lowerModule) ? $lowerModule : $module;
     }
 
     /**
