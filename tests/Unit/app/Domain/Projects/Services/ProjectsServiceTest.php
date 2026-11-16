@@ -587,6 +587,10 @@ class ProjectsServiceTest extends TestCase
             // Goal 78 was written by 3 and is assigned to 4.
             'goal edit' => [$set('goalcanvas', 'updated', ['id' => 78, 'itemId' => 78, 'author' => 1, 'assignedTo' => 4]), [3, 4]],
             'goal comment' => [$set('goalcanvas', 'commented', ['text' => 'On track', 'userId' => 1, 'moduleId' => 78]), [3, 4]],
+            // A new goal has no id in the payload yet; its assignee is in it.
+            'goal created for someone else' => [$set('goalcanvas', 'created', ['box' => 'goal', 'author' => 1, 'assignedTo' => 4]), [4]],
+            // Docs article 79 was written by 3.
+            'comment on a docs article' => [$set('comments', 'commented', ['id' => 9, 'text' => 'Typo', 'userId' => 1, 'module' => 'article', 'moduleId' => 79]), [3]],
             'comment on a milestone' => [$set('comments', 'commented', ['id' => 9, 'text' => 'Moved', 'userId' => 1, 'module' => 'milestone', 'moduleId' => 50]), [3]],
         ];
     }
@@ -599,7 +603,7 @@ class ProjectsServiceTest extends TestCase
     public function test_push_reaches_the_stored_people_of_the_item_whatever_the_producer_sent(\Closure $adjust, array $expectedPush): void
     {
         $this->storedTicketPeople = [42 => [4, 2], 50 => [3]];
-        $this->storedBoardPeople = [77 => [3], 78 => [3, 4]];
+        $this->storedBoardPeople = [77 => [3], 78 => [3, 4], 79 => [3]];
 
         $seen = $this->runNotifyProjectUsers([], adjustNotification: $adjust);
 

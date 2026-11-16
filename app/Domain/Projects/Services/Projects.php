@@ -677,7 +677,7 @@ class Projects extends BaseService implements ChecksProjectAccess
             $hostId = (int) ($entity['moduleId'] ?? 0);
             if ($host === 'ticket' || $host === 'milestone') {
                 $people = $this->projectRepository->getTicketPeopleIds($hostId);
-            } elseif ($host === 'idea' || str_ends_with($host, 'canvasitem')) {
+            } elseif ($host === 'idea' || $host === 'article' || str_ends_with($host, 'canvasitem')) {
                 $people = $this->projectRepository->getBoardItemPeopleIds($hostId);
             }
         }
@@ -743,8 +743,11 @@ class Projects extends BaseService implements ChecksProjectAccess
             if (isset($entity['userId']) && (int) $entity['userId'] === $userId) {
                 return true;
             }
-            // Canvas items: author field
+            // Canvas items: author field; goals also have an assignee
             if (isset($entity['author']) && (int) $entity['author'] === $userId) {
+                return true;
+            }
+            if (isset($entity['assignedTo']) && (int) $entity['assignedTo'] === $userId) {
                 return true;
             }
         } elseif (is_object($entity)) {
@@ -758,6 +761,9 @@ class Projects extends BaseService implements ChecksProjectAccess
                 return true;
             }
             if (isset($entity->author) && (int) $entity->author === $userId) {
+                return true;
+            }
+            if (isset($entity->assignedTo) && (int) $entity->assignedTo === $userId) {
                 return true;
             }
         }
