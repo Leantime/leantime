@@ -9,6 +9,7 @@ use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reactions\Services\Reactions as ReactionsService;
+use Leantime\Domain\Wiki\Services\Wiki as WikiService;
 use Unit\TestCase;
 
 /**
@@ -26,6 +27,20 @@ class CommentsServiceTest extends TestCase
     {
         parent::setUp();
         session(['userdata.id' => self::SESSION_USER]);
+
+        // Article comments ask the wiki service whether the article is visible; by default it is.
+        $this->articlesAreVisible(true);
+    }
+
+    /**
+     * Bind a wiki service that reports every article as visible (published or the user's own
+     * draft) or hidden (another user's draft).
+     */
+    private function articlesAreVisible(bool $visible): void
+    {
+        $this->app->instance(WikiService::class, $this->make(WikiService::class, [
+            'isArticleVisibleToCurrentUser' => fn () => $visible,
+        ]));
     }
 
     /**
@@ -690,5 +705,115 @@ class CommentsServiceTest extends TestCase
         $this->makeService($this->noopReactions(), $repo)->getComments('goalcanvas', 1);
 
         $this->assertSame(['goalcanvasitem'], $seen);
+    }
+
+    // ---------------------------------------------------------------------
+    // Drafts (#4056): the comments of another user's draft article are as private as the draft.
+    // ---------------------------------------------------------------------
+
+    /**
+     * A repository with one comment (99) by the session user on article 140 in project 9.
+     *
+     * @param  array<string, callable>  $overrides
+     */
+    private function articleCommentRepo(array $overrides = []): CommentRepository
+    {
+        return $this->make(CommentRepository::class, array_merge([
+            'getComment' => fn () => ['id' => 99, 'userId' => self::SESSION_USER, 'module' => 'article', 'moduleId' => 140],
+            'resolveModuleProjectId' => fn () => 9,
+            'getComments' => fn () => [['id' => 99, 'text' => 'secret']],
+        ], $overrides));
+    }
+
+    public function test_get_comments_of_another_users_draft_is_not_found(): void
+    {
+        $this->articlesAreVisible(false);
+        $service = $this->makeService($this->noopReactions(), $this->articleCommentRepo());
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $service->getComments('article', 140, strict: true);
+    }
+
+    public function test_get_comments_of_another_users_draft_is_not_found_whatever_the_module_spelling(): void
+    {
+        // A case-insensitive collation still matches the stored 'article' rows for "ARTICLE".
+        $this->articlesAreVisible(false);
+        $service = $this->makeService($this->noopReactions(), $this->articleCommentRepo());
+
+        foreach (['ARTICLE', ' Article ', 'Articles'] as $module) {
+            try {
+                $service->getComments($module, 140);
+                $this->fail("'$module' must not expose another user's draft thread");
+            } catch (\Leantime\Core\Exceptions\NotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    public function test_repository_reads_only_comments_stored_under_the_exact_module(): void
+    {
+        // The collation may match "árticle" to stored 'article' rows; the repository drops them.
+        $rows = collect([
+            (object) ['id' => 1, 'module' => 'article', 'text' => 'draft thread'],
+        ]);
+        $builder = null;
+        $chain = function () use (&$builder) {
+            return $builder;
+        };
+        $builder = $this->make(\Illuminate\Database\Query\Builder::class, [
+            'select' => $chain,
+            'addSelect' => $chain,
+            'join' => $chain,
+            'where' => $chain,
+            'orderBy' => $chain,
+            'get' => fn () => $rows,
+        ]);
+        $connection = $this->make(\Illuminate\Database\Connection::class, ['table' => fn () => $builder]);
+        $repo = new CommentRepository($this->make(\Leantime\Core\Db\Db::class, ['getConnection' => fn () => $connection]));
+
+        $this->assertSame([], $repo->getComments('árticle', 140));
+        $this->assertCount(1, $repo->getComments('article', 140));
+    }
+
+    public function test_get_comments_of_a_visible_article_are_returned(): void
+    {
+        $service = $this->makeService($this->noopReactions(), $this->articleCommentRepo());
+
+        $this->assertSame([['id' => 99, 'text' => 'secret']], $service->getComments('article', 140));
+    }
+
+    public function test_add_comment_to_another_users_draft_is_not_found_and_writes_nothing(): void
+    {
+        $this->articlesAreVisible(false);
+        $repo = $this->articleCommentRepo([
+            'addComment' => function () {
+                $this->fail('nothing may be written on another user\'s draft');
+            },
+        ]);
+
+        $this->expectException(\Leantime\Core\Exceptions\NotFoundException::class);
+
+        $this->makeService($this->noopReactions(), $repo)->addComment(['text' => 'hello'], 'article', 140);
+    }
+
+    public function test_comments_on_another_users_draft_cannot_be_edited_deleted_or_reacted_to(): void
+    {
+        $this->articlesAreVisible(false);
+        $repo = $this->articleCommentRepo([
+            'editComment' => fn () => $this->fail('edit must not run'),
+            'deleteComment' => fn () => $this->fail('delete must not run'),
+        ]);
+        $reactions = $this->make(ReactionsService::class, [
+            'getReactionType' => fn () => 'positive',
+            'addReaction' => fn () => $this->fail('reaction must not be added'),
+            'getEntityReactionsWithUsers' => fn () => $this->fail('reactions must not be read'),
+        ]);
+        $service = $this->makeService($reactions, $repo);
+
+        $this->assertFalse($service->editComment(['text' => 'changed'], 99));
+        $this->assertFalse($service->deleteComment(99));
+        $this->assertFalse($service->toggleCommentReaction(self::SESSION_USER, 99, 'thumbsup'));
+        $this->assertSame(['reactions' => [], 'userReactions' => []], $service->getCommentReactions(99, self::SESSION_USER));
     }
 }

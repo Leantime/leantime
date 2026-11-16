@@ -780,15 +780,16 @@ class Search
     }
 
     /**
-     * Wiki visibility rule: published items, or the user's own drafts.
+     * Wiki visibility rule (Wiki::isVisibleToCurrentUser()): everything but a draft, or the user's
+     * own drafts. Articles created from content templates before they got a status have none and
+     * are visible.
      */
     private function wherePublishedOrOwnDraft(Builder $builder, int $userId): void
     {
         $builder->where(function (Builder $group) use ($userId) {
-            $group->where('item.status', 'published')
-                ->orWhere(function (Builder $own) use ($userId) {
-                    $own->where('item.status', 'draft')->where('item.author', $userId);
-                });
+            $group->whereNull('item.status')
+                ->orWhere('item.status', '<>', 'draft')
+                ->orWhere('item.author', $userId);
         });
     }
 
@@ -800,10 +801,9 @@ class Search
     {
         $builder->where(function (Builder $group) use ($userId) {
             $group->where('comment.module', '<>', 'article')
-                ->orWhere('item.status', 'published')
-                ->orWhere(function (Builder $own) use ($userId) {
-                    $own->where('item.status', 'draft')->where('item.author', $userId);
-                });
+                ->orWhereNull('item.status')
+                ->orWhere('item.status', '<>', 'draft')
+                ->orWhere('item.author', $userId);
         });
     }
 

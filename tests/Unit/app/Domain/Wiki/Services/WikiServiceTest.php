@@ -336,6 +336,7 @@ class WikiServiceTest extends TestCase
         $service = $this->makeService(
             wikiRepo: $this->make(WikiRepository::class, [
                 'getArticleProjectId' => fn () => 9,
+                'getArticle' => fn () => $this->article(42, 'published', 3),
                 'delArticle' => function ($id) use (&$deletedId): void {
                     $deletedId = $id;
                 },
@@ -425,5 +426,91 @@ class WikiServiceTest extends TestCase
         $service->setPermissionService($this->denyingPermissions());
 
         $this->assertNull($service->getArticleProjectId(999));
+    }
+
+    // ---------------------------------------------------------------------
+    // Drafts (#4056): what the user cannot open, they cannot change or delete either.
+    // ---------------------------------------------------------------------
+
+    public function test_update_article_refuses_another_users_draft(): void
+    {
+        session(['userdata.id' => 7]);
+        $repo = $this->make(WikiRepository::class, [
+            'getArticle' => fn () => $this->article(42, 'draft', 3),
+            'getArticleProjectId' => fn () => 9,
+            'updateArticle' => fn () => $this->fail('another user\'s draft must not be overwritten'),
+        ]);
+        $service = $this->makeService(wikiRepo: $repo);
+        $service->setPermissionService($this->allowingPermissions());
+
+        $article = new Article;
+        $article->id = 42;
+        $article->title = 'Overwritten';
+
+        $this->assertFalse($service->updateArticle($article));
+    }
+
+    public function test_update_article_saves_own_draft_and_published_articles(): void
+    {
+        foreach ([[3, 'draft'], [7, 'published'], [7, null]] as [$userId, $status]) {
+            session(['userdata.id' => $userId]);
+            $saved = false;
+            $existing = $this->article(42, 'published', 3);
+            $existing->status = $status;
+            $repo = $this->make(WikiRepository::class, [
+                'getArticle' => fn () => $existing,
+                'getArticleProjectId' => fn () => 9,
+                'updateArticle' => function () use (&$saved): bool {
+                    $saved = true;
+
+                    return true;
+                },
+            ]);
+            $service = $this->makeService(wikiRepo: $repo);
+            $service->setPermissionService($this->allowingPermissions());
+
+            $article = new Article;
+            $article->id = 42;
+
+            $this->assertTrue($service->updateArticle($article), "user $userId, status ".var_export($status, true));
+            $this->assertTrue($saved);
+        }
+    }
+
+    public function test_delete_article_refuses_another_users_draft(): void
+    {
+        session(['userdata.id' => 7]);
+        $repo = $this->make(WikiRepository::class, [
+            'getArticle' => fn () => $this->article(42, 'draft', 3),
+            'getArticleProjectId' => fn () => 9,
+            'delArticle' => fn () => $this->fail('another user\'s draft must not be deleted'),
+        ]);
+        $service = $this->makeService(wikiRepo: $repo);
+        $service->setPermissionService($this->allowingPermissions());
+
+        $this->assertFalse($service->deleteArticle(42));
+    }
+
+    public function test_is_article_visible_to_current_user_follows_the_draft_rule(): void
+    {
+        session(['userdata.id' => 7]);
+
+        $visibility = function (?Article $article): bool {
+            $service = $this->makeService(wikiRepo: $this->make(WikiRepository::class, [
+                'getArticle' => fn () => $article ?? false,
+                'getArticleProjectId' => fn () => $article ? 9 : null,
+            ]));
+
+            return $service->isArticleVisibleToCurrentUser(42);
+        };
+
+        $templateArticle = $this->article(42, 'published', 3);
+        $templateArticle->status = null;
+
+        $this->assertFalse($visibility($this->article(42, 'draft', 3)), 'another user\'s draft');
+        $this->assertTrue($visibility($this->article(42, 'draft', 7)), 'own draft');
+        $this->assertTrue($visibility($this->article(42, 'published', 3)), 'published');
+        $this->assertTrue($visibility($templateArticle), 'no status (created from a template)');
+        $this->assertFalse($visibility(null), 'unknown id');
     }
 }
