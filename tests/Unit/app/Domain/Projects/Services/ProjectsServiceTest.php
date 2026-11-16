@@ -611,6 +611,57 @@ class ProjectsServiceTest extends TestCase
         $this->assertSame([2, 3, 4, 5], $seen['emailRecipients'], 'Email keeps All activity');
     }
 
+    /**
+     * Boards and ideas notify under their own module names. A mention there gets past the
+     * involved-only push filter like a mention on a task.
+     *
+     * @return array<string, array{0: \Closure}>
+     */
+    public static function boardMentionCases(): array
+    {
+        $set = fn (string $module, string $action, array $entity) => function (Notification $notification) use ($module, $action, $entity) {
+            $notification->module = $module;
+            $notification->action = $action;
+            $notification->entity = $entity;
+        };
+        $mention = '<a data-tagged-user-id="4">@Four</a> can you look?';
+
+        return [
+            'board item edit' => [$set('leancanvas', 'updated', ['id' => 77, 'itemId' => 77, 'author' => 1, 'description' => $mention])],
+            'board item comment' => [$set('leancanvas', 'commented', ['text' => $mention, 'userId' => 1, 'moduleId' => 77])],
+            'goal comment' => [$set('goalcanvas', 'commented', ['text' => $mention, 'userId' => 1, 'moduleId' => 77])],
+            'idea update' => [$set('ideas', 'updated', ['id' => 77, 'itemId' => 77, 'author' => 1, 'data' => $mention])],
+        ];
+    }
+
+    /**
+     * @dataProvider boardMentionCases
+     */
+    public function test_a_mention_on_a_board_or_idea_reaches_push(\Closure $adjust): void
+    {
+        $this->storedBoardPeople = [77 => [3]];
+
+        $seen = $this->runNotifyProjectUsers([], adjustNotification: $adjust);
+
+        $this->assertSame([3, 4], $seen['pushRecipients'], 'Author 3, and 4 who was mentioned');
+    }
+
+    public function test_a_mention_on_a_board_gets_past_a_muted_project(): void
+    {
+        $this->storedBoardPeople = [77 => [3]];
+
+        $seen = $this->runNotifyProjectUsers([
+            'usersettings.4.projectNotificationLevels' => json_encode([5 => 'muted']),
+        ], adjustNotification: function (Notification $notification) {
+            $notification->module = 'goalcanvas';
+            $notification->action = 'commented';
+            $notification->entity = ['text' => '<a data-tagged-user-id="4">@Four</a> ok?', 'userId' => 1, 'moduleId' => 77];
+        });
+
+        $this->assertSame([2, 3, 5, 4], $seen['emailRecipients']);
+        $this->assertSame([3, 4], $seen['pushRecipients']);
+    }
+
     public function test_notify_project_users_never_pushes_to_the_author(): void
     {
         $seen = $this->runNotifyProjectUsers([PushPreferences::settingKey(1) => '1']);

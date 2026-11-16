@@ -838,28 +838,19 @@ class Projects extends BaseService implements ChecksProjectAccess
      */
     private function extractMentionedUserIds(Notification $notification): array
     {
-        $mentionFields = [
-            'comments' => ['text'],
-            'projects' => ['details'],
-            'tickets' => ['description'],
-            'canvas' => ['description', 'data', 'conclusion', 'assumptions'],
-        ];
+        $fields = self::mentionFields((string) $notification->module);
 
         $contentToCheck = '';
         if (isset($notification->entity) && is_array($notification->entity)) {
-            if (isset($mentionFields[$notification->module])) {
-                foreach ($mentionFields[$notification->module] as $field) {
-                    if (isset($notification->entity[$field])) {
-                        $contentToCheck .= $notification->entity[$field];
-                    }
+            foreach ($fields as $field) {
+                if (isset($notification->entity[$field])) {
+                    $contentToCheck .= $notification->entity[$field];
                 }
             }
         } elseif (isset($notification->entity) && is_object($notification->entity)) {
-            if (isset($mentionFields[$notification->module])) {
-                foreach ($mentionFields[$notification->module] as $field) {
-                    if (isset($notification->entity->$field)) {
-                        $contentToCheck .= $notification->entity->$field;
-                    }
+            foreach ($fields as $field) {
+                if (isset($notification->entity->$field)) {
+                    $contentToCheck .= $notification->entity->$field;
                 }
             }
         }
@@ -881,6 +872,26 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         return array_unique($userIds);
+    }
+
+    /**
+     * The entity fields a module's mentions can sit in. Boards notify under their own module
+     * (leancanvas, goalcanvas, …) and ideas under 'ideas'; for both the entity is the item, or
+     * on a board's own comment notification the comment, so its text is read too.
+     *
+     * @return array<string>
+     */
+    private static function mentionFields(string $module): array
+    {
+        if ($module === 'ideas' || str_ends_with($module, 'canvas')) {
+            return ['description', 'data', 'conclusion', 'assumptions', 'text'];
+        }
+
+        return [
+            'comments' => ['text'],
+            'projects' => ['details'],
+            'tickets' => ['description'],
+        ][$module] ?? [];
     }
 
     /**
