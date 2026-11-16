@@ -161,9 +161,16 @@ class ProjectsServiceTest extends TestCase
 
     private ?QueueRepository $fakeQueueRepo = null;
 
+    /** @var array<int, array<int>> Stored creator/assignee of tasks and milestones, by id. */
+    private array $storedTicketPeople = [];
+
+    /** @var array<int, array<int>> Stored author/goal assignee of board items, by id. */
+    private array $storedBoardPeople = [];
+
     /**
      * Wires notifyProjectUsers for restricted project 5 with team members 1 (author), 2, 3, 4, 5;
-     * user 6 is not on the team but is @mentioned. Returns what each channel saw during the call.
+     * user 6 is not on the team but is @mentioned. The to-do is assigned to 2 and was created by
+     * 5, so those two are the ones it involves. Returns what each channel saw during the call.
      *
      * @param  array<string, string>  $settings  Setting key => stored value (preferences + webhooks).
      * @param  array<int>  $usersWithProjectAccess  Who ProjectRepository::isUserAssignedToProject() lets into project 5.
@@ -172,7 +179,7 @@ class ProjectsServiceTest extends TestCase
      * @param  array<int>  $collaborators  Collaborators on the to-do the notification is about.
      * @return array{emailRecipients: array|null, emailEntity: array|null, messengerCalls: int, pushRecipients: array|null, inAppNotifications: array|null, order: array<int, string>}
      */
-    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, array $collaborators = []): array
+    private function runNotifyProjectUsers(array $settings, array $usersWithProjectAccess = [1, 2, 3, 4, 5], array $userOverrides = [], ?Webhooks $webhooks = null, array $collaborators = [], ?\Closure $adjustNotification = null): array
     {
         $seen = ['emailRecipients' => null, 'emailEntity' => null, 'messengerCalls' => 0, 'pushRecipients' => null, 'inAppNotifications' => null, 'order' => []];
         $this->queueTable = [];
@@ -191,6 +198,9 @@ class ProjectsServiceTest extends TestCase
             'getUsersAssignedToProject' => fn () => $team,
             'getProject' => fn ($projectId) => $projectId == 5 ? ['id' => 5, 'name' => 'Acme', 'psettings' => 'restricted', 'clientId' => 3] : false,
             'isUserAssignedToProject' => fn ($userId, $projectId) => $projectId == 5 && in_array((int) $userId, $usersWithProjectAccess, true),
+            // The stored people of a task/milestone or a board item, by id (none unless a test says so).
+            'getTicketPeopleIds' => fn (int $id) => $this->storedTicketPeople[$id] ?? [],
+            'getBoardItemPeopleIds' => fn (int $id) => $this->storedBoardPeople[$id] ?? [],
         ]);
         $userRepo = $this->make(UserRepository::class, [
             'getUser' => fn ($userId) => $users[(int) $userId] ?? false,
@@ -268,7 +278,10 @@ class ProjectsServiceTest extends TestCase
         $notification->subject = 'To-Do updated';
         $notification->message = 'Ada updated "Ship it"';
         $notification->url = ['url' => 'https://leantime.example.com/tickets/showTicket/42', 'text' => 'Open'];
-        $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review', 'collaborators' => $collaborators];
+        $notification->entity = ['id' => 42, 'headline' => 'Ship it', 'description' => '<a data-tagged-user-id="6">@Six</a> please review', 'editorId' => 2, 'userId' => 5, 'collaborators' => $collaborators];
+        if ($adjustNotification) {
+            $adjustNotification($notification);
+        }
 
         $this->makeService(
             projectRepo: $projectRepo,
@@ -465,7 +478,7 @@ class ProjectsServiceTest extends TestCase
         $seen = $this->runNotifyProjectUsers([], webhooks: $webhooks);
 
         $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients']);
-        $this->assertSame([2, 3, 4, 5, 6], $seen['pushRecipients']);
+        $this->assertSame([2, 5, 6], $seen['pushRecipients']);
         $this->assertSame(1, $seen['messengerCalls']);
         $this->assertNotNull($seen['inAppNotifications'], 'In-app notifications are still created');
     }
@@ -483,7 +496,7 @@ class ProjectsServiceTest extends TestCase
         $seen = $this->runNotifyProjectUsers([], userOverrides: [2 => ['notifications' => 0]]);
 
         $this->assertSame([3, 4, 5, 6], $seen['emailRecipients'], 'No email for a user who switched email off');
-        $this->assertSame([2, 3, 4, 5, 6], $seen['pushRecipients'], 'Push still goes to them');
+        $this->assertSame([2, 5, 6], $seen['pushRecipients'], 'Push still goes to them');
     }
 
     public function test_notify_project_users_never_pushes_to_users_who_switched_push_off(): void
@@ -494,7 +507,7 @@ class ProjectsServiceTest extends TestCase
         ]);
 
         $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients'], 'The push switch never touches email');
-        $this->assertSame([3, 4, 5, 6], $seen['pushRecipients']);
+        $this->assertSame([5, 6], $seen['pushRecipients']);
     }
 
     /**
@@ -512,11 +525,138 @@ class ProjectsServiceTest extends TestCase
         $this->assertSame([2, 5], $seen['pushRecipients'], 'Muted and category filters apply to push too; the mentioned user switched push off');
     }
 
+    /**
+     * "All activity" fills the inbox and the email digest; push only carries what involves you.
+     */
+    public function test_push_goes_only_to_the_people_the_notification_involves(): void
+    {
+        $seen = $this->runNotifyProjectUsers([], collaborators: [3]);
+
+        $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients'], 'Email keeps All activity');
+        $this->assertSame([2, 3, 5, 6], $seen['pushRecipients'], 'Assignee 2, collaborator 3, creator 5 and mentioned 6; not 4');
+    }
+
+    public function test_project_activity_that_involves_nobody_pushes_to_nobody(): void
+    {
+        // A project status update: the entity is the comment, and nobody on the team is named.
+        $seen = $this->runNotifyProjectUsers([], adjustNotification: function (Notification $notification) {
+            $notification->module = 'comments';
+            $notification->action = 'commented';
+            $notification->entity = ['id' => 9, 'text' => 'On track', 'userId' => 1, 'moduleId' => 5, 'module' => 'project'];
+        });
+
+        $this->assertSame([2, 3, 4, 5], $seen['emailRecipients']);
+        $this->assertSame([], $seen['pushRecipients']);
+    }
+
+    public function test_a_comment_on_your_task_pushes_to_the_task_people(): void
+    {
+        $seen = $this->runNotifyProjectUsers([], adjustNotification: function (Notification $notification) {
+            $notification->module = 'comments';
+            $notification->action = 'commented';
+            $notification->entity = ['id' => 9, 'text' => 'Looks good', 'userId' => 1, 'moduleId' => 42, 'module' => 'ticket'];
+            $notification->involvedUserIds = [3, 4];
+        });
+
+        $this->assertSame([3, 4], $seen['pushRecipients']);
+    }
+
+    /**
+     * Producers send what they have (form fields, the editor as a board item's "author", a
+     * comment instead of its item), so involvement reads the stored item's people.
+     *
+     * @return array<string, array{0: \Closure, 1: array<int>}>
+     */
+    public static function storedPeopleCases(): array
+    {
+        $set = fn (string $module, string $action, array $entity) => function (Notification $notification) use ($module, $action, $entity) {
+            $notification->module = $module;
+            $notification->action = $action;
+            $notification->entity = $entity;
+        };
+
+        return [
+            // Task 42 was created by 4 and is assigned to 2; the form sends neither.
+            'task form save' => [$set('tickets', 'updated', ['id' => 42, 'headline' => 'Ship it']), [2, 4]],
+            // Milestone 50 was created by 3; the dialog's fields don't say so.
+            'milestone dialog save' => [$set('tickets', 'updated', ['id' => 50, 'headline' => 'Beta']), [3]],
+            // Board item 77 was written by 3; the edit carries the editor (1) as author.
+            'board item edit' => [$set('leancanvas', 'updated', ['id' => 77, 'itemId' => 77, 'author' => 1]), [3]],
+            'board item comment' => [$set('leancanvas', 'commented', ['text' => 'Nice', 'userId' => 1, 'moduleId' => 77]), [3]],
+            'comment on a board item through the comments service' => [$set('comments', 'commented', ['id' => 9, 'text' => 'Nice', 'userId' => 1, 'module' => 'leancanvasitem', 'moduleId' => 77]), [3]],
+            // Goal 78 was written by 3 and is assigned to 4.
+            'goal edit' => [$set('goalcanvas', 'updated', ['id' => 78, 'itemId' => 78, 'author' => 1, 'assignedTo' => 4]), [3, 4]],
+            'goal comment' => [$set('goalcanvas', 'commented', ['text' => 'On track', 'userId' => 1, 'moduleId' => 78]), [3, 4]],
+            // A new goal has no id in the payload yet; its assignee is in it.
+            'goal created for someone else' => [$set('goalcanvas', 'created', ['box' => 'goal', 'author' => 1, 'assignedTo' => 4]), [4]],
+            // Docs article 79 was written by 3.
+            'comment on a docs article' => [$set('comments', 'commented', ['id' => 9, 'text' => 'Typo', 'userId' => 1, 'module' => 'article', 'moduleId' => 79]), [3]],
+            'comment on a milestone' => [$set('comments', 'commented', ['id' => 9, 'text' => 'Moved', 'userId' => 1, 'module' => 'milestone', 'moduleId' => 50]), [3]],
+        ];
+    }
+
+    /**
+     * @dataProvider storedPeopleCases
+     *
+     * @param  array<int>  $expectedPush
+     */
+    public function test_push_reaches_the_stored_people_of_the_item_whatever_the_producer_sent(\Closure $adjust, array $expectedPush): void
+    {
+        $this->storedTicketPeople = [42 => [4, 2], 50 => [3]];
+        $this->storedBoardPeople = [77 => [3], 78 => [3, 4], 79 => [3]];
+
+        $seen = $this->runNotifyProjectUsers([], adjustNotification: $adjust);
+
+        $this->assertSame($expectedPush, $seen['pushRecipients']);
+        $this->assertSame([2, 3, 4, 5], $seen['emailRecipients'], 'Email keeps All activity');
+    }
+
     public function test_notify_project_users_never_pushes_to_the_author(): void
     {
         $seen = $this->runNotifyProjectUsers([PushPreferences::settingKey(1) => '1']);
 
         $this->assertNotContains(1, $seen['pushRecipients']);
+    }
+
+    /**
+     * A comment's entity is the comment, so "My work" can only see the task's people through
+     * involvedUserIds. Without them a comment on your task reached nobody on "My work".
+     */
+    public function test_my_work_reaches_the_people_a_comment_names_as_involved(): void
+    {
+        $myWork = [];
+        foreach ([2, 3, 4, 5] as $userId) {
+            $myWork["usersettings.{$userId}.projectNotificationLevels"] = json_encode([5 => 'my_work']);
+        }
+        $asTaskComment = function (array $involved) {
+            return function (Notification $notification) use ($involved) {
+                $notification->module = 'comments';
+                $notification->action = 'commented';
+                $notification->entity = ['id' => 9, 'text' => 'Looks good', 'userId' => 1, 'moduleId' => 42, 'module' => 'ticket'];
+                $notification->involvedUserIds = $involved;
+            };
+        };
+
+        $seen = $this->runNotifyProjectUsers($myWork, adjustNotification: $asTaskComment([]));
+        $this->assertSame([], $seen['emailRecipients'], 'Without the task people, nobody on My work is involved');
+
+        $seen = $this->runNotifyProjectUsers($myWork, adjustNotification: $asTaskComment([3, 5]));
+        $this->assertSame([3, 5], $seen['emailRecipients']);
+        $this->assertSame([3, 5], $seen['pushRecipients']);
+    }
+
+    public function test_involvement_never_gets_past_a_muted_project(): void
+    {
+        $seen = $this->runNotifyProjectUsers([
+            'usersettings.3.projectNotificationLevels' => json_encode([5 => 'my_work']),
+            'usersettings.4.projectNotificationLevels' => json_encode([5 => 'muted']),
+        ], adjustNotification: function (Notification $notification) {
+            $notification->module = 'comments';
+            $notification->entity = ['id' => 9, 'text' => 'Looks good', 'userId' => 1, 'moduleId' => 42, 'module' => 'ticket'];
+            $notification->involvedUserIds = [3, 4];
+        });
+
+        $this->assertSame([2, 3, 5], $seen['emailRecipients']);
     }
 
     public function test_get_project_hub_data_builds_unique_client_map_and_returns_all_projects_when_no_filter(): void

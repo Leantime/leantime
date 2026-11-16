@@ -2572,6 +2572,9 @@ class Tickets extends BaseService
             $submittedValues['status'] = $values['status'];
         }
 
+        // Read before prepareTicketDates() turns the date into a stored datetime.
+        $dueDateIsCalendarDate = self::isCalendarDateInput($values);
+
         $values = $this->prepareTicketDates($values);
 
         $values = $this->keepStoredValuesForOmittedFields($values, $submittedValues, $currentTicket);
@@ -2580,7 +2583,16 @@ class Tickets extends BaseService
         if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], strip_tags($values['headline']));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
-            $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($values['headline']));
+            [$dueDateChanged, $newDueDate] = $this->dueDateChange($currentTicket, $values);
+            $message = $this->ticketUpdateMessage(
+                (string) $values['headline'],
+                (int) $values['projectId'],
+                $currentTicket->status,
+                array_key_exists('status', $submittedValues) ? $values['status'] : null,
+                $dueDateChanged,
+                $newDueDate,
+                $dueDateIsCalendarDate
+            );
 
             $notification = new NotificationModel;
             $notification->url = [
@@ -2721,7 +2733,9 @@ class Tickets extends BaseService
 
     /**
      * A stored UTC datetime ('Y-m-d H:i:s') as a CarbonImmutable, or null for empty, zero
-     * ('0000-00-00 ...') or unparseable values.
+     * ('0000-00-00 ...'), the legacy no-date value ('1969-12-31 00:00:00') or unparseable values.
+     * The no-date values match {@see \Leantime\Core\Support\DateTimeHelper::isValidDateString()},
+     * which is what the to-do form uses to show an empty date.
      *
      * @param  mixed  $value  The stored value.
      */
@@ -2731,7 +2745,7 @@ class Tickets extends BaseService
             return CarbonImmutable::instance($value)->setTimezone('UTC');
         }
 
-        if (! is_string($value) || trim($value) === '' || str_starts_with($value, '0000-00-00')) {
+        if (! is_string($value) || trim($value) === '' || str_starts_with($value, '0000-00-00') || trim($value) === '1969-12-31 00:00:00') {
             return null;
         }
 
@@ -2885,6 +2899,109 @@ class Tickets extends BaseService
     private function normalizedDbDateTime(mixed $value): ?string
     {
         return $this->parseDbDateTimeOrNull($value)?->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * Whether a write changed the due date, and the new one (normalised DB format, null when it
+     * was removed). Only a dateToFinish present in $written counts.
+     *
+     * @param  TicketModel  $ticketBefore  The ticket as read before the write.
+     * @param  array<string, mixed>  $written  The field => value pairs that were written (DB format).
+     * @return array{0: bool, 1: string|null} [changed, new due date]
+     */
+    private function dueDateChange(TicketModel $ticketBefore, array $written): array
+    {
+        if (! array_key_exists('dateToFinish', $written)) {
+            return [false, null];
+        }
+
+        $previous = $this->normalizedDbDateTime($ticketBefore->dateToFinish);
+        $new = $this->normalizedDbDateTime($written['dateToFinish']);
+
+        return [$previous !== $new, $new];
+    }
+
+    /**
+     * The notification line for a ticket write. Says what changed when it is something people
+     * act on: "Sam moved 'X' to Approved" for a status change, "Sam changed the due date of 'X'
+     * to <date>" for a due date. Anything else, or a status whose label can't be found, keeps
+     * the generic "Sam updated the To-Do: 'X'". A status change wins when both changed.
+     *
+     * A timed due date is shown in the author's timezone and date format: the line is built once
+     * for every recipient, so it can't follow each recipient's settings. A calendar date (a date
+     * without a time, like the mobile app sends) is stored as that day's midnight without timezone
+     * conversion, so it is shown as that same day, never shifted into the author's timezone.
+     *
+     * @param  string  $headline  The ticket headline.
+     * @param  int  $projectId  The ticket's project after the write (status ids are per project).
+     * @param  mixed  $previousStatus  The status before the write.
+     * @param  mixed  $newStatus  The status after the write, or null when the write didn't set one.
+     * @param  bool  $dueDateChanged  Whether the due date changed.
+     * @param  string|null  $newDueDate  The new due date (DB format, UTC), null when removed.
+     * @param  bool  $dueDateIsCalendarDate  Whether the due date was written as a calendar date (no time).
+     */
+    private function ticketUpdateMessage(string $headline, int $projectId, mixed $previousStatus = null, mixed $newStatus = null, bool $dueDateChanged = false, ?string $newDueDate = null, bool $dueDateIsCalendarDate = false): string
+    {
+        $actor = (string) session('userdata.name');
+        $headline = strip_tags($headline);
+
+        if ($newStatus !== null && $newStatus !== '' && (string) $newStatus !== (string) $previousStatus) {
+            $label = $this->statusLabelName($projectId, $newStatus);
+            if ($label !== null) {
+                return sprintf($this->language->__('email_notifications.todo_status_message'), $actor, $headline, $label);
+            }
+        }
+
+        if ($dueDateChanged) {
+            if ($newDueDate === null) {
+                return sprintf($this->language->__('email_notifications.todo_due_date_removed_message'), $actor, $headline);
+            }
+
+            try {
+                $dueDate = $dueDateIsCalendarDate
+                    // The same calendar day, placed in the author's timezone so formatting doesn't shift it.
+                    ? CarbonImmutable::createFromFormat('!Y-m-d', substr($newDueDate, 0, 10), dtHelper()->userNow()->getTimezone())->formatDateForUser()
+                    : dtHelper()->parseDbDateTime($newDueDate)->formatDateForUser();
+            } catch (\Throwable) {
+                $dueDate = '';
+            }
+
+            if ($dueDate !== '') {
+                return sprintf($this->language->__('email_notifications.todo_due_date_message'), $actor, $headline, $dueDate);
+            }
+        }
+
+        return sprintf($this->language->__('email_notifications.todo_update_message'), $actor, $headline);
+    }
+
+    /**
+     * The display name of a project's status, or null when the project has no such status.
+     * A name that is a language key (the protected Archived status is re-added to saved custom
+     * labels as 'status.archived') is translated; a custom name stays as it is.
+     *
+     * @param  int  $projectId  The project the status belongs to.
+     * @param  mixed  $status  The status id.
+     */
+    private function statusLabelName(int $projectId, mixed $status): ?string
+    {
+        if (! is_numeric($status)) {
+            return null;
+        }
+
+        try {
+            $labels = $this->ticketRepository->getStateLabels($projectId);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        $name = $labels[(int) $status]['name'] ?? null;
+        if (! is_string($name) || trim($name) === '') {
+            return null;
+        }
+
+        $name = trim(strip_tags($this->language->__($name, $name)));
+
+        return $name !== '' ? $name : null;
     }
 
     /**
@@ -3915,6 +4032,9 @@ class Tickets extends BaseService
             unset($params['collaborators']);
         }
 
+        // Read before prepareTicketDates() turns the date into a stored datetime.
+        $dueDateIsCalendarDate = self::isCalendarDateInput($params);
+
         $params = $this->prepareTicketDates($params);
 
         $return = $this->ticketRepository->patchTicket($id, $params);
@@ -3933,8 +4053,11 @@ class Tickets extends BaseService
             $this->dispatchTicketChangeEvents((int) $id, $ticketBefore, $params);
         }
 
+        $statusSet = isset($params['status']);
+        [$dueDateChanged, $newDueDate] = $return ? $this->dueDateChange($ticketBefore, $params) : [false, null];
+
         // Todo: create events and move notification logic to notification module
-        if (isset($params['status'])) {
+        if ($statusSet) {
             $this->dispatchTicketCompletedOnTransition(
                 (int) $id,
                 $previousStatus,
@@ -3943,17 +4066,32 @@ class Tickets extends BaseService
                 (int) ($params['projectId'] ?? $previousProjectId),
                 $ticketBefore
             );
+        }
 
+        // A status write notifies as before; a due-date change now does too (it used to reach nobody).
+        if ($statusSet || $dueDateChanged) {
             $ticket = $this->getTicket($id);
             if (! $ticket) {
                 return true;
             }
 
-            $this->stopTimerWhenTicketIsDone((int) $id, $params['status'], (int) $ticket->projectId);
+            if ($statusSet) {
+                $this->stopTimerWhenTicketIsDone((int) $id, $params['status'], (int) $ticket->projectId);
+            }
+
+            $statusChanged = $statusSet && (string) $params['status'] !== (string) $previousStatus;
 
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-            $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
+            $message = $this->ticketUpdateMessage(
+                (string) $ticket->headline,
+                (int) $ticket->projectId,
+                $previousStatus,
+                $statusSet ? $params['status'] : null,
+                $dueDateChanged,
+                $newDueDate,
+                $dueDateIsCalendarDate
+            );
 
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
@@ -3962,7 +4100,7 @@ class Tickets extends BaseService
             ];
             $notification->entity = $ticket;
             $notification->module = 'tickets';
-            $notification->action = 'status_changed';
+            $notification->action = $statusChanged || ! $dueDateChanged ? 'status_changed' : 'due_date_changed';
             $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id');
@@ -4926,7 +5064,13 @@ class Tickets extends BaseService
             if ($ticket) {
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
+                // Only a card whose column changed says where it went; a re-sort keeps the generic line.
+                $message = $this->ticketUpdateMessage(
+                    (string) $ticket->headline,
+                    (int) $ticket->projectId,
+                    $previousStatusByTicket[(int) $id] ?? null,
+                    $newStatusByTicket[(int) $id] ?? null
+                );
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = [
@@ -6267,6 +6411,21 @@ class Tickets extends BaseService
      * @param  array  $values  The values of the ticket fields.
      * @return array The values of the ticket fields after preparing the dates.
      */
+    /**
+     * Whether the values carry the due date as a calendar date: 'YYYY-MM-DD' with no time
+     * (what the mobile app sends). {@see prepareTicketDates()} stores such a date as midnight
+     * without timezone conversion.
+     *
+     * @param  array<string, mixed>  $values  The submitted ticket values, before prepareTicketDates().
+     */
+    private static function isCalendarDateInput(array $values): bool
+    {
+        return isset($values['dateToFinish'])
+            && is_string($values['dateToFinish'])
+            && empty($values['timeToFinish'])
+            && preg_match('/^\d{4}-\d{2}-\d{2}$/', $values['dateToFinish']) === 1;
+    }
+
     public function prepareTicketDates(&$values)
     {
         // Prepare dates for db
@@ -6275,11 +6434,7 @@ class Tickets extends BaseService
             try {
                 if ($values['dateToFinish'] instanceof CarbonImmutable) {
                     $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
-                } elseif (
-                    is_string($values['dateToFinish'])
-                    && empty($values['timeToFinish'])
-                    && preg_match('/^\d{4}-\d{2}-\d{2}$/', $values['dateToFinish'])
-                ) {
+                } elseif (self::isCalendarDateInput($values)) {
                     // Calendar-date input (e.g. "2026-05-21" from mobile) — store as
                     // midnight without any timezone conversion.
                     //
