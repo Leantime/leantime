@@ -239,12 +239,28 @@ class Comments
                 'comment.status',
                 'zp_projects.id AS projectId'
             )
-            ->leftJoin('zp_tickets', 'comment.moduleId', '=', 'zp_tickets.id')
-            ->leftJoin('zp_canvas_items', 'comment.moduleId', '=', 'zp_canvas_items.id')
+            // moduleId means a different table per module, so each join only applies to its own
+            // module. Joining on the id alone tied a to-do comment to whatever canvas item shared
+            // its id, and through it to that item's project.
+            ->leftJoin('zp_tickets', function ($join) {
+                $join->on('comment.moduleId', '=', 'zp_tickets.id')
+                    ->where('comment.module', '=', 'ticket');
+            })
+            ->leftJoin('zp_canvas_items', function ($join) {
+                $join->on('comment.moduleId', '=', 'zp_canvas_items.id')
+                    ->where(function ($canvasModule) {
+                        $canvasModule->whereIn('comment.module', ['article', 'idea'])
+                            ->orWhere('comment.module', 'like', '%canvasitem');
+                    });
+            })
             ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
             ->leftJoin('zp_projects', function ($join) {
                 $join->on('zp_canvas.projectId', '=', 'zp_projects.id')
-                    ->orOn('zp_tickets.projectId', '=', 'zp_projects.id');
+                    ->orOn('zp_tickets.projectId', '=', 'zp_projects.id')
+                    ->orWhere(function ($projectComment) {
+                        $projectComment->whereColumn('comment.moduleId', 'zp_projects.id')
+                            ->where('comment.module', '=', 'project');
+                    });
             })
             ->where(function ($q) use ($userId, $clientId, $requesterRole) {
                 $q->whereIn('zp_projects.id', function ($subquery) use ($userId) {
