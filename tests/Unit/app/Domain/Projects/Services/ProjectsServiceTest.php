@@ -192,6 +192,8 @@ class ProjectsServiceTest extends TestCase
             'getUsersAssignedToProject' => fn () => $team,
             'getProject' => fn ($projectId) => $projectId == 5 ? ['id' => 5, 'name' => 'Acme', 'psettings' => 'restricted', 'clientId' => 3] : false,
             'isUserAssignedToProject' => fn ($userId, $projectId) => $projectId == 5 && in_array((int) $userId, $usersWithProjectAccess, true),
+            // Board item 77 was written by user 3.
+            'getBoardItemAuthorId' => fn (int $itemId) => $itemId === 77 ? 3 : null,
         ]);
         $userRepo = $this->make(UserRepository::class, [
             'getUser' => fn ($userId) => $users[(int) $userId] ?? false,
@@ -550,6 +552,28 @@ class ProjectsServiceTest extends TestCase
         });
 
         $this->assertSame([3, 4], $seen['pushRecipients']);
+    }
+
+    /**
+     * A board item's edit carries the editor as its author, and a comment carries the comment,
+     * so the item's own author comes from the stored item.
+     */
+    public function test_a_board_item_edit_or_comment_by_someone_else_reaches_the_items_author(): void
+    {
+        $seen = $this->runNotifyProjectUsers([], adjustNotification: function (Notification $notification) {
+            $notification->module = 'leancanvas';
+            $notification->action = 'updated';
+            $notification->entity = ['id' => 77, 'itemId' => 77, 'author' => 1, 'description' => 'Pricing'];
+        });
+        $this->assertSame([3], $seen['pushRecipients'], 'Edited by 1, written by 3');
+
+        $seen = $this->runNotifyProjectUsers([], adjustNotification: function (Notification $notification) {
+            $notification->module = 'leancanvas';
+            $notification->action = 'commented';
+            $notification->entity = ['text' => 'Nice', 'userId' => 1, 'moduleId' => 77];
+        });
+        $this->assertSame([3], $seen['pushRecipients'], 'A comment on 3\'s item');
+        $this->assertSame([2, 3, 4, 5], $seen['emailRecipients'], 'Email keeps All activity');
     }
 
     public function test_notify_project_users_never_pushes_to_the_author(): void

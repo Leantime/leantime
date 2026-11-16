@@ -361,6 +361,8 @@ class Projects extends BaseService implements ChecksProjectAccess
         /** @var Notification $notification */
         $notification = EventCore::dispatch_filter('notificationFilter', $notification);
 
+        $this->addBoardItemAuthor($notification);
+
         // The link goes out by email, messenger and push: point it at the trusted app URL
         // rather than the host of the request that triggered the notification.
         if (is_array($notification->url) && isset($notification->url['url']) && is_string($notification->url['url'])) {
@@ -642,6 +644,38 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         return $companyDefault;
+    }
+
+    /**
+     * A board item notification (a canvas board, goals or ideas) carries the person who
+     * edited or commented as the item's author, or the comment itself, so the item's own
+     * author would never count as involved. Name the stored author instead, for "My work"
+     * and for push.
+     */
+    private function addBoardItemAuthor(Notification $notification): void
+    {
+        $module = (string) $notification->module;
+        if ($module !== 'ideas' && ! str_ends_with($module, 'canvas')) {
+            return;
+        }
+
+        $entity = is_object($notification->entity) ? (array) $notification->entity : $notification->entity;
+        if (! is_array($entity)) {
+            return;
+        }
+
+        // A comment's entity points at its item with moduleId; an item's entity is the item.
+        $itemId = $notification->action === 'commented'
+            ? (int) ($entity['moduleId'] ?? 0)
+            : (int) ($entity['itemId'] ?? $entity['id'] ?? 0);
+        if ($itemId <= 0) {
+            return;
+        }
+
+        $authorId = $this->projectRepository->getBoardItemAuthorId($itemId);
+        if ($authorId !== null && ! in_array($authorId, array_map('intval', $notification->involvedUserIds), true)) {
+            $notification->involvedUserIds[] = $authorId;
+        }
     }
 
     /**

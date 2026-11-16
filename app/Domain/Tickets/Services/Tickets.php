@@ -2600,6 +2600,10 @@ class Tickets extends BaseService
                 'text' => $this->language->__('email_notifications.todo_update_cta'),
             ];
             $notification->entity = $values;
+            // The form doesn't send the creator, so name the stored one: "My work" and push
+            // reach the people a task involves, and its creator is one of them.
+            $creatorId = (int) ($currentTicket->userId ?? 0);
+            $notification->involvedUserIds = $creatorId > 0 ? [$creatorId] : [];
             $notification->module = 'tickets';
             $notification->action = 'updated';
             $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;

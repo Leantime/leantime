@@ -200,6 +200,17 @@ class Projects implements StoresProjectModules
     }
 
     /**
+     * The stored author of a board item. Items of every board (ideas, goals, blueprints)
+     * live in zp_canvas_items, so the id alone finds it.
+     */
+    public function getBoardItemAuthorId(int $itemId): ?int
+    {
+        $author = $this->connection->table('zp_canvas_items')->where('id', $itemId)->value('author');
+
+        return $author ? (int) $author : null;
+    }
+
+    /**
      * Gets all users that have access to a project.
      * For direct access only set the teamOnly flag to true
      */

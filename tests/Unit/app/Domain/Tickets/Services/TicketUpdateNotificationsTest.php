@@ -232,6 +232,14 @@ class TicketUpdateNotificationsTest extends TestCase
         $this->assertSame(["Sam moved 'Fix login' to Approved"], $this->sentMessages());
     }
 
+    public function test_the_full_edit_names_the_stored_creator_as_involved(): void
+    {
+        // The form doesn't send the creator; "My work" and push still need to reach them.
+        $this->buildService([5 => 3], ['userId' => 9])->updateTicket(['id' => 5, 'status' => 6]);
+
+        $this->assertSame([9], $this->sent[0]->involvedUserIds);
+    }
+
     public function test_the_full_edit_names_a_due_date_change(): void
     {
         $this->buildService([5 => 3], ['dateToFinish' => '2026-11-01 00:00:00'])->updateTicket(['id' => 5, 'dateToFinish' => '2026-11-20']);
