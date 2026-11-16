@@ -200,14 +200,46 @@ class Projects implements StoresProjectModules
     }
 
     /**
-     * The stored author of a board item. Items of every board (ideas, goals, blueprints)
-     * live in zp_canvas_items, so the id alone finds it.
+     * The people a task or milestone belongs to, as stored: its creator and its assignee.
+     * Both live in zp_tickets.
+     *
+     * @return array<int>
      */
-    public function getBoardItemAuthorId(int $itemId): ?int
+    public function getTicketPeopleIds(int $ticketId): array
     {
-        $author = $this->connection->table('zp_canvas_items')->where('id', $itemId)->value('author');
+        $row = $this->connection->table('zp_tickets')->where('id', $ticketId)->first(['userId', 'editorId']);
 
-        return $author ? (int) $author : null;
+        return $row ? self::peopleIds([$row->userId ?? null, $row->editorId ?? null]) : [];
+    }
+
+    /**
+     * The people a board item belongs to, as stored: its author and, for goals, its
+     * assignee. Items of every board (ideas, goals, blueprints) live in zp_canvas_items.
+     *
+     * @return array<int>
+     */
+    public function getBoardItemPeopleIds(int $itemId): array
+    {
+        $row = $this->connection->table('zp_canvas_items')->where('id', $itemId)->first(['author', 'assignedTo']);
+
+        return $row ? self::peopleIds([$row->author ?? null, $row->assignedTo ?? null]) : [];
+    }
+
+    /**
+     * @param  array<int, mixed>  $values  Stored user id columns ('', null or 0 when unset).
+     * @return array<int>
+     */
+    private static function peopleIds(array $values): array
+    {
+        $ids = [];
+        foreach ($values as $value) {
+            $id = is_numeric($value) ? (int) $value : 0;
+            if ($id > 0 && ! in_array($id, $ids, true)) {
+                $ids[] = $id;
+            }
+        }
+
+        return $ids;
     }
 
     /**

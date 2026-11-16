@@ -361,7 +361,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         /** @var Notification $notification */
         $notification = EventCore::dispatch_filter('notificationFilter', $notification);
 
-        $this->addBoardItemAuthor($notification);
+        $this->addStoredPeople($notification);
 
         // The link goes out by email, messenger and push: point it at the trusted app URL
         // rather than the host of the request that triggered the notification.
@@ -647,34 +647,47 @@ class Projects extends BaseService implements ChecksProjectAccess
     }
 
     /**
-     * A board item notification (a canvas board, goals or ideas) carries the person who
-     * edited or commented as the item's author, or the comment itself, so the item's own
-     * author would never count as involved. Name the stored author instead, for "My work"
-     * and for push.
+     * Names the people the notification's item belongs to, as stored, in involvedUserIds.
+     *
+     * Producers build the entity from what they have: a form's fields (no creator), the
+     * editor as a board item's "author", or a comment instead of the item it's on. So
+     * "My work" and push read the item itself: a task or milestone's creator and assignee,
+     * a board item's author and goal assignee. The item is the entity for a task, milestone
+     * or board notification, and the comment's host (module + moduleId) for a comment.
      */
-    private function addBoardItemAuthor(Notification $notification): void
+    private function addStoredPeople(Notification $notification): void
     {
-        $module = (string) $notification->module;
-        if ($module !== 'ideas' && ! str_ends_with($module, 'canvas')) {
-            return;
-        }
-
         $entity = is_object($notification->entity) ? (array) $notification->entity : $notification->entity;
         if (! is_array($entity)) {
             return;
         }
 
-        // A comment's entity points at its item with moduleId; an item's entity is the item.
-        $itemId = $notification->action === 'commented'
-            ? (int) ($entity['moduleId'] ?? 0)
-            : (int) ($entity['itemId'] ?? $entity['id'] ?? 0);
-        if ($itemId <= 0) {
-            return;
+        $module = (string) $notification->module;
+        $people = [];
+        if ($module === 'tickets') {
+            $people = $this->projectRepository->getTicketPeopleIds((int) ($entity['id'] ?? 0));
+        } elseif ($module === 'ideas' || str_ends_with($module, 'canvas')) {
+            // A board's own comment notifications point at their item with moduleId.
+            $itemId = $notification->action === 'commented'
+                ? (int) ($entity['moduleId'] ?? 0)
+                : (int) ($entity['itemId'] ?? $entity['id'] ?? 0);
+            $people = $this->projectRepository->getBoardItemPeopleIds($itemId);
+        } elseif ($module === 'comments') {
+            $host = (string) ($entity['module'] ?? '');
+            $hostId = (int) ($entity['moduleId'] ?? 0);
+            if ($host === 'ticket' || $host === 'milestone') {
+                $people = $this->projectRepository->getTicketPeopleIds($hostId);
+            } elseif ($host === 'idea' || str_ends_with($host, 'canvasitem')) {
+                $people = $this->projectRepository->getBoardItemPeopleIds($hostId);
+            }
         }
 
-        $authorId = $this->projectRepository->getBoardItemAuthorId($itemId);
-        if ($authorId !== null && ! in_array($authorId, array_map('intval', $notification->involvedUserIds), true)) {
-            $notification->involvedUserIds[] = $authorId;
+        $known = array_map('intval', $notification->involvedUserIds);
+        foreach ($people as $userId) {
+            if (! in_array($userId, $known, true)) {
+                $notification->involvedUserIds[] = $userId;
+                $known[] = $userId;
+            }
         }
     }
 
