@@ -4,6 +4,7 @@ namespace Leantime\Domain\Oauth\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Oauth\Services\ConnectedApps as ConnectedAppsService;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The "Connected apps" list on the profile page, next to the personal access tokens.
@@ -32,10 +33,16 @@ class ConnectedApps extends HtmxController
     }
 
     /**
-     * Disconnect one app, then render the updated list.
+     * Disconnect one app (DELETE only), then render the updated list.
      */
-    public function disconnect(): void
+    public function disconnect(): ?Response
     {
+        // State changes only on DELETE: the Frontcontroller routes any verb here, and GET skips the
+        // cross-site origin check, so a link on another site could otherwise disconnect an app.
+        if (! $this->incomingRequest->isMethod('DELETE')) {
+            return $this->tpl->emptyResponse(405);
+        }
+
         $clientId = (string) $this->incomingRequest->get('id');
 
         if ($this->connectedAppsService->disconnectApp($clientId)) {
@@ -45,5 +52,7 @@ class ConnectedApps extends HtmxController
         }
 
         $this->get();
+
+        return null;
     }
 }

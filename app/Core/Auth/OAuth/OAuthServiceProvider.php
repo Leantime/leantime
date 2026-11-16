@@ -5,6 +5,7 @@ namespace Leantime\Core\Auth\OAuth;
 use Carbon\CarbonInterval;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\AccessTokenRepository as PassportAccessTokenRepository;
+use Laravel\Passport\Bridge\AuthCodeRepository as PassportAuthCodeRepository;
 use Laravel\Passport\Bridge\RefreshTokenRepository as PassportRefreshTokenRepository;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\AuthorizationServer;
@@ -54,11 +55,14 @@ class OAuthServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(CarbonInterval::hours(self::ACCESS_TOKEN_TTL_HOURS));
         Passport::refreshTokensExpireIn(CarbonInterval::days(self::REFRESH_TOKEN_TTL_DAYS));
         Passport::tokensCan(ProtectedResources::scopes());
+        // A client that asks for no scope gets the MCP scope, so its tokens work on /mcp.
+        Passport::setDefaultScope(array_keys(ProtectedResources::scopes()));
 
         $this->app->singleton(OAuthKeys::class);
         $this->app->singleton(OAuthTokenStore::class);
 
         $this->app->bind(PassportAccessTokenRepository::class, Bridge\AccessTokenRepository::class);
+        $this->app->bind(PassportAuthCodeRepository::class, Bridge\AuthCodeRepository::class);
         $this->app->bind(PassportRefreshTokenRepository::class, Bridge\RefreshTokenRepository::class);
 
         // Hand Passport the signing keys only when its servers are actually built, so requests

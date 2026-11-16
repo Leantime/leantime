@@ -695,8 +695,8 @@ class SchemaBuilder
      * Shared by fresh installs and update_sql_30535, and safe to call again: existing tables are
      * left alone.
      *
-     * access_tokens.password_fingerprint ties each token to the password the user had when it was
-     * issued (see Core\Auth\OAuth\OAuthTokenStore).
+     * auth_codes/access_tokens.password_fingerprint tie each code and token to the password the user
+     * had when it was approved/issued (see Core\Auth\OAuth\OAuthTokenStore).
      *
      * @param  SchemaBuilderContract|null  $schema  Schema builder of the connection to migrate; the default connection when null.
      */
@@ -725,6 +725,7 @@ class SchemaBuilder
                 $table->uuid('client_id');
                 $table->text('scopes')->nullable();
                 $table->boolean('revoked');
+                $table->string('password_fingerprint', 64)->nullable();
                 $table->dateTime('expires_at')->nullable();
             });
         }

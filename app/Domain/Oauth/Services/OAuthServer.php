@@ -4,6 +4,7 @@ namespace Leantime\Domain\Oauth\Services;
 
 use GuzzleHttp\Psr7\Response as PsrResponse;
 use GuzzleHttp\Psr7\ServerRequest;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\Client as BridgeClient;
@@ -15,6 +16,7 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+use Leantime\Core\Auth\OAuth\OAuthTokenStore;
 use Leantime\Core\Auth\OAuth\ProtectedResources;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
@@ -40,6 +42,10 @@ class OAuthServer
 
     private const MAX_REDIRECT_URIS = 5;
 
+    private const NONCE_CACHE_PREFIX = 'oauth.consentNonce.';
+
+    private const NONCE_TTL_SECONDS = 3600;
+
     /**
      * Redirect URL prefixes every installation accepts at registration: Claude and ChatGPT.
      */
@@ -53,6 +59,8 @@ class OAuthServer
         private AuthorizationServer $authorizationServer,
         private ClientRepository $clients,
         private Environment $config,
+        private OAuthTokenStore $tokenStore,
+        private CacheRepository $cache,
     ) {}
 
     /**
@@ -282,7 +290,7 @@ class OAuthServer
         ]);
 
         $clientName = $authRequest->getClient()->getName();
-        $redirectUri = (string) $authRequest->getRedirectUri();
+        $redirectUri = (string) $this->redirectUriOf($authRequest);
 
         return [
             'clientName' => $clientName !== '' ? $clientName : 'Unnamed app',
@@ -310,6 +318,12 @@ class OAuthServer
         }
 
         if (! is_string($serializedAuthRequest)) {
+            return null;
+        }
+
+        // The session is loaded per request, so two parallel POSTs of the same form would both
+        // find the token there. Claim it in the shared cache too: only the first one gets a code.
+        if (! $this->cache->add(self::NONCE_CACHE_PREFIX.hash('sha256', $postedAuthToken), true, self::NONCE_TTL_SECONDS)) {
             return null;
         }
 
@@ -350,9 +364,15 @@ class OAuthServer
         }
 
         $psrRequest = $this->toPsrRequest($request)->withParsedBody($parameters);
+        $issueTokens = fn () => $this->toResponse($this->authorizationServer->respondToAccessTokenRequest($psrRequest, new PsrResponse));
+        $clientId = $parameters['client_id'] ?? null;
 
         try {
-            return $this->toResponse($this->authorizationServer->respondToAccessTokenRequest($psrRequest, new PsrResponse));
+            // Serialize issuance per client (see OAuthTokenStore::withClientLock()): the same code or
+            // refresh token can't be redeemed twice in parallel, and Disconnect can't be outrun.
+            return is_string($clientId) && $clientId !== ''
+                ? $this->tokenStore->withClientLock($clientId, $issueTokens)
+                : $issueTokens();
         } catch (OAuthServerException $exception) {
             return $this->toResponse($exception->generateHttpResponse(new PsrResponse));
         } catch (\Throwable $exception) {
@@ -373,7 +393,7 @@ class OAuthServer
             return $this->withIssuer($this->toResponse($exception->generateHttpResponse(new PsrResponse)));
         }
 
-        if ($authRequest !== null && $authRequest->getRedirectUri() !== null) {
+        if ($authRequest !== null && $this->redirectUriOf($authRequest) !== null) {
             return $this->redirectWithError($authRequest, $exception->getErrorType(), $exception->getMessage());
         }
 
@@ -396,8 +416,26 @@ class OAuthServer
         ], fn ($value) => $value !== null && $value !== '');
 
         return $this->withIssuer(new Response('', 302, [
-            'Location' => $this->appendQuery((string) $authRequest->getRedirectUri(), $parameters),
+            'Location' => $this->appendQuery((string) $this->redirectUriOf($authRequest), $parameters),
         ]));
+    }
+
+    /**
+     * Where the authorization response goes: the request's redirect_uri, or, when the client
+     * omitted it, the client's only registered redirect URL (the one league will use). The
+     * request itself is left as-is, so the token request doesn't gain a redirect_uri requirement.
+     */
+    private function redirectUriOf(AuthorizationRequestInterface $authRequest): ?string
+    {
+        $redirectUri = $authRequest->getRedirectUri();
+
+        if (is_string($redirectUri) && $redirectUri !== '') {
+            return $redirectUri;
+        }
+
+        $registeredRedirectUris = (array) $authRequest->getClient()->getRedirectUri();
+
+        return count($registeredRedirectUris) === 1 ? (string) reset($registeredRedirectUris) : null;
     }
 
     /**

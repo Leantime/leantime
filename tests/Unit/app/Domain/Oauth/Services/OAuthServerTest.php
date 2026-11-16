@@ -2,8 +2,10 @@
 
 namespace Unit\app\Domain\Oauth\Services;
 
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Laravel\Passport\ClientRepository;
 use League\OAuth2\Server\AuthorizationServer;
+use Leantime\Core\Auth\OAuth\OAuthTokenStore;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Domain\Oauth\Services\OAuthServer;
 use Unit\TestCase;
@@ -26,7 +28,9 @@ class OAuthServerTest extends TestCase
         return new OAuthServer(
             $this->makeEmpty(AuthorizationServer::class),
             $clients ?? $this->makeEmpty(ClientRepository::class),
-            $config
+            $config,
+            $this->makeEmpty(OAuthTokenStore::class),
+            $this->makeEmpty(CacheRepository::class)
         );
     }
 

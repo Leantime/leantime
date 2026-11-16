@@ -85,6 +85,62 @@ class OAuthTokenStore
     }
 
     /**
+     * Record the user's password fingerprint on an authorization code when the user approves.
+     */
+    public function stampAuthCodePasswordFingerprint(string $authCodeId, int $userId): void
+    {
+        $fingerprint = $this->passwordFingerprintOfActiveUser($userId);
+
+        $this->connection()->table('zp_oauth_auth_codes')
+            ->where('id', $authCodeId)
+            ->update(['password_fingerprint' => $fingerprint]);
+    }
+
+    /**
+     * Whether an authorization code may still be redeemed: its client is not revoked, the user is
+     * active, and the password hasn't changed since the user approved.
+     */
+    public function authCodeIsBoundToUser(string $authCodeId): bool
+    {
+        $code = $this->connection()->table('zp_oauth_auth_codes as codes')
+            ->join('zp_oauth_clients as clients', 'clients.id', '=', 'codes.client_id')
+            ->where('codes.id', $authCodeId)
+            ->where('clients.revoked', false)
+            ->first(['codes.user_id', 'codes.password_fingerprint']);
+
+        if ($code === null || empty($code->user_id) || empty($code->password_fingerprint)) {
+            return false;
+        }
+
+        $currentFingerprint = $this->passwordFingerprintOfActiveUser((int) $code->user_id);
+
+        return $currentFingerprint !== null && hash_equals($code->password_fingerprint, $currentFingerprint);
+    }
+
+    /**
+     * Run $work while holding a row lock on one client, inside a transaction. Token issuance and
+     * Disconnect for the same client run one after the other, on every node: two redemptions of
+     * the same code or refresh token can't both succeed, and a refresh that started before a
+     * Disconnect can't leave a fresh token pair behind it.
+     *
+     * @template TResult
+     *
+     * @param  callable(): TResult  $work
+     * @return TResult
+     */
+    public function withClientLock(string $clientId, callable $work): mixed
+    {
+        return $this->connection()->transaction(function () use ($clientId, $work) {
+            $this->connection()->table('zp_oauth_clients')
+                ->where('id', $clientId)
+                ->lockForUpdate()
+                ->value('id');
+
+            return $work();
+        });
+    }
+
+    /**
      * Whether a refresh token may still be exchanged: the access token it belongs to must still be
      * bound to its user (password unchanged, user active, client not revoked). The access token
      * itself may have expired; that is what refreshing is for.
@@ -157,12 +213,17 @@ class OAuthTokenStore
     }
 
     /**
-     * Revoke every access and refresh token one client holds for one user.
+     * Revoke every authorization code, access and refresh token one client holds for one user.
      *
      * @return int Number of access tokens revoked.
      */
     public function revokeForUserAndClient(int $userId, string $clientId): int
     {
+        $this->connection()->table('zp_oauth_auth_codes')
+            ->where('user_id', $userId)
+            ->where('client_id', $clientId)
+            ->update(['revoked' => true]);
+
         $tokenIds = $this->connection()->table('zp_oauth_access_tokens')
             ->where('user_id', $userId)
             ->where('client_id', $clientId)
@@ -173,12 +234,16 @@ class OAuthTokenStore
     }
 
     /**
-     * Revoke every OAuth token of a user.
+     * Revoke every OAuth code and token of a user.
      *
      * @return int Number of access tokens revoked.
      */
     public function revokeAllForUser(int $userId): int
     {
+        $this->connection()->table('zp_oauth_auth_codes')
+            ->where('user_id', $userId)
+            ->update(['revoked' => true]);
+
         $tokenIds = $this->connection()->table('zp_oauth_access_tokens')
             ->where('user_id', $userId)
             ->pluck('id')

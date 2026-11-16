@@ -47,6 +47,11 @@ class ConnectedApps
             return false;
         }
 
-        return $this->tokenStore->revokeForUserAndClient($userId, $clientId) > 0;
+        $revokedTokens = $this->tokenStore->withClientLock(
+            $clientId,
+            fn (): int => $this->tokenStore->revokeForUserAndClient($userId, $clientId)
+        );
+
+        return $revokedTokens > 0;
     }
 }
