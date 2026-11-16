@@ -1,3 +1,10 @@
+# Version: 3.15.3
+
+## Bug Fixes
+- **Onboarding** - You can finish an onboarding that was left incomplete or started in a different session (#4035)
+
+---
+
 # Version: 3.15.2
 
 ## Security
