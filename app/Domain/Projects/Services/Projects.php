@@ -422,9 +422,11 @@ class Projects extends BaseService implements ChecksProjectAccess
         $users = $this->addBypassRecipients($users, $mentionedUserIds, $notification->authorId);
         $users = $this->addBypassRecipients($users, $collaboratorIds, $notification->authorId);
 
-        // Push: the same two layers and bypasses, then the user's own push switch, which is final.
+        // Push: the same two layers, then only the people the notification involves (see
+        // filterPushToInvolved), then the bypasses, then the user's own push switch, which is final.
         $pushRecipients = $this->filterUsersByProjectRelevance($pushCandidates, $notification, $preloadedSettings);
         $pushRecipients = $this->filterUsersByEventType($pushRecipients, $notification->module, $preloadedSettings);
+        $pushRecipients = $this->filterPushToInvolved($pushRecipients, $notification);
         $pushRecipients = $this->addBypassRecipients($pushRecipients, $mentionedUserIds, $notification->authorId);
         $pushRecipients = $this->addBypassRecipients($pushRecipients, $collaboratorIds, $notification->authorId);
         $pushRecipients = PushPreferences::filter($pushRecipients, $preloadedSettings);
@@ -640,6 +642,28 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         return $companyDefault;
+    }
+
+    /**
+     * Push only reaches people the notification involves: the assignee, creator and
+     * collaborators of the item, the people a comment names (involvedUserIds) and a board
+     * item's author. "All activity" on a project still means every update in the inbox and
+     * the email digest; on the phone it means the things that are about you, so a busy
+     * project doesn't fill the notification list. Mentions and collaborators are added back
+     * as bypasses after this, as on every channel.
+     *
+     * A later "follow this project" would add its followers here.
+     *
+     * @param  array<int>  $userIds  Push candidates left after the relevance and category layers.
+     * @param  Notification  $notification  The notification being dispatched.
+     * @return array<int> The candidates the notification involves.
+     */
+    private function filterPushToInvolved(array $userIds, Notification $notification): array
+    {
+        return array_values(array_filter(
+            $userIds,
+            fn (int $userId) => $this->isUserInvolvedInNotification($userId, $notification)
+        ));
     }
 
     /**
