@@ -355,6 +355,26 @@ class UserRoleCeilingTest extends TestCase
         $service->importSelectedLdapUsers($staged, ['owner@example.com']);
     }
 
+    public function test_ldap_import_cannot_update_a_deactivated_account_above_the_caller(): void
+    {
+        $this->actAs('admin');
+        app()->instance(\Leantime\Domain\Ldap\Services\Ldap::class, $this->make(\Leantime\Domain\Ldap\Services\Ldap::class, [
+            'upsertUsers' => function () {
+                $this->fail('the deactivated owner account must not be modified');
+            },
+        ]));
+        // Like the real repository: the default lookup only finds active accounts.
+        $service = $this->makeService([
+            'getUserByEmail' => fn (string $email, string $status = 'a') => $status === 'a' ? false : ['id' => 1, 'role' => 50, 'status' => ''],
+        ]);
+
+        $this->expectException(AuthorizationException::class);
+
+        $service->importSelectedLdapUsers([
+            $this->ldapRow('owner@example.com', 5),
+        ], ['owner@example.com']);
+    }
+
     public function test_ldap_import_within_the_ceiling_is_passed_on(): void
     {
         $this->actAs('admin');
