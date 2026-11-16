@@ -53,6 +53,18 @@ class OAuthKeys
     }
 
     /**
+     * The secret that encrypts authorization code and refresh token payloads (league encrypts them,
+     * and they carry the user id). Derived from the signing private key, which is random and unique
+     * per installation (or set in the environment). The app encrypter's key is not used: it comes
+     * from LEAN_SESSION_PASSWORD, which has a public default, and anyone who knows it could rewrite
+     * the user id in a refresh token.
+     */
+    public function tokenEncryptionKey(): string
+    {
+        return hash_hmac('sha256', 'leantime-oauth-payload-encryption', $this->keys()['private']);
+    }
+
+    /**
      * Where the active keys come from, their fingerprint and when they were made (for `oauth:keys`).
      *
      * @return array{source: string, fingerprint: string, createdAt: ?string}

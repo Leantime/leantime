@@ -74,6 +74,10 @@ class OAuthServiceProvider extends ServiceProvider
             $app['config']->set('passport.public_key', $keys['public']);
         };
 
+        // Encrypt code and refresh token payloads with a per-installation secret, not with the app
+        // key (LEAN_SESSION_PASSWORD has a public default). See OAuthKeys::tokenEncryptionKey().
+        Passport::encryptTokensUsing(fn (): string => $this->app->make(OAuthKeys::class)->tokenEncryptionKey());
+
         $this->app->beforeResolving(AuthorizationServer::class, $loadSigningKeys);
         $this->app->beforeResolving(ResourceServer::class, $loadSigningKeys);
     }
