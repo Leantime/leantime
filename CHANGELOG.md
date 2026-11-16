@@ -1,3 +1,21 @@
+# Version: 3.15.2
+
+## Security
+- **Inactive accounts via SSO** - LDAP and OIDC logins now refuse accounts that are not active (#4082)
+- **Draft docs** - Drafts stay private through comments, edits and deletes, and template articles are listed correctly (#4083)
+
+## Bug Fixes
+- **Comment polling** - Polled comments are now tied to their own module's entity, so comments no longer appear on the wrong item (#4084)
+- **Project dates** - New project start and end dates are stored in UTC (#4081)
+- **Delivery Metrics** - The Delivery Metrics summary is dated with the user's today (#4080)
+- **Calendar iCal feed** - A stale iCal feed URL no longer logs an error on every poll (#4079)
+
+## Upgrade Notes
+- No database changes.
+- LDAP and OIDC can no longer authenticate accounts whose status is not active.
+
+---
+
 # Version: 3.15.1
 
 ## Security
