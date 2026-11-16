@@ -1,3 +1,15 @@
+# Version: 3.15.3
+
+## Bug Fixes
+- **Unfinished onboarding** - A new owner or invited user who left the welcome steps before the end could not log in ("Username or password incorrect!" with the right password). Logging in with the chosen password now takes them back to the welcome steps to finish (#4035)
+- **Onboarding across sessions** - Finishing the welcome steps in a different browser session no longer fails with a server error. It sends the person to log in and finish instead (#4035)
+- **Onboarding messages** - Notifications on welcome steps 2–5 no longer show as escaped HTML (#4035)
+
+## Upgrade Notes
+- No database changes.
+
+---
+
 # Version: 3.15.2
 
 ## Security
