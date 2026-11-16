@@ -219,6 +219,10 @@ class Reports extends BaseService
      * bound to the requested project (no null → session fallback). $sprintId stays mixed because
      * the empty string is the meaningful "backlog" selector.
      *
+     * The repository dates its rows "yesterday" because the daily snapshot stores them under the
+     * day that just ended. A realtime report describes the project as it is now, so its date is
+     * the current UTC datetime; formatting it for the user then shows the user's today (#4055).
+     *
      * @throws BindingResolutionException
      *
      * @api
@@ -226,7 +230,15 @@ class Reports extends BaseService
     #[RequiresPermission(ReportsPermissions::VIEW, projectIdParam: 'projectId')]
     public function getRealtimeReport(int $projectId, $sprintId): array|bool
     {
-        return $this->reportRepository->runTicketReport($projectId, $sprintId);
+        $report = $this->reportRepository->runTicketReport($projectId, $sprintId);
+
+        if (! is_array($report)) {
+            return $report;
+        }
+
+        $report['date'] = dtHelper()->dbNow()->format('Y-m-d H:i:s');
+
+        return $report;
     }
 
     /**
