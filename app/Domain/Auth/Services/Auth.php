@@ -154,8 +154,16 @@ class Auth implements Authenticatable
             if ($ldap->connect() && $ldap->bind($username, $password)) {
                 // Update username to include domain
                 $usernameWDomain = $ldap->getEmail($username);
-                // Get user
-                $user = $this->userRepo->getUserByEmail($usernameWDomain);
+                // Get the user whatever their status: an account an admin deactivated must be
+                // refused, not mistaken for a new one (creating it again hits the unique username).
+                $user = $this->userRepo->getUserByEmail($usernameWDomain, '');
+
+                if ($user !== false && ! AccountStatus::isActive($user)) {
+                    Log::info('Ldap login refused: the Leantime account is not active');
+                    $this->logFailedLogin($username);
+
+                    return false;
+                }
 
                 $ldapUser = $ldap->getSingleUser($username);
 
