@@ -293,6 +293,28 @@ class IdeasServiceTest extends TestCase
         $this->assertSame(9, $quickAdded['projectId'] ?? null);
     }
 
+    public function test_a_comment_on_someone_elses_idea_names_the_ideas_author_as_involved(): void
+    {
+        // The notification's entity is the comment; push and "My work" need the idea's author.
+        $sent = null;
+        $service = $this->makeService(
+            ideasRepo: $this->ideaRepoInProject9([
+                'getSingleCanvasItem' => fn () => ['id' => 5, 'canvasId' => 3, 'box' => 'idea', 'author' => 8],
+            ]),
+            commentsRepo: $this->make(CommentRepository::class, ['addComment' => fn () => '41']),
+            language: $this->make(LanguageCore::class, ['__' => fn ($key) => '%s '.$key]),
+            projects: $this->make(ProjectService::class, [
+                'notifyProjectUsers' => function ($notification) use (&$sent) {
+                    $sent = $notification;
+                },
+            ]),
+        );
+
+        $service->addIdeaComment('Love it', 5, 0, 9, self::SESSION_USER);
+
+        $this->assertSame([8], $sent?->involvedUserIds);
+    }
+
     public function test_create_idea_item_is_denied_without_create(): void
     {
         $service = $this->makeService(ideasRepo: $this->ideaRepoInProject9(), perms: $this->denyingPermissions());
