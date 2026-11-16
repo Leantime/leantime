@@ -66,6 +66,11 @@ class Auth implements Authenticatable
 
     public UserRepository $userRepo;
 
+    /**
+     * Session key of the URL to return to after sign-in ({@see self::rememberIntendedUrl()}).
+     */
+    public const INTENDED_URL_SESSION_KEY = 'auth.intendedUrl';
+
     private AccessTokenRepository $tokenRepo;
 
     /**
@@ -669,6 +674,48 @@ class Auth implements Authenticatable
         }
 
         return 'error';
+    }
+
+    /**
+     * Remember where to send the user once they have signed in. Used for OAuth authorize requests,
+     * whose full query string has to survive the login, 2FA and SSO round trips (?redirect= can't
+     * carry it through SSO). Only same-instance URLs are accepted.
+     */
+    public function rememberIntendedUrl(string $url): void
+    {
+        if (! $this->isOwnUrl($url)) {
+            return;
+        }
+
+        session([self::INTENDED_URL_SESSION_KEY => $url]);
+    }
+
+    /**
+     * Where to send a user who just finished signing in: a remembered intended URL wins (once),
+     * otherwise the requested redirect, made safe by {@see self::resolveSafeRedirect()}.
+     *
+     * Call it only where sign-in is complete. Login hands over to 2FA first when 2FA is on, and the
+     * intended URL must still be there when 2FA finishes.
+     */
+    public function postLoginRedirect(?string $requestedRedirect): string
+    {
+        $intendedUrl = session()->pull(self::INTENDED_URL_SESSION_KEY);
+
+        if (is_string($intendedUrl) && $this->isOwnUrl($intendedUrl)) {
+            return $intendedUrl;
+        }
+
+        return $this->resolveSafeRedirect($requestedRedirect);
+    }
+
+    /**
+     * Whether a URL points into this Leantime instance (same base URL, real path boundary).
+     */
+    private function isOwnUrl(string $url): bool
+    {
+        $base = rtrim(BASE_URL, '/');
+
+        return $base !== '' && str_starts_with($url, $base.'/') && ! preg_match('/[\x00-\x1F\x7F]/', $url);
     }
 
     /**

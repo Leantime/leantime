@@ -26,7 +26,7 @@
                         <td>{{ $token['last_used_at'] ? format($token['last_used_at'])->date() . ' ' . format($token['last_used_at'])->time(): 'Never' }}</td>
                         <td>{{ format($token['created_at'])->date(). ' ' . format($token['created_at'])->time() }}</td>
                         <td>
-                            <x-global::forms.button state="danger" class="btn-sm" hx-delete="{{ BASE_URL }}/hx/auth/personalTokens/delete/{{ $token['id'] }}" hx-confirm="{{ __('notifications.confirm_token_delete') }}" hx-target="#personalTokens"><i class="fa fa-trash"></i></x-global::forms.button>
+                            <x-global::forms.button state="danger" class="btn-sm" hx-delete="{{ BASE_URL }}/hx/auth/personalTokens/delete/{{ $token['id'] }}" hx-confirm="{{ __('notifications.confirm_token_delete') }}" hx-target="#personalTokensList"><i class="fa fa-trash"></i></x-global::forms.button>
                         </td>
                     </tr>
                 @endforeach

@@ -139,14 +139,17 @@ class UpdateSql30527Test extends TestCase
      * @return array<int, string> the row-format changes the migration ran
      */
     /**
-     * The statements update_sql_30527 ran: everything before the later migrations' own zp_queue
-     * changes (30534 adds columns), which updateDB() runs in the same pass.
+     * The statements update_sql_30527 ran, without those of the later migrations updateDB() runs
+     * in the same pass (30534 adds zp_queue columns, 30535 creates the zp_oauth_* tables).
      *
      * @return array<int, string>
      */
     private function statementsOf30527(SqliteStandInForInstalledDatabase $connection): array
     {
-        return array_values(array_filter($connection->statementsRun, fn (string $statement) => stripos($statement, 'add column') === false));
+        return array_values(array_filter(
+            $connection->statementsRun,
+            fn (string $statement) => stripos($statement, 'add column') === false && stripos($statement, 'zp_oauth_') === false
+        ));
     }
 
     private function rowFormatChanges(SqliteStandInForInstalledDatabase $connection): array

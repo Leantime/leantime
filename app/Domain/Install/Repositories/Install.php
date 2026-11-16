@@ -107,6 +107,7 @@ class Install
         30532,
         30533,
         30534,
+        30535,
     ];
 
     /**
@@ -3684,6 +3685,30 @@ class Install
             Log::error('Migration 30534: '.$e->getMessage());
 
             return ['Migration 30534 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30535 — OAuth tables for MCP sign-in (Claude, ChatGPT, …): zp_oauth_clients,
+     * zp_oauth_auth_codes, zp_oauth_access_tokens, zp_oauth_refresh_tokens. Laravel Passport's schema
+     * with the zp_ prefix; the definitions live in SchemaBuilder so fresh installs get the same tables.
+     *
+     * @return bool|array<int, string> True on success, otherwise the error messages.
+     */
+    public function update_sql_30535(): bool|array
+    {
+        if (! $this->connection instanceof \Illuminate\Database\Connection) {
+            return ['Migration 30535 failed: no schema builder for this database connection'];
+        }
+
+        try {
+            app(\Leantime\Domain\Install\Services\SchemaBuilder::class)->createOAuthTables($this->connection->getSchemaBuilder());
+        } catch (\Exception $e) {
+            Log::error('Migration 30535: '.$e->getMessage());
+
+            return ['Migration 30535 failed: '.$e->getMessage()];
         }
 
         return true;

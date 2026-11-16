@@ -843,13 +843,17 @@ class EventDispatcher implements Dispatcher
     /**
      * Dispatch an event until the first non-null response is returned.
      *
+     * Leantime listeners don't return responses, so this runs the listeners like dispatch() and
+     * returns null ("nobody halted"). Eloquent fires its halting model events (creating, saving …)
+     * through this; Passport's models are the first Eloquent models in core.
+     *
      * @param  string|object  $event
      * @param  mixed  $payload
-     * @return mixed
+     * @return null
      */
     public function until($event, $payload = [])
     {
-        throw new \Exception('Not implemented');
+        return $this->dispatch($event, $payload, true);
     }
 
     /**

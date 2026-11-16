@@ -626,4 +626,40 @@ class DefaultConfig
      *          onboarding (CSV/directory imports).
      */
     public int $ratelimitInvitesTenant = 30;
+
+    /**
+     * @var int OAuth dynamic client registrations (POST /oauth/register) per IP per hour.
+     *          Registration is unauthenticated and writes a row, so it gets a tight budget.
+     */
+    public int $ratelimitOauthRegister = 10;
+
+    // OAuth (sign-in for MCP clients such as Claude and ChatGPT) =====================================
+
+    /**
+     * @var bool Let MCP clients (Claude, ChatGPT, …) connect by signing in with OAuth instead of a
+     *           personal access token. Turning it off removes the OAuth endpoints entirely.
+     */
+    public bool $oauthEnabled = true;
+
+    /**
+     * @var string Optional token-signing private key (PEM, or a path to a PEM file). Leave empty and
+     *             Leantime generates a key pair and stores it encrypted in the database.
+     */
+    public string $oauthPrivateKey = '';
+
+    /**
+     * @var string Public key matching LEAN_OAUTH_PRIVATE_KEY (PEM, or a path to a PEM file).
+     */
+    public string $oauthPublicKey = '';
+
+    /**
+     * @var string Extra redirect URL prefixes OAuth clients may register, comma separated
+     *             (e.g. https://my-client.example.com/). Claude, ChatGPT and localhost are always allowed.
+     */
+    public string $oauthRedirectDomains = '';
+
+    /**
+     * @var string Custom URL schemes OAuth clients may redirect to, comma separated (e.g. cursor,vscode).
+     */
+    public string $oauthCustomSchemes = '';
 }

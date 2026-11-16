@@ -369,7 +369,7 @@ class Oidc
             return Frontcontroller::redirect($mobileRedirect.$separator.'code='.urlencode($code), 302);
         }
 
-        return Frontcontroller::redirect(BASE_URL.'/dashboard/home');
+        return Frontcontroller::redirect($this->authService->postLoginRedirect(null));
     }
 
     /**

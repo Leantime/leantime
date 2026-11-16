@@ -50,13 +50,12 @@ class Verify extends Controller
                 // sanitizer, not a safety check ("//attacker.com" passes through it
                 // untouched). Run it through the same guard get() uses.
                 $rawRedirect = $params['redirectUrl'] ?? null;
-                $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
                 if ($this->authService->verify2FA($params['twoFA_code'])) {
                     $this->authService->set2FAVerified();
                     $this->authService->learnTrustedAppUrlAfter2FA();
 
-                    return FrontcontrollerCore::redirect($redirectUrl);
+                    return FrontcontrollerCore::redirect($this->authService->postLoginRedirect(is_string($rawRedirect) ? $rawRedirect : null));
                 } else {
                     $this->tpl->setNotification('notification.incorrect_twoFA_code', 'error');
 
