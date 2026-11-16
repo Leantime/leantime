@@ -751,6 +751,31 @@ class CommentsServiceTest extends TestCase
         }
     }
 
+    public function test_repository_reads_only_comments_stored_under_the_exact_module(): void
+    {
+        // The collation may match "árticle" to stored 'article' rows; the repository drops them.
+        $rows = collect([
+            (object) ['id' => 1, 'module' => 'article', 'text' => 'draft thread'],
+        ]);
+        $builder = null;
+        $chain = function () use (&$builder) {
+            return $builder;
+        };
+        $builder = $this->make(\Illuminate\Database\Query\Builder::class, [
+            'select' => $chain,
+            'addSelect' => $chain,
+            'join' => $chain,
+            'where' => $chain,
+            'orderBy' => $chain,
+            'get' => fn () => $rows,
+        ]);
+        $connection = $this->make(\Illuminate\Database\Connection::class, ['table' => fn () => $builder]);
+        $repo = new CommentRepository($this->make(\Leantime\Core\Db\Db::class, ['getConnection' => fn () => $connection]));
+
+        $this->assertSame([], $repo->getComments('árticle', 140));
+        $this->assertCount(1, $repo->getComments('article', 140));
+    }
+
     public function test_get_comments_of_a_visible_article_are_returned(): void
     {
         $service = $this->makeService($this->noopReactions(), $this->articleCommentRepo());

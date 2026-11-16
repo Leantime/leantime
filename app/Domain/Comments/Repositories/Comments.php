@@ -14,6 +14,20 @@ class Comments
         $this->db = $db->getConnection();
     }
 
+    /**
+     * Comments on one entity, newest first unless $orderByState is 1.
+     *
+     * The module must match exactly. The database collation may compare case- and
+     * accent-insensitively ("ARTICLE", "árticle" match "article"), and callers authorize by the
+     * module they pass, so a spelling the service doesn't recognize must not read another
+     * module's comments.
+     *
+     * @param  string  $module  The stored comment module (ticket, article, ...)
+     * @param  int  $moduleId  The entity id
+     * @param  int  $parent  Parent comment id (0 = top level, negative = any)
+     * @param  int  $orderByState  1 for oldest first
+     * @return false|array Comment rows as arrays
+     */
     public function getComments(string $module, int $moduleId, int $parent = 0, int $orderByState = 0): false|array
     {
         $orderBy = $orderByState === 1 ? 'asc' : 'desc';
@@ -21,6 +35,7 @@ class Comments
         $query = $this->db->table('zp_comment as comment')
             ->select(
                 'comment.id',
+                'comment.module',
                 'comment.text',
                 'comment.date',
                 'comment.moduleId',
@@ -41,7 +56,9 @@ class Comments
             $query->where('comment.commentParent', $parent);
         }
 
-        $results = $query->orderBy('comment.date', $orderBy)->get();
+        $results = $query->orderBy('comment.date', $orderBy)->get()
+            ->filter(fn ($item) => $item->module === $module)
+            ->values();
 
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
