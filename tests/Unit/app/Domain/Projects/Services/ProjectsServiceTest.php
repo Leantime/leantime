@@ -1952,6 +1952,79 @@ class ProjectsServiceTest extends TestCase
     }
 
     /**
+     * Switches the test user to $timezone with US date formats.
+     */
+    private function useUserTimezone(string $timezone): void
+    {
+        session([
+            'usersettings.timezone' => $timezone,
+            'usersettings.date_format' => 'm/d/Y',
+            'usersettings.time_format' => 'h:i A',
+        ]);
+
+        CarbonImmutable::mixin(new CarbonMacros($timezone, 'en-US', 'm/d/Y', 'h:i A'));
+    }
+
+    /**
+     * Creates a project with the given user-entered dates and returns the start/end
+     * values the service handed to the repository.
+     *
+     * @return array{start: mixed, end: mixed}
+     */
+    private function createProjectWithDates(string $start, string $end): array
+    {
+        $stored = [];
+        $projectRepo = $this->makeEmpty(ProjectRepository::class, [
+            'addProject' => function (array $values) use (&$stored) {
+                $stored = $values;
+
+                return 12;
+            },
+        ]);
+
+        $this->makeService($projectRepo)->createProject([
+            'name' => 'Launch',
+            'clientId' => 0,
+            'start' => $start,
+            'end' => $end,
+        ]);
+
+        return ['start' => $stored['start'] ?? null, 'end' => $stored['end'] ?? null];
+    }
+
+    /**
+     * New project dates are entered in the user's timezone and must be stored in UTC, because
+     * everything reads zp_projects.start/end back as UTC. They used to be stored as the user's
+     * local time, so a user behind UTC saw the start date a day early.
+     */
+    public function test_create_project_stores_dates_in_utc_for_a_user_behind_utc(): void
+    {
+        $this->useUserTimezone('America/New_York');
+
+        $stored = $this->createProjectWithDates('11/02/2026', '03/31/2027');
+
+        // Start / end of day in New York (EST, UTC-5), expressed in UTC.
+        $this->assertSame('2026-11-02 05:00:00', $stored['start']);
+        $this->assertSame('2027-04-01 03:59:59', $stored['end']);
+        $this->assertSame('11/02/2026', format($stored['start'])->date());
+        $this->assertSame('03/31/2027', format($stored['end'])->date());
+    }
+
+    /**
+     * Mirror case: ahead of UTC the local end of day used to be read back as the next day.
+     */
+    public function test_create_project_keeps_its_calendar_dates_for_a_user_ahead_of_utc(): void
+    {
+        $this->useUserTimezone('Asia/Tokyo');
+
+        $stored = $this->createProjectWithDates('11/02/2026', '03/31/2027');
+
+        $this->assertSame('2026-11-01 15:00:00', $stored['start']);
+        $this->assertSame('11/02/2026', format($stored['start'])->date());
+        $this->assertSame('03/31/2027', format($stored['end'])->date());
+    }
+
+    /**
      * A UserRepository stub whose getUser() resolves to a real row, for the
      * addUserToProject() tests that need the existence guard to pass.
      */
