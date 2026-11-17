@@ -475,7 +475,7 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $seen = $this->runNotifyProjectUsers([], webhooks: $webhooks);
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], webhooks: $webhooks);
 
         $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients']);
         $this->assertSame([2, 5, 6], $seen['pushRecipients']);
@@ -493,7 +493,7 @@ class ProjectsServiceTest extends TestCase
      */
     public function test_notify_project_users_pushes_to_users_who_switched_email_off(): void
     {
-        $seen = $this->runNotifyProjectUsers([], userOverrides: [2 => ['notifications' => 0]]);
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], userOverrides: [2 => ['notifications' => 0]]);
 
         $this->assertSame([3, 4, 5, 6], $seen['emailRecipients'], 'No email for a user who switched email off');
         $this->assertSame([2, 5, 6], $seen['pushRecipients'], 'Push still goes to them');
@@ -504,10 +504,34 @@ class ProjectsServiceTest extends TestCase
         $seen = $this->runNotifyProjectUsers([
             PushPreferences::settingKey(2) => '0',
             PushPreferences::settingKey(3) => '1',
-        ]);
+        ], usersWithProjectAccess: [1, 2, 3, 4, 5, 6]);
 
         $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients'], 'The push switch never touches email');
         $this->assertSame([5, 6], $seen['pushRecipients']);
+    }
+
+    /**
+     * A mention left in an item must not push the text and link to someone who can no longer
+     * see the project. Collaborators go through the same check. Email keeps its own policy.
+     *
+     * @return iterable<string, array{array<int>, array<int, array<string, mixed>|false>, array<int>}>
+     */
+    public static function bypassWithoutAccess(): iterable
+    {
+        yield 'mentioned user removed from the project' => [[1, 2, 3, 4, 5], [], []];
+        yield 'mentioned user deactivated' => [[1, 2, 3, 4, 5, 6], [6 => ['status' => 'i']], []];
+        yield 'mentioned user deleted' => [[1, 2, 3, 4, 5, 6], [6 => false], []];
+    }
+
+    /**
+     * @dataProvider bypassWithoutAccess
+     */
+    public function test_a_mention_or_collaborator_without_project_access_gets_no_push(array $usersWithProjectAccess, array $userOverrides, array $collaborators): void
+    {
+        $seen = $this->runNotifyProjectUsers([], $usersWithProjectAccess, $userOverrides, collaborators: $collaborators);
+
+        $this->assertNotContains(6, $seen['pushRecipients'], 'Mentioned user without access');
+        $this->assertContains(2, $seen['pushRecipients'], 'Everyone else is unaffected');
     }
 
     /**
@@ -530,7 +554,7 @@ class ProjectsServiceTest extends TestCase
      */
     public function test_push_goes_only_to_the_people_the_notification_involves(): void
     {
-        $seen = $this->runNotifyProjectUsers([], collaborators: [3]);
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], collaborators: [3]);
 
         $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients'], 'Email keeps All activity');
         $this->assertSame([2, 3, 5, 6], $seen['pushRecipients'], 'Assignee 2, collaborator 3, creator 5 and mentioned 6; not 4');

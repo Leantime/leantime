@@ -429,8 +429,12 @@ class Projects extends BaseService implements ChecksProjectAccess
         $pushRecipients = $this->filterUsersByProjectRelevance($pushCandidates, $notification, $preloadedSettings);
         $pushRecipients = $this->filterUsersByEventType($pushRecipients, $notification->module, $preloadedSettings);
         $pushRecipients = $this->filterPushToInvolved($pushRecipients, $notification);
-        $pushRecipients = $this->addBypassRecipients($pushRecipients, $mentionedUserIds, $notification->authorId);
-        $pushRecipients = $this->addBypassRecipients($pushRecipients, $collaboratorIds, $notification->authorId);
+        // A push carries the text and link to a phone straight away, so its bypasses reach only
+        // people who can still see the project: a mention left in an item, or a collaborator
+        // kept on a task, must not reach someone removed from it. (Webhooks check the same at
+        // posting time; email keeps its own policy.)
+        $pushBypass = $this->withProjectAccess(array_merge($mentionedUserIds, $collaboratorIds), (int) $notification->projectId);
+        $pushRecipients = $this->addBypassRecipients($pushRecipients, $pushBypass, $notification->authorId);
         $pushRecipients = PushPreferences::filter($pushRecipients, $preloadedSettings);
 
         $emailMessage = $notification->message;
@@ -949,6 +953,33 @@ class Projects extends BaseService implements ChecksProjectAccess
         }
 
         return array_values(array_unique($candidates));
+    }
+
+    /**
+     * The users who may receive this project's pushes right now: an existing, active account
+     * with access to the project (assigned, or through the project's or role's visibility).
+     * The same test personal webhooks apply before posting.
+     *
+     * @param  array<int, int>  $userIds  Candidate user ids.
+     * @param  int  $projectId  The notification's project.
+     * @return array<int, int>
+     */
+    private function withProjectAccess(array $userIds, int $projectId): array
+    {
+        // Roles that see every project pass isUserAssignedToProject() for any id, so the
+        // project itself has to exist.
+        if ($userIds === [] || $projectId <= 0 || $this->projectRepository->getProject($projectId) === false) {
+            return [];
+        }
+
+        return array_values(array_filter(array_unique(array_map('intval', $userIds)), function (int $userId) use ($projectId): bool {
+            $user = $this->userRepo->getUser($userId);
+            if ($user === false || strtolower((string) ($user['status'] ?? '')) !== 'a') {
+                return false;
+            }
+
+            return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
+        }));
     }
 
     /**
