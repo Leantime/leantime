@@ -116,20 +116,21 @@
             array_values(array_filter(array_map(fn ($it) => trim((string) (((array) $it)['description'] ?? '')), $activityItems))),
             0, 3
         );
+        // Card titles are kept as written: activities are usually program or
+        // project names ("Community Pantries"), and lower-casing them read as
+        // a typo. The impact is quoted after a colon in the sentence, so it can
+        // be a noun phrase or a whole sentence.
         $activitiesSummary = '';
         if (count($activityDescs) > 0) {
-            $lowered = array_map(fn ($s) => (mb_strtolower(mb_substr($s, 0, 1)) . mb_substr($s, 1)), $activityDescs);
-            $activitiesSummary = count($lowered) === 1
-                ? $lowered[0]
-                : (count($lowered) === 2
-                    ? $lowered[0] . ' and ' . $lowered[1]
-                    : $lowered[0] . ', ' . $lowered[1] . ', and ' . $lowered[2]);
+            $activitiesSummary = count($activityDescs) === 1
+                ? $activityDescs[0]
+                : (count($activityDescs) === 2
+                    ? $activityDescs[0] . ' and ' . $activityDescs[1]
+                    : $activityDescs[0] . ', ' . $activityDescs[1] . ', and ' . $activityDescs[2]);
         }
         $impactSummary = '';
         if (count($impactItems) > 0) {
-            $impactSummary = trim((string) (((array) $impactItems[0])['description'] ?? ''));
-            // lowercase first char for grammar
-            if ($impactSummary !== '') $impactSummary = mb_strtolower(mb_substr($impactSummary, 0, 1)) . mb_substr($impactSummary, 1);
+            $impactSummary = rtrim(trim((string) (((array) $impactItems[0])['description'] ?? '')), '.');
         }
         $beliefLine = '';
         if ($activitiesSummary !== '' && $impactSummary !== '') {
