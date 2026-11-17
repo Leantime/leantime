@@ -47,6 +47,11 @@ class VerifyRequestOrigin
         'oidc/callback*',
         'auth/callback*',
         'advancedauth/callback*',
+        // OAuth token endpoint and dynamic client registration: called by MCP clients, some of them
+        // in a browser on another origin (MCP Inspector). Neither uses the session cookie, so
+        // there is nothing to forge. The consent form (/oauth/authorize) stays origin-checked.
+        'oauth/token',
+        'oauth/register',
     ];
 
     public function __construct(protected Environment $config) {}

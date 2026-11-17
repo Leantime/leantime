@@ -75,7 +75,6 @@ class Login extends Controller
 
             // Same array guard as the GET path above — redirectUrl[]=x must not 500 the login POST.
             $rawRedirect = $_POST['redirectUrl'] ?? null;
-            $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
             $username = trim($_POST['username']);
             $password = $_POST['password'];
@@ -100,7 +99,7 @@ class Login extends Controller
                     return FrontcontrollerCore::redirect(BASE_URL.'/auth/twoFA');
                 }
 
-                return FrontcontrollerCore::redirect($redirectUrl);
+                return FrontcontrollerCore::redirect($this->authService->postLoginRedirect(is_string($rawRedirect) ? $rawRedirect : null));
             } else {
                 // Right password, but the account's onboarding was left before the last step, so
                 // it is still pending. Send the person back into it instead of a misleading error.

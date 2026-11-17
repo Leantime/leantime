@@ -440,7 +440,14 @@
                     @dispatchEvent('tabsContent')
 
                     <div id="personalTokens">
-                        <x-global::hx endpoint="auth/personalTokens" trigger="load" />
+                        <div id="personalTokensList">
+                            <x-global::hx endpoint="auth/personalTokens" trigger="load" />
+                        </div>
+                        @if (\Leantime\Core\Auth\OAuth\OAuthServiceProvider::enabled())
+                            <div id="connectedApps">
+                                <x-global::hx endpoint="oauth/connectedApps" trigger="load" />
+                            </div>
+                        @endif
                     </div>
                 </div>
             </x-global::layout.content-box>

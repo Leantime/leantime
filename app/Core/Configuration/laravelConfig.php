@@ -38,6 +38,7 @@ return [
             \Illuminate\Validation\ValidationServiceProvider::class,
 
             \Leantime\Core\Auth\AuthenticationServiceProvider::class,
+            \Leantime\Core\Auth\OAuth\OAuthServiceProvider::class,
             \Leantime\Core\Auth\Permissions\PermissionServiceProvider::class,
             \Leantime\Core\Modules\ModulesServiceProvider::class,
             \Leantime\Core\Middleware\RateLimiter::class,
@@ -681,6 +682,20 @@ return [
             'read_timeout' => 1.0,
             'prefix' => 'leantime_cache',
         ],
+    ],
+    /*
+    | CORS for the public OAuth endpoints only, so browser-based MCP clients (MCP Inspector) can
+    | discover and register. Every other path keeps the same-origin default from InitialHeaders.
+    */
+    'cors' => [
+        'paths' => ['.well-known/oauth-protected-resource*', '.well-known/oauth-authorization-server*', 'oauth/token', 'oauth/register'],
+        'allowed_methods' => ['GET', 'POST', 'OPTIONS'],
+        'allowed_origins' => ['*'],
+        'allowed_origins_patterns' => [],
+        'allowed_headers' => ['*'],
+        'exposed_headers' => [],
+        'max_age' => 600,
+        'supports_credentials' => false,
     ],
     'auth' => [
         'defaults' => [

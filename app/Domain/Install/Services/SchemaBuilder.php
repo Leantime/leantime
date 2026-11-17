@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Install\Services;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\Builder as SchemaBuilderContract;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Leantime\Core\Configuration\AppSettings;
@@ -62,6 +63,7 @@ class SchemaBuilder
         $this->createRolesTable();
         $this->createPermissionsTable();
         $this->createRolePermissionsTable();
+        $this->createOAuthTables();
     }
 
     /**
@@ -686,6 +688,72 @@ class SchemaBuilder
             $table->string('key', 175)->primary();
             $table->text('value')->nullable();
         });
+    }
+
+    /**
+     * Create the OAuth tables (Laravel Passport's schema with the zp_ prefix) used by MCP sign-in.
+     * Shared by fresh installs and update_sql_30535, and safe to call again: existing tables are
+     * left alone.
+     *
+     * auth_codes/access_tokens.password_fingerprint tie each code and token to the password the user
+     * had when it was approved/issued (see Core\Auth\OAuth\OAuthTokenStore). clients.first_authorized_at
+     * marks clients a user approved at least once; only the others are purged as unused.
+     *
+     * @param  SchemaBuilderContract|null  $schema  Schema builder of the connection to migrate; the default connection when null.
+     */
+    public function createOAuthTables(?SchemaBuilderContract $schema = null): void
+    {
+        $schema ??= Schema::getFacadeRoot();
+
+        if (! $schema->hasTable('zp_oauth_clients')) {
+            $schema->create('zp_oauth_clients', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->nullableMorphs('owner');
+                $table->string('name');
+                $table->string('secret')->nullable();
+                $table->string('provider')->nullable();
+                $table->text('redirect_uris');
+                $table->text('grant_types');
+                $table->boolean('revoked');
+                $table->dateTime('first_authorized_at')->nullable();
+                $table->timestamps();
+            });
+        }
+
+        if (! $schema->hasTable('zp_oauth_auth_codes')) {
+            $schema->create('zp_oauth_auth_codes', function (Blueprint $table) {
+                $table->char('id', 80)->primary();
+                $table->unsignedBigInteger('user_id')->index();
+                $table->uuid('client_id');
+                $table->text('scopes')->nullable();
+                $table->boolean('revoked');
+                $table->string('password_fingerprint', 64)->nullable();
+                $table->dateTime('expires_at')->nullable();
+            });
+        }
+
+        if (! $schema->hasTable('zp_oauth_access_tokens')) {
+            $schema->create('zp_oauth_access_tokens', function (Blueprint $table) {
+                $table->char('id', 80)->primary();
+                $table->unsignedBigInteger('user_id')->nullable()->index();
+                $table->uuid('client_id')->index();
+                $table->string('name')->nullable();
+                $table->text('scopes')->nullable();
+                $table->boolean('revoked');
+                $table->string('password_fingerprint', 64)->nullable();
+                $table->timestamps();
+                $table->dateTime('expires_at')->nullable();
+            });
+        }
+
+        if (! $schema->hasTable('zp_oauth_refresh_tokens')) {
+            $schema->create('zp_oauth_refresh_tokens', function (Blueprint $table) {
+                $table->char('id', 80)->primary();
+                $table->char('access_token_id', 80)->index();
+                $table->boolean('revoked');
+                $table->dateTime('expires_at')->nullable();
+            });
+        }
     }
 
     /**

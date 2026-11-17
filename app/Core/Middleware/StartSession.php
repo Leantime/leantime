@@ -67,7 +67,7 @@ class StartSession
         // session object is created with the array handler from the start.
         // Browser AJAX requests (JS calling JSON-RPC) are excluded so they
         // continue to share the user's web session.
-        if ($request->isApiOrCronRequest() && ! $request->ajax()) {
+        if (($request->isApiOrCronRequest() && ! $request->ajax()) || $this->isTokenOnlyRequest($request)) {
             config(['session.driver' => 'array']);
             $this->manager->setDefaultDriver('array');
         }
@@ -482,7 +482,38 @@ class StartSession
      */
     protected function shouldPersistSession(IncomingRequest $request)
     {
-        return $request->isApiOrCronRequest() === false && $this->sessionConfigured();
+        return $request->isApiOrCronRequest() === false
+            && ! $this->isTokenOnlyRequest($request)
+            && $this->sessionConfigured();
+    }
+
+    /**
+     * Requests that authenticate with a token (or need no user at all) and so must never create
+     * or pick up a stored cookie session: MCP calls that carry an API key or Bearer token, and the
+     * machine-facing OAuth endpoints (discovery, client registration, token).
+     *
+     * Persisting these sessions turned every MCP call into a session file, and HTTP clients that
+     * keep cookies (httpx, used by the MCP SDKs) then sent a session without a password fingerprint
+     * to the token endpoint, where AuthenticateSession ended it with a redirect to the login page.
+     */
+    protected function isTokenOnlyRequest(IncomingRequest $request): bool
+    {
+        if ($request->ajax()) {
+            return false;
+        }
+
+        if ($request->isMcpRequest()) {
+            return $request->headers->has('x-api-key')
+                || $request->headers->has('Authorization')
+                || ! empty($request->server('HTTP_AUTHORIZATION'))
+                || ! empty($request->server('REDIRECT_HTTP_AUTHORIZATION'));
+        }
+
+        $segments = $request->normalizedSegments();
+
+        return ($segments[0] ?? '') === '.well-known'
+            || $segments === ['oauth', 'token']
+            || $segments === ['oauth', 'register'];
     }
 
     /**
