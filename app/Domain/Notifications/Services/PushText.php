@@ -33,6 +33,9 @@ class PushText
     /** Comment text longer than this is cut on a word boundary; the phone trims further. */
     private const SNIPPET_LENGTH = 140;
 
+    /** The email digest quotes more of a comment than a lock screen can show. */
+    private const QUOTE_LENGTH = 600;
+
     /** module → the noun in "<actor> updated this <noun>" (language key suffix). */
     private const ITEM_KINDS = [
         'tickets' => 'task',
@@ -72,6 +75,61 @@ class PushText
             'title' => $title !== null && $title !== '' ? $title : $fallback['title'],
             'body' => $body !== null && $body !== '' ? $body : $fallback['body'],
         ];
+    }
+
+    /**
+     * The same wording for the email digest, in parts: the item it is about ('group', so the digest
+     * can put several changes to one task together), its name, "who did what", and a comment's
+     * text to quote. Null when this can't word the notification; the digest then shows the
+     * email's own subject and message.
+     *
+     * @return array{group: string, title: string, line: string, quote: string}|null
+     */
+    public function forEmail(NotificationModel $notification): ?array
+    {
+        try {
+            $module = (string) ($notification->module ?? '');
+            $action = $notification->action;
+            $actor = $this->actorName((int) ($notification->authorId ?? 0));
+
+            if ($module === 'comments' || $action === 'commented') {
+                $host = (string) ($this->field($notification->entity, 'module') ?? '');
+                $hostId = (int) ($this->field($notification->entity, 'moduleId') ?? 0);
+                $comment = $this->comment($notification, $actor, true);
+                if ($comment === null || $hostId <= 0) {
+                    return null;
+                }
+
+                return [
+                    'group' => (in_array($host, ['ticket', 'tickets'], true) ? 'tickets' : $host).':'.$hostId,
+                    'title' => $comment['title'],
+                    'line' => sprintf($this->language->__('notification.push_commented_names'), $actor),
+                    'quote' => $this->snippet((string) ($this->field($notification->entity, 'text') ?? ''), self::QUOTE_LENGTH),
+                ];
+            }
+
+            $kind = self::ITEM_KINDS[$module] ?? (str_ends_with($module, 'canvas') ? 'board_item' : null);
+            $id = (int) ($this->field($notification->entity, 'id') ?? 0);
+            if ($kind === null || $id <= 0 || ! in_array($action, ['created', 'updated', 'status_changed', 'due_date_changed'], true)) {
+                return null;
+            }
+
+            $title = $this->itemName($module, $notification->entity);
+            if ($title === '') {
+                return null;
+            }
+
+            $verb = $action === 'created' ? 'created' : 'updated';
+
+            return [
+                'group' => $module.':'.$id,
+                'title' => $title,
+                'line' => $notification->pushBody ?? sprintf($this->language->__('notification.push_'.$kind.'_'.$verb), $actor),
+                'quote' => '',
+            ];
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**
@@ -180,17 +238,17 @@ class PushText
         return $name !== '' ? $name : $this->language->__('label.someone');
     }
 
-    private function snippet(string $html): string
+    private function snippet(string $html, int $length = self::SNIPPET_LENGTH): string
     {
         $text = $this->clean($html);
-        if (mb_strlen($text) <= self::SNIPPET_LENGTH) {
+        if (mb_strlen($text) <= $length) {
             return $text;
         }
 
-        $cut = mb_substr($text, 0, self::SNIPPET_LENGTH);
+        $cut = mb_substr($text, 0, $length);
         $space = mb_strrpos($cut, ' ');
 
-        return rtrim($space !== false && $space > self::SNIPPET_LENGTH / 2 ? mb_substr($cut, 0, $space) : $cut).'…';
+        return rtrim($space !== false && $space > $length / 2 ? mb_substr($cut, 0, $space) : $cut).'…';
     }
 
     /** Plain text on one line: tags and entities out, whitespace collapsed. */

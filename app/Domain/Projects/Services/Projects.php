@@ -31,6 +31,7 @@ use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Notifications\Services\PushPreferences;
+use Leantime\Domain\Notifications\Services\PushText;
 use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Events\ProjectArchived;
 use Leantime\Domain\Projects\Events\ProjectCreated;
@@ -434,9 +435,21 @@ class Projects extends BaseService implements ChecksProjectAccess
         $pushRecipients = PushPreferences::filter($pushRecipients, $preloadedSettings);
 
         $emailMessage = $notification->message;
+        $emailUrl = null;
         if ($notification->url !== false) {
             $emailUrl = Mailer::notificationEmailUrl((string) $notification->url['url'], (string) $notification->module);
             $emailMessage .= " <a href='".$emailUrl."'>".$notification->url['text'].'</a>';
+        }
+
+        // The digest's wording, the push's in parts: the digest shows changes to one item together.
+        // Never in the way of the email itself: without it the digest shows subject and message.
+        try {
+            $emailSummary = app()->make(PushText::class)->forEmail($notification);
+        } catch (\Throwable) {
+            $emailSummary = null;
+        }
+        if ($emailSummary !== null && $emailUrl !== null) {
+            $emailSummary['url'] = $emailUrl;
         }
 
         // The entity the notification is about, in the inbox's terms, so the digest can tell an
@@ -542,7 +555,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         // the inbox to tell an already-read email from a new one, so a queued row must never be
         // visible before the unread inbox row of the same event. (The listener runs in-process.)
         $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId);
+        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId, $emailSummary);
 
         // Personal webhooks go last, filtered like email (relevance, category, mentions,
         // collaborators) but from their own candidates: see personalWebhookCandidates(). This

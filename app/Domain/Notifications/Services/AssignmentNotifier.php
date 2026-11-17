@@ -120,7 +120,15 @@ class AssignmentNotifier
                 sprintf($this->language->__('email_notifications.assigned_subject'), $headline),
                 $projectId,
                 'tickets',
-                $event->ticketId
+                $event->ticketId,
+                // The digest's wording: the same lines the push shows.
+                [
+                    'group' => 'tickets:'.$event->ticketId,
+                    'title' => $headline,
+                    'line' => sprintf($this->language->__('notification.push_assigned_body'), $actorName),
+                    'detail' => $this->dueText($ticket->dateToFinish, $event->assigneeId),
+                    'url' => $emailUrl,
+                ]
             );
         }
 

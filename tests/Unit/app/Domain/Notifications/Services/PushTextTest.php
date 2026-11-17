@@ -179,4 +179,30 @@ class PushTextTest extends TestCase
 
         $this->assertSame('Someone updated this task · Sales', $text['body']);
     }
+
+    public function test_the_email_digest_gets_the_same_wording_in_parts(): void
+    {
+        $parts = $this->pushText()->forEmail($this->notification('tickets', 'status_changed', ['id' => 12, 'headline' => 'Pricing page'], [
+            'pushBody' => 'Marcel moved this to Done',
+        ]));
+
+        $this->assertSame(['group' => 'tickets:12', 'title' => 'Pricing page', 'line' => 'Marcel moved this to Done', 'quote' => ''], $parts);
+    }
+
+    public function test_a_comment_in_the_digest_sits_with_its_task_and_is_quoted(): void
+    {
+        $parts = $this->pushText()->forEmail($this->notification('comments', 'commented', [
+            'text' => '<p>Can we ship this Friday?</p>', 'module' => 'ticket', 'moduleId' => 2267,
+        ]));
+
+        $this->assertSame(
+            ['group' => 'tickets:2267', 'title' => 'Email campaign for .org users', 'line' => 'Marcel commented', 'quote' => 'Can we ship this Friday?'],
+            $parts
+        );
+    }
+
+    public function test_the_digest_keeps_the_email_wording_for_anything_unknown(): void
+    {
+        $this->assertNull($this->pushText()->forEmail($this->notification('wiki', 'updated', ['id' => 3, 'title' => 'Handbook'])));
+    }
 }
