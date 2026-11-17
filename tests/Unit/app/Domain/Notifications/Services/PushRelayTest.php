@@ -82,6 +82,14 @@ class PushRelayTest extends TestCase
         $this->assertTrue($this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'key')->isEnabled());
     }
 
+    public function test_content_level_is_full_unless_names_or_minimal_was_chosen(): void
+    {
+        $this->assertSame(PushRelay::CONTENT_FULL, $this->relay([], true, 'key')->contentLevel());
+        $this->assertSame(PushRelay::CONTENT_NAMES, $this->relay([PushRelay::SETTING_CONTENT => 'names'], true, 'key')->contentLevel());
+        $this->assertSame(PushRelay::CONTENT_MINIMAL, $this->relay([PushRelay::SETTING_CONTENT => 'minimal'], true, 'key')->contentLevel());
+        $this->assertSame(PushRelay::CONTENT_FULL, $this->relay([PushRelay::SETTING_CONTENT => 'everything'], true, 'key')->contentLevel());
+    }
+
     public function test_sends_license_and_instance_identity_with_full_content(): void
     {
         $relay = $this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'LIC-123');

@@ -23,6 +23,10 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  * A sender that knows more sets Notification::$pushTitle / $pushBody ("Marcel moved this
  * to Done"); those win. Anything this doesn't recognise keeps the email wording, so no
  * notification loses its push.
+ *
+ * At the "names" content level (Company Settings) a push keeps who did what and the item's
+ * name but no comment or description text: "Marcel commented · Sales". The email wording
+ * can carry that text, so at that level it is never used.
  */
 class PushText
 {
@@ -47,15 +51,16 @@ class PushText
     /**
      * @return array{title: string, body: string}
      */
-    public function forNotification(NotificationModel $notification): array
+    public function forNotification(NotificationModel $notification, string $level = PushRelay::CONTENT_FULL): array
     {
+        $namesOnly = $level === PushRelay::CONTENT_NAMES;
         $fallback = [
             'title' => $notification->subject !== '' ? $notification->subject : 'Leantime',
-            'body' => $notification->message,
+            'body' => $namesOnly ? $this->language->__('notification.push_names_fallback') : $notification->message,
         ];
 
         try {
-            $built = $this->build($notification);
+            $built = $this->build($notification, $namesOnly);
         } catch (\Throwable) {
             $built = null;
         }
@@ -72,14 +77,14 @@ class PushText
     /**
      * @return array{title: string, body: string}|null
      */
-    private function build(NotificationModel $notification): ?array
+    private function build(NotificationModel $notification, bool $namesOnly): ?array
     {
         $module = (string) ($notification->module ?? '');
         $action = $notification->action;
         $actor = $this->actorName((int) ($notification->authorId ?? 0));
 
         if ($module === 'comments' || $action === 'commented') {
-            return $this->comment($notification, $actor);
+            return $this->comment($notification, $actor, $namesOnly);
         }
 
         $kind = self::ITEM_KINDS[$module] ?? (str_ends_with($module, 'canvas') ? 'board_item' : null);
@@ -104,10 +109,10 @@ class PushText
      *
      * @return array{title: string, body: string}|null
      */
-    private function comment(NotificationModel $notification, string $actor): ?array
+    private function comment(NotificationModel $notification, string $actor, bool $namesOnly): ?array
     {
         $text = $this->snippet((string) ($this->field($notification->entity, 'text') ?? ''));
-        if ($text === '') {
+        if ($text === '' && ! $namesOnly) {
             return null;
         }
 
@@ -127,6 +132,13 @@ class PushText
 
         if ($title === '') {
             $title = $this->language->__('notification.push_new_comment');
+        }
+
+        if ($namesOnly) {
+            return [
+                'title' => $title,
+                'body' => $this->withProject(sprintf($this->language->__('notification.push_commented_names'), $actor), $notification, 'comments'),
+            ];
         }
 
         return [

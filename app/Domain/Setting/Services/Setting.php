@@ -362,11 +362,10 @@ class Setting
             'companySettings' => $companySettings,
             'defaultNotificationTypes' => $defaultNotificationTypes,
             'defaultRelevance' => $defaultRelevance,
-            // Mobile push through Leantime's relay (self-hosted only; Cloud sends directly)
+            // Mobile push: the relay switch (self-hosted only; Cloud sends directly), and what
+            // phone notifications show, which applies to every push.
             'pushRelayEnabled' => $this->settingsRepo->getSetting(PushRelay::SETTING_ENABLED) === '1',
-            'pushRelayContent' => $this->settingsRepo->getSetting(PushRelay::SETTING_CONTENT) === PushRelay::CONTENT_MINIMAL
-                ? PushRelay::CONTENT_MINIMAL
-                : PushRelay::CONTENT_FULL,
+            'pushRelayContent' => self::pushContentLevel($this->settingsRepo->getSetting(PushRelay::SETTING_CONTENT)),
         ];
     }
 
@@ -443,10 +442,7 @@ class Setting
             $relayEnabled = isset($params['pushRelayEnabled']) && filter_var($params['pushRelayEnabled'], FILTER_VALIDATE_BOOLEAN);
             $this->settingsRepo->saveSetting(PushRelay::SETTING_ENABLED, $relayEnabled ? '1' : '0');
             if (array_key_exists('pushRelayContent', $params)) {
-                $this->settingsRepo->saveSetting(
-                    PushRelay::SETTING_CONTENT,
-                    $params['pushRelayContent'] === PushRelay::CONTENT_MINIMAL ? PushRelay::CONTENT_MINIMAL : PushRelay::CONTENT_FULL
-                );
+                $this->settingsRepo->saveSetting(PushRelay::SETTING_CONTENT, self::pushContentLevel($params['pushRelayContent']));
             }
 
             session(['companysettings.sitename' => htmlspecialchars(addslashes($params['name']))]);
@@ -474,5 +470,11 @@ class Setting
         }
 
         return $saved;
+    }
+
+    /** A known push content level, or full. */
+    private static function pushContentLevel(mixed $value): string
+    {
+        return in_array($value, [PushRelay::CONTENT_NAMES, PushRelay::CONTENT_MINIMAL], true) ? $value : PushRelay::CONTENT_FULL;
     }
 }

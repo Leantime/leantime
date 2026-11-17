@@ -2,9 +2,11 @@
 
 namespace Unit\app\Domain\Notifications\Services;
 
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Notifications\Services\Push;
+use Leantime\Domain\Notifications\Services\PushRelay;
 use Leantime\Domain\Notifications\Services\PushText;
 use Unit\TestCase;
 
@@ -31,7 +33,12 @@ class PushDuplicatesTest extends TestCase
         );
         $this->app->instance(PushText::class, $pushText);
 
-        $this->push = $this->getMockBuilder(Push::class)->disableOriginalConstructor()->onlyMethods(['send'])->getMock();
+        $relay = $this->createMock(PushRelay::class);
+        $relay->method('contentLevel')->willReturn(PushRelay::CONTENT_FULL);
+        $this->push = $this->getMockBuilder(Push::class)
+            ->setConstructorArgs([$this->createMock(Client::class), $relay])
+            ->onlyMethods(['send'])
+            ->getMock();
         $this->push->method('send')->willReturnCallback(function (array $users, string $title, string $body) {
             $this->sent[] = ['users' => $users, 'title' => $title, 'body' => $body];
         });
@@ -100,5 +107,30 @@ class PushDuplicatesTest extends TestCase
         $this->push->sendFromNotification($this->notification(), [3]);
 
         $this->assertSame([], $this->sent);
+    }
+
+    public function test_a_direct_send_at_content_free_carries_no_text(): void
+    {
+        $relay = $this->createMock(PushRelay::class);
+        $relay->method('contentLevel')->willReturn(PushRelay::CONTENT_MINIMAL);
+        $relay->method('contentFreeData')->willReturn(['module' => 'tickets', 'moduleId' => '2267']);
+        $push = new Push($this->createMock(Client::class), $relay);
+
+        [$title, $body, $data] = $push->withContentLevel('Pricing page', 'Marcel: secret', ['module' => 'tickets', 'moduleId' => '2267', 'url' => 'https://x/?q=secret']);
+
+        $this->assertSame('Leantime', $title);
+        $this->assertStringNotContainsString('secret', $body);
+        $this->assertSame(['module' => 'tickets', 'moduleId' => '2267'], $data);
+    }
+
+    public function test_a_direct_send_at_full_or_names_is_unchanged(): void
+    {
+        foreach ([PushRelay::CONTENT_FULL, PushRelay::CONTENT_NAMES] as $level) {
+            $relay = $this->createMock(PushRelay::class);
+            $relay->method('contentLevel')->willReturn($level);
+            $push = new Push($this->createMock(Client::class), $relay);
+
+            $this->assertSame(['Pricing page', 'body', ['module' => 'tickets']], $push->withContentLevel('Pricing page', 'body', ['module' => 'tickets']));
+        }
     }
 }

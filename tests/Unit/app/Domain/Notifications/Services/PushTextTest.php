@@ -4,6 +4,7 @@ namespace Unit\app\Domain\Notifications\Services;
 
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+use Leantime\Domain\Notifications\Services\PushRelay;
 use Leantime\Domain\Notifications\Services\PushText;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
@@ -26,6 +27,8 @@ class PushTextTest extends TestCase
         'notification.push_project_updated' => '%s updated this project',
         'notification.push_commented' => '%1$s: %2$s',
         'notification.push_new_comment' => 'New comment',
+        'notification.push_commented_names' => '%s commented',
+        'notification.push_names_fallback' => 'New activity. Open Leantime to see it.',
         'label.someone' => 'Someone',
     ];
 
@@ -142,6 +145,32 @@ class PushTextTest extends TestCase
             ['title' => 'One of your To-Dos was updated [111] - Pricing page', 'body' => "Marcel updated the To-Do: 'Pricing page'"],
             $this->pushText()->forNotification($notification)
         );
+    }
+
+    public function test_names_only_keeps_who_and_what_but_not_the_comment(): void
+    {
+        $text = $this->pushText()->forNotification($this->notification('comments', 'commented', [
+            'text' => 'The patient result is back', 'module' => 'ticket', 'moduleId' => 2267,
+        ]), PushRelay::CONTENT_NAMES);
+
+        $this->assertSame(['title' => 'Email campaign for .org users', 'body' => 'Marcel commented · Sales'], $text);
+    }
+
+    public function test_names_only_leaves_task_lines_as_they_are(): void
+    {
+        $text = $this->pushText()->forNotification(
+            $this->notification('tickets', 'status_changed', ['headline' => 'Pricing page'], ['pushBody' => 'Marcel moved this to Done']),
+            PushRelay::CONTENT_NAMES
+        );
+
+        $this->assertSame('Marcel moved this to Done · Sales', $text['body']);
+    }
+
+    public function test_names_only_never_falls_back_to_the_email_message(): void
+    {
+        $text = $this->pushText()->forNotification($this->notification('wiki', 'updated', ['title' => 'Handbook']), PushRelay::CONTENT_NAMES);
+
+        $this->assertSame('New activity. Open Leantime to see it.', $text['body']);
     }
 
     public function test_an_unknown_author_is_someone(): void

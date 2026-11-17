@@ -165,11 +165,14 @@ class Push
         $stringData = self::withDefaults($stringData);
 
         if ($path === 'relay') {
-            // One request for the whole fan-out; the relay reports dead tokens back.
+            // One request for the whole fan-out; the relay reports dead tokens back. It
+            // applies the content level itself.
             $this->relay->send($rows->where('push_provider', 'fcm'), $title, $body, $stringData);
 
             return;
         }
+
+        [$title, $body, $stringData] = $this->withContentLevel($title, $body, $stringData);
 
         foreach ($rows as $row) {
             // push_provider is retained on the row for forward compat
@@ -190,6 +193,22 @@ class Push
                 Log::warning('Push send failed for access_token #'.$row->id.': '.$e->getMessage());
             }
         }
+    }
+
+    /**
+     * A direct send at the workspace's content level: content-free sends no text at all,
+     * the same as the relay does (PushRelay::send). Full and names only are worded upstream.
+     *
+     * @param  array<string, string>  $data
+     * @return array{0: string, 1: string, 2: array<string, string>}
+     */
+    public function withContentLevel(string $title, string $body, array $data): array
+    {
+        if ($this->relay->contentLevel() !== PushRelay::CONTENT_MINIMAL) {
+            return [$title, $body, $data];
+        }
+
+        return ['Leantime', __('notification.push_minimal_body'), $this->relay->contentFreeData($data)];
     }
 
     /**
@@ -219,7 +238,7 @@ class Push
      */
     public function sendFromNotification(NotificationModel $notification, array $userIds): void
     {
-        $text = app(PushText::class)->forNotification($notification);
+        $text = app(PushText::class)->forNotification($notification, $this->relay->contentLevel());
         $data = self::buildData($notification);
 
         $ticketId = ($notification->module ?? '') === 'tickets' ? (int) ($data['moduleId'] ?? 0) : 0;
