@@ -365,12 +365,13 @@ class OAuthServer
 
         $psrRequest = $this->toPsrRequest($request)->withParsedBody($parameters);
         $issueTokens = fn () => $this->toResponse($this->authorizationServer->respondToAccessTokenRequest($psrRequest, new PsrResponse));
-        $clientId = $parameters['client_id'] ?? null;
+        $clientId = $this->clientIdOf($request, $parameters);
 
         try {
             // Serialize issuance per client (see OAuthTokenStore::withClientLock()): the same code or
             // refresh token can't be redeemed twice in parallel, and Disconnect can't be outrun.
-            return is_string($clientId) && $clientId !== ''
+            // Without a client id league rejects the request before issuing anything.
+            return $clientId !== null
                 ? $this->tokenStore->withClientLock($clientId, $issueTokens)
                 : $issueTokens();
         } catch (OAuthServerException $exception) {
@@ -380,6 +381,32 @@ class OAuthServer
 
             return $this->jsonError('server_error', 'The token could not be issued.', 500);
         }
+    }
+
+    /**
+     * The client id of a token request, wherever league would read it from: the body, or the user
+     * part of an `Authorization: Basic` header (league accepts that for public clients too).
+     *
+     * @param  array<string, mixed>  $parameters  The token request body.
+     */
+    private function clientIdOf(IncomingRequest $request, array $parameters): ?string
+    {
+        $bodyClientId = $parameters['client_id'] ?? null;
+
+        if (is_string($bodyClientId) && trim($bodyClientId) !== '') {
+            return trim($bodyClientId);
+        }
+
+        $authorization = (string) ($request->headers->get('Authorization') ?? $request->server('HTTP_AUTHORIZATION') ?? $request->server('REDIRECT_HTTP_AUTHORIZATION') ?? '');
+
+        if (! str_starts_with(strtolower($authorization), 'basic ')) {
+            return null;
+        }
+
+        $credentials = base64_decode(substr($authorization, 6), true);
+        $basicClientId = is_string($credentials) ? trim(explode(':', $credentials, 2)[0]) : '';
+
+        return $basicClientId !== '' ? $basicClientId : null;
     }
 
     /**

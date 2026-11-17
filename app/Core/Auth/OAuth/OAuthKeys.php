@@ -61,7 +61,9 @@ class OAuthKeys
      */
     public function tokenEncryptionKey(): string
     {
-        return hash_hmac('sha256', 'leantime-oauth-payload-encryption', $this->keys()['private']);
+        // Trimmed, so the same key yields the same secret whether it comes from the database (PEM
+        // with OpenSSL's trailing newline) or from the environment after `oauth:keys --export`.
+        return hash_hmac('sha256', 'leantime-oauth-payload-encryption', trim($this->keys()['private']));
     }
 
     /**

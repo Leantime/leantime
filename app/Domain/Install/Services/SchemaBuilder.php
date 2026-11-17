@@ -696,7 +696,8 @@ class SchemaBuilder
      * left alone.
      *
      * auth_codes/access_tokens.password_fingerprint tie each code and token to the password the user
-     * had when it was approved/issued (see Core\Auth\OAuth\OAuthTokenStore).
+     * had when it was approved/issued (see Core\Auth\OAuth\OAuthTokenStore). clients.first_authorized_at
+     * marks clients a user approved at least once; only the others are purged as unused.
      *
      * @param  SchemaBuilderContract|null  $schema  Schema builder of the connection to migrate; the default connection when null.
      */
@@ -714,6 +715,7 @@ class SchemaBuilder
                 $table->text('redirect_uris');
                 $table->text('grant_types');
                 $table->boolean('revoked');
+                $table->dateTime('first_authorized_at')->nullable();
                 $table->timestamps();
             });
         }

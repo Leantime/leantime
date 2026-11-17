@@ -7,8 +7,8 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use Leantime\Core\Auth\OAuth\OAuthTokenStore;
 
 /**
- * Passport's authorization code repository, plus: a code records the user's password fingerprint
- * when the user approves, and counts as revoked once the password changed (or the user was
+ * Passport's authorization code repository, plus: the client is marked as approved (so cleanup keeps
+ * it), and a code records the user's password fingerprint when the user approves, and counts as revoked once the password changed (or the user was
  * deactivated) before the app redeemed it. Otherwise a code approved before a password reset
  * would mint tokens stamped with the new password.
  */
@@ -28,6 +28,8 @@ class AuthCodeRepository extends PassportAuthCodeRepository
         if ($userId !== null && ctype_digit($userId)) {
             $this->tokenStore->stampAuthCodePasswordFingerprint($authCodeEntity->getIdentifier(), (int) $userId);
         }
+
+        $this->tokenStore->markClientAuthorized($authCodeEntity->getClient()->getIdentifier());
     }
 
     /**

@@ -97,6 +97,18 @@ class OAuthTokenStore
     }
 
     /**
+     * Mark a client as approved by a user at least once, so the unused-client cleanup never
+     * deletes it (its tokens may all be purged later, but its client id is still in use).
+     */
+    public function markClientAuthorized(string $clientId): void
+    {
+        $this->connection()->table('zp_oauth_clients')
+            ->where('id', $clientId)
+            ->whereNull('first_authorized_at')
+            ->update(['first_authorized_at' => CarbonImmutable::now('UTC')->format('Y-m-d H:i:s')]);
+    }
+
+    /**
      * Whether an authorization code may still be redeemed: its client is not revoked, the user is
      * active, and the password hasn't changed since the user approved.
      */
@@ -279,8 +291,8 @@ class OAuthTokenStore
     }
 
     /**
-     * Delete revoked/expired tokens and codes older than a week, and registered clients that never
-     * completed a sign-in (dynamic registration is unauthenticated, so unused rows pile up).
+     * Delete revoked/expired tokens and codes older than a week, and registered clients no user ever
+     * approved (dynamic registration is unauthenticated, so unused rows pile up).
      *
      * @return array{accessTokens: int, refreshTokens: int, authCodes: int, clients: int}
      */
@@ -311,13 +323,9 @@ class OAuthTokenStore
             ->where(fn ($query) => $query->where('revoked', true)->orWhere('expires_at', '<', $now->format('Y-m-d H:i:s')))
             ->delete();
 
-        $unusedClients = $this->connection()->table('zp_oauth_clients as clients')
-            ->where('clients.created_at', '<', $unusedClientBefore)
-            ->whereNotExists(function ($query) {
-                $query->selectRaw('1')
-                    ->from('zp_oauth_access_tokens as tokens')
-                    ->whereColumn('tokens.client_id', 'clients.id');
-            })
+        $unusedClients = $this->connection()->table('zp_oauth_clients')
+            ->whereNull('first_authorized_at')
+            ->where('created_at', '<', $unusedClientBefore)
             ->delete();
 
         return [
