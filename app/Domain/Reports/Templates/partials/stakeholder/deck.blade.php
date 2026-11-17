@@ -165,7 +165,7 @@
                         'completedCount', 'completedDelta', 'goalsOnTrack', 'goalsTotal',
                         'overdueCount', 'hoursLogged', 'needsAttn', 'logicModel', 'hasLM',
                         'goalsGroup', 'report', 'strategyUpdates', 'programUpdates',
-                        'programRows'
+                        'programRows', 'subject'
                     ))
                 </div>
 
