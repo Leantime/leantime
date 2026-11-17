@@ -406,6 +406,9 @@ class EmailWorkerTest extends TestCase
         $this->assertStringContainsString('Sales', $html, 'the project above it');
         $this->assertLessThan(strpos($html, 'Marcel moved this to Done'), strpos($html, 'Marcel assigned this to you'), 'oldest change first');
         $this->assertStringContainsString('Due Nov 20', $html);
+        $between = substr($html, strpos($html, 'Marcel assigned this to you'), strpos($html, 'Due Nov 20') - strpos($html, 'Marcel assigned this to you'));
+        $this->assertStringNotContainsString('&bull;', $between, 'the due date sits under its own event, not as the next one');
+        $this->assertSame(2, substr_count($html, '&bull;'), 'one bullet per event');
         $this->assertSame(1, substr_count($html, '>Open task<'), 'one button for the task');
         $this->assertStringNotContainsString('One of your To-Dos', $html, 'no email subject');
         $this->assertStringNotContainsString('Click here', $html, 'no "click here" links');

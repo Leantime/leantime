@@ -373,23 +373,30 @@ class EmailWorker
         }
         $html .= '<div style="margin: 2px 0 10px; font-size: 17px; font-weight: 600; line-height: 1.35; color: #1f2933;">'.$this->e($first['summary']['title']).'</div>';
 
+        // One row per event: a bullet, the line with its details indented under it (a due date,
+        // a quoted comment), and the time. The details belong to their line, not the next one.
         $url = '';
+        $html .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">';
         foreach ($group['rows'] as $row) {
             $summary = $row['summary'];
-            $html .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
-                .'<td style="padding: 3px 0; font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['line']).'</td>'
-                .'<td style="padding: 3px 0 3px 12px; font-size: 13px; color: #52606d; white-space: nowrap; text-align: right; vertical-align: top;">'.$this->e($this->localTime((string) $row['thedate'], $timezone)).'</td>'
-                .'</tr></table>';
+            $html .= '<tr>'
+                .'<td width="16" style="width: 16px; padding: 4px 0; font-size: 15px; line-height: 1.5; color: #9aa5b1; vertical-align: top;">&bull;</td>'
+                .'<td style="padding: 4px 0; vertical-align: top;">'
+                .'<div style="font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['line']).'</div>';
             if ($summary['detail'] !== '') {
-                $html .= '<div style="padding: 0 0 3px; font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['detail']).'</div>';
+                $html .= '<div style="font-size: 14px; line-height: 1.5; color: #52606d;">'.$this->e($summary['detail']).'</div>';
             }
             if ($summary['quote'] !== '') {
-                $html .= '<div style="margin: 4px 0 6px; padding: 10px 14px; background: #f5f7fa; border-radius: 8px; font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['quote']).'</div>';
+                $html .= '<div style="margin: 4px 0 2px; padding: 10px 14px; background: #f5f7fa; border-radius: 8px; font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['quote']).'</div>';
             }
+            $html .= '</td>'
+                .'<td style="padding: 4px 0 4px 12px; font-size: 13px; line-height: 1.5; color: #52606d; white-space: nowrap; text-align: right; vertical-align: top;">'.$this->e($this->localTime((string) $row['thedate'], $timezone)).'</td>'
+                .'</tr>';
             if ($summary['url'] !== '') {
                 $url = $summary['url'];
             }
         }
+        $html .= '</table>';
 
         if ($url !== '') {
             $label = str_starts_with($first['summary']['group'], 'tickets:')
