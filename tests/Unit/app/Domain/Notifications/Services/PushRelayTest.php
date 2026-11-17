@@ -82,6 +82,13 @@ class PushRelayTest extends TestCase
         $this->assertTrue($this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'key')->isEnabled());
     }
 
+    public function test_available_follows_the_plugin_whatever_the_switch(): void
+    {
+        $this->assertFalse($this->relay([], false, 'key')->isAvailable(), 'no AdvancedAuth: grayed out');
+        $this->assertTrue($this->relay([], true, 'key')->isAvailable(), 'AdvancedAuth on, switch still off');
+        $this->assertTrue($this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'key')->isAvailable());
+    }
+
     public function test_sends_license_and_instance_identity_with_full_content(): void
     {
         $relay = $this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'LIC-123');

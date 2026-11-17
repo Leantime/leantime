@@ -143,16 +143,23 @@
                                         <br />
                                         <x-global::elements.section-header icon="fa fa-mobile">{!! __('label.push_relay') !!}</x-global::elements.section-header>
                                         <p>{!! __('label.push_relay_description') !!}</p>
+                                        @if (! $pushRelayAvailable)
+                                            <p>
+                                                <i class="fa fa-lock"></i> {{ __('label.push_relay_needs_plugin') }}
+                                                <a href="{{ BASE_URL }}/plugins/marketplace">{{ __('label.push_relay_find_plugin') }}</a>
+                                            </p>
+                                        @endif
                                         <div class="row">
                                             <div class="col-md-8">
                                                 <div class="form-group">
                                                     <x-global::forms.checkbox variant="toggle" name="pushRelayEnabled" value="1"
                                                         :checked="(bool) $pushRelayEnabled"
+                                                        :disabled="! $pushRelayAvailable"
                                                         :description="__('label.push_relay_enable_description')">{{ __('label.push_relay_enable') }}</x-global::forms.checkbox>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="pushRelayContent">{!! __('label.push_relay_content') !!}</label>
-                                                    <x-global::forms.select name="pushRelayContent" id="pushRelayContent" class="form-control">
+                                                    <x-global::forms.select name="pushRelayContent" id="pushRelayContent" class="form-control" :disabled="! $pushRelayAvailable">
                                                         <option value="full" @if ($pushRelayContent === 'full') selected @endif>{!! __('label.push_relay_content_full') !!}</option>
                                                         <option value="minimal" @if ($pushRelayContent === 'minimal') selected @endif>{!! __('label.push_relay_content_minimal') !!}</option>
                                                     </x-global::forms.select>
