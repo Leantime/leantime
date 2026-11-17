@@ -108,6 +108,7 @@ class Install
         30533,
         30534,
         30535,
+        30536,
     ];
 
     /**
@@ -3709,6 +3710,47 @@ class Install
             Log::error('Migration 30535: '.$e->getMessage());
 
             return ['Migration 30535 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30536 — zp_stats story-point totals become floats.
+     *
+     * `zp_tickets.storypoints` is a float and the effort picker offers half points ("< 2min"),
+     * so a project's point totals are frequently fractional. The stats columns were declared as
+     * integers: MySQL silently rounds on insert, but PostgreSQL rejects the value outright
+     * (SQLSTATE[22P02] invalid input syntax for type integer: "0.5"), which aborts the whole
+     * nightly `reports:dailyIngestion` run on a PostgreSQL installation.
+     *
+     * Fresh installs get the float columns from {@see \Leantime\Domain\Install\Services\SchemaBuilder}.
+     *
+     * @return bool|array<int, string> True on success, otherwise the error messages.
+     */
+    public function update_sql_30536(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_stats')) {
+                Log::info('Migration 30536 skipped: zp_stats table missing (partial install?)');
+
+                return true;
+            }
+
+            $schema->table('zp_stats', function (Blueprint $table): void {
+                $table->float('sum_points')->nullable()->change();
+                $table->float('sum_points_done')->nullable()->change();
+                $table->float('sum_points_progress')->nullable()->change();
+                $table->float('sum_points_open')->nullable()->change();
+            });
+        } catch (\Exception $e) {
+            Log::error('Migration 30536: '.$e->getMessage());
+
+            return ['Migration 30536 failed: '.$e->getMessage()];
         }
 
         return true;
