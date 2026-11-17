@@ -84,7 +84,7 @@
                 'label'      => trim((string) ($arr['description'] ?? '')),
                 'meaning'    => trim((string) ($arr['why_this_matters'] ?? '')),
                 // conclusion is the card's rich-text Description: show its text, not its HTML.
-                'measuredBy' => trim(html_entity_decode(strip_tags((string) ($arr['conclusion'] ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8')),
+                'measuredBy' => \Leantime\Core\Support\Format::plainText((string) ($arr['conclusion'] ?? '')),
                 'current'    => $current,
                 'target'     => $target,
                 'unit'       => $unit,
