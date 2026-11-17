@@ -193,15 +193,55 @@ class Push
     }
 
     /**
-     * Convenience for callers that already have a NotificationModel:
-     * extracts title/body/data from it and forwards to send().
+     * How long a push counts as "just sent" for the two duplicate checks below.
+     */
+    public const RECENT_SECONDS = 120;
+
+    /**
+     * Cache key AssignmentNotifier sets after an "assigned to you" push, so the quieter
+     * project notification about the same write doesn't reach the assignee as well.
+     */
+    public static function assignedKey(int $userId, int $ticketId): string
+    {
+        return 'push.assigned.'.$userId.'.'.$ticketId;
+    }
+
+    /**
+     * A project notification as a push: lock-screen wording from PushText, and two checks
+     * so one change reaches a phone once.
+     *
+     *   - Whoever was just pushed "assigned to you" for a task doesn't also get the
+     *     "added / updated this task" push for it.
+     *   - The same person never gets the same title and body twice within RECENT_SECONDS
+     *     (one save can raise the same notification twice).
+     *
+     * @param  array<int>  $userIds
      */
     public function sendFromNotification(NotificationModel $notification, array $userIds): void
     {
-        $title = $notification->subject !== '' ? $notification->subject : 'Leantime';
-        $body = $notification->message !== '' ? $notification->message : '';
+        $text = app(PushText::class)->forNotification($notification);
+        $data = self::buildData($notification);
 
-        $this->send($userIds, $title, $body, self::buildData($notification));
+        $ticketId = ($notification->module ?? '') === 'tickets' ? (int) ($data['moduleId'] ?? 0) : 0;
+        $fingerprint = sha1($text['title']."\n".$text['body']);
+
+        $recipients = [];
+        foreach (array_unique(array_map('intval', $userIds)) as $userId) {
+            if ($ticketId > 0 && Cache::has(self::assignedKey($userId, $ticketId))) {
+                continue;
+            }
+            // add() is false when the key is already there: this exact push just went out.
+            if (! Cache::add('push.sent.'.$userId.'.'.$fingerprint, 1, self::RECENT_SECONDS)) {
+                continue;
+            }
+            $recipients[] = $userId;
+        }
+
+        if ($recipients === []) {
+            return;
+        }
+
+        $this->send($recipients, $text['title'], $text['body'], $data);
     }
 
     /**
