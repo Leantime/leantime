@@ -1404,7 +1404,7 @@ class ProjectsServiceTest extends TestCase
 
     /**
      * duplicateProject() copies the To-Dos first, then re-links each copy to the copies of its
-     * milestone and parent. It used to patch the ORIGINAL ticket, which moved the source
+     * milestone and parent, and recreates the milestone dependencies between the copies. It used to patch the ORIGINAL ticket, which moved the source
      * project's To-Dos onto the new project's milestones and left the copies unlinked.
      */
     public function test_duplicate_project_links_the_copies_and_leaves_the_originals_alone(): void
@@ -1416,6 +1416,7 @@ class ProjectsServiceTest extends TestCase
             (object) ['id' => 11, 'type' => 'task', 'milestoneid' => 10, 'dependingTicketId' => ''],
             (object) ['id' => 12, 'type' => 'subtask', 'milestoneid' => '', 'dependingTicketId' => 11],
             (object) ['id' => 13, 'type' => 'task', 'milestoneid' => 99, 'dependingTicketId' => ''],
+            (object) ['id' => 14, 'type' => 'milestone', 'milestoneid' => '', 'dependingTicketId' => ''],
         ];
         foreach ($sourceTickets as $ticket) {
             foreach (['headline', 'description', 'editorId', 'status', 'storypoints', 'hourRemaining', 'planHours', 'priority', 'acceptanceCriteria', 'tags', 'editFrom', 'editTo', 'dateToFinish'] as $field) {
@@ -1425,8 +1426,16 @@ class ProjectsServiceTest extends TestCase
 
         $nextCopyId = 100;
         $patches = [];
+        $savedDependencies = [];
         $ticketRepo = $this->make(TicketRepository::class, [
             'getAllByProjectId' => fn () => $sourceTickets,
+            // Milestone 14 depends on 10 and on a milestone that is not part of the copy (99).
+            'getProjectMilestoneDependencies' => fn () => [10 => [], 14 => [10, 99]],
+            'setMilestoneDependencies' => function (int $milestoneId, array $dependencyIds) use (&$savedDependencies) {
+                $savedDependencies[$milestoneId] = $dependencyIds;
+
+                return true;
+            },
             'addTicket' => function () use (&$nextCopyId) {
                 return $nextCopyId++;
             },
@@ -1453,9 +1462,10 @@ class ProjectsServiceTest extends TestCase
 
         $this->assertSame(50, $service->duplicateProject(5, 3, 'Copy', '', false));
 
-        // Copies: 10 → 100, 11 → 101, 12 → 102, 13 → 103.
+        // Copies: 10 → 100, 11 → 101, 12 → 102, 13 → 103, 14 → 104.
         $this->assertSame([101 => ['milestoneid' => 100], 102 => ['dependingTicketId' => 101]], $patches);
-        $this->assertEmpty(array_intersect(array_keys($patches), [10, 11, 12, 13]), 'source To-Dos must not be modified');
+        $this->assertEmpty(array_intersect(array_keys($patches), [10, 11, 12, 13, 14]), 'source To-Dos must not be modified');
+        $this->assertSame([104 => [100]], $savedDependencies, 'milestone dependencies are recreated between the copies');
     }
 
     // ---------------------------------------------------------------------

@@ -1,6 +1,8 @@
 @php
     $currentMilestone = $milestone ?? null;
     $milestones = $milestones ?? [];
+    $milestoneDependents = $milestoneDependents ?? [];
+    $selectedDependencies = $currentMilestone->milestoneDependencies ?? [];
     $statusLabels = $statusLabels ?? [];
 @endphp
 
@@ -62,12 +64,14 @@
     </x-global::forms.field>
 
     <x-global::forms.field for="milestoneDependency" :label="__('label.dependent_on')">
-        <x-global::forms.select width="full" name="dependentMilestone" id="milestoneDependency">
-            <option value="">{!! __('label.no_dependency') !!}</option>
+        {{-- An empty entry keeps the field in the request when every dependency is deselected. --}}
+        <input type="hidden" name="dependentMilestone[]" value="" />
+        <x-global::forms.select enhanced width="full" name="dependentMilestone[]" id="milestoneDependency" multiple="multiple" data-placeholder="{{ __('label.no_dependency') }}">
             @foreach ($milestones as $milestoneRow)
-                @if ($milestoneRow->id !== $currentMilestone->id)
+                {{-- A milestone cannot depend on itself or on a milestone that depends on it. --}}
+                @if ($milestoneRow->id != $currentMilestone->id && ! in_array((int) $milestoneRow->id, $milestoneDependents, true))
                     <option value="{{ $milestoneRow->id }}"
-                        @if ($currentMilestone->milestoneid == $milestoneRow->id) selected='selected' @endif
+                        @if (in_array((int) $milestoneRow->id, $selectedDependencies, true)) selected='selected' @endif
                     >{{ $milestoneRow->headline }} </option>
                 @endif
             @endforeach

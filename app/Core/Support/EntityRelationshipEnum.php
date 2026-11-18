@@ -34,4 +34,11 @@ enum EntityRelationshipEnum: string
      * goal can hold many milestones.
      */
     case TrackedBy = 'tracked_by';
+
+    /**
+     * A prerequisite of a milestone. Direction convention: entityA = the dependent milestone
+     * (Ticket), entityB = the milestone it depends on (Ticket). Every milestone dependency is an
+     * edge, so a milestone can depend on many milestones.
+     */
+    case DependsOn = 'depends_on';
 }

@@ -2115,6 +2115,30 @@ class Projects extends BaseService implements ChecksProjectAccess
             }
         }
 
+        // Milestone dependencies are relationships, not ticket columns: recreate each one between the copies.
+        foreach ($this->ticketRepository->getProjectMilestoneDependencies($projectId) as $milestoneId => $dependencyIds) {
+            $copiedMilestoneId = $ticketIdList[$milestoneId] ?? null;
+
+            if (empty($copiedMilestoneId)) {
+                continue;
+            }
+
+            $copiedDependencyIds = [];
+            foreach ($dependencyIds as $dependencyId) {
+                if (! empty($ticketIdList[$dependencyId])) {
+                    $copiedDependencyIds[] = (int) $ticketIdList[$dependencyId];
+                }
+            }
+
+            if ($copiedDependencyIds !== []) {
+                $this->ticketRepository->setMilestoneDependencies(
+                    (int) $copiedMilestoneId,
+                    $copiedDependencyIds,
+                    session('userdata.id') === null ? null : (int) session('userdata.id')
+                );
+            }
+        }
+
         // Ideas
         $this->duplicateCanvas(
             repository: IdeaRepository::class,
