@@ -8,6 +8,9 @@ use Illuminate\Cache\RateLimiter;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\OAuth\OAuthBearerAuthenticator;
+use Leantime\Core\Auth\OAuth\OAuthServiceProvider;
+use Leantime\Core\Auth\OAuth\ProtectedResources;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
@@ -66,7 +69,7 @@ class AuthCheck
             return new Response(json_encode(['error' => 'Invalid request path']), Response::HTTP_BAD_REQUEST);
         }
 
-        if ($this->isPublicController($request->getCurrentRoute())) {
+        if ($this->isPublicController($request->getCurrentRoute()) || $this->isPublicOAuthEndpoint($request)) {
             return $next($request);
         }
 
@@ -122,6 +125,7 @@ class AuthCheck
 
                 // Check two-factor authentication
                 if (! $this->sessionTwoFASatisfied()) {
+                    $this->rememberOAuthAuthorizeRequest($request);
                     $response = $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
                 } else {
                     $authenticated = true;
@@ -136,6 +140,7 @@ class AuthCheck
                 $this->hitFailedAuthLimiter($request);
                 $response = new Response(json_encode(['error' => 'Invalid API Key']), 401);
             } else {
+                $this->rememberOAuthAuthorizeRequest($request);
                 $response = $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
             }
         }
@@ -205,6 +210,26 @@ class AuthCheck
         // checks those variants, so this fires where bearerToken() silently returned null.
         $bearer = method_exists($request, 'getBearerToken') ? $request->getBearerToken() : $request->bearerToken();
 
+        // OAuth access tokens (JWTs), only on the endpoints that accept them (/mcp) and only with
+        // the scope that endpoint requires. They never reach the personal access token lookup.
+        $protectedResourcePath = OAuthServiceProvider::enabled() ? ProtectedResources::pathForRequest($request) : null;
+
+        if (! empty($bearer) && $protectedResourcePath !== null && OAuthBearerAuthenticator::looksLikeAccessToken($bearer)) {
+            $oauthUserId = app(OAuthBearerAuthenticator::class)->authenticate($bearer, ProtectedResources::scopeFor($protectedResourcePath));
+            $oauthUser = $oauthUserId !== null ? app(\Leantime\Domain\Users\Services\Users::class)->getUser($oauthUserId) : null;
+
+            if (is_array($oauthUser) && ! empty($oauthUser['id'])) {
+                app(\Leantime\Domain\Api\Services\Api::class)->setApiUserSession($oauthUser, true);
+                $request->attributes->set(AuthenticateSession::TOKEN_AUTHENTICATED, true);
+
+                return true;
+            }
+
+            $this->hitFailedAuthLimiter($request);
+
+            return $this->unauthorizedResponse($request, $protectedResourcePath, invalidToken: true);
+        }
+
         if (! empty($bearer)) {
             $user = app(\Leantime\Domain\Auth\Services\Auth::class)->getUserByToken($bearer);
 
@@ -229,7 +254,78 @@ class AuthCheck
 
         $this->hitFailedAuthLimiter($request);
 
-        return new Response(json_encode(['error' => 'Unauthorized']), 401);
+        return $this->unauthorizedResponse($request, $protectedResourcePath, invalidToken: ! empty($bearer));
+    }
+
+    /**
+     * The 401 for a token-authenticated endpoint. On an endpoint that accepts OAuth (/mcp) it
+     * carries the RFC 9728 `WWW-Authenticate` challenge that points MCP clients to the OAuth
+     * discovery document; that header is what starts the "Sign in" flow in Claude and ChatGPT.
+     * `error="invalid_token"` tells a client holding an expired token to refresh it.
+     */
+    protected function unauthorizedResponse(IncomingRequest $request, ?string $protectedResourcePath, bool $invalidToken): Response
+    {
+        $response = new Response(json_encode(['error' => 'Unauthorized']), 401, ['Content-Type' => 'application/json']);
+
+        if ($protectedResourcePath === null) {
+            return $response;
+        }
+
+        $challenge = 'Bearer realm="leantime", resource_metadata="'.rtrim(BASE_URL, '/').'/.well-known/oauth-protected-resource/'.$protectedResourcePath.'"';
+        $challenge .= ', scope="'.ProtectedResources::scopeFor($protectedResourcePath).'"';
+
+        if ($invalidToken) {
+            $challenge .= ', error="invalid_token"';
+        }
+
+        $response->headers->set('WWW-Authenticate', $challenge);
+
+        return $response;
+    }
+
+    /**
+     * Public OAuth endpoints: the discovery documents, dynamic client registration and the token
+     * endpoint. (/oauth/authorize is not public: it needs a signed-in user.) The generic
+     * {@see self::isPublicController()} can't express these: "/.well-known/…" starts with a dot,
+     * which that check uses as its separator.
+     */
+    protected function isPublicOAuthEndpoint(IncomingRequest $request): bool
+    {
+        if (! OAuthServiceProvider::enabled()) {
+            return false;
+        }
+
+        $segments = $request->normalizedSegments();
+        $firstSegment = $segments[0] ?? '';
+        $secondSegment = $segments[1] ?? '';
+
+        if ($firstSegment === '.well-known') {
+            return in_array($secondSegment, ['oauth-protected-resource', 'oauth-authorization-server'], true);
+        }
+
+        return $firstSegment === 'oauth' && count($segments) === 2 && in_array($secondSegment, ['token', 'register'], true);
+    }
+
+    /**
+     * Remember an OAuth authorize request that is about to be bounced to the login or 2FA page,
+     * so that whichever way the user signs in (password, 2FA, SSO) they land back on the consent
+     * screen. Kept in the session rather than in ?redirect=, which loses the query string.
+     */
+    protected function rememberOAuthAuthorizeRequest(IncomingRequest $request): void
+    {
+        if (! OAuthServiceProvider::enabled() || ! $request->isMethod('GET')) {
+            return;
+        }
+
+        if ($request->normalizedSegments() !== ['oauth', 'authorize']) {
+            return;
+        }
+
+        $queryString = $request->getQueryString();
+
+        app(\Leantime\Domain\Auth\Services\Auth::class)->rememberIntendedUrl(
+            rtrim(BASE_URL, '/').'/oauth/authorize'.($queryString ? '?'.$queryString : '')
+        );
     }
 
     /**

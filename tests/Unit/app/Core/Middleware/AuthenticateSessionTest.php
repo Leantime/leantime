@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Session lifecycle hardening:
+ *  - deactivating or deleting a user logs out their open sessions on the next request (#4042);
  *  - a password change (reset, admin edit, own change elsewhere) logs out every other session,
  *    while the session that changed its own password stays signed in;
  *  - login regenerates the session id (no fixation) and logout destroys the session.
@@ -42,13 +43,17 @@ class AuthenticateSessionTest extends \Unit\TestCase
         ]));
     }
 
-    private function middlewareWithPasswordHash(string|false $passwordHash, int &$lookups = 0): AuthenticateSession
+    /**
+     * Middleware whose user lookup returns a row with the given password hash and account status
+     * (false = the user no longer exists).
+     */
+    private function middlewareWithPasswordHash(string|false $passwordHash, int &$lookups = 0, string $status = 'a'): AuthenticateSession
     {
         $userRepo = $this->make(UserRepository::class, [
-            'getUser' => function ($id) use ($passwordHash, &$lookups) {
+            'getUser' => function ($id) use ($passwordHash, &$lookups, $status) {
                 $lookups++;
 
-                return $passwordHash === false ? false : ['id' => (int) $id, 'password' => $passwordHash];
+                return $passwordHash === false ? false : ['id' => (int) $id, 'password' => $passwordHash, 'status' => $status];
             },
         ]);
 
@@ -115,6 +120,61 @@ class AuthenticateSessionTest extends \Unit\TestCase
 
         $this->assertFalse($reached);
         $this->assertSame(1, $this->logoutCalls);
+    }
+
+    public function test_active_user_with_uppercase_status_passes(): void
+    {
+        session(['userdata' => ['id' => 7, 'pwfp' => PasswordFingerprint::of('$2y$x')]]);
+
+        $lookups = 0;
+        $reached = false;
+        $this->runMiddleware($this->middlewareWithPasswordHash('$2y$x', $lookups, 'A'), $this->attachSession(IncomingRequest::create('/dashboard/home')), $reached);
+
+        $this->assertTrue($reached);
+        $this->assertSame(0, $this->logoutCalls);
+        $this->assertSame(1, $lookups, 'the status check reuses the one user lookup');
+    }
+
+    /**
+     * #4042: deactivating a user must end their open sessions on the next request.
+     */
+    public function test_deactivated_user_is_logged_out_on_next_request(): void
+    {
+        foreach (['0', '', 'i'] as $inactiveStatus) {
+            $this->logoutCalls = 0;
+            session(['userdata' => ['id' => 7, 'pwfp' => PasswordFingerprint::of('$2y$x')]]);
+
+            $reached = false;
+            $response = $this->runMiddleware($this->middlewareWithPasswordHash('$2y$x', status: $inactiveStatus), $this->attachSession(IncomingRequest::create('/tickets/showTicket/5')), $reached);
+
+            $this->assertFalse($reached, "status '$inactiveStatus' must not reach the app");
+            $this->assertSame(1, $this->logoutCalls);
+            $this->assertTrue($response->isRedirect(BASE_URL.'/auth/login'));
+        }
+    }
+
+    public function test_deactivated_user_htmx_request_gets_client_side_redirect(): void
+    {
+        session(['userdata' => ['id' => 7, 'pwfp' => PasswordFingerprint::of('$2y$x')]]);
+
+        $reached = false;
+        $response = $this->runMiddleware($this->middlewareWithPasswordHash('$2y$x', status: '0'), $this->attachSession(HtmxRequest::create('/hx/comments/foo')), $reached);
+
+        $this->assertFalse($reached);
+        $this->assertSame(1, $this->logoutCalls);
+        $this->assertSame(BASE_URL.'/auth/login', $response->headers->get('HX-Redirect'));
+    }
+
+    public function test_deactivated_user_session_api_call_gets_401(): void
+    {
+        session(['userdata' => ['id' => 7, 'pwfp' => PasswordFingerprint::of('$2y$x')]]);
+
+        $reached = false;
+        $response = $this->runMiddleware($this->middlewareWithPasswordHash('$2y$x', status: '0'), $this->attachSession(ApiRequest::create('/api/jsonrpc', 'POST')), $reached);
+
+        $this->assertFalse($reached);
+        $this->assertSame(1, $this->logoutCalls);
+        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function test_legacy_session_without_fingerprint_must_sign_in_again(): void

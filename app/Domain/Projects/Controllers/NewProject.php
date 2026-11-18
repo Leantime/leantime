@@ -6,7 +6,6 @@ use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -121,8 +120,9 @@ class NewProject extends Controller
             'psettings' => $_POST['globalProjectUserAccess'],
             'type' => $_POST['type'] ?? 'project',
             'parent' => $parent,
-            'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
-            'end' => $_POST['end'] ? format(value: $_POST['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime() : '',
+            // Raw user-format dates: addProject() converts them to UTC (and the form re-renders them on error).
+            'start' => $_POST['start'] ?? '',
+            'end' => $_POST['end'] ?? '',
         ];
 
         if ($values['name'] === '') {

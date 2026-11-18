@@ -8,6 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
+use Leantime\Core\Auth\AccountStatus;
 use Leantime\Core\Auth\PasswordFingerprint;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
@@ -64,6 +65,11 @@ class Auth implements Authenticatable
     public AuthRepository $authRepo;
 
     public UserRepository $userRepo;
+
+    /**
+     * Session key of the URL to return to after sign-in ({@see self::rememberIntendedUrl()}).
+     */
+    public const INTENDED_URL_SESSION_KEY = 'auth.intendedUrl';
 
     private AccessTokenRepository $tokenRepo;
 
@@ -153,8 +159,16 @@ class Auth implements Authenticatable
             if ($ldap->connect() && $ldap->bind($username, $password)) {
                 // Update username to include domain
                 $usernameWDomain = $ldap->getEmail($username);
-                // Get user
-                $user = $this->userRepo->getUserByEmail($usernameWDomain);
+                // Get the user whatever their status: an account an admin deactivated must be
+                // refused, not mistaken for a new one (creating it again hits the unique username).
+                $user = $this->userRepo->getUserByEmail($usernameWDomain, '');
+
+                if ($user !== false && ! AccountStatus::isActive($user)) {
+                    Log::info('Ldap login refused: the Leantime account is not active');
+                    $this->logFailedLogin($username);
+
+                    return false;
+                }
 
                 $ldapUser = $ldap->getSingleUser($username);
 
@@ -504,6 +518,40 @@ class Auth implements Authenticatable
     }
 
     /**
+     * getPendingInviteToken - the invite token of an account whose owner chose a password in the
+     * first onboarding step but left before the last one, so the account is still pending.
+     *
+     * Such an account can't sign in (only active accounts can), and before this the login page
+     * answered "Username or password incorrect!" although both were right. The token is handed
+     * out only when the password matches the one the person chose, so it never reveals more than
+     * the account owner already knows.
+     *
+     * @internal Not exposed over JSON-RPC; only the login flow resumes an onboarding.
+     *
+     * @param  string  $username  the email address entered on the login page
+     * @param  string  $password  the password entered on the login page
+     * @return string|null the token for /auth/userInvite/{token}, or null when there is no such account
+     */
+    public function getPendingInviteToken(string $username, string $password): ?string
+    {
+        if ($username === '' || $password === '') {
+            return null;
+        }
+
+        $user = $this->userRepo->getUserByEmail($username, 'i');
+
+        if ($user === false || empty($user['password']) || empty($user['pwReset'])) {
+            return null;
+        }
+
+        if (! password_verify($password, (string) $user['password'])) {
+            return null;
+        }
+
+        return (string) $user['pwReset'];
+    }
+
+    /**
      * generateLinkAndSendEmail - generates a password reset link and emails it to the user
      *
      * The link is built from the trusted application URL ({@see TrustedAppUrl}), never from the
@@ -626,6 +674,48 @@ class Auth implements Authenticatable
         }
 
         return 'error';
+    }
+
+    /**
+     * Remember where to send the user once they have signed in. Used for OAuth authorize requests,
+     * whose full query string has to survive the login, 2FA and SSO round trips (?redirect= can't
+     * carry it through SSO). Only same-instance URLs are accepted.
+     */
+    public function rememberIntendedUrl(string $url): void
+    {
+        if (! $this->isOwnUrl($url)) {
+            return;
+        }
+
+        session([self::INTENDED_URL_SESSION_KEY => $url]);
+    }
+
+    /**
+     * Where to send a user who just finished signing in: a remembered intended URL wins (once),
+     * otherwise the requested redirect, made safe by {@see self::resolveSafeRedirect()}.
+     *
+     * Call it only where sign-in is complete. Login hands over to 2FA first when 2FA is on, and the
+     * intended URL must still be there when 2FA finishes.
+     */
+    public function postLoginRedirect(?string $requestedRedirect): string
+    {
+        $intendedUrl = session()->pull(self::INTENDED_URL_SESSION_KEY);
+
+        if (is_string($intendedUrl) && $this->isOwnUrl($intendedUrl)) {
+            return $intendedUrl;
+        }
+
+        return $this->resolveSafeRedirect($requestedRedirect);
+    }
+
+    /**
+     * Whether a URL points into this Leantime instance (same base URL, real path boundary).
+     */
+    private function isOwnUrl(string $url): bool
+    {
+        $base = rtrim(BASE_URL, '/');
+
+        return $base !== '' && str_starts_with($url, $base.'/') && ! preg_match('/[\x00-\x1F\x7F]/', $url);
     }
 
     /**
@@ -930,6 +1020,14 @@ class Auth implements Authenticatable
 
     }
 
+    /**
+     * Resolve the user behind a personal access token (Bearer).
+     *
+     * Returns false for an unknown or expired token, and for a token whose user was deleted or
+     * deactivated. Records the token's last use on success.
+     *
+     * @return array<string, mixed>|false The token user's zp_user row, or false when refused.
+     */
     public function getUserByToken(string $token): array|bool
     {
         $tokenModel = $this->tokenRepo->findToken($token);
@@ -942,9 +1040,9 @@ class Auth implements Authenticatable
             return false;
         }
 
-        // Load the user associated with this token
+        // Load the user associated with this token. Tokens of a deactivated user stop working.
         $user = $this->userRepo->getUser($tokenModel['tokenable_id']);
-        if (! $user) {
+        if (! AccountStatus::isActive($user)) {
             return false;
         }
 

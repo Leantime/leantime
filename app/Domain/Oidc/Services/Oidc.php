@@ -8,6 +8,7 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Auth\AccountStatus;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Language;
@@ -284,7 +285,14 @@ class Oidc
             $this->displayError('oidc.error.emailNotVerified');
         }
 
-        $user = $this->userRepo->getUserByEmail($userName);
+        // Look the user up whatever their status: an account an admin deactivated (or an invite not
+        // accepted yet) must be refused, not mistaken for a new one.
+        $user = $this->userRepo->getUserByEmail($userName, '');
+
+        if ($user !== false && ! AccountStatus::isActive($user)) {
+            Log::info('OIDC login refused: the Leantime account is not active');
+            $this->displayError('oidc.error.userInactive');
+        }
 
         if ($user === false) {
             if ($this->createUser) {
@@ -361,7 +369,7 @@ class Oidc
             return Frontcontroller::redirect($mobileRedirect.$separator.'code='.urlencode($code), 302);
         }
 
-        return Frontcontroller::redirect(BASE_URL.'/dashboard/home');
+        return Frontcontroller::redirect($this->authService->postLoginRedirect(null));
     }
 
     /**

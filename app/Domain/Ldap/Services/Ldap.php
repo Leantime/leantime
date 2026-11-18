@@ -336,8 +336,9 @@ class Ldap
         $userRepo = app()->make(UserRepository::class);
 
         foreach ($ldapUsers as $user) {
-            // Update
-            $checkUser = $userRepo->getUserByEmail($user['user']);
+            // Update. Look the user up whatever their status: a deactivated account is updated
+            // (and stays deactivated) instead of being inserted again, which hits the unique username.
+            $checkUser = $userRepo->getUserByEmail($user['user'], '');
 
             if (is_array($checkUser)) {
                 $userRepo->patchUser($checkUser['id'], ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'role' => $user['role']]);

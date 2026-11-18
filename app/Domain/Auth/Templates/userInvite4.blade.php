@@ -15,7 +15,7 @@
 
         <input type="hidden" name="step" value="4"/>
 
-        {{  $tpl->displayInlineNotification() }}
+        {!! $tpl->displayInlineNotification() !!}
 
         <x-global::forms.label>{{ __('label.onboarding_work_start') }}</x-global::forms.label>
         <div class="">

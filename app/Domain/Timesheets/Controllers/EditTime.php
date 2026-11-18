@@ -111,7 +111,9 @@ class EditTime extends Controller
     private function assignTemplateVars(): void
     {
         $this->tpl->assign('allClients', $this->clientService->getAll());
-        $this->tpl->assign('allProjects', $this->projectService->getAll(showClosedProjects: false));
+        // Closed projects stay in the list: the entry being edited may belong to one, and the
+        // select would otherwise fall back to another project and move the entry on save.
+        $this->tpl->assign('allProjects', $this->projectService->getAll(showClosedProjects: true));
         $this->tpl->assign('allTickets', $this->ticketService->getAll());
         $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
     }

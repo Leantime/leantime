@@ -7,6 +7,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Auth\Services\Onboarding as OnboardingService;
 use Symfony\Component\HttpFoundation\Response;
 
 class Login extends Controller
@@ -15,15 +16,19 @@ class Login extends Controller
 
     private Environment $config;
 
+    private OnboardingService $onboardingService;
+
     /**
      * init - initialize private variables
      */
     public function init(
         AuthService $authService,
-        Environment $config
+        Environment $config,
+        OnboardingService $onboardingService
     ): void {
         $this->authService = $authService;
         $this->config = $config;
+        $this->onboardingService = $onboardingService;
     }
 
     /**
@@ -70,7 +75,6 @@ class Login extends Controller
 
             // Same array guard as the GET path above — redirectUrl[]=x must not 500 the login POST.
             $rawRedirect = $_POST['redirectUrl'] ?? null;
-            $redirectUrl = $this->authService->resolveSafeRedirect(is_string($rawRedirect) ? $rawRedirect : null);
 
             $username = trim($_POST['username']);
             $password = $_POST['password'];
@@ -95,8 +99,17 @@ class Login extends Controller
                     return FrontcontrollerCore::redirect(BASE_URL.'/auth/twoFA');
                 }
 
-                return FrontcontrollerCore::redirect($redirectUrl);
+                return FrontcontrollerCore::redirect($this->authService->postLoginRedirect(is_string($rawRedirect) ? $rawRedirect : null));
             } else {
+                // Right password, but the account's onboarding was left before the last step, so
+                // it is still pending. Send the person back into it instead of a misleading error.
+                $inviteToken = $this->onboardingService->resumeOnboarding($username, $password);
+                if ($inviteToken !== null) {
+                    $this->tpl->setNotification('notifications.finish_account_setup', 'info');
+
+                    return FrontcontrollerCore::redirect(BASE_URL.'/auth/userInvite/'.$inviteToken.'?step=2');
+                }
+
                 $this->tpl->setNotification('notifications.username_or_password_incorrect', 'error');
 
                 return FrontcontrollerCore::redirect(BASE_URL.'/auth/login');

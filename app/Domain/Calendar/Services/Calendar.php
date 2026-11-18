@@ -10,6 +10,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Domains\BaseService;
 use Leantime\Core\Exceptions\MissingParameterException;
+use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\OutboundHttpClient;
 use Leantime\Domain\Calendar\Events\CalendarConnected;
@@ -468,6 +469,7 @@ class Calendar extends BaseService
      * @return IcalCalendar The iCal calendar generated from the calendar events.
      *
      * @throws MissingParameterException If either user hash or calendar hash is empty.
+     * @throws NotFoundException If the hashes don't match a user's iCal feed.
      *
      * Not @api: served by the PUBLIC, hash-authenticated /calendar/ical route (no session). The
      * userHash+calHash secrets ARE the credential; exposing it over JSON-RPC would let a caller
@@ -482,8 +484,10 @@ class Calendar extends BaseService
 
         $calendarEvents = $this->calendarRepo->getCalendarBySecretHash($userHash, $calHash);
 
-        if (! $calendarEvents) {
-            throw new \Exception('Calendar could not be retrieved');
+        // false = the hashes don't match a feed. An empty array is a valid feed with no events
+        // yet and is served as an empty calendar, so calendar apps keep the subscription.
+        if ($calendarEvents === false) {
+            throw new NotFoundException('Calendar could not be retrieved');
         }
 
         // The feed is fetched without a login, so the owner's timezone comes from the session

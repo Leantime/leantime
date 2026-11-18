@@ -58,9 +58,34 @@ class Install
         $this->I->waitForText('Your Leantime journey is about to begin', 90);
 
         $this->I->click('Complete Sign up');
+        $this->waitForActiveAccount($email);
 
         Fixtures::add('installed', true);
         $this->suppressModals();
+    }
+
+    /**
+     * Wait until the last onboarding step has activated the owner account.
+     *
+     * The account stays pending ('i') until "Complete Sign up" finishes, and pending accounts
+     * can't log in or use a token. Without this wait, a test that starts right after the install
+     * (e.g. BearerApiCest, which mints a token in the DB) could get 401 while that request was
+     * still running.
+     */
+    private function waitForActiveAccount(string $email): void
+    {
+        $deadline = time() + 90;
+
+        do {
+            $status = (string) $this->I->grabFromDatabase('zp_user', 'status', ['username' => $email]);
+            if (strtolower($status) === 'a') {
+                return;
+            }
+
+            usleep(250_000);
+        } while (time() < $deadline);
+
+        throw new \RuntimeException("Install: the owner account {$email} was not activated within 90 seconds (status '{$status}').");
     }
 
     /**

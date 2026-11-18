@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Leantime\Core\Auth\AccountStatus;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Auth\RoleCeiling;
 use Leantime\Core\Events\DispatchesEvents;
@@ -53,6 +54,13 @@ class Api
     }
 
     /**
+     * Resolve the user behind an `lt_{user}_{secret}` API key and establish its session.
+     *
+     * Returns false for a malformed key, an unknown key user, a wrong secret, or a key an admin
+     * deactivated (status is not active).
+     *
+     * @return array<string, mixed>|false The API key's zp_user row, or false when the key is refused.
+     *
      * @throws BindingResolutionException
      *
      * @internal Not exposed over JSON-RPC: it verifies a key AND rewrites the session to that
@@ -60,34 +68,35 @@ class Api
      */
     public function getAPIKeyUser(string $apiKey): bool|array
     {
-
-        // Split apiKey into parts
         $apiKeyParts = explode('_', $apiKey);
 
         if (count($apiKeyParts) != 3) {
             return false;
         }
 
-        $namespace = $apiKeyParts[0];
-        $user = $apiKeyParts[1];
-        $key = $apiKeyParts[2];
+        [$namespace, $keyUsername, $keySecret] = $apiKeyParts;
 
         if ($namespace != 'lt') {
             return false;
         }
 
-        $apiUser = $this->apiRepository->getAPIKeyUser($user);
+        $apiUser = $this->apiRepository->getAPIKeyUser($keyUsername);
 
-        if ($apiUser) {
-            if (password_verify($key, $apiUser['password'])) {
-
-                $this->setApiUserSession($apiUser, true);
-
-                return $apiUser;
-            }
+        if (! is_array($apiUser)) {
+            return false;
         }
 
-        return false;
+        if (! password_verify($keySecret, $apiUser['password'])) {
+            return false;
+        }
+
+        if (! AccountStatus::isActive($apiUser)) {
+            return false;
+        }
+
+        $this->setApiUserSession($apiUser, true);
+
+        return $apiUser;
     }
 
     /**

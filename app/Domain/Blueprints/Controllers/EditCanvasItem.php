@@ -144,7 +144,7 @@ class EditCanvasItem
         $this->tpl->assign('relatesLabels', $relatesLabels);
         $this->tpl->assign('canvasTypes', $canvasTypes);
         $this->tpl->assign('statusLabels', $statusLabels);
-        $this->tpl->assign('dataLabels', $this->blueprintsService->getTranslatedDataLabels($this->template));
+        $this->tpl->assign('dataLabels', $this->blueprintsService->getTranslatedDataLabels($this->template, (string) ($canvasItem['box'] ?? '')));
 
         return $this->tpl->displayPartial('blueprints.canvasDialog');
     }
@@ -413,7 +413,6 @@ class EditCanvasItem
         $this->tpl->assign('canvasTypes', $this->blueprintsService->getTranslatedBoxes($this->template));
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('relatesLabels', $relatesLabels);
-        $this->tpl->assign('dataLabels', $this->blueprintsService->getTranslatedDataLabels($this->template));
         if (isset($data['id'])) {
             $canvasItemId = (int) $data['id'];
             $comments = $this->commentsRepo->getComments($commentModule, $canvasItemId);
@@ -436,6 +435,10 @@ class EditCanvasItem
             $comments = [];
             $this->tpl->assign('canvasItem', $value);
         }
+        $this->tpl->assign('dataLabels', $this->blueprintsService->getTranslatedDataLabels(
+            $this->template,
+            is_array($value) ? (string) ($value['box'] ?? '') : ''
+        ));
         $this->tpl->assign('comments', $comments);
         $this->tpl->assign('milestones', $this->ticketService->getAllMilestones([
             'sprint' => '',

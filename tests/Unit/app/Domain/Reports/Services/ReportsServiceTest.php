@@ -2,8 +2,11 @@
 
 namespace Unit\app\Domain\Reports\Services;
 
+use Carbon\CarbonImmutable;
 use Leantime\Core\Configuration\AppSettings as AppSettingCore;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Support\CarbonMacros;
+use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
 use Leantime\Domain\Reports\Services\Reports;
@@ -239,5 +242,66 @@ class ReportsServiceTest extends TestCase
 
         $this->assertSame([['date' => '2024-03-03']], $result['chart']);
         $this->assertSame(11, $result['currentSprintId']);
+    }
+
+    /**
+     * Builds the Reports service with a Reports repository whose runTicketReport() returns $report.
+     */
+    private function makeServiceWithTicketReport(array|bool $report): Reports
+    {
+        return new Reports(
+            $this->make(AppSettingCore::class),
+            $this->make(EnvironmentCore::class),
+            $this->make(ProjectRepository::class),
+            $this->make(SprintRepository::class),
+            $this->make(ReportRepository::class, [
+                'runTicketReport' => fn () => $report,
+            ]),
+            $this->make(SettingsService::class),
+            $this->make(TicketRepository::class),
+            $this->make(SprintService::class),
+        );
+    }
+
+    /**
+     * The Delivery Metrics summary shows the realtime report's numbers as of now, so its date
+     * must be the user's today. The repository row carries the DB's UTC "yesterday" (the daily
+     * snapshot date), which showed one or two days behind for users west of UTC (#4055).
+     */
+    public function test_realtime_report_is_dated_today_in_the_users_timezone(): void
+    {
+        $timezone = 'America/New_York';
+        session([
+            'usersettings.timezone' => $timezone,
+            'usersettings.language' => 'en-US',
+            'usersettings.date_format' => 'm/d/Y',
+            'usersettings.time_format' => 'h:i A',
+        ]);
+        CarbonImmutable::mixin(new CarbonMacros($timezone, 'en-US', 'm/d/Y', 'h:i A'));
+        app()->forgetInstance(DateTimeHelper::class);
+
+        // 10:00 and 21:30 on 11/14 in New York: UTC is still on 11/14, then already on 11/15.
+        try {
+            foreach (['2026-11-14 15:00:00', '2026-11-15 02:30:00'] as $utcNow) {
+                CarbonImmutable::setTestNow(CarbonImmutable::parse($utcNow, 'UTC'));
+
+                $report = $this->makeServiceWithTicketReport([
+                    'projectId' => 7,
+                    'date' => CarbonImmutable::now('UTC')->subDay()->format('Y-m-d'),
+                    'sum_todos' => 3,
+                ])->getRealtimeReport(7, '');
+
+                $this->assertSame('11/14/2026', format($report['date'])->date(), "at $utcNow UTC");
+                $this->assertSame(3, $report['sum_todos']);
+            }
+        } finally {
+            CarbonImmutable::setTestNow();
+            app()->forgetInstance(DateTimeHelper::class);
+        }
+    }
+
+    public function test_realtime_report_passes_an_empty_result_through(): void
+    {
+        $this->assertFalse($this->makeServiceWithTicketReport(false)->getRealtimeReport(7, ''));
     }
 }

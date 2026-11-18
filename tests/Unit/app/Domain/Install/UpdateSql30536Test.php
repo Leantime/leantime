@@ -7,10 +7,10 @@ use Leantime\Domain\Install\Repositories\Install;
 use Unit\TestCase;
 
 /**
- * update_sql_30535 moves milestone dependencies from zp_tickets.milestoneid into depends_on rows
+ * update_sql_30536 moves milestone dependencies from zp_tickets.milestoneid into depends_on rows
  * of zp_entity_relationship and clears milestoneid on milestones. To-Dos keep their milestoneid.
  */
-class UpdateSql30535Test extends TestCase
+class UpdateSql30536Test extends TestCase
 {
     private function installer(Connection $connection): Install
     {
@@ -52,7 +52,7 @@ class UpdateSql30535Test extends TestCase
             ['id' => 4, 'type' => 'task', 'milestoneid' => 2],
         ]);
 
-        $this->assertTrue($this->installer($connection)->update_sql_30535());
+        $this->assertTrue($this->installer($connection)->update_sql_30536());
 
         $this->assertSame([2 => [1], 3 => [2]], $this->dependencies($connection));
 
@@ -77,7 +77,7 @@ class UpdateSql30535Test extends TestCase
             ['entityA' => 3, 'entityAType' => 'Ticket', 'entityB' => 2, 'entityBType' => 'Ticket', 'relationship' => 'depends_on'],
         ]);
 
-        $this->assertTrue($this->installer($connection)->update_sql_30535());
+        $this->assertTrue($this->installer($connection)->update_sql_30536());
 
         $this->assertSame([3 => [1, 2]], $this->dependencies($connection));
     }
@@ -92,7 +92,7 @@ class UpdateSql30535Test extends TestCase
             ['id' => 4, 'type' => 'milestone', 'milestoneid' => 1],
         ]);
 
-        $this->assertTrue($this->installer($connection)->update_sql_30535());
+        $this->assertTrue($this->installer($connection)->update_sql_30536());
 
         $this->assertSame([], $this->dependencies($connection));
         $this->assertSame([], $connection->table('zp_tickets')->where('type', 'milestone')->whereNotNull('milestoneid')->pluck('id')->all());
@@ -106,14 +106,14 @@ class UpdateSql30535Test extends TestCase
             ['id' => 2, 'type' => 'milestone', 'milestoneid' => 1],
         ]);
 
-        $this->assertTrue($this->installer($connection)->update_sql_30535());
-        $this->assertTrue($this->installer($connection)->update_sql_30535());
+        $this->assertTrue($this->installer($connection)->update_sql_30536());
+        $this->assertTrue($this->installer($connection)->update_sql_30536());
 
         $this->assertSame([2 => [1]], $this->dependencies($connection));
     }
 
     public function test_skipped_without_the_tables(): void
     {
-        $this->assertTrue($this->installer(new SqliteStandInForInstalledDatabase)->update_sql_30535());
+        $this->assertTrue($this->installer(new SqliteStandInForInstalledDatabase)->update_sql_30536());
     }
 }

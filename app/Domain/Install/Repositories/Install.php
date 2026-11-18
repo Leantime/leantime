@@ -108,6 +108,7 @@ class Install
         30533,
         30534,
         30535,
+        30536,
     ];
 
     /**
@@ -3691,7 +3692,31 @@ class Install
     }
 
     /**
-     * Migration 30535 — milestone dependencies move to zp_entity_relationship.
+     * Migration 30535 — OAuth tables for MCP sign-in (Claude, ChatGPT, …): zp_oauth_clients,
+     * zp_oauth_auth_codes, zp_oauth_access_tokens, zp_oauth_refresh_tokens. Laravel Passport's schema
+     * with the zp_ prefix; the definitions live in SchemaBuilder so fresh installs get the same tables.
+     *
+     * @return bool|array<int, string> True on success, otherwise the error messages.
+     */
+    public function update_sql_30535(): bool|array
+    {
+        if (! $this->connection instanceof \Illuminate\Database\Connection) {
+            return ['Migration 30535 failed: no schema builder for this database connection'];
+        }
+
+        try {
+            app(\Leantime\Domain\Install\Services\SchemaBuilder::class)->createOAuthTables($this->connection->getSchemaBuilder());
+        } catch (\Exception $e) {
+            Log::error('Migration 30535: '.$e->getMessage());
+
+            return ['Migration 30535 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30536 — milestone dependencies move to zp_entity_relationship.
      *
      * A milestone's first dependency used to live in zp_tickets.milestoneid; every dependency is
      * now a `depends_on` relationship (entityA = the dependent milestone, entityB = its
@@ -3699,7 +3724,7 @@ class Install
      * and is then cleared. For To-Dos milestoneid still means "belongs to milestone" and is left
      * alone.
      */
-    public function update_sql_30535(): bool|array
+    public function update_sql_30536(): bool|array
     {
         try {
             /** @var \Illuminate\Database\Connection $connection */
@@ -3707,7 +3732,7 @@ class Install
             $schema = $connection->getSchemaBuilder();
 
             if (! $schema->hasTable('zp_tickets') || ! $schema->hasTable('zp_entity_relationship')) {
-                Log::info('Migration 30535 skipped: zp_tickets or zp_entity_relationship table missing (partial install?)');
+                Log::info('Migration 30536 skipped: zp_tickets or zp_entity_relationship table missing (partial install?)');
 
                 return true;
             }
@@ -3774,9 +3799,9 @@ class Install
                     ->update(['milestoneid' => null]);
             });
         } catch (\Exception $e) {
-            Log::error('Migration 30535: '.$e->getMessage());
+            Log::error('Migration 30536: '.$e->getMessage());
 
-            return ['Migration 30535 failed: '.$e->getMessage()];
+            return ['Migration 30536 failed: '.$e->getMessage()];
         }
 
         return true;

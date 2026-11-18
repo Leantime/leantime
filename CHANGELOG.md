@@ -1,3 +1,68 @@
+# Version: 3.15.3
+
+## Bug Fixes
+- **Unfinished onboarding** - A new owner or invited user who left the welcome steps before the end could not log in ("Username or password incorrect!" with the right password). Logging in with the chosen password now takes them back to the welcome steps to finish (#4035)
+- **Onboarding across sessions** - Finishing the welcome steps in a different browser session no longer fails with a server error. It sends the person to log in and finish instead (#4035)
+- **Onboarding messages** - Notifications on welcome steps 2–5 no longer show as escaped HTML (#4035)
+
+## Upgrade Notes
+- No database changes.
+
+---
+
+# Version: 3.15.2
+
+## Security
+- **Comment polling** - `comments.pollComments` could return to-do comments from a project you can't access when a canvas item in one of your projects had the same id. Comments are now tied to the entity of their own module (#4084)
+- **Draft docs** - Other users' drafts stay private through comments, comment polling, edits and deletes, including over JSON-RPC (#4083)
+- **Inactive accounts via SSO** - LDAP and OIDC logins refuse deactivated and not-yet-accepted accounts instead of failing on a duplicate account (which showed the database error on the OIDC login page). An LDAP import no longer stops at a deactivated user and leaves them deactivated (#4082)
+
+## Bug Fixes
+- **Docs from templates** - Docs created from a content template show in the Contents tree and search again (#4083)
+- **New project dates** - New projects store their start and end dates in UTC, so they no longer show a day off for users outside UTC. Projects created before this keep their dates (#4081)
+- **Delivery Metrics** - The summary heading shows the user's today instead of the previous UTC day (#4080, fixes #4055)
+- **iCal feed** - Calendar apps polling an old feed URL get a 404 without writing an error to the log each time (#4079)
+
+## Upgrade Notes
+- No database changes.
+- LDAP and OIDC logins are refused for accounts that are deactivated or still pending an invite, the same as the password login.
+
+---
+
+# Version: 3.15.1
+
+## Security
+- **Calendar privacy** - The calendar showed the personal events of every user with a higher user id; it now shows only your own events (#4034)
+- **Deactivated users** - Deactivating a user now ends their open sessions on the next request, and their API keys and access tokens stop working. Setting an API key to "Deactivated" now actually disables it (#4042, #4075)
+- **Draft docs** - A draft in Docs can only be opened by its author until it is published, also through its link, the activity feed and the API (#4056, #4072)
+
+## New Features
+- **Bulk project card data** - A new `getProjectsCardData` API call returns card data for many projects in one request (#4026)
+
+## Bug Fixes
+- **Calendar iCal feed** - Subscribing to the iCal feed from a calendar app works again, and the feed includes your To-Dos (#4018, #4077)
+- **To-do dialog headline** - The to-do dialog shows the To-Do's title in its header again (#4008, #4071)
+- **Saving descriptions on PostgreSQL** - Saving a To-Do with a long description no longer fails with a server error on PostgreSQL (#4005, #4069)
+- **Goal dates** - Goal start and end dates no longer move by a day each time a goal is saved (#4046, #4073)
+- **Project duplication** - Duplicating a project links the copied To-Dos to the copied milestones and parents, and no longer changes the original project (#4067)
+- **Client deletion** - The delete dialog lists the projects that will be deleted with the client, and they are cleaned up like a normal project delete (#4040, #4076)
+- **Show Closed Projects** - The "Show Closed Projects" toggle on All Projects works again (#4039, #4070)
+- **Canvas field labels** - The Project Value Canvas and Strategy Message dialogs show their field labels instead of translation keys (#4049, #4074)
+- **Subfolder installs** - Old `/download.php` attachment links and the mobile app's SSO login keep the subfolder Leantime runs in, and the nginx examples work for root and subfolder installs (#4062, #4068, #4065, #4061)
+- **MCP priority labels** - MCP tools label ticket priorities correctly (1 = Critical) (#4030)
+
+## Improvements
+- **LDAP** - Email and group attributes are matched case-insensitively (Active Directory `userPrincipalName`/`memberOf` work), a partial `LEAN_LDAP_KEYS` mapping no longer causes a login error, and `sample.env` shows valid JSON (#4028)
+- **Cache clearing** - `php bin/leantime cache:clearAll` also empties the per-domain data caches (#4027)
+
+## Upgrade Notes
+- No database changes.
+- API keys and users whose status is not active can no longer authenticate with existing sessions, API keys or access tokens.
+- Deleting a client that has projects now also requires permission to delete projects (default roles: manager and above). Over the API, `clients.delete` refuses a client whose projects have To-Dos, as the screen already did.
+- The project pickers when adding a user or adding time no longer list closed projects.
+
+---
+
 # Version: 3.15.0
 
 ## New Features

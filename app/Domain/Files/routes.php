@@ -12,14 +12,16 @@ use Leantime\Domain\Files\Controllers\Upload;
 | in ticket descriptions by the old TinyMCE editor. The file was removed in
 | the storage refactor but the URLs live on in the database. This route
 | preserves those links permanently by forwarding all query parameters to
-| the active /files/get endpoint.
+| the active /files/get endpoint. The target is built from BASE_URL so an
+| installation in a subfolder (LEAN_APP_URL = https://example.com/leantime)
+| keeps its /leantime prefix.
 |
 */
 
 Route::get('/download.php', function () {
     $qs = request()->getQueryString();
 
-    return redirect('/files/get'.($qs ? '?'.$qs : ''), 301);
+    return redirect(BASE_URL.'/files/get'.($qs ? '?'.$qs : ''), 301);
 });
 
 /*

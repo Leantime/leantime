@@ -3,19 +3,23 @@
 namespace Leantime\Domain\Clients\Services;
 
 use Leantime\Core\Auth\Permissions\RequiresPermission;
+use Leantime\Core\Domains\BaseService;
+use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\EntityExistsException;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Clients\Permissions\ClientsPermissions;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Files\Services\Files as FileService;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
  * Client service - Business logic for client management.
  */
-class Clients
+class Clients extends BaseService
 {
     private ProjectRepository $projectRepository;
 
@@ -27,18 +31,22 @@ class Clients
 
     private UserRepository $userRepository;
 
+    private ProjectService $projectService;
+
     public function __construct(
         ProjectRepository $projectRepository,
         ClientRepository $clientRepository,
         CommentService $commentService,
         FileService $fileService,
         UserRepository $userRepository,
+        ProjectService $projectService,
     ) {
         $this->projectRepository = $projectRepository;
         $this->clientRepository = $clientRepository;
         $this->commentService = $commentService;
         $this->fileService = $fileService;
         $this->userRepository = $userRepository;
+        $this->projectService = $projectService;
     }
 
     /**
@@ -126,16 +134,40 @@ class Clients
     }
 
     /**
-     * Deletes a client and its associated projects.
+     * Deletes a client and its projects.
+     *
+     * A client whose projects hold to-dos is not deleted. Its projects are deleted through
+     * {@see ProjectService::deleteProject()}, so they are cleaned up exactly like a project deleted
+     * from its settings (team memberships removed, cached project access refreshed). Deleting
+     * projects needs projects.delete as well; without it nothing is deleted.
      *
      * @param  int  $id  Id of the client to be deleted
-     * @return bool Returns true on success, false on failure
+     * @return bool Returns true on success, false when the client has to-dos or a project could not be deleted
+     *
+     * @throws AuthorizationException When the client has projects and the user may not delete projects
      *
      * @api
      */
     #[RequiresPermission(ClientsPermissions::DELETE, global: true)]
     public function delete(int $id): bool
     {
+        if ($this->clientRepository->hasTickets($id)) {
+            return false;
+        }
+
+        $clientProjects = $this->getProjectsDeletedWithClient($id);
+
+        if ($clientProjects !== []) {
+            $this->authorize(ProjectsPermissions::DELETE);
+        }
+
+        foreach ($clientProjects as $project) {
+            $projectDeleted = $this->projectService->deleteProject((int) $project['id']);
+            if (! $projectDeleted) {
+                return false;
+            }
+        }
+
         return $this->clientRepository->deleteClient($id);
     }
 
@@ -207,6 +239,19 @@ class Clients
     public function getClientProjects(int $clientId): array
     {
         return $this->projectRepository->getClientProjects($clientId);
+    }
+
+    /**
+     * The projects that deleting this client would delete: all of its projects, including ones
+     * that lists like getClientProjects() hide. The delete dialog lists them.
+     *
+     * @param  int  $clientId  Client id
+     * @return array<int, array{id: int, name: string}> The client's projects
+     */
+    #[RequiresPermission(ClientsPermissions::VIEW, global: true)]
+    public function getProjectsDeletedWithClient(int $clientId): array
+    {
+        return $this->projectRepository->getAllProjectsOfClient($clientId);
     }
 
     /**

@@ -26,6 +26,8 @@ use Leantime\Domain\ContentTemplates\Models\ContentTemplate;
  *
  * Mode 'replace' wipes all box='article' rows under the wiki before inserting.
  * Mode 'add' (default) appends, preserving any existing articles.
+ *
+ * Articles are created published: a template sets up shared docs for the team.
  */
 class WikiApplier implements Applier
 {
@@ -87,6 +89,7 @@ class WikiApplier implements Applier
                 'description' => (string) ($article['content'] ?? ''),
                 'parent' => $parent,
                 'author' => $userId,
+                'status' => 'published',
                 'created' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'modified' => dtHelper()->dbNow()->formatDateTimeForDb(),
                 'sortindex' => $sortBase + $offset * 10,

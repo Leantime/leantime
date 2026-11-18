@@ -14,6 +14,20 @@ class Comments
         $this->db = $db->getConnection();
     }
 
+    /**
+     * Comments on one entity, newest first unless $orderByState is 1.
+     *
+     * The module must match exactly. The database collation may compare case- and
+     * accent-insensitively ("ARTICLE", "árticle" match "article"), and callers authorize by the
+     * module they pass, so a spelling the service doesn't recognize must not read another
+     * module's comments.
+     *
+     * @param  string  $module  The stored comment module (ticket, article, ...)
+     * @param  int  $moduleId  The entity id
+     * @param  int  $parent  Parent comment id (0 = top level, negative = any)
+     * @param  int  $orderByState  1 for oldest first
+     * @return false|array Comment rows as arrays
+     */
     public function getComments(string $module, int $moduleId, int $parent = 0, int $orderByState = 0): false|array
     {
         $orderBy = $orderByState === 1 ? 'asc' : 'desc';
@@ -21,6 +35,7 @@ class Comments
         $query = $this->db->table('zp_comment as comment')
             ->select(
                 'comment.id',
+                'comment.module',
                 'comment.text',
                 'comment.date',
                 'comment.moduleId',
@@ -41,7 +56,9 @@ class Comments
             $query->where('comment.commentParent', $parent);
         }
 
-        $results = $query->orderBy('comment.date', $orderBy)->get();
+        $results = $query->orderBy('comment.date', $orderBy)->get()
+            ->filter(fn ($item) => $item->module === $module)
+            ->values();
 
         return array_map(fn ($item) => (array) $item, $results->toArray());
     }
@@ -196,6 +213,14 @@ class Comments
         return true;
     }
 
+    /**
+     * Comments in the projects the session user can access, optionally narrowed to one project
+     * and/or entity id. Comments on other users' draft articles are excluded.
+     *
+     * @param  int|null  $projectId  Only this project (null or 0 for all accessible projects)
+     * @param  int|null  $moduleId  Only comments on this entity id (null or 0 for all)
+     * @return array|false Comment rows as arrays
+     */
     public function getAllAccountComments(?int $projectId, ?int $moduleId): array|false
     {
         $userId = session('userdata.id') ?? -1;
@@ -214,12 +239,28 @@ class Comments
                 'comment.status',
                 'zp_projects.id AS projectId'
             )
-            ->leftJoin('zp_tickets', 'comment.moduleId', '=', 'zp_tickets.id')
-            ->leftJoin('zp_canvas_items', 'comment.moduleId', '=', 'zp_canvas_items.id')
+            // moduleId means a different table per module, so each join only applies to its own
+            // module. Joining on the id alone tied a to-do comment to whatever canvas item shared
+            // its id, and through it to that item's project.
+            ->leftJoin('zp_tickets', function ($join) {
+                $join->on('comment.moduleId', '=', 'zp_tickets.id')
+                    ->where('comment.module', '=', 'ticket');
+            })
+            ->leftJoin('zp_canvas_items', function ($join) {
+                $join->on('comment.moduleId', '=', 'zp_canvas_items.id')
+                    ->where(function ($canvasModule) {
+                        $canvasModule->whereIn('comment.module', ['article', 'idea'])
+                            ->orWhere('comment.module', 'like', '%canvasitem');
+                    });
+            })
             ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
             ->leftJoin('zp_projects', function ($join) {
                 $join->on('zp_canvas.projectId', '=', 'zp_projects.id')
-                    ->orOn('zp_tickets.projectId', '=', 'zp_projects.id');
+                    ->orOn('zp_tickets.projectId', '=', 'zp_projects.id')
+                    ->orWhere(function ($projectComment) {
+                        $projectComment->whereColumn('comment.moduleId', 'zp_projects.id')
+                            ->where('comment.module', '=', 'project');
+                    });
             })
             ->where(function ($q) use ($userId, $clientId, $requesterRole) {
                 $q->whereIn('zp_projects.id', function ($subquery) use ($userId) {
@@ -238,6 +279,16 @@ class Comments
                         }
                     });
             });
+
+        // A comment on a Docs article is as private as the article: another user's draft hides
+        // its comments. Anything but the literal 'draft' status (published, or none for
+        // template-created articles) is visible, matching Wiki::isVisibleToCurrentUser().
+        $query->where(function ($visible) use ($userId) {
+            $visible->where('comment.module', '<>', 'article')
+                ->orWhereNull('zp_canvas_items.status')
+                ->orWhere('zp_canvas_items.status', '<>', 'draft')
+                ->orWhere('zp_canvas_items.author', $userId);
+        });
 
         if (isset($projectId) && $projectId > 0) {
             $query->where('zp_projects.id', $projectId);

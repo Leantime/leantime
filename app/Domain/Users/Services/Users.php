@@ -1804,11 +1804,12 @@ class Users extends BaseService
         }
 
         // Role ceiling, checked for the whole batch before anything is written: the imported role
-        // and the existing account it would update (matched the same way upsertUsers() does).
+        // and the existing account it would update (matched the same way upsertUsers() does: whatever
+        // its status, so a deactivated account above the caller can't be demoted either).
         foreach ($users as $user) {
             $this->assertRoleAssignable($user['role'] ?? '');
 
-            $existingUser = $this->userRepo->getUserByEmail((string) $user['user']);
+            $existingUser = $this->userRepo->getUserByEmail((string) $user['user'], '');
             if (is_array($existingUser)) {
                 $this->assertRoleAssignable($existingUser['role'] ?? '');
             }
