@@ -1938,6 +1938,14 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         if ($projectId !== false && $projectId > 0) {
             ProjectCreated::dispatch(projectId: $projectId, type: $values['type']);
+
+            // The team it was created with (the creator is added too, but isn't told).
+            foreach (is_array($values['assignedUsers']) ? $values['assignedUsers'] : [] as $user) {
+                $userId = is_array($user) ? (int) ($user['id'] ?? 0) : 0;
+                if ($userId > 0) {
+                    ProjectMemberAdded::dispatch(projectId: (int) $projectId, userId: $userId);
+                }
+            }
         }
 
         return $projectId;
@@ -2866,6 +2874,29 @@ class Projects extends BaseService implements ChecksProjectAccess
         $this->projectRepository->addProjectRelation($userId, $projectId, $projectRole);
 
         ProjectMemberAdded::dispatch(projectId: $projectId, userId: $userId);
+
+        return true;
+    }
+
+    /**
+     * Removes one user from one project's team, leaving their other projects alone.
+     *
+     * The counterpart of addUserToProject(), with the same permission.
+     *
+     * @param  int  $userId  The user to remove.
+     * @param  int  $projectId  The project to remove them from.
+     * @return bool True when a membership was removed; false when they weren't on the team (or the ids were invalid).
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
+    public function removeUserFromProject(int $userId, int $projectId): bool
+    {
+        if ($userId <= 0 || $projectId <= 0 || ! $this->projectRepository->isUserMemberOfProject($userId, $projectId)) {
+            return false;
+        }
+
+        $this->projectRepository->deleteProjectRelation($userId, $projectId);
 
         return true;
     }
