@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Notifications\Services;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment;
@@ -119,7 +120,15 @@ class AssignmentNotifier
                 sprintf($this->language->__('email_notifications.assigned_subject'), $headline),
                 $projectId,
                 'tickets',
-                $event->ticketId
+                $event->ticketId,
+                // The digest's wording: the same lines the push shows.
+                [
+                    'group' => 'tickets:'.$event->ticketId,
+                    'title' => $headline,
+                    'line' => sprintf($this->language->__('notification.push_assigned_body'), $actorName),
+                    'detail' => $this->dueText($ticket->dateToFinish, $event->assigneeId),
+                    'url' => $emailUrl,
+                ]
             );
         }
 
@@ -146,6 +155,9 @@ class AssignmentNotifier
                 'tier' => Push::TIER_DIRECT,
                 'category' => Push::CATEGORY_TASK,
             ]);
+            // The project notification about this same write ("added / updated this task")
+            // then skips the assignee's phone: this push already says it.
+            Cache::put(Push::assignedKey($event->assigneeId, $event->ticketId), 1, Push::RECENT_SECONDS);
         } catch (\Throwable $e) {
             Log::warning('Assignment push failed: '.$e->getMessage());
         }

@@ -54,6 +54,9 @@ class PushRelay
 
     public const CONTENT_MINIMAL = 'minimal';
 
+    /** Who did what and the item's name, without comment or description text. */
+    public const CONTENT_NAMES = 'names';
+
     public const DEFAULT_RELAY_URL = 'https://accounts.leantime.io/pushRelay/send';
 
     /** The marketplace plugin whose license the relay verifies. */
@@ -85,14 +88,47 @@ class PushRelay
     }
 
     /**
-     * Content level the administrator chose: full, or minimal (no titles,
-     * bodies or names leave the server; the app loads details on tap).
+     * What phone notifications show, for every push this instance sends (directly or through
+     * the relay): full (the default), names (who did what and the item's name, no comment or
+     * description text), or minimal (no titles, bodies or names; the app loads details on tap).
+     * The setting predates Cloud having the choice, hence its relay name.
      */
     public function contentLevel(): string
     {
         $level = $this->settingsRepo->getSetting(self::SETTING_CONTENT);
 
-        return $level === self::CONTENT_MINIMAL ? self::CONTENT_MINIMAL : self::CONTENT_FULL;
+        return in_array($level, [self::CONTENT_NAMES, self::CONTENT_MINIMAL], true) ? $level : self::CONTENT_FULL;
+    }
+
+    /**
+     * Content-free routing data: only what the app needs to open the right screen, with the
+     * link rebuilt from the ids. Callers set the title and body themselves.
+     *
+     * @param  array<string, string>  $data
+     * @return array<string, string>
+     */
+    public function contentFreeData(array $data): array
+    {
+        // A comment's host task is the only thing worth linking. Callers that predate
+        // the routing-data change don't send parentTicketId, but the comment's own url
+        // names the task in its path, so read the id from there before the url is
+        // dropped. Only the path segment counts; nothing from a query string.
+        if (($data['module'] ?? '') === 'comments' && ! ctype_digit((string) ($data['parentTicketId'] ?? ''))) {
+            $hostTask = self::ticketIdFromUrl((string) ($data['url'] ?? ''));
+            if ($hostTask !== null) {
+                $data['parentTicketId'] = $hostTask;
+            }
+        }
+        // Keep only what the app needs to open the right screen. The caller's url is
+        // never forwarded: it can carry text (query parameters of the request that made
+        // the change); a link is rebuilt from the ids instead.
+        $data = array_intersect_key($data, array_flip(['module', 'moduleId', 'parentTicketId', 'projectId', 'type', 'threadId', 'tier', 'category']));
+        $canonical = $this->canonicalUrl($data);
+        if ($canonical !== null) {
+            $data['url'] = $canonical;
+        }
+
+        return $data;
     }
 
     /**
@@ -113,24 +149,7 @@ class PushRelay
         if ($this->contentLevel() === self::CONTENT_MINIMAL) {
             $title = 'Leantime';
             $body = __('notification.push_minimal_body');
-            // A comment's host task is the only thing worth linking. Callers that predate
-            // the routing-data change don't send parentTicketId, but the comment's own url
-            // names the task in its path, so read the id from there before the url is
-            // dropped. Only the path segment counts; nothing from a query string.
-            if (($data['module'] ?? '') === 'comments' && ! ctype_digit((string) ($data['parentTicketId'] ?? ''))) {
-                $hostTask = self::ticketIdFromUrl((string) ($data['url'] ?? ''));
-                if ($hostTask !== null) {
-                    $data['parentTicketId'] = $hostTask;
-                }
-            }
-            // Keep only what the app needs to open the right screen. The caller's url is
-            // never forwarded: it can carry text (query parameters of the request that made
-            // the change); a link is rebuilt from the ids instead.
-            $data = array_intersect_key($data, array_flip(['module', 'moduleId', 'parentTicketId', 'projectId', 'type', 'threadId', 'tier', 'category']));
-            $canonical = $this->canonicalUrl($data);
-            if ($canonical !== null) {
-                $data['url'] = $canonical;
-            }
+            $data = $this->contentFreeData($data);
         }
 
         $messages = [];
