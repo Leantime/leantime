@@ -81,6 +81,16 @@ class PushRelay
             return false;
         }
 
+        return $this->isAvailable();
+    }
+
+    /**
+     * Whether the relay can work on this instance at all: the licensed plugin
+     * is enabled. Company Settings grays the relay out when it isn't, rather
+     * than letting an administrator turn on something that never sends.
+     */
+    public function isAvailable(): bool
+    {
         return $this->pluginService->isEnabled(self::LICENSE_PLUGIN);
     }
 
