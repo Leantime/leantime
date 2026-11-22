@@ -128,7 +128,7 @@ class ReminderNotifierTest extends TestCase
         $this->assertSame('reminders', $this->inbox[0]['module']);
         $this->assertSame('Your morning summary: 2 due today, 1 due tomorrow, 3 coming up', $this->inbox[0]['message']);
         $this->assertSame('2026-11-22 08:00:00', $this->inbox[0]['datetime']);
-        $this->assertSame('https://pm.example.test/dashboard/home', $this->inbox[0]['url']);
+        $this->assertSame('https://pm.example.test/dashboard/home#/reminders/comingUp', $this->inbox[0]['url'], 'the row opens the Coming up panel');
 
         $this->assertCount(1, $this->emails);
         $this->assertSame(['sam@example.test'], $this->emails[0]['to']);
@@ -144,7 +144,7 @@ class ReminderNotifierTest extends TestCase
         $this->assertSame([7], $this->pushes[0]['userIds']);
         $this->assertSame('2 due today, 1 due tomorrow, 3 coming up', $this->pushes[0]['title']);
         $this->assertSame("Send the invoice · Due today\nCall <Ada> · Due tomorrow\nRoutine tasks today: 1\nAnd 3 more", $this->pushes[0]['body']);
-        $this->assertSame(['module' => 'reminders', 'moduleId' => '0', 'type' => 'morning_summary', 'threadId' => 'morning-summary', 'url' => 'https://pm.example.test/dashboard/home', 'tier' => Push::TIER_DIRECT, 'category' => Push::CATEGORY_NONE], $this->pushes[0]['data']);
+        $this->assertSame(['module' => 'reminders', 'moduleId' => '0', 'type' => 'morning_summary', 'threadId' => 'morning-summary', 'url' => 'https://pm.example.test/dashboard/home#/reminders/comingUp', 'tier' => Push::TIER_DIRECT, 'category' => Push::CATEGORY_NONE], $this->pushes[0]['data']);
     }
 
     public function test_the_email_greets_by_name_groups_by_day_and_explains_its_own_settings(): void
@@ -170,7 +170,7 @@ class ReminderNotifierTest extends TestCase
         $this->assertTrue(strpos($html, 'Routine tasks today: 1') < $tomorrow, 'the routine line belongs to Today');
         $this->assertStringContainsString('https://pm.example.test/x/1', $html, 'each item links to it');
         $this->assertStringContainsString('>See what&#039;s coming up</a>', $html);
-        $this->assertStringContainsString('href="https://pm.example.test/dashboard/home"', $html);
+        $this->assertStringContainsString('href="https://pm.example.test/dashboard/home#/reminders/comingUp"', $html, 'the button opens the Coming up panel');
         $this->assertStringNotContainsString("\n", $html);
 
         $this->assertStringContainsString('at 7:30 (your time)', $email['footer']);
@@ -182,7 +182,7 @@ class ReminderNotifierTest extends TestCase
         $this->assertStringContainsString("Today\n- Send the invoice (Due today · Website): https://pm.example.test/x/1\n- Routine tasks today: 1", $text);
         $this->assertStringContainsString("Coming up this week\n- Beta (Ends in 7 days · Website): https://pm.example.test/x/3", $text);
         $this->assertStringContainsString('3 still open from earlier', $text);
-        $this->assertStringContainsString("See what's coming up: https://pm.example.test/dashboard/home", $text);
+        $this->assertStringContainsString("See what's coming up: https://pm.example.test/dashboard/home#/reminders/comingUp", $text);
         $this->assertStringContainsString('at 7:30 (your time). Change the time or turn it off in your notification settings: https://pm.example.test/users/editOwn#notifications', $text);
     }
 

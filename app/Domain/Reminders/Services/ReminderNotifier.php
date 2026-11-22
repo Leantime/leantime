@@ -70,7 +70,7 @@ class ReminderNotifier
             'moduleId' => 0,
             'message' => sprintf($this->language->__('reminders.summary_inbox'), $this->countsLine($summary)),
             'datetime' => $nowUtc->format('Y-m-d H:i:s'),
-            'url' => $this->homeUrl(),
+            'url' => $this->comingUpUrl(),
             'authorId' => 0,
         ]]);
         if ($written !== true) {
@@ -88,7 +88,7 @@ class ReminderNotifier
     public function deliverSummary(array $user, array $summary, string $summaryTime = ReminderSettings::DEFAULT_SUMMARY_TIME): void
     {
         $userId = (int) $user['id'];
-        $url = $this->homeUrl();
+        $url = $this->comingUpUrl();
         $counts = $this->countsLine($summary);
 
         if ($user['notifications'] !== 0 && ($user['username'] ?? '') !== '') {
@@ -120,9 +120,13 @@ class ReminderNotifier
         }
     }
 
-    private function homeUrl(): string
+    /**
+     * Where the summary's inbox row, email button and push lead: the web home with the "Coming up"
+     * panel open. Push data keeps module 'reminders', so apps can route by module instead.
+     */
+    public function comingUpUrl(): string
     {
-        return rtrim($this->trustedAppUrl->forLinks(), '/').'/dashboard/home';
+        return rtrim($this->trustedAppUrl->forLinks(), '/').'/dashboard/home#/reminders/comingUp';
     }
 
     /** "2 due today, 1 due tomorrow, 1 coming up". */

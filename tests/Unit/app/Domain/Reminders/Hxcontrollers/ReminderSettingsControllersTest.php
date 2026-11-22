@@ -181,7 +181,7 @@ class ReminderSettingsControllersTest extends TestCase
         $this->assertMatchesRegularExpression($guard("@can('tickets.edit', \$ticket->projectId)", '<li><a href="#/tickets/moveTicket/'), $template, 'Move keeps its own check');
         $this->assertMatchesRegularExpression($guard("@can('tickets.delete', \$ticket->projectId)", '<li><a href="#/tickets/delTicket/'), $template, 'Delete keeps its own check');
         $this->assertMatchesRegularExpression($guard("@can('timesheets.create')", "@module('timesheets'"), $template, 'time tracking keeps its own check');
-        $this->assertMatchesRegularExpression($guard("@can('tickets.view', \$ticket->projectId)", "<li class=\"nav-header border\">{{ __('reminders.your_reminders') }}"), $template);
+        $this->assertMatchesRegularExpression($guard("@can('tickets.view', \$ticket->projectId)", "@include('reminders::partials.taskReminderMenuMount'"), $template);
     }
 
     private function assertPermission(string $class, string $method, string $permission): void

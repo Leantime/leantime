@@ -286,3 +286,114 @@
     color: var(--color-text-muted);
     font-size: var(--font-size-s);
 }
+
+/* Coming up panel (#/reminders/comingUp): the person's summary list. Quiet colors only. */
+.lt-coming-up {
+    max-width: 620px;
+    padding: 0 0 8px;
+}
+
+.lt-coming-up-section {
+    padding-top: 12px;
+}
+
+.lt-coming-up-heading {
+    margin: 0 0 4px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.lt-coming-up-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lt-coming-up-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    border-top: 1px solid var(--main-border-color);
+}
+
+.lt-coming-up-icon {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--neutral);
+    color: var(--accent1);
+}
+
+.lt-coming-up-link {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 0;
+    color: var(--primary-font-color);
+    text-decoration: none;
+}
+
+.lt-coming-up-link:hover .lt-coming-up-title {
+    text-decoration: underline;
+}
+
+.lt-coming-up-title {
+    font-weight: 600;
+}
+
+.lt-coming-up-why,
+.lt-coming-up-note,
+.lt-coming-up-empty {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+.lt-coming-up-note {
+    margin: 0;
+    padding: 10px 0 4px 40px;
+    border-top: 1px solid var(--main-border-color);
+}
+
+.lt-coming-up-empty {
+    padding: 16px 0;
+}
+
+.lt-coming-up-actions {
+    flex: none;
+}
+
+/* The dialog clips anything past its edge (overflow-x: hidden makes it scroll), so while a row's
+   menu is open the list makes room for it below. */
+.lt-coming-up:has(.lt-coming-up-actions.open) {
+    padding-bottom: 300px;
+}
+
+.lt-coming-up-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    max-width: 620px;
+    padding: 14px 0 4px;
+    border-top: 1px solid var(--main-border-color);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+.lt-coming-up-footer span {
+    flex: 1;
+}
+
+.lt-coming-up-footer a {
+    font-weight: 600;
+}
