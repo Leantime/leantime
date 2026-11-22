@@ -154,10 +154,43 @@ class TaskReminderMenuTest extends TestCase
         $this->assertStringNotContainsString('aria-describedby', $html, 'nothing to explain');
     }
 
+    public function test_the_top_level_is_one_item_that_drills_into_the_choices(): void
+    {
+        $html = $this->render($this->state);
+
+        $this->assertMatchesRegularExpression('~<li id="taskReminderMenu-5-abc123" class="lt-reminder-menu"[^>]*onclick="event.stopPropagation\(\);">~', $html, 'clicks inside keep the menu open');
+        $this->assertMatchesRegularExpression('~<a href="javascript:void\(0\);"\s+class="lt-reminder-choice lt-reminder-top"\s+role="button"\s+data-lt-drill-open\s+aria-expanded="false"\s+aria-controls="taskReminderMenu-5-abc123-panel">~', $html, 'a disclosure for the in-place panel');
+        $this->assertStringNotContainsString('aria-haspopup', $html, 'nothing pops up: the menu\'s own content changes');
+        $this->assertStringContainsString('<span class="lt-reminder-label">'.e(sprintf(__('reminders.remind_me_current'), __('reminders.short_more'))).'</span>', $html);
+        $this->assertStringContainsString('<div id="taskReminderMenu-5-abc123-panel" class="lt-reminder-panel" hidden>', $html, 'the choices start hidden');
+        $this->assertMatchesRegularExpression('~<button type="button" class="lt-reminder-choice lt-reminder-back" data-lt-drill-back aria-label="'.preg_quote(e(__('reminders.back')), '~').'">\s*<i[^>]*></i>\s*<span id="taskReminderMenu-5-abc123-label">'.preg_quote(e(__('reminders.remind_me')), '~').'</span>~', $html, 'Back, labelled "Remind me" for the group');
+        $panel = substr($html, strpos($html, '-panel" class="lt-reminder-panel"'));
+        $this->assertSame(4, substr_count($panel, 'role="radio"'), 'the choices are inside the panel');
+    }
+
+    public function test_the_top_label_names_the_current_choice(): void
+    {
+        foreach (['default', 'more', 'less', 'off'] as $preset) {
+            $html = $this->render(['preset' => $preset] + $this->state);
+            $this->assertStringContainsString(e(sprintf(__('reminders.remind_me_current'), __('reminders.short_'.$preset))), $html);
+        }
+        $this->assertStringContainsString(e(sprintf(__('reminders.remind_me_current'), __('reminders.short_off'))), $this->render(['preset' => 'off', 'chosen' => false, 'inherited' => 'off', 'isYours' => false] + $this->state), 'someone else\'s to-do starts at Off');
+    }
+
+    public function test_the_mount_shows_remind_me_while_it_loads(): void
+    {
+        $html = view('reminders::partials.taskReminderMenuMount', ['ticketId' => 9])->render();
+
+        $this->assertMatchesRegularExpression('/<li id="taskReminderMenu-9-([a-f0-9]{8})" class="lt-reminder-menu"\s+hx-get="[^"]*ticketId=9&amp;instance=\1"\s+hx-trigger="intersect once"/', $html);
+        $this->assertStringContainsString(e(__('reminders.remind_me')), $html);
+        $this->assertStringNotContainsString('nav-header', $html, 'one item at the top level, no heading');
+    }
+
     public function test_without_a_due_date_there_is_only_the_explanation(): void
     {
         $html = $this->render(['hasDueDate' => false] + $this->state);
 
+        $this->assertStringContainsString('<span class="lt-reminder-label">'.e(__('reminders.remind_me')).'</span>', $html, 'just "Remind me" at the top level');
         $this->assertStringContainsString('<p id="taskReminderMenu-5-abc123-hint" class="lt-reminder-hint">'.e(__('reminders.picker_needs_due_date')).'</p>', $html);
         $this->assertStringNotContainsString('hx-post', $html);
         $this->assertStringNotContainsString('role="radio"', $html);

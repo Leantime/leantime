@@ -8,6 +8,11 @@
  *   close once it is out of sight (or the window is resized).
  * - Escape on a dropdown trigger closes its open menu; on a closed one it closes the dialog the
  *   trigger is in (Bootstrap 2 would open the menu instead).
+ * - In-place drill-down: a [data-lt-drill-open] item (aria-controls → its panel) swaps the menu
+ *   to that panel on click, Enter, Space or ArrowRight, focusing its checked choice; the panel's
+ *   [data-lt-drill-back] button, ArrowLeft or Escape return to the top level with focus on the
+ *   item. A menu always opens at its top level; after an htmx pick inside the panel it returns
+ *   there too, the menu still open.
  * - [data-lt-menu-keys] menus: ArrowDown/ArrowUp/Home/End move between the menu's items,
  *   Escape closes the menu and returns focus to its trigger, Space picks a radio item. ArrowDown
  *   on the trigger of an open menu goes to its first item. (Bootstrap only does this for
@@ -121,12 +126,81 @@ leantime.menus = (function () {
         }
     };
 
-    // Runs after Bootstrap's own click handler has opened or closed the menu.
+    // In-place drill-down ([data-lt-drill-open] item with aria-controls → its panel): the menu
+    // shows only that panel (.lt-drilled hides the menu's other items) until [data-lt-drill-back],
+    // ArrowLeft or Escape returns to the top level.
+    var drillIn = function (trigger) {
+        var menu = trigger.closest('.dropdown-menu');
+        var panel = document.getElementById(trigger.getAttribute('aria-controls'));
+        if (!menu || !panel) {
+            return;
+        }
+        panel.hidden = false;
+        menu.classList.add('lt-drilled');
+        trigger.setAttribute('aria-expanded', 'true');
+        var wrapper = wrapperOf(menu);
+        if (wrapper && wrapper.matches('[data-lt-dropdown-float]')) {
+            place(wrapper);
+        }
+        var start = panel.querySelector('[aria-checked="true"]') || panel.querySelector('[role="radio"]') || panel.querySelector('[data-lt-drill-back]');
+        if (start) {
+            start.focus();
+        }
+    };
+
+    var drillOut = function (menu, focusTrigger) {
+        menu.classList.remove('lt-drilled');
+        var trigger = null;
+        menu.querySelectorAll('[data-lt-drill-open]').forEach(function (item) {
+            item.setAttribute('aria-expanded', 'false');
+            var panel = document.getElementById(item.getAttribute('aria-controls'));
+            if (panel && !panel.hidden) {
+                trigger = item;
+            }
+            if (panel) {
+                panel.hidden = true;
+            }
+        });
+        var wrapper = wrapperOf(menu);
+        if (wrapper && wrapper.matches('[data-lt-dropdown-float]')) {
+            place(wrapper);
+        }
+        if (focusTrigger) {
+            (trigger || menu.querySelector('[data-lt-drill-open]'))?.focus();
+        }
+    };
+
+    // Capture phase: drill items live in content that keeps its clicks from Bootstrap (so the
+    // menu stays open), which also keeps them from a bubbling listener.
+    document.addEventListener('click', function (event) {
+        var target = event.target && event.target.closest ? event.target : null;
+        if (!target) {
+            return;
+        }
+        var open = target.closest('[data-lt-drill-open]');
+        if (open) {
+            event.preventDefault();
+            drillIn(open);
+            return;
+        }
+        var back = target.closest('[data-lt-drill-back]');
+        if (back && back.closest('.dropdown-menu')) {
+            event.preventDefault();
+            drillOut(back.closest('.dropdown-menu'), true);
+        }
+    }, true);
+
+    // Runs after Bootstrap's own click handler has opened or closed the menu. A menu always opens
+    // at its top level.
     document.addEventListener('click', function (event) {
         setTimeout(function () {
             syncExpanded();
             var toggle = event.target.closest && event.target.closest('[data-toggle="dropdown"]');
             var wrapper = toggle ? toggle.parentElement : null;
+            var menu = wrapper ? menuOf(wrapper) : null;
+            if (menu && menu.classList.contains('lt-drilled')) {
+                drillOut(menu, false);
+            }
             if (wrapper && wrapper.matches('[data-lt-dropdown-float]')) {
                 place(wrapper);
             }
@@ -172,6 +246,19 @@ leantime.menus = (function () {
             return;
         }
         var wrapper = wrapperOf(menu);
+
+        if ((event.key === 'Escape' || event.key === 'ArrowLeft') && menu.classList.contains('lt-drilled')) {
+            event.preventDefault();
+            event.stopPropagation();
+            drillOut(menu, true);
+            return;
+        }
+
+        if (event.key === 'ArrowRight' && target.matches('[data-lt-drill-open]')) {
+            event.preventDefault();
+            drillIn(target);
+            return;
+        }
 
         if (event.key === 'Escape') {
             event.preventDefault();
@@ -267,7 +354,11 @@ leantime.menus = (function () {
         var source = event.detail && event.detail.target;
         if (source && hadFocus.has(source)) {
             var menuWrapper = wrapperOf(elt);
-            if (menuWrapper && menuWrapper.classList.contains('open')) {
+            var swappedMenu = elt.closest('.dropdown-menu');
+            if (swappedMenu && swappedMenu.classList.contains('lt-drilled')) {
+                // The pick is saved: show the top level with its new label, focus on its item.
+                drillOut(swappedMenu, true);
+            } else if (menuWrapper && menuWrapper.classList.contains('open')) {
                 var focusTarget = elt.querySelector('[aria-checked="true"]') || visibleItems(elt)[0];
                 if (focusTarget) {
                     focusTarget.focus();
