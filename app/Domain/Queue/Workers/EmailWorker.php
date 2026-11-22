@@ -350,7 +350,9 @@ class EmailWorker
                 if ($row['summary'] === null) {
                     return true;
                 }
-                $fingerprint = $row['summary']['line']."\n".$row['summary']['quote']."\n".$row['summary']['detail'];
+                // The title is part of it: an update and a rename in the same two minutes read the
+                // same line but carry different names, and the newest name heads the item.
+                $fingerprint = $row['summary']['title']."\n".$row['summary']['line']."\n".$row['summary']['quote']."\n".$row['summary']['detail'];
                 $at = $this->utc((string) $row['thedate'])?->getTimestamp() ?? 0;
                 if ($lastKept !== null && $lastKept['fingerprint'] === $fingerprint && abs($at - $lastKept['at']) <= self::SAME_SAVE_SECONDS) {
                     return false;

@@ -460,6 +460,20 @@ class EmailWorkerTest extends TestCase
         $this->assertLessThan(strpos($html, 'Marcel renamed this task'), strpos($html, 'Marcel assigned this to you'), 'lines stay oldest first');
     }
 
+    public function test_an_update_then_a_rename_within_one_save_window_keeps_the_new_name(): void
+    {
+        // Same line twice inside two minutes, but the second carries the new name: it is a
+        // change of its own, and the newest name heads the item.
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 90), [], 'tickets:12', 'Draft pricing'),
+            $this->summaryRow('h2', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 30), [], 'tickets:12', 'Pricing page'),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertStringContainsString('Pricing page', $html);
+        $this->assertStringNotContainsString('Draft pricing', $html);
+    }
+
     public function test_each_project_is_looked_up_once_per_run(): void
     {
         $this->worker()->handleQueue([

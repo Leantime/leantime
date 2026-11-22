@@ -319,12 +319,18 @@ class Push
 
         $ticketId = ($notification->module ?? '') === 'tickets' ? (int) ($data['moduleId'] ?? 0) : 0;
         // The item it's about is part of the fingerprint, so two different tasks that happen
-        // to get the same wording both reach the phone.
+        // to get the same wording both reach the phone. A comment names its host item in the
+        // entity's module / moduleId (goal and board comments carry nothing else that tells
+        // two equally named items apart).
+        $entity = $notification->entity ?? null;
+        $entityField = static fn (string $key): string => (string) (is_array($entity) ? ($entity[$key] ?? '') : (is_object($entity) ? ($entity->{$key} ?? '') : ''));
         $fingerprint = sha1(implode("\n", [
             $data['module'] ?? '',
             $data['moduleId'] ?? '',
             $data['parentTicketId'] ?? '',
             $data['projectId'] ?? '',
+            $entityField('module'),
+            $entityField('moduleId'),
             $text['title'],
             $text['body'],
         ]));

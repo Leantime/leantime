@@ -122,6 +122,20 @@ class PushDuplicatesTest extends TestCase
         $this->assertSame('Marcel due_date_changed this task · Sales', $this->sent[0]['body']);
     }
 
+    public function test_comments_on_two_equally_named_board_items_both_reach_the_phone(): void
+    {
+        // Goal and board comments carry only their host's id (entity moduleId); the push data
+        // has no item id for them, so the host must be part of the fingerprint.
+        foreach ([31, 32] as $goalId) {
+            $notification = $this->notification('commented');
+            $notification->module = 'goalcanvas';
+            $notification->entity = ['text' => 'Nice', 'moduleId' => $goalId];
+            $this->push->sendFromNotification($notification, [3]);
+        }
+
+        $this->assertCount(2, $this->sent);
+    }
+
     public function test_a_repeat_of_a_push_the_assignment_covered_stays_skipped(): void
     {
         Push::markAssigned(3, 2267);
