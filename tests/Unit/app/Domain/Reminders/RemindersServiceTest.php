@@ -48,7 +48,7 @@ class RemindersServiceTest extends TestCase
 
         return new Reminders(
             new ReminderSettings($this->settingRepository(), $config),
-            $this->make(SummaryBuilder::class, ['build' => fn (int $userId, $now, string $timezone, string $preset) => ['for' => $userId, 'preset' => $preset]]),
+            $this->make(SummaryBuilder::class, ['build' => fn (int $userId, $now, string $timezone, string $preset, int $limit = 5) => ['for' => $userId, 'preset' => $preset] + ($limit === 5 ? [] : ['limit' => $limit])]),
             $this->make(TicketRepository::class, [
                 'getTicket' => function ($id) {
                     if (! in_array((int) $id, [1, 2, 3, 4, 5], true)) {
@@ -103,6 +103,13 @@ class RemindersServiceTest extends TestCase
     public function test_the_summary_is_always_the_session_user_s(): void
     {
         $this->assertSame(['for' => 7, 'preset' => 'default'], $this->service()->getSummary());
+    }
+
+    public function test_the_whole_list_is_asked_for_with_limit_0(): void
+    {
+        $this->assertSame(['for' => 7, 'preset' => 'default', 'limit' => 0], $this->service()->getSummary(0));
+        $this->assertSame(['for' => 7, 'preset' => 'default', 'limit' => 20], $this->service()->getSummary(20));
+        $this->assertSame(['for' => 7, 'preset' => 'default', 'limit' => 0], $this->service()->getSummary(-3), 'below 0 means the whole list');
     }
 
     public function test_settings_are_validated_and_saved_as_user_settings(): void

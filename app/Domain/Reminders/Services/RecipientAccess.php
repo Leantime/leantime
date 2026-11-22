@@ -20,6 +20,12 @@ class RecipientAccess
     /** @var array<string, bool> "userId|projectId|permission" → allowed */
     private array $cache = [];
 
+    /** @var array<int, string|false> user id → company role name (false: unknown person or role) */
+    private array $companyRoles = [];
+
+    /** @var array<string, string> "userId|projectId" → effective role name */
+    private array $effectiveRoles = [];
+
     public function __construct(
         private ReminderRepository $reminders,
         private PermissionService $permissions,
@@ -32,26 +38,49 @@ class RecipientAccess
 
     private function resolve(int $userId, int $projectId, string $permission): bool
     {
-        $roles = $this->reminders->rolesIn($userId, $projectId);
-        if ($roles === null) {
-            return false;
-        }
+        $role = $this->effectiveRole($userId, $projectId);
 
-        $globalRole = Roles::getRoleString(ctype_digit($roles['role']) ? (int) $roles['role'] : $roles['role']);
+        return $role !== false && $this->permissions->roleHasPermission($role, $permission);
+    }
+
+    /**
+     * The person's role in the project. One query per person for the company role, and one per
+     * project only for people below manager, whose project role can change it.
+     */
+    private function effectiveRole(int $userId, int $projectId): string|false
+    {
+        $globalRole = $this->companyRoles[$userId] ??= $this->companyRole($userId);
         if ($globalRole === false) {
             return false;
         }
-
-        $role = $globalRole;
-        if (! Roles::isAtLeast($globalRole, Roles::$manager)) {
-            $projectRole = $roles['projectRole'];
-            if (ctype_digit($projectRole) && isset(Roles::getProjectAssignableRoles()[(int) $projectRole])) {
-                $role = Roles::getProjectAssignableRoles()[(int) $projectRole];
-            } elseif ($projectRole !== '' && in_array($projectRole, Roles::getRoles(), true)) {
-                $role = $projectRole;
-            }
+        if (Roles::isAtLeast($globalRole, Roles::$manager)) {
+            return $globalRole;
         }
 
-        return $this->permissions->roleHasPermission($role, $permission);
+        return $this->effectiveRoles[$userId.'|'.$projectId] ??= $this->withProjectRole($globalRole, $this->reminders->projectRole($userId, $projectId));
+    }
+
+    private function companyRole(int $userId): string|false
+    {
+        $stored = $this->reminders->userRole($userId);
+        if ($stored === null) {
+            return false;
+        }
+
+        $role = Roles::getRoleString(ctype_digit($stored) ? (int) $stored : $stored);
+
+        return is_string($role) ? $role : false;
+    }
+
+    private function withProjectRole(string $globalRole, string $projectRole): string
+    {
+        if (ctype_digit($projectRole) && isset(Roles::getProjectAssignableRoles()[(int) $projectRole])) {
+            return Roles::getProjectAssignableRoles()[(int) $projectRole];
+        }
+        if ($projectRole !== '' && in_array($projectRole, Roles::getRoles(), true)) {
+            return $projectRole;
+        }
+
+        return $globalRole;
     }
 }

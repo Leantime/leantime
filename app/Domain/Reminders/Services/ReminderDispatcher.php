@@ -13,7 +13,9 @@ use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
  *
  * A person's morning summary is due from their summary time until {@see WINDOW_MINUTES} after
  * it, in their timezone. A run that was missed catches up on the next one inside that window;
- * after it, nothing goes out that day: a "this morning" summary in the afternoon is noise.
+ * after it, nothing goes out that day: a "this morning" summary in the afternoon is noise. The
+ * window never crosses midnight; times after the day's last run ({@see LAST_RUN_TIME}) are due
+ * at that run.
  *
  * The inbox is the record of what was sent. A summary writes its inbox row first, then the email
  * and push. A person who already has a summary row since their local midnight gets nothing more
@@ -38,11 +40,17 @@ class ReminderDispatcher
     /** How long after the summary time a summary may still go out. */
     public const WINDOW_MINUTES = 180;
 
+    /**
+     * The day's last five-minute run. A summary time after it (23:56 to 23:59) is due at this
+     * run instead, a few minutes early, because the next run is already the next day.
+     */
+    public const LAST_RUN_TIME = '23:55';
+
     /** A run starts no new person after this long (the overlap lock lasts 10 minutes). */
     public const MAX_RUN_SECONDS = 480;
 
-    /** How long one person's send lock lasts; one send takes seconds. */
-    public const SEND_LOCK_SECONDS = 120;
+    /** How long one person's send lock lasts; it covers one inbox check and one insert. */
+    public const SEND_LOCK_SECONDS = 60;
 
     public function __construct(
         private ReminderRepository $reminders,
@@ -80,7 +88,7 @@ class ReminderDispatcher
                 }
 
                 $localNow = $nowUtc->setTimezone($mine['timezone']);
-                $minutesPast = self::minutesOfDay($localNow->format('H:i')) - self::minutesOfDay($mine['summaryTime']);
+                $minutesPast = self::minutesOfDay($localNow->format('H:i')) - self::minutesOfDay(self::dueTime($mine['summaryTime']));
                 if ($minutesPast < 0 || $minutesPast > self::WINDOW_MINUTES) {
                     continue;
                 }
@@ -115,24 +123,17 @@ class ReminderDispatcher
     }
 
     /**
-     * Builds and sends one person's summary, at most once a day even when runs overlap: under the
-     * person's lock, the inbox is checked again right before the row is written.
+     * Builds and sends one person's summary, at most once a day even when runs overlap. The slow
+     * part (building) happens first, without a lock. Then, under the person's lock, the inbox is
+     * checked again and the row written; that is all the lock covers, so it can't expire while
+     * held. Email and push follow once the row exists: any other run now finds the row.
      *
      * @param  array{summary: bool, summaryTime: string, taskPreset: string, timezone: string}  $mine
      * @return bool Whether a summary went out.
      */
     private function sendOnce(int $userId, string $sinceUtc, CarbonImmutable $nowUtc, array $mine): bool
     {
-        $lock = $this->sendLock($userId);
-        if (! $lock->get()) {
-            return false; // another run is sending to this person right now
-        }
-
         try {
-            if (isset($this->reminders->summariesSentSince([$userId => $sinceUtc])[$userId])) {
-                return false;
-            }
-
             $summary = $this->builder->build($userId, $nowUtc, $mine['timezone'], $mine['taskPreset']);
             if ($summary['isEmpty']) {
                 return false;
@@ -143,15 +144,28 @@ class ReminderDispatcher
                 return false;
             }
 
-            $this->notifier->sendSummary($user, $summary, $nowUtc, $mine['summaryTime']);
+            $lock = $this->sendLock($userId);
+            if (! $lock->get()) {
+                return false; // another run is recording this person's summary right now
+            }
+
+            try {
+                if (isset($this->reminders->summariesSentSince([$userId => $sinceUtc])[$userId])) {
+                    return false;
+                }
+
+                $this->notifier->recordSummary($user, $summary, $nowUtc);
+            } finally {
+                $lock->release();
+            }
+
+            $this->notifier->deliverSummary($user, $summary, $mine['summaryTime']);
 
             return true;
         } catch (\Throwable $e) {
             Log::warning('Morning summary failed for user '.$userId.': '.$e->getMessage());
 
             return false;
-        } finally {
-            $lock->release();
         }
     }
 
@@ -165,6 +179,15 @@ class ReminderDispatcher
     protected function seconds(): float
     {
         return hrtime(true) / 1e9;
+    }
+
+    /**
+     * When a summary time becomes due: the time itself (any minute, e.g. 08:02 goes out with the
+     * 08:05 run), except after the day's last run, which gets it instead.
+     */
+    public static function dueTime(string $summaryTime): string
+    {
+        return $summaryTime > self::LAST_RUN_TIME ? self::LAST_RUN_TIME : $summaryTime;
     }
 
     private static function minutesOfDay(string $time): int

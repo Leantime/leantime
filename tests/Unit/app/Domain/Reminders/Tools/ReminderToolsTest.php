@@ -27,7 +27,11 @@ class ReminderToolsTest extends TestCase
     private function service(array $overrides = []): Reminders
     {
         return $this->make(Reminders::class, $overrides + [
-            'getSummary' => fn () => ['date' => '2026-11-22', 'items' => [['kind' => 'task', 'id' => 5, 'title' => 'Send the invoice', 'daysUntil' => 0]], 'dueToday' => 1],
+            'getSummary' => function (int $limit = 5) {
+                $this->calls[] = ['getSummary', $limit];
+
+                return ['date' => '2026-11-22', 'items' => [['kind' => 'task', 'id' => 5, 'title' => 'Send the invoice', 'daysUntil' => 0]], 'dueToday' => 1];
+            },
             'getSettings' => fn () => ['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'UTC', 'workspaceEnabled' => true],
             'saveSettings' => function (?bool $summary = null, ?string $summaryTime = null, ?string $taskPreset = null) {
                 $this->calls[] = ['saveSettings', $summary, $summaryTime, $taskPreset];
@@ -56,6 +60,18 @@ class ReminderToolsTest extends TestCase
         $this->assertFalse($result->isError());
         $this->assertSame('getComingUp', (new GetComingUpTool($this->service()))->name());
         $this->assertStringContainsString('"title":"Send the invoice"', (string) $result->content());
+    }
+
+    public function test_get_coming_up_takes_a_limit_and_0_is_the_whole_list(): void
+    {
+        $tool = new GetComingUpTool($this->service());
+
+        $tool->handle(new Request([]));
+        $tool->handle(new Request(['limit' => 0]));
+        $tool->handle(new Request(['limit' => 12]));
+
+        $this->assertSame([['getSummary', 5], ['getSummary', 0], ['getSummary', 12]], $this->calls);
+        $this->assertArrayHasKey('limit', $tool->schema(new \Illuminate\JsonSchema\JsonSchemaTypeFactory));
     }
 
     public function test_set_task_reminder_saves_and_returns_what_applies(): void

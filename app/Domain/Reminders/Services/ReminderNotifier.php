@@ -38,33 +38,58 @@ class ReminderNotifier
     ) {}
 
     /**
+     * Records the summary, then delivers it: {@see recordSummary()} and {@see deliverSummary()}.
+     *
      * @param  array<string, mixed>  $summary  From {@see SummaryBuilder::build()}.
      * @param  array{id: int, notifications: int, username?: string, firstname?: string}  $user
      * @param  string  $summaryTime  The person's summary time ('HH:MM'), named in the email footer.
      */
     public function sendSummary(array $user, array $summary, CarbonImmutable $nowUtc, string $summaryTime = ReminderSettings::DEFAULT_SUMMARY_TIME): void
     {
-        $userId = (int) $user['id'];
-        $url = rtrim($this->trustedAppUrl->forLinks(), '/').'/dashboard/home';
-        $counts = $this->countsLine($summary);
+        $this->recordSummary($user, $summary, $nowUtc);
+        $this->deliverSummary($user, $summary, $summaryTime);
+    }
 
-        // The inbox row is the record that today's summary went out, so it must be written before
-        // anything leaves the server. If it isn't, nothing is sent and the dispatcher leaves the
-        // person due for the next run.
+    /**
+     * Writes the inbox row: the record that today's summary went out. It must be written before
+     * anything leaves the server, so a failed write throws; the dispatcher then sends nothing and
+     * leaves the person due for the next run.
+     *
+     * @param  array<string, mixed>  $summary
+     * @param  array{id: int, notifications: int, username?: string, firstname?: string}  $user
+     */
+    public function recordSummary(array $user, array $summary, CarbonImmutable $nowUtc): void
+    {
+        $userId = (int) $user['id'];
+
         $written = $this->notifications->addNotifications([[
             'userId' => $userId,
             'read' => '0',
             'type' => self::TYPE_SUMMARY,
             'module' => self::MODULE,
             'moduleId' => 0,
-            'message' => sprintf($this->language->__('reminders.summary_inbox'), $counts),
+            'message' => sprintf($this->language->__('reminders.summary_inbox'), $this->countsLine($summary)),
             'datetime' => $nowUtc->format('Y-m-d H:i:s'),
-            'url' => $url,
+            'url' => $this->homeUrl(),
             'authorId' => 0,
         ]]);
         if ($written !== true) {
             throw new \RuntimeException('The morning summary inbox row for user '.$userId.' was not written.');
         }
+    }
+
+    /**
+     * Email and push, after the inbox row is written. Each one's failure is logged and never
+     * stops the other.
+     *
+     * @param  array<string, mixed>  $summary
+     * @param  array{id: int, notifications: int, username?: string, firstname?: string}  $user
+     */
+    public function deliverSummary(array $user, array $summary, string $summaryTime = ReminderSettings::DEFAULT_SUMMARY_TIME): void
+    {
+        $userId = (int) $user['id'];
+        $url = $this->homeUrl();
+        $counts = $this->countsLine($summary);
 
         if ($user['notifications'] !== 0 && ($user['username'] ?? '') !== '') {
             try {
@@ -93,6 +118,11 @@ class ReminderNotifier
                 Log::warning('Morning summary push failed for user '.$userId.': '.$e->getMessage());
             }
         }
+    }
+
+    private function homeUrl(): string
+    {
+        return rtrim($this->trustedAppUrl->forLinks(), '/').'/dashboard/home';
     }
 
     /** "2 due today, 1 due tomorrow, 1 coming up". */

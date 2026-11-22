@@ -175,25 +175,21 @@ class Reminders
         return is_string($value) && $value !== '' && $value >= self::NO_DATE_BEFORE;
     }
 
-    /**
-     * The roles that decide what a person may see in a project, read without a session: their
-     * company role and their role on the project's team ('' when they aren't on it).
-     *
-     * @return array{role: string, projectRole: string}|null Null when the person doesn't exist.
-     */
-    public function rolesIn(int $userId, int $projectId): ?array
+    /** A person's company role, read without a session; null when they don't exist. */
+    public function userRole(int $userId): ?string
     {
-        $user = $this->db->table('zp_user')->select(['role'])->where('id', $userId)->first();
-        if ($user === null) {
-            return null;
-        }
+        $role = $this->db->table('zp_user')->where('id', $userId)->value('role');
 
-        $projectRole = $this->db->table('zp_relationuserproject')
+        return $role === null ? null : (string) $role;
+    }
+
+    /** A person's role on a project's team, '' when they aren't on it or have none. */
+    public function projectRole(int $userId, int $projectId): string
+    {
+        return (string) ($this->db->table('zp_relationuserproject')
             ->where('userId', $userId)
             ->where('projectId', $projectId)
-            ->value('projectRole');
-
-        return ['role' => (string) $user->role, 'projectRole' => (string) ($projectRole ?? '')];
+            ->value('projectRole') ?? '');
     }
 
     /** Assigned to the person, or unassigned and created by them (the rule {@see owned()} queries). */

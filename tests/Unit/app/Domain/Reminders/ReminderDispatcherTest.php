@@ -89,14 +89,17 @@ class ReminderDispatcherTest extends TestCase
             },
         ]);
 
-        // The real notifier writes its inbox row first; this stand-in writes the same row.
+        // The real notifier writes its inbox row (recordSummary), then emails and pushes
+        // (deliverSummary); this stand-in writes the same row and notes the delivery.
         $notifier = $this->make(ReminderNotifier::class, [
-            'sendSummary' => function (array $user, array $summary, CarbonImmutable $now) {
+            'recordSummary' => function (array $user, array $summary, CarbonImmutable $now) {
                 if ($this->inboxFails) {
                     $this->inboxFails = false;
                     throw new \RuntimeException('inbox row not written');
                 }
                 $this->addSummaryRow($user['id'], $now->format('Y-m-d H:i:s'));
+            },
+            'deliverSummary' => function (array $user, array $summary) {
                 $this->summariesSent[] = ['user' => $user['id'], 'items' => array_column($summary['items'], 'id')];
             },
         ]);
@@ -118,6 +121,28 @@ class ReminderDispatcherTest extends TestCase
                 return ($this->clock)();
             }
         };
+    }
+
+    public function test_any_minute_works_and_times_after_the_last_run_go_out_with_it(): void
+    {
+        $this->userSettings[7]['summaryTime'] = '08:02';
+        $this->userSettings[8]['summaryTime'] = '23:58';
+        $dispatcher = $this->dispatcher();
+
+        $dispatcher->run($this->utc('2026-11-22 08:00:00'));
+        $this->assertSame([], $this->sentTo(), '08:02 isn\'t due at 08:00');
+        $dispatcher->run($this->utc('2026-11-22 08:05:00'));
+        $this->assertSame([7], $this->sentTo(), '08:02 goes out with the 08:05 run');
+
+        $dispatcher->run($this->utc('2026-11-22 23:50:00'));
+        $this->assertSame([7], $this->sentTo());
+        $dispatcher->run($this->utc('2026-11-22 23:55:00'));
+        $this->assertSame([7, 8], $this->sentTo(), '23:58 is due at the day\'s last run, 23:55');
+
+        $dispatcher->run($this->utc('2026-11-23 00:00:00'));
+        $this->assertSame([7, 8], $this->sentTo(), 'the midnight run starts the next day: nothing early');
+        $this->assertSame('23:55', ReminderDispatcher::dueTime('23:59'));
+        $this->assertSame('08:02', ReminderDispatcher::dueTime('08:02'));
     }
 
     public function test_a_failed_inbox_write_leaves_the_person_due_for_the_next_run(): void
@@ -170,7 +195,7 @@ class ReminderDispatcherTest extends TestCase
         $this->dispatcher(repository: $repository)->run($this->utc('2026-11-22 08:01:00'));
 
         $this->assertSame([], $this->sentTo(), 'the recheck finds the other run\'s row');
-        $this->assertSame(0, $this->builds);
+        $this->assertSame(1, $this->db->table('zp_notifications')->where('userId', 7)->count(), 'only the other run\'s row');
     }
 
     public function test_a_run_starts_no_new_person_after_its_time_limit(): void

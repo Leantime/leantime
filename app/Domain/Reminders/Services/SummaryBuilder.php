@@ -60,6 +60,8 @@ class SummaryBuilder
     /** @var array<int, array<int, int>> project id → user ids who get its end notice */
     private array $endRecipients = [];
 
+    private ?RecipientAccess $recipientAccess = null;
+
     public function __construct(
         private ReminderRepository $reminders,
         private TicketRepository $tickets,
@@ -71,6 +73,8 @@ class SummaryBuilder
      * @param  CarbonImmutable  $nowUtc  The current time.
      * @param  string  $timezone  The person's timezone.
      * @param  string  $defaultPreset  Their default preset for to-dos.
+     * @param  int  $limit  How many items to list ({@see MAX_ITEMS} for the email and push); 0 lists
+     *                      them all, for the full "Coming up" list. The rest is moreCount.
      * @return array{
      *     date: string,
      *     items: array<int, array{kind: string, id: int, title: string, projectId: int, projectName: string, due: string, daysUntil: int, url: string}>,
@@ -83,7 +87,7 @@ class SummaryBuilder
      *     isEmpty: bool
      * }
      */
-    public function build(int $userId, CarbonImmutable $nowUtc, string $timezone, string $defaultPreset = ReminderSettings::PRESET_DEFAULT): array
+    public function build(int $userId, CarbonImmutable $nowUtc, string $timezone, string $defaultPreset = ReminderSettings::PRESET_DEFAULT, int $limit = self::MAX_ITEMS): array
     {
         $today = $nowUtc->setTimezone($timezone)->startOfDay();
         $todayIndex = self::dayIndex($today->toDateString());
@@ -109,8 +113,8 @@ class SummaryBuilder
 
         return [
             'date' => $today->toDateString(),
-            'items' => array_slice($items, 0, self::MAX_ITEMS),
-            'moreCount' => max(0, count($items) - self::MAX_ITEMS),
+            'items' => $limit > 0 ? array_slice($items, 0, $limit) : $items,
+            'moreCount' => $limit > 0 ? max(0, count($items) - $limit) : 0,
             'routine' => ['count' => count($routineItems), 'items' => $routineItems],
             'overdueCount' => $overdueCount,
             'dueToday' => $count(fn (array $item) => $item['daysUntil'] === 0),
@@ -320,7 +324,10 @@ class SummaryBuilder
      */
     protected function mayView(int $userId, int $projectId, string $permission): bool
     {
-        return app()->make(RecipientAccess::class)->can($userId, $projectId, $permission);
+        // One checker for this builder (one run), so its answers are reused across items.
+        $this->recipientAccess ??= app()->make(RecipientAccess::class);
+
+        return $this->recipientAccess->can($userId, $projectId, $permission);
     }
 
     /** Whether the person can still see the project (team, company-wide role, or shared with everyone). */

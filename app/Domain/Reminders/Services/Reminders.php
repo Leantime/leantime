@@ -30,16 +30,19 @@ class Reminders
     /**
      * What is coming up for you today: the same list the morning summary sends.
      *
+     * @param  int  $limit  How many items to list: 5 by default (as the morning summary does, the
+     *                      rest counted in moreCount); 0 for the whole list. The routine line,
+     *                      counts and item fields are the same either way.
      * @return array<string, mixed> See {@see SummaryBuilder::build()}.
      *
      * @api
      */
-    public function getSummary(): array
+    public function getSummary(int $limit = SummaryBuilder::MAX_ITEMS): array
     {
         $userId = $this->userId();
         $mine = $this->settings->forUser($userId);
 
-        return $this->builder->build($userId, CarbonImmutable::now('UTC'), $mine['timezone'], $mine['taskPreset']);
+        return $this->builder->build($userId, CarbonImmutable::now('UTC'), $mine['timezone'], $mine['taskPreset'], max(0, $limit));
     }
 
     /**

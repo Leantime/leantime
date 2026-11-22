@@ -287,6 +287,30 @@ class SummaryBuilderTest extends TestCase
         $this->assertSame([8, 7, 6, 5, 4], $this->ids($summary), 'same day: most important first');
     }
 
+    public function test_limit_0_lists_everything_in_the_same_order_and_shape(): void
+    {
+        for ($id = 1; $id <= 8; $id++) {
+            $this->addTicket($id, ['editorId' => '7', 'dateToFinish' => '2026-11-22 17:00:00', 'priority' => (string) (9 - $id)]);
+        }
+        $this->addTicket(9, ['editorId' => '7', 'dateToFinish' => '2026-11-22 17:00:00']);
+        $this->db->table('zp_recurring_patterns')->insert(['entityId' => 9, 'module' => 'tickets', 'type' => 'daily', 'interval' => 1, 'weekDays' => null, 'enabled' => 1]);
+
+        $capped = $this->builder()->build(7, $this->now, 'UTC');
+        $all = $this->builder()->build(7, $this->now, 'UTC', 'default', 0);
+        $three = $this->builder()->build(7, $this->now, 'UTC', 'default', 3);
+
+        $this->assertSame([8, 7, 6, 5, 4, 3, 2, 1], $this->ids($all));
+        $this->assertSame(0, $all['moreCount']);
+        $this->assertSame(array_slice($all['items'], 0, 5), $capped['items'], 'the top 5 are the start of the whole list');
+        $this->assertSame([8, 7, 6], $this->ids($three));
+        $this->assertSame(5, $three['moreCount']);
+        foreach (['routine', 'overdueCount', 'dueToday', 'dueTomorrow', 'later', 'date', 'isEmpty'] as $field) {
+            $this->assertSame($capped[$field], $all[$field], $field.' doesn\'t depend on the limit');
+        }
+        $this->assertSame([9], array_column($all['routine']['items'], 'id'));
+        $this->assertArrayHasKey('isYours', $all['items'][7]);
+    }
+
     public function test_days_are_the_person_s_local_days(): void
     {
         // 03:00 UTC on the 23rd is 22:00 on the 22nd in New York, where it's 08:00 on the 22nd.
