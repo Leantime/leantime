@@ -22,6 +22,10 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
  *      off      never
  *    To-dos that repeat daily or every weekday use "less" unless the person chose otherwise for
  *    that task, and are grouped into one "routine" line instead of listed.
+ *  - Anyone else's to-do they can see and chose a reminder for ("Remind me"). Those are off until
+ *    they pick one: an opt-in for themselves that never reminds the to-do's person. Ownership is
+ *    read each day, so a stored choice keeps working when they become, or stop being, the
+ *    assignee; with no stored choice the to-do follows the rules for whose it is that day.
  *  - Milestones they own (assigned, or unassigned and created by them): a week before and the
  *    day before they end.
  *  - Projects they're on the team of that end: a week before and the day before. Only the
@@ -146,24 +150,29 @@ class SummaryBuilder
     {
         $overdueCount = 0;
 
+        // Choices on to-dos that aren't theirs are opt-ins: those to-dos join the summary too.
+        $chosen = array_filter($this->reminders->taskChoices($userId), fn (string $preset) => in_array($preset, ReminderSettings::PRESETS, true));
+        $optedIn = array_keys(array_filter($chosen, fn (string $preset) => $preset !== ReminderSettings::PRESET_OFF));
+
         $rows = $this->reminders->tasksFor(
             $userId,
             self::utc($today),
             self::utc($today->endOfDay()),
             self::utc($today->addDays(self::MORE_DAYS_WITHOUT_START)->endOfDay()),
+            $optedIn,
         );
         $rows = array_values(array_filter($rows, fn (array $row) => ! $this->isDone((int) $row['projectId'], $row['status'])
             && $this->canSee($userId, (int) $row['projectId'])));
 
         $ids = array_map(fn (array $row) => (int) $row['id'], $rows);
-        $chosen = array_filter($this->reminders->taskChoices($userId), fn (string $preset) => in_array($preset, ReminderSettings::PRESETS, true));
         $frequent = $this->reminders->frequentRecurring($ids);
 
         $entries = [];
         foreach ($rows as $row) {
             $id = (int) $row['id'];
             $isRoutine = isset($frequent[$id]);
-            $preset = $chosen[$id] ?? ReminderSettings::inheritedPreset($defaultPreset, $isRoutine);
+            $isYours = (bool) ($row['isYours'] ?? true);
+            $preset = $chosen[$id] ?? ReminderSettings::inheritedPreset($defaultPreset, $isRoutine, $isYours);
             if ($preset === ReminderSettings::PRESET_OFF) {
                 continue;
             }
@@ -181,7 +190,7 @@ class SummaryBuilder
             }
 
             $entries[] = [
-                'item' => $this->item('task', $id, (string) $row['headline'], (int) $row['projectId'], (string) ($row['projectName'] ?? ''), (string) $row['dateToFinish'], $daysUntil, '/dashboard/home#/tickets/showTicket/'.$id),
+                'item' => $this->item('task', $id, (string) $row['headline'], (int) $row['projectId'], (string) ($row['projectName'] ?? ''), (string) $row['dateToFinish'], $daysUntil, '/dashboard/home#/tickets/showTicket/'.$id, $isYours),
                 'rank' => 2,
                 'priority' => is_numeric($row['priority'] ?? null) ? (int) $row['priority'] : 99,
                 'routine' => $isRoutine,
@@ -307,7 +316,10 @@ class SummaryBuilder
     /**
      * @return array{kind: string, id: int, title: string, projectId: int, projectName: string, due: string, daysUntil: int, url: string}
      */
-    private function item(string $kind, int $id, string $title, int $projectId, string $projectName, string $dueUtc, int $daysUntil, string $path): array
+    /**
+     * @param  bool  $isYours  False for someone else's to-do the person asked to be reminded about.
+     */
+    private function item(string $kind, int $id, string $title, int $projectId, string $projectName, string $dueUtc, int $daysUntil, string $path, bool $isYours = true): array
     {
         return [
             'kind' => $kind,
@@ -318,6 +330,7 @@ class SummaryBuilder
             'due' => CarbonImmutable::parse($dueUtc, 'UTC')->toIso8601ZuluString(),
             'daysUntil' => $daysUntil,
             'url' => rtrim($this->trustedAppUrl->forLinks(), '/').$path,
+            'isYours' => $isYours,
         ];
     }
 

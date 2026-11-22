@@ -34,7 +34,7 @@ class SetTaskReminderTool extends Tool
 
     public function description(): string
     {
-        return 'Chooses how often one to-do reminds the signed-in user in their morning summary. Presets: "default" (the day before and the morning it is due), "more" (every morning from its start date, or 3 days before, until it is due), "less" (only the morning it is due), "off" (never), or "inherit" to remove the choice so the user\'s own default applies. Only changes the signed-in user\'s own reminders, never anyone else\'s. Reminders need the to-do to have a due date.';
+        return 'Chooses how often one to-do reminds the signed-in user in their morning summary. Presets: "default" (the day before and the morning it is due), "more" (every morning from its start date, or 3 days before, until it is due), "less" (only the morning it is due), "off" (never), or "inherit" to remove the choice so the user\'s own default applies. Works on any to-do the user can see: on their own to-dos (assigned to them, or unassigned and created by them) it changes how often they are reminded; on anyone else\'s it is an opt-in that adds the to-do to the user\'s own summary ("off" or "inherit" removes it) and never reminds the to-do\'s person. The result says isYours. Reminders need the to-do to have a due date.';
     }
 
     /**

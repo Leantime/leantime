@@ -34,7 +34,7 @@ class GetComingUpTool extends Tool
 
     public function description(): string
     {
-        return 'Gets what is coming up for the signed-in user: their to-dos due today and tomorrow, milestones and projects ending soon, routine to-dos for today and how many older to-dos are still open. It is the same list their morning summary sends, so it follows their reminder settings. daysUntil is 0 for today. Dates are UTC.';
+        return 'Gets what is coming up for the signed-in user: their to-dos due today and tomorrow, milestones and projects ending soon, routine to-dos for today and how many older to-dos are still open. It is the same list their morning summary sends, so it follows their reminder settings. daysUntil is 0 for today. isYours is false on someone else\'s to-do the user opted in to. Dates are UTC.';
     }
 
     /**

@@ -83,13 +83,15 @@ class Reminders
     /**
      * How often one to-do reminds you.
      *
-     * preset: what applies now. chosen: you picked it for this to-do; otherwise it follows
-     * inherited, which is your default ("less" for to-dos that repeat every weekday, "off" when
-     * your default is off). hasDueDate: reminders need a due date. summary / workspaceEnabled:
+     * isYours: assigned to you, or unassigned and created by you. Reminders on anyone else's
+     * to-do you can see are an opt-in for yourself: off until you pick one, and they never
+     * remind its person. preset: what applies now. chosen: you picked it for this to-do;
+     * otherwise it follows inherited, which is "off" when it isn't yours, else your default
+     * ("less" for to-dos that repeat every weekday, "off" when your default is off). hasDueDate: reminders need a due date. summary / workspaceEnabled:
      * whether your morning summary, which carries these reminders, is on for you and for the
      * workspace.
      *
-     * @return array{preset: string, chosen: bool, inherited: string, defaultPreset: string, hasDueDate: bool, summary: bool, workspaceEnabled: bool}
+     * @return array{preset: string, chosen: bool, inherited: string, defaultPreset: string, hasDueDate: bool, summary: bool, workspaceEnabled: bool, isYours: bool}
      *
      * @api
      */
@@ -103,10 +105,11 @@ class Reminders
 
     /**
      * Picks how often one to-do reminds you (default, more, less or off). Picking what the to-do
-     * already follows removes the choice, so it keeps following your default. With
-     * $forAllMyTodos the pick becomes your default for every to-do, and this to-do follows it.
+     * already follows removes the choice (on someone else's to-do, picking off stops the
+     * reminders). With $forAllMyTodos the pick becomes your default for every to-do of yours, and
+     * this to-do follows it; it is refused on a to-do that isn't yours.
      *
-     * @return array{preset: string, chosen: bool, inherited: string, defaultPreset: string, hasDueDate: bool, summary: bool, workspaceEnabled: bool}
+     * @return array{preset: string, chosen: bool, inherited: string, defaultPreset: string, hasDueDate: bool, summary: bool, workspaceEnabled: bool, isYours: bool}
      *
      * @api
      */
@@ -120,13 +123,16 @@ class Reminders
         }
 
         if ($forAllMyTodos) {
+            if (! $this->isYours($userId, $ticket)) {
+                throw new ValidationException(['forAllMyTodos' => ['"Use this for all my to-dos" is only for your own to-dos.']]);
+            }
             $this->settings->save($userId, null, null, $preset);
             $this->settings->saveTaskChoice($userId, $ticketId, null);
 
             return $this->taskReminderState($userId, $ticket);
         }
 
-        $inherited = $this->inheritedFor($userId, $ticketId);
+        $inherited = $this->inheritedFor($userId, $ticket);
         $this->settings->saveTaskChoice($userId, $ticketId, $preset === $inherited ? null : $preset);
 
         return $this->taskReminderState($userId, $ticket);
@@ -180,14 +186,14 @@ class Reminders
     }
 
     /**
-     * @return array{preset: string, chosen: bool, inherited: string, defaultPreset: string, hasDueDate: bool, summary: bool, workspaceEnabled: bool}
+     * @return array{preset: string, chosen: bool, inherited: string, defaultPreset: string, hasDueDate: bool, summary: bool, workspaceEnabled: bool, isYours: bool}
      */
     private function taskReminderState(int $userId, object $ticket): array
     {
         $ticketId = (int) $ticket->id;
         $mine = $this->settings->forUser($userId);
         $chosen = $this->settings->taskChoice($userId, $ticketId);
-        $inherited = $this->inheritedFor($userId, $ticketId);
+        $inherited = $this->inheritedFor($userId, $ticket);
 
         return [
             'preset' => $chosen ?? $inherited,
@@ -197,15 +203,29 @@ class Reminders
             'hasDueDate' => self::isDate($ticket->dateToFinish ?? null),
             'summary' => $mine['summary'],
             'workspaceEnabled' => $this->settings->workspaceEnabled(),
+            'isYours' => $this->isYours($userId, $ticket),
         ];
     }
 
-    private function inheritedFor(int $userId, int $ticketId): string
+    /**
+     * What the to-do follows without a choice: off when it isn't yours (an opt-in), otherwise
+     * your default ("less" for routines every weekday).
+     */
+    private function inheritedFor(int $userId, object $ticket): string
     {
+        $ticketId = (int) $ticket->id;
+
         return ReminderSettings::inheritedPreset(
             $this->settings->forUser($userId)['taskPreset'],
-            isset($this->reminders->frequentRecurring([$ticketId])[$ticketId])
+            isset($this->reminders->frequentRecurring([$ticketId])[$ticketId]),
+            $this->isYours($userId, $ticket)
         );
+    }
+
+    /** Assigned to you, or unassigned and created by you. */
+    private function isYours(int $userId, object $ticket): bool
+    {
+        return ReminderRepository::isOwner($userId, $ticket->editorId ?? null, $ticket->userId ?? null);
     }
 
     /** A real date (not empty and not MySQL's 0000-00-00 "no date"). */

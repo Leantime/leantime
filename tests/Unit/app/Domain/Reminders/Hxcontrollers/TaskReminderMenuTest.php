@@ -28,13 +28,19 @@ class TaskReminderMenuTest extends TestCase
     /** @var array<int, array> */
     private array $picks = [];
 
-    private array $state = ['preset' => 'more', 'chosen' => true, 'inherited' => 'default', 'defaultPreset' => 'default', 'hasDueDate' => true, 'summary' => true, 'workspaceEnabled' => true];
+    private array $state = ['preset' => 'more', 'chosen' => true, 'inherited' => 'default', 'defaultPreset' => 'default', 'hasDueDate' => true, 'summary' => true, 'workspaceEnabled' => true, 'isYours' => true];
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->assigned = [];
         $this->picks = [];
+
+        // The view factory discovers plugin composer paths, which hits the database unit tests
+        // don't have.
+        $plugins = $this->createMock(\Leantime\Core\Plugins\Plugins::class);
+        $plugins->method('getEnabledPluginPaths')->willReturn([]);
+        app()->instance(\Leantime\Core\Plugins\Plugins::class, $plugins);
     }
 
     private function controller(string $method, array $parameters): TaskReminderMenu
@@ -150,6 +156,18 @@ class TaskReminderMenuTest extends TestCase
 
         $this->assertStringContainsString(__('reminders.picker_needs_due_date'), $html);
         $this->assertStringNotContainsString('hx-post', $html);
+    }
+
+    public function test_on_someone_else_s_to_do_off_is_the_default_and_use_for_all_is_hidden(): void
+    {
+        $html = $this->render(['preset' => 'off', 'chosen' => false, 'inherited' => 'off', 'isYours' => false] + $this->state);
+
+        $this->assertMatchesRegularExpression('/aria-checked="true"[^>]*"preset": "off"/s', $html);
+        $this->assertMatchesRegularExpression('/"preset": "off"\}.*?·\s*'.preg_quote(__('reminders.picker_your_default'), '/').'/s', $html);
+        $this->assertStringContainsString(e(__('reminders.picker_not_yours')), $html);
+
+        $html = $this->render(['preset' => 'more', 'chosen' => true, 'inherited' => 'off', 'isYours' => false] + $this->state);
+        $this->assertStringNotContainsString('forAllMyTodos', $html, 'only for your own to-dos');
     }
 
     public function test_the_partial_skips_use_for_all_when_the_to_do_follows_your_default(): void

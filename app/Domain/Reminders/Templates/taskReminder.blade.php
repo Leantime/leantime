@@ -4,7 +4,8 @@
     One radio per choice; the one that applies now is picked. The choice the to-do follows when
     you pick nothing is marked "Your default". Reminders arrive in the morning summary, so the
     modal says when the summary is off for you or for the workspace, and asks for a due date when
-    the to-do has none.
+    the to-do has none. On someone else's to-do reminders are an opt-in for yourself: "Don't remind
+    me" is the default and "Use this for all my to-dos" is hidden.
 --}}
 @php
     $choices = [
@@ -35,6 +36,8 @@
 
     @if (! $canPick)
         <p><strong>{{ __('reminders.picker_needs_due_date') }}</strong></p>
+    @elseif (! ($reminder['isYours'] ?? true))
+        <p>{{ __('reminders.picker_not_yours') }}</p>
     @endif
 
     <fieldset @disabled(! $canPick) class="tw-border-0 tw-p-0 tw-m-0">
@@ -46,9 +49,11 @@
             </div>
         @endforeach
 
-        <div class="form-group">
-            <x-global::forms.checkbox name="forAllMyTodos" value="1">{{ __('reminders.picker_for_all') }}</x-global::forms.checkbox>
-        </div>
+        @if ($reminder['isYours'] ?? true)
+            <div class="form-group">
+                <x-global::forms.checkbox name="forAllMyTodos" value="1">{{ __('reminders.picker_for_all') }}</x-global::forms.checkbox>
+            </div>
+        @endif
     </fieldset>
 
     <br />

@@ -129,9 +129,14 @@ class Reminders
      * $todayEndUtc and not due before $todayStartUtc (the "every morning from the start date"
      * preset). Done is decided later, per project, from its status labels.
      *
+     * $alsoIds adds to-dos that aren't theirs but that they asked to be reminded about (their own
+     * choice on someone else's to-do); the same filters apply. Each row says whether it is
+     * theirs (isYours).
+     *
+     * @param  array<int, int>  $alsoIds
      * @return array<int, array<string, mixed>>
      */
-    public function tasksFor(int $userId, string $todayStartUtc, string $todayEndUtc, string $windowEndUtc): array
+    public function tasksFor(int $userId, string $todayStartUtc, string $todayEndUtc, string $windowEndUtc, array $alsoIds = []): array
     {
         return $this->db->table('zp_tickets as t')
             ->join('zp_projects as p', 'p.id', '=', 't.projectId')
@@ -141,7 +146,12 @@ class Reminders
             ])
             ->where(fn ($q) => $q->whereNull('t.type')->orWhere('t.type', '<>', 'milestone'))
             ->where(fn ($q) => $this->openProject($q))
-            ->where(fn ($q) => $this->owned($q, $userId))
+            ->where(function ($q) use ($userId, $alsoIds) {
+                $q->where(fn ($q) => $this->owned($q, $userId));
+                if ($alsoIds !== []) {
+                    $q->orWhereIn('t.id', $alsoIds);
+                }
+            })
             ->where('t.dateToFinish', '>=', self::NO_DATE_BEFORE)
             ->where(function ($q) use ($todayStartUtc, $todayEndUtc, $windowEndUtc) {
                 $q->where('t.dateToFinish', '<=', $windowEndUtc)
@@ -154,8 +164,19 @@ class Reminders
             ->orderBy('t.dateToFinish')
             ->orderBy('t.id')
             ->get()
-            ->map(fn ($row) => (array) $row)
+            ->map(fn ($row) => ['isYours' => self::isOwner($userId, $row->editorId ?? null, $row->userId ?? null)] + (array) $row)
             ->all();
+    }
+
+    /** Assigned to the person, or unassigned and created by them (the rule {@see owned()} queries). */
+    public static function isOwner(int $userId, mixed $editorId, mixed $creatorId): bool
+    {
+        $editor = trim((string) ($editorId ?? ''));
+        if ($editor !== '' && $editor !== '0') {
+            return $editor === (string) $userId;
+        }
+
+        return (int) ($creatorId ?? 0) === $userId;
     }
 
     /**

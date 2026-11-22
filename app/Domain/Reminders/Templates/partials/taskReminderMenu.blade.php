@@ -4,6 +4,7 @@
     Fragment "menu" is one <li> holding the choices as menu links. Tapping one saves it and swaps
     the <li> with the new state: a check marks what applies now, "Your default" marks what the
     to-do follows when you pick nothing. Without a due date there are no choices, only the hint.
+    On someone else's to-do the default is off and "Use this for all my to-dos" is hidden.
 --}}
 @fragment('menu')
 @php
@@ -24,6 +25,9 @@
         @elseif (! $reminder['summary'])
             <span class="tw-block tw-px-[10px] tw-py-[3px] tw-text-[var(--secondary-font-color)]">{{ __('reminders.picker_summary_off') }}</span>
         @endif
+        @if (! ($reminder['isYours'] ?? true))
+            <span class="tw-block tw-px-[10px] tw-py-[3px] tw-text-[var(--secondary-font-color)]">{{ __('reminders.picker_not_yours') }}</span>
+        @endif
 
         @foreach ($choices as $preset => $labelKey)
             <a href="javascript:void(0);"
@@ -41,7 +45,7 @@
             </a>
         @endforeach
 
-        @if ($reminder['chosen'])
+        @if ($reminder['chosen'] && ($reminder['isYours'] ?? true))
             <a href="javascript:void(0);"
                hx-post="{{ $endpoint }}"
                hx-vals='{"ticketId": "{{ $ticketId }}", "preset": "{{ $reminder['preset'] }}", "forAllMyTodos": "1"}'

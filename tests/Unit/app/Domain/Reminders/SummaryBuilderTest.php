@@ -143,6 +143,80 @@ class SummaryBuilderTest extends TestCase
         $this->assertSame([1, 3], $this->ids($this->build()), 'removing the choice brings the default back');
     }
 
+    public function test_someone_else_s_to_do_is_off_until_you_opt_in_and_then_only_you_get_it(): void
+    {
+        $this->addUser(99);
+        $this->addMember(99, 1);
+        $this->addTicket(1, ['editorId' => '99', 'userId' => 99, 'dateToFinish' => '2026-11-22 17:00:00']);  // Ben's, due today
+        $this->addTicket(2, ['editorId' => '99', 'userId' => 7, 'dateToFinish' => '2026-11-22 17:00:00']);   // I made it, Ben has it
+
+        $this->assertSame([], $this->ids($this->build()), 'not yours: off by default');
+        $bensBefore = $this->builder()->build(99, $this->now, 'UTC', 'default');
+
+        $this->settingRepository()->saveSetting('usersettings.7.reminders.task.1', 'default');
+        $summary = $this->build();
+
+        $this->assertSame([1], $this->ids($summary));
+        $this->assertFalse($summary['items'][0]['isYours']);
+        $this->assertSame($bensBefore, $this->builder()->build(99, $this->now, 'UTC', 'default'), 'Ben\'s summary doesn\'t change');
+        $this->assertSame([1, 2], $this->ids($bensBefore));
+        $this->assertTrue($bensBefore['items'][0]['isYours']);
+    }
+
+    public function test_an_opt_in_follows_the_same_rules_as_your_own_to_dos(): void
+    {
+        $this->addProject(4);
+        $base = ['editorId' => '99', 'userId' => 99];
+        $this->addTicket(1, $base + ['dateToFinish' => '2026-11-23 17:00:00']);                     // due tomorrow: default shows
+        $this->addTicket(2, $base + ['dateToFinish' => '2026-11-25 17:00:00']);                     // in 3 days: only "more" shows
+        $this->addTicket(3, $base + ['dateToFinish' => '2026-11-22 17:00:00', 'status' => 0]);      // done
+        $this->addTicket(4, $base + ['dateToFinish' => '2026-11-22 17:00:00', 'projectId' => 4]);   // can't see the project any more
+        $this->addTicket(5, $base);                                                                  // no due date
+        $this->addTicket(6, $base + ['dateToFinish' => '2026-11-22 17:00:00']);                     // opted in, then off
+        $settings = $this->settingRepository();
+        foreach ([1 => 'default', 2 => 'default', 3 => 'more', 4 => 'more', 5 => 'more', 6 => 'off'] as $id => $preset) {
+            $settings->saveSetting('usersettings.7.reminders.task.'.$id, $preset);
+        }
+
+        $this->assertSame([1], $this->ids($this->build(hiddenProjects: [4])));
+
+        $settings->saveSetting('usersettings.7.reminders.task.2', 'more');
+        $this->assertSame([1, 2], $this->ids($this->build(hiddenProjects: [4])));
+    }
+
+    public function test_a_to_do_that_is_yours_and_chosen_shows_once(): void
+    {
+        $this->addTicket(1, ['editorId' => '7', 'dateToFinish' => '2026-11-22 17:00:00']);
+        $this->settingRepository()->saveSetting('usersettings.7.reminders.task.1', 'more');
+
+        $summary = $this->build();
+
+        $this->assertSame([1], $this->ids($summary));
+        $this->assertSame(1, $summary['dueToday']);
+        $this->assertTrue($summary['items'][0]['isYours']);
+    }
+
+    public function test_a_stored_choice_keeps_working_when_the_assignee_changes(): void
+    {
+        $this->addTicket(1, ['editorId' => '99', 'userId' => 99, 'dateToFinish' => '2026-11-23 17:00:00']);
+        $this->addTicket(2, ['editorId' => '7', 'userId' => 99, 'dateToFinish' => '2026-11-23 17:00:00']);
+        $this->settingRepository()->saveSetting('usersettings.7.reminders.task.1', 'more');
+
+        $this->assertSame([1, 2], $this->ids($this->build()));
+
+        // To-do 1 becomes mine (the choice still applies); I stop being to-do 2's assignee
+        // without a stored choice (it stops).
+        $this->db->table('zp_tickets')->where('id', 1)->update(['editorId' => '7']);
+        $this->db->table('zp_tickets')->where('id', 2)->update(['editorId' => '99']);
+        $summary = $this->build();
+        $this->assertSame([1], $this->ids($summary));
+        $this->assertTrue($summary['items'][0]['isYours']);
+
+        // I stop being to-do 1's assignee again: I opted in, so I keep getting it.
+        $this->db->table('zp_tickets')->where('id', 1)->update(['editorId' => '99']);
+        $this->assertSame([1], $this->ids($this->build()));
+    }
+
     public function test_a_recurring_to_do_that_resets_in_place_shows_again_next_cycle(): void
     {
         $this->addTicket(1, ['editorId' => '7', 'dateToFinish' => '2026-11-22 17:00:00']);

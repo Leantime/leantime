@@ -51,14 +51,17 @@ class RemindersServiceTest extends TestCase
             $this->make(SummaryBuilder::class, ['build' => fn (int $userId, $now, string $timezone, string $preset) => ['for' => $userId, 'preset' => $preset]]),
             $this->make(TicketRepository::class, [
                 'getTicket' => function ($id) {
-                    if (! in_array((int) $id, [1, 2, 3], true)) {
+                    if (! in_array((int) $id, [1, 2, 3, 4], true)) {
                         return false;
                     }
                     $ticket = new TicketModel;
                     $ticket->id = (int) $id;
-                    // to-do 1 is in project 1, to-do 2 in project 2; to-do 3 is in project 1 without a due date
-                    $ticket->projectId = (int) $id === 3 ? 1 : (int) $id;
+                    // to-do 1 is in project 1, to-do 2 in project 2; to-do 3 is in project 1 without a due date;
+                    // to-dos 1-3 are assigned to the session user (7), to-do 4 (project 1) to someone else (99)
+                    $ticket->projectId = in_array((int) $id, [3, 4], true) ? 1 : (int) $id;
                     $ticket->dateToFinish = (int) $id === 3 ? '0000-00-00 00:00:00' : '2026-11-25 17:00:00';
+                    $ticket->editorId = (int) $id === 4 ? '99' : '7';
+                    $ticket->userId = 99;
 
                     return $ticket;
                 },
@@ -171,6 +174,7 @@ class RemindersServiceTest extends TestCase
             'hasDueDate' => true,
             'summary' => true,
             'workspaceEnabled' => true,
+            'isYours' => true,
         ], $this->service()->getTaskReminders(1));
 
         $this->assertFalse($this->service()->getTaskReminders(3)['hasDueDate'], '0000-00-00 is no due date');
@@ -272,6 +276,54 @@ class RemindersServiceTest extends TestCase
 
         $this->settingRepository()->saveSetting('reminders.lastRun', 'garbage');
         $this->assertTrue($this->service()->schedulerLooksStopped($now));
+    }
+
+    public function test_on_someone_else_s_to_do_reminders_are_an_opt_in_that_starts_off(): void
+    {
+        $service = $this->service();
+        $service->saveSettings(taskPreset: 'more');
+
+        $state = $service->getTaskReminders(4);
+        $this->assertFalse($state['isYours']);
+        $this->assertSame(['preset' => 'off', 'chosen' => false], $this->presetOf($state));
+        $this->assertSame('off', $state['inherited'], 'off is the marked default, not your own default');
+
+        $state = $service->chooseTaskReminder(4, 'default');
+        $this->assertSame('default', $this->storedKeys()['usersettings.7.reminders.task.4']);
+        $this->assertSame(['preset' => 'default', 'chosen' => true], $this->presetOf($state));
+
+        $service->chooseTaskReminder(4, 'off');
+        $this->assertArrayNotHasKey('usersettings.7.reminders.task.4', $this->storedKeys(), 'off on someone else\'s to-do removes the opt-in');
+
+        $service->setTaskPreset(4, 'more');
+        $service->setTaskPreset(4, 'inherit');
+        $this->assertArrayNotHasKey('usersettings.7.reminders.task.4', $this->storedKeys(), 'inherit = off = no key');
+    }
+
+    public function test_use_this_for_all_my_to_dos_is_refused_on_someone_else_s_to_do(): void
+    {
+        $this->expectException(ValidationException::class);
+        try {
+            $this->service()->chooseTaskReminder(4, 'less', forAllMyTodos: true);
+        } finally {
+            $this->assertSame([], $this->storedKeys(), 'your default is untouched');
+        }
+    }
+
+    public function test_the_mcp_tool_opts_in_on_someone_else_s_to_do(): void
+    {
+        $tool = new \Leantime\Domain\Reminders\Tools\SetTaskReminderTool($this->service());
+
+        $result = $tool->handle(new \Laravel\Mcp\Request(['ticketId' => 4, 'preset' => 'more']));
+
+        $this->assertFalse($result->isError());
+        $this->assertStringContainsString('"isYours":false', (string) $result->content());
+        $this->assertSame('more', $this->storedKeys()['usersettings.7.reminders.task.4']);
+
+        $this->viewable = [];
+        $refused = $tool->handle(new \Laravel\Mcp\Request(['ticketId' => 4, 'preset' => 'off']));
+        $this->assertTrue($refused->isError(), 'a to-do you can no longer see');
+        $this->assertSame('more', $this->storedKeys()['usersettings.7.reminders.task.4']);
     }
 
     /** @return array{preset: string, chosen: bool} */

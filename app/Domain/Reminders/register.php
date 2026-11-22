@@ -16,7 +16,10 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
     }
 
     $scheduler
-        ->call(fn () => app()->make(Services\ReminderDispatcher::class)->run())
+        // Returns nothing: schedule:test reads a returned 2 or 3 as "failed" / "skipped".
+        ->call(function (): void {
+            app()->make(Services\ReminderDispatcher::class)->run();
+        })
         ->everyFiveMinutes()
         ->name('reminders:dispatch')
         ->withoutOverlapping(10)

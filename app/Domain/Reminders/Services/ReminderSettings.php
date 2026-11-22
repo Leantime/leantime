@@ -126,13 +126,14 @@ class ReminderSettings
     }
 
     /**
-     * What a to-do follows when the person made no choice for it: off when their default is off,
-     * "less" for to-dos that repeat every weekday or more often, otherwise their default.
+     * What a to-do follows when the person made no choice for it: off when it isn't theirs
+     * (reminders on someone else's to-do are opt-in) or when their default is off, "less" for
+     * to-dos that repeat every weekday or more often, otherwise their default.
      */
-    public static function inheritedPreset(string $defaultPreset, bool $frequentRoutine): string
+    public static function inheritedPreset(string $defaultPreset, bool $frequentRoutine, bool $isYours = true): string
     {
         return match (true) {
-            $defaultPreset === self::PRESET_OFF => self::PRESET_OFF,
+            ! $isYours, $defaultPreset === self::PRESET_OFF => self::PRESET_OFF,
             $frequentRoutine => self::PRESET_LESS,
             default => $defaultPreset,
         };
