@@ -107,7 +107,8 @@ class Reminders
      * Picks how often one to-do reminds you (default, more, less or off). Picking what the to-do
      * already follows removes the choice (on someone else's to-do, picking off stops the
      * reminders). With $forAllMyTodos the pick becomes your default for every to-do of yours, and
-     * this to-do follows it; it is refused on a to-do that isn't yours.
+     * this to-do follows it (or keeps the pick when it would inherit something else, as a routine
+     * does); it is refused on a to-do that isn't yours.
      *
      * @return array{preset: string, chosen: bool, inherited: string, defaultPreset: string, hasDueDate: bool, summary: bool, workspaceEnabled: bool, isYours: bool}
      *
@@ -127,7 +128,10 @@ class Reminders
                 throw new ValidationException(['forAllMyTodos' => ['"Use this for all my to-dos" is only for your own to-dos.']]);
             }
             $this->settings->save($userId, null, null, $preset);
-            $this->settings->saveTaskChoice($userId, $ticketId, null);
+            // This to-do keeps the pick even when it would inherit something else under the new
+            // default (a routine every weekday inherits "only the morning it's due").
+            $inherited = $this->inheritedFor($userId, $ticket);
+            $this->settings->saveTaskChoice($userId, $ticketId, $preset === $inherited ? null : $preset);
 
             return $this->taskReminderState($userId, $ticket);
         }
@@ -196,7 +200,8 @@ class Reminders
         $inherited = $this->inheritedFor($userId, $ticket);
 
         return [
-            'preset' => $chosen ?? $inherited,
+            // The same resolver the summary uses, so this is the preset reminders will follow.
+            'preset' => ReminderSettings::effectivePreset($chosen, $mine['taskPreset'], $this->isFrequentRoutine($ticketId), $this->isYours($userId, $ticket)),
             'chosen' => $chosen !== null,
             'inherited' => $inherited,
             'defaultPreset' => $mine['taskPreset'],
@@ -213,13 +218,17 @@ class Reminders
      */
     private function inheritedFor(int $userId, object $ticket): string
     {
-        $ticketId = (int) $ticket->id;
-
-        return ReminderSettings::inheritedPreset(
+        return ReminderSettings::effectivePreset(
+            null,
             $this->settings->forUser($userId)['taskPreset'],
-            isset($this->reminders->frequentRecurring([$ticketId])[$ticketId]),
+            $this->isFrequentRoutine((int) $ticket->id),
             $this->isYours($userId, $ticket)
         );
+    }
+
+    private function isFrequentRoutine(int $ticketId): bool
+    {
+        return isset($this->reminders->frequentRecurring([$ticketId])[$ticketId]);
     }
 
     /** Assigned to you, or unassigned and created by you. */
@@ -228,10 +237,10 @@ class Reminders
         return ReminderRepository::isOwner($userId, $ticket->editorId ?? null, $ticket->userId ?? null);
     }
 
-    /** A real date (not empty and not MySQL's 0000-00-00 "no date"). */
+    /** A real date: not empty and not one of Leantime's "no date" sentinels (as the summary reads it). */
     private static function isDate(mixed $value): bool
     {
-        return is_string($value) && $value !== '' && ! str_starts_with($value, '0000') && strtotime($value) !== false;
+        return ReminderRepository::isRealDate($value);
     }
 
     private function userId(): int

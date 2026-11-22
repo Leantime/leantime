@@ -139,6 +139,17 @@ class ReminderSettings
         };
     }
 
+    /**
+     * The preset that governs a to-do's reminders: the person's choice for it, else what it
+     * inherits. The one resolver the summary and the API both use.
+     */
+    public static function effectivePreset(?string $chosen, string $defaultPreset, bool $frequentRoutine, bool $isYours = true): string
+    {
+        return $chosen !== null && in_array($chosen, self::PRESETS, true)
+            ? $chosen
+            : self::inheritedPreset($defaultPreset, $frequentRoutine, $isYours);
+    }
+
     /** True when the reminder job ran within the last $maxAgeMinutes. */
     public function schedulerRanSince(\DateTimeInterface $nowUtc, int $maxAgeMinutes = 60): bool
     {

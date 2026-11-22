@@ -23,7 +23,7 @@
 
         <div class="form-group">
             <label for="reminderSummaryTime">{{ __('reminders.settings_time') }}</label>
-            <input type="time" name="summaryTime" id="reminderSummaryTime" value="{{ $settings['summaryTime'] }}" step="300" required />
+            <input type="time" name="summaryTime" id="reminderSummaryTime" value="{{ $settings['summaryTime'] }}" step="60" required />
             <small>{{ sprintf(__('reminders.settings_timezone'), $settings['timezone']) }}</small>
         </div>
 

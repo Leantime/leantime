@@ -34,6 +34,8 @@ class ReminderNotifierTest extends TestCase
 
     private bool $pushFails = false;
 
+    private ?bool $inboxResult = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,6 +45,7 @@ class ReminderNotifierTest extends TestCase
         $this->pushes = [];
         $this->settings = [];
         $this->pushFails = false;
+        $this->inboxResult = true;
 
         $mail = ['subject' => '', 'html' => '', 'headline' => null, 'footer' => null, 'text' => ''];
         app()->instance(MailerCore::class, $this->make(MailerCore::class, [
@@ -76,9 +79,11 @@ class ReminderNotifierTest extends TestCase
 
         return new ReminderNotifier(
             $this->make(NotificationService::class, ['addNotifications' => function (array $rows) {
-                $this->inbox = array_merge($this->inbox, $rows);
+                if ($this->inboxResult === true) {
+                    $this->inbox = array_merge($this->inbox, $rows);
+                }
 
-                return true;
+                return $this->inboxResult;
             }]),
             $this->make(SettingRepository::class, ['getSetting' => fn (string $key) => $this->settings[$key] ?? false]),
             $this->make(LanguageCore::class, ['__' => fn (string $key) => $strings[$key] ?? $key]),
@@ -179,6 +184,37 @@ class ReminderNotifierTest extends TestCase
         $this->assertStringContainsString('3 still open from earlier', $text);
         $this->assertStringContainsString("See what's coming up: https://pm.example.test/dashboard/home", $text);
         $this->assertStringContainsString('at 7:30 (your time). Change the time or turn it off in your notification settings: https://pm.example.test/users/editOwn#notifications', $text);
+    }
+
+    public function test_nothing_leaves_the_server_when_the_inbox_row_is_not_written(): void
+    {
+        foreach ([false, null] as $result) {
+            $this->inboxResult = $result;
+            try {
+                $this->notifier()->sendSummary(['id' => 7, 'notifications' => 1, 'username' => 'sam@example.test'], $this->summary(), $this->now());
+                $this->fail('a summary without its inbox record');
+            } catch (\RuntimeException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+
+        $this->assertSame([], $this->emails);
+        $this->assertSame([], $this->pushes);
+    }
+
+    public function test_items_more_than_a_week_away_are_not_called_this_week(): void
+    {
+        $summary = $this->summary();
+        $summary['items'][] = ['kind' => 'task', 'id' => 4, 'title' => 'Write the annual report', 'projectId' => 1, 'projectName' => 'Website', 'due' => '', 'daysUntil' => 12, 'url' => 'https://pm.example.test/x/4'];
+
+        $email = $this->notifier()->summaryEmail($summary, 'https://pm.example.test/dashboard/home', 'Sam', '08:00');
+
+        $week = strpos($email['html'], '>Coming up this week<');
+        $later = strpos($email['html'], '>Later<');
+        $this->assertNotFalse($later);
+        $this->assertTrue($week < strpos($email['html'], 'Beta') && strpos($email['html'], 'Beta') < $later, '7 days away is this week');
+        $this->assertTrue($later < strpos($email['html'], 'Write the annual report'), '12 days away is later');
+        $this->assertStringContainsString("Later\n- Write the annual report (Due in 12 days · Website)", $email['text']);
     }
 
     public function test_the_email_falls_back_to_the_plain_greeting_without_a_first_name(): void

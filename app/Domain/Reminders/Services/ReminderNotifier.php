@@ -15,12 +15,13 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
  * Sends the morning summary through the channels that already exist, in this order:
  *
  *   1. inbox (zp_notifications): always, and first. This row is also the record that today's
- *      summary went out (see {@see ReminderDispatcher}).
+ *      summary went out (see {@see ReminderDispatcher}), so a failed write throws and nothing
+ *      else is sent; the person stays due for the next run.
  *   2. email: sent right away, not through the digest queue, when the person kept email on
  *      ("Receive email notifications"). The scheduler already picked the right time.
  *   3. push: when the person kept push on (usersettings.{id}.pushNotifications)
  *
- * A failing email or push never stops the other.
+ * A failing email or push never stops the other, and neither undoes the inbox row.
  */
 class ReminderNotifier
 {
@@ -47,7 +48,10 @@ class ReminderNotifier
         $url = rtrim($this->trustedAppUrl->forLinks(), '/').'/dashboard/home';
         $counts = $this->countsLine($summary);
 
-        $this->notifications->addNotifications([[
+        // The inbox row is the record that today's summary went out, so it must be written before
+        // anything leaves the server. If it isn't, nothing is sent and the dispatcher leaves the
+        // person due for the next run.
+        $written = $this->notifications->addNotifications([[
             'userId' => $userId,
             'read' => '0',
             'type' => self::TYPE_SUMMARY,
@@ -58,6 +62,9 @@ class ReminderNotifier
             'url' => $url,
             'authorId' => 0,
         ]]);
+        if ($written !== true) {
+            throw new \RuntimeException('The morning summary inbox row for user '.$userId.' was not written.');
+        }
 
         if ($user['notifications'] !== 0 && ($user['username'] ?? '') !== '') {
             try {
@@ -141,7 +148,8 @@ class ReminderNotifier
     }
 
     /**
-     * The email: a greeting by first name, the items grouped by day, a button to the home page,
+     * The email: a greeting by first name, the items grouped by day (today, tomorrow, the rest
+     * of the next 7 days, later), a button to the home page,
      * and a footer that says why this email came and where to change it. HTML is kept on single
      * lines because the mailer turns newlines into line breaks; the text part mirrors it.
      *
@@ -153,12 +161,15 @@ class ReminderNotifier
         $groups = [
             'today' => ['heading' => $this->language->__('reminders.email_today'), 'items' => []],
             'tomorrow' => ['heading' => $this->language->__('reminders.email_tomorrow'), 'items' => []],
-            'later' => ['heading' => $this->language->__('reminders.email_this_week'), 'items' => []],
+            'week' => ['heading' => $this->language->__('reminders.email_this_week'), 'items' => []],
+            // "more" can list a started to-do due weeks away: it isn't "this week".
+            'later' => ['heading' => $this->language->__('reminders.email_later'), 'items' => []],
         ];
         foreach ($summary['items'] as $item) {
             $group = match (true) {
                 $item['daysUntil'] <= 0 => 'today',
                 $item['daysUntil'] === 1 => 'tomorrow',
+                $item['daysUntil'] <= 7 => 'week',
                 default => 'later',
             };
             $groups[$group]['items'][] = $item;

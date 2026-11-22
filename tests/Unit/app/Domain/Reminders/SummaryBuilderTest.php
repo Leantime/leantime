@@ -45,9 +45,12 @@ class SummaryBuilderTest extends TestCase
         return $builder;
     }
 
-    private function build(string $timezone = 'UTC', string $preset = 'default', array $hiddenProjects = []): array
+    private function build(string $timezone = 'UTC', string $preset = 'default', array $hiddenProjects = [], array $denied = []): array
     {
-        return $this->builder($hiddenProjects)->build(7, $this->now, $timezone, $preset);
+        $builder = $this->builder($hiddenProjects);
+        $builder->deniedPermissions = $denied;
+
+        return $builder->build(7, $this->now, $timezone, $preset);
     }
 
     /** @return array<int, int> listed item ids */
@@ -340,6 +343,64 @@ class SummaryBuilderTest extends TestCase
         // A project manager by project role counts too.
         $this->db->table('zp_relationuserproject')->where('userId', 9)->where('projectId', 6)->update(['projectRole' => '30']);
         $this->assertSame([], $this->ids($this->build()));
+    }
+
+    public function test_nothing_is_sent_that_the_person_s_own_role_may_not_view(): void
+    {
+        $this->addProject(2);
+        $this->addMember(7, 2);
+        $this->addProject(5, end: '2026-11-23 12:00:00', name: 'Launch');
+        $this->addMember(7, 5);
+        $this->addTicket(1, ['editorId' => '7', 'dateToFinish' => '2026-11-22 17:00:00']);                    // mine, project 1
+        $this->addTicket(2, ['editorId' => '7', 'dateToFinish' => '2026-11-22 17:00:00', 'projectId' => 2]);  // mine, project 2
+        $this->addTicket(3, ['editorId' => '99', 'userId' => 99, 'dateToFinish' => '2026-11-22 17:00:00', 'projectId' => 2]); // opted in
+        $this->addTicket(4, ['type' => 'milestone', 'editorId' => '7', 'editTo' => '2026-11-23 12:00:00', 'projectId' => 2]);
+        $this->settingRepository()->saveSetting('usersettings.7.reminders.task.3', 'default');
+
+        $this->assertSame([1, 2, 3, 5, 4], $this->ids($this->build()), 'today first, then tomorrow');
+
+        // On the team of project 2 and 5, but the role there lacks tickets.view / projects.view.
+        $summary = $this->build(denied: ['7|2|tickets.view', '7|5|projects.view']);
+        $this->assertSame([1], $this->ids($summary), 'no to-do, opt-in, milestone or project end the role can\'t see');
+    }
+
+    public function test_api_accounts_on_the_team_are_not_its_managers(): void
+    {
+        $this->addUser(40, role: '40', source: 'api'); // an admin API key with project access
+        $this->addProject(5, end: '2026-11-23 12:00:00', name: 'Launch');
+        $this->addMember(7, 5);
+        $this->addMember(40, 5);
+
+        $this->assertSame([5], $this->ids($this->build()), 'the team still has no human manager, so everyone on it hears');
+    }
+
+    public function test_only_today_s_routines_are_grouped_and_later_ones_are_listed_by_date(): void
+    {
+        $this->addTicket(1, ['editorId' => '7', 'dateToFinish' => '2026-11-22 17:00:00']); // routine today
+        $this->addTicket(2, ['editorId' => '7', 'dateToFinish' => '2026-11-23 17:00:00']); // routine tomorrow, chosen "more"
+        $this->db->table('zp_recurring_patterns')->insert([
+            ['entityId' => 1, 'module' => 'tickets', 'type' => 'daily', 'interval' => 1, 'weekDays' => null, 'enabled' => 1],
+            ['entityId' => 2, 'module' => 'tickets', 'type' => 'daily', 'interval' => 1, 'weekDays' => null, 'enabled' => 1],
+        ]);
+        $this->settingRepository()->saveSetting('usersettings.7.reminders.task.2', 'more');
+
+        $summary = $this->build();
+
+        $this->assertSame([2], $this->ids($summary), 'tomorrow\'s occurrence is listed with its day');
+        $this->assertSame(1, $summary['items'][0]['daysUntil']);
+        $this->assertSame([1], array_column($summary['routine']['items'], 'id'));
+        $this->assertSame(1, $summary['dueToday']);
+        $this->assertSame(1, $summary['dueTomorrow']);
+    }
+
+    public function test_priority_0_means_no_priority_and_sorts_after_critical(): void
+    {
+        $due = '2026-11-22 17:00:00';
+        $this->addTicket(1, ['editorId' => '7', 'dateToFinish' => $due, 'priority' => '0', 'headline' => 'A no priority']);
+        $this->addTicket(2, ['editorId' => '7', 'dateToFinish' => $due, 'priority' => '1', 'headline' => 'B critical']);
+        $this->addTicket(3, ['editorId' => '7', 'dateToFinish' => $due, 'priority' => '', 'headline' => 'C missing']);
+
+        $this->assertSame([2, 1, 3], $this->ids($this->build()));
     }
 
     public function test_items_sort_by_day_then_projects_milestones_tasks(): void

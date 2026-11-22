@@ -20,7 +20,8 @@ use Leantime\Core\Db\Db as DbCore;
 class Reminders
 {
     /** Dates before this are Leantime's "no date" sentinels (0000-00-00 …, 1969-12-31 …). */
-    private const NO_DATE_BEFORE = '1971-01-01 00:00:00';
+    /** Earlier dates are Leantime's "no date" sentinels (0000-00-00, 1969-12-31, 1970-01-01). */
+    public const NO_DATE_BEFORE = '1971-01-01 00:00:00';
 
     private ConnectionInterface $db;
 
@@ -168,6 +169,33 @@ class Reminders
             ->all();
     }
 
+    /** A real date: not empty and not one of Leantime's "no date" sentinels. */
+    public static function isRealDate(mixed $value): bool
+    {
+        return is_string($value) && $value !== '' && $value >= self::NO_DATE_BEFORE;
+    }
+
+    /**
+     * The roles that decide what a person may see in a project, read without a session: their
+     * company role and their role on the project's team ('' when they aren't on it).
+     *
+     * @return array{role: string, projectRole: string}|null Null when the person doesn't exist.
+     */
+    public function rolesIn(int $userId, int $projectId): ?array
+    {
+        $user = $this->db->table('zp_user')->select(['role'])->where('id', $userId)->first();
+        if ($user === null) {
+            return null;
+        }
+
+        $projectRole = $this->db->table('zp_relationuserproject')
+            ->where('userId', $userId)
+            ->where('projectId', $projectId)
+            ->value('projectRole');
+
+        return ['role' => (string) $user->role, 'projectRole' => (string) ($projectRole ?? '')];
+    }
+
     /** Assigned to the person, or unassigned and created by them (the rule {@see owned()} queries). */
     public static function isOwner(int $userId, mixed $editorId, mixed $creatorId): bool
     {
@@ -232,6 +260,9 @@ class Reminders
             ->select(['r.userId', 'u.role', 'r.projectRole'])
             ->where('r.projectId', $projectId)
             ->whereIn('u.status', ['a', 'A'])
+            // API service accounts aren't people: they never get summaries, so they mustn't count
+            // as the team's manager either.
+            ->where(fn ($q) => $q->whereNull('u.source')->orWhere('u.source', '<>', 'api'))
             ->get()
             ->map(fn ($row) => ['userId' => (int) $row->userId, 'role' => (string) $row->role, 'projectRole' => (string) ($row->projectRole ?? '')])
             ->all();

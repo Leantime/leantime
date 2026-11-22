@@ -35,9 +35,12 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
         <x-slot:meta>
             {{ __('label.created_by') }} {{ $ticket->userFirstname }} {{ $ticket->userLastname }} | {{ __('label.last_updated') }}: {{ format(! empty($ticket->modified) ? $ticket->modified : $ticket->date)->date() }}
         </x-slot:meta>
-        @canany(['tickets.edit', 'tickets.delete', 'timesheets.create'], $ticket->projectId)
+        {{-- tickets.view opens the menu for "Your reminders"; every other item keeps its own check. --}}
+        @canany(['tickets.view', 'tickets.edit', 'tickets.delete', 'timesheets.create'], $ticket->projectId)
             <x-slot:actions>
+                @canany(['tickets.edit', 'tickets.delete'], $ticket->projectId)
                 <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
+                @endcanany
                         @can('tickets.edit', $ticket->projectId)
                         <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                         @endcan
@@ -90,6 +93,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                         @endcan
                         @if ($ticket->type !== 'milestone')
                         {{-- Your own reminders for this to-do; the choices save inside this menu (a second modal would replace the open to-do). --}}
+                        @can('tickets.view', $ticket->projectId)
                         <li class="nav-header border">{{ __('reminders.your_reminders') }}</li>
                         <li id="taskReminderMenu-{{ $ticket->id }}"
                             hx-get="{{ BASE_URL }}/hx/reminders/taskReminderMenu/get?ticketId={{ $ticket->id }}"
@@ -97,6 +101,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                             hx-swap="outerHTML">
                             <span class="tw-block tw-px-[10px] tw-py-[3px]">…</span>
                         </li>
+                        @endcan
                         @endif
             </x-slot:actions>
         @endcanany

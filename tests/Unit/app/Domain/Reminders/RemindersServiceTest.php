@@ -51,15 +51,20 @@ class RemindersServiceTest extends TestCase
             $this->make(SummaryBuilder::class, ['build' => fn (int $userId, $now, string $timezone, string $preset) => ['for' => $userId, 'preset' => $preset]]),
             $this->make(TicketRepository::class, [
                 'getTicket' => function ($id) {
-                    if (! in_array((int) $id, [1, 2, 3, 4], true)) {
+                    if (! in_array((int) $id, [1, 2, 3, 4, 5], true)) {
                         return false;
                     }
                     $ticket = new TicketModel;
                     $ticket->id = (int) $id;
                     // to-do 1 is in project 1, to-do 2 in project 2; to-do 3 is in project 1 without a due date;
                     // to-dos 1-3 are assigned to the session user (7), to-do 4 (project 1) to someone else (99)
-                    $ticket->projectId = in_array((int) $id, [3, 4], true) ? 1 : (int) $id;
-                    $ticket->dateToFinish = (int) $id === 3 ? '0000-00-00 00:00:00' : '2026-11-25 17:00:00';
+                    // to-do 5 (project 1) has the other "no date" sentinel
+                    $ticket->projectId = in_array((int) $id, [3, 4, 5], true) ? 1 : (int) $id;
+                    $ticket->dateToFinish = match ((int) $id) {
+                        3 => '0000-00-00 00:00:00',
+                        5 => '1969-12-31 00:00:00',
+                        default => '2026-11-25 17:00:00',
+                    };
                     $ticket->editorId = (int) $id === 4 ? '99' : '7';
                     $ticket->userId = 99;
 
@@ -324,6 +329,37 @@ class RemindersServiceTest extends TestCase
         $refused = $tool->handle(new \Laravel\Mcp\Request(['ticketId' => 4, 'preset' => 'off']));
         $this->assertTrue($refused->isError(), 'a to-do you can no longer see');
         $this->assertSame('more', $this->storedKeys()['usersettings.7.reminders.task.4']);
+    }
+
+    public function test_1969_12_31_is_no_due_date_either(): void
+    {
+        $this->assertFalse($this->service()->getTaskReminders(5)['hasDueDate']);
+    }
+
+    public function test_a_routine_reports_the_preset_the_summary_uses(): void
+    {
+        $this->db->table('zp_recurring_patterns')->insert(['entityId' => 1, 'module' => 'tickets', 'type' => 'daily', 'interval' => 1, 'enabled' => 1]);
+        $service = $this->service();
+        $service->saveSettings(taskPreset: 'more');
+
+        $this->assertSame(['preset' => 'less', 'chosen' => false], $this->presetOf($service->getTaskReminders(1)));
+
+        $service->setTaskPreset(1, 'inherit');
+        $this->assertSame('less', $service->getTaskReminders(1)['preset'], 'inherit on a routine still means "less"');
+    }
+
+    public function test_use_this_for_all_on_a_routine_keeps_the_pick_for_that_routine(): void
+    {
+        $this->db->table('zp_recurring_patterns')->insert(['entityId' => 1, 'module' => 'tickets', 'type' => 'daily', 'interval' => 1, 'enabled' => 1]);
+
+        $state = $this->service()->chooseTaskReminder(1, 'more', forAllMyTodos: true);
+
+        $this->assertSame('more', $this->storedKeys()['usersettings.7.reminders.taskPreset'], 'your default changed');
+        $this->assertSame('more', $this->storedKeys()['usersettings.7.reminders.task.1'], 'the routine would inherit "less", so it keeps "more"');
+        $this->assertSame(['preset' => 'more', 'chosen' => true], $this->presetOf($state));
+
+        $this->service()->chooseTaskReminder(1, 'less', forAllMyTodos: true);
+        $this->assertArrayNotHasKey('usersettings.7.reminders.task.1', $this->storedKeys(), '"less" is what it inherits anyway');
     }
 
     /** @return array{preset: string, chosen: bool} */

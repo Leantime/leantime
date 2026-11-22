@@ -156,6 +156,34 @@ class ReminderSettingsControllersTest extends TestCase
         $this->assertFalse($this->assigned['showSchedulerWarning']);
     }
 
+    public function test_the_time_field_takes_any_minute(): void
+    {
+        $plugins = $this->createMock(\Leantime\Core\Plugins\Plugins::class);
+        $plugins->method('getEnabledPluginPaths')->willReturn([]);
+        app()->instance(\Leantime\Core\Plugins\Plugins::class, $plugins);
+
+        $html = view('reminders::partials.summarySettings', [
+            'settings' => ['summary' => true, 'summaryTime' => '08:02', 'taskPreset' => 'default', 'timezone' => 'UTC', 'workspaceEnabled' => true],
+            'presets' => ['default', 'more', 'less', 'off'],
+            'showSchedulerWarning' => false,
+        ])->fragment('form');
+
+        $this->assertMatchesRegularExpression('/<input type="time"[^>]*value="08:02"[^>]*step="60"/', $html, 'the server takes any HH:MM, so the field does too');
+    }
+
+    public function test_viewers_get_the_open_to_do_s_menu_for_their_reminders_and_nothing_more(): void
+    {
+        $template = (string) file_get_contents(APP_ROOT.'/app/Domain/Tickets/Templates/showTicketModal.blade.php');
+        $guard = fn (string $check, string $then) => '~'.preg_quote($check, '~').'\s*'.preg_quote($then, '~').'~';
+
+        $this->assertStringContainsString("@canany(['tickets.view', 'tickets.edit', 'tickets.delete', 'timesheets.create'], \$ticket->projectId)", $template, 'tickets.view opens the menu');
+        $this->assertMatchesRegularExpression($guard("@canany(['tickets.edit', 'tickets.delete'], \$ticket->projectId)", '<li class="nav-header">'), $template, 'the To-do heading needs edit or delete');
+        $this->assertMatchesRegularExpression($guard("@can('tickets.edit', \$ticket->projectId)", '<li><a href="#/tickets/moveTicket/'), $template, 'Move keeps its own check');
+        $this->assertMatchesRegularExpression($guard("@can('tickets.delete', \$ticket->projectId)", '<li><a href="#/tickets/delTicket/'), $template, 'Delete keeps its own check');
+        $this->assertMatchesRegularExpression($guard("@can('timesheets.create')", "@module('timesheets'"), $template, 'time tracking keeps its own check');
+        $this->assertMatchesRegularExpression($guard("@can('tickets.view', \$ticket->projectId)", "<li class=\"nav-header border\">{{ __('reminders.your_reminders') }}"), $template);
+    }
+
     private function assertPermission(string $class, string $method, string $permission): void
     {
         $attributes = (new \ReflectionMethod($class, $method))->getAttributes(RequiresPermission::class);

@@ -41,6 +41,9 @@ class ReminderDispatcherTest extends TestCase
 
     private ?string $heartbeat = null;
 
+    /** The next summary's inbox write fails (the notifier throws before sending anything). */
+    private bool $inboxFails = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -56,6 +59,7 @@ class ReminderDispatcherTest extends TestCase
         $this->empty = [];
         $this->workspaceEnabled = true;
         $this->heartbeat = null;
+        $this->inboxFails = false;
         $settings = ['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'UTC'];
         $this->userSettings = [7 => $settings, 8 => ['summaryTime' => '09:30'] + $settings, 9 => $settings, 10 => $settings];
     }
@@ -63,7 +67,10 @@ class ReminderDispatcherTest extends TestCase
     /**
      * @param  SummaryBuilder|null  $builder  A real builder; by default a stand-in that returns one item, or nothing for users in $this->empty.
      */
-    private function dispatcher(?SummaryBuilder $builder = null, ?ReminderRepository $repository = null): ReminderDispatcher
+    /**
+     * @param  \Closure|null  $seconds  Replaces the run clock (seconds), to test the run limit.
+     */
+    private function dispatcher(?SummaryBuilder $builder = null, ?ReminderRepository $repository = null, ?\Closure $seconds = null): ReminderDispatcher
     {
         $settings = $this->make(ReminderSettings::class, [
             'forUsers' => fn (array $ids) => array_intersect_key($this->userSettings, array_flip($ids)),
@@ -85,12 +92,102 @@ class ReminderDispatcherTest extends TestCase
         // The real notifier writes its inbox row first; this stand-in writes the same row.
         $notifier = $this->make(ReminderNotifier::class, [
             'sendSummary' => function (array $user, array $summary, CarbonImmutable $now) {
+                if ($this->inboxFails) {
+                    $this->inboxFails = false;
+                    throw new \RuntimeException('inbox row not written');
+                }
                 $this->addSummaryRow($user['id'], $now->format('Y-m-d H:i:s'));
                 $this->summariesSent[] = ['user' => $user['id'], 'items' => array_column($summary['items'], 'id')];
             },
         ]);
 
-        return new ReminderDispatcher($repository ?? $this->repository(), $settings, $builder, $notifier);
+        $repository ??= $this->repository();
+        if ($seconds === null) {
+            return new ReminderDispatcher($repository, $settings, $builder, $notifier);
+        }
+
+        return new class($repository, $settings, $builder, $notifier, $seconds) extends ReminderDispatcher
+        {
+            public function __construct($repository, $settings, $builder, $notifier, private \Closure $clock)
+            {
+                parent::__construct($repository, $settings, $builder, $notifier);
+            }
+
+            protected function seconds(): float
+            {
+                return ($this->clock)();
+            }
+        };
+    }
+
+    public function test_a_failed_inbox_write_leaves_the_person_due_for_the_next_run(): void
+    {
+        $this->inboxFails = true;
+        $this->dispatcher()->run($this->utc('2026-11-22 08:00:00'));
+        $this->assertSame([], $this->sentTo());
+
+        $this->dispatcher()->run($this->utc('2026-11-22 08:05:00'));
+        $this->assertSame([7], $this->sentTo(), 'no inbox row, so still due');
+    }
+
+    public function test_a_person_another_run_is_sending_to_is_skipped(): void
+    {
+        $lock = \Illuminate\Support\Facades\Cache::lock('reminders:summary:7', 120);
+        $this->assertTrue($lock->get(), 'the other run holds the person\'s lock');
+
+        $this->dispatcher()->run($this->utc('2026-11-22 08:00:00'));
+        $this->assertSame([], $this->sentTo());
+
+        $lock->release();
+        $this->dispatcher()->run($this->utc('2026-11-22 08:05:00'));
+        $this->assertSame([7], $this->sentTo());
+    }
+
+    public function test_the_inbox_is_checked_again_right_before_sending(): void
+    {
+        // Another run (whose overlap lock had expired) sends to user 7 after this run's batch
+        // check but before its own send.
+        $repository = new class extends ReminderRepository
+        {
+            public int $checks = 0;
+
+            public ?\Closure $beforeRecheck = null;
+
+            public function __construct() {}
+
+            public function summariesSentSince(array $sinceByUser): array
+            {
+                if (++$this->checks === 2 && $this->beforeRecheck !== null) {
+                    ($this->beforeRecheck)();
+                }
+
+                return parent::summariesSentSince($sinceByUser);
+            }
+        };
+        (new \ReflectionProperty(ReminderRepository::class, 'db'))->setValue($repository, $this->db);
+        $repository->beforeRecheck = fn () => $this->addSummaryRow(7, '2026-11-22 08:00:30');
+
+        $this->dispatcher(repository: $repository)->run($this->utc('2026-11-22 08:01:00'));
+
+        $this->assertSame([], $this->sentTo(), 'the recheck finds the other run\'s row');
+        $this->assertSame(0, $this->builds);
+    }
+
+    public function test_a_run_starts_no_new_person_after_its_time_limit(): void
+    {
+        $this->userSettings[8] = $this->userSettings[7];
+        $ticks = [0.0, 10.0, ReminderDispatcher::MAX_RUN_SECONDS + 1.0];
+        $clock = function () use (&$ticks) {
+            return count($ticks) > 1 ? array_shift($ticks) : $ticks[0];
+        };
+
+        $sent = $this->dispatcher(seconds: $clock)->run($this->utc('2026-11-22 08:00:00'));
+
+        $this->assertSame(1, $sent);
+        $this->assertSame([7], $this->sentTo(), 'user 8 waits for the next run');
+
+        $this->dispatcher()->run($this->utc('2026-11-22 08:05:00'));
+        $this->assertSame([7, 8], $this->sentTo());
     }
 
     private function utc(string $utc): CarbonImmutable

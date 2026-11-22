@@ -5,8 +5,10 @@ namespace Leantime\Domain\Reminders\Services;
 use Carbon\CarbonImmutable;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
+use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 
 /**
@@ -31,8 +33,9 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
  *  - Projects they're on the team of that end: a week before and the day before. Only the
  *    team's managers get these; when nobody on the team is a manager, everyone on it does.
  *
- * Done to-dos and milestones, closed and archived projects, and projects the person can no
- * longer see are left out. Overdue to-dos are one count, never a list, and alone they never make
+ * Done to-dos and milestones, closed and archived projects, projects the person can no longer
+ * see, and anything their own role there may not view (tickets.view for to-dos and milestones,
+ * projects.view for project ends) are left out. Overdue to-dos are one count, never a list, and alone they never make
  * a summary: nothing coming up means nothing to send.
  *
  * Every day is the person's local calendar day in their timezone.
@@ -162,7 +165,8 @@ class SummaryBuilder
             $optedIn,
         );
         $rows = array_values(array_filter($rows, fn (array $row) => ! $this->isDone((int) $row['projectId'], $row['status'])
-            && $this->canSee($userId, (int) $row['projectId'])));
+            && $this->canSee($userId, (int) $row['projectId'])
+            && $this->mayView($userId, (int) $row['projectId'], TicketsPermissions::VIEW)));
 
         $ids = array_map(fn (array $row) => (int) $row['id'], $rows);
         $frequent = $this->reminders->frequentRecurring($ids);
@@ -172,7 +176,7 @@ class SummaryBuilder
             $id = (int) $row['id'];
             $isRoutine = isset($frequent[$id]);
             $isYours = (bool) ($row['isYours'] ?? true);
-            $preset = $chosen[$id] ?? ReminderSettings::inheritedPreset($defaultPreset, $isRoutine, $isYours);
+            $preset = ReminderSettings::effectivePreset($chosen[$id] ?? null, $defaultPreset, $isRoutine, $isYours);
             if ($preset === ReminderSettings::PRESET_OFF) {
                 continue;
             }
@@ -192,8 +196,11 @@ class SummaryBuilder
             $entries[] = [
                 'item' => $this->item('task', $id, (string) $row['headline'], (int) $row['projectId'], (string) ($row['projectName'] ?? ''), (string) $row['dateToFinish'], $daysUntil, '/dashboard/home#/tickets/showTicket/'.$id, $isYours),
                 'rank' => 2,
-                'priority' => is_numeric($row['priority'] ?? null) ? (int) $row['priority'] : 99,
-                'routine' => $isRoutine,
+                // 0 is "no priority", sorted with the missing ones (as the to-do lists sort it).
+                'priority' => is_numeric($row['priority'] ?? null) && (int) $row['priority'] > 0 ? (int) $row['priority'] : 99,
+                // Only today's routines become the routine line; a later occurrence ("more") is
+                // listed under its own day.
+                'routine' => $isRoutine && $daysUntil === 0,
             ];
         }
 
@@ -209,7 +216,8 @@ class SummaryBuilder
 
         $entries = [];
         foreach ($rows as $row) {
-            if ($this->isDone((int) $row['projectId'], $row['status']) || ! $this->canSee($userId, (int) $row['projectId'])) {
+            if ($this->isDone((int) $row['projectId'], $row['status']) || ! $this->canSee($userId, (int) $row['projectId'])
+                || ! $this->mayView($userId, (int) $row['projectId'], TicketsPermissions::VIEW)) {
                 continue;
             }
 
@@ -240,7 +248,8 @@ class SummaryBuilder
         $entries = [];
         foreach ($rows as $row) {
             $daysUntil = $this->localDayIndex($row['end'], $timezone) - $todayIndex;
-            if (! in_array($daysUntil, self::END_NOTICE_DAYS, true) || ! in_array($userId, $this->endRecipients($row['id']), true)) {
+            if (! in_array($daysUntil, self::END_NOTICE_DAYS, true) || ! in_array($userId, $this->endRecipients($row['id']), true)
+                || ! $this->mayView($userId, $row['id'], ProjectsPermissions::VIEW)) {
                 continue;
             }
 
@@ -305,6 +314,15 @@ class SummaryBuilder
         return ($this->labels[$projectId][(int) $status]['statusType'] ?? '') === 'DONE';
     }
 
+    /**
+     * Whether the person's own role in the project holds the permission (tickets.view for to-dos
+     * and milestones, projects.view for project ends), read without a session.
+     */
+    protected function mayView(int $userId, int $projectId, string $permission): bool
+    {
+        return app()->make(RecipientAccess::class)->can($userId, $projectId, $permission);
+    }
+
     /** Whether the person can still see the project (team, company-wide role, or shared with everyone). */
     protected function canSee(int $userId, int $projectId): bool
     {
@@ -341,7 +359,7 @@ class SummaryBuilder
 
     private static function isDate(mixed $value): bool
     {
-        return is_string($value) && $value >= '1971-01-01';
+        return ReminderRepository::isRealDate($value);
     }
 
     private static function utc(CarbonImmutable $time): string

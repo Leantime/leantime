@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Reminders\Services;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\Cache\Lock;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
 
@@ -15,8 +17,14 @@ use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
  *
  * The inbox is the record of what was sent. A summary writes its inbox row first, then the email
  * and push. A person who already has a summary row since their local midnight gets nothing more
- * that day. The job runs under the scheduler's overlap lock (and on one server, where the cache
- * can share locks), so the check and the write can't race.
+ * that day.
+ *
+ * Sending once doesn't depend on the scheduler's overlap lock alone, which expires after 10
+ * minutes while a slow run could still be going. Each person's send takes its own short lock
+ * (same cache store as the scheduler's) and checks the inbox again inside it, so two runs can
+ * never both send: the second can't get the lock, or finds the row. A run also stops starting
+ * new people after {@see MAX_RUN_SECONDS}, well inside the overlap lock; the rest go out on the
+ * next run, still inside their window.
  *
  * An empty day writes nothing. A later run inside the window still sends one summary if something
  * has come due since, so a person gets at most one summary a day, and maybe none.
@@ -29,6 +37,12 @@ class ReminderDispatcher
 
     /** How long after the summary time a summary may still go out. */
     public const WINDOW_MINUTES = 180;
+
+    /** A run starts no new person after this long (the overlap lock lasts 10 minutes). */
+    public const MAX_RUN_SECONDS = 480;
+
+    /** How long one person's send lock lasts; one send takes seconds. */
+    public const SEND_LOCK_SECONDS = 120;
 
     public function __construct(
         private ReminderRepository $reminders,
@@ -43,6 +57,7 @@ class ReminderDispatcher
     public function run(?CarbonImmutable $nowUtc = null): int
     {
         $nowUtc ??= CarbonImmutable::now('UTC');
+        $startedAt = $this->seconds();
         $this->settings->recordHeartbeat($nowUtc->format('Y-m-d H:i:s'));
 
         if (! $this->settings->workspaceEnabled()) {
@@ -80,21 +95,14 @@ class ReminderDispatcher
                     continue;
                 }
 
-                try {
-                    $summary = $this->builder->build($userId, $nowUtc, $settings[$userId]['timezone'], $settings[$userId]['taskPreset']);
-                    if ($summary['isEmpty']) {
-                        continue;
-                    }
+                if ($this->seconds() - $startedAt > self::MAX_RUN_SECONDS) {
+                    Log::info('Morning summaries: run reached '.self::MAX_RUN_SECONDS.' seconds; the rest go out on the next run.');
 
-                    $user = $this->reminders->activeUser($userId);
-                    if ($user === null) {
-                        continue;
-                    }
+                    return $sent;
+                }
 
-                    $this->notifier->sendSummary($user, $summary, $nowUtc, $settings[$userId]['summaryTime']);
+                if ($this->sendOnce($userId, $since[$userId], $nowUtc, $settings[$userId])) {
                     $sent++;
-                } catch (\Throwable $e) {
-                    Log::warning('Morning summary failed for user '.$userId.': '.$e->getMessage());
                 }
             }
 
@@ -104,6 +112,59 @@ class ReminderDispatcher
         }
 
         return $sent;
+    }
+
+    /**
+     * Builds and sends one person's summary, at most once a day even when runs overlap: under the
+     * person's lock, the inbox is checked again right before the row is written.
+     *
+     * @param  array{summary: bool, summaryTime: string, taskPreset: string, timezone: string}  $mine
+     * @return bool Whether a summary went out.
+     */
+    private function sendOnce(int $userId, string $sinceUtc, CarbonImmutable $nowUtc, array $mine): bool
+    {
+        $lock = $this->sendLock($userId);
+        if (! $lock->get()) {
+            return false; // another run is sending to this person right now
+        }
+
+        try {
+            if (isset($this->reminders->summariesSentSince([$userId => $sinceUtc])[$userId])) {
+                return false;
+            }
+
+            $summary = $this->builder->build($userId, $nowUtc, $mine['timezone'], $mine['taskPreset']);
+            if ($summary['isEmpty']) {
+                return false;
+            }
+
+            $user = $this->reminders->activeUser($userId);
+            if ($user === null) {
+                return false;
+            }
+
+            $this->notifier->sendSummary($user, $summary, $nowUtc, $mine['summaryTime']);
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::warning('Morning summary failed for user '.$userId.': '.$e->getMessage());
+
+            return false;
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /** One person's send lock, in the default cache store (the one the scheduler's locks use). */
+    protected function sendLock(int $userId): Lock
+    {
+        return Cache::lock('reminders:summary:'.$userId, self::SEND_LOCK_SECONDS);
+    }
+
+    /** Seconds on a steady clock, to bound a run. */
+    protected function seconds(): float
+    {
+        return hrtime(true) / 1e9;
     }
 
     private static function minutesOfDay(string $time): int
