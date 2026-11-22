@@ -446,6 +446,12 @@ class AuthCheck
         return new RedirectResponse($destination.$queryParams);
     }
 
+    /**
+     * Whether a route (dot separated, as from getCurrentRoute()) is in the public actions list.
+     * Compares "module.action"; "/.well-known/{name}" paths compare as "well-known.{name}".
+     *
+     * @param  string|null  $currentPath  The current route, e.g. "auth.login" or ".well-known.caldav"
+     */
     public function isPublicController($currentPath): bool
     {
 
@@ -453,6 +459,14 @@ class AuthCheck
         // We only need to compare the first 2 segments
         if (empty($currentPath)) {
             return false;
+        }
+
+        // "/.well-known/caldav" arrives as ".well-known.caldav": its leading dot is part of the
+        // name, not a separator. Plugins list these as "well-known.{name}".
+        if (str_starts_with($currentPath, '.well-known.')) {
+            $wellKnownName = explode('.', substr($currentPath, strlen('.well-known.')))[0];
+
+            return in_array('well-known.'.$wellKnownName, $this->publicActions, true);
         }
 
         $pathSegments = explode('.', $currentPath);

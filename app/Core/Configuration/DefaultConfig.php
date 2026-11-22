@@ -571,6 +571,14 @@ class DefaultConfig
     public string $trustedProxies = '';
 
     /**
+     * @var string Comma separated hostnames, IPs or CIDR ranges on a private network that
+     *             server-initiated requests may still reach (external calendars, CalDAV accounts,
+     *             webhooks). Empty = only public addresses. For self-hosted installs whose
+     *             calendar server sits on the LAN, e.g. 'nextcloud.lan,192.168.1.0/24'.
+     */
+    public string $outboundAllowedHosts = '';
+
+    /**
      * @var int rate limit on all requests
      */
     public int $ratelimitGeneral = 2000;

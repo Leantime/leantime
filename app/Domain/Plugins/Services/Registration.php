@@ -108,12 +108,15 @@ class Registration
 
     }
 
+    /**
+     * The plugin's strings for one language, from its phar or folder; cached until the phar or
+     * .ini changes.
+     *
+     * @param  string  $language  Language code, e.g. "en-US"
+     * @return array|false The strings, or false when the plugin has no file for this language
+     */
     private function loadPluginLanguage($language): array|false
     {
-
-        if (Cache::store('installation')->has($this->pluginId.'.language.'.$language)) {
-            return Cache::store('installation')->get($this->pluginId.'.language.'.$language);
-        }
 
         $pluginPath = APP_ROOT.'/app/Plugins/';
 
@@ -123,6 +126,16 @@ class Registration
 
         $languagePath = "/Language/{$language}.ini";
 
+        // The key carries the modification time of what the strings come from (the phar, or the
+        // .ini of a folder plugin), so an updated plugin's new strings show right away instead of
+        // as raw keys until the 7-day entry expires. Two stat() calls; no archive is opened.
+        $sourceModified = is_file($pharFile) ? filemtime($pharFile) : @filemtime($regularPath.$languagePath);
+        $cacheKey = $this->pluginId.'.language.'.$language.'.'.(int) $sourceModified;
+
+        if (Cache::store('installation')->has($cacheKey)) {
+            return Cache::store('installation')->get($cacheKey);
+        }
+
         // Check phar first, only after the on-disk archive exists as a real file (open_basedir hosts)
         if (is_file($pharFile) && file_exists($pharPath.$languagePath)) {
             $completeLanguagePath = $pharPath.$languagePath;
@@ -130,7 +143,7 @@ class Registration
             $completeLanguagePath = $regularPath.$languagePath;
         } else {
             // Language file doesn't exist
-            Cache::store('installation')->set($this->pluginId.'.language.'.$language, false, new \DateInterval('P7D'));
+            Cache::store('installation')->set($cacheKey, false, new \DateInterval('P7D'));
 
             return false;
         }
@@ -139,7 +152,7 @@ class Registration
 
         // We're caching the results no matter what, language file is not going to magically appear.
         // So even a false is valid as parse_ini_is too expensive to run every time
-        Cache::store('installation')->set($this->pluginId.'.language.'.$language, $languageArray, new \DateInterval('P7D'));
+        Cache::store('installation')->set($cacheKey, $languageArray, new \DateInterval('P7D'));
 
         return $languageArray;
 
