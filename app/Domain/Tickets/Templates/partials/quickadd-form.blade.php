@@ -64,7 +64,7 @@ $hasError = $isActive && !empty($reopenState['error']);
                    data-quickadd-input />
 
             @if ($hasError)
-                <div class="error-message" role="alert">{{ htmlspecialchars($reopenState['error']) }}</div>
+                <div class="error-message" role="alert">{{ $reopenState['error'] }}</div>
             @endif
 
             <div id="quick-add-help-{{ $statusId }}-{{ $swimlaneKey ?? 'default' }}" class="sr-only">

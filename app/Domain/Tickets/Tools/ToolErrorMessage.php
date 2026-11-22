@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Tools;
 
+use Illuminate\Support\Str;
 use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Exceptions\AssigneeCannotSeeProjectException;
 
@@ -10,6 +11,7 @@ use Leantime\Domain\Tickets\Exceptions\AssigneeCannotSeeProjectException;
  *
  * Most errors are the client message as is. When the assignee or a collaborator isn't on the
  * project team, the AI also gets the way out: ask the user, add them to the team, try again.
+ * That whole text goes through Str::sanitizeForLLM(): user and project names are in it.
  */
 class ToolErrorMessage
 {
@@ -37,6 +39,6 @@ class ToolErrorMessage
                 .'Or pick someone from getUsersAssignedToProject instead.';
         }
 
-        return $e->getClientMessage().' '.$next;
+        return Str::sanitizeForLLM($e->getClientMessage().' '.$next);
     }
 }

@@ -30,6 +30,11 @@ class GetLatestGrowl extends Controller
     {
         $payload = $this->notificationService->consumeFlashNotification();
 
+        // The page shows this as HTML: clean it like rich text (see Template::growlScript()).
+        if ($payload !== null) {
+            $payload['notification'] = $this->tpl->escapeMinimal((string) $payload['notification']);
+        }
+
         return new JsonResponse($payload !== null ? json_encode($payload) : false);
     }
 }

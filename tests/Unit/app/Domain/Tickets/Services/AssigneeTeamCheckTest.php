@@ -43,6 +43,7 @@ class AssigneeTeamCheckTest extends TestCase
         'notifications.assignee_not_on_project_team' => "%1\$s can't see the %2\$s project because they aren't on its team. Add them to the team first, or pick someone who is on it.",
         'notifications.collaborator_not_on_project_team' => "%1\$s can't see the %2\$s project because they aren't on its team. Add them to the team first, or leave them off.",
         'notifications.ticket_user_not_found' => 'There is no user with ID %s.',
+        'notifications.ticket_user_id_invalid' => "'%s' is not a user ID. Use a user's ID number, or 0 for no one.",
     ];
 
     /** @var array<int, array<string, mixed>> Every patchTicket() write that reached the repository. */
@@ -169,6 +170,45 @@ class AssigneeTeamCheckTest extends TestCase
         $this->buildService()->patchTicket(5, ['editorId' => 999]);
     }
 
+    /**
+     * The repository writes the value as sent, so anything but a whole, non-negative id must be
+     * refused rather than cast (true would be stored as user 1, 2.5 checked as user 2).
+     */
+    public function test_malformed_assignee_ids_are_refused_not_cast(): void
+    {
+        $service = $this->buildService();
+
+        foreach ([[true, "'true' is not a user ID."], [2.5, "'2.5' is not a user ID."], [-3, "'-3' is not a user ID."], ['2abc', "'2abc' is not a user ID."], [[2], "'array' is not a user ID."]] as [$value, $start]) {
+            try {
+                $service->patchTicket(5, ['editorId' => $value]);
+                $this->fail('Expected '.var_export($value, true).' to be refused.');
+            } catch (ValidationException $e) {
+                $this->assertNotInstanceOf(AssigneeCannotSeeProjectException::class, $e);
+                $this->assertStringStartsWith($start, $e->getClientMessage());
+            }
+        }
+
+        $this->assertSame([], $this->patches);
+        $this->assertTrue($service->patchTicket(5, ['editorId' => '2']));
+        $this->assertTrue($service->patchTicket(5, ['editorId' => '0']));
+        $this->assertTrue($service->patchTicket(5, ['editorId' => null]));
+    }
+
+    public function test_malformed_collaborator_ids_are_refused(): void
+    {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage("'1.5' is not a user ID.");
+
+        $this->buildService()->patchTicket(5, ['collaborators' => [2, 1.5]]);
+    }
+
+    public function test_collaborators_as_a_comma_list_are_checked_too(): void
+    {
+        $this->expectException(AssigneeCannotSeeProjectException::class);
+
+        $this->buildService()->patchTicket(5, ['collaborators' => '2, 64']);
+    }
+
     public function test_quick_add_refuses_an_outside_assignee_and_defaults_to_the_caller(): void
     {
         $service = $this->buildService();
@@ -195,6 +235,20 @@ class AssigneeTeamCheckTest extends TestCase
 
         $this->assertFalse($result['success']);
         $this->assertStringStartsWith("Marcel H can't see the Customer Service project", $result['message']);
+        $this->assertSame([], $this->adds);
+    }
+
+    public function test_the_board_quick_add_shows_an_unknown_user_the_same_way(): void
+    {
+        $result = $this->buildService()->quickAddTicketFromKanban(
+            ['headline' => 'Reply to customer', 'projectId' => 7, 'status' => 3],
+            '999',
+            'editorId',
+        );
+
+        $this->assertFalse($result['success']);
+        $this->assertSame('There is no user with ID 999.', $result['message']);
+        $this->assertSame('There is no user with ID 999.', session('quickadd_reopen')['error']);
         $this->assertSame([], $this->adds);
     }
 

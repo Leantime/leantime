@@ -3419,7 +3419,9 @@ class Tickets extends BaseService
      * Someone outside the project team can't open a task assigned to them, and is never told
      * about it. Only people this write ADDS are checked: an unchanged assignee and collaborators
      * already on the task stay, so older tasks that predate this check still save. Unassigning
-     * (0, '' or null) is always allowed.
+     * (0, '0', '' or null) is always allowed. Anything that isn't a whole, non-negative user id
+     * (true, 2.5, -3, 'abc') is refused rather than cast, because the repository writes the value
+     * as sent.
      *
      * @param  int  $projectId  The project the task is in after the write.
      * @param  mixed  $assignee  The editorId being written; null when the write doesn't set it.
@@ -3427,11 +3429,11 @@ class Tickets extends BaseService
      * @param  TicketModel|null  $currentTicket  The task before the write; null on create.
      *
      * @throws AssigneeCannotSeeProjectException When a new assignee or collaborator can't see the project.
-     * @throws ValidationException When a user id doesn't exist.
+     * @throws ValidationException When a user id is malformed or doesn't exist.
      */
     private function assertAssigneesCanSeeProject(int $projectId, mixed $assignee, mixed $collaborators, ?TicketModel $currentTicket = null): void
     {
-        $assigneeId = is_numeric($assignee) ? (int) $assignee : 0;
+        $assigneeId = $this->userIdOrFail('editorId', $assignee);
         if ($assigneeId > 0 && $assigneeId !== (int) ($currentTicket->editorId ?? 0)) {
             $this->assertUserCanSeeProject('editorId', $assigneeId, $projectId);
         }
@@ -3440,14 +3442,47 @@ class Tickets extends BaseService
             return;
         }
 
-        $collaboratorIds = is_array($collaborators) ? $collaborators : explode(',', (string) $collaborators);
+        $collaboratorIds = match (true) {
+            is_array($collaborators) => $collaborators,
+            is_string($collaborators) => array_map('trim', explode(',', $collaborators)),
+            default => [$collaborators],
+        };
         $currentCollaborators = array_map('intval', $currentTicket->collaborators ?? []);
 
-        foreach (array_unique(array_map('intval', $collaboratorIds)) as $userId) {
+        $userIds = array_unique(array_map(fn ($userId) => $this->userIdOrFail('collaborators', $userId), $collaboratorIds));
+        foreach ($userIds as $userId) {
             if ($userId > 0 && $userId !== $assigneeId && ! in_array($userId, $currentCollaborators, true)) {
                 $this->assertUserCanSeeProject('collaborators', $userId, $projectId);
             }
         }
+    }
+
+    /**
+     * A user id as written to a task: a non-negative whole number or digit string; null, '' and
+     * 0 mean nobody. Everything else is refused.
+     *
+     * @param  string  $field  'editorId' or 'collaborators', for the error.
+     *
+     * @throws ValidationException
+     */
+    private function userIdOrFail(string $field, mixed $value): int
+    {
+        if ($value === null || $value === '') {
+            return 0;
+        }
+
+        if (is_int($value) && $value >= 0) {
+            return $value;
+        }
+
+        if (is_string($value) && ctype_digit($value)) {
+            return (int) $value;
+        }
+
+        $shown = is_string($value) ? $value : (is_scalar($value) ? json_encode($value) : gettype($value));
+        $message = sprintf($this->language->__('notifications.ticket_user_id_invalid'), $shown);
+
+        throw new ValidationException([$field => [$message]], $message);
     }
 
     /**
@@ -4659,7 +4694,7 @@ class Tickets extends BaseService
 
         try {
             $result = $this->quickAddTicket($formParams);
-        } catch (AssigneeCannotSeeProjectException $e) {
+        } catch (ValidationException $e) {
             // e.g. adding to the swimlane of someone who has since left the project team
             $result = ['status' => 'error', 'message' => $e->getClientMessage()];
         }
