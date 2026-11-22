@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Notifications\Services;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment;
@@ -157,7 +156,7 @@ class AssignmentNotifier
             ]);
             // The project notification about this same write ("added / updated this task")
             // then skips the assignee's phone: this push already says it.
-            Cache::put(Push::assignedKey($event->assigneeId, $event->ticketId), 1, Push::RECENT_SECONDS);
+            Push::markAssigned($event->assigneeId, $event->ticketId);
         } catch (\Throwable $e) {
             Log::warning('Assignment push failed: '.$e->getMessage());
         }

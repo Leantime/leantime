@@ -196,15 +196,20 @@ class Push
     }
 
     /**
-     * A direct send at the workspace's content level: content-free sends no text at all,
-     * the same as the relay does (PushRelay::send). Full and names only are worded upstream.
+     * A direct send at the workspace's content level, the same as the relay does
+     * (PushRelay::send): content-free sends no text at all; names only keeps its wording
+     * (worded upstream) but never a link that carries text. Full is unchanged.
      *
      * @param  array<string, string>  $data
      * @return array{0: string, 1: string, 2: array<string, string>}
      */
     public function withContentLevel(string $title, string $body, array $data): array
     {
-        if ($this->relay->contentLevel() !== PushRelay::CONTENT_MINIMAL) {
+        $level = $this->relay->contentLevel();
+        if ($level === PushRelay::CONTENT_NAMES) {
+            return [$title, $body, $this->relay->namesOnlyData($data)];
+        }
+        if ($level !== PushRelay::CONTENT_MINIMAL) {
             return [$title, $body, $data];
         }
 
@@ -217,12 +222,43 @@ class Push
     public const RECENT_SECONDS = 120;
 
     /**
-     * Cache key AssignmentNotifier sets after an "assigned to you" push, so the quieter
-     * project notification about the same write doesn't reach the assignee as well.
+     * "Assigned to you" pushes sent while handling the current write, keyed by user and task,
+     * with the time they went out. The project notification about that same write is raised
+     * in the same request right after, and skips the assignee once; later, separate changes
+     * to the task (a new deadline a minute after) still push.
+     *
+     * @var array<string, int>
      */
-    public static function assignedKey(int $userId, int $ticketId): string
+    private static array $assignedThisWrite = [];
+
+    /** How long an assignment mark waits for the project notification of its own write. */
+    private const ASSIGNED_WRITE_SECONDS = 30;
+
+    /**
+     * AssignmentNotifier calls this after an "assigned to you" push.
+     */
+    public static function markAssigned(int $userId, int $ticketId): void
     {
-        return 'push.assigned.'.$userId.'.'.$ticketId;
+        self::$assignedThisWrite[$userId.'.'.$ticketId] = time();
+    }
+
+    /**
+     * Whether the assignee was just pushed "assigned to you" for this task by the same write.
+     * Consumes the mark, so only that write's project notification is skipped.
+     */
+    public static function consumeAssigned(int $userId, int $ticketId): bool
+    {
+        $key = $userId.'.'.$ticketId;
+        $at = self::$assignedThisWrite[$key] ?? null;
+        unset(self::$assignedThisWrite[$key]);
+
+        return $at !== null && time() - $at <= self::ASSIGNED_WRITE_SECONDS;
+    }
+
+    /** Test hook: forget assignment marks. */
+    public static function resetAssigned(): void
+    {
+        self::$assignedThisWrite = [];
     }
 
     /**
@@ -230,9 +266,9 @@ class Push
      * so one change reaches a phone once.
      *
      *   - Whoever was just pushed "assigned to you" for a task doesn't also get the
-     *     "added / updated this task" push for it.
-     *   - The same person never gets the same title and body twice within RECENT_SECONDS
-     *     (one save can raise the same notification twice).
+     *     "added / updated this task" push from that same write.
+     *   - The same person never gets the same push about the same item twice within
+     *     RECENT_SECONDS (one save can raise the same notification twice).
      *
      * @param  array<int>  $userIds
      */
@@ -242,11 +278,20 @@ class Push
         $data = self::buildData($notification);
 
         $ticketId = ($notification->module ?? '') === 'tickets' ? (int) ($data['moduleId'] ?? 0) : 0;
-        $fingerprint = sha1($text['title']."\n".$text['body']);
+        // The item it's about is part of the fingerprint, so two different tasks that happen
+        // to get the same wording both reach the phone.
+        $fingerprint = sha1(implode("\n", [
+            $data['module'] ?? '',
+            $data['moduleId'] ?? '',
+            $data['parentTicketId'] ?? '',
+            $data['projectId'] ?? '',
+            $text['title'],
+            $text['body'],
+        ]));
 
         $recipients = [];
         foreach (array_unique(array_map('intval', $userIds)) as $userId) {
-            if ($ticketId > 0 && Cache::has(self::assignedKey($userId, $ticketId))) {
+            if ($ticketId > 0 && self::consumeAssigned($userId, $ticketId)) {
                 continue;
             }
             // add() is false when the key is already there: this exact push just went out.

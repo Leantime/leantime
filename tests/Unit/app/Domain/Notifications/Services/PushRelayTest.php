@@ -167,6 +167,36 @@ class PushRelayTest extends TestCase
         $this->assertSame('7', PushRelay::ticketIdFromUrl('https://host/tickets/showTicket/7'));
     }
 
+    /**
+     * Names only keeps who did what, and must not leak the text through the link either:
+     * a comment posted over a JSON-RPC GET keeps its params (base64 of the comment) in the URL.
+     */
+    public function test_names_only_rebuilds_a_link_that_carries_a_query(): void
+    {
+        $leaky = 'https://host/api/jsonrpc?method=comments.addComment&params=eyJ0ZXh0Ijoic2VjcmV0In0=';
+        $relay = $this->relay([PushRelay::SETTING_ENABLED => '1', PushRelay::SETTING_CONTENT => 'names'], true, 'LIC');
+        $relay->send($this->rows(1), 'Fix login', 'Sam commented', ['module' => 'comments', 'moduleId' => '4', 'parentTicketId' => '42', 'url' => $leaky]);
+
+        $posted = (string) $this->requests[0]['request']->getBody();
+        $msg = json_decode($posted, true)['messages'][0];
+        $this->assertSame('Fix login', $msg['title'], 'names only keeps the wording');
+        $this->assertSame('https://app.example.com/dashboard/home#/tickets/showTicket/42', $msg['data']['url']);
+        $this->assertStringNotContainsString('params=', $posted);
+    }
+
+    public function test_names_only_keeps_a_plain_item_link(): void
+    {
+        $relay = $this->relay([PushRelay::SETTING_ENABLED => '1', PushRelay::SETTING_CONTENT => 'names'], true, 'LIC');
+        $link = 'https://host/dashboard/home#/tickets/showTicket/9?projectId=3';
+
+        $this->assertSame($link, $relay->namesOnlyData(['module' => 'tickets', 'moduleId' => '9', 'url' => $link])['url']);
+        $this->assertSame(
+            'https://app.example.com',
+            $relay->namesOnlyData(['module' => 'projects', 'moduleId' => '3', 'url' => 'https://host/projects/x?text=secret'])['url'],
+            'a non-task link with a query falls back to the app itself'
+        );
+    }
+
     public function test_content_free_mode_links_the_app_itself_for_everything_else(): void
     {
         $this->minimalRelay()->send($this->rows(1), 'Goal', 'x', ['module' => 'goalcanvas', 'moduleId' => '5', 'url' => 'https://host/goals?projectId=3']);

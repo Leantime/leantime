@@ -1939,9 +1939,10 @@ class Projects extends BaseService implements ChecksProjectAccess
         if ($projectId !== false && $projectId > 0) {
             ProjectCreated::dispatch(projectId: $projectId, type: $values['type']);
 
-            // The team it was created with (the creator is added too, but isn't told).
+            // The team it was created with (the creator is added too, but isn't told). Only
+            // members the repository actually saved: it skips entries without a projectRole.
             foreach (is_array($values['assignedUsers']) ? $values['assignedUsers'] : [] as $user) {
-                $userId = is_array($user) ? (int) ($user['id'] ?? 0) : 0;
+                $userId = is_array($user) && isset($user['projectRole']) ? (int) ($user['id'] ?? 0) : 0;
                 if ($userId > 0) {
                     ProjectMemberAdded::dispatch(projectId: (int) $projectId, userId: $userId);
                 }
@@ -3987,7 +3988,8 @@ class Projects extends BaseService implements ChecksProjectAccess
             'url' => $currentUrl,
             'text' => $this->language->__('email_notifications.project_update_cta'),
         ];
-        $notification->entity = $project;
+        // The project as saved, so a rename is told with its new name.
+        $notification->entity = array_merge($project, $values, ['id' => $projectId]);
         $notification->module = 'projects';
         $notification->action = 'updated';
         $notification->projectId = session('currentProject');

@@ -2611,7 +2611,7 @@ class Tickets extends BaseService
             $notification->pushBody = $updateLine(true);
 
             // Change events first, as patch() does: an assignment pushes "assigned to you", and
-            // the project notification below then skips the assignee's phone (Push::assignedKey).
+            // the project notification below then skips the assignee's phone (Push::markAssigned).
             $this->dispatchTicketChangeEvents((int) $values['id'], $currentTicket, $values);
 
             $this->projectService->notifyProjectUsers($notification);

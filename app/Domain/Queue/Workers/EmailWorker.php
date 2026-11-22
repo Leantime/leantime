@@ -63,6 +63,7 @@ class EmailWorker
     public function handleQueue($messages): void
     {
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+        $this->projectNames = [];
 
         $messagesByUser = [];
         $expiredHashes = [];
@@ -308,8 +309,23 @@ class EmailWorker
     }
 
     /**
+     * Two copies of one line closer together than this came from the same save (one save can
+     * raise the same notification twice); further apart, they are separate changes.
+     */
+    private const SAME_SAVE_SECONDS = 120;
+
+    /**
+     * Project names looked up during one handleQueue() run, by project id.
+     *
+     * @var array<int, string>
+     */
+    private array $projectNames = [];
+
+    /**
      * New rows grouped by the item they are about, newest change first; within an item, oldest
-     * first, a line repeated by the same save shown once. Rows without a summary stay on their own.
+     * first, a line repeated by the same save shown once. The same line again later is a new
+     * change (Done, In Progress, then Done again) and stays. Rows without a summary stay on
+     * their own.
      *
      * @param  array<string, array<string, mixed>>  $rows
      * @return array<int, array{rows: array<int, array<string, mixed>>, latest: string}>
@@ -325,16 +341,17 @@ class EmailWorker
 
         foreach ($groups as &$group) {
             usort($group['rows'], fn (array $a, array $b) => strcmp((string) $a['thedate'], (string) $b['thedate']));
-            $seenLines = [];
-            $group['rows'] = array_values(array_filter($group['rows'], function (array $row) use (&$seenLines) {
+            $lastKept = null;
+            $group['rows'] = array_values(array_filter($group['rows'], function (array $row) use (&$lastKept) {
                 if ($row['summary'] === null) {
                     return true;
                 }
                 $fingerprint = $row['summary']['line']."\n".$row['summary']['quote']."\n".$row['summary']['detail'];
-                if (isset($seenLines[$fingerprint])) {
+                $at = $this->utc((string) $row['thedate'])?->getTimestamp() ?? 0;
+                if ($lastKept !== null && $lastKept['fingerprint'] === $fingerprint && abs($at - $lastKept['at']) <= self::SAME_SAVE_SECONDS) {
                     return false;
                 }
-                $seenLines[$fingerprint] = true;
+                $lastKept = ['fingerprint' => $fingerprint, 'at' => $at];
 
                 return true;
             }));
@@ -371,7 +388,10 @@ class EmailWorker
         if ($project !== '') {
             $html .= '<div style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #52606d;">'.$this->e($project).'</div>';
         }
-        $html .= '<div style="margin: 2px 0 10px; font-size: 17px; font-weight: 600; line-height: 1.35; color: #1f2933;">'.$this->e($first['summary']['title']).'</div>';
+        // The item's name as of its newest change (it may have been renamed); the lines below
+        // stay oldest first.
+        $newest = $group['rows'][count($group['rows']) - 1];
+        $html .= '<div style="margin: 2px 0 10px; font-size: 17px; font-weight: 600; line-height: 1.35; color: #1f2933;">'.$this->e($newest['summary']['title']).'</div>';
 
         // One row per event: a bullet, the line with its details indented under it (a due date,
         // a quoted comment), and the time. The details belong to their line, not the next one.
@@ -468,13 +488,18 @@ class EmailWorker
             return '';
         }
 
+        // Once per project per run: a digest repeats the same few projects many times over.
+        if (array_key_exists($projectId, $this->projectNames)) {
+            return $this->projectNames[$projectId];
+        }
+
         try {
             $project = ($this->projects ?? app(ProjectRepository::class))->getProject($projectId);
         } catch (\Throwable) {
             return '';
         }
 
-        return is_array($project) ? trim(strip_tags((string) ($project['name'] ?? ''))) : '';
+        return $this->projectNames[$projectId] = is_array($project) ? trim(strip_tags((string) ($project['name'] ?? ''))) : '';
     }
 
     private function e(string $text): string

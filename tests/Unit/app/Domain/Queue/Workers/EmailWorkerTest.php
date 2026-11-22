@@ -48,6 +48,8 @@ class EmailWorkerTest extends TestCase
     /** @var array<int, array{userId: int, entities: array}> */
     private array $lookups = [];
 
+    private int $projectLookups = 0;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -57,6 +59,7 @@ class EmailWorkerTest extends TestCase
         $this->deleted = [];
         $this->latest = [];
         $this->lookups = [];
+        $this->projectLookups = 0;
     }
 
     private function worker(): EmailWorker
@@ -106,7 +109,11 @@ class EmailWorkerTest extends TestCase
                 },
             ]),
             $this->make(ProjectRepository::class, [
-                'getProject' => fn ($id) => (int) $id === 5 ? ['id' => 5, 'name' => 'Sales'] : false,
+                'getProject' => function ($id) {
+                    $this->projectLookups++;
+
+                    return (int) $id === 5 ? ['id' => 5, 'name' => 'Sales'] : false;
+                },
             ]),
         );
     }
@@ -424,6 +431,45 @@ class EmailWorkerTest extends TestCase
         ]);
 
         $this->assertSame(1, substr_count($this->sent[0]['html'], 'Marcel updated this task'));
+    }
+
+    public function test_the_same_line_later_is_a_new_change_and_stays(): void
+    {
+        // Done at 09:00, In Progress at 10:00, Done again at 11:00: the digest ends at Done.
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 7200)),
+            $this->summaryRow('h2', 'Marcel moved this to In Progress', gmdate('Y-m-d H:i:s', time() - 3600)),
+            $this->summaryRow('h3', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 60)),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertSame(2, substr_count($html, 'Marcel moved this to Done'));
+        $this->assertGreaterThan(strpos($html, 'In Progress'), strrpos($html, 'Marcel moved this to Done'), 'ends at Done');
+    }
+
+    public function test_a_renamed_task_is_headed_by_its_newest_name(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel assigned this to you', gmdate('Y-m-d H:i:s', time() - 600), [], 'tickets:12', 'Draft pricing'),
+            $this->summaryRow('h2', 'Marcel renamed this task', gmdate('Y-m-d H:i:s', time() - 60), [], 'tickets:12', 'Pricing page'),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertStringContainsString('Pricing page', $html);
+        $this->assertStringNotContainsString('Draft pricing', $html);
+        $this->assertLessThan(strpos($html, 'Marcel renamed this task'), strpos($html, 'Marcel assigned this to you'), 'lines stay oldest first');
+    }
+
+    public function test_each_project_is_looked_up_once_per_run(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 60), [], 'tickets:12', 'Pricing page'),
+            $this->summaryRow('h2', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 600), [], 'tickets:13', 'Landing copy'),
+            $this->summaryRow('h3', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 900), [], 'tickets:14', 'Signup form'),
+        ]);
+
+        $this->assertSame(3, substr_count($this->sent[0]['html'], 'Sales'));
+        $this->assertSame(1, $this->projectLookups);
     }
 
     public function test_the_task_changed_last_comes_first(): void

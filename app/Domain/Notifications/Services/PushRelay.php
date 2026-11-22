@@ -132,6 +132,28 @@ class PushRelay
     }
 
     /**
+     * At "names only" a link must not carry text either. A change made through a GET request
+     * keeps that request's parameters in its link (a comment sent over JSON-RPC carries its
+     * text, base64-encoded, in the query string). A link with a query string is rebuilt
+     * from the ids, as at content-free; a link without one is kept as it is.
+     *
+     * @param  array<string, string>  $data
+     * @return array<string, string>
+     */
+    public function namesOnlyData(array $data): array
+    {
+        $url = (string) ($data['url'] ?? '');
+        $beforeFragment = explode('#', $url, 2)[0];
+        if (! str_contains($beforeFragment, '?')) {
+            return $data;
+        }
+
+        $data['url'] = $this->canonicalUrl($data) ?? strtok($beforeFragment, '?');
+
+        return $data;
+    }
+
+    /**
      * Send one message to the given access-token rows through the relay.
      *
      * @param  iterable<object>  $rows  zp_access_tokens rows (id, push_token, push_platform)
@@ -150,6 +172,8 @@ class PushRelay
             $title = 'Leantime';
             $body = __('notification.push_minimal_body');
             $data = $this->contentFreeData($data);
+        } elseif ($this->contentLevel() === self::CONTENT_NAMES) {
+            $data = $this->namesOnlyData($data);
         }
 
         $messages = [];

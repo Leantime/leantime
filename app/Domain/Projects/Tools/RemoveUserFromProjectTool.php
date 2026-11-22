@@ -10,6 +10,7 @@ use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Services\Projects;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
  * Removes one user from one project's team (and leaves their other projects alone).
@@ -20,6 +21,7 @@ class RemoveUserFromProjectTool extends Tool
     public function __construct(
         private Projects $projectService,
         private PermissionService $permissionService,
+        private ?UserRepository $users = null,
     ) {}
 
     /**
@@ -70,6 +72,13 @@ class RemoveUserFromProjectTool extends Tool
 
         if ($userId <= 0 || $projectId <= 0 || ! $this->projectService->getProject($projectId)) {
             return Response::error("Project {$projectId} was not found or you do not have access to it.");
+        }
+
+        // The service answers false for a user that doesn't exist too, which would read as
+        // "already on the team" / "not on the team". Say what's actually wrong instead.
+        $user = ($this->users ?? app(UserRepository::class))->getUser($userId);
+        if (empty($user)) {
+            return Response::error("User {$userId} was not found. Use getUsersAssignedToProject or another user lookup to find the right ID.");
         }
 
         if ($this->projectService->removeUserFromProject($userId, $projectId)) {

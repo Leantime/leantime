@@ -54,7 +54,20 @@ class PushTextTest extends TestCase
             return $ticket;
         });
 
-        return new PushText($language, $users, $projects, $tickets);
+        // Goals, ideas and board items by id, as zp_canvas_items holds them: a goal's name is its
+        // title, an idea's or board item's is its description.
+        return new class($language, $users, $projects, $tickets) extends PushText
+        {
+            protected function canvasItem(int $id): ?array
+            {
+                return match ($id) {
+                    31 => ['title' => 'Grow revenue', 'description' => 'Hit 1M ARR by Q4'],
+                    32 => ['title' => '', 'description' => 'Referral bonus'],
+                    33 => ['title' => null, 'description' => 'Strong brand'],
+                    default => null,
+                };
+            }
+        };
     }
 
     private function notification(string $module, string $action, mixed $entity, array $extra = []): NotificationModel
@@ -125,7 +138,12 @@ class PushTextTest extends TestCase
 
         $this->assertSame(
             ['title' => 'Grow revenue', 'body' => 'Marcel added this goal · Sales'],
-            $pushText->forNotification($this->notification('goalcanvas', 'created', ['description' => 'Grow revenue']))
+            $pushText->forNotification($this->notification('goalcanvas', 'created', ['title' => 'Grow revenue', 'description' => 'Hit 1M ARR by Q4']))
+        );
+        $this->assertSame(
+            'Grow revenue',
+            $pushText->forNotification($this->notification('goalcanvas', 'created', ['title' => '', 'description' => 'Grow revenue']))['title'],
+            'a goal without a title falls back to its description'
         );
         $this->assertSame(
             'Marcel updated this idea · Sales',
@@ -199,6 +217,58 @@ class PushTextTest extends TestCase
             ['group' => 'tickets:2267', 'title' => 'Email campaign for .org users', 'line' => 'Marcel commented', 'quote' => 'Can we ship this Friday?'],
             $parts
         );
+    }
+
+    public function test_goal_idea_and_board_comments_name_their_item(): void
+    {
+        $pushText = $this->pushText();
+
+        // A goal comment: the notification says goalcanvas, the comment carries the goal's id.
+        $this->assertSame(
+            ['title' => 'Grow revenue', 'body' => 'Marcel: Nice work'],
+            $pushText->forNotification($this->notification('goalcanvas', 'commented', ['text' => 'Nice work', 'moduleId' => 31]))
+        );
+        // An idea comment says module 'idea' on the comment.
+        $this->assertSame(
+            'Referral bonus',
+            $pushText->forNotification($this->notification('comments', 'commented', ['text' => 'Yes', 'module' => 'idea', 'moduleId' => 32]))['title']
+        );
+        // A board item comment.
+        $this->assertSame(
+            'Strong brand',
+            $pushText->forNotification($this->notification('swotcanvas', 'commented', ['text' => 'Agreed', 'moduleId' => 33]))['title']
+        );
+        // A host that can't be found keeps the plain title.
+        $this->assertSame(
+            'New comment',
+            $pushText->forNotification($this->notification('goalcanvas', 'commented', ['text' => 'x', 'moduleId' => 999]))['title']
+        );
+    }
+
+    public function test_comments_in_the_digest_group_with_their_items_own_changes(): void
+    {
+        $pushText = $this->pushText();
+
+        $goalComment = $pushText->forEmail($this->notification('goalcanvas', 'commented', ['text' => 'Nice work', 'moduleId' => 31]));
+        $goalUpdate = $pushText->forEmail($this->notification('goalcanvas', 'updated', ['id' => 31, 'title' => 'Grow revenue']));
+        $this->assertSame('goalcanvas:31', $goalComment['group']);
+        $this->assertSame($goalUpdate['group'], $goalComment['group']);
+        $this->assertSame('Grow revenue', $goalComment['title']);
+
+        $ideaComment = $pushText->forEmail($this->notification('comments', 'commented', ['text' => 'Yes', 'module' => 'idea', 'moduleId' => 32]));
+        $ideaUpdate = $pushText->forEmail($this->notification('ideas', 'updated', ['id' => 32, 'description' => 'Referral bonus']));
+        $this->assertSame($ideaUpdate['group'], $ideaComment['group']);
+
+        // Project comments ('project') and project updates ('projects') share one key.
+        $projectComment = $pushText->forEmail($this->notification('comments', 'commented', ['text' => 'Kickoff Monday', 'module' => 'project', 'moduleId' => 111]));
+        $projectUpdate = $pushText->forEmail($this->notification('projects', 'updated', ['id' => 111, 'name' => 'Sales']));
+        $this->assertSame('projects:111', $projectComment['group']);
+        $this->assertSame($projectUpdate['group'], $projectComment['group']);
+    }
+
+    public function test_a_comment_whose_item_cannot_be_told_keeps_the_email_wording(): void
+    {
+        $this->assertNull($this->pushText()->forEmail($this->notification('comments', 'commented', ['text' => 'Yes', 'moduleId' => 32])));
     }
 
     public function test_the_digest_keeps_the_email_wording_for_anything_unknown(): void

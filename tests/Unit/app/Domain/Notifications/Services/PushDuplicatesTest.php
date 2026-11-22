@@ -25,6 +25,7 @@ class PushDuplicatesTest extends TestCase
     {
         parent::setUp();
         Cache::flush();
+        Push::resetAssigned();
         $this->sent = [];
 
         $pushText = $this->createMock(PushText::class);
@@ -44,12 +45,12 @@ class PushDuplicatesTest extends TestCase
         });
     }
 
-    private function notification(string $action = 'updated'): NotificationModel
+    private function notification(string $action = 'updated', int $ticketId = 2267): NotificationModel
     {
         $notification = new NotificationModel;
         $notification->module = 'tickets';
         $notification->action = $action;
-        $notification->entity = ['id' => 2267, 'headline' => 'Pricing page'];
+        $notification->entity = ['id' => $ticketId, 'headline' => 'Pricing page'];
         $notification->projectId = 111;
         $notification->authorId = 7;
         $notification->subject = 'subject';
@@ -84,7 +85,7 @@ class PushDuplicatesTest extends TestCase
 
     public function test_someone_just_told_they_were_assigned_does_not_also_get_the_update(): void
     {
-        Cache::put(Push::assignedKey(3, 2267), 1, Push::RECENT_SECONDS);
+        Push::markAssigned(3, 2267);
 
         $this->push->sendFromNotification($this->notification(), [3, 4]);
 
@@ -93,16 +94,37 @@ class PushDuplicatesTest extends TestCase
 
     public function test_the_assignment_mark_is_per_task(): void
     {
-        Cache::put(Push::assignedKey(3, 9999), 1, Push::RECENT_SECONDS);
+        Push::markAssigned(3, 9999);
 
         $this->push->sendFromNotification($this->notification(), [3]);
 
         $this->assertSame([[3]], array_column($this->sent, 'users'));
     }
 
+    public function test_two_tasks_with_the_same_wording_both_reach_the_phone(): void
+    {
+        $this->push->sendFromNotification($this->notification('updated', 2267), [3]);
+        $this->push->sendFromNotification($this->notification('updated', 2268), [3]);
+
+        $this->assertCount(2, $this->sent);
+    }
+
+    public function test_only_the_assignments_own_write_is_skipped(): void
+    {
+        Push::markAssigned(3, 2267);
+
+        // The project notification from the assignment's own write: skipped for the assignee.
+        $this->push->sendFromNotification($this->notification('updated'), [3]);
+        // A separate change to the task a moment later: it goes out.
+        $this->push->sendFromNotification($this->notification('due_date_changed'), [3]);
+
+        $this->assertSame([[3]], array_column($this->sent, 'users'));
+        $this->assertSame('Marcel due_date_changed this task · Sales', $this->sent[0]['body']);
+    }
+
     public function test_nothing_is_sent_when_everyone_was_skipped(): void
     {
-        Cache::put(Push::assignedKey(3, 2267), 1, Push::RECENT_SECONDS);
+        Push::markAssigned(3, 2267);
 
         $this->push->sendFromNotification($this->notification(), [3]);
 
@@ -123,11 +145,25 @@ class PushDuplicatesTest extends TestCase
         $this->assertSame(['module' => 'tickets', 'moduleId' => '2267'], $data);
     }
 
+    public function test_a_direct_send_at_names_only_never_forwards_a_link_with_text(): void
+    {
+        $relay = $this->createMock(PushRelay::class);
+        $relay->method('contentLevel')->willReturn(PushRelay::CONTENT_NAMES);
+        $relay->expects($this->once())->method('namesOnlyData')->willReturn(['module' => 'comments', 'url' => 'https://app/clean']);
+        $push = new Push($this->createMock(Client::class), $relay);
+
+        [$title, $body, $data] = $push->withContentLevel('Pricing page', 'Marcel commented', ['module' => 'comments', 'url' => 'https://x/api/jsonrpc?params=secret']);
+
+        $this->assertSame(['Pricing page', 'Marcel commented'], [$title, $body]);
+        $this->assertSame('https://app/clean', $data['url']);
+    }
+
     public function test_a_direct_send_at_full_or_names_is_unchanged(): void
     {
         foreach ([PushRelay::CONTENT_FULL, PushRelay::CONTENT_NAMES] as $level) {
             $relay = $this->createMock(PushRelay::class);
             $relay->method('contentLevel')->willReturn($level);
+            $relay->method('namesOnlyData')->willReturnArgument(0);
             $push = new Push($this->createMock(Client::class), $relay);
 
             $this->assertSame(['Pricing page', 'body', ['module' => 'tickets']], $push->withContentLevel('Pricing page', 'body', ['module' => 'tickets']));

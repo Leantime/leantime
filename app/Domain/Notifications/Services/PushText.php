@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Notifications\Services;
 
+use Illuminate\Support\Facades\DB;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\NameSanitizer;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
@@ -93,15 +94,15 @@ class PushText
             $actor = $this->actorName((int) ($notification->authorId ?? 0));
 
             if ($module === 'comments' || $action === 'commented') {
-                $host = (string) ($this->field($notification->entity, 'module') ?? '');
-                $hostId = (int) ($this->field($notification->entity, 'moduleId') ?? 0);
+                $host = $this->commentHost($notification);
                 $comment = $this->comment($notification, $actor, true);
-                if ($comment === null || $hostId <= 0) {
+                if ($comment === null || $host === null) {
                     return null;
                 }
 
                 return [
-                    'group' => (in_array($host, ['ticket', 'tickets'], true) ? 'tickets' : $host).':'.$hostId,
+                    // The same key the item's own changes use, so they sit together.
+                    'group' => $host['module'].':'.$host['id'],
                     'title' => $comment['title'],
                     'line' => sprintf($this->language->__('notification.push_commented_names'), $actor),
                     'quote' => $this->snippet((string) ($this->field($notification->entity, 'text') ?? ''), self::QUOTE_LENGTH),
@@ -174,19 +175,7 @@ class PushText
             return null;
         }
 
-        $title = '';
-        $host = (string) ($this->field($notification->entity, 'module') ?? '');
-        $hostId = (int) ($this->field($notification->entity, 'moduleId') ?? 0);
-        if (in_array($host, ['ticket', 'tickets'], true) && $hostId > 0) {
-            $ticket = $this->ticketRepository->getTicket($hostId);
-            $title = $ticket !== false ? $this->clean((string) $ticket->headline) : '';
-        } elseif (in_array($host, ['project', 'projects'], true) && $hostId > 0) {
-            $project = $this->projectRepository->getProject($hostId);
-            $title = is_array($project) ? $this->clean((string) ($project['name'] ?? '')) : '';
-        } else {
-            // A board item, goal or idea comment carries the item itself.
-            $title = $this->clean((string) ($this->field($notification->entity, 'description') ?? ''));
-        }
+        $title = $this->commentHost($notification)['name'] ?? '';
 
         if ($title === '') {
             $title = $this->language->__('notification.push_new_comment');
@@ -205,15 +194,78 @@ class PushText
         ];
     }
 
+    /**
+     * The item a comment is on: its module, as that item's own notifications use it (so the
+     * digest puts them together), its id and its name. Task and project comments say their
+     * host in the comment; goal and board comments carry only the host id, with the module on
+     * the notification. Null when the host can't be told.
+     *
+     * @return array{module: string, id: int, name: string}|null
+     */
+    private function commentHost(NotificationModel $notification): ?array
+    {
+        $id = (int) ($this->field($notification->entity, 'moduleId') ?? 0);
+        $host = (string) ($this->field($notification->entity, 'module') ?? '');
+        if ($host === '' && ($notification->module ?? '') !== 'comments') {
+            $host = (string) $notification->module;
+        }
+
+        $module = match (true) {
+            in_array($host, ['ticket', 'tickets'], true) => 'tickets',
+            in_array($host, ['project', 'projects'], true) => 'projects',
+            in_array($host, ['idea', 'ideas'], true) => 'ideas',
+            str_ends_with($host, 'canvasitem') => substr($host, 0, -strlen('item')),
+            str_ends_with($host, 'canvas') => $host,
+            default => '',
+        };
+        if ($module === '' || $id <= 0) {
+            return null;
+        }
+
+        if ($module === 'tickets') {
+            $ticket = $this->ticketRepository->getTicket($id);
+            $name = $ticket !== false ? (string) $ticket->headline : '';
+        } elseif ($module === 'projects') {
+            $project = $this->projectRepository->getProject($id);
+            $name = is_array($project) ? (string) ($project['name'] ?? '') : '';
+        } else {
+            $name = $this->itemName($module, $this->canvasItem($id));
+        }
+
+        return ['module' => $module, 'id' => $id, 'name' => $this->clean($name)];
+    }
+
+    /**
+     * A goal, idea or board item by id (they share zp_canvas_items), or null.
+     *
+     * @return array{title: ?string, description: ?string}|null
+     */
+    protected function canvasItem(int $id): ?array
+    {
+        $row = DB::table('zp_canvas_items')->where('id', $id)->first(['title', 'description']);
+
+        return $row !== null ? (array) $row : null;
+    }
+
     private function itemName(string $module, mixed $entity): string
     {
-        $field = match ($module) {
-            'tickets' => 'headline',
-            'projects' => 'name',
-            default => 'description', // goals, ideas and board items keep their title here
+        // Goals keep their name in title (description holds details); ideas and board items
+        // keep it in description. Each falls back to the other field.
+        $fields = match ($module) {
+            'tickets' => ['headline'],
+            'projects' => ['name'],
+            'goalcanvas' => ['title', 'description'],
+            default => ['description', 'title'],
         };
 
-        return $this->clean((string) ($this->field($entity, $field) ?? ''));
+        foreach ($fields as $field) {
+            $name = $this->clean((string) ($this->field($entity, $field) ?? ''));
+            if ($name !== '') {
+                return $name;
+            }
+        }
+
+        return '';
     }
 
     /** "<body> · <project>", when the project has a name. */

@@ -7,6 +7,7 @@ use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Projects\Tools\AddUserToProjectTool;
 use Leantime\Domain\Projects\Tools\RemoveUserFromProjectTool;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Unit\TestCase;
 
 /**
@@ -20,6 +21,11 @@ class ProjectTeamToolsTest extends TestCase
     private function permissions(bool $allowed): PermissionService
     {
         return $this->make(PermissionService::class, ['currentUserCan' => fn () => $allowed]);
+    }
+
+    private function users(array|false $user = ['id' => 2, 'status' => 'a']): UserRepository
+    {
+        return $this->make(UserRepository::class, ['getUser' => fn () => $user]);
     }
 
     private function projects(bool $visible, bool $changed): Projects
@@ -59,11 +65,11 @@ class ProjectTeamToolsTest extends TestCase
     {
         $request = new Request(['userId' => 2, 'projectId' => 9]);
 
-        $added = (new AddUserToProjectTool($this->projects(true, true), $this->permissions(true)))->handle($request);
+        $added = (new AddUserToProjectTool($this->projects(true, true), $this->permissions(true), $this->users()))->handle($request);
         $this->assertFalse($added->isError());
         $this->assertStringContainsString('was added to project 9', (string) $added->content());
 
-        $already = (new AddUserToProjectTool($this->projects(true, false), $this->permissions(true)))->handle($request);
+        $already = (new AddUserToProjectTool($this->projects(true, false), $this->permissions(true), $this->users()))->handle($request);
         $this->assertFalse($already->isError());
         $this->assertStringContainsString('already on the team', (string) $already->content());
     }
@@ -72,10 +78,39 @@ class ProjectTeamToolsTest extends TestCase
     {
         $request = new Request(['userId' => 2, 'projectId' => 9]);
 
-        $removed = (new RemoveUserFromProjectTool($this->projects(true, true), $this->permissions(true)))->handle($request);
+        $removed = (new RemoveUserFromProjectTool($this->projects(true, true), $this->permissions(true), $this->users()))->handle($request);
         $this->assertStringContainsString('was removed from project 9', (string) $removed->content());
 
-        $absent = (new RemoveUserFromProjectTool($this->projects(true, false), $this->permissions(true)))->handle($request);
+        $absent = (new RemoveUserFromProjectTool($this->projects(true, false), $this->permissions(true), $this->users()))->handle($request);
         $this->assertStringContainsString('is not on the team', (string) $absent->content());
+    }
+
+    public function test_an_unknown_user_is_an_error_not_already_on_the_team(): void
+    {
+        $request = new Request(['userId' => 404, 'projectId' => 9]);
+
+        $add = (new AddUserToProjectTool($this->projects(true, false), $this->permissions(true), $this->users(false)))->handle($request);
+        $this->assertTrue($add->isError());
+        $this->assertStringContainsString('User 404 was not found', (string) $add->content());
+
+        $remove = (new RemoveUserFromProjectTool($this->projects(true, false), $this->permissions(true), $this->users(false)))->handle($request);
+        $this->assertTrue($remove->isError());
+        $this->assertStringContainsString('User 404 was not found', (string) $remove->content());
+    }
+
+    public function test_an_inactive_user_is_not_added(): void
+    {
+        $projects = $this->make(Projects::class, [
+            'getProject' => fn () => ['id' => 9],
+            'addUserToProject' => function () {
+                throw new \RuntimeException('must not change the team');
+            },
+        ]);
+
+        $result = (new AddUserToProjectTool($projects, $this->permissions(true), $this->users(['id' => 2, 'status' => 'i'])))
+            ->handle(new Request(['userId' => 2, 'projectId' => 9]));
+
+        $this->assertTrue($result->isError());
+        $this->assertStringContainsString('not active', (string) $result->content());
     }
 }
