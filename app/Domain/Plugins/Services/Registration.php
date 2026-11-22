@@ -126,11 +126,12 @@ class Registration
 
         $languagePath = "/Language/{$language}.ini";
 
-        // The key carries the modification time of what the strings come from (the phar, or the
-        // .ini of a folder plugin), so an updated plugin's new strings show right away instead of
-        // as raw keys until the 7-day entry expires. Two stat() calls; no archive is opened.
-        $sourceModified = is_file($pharFile) ? filemtime($pharFile) : @filemtime($regularPath.$languagePath);
-        $cacheKey = $this->pluginId.'.language.'.$language.'.'.(int) $sourceModified;
+        // The key carries the modification times of where the strings can come from (the phar, and
+        // the folder's .ini it falls back to), so an updated plugin's new strings show right away
+        // instead of as raw keys until the 7-day entry expires. stat() calls only; no archive is opened.
+        $pharModified = is_file($pharFile) ? (int) filemtime($pharFile) : 0;
+        $iniModified = (int) @filemtime($regularPath.$languagePath);
+        $cacheKey = $this->pluginId.'.language.'.$language.'.'.$pharModified.'-'.$iniModified;
 
         if (Cache::store('installation')->has($cacheKey)) {
             return Cache::store('installation')->get($cacheKey);

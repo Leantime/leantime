@@ -462,11 +462,10 @@ class AuthCheck
         }
 
         // "/.well-known/caldav" arrives as ".well-known.caldav": its leading dot is part of the
-        // name, not a separator. Plugins list these as "well-known.{name}".
+        // name, not a separator. Plugins list these as "well-known.{name}", matched exactly (a
+        // name may itself contain dots, e.g. "security.txt").
         if (str_starts_with($currentPath, '.well-known.')) {
-            $wellKnownName = explode('.', substr($currentPath, strlen('.well-known.')))[0];
-
-            return in_array('well-known.'.$wellKnownName, $this->publicActions, true);
+            return in_array(substr($currentPath, 1), $this->publicActions, true);
         }
 
         $pathSegments = explode('.', $currentPath);

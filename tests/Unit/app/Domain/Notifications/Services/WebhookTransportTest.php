@@ -284,6 +284,18 @@ namespace Unit\app\Domain\Notifications\Services {
             }
         }
 
+        public function test_a_private_ip_endpoint_the_admin_allowed_is_valid(): void
+        {
+            config(['outboundAllowedHosts' => '10.0.0.7']);
+
+            try {
+                $this->assertTrue(WebhookTransport::isValidEndpointUrl('https://10.0.0.7/hooks/secret'));
+                $this->assertFalse(WebhookTransport::isValidEndpointUrl('https://10.0.0.8/hooks/secret'));
+            } finally {
+                config(['outboundAllowedHosts' => '']);
+            }
+        }
+
         /**
          * @dataProvider ipLiteralProvider
          */

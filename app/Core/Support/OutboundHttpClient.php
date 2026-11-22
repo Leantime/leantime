@@ -85,6 +85,23 @@ class OutboundHttpClient
     }
 
     /**
+     * Whether a request to this host name can be pinned: a pinnable hostname, or a single label
+     * ("nextcloud") the admin listed in LEAN_OUTBOUND_ALLOWED_HOSTS. A listed single label is
+     * pinned to the address the guard resolved like any other name, so cURL's own lookup (and any
+     * search-domain expansion) never decides where it connects.
+     *
+     * @param  string  $host  The (lower-cased) host as Guzzle's Uri parses it.
+     */
+    public static function canPinHost(string $host): bool
+    {
+        if (self::isPinnableHostname($host)) {
+            return true;
+        }
+
+        return preg_match('/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/', $host) === 1 && OutboundUrlGuard::isAdminAllowedHost($host);
+    }
+
+    /**
      * The cURL options that pin a request to $uri onto an address the SSRF guard validated just
      * now, on a fresh connection that is closed afterwards.
      *
@@ -103,7 +120,7 @@ class OutboundHttpClient
         $host = $uri->getHost();
         $isIpLiteral = str_starts_with($host, '[') || filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
 
-        if (! $isIpLiteral && ! self::isPinnableHostname($host)) {
+        if (! $isIpLiteral && ! self::canPinHost($host)) {
             return null;
         }
 

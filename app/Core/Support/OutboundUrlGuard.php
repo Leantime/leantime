@@ -157,7 +157,7 @@ final class OutboundUrlGuard
         }
 
         // A hostname the admin listed may resolve to anything (that is the point: a LAN server).
-        if (in_array(self::normalizeHost($host), self::adminAllowList()['hosts'], true)) {
+        if (self::isAdminAllowedHost($host)) {
             return $ips;
         }
 
@@ -208,6 +208,17 @@ final class OutboundUrlGuard
         }
 
         return true;
+    }
+
+    /**
+     * True when the admin listed this exact hostname in LEAN_OUTBOUND_ALLOWED_HOSTS. Such a name
+     * may resolve to a private address, and may be a single label ("nextcloud") on a LAN.
+     *
+     * @param  string  $host  The (lower-cased) host as the URL parser returned it
+     */
+    public static function isAdminAllowedHost(string $host): bool
+    {
+        return in_array(self::normalizeHost($host), self::adminAllowList()['hosts'], true);
     }
 
     /**

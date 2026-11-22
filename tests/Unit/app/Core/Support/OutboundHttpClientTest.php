@@ -117,6 +117,22 @@ namespace Unit\app\Core\Support {
             $this->assertFalse($options['allow_redirects']);
         }
 
+        public function test_a_single_label_host_the_admin_listed_is_pinned_to_its_checked_address(): void
+        {
+            config(['outboundAllowedHosts' => 'nextcloud']);
+
+            try {
+                $this->fakeDns(['nextcloud' => ['192.168.1.5']]);
+
+                $this->makeClient()->get('http://nextcloud/feed.ics');
+
+                $this->assertSame(['nextcloud:80:192.168.1.5'], $this->handledRequests[0]['options']['curl'][CURLOPT_RESOLVE]);
+                $this->assertFalse(OutboundHttpClient::canPinHost('othername'), 'unlisted single labels stay refused');
+            } finally {
+                config(['outboundAllowedHosts' => '']);
+            }
+        }
+
         public function test_caller_can_tune_timeouts_but_not_the_safety_options(): void
         {
             $this->fakeDns(['hooks.example.test' => [self::PUBLIC_V4]]);

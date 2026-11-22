@@ -105,11 +105,12 @@ class WebhookTransport
         if (str_starts_with($host, '[') || filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
             $ip = trim($host, '[]');
 
-            return filter_var($ip, FILTER_VALIDATE_IP) !== false && OutboundUrlGuard::isIpAllowed($ip);
+            // isAllowedUrl() also honours private addresses the admin allowed (LEAN_OUTBOUND_ALLOWED_HOSTS).
+            return filter_var($ip, FILTER_VALIDATE_IP) !== false && OutboundUrlGuard::isAllowedUrl($url);
         }
 
         // The pin only holds if cURL looks up the very name the guard resolved.
-        return OutboundHttpClient::isPinnableHostname($host);
+        return OutboundHttpClient::canPinHost($host);
     }
 
     /**

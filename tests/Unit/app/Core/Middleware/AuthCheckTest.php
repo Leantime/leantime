@@ -129,11 +129,13 @@ class AuthCheckTest extends \Unit\TestCase
     {
         $authCheck = $this->make(AuthCheck::class);
         $publicActions = new \ReflectionProperty(AuthCheck::class, 'publicActions');
-        $publicActions->setValue($authCheck, array_merge($publicActions->getValue($authCheck), ['well-known.caldav']));
+        $publicActions->setValue($authCheck, array_merge($publicActions->getValue($authCheck), ['well-known.caldav', 'well-known.security.txt']));
 
         $this->assertTrue($authCheck->isPublicController('.well-known.caldav'));
+        $this->assertTrue($authCheck->isPublicController('.well-known.security.txt'), 'names with a dot match in full');
         $this->assertFalse($authCheck->isPublicController('.well-known.carddav'));
         $this->assertFalse($authCheck->isPublicController('.well-known.caldavx'));
+        $this->assertFalse($authCheck->isPublicController('.well-known.caldav.json'), 'a listed name does not open longer ones');
     }
 
     // ---------------------------------------------------------------------
