@@ -312,6 +312,19 @@ class RemindersServiceTest extends TestCase
         $this->assertArrayNotHasKey('usersettings.7.reminders.task.4', $this->storedKeys(), 'inherit = off = no key');
     }
 
+    public function test_off_through_the_api_removes_an_opt_in_but_is_kept_on_your_own_to_do(): void
+    {
+        $service = $this->service();
+
+        $service->setTaskPreset(4, 'more');
+        $service->setTaskPreset(4, 'off');
+        $this->assertArrayNotHasKey('usersettings.7.reminders.task.4', $this->storedKeys(), 'off on someone else\'s to-do leaves nothing behind');
+        $this->assertSame(['preset' => 'off', 'chosen' => false], $this->presetOf($service->getTaskReminders(4)));
+
+        $service->setTaskPreset(1, 'off');
+        $this->assertSame('off', $this->storedKeys()['usersettings.7.reminders.task.1'], 'your own explicit off stays');
+    }
+
     public function test_use_this_for_all_my_to_dos_is_refused_on_someone_else_s_to_do(): void
     {
         $this->expectException(ValidationException::class);

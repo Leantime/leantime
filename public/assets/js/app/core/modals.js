@@ -475,9 +475,15 @@ leantime.modals = (function () {
         }
         var first = items[0];
         var last = items[items.length - 1];
-        if (!dialog.contains(document.activeElement)) {
+        var inside = dialog.contains(document.activeElement);
+        if (!inside) {
             event.preventDefault();
             first.focus();
+        } else if (document.activeElement === dialog || document.activeElement.getAttribute('tabindex') === '-1') {
+            // Focus on something focusable only by script (the title or the dialog itself, where
+            // focus lands on open): it is the boundary both ways.
+            event.preventDefault();
+            (event.shiftKey ? last : first).focus();
         } else if (event.shiftKey && document.activeElement === first) {
             event.preventDefault();
             last.focus();

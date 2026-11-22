@@ -70,6 +70,26 @@ leantime.menus = (function () {
         });
     };
 
+    // position: fixed is relative to the viewport unless an ancestor has a transform, filter,
+    // backdrop-filter, perspective, paint/layout containment or will-change of those: then that
+    // ancestor's padding box is the containing block (and the menu scrolls with it). The dialog
+    // backdrop (.nyroModalBg, backdrop-filter, scrolls) is one.
+    var containingBlock = function (element) {
+        for (var node = element.parentElement; node && node !== document.documentElement; node = node.parentElement) {
+            var style = getComputedStyle(node);
+            if ((style.transform && style.transform !== 'none')
+                || (style.filter && style.filter !== 'none')
+                || (style.backdropFilter && style.backdropFilter !== 'none')
+                || (style.webkitBackdropFilter && style.webkitBackdropFilter !== 'none')
+                || (style.perspective && style.perspective !== 'none')
+                || /paint|layout|strict|content/.test(style.contain || '')
+                || /transform|filter|perspective/.test(style.willChange || '')) {
+                return node;
+            }
+        }
+        return null;
+    };
+
     var place = function (wrapper) {
         var toggle = toggleOf(wrapper);
         var menu = menuOf(wrapper);
@@ -98,9 +118,17 @@ leantime.menus = (function () {
             height = room;
         }
 
+        // Worked out in viewport coordinates, then moved into the containing block's, if any.
         var left = Math.max(edge, Math.min(anchor.right - width, window.innerWidth - width - edge));
+        var top = openUp ? anchor.top - gap - height : anchor.bottom + gap;
+        var block = containingBlock(menu);
+        if (block) {
+            var box = block.getBoundingClientRect();
+            left = left - box.left - block.clientLeft + block.scrollLeft;
+            top = top - box.top - block.clientTop + block.scrollTop;
+        }
         menu.style.left = left + 'px';
-        menu.style.top = (openUp ? anchor.top - gap - height : anchor.bottom + gap) + 'px';
+        menu.style.top = top + 'px';
         wrapper.classList.toggle('lt-dropdown-up', openUp);
     };
 

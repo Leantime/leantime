@@ -154,13 +154,17 @@ class Reminders
     public function setTaskPreset(int $ticketId, string $preset): bool
     {
         $userId = $this->userId();
-        $this->visibleTicket($ticketId);
+        $ticket = $this->visibleTicket($ticketId);
 
         if ($preset !== 'inherit' && ! in_array($preset, ReminderSettings::PRESETS, true)) {
             throw new ValidationException(['preset' => ['Use default, more, less, off or inherit.']]);
         }
 
-        $this->settings->saveTaskChoice($userId, $ticketId, $preset === 'inherit' ? null : $preset);
+        // "off" on someone else's to-do removes the opt-in (as the menu does) rather than storing
+        // it, so it can't silence the person's own default if the to-do becomes theirs later. On
+        // their own to-dos an explicit "off" is kept.
+        $remove = $preset === 'inherit' || ($preset === ReminderSettings::PRESET_OFF && ! $this->isYours($userId, $ticket));
+        $this->settings->saveTaskChoice($userId, $ticketId, $remove ? null : $preset);
 
         return true;
     }
