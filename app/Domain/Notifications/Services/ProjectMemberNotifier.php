@@ -27,9 +27,10 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  *   - mobile push: the per-user push switch, at the workspace's push content level
  *
  * Nothing is sent when people add themselves, when nobody is signed in (setup scripts, a new
- * workspace's first project), when the person is deactivated or only invited, or when the project
- * can't be read back. Someone added to many projects at once (the user's project list) gets at
- * most MAX_PUSHES_PER_REQUEST pushes; the inbox and the digest still list every project.
+ * workspace's first project), when the person is deactivated or only invited, when the project
+ * can't be read back, or when they aren't actually on its team (the membership wasn't saved).
+ * Someone added to many projects at once (the user's project list) gets at most
+ * MAX_PUSHES_PER_REQUEST pushes; the inbox and the digest still list every project.
  */
 class ProjectMemberNotifier
 {
@@ -51,6 +52,10 @@ class ProjectMemberNotifier
         private TrustedAppUrl $trustedAppUrl,
     ) {}
 
+    /**
+     * Tell the added person on every channel they kept on. Sends nothing unless they are an
+     * active user who is now actually on the project's team and someone else added them.
+     */
     public function notify(ProjectMemberAdded $event): void
     {
         $actorId = (int) session('userdata.id');
@@ -65,6 +70,12 @@ class ProjectMemberNotifier
 
         $project = $this->projectRepository->getProject($event->projectId);
         if (! is_array($project)) {
+            return;
+        }
+
+        // Only someone actually on the team hears about it (and the project's name): a caller
+        // that fired the event for a membership that wasn't saved tells nobody.
+        if (! $this->projectRepository->isUserMemberOfProject($event->userId, $event->projectId)) {
             return;
         }
 

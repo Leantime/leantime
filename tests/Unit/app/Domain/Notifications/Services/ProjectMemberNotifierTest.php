@@ -40,6 +40,9 @@ class ProjectMemberNotifierTest extends TestCase
 
     private array $inbox = [];
 
+    /** @var array<int, int> users the project repository says aren't on the team */
+    private array $notOnTeam = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -54,6 +57,7 @@ class ProjectMemberNotifierTest extends TestCase
         $this->pushes = [];
         $this->emails = [];
         $this->inbox = [];
+        $this->notOnTeam = [];
         ProjectMemberNotifier::resetPushCount();
     }
 
@@ -66,6 +70,7 @@ class ProjectMemberNotifierTest extends TestCase
             $this->make(UserRepository::class, ['getUser' => fn ($id) => $this->users[(int) $id] ?? false]),
             $this->make(ProjectRepository::class, [
                 'getProject' => fn ($id) => (int) $id === 5 ? ['id' => 5, 'name' => 'Customer <b>Service</b>'] : false,
+                'isUserMemberOfProject' => fn ($userId, $projectId) => ! in_array((int) $userId, $this->notOnTeam, true),
             ]),
             $this->make(NotificationService::class, [
                 'addNotifications' => function (array $rows) {
@@ -143,6 +148,17 @@ class ProjectMemberNotifierTest extends TestCase
         $this->assertSame([[], [], []], [$this->inbox, $this->emails, $this->pushes]);
     }
 
+    public function test_someone_not_actually_on_the_team_gets_nothing(): void
+    {
+        // An event fired for a membership the repository didn't save (a new project's team entry
+        // without a projectRole): not even the project's name goes out.
+        $this->notOnTeam = [2];
+
+        $this->notifier()->notify(new ProjectMemberAdded(projectId: 5, userId: 2));
+
+        $this->assertSame([[], [], []], [$this->inbox, $this->emails, $this->pushes]);
+    }
+
     public function test_email_off_still_gets_the_inbox_and_push(): void
     {
         $this->notifier()->notify(new ProjectMemberAdded(projectId: 5, userId: 4));
@@ -177,7 +193,7 @@ class ProjectMemberNotifierTest extends TestCase
     {
         $notifier = new ProjectMemberNotifier(
             $this->make(UserRepository::class, ['getUser' => fn ($id) => $this->users[(int) $id] ?? false]),
-            $this->make(ProjectRepository::class, ['getProject' => fn () => ['id' => 5, 'name' => 'P']]),
+            $this->make(ProjectRepository::class, ['getProject' => fn () => ['id' => 5, 'name' => 'P'], 'isUserMemberOfProject' => true]),
             $this->make(NotificationService::class, ['addNotifications' => function (array $rows) {
                 array_push($this->inbox, ...$rows);
 

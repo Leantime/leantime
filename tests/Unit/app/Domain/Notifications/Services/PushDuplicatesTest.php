@@ -122,6 +122,38 @@ class PushDuplicatesTest extends TestCase
         $this->assertSame('Marcel due_date_changed this task · Sales', $this->sent[0]['body']);
     }
 
+    public function test_a_repeat_of_a_push_the_assignment_covered_stays_skipped(): void
+    {
+        Push::markAssigned(3, 2267);
+
+        // One save raising the same project notification twice: the assignee gets neither.
+        $this->push->sendFromNotification($this->notification(), [3, 4]);
+        $this->push->sendFromNotification($this->notification(), [3, 4]);
+
+        $this->assertSame([[4]], array_column($this->sent, 'users'));
+    }
+
+    public function test_an_assignment_mark_ends_with_the_notification_of_its_write(): void
+    {
+        Push::markAssigned(3, 2267);
+
+        // The assignment's write told only others (the assignee wasn't among the recipients)…
+        $this->push->sendFromNotification($this->notification('updated'), [4]);
+        // …so the assignee's next change to the task (moved to Done) still reaches them.
+        $this->push->sendFromNotification($this->notification('status_changed'), [3]);
+
+        $this->assertSame([[4], [3]], array_column($this->sent, 'users'));
+    }
+
+    public function test_a_long_title_or_body_is_cut_to_fit_a_push(): void
+    {
+        $long = str_repeat('word ', 100);
+
+        $this->assertLessThanOrEqual(120, mb_strlen(Push::fit($long, 120)));
+        $this->assertStringEndsWith('word…', Push::fit($long, 120));
+        $this->assertSame('Short', Push::fit('Short', 120));
+    }
+
     public function test_nothing_is_sent_when_everyone_was_skipped(): void
     {
         Push::markAssigned(3, 2267);
@@ -149,7 +181,7 @@ class PushDuplicatesTest extends TestCase
     {
         $relay = $this->createMock(PushRelay::class);
         $relay->method('contentLevel')->willReturn(PushRelay::CONTENT_NAMES);
-        $relay->expects($this->once())->method('namesOnlyData')->willReturn(['module' => 'comments', 'url' => 'https://app/clean']);
+        $relay->expects($this->once())->method('withoutLinkText')->willReturn(['module' => 'comments', 'url' => 'https://app/clean']);
         $push = new Push($this->createMock(Client::class), $relay);
 
         [$title, $body, $data] = $push->withContentLevel('Pricing page', 'Marcel commented', ['module' => 'comments', 'url' => 'https://x/api/jsonrpc?params=secret']);
@@ -158,12 +190,24 @@ class PushDuplicatesTest extends TestCase
         $this->assertSame('https://app/clean', $data['url']);
     }
 
-    public function test_a_direct_send_at_full_or_names_is_unchanged(): void
+    public function test_a_direct_send_at_full_never_forwards_a_link_with_text_either(): void
+    {
+        $relay = $this->createMock(PushRelay::class);
+        $relay->method('contentLevel')->willReturn(PushRelay::CONTENT_FULL);
+        $relay->expects($this->once())->method('withoutLinkText')->willReturn(['module' => 'comments', 'url' => 'https://app/clean']);
+        $push = new Push($this->createMock(Client::class), $relay);
+
+        [, , $data] = $push->withContentLevel('Pricing page', 'Marcel: hi', ['module' => 'comments', 'url' => 'https://x/api/jsonrpc?params=secret']);
+
+        $this->assertSame('https://app/clean', $data['url']);
+    }
+
+    public function test_a_direct_send_at_full_or_names_keeps_its_wording(): void
     {
         foreach ([PushRelay::CONTENT_FULL, PushRelay::CONTENT_NAMES] as $level) {
             $relay = $this->createMock(PushRelay::class);
             $relay->method('contentLevel')->willReturn($level);
-            $relay->method('namesOnlyData')->willReturnArgument(0);
+            $relay->method('withoutLinkText')->willReturnArgument(0);
             $push = new Push($this->createMock(Client::class), $relay);
 
             $this->assertSame(['Pricing page', 'body', ['module' => 'tickets']], $push->withContentLevel('Pricing page', 'body', ['module' => 'tickets']));

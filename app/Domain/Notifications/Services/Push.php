@@ -164,6 +164,11 @@ class Push
         }
         $stringData = self::withDefaults($stringData);
 
+        // An item's name can be a whole idea or board-item description: keep the message well
+        // under FCM's payload cap, or the send fails as INVALID_ARGUMENT and the token is dropped.
+        $title = self::fit($title, self::MAX_TITLE_LENGTH);
+        $body = self::fit($body, self::MAX_BODY_LENGTH);
+
         if ($path === 'relay') {
             // One request for the whole fan-out; the relay reports dead tokens back. It
             // applies the content level itself.
@@ -197,23 +202,41 @@ class Push
 
     /**
      * A direct send at the workspace's content level, the same as the relay does
-     * (PushRelay::send): content-free sends no text at all; names only keeps its wording
-     * (worded upstream) but never a link that carries text. Full is unchanged.
+     * (PushRelay::send): content-free sends no text at all and rebuilds the link from the ids;
+     * full and names only keep their wording (worded upstream) but never a link that carries
+     * text (PushRelay::withoutLinkText()).
      *
      * @param  array<string, string>  $data
      * @return array{0: string, 1: string, 2: array<string, string>}
      */
     public function withContentLevel(string $title, string $body, array $data): array
     {
-        $level = $this->relay->contentLevel();
-        if ($level === PushRelay::CONTENT_NAMES) {
-            return [$title, $body, $this->relay->namesOnlyData($data)];
-        }
-        if ($level !== PushRelay::CONTENT_MINIMAL) {
-            return [$title, $body, $data];
+        if ($this->relay->contentLevel() !== PushRelay::CONTENT_MINIMAL) {
+            return [$title, $body, $this->relay->withoutLinkText($data)];
         }
 
         return ['Leantime', __('notification.push_minimal_body'), $this->relay->contentFreeData($data)];
+    }
+
+    /** Longest title a push carries; phones show far less, and FCM caps the whole payload at 4 KB. */
+    private const MAX_TITLE_LENGTH = 120;
+
+    /** Longest body a push carries. */
+    private const MAX_BODY_LENGTH = 600;
+
+    /**
+     * Cut a title or body to $length characters, on a word when one is near, with an ellipsis.
+     */
+    public static function fit(string $text, int $length): string
+    {
+        if (mb_strlen($text) <= $length) {
+            return $text;
+        }
+
+        $cut = mb_substr($text, 0, $length - 1);
+        $space = mb_strrpos($cut, ' ');
+
+        return rtrim($space !== false && $space > $length / 2 ? mb_substr($cut, 0, $space) : $cut).'…';
     }
 
     /**
@@ -224,8 +247,9 @@ class Push
     /**
      * "Assigned to you" pushes sent while handling the current write, keyed by user and task,
      * with the time they went out. The project notification about that same write is raised
-     * in the same request right after, and skips the assignee once; later, separate changes
-     * to the task (a new deadline a minute after) still push.
+     * in the same request right after and skips the assignee; it also clears every mark for
+     * that task, so later, separate changes to the task (moved to Done a minute after) still
+     * push, even in a long-running process.
      *
      * @var array<string, int>
      */
@@ -255,6 +279,19 @@ class Push
         return $at !== null && time() - $at <= self::ASSIGNED_WRITE_SECONDS;
     }
 
+    /**
+     * Forget every assignment mark for a task, once the project notification of the write
+     * that set them has gone out (whether or not its assignee was among the recipients).
+     */
+    private static function forgetAssigned(int $ticketId): void
+    {
+        foreach (array_keys(self::$assignedThisWrite) as $key) {
+            if (str_ends_with($key, '.'.$ticketId)) {
+                unset(self::$assignedThisWrite[$key]);
+            }
+        }
+    }
+
     /** Test hook: forget assignment marks. */
     public static function resetAssigned(): void
     {
@@ -266,9 +303,11 @@ class Push
      * so one change reaches a phone once.
      *
      *   - Whoever was just pushed "assigned to you" for a task doesn't also get the
-     *     "added / updated this task" push from that same write.
+     *     "added / updated this task" push from that same write. Only that one notification
+     *     is skipped: it clears the task's marks, so the next change to the task pushes.
      *   - The same person never gets the same push about the same item twice within
-     *     RECENT_SECONDS (one save can raise the same notification twice).
+     *     RECENT_SECONDS (one save can raise the same notification twice). The push counts
+     *     as sent even when the assignment skipped it, so a repeat of it is skipped too.
      *
      * @param  array<int>  $userIds
      */
@@ -291,14 +330,17 @@ class Push
 
         $recipients = [];
         foreach (array_unique(array_map('intval', $userIds)) as $userId) {
-            if ($ticketId > 0 && self::consumeAssigned($userId, $ticketId)) {
-                continue;
-            }
+            $coveredByAssignment = $ticketId > 0 && self::consumeAssigned($userId, $ticketId);
             // add() is false when the key is already there: this exact push just went out.
-            if (! Cache::add('push.sent.'.$userId.'.'.$fingerprint, 1, self::RECENT_SECONDS)) {
+            // Recorded either way, so a repeat of a push the assignment covered stays skipped.
+            $isRepeat = ! Cache::add('push.sent.'.$userId.'.'.$fingerprint, 1, self::RECENT_SECONDS);
+            if ($coveredByAssignment || $isRepeat) {
                 continue;
             }
             $recipients[] = $userId;
+        }
+        if ($ticketId > 0) {
+            self::forgetAssigned($ticketId);
         }
 
         if ($recipients === []) {

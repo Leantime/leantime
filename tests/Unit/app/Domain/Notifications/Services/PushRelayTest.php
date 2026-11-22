@@ -189,12 +189,47 @@ class PushRelayTest extends TestCase
         $relay = $this->relay([PushRelay::SETTING_ENABLED => '1', PushRelay::SETTING_CONTENT => 'names'], true, 'LIC');
         $link = 'https://host/dashboard/home#/tickets/showTicket/9?projectId=3';
 
-        $this->assertSame($link, $relay->namesOnlyData(['module' => 'tickets', 'moduleId' => '9', 'url' => $link])['url']);
+        $this->assertSame($link, $relay->withoutLinkText(['module' => 'tickets', 'moduleId' => '9', 'url' => $link])['url']);
         $this->assertSame(
             'https://app.example.com',
-            $relay->namesOnlyData(['module' => 'projects', 'moduleId' => '3', 'url' => 'https://host/projects/x?text=secret'])['url'],
+            $relay->withoutLinkText(['module' => 'projects', 'moduleId' => '3', 'url' => 'https://host/projects/x?text=secret'])['url'],
             'a non-task link with a query falls back to the app itself'
         );
+    }
+
+    /**
+     * Only numeric ids may ride in a link's query: an idea comment's link (?projectId=5) keeps
+     * its deep link, text in the query or in the fragment's query does not go out.
+     */
+    public function test_a_link_keeps_id_only_queries_and_loses_text(): void
+    {
+        $relay = $this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'LIC');
+
+        $ideaLink = 'https://host/ideas/showBoards/4?projectId=5';
+        $this->assertSame($ideaLink, $relay->withoutLinkText(['module' => 'comments', 'url' => $ideaLink])['url']);
+
+        $this->assertTrue(PushRelay::linkCarriesText('https://host/x?tab=comments'));
+        $this->assertTrue(PushRelay::linkCarriesText('https://host/dashboard/home#/tickets/showTicket/9?text=secret'));
+        $this->assertFalse(PushRelay::linkCarriesText('https://host/dashboard/home#/tickets/showTicket/9?projectId=3&x=4'));
+        $this->assertFalse(PushRelay::linkCarriesText('https://host/projects/showProject/3'));
+        $this->assertFalse(PushRelay::linkCarriesText(''));
+    }
+
+    /**
+     * Full content shows the comment in the banner by choice, but the link still never carries
+     * whatever else the request that made the change had in its query.
+     */
+    public function test_full_content_rebuilds_a_link_that_carries_text_too(): void
+    {
+        $leaky = 'https://host/api/jsonrpc?method=comments.addComment&params=eyJ0ZXh0Ijoic2VjcmV0In0=';
+        $relay = $this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'LIC');
+        $relay->send($this->rows(1), 'Fix login', 'Sam: hi', ['module' => 'comments', 'moduleId' => '4', 'parentTicketId' => '42', 'url' => $leaky]);
+
+        $posted = (string) $this->requests[0]['request']->getBody();
+        $msg = json_decode($posted, true)['messages'][0];
+        $this->assertSame('Sam: hi', $msg['body']);
+        $this->assertSame('https://app.example.com/dashboard/home#/tickets/showTicket/42', $msg['data']['url']);
+        $this->assertStringNotContainsString('params=', $posted);
     }
 
     public function test_content_free_mode_links_the_app_itself_for_everything_else(): void

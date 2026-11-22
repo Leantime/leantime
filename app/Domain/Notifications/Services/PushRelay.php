@@ -132,25 +132,44 @@ class PushRelay
     }
 
     /**
-     * At "names only" a link must not carry text either. A change made through a GET request
-     * keeps that request's parameters in its link (a comment sent over JSON-RPC carries its
-     * text, base64-encoded, in the query string). A link with a query string is rebuilt
-     * from the ids, as at content-free; a link without one is kept as it is.
+     * A push link never carries text, at any content level that keeps a link (full and names
+     * only; content-free rebuilds every link). A change made through a GET request keeps that
+     * request's parameters in its link: a comment sent over JSON-RPC carries its text,
+     * base64-encoded, in the query string. A link whose query (before or inside the #fragment)
+     * holds anything but numeric ids (?projectId=5) is rebuilt from the ids, as at content-free;
+     * any other link is kept as it is, so item links keep working.
      *
      * @param  array<string, string>  $data
      * @return array<string, string>
      */
-    public function namesOnlyData(array $data): array
+    public function withoutLinkText(array $data): array
     {
         $url = (string) ($data['url'] ?? '');
-        $beforeFragment = explode('#', $url, 2)[0];
-        if (! str_contains($beforeFragment, '?')) {
+        if (! self::linkCarriesText($url)) {
             return $data;
         }
 
-        $data['url'] = $this->canonicalUrl($data) ?? strtok($beforeFragment, '?');
+        $beforeFragment = explode('#', $url, 2)[0];
+        $data['url'] = $this->canonicalUrl($data) ?? explode('?', $beforeFragment, 2)[0];
 
         return $data;
+    }
+
+    /**
+     * Whether a link's query, before or inside the #fragment, holds anything but numeric ids.
+     */
+    public static function linkCarriesText(string $url): bool
+    {
+        [$beforeFragment, $fragment] = array_pad(explode('#', $url, 2), 2, '');
+
+        foreach ([$beforeFragment, $fragment] as $part) {
+            $query = explode('?', $part, 2)[1] ?? null;
+            if ($query !== null && $query !== '' && preg_match('/^\w+=\d*(&\w+=\d*)*$/', $query) !== 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -172,8 +191,8 @@ class PushRelay
             $title = 'Leantime';
             $body = __('notification.push_minimal_body');
             $data = $this->contentFreeData($data);
-        } elseif ($this->contentLevel() === self::CONTENT_NAMES) {
-            $data = $this->namesOnlyData($data);
+        } else {
+            $data = $this->withoutLinkText($data);
         }
 
         $messages = [];

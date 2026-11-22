@@ -64,6 +64,7 @@ class EmailWorker
     {
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         $this->projectNames = [];
+        $this->brandColor = null;
 
         $messagesByUser = [];
         $expiredHashes = [];
@@ -321,6 +322,9 @@ class EmailWorker
      */
     private array $projectNames = [];
 
+    /** The company colour, looked up once per handleQueue() run. */
+    private ?string $brandColor = null;
+
     /**
      * New rows grouped by the item they are about, newest change first; within an item, oldest
      * first, a line repeated by the same save shown once. The same line again later is a new
@@ -431,12 +435,16 @@ class EmailWorker
         return $html.'</td></tr></table>';
     }
 
-    /** The company's primary colour, as the email around the digest uses it (Mailer). */
+    /** The company's primary colour, as the email around the digest uses it (Mailer). Once per run. */
     private function brandColor(): string
     {
+        if ($this->brandColor !== null) {
+            return $this->brandColor;
+        }
+
         $color = $this->settingsRepo->getSetting('companysettings.primarycolor');
 
-        return is_string($color) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $color) === 1 ? $color : '#006c9e';
+        return $this->brandColor = is_string($color) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $color) === 1 ? $color : '#006c9e';
     }
 
     /** The person's time zone, else the instance default, else UTC. */
