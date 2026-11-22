@@ -173,7 +173,7 @@ class ReminderNotifierTest extends TestCase
         $this->assertStringContainsString('href="https://pm.example.test/dashboard/home#/reminders/comingUp"', $html, 'the button opens the Coming up panel');
         $this->assertStringNotContainsString("\n", $html);
 
-        $this->assertStringContainsString('at 7:30 (your time)', $email['footer']);
+        $this->assertStringContainsString('at 07:30 AM (your time)', $email['footer'], 'no time format of their own: the language default (h:i A)');
         $this->assertStringContainsString("href='https://pm.example.test/users/editOwn#notifications'", $email['footer']);
         $this->assertStringNotContainsString('unsubscribe', $email['footer']);
 
@@ -183,7 +183,7 @@ class ReminderNotifierTest extends TestCase
         $this->assertStringContainsString("Coming up this week\n- Beta (Ends in 7 days · Website): https://pm.example.test/x/3", $text);
         $this->assertStringContainsString('3 still open from earlier', $text);
         $this->assertStringContainsString("See what's coming up: https://pm.example.test/dashboard/home#/reminders/comingUp", $text);
-        $this->assertStringContainsString('at 7:30 (your time). Change the time or turn it off in your notification settings: https://pm.example.test/users/editOwn#notifications', $text);
+        $this->assertStringContainsString('at 07:30 AM (your time). Change the time or turn it off in your notification settings: https://pm.example.test/users/editOwn#notifications', $text);
     }
 
     public function test_nothing_leaves_the_server_when_the_inbox_row_is_not_written(): void
@@ -207,7 +207,7 @@ class ReminderNotifierTest extends TestCase
         $summary = $this->summary();
         $summary['items'][] = ['kind' => 'task', 'id' => 4, 'title' => 'Write the annual report', 'projectId' => 1, 'projectName' => 'Website', 'due' => '', 'daysUntil' => 12, 'url' => 'https://pm.example.test/x/4'];
 
-        $email = $this->notifier()->summaryEmail($summary, 'https://pm.example.test/dashboard/home', 'Sam', '08:00');
+        $email = $this->notifier()->summaryEmail($summary, 'https://pm.example.test/dashboard/home', 'Sam', '08:00 AM');
 
         $week = strpos($email['html'], '>Coming up this week<');
         $later = strpos($email['html'], '>Later<');
@@ -217,12 +217,31 @@ class ReminderNotifierTest extends TestCase
         $this->assertStringContainsString("Later\n- Write the annual report (Due in 12 days · Website)", $email['text']);
     }
 
+    public function test_the_email_names_the_time_in_the_recipient_s_own_format(): void
+    {
+        $user = ['id' => 7, 'notifications' => 1, 'username' => 'sam@example.test'];
+
+        $this->settings['usersettings.7.time_format'] = 'H:i';
+        $this->notifier()->sendSummary($user, $this->summary(), $this->now(), '14:00');
+        $this->assertStringContainsString('at 14:00 (your time)', $this->emails[0]['footer'], '24-hour');
+
+        $this->settings['usersettings.7.time_format'] = 'h:i A';
+        $this->notifier()->sendSummary($user, $this->summary(), $this->now(), '14:00');
+        $this->assertStringContainsString('at 02:00 PM (your time)', $this->emails[1]['footer'], '12-hour');
+        $this->assertStringContainsString('at 02:00 PM (your time). Change the time', $this->emails[1]['text']);
+
+        $this->settings['usersettings.8.time_format'] = 'H:i'; // someone else's setting doesn't count
+        unset($this->settings['usersettings.7.time_format']);
+        $this->notifier()->sendSummary($user, $this->summary(), $this->now(), '14:00');
+        $this->assertStringContainsString('at 02:00 PM (your time)', $this->emails[2]['footer'], 'the language default');
+    }
+
     public function test_the_email_falls_back_to_the_plain_greeting_without_a_first_name(): void
     {
         $this->notifier()->sendSummary(['id' => 7, 'notifications' => 1, 'username' => 'sam@example.test', 'firstname' => ''], $this->summary(), $this->now());
 
         $this->assertSame('Hi, ', $this->emails[0]['headline']);
-        $this->assertStringContainsString('at 8:00 (your time)', $this->emails[0]['footer'], 'the default time');
+        $this->assertStringContainsString('at 08:00 AM (your time)', $this->emails[0]['footer'], 'the default time');
     }
 
     public function test_the_inbox_row_is_written_before_email_and_push(): void

@@ -96,7 +96,7 @@ class ReminderNotifier
                 $this->sendMail(
                     (string) $user['username'],
                     sprintf($this->language->__('reminders.email_subject'), $counts),
-                    $this->summaryEmail($summary, $url, (string) ($user['firstname'] ?? ''), $summaryTime)
+                    $this->summaryEmail($summary, $url, (string) ($user['firstname'] ?? ''), $this->timeForPerson($userId, $summaryTime))
                 );
             } catch (\Throwable $e) {
                 Log::warning('Morning summary email failed for user '.$userId.': '.$e->getMessage());
@@ -118,6 +118,18 @@ class ReminderNotifier
                 Log::warning('Morning summary push failed for user '.$userId.': '.$e->getMessage());
             }
         }
+    }
+
+    /**
+     * The summary time as the recipient reads times: their own time format setting, else the
+     * language's default (the scheduler has no session, so it's read from storage).
+     */
+    private function timeForPerson(int $userId, string $summaryTime): string
+    {
+        $stored = $this->settings->getSetting('usersettings.'.$userId.'.time_format');
+        $format = is_string($stored) && trim($stored) !== '' ? html_entity_decode($stored, ENT_QUOTES) : (string) $this->language->__('language.timeformat');
+
+        return ReminderSettings::formatTime($summaryTime, $format !== '' && $format !== 'language.timeformat' ? $format : 'H:i');
     }
 
     /**
@@ -188,9 +200,10 @@ class ReminderNotifier
      * lines because the mailer turns newlines into line breaks; the text part mirrors it.
      *
      * @param  array<string, mixed>  $summary
+     * @param  string  $displayTime  The summary time as the person reads times ("02:00 PM", "14:00").
      * @return array{headline: string, html: string, text: string, footer: string}
      */
-    public function summaryEmail(array $summary, string $homeUrl, string $firstname, string $summaryTime): array
+    public function summaryEmail(array $summary, string $homeUrl, string $firstname, string $displayTime): array
     {
         $groups = [
             'today' => ['heading' => $this->language->__('reminders.email_today'), 'items' => []],
@@ -260,10 +273,9 @@ class ReminderNotifier
         $text[] = $this->language->__('reminders.email_button').': '.$home;
 
         $settingsUrl = MailerCore::notificationEmailUrl(rtrim($this->trustedAppUrl->forLinks(), '/').'/users/editOwn#notifications', 'reminders');
-        $time = self::displayTime($summaryTime);
-        $footer = sprintf($this->language->__('reminders.email_footer'), $this->escape($time), $this->escape($settingsUrl));
+        $footer = sprintf($this->language->__('reminders.email_footer'), $this->escape($displayTime), $this->escape($settingsUrl));
         $text[] = '';
-        $text[] = sprintf($this->language->__('reminders.email_footer_text'), $time, $settingsUrl);
+        $text[] = sprintf($this->language->__('reminders.email_footer_text'), $displayTime, $settingsUrl);
 
         $headline = $firstname !== ''
             ? sprintf($this->language->__('reminders.email_hi_name'), $this->escape($firstname))
@@ -275,12 +287,6 @@ class ReminderNotifier
             'text' => ($firstname !== '' ? sprintf($this->language->__('reminders.email_hi_name'), $firstname) : trim($this->language->__('email_notifications.hi')))."\n\n".implode("\n", $text),
             'footer' => $footer,
         ];
-    }
-
-    /** '08:00' → '8:00', the way people write a time. */
-    public static function displayTime(string $time): string
-    {
-        return (int) substr($time, 0, 2).substr($time, 2);
     }
 
     /**

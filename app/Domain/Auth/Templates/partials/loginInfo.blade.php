@@ -16,10 +16,6 @@
         </x-slot:trigger>
         @dispatchEvent('afterUserinfoDropdownMenuOpen')
         <li>
-            {{-- The morning summary's list, any time --}}
-            <a href="#/reminders/comingUp">{!! __('menu.coming_up') !!}</a>
-        </li>
-        <li>
             <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover">
                 {!! __("menu.my_profile") !!}
             </a>

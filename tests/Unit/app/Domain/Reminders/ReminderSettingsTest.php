@@ -34,6 +34,19 @@ class ReminderSettingsTest extends TestCase
         );
     }
 
+    public function test_the_time_format_is_the_person_s_own_else_the_language_default(): void
+    {
+        app()->instance(\Leantime\Core\Language::class, $this->make(\Leantime\Core\Language::class, [
+            '__' => fn (string $key) => $key === 'language.timeformat' ? 'h:i A' : $key,
+        ]));
+
+        $this->assertSame('H:i', $this->settings(['usersettings.7.time_format' => 'H:i'])->timeFormat(7));
+        $this->assertSame('h:i A', $this->settings(['usersettings.8.time_format' => 'H:i'])->timeFormat(7), 'not someone else\'s');
+        $this->assertSame('h:i A', $this->settings(['usersettings.7.time_format' => ''])->timeFormat(7));
+
+        app()->forgetInstance(\Leantime\Core\Language::class);
+    }
+
     public function test_defaults(): void
     {
         $this->assertSame(

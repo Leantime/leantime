@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Reminders\Services;
 
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 
 /**
@@ -186,6 +187,30 @@ class ReminderSettings
     public function recordHeartbeat(string $nowUtc): void
     {
         $this->settings->saveSetting(self::HEARTBEAT, $nowUtc);
+    }
+
+    /**
+     * The person's own time format (Settings → Time format, stored as a PHP date format), else the
+     * language's default. Read from storage, so it works without a session (the scheduler).
+     */
+    public function timeFormat(int $userId): string
+    {
+        $stored = $this->settings->getSetting('usersettings.'.$userId.'.time_format');
+        if (is_string($stored) && trim($stored) !== '') {
+            return html_entity_decode($stored, ENT_QUOTES);
+        }
+
+        $default = (string) app()->make(LanguageCore::class)->__('language.timeformat');
+
+        return $default !== '' && $default !== 'language.timeformat' ? $default : 'H:i';
+    }
+
+    /** A stored 'HH:MM' time in a PHP time format: '14:00' → '02:00 PM' with 'h:i A'. */
+    public static function formatTime(string $time, string $format): string
+    {
+        $parsed = \DateTimeImmutable::createFromFormat('!H:i', $time);
+
+        return $parsed === false ? $time : $parsed->format($format);
     }
 
     /** 'HH:MM', 00:00 to 23:59. */

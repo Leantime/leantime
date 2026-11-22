@@ -4,8 +4,8 @@ namespace Leantime\Domain\Reminders\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Reminders\Services\ComingUpList;
-use Leantime\Domain\Reminders\Services\ReminderNotifier;
 use Leantime\Domain\Reminders\Services\Reminders as ReminderService;
+use Leantime\Domain\Reminders\Services\ReminderSettings;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -20,10 +20,13 @@ class ComingUp extends Controller
 
     private ComingUpList $list;
 
-    public function init(ReminderService $reminders, ComingUpList $list): void
+    private ReminderSettings $settings;
+
+    public function init(ReminderService $reminders, ComingUpList $list, ReminderSettings $settings): void
     {
         $this->reminders = $reminders;
         $this->list = $list;
+        $this->settings = $settings;
     }
 
     public function get($params): Response
@@ -33,7 +36,7 @@ class ComingUp extends Controller
 
         $this->tpl->assign('panel', $panel);
         $this->tpl->assign('summaryOn', $settings['summary'] && $settings['workspaceEnabled']);
-        $this->tpl->assign('summaryTime', ReminderNotifier::displayTime($settings['summaryTime']));
+        $this->tpl->assign('summaryTime', ReminderSettings::formatTime($settings['summaryTime'], $this->settings->timeFormat((int) session('userdata.id'))));
 
         return $this->tpl->displayPartial('reminders.comingUp');
     }

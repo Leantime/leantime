@@ -96,7 +96,7 @@ class ComingUpPanelTest extends TestCase
     }
 
     /** @return array<string, mixed> what the controller handed the template */
-    private function openPanel(array $settings, ?\Closure $summary = null): array
+    private function openPanel(array $settings, ?\Closure $summary = null, string $timeFormat = 'H:i'): array
     {
         $assigned = [];
         $tpl = $this->make(Template::class, [
@@ -116,7 +116,9 @@ class ComingUpPanelTest extends TestCase
 
         $controller = (new \ReflectionClass(ComingUp::class))->newInstanceWithoutConstructor();
         (new \ReflectionProperty(ComingUp::class, 'tpl'))->setValue($controller, $tpl);
-        $controller->init($reminders, new ComingUpList($this->language()));
+        $controller->init($reminders, new ComingUpList($this->language()), $this->make(\Leantime\Domain\Reminders\Services\ReminderSettings::class, [
+            'timeFormat' => fn (int $userId) => $timeFormat,
+        ]));
         $assigned['__response'] = $controller->get([]);
 
         return $assigned;
@@ -129,7 +131,8 @@ class ComingUpPanelTest extends TestCase
         $this->assertSame('reminders.comingUp', $assigned['__response']->getContent());
         $this->assertSame(0, $assigned['__limit'], 'all of it, not the top 5');
         $this->assertTrue($assigned['summaryOn']);
-        $this->assertSame('7:30', $assigned['summaryTime']);
+        $this->assertSame('07:30', $assigned['summaryTime'], '24-hour format');
+        $this->assertSame('02:00 PM', $this->openPanel(['summaryTime' => '14:00'], timeFormat: 'h:i A')['summaryTime'], '12-hour format');
         $this->assertCount(4, $assigned['panel']['sections']);
     }
 
@@ -182,10 +185,18 @@ class ComingUpPanelTest extends TestCase
         $this->assertStringNotContainsString('taskReminderMenu', $html);
     }
 
-    public function test_the_avatar_menu_opens_the_panel(): void
+    public function test_the_panel_is_not_in_the_avatar_menu(): void
     {
         $template = (string) file_get_contents(APP_ROOT.'/app/Domain/Auth/Templates/partials/loginInfo.blade.php');
 
-        $this->assertStringContainsString('<a href="#/reminders/comingUp">{!! __(\'menu.coming_up\') !!}</a>', $template);
+        $this->assertStringNotContainsString('reminders/comingUp', $template, 'the bell row, the email and the push are the ways in');
+    }
+
+    public function test_times_are_formatted_from_storage(): void
+    {
+        $this->assertSame('14:00', \Leantime\Domain\Reminders\Services\ReminderSettings::formatTime('14:00', 'H:i'));
+        $this->assertSame('02:00 PM', \Leantime\Domain\Reminders\Services\ReminderSettings::formatTime('14:00', 'h:i A'));
+        $this->assertSame('8:02 am', \Leantime\Domain\Reminders\Services\ReminderSettings::formatTime('08:02', 'g:i a'));
+        $this->assertSame('nonsense', \Leantime\Domain\Reminders\Services\ReminderSettings::formatTime('nonsense', 'H:i'), 'left as it is');
     }
 }
