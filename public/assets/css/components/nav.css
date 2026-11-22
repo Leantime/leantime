@@ -1020,6 +1020,10 @@ a.barmenu:hover {
     margin-top: 5px;
 }
 
+.notificationDropdown .dropdown-menu li .notificationPinned {
+    color: var(--secondary-font-color);
+}
+
 .notificationDropdown .dropdown-menu li .notificationTitle {
     font-size: var(--base-font-size);
     display:block;

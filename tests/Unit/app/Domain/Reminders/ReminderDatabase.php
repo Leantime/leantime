@@ -20,7 +20,7 @@ trait ReminderDatabase
     {
         $this->db = new SQLiteConnection(new \PDO('sqlite::memory:'));
 
-        $this->db->statement('CREATE TABLE zp_user (id INTEGER PRIMARY KEY, username VARCHAR(100), status VARCHAR(1), role VARCHAR(200), source VARCHAR(200), notifications INTEGER)');
+        $this->db->statement('CREATE TABLE zp_user (id INTEGER PRIMARY KEY, username VARCHAR(100), firstname VARCHAR(100), lastname VARCHAR(100), status VARCHAR(1), role VARCHAR(200), source VARCHAR(200), notifications INTEGER)');
         $this->db->statement('CREATE TABLE zp_projects (id INTEGER PRIMARY KEY, name VARCHAR(100), state INTEGER, "end" DATETIME, psettings TEXT)');
         $this->db->statement('CREATE TABLE zp_relationuserproject (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, projectId INTEGER, projectRole VARCHAR(20))');
         $this->db->statement('CREATE TABLE zp_tickets (id INTEGER PRIMARY KEY, projectId INTEGER, headline VARCHAR(255), type VARCHAR(255), status INTEGER, priority VARCHAR(60), dateToFinish DATETIME, editFrom DATETIME, editTo DATETIME, editorId VARCHAR(75), userId INTEGER)');

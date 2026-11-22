@@ -125,6 +125,47 @@ class ReminderSettings
         $this->settings->saveSetting(self::taskKey($userId, $ticketId), $preset);
     }
 
+    /**
+     * What a to-do follows when the person made no choice for it: off when their default is off,
+     * "less" for to-dos that repeat every weekday or more often, otherwise their default.
+     */
+    public static function inheritedPreset(string $defaultPreset, bool $frequentRoutine): string
+    {
+        return match (true) {
+            $defaultPreset === self::PRESET_OFF => self::PRESET_OFF,
+            $frequentRoutine => self::PRESET_LESS,
+            default => $defaultPreset,
+        };
+    }
+
+    /** True when the reminder job ran within the last $maxAgeMinutes. */
+    public function schedulerRanSince(\DateTimeInterface $nowUtc, int $maxAgeMinutes = 60): bool
+    {
+        $lastRun = $this->settings->getSetting(self::HEARTBEAT);
+        if (! is_string($lastRun) || $lastRun === '') {
+            return false;
+        }
+
+        $ranAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $lastRun, new \DateTimeZone('UTC'));
+        if ($ranAt === false) {
+            return false;
+        }
+
+        return $nowUtc->getTimestamp() - $ranAt->getTimestamp() <= $maxAgeMinutes * 60;
+    }
+
+    /** The workspace switch: on clears it; off stores '0'. */
+    public function saveWorkspaceEnabled(bool $enabled): void
+    {
+        if ($enabled) {
+            $this->settings->deleteSetting(self::WORKSPACE_SWITCH);
+
+            return;
+        }
+
+        $this->settings->saveSetting(self::WORKSPACE_SWITCH, '0');
+    }
+
     public static function taskKey(int $userId, int $ticketId): string
     {
         return 'usersettings.'.$userId.'.reminders.task.'.$ticketId;

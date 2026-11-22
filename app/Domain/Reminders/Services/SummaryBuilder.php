@@ -163,11 +163,7 @@ class SummaryBuilder
         foreach ($rows as $row) {
             $id = (int) $row['id'];
             $isRoutine = isset($frequent[$id]);
-            $preset = $chosen[$id] ?? match (true) {
-                $defaultPreset === ReminderSettings::PRESET_OFF => ReminderSettings::PRESET_OFF,
-                $isRoutine => ReminderSettings::PRESET_LESS,
-                default => $defaultPreset,
-            };
+            $preset = $chosen[$id] ?? ReminderSettings::inheritedPreset($defaultPreset, $isRoutine);
             if ($preset === ReminderSettings::PRESET_OFF) {
                 continue;
             }

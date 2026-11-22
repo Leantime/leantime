@@ -80,10 +80,11 @@ class HeadMenu extends Composer
         // instead of making two separate DB queries
         $notifications = [];
         if (session()->exists('userdata')) {
-            $notifications = $this->notificationService->getAllNotifications(session('userdata.id'));
+            // Newest first, with today's morning summary pinned on top.
+            $notifications = $this->notificationService->getBellNotifications((int) session('userdata.id'));
         }
 
-        $nCount = is_array($notifications) ? count(array_filter($notifications, fn ($n) => ($n['read'] ?? 1) == 0)) : 0;
+        $nCount = count(array_filter($notifications, fn ($n) => ($n['read'] ?? 1) == 0));
         $totalNotificationCount =
         $totalMentionCount =
         $totalNewMentions =

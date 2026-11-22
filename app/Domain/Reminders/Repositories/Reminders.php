@@ -104,17 +104,22 @@ class Reminders
     /**
      * One active person, or null.
      *
-     * @return array{id: int, notifications: int, username: string}|null
+     * @return array{id: int, notifications: int, username: string, firstname: string}|null
      */
     public function activeUser(int $userId): ?array
     {
         $row = $this->db->table('zp_user')
-            ->select(['id', 'notifications', 'username'])
+            ->select(['id', 'notifications', 'username', 'firstname'])
             ->where('id', $userId)
             ->whereIn('status', ['a', 'A'])
             ->first();
 
-        return $row === null ? null : ['id' => (int) $row->id, 'notifications' => (int) ($row->notifications ?? 0), 'username' => (string) $row->username];
+        return $row === null ? null : [
+            'id' => (int) $row->id,
+            'notifications' => (int) ($row->notifications ?? 0),
+            'username' => (string) $row->username,
+            'firstname' => (string) ($row->firstname ?? ''),
+        ];
     }
 
     /**

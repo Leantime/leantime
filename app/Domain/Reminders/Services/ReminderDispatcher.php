@@ -91,7 +91,7 @@ class ReminderDispatcher
                         continue;
                     }
 
-                    $this->notifier->sendSummary($user, $summary, $nowUtc);
+                    $this->notifier->sendSummary($user, $summary, $nowUtc, $settings[$userId]['summaryTime']);
                     $sent++;
                 } catch (\Throwable $e) {
                     Log::warning('Morning summary failed for user '.$userId.': '.$e->getMessage());

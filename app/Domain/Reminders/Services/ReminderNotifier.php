@@ -38,9 +38,10 @@ class ReminderNotifier
 
     /**
      * @param  array<string, mixed>  $summary  From {@see SummaryBuilder::build()}.
-     * @param  array{id: int, notifications: int, username?: string}  $user
+     * @param  array{id: int, notifications: int, username?: string, firstname?: string}  $user
+     * @param  string  $summaryTime  The person's summary time ('HH:MM'), named in the email footer.
      */
-    public function sendSummary(array $user, array $summary, CarbonImmutable $nowUtc): void
+    public function sendSummary(array $user, array $summary, CarbonImmutable $nowUtc, string $summaryTime = ReminderSettings::DEFAULT_SUMMARY_TIME): void
     {
         $userId = (int) $user['id'];
         $url = rtrim($this->trustedAppUrl->forLinks(), '/').'/dashboard/home';
@@ -63,7 +64,7 @@ class ReminderNotifier
                 $this->sendMail(
                     (string) $user['username'],
                     sprintf($this->language->__('reminders.email_subject'), $counts),
-                    $this->summaryHtml($summary, $url)
+                    $this->summaryEmail($summary, $url, (string) ($user['firstname'] ?? ''), $summaryTime)
                 );
             } catch (\Throwable $e) {
                 Log::warning('Morning summary email failed for user '.$userId.': '.$e->getMessage());
@@ -140,48 +141,115 @@ class ReminderNotifier
     }
 
     /**
-     * The email body. Kept on single lines: the mailer turns newlines into line breaks.
+     * The email: a greeting by first name, the items grouped by day, a button to the home page,
+     * and a footer that says why this email came and where to change it. HTML is kept on single
+     * lines because the mailer turns newlines into line breaks; the text part mirrors it.
      *
      * @param  array<string, mixed>  $summary
+     * @return array{headline: string, html: string, text: string, footer: string}
      */
-    private function summaryHtml(array $summary, string $homeUrl): string
+    public function summaryEmail(array $summary, string $homeUrl, string $firstname, string $summaryTime): array
     {
-        $html = '<p>'.$this->escape($this->language->__('reminders.email_intro')).'</p>';
-
+        $groups = [
+            'today' => ['heading' => $this->language->__('reminders.email_today'), 'items' => []],
+            'tomorrow' => ['heading' => $this->language->__('reminders.email_tomorrow'), 'items' => []],
+            'later' => ['heading' => $this->language->__('reminders.email_this_week'), 'items' => []],
+        ];
         foreach ($summary['items'] as $item) {
-            $link = MailerCore::notificationEmailUrl($item['url'], $item['kind'] === 'task' ? 'tickets' : 'reminders');
-            $html .= '<div style="border-top: 1px solid #ddd; margin: 3px; padding: 6px 3px;">'
-                .'<a href="'.$this->escape($link).'"><strong>'.$this->escape($item['title']).'</strong></a>'
-                .'<br/><span style="color: #555;">'.$this->escape($this->whenText($item['kind'], $item['daysUntil']))
-                .($item['projectName'] !== '' && $item['kind'] !== 'project' ? ' · '.$this->escape($item['projectName']) : '')
-                .'</span></div>';
+            $group = match (true) {
+                $item['daysUntil'] <= 0 => 'today',
+                $item['daysUntil'] === 1 => 'tomorrow',
+                default => 'later',
+            };
+            $groups[$group]['items'][] = $item;
+        }
+
+        $html = '<p>'.$this->escape($this->language->__('reminders.email_intro')).'</p>';
+        $text = [$this->language->__('reminders.email_intro'), ''];
+
+        foreach ($groups as $key => $group) {
+            $routine = $key === 'today' && $summary['routine']['count'] > 0
+                ? sprintf($this->language->__('reminders.routine'), $summary['routine']['count'])
+                : null;
+            if ($group['items'] === [] && $routine === null) {
+                continue;
+            }
+
+            $html .= '<p style="margin: 18px 3px 4px; font-weight: bold; color: #333;">'.$this->escape($group['heading']).'</p>';
+            $text[] = $group['heading'];
+
+            foreach ($group['items'] as $item) {
+                $link = MailerCore::notificationEmailUrl($item['url'], $item['kind'] === 'task' ? 'tickets' : 'reminders');
+                $detail = $this->whenText($item['kind'], $item['daysUntil'])
+                    .($item['projectName'] !== '' && $item['kind'] !== 'project' ? ' · '.$item['projectName'] : '');
+
+                $html .= '<div style="border-top: 1px solid #ddd; margin: 3px; padding: 6px 3px;">'
+                    .'<a href="'.$this->escape($link).'"><strong>'.$this->escape($item['title']).'</strong></a>'
+                    .'<br/><span style="color: #555;">'.$this->escape($detail).'</span></div>';
+                $text[] = '- '.$item['title'].' ('.$detail.'): '.$link;
+            }
+
+            if ($routine !== null) {
+                $html .= '<p style="margin: 6px 3px; color: #555;">'.$this->escape($routine).'</p>';
+                $text[] = '- '.$routine;
+            }
+            $text[] = '';
         }
 
         $extra = [];
         if ($summary['moreCount'] > 0) {
             $extra[] = sprintf($this->language->__('reminders.more'), $summary['moreCount']);
         }
-        if ($summary['routine']['count'] > 0) {
-            $extra[] = sprintf($this->language->__('reminders.routine'), $summary['routine']['count']);
-        }
         if ($summary['overdueCount'] > 0) {
             $extra[] = sprintf($this->language->__('reminders.still_open'), $summary['overdueCount']);
         }
         foreach ($extra as $line) {
             $html .= '<p style="margin: 6px 3px; color: #666;">'.$this->escape($line).'</p>';
+            $text[] = $line;
         }
 
-        $html .= '<p><a href="'.$this->escape(MailerCore::notificationEmailUrl($homeUrl, 'reminders')).'">'.$this->escape($this->language->__('reminders.open_leantime')).'</a></p>';
+        $home = MailerCore::notificationEmailUrl($homeUrl, 'reminders');
+        $html .= '<p style="margin-top: 20px;"><a href="'.$this->escape($home).'" style="display: inline-block; padding: 10px 18px; border-radius: 4px; background: #004666; color: #ffffff; text-decoration: none; font-weight: bold;">'
+            .$this->escape($this->language->__('reminders.email_button')).'</a></p>';
+        $text[] = '';
+        $text[] = $this->language->__('reminders.email_button').': '.$home;
 
-        return $html;
+        $settingsUrl = MailerCore::notificationEmailUrl(rtrim($this->trustedAppUrl->forLinks(), '/').'/users/editOwn#notifications', 'reminders');
+        $time = self::displayTime($summaryTime);
+        $footer = sprintf($this->language->__('reminders.email_footer'), $this->escape($time), $this->escape($settingsUrl));
+        $text[] = '';
+        $text[] = sprintf($this->language->__('reminders.email_footer_text'), $time, $settingsUrl);
+
+        $headline = $firstname !== ''
+            ? sprintf($this->language->__('reminders.email_hi_name'), $this->escape($firstname))
+            : $this->language->__('email_notifications.hi');
+
+        return [
+            'headline' => $headline,
+            'html' => $html,
+            'text' => ($firstname !== '' ? sprintf($this->language->__('reminders.email_hi_name'), $firstname) : trim($this->language->__('email_notifications.hi')))."\n\n".implode("\n", $text),
+            'footer' => $footer,
+        ];
     }
 
-    private function sendMail(string $to, string $subject, string $html): void
+    /** '08:00' → '8:00', the way people write a time. */
+    public static function displayTime(string $time): string
+    {
+        return (int) substr($time, 0, 2).substr($time, 2);
+    }
+
+    /**
+     * @param  array{headline: string, html: string, text: string, footer: string}  $email
+     */
+    private function sendMail(string $to, string $subject, array $email): void
     {
         $mailer = app()->make(MailerCore::class);
         $mailer->setContext('reminders');
         $mailer->setSubject($subject);
-        $mailer->setHtml($html);
+        $mailer->setHeadline($email['headline']);
+        $mailer->setFooter($email['footer']);
+        $mailer->setHtml($email['html']);
+        $mailer->setText($email['text']);
         $mailer->sendMail([$to], 'Leantime System');
     }
 

@@ -83,6 +83,10 @@
                                 @endif
                             </span>
                             <span class="notificationDate">
+                                @if (! empty($notif['pinned']))
+                                    {{-- Today's morning summary stays on top until the person's next local midnight --}}
+                                    <span class="notificationPinned"><i class="fa-solid fa-thumbtack" aria-hidden="true"></i> {{ __('reminders.pinned_today') }} ·</span>
+                                @endif
                                 {{ format($notif['datetime'])->date() }}
                                 {{ format($notif['datetime'])->time() }}
                             </span>

@@ -23,7 +23,7 @@ class ReminderNotifierTest extends TestCase
     /** @var array<int, array<string, mixed>> */
     private array $inbox = [];
 
-    /** @var array<int, array{to: array, subject: string, html: string}> */
+    /** @var array<int, array{to: array, subject: string, html: string, headline: ?string, footer: ?string, text: string}> */
     private array $emails = [];
 
     /** @var array<int, array{userIds: array, title: string, body: string, data: array}> */
@@ -44,7 +44,7 @@ class ReminderNotifierTest extends TestCase
         $this->settings = [];
         $this->pushFails = false;
 
-        $mail = ['subject' => '', 'html' => ''];
+        $mail = ['subject' => '', 'html' => '', 'headline' => null, 'footer' => null, 'text' => ''];
         app()->instance(MailerCore::class, $this->make(MailerCore::class, [
             'setContext' => fn () => null,
             'setSubject' => function ($subject) use (&$mail) {
@@ -52,6 +52,15 @@ class ReminderNotifierTest extends TestCase
             },
             'setHtml' => function ($html) use (&$mail) {
                 $mail['html'] = $html;
+            },
+            'setHeadline' => function ($headline) use (&$mail) {
+                $mail['headline'] = $headline;
+            },
+            'setFooter' => function ($footer) use (&$mail) {
+                $mail['footer'] = $footer;
+            },
+            'setText' => function ($text) use (&$mail) {
+                $mail['text'] = $text;
             },
             'sendMail' => function (array $to) use (&$mail) {
                 $this->emails[] = ['to' => $to] + $mail;
@@ -133,6 +142,53 @@ class ReminderNotifierTest extends TestCase
         $this->assertSame(['module' => 'reminders', 'moduleId' => '0', 'type' => 'morning_summary', 'threadId' => 'morning-summary', 'url' => 'https://pm.example.test/dashboard/home', 'tier' => Push::TIER_DIRECT, 'category' => Push::CATEGORY_NONE], $this->pushes[0]['data']);
     }
 
+    public function test_the_email_greets_by_name_groups_by_day_and_explains_its_own_settings(): void
+    {
+        $this->notifier()->sendSummary(
+            ['id' => 7, 'notifications' => 1, 'username' => 'sam@example.test', 'firstname' => 'Sam <B>'],
+            $this->summary(),
+            $this->now(),
+            '07:30'
+        );
+
+        $email = $this->emails[0];
+        $this->assertSame('Hi Sam &lt;B&gt;,', $email['headline'], 'the name is escaped');
+
+        $html = $email['html'];
+        $today = strpos($html, '>Today<');
+        $tomorrow = strpos($html, '>Tomorrow<');
+        $week = strpos($html, '>Coming up this week<');
+        $this->assertNotFalse($today);
+        $this->assertTrue($today < strpos($html, 'Send the invoice') && strpos($html, 'Send the invoice') < $tomorrow, 'today\'s to-do sits under Today');
+        $this->assertTrue($tomorrow < strpos($html, 'Call &lt;Ada&gt;') && strpos($html, 'Call &lt;Ada&gt;') < $week, 'tomorrow\'s to-do sits under Tomorrow');
+        $this->assertTrue($week < strpos($html, 'Beta'), 'the milestone sits under Coming up this week');
+        $this->assertTrue(strpos($html, 'Routine tasks today: 1') < $tomorrow, 'the routine line belongs to Today');
+        $this->assertStringContainsString('https://pm.example.test/x/1', $html, 'each item links to it');
+        $this->assertStringContainsString('>See what&#039;s coming up</a>', $html);
+        $this->assertStringContainsString('href="https://pm.example.test/dashboard/home"', $html);
+        $this->assertStringNotContainsString("\n", $html);
+
+        $this->assertStringContainsString('at 7:30 (your time)', $email['footer']);
+        $this->assertStringContainsString("href='https://pm.example.test/users/editOwn#notifications'", $email['footer']);
+        $this->assertStringNotContainsString('unsubscribe', $email['footer']);
+
+        $text = $email['text'];
+        $this->assertStringStartsWith("Hi Sam <B>,\n\nHere is what's coming up for you.", $text);
+        $this->assertStringContainsString("Today\n- Send the invoice (Due today · Website): https://pm.example.test/x/1\n- Routine tasks today: 1", $text);
+        $this->assertStringContainsString("Coming up this week\n- Beta (Ends in 7 days · Website): https://pm.example.test/x/3", $text);
+        $this->assertStringContainsString('3 still open from earlier', $text);
+        $this->assertStringContainsString("See what's coming up: https://pm.example.test/dashboard/home", $text);
+        $this->assertStringContainsString('at 7:30 (your time). Change the time or turn it off in your notification settings: https://pm.example.test/users/editOwn#notifications', $text);
+    }
+
+    public function test_the_email_falls_back_to_the_plain_greeting_without_a_first_name(): void
+    {
+        $this->notifier()->sendSummary(['id' => 7, 'notifications' => 1, 'username' => 'sam@example.test', 'firstname' => ''], $this->summary(), $this->now());
+
+        $this->assertSame('Hi, ', $this->emails[0]['headline']);
+        $this->assertStringContainsString('at 8:00 (your time)', $this->emails[0]['footer'], 'the default time');
+    }
+
     public function test_the_inbox_row_is_written_before_email_and_push(): void
     {
         $order = [];
@@ -151,6 +207,7 @@ class ReminderNotifierTest extends TestCase
         );
         app()->instance(MailerCore::class, $this->make(MailerCore::class, [
             'setContext' => fn () => null, 'setSubject' => fn () => null, 'setHtml' => fn () => null,
+            'setHeadline' => fn () => null, 'setFooter' => fn () => null, 'setText' => fn () => null,
             'sendMail' => function () use (&$order) {
                 $order[] = 'email';
 
