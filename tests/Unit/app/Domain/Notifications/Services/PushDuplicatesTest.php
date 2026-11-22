@@ -213,4 +213,18 @@ class PushDuplicatesTest extends TestCase
             $this->assertSame(['Pricing page', 'body', ['module' => 'tickets']], $push->withContentLevel('Pricing page', 'body', ['module' => 'tickets']));
         }
     }
+
+    public function test_only_firebases_verdict_on_the_token_retires_a_device(): void
+    {
+        $error = fn (string $status, array $details, string $message = 'x') => json_encode(['error' => ['code' => 400, 'status' => $status, 'message' => $message, 'details' => $details]]);
+
+        $this->assertTrue(Push::isDeadToken($error('NOT_FOUND', [['@type' => 'type.googleapis.com/google.firebase.fcm.v1.FcmError', 'errorCode' => 'UNREGISTERED']])));
+        $this->assertTrue(Push::isDeadToken($error('INVALID_ARGUMENT', [['@type' => 'type.googleapis.com/google.rpc.BadRequest', 'fieldViolations' => [['field' => 'message.token', 'description' => 'Invalid registration token']]]])));
+
+        // A payload FCM refuses (too big, a bad field) leaves the device alone.
+        $this->assertFalse(Push::isDeadToken($error('INVALID_ARGUMENT', [['@type' => 'type.googleapis.com/google.firebase.fcm.v1.FcmError', 'errorCode' => 'INVALID_ARGUMENT']], 'Message is too big')));
+        $this->assertFalse(Push::isDeadToken($error('INVALID_ARGUMENT', [['@type' => 'type.googleapis.com/google.rpc.BadRequest', 'fieldViolations' => [['field' => 'message.data', 'description' => 'mentions message.token']]]])));
+        $this->assertFalse(Push::isDeadToken('{"error":{"message":"google.UNREGISTERED is a reserved key"}}'), 'free text never counts');
+        $this->assertFalse(Push::isDeadToken('<html>404 Not Found</html>'), 'a bare 404 is a wrong URL, not a dead token');
+    }
 }

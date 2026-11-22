@@ -22,8 +22,9 @@ use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
  * Token lifecycle:
  *   - Mobile registers on login → push_token populated on the bearer's
  *     zp_access_tokens row.
- *   - FCM rejects token with UNREGISTERED / INVALID_ARGUMENT → we set
- *     push_invalidated_at on that row. Subsequent sends skip it.
+ *   - FCM says the token itself is dead (UNREGISTERED, or INVALID_ARGUMENT on
+ *     message.token; see isDeadToken) → we set push_invalidated_at on that row.
+ *     Subsequent sends skip it. Other rejections are logged and leave it alone.
  *   - Mobile logout → Sanctum revokes the access_tokens row entirely;
  *     push registration dies with it. No prune cron needed.
  *
@@ -165,7 +166,7 @@ class Push
         $stringData = self::withDefaults($stringData);
 
         // An item's name can be a whole idea or board-item description: keep the message well
-        // under FCM's payload cap, or the send fails as INVALID_ARGUMENT and the token is dropped.
+        // under FCM's payload cap, or FCM refuses the send (INVALID_ARGUMENT; see isDeadToken).
         $title = self::fit($title, self::MAX_TITLE_LENGTH);
         $body = self::fit($body, self::MAX_BODY_LENGTH);
 
@@ -192,8 +193,8 @@ class Push
                 $this->sendFcm($row, $title, $body, $stringData);
             } catch (\Throwable $e) {
                 // One bad row doesn't kill the broadcast. sendFcm marks
-                // push_invalidated_at on known-dead tokens (UNREGISTERED
-                // / INVALID_ARGUMENT); anything else gets logged for ops
+                // push_invalidated_at on known-dead tokens (isDeadToken);
+                // anything else gets logged for ops
                 // to look at later.
                 Log::warning('Push send failed for access_token #'.$row->id.': '.$e->getMessage());
             }
@@ -466,14 +467,10 @@ class Push
             $response = $e->getResponse();
             $bodyText = (string) $response->getBody();
 
-            // FCM signals dead tokens via UNREGISTERED (404) or
-            // INVALID_ARGUMENT (400 with that specific error code).
-            // Mark the row invalidated so we stop trying.
-            if (
-                str_contains($bodyText, 'UNREGISTERED')
-                || str_contains($bodyText, 'INVALID_ARGUMENT')
-                || $response->getStatusCode() === 404
-            ) {
+            // Only Firebase's verdict about the token retires a device (the same rule as the
+            // relay): a payload FCM rejects, such as one over its size limit, is an error, not
+            // a dead token.
+            if (self::isDeadToken($bodyText)) {
                 $this->invalidateToken((int) $row->id);
 
                 return;
@@ -597,6 +594,41 @@ class Push
      * when a provider tells us the token is dead. Doesn't touch the
      * access token itself — only the push fields.
      */
+    /**
+     * Whether an FCM error response says the registration token itself is dead. Firebase
+     * states that in the structured error, never in free text: an FcmError detail with
+     * errorCode UNREGISTERED, or INVALID_ARGUMENT with a field violation on exactly
+     * "message.token". Anything else (a payload that is too large, a bad field, a 404 for a
+     * wrong project id) is an error and leaves the device alone. Same rule as the relay's
+     * FcmSender::isDeadToken().
+     */
+    public static function isDeadToken(string $body): bool
+    {
+        $decoded = json_decode($body, true);
+        $error = is_array($decoded) && is_array($decoded['error'] ?? null) ? $decoded['error'] : null;
+        if ($error === null) {
+            return false;
+        }
+
+        foreach (is_array($error['details'] ?? null) ? $error['details'] : [] as $detail) {
+            if (! is_array($detail)) {
+                continue;
+            }
+            if (($detail['errorCode'] ?? null) === 'UNREGISTERED') {
+                return true;
+            }
+            if (($error['status'] ?? null) === 'INVALID_ARGUMENT' && is_array($detail['fieldViolations'] ?? null)) {
+                foreach ($detail['fieldViolations'] as $violation) {
+                    if (is_array($violation) && ($violation['field'] ?? null) === 'message.token') {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private function invalidateToken(int $accessTokenId): void
     {
         \Illuminate\Support\Facades\DB::table('zp_access_tokens')
