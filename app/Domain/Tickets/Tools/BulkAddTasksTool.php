@@ -42,7 +42,8 @@ class BulkAddTasksTool extends Tool
      */
     public function description(): string
     {
-        return 'Adds multiple task in a single operation. Expects an array of task data where each element contains the same fields as addTicket. Required fields for each ticket: headline, projectId. Optional fields: description, editorId, userId, dateToFinish, status, sprint, editFrom, editTo, milestone.';
+        return 'Adds multiple task in a single operation. Expects an array of task data where each element contains the same fields as addTicket. Required fields for each ticket: headline, projectId. Optional fields: description, editorId, userId, dateToFinish, status, sprint, editFrom, editTo, milestone.'.
+            ' The assignee (editorId) must be on the project team: pick one with getUsersAssignedToProject.';
     }
 
     /**
@@ -104,7 +105,7 @@ class BulkAddTasksTool extends Tool
                 }
             } catch (LeantimeExceptionInterface $e) {
                 $failureCount++;
-                $results[] = ['headline' => $taskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => $e->getClientMessage()];
+                $results[] = ['headline' => $taskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => ToolErrorMessage::for($e)];
             } catch (\Exception $e) {
                 $failureCount++;
                 $results[] = ['headline' => $taskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => $e->getMessage()];
