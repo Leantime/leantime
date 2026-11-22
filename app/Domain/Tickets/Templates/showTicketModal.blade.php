@@ -88,6 +88,16 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                         </li>
                         @endmodule
                         @endcan
+                        @if ($ticket->type !== 'milestone')
+                        {{-- Your own reminders for this to-do; the choices save inside this menu (a second modal would replace the open to-do). --}}
+                        <li class="nav-header border">{{ __('reminders.your_reminders') }}</li>
+                        <li id="taskReminderMenu-{{ $ticket->id }}"
+                            hx-get="{{ BASE_URL }}/hx/reminders/taskReminderMenu/get?ticketId={{ $ticket->id }}"
+                            hx-trigger="intersect once"
+                            hx-swap="outerHTML">
+                            <span class="tw-block tw-px-[10px] tw-py-[3px]">…</span>
+                        </li>
+                        @endif
             </x-slot:actions>
         @endcanany
     </x-global::actions.modal-header>
