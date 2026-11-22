@@ -234,8 +234,9 @@ leantime.showNotification = function (evt) {
         let notification = JSON.parse(data);
 
         if(notification.notification && notification.notification !== "undefined") {
+            // Sanitized on the server (GetLatestGrowl); may carry a link, so shown as HTML.
             jQuery.growl({
-                message: notification.notification, style: notification.notificationType
+                message: notification.notification, style: notification.notificationType, html: true
             });
         }
     })

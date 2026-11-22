@@ -27,7 +27,7 @@ class TemplateGrowlScriptTest extends TestCase
      */
     private function decoded(string $script): array
     {
-        $this->assertSame(1, preg_match('/^<script type="text\/javascript">jQuery\.growl\(\{message: (.*), style: (.*)\}\);<\/script>$/s', $script, $m));
+        $this->assertSame(1, preg_match('/^<script type="text\/javascript">jQuery\.growl\(\{message: (.*), style: (.*), html: true\}\);<\/script>$/s', $script, $m));
 
         return ['message' => json_decode($m[1], true, flags: JSON_THROW_ON_ERROR), 'style' => json_decode($m[2], true, flags: JSON_THROW_ON_ERROR)];
     }
@@ -64,11 +64,15 @@ class TemplateGrowlScriptTest extends TestCase
         $this->assertSame('success', $linked['style']);
     }
 
-    public function test_the_style_is_encoded_too(): void
+    public function test_the_style_is_reduced_to_a_class_name(): void
     {
-        $script = $this->growlScript('Saved', 'success"});alert(1);//');
+        // growl puts the style into a single-quoted class attribute.
+        $this->assertSame('successonmouseoveralert1data-x', $this->decoded($this->growlScript('Saved', "success' onmouseover='alert(1)' data-x='"))['style']);
 
-        $this->assertSame('success"});alert(1);//', $this->decoded($script)['style']);
-        $this->assertStringNotContainsString('"});alert(1)', $script);
+        $script = $this->growlScript('Saved', 'success"});alert(1);//');
+        $this->assertSame('successalert1', $this->decoded($script)['style']);
+        $this->assertStringNotContainsString('alert(1)', $script);
+
+        $this->assertSame('success', $this->decoded($this->growlScript('Saved', 'success'))['style']);
     }
 }

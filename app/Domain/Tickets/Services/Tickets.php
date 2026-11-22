@@ -2207,7 +2207,7 @@ class Tickets extends BaseService
             return ['status' => 'error', 'message' => 'Headline Missing'];
         }
 
-        $this->assertAssigneesCanSeeProject((int) $projectId, $values['editorId'], $values['collaborators']);
+        $values['collaborators'] = $this->assertAssigneesCanSeeProject((int) $projectId, $values['editorId'], $values['collaborators']) ?? [];
 
         $values = $this->prepareTicketDates($values);
 
@@ -2387,7 +2387,7 @@ class Tickets extends BaseService
 
         $this->assertParentTicketIsVisible($values['dependingTicketId'], (int) $values['projectId']);
 
-        $this->assertAssigneesCanSeeProject((int) $values['projectId'], $values['editorId'], $values['collaborators']);
+        $values['collaborators'] = $this->assertAssigneesCanSeeProject((int) $values['projectId'], $values['editorId'], $values['collaborators']) ?? [];
 
         // New work defaults to the project's NEW status; label names and status types are
         // resolved, unknown strings are rejected instead of becoming 0 (= Done) (#3702).
@@ -2558,12 +2558,15 @@ class Tickets extends BaseService
             $this->assertParentTicketIsVisible($submittedValues['dependingTicketId'], (int) $values['projectId']);
         }
 
-        $this->assertAssigneesCanSeeProject(
+        $collaborators = $this->assertAssigneesCanSeeProject(
             (int) $values['projectId'],
             $submittedValues['editorId'] ?? null,
             array_key_exists('collaborators', $submittedValues) ? ($submittedValues['collaborators'] ?? []) : null,
             $currentTicket,
         );
+        if ($collaborators !== null) {
+            $values['collaborators'] = $collaborators;
+        }
 
         // On a move, links that belong to the old project (parent, milestone, sprint) are cleared
         // unless the caller set them; explicitly set milestone/sprint must belong to the target.
@@ -3427,11 +3430,13 @@ class Tickets extends BaseService
      * @param  mixed  $assignee  The editorId being written; null when the write doesn't set it.
      * @param  mixed  $collaborators  The collaborator ids being written; null when the write doesn't set them.
      * @param  TicketModel|null  $currentTicket  The task before the write; null on create.
+     * @return array<int, int>|null The collaborator ids to write (a comma list becomes an array), or
+     *                              null when the write doesn't set collaborators.
      *
      * @throws AssigneeCannotSeeProjectException When a new assignee or collaborator can't see the project.
      * @throws ValidationException When a user id is malformed or doesn't exist.
      */
-    private function assertAssigneesCanSeeProject(int $projectId, mixed $assignee, mixed $collaborators, ?TicketModel $currentTicket = null): void
+    private function assertAssigneesCanSeeProject(int $projectId, mixed $assignee, mixed $collaborators, ?TicketModel $currentTicket = null): ?array
     {
         $assigneeId = $this->userIdOrFail('editorId', $assignee);
         if ($assigneeId > 0 && $assigneeId !== (int) ($currentTicket->editorId ?? 0)) {
@@ -3439,7 +3444,7 @@ class Tickets extends BaseService
         }
 
         if ($collaborators === null) {
-            return;
+            return null;
         }
 
         $collaboratorIds = match (true) {
@@ -3449,12 +3454,17 @@ class Tickets extends BaseService
         };
         $currentCollaborators = array_map('intval', $currentTicket->collaborators ?? []);
 
-        $userIds = array_unique(array_map(fn ($userId) => $this->userIdOrFail('collaborators', $userId), $collaboratorIds));
+        $userIds = array_values(array_unique(array_filter(
+            array_map(fn ($userId) => $this->userIdOrFail('collaborators', $userId), $collaboratorIds),
+            fn (int $userId) => $userId > 0,
+        )));
         foreach ($userIds as $userId) {
-            if ($userId > 0 && $userId !== $assigneeId && ! in_array($userId, $currentCollaborators, true)) {
+            if ($userId !== $assigneeId && ! in_array($userId, $currentCollaborators, true)) {
                 $this->assertUserCanSeeProject('collaborators', $userId, $projectId);
             }
         }
+
+        return $userIds;
     }
 
     /**
@@ -4120,12 +4130,15 @@ class Tickets extends BaseService
             $this->assertParentTicketIsVisible($params['dependingTicketId'], (int) ($params['projectId'] ?? $ticket->projectId));
         }
 
-        $this->assertAssigneesCanSeeProject(
+        $collaborators = $this->assertAssigneesCanSeeProject(
             (int) ($params['projectId'] ?? $ticket->projectId),
             $params['editorId'] ?? null,
             array_key_exists('collaborators', $params) ? ($params['collaborators'] ?? []) : null,
             $ticket,
         );
+        if ($collaborators !== null) {
+            $params['collaborators'] = $collaborators;
+        }
 
         // On a move, links that belong to the old project (parent, milestone, sprint) are cleared
         // unless the caller set them; explicitly set milestone/sprint must belong to the target.

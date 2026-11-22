@@ -28,12 +28,12 @@ class GetLatestGrowlTest extends TestCase
 
     public function test_the_notification_is_cleaned_before_it_is_sent(): void
     {
-        $response = $this->controller(['notification' => 'Saved <img src=x onerror=alert(1)>', 'type' => 'error', 'eventId' => ''])->get();
+        $response = $this->controller(['notification' => 'Saved <img src=x onerror=alert(1)>', 'type' => "error' onclick='x", 'eventId' => ''])->get();
         $payload = json_decode(json_decode($response->getContent(), true), true);
 
         $this->assertStringStartsWith('Saved', $payload['notification']);
         $this->assertStringNotContainsString('onerror', $payload['notification']);
-        $this->assertSame('error', $payload['type']);
+        $this->assertSame('erroronclickx', $payload['type']);
     }
 
     public function test_nothing_pending_stays_false(): void

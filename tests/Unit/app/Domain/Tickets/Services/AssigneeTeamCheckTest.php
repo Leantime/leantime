@@ -52,6 +52,12 @@ class AssigneeTeamCheckTest extends TestCase
     /** @var array<int, array<string, mixed>> Every addTicket() write that reached the repository. */
     private array $adds = [];
 
+    /** @var array<int, array<string, mixed>> Every updateTicket() write that reached the repository. */
+    private array $updates = [];
+
+    /** @var array<int, array<int, mixed>> The collaborator lists patch() wrote. */
+    private array $collaboratorWrites = [];
+
     private array $dispatcherSnapshot = [];
 
     private const DISPATCHER_PROPS = [
@@ -98,6 +104,8 @@ class AssigneeTeamCheckTest extends TestCase
 
         $this->patches = [];
         $this->adds = [];
+        $this->updates = [];
+        $this->collaboratorWrites = [];
     }
 
     protected function tearDown(): void
@@ -209,6 +217,27 @@ class AssigneeTeamCheckTest extends TestCase
         $this->buildService()->patchTicket(5, ['collaborators' => '2, 64']);
     }
 
+    /**
+     * A comma list was only parsed for the check: patch() then cleared the collaborators and
+     * the create paths handed the repository a string. The parsed ids are what gets written.
+     */
+    public function test_a_comma_list_of_collaborators_is_saved_on_every_path(): void
+    {
+        $service = $this->buildService();
+
+        $this->assertTrue($service->patchTicket(5, ['collaborators' => '2, 1']));
+        $this->assertSame([[2, 1]], $this->collaboratorWrites);
+
+        $this->assertSame(77, $service->quickAddTicket(['headline' => 'Quick', 'projectId' => 7, 'collaborators' => '2,1']));
+        $this->assertSame([2, 1], $this->adds[0]['collaborators']);
+
+        $this->assertSame(77, $service->addTicket(['headline' => 'Full', 'projectId' => 7, 'editorId' => 1, 'collaborators' => '2']));
+        $this->assertSame([2], $this->adds[1]['collaborators']);
+
+        $this->assertTrue($service->updateTicket(['id' => 5, 'headline' => 'Edited', 'collaborators' => '2, 1,']));
+        $this->assertSame([2, 1], $this->updates[0]['collaborators']);
+    }
+
     public function test_quick_add_refuses_an_outside_assignee_and_defaults_to_the_caller(): void
     {
         $service = $this->buildService();
@@ -297,8 +326,17 @@ class AssigneeTeamCheckTest extends TestCase
 
                 return 77;
             },
+            'updateTicket' => function ($values) {
+                $this->updates[] = $values;
+
+                return true;
+            },
             'removeCollaborators' => fn () => true,
-            'addCollaborators' => fn () => true,
+            'addCollaborators' => function ($id, $collaborators) {
+                $this->collaboratorWrites[] = $collaborators;
+
+                return true;
+            },
             'getStateLabels' => fn () => [
                 0 => ['name' => 'Done', 'statusType' => 'DONE'],
                 3 => ['name' => 'New', 'statusType' => 'NEW'],

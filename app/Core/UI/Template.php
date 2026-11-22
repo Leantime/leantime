@@ -556,8 +556,10 @@ class Template
      *
      * Notifications are HTML (some carry a link or a line break), and callers are expected to
      * escape the user data they put in them. As a backstop the message is cleaned like rich text
-     * here (no scripts, event handlers or javascript: links), and both values are JSON-encoded so
-     * a quote or "</script>" in the text can't end the string or the script.
+     * here (no scripts, event handlers or javascript: links) and passed with html: true, since growl
+     * shows plain text otherwise. The style becomes a class name, so it keeps only class-safe
+     * characters. Both values are JSON-encoded so a quote or "</script>" can't end the string or
+     * the script.
      */
     public function growlScript(string $message, string $style): string
     {
@@ -565,7 +567,15 @@ class Template
 
         return '<script type="text/javascript">jQuery.growl({message: '
             .json_encode($this->escapeMinimal($message), $flags)
-            .', style: '.json_encode($style, $flags).'});</script>';
+            .', style: '.json_encode(self::growlStyle($style), $flags).', html: true});</script>';
+    }
+
+    /**
+     * A notification style as a class-name token: letters, digits, '_' and '-' only.
+     */
+    public static function growlStyle(string $style): string
+    {
+        return (string) preg_replace('/[^A-Za-z0-9_-]/', '', $style);
     }
 
     /**

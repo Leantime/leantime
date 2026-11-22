@@ -11,9 +11,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     */
     "use strict";
 
-    var $, Animation, Growl;
+    var $, Animation, Growl, escapeHtml, classToken;
 
     $ = jQuery;
+
+    // Leantime: messages are often server error text, so they are shown as plain text unless
+    // the caller passes html: true (only for server notifications that were sanitized there).
+    // Class names are reduced to safe characters so a style can't break out of the attribute.
+    escapeHtml = function (value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    };
+
+    classToken = function (value) {
+        return String(value == null ? '' : value).replace(/[^A-Za-z0-9_-]/g, '');
+    };
 
     Animation = function () {
         var Animation = function () {
@@ -241,12 +257,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }, {
                 key: "content",
                 value: function content() {
-                    return "<div class='" + this.settings.namespace + "-close'>" + this.settings.close + "</div>\n<div class='" + this.settings.namespace + "-title'>" + this.settings.title + "</div>\n<div class='" + this.settings.namespace + "-message'>" + this.settings.message + "</div>";
+                    var namespace = classToken(this.settings.namespace);
+                    var title = this.settings.html ? this.settings.title : escapeHtml(this.settings.title);
+                    var message = this.settings.html ? this.settings.message : escapeHtml(this.settings.message);
+                    return "<div class='" + namespace + "-close'>" + this.settings.close + "</div>\n<div class='" + namespace + "-title'>" + title + "</div>\n<div class='" + namespace + "-message'>" + message + "</div>";
                 }
             }, {
                 key: "container",
                 value: function container(content) {
-                    return "<div class='" + this.settings.namespace + " " + this.settings.namespace + "-" + this.settings.style + " " + this.settings.namespace + "-" + this.settings.size + "'>\n  " + content + "\n</div>";
+                    var namespace = classToken(this.settings.namespace);
+                    return "<div class='" + namespace + " " + namespace + "-" + classToken(this.settings.style) + " " + namespace + "-" + classToken(this.settings.size) + "'>\n  " + content + "\n</div>";
                 }
             }]);
 
