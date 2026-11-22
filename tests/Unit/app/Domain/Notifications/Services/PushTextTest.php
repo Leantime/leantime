@@ -61,9 +61,11 @@ class PushTextTest extends TestCase
             protected function canvasItem(int $id): ?array
             {
                 return match ($id) {
-                    31 => ['title' => 'Grow revenue', 'description' => 'Hit 1M ARR by Q4'],
-                    32 => ['title' => '', 'description' => 'Referral bonus'],
-                    33 => ['title' => null, 'description' => 'Strong brand'],
+                    31 => ['title' => 'Grow revenue', 'description' => 'Hit 1M ARR by Q4', 'projectId' => 111],
+                    32 => ['title' => '', 'description' => 'Referral bonus', 'projectId' => 111],
+                    33 => ['title' => null, 'description' => 'Strong brand', 'projectId' => '111'],
+                    // Another project's item: zp_canvas_items ids are shared by every board.
+                    34 => ['title' => 'Acquire competitor', 'description' => 'Secret plan', 'projectId' => 222],
                     default => null,
                 };
             }
@@ -141,9 +143,9 @@ class PushTextTest extends TestCase
             $pushText->forNotification($this->notification('goalcanvas', 'created', ['title' => 'Grow revenue', 'description' => 'Hit 1M ARR by Q4']))
         );
         $this->assertSame(
-            'Grow revenue',
-            $pushText->forNotification($this->notification('goalcanvas', 'created', ['title' => '', 'description' => 'Grow revenue']))['title'],
-            'a goal without a title falls back to its description'
+            'One of your To-Dos was updated [111] - Pricing page',
+            $pushText->forNotification($this->notification('goalcanvas', 'created', ['title' => '', 'description' => 'Hit 1M ARR by Q4']))['title'],
+            'a goal is named by its title only; its description holds details, never a name'
         );
         $this->assertSame(
             'Marcel updated this idea · Sales',
@@ -153,6 +155,35 @@ class PushTextTest extends TestCase
             'Marcel updated this board item · Sales',
             $pushText->forNotification($this->notification('swotcanvas', 'updated', ['description' => 'Strong brand']))['body']
         );
+    }
+
+    public function test_names_only_never_shows_a_goals_details(): void
+    {
+        $pushText = $this->pushText();
+
+        $update = $pushText->forNotification($this->notification('goalcanvas', 'updated', ['title' => '', 'description' => 'Hit 1M ARR by Q4']), PushRelay::CONTENT_NAMES);
+        $this->assertStringNotContainsString('1M ARR', $update['title'].$update['body']);
+
+        // A comment on goal 31 is titled with the goal's title, not its description.
+        $comment = $pushText->forNotification($this->notification('goalcanvas', 'commented', ['text' => 'Nice work', 'moduleId' => 31]), PushRelay::CONTENT_NAMES);
+        $this->assertSame('Grow revenue', $comment['title']);
+        $this->assertStringNotContainsString('1M ARR', $comment['body']);
+        $this->assertStringNotContainsString('Nice work', $comment['body']);
+    }
+
+    public function test_an_item_of_another_project_is_neither_named_nor_quoted(): void
+    {
+        $pushText = $this->pushText();
+
+        // Commenting on project 222's goal while the notification goes to project 111.
+        $notification = $this->notification('goalcanvas', 'commented', ['text' => 'Nice work', 'moduleId' => 34]);
+
+        $this->assertSame(
+            ['title' => 'One of your To-Dos was updated [111] - Pricing page', 'body' => "Marcel updated the To-Do: 'Pricing page'"],
+            $pushText->forNotification($notification),
+            'falls back to the email wording, which quotes neither'
+        );
+        $this->assertNull($pushText->forEmail($notification));
     }
 
     public function test_anything_it_does_not_know_keeps_the_email_wording(): void

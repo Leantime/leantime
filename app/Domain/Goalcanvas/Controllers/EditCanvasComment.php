@@ -234,7 +234,8 @@ class EditCanvasComment extends Controller
 
         if (isset($params['comment']) === true) {
             // Only allow commenting on a goal item the user can view in their project.
-            if (! $this->goalService->getGoalItem((int) ($_GET['id'] ?? 0))) {
+            $commentedGoal = $this->goalService->getGoalItem((int) ($_GET['id'] ?? 0));
+            if (! $commentedGoal) {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
@@ -257,7 +258,8 @@ class EditCanvasComment extends Controller
             $notification->entity = $values;
             $notification->module = static::CANVAS_NAME.'canvas';
             $notification->action = 'commented';
-            $notification->projectId = session('currentProject');
+            // The goal's own project: the dialog can be open for a goal outside the current one.
+            $notification->projectId = (int) $commentedGoal['projectId'];
             $notification->subject = $this->language->__('email_notifications.canvas_board_comment_created');
             $notification->authorId = session('userdata.id');
             $notification->message = sprintf(

@@ -302,7 +302,8 @@ class EditCanvasComment
             $itemId = (int) ($data['id'] ?? 0);
 
             // Only allow commenting on an item the user can view in their project.
-            if (! $this->blueprintsService->getCanvasItem($itemId, $canvasType)) {
+            $commentedItem = $this->blueprintsService->getCanvasItem($itemId, $canvasType);
+            if (! $commentedItem) {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
@@ -329,7 +330,8 @@ class EditCanvasComment
             $notification->entity = $values;
             $notification->module = $this->canvasSlug.'canvas';
             $notification->action = 'commented';
-            $notification->projectId = session('currentProject');
+            // The item's own project: the dialog can be open for an item outside the current one.
+            $notification->projectId = (int) $commentedItem['projectId'];
             $notification->subject = $this->language->__('email_notifications.canvas_board_comment_created');
             $notification->authorId = session('userdata.id');
             $notification->message = sprintf(

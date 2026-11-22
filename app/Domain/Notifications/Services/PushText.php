@@ -95,8 +95,11 @@ class PushText
 
             if ($module === 'comments' || $action === 'commented') {
                 $host = $this->commentHost($notification);
+                if ($host === null || $this->inOtherProject($host, $notification)) {
+                    return null;
+                }
                 $comment = $this->comment($notification, $actor, true);
-                if ($comment === null || $host === null) {
+                if ($comment === null) {
                     return null;
                 }
 
@@ -175,7 +178,14 @@ class PushText
             return null;
         }
 
-        $title = $this->commentHost($notification)['name'] ?? '';
+        $host = $this->commentHost($notification);
+        // An item of another project than the one being told: neither its name nor the comment
+        // goes out. The email wording, which quotes neither, is used instead.
+        if ($host !== null && $this->inOtherProject($host, $notification)) {
+            return null;
+        }
+
+        $title = $host['name'] ?? '';
 
         if ($title === '') {
             $title = $this->language->__('notification.push_new_comment');
@@ -196,11 +206,12 @@ class PushText
 
     /**
      * The item a comment is on: its module, as that item's own notifications use it (so the
-     * digest puts them together), its id and its name. Task and project comments say their
-     * host in the comment; goal and board comments carry only the host id, with the module on
-     * the notification. Null when the host can't be told.
+     * digest puts them together), its id, its name and the project it belongs to (0 when
+     * unknown). Task and project comments say their host in the comment; goal and board
+     * comments carry only the host id, with the module on the notification. Null when the
+     * host can't be told.
      *
-     * @return array{module: string, id: int, name: string}|null
+     * @return array{module: string, id: int, name: string, projectId: int}|null
      */
     private function commentHost(NotificationModel $notification): ?array
     {
@@ -225,36 +236,62 @@ class PushText
         if ($module === 'tickets') {
             $ticket = $this->ticketRepository->getTicket($id);
             $name = $ticket !== false ? (string) $ticket->headline : '';
+            $projectId = $ticket !== false ? (int) ($ticket->projectId ?? 0) : 0;
         } elseif ($module === 'projects') {
             $project = $this->projectRepository->getProject($id);
             $name = is_array($project) ? (string) ($project['name'] ?? '') : '';
+            $projectId = is_array($project) ? $id : 0;
         } else {
-            $name = $this->itemName($module, $this->canvasItem($id));
+            $item = $this->canvasItem($id);
+            $name = $this->itemName($module, $item);
+            $projectId = (int) ($item['projectId'] ?? 0);
         }
 
-        return ['module' => $module, 'id' => $id, 'name' => $this->clean($name)];
+        return ['module' => $module, 'id' => $id, 'name' => $this->clean($name), 'projectId' => $projectId];
     }
 
     /**
-     * A goal, idea or board item by id (they share zp_canvas_items), or null.
+     * Whether the commented item belongs to another project than the notification's. Goals,
+     * ideas and board items share one id sequence (zp_canvas_items), so a bare id can name
+     * another project's item: its name and the comment then stay out of what this project's
+     * team is told. Unknown on either side counts as not other.
      *
-     * @return array{title: ?string, description: ?string}|null
+     * @param  array{projectId: int}  $host
+     */
+    private function inOtherProject(array $host, NotificationModel $notification): bool
+    {
+        $notificationProjectId = (int) ($notification->projectId ?? 0);
+
+        return $host['projectId'] > 0 && $notificationProjectId > 0 && $host['projectId'] !== $notificationProjectId;
+    }
+
+    /**
+     * A goal, idea or board item by id (they share zp_canvas_items) with the project of its
+     * board, or null.
+     *
+     * @return array{title: ?string, description: ?string, projectId: int|string|null}|null
      */
     protected function canvasItem(int $id): ?array
     {
-        $row = DB::table('zp_canvas_items')->where('id', $id)->first(['title', 'description']);
+        $row = DB::table('zp_canvas_items')
+            ->leftJoin('zp_canvas', 'zp_canvas.id', '=', 'zp_canvas_items.canvasId')
+            ->where('zp_canvas_items.id', $id)
+            ->first(['zp_canvas_items.title', 'zp_canvas_items.description', 'zp_canvas.projectId']);
 
         return $row !== null ? (array) $row : null;
     }
 
+    /**
+     * An item's name. Goals keep it in title and their details in description, so a goal is
+     * named by its title only: the details never stand in for a name. Ideas and board items
+     * keep their name in description (title is a rarely-used extra).
+     */
     private function itemName(string $module, mixed $entity): string
     {
-        // Goals keep their name in title (description holds details); ideas and board items
-        // keep it in description. Each falls back to the other field.
         $fields = match ($module) {
             'tickets' => ['headline'],
             'projects' => ['name'],
-            'goalcanvas' => ['title', 'description'],
+            'goalcanvas' => ['title'],
             default => ['description', 'title'],
         };
 

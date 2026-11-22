@@ -4355,7 +4355,9 @@ class Tickets extends BaseService
         $notification->entity = $values;
         $notification->module = 'comments';
         $notification->action = 'commented';
-        $notification->projectId = session('currentProject');
+        // The milestone's own project, not the session's: it can be opened from another project.
+        $milestoneProjectId = is_object($milestone) ? (int) ($milestone->projectId ?? 0) : 0;
+        $notification->projectId = $milestoneProjectId > 0 ? $milestoneProjectId : session('currentProject');
         $notification->subject = $subject;
         $notification->authorId = session('userdata.id');
         $notification->message = $message;
