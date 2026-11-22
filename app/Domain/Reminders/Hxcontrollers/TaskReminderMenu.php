@@ -32,7 +32,7 @@ class TaskReminderMenu extends HtmxController
     public function get(): string
     {
         $ticketId = (int) $this->incomingRequest->query->get('ticketId', 0);
-        $this->assignVariables($ticketId, $this->reminders->getTaskReminders($ticketId));
+        $this->assignVariables($ticketId, (string) $this->incomingRequest->query->get('instance', ''), $this->reminders->getTaskReminders($ticketId));
 
         return 'menu';
     }
@@ -47,28 +47,35 @@ class TaskReminderMenu extends HtmxController
         $request = $this->incomingRequest->request;
         $ticketId = (int) $request->get('ticketId', 0);
 
+        $preset = (string) $request->get('preset', '');
+        $forAll = $request->get('forAllMyTodos') === '1';
+
         try {
-            $state = $this->reminders->chooseTaskReminder(
-                $ticketId,
-                (string) $request->get('preset', ''),
-                $request->get('forAllMyTodos') === '1'
-            );
+            $state = $this->reminders->chooseTaskReminder($ticketId, $preset, $forAll);
+            $this->tpl->assign('announce', sprintf(
+                $this->language->__($forAll ? 'reminders.saved_for_all' : 'reminders.saved_choice'),
+                $this->language->__('reminders.preset_'.$state['preset'])
+            ));
         } catch (ValidationException) {
             $state = $this->reminders->getTaskReminders($ticketId);
             $this->tpl->assign('errorMessage', $this->language->__('reminders.picker_not_saved'));
+            $this->tpl->assign('announce', $this->language->__('reminders.picker_not_saved'));
         }
 
-        $this->assignVariables($ticketId, $state);
+        $this->assignVariables($ticketId, (string) $request->get('instance', ''), $state);
 
         return 'menu';
     }
 
     /**
-     * @param  array{preset: string, chosen: bool, inherited: string, defaultPreset: string, hasDueDate: bool, summary: bool, workspaceEnabled: bool}  $state
+     * @param  string  $instance  The menu's own id part, from the mount partial; anything else is
+     *                            replaced, so it can't break the ids it goes into.
+     * @param  array<string, mixed>  $state
      */
-    private function assignVariables(int $ticketId, array $state): void
+    private function assignVariables(int $ticketId, string $instance, array $state): void
     {
         $this->tpl->assign('ticketId', $ticketId);
+        $this->tpl->assign('instance', preg_match('/^[a-f0-9]{1,16}$/', $instance) === 1 ? $instance : bin2hex(random_bytes(4)));
         $this->tpl->assign('reminder', $state);
     }
 }

@@ -131,40 +131,46 @@ class TaskReminderMenuTest extends TestCase
         $this->controller('GET', ['ticketId' => 2])->get();
     }
 
-    private function render(array $reminder): string
+    private function render(array $reminder, array $extra = []): string
     {
-        return view('reminders::partials.taskReminderMenu', ['ticketId' => 5, 'reminder' => $reminder])->fragment('menu');
+        return view('reminders::partials.taskReminderMenu', ['ticketId' => 5, 'instance' => 'abc123', 'reminder' => $reminder] + $extra)->fragment('menu');
     }
 
-    public function test_the_partial_marks_the_current_choice_and_your_default(): void
+    public function test_the_choices_are_a_labelled_radio_group(): void
     {
         $html = $this->render($this->state);
 
-        $this->assertSame(4, substr_count($html, 'role="menuitemradio"'));
-        $this->assertMatchesRegularExpression('/aria-checked="true"[^>]*"preset": "more"/s', $html, 'the current choice is checked');
+        $this->assertStringContainsString('id="taskReminderMenu-5-abc123"', $html);
+        $this->assertStringContainsString('role="radiogroup" aria-labelledby="taskReminderMenu-5-abc123-label"', $html, 'named by the menu\'s "Your reminders" heading');
+        $this->assertSame(4, substr_count($html, 'role="radio"'));
         $this->assertSame(1, substr_count($html, 'aria-checked="true"'));
-        $this->assertSame(4, substr_count($html, 'fa fa-check tw-invisible'), 'the other three choices plus "use for all" hide their check');
-        $this->assertMatchesRegularExpression('/"preset": "default"\}.*?·\s*'.preg_quote(__('reminders.picker_your_default'), '/').'/s', $html);
-        $this->assertStringContainsString('"forAllMyTodos": "1"', $html, 'offered when this to-do has its own choice');
+        $this->assertMatchesRegularExpression('/aria-checked="true"[^>]*"preset":"more"/s', $html, 'the current choice is checked');
+        $this->assertMatchesRegularExpression('~"preset":"default"[^>]*>\s*<i[^>]*aria-hidden="true"></i>\s*<span>'.preg_quote(e(__('reminders.preset_default')), '~').'<span class="lt-reminder-default"> · '.preg_quote(e(__('reminders.picker_your_default')), '~').'</span></span>~', $html, '"Your default" is part of the item\'s name');
+        $this->assertMatchesRegularExpression('~</div>\s*<a [^>]*role="button"[^>]*"forAllMyTodos":"1"~s', $html, '"Use this for all my to-dos" is a command outside the radio group');
+        $this->assertStringContainsString('"forAllMyTodos":"1"', $html);
         $this->assertStringContainsString('hx-post="'.BASE_URL.'/hx/reminders/taskReminderMenu/choose"', $html);
-        $this->assertStringContainsString('hx-target="#taskReminderMenu-5"', $html);
+        $this->assertStringContainsString('hx-target="#taskReminderMenu-5-abc123"', $html);
+        $this->assertStringContainsString('"instance":"abc123"', $html, 'a save redraws the same menu');
+        $this->assertStringNotContainsString('aria-describedby', $html, 'nothing to explain');
     }
 
-    public function test_the_partial_shows_only_the_hint_without_a_due_date(): void
+    public function test_without_a_due_date_there_is_only_the_explanation(): void
     {
         $html = $this->render(['hasDueDate' => false] + $this->state);
 
-        $this->assertStringContainsString(__('reminders.picker_needs_due_date'), $html);
+        $this->assertStringContainsString('<p id="taskReminderMenu-5-abc123-hint" class="lt-reminder-hint">'.e(__('reminders.picker_needs_due_date')).'</p>', $html);
         $this->assertStringNotContainsString('hx-post', $html);
+        $this->assertStringNotContainsString('role="radio"', $html);
     }
 
-    public function test_on_someone_else_s_to_do_off_is_the_default_and_use_for_all_is_hidden(): void
+    public function test_on_someone_else_s_to_do_off_is_the_default_and_the_explanation_describes_the_group(): void
     {
         $html = $this->render(['preset' => 'off', 'chosen' => false, 'inherited' => 'off', 'isYours' => false] + $this->state);
 
-        $this->assertMatchesRegularExpression('/aria-checked="true"[^>]*"preset": "off"/s', $html);
-        $this->assertMatchesRegularExpression('/"preset": "off"\}.*?·\s*'.preg_quote(__('reminders.picker_your_default'), '/').'/s', $html);
+        $this->assertMatchesRegularExpression('/aria-checked="true"[^>]*"preset":"off"/s', $html);
+        $this->assertStringContainsString('aria-describedby="taskReminderMenu-5-abc123-hint"', $html);
         $this->assertStringContainsString(e(__('reminders.picker_not_yours')), $html);
+        $this->assertDoesNotMatchRegularExpression('/role="radio"[^>]*>[^<]*'.preg_quote(e(__('reminders.picker_not_yours')), '/').'/', $html, 'the explanation is not an item');
 
         $html = $this->render(['preset' => 'more', 'chosen' => true, 'inherited' => 'off', 'isYours' => false] + $this->state);
         $this->assertStringNotContainsString('forAllMyTodos', $html, 'only for your own to-dos');
@@ -175,5 +181,31 @@ class TaskReminderMenuTest extends TestCase
         $html = $this->render(['preset' => 'default', 'chosen' => false] + $this->state);
 
         $this->assertStringNotContainsString('forAllMyTodos', $html);
+    }
+
+    public function test_a_save_is_announced(): void
+    {
+        $html = $this->render($this->state, ['announce' => 'Saved. This to-do: Every morning until it\'s due.']);
+
+        $this->assertStringContainsString('data-lt-announce="Saved. This to-do: Every morning until it&#039;s due."', $html);
+    }
+
+    public function test_the_instance_id_is_kept_and_only_ever_hex(): void
+    {
+        $this->controller('GET', ['ticketId' => 1, 'instance' => 'abc123'])->get();
+        $this->assertSame('abc123', $this->assigned['instance']);
+
+        $this->controller('GET', ['ticketId' => 1, 'instance' => '"><script>'])->get();
+        $this->assertMatchesRegularExpression('/^[a-f0-9]{8}$/', $this->assigned['instance'], 'anything else is replaced');
+    }
+
+    public function test_a_save_sets_what_is_announced(): void
+    {
+        $this->controller('POST', ['ticketId' => '1', 'preset' => 'less', 'instance' => 'abc123'])->choose();
+        $this->assertSame('reminders.saved_choice', $this->assigned['announce']);
+        $this->assertSame('abc123', $this->assigned['instance']);
+
+        $this->controller('POST', ['ticketId' => '1', 'preset' => 'loud'])->choose();
+        $this->assertSame('reminders.picker_not_saved', $this->assigned['announce']);
     }
 }

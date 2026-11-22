@@ -425,6 +425,87 @@ leantime.modals = (function () {
         softReload();
     };
 
+    // Dialog semantics for nyroModal, which has none of its own (it already closes on Escape):
+    // the dialog role and its title, focus moved into it on open and back to what opened it on
+    // close, and Tab kept inside while it is open.
+    var modalOpener = null;
+    var FOCUSABLE = 'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
+    var describeDialog = function (dialog) {
+        if (!dialog) {
+            return;
+        }
+        dialog.setAttribute('role', 'dialog');
+        dialog.setAttribute('aria-modal', 'true');
+        var title = dialog.querySelector('.lt-modal-title[id]');
+        if (title) {
+            dialog.setAttribute('aria-labelledby', title.id);
+        } else {
+            dialog.removeAttribute('aria-labelledby');
+        }
+
+        // Content reloads inside an open dialog keep the focus where the person is.
+        if (!dialog.contains(document.activeElement)) {
+            var start = dialog.querySelector('[autofocus]') || title || dialog;
+            if (!start.hasAttribute('tabindex') && !start.matches(FOCUSABLE)) {
+                start.setAttribute('tabindex', '-1');
+            }
+            start.focus({ preventScroll: true });
+        }
+    };
+
+    var focusables = function (dialog) {
+        return Array.prototype.filter.call(dialog.querySelectorAll(FOCUSABLE), function (element) {
+            return element.getClientRects().length > 0;
+        });
+    };
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Tab') {
+            return;
+        }
+        var dialog = document.querySelector('.nyroModalCont[aria-modal="true"]');
+        if (!dialog) {
+            return;
+        }
+        var items = focusables(dialog);
+        if (!items.length) {
+            event.preventDefault();
+            return;
+        }
+        var first = items[0];
+        var last = items[items.length - 1];
+        if (!dialog.contains(document.activeElement)) {
+            event.preventDefault();
+            first.focus();
+        } else if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    });
+
+    var returnFocus = function () {
+        var opener = modalOpener;
+        modalOpener = null;
+        // After the close animation, when the dialog is gone.
+        setTimeout(function () {
+            if (!opener || !opener.isConnected) {
+                return;
+            }
+            // An item of a menu that has closed since: back to the menu's button instead.
+            if (opener.getClientRects().length === 0) {
+                var menu = opener.closest('.dropdown-menu');
+                opener = menu && menu.parentElement ? menu.parentElement.querySelector('[data-toggle="dropdown"]') : null;
+            }
+            if (opener && typeof opener.focus === 'function') {
+                opener.focus({ preventScroll: true });
+            }
+        }, 400);
+    };
+
     var setCustomModalCallback = function(callback) {
         if(typeof callback === 'function') {
             window.globalModalCallback = callback;
@@ -463,6 +544,7 @@ leantime.modals = (function () {
 
                 },
                 afterShowCont: function () {
+                    describeDialog(document.querySelector('.nyroModalCont'));
                     jQuery(".formModal, .modal").nyroModal(modalOptions);
                     // nyroModal content is not an htmx swap, so htmx.onLoad never sees it.
                     window.leantime.initLoadedContent(document.querySelector('.nyroModalCont'));
@@ -479,6 +561,7 @@ leantime.modals = (function () {
                 },
                 beforeClose: function () {
                     currentModalUrl = null;
+                    returnFocus();
                     closeUppyInstances('modal');
                     releaseContent(document.querySelector('.nyroModalCont'), false);
                     // The modal content is removed after the close animation.
@@ -539,6 +622,13 @@ leantime.modals = (function () {
                 return;
             }
             currentModalUrl = targetUrl;
+
+            // What had focus when the dialog opened (the link or menu item that opened it), unless
+            // a dialog is already open and this one replaces it.
+            if (!jQuery.nmTop || !jQuery.nmTop()) {
+                var active = document.activeElement;
+                modalOpener = active && active !== document.body ? active : null;
+            }
 
             // Guard against nyroModal losing its jQuery registration between opens.
             // This can happen when the modal close/reinit cycle runs before the

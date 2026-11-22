@@ -163,12 +163,15 @@ class ComingUpPanelTest extends TestCase
     {
         $html = $this->render((new ComingUpList($this->language()))->present($this->summary(), 'America/New_York'));
 
-        $this->assertMatchesRegularExpression('~<h4 class="lt-modal-title">\s*'.preg_quote(e(__('reminders.panel_title')), '~').'\s*<\/h4>~', $html);
+        $this->assertMatchesRegularExpression('~<h4 class="lt-modal-title" id="lt-modal-title-[a-f0-9]{8}">\s*'.preg_quote(e(__('reminders.panel_title')), '~').'\s*<\/h4>~', $html, 'a real heading with an id the dialog is labelled by');
         $this->assertStringContainsString(e(__('reminders.panel_intro')), $html);
         $this->assertStringContainsString('href="#/tickets/showTicket/1"', $html);
         $this->assertSame(3, substr_count($html, 'hx-get="'.BASE_URL.'/hx/reminders/taskReminderMenu/get?ticketId='), 'one reminders menu per to-do');
-        $this->assertStringContainsString('id="taskReminderMenu-3"', $html);
-        $this->assertStringNotContainsString('taskReminderMenu-2"', $html, 'milestones have no reminders menu');
+        $this->assertMatchesRegularExpression('/id="taskReminderMenu-3-[a-f0-9]{8}"/', $html);
+        $this->assertDoesNotMatchRegularExpression('/taskReminderMenu-2-/', $html, 'milestones have no reminders menu');
+        $this->assertStringContainsString('data-lt-dropdown-float', $html, 'the row menu floats over the dialog');
+        $this->assertStringContainsString('data-lt-menu-keys', $html);
+        $this->assertStringContainsString('aria-label="'.e(sprintf(__('reminders.panel_row_actions'), 'Task 1')).'"', $html, 'each row\'s ⋮ has its own name');
         $this->assertStringContainsString('fa-solid fa-diamond', $html);
         $this->assertStringContainsString('fa-regular fa-flag', $html);
         $this->assertStringContainsString(e('You get this summary at 8:00 when something is coming up.'), $html);

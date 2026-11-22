@@ -202,7 +202,9 @@
     font-size: var(--font-size-l);
     font-weight: var(--font-weight-bold);
     line-height: 25px;
-    color: var(--primary-color);
+    /* The theme's link text color: readable on the dialog in light and dark (the primary color
+       is too dark on the dark theme's dialog). */
+    color: var(--color-text-link, var(--primary-color));
 }
 
 .lt-modal-header .lt-modal-title i {
@@ -349,6 +351,14 @@
 
 .lt-coming-up-title {
     font-weight: 600;
+    color: var(--color-text-link, var(--primary-color));
+}
+
+.lt-coming-up-link:focus-visible,
+.lt-coming-up-actions > .dropdown-toggle:focus-visible {
+    outline: 2px solid var(--color-text-link, var(--accent1));
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 .lt-coming-up-why,
@@ -372,10 +382,13 @@
     flex: none;
 }
 
-/* The dialog clips anything past its edge (overflow-x: hidden makes it scroll), so while a row's
-   menu is open the list makes room for it below. */
-.lt-coming-up:has(.lt-coming-up-actions.open) {
-    padding-bottom: 300px;
+/* A 44px target for the row's ⋮ (its menu floats over the dialog: core/menus.js). */
+.lt-coming-up-actions > .dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .lt-coming-up-footer {
@@ -394,6 +407,17 @@
     flex: 1;
 }
 
-.lt-coming-up-footer a {
+.lt-coming-up-footer a,
+.lt-coming-up-footer a:link,
+.lt-coming-up-footer a:visited {
     font-weight: 600;
+    color: var(--color-text-link, var(--primary-color));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lt-coming-up *,
+    .lt-reminder-menu * {
+        transition: none !important;
+        animation: none !important;
+    }
 }

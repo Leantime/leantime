@@ -31,7 +31,7 @@
                             <span class="lt-coming-up-why">{{ $row['why'] }}</span>
                         </a>
                         @if ($row['kind'] === 'task')
-                            <x-global::actions.dropdown class="lt-coming-up-actions" :aria-label="__('reminders.panel_row_actions')">
+                            <x-global::actions.dropdown class="lt-coming-up-actions" :aria-label="sprintf(__('reminders.panel_row_actions'), $row['title'])" floating keyboard>
                                 @include('reminders::partials.taskReminderMenuMount', ['ticketId' => $row['id']])
                             </x-global::actions.dropdown>
                         @endif

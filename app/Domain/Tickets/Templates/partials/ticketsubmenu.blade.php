@@ -6,7 +6,7 @@
 
 @canany(['tickets.edit', 'tickets.delete', 'tickets.create', 'timesheets.create'], $ticket['projectId'] ?? null)
 
-    <x-global::actions.dropdown style="float:right;">
+    <x-global::actions.dropdown style="float:right;" floating keyboard>
         <li class="nav-header">{{ __("subtitles.todo") }}</li>
         @dispatchEvent("beforeShowTicket", ["ticket"=>$ticket])
         @can('tickets.edit', $ticket['projectId'] ?? null)
@@ -14,9 +14,6 @@
         @dispatchEvent("beforeMoveTicket", ["ticket"=>$ticket])
         <li><a href="#/tickets/moveTicket/{{ $ticket["id"] }}" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> {{  __("links.move_todo") }}</a></li>
         @endcan
-        @if (($ticket['type'] ?? '') !== 'milestone')
-        <li><a href="#/reminders/taskReminder/{{ $ticket["id"] }}" class=""><i class="fa-regular fa-bell"></i> {{ __("reminders.remind_me") }}</a></li>
-        @endif
         @if($allowSubtaskCreation && \Illuminate\Support\Facades\Gate::allows('tickets.create', $ticket['projectId'] ?? null))
         <li><a  href="javascript:void(0);" onclick="jQuery('#subtask-form-{{$ticket['id']}}').toggle();"
                 class="add-subtask-link">
@@ -29,6 +26,10 @@
 
 
         @dispatchEvent("submenuSection", ["ticket"=>$ticket])
+
+        @if (($ticket['type'] ?? '') !== 'milestone')
+            @include('reminders::partials.taskReminderMenuMount', ['ticketId' => $ticket['id']])
+        @endif
 
         @can('timesheets.create')
         @module('timesheets', $ticket['projectId'] ?? null)
