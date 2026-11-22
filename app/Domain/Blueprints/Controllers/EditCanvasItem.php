@@ -316,6 +316,10 @@ class EditCanvasItem
                     // CREATE there (the board must exist and belong to a project the user can
                     // create in) before inserting.
                     $id = $this->blueprintsService->createCanvasItem($canvasItem, $canvasType);
+
+                    // The board need not be in the session's project: notify the project the new
+                    // item actually landed in.
+                    $savedItem = $this->blueprintsService->getCanvasItem((int) $id, $canvasType);
                     $canvasTypes = $this->blueprintsService->getTranslatedBoxes($this->template);
 
                     $this->tpl->setNotification(
@@ -341,12 +345,14 @@ class EditCanvasItem
                     $notification->entity = $canvasItem + ['id' => (int) $id];
                     $notification->module = $this->canvasSlug.'canvas';
                     $notification->action = 'created';
-                    $notification->projectId = session('currentProject');
+                    $notification->projectId = (int) ($savedItem['projectId'] ?? 0);
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');
                     $notification->message = $message;
 
-                    $this->projectService->notifyProjectUsers($notification);
+                    if ($notification->projectId > 0) {
+                        $this->projectService->notifyProjectUsers($notification);
+                    }
 
                     $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
 
