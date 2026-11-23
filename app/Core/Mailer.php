@@ -386,17 +386,17 @@ class Mailer
         $footer = $this->footer ?? sprintf($this->language->__('email_notifications.unsubscribe'), $profileUrl);
 
         $mailBody = $this->hideWrapper ? $this->html : app('blade.compiler')::render(
-            $this->dispatchMailerFilter('bodyTemplate', '<table width="100%" style="background:#fefefe; padding:15px; ">
+            $this->dispatchMailerFilter('bodyTemplate', '<table role="presentation" width="100%" style="width:100%; background:#fefefe; padding:15px 8px; ">
                 <tr>
                     <td align="center" valign="top">
-                        <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc; border-radius:5px;">
+                        <table role="presentation" width="100%" style="width:100%; max-width:600px; background-color:#ffffff; border:1px solid #ccc; border-radius:5px;">
                             <tr>
                                 <td style="padding:20px 10px; text-align:center;">
                                    <img alt="Logo" src="{!! $inlineLogoContent !!}" width="150" style="width:150px;">
                                 </td>
                             </tr>
                             <tr>
-                                <td style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:16px; line-height:1.7;\'>
+                                <td style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:16px; line-height:1.7; overflow-wrap:anywhere; word-break:break-word;\'>
                                     {!! $headline !!}
                                     <br/>
                                     {!! $content !!}
@@ -407,7 +407,7 @@ class Mailer
                     </td>
                 </tr>
                 <tr>
-                    <td align="center" style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:14px; line-height:1.7;\'>
+                    <td align="center" style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:14px; line-height:1.7; overflow-wrap:anywhere; word-break:break-word;\'>
                         {!! $unsub_link !!}
                     </td>
                 </tr>

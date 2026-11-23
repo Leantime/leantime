@@ -547,7 +547,7 @@ class EmailWorker
         $newest = $group['rows'][count($group['rows']) - 1];
         $title = $this->e($newest['summary']['title']);
         $url = $this->groupUrl($group);
-        $titleStyle = 'font-size: 18px; font-weight: 700; line-height: 1.35;';
+        $titleStyle = 'font-size: 18px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; word-break: break-word;';
         $html .= '<div style="margin: 2px 0 10px;">'
             .($url !== ''
                 ? '<a href="'.$this->e($url).'" style="'.$titleStyle.' color: '.$this->e($this->accentColor()).'; text-decoration: underline;">'.$title.'</a>'
@@ -561,14 +561,14 @@ class EmailWorker
                 .'<td width="38" aria-hidden="true" style="width: 38px; padding: 6px 0; vertical-align: top;">'
                 .'<div style="width: 28px; height: 28px; border-radius: 14px; background: #dbe7ee; color: '.self::TEXT.'; font-size: 13px; font-weight: 700; line-height: 28px; text-align: center;">'.$this->e($event['initial']).'</div>'
                 .'</td>'
-                .'<td style="padding: 9px 0 6px; vertical-align: top;">'
+                .'<td style="padding: 9px 0 6px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">'
                 .'<div style="font-size: 15px; line-height: 1.45; color: '.self::TEXT.';">'.$this->eventLineHtml($event)
                 .' <span style="color: '.self::MUTED.';">&middot; '.$this->e($this->when($event['thedate'], $timezone, $locale, $now)).'</span></div>';
             if ($event['detail'] !== '') {
                 $html .= '<div style="font-size: 15px; line-height: 1.5; color: '.self::MUTED.';">'.$this->e($event['detail']).'</div>';
             }
             if ($event['quote'] !== '') {
-                $html .= '<div style="margin: 6px 0 2px; padding: 10px 12px; background: #f1f3f5; border-radius: 8px; font-size: 15px; line-height: 1.5; color: '.self::TEXT.';">'.$this->e($event['quote']).'</div>';
+                $html .= '<div style="margin: 6px 0 2px; padding: 10px 12px; background: #f1f3f5; border-radius: 8px; font-size: 15px; line-height: 1.5; color: '.self::TEXT.'; overflow-wrap: anywhere; word-break: break-word;">'.$this->e($event['quote']).'</div>';
             }
             $html .= '</td></tr>';
         }
