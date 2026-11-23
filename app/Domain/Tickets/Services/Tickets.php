@@ -2997,7 +2997,8 @@ class Tickets extends BaseService
                 $day = $dueDateIsCalendarDate
                     // The same calendar day, placed in the author's timezone so formatting doesn't shift it.
                     ? CarbonImmutable::createFromFormat('!Y-m-d', substr($newDueDate, 0, 10), dtHelper()->userNow()->getTimezone())
-                    : dtHelper()->parseDbDateTime($newDueDate);
+                    // A timed due date, stored in UTC, in the author's timezone (as formatDateForUser shows it).
+                    : dtHelper()->parseDbDateTime($newDueDate)->setTimezone(dtHelper()->userNow()->getTimezone());
                 // The push and the digest say the day the way people do ("Fri, Nov 28"); the
                 // email keeps the date format the author chose.
                 $dueDate = $forPush

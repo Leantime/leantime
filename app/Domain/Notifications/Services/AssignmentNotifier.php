@@ -128,6 +128,7 @@ class AssignmentNotifier
                     'detail' => $this->dueText($ticket->dateToFinish, $event->assigneeId),
                     'url' => $emailUrl,
                     'actor' => $actorName,
+                    'actorId' => $actorId,
                 ]
             );
         }

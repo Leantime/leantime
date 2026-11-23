@@ -266,10 +266,13 @@ class TicketUpdateNotificationsTest extends TestCase
     {
         $this->useAuthorTimezone('America/Los_Angeles');
 
-        // 6pm in Los Angeles is stored as 02:00 UTC the next day, and shown as the author's day again.
+        // 6pm in Los Angeles is stored as 02:00 UTC the next day, and shown as the author's day again,
+        // in the email and in the push and digest line alike.
         $this->buildService([5 => 3], ['dateToFinish' => '2026-11-01 00:00:00'])->patch(5, ['dateToFinish' => '2026-11-20', 'timeToFinish' => '18:00']);
 
         $this->assertSame(["Sam changed the due date of 'Fix login' to Nov 20, 2026"], $this->sentMessages());
+        $expected = CarbonImmutable::now('UTC')->year === 2026 ? 'Fri, Nov 20' : 'Fri, Nov 20, 2026';
+        $this->assertSame('Sam changed the due date to '.$expected, $this->sent[0]->pushBody);
     }
 
     public function test_the_push_and_digest_line_says_the_day_the_way_people_do(): void

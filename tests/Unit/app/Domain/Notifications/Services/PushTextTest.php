@@ -235,7 +235,7 @@ class PushTextTest extends TestCase
             'pushBody' => 'Marcel moved this to Done',
         ]));
 
-        $this->assertSame(['group' => 'tickets:12', 'title' => 'Pricing page', 'line' => 'Marcel moved this to Done', 'quote' => '', 'actor' => 'Marcel'], $parts);
+        $this->assertSame(['group' => 'tickets:12', 'title' => 'Pricing page', 'line' => 'Marcel moved this to Done', 'quote' => '', 'actor' => 'Marcel', 'actorId' => 7], $parts);
     }
 
     public function test_a_comment_in_the_digest_sits_with_its_task_and_is_quoted(): void
@@ -245,7 +245,7 @@ class PushTextTest extends TestCase
         ]));
 
         $this->assertSame(
-            ['group' => 'tickets:2267', 'title' => 'Email campaign for .org users', 'line' => 'Marcel commented', 'quote' => 'Can we ship this Friday?', 'actor' => 'Marcel'],
+            ['group' => 'tickets:2267', 'title' => 'Email campaign for .org users', 'line' => 'Marcel commented', 'quote' => 'Can we ship this Friday?', 'actor' => 'Marcel', 'actorId' => 7],
             $parts
         );
     }

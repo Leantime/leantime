@@ -250,7 +250,7 @@ class EmailWorker
     /**
      * A queued row's summary, decoded; null when it has none or it is unusable.
      *
-     * @return array{group: string, title: string, line: string, quote: string, detail: string, url: string, actor: string}|null
+     * @return array{group: string, title: string, line: string, quote: string, detail: string, url: string, actor: string, actorId: int}|null
      */
     private static function summary(mixed $json): ?array
     {
@@ -276,6 +276,8 @@ class EmailWorker
             // Who did it, so the digest can set the name apart and join a comment with the
             // change that came with it. Rows queued before it existed have none.
             'actor' => is_string($data['actor'] ?? null) ? $data['actor'] : '',
+            // The name is only a first name; the id decides whether two lines are the same person's.
+            'actorId' => is_int($data['actorId'] ?? null) ? $data['actorId'] : 0,
         ];
     }
 
@@ -357,7 +359,7 @@ class EmailWorker
             $first = $group['rows'][0];
             if ($first['summary'] === null) {
                 $lines[] = strip_tags((string) $first['subject']).' · '.$this->when((string) $first['thedate'], $timezone, $locale, $now);
-                $lines[] = trim(html_entity_decode(strip_tags((string) $first['message']), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+                $lines[] = $this->plainText((string) $first['message']);
 
                 continue;
             }
@@ -404,6 +406,26 @@ class EmailWorker
         }
 
         return implode("\n", $lines)."\n";
+    }
+
+    /**
+     * An email's HTML message as plain text, keeping where its links go: "Click here
+     * (https://…)", since the plain-text part has no other way to open the item.
+     */
+    private function plainText(string $html): string
+    {
+        $withTargets = preg_replace_callback(
+            '/<a\s[^>]*href\s*=\s*(["\'])(.*?)\1[^>]*>(.*?)<\/a>/is',
+            static function (array $m): string {
+                $text = trim(strip_tags($m[3]));
+                $url = html_entity_decode($m[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+                return $text !== '' && $text !== $url ? $text.' ('.$url.')' : $url;
+            },
+            $html
+        ) ?? $html;
+
+        return trim(html_entity_decode(strip_tags($withTargets), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
 
     /** "Hi Gloria," with the person's first name, else the standard greeting. Escaped HTML. */
@@ -622,10 +644,14 @@ class EmailWorker
         return $events;
     }
 
-    /** Whether two neighbouring rows are a comment and a change by the same person, moments apart. */
+    /** Whether two neighbouring rows are a comment and a change by the same person (by id), moments apart. */
     private function joins(array $a, array $b): bool
     {
         $actor = $a['summary']['actor'];
+        // The same person by id, not just the same first name; rows without an id stay apart.
+        if ($a['summary']['actorId'] <= 0 || $a['summary']['actorId'] !== $b['summary']['actorId']) {
+            return false;
+        }
         if ($actor === '' || $actor !== $b['summary']['actor']) {
             return false;
         }

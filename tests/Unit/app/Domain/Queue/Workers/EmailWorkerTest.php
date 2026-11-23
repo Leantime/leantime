@@ -601,8 +601,8 @@ class EmailWorkerTest extends TestCase
     public function test_a_comment_and_a_change_by_the_same_person_moments_apart_are_one_line(): void
     {
         $this->worker()->handleQueue([
-            $this->summaryRow('h1', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 180), ['quote' => 'Booked for Tuesday.', 'actor' => 'Marcel']),
-            $this->summaryRow('h2', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 120), ['actor' => 'Marcel']),
+            $this->summaryRow('h1', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 180), ['quote' => 'Booked for Tuesday.', 'actor' => 'Marcel', 'actorId' => 1]),
+            $this->summaryRow('h2', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 120), ['actor' => 'Marcel', 'actorId' => 1]),
         ]);
 
         $html = $this->sent[0]['html'];
@@ -616,8 +616,8 @@ class EmailWorkerTest extends TestCase
     public function test_a_change_first_then_a_comment_joins_in_that_order(): void
     {
         $this->worker()->handleQueue([
-            $this->summaryRow('h1', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 180), ['actor' => 'Marcel']),
-            $this->summaryRow('h2', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 120), ['quote' => 'Shipped.', 'actor' => 'Marcel']),
+            $this->summaryRow('h1', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 180), ['actor' => 'Marcel', 'actorId' => 1]),
+            $this->summaryRow('h2', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 120), ['quote' => 'Shipped.', 'actor' => 'Marcel', 'actorId' => 1]),
         ]);
 
         $this->assertStringContainsString('moved this to Done and commented', $this->sent[0]['html']);
@@ -627,12 +627,12 @@ class EmailWorkerTest extends TestCase
     {
         $this->worker()->handleQueue([
             // Ten minutes apart.
-            $this->summaryRow('h1', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 900), ['quote' => 'First', 'actor' => 'Marcel']),
-            $this->summaryRow('h2', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 300), ['actor' => 'Marcel']),
+            $this->summaryRow('h1', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 900), ['quote' => 'First', 'actor' => 'Marcel', 'actorId' => 1]),
+            $this->summaryRow('h2', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 300), ['actor' => 'Marcel', 'actorId' => 1]),
             // Another person, a minute later.
-            $this->summaryRow('h3', 'Chloe commented', gmdate('Y-m-d H:i:s', time() - 240), ['quote' => 'Second', 'actor' => 'Chloe']),
+            $this->summaryRow('h3', 'Chloe commented', gmdate('Y-m-d H:i:s', time() - 240), ['quote' => 'Second', 'actor' => 'Chloe', 'actorId' => 2]),
             // Two comments by the same person.
-            $this->summaryRow('h4', 'Chloe commented', gmdate('Y-m-d H:i:s', time() - 200), ['quote' => 'Third', 'actor' => 'Chloe']),
+            $this->summaryRow('h4', 'Chloe commented', gmdate('Y-m-d H:i:s', time() - 200), ['quote' => 'Third', 'actor' => 'Chloe', 'actorId' => 2]),
         ]);
 
         $html = $this->sent[0]['html'];
@@ -671,7 +671,7 @@ class EmailWorkerTest extends TestCase
     public function test_the_plain_text_part_has_the_same_content_without_html(): void
     {
         $this->worker()->handleQueue([
-            $this->summaryRow('h1', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 120), ['quote' => 'Ship <b>Friday</b>?', 'actor' => 'Marcel']),
+            $this->summaryRow('h1', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 120), ['quote' => 'Ship <b>Friday</b>?', 'actor' => 'Marcel', 'actorId' => 1]),
         ]);
 
         $text = $this->sent[0]['text'];
@@ -698,5 +698,34 @@ class EmailWorkerTest extends TestCase
         $html = $this->sent[0]['html'];
         $this->assertStringNotContainsString('#ffeb3b', $html);
         $this->assertStringContainsString('background: #00607d', $html);
+    }
+
+    public function test_two_people_with_the_same_first_name_are_never_joined(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Sam commented', gmdate('Y-m-d H:i:s', time() - 180), ['quote' => 'Looks good', 'actor' => 'Sam', 'actorId' => 7]),
+            $this->summaryRow('h2', 'Sam moved this to Done', gmdate('Y-m-d H:i:s', time() - 120), ['actor' => 'Sam', 'actorId' => 8]),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertStringNotContainsString('commented and moved', $html);
+        $this->assertSame(2, substr_count($html, '<strong style="font-weight: 600;">Sam</strong>'));
+    }
+
+    public function test_rows_with_a_name_but_no_id_are_never_joined(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 180), ['quote' => 'Booked', 'actor' => 'Marcel']),
+            $this->summaryRow('h2', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 120), ['actor' => 'Marcel']),
+        ]);
+
+        $this->assertStringNotContainsString('commented and moved', $this->sent[0]['html']);
+    }
+
+    public function test_plain_text_keeps_the_links_of_rows_without_a_summary(): void
+    {
+        $this->worker()->handleQueue([$this->row('h1', 2, 'Project created', 'projects', 5)]);
+
+        $this->assertStringContainsString('Project created Click here (https://app.example.com/tickets/5)', $this->sent[0]['text']);
     }
 }
