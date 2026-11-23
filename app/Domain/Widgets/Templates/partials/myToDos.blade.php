@@ -149,6 +149,9 @@
 
     </div>
 
+    {{-- Above the list, inside the swapped container: plugins add a panel here (e.g. an AI focus list). --}}
+    @dispatchEvent('beforeTodoListWidgetBox')
+
     <div class="tw-flex tw-flex-col">
 
         <div class="">
