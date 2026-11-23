@@ -1,3 +1,24 @@
+# Version: 3.16.0
+
+## Highlights
+### Connect Claude and ChatGPT to Leantime
+You can now sign in with OAuth to link AI assistants like Claude and ChatGPT to your Leantime instance through the new `/mcp` endpoint (#4092)
+
+## New Features
+- **Clearer notifications** - Notifications now say exactly what changed on a task, send one notification per change, and include an "added you to a project" message, with improved lock-screen and digest wording (#4037, #4100)
+- **Relay settings visibility** - Push relay settings are now grayed out when AdvancedAuth is not installed (#4099)
+
+## Bug Fixes
+- **Push mentions** - Mentions on boards, goals and ideas now reach push notifications, and push is only sent to people who have access to the project (#4097)
+
+## Dependency Updates
+- Bump bundled plugins to latest, including AdvancedAuth 1.5.0 and OAuth/McpServer fixes (#4093, #4106)
+
+## Upgrade Notes
+- No database changes.
+
+---
+
 # Version: 3.15.3
 
 ## Bug Fixes
