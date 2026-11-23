@@ -6,20 +6,15 @@
     $themeOpacity, $themeType ('gradient' | 'image').
 --}}
 <style id="backgroundImageSetter" @if(!empty($oob)) hx-swap-oob="true" @endif>
+    {{-- Painted on the shell's background layer (.rightpanel:before spans the whole row below the
+         header), so the image also sits behind the left menu. The selector outranks the themes'
+         opacity rules for that layer. --}}
     @if(!empty($themeBg))
-            .rightpanel {
-                background-image: url({!! $themeBgCss ?? '""' !!});
-                opacity: {{ $themeOpacity }};
-                mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
-                background-size: var(--background-size, cover);
-                background-position: center;
-                background-attachment: fixed;
-            }
-
-    @if($themeType === 'image')
-        .rightpanel:before {
-            background: none;
+        .mainwrapper .overlay .rightpanel:before {
+            background-image: url({!! $themeBgCss ?? '""' !!});
+            opacity: {{ $themeOpacity }};
+            mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
+            background-size: var(--background-size, cover);
         }
-    @endif
     @endif
 </style>
