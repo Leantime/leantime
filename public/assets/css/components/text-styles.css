@@ -227,7 +227,8 @@ blockquote.pull-right {
 
 a.danger,
 a.delete {
-    color:var(--red) !important;
+    /* Text-strength red per theme (the light theme's --red is 4.48:1 on white). */
+    color: var(--color-text-danger, var(--red)) !important;
 }
 
 /* Bootstrap sizes <small> at 85% (11.9px off 14px) — pin body text <small> to the scale.

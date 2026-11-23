@@ -43,7 +43,7 @@ class RouteLoader
     private static function loadDomainRoutes(): void
     {
         if ((bool) config('debug') === false) {
-            $domainPaths = Cache::store('installation')->rememberForever('domainRoutes', function () {
+            $domainPaths = Cache::store('installation')->rememberForever(EventDispatcher::domainCacheKey('domainRoutes'), function () {
                 return self::getDomainPaths();
             });
         } else {
