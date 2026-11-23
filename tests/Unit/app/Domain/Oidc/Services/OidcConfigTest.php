@@ -110,4 +110,28 @@ class OidcConfigTest extends \Unit\TestCase
 
         $this->assertSame('env-client', $this->oidcConfig(['oidcClientId' => 'env-client'])->get('oidcClientId'));
     }
+
+    public function test_a_certificate_from_a_listener_must_be_inline_pem(): void
+    {
+        // openssl_pkey_get_public() reads "file://..." from disk.
+        EventDispatcher::add_filter_listener(OidcConfigFilter::class, function (array $config) {
+            $config['oidcCertificateString'] = 'file:///var/www/html/config/.env#-----BEGIN ';
+
+            return $config;
+        });
+
+        $this->assertSame('', $this->oidcConfig([])->get('oidcCertificateString'));
+    }
+
+    public function test_an_inline_pem_certificate_from_a_listener_is_used(): void
+    {
+        $pem = "-----BEGIN PUBLIC KEY-----\nMIIB\n-----END PUBLIC KEY-----";
+        EventDispatcher::add_filter_listener(OidcConfigFilter::class, function (array $config) use ($pem) {
+            $config['oidcCertificateString'] = $pem;
+
+            return $config;
+        });
+
+        $this->assertSame($pem, $this->oidcConfig([])->get('oidcCertificateString'));
+    }
 }

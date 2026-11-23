@@ -13,6 +13,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Oidc\Events\OidcSignInFilter;
 use Leantime\Domain\Users\Events\UserCreated;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
@@ -283,6 +284,15 @@ class Oidc
         // must not be able to sign into (or create) the account that owns it.
         if (! $this->emailVerificationAccepted($userInfo)) {
             $this->displayError('oidc.error.emailNotVerified');
+        }
+
+        // A plugin rule (e.g. AdvancedAuth's allowed email domain) may refuse the sign-in before
+        // the account is looked up, created or signed in.
+        $refusal = OidcSignInFilter::dispatch(refusal: null, email: (string) $userName, claims: $userInfo);
+        if (is_string($refusal) && $refusal !== '') {
+            Log::info('OIDC login refused by a sign-in rule');
+
+            throw new \RuntimeException($refusal);
         }
 
         // Look the user up whatever their status: an account an admin deactivated (or an invite not

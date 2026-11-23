@@ -48,7 +48,8 @@ class OidcConfig
 
     /**
      * Settings only the server operator may change: turning off TLS verification, or reading a
-     * certificate from a path on the server. Filter listeners can't override these.
+     * certificate from a path on the server. Filter listeners can't override these, and a
+     * certificate they supply must be inline PEM (see all()).
      *
      * @var array<int, string>
      */
@@ -86,6 +87,13 @@ class OidcConfig
         $resolved = array_merge($fromEnvironment, array_intersect_key($filtered, self::DEFAULTS));
         foreach (self::ENV_ONLY_KEYS as $key) {
             $resolved[$key] = $fromEnvironment[$key];
+        }
+
+        // openssl reads "file://..." as a path, so a certificate a listener supplies must be the
+        // PEM text itself; anything else would let it read a file on the server.
+        if ($resolved['oidcCertificateString'] !== $fromEnvironment['oidcCertificateString']
+            && ! str_starts_with(ltrim((string) $resolved['oidcCertificateString']), '-----BEGIN ')) {
+            $resolved['oidcCertificateString'] = $fromEnvironment['oidcCertificateString'];
         }
 
         return $this->resolved = $resolved;
