@@ -149,6 +149,9 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
             jQuery.nmTop().close();
         <?php } ?>
 
+        // Manual openers (?showTicketModal=, openTicketModalManually) skip the dialog lifecycle that sets
+        // section tabs up; setting up twice is a no-op.
+        leantime.sectionTabs.init('.ticketTabs');
         @can('tickets.edit', $ticket->projectId)
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
