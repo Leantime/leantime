@@ -382,8 +382,14 @@ Goalcanvas/StrategyPro/Whiteboards via `adapter` + `canvasType`), `ideas::chip-s
 Props (built): `variant`, `label` (raw trigger HTML) or `trigger` slot (its attributes — `data-tippy-content`,
 `hx-*`, `preload`, `href`, extra `class` — go on the trigger), `icon` (⋮ variants), `href`, `as` (wrapper tag, e.g.
 `li` in the head menu), `menuAs` (`div` menu for a filter holding a form), `triggerClass`, `menuClass`, `menuId`,
-`menuStyle`, `keepOpen`, `ariaLabel`. Wrapper attributes pass through. Escape/outside-click/arrow handling is
-Bootstrap 2.3's own, so there is no `core/dropdown` JS.
+`menuStyle`, `keepOpen`, `ariaLabel`, `floating`, `keyboard`. Wrapper attributes pass through. Escape/outside-click/arrow handling is
+Bootstrap 2.3's own, so there is no `core/dropdown` JS — except what `core/menus.js` adds (below).
+
+`menu` / `header-menu` triggers carry `aria-haspopup` + `aria-expanded` (kept current by `core/menus.js`) and, when
+icon-only with no `ariaLabel`, the name "Actions". Opt-ins: `floating` positions the menu against the window (so a
+dialog or scrolling box can't clip it; flips up when there's more room above, follows the trigger on scroll);
+`keyboard` adds ArrowUp/ArrowDown/Home/End between the menu's items, Escape to close and refocus the trigger, and Space
+on radio/menuitem/button items — for menus that aren't `role="menu"` (they mix headings, text and items).
 
 ### JS modules (IIFE on `leantime.*`, added to `compiled-app` after `app.js`)
 - **`public/assets/js/app/core/select/index.js`** — Tiptap-style registry: `leantime.select.{init, get,
@@ -402,6 +408,13 @@ Bootstrap 2.3's own, so there is no `core/dropdown` JS.
   `priority-border-*`).
 - ~~`core/dropdown/index.js`~~ — not needed: Bootstrap 2.3's data-api already closes on Escape and outside click,
   and a swapped-out menu takes its `.open` wrapper with it.
+- **`public/assets/js/app/core/menus.js`** (`leantime.menus.{announce, place}`) — all delegated from `document`: keeps
+  `aria-expanded` current, places `[data-lt-dropdown-float]` menus, keyboard for `[data-lt-menu-keys]` menus, Escape on a
+  closed trigger closes the dialog it is in (Bootstrap 2 would reopen the menu), returns focus after an htmx pick inside a
+  menu, and reads out `data-lt-announce="…"` from swapped content through one polite live region (`#lt-live-region`).
+- **Dialogs** (`core/modals.js`): every nyroModal gets `role="dialog"`, `aria-modal`, `aria-labelledby` (the
+  `actions.modal-header` title's id), focus into the dialog on open (its `[autofocus]` or title), Tab kept inside, and
+  focus back to what opened it on close.
 
 ### Phases (one PR each)
 | # | Repo | Scope |

@@ -10,7 +10,9 @@
     'menuId' => null,     // id of the menu (htmx targets)
     'menuStyle' => null,  // inline style of the menu
     'keepOpen' => false,  // clicks inside the menu don't close it (panels with inputs, tabs or filters)
-    'ariaLabel' => null,  // accessible name for icon-only triggers
+    'ariaLabel' => null,  // accessible name for icon-only triggers (⋮ menus default to "Actions")
+    'floating' => false,  // the menu is positioned against the window, so a dialog or scrolling box can't clip it (core/menus.js)
+    'keyboard' => false,  // arrow keys, Home/End and Escape inside the open menu (core/menus.js)
 ])
 
 {{--
@@ -57,12 +59,15 @@
         'type' => $triggerTag === 'button' ? 'button' : null,
         'role' => $variant === 'subject' ? 'button' : null,
         'data-toggle' => 'dropdown',
-        'aria-haspopup' => $variant === 'subject' ? 'true' : null,
-        'aria-expanded' => $variant === 'subject' ? 'false' : null,
-        'aria-label' => $ariaLabel,
+        // core/menus.js keeps aria-expanded in step with the menu.
+        'aria-haspopup' => in_array($variant, ['subject', 'menu', 'header-menu'], true) ? 'true' : null,
+        'aria-expanded' => in_array($variant, ['subject', 'menu', 'header-menu'], true) ? 'false' : null,
+        'aria-label' => $ariaLabel ?? (in_array($variant, ['menu', 'header-menu'], true) && ! isset($trigger) && ($label ?? '') === '' ? __('label.actions') : null),
     ], fn ($value) => $value !== null));
+
+    $wrapperData = $floating ? ['data-lt-dropdown-float' => ''] : [];
 @endphp
-<{{ $wrapperTag }} {{ $attributes->class(array_filter([$wrapperClass])) }}>
+<{{ $wrapperTag }} {{ $attributes->class(array_filter([$wrapperClass]))->merge($wrapperData) }}>
     <{{ $triggerTag }} {{ $triggerAttributes }}>
         @if (isset($trigger))
             {{ $trigger }}
@@ -73,7 +78,7 @@
             @if ($variant === 'subject') <i class="fa fa-caret-down" aria-hidden="true"></i>@endif
         @endif
     </{{ $triggerTag }}>
-    <{{ $menuTag }} class="{{ trim($baseMenuClass.' '.$menuClass) }}"@if ($menuId) id="{{ $menuId }}"@endif @if ($menuStyle) style="{{ $menuStyle }}"@endif @if ($keepOpen) onclick="event.stopPropagation();"@endif>
+    <{{ $menuTag }} class="{{ trim($baseMenuClass.' '.$menuClass) }}"@if ($menuId) id="{{ $menuId }}"@endif @if ($menuStyle) style="{{ $menuStyle }}"@endif @if ($keepOpen) onclick="event.stopPropagation();"@endif @if ($keyboard) data-lt-menu-keys @endif>
         {{ $slot }}
     </{{ $menuTag }}>
 </{{ $wrapperTag }}>

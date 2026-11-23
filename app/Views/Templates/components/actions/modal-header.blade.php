@@ -12,6 +12,8 @@
                       parent breadcrumb) use the `title` slot instead.
       eyebrow     string  Small uppercase label above the title ("New allocation", "Program").
       description string  One muted line under the title.
+      titleId     string  Id of the title heading (generated when left out); the dialog is
+                          labelled by it.
 
     Slots:
       title    Title with markup.
@@ -26,7 +28,13 @@
     'title' => null,
     'eyebrow' => null,
     'description' => null,
+    'titleId' => null,
 ])
+
+@php
+    // The dialog is labelled by its title (core/modals.js sets aria-labelledby to this id).
+    $titleId = $titleId ?: 'lt-modal-title-'.bin2hex(random_bytes(4));
+@endphp
 
 <div {{ $attributes->class(['lt-modal-header']) }}>
     @if ($eyebrow || $description)
@@ -34,7 +42,7 @@
             @if ($eyebrow)
                 <div class="lt-modal-eyebrow">{{ $eyebrow }}</div>
             @endif
-            <h4 class="lt-modal-title">
+            <h4 class="lt-modal-title" id="{{ $titleId }}">
                 @if ($icon)<i class="{{ $icon }}" aria-hidden="true"></i>@endif
                 {{ $title }}
             </h4>
@@ -43,7 +51,7 @@
             @endif
         </div>
     @else
-        <h4 class="lt-modal-title">
+        <h4 class="lt-modal-title" id="{{ $titleId }}">
             @if ($icon)<i class="{{ $icon }}" aria-hidden="true"></i>@endif
             {{ $title }}
         </h4>
@@ -54,7 +62,7 @@
     @endisset
 
     @isset($actions)
-        <x-global::actions.dropdown :aria-label="__('label.actions')" class="lt-modal-actions">
+        <x-global::actions.dropdown :aria-label="__('label.actions')" class="lt-modal-actions" keyboard>
             {{ $actions }}
         </x-global::actions.dropdown>
     @endisset
