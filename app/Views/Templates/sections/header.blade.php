@@ -168,4 +168,5 @@
 
 <script>
     window.leantime.currentProject = '{{ session("currentProject") }}';
+    window.leantime.editorSettings = { emojiSuggestions: @json($emojiSuggestions ?? true) };
 </script>

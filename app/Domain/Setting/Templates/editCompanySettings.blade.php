@@ -172,6 +172,18 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <br />
+                                    <x-global::elements.section-header icon="fa fa-pen">{!! __('label.text_editor') !!}</x-global::elements.section-header>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <input type="hidden" name="emojiSuggestions" value="0" />
+                                                <x-global::forms.checkbox variant="toggle" name="emojiSuggestions" value="1"
+                                                    :checked="(bool) $companySettings['emojiSuggestions']"
+                                                    :description="__('label.emoji_suggestions_description')">{{ __('label.emoji_suggestions') }}</x-global::forms.checkbox>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
                                 </form>
 
