@@ -111,8 +111,8 @@
                 // Every value goes through json_encode with the HEX flags so names and colors can
                 // neither break out of the JS string nor close the surrounding <script> element.
                 $jsFlags = JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP;
-                $startDate = ($mlst->editFrom != '0000-00-00 00:00:00' && ! str_starts_with((string) $mlst->editFrom, '1969-12-31')) ? $mlst->editFrom : dtHelper()->userNow()->addDay()->format('Y-m-d');
-                $endDate = ($mlst->editTo != '0000-00-00 00:00:00' && ! str_starts_with((string) $mlst->editTo, '1969-12-31')) ? $mlst->editTo : dtHelper()->userNow()->addWeek()->format('Y-m-d');
+                $startDate = (! empty($mlst->editFrom) && $mlst->editFrom != '0000-00-00 00:00:00' && ! str_starts_with((string) $mlst->editFrom, '1969-12-31')) ? $mlst->editFrom : dtHelper()->userNow()->addDay()->format('Y-m-d');
+                $endDate = (! empty($mlst->editTo) && $mlst->editTo != '0000-00-00 00:00:00' && ! str_starts_with((string) $mlst->editTo, '1969-12-31')) ? $mlst->editTo : dtHelper()->userNow()->addWeek()->format('Y-m-d');
 
                 echo '{
                     projectName: '.json_encode((string) $mlst->projectName, $jsFlags).',
