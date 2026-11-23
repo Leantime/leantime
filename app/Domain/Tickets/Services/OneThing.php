@@ -24,6 +24,11 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
  * converts time zones). The choice is always an existing to-do: a write-in is created by the
  * caller first (quick add) and then set here. Setting or clearing a one thing never changes the
  * to-do itself, including its Work Start and due dates.
+ *
+ * Permissions: the methods are entity-scoped, not tied to the session's current project (a
+ * personal call must keep working whatever project happens to be selected). The precise check
+ * is per to-do in visibleTask(): tickets.view in that to-do's own project, which includes project
+ * access. Nothing is returned or stored for a to-do that check refuses.
  */
 class OneThing extends BaseService
 {
@@ -45,7 +50,7 @@ class OneThing extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(TicketsPermissions::VIEW)]
+    #[RequiresPermission(TicketsPermissions::VIEW, entityScoped: true)]
     public function getOneThing(string $date): ?array
     {
         $date = $this->validDate($date, 'date');
@@ -69,7 +74,7 @@ class OneThing extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(TicketsPermissions::VIEW)]
+    #[RequiresPermission(TicketsPermissions::VIEW, entityScoped: true)]
     public function setOneThing(string $date, int $taskId): array
     {
         $date = $this->validDate($date, 'date');
@@ -97,7 +102,7 @@ class OneThing extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(TicketsPermissions::VIEW)]
+    #[RequiresPermission(TicketsPermissions::VIEW, entityScoped: true)]
     public function clearOneThing(string $date): bool
     {
         $date = $this->validDate($date, 'date');
@@ -120,7 +125,7 @@ class OneThing extends BaseService
      *
      * @api
      */
-    #[RequiresPermission(TicketsPermissions::VIEW)]
+    #[RequiresPermission(TicketsPermissions::VIEW, entityScoped: true)]
     public function getOneThings(string $from, string $until): array
     {
         $from = $this->validDate($from, 'from');
@@ -234,6 +239,11 @@ class OneThing extends BaseService
      */
     private function validDate(string $date, string $field): string
     {
+        // Shape first: createFromFormat() throws a ValueError on input with a NUL byte.
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/D', $date) !== 1) {
+            throw new ValidationException([$field => ['Use a date like 2026-11-23.']]);
+        }
+
         $parsed = \DateTimeImmutable::createFromFormat('!Y-m-d', $date);
         if ($parsed === false || $parsed->format('Y-m-d') !== $date) {
             throw new ValidationException([$field => ['Use a date like 2026-11-23.']]);

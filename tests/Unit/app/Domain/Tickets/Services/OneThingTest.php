@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Tickets\Services;
 
+use Leantime\Core\Auth\Permissions\PermissionEnforcer;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\ValidationException;
@@ -215,6 +216,48 @@ class OneThingTest extends TestCase
 
         $this->expectException(AuthorizationException::class);
         $this->service()->getOneThing('2026-11-23');
+    }
+
+    public function test_rpc_gate_ignores_the_session_project(): void
+    {
+        // The selected project (99) is one the person lost access to; these personal calls must still pass.
+        session(['currentProject' => 99]);
+        config(['permissions.enforce' => true]);
+
+        $engineCalls = [];
+        $enforcer = new PermissionEnforcer($this->make(PermissionService::class, [
+            'currentUserCan' => function (string $key, ?int $projectId = null, ?bool $forceGlobal = null) use (&$engineCalls): bool {
+                $engineCalls[] = [$key, $projectId];
+
+                return $projectId !== 99;
+            },
+        ]));
+
+        foreach (['getOneThing' => ['date' => '2026-11-23'], 'setOneThing' => ['date' => '2026-11-23', 'taskId' => 11], 'clearOneThing' => ['date' => '2026-11-23'], 'getOneThings' => ['from' => '2026-11-23', 'until' => '2026-11-24']] as $method => $params) {
+            $enforcer->enforce(OneThing::class, $method, $params);
+        }
+
+        $this->assertSame([], $engineCalls, 'the gate defers to the per-to-do check instead of the session project');
+
+        // The per-to-do check still runs against the to-do's own project.
+        $this->assertSame(11, $this->service()->setOneThing('2026-11-23', 11)['taskId']);
+    }
+
+    public function test_a_nul_byte_in_a_date_is_a_field_error_not_a_crash(): void
+    {
+        $service = $this->service();
+
+        foreach (["2026-11-23\0", "2026\0-11-23", "\0"] as $date) {
+            try {
+                $service->getOneThing($date);
+                $this->fail('a NUL byte should be refused');
+            } catch (ValidationException $e) {
+                $this->assertSame(['Use a date like 2026-11-23.'], $e->getErrorData()['date']);
+            }
+        }
+
+        $this->expectException(ValidationException::class);
+        $service->getOneThings("2026-11-23\0", '2026-11-24');
     }
 
     public function test_task_id_parsing_is_strict(): void
