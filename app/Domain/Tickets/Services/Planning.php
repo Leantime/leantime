@@ -108,12 +108,6 @@ class Planning extends BaseService
         $timezone = self::timezone();
         $task = $this->visibleTask($taskId);
 
-        // getTicket() checks project access; reading also needs tickets.view in that project.
-        // Same message as a missing to-do, so the reply never reveals that a hidden one exists.
-        if (! $this->can(TicketsPermissions::VIEW, (int) $task->projectId)) {
-            throw new ValidationException(['taskId' => ["That to-do doesn't exist, or you can't see it."]]);
-        }
-
         return [
             'taskId' => $taskId,
             'days' => WorkStart::plannedDays(self::stored($task->editFrom), self::stored($task->editTo), $timezone),
@@ -141,12 +135,16 @@ class Planning extends BaseService
      * A to-do you can see, or a field error. One message for "doesn't exist" and "can't see it",
      * so the reply never reveals whether a hidden to-do exists.
      *
+     * getTicket() checks project access only, so tickets.view in the to-do's own project is
+     * checked here too. Every endpoint goes through this before any other check, so a person who
+     * can't view the to-do can't tell a milestone or a time box apart from a missing to-do.
+     *
      * @throws ValidationException
      */
     private function visibleTask(int $taskId): TicketModel
     {
         $task = $taskId > 0 ? $this->tickets->getTicket($taskId) : false;
-        if (! $task instanceof TicketModel) {
+        if (! $task instanceof TicketModel || ! $this->can(TicketsPermissions::VIEW, (int) $task->projectId)) {
             throw new ValidationException(['taskId' => ["That to-do doesn't exist, or you can't see it."]]);
         }
 

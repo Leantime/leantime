@@ -147,6 +147,29 @@ class PlanningTest extends TestCase
         $this->assertFieldError('taskId', fn () => $this->service()->getTaskPlan(12));
     }
 
+    public function test_writes_without_view_permission_answer_like_a_missing_to_do(): void
+    {
+        $this->canView = false;
+        $hiddenMessage = ["That to-do doesn't exist, or you can't see it."];
+
+        // A milestone (30) and a time box (12) must not be told apart from a missing to-do.
+        foreach ([
+            fn () => $this->service()->planTaskForDay(30, '2026-11-24'),
+            fn () => $this->service()->planTaskForDay(12, '2026-11-24'),
+            fn () => $this->service()->clearTaskPlan(12),
+            fn () => $this->service()->planTaskForDay(999, '2026-11-24'),
+        ] as $call) {
+            try {
+                $call();
+                $this->fail('Expected a ValidationException.');
+            } catch (ValidationException $e) {
+                $this->assertSame($hiddenMessage, $e->getErrorData()['taskId'] ?? null);
+            }
+        }
+
+        $this->assertSame([], $this->patches);
+    }
+
     private function service(bool $patchSucceeds = true): Planning
     {
         $tickets = $this->createMock(TicketService::class);

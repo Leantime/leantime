@@ -666,6 +666,25 @@ class CalendarServiceTest extends TestCase
         $this->assertStringContainsString('BEGIN:VALARM', $timeBox);
     }
 
+    /**
+     * A planned day has no Work End, so its event ends where it starts. An all-day DTEND is
+     * exclusive and must come after DTSTART, so the feed sends the next day.
+     */
+    public function test_ical_feed_ends_a_single_planned_day_on_the_next_day(): void
+    {
+        session(['usersettings.timezone' => 'America/Los_Angeles']);
+
+        // Midnight 24 November in Los Angeles is 08:00 UTC.
+        $ics = $this->calendarWithFeedEvents([[
+            'id' => 33, 'title' => 'Planned: To-do 33', 'description' => '', 'url' => '',
+            'dateFrom' => '2026-11-24 08:00:00', 'dateTo' => '2026-11-24 08:00:00',
+            'allDay' => true, 'eventType' => 'ticket', 'dateContext' => 'edit', 'plannedDay' => true,
+        ]])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertMatchesRegularExpression('/DTSTART[^:\r\n]*VALUE=DATE:20261124/', $ics);
+        $this->assertMatchesRegularExpression('/DTEND[^:\r\n]*VALUE=DATE:20261125/', $ics);
+    }
+
     public function test_ical_feed_without_events_is_an_empty_calendar_not_an_error(): void
     {
         // #4018: a valid feed with no events yet threw "Calendar could not be retrieved" (404),

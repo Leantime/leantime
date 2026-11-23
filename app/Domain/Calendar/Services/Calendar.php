@@ -573,6 +573,13 @@ class Calendar extends BaseService
                 $startsAt = dtHelper()->parseDbDateTime($event['dateFrom'])->setTimezone($eventTimezone);
                 $endsAt = dtHelper()->parseDbDateTime($event['dateTo'])->setTimezone($eventTimezone);
 
+                // An all-day DTEND is exclusive and must come after DTSTART (RFC 5545). A planned
+                // day has no Work End, so it would go out with DTEND equal to DTSTART: send the
+                // next day instead.
+                if ($isAllDay && $endsAt->lessThanOrEqualTo($startsAt)) {
+                    $endsAt = $startsAt->addDay();
+                }
+
                 $currentEvent = IcalEvent::create()
                     ->image(BASE_URL.'/dist/images/favicon.png', 'image/png', Display::badge())
                     ->startsAt($startsAt)
