@@ -396,11 +396,11 @@ class CalendarServiceTest extends TestCase
     }
 
     /**
-     * A date-only Work Start is a planned day. It stays off the calendar by default, because a
-     * plan shown on a calendar reads as a commitment; with "Show planned days" on it is all-day.
+     * A date-only Work Start is a planned day. It shows as all-day (not a zero-length event at
+     * midnight) by default, and is left out when the person turns "Show planned days" off.
      * Time-boxed Work Starts always show.
      */
-    public function test_get_calendar_leaves_planned_days_out_unless_shown(): void
+    public function test_get_calendar_shows_planned_days_all_day_unless_hidden(): void
     {
         session(['usersettings.timezone' => 'America/Los_Angeles']);
         app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
@@ -437,19 +437,19 @@ class CalendarServiceTest extends TestCase
             return array_combine(array_column($events, 'id'), $events);
         };
 
-        $hidden = $editEvents('');
-        $this->assertSame([22], array_keys($hidden), 'only the time box shows by default');
-        $this->assertFalse($hidden[22]['allDay']);
-
-        $shown = $editEvents('1');
-        $this->assertSame([21, 22], array_keys($shown));
+        $shown = $editEvents('');
+        $this->assertSame([21, 22], array_keys($shown), 'planned days show by default');
         $this->assertTrue($shown[21]['allDay'], 'a planned day shows as all-day, not at midnight');
         $this->assertFalse($shown[22]['allDay']);
+
+        $hidden = $editEvents('0');
+        $this->assertSame([22], array_keys($hidden), 'turned off, only the time box shows');
+        $this->assertFalse($hidden[22]['allDay']);
 
         app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
     }
 
-    public function test_show_planned_days_is_saved_per_person_and_off_when_cleared(): void
+    public function test_show_planned_days_is_on_by_default_and_saved_per_person_when_off(): void
     {
         session(['userdata.id' => 7]);
         $saved = [];
@@ -477,14 +477,14 @@ class CalendarServiceTest extends TestCase
             outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
         );
 
-        $this->assertFalse($service->getShowPlannedDays(), 'off by default');
-
-        $this->assertTrue($service->saveShowPlannedDays(true));
-        $this->assertSame(['usersettings.7.calendar.showPlannedDays' => '1'], $saved);
-        $this->assertTrue($service->getShowPlannedDays());
+        $this->assertTrue($service->getShowPlannedDays(), 'on by default');
 
         $this->assertFalse($service->saveShowPlannedDays(false));
-        $this->assertSame(['usersettings.7.calendar.showPlannedDays'], $deleted);
+        $this->assertSame(['usersettings.7.calendar.showPlannedDays' => '0'], $saved);
+        $this->assertFalse($service->getShowPlannedDays());
+
+        $this->assertTrue($service->saveShowPlannedDays(true));
+        $this->assertSame(['usersettings.7.calendar.showPlannedDays'], $deleted, 'turning it back on clears the stored "off"');
     }
 
     /**

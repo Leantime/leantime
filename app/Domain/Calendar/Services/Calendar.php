@@ -44,8 +44,8 @@ class Calendar extends BaseService
 
     /**
      * Per-person setting, under `usersettings.{userId}.`: show date-only plans (Planned days with
-     * no time) on the calendar. Off by default, because a plan shown on a calendar reads as a
-     * commitment. Time-boxed to-dos always show.
+     * no time) on the calendar. On by default, as all-day items; stored as '0' when someone turns
+     * it off. Time-boxed to-dos always show.
      */
     public const SHOW_PLANNED_DAYS_SETTING = 'calendar.showPlannedDays';
 
@@ -440,9 +440,9 @@ class Calendar extends BaseService
     }
 
     /**
-     * Whether your calendar shows date-only plans (Planned days with no time). Off by default.
+     * Whether your calendar shows date-only plans (Planned days with no time). On by default.
      *
-     * @return bool True when you turned "Show planned days on my calendar" on.
+     * @return bool False when you turned "Show planned days on my calendar" off.
      *
      * @api
      */
@@ -467,10 +467,11 @@ class Calendar extends BaseService
         $userId = (int) session('userdata.id');
         $key = 'usersettings.'.$userId.'.'.self::SHOW_PLANNED_DAYS_SETTING;
 
+        // On is the default, so only "off" is stored.
         if ($show) {
-            $this->settingsRepo->saveSetting($key, '1');
-        } else {
             $this->settingsRepo->deleteSetting($key);
+        } else {
+            $this->settingsRepo->saveSetting($key, '0');
         }
 
         return $show;
@@ -485,10 +486,10 @@ class Calendar extends BaseService
     private function showsPlannedDays(int $userId): bool
     {
         if ($userId <= 0) {
-            return false;
+            return true;
         }
 
-        return (string) $this->settingsRepo->getSetting('usersettings.'.$userId.'.'.self::SHOW_PLANNED_DAYS_SETTING) === '1';
+        return (string) $this->settingsRepo->getSetting('usersettings.'.$userId.'.'.self::SHOW_PLANNED_DAYS_SETTING) !== '0';
     }
 
     /**
@@ -755,9 +756,9 @@ class Calendar extends BaseService
 
                 if (dtHelper()->isValidDateString($ticket['editFrom'])) {
 
-                    // A date-only Work Start is a plan for the day, not a time box. It stays off
-                    // the calendar unless the person turned "Show planned days" on, and then shows
-                    // as all-day rather than as a zero-length event at midnight.
+                    // A date-only Work Start is a plan for the day, not a time box. It shows as
+                    // all-day rather than as a zero-length event at midnight, unless the person
+                    // turned "Show planned days" off.
                     $isPlannedDay = WorkStart::isDateOnly($ticket['editFrom'], $ticket['editTo'] ?? null, $timezone);
                     if ($isPlannedDay && ! $showPlannedDays) {
                         continue;

@@ -5,7 +5,7 @@
 </x-global::actions.modal-header>
 <br />
 
-{{-- Planned days: date-only plans stay off the calendar unless the person turns them on --}}
+{{-- Planned days: date-only plans show as all-day items unless the person turns them off --}}
 <x-global::elements.section-header as="h5">{{ __('label.planned_days') }}</x-global::elements.section-header>
 <form class="formModal" method="post" action="{{ BASE_URL }}/calendar/calendarSettings">
     <input type="hidden" name="savePlannedDays" value="1" />

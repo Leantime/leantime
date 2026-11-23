@@ -118,8 +118,8 @@ class Calendar extends RepositoryCore
      * access explicitly. The session-scoped Tickets service would scope them to nobody and the
      * feed lost every To-Do (#4018).
      *
-     * Date-only Work Starts (planned days) are left out unless the owner turned "Show planned
-     * days" on; then they go out as all-day events.
+     * Date-only Work Starts (planned days) go out as all-day events, unless the owner turned
+     * "Show planned days" off.
      *
      * @param  int  $userId  The feed owner, already authenticated by the feed hashes
      * @param  int|null  $clientId  The feed owner's client (grants client-visible projects)
@@ -129,7 +129,7 @@ class Calendar extends RepositoryCore
      *
      * @throws BindingResolutionException
      */
-    public function getCalendar(int $userId, ?int $clientId = null, bool $showPlannedDays = false, string $timezone = 'UTC'): array
+    public function getCalendar(int $userId, ?int $clientId = null, bool $showPlannedDays = true, string $timezone = 'UTC'): array
     {
         $ticketRepo = app()->make(TicketsRepository::class);
         $tickets = $ticketRepo->getAllBySearchCriteria(
@@ -225,8 +225,8 @@ class Calendar extends RepositoryCore
                 $hasWorkStart = dtHelper()->isValidDateString($ticket['editFrom']);
                 $hasWorkEnd = dtHelper()->isValidDateString($ticket['editTo']);
 
-                // A date-only Work Start is a plan for the day. It is left out of the feed unless
-                // the owner turned "Show planned days" on, and then goes out as all-day.
+                // A date-only Work Start is a plan for the day. It goes out as all-day, unless the
+                // owner turned "Show planned days" off.
                 $isPlannedDay = $hasWorkStart
                     && WorkStart::isDateOnly($ticket['editFrom'], $ticket['editTo'] ?? null, $timezone);
 
@@ -329,7 +329,7 @@ class Calendar extends RepositoryCore
 
         $showPlannedDays = (string) $settingService->getSetting(
             'usersettings.'.$user['id'].'.'.\Leantime\Domain\Calendar\Services\Calendar::SHOW_PLANNED_DAYS_SETTING
-        ) === '1';
+        ) !== '0';
 
         return $this->getCalendar(
             (int) $user['id'],
