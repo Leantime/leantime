@@ -63,7 +63,7 @@ class AddSubtaskTool extends Tool
             'projectId' => $schema->integer()
                 ->description('Project ID.'),
             'editorId' => $schema->integer()
-                ->description('Assigned user ID.'),
+                ->description('Assigned user ID. Must be on the project team (see getUsersAssignedToProject).'),
             'userId' => $schema->integer()
                 ->description('Creator user ID.'),
             'dateToFinish' => $schema->string()
@@ -113,7 +113,7 @@ class AddSubtaskTool extends Tool
             $params['origin'] = 'mcp';
             $result = $this->ticketsService->quickAddTicket($params);
         } catch (LeantimeExceptionInterface $e) {
-            return Response::error($e->getClientMessage());
+            return Response::error(ToolErrorMessage::for($e));
         }
 
         if (is_array($result)) {

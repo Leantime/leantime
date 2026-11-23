@@ -202,7 +202,9 @@
     font-size: var(--font-size-l);
     font-weight: var(--font-weight-bold);
     line-height: 25px;
-    color: var(--primary-color);
+    /* The theme's link text color: readable on the dialog in light and dark (the primary color
+       is too dark on the dark theme's dialog). */
+    color: var(--color-text-link, var(--primary-color));
 }
 
 .lt-modal-header .lt-modal-title i {
@@ -285,4 +287,137 @@
     margin: 2px 0 0;
     color: var(--color-text-muted);
     font-size: var(--font-size-s);
+}
+
+/* Coming up panel (#/reminders/comingUp): the person's summary list. Quiet colors only. */
+.lt-coming-up {
+    max-width: 620px;
+    padding: 0 0 8px;
+}
+
+.lt-coming-up-section {
+    padding-top: 12px;
+}
+
+.lt-coming-up-heading {
+    margin: 0 0 4px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.lt-coming-up-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lt-coming-up-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    border-top: 1px solid var(--main-border-color);
+}
+
+.lt-coming-up-icon {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--neutral);
+    color: var(--accent1);
+}
+
+.lt-coming-up-link {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 0;
+    color: var(--primary-font-color);
+    text-decoration: none;
+}
+
+.lt-coming-up-link:hover .lt-coming-up-title {
+    text-decoration: underline;
+}
+
+.lt-coming-up-title {
+    font-weight: 600;
+    color: var(--color-text-link, var(--primary-color));
+}
+
+.lt-coming-up-link:focus-visible,
+.lt-coming-up-actions > .dropdown-toggle:focus-visible {
+    outline: 2px solid var(--color-text-link, var(--accent1));
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.lt-coming-up-why,
+.lt-coming-up-note,
+.lt-coming-up-empty {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+.lt-coming-up-note {
+    margin: 0;
+    padding: 10px 0 4px 40px;
+    border-top: 1px solid var(--main-border-color);
+}
+
+.lt-coming-up-empty {
+    padding: 16px 0;
+}
+
+.lt-coming-up-actions {
+    flex: none;
+}
+
+/* A 44px target for the row's ⋮ (its menu floats over the dialog: core/menus.js). */
+.lt-coming-up-actions > .dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.lt-coming-up-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    max-width: 620px;
+    padding: 14px 0 4px;
+    border-top: 1px solid var(--main-border-color);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+.lt-coming-up-footer span {
+    flex: 1;
+}
+
+.lt-coming-up-footer a,
+.lt-coming-up-footer a:link,
+.lt-coming-up-footer a:visited {
+    font-weight: 600;
+    color: var(--color-text-link, var(--primary-color));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lt-coming-up *,
+    .lt-reminder-menu * {
+        transition: none !important;
+        animation: none !important;
+    }
 }

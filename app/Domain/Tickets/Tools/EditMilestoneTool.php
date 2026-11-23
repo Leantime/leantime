@@ -7,6 +7,7 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -78,7 +79,13 @@ class EditMilestoneTool extends Tool
             return Response::error('The params parameter is not a valid object. Provide key-value pairs.');
         }
 
-        if ($this->ticketsService->patch($id, $params)) {
+        try {
+            $updated = $this->ticketsService->patch($id, $params);
+        } catch (LeantimeExceptionInterface $e) {
+            return Response::error(ToolErrorMessage::for($e));
+        }
+
+        if ($updated) {
             return Response::text('Milestone updated successfully.');
         }
 

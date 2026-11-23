@@ -5,6 +5,21 @@
 </x-global::actions.modal-header>
 <br />
 
+{{-- Planned days: date-only plans show as all-day items unless the person turns them off --}}
+<x-global::elements.section-header as="h5">{{ __('label.planned_days') }}</x-global::elements.section-header>
+<form class="formModal" method="post" action="{{ BASE_URL }}/calendar/calendarSettings">
+    <input type="hidden" name="savePlannedDays" value="1" />
+    <label for="showPlannedDays" style="display:flex; gap:8px; align-items:flex-start;">
+        <input type="checkbox" id="showPlannedDays" name="showPlannedDays" value="1" @if(!empty($showPlannedDays)) checked="checked" @endif style="margin-top:3px;" />
+        <span>
+            {{ __('label.show_planned_days') }}<br />
+            <small class="text-muted">{{ __('text.show_planned_days_help') }}</small>
+        </span>
+    </label>
+    <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" />
+</form>
+<hr style="margin: 20px 0;" />
+
 {{-- Connected Calendars Section --}}
 <x-global::elements.section-header as="h5">{{ __('label.connected_calendars') }}</x-global::elements.section-header>
 

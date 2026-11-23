@@ -57,6 +57,39 @@ class Notifications
     }
 
     /**
+     * The newest row of one type for a person written at or after $sinceUtc ('Y-m-d H:i:s'), in
+     * the same shape as getAllNotifications() rows, or null.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function newestOfTypeSince(int $userId, string $type, string $sinceUtc): ?array
+    {
+        $row = $this->db->table('zp_notifications')
+            ->select(
+                'zp_notifications.id',
+                'userId',
+                'read',
+                'type',
+                'module',
+                'moduleId',
+                'datetime',
+                'url',
+                'message',
+                'authorId',
+                'zp_user.firstname',
+                'zp_user.lastname'
+            )
+            ->leftJoin('zp_user', 'zp_notifications.authorId', '=', 'zp_user.id')
+            ->where('userId', $userId)
+            ->where('zp_notifications.type', $type)
+            ->where('datetime', '>=', $sinceUtc)
+            ->orderBy('datetime', 'desc')
+            ->first();
+
+        return $row === null ? null : (array) $row;
+    }
+
+    /**
      * @return bool|void
      */
     public function addNotifications(array $notifications)

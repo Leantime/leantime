@@ -83,7 +83,8 @@
                 'id'         => $itemId,
                 'label'      => trim((string) ($arr['description'] ?? '')),
                 'meaning'    => trim((string) ($arr['why_this_matters'] ?? '')),
-                'measuredBy' => trim((string) ($arr['conclusion'] ?? '')),
+                // conclusion is the card's rich-text Description: show its text, not its HTML.
+                'measuredBy' => \Leantime\Core\Support\Format::plainText((string) ($arr['conclusion'] ?? '')),
                 'current'    => $current,
                 'target'     => $target,
                 'unit'       => $unit,

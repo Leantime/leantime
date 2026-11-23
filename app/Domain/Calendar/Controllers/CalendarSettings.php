@@ -11,7 +11,8 @@ use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * CalendarSettings Controller - Displays calendar settings modal.
+ * CalendarSettings Controller - Displays calendar settings modal and saves the personal
+ * "Show planned days on my calendar" setting (on by default).
  *
  * Plugins add settings sections via {@see CalendarSettingsSectionsFilter} and add or mark their
  * calendars via {@see ExternalCalendarsFilter}.
@@ -42,7 +43,22 @@ class CalendarSettings extends Controller
 
         $this->tpl->assign('externalCalendars', $externalCalendars);
         $this->tpl->assign('pluginSections', $pluginSections);
+        $this->tpl->assign('showPlannedDays', $this->calendarService->getShowPlannedDays());
 
         return $this->tpl->displayPartial('calendar.calendarSettings');
+    }
+
+    /**
+     * Saves "Show planned days on my calendar", then shows the settings again.
+     */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
+    public function post(array $params): Response
+    {
+        if (isset($params['savePlannedDays'])) {
+            $this->calendarService->saveShowPlannedDays(! empty($params['showPlannedDays']));
+            $this->tpl->setNotification($this->language->__('notifications.calendar_settings_saved'), 'success');
+        }
+
+        return $this->get($params);
     }
 }
