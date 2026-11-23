@@ -21,6 +21,9 @@ class SuggestionsTest extends TestCase
     /** @var list<array<string, mixed>> The open to-dos the Tickets service returns. */
     private array $open = [];
 
+    /** @var int[] Projects where the signed-in person's role may view to-dos. */
+    private array $viewableProjects = [3];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -108,6 +111,25 @@ class SuggestionsTest extends TestCase
         $this->assertSame([1], array_column($this->service()->getQuickWins(0)['tasks'], 'id'));
     }
 
+    public function test_to_dos_in_projects_where_viewing_to_dos_is_denied_are_left_out(): void
+    {
+        $this->viewableProjects = [3];
+        $this->open = [
+            $this->task(1, created: '2026-11-21 10:00:00'),
+            $this->task(2, created: '2026-11-21 10:00:00', project: 9),
+            $this->task(3, effort: '1', due: '2026-11-24 07:59:59'),
+            $this->task(4, effort: '1', due: '2026-11-24 07:59:59', project: 9),
+        ];
+
+        $consider = $this->service()->getTasksToConsider(0);
+        $quickWins = $this->service()->getQuickWins(0);
+
+        $this->assertSame([1], array_column($consider['tasks'], 'id'));
+        $this->assertSame(1, $consider['total'], 'the total never counts hidden to-dos');
+        $this->assertSame([3], array_column($quickWins['tasks'], 'id'));
+        $this->assertSame(1, $quickWins['total']);
+    }
+
     public function test_limits_outside_the_range_are_refused(): void
     {
         foreach ([-1, 101] as $limit) {
@@ -133,7 +155,15 @@ class SuggestionsTest extends TestCase
         $tickets = $this->createMock(TicketService::class);
         $tickets->method('getAllOpenUserTickets')->willReturnCallback(fn () => $this->open);
 
-        return new Suggestions($tickets);
+        $permissions = $this->createMock(\Leantime\Core\Auth\Permissions\PermissionService::class);
+        $permissions->method('currentUserCan')->willReturnCallback(
+            fn (string $permission, ?int $projectId = null) => in_array($projectId, $this->viewableProjects, true)
+        );
+
+        $suggestions = new Suggestions($tickets);
+        $suggestions->setPermissionService($permissions);
+
+        return $suggestions;
     }
 
     /**
@@ -141,12 +171,12 @@ class SuggestionsTest extends TestCase
      *
      * @return array<string, mixed>
      */
-    private function task(int $id, string $created = '2026-01-01 10:00:00', string $priority = '', string $effort = '', ?string $due = null): array
+    private function task(int $id, string $created = '2026-01-01 10:00:00', string $priority = '', string $effort = '', ?string $due = null, int $project = 3): array
     {
         return [
             'id' => $id,
             'headline' => 'To-do '.$id,
-            'projectId' => 3,
+            'projectId' => $project,
             'type' => 'task',
             'status' => 3,
             'date' => $created,

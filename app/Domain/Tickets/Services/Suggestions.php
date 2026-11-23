@@ -147,7 +147,9 @@ class Suggestions extends BaseService
     }
 
     /**
-     * The signed-in person's open to-dos (no done to-dos, milestones or closed projects).
+     * The signed-in person's open to-dos (no done to-dos, milestones or closed projects), limited
+     * to projects where their role may view to-dos. getAllOpenUserTickets() checks project access,
+     * not that permission, and the methods' entity-scoped gate leaves the check to this read.
      *
      * @return list<array<string, mixed>>
      */
@@ -158,7 +160,17 @@ class Suggestions extends BaseService
             return [];
         }
 
-        return array_values($this->tickets->getAllOpenUserTickets($userId));
+        $canView = [];
+        $visible = [];
+        foreach ($this->tickets->getAllOpenUserTickets($userId) as $task) {
+            $projectId = (int) ($task['projectId'] ?? 0);
+            $canView[$projectId] ??= $projectId > 0 && $this->can(TicketsPermissions::VIEW, $projectId);
+            if ($canView[$projectId]) {
+                $visible[] = $task;
+            }
+        }
+
+        return $visible;
     }
 
     /**
