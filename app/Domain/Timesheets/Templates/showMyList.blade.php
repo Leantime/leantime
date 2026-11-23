@@ -19,17 +19,20 @@
             {{-- The filter fields belong to the #form form below (form="…"). --}}
             <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" menu-style="width:250px;" keep-open class="filterWrapper">
                 <x-slot:trigger class="btn-link">{!! __('links.filter') !!} <span class="badge badge-primary">1</span></x-slot:trigger>
-                <x-global::forms.label for="dateFrom">{!! __('label.date_from') !!}</x-global::forms.label>
-                <input type="text" id="dateFrom" class="dateFrom" name="dateFrom" form="form" value="{{ $dateFrom->formatDateForUser() }}" />
-                <x-global::forms.label for="dateTo">{!! __('label.until') !!}</x-global::forms.label>
-                <input type="text" id="dateTo" class="dateTo" name="dateTo" form="form" value="{{ $dateTo->formatDateForUser() }}" />
-                <x-global::forms.label for="kind">{!! __('label.type') !!}</x-global::forms.label>
-                <x-global::forms.select id="kind" name="kind" form="form" onchange="this.form.submit();">
-                    <option value="all">{!! __('label.all_types') !!}</option>
-                    @foreach($kind as $key => $row)
-                        <option value="{{ $key }}" @selected($key == $actKind)>{!! __($row) !!}</option>
-                    @endforeach
-                </x-global::forms.select>
+                <x-global::forms.field for="dateFrom" :label="__('label.date_from')">
+                    <input type="text" id="dateFrom" class="dateFrom" name="dateFrom" form="form" value="{{ $dateFrom->formatDateForUser() }}" />
+                </x-global::forms.field>
+                <x-global::forms.field for="dateTo" :label="__('label.until')">
+                    <input type="text" id="dateTo" class="dateTo" name="dateTo" form="form" value="{{ $dateTo->formatDateForUser() }}" />
+                </x-global::forms.field>
+                <x-global::forms.field for="kind" :label="__('label.type')">
+                    <x-global::forms.select id="kind" name="kind" form="form" onchange="this.form.submit();">
+                        <option value="all">{!! __('label.all_types') !!}</option>
+                        @foreach($kind as $key => $row)
+                            <option value="{{ $key }}" @selected($key == $actKind)>{!! __($row) !!}</option>
+                        @endforeach
+                    </x-global::forms.select>
+                </x-global::forms.field>
                 <div class="tw-mt-2">
                     <x-global::forms.button tag="input" inputType="submit" form="form" contentRole="primary" :labelText="__('buttons.search')" class="reload" />
                 </div>

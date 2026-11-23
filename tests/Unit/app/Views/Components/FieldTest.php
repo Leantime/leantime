@@ -79,6 +79,13 @@ class FieldTest extends TestCase
         $this->assertStringNotContainsString('style=', $html);
     }
 
+    public function test_the_help_slot_takes_markup(): void
+    {
+        $html = $this->render('<x-global::forms.field for="telemetry" label="Telemetry"><input id="telemetry" /><x-slot:help>Send <a href="/docs">anonymous data</a></x-slot:help></x-global::forms.field>');
+
+        $this->assertStringContainsString('<p class="lt-field-help" id="telemetry-help">Send <a href="/docs">anonymous data</a></p>', $html);
+    }
+
     public function test_without_a_label_only_the_control_renders(): void
     {
         $html = $this->render('<x-global::forms.field><input id="x" /></x-global::forms.field>');
