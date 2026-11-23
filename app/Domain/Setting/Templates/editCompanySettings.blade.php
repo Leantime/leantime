@@ -174,6 +174,10 @@
                                     </div>
                                     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
                                 </form>
+
+                                <br />
+                                {{-- Morning summaries for the workspace; saves on its own. --}}
+                                <x-global::hx endpoint="reminders/workspaceReminders/get" trigger="load" wrapperId="workspaceRemindersMount" />
                             </div>
                             <div class="col-md-4">
 
