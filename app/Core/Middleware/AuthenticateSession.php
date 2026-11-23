@@ -153,7 +153,9 @@ class AuthenticateSession implements AuthenticatesSessions
         }
 
         $storedProjectRole = app(ChecksProjectAccess::class)->getProjectRole($userId, $currentProjectId);
-        $currentProjectRole = $storedProjectRole === '' ? '' : (string) (Roles::getRoleString($storedProjectRole) ?: '');
+        // Stored as a role key, or as a role name on legacy rows; unknown values inherit ('').
+        $projectRoleKey = Roles::getRoleKey($storedProjectRole);
+        $currentProjectRole = $projectRoleKey === false ? '' : (string) Roles::getRoleString($projectRoleKey);
 
         if ((string) $session->get('userdata.projectRole', '') === $currentProjectRole) {
             return;

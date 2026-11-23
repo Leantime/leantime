@@ -171,6 +171,18 @@ class SessionRoleSyncTest extends \Unit\TestCase
         $this->assertFalse($this->permissions()->currentUserCan('tickets.create'));
     }
 
+    public function test_legacy_project_role_name_is_enforced(): void
+    {
+        // Older membership rows store the role name instead of its key.
+        $this->storedProjectRole = 'readonly';
+        $this->loggedInSession('editor', projectRole: 'editor');
+
+        $this->nextRequest(roleKeyInDatabase: 20);
+
+        $this->assertSame('readonly', session('userdata.projectRole'));
+        $this->assertFalse($this->permissions()->currentUserCan('tickets.create'));
+    }
+
     public function test_project_role_set_back_to_inherit_follows_the_global_role(): void
     {
         $this->storedProjectRole = '5';
