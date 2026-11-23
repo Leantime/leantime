@@ -9,6 +9,7 @@ use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Help\Services\Helper;
+use Leantime\Domain\Menu\Events\CompanyPagesFilter;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepo;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -38,6 +39,7 @@ class HeadMenu extends Composer
 
     /**
      * Company pages in the order the Company link prefers them, each with the permission it needs.
+     * Plugins add theirs through {@see CompanyPagesFilter}.
      *
      * @var array<string, string>
      */
@@ -145,7 +147,9 @@ class HeadMenu extends Composer
      */
     private function companyLink(): ?string
     {
-        foreach (self::COMPANY_PAGES as $permission => $path) {
+        $companyPages = CompanyPagesFilter::dispatch(self::COMPANY_PAGES);
+
+        foreach ($companyPages as $permission => $path) {
             if ($this->permissionService->currentUserCan($permission)) {
                 return $path;
             }
