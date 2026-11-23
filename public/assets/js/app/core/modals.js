@@ -429,6 +429,11 @@ leantime.modals = (function () {
     // the dialog role and its title, focus moved into it on open and back to what opened it on
     // close, and Tab kept inside while it is open.
     var modalOpener = null;
+    // <body>'s children when the dialog opened: the page behind it. Pop-ups the dialog's content
+    // opens later (editor popovers, emoji pickers, floating menus) are mounted on <body> too, but
+    // they belong to the dialog, so Tab must work inside them.
+    var describedDialog = null;
+    var pageBehindDialog = [];
     var FOCUSABLE = 'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     var describeDialog = function (dialog) {
@@ -437,6 +442,12 @@ leantime.modals = (function () {
         }
         dialog.setAttribute('role', 'dialog');
         dialog.setAttribute('aria-modal', 'true');
+        if (describedDialog !== dialog) {
+            describedDialog = dialog;
+            pageBehindDialog = Array.prototype.filter.call(document.body.children, function (node) {
+                return !node.contains(dialog);
+            });
+        }
         var title = dialog.querySelector('.lt-modal-title[id]');
         if (title) {
             dialog.setAttribute('aria-labelledby', title.id);
@@ -454,6 +465,19 @@ leantime.modals = (function () {
         }
     };
 
+    // Focus in a pop-up the dialog opened: mounted on <body> after the dialog, so not part of the
+    // page behind it.
+    var inDialogPopup = function (element) {
+        if (!element || element === document.body) {
+            return false;
+        }
+        var top = element;
+        while (top.parentElement && top.parentElement !== document.body) {
+            top = top.parentElement;
+        }
+        return top.parentElement === document.body && pageBehindDialog.indexOf(top) === -1;
+    };
+
     var focusables = function (dialog) {
         return Array.prototype.filter.call(dialog.querySelectorAll(FOCUSABLE), function (element) {
             return element.getClientRects().length > 0;
@@ -467,6 +491,9 @@ leantime.modals = (function () {
         var dialog = document.querySelector('.nyroModalCont[aria-modal="true"]');
         if (!dialog) {
             return;
+        }
+        if (!dialog.contains(document.activeElement) && inDialogPopup(document.activeElement)) {
+            return; // Tab moves through the pop-up's own controls
         }
         var items = focusables(dialog);
         if (!items.length) {
@@ -567,6 +594,7 @@ leantime.modals = (function () {
                 },
                 beforeClose: function () {
                     currentModalUrl = null;
+                    describedDialog = null;
                     returnFocus();
                     closeUppyInstances('modal');
                     releaseContent(document.querySelector('.nyroModalCont'), false);

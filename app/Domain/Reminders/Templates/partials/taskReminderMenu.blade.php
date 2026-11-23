@@ -13,6 +13,10 @@
     description, not a choice. A tap saves and redraws the <li> at the top level with the new
     label; data-lt-announce is read out and focus returns to the item, the menu still open. Clicks
     inside don't reach Bootstrap, so the menu stays open while drilling and saving.
+
+    Every other loaded menu for the same to-do redraws when its reminder changes (lt:reminders:
+    reminder.updated#{to-do}), and every loaded menu when the person's defaults change
+    (lt:reminders:defaults.updated); the menu that saved already shows the change.
 --}}
 @fragment('menu')
 @php
@@ -34,7 +38,10 @@
         : __('reminders.remind_me');
     $vals = fn (array $values) => json_encode(['ticketId' => (string) $ticketId, 'instance' => $instance] + $values, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP);
 @endphp
-<li id="{{ $menuId }}" class="lt-reminder-menu" data-lt-announce="{{ $announce ?? '' }}" onclick="event.stopPropagation();">
+<li id="{{ $menuId }}" class="lt-reminder-menu" data-lt-announce="{{ $announce ?? '' }}" onclick="event.stopPropagation();"
+    hx-get="{{ BASE_URL }}/hx/reminders/taskReminderMenu/get?ticketId={{ $ticketId }}&amp;instance={{ $instance }}"
+    hx-trigger="{{ \Leantime\Domain\Reminders\Events\TaskReminderUpdated::CLIENT_EVENT }}#{{ $ticketId }} from:body, {{ \Leantime\Domain\Reminders\Events\ReminderDefaultsUpdated::CLIENT_EVENT }} from:body"
+    hx-swap="outerHTML">
     <a href="javascript:void(0);"
        class="lt-reminder-choice lt-reminder-top"
        role="button"

@@ -60,6 +60,7 @@ class ReminderDispatcherTest extends TestCase
         $this->workspaceEnabled = true;
         $this->heartbeat = null;
         $this->inboxFails = false;
+        \Illuminate\Support\Facades\Cache::forget(ReminderDispatcher::CURSOR_KEY);
         $settings = ['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'UTC'];
         $this->userSettings = [7 => $settings, 8 => ['summaryTime' => '09:30'] + $settings, 9 => $settings, 10 => $settings];
     }
@@ -213,6 +214,65 @@ class ReminderDispatcherTest extends TestCase
 
         $this->dispatcher()->run($this->utc('2026-11-22 08:05:00'));
         $this->assertSame([7, 8], $this->sentTo());
+    }
+
+    public function test_the_next_run_continues_where_a_busy_run_stopped(): void
+    {
+        // User 7's summary is empty every time, so it is rebuilt on every run and never written.
+        $this->empty[7] = true;
+        $this->userSettings[8] = $this->userSettings[7];
+        $oneTick = fn (array $ticks) => function () use (&$ticks) {
+            return count($ticks) > 1 ? array_shift($ticks) : $ticks[0];
+        };
+
+        // Run 1 has time for user 7 only.
+        $this->dispatcher(seconds: $oneTick([0.0, 10.0, ReminderDispatcher::MAX_RUN_SECONDS + 1.0]))->run($this->utc('2026-11-22 08:00:00'));
+        $this->assertSame([], $this->sentTo());
+
+        // Run 2 again has time for one person: it starts after user 7, so user 8 is reached.
+        $this->dispatcher(seconds: $oneTick([0.0, 10.0, ReminderDispatcher::MAX_RUN_SECONDS + 1.0]))->run($this->utc('2026-11-22 08:05:00'));
+        $this->assertSame([8], $this->sentTo());
+
+        // A run that gets through everyone wraps around and clears the place it resumes from.
+        $this->dispatcher()->run($this->utc('2026-11-22 08:10:00'));
+        $this->assertSame(0, (int) \Illuminate\Support\Facades\Cache::get(ReminderDispatcher::CURSOR_KEY, 0));
+    }
+
+    /**
+     * @dataProvider staleSendProvider
+     */
+    public function test_a_summary_that_became_stale_while_the_run_was_busy_is_skipped(string $summaryTime, string $runAt, string $sendAt): void
+    {
+        $this->userSettings[7]['summaryTime'] = $summaryTime;
+        $this->userSettings[8]['summary'] = false;
+        $dispatcher = $this->dispatcher();
+        $later = new class($dispatcher, $this->utc($sendAt)) extends ReminderDispatcher
+        {
+            public function __construct(ReminderDispatcher $inner, private CarbonImmutable $sendAt)
+            {
+                // The stand-ins wired into the inner dispatcher.
+                $stub = fn (string $property) => (new \ReflectionProperty(ReminderDispatcher::class, $property))->getValue($inner);
+                parent::__construct($stub('reminders'), $stub('settings'), $stub('builder'), $stub('notifier'));
+            }
+
+            protected function currentTime(): CarbonImmutable
+            {
+                return $this->sendAt;
+            }
+        };
+
+        $later->run($this->utc($runAt));
+
+        $this->assertSame([], $this->sentTo());
+        $this->assertSame(0, $this->db->table('zp_notifications')->where('userId', 7)->count());
+    }
+
+    public static function staleSendProvider(): array
+    {
+        return [
+            'the day ended (yesterday\'s summary)' => ['23:30', '2026-11-22 23:55:00', '2026-11-23 00:02:00'],
+            'the window ended' => ['08:00', '2026-11-22 10:59:00', '2026-11-22 11:01:00'],
+        ];
     }
 
     private function utc(string $utc): CarbonImmutable

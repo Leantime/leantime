@@ -44,4 +44,15 @@
 
     </x-global::actions.dropdown>
 
+@else
+    {{-- Read-only and commenter roles: only their own reminders (no actions on the to-do itself, and
+         no plugin sections, which are written for people who can change the to-do). --}}
+    @if (($ticket['type'] ?? '') !== 'milestone')
+    @can('tickets.view', $ticket['projectId'] ?? null)
+        <x-global::actions.dropdown style="float:right;" floating keyboard>
+            <li class="nav-header">{{ __("subtitles.todo") }}</li>
+            @include('reminders::partials.taskReminderMenuMount', ['ticketId' => $ticket['id']])
+        </x-global::actions.dropdown>
+    @endcan
+    @endif
 @endcanany

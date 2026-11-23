@@ -158,7 +158,8 @@ class TaskReminderMenuTest extends TestCase
     {
         $html = $this->render($this->state);
 
-        $this->assertMatchesRegularExpression('~<li id="taskReminderMenu-5-abc123" class="lt-reminder-menu"[^>]*onclick="event.stopPropagation\(\);">~', $html, 'clicks inside keep the menu open');
+        $this->assertMatchesRegularExpression('~<li id="taskReminderMenu-5-abc123" class="lt-reminder-menu"[^>]*onclick="event.stopPropagation\(\);"~', $html, 'clicks inside keep the menu open');
+        $this->assertStringContainsString('hx-trigger="lt:reminders:reminder.updated#5 from:body, lt:reminders:defaults.updated from:body"', $html, 'other menus for the to-do redraw after a change');
         $this->assertMatchesRegularExpression('~<a href="javascript:void\(0\);"\s+class="lt-reminder-choice lt-reminder-top"\s+role="button"\s+data-lt-drill-open\s+aria-expanded="false"\s+aria-controls="taskReminderMenu-5-abc123-panel">~', $html, 'a disclosure for the in-place panel');
         $this->assertStringNotContainsString('aria-haspopup', $html, 'nothing pops up: the menu\'s own content changes');
         $this->assertStringContainsString('<span class="lt-reminder-label">'.e(sprintf(__('reminders.remind_me_current'), __('reminders.short_more'))).'</span>', $html);

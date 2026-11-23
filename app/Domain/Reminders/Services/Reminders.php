@@ -7,6 +7,8 @@ use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Exceptions\AuthorizationException;
 use Leantime\Core\Exceptions\NotFoundException;
 use Leantime\Core\Exceptions\ValidationException;
+use Leantime\Domain\Reminders\Events\ReminderDefaultsUpdated;
+use Leantime\Domain\Reminders\Events\TaskReminderUpdated;
 use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
 use Leantime\Domain\Setting\Permissions\SettingPermissions;
 use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
@@ -79,6 +81,7 @@ class Reminders
         }
 
         $this->settings->save($userId, $summary, $summaryTime, $taskPreset);
+        ReminderDefaultsUpdated::dispatch(userId: $userId);
 
         return $this->getSettings();
     }
@@ -135,12 +138,14 @@ class Reminders
             // default (a routine every weekday inherits "only the morning it's due").
             $inherited = $this->inheritedFor($userId, $ticket);
             $this->settings->saveTaskChoice($userId, $ticketId, $preset === $inherited ? null : $preset);
+            ReminderDefaultsUpdated::dispatch(userId: $userId);
 
             return $this->taskReminderState($userId, $ticket);
         }
 
         $inherited = $this->inheritedFor($userId, $ticket);
         $this->settings->saveTaskChoice($userId, $ticketId, $preset === $inherited ? null : $preset);
+        TaskReminderUpdated::dispatch(ticketId: $ticketId, userId: $userId);
 
         return $this->taskReminderState($userId, $ticket);
     }
@@ -165,6 +170,7 @@ class Reminders
         // their own to-dos an explicit "off" is kept.
         $remove = $preset === 'inherit' || ($preset === ReminderSettings::PRESET_OFF && ! $this->isYours($userId, $ticket));
         $this->settings->saveTaskChoice($userId, $ticketId, $remove ? null : $preset);
+        TaskReminderUpdated::dispatch(ticketId: $ticketId, userId: $userId);
 
         return true;
     }

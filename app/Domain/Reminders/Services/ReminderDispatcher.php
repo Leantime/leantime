@@ -25,8 +25,10 @@ use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
  * minutes while a slow run could still be going. Each person's send takes its own short lock
  * (same cache store as the scheduler's) and checks the inbox again inside it, so two runs can
  * never both send: the second can't get the lock, or finds the row. A run also stops starting
- * new people after {@see MAX_RUN_SECONDS}, well inside the overlap lock; the rest go out on the
- * next run, still inside their window.
+ * new people after {@see MAX_RUN_SECONDS}, well inside the overlap lock; the next run starts where
+ * it stopped (and wraps around), so the people after that point are reached even when the ones
+ * before it keep runs busy. Right before a send the clock is read again: a summary whose day or
+ * window ended while the run was busy is skipped, and the inbox row carries the real send time.
  *
  * An empty day writes nothing. A later run inside the window still sends one summary if something
  * has come due since, so a person gets at most one summary a day, and maybe none.
@@ -52,6 +54,12 @@ class ReminderDispatcher
     /** How long one person's send lock lasts; it covers one inbox check and one insert. */
     public const SEND_LOCK_SECONDS = 60;
 
+    /** Where a run that reached its time limit stopped: the last user id it handled. */
+    public const CURSOR_KEY = 'reminders:dispatch:cursor';
+
+    /** The time run() was given (tests), or null to read the real clock at each send. */
+    private ?CarbonImmutable $fixedNow = null;
+
     public function __construct(
         private ReminderRepository $reminders,
         private ReminderSettings $settings,
@@ -64,6 +72,7 @@ class ReminderDispatcher
      */
     public function run(?CarbonImmutable $nowUtc = null): int
     {
+        $this->fixedNow = $nowUtc;
         $nowUtc ??= CarbonImmutable::now('UTC');
         $startedAt = $this->seconds();
         $this->settings->recordHeartbeat($nowUtc->format('Y-m-d H:i:s'));
@@ -73,53 +82,86 @@ class ReminderDispatcher
         }
 
         $sent = 0;
-        $afterId = 0;
 
-        while (($users = $this->reminders->activeUsers($afterId, self::USERS_PER_CHUNK)) !== []) {
-            $afterId = (int) end($users)['id'];
-            $settings = $this->settings->forUsers(array_column($users, 'id'));
+        // Start after where the last run ran out of time, then wrap around to the start: people
+        // late in the list are reached even when the ones before them keep runs busy (an empty
+        // summary writes nothing, so the same people are rebuilt on every run).
+        $resumeAfter = $this->loadCursor();
 
-            // Who is due: summary on, local time inside the window after their summary time.
-            $since = [];
-            foreach ($users as $user) {
-                $mine = $settings[$user['id']];
-                if (! $mine['summary']) {
-                    continue;
-                }
-
-                $localNow = $nowUtc->setTimezone($mine['timezone']);
-                $minutesPast = self::minutesOfDay($localNow->format('H:i')) - self::minutesOfDay(self::dueTime($mine['summaryTime']));
-                if ($minutesPast < 0 || $minutesPast > self::WINDOW_MINUTES) {
-                    continue;
-                }
-
-                $since[$user['id']] = $localNow->startOfDay()->setTimezone('UTC')->format('Y-m-d H:i:s');
+        foreach ([[$resumeAfter, PHP_INT_MAX], [0, $resumeAfter]] as [$afterId, $upTo]) {
+            if ($afterId >= $upTo) {
+                continue;
             }
 
-            $alreadySent = $this->reminders->summariesSentSince($since);
-
-            foreach (array_keys($since) as $userId) {
-                if (isset($alreadySent[$userId])) {
-                    continue;
+            while (($users = $this->reminders->activeUsers($afterId, self::USERS_PER_CHUNK)) !== []) {
+                $isFullChunk = count($users) === self::USERS_PER_CHUNK;
+                $users = array_values(array_filter($users, fn (array $user): bool => (int) $user['id'] <= $upTo));
+                if ($users === []) {
+                    break;
                 }
 
-                if ($this->seconds() - $startedAt > self::MAX_RUN_SECONDS) {
-                    Log::info('Morning summaries: run reached '.self::MAX_RUN_SECONDS.' seconds; the rest go out on the next run.');
+                $afterId = (int) end($users)['id'];
+                $settings = $this->settings->forUsers(array_column($users, 'id'));
 
-                    return $sent;
+                // Who is due: summary on, local time inside the window after their summary time.
+                $since = [];
+                foreach ($users as $user) {
+                    $dueSince = self::dueSince($settings[$user['id']], $nowUtc);
+                    if ($dueSince !== null) {
+                        $since[$user['id']] = $dueSince;
+                    }
                 }
 
-                if ($this->sendOnce($userId, $since[$userId], $nowUtc, $settings[$userId])) {
-                    $sent++;
-                }
-            }
+                $alreadySent = $this->reminders->summariesSentSince($since);
 
-            if (count($users) < self::USERS_PER_CHUNK) {
-                break;
+                foreach (array_keys($since) as $userId) {
+                    if (isset($alreadySent[$userId])) {
+                        continue;
+                    }
+
+                    if ($this->seconds() - $startedAt > self::MAX_RUN_SECONDS) {
+                        Log::info('Morning summaries: run reached '.self::MAX_RUN_SECONDS.' seconds; the next run continues from here.');
+                        $this->saveCursor($userId - 1);
+
+                        return $sent;
+                    }
+
+                    if ($this->sendOnce($userId, $since[$userId], $nowUtc, $settings[$userId])) {
+                        $sent++;
+                    }
+                }
+
+                if (! $isFullChunk) {
+                    break;
+                }
             }
         }
 
+        $this->clearCursor();
+
         return $sent;
+    }
+
+    /**
+     * Since when (UTC, the person's local midnight) a person's summary counts as sent today, when
+     * it is due at $nowUtc: summary on, and their local time inside the window after their
+     * summary time. Null when it isn't due.
+     *
+     * @param  array{summary: bool, summaryTime: string, taskPreset: string, timezone: string}  $mine
+     */
+    public static function dueSince(array $mine, CarbonImmutable $nowUtc): ?string
+    {
+        if (! $mine['summary']) {
+            return null;
+        }
+
+        $localNow = $nowUtc->setTimezone($mine['timezone']);
+        $minutesPast = self::minutesOfDay($localNow->format('H:i')) - self::minutesOfDay(self::dueTime($mine['summaryTime']));
+        if ($minutesPast < 0 || $minutesPast > self::WINDOW_MINUTES) {
+            return null;
+        }
+
+        return $localNow->startOfDay()->setTimezone('UTC')->format('Y-m-d H:i:s');
     }
 
     /**
@@ -139,6 +181,13 @@ class ReminderDispatcher
                 return false;
             }
 
+            // The run may have been busy for minutes: still the same local day, still inside the
+            // window? Otherwise this summary is stale (yesterday's, or "this morning" too late).
+            $sendNow = $this->currentTime();
+            if (self::dueSince($mine, $sendNow) !== $sinceUtc) {
+                return false;
+            }
+
             $user = $this->reminders->activeUser($userId);
             if ($user === null) {
                 return false;
@@ -154,7 +203,7 @@ class ReminderDispatcher
                     return false;
                 }
 
-                $this->notifier->recordSummary($user, $summary, $nowUtc);
+                $this->notifier->recordSummary($user, $summary, $sendNow);
             } finally {
                 $lock->release();
             }
@@ -169,10 +218,32 @@ class ReminderDispatcher
         }
     }
 
+    /** The last user id a run handled before it ran out of time; 0 when the last run finished. */
+    protected function loadCursor(): int
+    {
+        return (int) Cache::get(self::CURSOR_KEY, 0);
+    }
+
+    protected function saveCursor(int $lastHandledUserId): void
+    {
+        Cache::put(self::CURSOR_KEY, max(0, $lastHandledUserId), CarbonImmutable::now()->addDay());
+    }
+
+    protected function clearCursor(): void
+    {
+        Cache::forget(self::CURSOR_KEY);
+    }
+
     /** One person's send lock, in the default cache store (the one the scheduler's locks use). */
     protected function sendLock(int $userId): Lock
     {
         return Cache::lock('reminders:summary:'.$userId, self::SEND_LOCK_SECONDS);
+    }
+
+    /** The time a summary is recorded at: the time run() was given, else the real clock now. */
+    protected function currentTime(): CarbonImmutable
+    {
+        return $this->fixedNow ?? CarbonImmutable::now('UTC');
     }
 
     /** Seconds on a steady clock, to bound a run. */
