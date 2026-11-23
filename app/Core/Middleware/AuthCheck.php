@@ -69,7 +69,11 @@ class AuthCheck
             return new Response(json_encode(['error' => 'Invalid request path']), Response::HTTP_BAD_REQUEST);
         }
 
-        if ($this->isPublicController($request->getCurrentRoute()) || $this->isPublicOAuthEndpoint($request)) {
+        if (
+            $this->isPublicController($request->getCurrentRoute())
+            || $this->isWellKnownPath($request)
+            || $this->isPublicOAuthEndpoint($request)
+        ) {
             return $next($request);
         }
 
@@ -284,10 +288,20 @@ class AuthCheck
     }
 
     /**
-     * Public OAuth endpoints: the discovery documents, dynamic client registration and the token
-     * endpoint. (/oauth/authorize is not public: it needs a signed-in user.) The generic
-     * {@see self::isPublicController()} can't express these: "/.well-known/…" starts with a dot,
+     * "/.well-known/…" (RFC 8615) is the discovery namespace that clients read before they have
+     * credentials: OAuth metadata for MCP clients, /.well-known/caldav for calendar apps. Each
+     * handler there does its own authentication, and a path nothing registered is a 404. The
+     * generic {@see self::isPublicController()} can't express this: the path starts with a dot,
      * which that check uses as its separator.
+     */
+    protected function isWellKnownPath(IncomingRequest $request): bool
+    {
+        return ($request->normalizedSegments()[0] ?? '') === '.well-known';
+    }
+
+    /**
+     * Public OAuth endpoints: dynamic client registration and the token endpoint. (/oauth/authorize
+     * is not public: it needs a signed-in user. The discovery documents are under /.well-known.)
      */
     protected function isPublicOAuthEndpoint(IncomingRequest $request): bool
     {
@@ -296,14 +310,8 @@ class AuthCheck
         }
 
         $segments = $request->normalizedSegments();
-        $firstSegment = $segments[0] ?? '';
-        $secondSegment = $segments[1] ?? '';
 
-        if ($firstSegment === '.well-known') {
-            return in_array($secondSegment, ['oauth-protected-resource', 'oauth-authorization-server'], true);
-        }
-
-        return $firstSegment === 'oauth' && count($segments) === 2 && in_array($secondSegment, ['token', 'register'], true);
+        return $segments === ['oauth', 'token'] || $segments === ['oauth', 'register'];
     }
 
     /**

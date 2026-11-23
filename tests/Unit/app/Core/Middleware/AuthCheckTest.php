@@ -120,6 +120,29 @@ class AuthCheckTest extends \Unit\TestCase
         $this->assertTrue($authCheck->isPublicController('status'));
     }
 
+    /** Invoke the protected isWellKnownPath() on a constructor-less AuthCheck. */
+    private function isWellKnownPath(string $path): bool
+    {
+        $authCheck = $this->make(AuthCheck::class);
+        $request = IncomingRequest::create($path, 'PROPFIND');
+
+        return (fn () => $this->isWellKnownPath($request))->call($authCheck);
+    }
+
+    public function test_well_known_discovery_paths_are_public(): void
+    {
+        // Calendar apps (RFC 6764) and MCP clients (RFC 9728/8414) read these before they have
+        // credentials. Regression: /.well-known/caldav was sent to the login page.
+        $this->assertTrue($this->isWellKnownPath('/.well-known/caldav'));
+        $this->assertTrue($this->isWellKnownPath('/.well-known/oauth-protected-resource/mcp'));
+        $this->assertTrue($this->isWellKnownPath('/.WELL-KNOWN/caldav'));
+
+        // Negative controls: only the namespace itself, not lookalikes.
+        $this->assertFalse($this->isWellKnownPath('/well-known/caldav'));
+        $this->assertFalse($this->isWellKnownPath('/caldav/.well-known'));
+        $this->assertFalse($this->isWellKnownPath('/.well-knownx/caldav'));
+    }
+
     // ---------------------------------------------------------------------
     // API auth path: the cookie session guard is only honoured for same-origin XHR calls whose
     // session completed 2FA. Everything else needs an API key or Bearer token.
