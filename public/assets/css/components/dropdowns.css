@@ -113,7 +113,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding-top:10px;
     padding-bottom:5px;
     font-size: var(--font-size-m);
-    color:var(--interactive-icon-color);
+    /* Section headings are text, so they need text contrast (the icon grey is 4.47:1 on white). */
+    color: var(--color-text-secondary, var(--interactive-icon-color));
     text-transform:none;
 }
 
@@ -683,4 +684,89 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .grid-stack-item-content.maincontentinner .inlineDropDownContainer .ticketDropDown,
 .grid-stack-item-content.maincontentinner .grid-handler-top {
     color: var(--interactive-icon-color);
+}
+
+/* Floating menus (data-lt-dropdown-float, core/menus.js) sit above dialogs. */
+[data-lt-dropdown-float].open > .dropdown-menu {
+    z-index: 1100;
+}
+
+/* "Remind me" inside a to-do's ⋮ menu (reminders::partials.taskReminderMenu): one item that
+   drills into the choices in place (core/menus.js adds .lt-drilled to the menu). */
+.dropdown-menu .lt-reminder-menu {
+    padding: 0;
+}
+
+.dropdown-menu.lt-drilled > li:not(.lt-reminder-menu),
+.dropdown-menu.lt-drilled .lt-reminder-menu .lt-reminder-choice.lt-reminder-top {
+    display: none;
+}
+
+.dropdown-menu .lt-reminder-panel[hidden] {
+    display: none;
+}
+
+.dropdown-menu .lt-reminder-panel {
+    padding-bottom: 4px;
+}
+
+.dropdown-menu .lt-reminder-menu .lt-reminder-chevron {
+    margin-left: auto;
+    padding-left: 12px;
+    font-size: var(--font-size-s);
+}
+
+.dropdown-menu .lt-reminder-menu .lt-reminder-back {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid var(--main-border-color);
+    background: transparent;
+    font-weight: var(--font-weight-bold, 600);
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-menu .lt-reminder-menu .lt-reminder-loading {
+    color: var(--color-text-secondary, var(--primary-font-color));
+}
+
+.dropdown-menu .lt-reminder-hint {
+    max-width: 280px;
+    margin: 0;
+    padding: 4px 10px 6px;
+    color: var(--color-text-secondary, var(--primary-font-color));
+    font-size: var(--font-size-s);
+    white-space: normal;
+}
+
+.dropdown-menu .lt-reminder-menu .lt-reminder-choice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px 0 10px;
+    color: var(--dropdown-link-color, var(--primary-font-color));
+    white-space: nowrap;
+}
+
+.dropdown-menu .lt-reminder-menu .lt-reminder-choice:hover {
+    background: var(--dropdown-link-hover-bg, var(--col-hover-bg));
+}
+
+.dropdown-menu .lt-reminder-menu .lt-reminder-choice:focus-visible {
+    outline: 2px solid var(--color-text-link, var(--accent1));
+    outline-offset: -2px;
+}
+
+.lt-reminder-menu .lt-reminder-check {
+    width: 14px;
+}
+
+.lt-reminder-menu [aria-checked="false"] .lt-reminder-check,
+.lt-reminder-menu .lt-reminder-for-all .lt-reminder-check {
+    visibility: hidden;
+}
+
+.lt-reminder-menu .lt-reminder-default {
+    color: var(--color-text-secondary, var(--primary-font-color));
 }

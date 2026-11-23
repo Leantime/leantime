@@ -60,6 +60,16 @@ class Mailer
 
     private bool $hideWrapper = false;
 
+    /**
+     * Greeting above the content; null uses the standard "Hi," greeting.
+     */
+    private ?string $headline = null;
+
+    /**
+     * HTML under the message; null uses the standard "unsubscribe" line.
+     */
+    private ?string $footer = null;
+
     public bool $nl2br = true;
 
     /**
@@ -245,6 +255,23 @@ class Mailer
     }
 
     /**
+     * Replaces the standard "Hi," greeting with this HTML (escape any user data first).
+     */
+    public function setHeadline(?string $headline): void
+    {
+        $this->headline = $headline;
+    }
+
+    /**
+     * Replaces the standard "unsubscribe" line under the message with this HTML, for emails
+     * that explain their own settings (escape any user data first).
+     */
+    public function setFooter(?string $footer): void
+    {
+        $this->footer = $footer;
+    }
+
+    /**
      * setSubject - set mail subject
      */
     public function setSubject($subject): void
@@ -355,6 +382,9 @@ class Mailer
             (string) ($this->context ?? 'email')
         );
 
+        $headline = $this->headline ?? $this->language->__('email_notifications.hi');
+        $footer = $this->footer ?? sprintf($this->language->__('email_notifications.unsubscribe'), $profileUrl);
+
         $mailBody = $this->hideWrapper ? $this->html : app('blade.compiler')::render(
             $this->dispatchMailerFilter('bodyTemplate', '<table width="100%" style="background:#fefefe; padding:15px; ">
                 <tr>
@@ -386,9 +416,9 @@ class Mailer
                 'mailBodyParams',
                 [
                     'inlineLogoContent' => $inlineLogoContent,
-                    'headline' => $this->language->__('email_notifications.hi'),
+                    'headline' => $headline,
                     'content' => $this->nl2br ? nl2br($this->html) : $this->html,
-                    'unsub_link' => sprintf($this->language->__('email_notifications.unsubscribe'), $profileUrl),
+                    'unsub_link' => $footer,
                 ]
             )
         );
@@ -400,9 +430,9 @@ class Mailer
                 [
                     'companyColor' => $this->companyColor,
                     'logoUrl' => $inlineLogoContent,
-                    'languageHiText' => $this->language->__('email_notifications.hi'),
+                    'languageHiText' => $headline,
                     'emailContentsHtml' => nl2br($this->html),
-                    'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), $profileUrl),
+                    'unsubLink' => $footer,
                 ],
             ]
         );

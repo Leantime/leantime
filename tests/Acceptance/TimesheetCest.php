@@ -157,19 +157,31 @@ class TimesheetCest
     {
         $I->wantTo('Change timezone and see the correct timesheet');
 
-        // Change timezone and see the correct timesheet.
+        // The hours were entered on Monday and Tuesday of the current Los Angeles week. Copenhagen's
+        // current week is a different one between Sunday ~23:00 UTC and Monday ~08:00 UTC (Monday in
+        // Copenhagen, still Sunday in Los Angeles), so open the Copenhagen week that holds the first
+        // entry instead of the current one. Los Angeles midnight is 08:00–10:00 in Copenhagen, so the
+        // entry stays on the same weekday. (#4086)
+        $firstEntryWorkDate = $I->grabFromDatabase('zp_timesheets', 'workDate', ['id' => 1]);
+        $entryWeekStartInCopenhagen = (new \DateTimeImmutable($firstEntryWorkDate, new \DateTimeZone('UTC')))
+            ->setTimezone(new \DateTimeZone('Europe/Copenhagen'))
+            ->modify('monday this week')
+            ->format('m/d/Y'); // The test user's date format (en-US).
+
         $this->changeUsersTimeZone($I, 'Europe/Copenhagen');
 
-        // Check timesheet
-        $I->amOnPage('/timesheets/showMy');
-        $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
-        $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
-        $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
+        // Switch back even when an assertion fails, so editTimesheet and deleteTimesheet
+        // don't run in Copenhagen's week.
+        try {
+            $this->openTimesheetWeek($I, $entryWeekStartInCopenhagen);
 
-        $I->seeInSource('<td id="finalSum">6</td>');
+            $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
+            $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
 
-        // Switch back.
-        $this->changeUsersTimeZone($I);
+            $I->seeInSource('<td id="finalSum">6</td>');
+        } finally {
+            $this->changeUsersTimeZone($I);
+        }
     }
 
     #[Group('timesheet')]
@@ -295,6 +307,28 @@ class TimesheetCest
         $I->waitForElementVisible('#allTimesheetsTable');
         $I->wait(5);
         $I->cantSee('#1 - Edit');
+    }
+
+    /**
+     * Open the weekly timesheet for the week that starts on the given date.
+     *
+     * Uses the week range form, the same request the previous/next week arrows send.
+     *
+     * @param  AcceptanceTester  $I  The AcceptanceTester object representing the test runner.
+     * @param  string  $weekStart  The Monday of the week, in the user's date format.
+     */
+    private function openTimesheetWeek(AcceptanceTester $I, string $weekStart): void
+    {
+        $I->amOnPage('/timesheets/showMy');
+        $I->waitForElementVisible('#startDate');
+        // The marker only lives on the current page: once it's gone, the requested week has loaded.
+        $I->executeJS(
+            'window.__ltTimesheetWeekPending = true; jQuery("#startDate").val(arguments[0]); jQuery("#timesheetList").submit();',
+            [$weekStart]
+        );
+        $I->waitForJS('return window.__ltTimesheetWeekPending === undefined && document.readyState === "complete";', 60);
+        $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
+        $I->seeInField('#startDate', $weekStart);
     }
 
     /**

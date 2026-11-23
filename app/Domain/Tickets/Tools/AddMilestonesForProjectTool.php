@@ -8,6 +8,7 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -121,6 +122,13 @@ class AddMilestonesForProjectTool extends Tool
                         'message' => 'Failed to create milestone',
                     ];
                 }
+            } catch (LeantimeExceptionInterface $e) {
+                $failureCount++;
+                $results[] = [
+                    'headline' => $milestoneData['headline'] ?? 'Unknown',
+                    'status' => 'error',
+                    'message' => ToolErrorMessage::for($e),
+                ];
             } catch (\Exception $e) {
                 $failureCount++;
                 $results[] = [

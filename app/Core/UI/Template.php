@@ -552,6 +552,33 @@ class Template
     }
 
     /**
+     * The inline script that shows a notification.
+     *
+     * Notifications are HTML (some carry a link or a line break), and callers are expected to
+     * escape the user data they put in them. As a backstop the message is cleaned like rich text
+     * here (no scripts, event handlers or javascript: links) and passed with html: true, since growl
+     * shows plain text otherwise. The style becomes a class name, so it keeps only class-safe
+     * characters. Both values are JSON-encoded so a quote or "</script>" can't end the string or
+     * the script.
+     */
+    public function growlScript(string $message, string $style): string
+    {
+        $flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE;
+
+        return '<script type="text/javascript">jQuery.growl({message: '
+            .json_encode($this->escapeMinimal($message), $flags)
+            .', style: '.json_encode(self::growlStyle($style), $flags).', html: true});</script>';
+    }
+
+    /**
+     * A notification style as a class-name token: letters, digits, '_' and '-' only.
+     */
+    public static function growlStyle(string $style): string
+    {
+        return (string) preg_replace('/[^A-Za-z0-9_-]/', '', $style);
+    }
+
+    /**
      * displayNotification - display notification
      *
      * @throws BindingResolutionException
@@ -575,13 +602,7 @@ class Template
         );
 
         if (! empty($note) && $note['msg'] != '' && $note['type'] != '') {
-            $notification .= app('blade.compiler')::render(
-                '<script type="text/javascript">jQuery.growl({message: "{!! $message !!}", style: "{{ $style }}"});</script>',
-                [
-                    'message' => $message,
-                    'style' => $note['type'],
-                ]
-            );
+            $notification .= $this->growlScript((string) $message, (string) $note['type']);
 
             self::dispatchEvent('notification_displayed', $note);
 

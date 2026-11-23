@@ -1721,10 +1721,10 @@ class Projects extends BaseService implements ChecksProjectAccess
 
                 session(['currentProjectClient' => $project['clientName']]);
 
-                session(['userdata.projectRole' => '']);
-                if ($projectRole != '') {
-                    session(['userdata.projectRole' => Roles::getRoleString($projectRole)]);
-                }
+                // Stored as a role key, or as a role name on legacy rows; unknown values inherit ('').
+                // AuthenticateSession refreshes this value on every request the same way.
+                $projectRoleKey = Roles::getRoleKey($projectRole);
+                session(['userdata.projectRole' => $projectRoleKey === false ? '' : (string) Roles::getRoleString($projectRoleKey)]);
 
                 session(['currentSprint' => '']);
                 session(['currentIdeaCanvas' => '']);

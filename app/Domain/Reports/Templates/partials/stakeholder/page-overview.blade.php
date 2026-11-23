@@ -360,7 +360,9 @@
         }
         $newest = $notesArr[0]; // repo returns newest first
         $narrativeNotes[] = [
-            'label'     => __('stakeholder.overview.narrative_portfolio'),
+            // The report's own subject (the strategy, or the program): name it, so a
+            // program's update doesn't read as "Portfolio".
+            'label'     => ($subject ?? '') !== '' ? $subject : __('stakeholder.overview.narrative_portfolio'),
             'text'      => trim(strip_tags((string) ($newest->text ?? ''))),
             'date'      => (string) ($newest->date ?? ''),
             'portfolio' => true,

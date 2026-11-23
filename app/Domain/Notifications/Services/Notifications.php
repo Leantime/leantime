@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Notifications\Services;
 
+use Carbon\CarbonImmutable;
 use DOMDocument;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Http\TrustedAppUrl;
@@ -11,6 +12,8 @@ use Leantime\Core\Support\NameSanitizer;
 use Leantime\Domain\Notifications\Events\PushDeviceRegistered;
 use Leantime\Domain\Notifications\Events\UserMentioned;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
+use Leantime\Domain\Reminders\Services\ReminderNotifier;
+use Leantime\Domain\Reminders\Services\ReminderSettings;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
 /**
@@ -38,6 +41,47 @@ class Notifications
         $this->notificationsRepo = $notificationsRepo;
         $this->userRepository = $userRepository;
         $this->language = $language;
+    }
+
+    /**
+     * The bell's list: the person's notifications, newest first, with today's morning summary
+     * pinned on top. Not exposed via JSON-RPC: it accepts an arbitrary $userId.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getBellNotifications(int $userId, ?CarbonImmutable $nowUtc = null): array
+    {
+        return $this->pinTodaysSummary($this->getAllNotifications($userId) ?: [], $userId, true, $nowUtc);
+    }
+
+    /**
+     * Marks today's morning summary with pinned = true and every other row with pinned = false.
+     * "Today" is the person's own day: the summary written at or after their local midnight. Its
+     * read state is untouched, so reading it clears the unread highlight but not the pin; from
+     * the next local midnight it sorts by date like any other row.
+     *
+     * With $moveToTop the pinned row goes first (fetched separately when it isn't among $rows);
+     * without it the order is kept, for API callers that sort themselves.
+     *
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    public function pinTodaysSummary(array $rows, int $userId, bool $moveToTop = true, ?CarbonImmutable $nowUtc = null): array
+    {
+        $timezone = app()->make(ReminderSettings::class)->forUser($userId)['timezone'];
+        $sinceUtc = ($nowUtc ?? CarbonImmutable::now('UTC'))->setTimezone($timezone)->startOfDay()->setTimezone('UTC')->format('Y-m-d H:i:s');
+        $today = $this->notificationsRepo->newestOfTypeSince($userId, ReminderNotifier::TYPE_SUMMARY, $sinceUtc);
+        $pinnedId = $today === null ? null : (int) $today['id'];
+
+        $rows = array_map(fn (array $row) => ['pinned' => $pinnedId !== null && (int) ($row['id'] ?? 0) === $pinnedId] + $row, $rows);
+
+        if (! $moveToTop || $today === null) {
+            return $rows;
+        }
+
+        $rest = array_values(array_filter($rows, fn (array $row) => ! $row['pinned']));
+
+        return [['pinned' => true] + $today, ...$rest];
     }
 
     /**
@@ -200,7 +244,8 @@ class Notifications
         $limitStart = max(0, $limitStart);
         $limitEnd = min(max(1, $limitEnd), 100);
 
-        return $this->notificationsRepo->getAllNotifications($userId, (bool) $showNewOnly, $limitStart, $limitEnd) ?: [];
+        // Each row says whether it is today's pinned morning summary; the order stays newest first.
+        return $this->pinTodaysSummary($this->notificationsRepo->getAllNotifications($userId, (bool) $showNewOnly, $limitStart, $limitEnd) ?: [], $userId, false);
     }
 
     /**
