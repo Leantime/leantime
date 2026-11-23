@@ -331,6 +331,8 @@ class CalendarServiceTest extends TestCase
             'patch' => 'calendar.edit',
             'delEvent' => 'calendar.delete',
             'deleteGCal' => 'calendar.delete',
+            'getShowPlannedDays' => 'calendar.view',
+            'saveShowPlannedDays' => 'calendar.view',
         ];
         foreach ($expected as $method => $permission) {
             $this->assertTrue($isApi($method), "$method should stay @api");
@@ -391,6 +393,98 @@ class CalendarServiceTest extends TestCase
             $editEvents[0]['dateTo'],
             'editTo should fall back to editFrom when empty'
         );
+    }
+
+    /**
+     * A date-only Work Start is a planned day. It stays off the calendar by default, because a
+     * plan shown on a calendar reads as a commitment; with "Show planned days" on it is all-day.
+     * Time-boxed Work Starts always show.
+     */
+    public function test_get_calendar_leaves_planned_days_out_unless_shown(): void
+    {
+        session(['usersettings.timezone' => 'America/Los_Angeles']);
+        app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+
+        $plannedDay = [
+            'id' => 21, 'headline' => 'Draft the survey', 'description' => '', 'projectId' => 3, 'status' => 3,
+            'dateToFinish' => '',
+            'editFrom' => '2026-11-24 08:00:00', // midnight in Los Angeles
+            'editTo' => null,
+        ];
+        $timeBoxed = [
+            'id' => 22, 'headline' => 'Coaching call', 'description' => '', 'projectId' => 3, 'status' => 3,
+            'dateToFinish' => '',
+            'editFrom' => '2026-11-24 22:00:00', // 14:00 in Los Angeles
+            'editTo' => '2026-11-24 23:30:00',
+        ];
+
+        app()->instance(Tickets::class, $this->make(Tickets::class, [
+            'getOpenUserTicketsThisWeekAndLater' => fn () => ['thisWeek' => ['tickets' => [$plannedDay, $timeBoxed]]],
+            'getStatusLabels' => fn () => [],
+        ]));
+
+        $editEvents = function (string $setting): array {
+            $service = new \Leantime\Domain\Calendar\Services\Calendar(
+                calendarRepo: $this->make(CalendarRepository::class, ['getAll' => fn () => []]),
+                language: $this->language,
+                settingsRepo: $this->make(Setting::class, ['getSetting' => $setting]),
+                config: $this->config,
+                outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
+            );
+
+            $events = array_values(array_filter($service->getCalendar(1), fn ($e) => ($e['dateContext'] ?? null) === 'edit'));
+
+            return array_combine(array_column($events, 'id'), $events);
+        };
+
+        $hidden = $editEvents('');
+        $this->assertSame([22], array_keys($hidden), 'only the time box shows by default');
+        $this->assertFalse($hidden[22]['allDay']);
+
+        $shown = $editEvents('1');
+        $this->assertSame([21, 22], array_keys($shown));
+        $this->assertTrue($shown[21]['allDay'], 'a planned day shows as all-day, not at midnight');
+        $this->assertFalse($shown[22]['allDay']);
+
+        app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+    }
+
+    public function test_show_planned_days_is_saved_per_person_and_off_when_cleared(): void
+    {
+        session(['userdata.id' => 7]);
+        $saved = [];
+        $deleted = [];
+
+        $service = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->calendarRepository,
+            language: $this->language,
+            settingsRepo: $this->make(Setting::class, [
+                'saveSetting' => function ($key, $value) use (&$saved) {
+                    $saved[$key] = $value;
+
+                    return true;
+                },
+                'deleteSetting' => function ($key) use (&$deleted) {
+                    $deleted[] = $key;
+
+                    return true;
+                },
+                'getSetting' => function ($key) use (&$saved) {
+                    return $saved[$key] ?? false;
+                },
+            ]),
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
+        );
+
+        $this->assertFalse($service->getShowPlannedDays(), 'off by default');
+
+        $this->assertTrue($service->saveShowPlannedDays(true));
+        $this->assertSame(['usersettings.7.calendar.showPlannedDays' => '1'], $saved);
+        $this->assertTrue($service->getShowPlannedDays());
+
+        $this->assertFalse($service->saveShowPlannedDays(false));
+        $this->assertSame(['usersettings.7.calendar.showPlannedDays'], $deleted);
     }
 
     /**

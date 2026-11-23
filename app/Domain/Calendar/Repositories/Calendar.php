@@ -12,6 +12,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketsRepository;
+use Leantime\Domain\Tickets\Support\WorkStart;
 use Leantime\Domain\Users\Repositories\Users;
 
 class Calendar extends RepositoryCore
@@ -117,13 +118,18 @@ class Calendar extends RepositoryCore
      * access explicitly. The session-scoped Tickets service would scope them to nobody and the
      * feed lost every To-Do (#4018).
      *
+     * Date-only Work Starts (planned days) are left out unless the owner turned "Show planned
+     * days" on; then they go out as all-day events.
+     *
      * @param  int  $userId  The feed owner, already authenticated by the feed hashes
      * @param  int|null  $clientId  The feed owner's client (grants client-visible projects)
+     * @param  bool  $showPlannedDays  Whether the owner shows planned days on their calendar
+     * @param  string  $timezone  The owner's timezone, which decides what counts as a planned day
      * @return array<int, array<string, mixed>> Event arrays
      *
      * @throws BindingResolutionException
      */
-    public function getCalendar(int $userId, ?int $clientId = null): array
+    public function getCalendar(int $userId, ?int $clientId = null, bool $showPlannedDays = false, string $timezone = 'UTC'): array
     {
         $ticketRepo = app()->make(TicketsRepository::class);
         $tickets = $ticketRepo->getAllBySearchCriteria(
@@ -216,20 +222,23 @@ class Calendar extends RepositoryCore
                     );
                 }
 
-                if (
-                    dtHelper()->isValidDateString($ticket['editFrom'])
-                    && dtHelper()->isValidDateString($ticket['editTo'])
-                ) {
-                    // Set ticket to all-day ticket when no time is set
+                $hasWorkStart = dtHelper()->isValidDateString($ticket['editFrom']);
+                $hasWorkEnd = dtHelper()->isValidDateString($ticket['editTo']);
+
+                // A date-only Work Start is a plan for the day. It is left out of the feed unless
+                // the owner turned "Show planned days" on, and then goes out as all-day.
+                $isPlannedDay = $hasWorkStart
+                    && WorkStart::isDateOnly($ticket['editFrom'], $ticket['editTo'] ?? null, $timezone);
+
+                if ($hasWorkStart && ($hasWorkEnd || $isPlannedDay) && (! $isPlannedDay || $showPlannedDays)) {
                     $dateFrom = dtHelper()->parseDbDateTime($ticket['editFrom']);
-                    $dateTo = dtHelper()->parseDbDateTime($ticket['editTo']);
+                    $dateTo = $hasWorkEnd ? dtHelper()->parseDbDateTime($ticket['editTo']) : $dateFrom;
 
-                    $allDay = false;
-                    if ($dateFrom->diffInDays($dateTo) >= 1) {
-                        $allDay = true;
-                    }
+                    $allDay = $isPlannedDay || $dateFrom->diffInDays($dateTo) >= 1;
 
-                    $context = $this->language->__('label.planned_edit');
+                    $context = $isPlannedDay
+                        ? $this->language->__('label.planned_day_prefix')
+                        : $this->language->__('label.planned_edit');
 
                     $newValues[] = $this->mapEventData(
                         title: $context.$ticket['headline'].' ('.$statusName.')',
@@ -242,7 +251,7 @@ class Calendar extends RepositoryCore
                         backgroundColor: $backgroundColor,
                         borderColor: $statusColor,
                         dateFrom: $ticket['editFrom'],
-                        dateTo: $ticket['editTo']
+                        dateTo: $hasWorkEnd ? $ticket['editTo'] : $ticket['editFrom']
                     );
                 }
             }
@@ -308,15 +317,26 @@ class Calendar extends RepositoryCore
         $settingService = app()->make(Setting::class);
         $hash = $settingService->getSetting('usersettings.'.$user['id'].'.icalSecret');
 
+        $timezone = (string) ($settingService->getSetting('usersettings.'.$user['id'].'.timezone') ?: $this->config->defaultTimezone);
+
         session([
-            'usersettings.timezone' => $settingService->getSetting('usersettings.'.$user['id'].'.timezone') ?: $this->config->defaultTimezone,
+            'usersettings.timezone' => $timezone,
         ]);
 
         if (empty($hash) || ! hash_equals((string) $hash, $calHash)) {
             return false;
         }
 
-        return $this->getCalendar((int) $user['id'], isset($user['clientId']) ? (int) $user['clientId'] : null);
+        $showPlannedDays = (string) $settingService->getSetting(
+            'usersettings.'.$user['id'].'.'.\Leantime\Domain\Calendar\Services\Calendar::SHOW_PLANNED_DAYS_SETTING
+        ) === '1';
+
+        return $this->getCalendar(
+            (int) $user['id'],
+            isset($user['clientId']) ? (int) $user['clientId'] : null,
+            $showPlannedDays,
+            $timezone,
+        );
     }
 
     public function getTicketWishDates(): false|array

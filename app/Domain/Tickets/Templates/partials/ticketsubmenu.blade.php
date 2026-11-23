@@ -24,6 +24,10 @@
         <li><a href="#/tickets/delTicket/{{ $ticket["id"] }}" class="delete" data-lt-permitted><i class="fa fa-trash"></i> {{  __("links.delete_todo") }}</a></li>
         @endcan
 
+        @if(($ticket['type'] ?? '') !== 'milestone' && \Illuminate\Support\Facades\Gate::allows('tickets.edit', $ticket['projectId'] ?? null))
+            @include('tickets::partials.planMenu', ['ticket' => $ticket])
+        @endif
+
 
         @dispatchEvent("submenuSection", ["ticket"=>$ticket])
 

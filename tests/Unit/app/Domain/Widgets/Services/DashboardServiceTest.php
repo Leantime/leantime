@@ -389,9 +389,19 @@ class DashboardServiceTest extends TestCase
             'simpleTicketCounter' => fn () => 12,
             'getRecentlyCompletedTicketsByUser' => fn () => [['id' => 1], ['id' => 2]],
             'goalsRelatedToWork' => fn () => [['id' => 9]],
+            // Three time boxes, plus a date-only plan (id 4), which "Time boxed tasks completed"
+            // never counts: a plan for the day isn't scored.
             'getScheduledTasks' => fn () => [
-                'totalTasks' => [['id' => 1], ['id' => 2], ['id' => 3]],
-                'doneTasks' => [['id' => 1]],
+                'totalTasks' => [
+                    ['id' => 1, 'editFrom' => '2026-11-24 09:00:00', 'editTo' => '2026-11-24 10:00:00'],
+                    ['id' => 2, 'editFrom' => '2026-11-24 13:00:00', 'editTo' => '2026-11-24 14:30:00'],
+                    ['id' => 3, 'editFrom' => '2026-11-24 16:00:00', 'editTo' => null],
+                    ['id' => 4, 'editFrom' => '2026-11-24 00:00:00', 'editTo' => null],
+                ],
+                'doneTasks' => [
+                    ['id' => 1, 'editFrom' => '2026-11-24 09:00:00', 'editTo' => '2026-11-24 10:00:00'],
+                    ['id' => 4, 'editFrom' => '2026-11-24 00:00:00', 'editTo' => null],
+                ],
             ],
         ]);
         $projects = $this->make(ProjectService::class, [

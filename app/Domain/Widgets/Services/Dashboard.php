@@ -10,6 +10,7 @@ use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Tickets\Support\WorkStart;
 use Leantime\Domain\Users\Services\Users as UserService;
 
 /**
@@ -112,8 +113,17 @@ class Dashboard extends BaseService
         $todayStart = dtHelper()->userNow()->startOfDay();
         $todayEnd = dtHelper()->userNow()->endOfDay();
         $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, $userId);
-        $totalToday = count($todaysTasks['totalTasks'] ?? []);
-        $doneToday = count($todaysTasks['doneTasks'] ?? []);
+
+        // "Time boxed tasks completed" counts time boxes only. A date-only Work Start is a plan
+        // for the day, and a plan is never scored.
+        $timezone = $todayStart->getTimezone()->getName();
+        $isTimeBoxed = fn (array $task): bool => WorkStart::isTimeBoxed(
+            is_string($task['editFrom'] ?? null) ? $task['editFrom'] : null,
+            is_string($task['editTo'] ?? null) ? $task['editTo'] : null,
+            $timezone
+        );
+        $totalToday = count(array_filter($todaysTasks['totalTasks'] ?? [], $isTimeBoxed));
+        $doneToday = count(array_filter($todaysTasks['doneTasks'] ?? [], $isTimeBoxed));
 
         $allAssignedProjects = $this->projectsService->getProjectsAssignedToUser($userId, 'open');
 
