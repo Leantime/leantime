@@ -1,3 +1,10 @@
+# Version: 3.17.0
+
+## New Features
+- **CalDAV support in core** - Core now supports CalDAV with LAN servers, `/.well-known` paths and refreshed plugin strings, bundled with the CalDAV 1.1.0 plugin (#4105, #4111)
+
+---
+
 # Version: 3.16.0
 
 ## Highlights
