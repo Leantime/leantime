@@ -17,6 +17,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Plugins\PluginCompatibility;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Notifications\Services\Notifications;
@@ -2021,6 +2022,8 @@ class Plugins
     public function clearCache()
     {
         Cache::store('installation')->forget('domainEvents');
+        Cache::store('installation')->forget(EventDispatcher::domainCacheKey('domainEvents'));
+        Cache::store('installation')->forget(EventDispatcher::domainCacheKey('domainRoutes'));
         Cache::store('installation')->forget('commands');
         Cache::store('installation')->forget('plugins.enabledPlugins');
         Cache::store('installation')->forget($this->enabledPluginsCacheKey());
