@@ -41,9 +41,10 @@ class WeeklySummaryBuilderTest extends TestCase
         $this->finished = [];
         $this->recapCalls = [];
 
-        // Snapshot the dispatcher's registries and match caches, so a listener added in one test
-        // never reaches the next one.
-        foreach (['filterRegistry', 'available_hooks', 'patternMatchCache', 'compiledPatternCache', 'filterRegistryVersion'] as $property) {
+        // Keep the filter registry as it was, so a listener added in one test never reaches the
+        // next. Only the registry is kept (the match caches are cleared after each test instead):
+        // PHPUnit holds on to finished tests, so copies of large caches would add up over a run.
+        foreach (['filterRegistry', 'filterRegistryVersion'] as $property) {
             $this->savedFilters[$property] = (new \ReflectionProperty(EventDispatcher::class, $property))->getValue();
         }
     }
@@ -53,6 +54,11 @@ class WeeklySummaryBuilderTest extends TestCase
         foreach ($this->savedFilters as $property => $value) {
             (new \ReflectionProperty(EventDispatcher::class, $property))->setValue(null, $value);
         }
+        foreach (['patternMatchCache', 'compiledPatternCache'] as $cache) {
+            (new \ReflectionProperty(EventDispatcher::class, $cache))->setValue(null, []);
+        }
+        $this->savedFilters = [];
+        $this->db = null;
 
         parent::tearDown();
     }
@@ -277,6 +283,21 @@ class WeeklySummaryBuilderTest extends TestCase
 
         $this->assertTrue($week['isEmpty']);
         $this->assertSame(['plugin:other.notes'], array_column(array_slice($week['sections'], 1), 'kind'));
+    }
+
+    public function test_one_failing_plugin_does_not_take_the_others_sections_with_it(): void
+    {
+        EventDispatcher::add_filter_listener(WeeklySummarySectionsFilter::class, fn (array $sections) => [...$sections, ['kind' => 'plugin:myweek.picks', 'title' => 'Picks', 'countsForSending' => true]], 5);
+        EventDispatcher::add_filter_listener(WeeklySummarySectionsFilter::class, function () {
+            throw new \RuntimeException('plugin broke');
+        }, 10);
+        EventDispatcher::add_filter_listener(WeeklySummarySectionsFilter::class, fn (array $sections) => [...$sections, ['kind' => 'plugin:notes.week', 'title' => 'Notes']], 20);
+        EventDispatcher::add_filter_listener(WeeklySummarySectionsFilter::class, fn () => 'not a list', 30);
+
+        $week = $this->week();
+
+        $this->assertSame(['ahead', 'plugin:myweek.picks', 'plugin:notes.week'], array_column($week['sections'], 'kind'), 'kept: the one before and the one after the failure');
+        $this->assertFalse($week['isEmpty'], 'the section that counts still sends the summary');
     }
 
     public function test_a_failing_plugin_is_left_out_and_the_week_still_builds(): void

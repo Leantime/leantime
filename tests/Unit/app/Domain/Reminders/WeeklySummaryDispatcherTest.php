@@ -37,6 +37,9 @@ class WeeklySummaryDispatcherTest extends TestCase
 
     private bool $workspaceEnabled = true;
 
+    /** Another run records this user's morning summary while the weekly one is being built. */
+    private ?int $morningRecordedMeanwhile = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,6 +51,7 @@ class WeeklySummaryDispatcherTest extends TestCase
         $this->emptyWeek = [];
         $this->emptyDay = [];
         $this->workspaceEnabled = true;
+        $this->morningRecordedMeanwhile = null;
         Cache::forget(ReminderDispatcher::CURSOR_KEY);
         Cache::forget(WeeklySummaryDispatcher::CURSOR_KEY);
 
@@ -66,12 +70,20 @@ class WeeklySummaryDispatcherTest extends TestCase
             'recordHeartbeat' => fn () => null,
         ]);
         $morning = $this->make(SummaryBuilder::class, [
-            'build' => fn (int $userId) => ['isEmpty' => isset($this->emptyDay[$userId]), 'items' => [['id' => 1]]],
+            'build' => function (int $userId) use ($now) {
+                if ($this->morningRecordedMeanwhile === $userId) {
+                    $this->morningRecordedMeanwhile = null;
+                    $this->addSummaryRow($userId, $now->format('Y-m-d H:i:s'));
+                }
+
+                return ['isEmpty' => isset($this->emptyDay[$userId]), 'items' => [['id' => 1]]];
+            },
         ]);
         $weekly = $this->make(WeeklySummaryBuilder::class, [
             'buildWeek' => fn (int $userId, $now, array $mine, ?array $today = null) => [
                 'isEmpty' => isset($this->emptyWeek[$userId]),
                 'today' => $today !== null && ! $today['isEmpty'] ? $today : null,
+                'sections' => $today !== null && ! $today['isEmpty'] ? [['kind' => 'today'], ['kind' => 'ahead']] : [['kind' => 'ahead']],
             ],
         ]);
         $notifier = $this->make(ReminderNotifier::class, [
@@ -79,7 +91,7 @@ class WeeklySummaryDispatcherTest extends TestCase
             'deliverSummary' => function (array $user) {
                 $this->sent[] = ['morning', $user['id']];
             },
-            'recordWeekly' => fn (array $user, array $week, CarbonImmutable $at) => $this->addSummaryRow($user['id'], $at->format('Y-m-d H:i:s'), 'weekly_summary'),
+            'recordWeekly' => fn (array $user, array $week, CarbonImmutable $at) => $this->addSummaryRow($user['id'], $at->format('Y-m-d H:i:s'), 'weekly_summary', $week['today'] !== null ? 1 : 0),
             'deliverWeekly' => function (array $user, array $week) {
                 $this->sent[] = ['weekly', $user['id'], $week['today'] !== null];
             },
@@ -128,6 +140,31 @@ class WeeklySummaryDispatcherTest extends TestCase
 
         $this->job('2026-11-23 10:00:00');
         $this->assertSame([['weekly', 7, false], ['morning', 7]], $this->sentTo(7));
+    }
+
+    public function test_a_weekly_summary_without_today_never_counts_as_the_morning_one(): void
+    {
+        // Weekly at 08:00, morning at 08:02: the 08:00 run builds the week without Today. However
+        // late its row is written, the morning summary still goes out with the 08:05 run.
+        $this->userSettings[7]['summaryTime'] = '08:02';
+
+        $this->job('2026-11-23 08:00:00');
+        $this->addSummaryRow(8, '2026-11-23 08:03:00', 'weekly_summary'); // a weekly row without Today, written late
+        $this->job('2026-11-23 08:05:00');
+
+        $this->assertSame([['weekly', 7, false], ['morning', 7]], $this->sentTo(7));
+    }
+
+    public function test_today_is_checked_again_under_the_lock_and_dropped_when_it_already_went_out(): void
+    {
+        // An overlapping run records user 7's morning summary while this run builds the week.
+        $this->morningRecordedMeanwhile = 7;
+
+        $this->job('2026-11-23 08:00:00');
+
+        $this->assertSame([['weekly', 7, false]], $this->sentTo(7), 'the week goes out without Today, and no second morning summary');
+        $this->assertSame([['morning_summary', 0], ['weekly_summary', 0]],
+            $this->db->table('zp_notifications')->where('userId', 7)->orderBy('id')->get()->map(fn ($r) => [$r->type, (int) $r->moduleId])->all());
     }
 
     public function test_it_goes_out_once_a_week_even_when_the_day_changes(): void

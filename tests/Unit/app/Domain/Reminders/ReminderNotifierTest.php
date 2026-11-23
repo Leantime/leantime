@@ -330,6 +330,7 @@ class ReminderNotifierTest extends TestCase
 
         $this->assertCount(1, $this->inbox);
         $this->assertSame('weekly_summary', $this->inbox[0]['type']);
+        $this->assertSame(0, $this->inbox[0]['moduleId'], 'without Today');
         $this->assertSame('reminders', $this->inbox[0]['module']);
         $this->assertSame('Your week: 5 due, 3 planned', $this->inbox[0]['message']);
         $this->assertSame('https://pm.example.test/dashboard/home#/reminders/thisWeek', $this->inbox[0]['url']);
@@ -338,6 +339,25 @@ class ReminderNotifierTest extends TestCase
         $this->inboxResult = null;
         $this->expectException(\RuntimeException::class);
         $this->notifier()->recordWeekly(['id' => 7, 'notifications' => 1], $this->week(), CarbonImmutable::parse('2026-11-23 08:00:00', 'UTC'));
+    }
+
+    public function test_a_weekly_row_with_today_says_so(): void
+    {
+        $this->notifier()->recordWeekly(['id' => 7, 'notifications' => 1], $this->week(withToday: true), CarbonImmutable::parse('2026-11-23 08:00:00', 'UTC'));
+
+        $this->assertSame(1, $this->inbox[0]['moduleId'], 'the morning summary reads this');
+    }
+
+    public function test_a_week_of_only_planned_days_or_routines_still_has_a_push_body(): void
+    {
+        $week = $this->week(withPlugin: false);
+        $week['ahead']['items'] = [];
+        $week['lookBack'] = null;
+        $week['sections'] = [$week['ahead']];
+
+        $this->notifier()->deliverWeekly(['id' => 7, 'notifications' => 0], $week, 1, '08:00');
+
+        $this->assertSame("Wed: 2 planned (1 with a set time)\nThu: 1 planned\nRoutine tasks this week: 1", $this->pushes[0]['body']);
     }
 
     public function test_the_weekly_push_is_routed_like_the_morning_one_and_says_whether_today_is_in_it(): void

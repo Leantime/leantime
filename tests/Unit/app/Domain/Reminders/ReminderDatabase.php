@@ -14,7 +14,7 @@ use Leantime\Domain\Setting\Services\SettingCache;
  */
 trait ReminderDatabase
 {
-    protected SQLiteConnection $db;
+    protected ?SQLiteConnection $db = null;
 
     protected function createReminderDatabase(): void
     {
@@ -48,10 +48,13 @@ trait ReminderDatabase
         return $repository;
     }
 
-    /** An inbox row, as the morning summary (or, with $type 'weekly_summary', the weekly one) writes it. */
-    protected function addSummaryRow(int $userId, string $datetimeUtc, string $type = 'morning_summary'): void
+    /**
+     * An inbox row, as the morning summary (or, with $type 'weekly_summary', the weekly one) writes
+     * it. A weekly row that included Today has moduleId 1.
+     */
+    protected function addSummaryRow(int $userId, string $datetimeUtc, string $type = 'morning_summary', int $moduleId = 0): void
     {
-        $this->db->table('zp_notifications')->insert(['userId' => $userId, 'read' => 0, 'type' => $type, 'module' => 'reminders', 'moduleId' => 0, 'datetime' => $datetimeUtc, 'url' => '', 'message' => '', 'authorId' => 0]);
+        $this->db->table('zp_notifications')->insert(['userId' => $userId, 'read' => 0, 'type' => $type, 'module' => 'reminders', 'moduleId' => $moduleId, 'datetime' => $datetimeUtc, 'url' => '', 'message' => '', 'authorId' => 0]);
     }
 
     /** A status change in the to-do history, as Tickets::addTicketChange() writes it. */

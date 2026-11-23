@@ -52,6 +52,9 @@ class RecapTest extends TestCase
             /** @var array<int, int> */
             public array $denied = [];
 
+            /** @var array<int, int> project ids asked about */
+            public array $asked = [];
+
             protected function isDone(int $projectId, string $status): bool
             {
                 return $status === '0';
@@ -59,6 +62,8 @@ class RecapTest extends TestCase
 
             protected function canView(int $userId, int $projectId): bool
             {
+                $this->asked[] = $projectId;
+
                 return ! in_array($projectId, $this->denied, true);
             }
         };
@@ -137,6 +142,18 @@ class RecapTest extends TestCase
         $this->addStatusChange(2, 7, 0, '2026-11-18 10:00:00');
 
         $this->assertSame([1], array_column($this->finished($this->recap([2])), 'taskId'));
+    }
+
+    public function test_access_is_checked_once_per_project(): void
+    {
+        foreach ([1, 2, 3] as $id) {
+            $this->addTicket($id, ['editorId' => '7', 'status' => 0]);
+            $this->addStatusChange($id, 7, 0, '2026-11-18 10:00:00');
+        }
+        $recap = $this->recap();
+
+        $this->assertCount(3, $this->finished($recap));
+        $this->assertSame([1], $recap->asked, 'three to-dos in one project: one check');
     }
 
     public function test_the_api_is_for_the_signed_in_person_and_checks_the_range(): void

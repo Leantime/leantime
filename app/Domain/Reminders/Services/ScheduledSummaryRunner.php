@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Log;
  *   go out after the row exists, so a second run either can't get the lock or finds the row.
  * - Right before the row is written, the clock is read again: a summary whose period or window
  *   ended while the run was busy is skipped, and the row carries the real send time.
- * - A run starts no new person after {@see MAX_RUN_SECONDS} (well inside the scheduler's
- *   10-minute overlap lock). It saves where it stopped; the next run continues there and wraps
+ * - A run starts no new person after {@see MAX_RUN_SECONDS}, or after the deadline it was given
+ *   when kinds share one job (well inside the scheduler's 10-minute overlap lock). It saves where it stopped; the next run continues there and wraps
  *   around, so people late in the list are reached even when the ones before them keep runs busy.
  * - An empty summary writes nothing, so a later run inside the window may still send one.
  *
@@ -48,13 +48,17 @@ abstract class ScheduledSummaryRunner
      * Sends this kind's summary to everyone it's due for.
      *
      * @param  CarbonImmutable|null  $nowUtc  The run's time (tests); the real clock when null.
+     * @param  float|null  $deadline  When to stop starting new people, on the {@see seconds()} clock.
+     *                                Kinds that run one after another in one job share one deadline,
+     *                                so the job as a whole stays inside the scheduler's overlap
+     *                                lock. Null gives this run {@see MAX_RUN_SECONDS} of its own.
      * @return int How many summaries were sent.
      */
-    public function run(?CarbonImmutable $nowUtc = null): int
+    public function run(?CarbonImmutable $nowUtc = null, ?float $deadline = null): int
     {
         $this->fixedNow = $nowUtc;
         $nowUtc ??= CarbonImmutable::now('UTC');
-        $startedAt = $this->seconds();
+        $deadline ??= $this->seconds() + static::MAX_RUN_SECONDS;
 
         if (! $this->startRun($nowUtc)) {
             return 0;
@@ -91,15 +95,15 @@ abstract class ScheduledSummaryRunner
                     }
                 }
 
-                $alreadySent = $this->sentSince($since, $settings);
+                $alreadySent = $this->sentSince($since);
 
                 foreach (array_keys($since) as $userId) {
                     if (isset($alreadySent[$userId])) {
                         continue;
                     }
 
-                    if ($this->seconds() - $startedAt > static::MAX_RUN_SECONDS) {
-                        Log::info($this->runLabel().': run reached '.static::MAX_RUN_SECONDS.' seconds; the next run continues from here.');
+                    if ($this->seconds() > $deadline) {
+                        Log::info($this->runLabel().': the run reached its time limit; the next run continues from here.');
                         $this->saveCursor($userId - 1);
 
                         return $sent;
@@ -158,7 +162,7 @@ abstract class ScheduledSummaryRunner
             }
 
             try {
-                if (isset($this->sentSince([$userId => $periodStartUtc], [$userId => $mine])[$userId])) {
+                if (isset($this->sentSince([$userId => $periodStartUtc])[$userId])) {
                     return false;
                 }
 
@@ -210,14 +214,12 @@ abstract class ScheduledSummaryRunner
 
     /**
      * Which of these people already have this kind's inbox row since their period start (or a row
-     * of another kind that already covered it, such as a weekly summary that included the morning
-     * one).
+     * of another kind that covered it, such as a weekly summary that included the morning one).
      *
      * @param  array<int, string>  $sinceByUser  user id => period start (UTC)
-     * @param  array<int, array<string, mixed>>  $settingsByUser  user id => their settings, from {@see settingsFor()}
      * @return array<int, true>
      */
-    abstract protected function sentSince(array $sinceByUser, array $settingsByUser): array;
+    abstract protected function sentSince(array $sinceByUser): array;
 
     /**
      * The person's summary, or null when there's nothing to send.

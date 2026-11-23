@@ -37,19 +37,22 @@ class Reminders
     public const TYPE_WEEKLY = 'weekly_summary';
 
     /**
+     * The weekly summary row's moduleId when it included that day's morning summary (Today); 0
+     * otherwise. The row itself is the record that Today went out.
+     */
+    public const WEEKLY_WITH_TODAY = 1;
+
+    /**
      * Which of these people already have today's morning summary in their inbox: a morning summary
-     * row since the given time (their local midnight, in UTC), or a weekly summary row since
-     * $weeklyCountsSince (the time their morning summary became due today). A weekly summary sent
-     * while the morning summary was due included it, so it counts as sent. Uses the inbox's
-     * (userId, datetime) index.
+     * row, or a weekly summary row that included it (moduleId {@see WEEKLY_WITH_TODAY}), since the
+     * given time (their local midnight, in UTC). Uses the inbox's (userId, datetime) index.
      *
      * @param  array<int, string>  $sinceByUser  userId → UTC `Y-m-d H:i:s`
-     * @param  array<int, string>  $weeklyCountsSince  userId → UTC `Y-m-d H:i:s`
      * @return array<int, true> userId → true when today's summary is already there
      */
-    public function summariesSentSince(array $sinceByUser, array $weeklyCountsSince = []): array
+    public function summariesSentSince(array $sinceByUser): array
     {
-        return $this->sentSince(self::TYPE_MORNING, $sinceByUser) + $this->sentSince(self::TYPE_WEEKLY, $weeklyCountsSince);
+        return $this->sentSince(self::TYPE_MORNING, $sinceByUser) + $this->sentSince(self::TYPE_WEEKLY, $sinceByUser, withToday: true);
     }
 
     /**
@@ -68,7 +71,7 @@ class Reminders
      * @param  array<int, string>  $sinceByUser  userId → UTC `Y-m-d H:i:s`
      * @return array<int, true>
      */
-    private function sentSince(string $type, array $sinceByUser): array
+    private function sentSince(string $type, array $sinceByUser, bool $withToday = false): array
     {
         if ($sinceByUser === []) {
             return [];
@@ -80,6 +83,7 @@ class Reminders
             ->where('datetime', '>=', min($sinceByUser))
             ->where('type', $type)
             ->where('module', 'reminders')
+            ->when($withToday, fn ($query) => $query->where('moduleId', self::WEEKLY_WITH_TODAY))
             ->get();
 
         $sent = [];

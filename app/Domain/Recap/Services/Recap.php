@@ -32,6 +32,9 @@ class Recap
     /** @var array<int, array<int, array<string, mixed>>> project id → status labels */
     private array $labels = [];
 
+    /** @var array<string, bool> "userId|projectId" → may view (asked once per project per call) */
+    private array $visible = [];
+
     public function __construct(
         private RecapRepository $recap,
         private TicketRepository $tickets,
@@ -110,7 +113,7 @@ class Recap
                 continue;
             }
 
-            if (! $this->canView($userId, $last['projectId'])) {
+            if (! ($this->visible[$userId.'|'.$last['projectId']] ??= $this->canView($userId, $last['projectId']))) {
                 continue;
             }
 

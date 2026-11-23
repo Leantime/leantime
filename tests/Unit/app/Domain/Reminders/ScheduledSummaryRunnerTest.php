@@ -46,6 +46,16 @@ class ScheduledSummaryRunnerTest extends TestCase
         $this->assertSame([1], array_column($runner->delivered, 'user'), 'no email or push without the inbox row');
     }
 
+    public function test_kinds_in_one_job_share_a_deadline(): void
+    {
+        $runner = new WeeklyTestRunner(users: [1, 2]);
+
+        $this->assertSame(0, $runner->run(CarbonImmutable::parse('2026-11-23 08:00:00', 'UTC'), deadline: 0.0), 'the job\'s time is already used up');
+        $this->assertSame([], $runner->delivered);
+
+        $this->assertSame(2, $runner->run(CarbonImmutable::parse('2026-11-23 08:00:00', 'UTC'), deadline: hrtime(true) / 1e9 + 60));
+    }
+
     public function test_a_kind_uses_its_own_cursor_and_lock_keys(): void
     {
         $runner = new WeeklyTestRunner(users: [1, 2]);
@@ -112,7 +122,7 @@ class WeeklyTestRunner extends ScheduledSummaryRunner
         return $nowUtc->startOfWeek()->format('Y-m-d H:i:s');
     }
 
-    protected function sentSince(array $sinceByUser, array $settingsByUser): array
+    protected function sentSince(array $sinceByUser): array
     {
         $sent = [];
         foreach ($this->inbox as $row) {

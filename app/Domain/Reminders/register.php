@@ -21,8 +21,10 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
     $scheduler
         // Returns nothing: schedule:test reads a returned 2 or 3 as "failed" / "skipped".
         ->call(function (): void {
-            app()->make(Services\WeeklySummaryDispatcher::class)->run();
-            app()->make(Services\ReminderDispatcher::class)->run();
+            // One time budget for both kinds, so the job stays inside its 10-minute overlap lock.
+            $deadline = hrtime(true) / 1e9 + Services\ScheduledSummaryRunner::MAX_RUN_SECONDS;
+            app()->make(Services\WeeklySummaryDispatcher::class)->run(null, $deadline);
+            app()->make(Services\ReminderDispatcher::class)->run(null, $deadline);
         })
         ->everyFiveMinutes()
         ->name('reminders:dispatch')

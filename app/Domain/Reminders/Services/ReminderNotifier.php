@@ -9,6 +9,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Notifications\Services\Push;
+use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 
 /**
@@ -139,7 +140,8 @@ class ReminderNotifier
             'read' => '0',
             'type' => self::TYPE_WEEKLY,
             'module' => self::MODULE,
-            'moduleId' => 0,
+            // Whether this message included the morning summary (Today): the morning kind reads it.
+            'moduleId' => ($week['today'] ?? null) !== null ? ReminderRepository::WEEKLY_WITH_TODAY : 0,
             'message' => sprintf($this->language->__('reminders.weekly_inbox'), $this->weeklyCountsLine($week)),
             'datetime' => $nowUtc->format('Y-m-d H:i:s'),
             'url' => $this->thisWeekUrl(),
@@ -248,6 +250,13 @@ class ReminderNotifier
             if (str_starts_with((string) $section['kind'], 'plugin:')) {
                 $lines[] = $section['title'];
             }
+        }
+        // A week of only planned days or routines still says something.
+        foreach ($week['ahead']['planned'] as $day) {
+            $lines[] = $this->plannedLine($day);
+        }
+        if ($week['ahead']['routine']['count'] > 0) {
+            $lines[] = sprintf($this->language->__('reminders.weekly_routine'), $week['ahead']['routine']['count']);
         }
 
         return implode("\n", array_slice($lines, 0, 3));

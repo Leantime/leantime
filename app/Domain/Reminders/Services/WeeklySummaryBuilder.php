@@ -4,6 +4,7 @@ namespace Leantime\Domain\Reminders\Services;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -309,23 +310,33 @@ class WeeklySummaryBuilder extends SummaryBuilder
     }
 
     /**
-     * Sections from plugins ({@see WeeklySummarySectionsFilter}), checked and cleaned. A plugin that
-     * fails is logged and left out; the summary still goes out.
+     * Sections from plugins ({@see WeeklySummarySectionsFilter}), checked and cleaned. Each listener
+     * runs on its own: one that fails (or returns something else than a list) is logged and
+     * skipped, and the sections the others added are kept. Core's filter pipeline stops at the
+     * first failure, so the listeners are called here.
      *
      * @return array<int, array{kind: string, title: string, lines: array<int, string>, url: string|null, countsForSending: bool}>
      */
     private function pluginSections(int $userId, string $weekStart, string $weekEnd, string $timezone): array
     {
-        try {
-            $raw = WeeklySummarySectionsFilter::dispatch(sections: [], userId: $userId, weekStart: $weekStart, weekEnd: $weekEnd, timezone: $timezone);
-        } catch (\Throwable $e) {
-            Log::warning('Weekly summary: a plugin section failed for user '.$userId.': '.$e->getMessage());
+        $filter = new WeeklySummarySectionsFilter(sections: [], userId: $userId, weekStart: $weekStart, weekEnd: $weekEnd, timezone: $timezone);
+        $listeners = EventDispatcher::findEventListeners(WeeklySummarySectionsFilter::class, EventDispatcher::getFilterRegistry());
+        usort($listeners, fn (array $a, array $b): int => ($a['priority'] ?? 10) <=> ($b['priority'] ?? 10));
 
-            return [];
-        }
+        $raw = [];
+        foreach ($listeners as $listener) {
+            try {
+                $result = self::listenerCallable($listener['listener'])($raw, $filter);
+            } catch (\Throwable $e) {
+                Log::warning('Weekly summary: a plugin section failed for user '.$userId.': '.$e->getMessage());
 
-        if (! is_array($raw)) {
-            return [];
+                continue;
+            }
+            if (is_array($result)) {
+                $raw = $result;
+            } else {
+                Log::warning('Weekly summary: a plugin listener returned no list; its result is ignored.');
+            }
         }
 
         $sections = [];
@@ -368,6 +379,32 @@ class WeeklySummaryBuilder extends SummaryBuilder
             'url' => $this->sectionUrl($section['url'] ?? null),
             'countsForSending' => ($section['countsForSending'] ?? false) === true,
         ];
+    }
+
+    /**
+     * A filter listener registration as a callable, the way core resolves class-based filter
+     * listeners: a closure or callable as is, "Class@method" or [Class, method] through the
+     * container, and a class name on its handle() (or __invoke()) method.
+     */
+    private static function listenerCallable(mixed $listener): callable
+    {
+        if (is_callable($listener) && ! is_string($listener) && ! is_array($listener)) {
+            return $listener;
+        }
+
+        if (is_string($listener) && ! function_exists($listener)) {
+            [$class, $method] = str_contains($listener, '@') ? explode('@', $listener, 2) : [$listener, 'handle'];
+        } elseif (is_array($listener) && isset($listener[0]) && is_string($listener[0])) {
+            [$class, $method] = [$listener[0], $listener[1] ?? 'handle'];
+        } else {
+            return $listener;
+        }
+
+        if (! method_exists($class, $method)) {
+            $method = '__invoke';
+        }
+
+        return [app()->make($class), $method];
     }
 
     /** A path on this Leantime, or a full URL on it; anything else is dropped. */

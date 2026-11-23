@@ -17,7 +17,9 @@ use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
  *
  * Combined with the morning summary: when the morning summary is due in the same run and hasn't
  * gone out today, the weekly message includes it as its Today section, and that one message
- * counts as both ({@see ReminderDispatcher::sentSince()} accepts it). With the defaults every
+ * counts as both: its inbox row says so ({@see ReminderRepository::WEEKLY_WITH_TODAY}), and the
+ * morning kind's check accepts it. Today is checked again under the send lock, right before the
+ * row is written. With the defaults every
  * Monday is one message. Someone whose times differ gets two messages that day, each at the time
  * they chose.
  *
@@ -30,6 +32,9 @@ class WeeklySummaryDispatcher extends ScheduledSummaryRunner
 {
     /** Where a run that reached its time limit stopped: the last user id it handled. */
     public const CURSOR_KEY = 'reminders:weekly:cursor';
+
+    /** @var array<int, array<string, mixed>> The summary each person's row was recorded with, for deliver(). */
+    private array $recorded = [];
 
     public function __construct(
         private ReminderRepository $reminders,
@@ -87,7 +92,7 @@ class WeeklySummaryDispatcher extends ScheduledSummaryRunner
         return self::dueSince($mine, $nowUtc);
     }
 
-    protected function sentSince(array $sinceByUser, array $settingsByUser): array
+    protected function sentSince(array $sinceByUser): array
     {
         return $this->reminders->weeklySummariesSentSince($sinceByUser);
     }
@@ -100,13 +105,17 @@ class WeeklySummaryDispatcher extends ScheduledSummaryRunner
     {
         $today = null;
         $morningSince = ReminderDispatcher::dueSince($mine, $nowUtc);
-        if ($morningSince !== null && ! isset($this->reminders->summariesSentSince([$userId => $morningSince], [$userId => ReminderDispatcher::dueAtUtc($mine, $morningSince)])[$userId])) {
+        if ($morningSince !== null && ! isset($this->reminders->summariesSentSince([$userId => $morningSince])[$userId])) {
             $today = $this->morningBuilder->build($userId, $nowUtc, $mine['timezone'], $mine['taskPreset']);
         }
 
         $week = $this->weeklyBuilder->buildWeek($userId, $nowUtc, $mine, $today);
+        if ($week['isEmpty']) {
+            return null;
+        }
 
-        return $week['isEmpty'] ? null : $week;
+        // For record(): since when a morning summary would make Today a repeat.
+        return $week['today'] !== null ? $week + ['morningSinceUtc' => $morningSince] : $week;
     }
 
     protected function activeUser(int $userId): ?array
@@ -114,14 +123,48 @@ class WeeklySummaryDispatcher extends ScheduledSummaryRunner
         return $this->reminders->activeUser($userId);
     }
 
+    /**
+     * Writes the weekly row, under the person's send lock (shared with the morning kind). Today is
+     * checked again here: when another run recorded this morning's summary while this one was
+     * being built, Today is dropped, so it never goes out twice. The row records whether Today
+     * went out with it ({@see ReminderRepository::WEEKLY_WITH_TODAY}).
+     */
     protected function record(array $user, array $summary, CarbonImmutable $sendNowUtc): void
     {
+        $userId = (int) $user['id'];
+        $since = $summary['morningSinceUtc'] ?? null;
+        unset($summary['morningSinceUtc']);
+
+        if ($summary['today'] !== null && is_string($since) && isset($this->reminders->summariesSentSince([$userId => $since])[$userId])) {
+            $summary = self::withoutToday($summary);
+        }
+
+        $this->recorded[$userId] = $summary;
         $this->notifier->recordWeekly($user, $summary, $sendNowUtc);
     }
 
+    /** Email and push of the summary as it was recorded (maybe without Today). */
     protected function deliver(array $user, array $summary, array $mine): void
     {
-        $this->notifier->deliverWeekly($user, $summary, $mine['weeklyDay'], $mine['weeklyTime']);
+        $userId = (int) $user['id'];
+        $recorded = $this->recorded[$userId] ?? $summary;
+        unset($this->recorded[$userId]);
+
+        $this->notifier->deliverWeekly($user, $recorded, $mine['weeklyDay'], $mine['weeklyTime']);
+    }
+
+    /**
+     * The week without its Today section.
+     *
+     * @param  array<string, mixed>  $week
+     * @return array<string, mixed>
+     */
+    private static function withoutToday(array $week): array
+    {
+        $week['today'] = null;
+        $week['sections'] = array_values(array_filter($week['sections'], fn (array $section): bool => ($section['kind'] ?? '') !== 'today'));
+
+        return $week;
     }
 
     protected function cursorKey(): string
