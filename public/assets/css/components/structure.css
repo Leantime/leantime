@@ -391,6 +391,11 @@ body {
     align-items: flex-start;
 }
 
+/* Right-to-left languages: the menu stays on the left, as it was when it was floated. */
+[dir="rtl"] .mainwrapper > .overlay {
+    flex-direction: row-reverse;
+}
+
 .rightpanel {
     padding-top:50px;
     flex: 1 1 0;
