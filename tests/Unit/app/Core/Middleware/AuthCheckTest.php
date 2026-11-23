@@ -130,12 +130,16 @@ class AuthCheckTest extends \Unit\TestCase
         $authCheck = $this->make(AuthCheck::class);
         $publicActions = new \ReflectionProperty(AuthCheck::class, 'publicActions');
         $publicActions->setValue($authCheck, array_merge($publicActions->getValue($authCheck), ['well-known.caldav', 'well-known.security.txt']));
+        $isPublic = new \ReflectionMethod(AuthCheck::class, 'isPublicWellKnownPath');
+        $check = fn (string $path): bool => $isPublic->invoke($authCheck, IncomingRequest::create($path));
 
-        $this->assertTrue($authCheck->isPublicController('.well-known.caldav'));
-        $this->assertTrue($authCheck->isPublicController('.well-known.security.txt'), 'names with a dot match in full');
-        $this->assertFalse($authCheck->isPublicController('.well-known.carddav'));
-        $this->assertFalse($authCheck->isPublicController('.well-known.caldavx'));
-        $this->assertFalse($authCheck->isPublicController('.well-known.caldav.json'), 'a listed name does not open longer ones');
+        $this->assertTrue($check('/.well-known/caldav'));
+        $this->assertTrue($check('/.well-known/security.txt'), 'a listed name with a dot');
+        $this->assertFalse($check('/.well-known/security/txt'), 'same dotted route, different path');
+        $this->assertFalse($check('/.well-known/caldav/extra'), 'nothing below a listed name');
+        $this->assertFalse($check('/.well-known/carddav'));
+        $this->assertFalse($check('/.well-known/caldav.json'));
+        $this->assertFalse($authCheck->isPublicController('.well-known.caldav'), 'the dotted route alone never decides');
     }
 
     // ---------------------------------------------------------------------

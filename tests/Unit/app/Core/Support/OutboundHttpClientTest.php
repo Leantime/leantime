@@ -47,6 +47,14 @@ namespace Unit\app\Core\Support {
          */
         private array $handledRequests = [];
 
+        protected function setUp(): void
+        {
+            parent::setUp();
+
+            // Independent of the local .env: no admin allow-list unless a test sets one.
+            config(['outboundAllowedHosts' => '']);
+        }
+
         protected function tearDown(): void
         {
             unset($GLOBALS['leantimeTestDnsResolver']);
