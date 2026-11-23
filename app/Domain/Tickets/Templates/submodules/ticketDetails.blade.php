@@ -88,7 +88,7 @@
                                name="dateToFinish" placeholder="{{ __('language.dateformat') }}"/>
                         <input type="time" class="field-width-sm timepicker" id="dueTime" autocomplete="off"
                                value="{{ format($ticket->dateToFinish)->time24() }}"
-                               name="timeToFinish" aria-label="{{ strip_tags(__('label.due_date')) }}"/>
+                               name="timeToFinish"/>
                         @dispatchEvent('afterDates', ['ticket' => $ticket])
                     </div>
                 </x-global::forms.field>
@@ -227,7 +227,7 @@
                                    value="{{ format($ticket->editFrom)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
                             <input type="time" class="field-width-sm timepicker" id="timeFrom" autocomplete="off"
                                    value="{{ format($ticket->editFrom)->time24() }}"
-                                   name="timeFrom" aria-label="{{ strip_tags(__('label.working_date_from')) }}"/>
+                                   name="timeFrom"/>
                         </div>
                     </x-global::forms.field>
 
@@ -237,7 +237,7 @@
                                    value="{{ format($ticket->editTo)->date() }}" placeholder="{{ __('language.dateformat') }}"/>
                             <input type="time" class="field-width-sm timepicker" id="timeTo" autocomplete="off"
                                    value="{{ format($ticket->editTo)->time24() }}"
-                                   name="timeTo" aria-label="{{ strip_tags(__('label.working_date_to')) }}"/>
+                                   name="timeTo"/>
                         </div>
                     </x-global::forms.field>
 
