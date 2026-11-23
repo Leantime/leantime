@@ -900,8 +900,9 @@ class Ideas extends BaseService
             'url' => $actualLink,
             'text' => $this->language->__('email_notifications.new_comment_idea_cta'),
         ];
-        $notification->entity = $values;
-        // The entity is the comment; the idea's own author is the person it's about.
+        // The entity is the comment, with the idea it's on, so its push and digest line
+        // name the idea. The idea's own author is the person it's about.
+        $notification->entity = $values + ['module' => 'idea'];
         $idea = $this->ideasRepository->getSingleCanvasItem($ideaItemId);
         $ideaAuthorId = (int) (is_array($idea) ? ($idea['author'] ?? 0) : 0);
         $notification->involvedUserIds = $ideaAuthorId > 0 ? [$ideaAuthorId] : [];

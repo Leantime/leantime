@@ -861,6 +861,8 @@ class SchemaBuilder
             // moduleId), so the digest can tell already-read items from new ones.
             $table->string('module', 45)->nullable();
             $table->integer('moduleId')->nullable();
+            // The digest's wording for the row (JSON): see EmailWorker.
+            $table->text('summary')->nullable();
 
             $table->index(['projectId'], 'idx_queue_projectId');
             $table->index(['userId'], 'idx_queue_userId');

@@ -109,6 +109,7 @@ class Install
         30534,
         30535,
         30536,
+        30537,
     ];
 
     /**
@@ -3716,7 +3717,44 @@ class Install
     }
 
     /**
-     * Migration 30536 — zp_stats story-point totals become floats.
+     * Migration 30536 — zp_queue.summary, the email digest's wording for a queued row.
+     *
+     * JSON with the item the email is about ('group'), its name, "who did what" and a comment to
+     * quote, so the digest can show several changes to one task together instead of each row's
+     * email subject and message (see {@see \Leantime\Domain\Queue\Workers\EmailWorker}).
+     * Nullable: rows queued before this migration, and emails no producer summarised, keep their
+     * subject and message. Fresh installs get the column from
+     * {@see \Leantime\Domain\Install\Services\SchemaBuilder}.
+     */
+    public function update_sql_30536(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_queue')) {
+                Log::info('Migration 30536 skipped: zp_queue table missing (partial install?)');
+
+                return true;
+            }
+
+            if (! $schema->hasColumn('zp_queue', 'summary')) {
+                $schema->table('zp_queue', function (Blueprint $table): void {
+                    $table->text('summary')->nullable()->after('moduleId');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30536: '.$e->getMessage());
+
+            return ['Migration 30536 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30537 — zp_stats story-point totals become floats.
      *
      * `zp_tickets.storypoints` is a float and the effort picker offers half points ("< 2min"),
      * so a project's point totals are frequently fractional. The stats columns were declared as
@@ -3728,7 +3766,7 @@ class Install
      *
      * @return bool|array<int, string> True on success, otherwise the error messages.
      */
-    public function update_sql_30536(): bool|array
+    public function update_sql_30537(): bool|array
     {
         try {
             /** @var \Illuminate\Database\Connection $connection */
@@ -3736,7 +3774,7 @@ class Install
             $schema = $connection->getSchemaBuilder();
 
             if (! $schema->hasTable('zp_stats')) {
-                Log::info('Migration 30536 skipped: zp_stats table missing (partial install?)');
+                Log::info('Migration 30537 skipped: zp_stats table missing (partial install?)');
 
                 return true;
             }
@@ -3748,9 +3786,9 @@ class Install
                 $table->float('sum_points_open')->nullable()->change();
             });
         } catch (\Exception $e) {
-            Log::error('Migration 30536: '.$e->getMessage());
+            Log::error('Migration 30537: '.$e->getMessage());
 
-            return ['Migration 30536 failed: '.$e->getMessage()];
+            return ['Migration 30537 failed: '.$e->getMessage()];
         }
 
         return true;

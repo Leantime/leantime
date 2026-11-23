@@ -40,9 +40,18 @@ namespace Unit\app\Core\Support {
          */
         private array $dnsLookups = [];
 
+        protected function setUp(): void
+        {
+            parent::setUp();
+
+            // Independent of the local .env: no admin allow-list unless a test sets one.
+            config(['outboundAllowedHosts' => '']);
+        }
+
         protected function tearDown(): void
         {
             unset($GLOBALS['leantimeTestDnsResolver']);
+            config(['outboundAllowedHosts' => '']);
 
             parent::tearDown();
         }
@@ -167,6 +176,41 @@ namespace Unit\app\Core\Support {
                 OutboundUrlGuard::resolveAllowedAddresses('https://hooks.example.test/hook?token=abc')
             );
             $this->assertTrue(OutboundUrlGuard::isAllowedUrl('https://hooks.example.test/hook?token=abc'));
+        }
+
+        public function test_admin_allowed_ranges_and_ips_open_private_targets(): void
+        {
+            config(['outboundAllowedHosts' => '192.168.1.0/24, 10.0.0.7, fd00::/8']);
+
+            $this->assertTrue(OutboundUrlGuard::isAllowedUrl('http://192.168.1.20:5232/dav/'));
+            $this->assertTrue(OutboundUrlGuard::isAllowedUrl('http://10.0.0.7/'));
+            $this->assertTrue(OutboundUrlGuard::isAllowedUrl('http://[fd00::5]/'));
+
+            // Everything not listed stays blocked.
+            $this->assertFalse(OutboundUrlGuard::isAllowedUrl('http://192.168.2.20/'));
+            $this->assertFalse(OutboundUrlGuard::isAllowedUrl('http://10.0.0.8/'));
+            $this->assertFalse(OutboundUrlGuard::isAllowedUrl('http://169.254.169.254/'));
+        }
+
+        public function test_admin_allowed_hostname_may_resolve_to_a_private_address(): void
+        {
+            config(['outboundAllowedHosts' => 'NAS.lan.']);
+            $this->fakeDns([
+                'nas.lan' => ['A' => ['192.168.1.2']],
+                'other.lan' => ['A' => ['192.168.1.3']],
+            ]);
+
+            $this->assertSame(['192.168.1.2'], OutboundUrlGuard::resolveAllowedAddresses('https://nas.lan/remote.php/dav'));
+            $this->assertFalse(OutboundUrlGuard::isAllowedUrl('https://other.lan/'));
+        }
+
+        public function test_private_targets_stay_blocked_without_an_allow_list(): void
+        {
+            config(['outboundAllowedHosts' => '']);
+            $this->fakeDns(['nas.lan' => ['A' => ['192.168.1.2']]]);
+
+            $this->assertFalse(OutboundUrlGuard::isAllowedUrl('https://nas.lan/'));
+            $this->assertFalse(OutboundUrlGuard::isAllowedUrl('http://192.168.1.2/'));
         }
 
         public function test_resolve_allowed_addresses_returns_a_repeated_record_once(): void

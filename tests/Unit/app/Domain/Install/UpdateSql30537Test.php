@@ -6,14 +6,14 @@ use Leantime\Domain\Install\Repositories\Install;
 use Unit\TestCase;
 
 /**
- * update_sql_30536 turns the zp_stats story-point totals into floats.
+ * update_sql_30537 turns the zp_stats story-point totals into floats.
  *
  * `zp_tickets.storypoints` is a float and the effort picker offers half points ("< 2min"), so a
  * project's point totals are frequently fractional. The integer columns were rejected by
  * PostgreSQL ("0.5"), aborting the nightly reports:dailyIngestion run; MySQL had been rounding
  * silently. Fresh installs get the float columns from SchemaBuilder.
  */
-class UpdateSql30536Test extends TestCase
+class UpdateSql30537Test extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
 
@@ -43,7 +43,7 @@ class UpdateSql30536Test extends TestCase
         $connection = new SqliteStandInForInstalledDatabase;
         $this->createStatsTable($connection);
 
-        $this->assertTrue($this->installer($connection)->update_sql_30536());
+        $this->assertTrue($this->installer($connection)->update_sql_30537());
 
         foreach (self::POINT_COLUMNS as $column) {
             $this->assertNotSame(
@@ -60,7 +60,7 @@ class UpdateSql30536Test extends TestCase
         $this->createStatsTable($connection);
         $connection->table('zp_stats')->insert(['sprintId' => -1, 'projectId' => 4, 'sum_points' => 7]);
 
-        $this->assertTrue($this->installer($connection)->update_sql_30536());
+        $this->assertTrue($this->installer($connection)->update_sql_30537());
 
         $this->assertEquals(7, $connection->table('zp_stats')->value('sum_points'));
     }
@@ -70,7 +70,7 @@ class UpdateSql30536Test extends TestCase
         $connection = new SqliteStandInForInstalledDatabase;
         $this->createStatsTable($connection);
 
-        $this->assertTrue($this->installer($connection)->update_sql_30536());
+        $this->assertTrue($this->installer($connection)->update_sql_30537());
 
         $connection->table('zp_stats')->insert(['sprintId' => -1, 'projectId' => 4, 'sum_points' => 0.5]);
 
@@ -79,6 +79,6 @@ class UpdateSql30536Test extends TestCase
 
     public function test_skipped_without_the_stats_table(): void
     {
-        $this->assertTrue($this->installer(new SqliteStandInForInstalledDatabase)->update_sql_30536());
+        $this->assertTrue($this->installer(new SqliteStandInForInstalledDatabase)->update_sql_30537());
     }
 }
