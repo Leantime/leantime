@@ -10,6 +10,7 @@ use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Domain\Reminders\Services\Reminders;
 use Leantime\Domain\Reminders\Services\ReminderSettings;
 use Leantime\Domain\Reminders\Services\SummaryBuilder;
+use Leantime\Domain\Reminders\Services\WeeklySummaryBuilder;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Unit\TestCase;
@@ -84,6 +85,9 @@ class RemindersServiceTest extends TestCase
                 'currentUserCan' => fn (string $permission, ?int $projectId = null, ?bool $forceGlobal = null) => $permission === 'company.settings.view' && $forceGlobal === true && $this->companyEditor,
             ]),
             $this->repository(),
+            $this->make(WeeklySummaryBuilder::class, [
+                'buildWeek' => fn (int $userId, $now, array $mine, ?array $today = null, int $limit = 5) => ['week for' => $userId, 'lookBack' => $mine['weeklyLookBack'], 'today' => $today, 'limit' => $limit],
+            ]),
         );
     }
 
@@ -106,6 +110,19 @@ class RemindersServiceTest extends TestCase
         $this->assertSame(['for' => 7, 'preset' => 'default'], $this->service()->getSummary());
     }
 
+    public function test_the_week_is_always_the_session_user_s_with_their_look_back_setting(): void
+    {
+        $this->service()->saveSettings(weeklyLookBack: false);
+
+        $week = $this->service()->getWeeklySummary();
+        $this->assertSame(['week for' => 7, 'lookBack' => false, 'today' => null, 'limit' => 5], $week);
+
+        $withToday = $this->service()->getWeeklySummary(includeToday: true, limit: 0);
+        $this->assertSame(['for' => 7, 'preset' => 'default'], $withToday['today'], 'today is the morning summary');
+        $this->assertSame(0, $withToday['limit']);
+        $this->assertSame(0, $this->service()->getWeeklySummary(limit: -2)['limit'], 'below 0 means the whole list');
+    }
+
     public function test_the_whole_list_is_asked_for_with_limit_0(): void
     {
         $this->assertSame(['for' => 7, 'preset' => 'default', 'limit' => 0], $this->service()->getSummary(0));
@@ -122,9 +139,16 @@ class RemindersServiceTest extends TestCase
             'usersettings.7.reminders.summaryTime' => '07:30',
             'usersettings.7.reminders.taskPreset' => 'more',
         ], $this->storedKeys());
-        $this->assertSame(['summary' => false, 'summaryTime' => '07:30', 'taskPreset' => 'more', 'timezone' => 'UTC', 'workspaceEnabled' => true], $result);
+        $this->assertSame(['summary' => false, 'summaryTime' => '07:30', 'taskPreset' => 'more', 'timezone' => 'UTC',
+            'weekly' => true, 'weeklyDay' => 1, 'weeklyTime' => '08:00', 'weeklyLookBack' => true, 'workspaceEnabled' => true], $result);
 
-        foreach ([['summaryTime' => '7:30'], ['summaryTime' => '24:00'], ['taskPreset' => 'loud']] as $bad) {
+        $result = $this->service()->saveSettings(weekly: false, weeklyDay: 5, weeklyTime: '16:30', weeklyLookBack: false);
+        $this->assertSame(['usersettings.7.reminders.weekly' => '0', 'usersettings.7.reminders.weeklyDay' => '5', 'usersettings.7.reminders.weeklyLookBack' => '0', 'usersettings.7.reminders.weeklyTime' => '16:30'],
+            array_intersect_key($this->storedKeys(), array_flip(['usersettings.7.reminders.weekly', 'usersettings.7.reminders.weeklyDay', 'usersettings.7.reminders.weeklyLookBack', 'usersettings.7.reminders.weeklyTime'])));
+        $this->assertSame([false, 5, '16:30', false], [$result['weekly'], $result['weeklyDay'], $result['weeklyTime'], $result['weeklyLookBack']]);
+        $this->assertSame('07:30', $result['summaryTime'], 'the morning settings are kept');
+
+        foreach ([['summaryTime' => '7:30'], ['summaryTime' => '24:00'], ['taskPreset' => 'loud'], ['weeklyDay' => 0], ['weeklyDay' => 8], ['weeklyTime' => '8am']] as $bad) {
             try {
                 $this->service()->saveSettings(...$bad);
                 $this->fail('accepted '.json_encode($bad));

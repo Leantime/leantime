@@ -14,7 +14,7 @@ use Leantime\Domain\Setting\Services\SettingCache;
  */
 trait ReminderDatabase
 {
-    protected SQLiteConnection $db;
+    protected ?SQLiteConnection $db = null;
 
     protected function createReminderDatabase(): void
     {
@@ -23,9 +23,10 @@ trait ReminderDatabase
         $this->db->statement('CREATE TABLE zp_user (id INTEGER PRIMARY KEY, username VARCHAR(100), firstname VARCHAR(100), lastname VARCHAR(100), status VARCHAR(1), role VARCHAR(200), source VARCHAR(200), notifications INTEGER)');
         $this->db->statement('CREATE TABLE zp_projects (id INTEGER PRIMARY KEY, name VARCHAR(100), state INTEGER, "end" DATETIME, psettings TEXT)');
         $this->db->statement('CREATE TABLE zp_relationuserproject (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, projectId INTEGER, projectRole VARCHAR(20))');
-        $this->db->statement('CREATE TABLE zp_tickets (id INTEGER PRIMARY KEY, projectId INTEGER, headline VARCHAR(255), type VARCHAR(255), status INTEGER, priority VARCHAR(60), dateToFinish DATETIME, editFrom DATETIME, editTo DATETIME, editorId VARCHAR(75), userId INTEGER)');
+        $this->db->statement('CREATE TABLE zp_tickets (id INTEGER PRIMARY KEY, projectId INTEGER, headline VARCHAR(255), type VARCHAR(255), status INTEGER, priority VARCHAR(60), dateToFinish DATETIME, editFrom DATETIME, editTo DATETIME, editorId VARCHAR(75), userId INTEGER, milestoneid INTEGER)');
         $this->db->statement('CREATE TABLE zp_notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, "read" INTEGER, type VARCHAR(45), module VARCHAR(45), moduleId INTEGER, datetime DATETIME, url TEXT, message TEXT, authorId INTEGER)');
         $this->db->statement('CREATE TABLE zp_settings ("key" VARCHAR(175) PRIMARY KEY, value TEXT)');
+        $this->db->statement('CREATE TABLE zp_tickethistory (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, ticketId INTEGER, changeType VARCHAR(255), changeValue VARCHAR(150), dateModified DATETIME)');
         $this->db->statement('CREATE TABLE zp_recurring_patterns (id INTEGER PRIMARY KEY AUTOINCREMENT, entityId INTEGER, module VARCHAR(50), type VARCHAR(50), "trigger" VARCHAR(50), "interval" INTEGER DEFAULT 1, weekDays TEXT, enabled INTEGER DEFAULT 1)');
     }
 
@@ -47,15 +48,24 @@ trait ReminderDatabase
         return $repository;
     }
 
-    /** An inbox row, as the morning summary writes it. */
-    protected function addSummaryRow(int $userId, string $datetimeUtc): void
+    /**
+     * An inbox row, as the morning summary (or, with $type 'weekly_summary', the weekly one) writes
+     * it. A weekly row that included Today has moduleId 1.
+     */
+    protected function addSummaryRow(int $userId, string $datetimeUtc, string $type = 'morning_summary', int $moduleId = 0): void
     {
-        $this->db->table('zp_notifications')->insert(['userId' => $userId, 'read' => 0, 'type' => 'morning_summary', 'module' => 'reminders', 'moduleId' => 0, 'datetime' => $datetimeUtc, 'url' => '', 'message' => '', 'authorId' => 0]);
+        $this->db->table('zp_notifications')->insert(['userId' => $userId, 'read' => 0, 'type' => $type, 'module' => 'reminders', 'moduleId' => $moduleId, 'datetime' => $datetimeUtc, 'url' => '', 'message' => '', 'authorId' => 0]);
+    }
+
+    /** A status change in the to-do history, as Tickets::addTicketChange() writes it. */
+    protected function addStatusChange(int $ticketId, int $byUserId, int $status, string $atUtc): void
+    {
+        $this->db->table('zp_tickethistory')->insert(['userId' => $byUserId, 'ticketId' => $ticketId, 'changeType' => 'status', 'changeValue' => (string) $status, 'dateModified' => $atUtc]);
     }
 
     protected function addUser(int $id, string $role = '20', string $status = 'a', ?string $source = null, int $notifications = 1): void
     {
-        $this->db->table('zp_user')->insert(['id' => $id, 'username' => 'user'.$id.'@example.test', 'status' => $status, 'role' => $role, 'source' => $source, 'notifications' => $notifications]);
+        $this->db->table('zp_user')->insert(['id' => $id, 'username' => 'user'.$id.'@example.test', 'firstname' => 'User', 'lastname' => (string) $id, 'status' => $status, 'role' => $role, 'source' => $source, 'notifications' => $notifications]);
     }
 
     protected function addProject(int $id, ?int $state = null, ?string $end = null, string $name = 'Project'): void

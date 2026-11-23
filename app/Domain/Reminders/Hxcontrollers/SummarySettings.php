@@ -9,8 +9,9 @@ use Leantime\Domain\Reminders\Services\ReminderSettings;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * "Morning summary" in the Notifications tab of your own settings: on or off, the time (in your
- * timezone) and how often to-dos remind you by default. Saves for the signed-in person only.
+ * "Morning summary" and "Weekly summary" in the Notifications tab of your own settings: each on
+ * or off with its time (in your timezone), the weekly day and look-back, and how often to-dos
+ * remind you by default. Saves for the signed-in person only.
  * People who can see company settings also get the scheduler warning here when reminders
  * aren't going out.
  *
@@ -42,10 +43,17 @@ class SummarySettings extends HtmxController
         $request = $this->incomingRequest->request;
 
         try {
+            // The weekly fields are left as they are when a form doesn't send them.
+            $weeklyDay = $request->get('weeklyDay');
+
             $this->reminders->saveSettings(
                 $request->get('summary') === '1',
                 (string) $request->get('summaryTime', ''),
-                (string) $request->get('taskPreset', '')
+                (string) $request->get('taskPreset', ''),
+                $request->has('weekly') ? $request->get('weekly') === '1' : null,
+                $weeklyDay === null ? null : (ReminderSettings::isValidDay((string) $weeklyDay) ? (int) $weeklyDay : 0),
+                $request->has('weeklyTime') ? (string) $request->get('weeklyTime') : null,
+                $request->has('weeklyLookBack') ? $request->get('weeklyLookBack') === '1' : null,
             );
             $this->tpl->assign('savedMessage', $this->language->__('reminders.settings_saved'));
         } catch (ValidationException) {
@@ -61,6 +69,8 @@ class SummarySettings extends HtmxController
     {
         $this->tpl->assign('settings', $this->reminders->getSettings());
         $this->tpl->assign('presets', ReminderSettings::PRESETS);
+        $dayNames = explode(',', (string) $this->language->__('language.dayNames'));
+        $this->tpl->assign('weekDays', array_combine(range(1, 7), array_map(fn (int $day): string => trim($dayNames[$day % 7] ?? (string) $day), range(1, 7))));
         $this->tpl->assign('showSchedulerWarning', $this->reminders->canManageWorkspace() && $this->reminders->schedulerLooksStopped());
     }
 }

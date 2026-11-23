@@ -9,8 +9,8 @@ use Leantime\Core\Db\Db as DbCore;
 /**
  * Data access for reminders. Reminders add no tables of their own:
  *
- *  - Whether today's summary went out is read from the inbox (zp_notifications): the summary
- *    writes its inbox row before anything else.
+ *  - Whether today's morning summary or this week's weekly summary went out is read from the
+ *    inbox (zp_notifications): each summary writes its inbox row before anything else.
  *  - A person's choice for one to-do is a user setting in zp_settings,
  *    usersettings.{userId}.reminders.task.{ticketId}, read here with one prefix query.
  *
@@ -30,14 +30,48 @@ class Reminders
         $this->db = $db->getConnection();
     }
 
+    /** The inbox type of the morning summary. */
+    public const TYPE_MORNING = 'morning_summary';
+
+    /** The inbox type of the weekly summary, alone or combined with that day's morning summary. */
+    public const TYPE_WEEKLY = 'weekly_summary';
+
     /**
-     * Which of these people already have a morning summary in their inbox since the given time
-     * (their local midnight, in UTC). Uses the inbox's (userId, datetime) index.
+     * The weekly summary row's moduleId when it included that day's morning summary (Today); 0
+     * otherwise. The row itself is the record that Today went out.
+     */
+    public const WEEKLY_WITH_TODAY = 1;
+
+    /**
+     * Which of these people already have today's morning summary in their inbox: a morning summary
+     * row, or a weekly summary row that included it (moduleId {@see WEEKLY_WITH_TODAY}), since the
+     * given time (their local midnight, in UTC). Uses the inbox's (userId, datetime) index.
      *
      * @param  array<int, string>  $sinceByUser  userId → UTC `Y-m-d H:i:s`
      * @return array<int, true> userId → true when today's summary is already there
      */
     public function summariesSentSince(array $sinceByUser): array
+    {
+        return $this->sentSince(self::TYPE_MORNING, $sinceByUser) + $this->sentSince(self::TYPE_WEEKLY, $sinceByUser, withToday: true);
+    }
+
+    /**
+     * Which of these people already have this week's weekly summary: a weekly summary row since
+     * the given time (their local week start, in UTC).
+     *
+     * @param  array<int, string>  $sinceByUser  userId → UTC `Y-m-d H:i:s`
+     * @return array<int, true>
+     */
+    public function weeklySummariesSentSince(array $sinceByUser): array
+    {
+        return $this->sentSince(self::TYPE_WEEKLY, $sinceByUser);
+    }
+
+    /**
+     * @param  array<int, string>  $sinceByUser  userId → UTC `Y-m-d H:i:s`
+     * @return array<int, true>
+     */
+    private function sentSince(string $type, array $sinceByUser, bool $withToday = false): array
     {
         if ($sinceByUser === []) {
             return [];
@@ -47,8 +81,9 @@ class Reminders
             ->select(['userId', 'datetime'])
             ->whereIn('userId', array_keys($sinceByUser))
             ->where('datetime', '>=', min($sinceByUser))
-            ->where('type', 'morning_summary')
+            ->where('type', $type)
             ->where('module', 'reminders')
+            ->when($withToday, fn ($query) => $query->where('moduleId', self::WEEKLY_WITH_TODAY))
             ->get();
 
         $sent = [];
@@ -166,6 +201,38 @@ class Reminders
             ->orderBy('t.id')
             ->get()
             ->map(fn ($row) => ['isYours' => self::isOwner($userId, $row->editorId ?? null, $row->userId ?? null)] + (array) $row)
+            ->all();
+    }
+
+    /**
+     * To-dos (not milestones) that are this person's (assigned, or unassigned and created by
+     * them) with a Work Start that touches the range: starting in it, or starting earlier and
+     * ending in or after it. Only open projects. Which local days a Work Start covers, and
+     * whether the to-do is done, is decided later.
+     *
+     * @return array<int, array{id: int, projectId: int, status: mixed, editFrom: string, editTo: string|null}>
+     */
+    public function plannedTasksFor(int $userId, string $fromUtc, string $toUtc): array
+    {
+        return $this->db->table('zp_tickets as t')
+            ->join('zp_projects as p', 'p.id', '=', 't.projectId')
+            ->select(['t.id', 't.projectId', 't.status', 't.editFrom', 't.editTo'])
+            ->where(fn ($q) => $q->whereNull('t.type')->orWhere('t.type', '<>', 'milestone'))
+            ->where(fn ($q) => $this->openProject($q))
+            ->where(fn ($q) => $this->owned($q, $userId))
+            ->where('t.editFrom', '>=', self::NO_DATE_BEFORE)
+            ->where('t.editFrom', '<=', $toUtc)
+            ->where(fn ($q) => $q->where('t.editFrom', '>=', $fromUtc)->orWhere('t.editTo', '>=', $fromUtc))
+            ->orderBy('t.editFrom')
+            ->orderBy('t.id')
+            ->get()
+            ->map(fn ($row) => [
+                'id' => (int) $row->id,
+                'projectId' => (int) $row->projectId,
+                'status' => $row->status,
+                'editFrom' => (string) $row->editFrom,
+                'editTo' => self::isRealDate($row->editTo ?? null) ? (string) $row->editTo : null,
+            ])
             ->all();
     }
 

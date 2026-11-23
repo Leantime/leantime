@@ -63,10 +63,10 @@ class SummaryBuilder
     private ?RecipientAccess $recipientAccess = null;
 
     public function __construct(
-        private ReminderRepository $reminders,
-        private TicketRepository $tickets,
-        private ProjectRepository $projects,
-        private TrustedAppUrl $trustedAppUrl,
+        protected ReminderRepository $reminders,
+        protected TicketRepository $tickets,
+        protected ProjectRepository $projects,
+        protected TrustedAppUrl $trustedAppUrl,
     ) {}
 
     /**
@@ -273,7 +273,7 @@ class SummaryBuilder
      *
      * @return array<int, int>
      */
-    private function endRecipients(int $projectId): array
+    protected function endRecipients(int $projectId): array
     {
         if (isset($this->endRecipients[$projectId])) {
             return $this->endRecipients[$projectId];
@@ -339,12 +339,12 @@ class SummaryBuilder
     }
 
     /**
-     * @return array{kind: string, id: int, title: string, projectId: int, projectName: string, due: string, daysUntil: int, url: string}
-     */
-    /**
+     * One item, in the shape every summary and the API share.
+     *
      * @param  bool  $isYours  False for someone else's to-do the person asked to be reminded about.
+     * @return array{kind: string, id: int, title: string, projectId: int, projectName: string, due: string, daysUntil: int, url: string, isYours: bool}
      */
-    private function item(string $kind, int $id, string $title, int $projectId, string $projectName, string $dueUtc, int $daysUntil, string $path, bool $isYours = true): array
+    protected function item(string $kind, int $id, string $title, int $projectId, string $projectName, string $dueUtc, int $daysUntil, string $path, bool $isYours = true): array
     {
         return [
             'kind' => $kind,
@@ -359,17 +359,17 @@ class SummaryBuilder
         ];
     }
 
-    private function localDayIndex(string $utc, string $timezone): int
+    protected function localDayIndex(string $utc, string $timezone): int
     {
         return self::dayIndex(CarbonImmutable::parse($utc, 'UTC')->setTimezone($timezone)->toDateString());
     }
 
-    private static function isDate(mixed $value): bool
+    protected static function isDate(mixed $value): bool
     {
         return ReminderRepository::isRealDate($value);
     }
 
-    private static function utc(CarbonImmutable $time): string
+    protected static function utc(CarbonImmutable $time): string
     {
         return $time->setTimezone('UTC')->format('Y-m-d H:i:s');
     }

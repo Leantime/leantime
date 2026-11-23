@@ -46,12 +46,18 @@ class ReminderSettingsControllersTest extends TestCase
     private function reminders(): Reminders
     {
         return $this->make(Reminders::class, [
-            'getSettings' => fn () => ['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'America/New_York', 'workspaceEnabled' => true],
-            'saveSettings' => function (?bool $summary = null, ?string $summaryTime = null, ?string $taskPreset = null) {
+            'getSettings' => fn () => ['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'America/New_York',
+                'weekly' => true, 'weeklyDay' => 1, 'weeklyTime' => '08:00', 'weeklyLookBack' => true, 'workspaceEnabled' => true],
+            'saveSettings' => function (?bool $summary = null, ?string $summaryTime = null, ?string $taskPreset = null, ?bool $weekly = null, ?int $weeklyDay = null, ?string $weeklyTime = null, ?bool $weeklyLookBack = null) {
                 if ($summaryTime !== null && preg_match('/^\d\d:\d\d$/', $summaryTime) !== 1) {
                     throw new ValidationException(['summaryTime' => ['Use a time like 08:00.']]);
                 }
-                $this->changes[] = ['saveSettings', $summary, $summaryTime, $taskPreset];
+                if ($weeklyDay !== null && ($weeklyDay < 1 || $weeklyDay > 7)) {
+                    throw new ValidationException(['weeklyDay' => ['Use a day from 1 to 7.']]);
+                }
+                $this->changes[] = $weekly === null && $weeklyDay === null && $weeklyTime === null && $weeklyLookBack === null
+                    ? ['saveSettings', $summary, $summaryTime, $taskPreset]
+                    : ['saveSettings', $summary, $summaryTime, $taskPreset, $weekly, $weeklyDay, $weeklyTime, $weeklyLookBack];
 
                 return [];
             },
@@ -80,7 +86,7 @@ class ReminderSettingsControllersTest extends TestCase
                 $this->assigned[$name] = $value;
             },
         ]);
-        $language = $this->make(Language::class, ['__' => fn (string $key) => $key]);
+        $language = $this->make(Language::class, ['__' => fn (string $key) => $key === 'language.dayNames' ? 'Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday' : $key]);
 
         $controller = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
         foreach (['incomingRequest' => $request, 'tpl' => $tpl, 'language' => $language] as $property => $value) {
@@ -108,6 +114,25 @@ class ReminderSettingsControllersTest extends TestCase
         $this->assertSame([['saveSettings', false, '07:30', 'less']], $this->changes);
         $this->assertSame('reminders.settings_saved', $this->assigned['savedMessage']);
         $this->assertSame('America/New_York', $this->assigned['settings']['timezone'], 'the form shows the timezone');
+    }
+
+    public function test_the_weekly_summary_fields_are_saved_with_the_rest(): void
+    {
+        $this->controller(SummarySettings::class, 'POST', [
+            'summary' => '1', 'summaryTime' => '08:00', 'taskPreset' => 'default',
+            'weekly' => '0', 'weeklyDay' => '5', 'weeklyTime' => '16:30', 'weeklyLookBack' => '0',
+        ])->save();
+
+        $this->assertSame([['saveSettings', true, '08:00', 'default', false, 5, '16:30', false]], $this->changes);
+        $this->assertSame([1 => 'Monday', 2 => 'Tuesday', 3 => 'Wednesday', 4 => 'Thursday', 5 => 'Friday', 6 => 'Saturday', 7 => 'Sunday'], $this->assigned['weekDays']);
+    }
+
+    public function test_a_day_that_isn_t_one_says_so_and_saves_nothing(): void
+    {
+        $this->controller(SummarySettings::class, 'POST', ['summary' => '1', 'summaryTime' => '08:00', 'taskPreset' => 'default', 'weeklyDay' => '8', 'weeklyTime' => '08:00'])->save();
+
+        $this->assertSame([], $this->changes);
+        $this->assertSame('reminders.settings_not_saved', $this->assigned['errorMessage']);
     }
 
     public function test_a_bad_time_says_so_and_saves_nothing(): void
@@ -163,12 +188,17 @@ class ReminderSettingsControllersTest extends TestCase
         app()->instance(\Leantime\Core\Plugins\Plugins::class, $plugins);
 
         $html = view('reminders::partials.summarySettings', [
-            'settings' => ['summary' => true, 'summaryTime' => '08:02', 'taskPreset' => 'default', 'timezone' => 'UTC', 'workspaceEnabled' => true],
+            'settings' => ['summary' => true, 'summaryTime' => '08:02', 'taskPreset' => 'default', 'timezone' => 'UTC',
+                'weekly' => true, 'weeklyDay' => 5, 'weeklyTime' => '16:47', 'weeklyLookBack' => false, 'workspaceEnabled' => true],
             'presets' => ['default', 'more', 'less', 'off'],
+            'weekDays' => [1 => 'Monday', 2 => 'Tuesday', 3 => 'Wednesday', 4 => 'Thursday', 5 => 'Friday', 6 => 'Saturday', 7 => 'Sunday'],
             'showSchedulerWarning' => false,
         ])->fragment('form');
 
         $this->assertMatchesRegularExpression('/<input type="time"[^>]*value="08:02"[^>]*step="60"/', $html, 'the server takes any HH:MM, so the field does too');
+        $this->assertMatchesRegularExpression('/<input type="time" name="weeklyTime"[^>]*value="16:47"[^>]*step="60"/', $html);
+        $this->assertMatchesRegularExpression('/<option value="5"\s+selected[^>]*>Friday<\/option>/', $html, 'the weekly day is selected');
+        $this->assertMatchesRegularExpression('/<input type="hidden" name="weeklyLookBack" value="0"/', $html, 'unticking the look-back still sends a value');
     }
 
     public function test_viewers_get_the_open_to_do_s_menu_for_their_reminders_and_nothing_more(): void

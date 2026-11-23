@@ -13,6 +13,8 @@ use Leantime\Core\Language as LanguageCore;
  * Each row gets a plain "why" line: when it's due or ends ("today", "tomorrow", the weekday
  * within a week, else "in N days", in the person's timezone), then its project, or "You asked
  * to be reminded" for someone else's to-do the person opted in to.
+ *
+ * {@see presentWeek()} does the same for the "Your week" panel, from the weekly summary.
  */
 class ComingUpList
 {
@@ -56,6 +58,77 @@ class ComingUpList
             'stillOpen' => ($summary['overdueCount'] ?? 0) > 0 ? sprintf($this->language->__('reminders.still_open'), $summary['overdueCount']) : null,
             'isEmpty' => $sections === [],
         ];
+    }
+
+    /**
+     * The "Your week" panel's content, from {@see WeeklySummaryBuilder::buildWeek()} with limit 0:
+     * This week (rows, then the routine, planned-day and "still open" lines), Last week (the
+     * count and the named to-dos), then plugin sections (their lines and link).
+     *
+     * @param  array<string, mixed>  $week
+     * @return array{
+     *     sections: array<int, array{key: string, label: string, items: array<int, array<string, mixed>>, notes: array<int, string>, link: array{url: string, label: string}|null}>,
+     *     isEmpty: bool
+     * }
+     */
+    public function presentWeek(array $week, string $timezone): array
+    {
+        $sections = [];
+        $ahead = $week['ahead'];
+
+        $notes = [];
+        if ($ahead['routine']['count'] > 0) {
+            $notes[] = sprintf($this->language->__('reminders.weekly_routine'), $ahead['routine']['count']);
+        }
+        foreach ($ahead['planned'] as $day) {
+            $notes[] = WeeklyLines::planned($this->language, $day);
+        }
+        if ($ahead['overdueCount'] > 0) {
+            $notes[] = sprintf($this->language->__('reminders.still_open'), $ahead['overdueCount']);
+        }
+        $aheadRows = array_map(fn (array $item) => $this->row($item, $timezone), $ahead['items']);
+        if ($aheadRows !== [] || $notes !== []) {
+            $sections[] = ['key' => 'ahead', 'label' => $this->language->__('reminders.weekly_email_this_week'), 'items' => $aheadRows, 'notes' => $notes, 'link' => null];
+        }
+
+        if (($week['lookBack'] ?? null) !== null) {
+            $rows = [];
+            foreach ($week['lookBack']['items'] as $item) {
+                $closedBy = $item['closedBy'] !== null && $item['closedBy']['name'] !== ''
+                    ? sprintf($this->language->__('reminders.weekly_closed_by'), $item['closedBy']['name'])
+                    : '';
+                $rows[] = [
+                    'kind' => 'done',
+                    'id' => $item['id'],
+                    'title' => $item['title'],
+                    'href' => self::inPageLink((string) $item['url']),
+                    'why' => trim($item['projectName'].($closedBy !== '' ? ' · '.$closedBy : ''), ' ·'),
+                    'isYours' => true,
+                ];
+            }
+            $sections[] = [
+                'key' => 'lookBack',
+                'label' => $this->language->__('reminders.weekly_email_last_week'),
+                'items' => $rows,
+                'notes' => [WeeklyLines::finished($this->language, $week['lookBack']['count'])],
+                'link' => null,
+            ];
+        }
+
+        foreach ($week['sections'] as $section) {
+            if (! str_starts_with((string) $section['kind'], 'plugin:')) {
+                continue;
+            }
+            $sections[] = [
+                'key' => str_replace(['plugin:', '.'], ['plugin-', '-'], (string) $section['kind']),
+                'label' => $section['title'],
+                'items' => [],
+                'notes' => $section['lines'],
+                'link' => $section['url'] !== null ? ['url' => $section['url'], 'label' => $section['title']] : null,
+            ];
+        }
+
+        return ['sections' => $sections, 'isEmpty' => $sections === []];
     }
 
     /**

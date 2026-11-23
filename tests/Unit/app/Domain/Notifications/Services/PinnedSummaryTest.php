@@ -134,6 +134,21 @@ class PinnedSummaryTest extends TestCase
         $this->assertArrayHasKey('pinned', $inbox[0], 'every row carries the flag');
     }
 
+    public function test_today_s_weekly_summary_is_pinned_like_the_morning_one(): void
+    {
+        $morning = $this->add(7, 'morning_summary', '2026-11-22 13:00:00');
+        $weekly = $this->add(7, 'weekly_summary', '2026-11-22 04:00:00');   // 23:00 the day before in New York
+        $this->add(7, 'comment', '2026-11-22 18:00:00');
+
+        $this->assertSame($morning, (int) $this->service()->getBellNotifications(7, $this->now())[0]['id'], 'yesterday\'s weekly row isn\'t today\'s');
+
+        $this->db->table('zp_notifications')->where('id', $weekly)->update(['datetime' => '2026-11-22 14:00:00']);
+        $rows = $this->service()->getBellNotifications(7, $this->now());
+        $this->assertSame($weekly, (int) $rows[0]['id'], 'on a day with both, the later one is pinned');
+        $this->assertTrue($rows[0]['pinned']);
+        $this->assertSame(1, count(array_filter(array_column($rows, 'pinned'))));
+    }
+
     public function test_someone_else_s_summary_is_never_pinned_for_you(): void
     {
         $this->add(8, 'morning_summary', '2026-11-22 13:00:00');

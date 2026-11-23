@@ -57,12 +57,13 @@ class Notifications
     }
 
     /**
-     * The newest row of one type for a person written at or after $sinceUtc ('Y-m-d H:i:s'), in
-     * the same shape as getAllNotifications() rows, or null.
+     * The newest row of any of these types for a person written at or after $sinceUtc
+     * ('Y-m-d H:i:s'), in the same shape as getAllNotifications() rows, or null.
      *
+     * @param  array<int, string>  $types
      * @return array<string, mixed>|null
      */
-    public function newestOfTypeSince(int $userId, string $type, string $sinceUtc): ?array
+    public function newestOfTypesSince(int $userId, array $types, string $sinceUtc): ?array
     {
         $row = $this->db->table('zp_notifications')
             ->select(
@@ -81,7 +82,7 @@ class Notifications
             )
             ->leftJoin('zp_user', 'zp_notifications.authorId', '=', 'zp_user.id')
             ->where('userId', $userId)
-            ->where('zp_notifications.type', $type)
+            ->whereIn('zp_notifications.type', $types)
             ->where('datetime', '>=', $sinceUtc)
             ->orderBy('datetime', 'desc')
             ->first();

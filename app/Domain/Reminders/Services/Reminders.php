@@ -15,7 +15,7 @@ use Leantime\Domain\Tickets\Permissions\TicketsPermissions;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 
 /**
- * Reminders for the person who is signed in: their morning summary as data, their reminder
+ * Reminders for the person who is signed in: their morning and weekly summaries as data, their reminder
  * settings, and the reminders on one to-do. Every method acts for the session user only; none
  * takes another person's id. Methods about a to-do check that the person can see it.
  */
@@ -27,6 +27,7 @@ class Reminders
         private TicketRepository $tickets,
         private PermissionService $permissions,
         private ReminderRepository $reminders,
+        private WeeklySummaryBuilder $weeklyBuilder,
     ) {}
 
     /**
@@ -48,9 +49,36 @@ class Reminders
     }
 
     /**
-     * Your reminder settings, plus whether the workspace has reminders turned off.
+     * Your week: the same sections your weekly summary sends. "This week" covers today and the
+     * six days after it, "Last week" (lookBack) the seven days before today, when you keep it on
+     * and finished something. Every section has a stable kind: 'today' (only with $includeToday,
+     * when today has something), 'ahead', 'lookBack' and 'plugin:{plugin}.{section}'; they are
+     * also listed in order in sections. Items share the morning summary's item fields; look-back
+     * items add finishedAt and closedBy.
      *
-     * @return array{summary: bool, summaryTime: string, taskPreset: string, timezone: string, workspaceEnabled: bool}
+     * @param  bool  $includeToday  Add today's morning summary as the Today section, as the
+     *                              weekly message does when both are due together.
+     * @param  int  $limit  How many items "This week" lists: 5 by default, 0 for all of them.
+     * @return array{week: array{start: string, end: string}, today: array<string, mixed>|null, ahead: array<string, mixed>, lookBack: array<string, mixed>|null, sections: array<int, array<string, mixed>>, isEmpty: bool}
+     *
+     * @api
+     */
+    public function getWeeklySummary(bool $includeToday = false, int $limit = SummaryBuilder::MAX_ITEMS): array
+    {
+        $userId = $this->userId();
+        $mine = $this->settings->forUser($userId);
+        $now = CarbonImmutable::now('UTC');
+
+        $today = $includeToday ? $this->builder->build($userId, $now, $mine['timezone'], $mine['taskPreset']) : null;
+
+        return $this->weeklyBuilder->buildWeek($userId, $now, $mine, $today, max(0, $limit));
+    }
+
+    /**
+     * Your reminder settings, plus whether the workspace has reminders turned off. weekly,
+     * weeklyDay (1 Monday to 7 Sunday), weeklyTime and weeklyLookBack are the weekly summary's.
+     *
+     * @return array{summary: bool, summaryTime: string, taskPreset: string, timezone: string, weekly: bool, weeklyDay: int, weeklyTime: string, weeklyLookBack: bool, workspaceEnabled: bool}
      *
      * @api
      */
@@ -65,12 +93,23 @@ class Reminders
      * @param  bool|null  $summary  Morning summary on or off.
      * @param  string|null  $summaryTime  'HH:MM' in your timezone.
      * @param  string|null  $taskPreset  Your default for to-dos: default, more, less or off.
-     * @return array{summary: bool, summaryTime: string, taskPreset: string, timezone: string, workspaceEnabled: bool}
+     * @param  bool|null  $weekly  Weekly summary on or off.
+     * @param  int|null  $weeklyDay  The weekly summary's day: 1 (Monday) to 7 (Sunday).
+     * @param  string|null  $weeklyTime  The weekly summary's time, 'HH:MM' in your timezone.
+     * @param  bool|null  $weeklyLookBack  Whether the weekly summary includes what you finished last week.
+     * @return array{summary: bool, summaryTime: string, taskPreset: string, timezone: string, weekly: bool, weeklyDay: int, weeklyTime: string, weeklyLookBack: bool, workspaceEnabled: bool}
      *
      * @api
      */
-    public function saveSettings(?bool $summary = null, ?string $summaryTime = null, ?string $taskPreset = null): array
-    {
+    public function saveSettings(
+        ?bool $summary = null,
+        ?string $summaryTime = null,
+        ?string $taskPreset = null,
+        ?bool $weekly = null,
+        ?int $weeklyDay = null,
+        ?string $weeklyTime = null,
+        ?bool $weeklyLookBack = null,
+    ): array {
         $userId = $this->userId();
 
         if ($summaryTime !== null && ! ReminderSettings::isValidTime($summaryTime)) {
@@ -79,8 +118,15 @@ class Reminders
         if ($taskPreset !== null && ! in_array($taskPreset, ReminderSettings::PRESETS, true)) {
             throw new ValidationException(['taskPreset' => ['Use default, more, less or off.']]);
         }
+        if ($weeklyDay !== null && ! ReminderSettings::isValidDay($weeklyDay)) {
+            throw new ValidationException(['weeklyDay' => ['Use a day from 1 (Monday) to 7 (Sunday).']]);
+        }
+        if ($weeklyTime !== null && ! ReminderSettings::isValidTime($weeklyTime)) {
+            throw new ValidationException(['weeklyTime' => ['Use a time like 08:00.']]);
+        }
 
         $this->settings->save($userId, $summary, $summaryTime, $taskPreset);
+        $this->settings->saveWeekly($userId, $weekly, $weeklyDay, $weeklyTime, $weeklyLookBack);
         ReminderDefaultsUpdated::dispatch(userId: $userId);
 
         return $this->getSettings();

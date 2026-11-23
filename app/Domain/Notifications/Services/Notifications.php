@@ -44,8 +44,8 @@ class Notifications
     }
 
     /**
-     * The bell's list: the person's notifications, newest first, with today's morning summary
-     * pinned on top. Not exposed via JSON-RPC: it accepts an arbitrary $userId.
+     * The bell's list: the person's notifications, newest first, with today's summary (morning
+     * or weekly) pinned on top. Not exposed via JSON-RPC: it accepts an arbitrary $userId.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -55,8 +55,9 @@ class Notifications
     }
 
     /**
-     * Marks today's morning summary with pinned = true and every other row with pinned = false.
-     * "Today" is the person's own day: the summary written at or after their local midnight. Its
+     * Marks today's summary with pinned = true and every other row with pinned = false: the newest
+     * morning or weekly summary written at or after the person's local midnight (on a day with
+     * both, the later one). Its
      * read state is untouched, so reading it clears the unread highlight but not the pin; from
      * the next local midnight it sorts by date like any other row.
      *
@@ -70,7 +71,7 @@ class Notifications
     {
         $timezone = app()->make(ReminderSettings::class)->forUser($userId)['timezone'];
         $sinceUtc = ($nowUtc ?? CarbonImmutable::now('UTC'))->setTimezone($timezone)->startOfDay()->setTimezone('UTC')->format('Y-m-d H:i:s');
-        $today = $this->notificationsRepo->newestOfTypeSince($userId, ReminderNotifier::TYPE_SUMMARY, $sinceUtc);
+        $today = $this->notificationsRepo->newestOfTypesSince($userId, [ReminderNotifier::TYPE_SUMMARY, ReminderNotifier::TYPE_WEEKLY], $sinceUtc);
         $pinnedId = $today === null ? null : (int) $today['id'];
 
         $rows = array_map(fn (array $row) => ['pinned' => $pinnedId !== null && (int) ($row['id'] ?? 0) === $pinnedId] + $row, $rows);

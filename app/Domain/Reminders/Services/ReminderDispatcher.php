@@ -3,13 +3,12 @@
 namespace Leantime\Domain\Reminders\Services;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Cache\Lock;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
 
 /**
- * The reminder job ('reminders:dispatch', every five minutes, never two at once).
+ * The morning summary, sent by the reminder job ('reminders:dispatch', every five minutes, never
+ * two at once, right after the weekly summary) through the shared {@see ScheduledSummaryRunner} loop (claiming by inbox row,
+ * per-person lock, run budget and resume cursor are described there).
  *
  * A person's morning summary is due from their summary time until {@see WINDOW_MINUTES} after
  * it, in their timezone. A run that was missed catches up on the next one inside that window;
@@ -19,26 +18,16 @@ use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
  *
  * The inbox is the record of what was sent. A summary writes its inbox row first, then the email
  * and push. A person who already has a summary row since their local midnight gets nothing more
- * that day.
- *
- * Sending once doesn't depend on the scheduler's overlap lock alone, which expires after 10
- * minutes while a slow run could still be going. Each person's send takes its own short lock
- * (same cache store as the scheduler's) and checks the inbox again inside it, so two runs can
- * never both send: the second can't get the lock, or finds the row. A run also stops starting
- * new people after {@see MAX_RUN_SECONDS}, well inside the overlap lock; the next run starts where
- * it stopped (and wraps around), so the people after that point are reached even when the ones
- * before it keep runs busy. Right before a send the clock is read again: a summary whose day or
- * window ended while the run was busy is skipped, and the inbox row carries the real send time.
+ * that day. A weekly summary that included Today (recorded on its inbox row) counts as that
+ * day's morning summary too.
  *
  * An empty day writes nothing. A later run inside the window still sends one summary if something
  * has come due since, so a person gets at most one summary a day, and maybe none.
  *
  * Every run records a heartbeat, so admins can be told when the scheduler isn't running.
  */
-class ReminderDispatcher
+class ReminderDispatcher extends ScheduledSummaryRunner
 {
-    public const USERS_PER_CHUNK = 200;
-
     /** How long after the summary time a summary may still go out. */
     public const WINDOW_MINUTES = 180;
 
@@ -48,17 +37,8 @@ class ReminderDispatcher
      */
     public const LAST_RUN_TIME = '23:55';
 
-    /** A run starts no new person after this long (the overlap lock lasts 10 minutes). */
-    public const MAX_RUN_SECONDS = 480;
-
-    /** How long one person's send lock lasts; it covers one inbox check and one insert. */
-    public const SEND_LOCK_SECONDS = 60;
-
     /** Where a run that reached its time limit stopped: the last user id it handled. */
     public const CURSOR_KEY = 'reminders:dispatch:cursor';
-
-    /** The time run() was given (tests), or null to read the real clock at each send. */
-    private ?CarbonImmutable $fixedNow = null;
 
     public function __construct(
         private ReminderRepository $reminders,
@@ -66,81 +46,6 @@ class ReminderDispatcher
         private SummaryBuilder $builder,
         private ReminderNotifier $notifier,
     ) {}
-
-    /**
-     * @return int How many summaries were sent.
-     */
-    public function run(?CarbonImmutable $nowUtc = null): int
-    {
-        $this->fixedNow = $nowUtc;
-        $nowUtc ??= CarbonImmutable::now('UTC');
-        $startedAt = $this->seconds();
-        $this->settings->recordHeartbeat($nowUtc->format('Y-m-d H:i:s'));
-
-        if (! $this->settings->workspaceEnabled()) {
-            return 0;
-        }
-
-        $sent = 0;
-
-        // Start after where the last run ran out of time, then wrap around to the start: people
-        // late in the list are reached even when the ones before them keep runs busy (an empty
-        // summary writes nothing, so the same people are rebuilt on every run).
-        $resumeAfter = $this->loadCursor();
-
-        foreach ([[$resumeAfter, PHP_INT_MAX], [0, $resumeAfter]] as [$afterId, $upTo]) {
-            if ($afterId >= $upTo) {
-                continue;
-            }
-
-            while (($users = $this->reminders->activeUsers($afterId, self::USERS_PER_CHUNK)) !== []) {
-                $isFullChunk = count($users) === self::USERS_PER_CHUNK;
-                $users = array_values(array_filter($users, fn (array $user): bool => (int) $user['id'] <= $upTo));
-                if ($users === []) {
-                    break;
-                }
-
-                $afterId = (int) end($users)['id'];
-                $settings = $this->settings->forUsers(array_column($users, 'id'));
-
-                // Who is due: summary on, local time inside the window after their summary time.
-                $since = [];
-                foreach ($users as $user) {
-                    $dueSince = self::dueSince($settings[$user['id']], $nowUtc);
-                    if ($dueSince !== null) {
-                        $since[$user['id']] = $dueSince;
-                    }
-                }
-
-                $alreadySent = $this->reminders->summariesSentSince($since);
-
-                foreach (array_keys($since) as $userId) {
-                    if (isset($alreadySent[$userId])) {
-                        continue;
-                    }
-
-                    if ($this->seconds() - $startedAt > self::MAX_RUN_SECONDS) {
-                        Log::info('Morning summaries: run reached '.self::MAX_RUN_SECONDS.' seconds; the next run continues from here.');
-                        $this->saveCursor($userId - 1);
-
-                        return $sent;
-                    }
-
-                    if ($this->sendOnce($userId, $since[$userId], $nowUtc, $settings[$userId])) {
-                        $sent++;
-                    }
-                }
-
-                if (! $isFullChunk) {
-                    break;
-                }
-            }
-        }
-
-        $this->clearCursor();
-
-        return $sent;
-    }
 
     /**
      * Since when (UTC, the person's local midnight) a person's summary counts as sent today, when
@@ -164,92 +69,85 @@ class ReminderDispatcher
         return $localNow->startOfDay()->setTimezone('UTC')->format('Y-m-d H:i:s');
     }
 
+    /** Records the heartbeat; sends nothing when reminders are off for the workspace. */
+    protected function startRun(CarbonImmutable $nowUtc): bool
+    {
+        $this->settings->recordHeartbeat($nowUtc->format('Y-m-d H:i:s'));
+
+        return $this->settings->workspaceEnabled();
+    }
+
+    protected function usersAfter(int $afterId, int $limit): array
+    {
+        return $this->reminders->activeUsers($afterId, $limit);
+    }
+
     /**
-     * Builds and sends one person's summary, at most once a day even when runs overlap. The slow
-     * part (building) happens first, without a lock. Then, under the person's lock, the inbox is
-     * checked again and the row written; that is all the lock covers, so it can't expire while
-     * held. Email and push follow once the row exists: any other run now finds the row.
-     *
-     * @param  array{summary: bool, summaryTime: string, taskPreset: string, timezone: string}  $mine
-     * @return bool Whether a summary went out.
+     * @return array<int, array{summary: bool, summaryTime: string, taskPreset: string, timezone: string}>
      */
-    private function sendOnce(int $userId, string $sinceUtc, CarbonImmutable $nowUtc, array $mine): bool
+    protected function settingsFor(array $userIds): array
     {
-        try {
-            $summary = $this->builder->build($userId, $nowUtc, $mine['timezone'], $mine['taskPreset']);
-            if ($summary['isEmpty']) {
-                return false;
-            }
-
-            // The run may have been busy for minutes: still the same local day, still inside the
-            // window? Otherwise this summary is stale (yesterday's, or "this morning" too late).
-            $sendNow = $this->currentTime();
-            if (self::dueSince($mine, $sendNow) !== $sinceUtc) {
-                return false;
-            }
-
-            $user = $this->reminders->activeUser($userId);
-            if ($user === null) {
-                return false;
-            }
-
-            $lock = $this->sendLock($userId);
-            if (! $lock->get()) {
-                return false; // another run is recording this person's summary right now
-            }
-
-            try {
-                if (isset($this->reminders->summariesSentSince([$userId => $sinceUtc])[$userId])) {
-                    return false;
-                }
-
-                $this->notifier->recordSummary($user, $summary, $sendNow);
-            } finally {
-                $lock->release();
-            }
-
-            $this->notifier->deliverSummary($user, $summary, $mine['summaryTime']);
-
-            return true;
-        } catch (\Throwable $e) {
-            Log::warning('Morning summary failed for user '.$userId.': '.$e->getMessage());
-
-            return false;
-        }
+        return $this->settings->forUsers($userIds);
     }
 
-    /** The last user id a run handled before it ran out of time; 0 when the last run finished. */
-    protected function loadCursor(): int
+    /** The person's local midnight (UTC) while their summary is due; see {@see dueSince()}. */
+    protected function periodStartIfDue(array $mine, CarbonImmutable $nowUtc): ?string
     {
-        return (int) Cache::get(self::CURSOR_KEY, 0);
+        return self::dueSince($mine, $nowUtc);
     }
 
-    protected function saveCursor(int $lastHandledUserId): void
+    /**
+     * Today's morning summary row, or a weekly summary row that included today's morning summary
+     * (the weekly kind runs first in the same job and folds it in when both are due; see
+     * {@see WeeklySummaryDispatcher}). A weekly summary without Today doesn't count, so someone
+     * whose times differ gets both.
+     */
+    protected function sentSince(array $sinceByUser): array
     {
-        Cache::put(self::CURSOR_KEY, max(0, $lastHandledUserId), CarbonImmutable::now()->addDay());
+        return $this->reminders->summariesSentSince($sinceByUser);
     }
 
-    protected function clearCursor(): void
+    /** The morning summary, or null on an empty day. */
+    protected function buildFor(int $userId, CarbonImmutable $nowUtc, array $mine): ?array
     {
-        Cache::forget(self::CURSOR_KEY);
+        $summary = $this->builder->build($userId, $nowUtc, $mine['timezone'], $mine['taskPreset']);
+
+        return $summary['isEmpty'] ? null : $summary;
     }
 
-    /** One person's send lock, in the default cache store (the one the scheduler's locks use). */
-    protected function sendLock(int $userId): Lock
+    protected function activeUser(int $userId): ?array
     {
-        return Cache::lock('reminders:summary:'.$userId, self::SEND_LOCK_SECONDS);
+        return $this->reminders->activeUser($userId);
     }
 
-    /** The time a summary is recorded at: the time run() was given, else the real clock now. */
-    protected function currentTime(): CarbonImmutable
+    protected function record(array $user, array $summary, CarbonImmutable $sendNowUtc): void
     {
-        return $this->fixedNow ?? CarbonImmutable::now('UTC');
+        $this->notifier->recordSummary($user, $summary, $sendNowUtc);
     }
 
-    /** Seconds on a steady clock, to bound a run. */
-    protected function seconds(): float
+    protected function deliver(array $user, array $summary, array $mine): void
     {
-        return hrtime(true) / 1e9;
+        $this->notifier->deliverSummary($user, $summary, $mine['summaryTime']);
+    }
+
+    protected function cursorKey(): string
+    {
+        return self::CURSOR_KEY;
+    }
+
+    protected function lockKey(int $userId): string
+    {
+        return 'reminders:summary:'.$userId;
+    }
+
+    protected function label(): string
+    {
+        return 'Morning summary';
+    }
+
+    protected function runLabel(): string
+    {
+        return 'Morning summaries';
     }
 
     /**
