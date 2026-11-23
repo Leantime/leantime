@@ -331,6 +331,8 @@ class CalendarServiceTest extends TestCase
             'patch' => 'calendar.edit',
             'delEvent' => 'calendar.delete',
             'deleteGCal' => 'calendar.delete',
+            'getShowPlannedDays' => 'calendar.view',
+            'saveShowPlannedDays' => 'calendar.view',
         ];
         foreach ($expected as $method => $permission) {
             $this->assertTrue($isApi($method), "$method should stay @api");
@@ -391,6 +393,98 @@ class CalendarServiceTest extends TestCase
             $editEvents[0]['dateTo'],
             'editTo should fall back to editFrom when empty'
         );
+    }
+
+    /**
+     * A date-only Work Start is a planned day. It shows as all-day (not a zero-length event at
+     * midnight) by default, and is left out when the person turns "Show planned days" off.
+     * Time-boxed Work Starts always show.
+     */
+    public function test_get_calendar_shows_planned_days_all_day_unless_hidden(): void
+    {
+        session(['usersettings.timezone' => 'America/Los_Angeles']);
+        app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+
+        $plannedDay = [
+            'id' => 21, 'headline' => 'Draft the survey', 'description' => '', 'projectId' => 3, 'status' => 3,
+            'dateToFinish' => '',
+            'editFrom' => '2026-11-24 08:00:00', // midnight in Los Angeles
+            'editTo' => null,
+        ];
+        $timeBoxed = [
+            'id' => 22, 'headline' => 'Coaching call', 'description' => '', 'projectId' => 3, 'status' => 3,
+            'dateToFinish' => '',
+            'editFrom' => '2026-11-24 22:00:00', // 14:00 in Los Angeles
+            'editTo' => '2026-11-24 23:30:00',
+        ];
+
+        app()->instance(Tickets::class, $this->make(Tickets::class, [
+            'getOpenUserTicketsThisWeekAndLater' => fn () => ['thisWeek' => ['tickets' => [$plannedDay, $timeBoxed]]],
+            'getStatusLabels' => fn () => [],
+        ]));
+
+        $editEvents = function (string $setting): array {
+            $service = new \Leantime\Domain\Calendar\Services\Calendar(
+                calendarRepo: $this->make(CalendarRepository::class, ['getAll' => fn () => []]),
+                language: $this->language,
+                settingsRepo: $this->make(Setting::class, ['getSetting' => $setting]),
+                config: $this->config,
+                outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
+            );
+
+            $events = array_values(array_filter($service->getCalendar(1), fn ($e) => ($e['dateContext'] ?? null) === 'edit'));
+
+            return array_combine(array_column($events, 'id'), $events);
+        };
+
+        $shown = $editEvents('');
+        $this->assertSame([21, 22], array_keys($shown), 'planned days show by default');
+        $this->assertTrue($shown[21]['allDay'], 'a planned day shows as all-day, not at midnight');
+        $this->assertFalse($shown[22]['allDay']);
+
+        $hidden = $editEvents('0');
+        $this->assertSame([22], array_keys($hidden), 'turned off, only the time box shows');
+        $this->assertFalse($hidden[22]['allDay']);
+
+        app()->forgetInstance(\Leantime\Core\Support\DateTimeHelper::class);
+    }
+
+    public function test_show_planned_days_is_on_by_default_and_saved_per_person_when_off(): void
+    {
+        session(['userdata.id' => 7]);
+        $saved = [];
+        $deleted = [];
+
+        $service = new \Leantime\Domain\Calendar\Services\Calendar(
+            calendarRepo: $this->calendarRepository,
+            language: $this->language,
+            settingsRepo: $this->make(Setting::class, [
+                'saveSetting' => function ($key, $value) use (&$saved) {
+                    $saved[$key] = $value;
+
+                    return true;
+                },
+                'deleteSetting' => function ($key) use (&$deleted) {
+                    $deleted[] = $key;
+
+                    return true;
+                },
+                'getSetting' => function ($key) use (&$saved) {
+                    return $saved[$key] ?? false;
+                },
+            ]),
+            config: $this->config,
+            outboundHttpClient: $this->make(\Leantime\Core\Support\OutboundHttpClient::class)
+        );
+
+        $this->assertTrue($service->getShowPlannedDays(), 'on by default');
+
+        $this->assertFalse($service->saveShowPlannedDays(false));
+        $this->assertSame(['usersettings.7.calendar.showPlannedDays' => '0'], $saved);
+        $this->assertFalse($service->getShowPlannedDays());
+
+        $this->assertTrue($service->saveShowPlannedDays(true));
+        $this->assertSame(['usersettings.7.calendar.showPlannedDays'], $deleted, 'turning it back on clears the stored "off"');
     }
 
     /**
@@ -549,6 +643,46 @@ class CalendarServiceTest extends TestCase
         ]])->getIcalByRequestToken('cal_user')->get();
 
         $this->assertMatchesRegularExpression('/DTSTART[^:\\r\\n]*VALUE=DATE:20250417/', $ics);
+    }
+
+    /**
+     * A planned day has no start time, so it gets no start alarm. A time box that spans whole
+     * days is all-day too, but it has a real start and keeps its alarm.
+     */
+    public function test_ical_feed_skips_the_start_alarm_only_for_planned_days(): void
+    {
+        session(['usersettings.timezone' => 'America/Los_Angeles']);
+
+        $event = fn (int $id, bool $plannedDay) => [
+            'id' => $id, 'title' => 'To-do '.$id, 'description' => '', 'url' => '',
+            'dateFrom' => '2026-11-24 08:00:00', 'dateTo' => '2026-11-26 08:00:00',
+            'allDay' => true, 'eventType' => 'ticket', 'dateContext' => 'edit', 'plannedDay' => $plannedDay,
+        ];
+
+        $planned = $this->calendarWithFeedEvents([$event(31, true)])->getIcalByRequestToken('cal_user')->get();
+        $timeBox = $this->calendarWithFeedEvents([$event(32, false)])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertStringNotContainsString('BEGIN:VALARM', $planned);
+        $this->assertStringContainsString('BEGIN:VALARM', $timeBox);
+    }
+
+    /**
+     * A planned day has no Work End, so its event ends where it starts. An all-day DTEND is
+     * exclusive and must come after DTSTART, so the feed sends the next day.
+     */
+    public function test_ical_feed_ends_a_single_planned_day_on_the_next_day(): void
+    {
+        session(['usersettings.timezone' => 'America/Los_Angeles']);
+
+        // Midnight 24 November in Los Angeles is 08:00 UTC.
+        $ics = $this->calendarWithFeedEvents([[
+            'id' => 33, 'title' => 'Planned: To-do 33', 'description' => '', 'url' => '',
+            'dateFrom' => '2026-11-24 08:00:00', 'dateTo' => '2026-11-24 08:00:00',
+            'allDay' => true, 'eventType' => 'ticket', 'dateContext' => 'edit', 'plannedDay' => true,
+        ]])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertMatchesRegularExpression('/DTSTART[^:\r\n]*VALUE=DATE:20261124/', $ics);
+        $this->assertMatchesRegularExpression('/DTEND[^:\r\n]*VALUE=DATE:20261125/', $ics);
     }
 
     public function test_ical_feed_without_events_is_an_empty_calendar_not_an_error(): void

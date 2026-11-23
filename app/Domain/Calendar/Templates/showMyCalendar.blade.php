@@ -204,11 +204,17 @@
                             }
 
                         }else{
-                            dataVal = {
-                                id: event.event.extendedProps.enitityId,
-                                editFrom: event.event.startStr,
-                                editTo: event.event.endStr
-                            }
+                            // Same date/time values as the dashboard calendar. An all-day item (a
+                            // planned day) then keeps its local-midnight start and exclusive
+                            // midnight end instead of being read as a timed block.
+                            dataVal = Object.assign(
+                                { id: event.event.extendedProps.enitityId },
+                                leantime.calendarController.buildTicketDateValues(
+                                    event.event,
+                                    leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
+                                    leantime.dateHelper.getFormatFromSettings("timeformat", "luxon")
+                                )
+                            );
                         }
 
                         leantime.rpc('Tickets.Tickets.patchTicket', { id: dataVal.id, values: dataVal })
@@ -249,11 +255,17 @@
                             }
 
                         }else{
-                            dataVal = {
-                                id: event.event.extendedProps.enitityId,
-                                editFrom: event.event.startStr,
-                                editTo: event.event.endStr
-                            }
+                            // Same date/time values as the dashboard calendar. An all-day item (a
+                            // planned day) then keeps its local-midnight start and exclusive
+                            // midnight end instead of being read as a timed block.
+                            dataVal = Object.assign(
+                                { id: event.event.extendedProps.enitityId },
+                                leantime.calendarController.buildTicketDateValues(
+                                    event.event,
+                                    leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
+                                    leantime.dateHelper.getFormatFromSettings("timeformat", "luxon")
+                                )
+                            );
                         }
 
                         leantime.rpc('Tickets.Tickets.patchTicket', { id: dataVal.id, values: dataVal })
