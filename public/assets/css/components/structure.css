@@ -384,15 +384,23 @@ body {
 
 }
 
-.rightpanel {
-    padding-top:50px;
+/* The app shell: one flex row below the fixed header, left menu | page content. The window stays
+   the scroll container; the left menu is a sticky column in that row. */
+.mainwrapper > .overlay {
+    display: flex;
+    align-items: flex-start;
 }
 
-.rightpanel::after {
-    clear: both;
-    content: '';
-    display: block;
-    pointer-events: none !important;
+/* Right-to-left languages: the menu stays on the left, as it was when it was floated. */
+[dir="rtl"] .mainwrapper > .overlay {
+    flex-direction: row-reverse;
+}
+
+.rightpanel {
+    padding-top:50px;
+    flex: 1 1 0;
+    /* Lets wide content (kanban, tables, the gantt) scroll inside the page instead of stretching the row. */
+    min-width: 0;
 }
 
 .overlay::after {
@@ -413,8 +421,7 @@ body {
 .leftpanel {
     width: 240px;
     color: #fff;
-    float: left;
-    clear: both;
+    flex: 0 0 auto;
     background:var(--left-panel-bg);
     position:sticky;
     height:calc(100vh - 70px);
