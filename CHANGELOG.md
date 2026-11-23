@@ -1,6 +1,17 @@
 # Version: 3.17.0
 
 ## Highlights
+### Morning summaries and reminders
+Leantime now looks ahead.
+- **Morning summary:** at most one a day, at each person's chosen time (08:00 by default, in their timezone). It covers:
+  - their to-dos that are due
+  - milestones a week and a day ahead
+  - project end dates, for the project's managers
+- **Where it arrives:** in the inbox, and by email and push for people who kept those on.
+- **Nothing coming up, nothing sent.** Overdue work is one quiet line, never a nag.
+- **"Remind me" on each to-do:** choose how often it reminds you (default, more, less or off) from the to-do's ⋮ menu, the open to-do, or the new Coming up panel, or set your own default.
+- **Turning it off:** admins can switch reminders off for the whole workspace. It runs on the scheduler, so it needs the cron to be running (#4104)
+
 ### CalDAV that works both ways
 This release bundles CalDAV 1.1.0 (Leantime/plugins#168).
 - **Calendar apps:** Apple Calendar, Thunderbird and DAVx5 can now add, change and delete Leantime events without errors, and they see edits made in Leantime. Events an app adds keep their alarms, location and repeat rules.
@@ -14,17 +25,41 @@ This release bundles CalDAV 1.1.0 (Leantime/plugins#168).
 (#4105, #4111)
 
 ## New Features
+- **Your one thing** - Pick the one to-do that matters most for a day. JSON-RPC: `Tickets.OneThing.getOneThing`, `setOneThing`, `clearOneThing`, `getOneThings`. It's personal, and only stores a to-do you can see (#4109)
+- **Planned days** - A Work Start with a date but no time now means the day you plan to work on a to-do:
+  - **Calendars:** it shows as an all-day "Planned:" item instead of a 12 AM event, on the web and dashboard calendars, the mobile feed and iCal.
+  - **Hiding them:** a new Calendar setting, "Show planned days on my calendar", turns them off.
+  - **Planning API:** `Tickets.Planning.planTaskForDay`, `clearTaskPlan` and `getTaskPlan` plan a to-do without ever moving its due date.
+
+  (#4110)
+- **Tasks to consider and quick wins** - A JSON-RPC API that picks the same suggestions on every client as the mobile app's Today screen: `Tickets.Suggestions.getTasksToConsider` and `getQuickWins`. It only suggests to-dos from projects you can view. There's no web UI yet (#4116)
 - **Calendar servers on your own network** - Self-hosted admins can let Leantime reach named private-network servers with `LEAN_OUTBOUND_ALLOWED_HOSTS` (hostnames, IP addresses or CIDR ranges). It covers CalDAV accounts, iCal feeds and webhooks. By default only public addresses are reachable, as before (#4105)
 - **Calendar discovery** - `/.well-known/caldav` now sends calendar apps to Leantime's CalDAV server, so the workspace address alone is enough to set one up (#4105)
 
+## Security
+- **Task assignment** - Tasks can only be assigned to people who can see the project (#4103)
+- **Role changes** - A changed role or client now takes effect on the user's next request. Before, it waited until they logged in again (#4114)
+
 ## Bug Fixes
+- **iCal all-day events** - All-day events in the iCal feed end on the right day (the end date is exclusive) (#4110)
+- **Welcome widget** - "Time boxed tasks completed" counts real time boxes only (#4110)
+- **Reports** - The belief line is readable, "as measured by" is plain text, and the subject's own update shows their name (#4102)
+- **Story-point totals** - Report totals for fractional story points are stored as decimals instead of rounded (#4094)
+- **Daily report ingestion** - One failing project no longer stops the daily report run for the others (#4096)
+- **Goal snapshots on PostgreSQL** - The nightly goal-value snapshot works on PostgreSQL (#4095)
+- **Growl messages** - Notification text is escaped unless it is explicitly marked as HTML (#4103)
 - **Plugin text after updates** - After a plugin update, its new text no longer shows as raw keys for up to 7 days (#4105)
 
+## Dependency Updates
+- Bundled plugins bumped to plugins main: CalDAV 1.1.0, RecurringTasks 1.4.0 (reminder choices carried to new copies) and StrategyPro Logic Model fixes (#4111, #4117)
+
 ## Upgrade Notes
-- **No database changes in core** (dbVersion stays 3.5.36). The CalDAV plugin creates its new tables and columns itself on first use.
+- **Database changes** (dbVersion 3.5.37): `zp_stats` story-point columns become decimals (migration 30537). `system:update` does not run migrations: open the update screen once, or run `php bin/leantime db:migrate`.
+- **Morning summaries are on by default** for everyone, at 08:00 in each person's timezone. People can change or switch them off in their settings; admins can switch reminders off for the workspace in Company Settings. They need the scheduler (`php bin/leantime schedule:run` every minute via cron, or `schedule:work`).
 - **Self-hosted, calendar server on your LAN:** list it in `LEAN_OUTBOUND_ALLOWED_HOSTS` in `config/.env`, e.g. `'nextcloud.lan,192.168.1.0/24'` (see `config/sample.env`).
 - **Marketplace CalDAV installs:** update to CalDAV 1.1.0.
 - **Calendar app sign-in:** accounts with two-factor authentication or single sign-on sign in with an app password.
+- **McpServer:** the reminder tools need McpServer 2.1.0 (released alongside).
 
 ---
 
