@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
+use Symfony\Component\HttpFoundation\IpUtils;
 
 /**
  * Shared SSRF guard for server-initiated outbound HTTP requests (external calendars, webhook
@@ -21,6 +22,9 @@ use Psr\Http\Message\UriInterface;
  * A check alone still lets the HTTP client resolve the host a second time and get a different
  * answer (DNS rebinding). Callers that need the connection itself pinned to a checked address use
  * {@see resolveAllowedAddresses()} and hand the result to their transport.
+ *
+ * Self-hosted installs can allow specific private targets (a calendar server on the LAN) with
+ * LEAN_OUTBOUND_ALLOWED_HOSTS: hostnames, IP addresses or CIDR ranges. Everything else stays blocked.
  *
  * Refusals are logged by reason alone — never the scheme, host or a resolved address. The URLs
  * checked here are user-supplied and any part of one can carry a secret (a webhook's per-user
@@ -126,14 +130,14 @@ final class OutboundUrlGuard
         if (str_starts_with($host, '[')) {
             $ipv6 = str_ends_with($host, ']') ? substr($host, 1, -1) : '';
             $isAllowedIpv6 = filter_var($ipv6, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false
-                && self::isIpAllowed($ipv6);
+                && (self::isIpAllowed($ipv6) || self::isAllowedByAdmin($ipv6));
 
             return $isAllowedIpv6 ? [$ipv6] : [];
         }
 
         // IP literal: validate directly.
         if (filter_var($host, FILTER_VALIDATE_IP)) {
-            return self::isIpAllowed($host) ? [$host] : [];
+            return self::isIpAllowed($host) || self::isAllowedByAdmin($host) ? [$host] : [];
         }
 
         // Resolve every A and AAAA record; block if any single record is disallowed.
@@ -152,8 +156,13 @@ final class OutboundUrlGuard
             return [];
         }
 
+        // A hostname the admin listed may resolve to anything (that is the point: a LAN server).
+        if (self::isAdminAllowedHost($host)) {
+            return $ips;
+        }
+
         foreach ($ips as $ip) {
-            if (! self::isIpAllowed($ip)) {
+            if (! self::isIpAllowed($ip) && ! self::isAllowedByAdmin($ip)) {
                 Log::warning('SSRF guard: blocked private/reserved IP');
 
                 return [];
@@ -199,6 +208,71 @@ final class OutboundUrlGuard
         }
 
         return true;
+    }
+
+    /**
+     * True when the admin listed this exact hostname in LEAN_OUTBOUND_ALLOWED_HOSTS. Such a name
+     * may resolve to a private address, and may be a single label ("nextcloud") on a LAN.
+     *
+     * @param  string  $host  The (lower-cased) host as the URL parser returned it
+     */
+    public static function isAdminAllowedHost(string $host): bool
+    {
+        return in_array(self::normalizeHost($host), self::adminAllowList()['hosts'], true);
+    }
+
+    /**
+     * True when the admin allowed this private address with LEAN_OUTBOUND_ALLOWED_HOSTS
+     * (as a single IP or inside a CIDR range).
+     */
+    private static function isAllowedByAdmin(string $ip): bool
+    {
+        $ranges = self::adminAllowList()['ranges'];
+
+        return $ranges !== [] && IpUtils::checkIp($ip, $ranges);
+    }
+
+    /**
+     * LEAN_OUTBOUND_ALLOWED_HOSTS split into hostnames and IP/CIDR ranges. Read on every call so
+     * a config change needs no cache flush; the value is a short comma separated string.
+     *
+     * @return array{hosts: array<int, string>, ranges: array<int, string>}
+     */
+    private static function adminAllowList(): array
+    {
+        $allowList = ['hosts' => [], 'ranges' => []];
+
+        try {
+            $configured = (string) config('outboundAllowedHosts', '');
+        } catch (\Throwable $e) {
+            return $allowList;
+        }
+
+        foreach (explode(',', $configured) as $entry) {
+            $entry = trim($entry);
+            if ($entry === '') {
+                continue;
+            }
+
+            $address = explode('/', $entry, 2)[0];
+            if (filter_var(trim($address, '[]'), FILTER_VALIDATE_IP) !== false) {
+                $allowList['ranges'][] = trim($entry, '[]');
+
+                continue;
+            }
+
+            $allowList['hosts'][] = self::normalizeHost($entry);
+        }
+
+        return $allowList;
+    }
+
+    /**
+     * Lowercase, without a trailing root dot, so "NAS.lan." and "nas.lan" compare equal.
+     */
+    private static function normalizeHost(string $host): string
+    {
+        return rtrim(strtolower($host), '.');
     }
 
     private static function isIpv4Allowed(string $ip): bool
