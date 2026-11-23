@@ -1,7 +1,30 @@
 # Version: 3.17.0
 
+## Highlights
+### CalDAV that works both ways
+This release bundles CalDAV 1.1.0 (Leantime/plugins#168).
+- **Calendar apps:** Apple Calendar, Thunderbird and DAVx5 can now add, change and delete Leantime events without errors, and they see edits made in Leantime. Events an app adds keep their alarms, location and repeat rules.
+- **App passwords:** a new **App passwords** option under Calendar Settings lets people who use two-factor authentication or single sign-on connect a calendar app.
+- **Connected calendars (Nextcloud, Radicale, …):**
+  - Deletions now come in.
+  - Repeating events arrive as every occurrence.
+  - Editing or deleting one occurrence in Leantime changes only that occurrence.
+  - Edits made in Leantime keep the event's location, alarms and timezone on the other server.
+
+(#4105, #4111)
+
 ## New Features
-- **CalDAV support in core** - Core now supports CalDAV with LAN servers, `/.well-known` paths and refreshed plugin strings, bundled with the CalDAV 1.1.0 plugin (#4105, #4111)
+- **Calendar servers on your own network** - Self-hosted admins can let Leantime reach named private-network servers with `LEAN_OUTBOUND_ALLOWED_HOSTS` (hostnames, IP addresses or CIDR ranges). It covers CalDAV accounts, iCal feeds and webhooks. By default only public addresses are reachable, as before (#4105)
+- **Calendar discovery** - `/.well-known/caldav` now sends calendar apps to Leantime's CalDAV server, so the workspace address alone is enough to set one up (#4105)
+
+## Bug Fixes
+- **Plugin text after updates** - After a plugin update, its new text no longer shows as raw keys for up to 7 days (#4105)
+
+## Upgrade Notes
+- **No database changes in core** (dbVersion stays 3.5.36). The CalDAV plugin creates its new tables and columns itself on first use.
+- **Self-hosted, calendar server on your LAN:** list it in `LEAN_OUTBOUND_ALLOWED_HOSTS` in `config/.env`, e.g. `'nextcloud.lan,192.168.1.0/24'` (see `config/sample.env`).
+- **Marketplace CalDAV installs:** update to CalDAV 1.1.0.
+- **Calendar app sign-in:** accounts with two-factor authentication or single sign-on sign in with an app password.
 
 ---
 
