@@ -204,4 +204,18 @@ class Integrations
             'fields' => safe_unserialize(session('serFields'), []),
         ];
     }
+
+    /**
+     * Clears the cached import payload once it has been imported.
+     *
+     * Without this, reloading the result page or going back and confirming again would import
+     * the same rows a second time.
+     *
+     * @api
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function forgetCachedImportPayload(): void
+    {
+        session()->forget(['serValues', 'serFields']);
+    }
 }

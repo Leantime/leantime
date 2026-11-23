@@ -2,8 +2,11 @@
 
 namespace Leantime\Domain\Connector\Services;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
+use Leantime\Core\Language;
 use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Connector\Models\ImportResult;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
 use Leantime\Domain\Ideas\Repositories\Ideas;
 use Leantime\Domain\Projects\Services\Projects;
@@ -13,6 +16,11 @@ use Ramsey\Uuid\Uuid;
 
 class Connector
 {
+    /**
+     * Leantime fields that hold a date or date-time.
+     */
+    private const DATE_FIELDS = ['date', 'dateToFinish', 'editFrom', 'editTo'];
+
     public function __construct(
         private Users $userService,
         private Projects $projectService,
@@ -20,6 +28,7 @@ class Connector
         private \Leantime\Domain\Tickets\Repositories\Tickets $ticketRepository,
         private Goalcanvas $goalCanvasRepo,
         private Ideas $ideaRepo,
+        private Language $language,
     ) {}
 
     public function getEntityFlags($entity)
@@ -200,27 +209,46 @@ class Connector
             }
         }
 
-        // Status Field Mapping
-        $matchingDateField = '';
-        $dateArray = ['date', 'dateToFinish', 'editFrom', 'editTo'];
+        // Every mapped date column is checked, not only the first one.
+        array_push($flags, ...$this->dateFlags($fields, $values));
+
+        // Type: only the to-do types Leantime has. Subtasks need a parent, which a file can't
+        // name yet, so they can't be imported.
+        $matchingTypeField = '';
         foreach ($fields as $item) {
-            if (in_array($item['leantimeField'], $dateArray)) {
-                $matchingDateField = $item['sourceField'];
+            if ($item['leantimeField'] === 'type') {
+                $matchingTypeField = $item['sourceField'];
                 break;
             }
         }
 
-        if ($matchingDateField) {
-            foreach ($values as &$row) {
-
-                if ($row[$matchingDateField] !== '') {
-                    try {
-                        dtHelper()->parseUserDateTime($row[$matchingDateField]);
-                    } catch (\Exception $e) {
-                        $flags[] = $matchingDateField.': '.$row[$matchingDateField].' '.'is not a valid date. Please use the date format defined in your profile or iso8601';
-                    }
+        if ($matchingTypeField) {
+            $validTypes = $this->importableTicketTypes();
+            foreach ($values as $index => $typeRow) {
+                $type = strtolower(trim((string) ($typeRow[$matchingTypeField] ?? '')));
+                if ($type !== '' && ! in_array($type, $validTypes, true)) {
+                    $flags[] = sprintf(
+                        $this->language->__('notification.import_row_invalid_type'),
+                        $this->rowNumber($index),
+                        $typeRow[$matchingTypeField],
+                        implode(', ', $validTypes)
+                    );
                 }
+            }
+        }
 
+        // Assignees must be on the project's team, or the save fails at import time. Checking it
+        // here shows the problem on the review step, before anything is written.
+        foreach ($values as $index => $teamRow) {
+            $editorId = (int) ($teamRow['editorId'] ?? 0);
+            $projectId = (int) ($teamRow['projectId'] ?? 0);
+            if ($editorId > 0 && $projectId > 0 && ! $this->projectService->isUserAssignedToProject($editorId, $projectId)) {
+                $flags[] = sprintf(
+                    $this->language->__('notification.import_row_assignee_not_on_team'),
+                    $this->rowNumber($index),
+                    $matchingSourceField !== '' ? (string) ($teamRow[$matchingSourceField] ?? $editorId) : (string) $editorId,
+                    $matchingProjectSourceField !== '' ? (string) ($teamRow[$matchingProjectSourceField] ?? $projectId) : (string) $projectId
+                );
             }
         }
 
@@ -599,12 +627,25 @@ class Connector
             $flags[] = 'You must have a column matching to a valid Edit From.';
         }
 
+        array_push($flags, ...$this->dateFlags($fields, $values));
+
         $this->cacheSerializedFieldValues($fields, $values);
 
         return $flags;
     }
 
-    public function importValues($fields, $values, $entity)
+    /**
+     * Imports the reviewed rows into the chosen Leantime entity.
+     *
+     * Every row is attempted. A row that can't be saved is reported with its spreadsheet row
+     * number and the reason; it doesn't stop the rows after it.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows as returned by the parse step.
+     * @param  string  $entity  Entity key (tickets, projects, users, ideas, goals, milestones).
+     * @return ImportResult|false The outcome per row, or false for an unknown entity.
+     */
+    public function importValues(array $fields, array $values, string $entity): ImportResult|false
     {
 
         $finalMappings = [];
@@ -613,31 +654,35 @@ class Connector
             array_push($finalMappings, $field['leantimeField']);
         }
 
-        if ($entity == 'tickets') {
-            return $this->importTickets($finalMappings, $values);
-        } elseif ($entity == 'projects') {
-            return $this->importProjects($finalMappings, $values);
-        } elseif ($entity == 'users') {
-            return $this->importUsers($finalMappings, $values);
-        } elseif ($entity == 'ideas') {
-            return $this->importIdeas($finalMappings, $values);
-        } elseif ($entity == 'goals') {
-            return $this->importGoals($finalMappings, $values);
-        } elseif ($entity == 'milestones') {
-            return $this->importMilestones($finalMappings, $values);
-        }
+        $values = array_values($values);
 
-        return false;
+        return match ($entity) {
+            'tickets' => $this->importTickets($finalMappings, $values),
+            'projects' => $this->importProjects($finalMappings, $values),
+            'users' => $this->importUsers($finalMappings, $values),
+            'ideas' => $this->importIdeas($finalMappings, $values),
+            'goals' => $this->importGoals($finalMappings, $values),
+            'milestones' => $this->importMilestones($finalMappings, $values),
+            default => false,
+        };
     }
 
-    private function importTickets($finalMappings, $finalValues)
+    /**
+     * Imports to-dos. A row with a numeric Id updates that to-do; any other row adds one.
+     *
+     * Columns that aren't mapped are left out of the save, so updating a to-do keeps its stored
+     * values for them (updateTicket() preserves omitted fields).
+     *
+     * @param  array<int, string>  $finalMappings  Pairs of source column, Leantime field.
+     * @param  array<int, array<string, mixed>>  $finalValues  Rows from the parse step.
+     */
+    private function importTickets(array $finalMappings, array $finalValues): ImportResult
     {
-        foreach ($finalValues as $row) {
-            $ticket = [];
+        $result = new ImportResult;
 
-            for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
-                $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
-            }
+        foreach ($finalValues as $index => $row) {
+            $ticket = $this->mapRow($finalMappings, $row);
+
             $ticket['editorId'] = $row['editorId'] ?? '';
             $ticket['projectId'] = $row['projectId'] ?? '';
             // Only send a status that was resolved to an id of the ticket's project. Without one,
@@ -647,171 +692,400 @@ class Connector
             if (isset($row['status']) && $row['status'] !== '') {
                 $ticket['status'] = $row['status'];
             }
-            $ticket['type'] = $row['type'] ?? 'task';
+
+            // The parse step only lets known types through; a blank cell or no Type column is a task.
+            $ticket['type'] = strtolower(trim((string) ($ticket['type'] ?? ''))) ?: 'task';
 
             try {
-                $ticket['date'] = dtHelper()->parseUserDateTime(trim($ticket['date']))->formatDateForUser();
+                $ticket['date'] = dtHelper()->parseUserDateTime(trim((string) ($ticket['date'] ?? '')))->formatDateForUser();
             } catch (\Exception $e) {
                 $ticket['date'] = dtHelper()->userNow()->formatDateForUser();
             }
 
-            try {
-                $ticket['dateToFinish'] = dtHelper()->parseUserDateTime(trim($ticket['dateToFinish']))->formatDateForUser();
-            } catch (\Exception $e) {
-                $ticket['dateToFinish'] = '';
+            if (array_key_exists('dateToFinish', $ticket)) {
+                try {
+                    $ticket['dateToFinish'] = dtHelper()->parseUserDateTime(trim((string) $ticket['dateToFinish']))->formatDateForUser();
+                } catch (\Exception $e) {
+                    $ticket['dateToFinish'] = '';
+                }
             }
 
-            try {
-                $ticket['editFrom'] = dtHelper()->parseUserDateTime(trim($ticket['dateToFinish']))->formatDateForUser();
-            } catch (\Exception $e) {
-                $ticket['editFrom'] = '';
-            }
+            // Edit From / Edit To come from their own columns. Without a value they are left out:
+            // a new to-do has no work dates, an existing one keeps its own.
+            foreach (['editFrom', 'editTo'] as $workDate) {
+                if (! array_key_exists($workDate, $ticket)) {
+                    continue;
+                }
 
-            try {
-                $ticket['editTo'] = dtHelper()->parseUserDateTime(trim($ticket['dateToFinish']))->formatDateForUser();
-            } catch (\Exception $e) {
-                $ticket['editTo'] = '';
+                $workDateValue = $this->workDateValue((string) $ticket[$workDate]);
+                if ($workDateValue === null) {
+                    unset($ticket[$workDate]);
+                } else {
+                    $ticket[$workDate] = $workDateValue;
+                }
             }
 
             try {
                 if (isset($ticket['id']) && is_numeric($ticket['id'])) {
-                    $this->ticketService->updateTicket($ticket);
+                    $saved = $this->ticketService->updateTicket($ticket);
                 } else {
+                    unset($ticket['id']);
                     $ticket['origin'] = 'import';
-                    $this->ticketService->addTicket($ticket);
+                    $saved = $this->ticketService->addTicket($ticket);
                 }
             } catch (\Exception $e) {
                 Log::error($e);
+                $result->addFailure($this->rowNumber($index), $e->getMessage());
 
-                return $e->getMessage();
-
+                continue;
             }
+
+            if (is_array($saved) || $saved === false) {
+                $result->addFailure($this->rowNumber($index), $this->saveErrorMessage($saved));
+
+                continue;
+            }
+
+            $result->addImported();
         }
 
-        return true;
-
+        return $result;
     }
 
-    private function importProjects($finalMappings, $finalValues)
+    /**
+     * Imports projects. A row with a numeric Id edits that project; any other row adds one.
+     *
+     * @param  array<int, string>  $finalMappings  Pairs of source column, Leantime field.
+     * @param  array<int, array<string, mixed>>  $finalValues  Rows from the parse step.
+     */
+    private function importProjects(array $finalMappings, array $finalValues): ImportResult
     {
+        $result = new ImportResult;
         $psettings = ['all', 'clients', 'restricted'];
-        foreach ($finalValues as $row) {
-            $values = [];
-            for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
-                if ($finalMappings[$i + 1] == 'psettings') {
-                    if (! in_array($row[$finalMappings[$i]], $psettings)) {
-                        $row[$finalMappings[$i]] = 'restricted';
-                    }
-                }
-                $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
+
+        foreach ($finalValues as $index => $row) {
+            $values = $this->mapRow($finalMappings, $row);
+            if (isset($values['psettings']) && ! in_array($values['psettings'], $psettings, true)) {
+                $values['psettings'] = 'restricted';
             }
 
             try {
                 if (isset($values['id']) && is_numeric($values['id'])) {
+                    // editProject() returns nothing; a failure throws.
                     $this->projectService->editProject($values, $values['id']);
+                    $saved = true;
                 } else {
-                    $this->projectService->addProject($values);
+                    unset($values['id']);
+                    $saved = $this->projectService->addProject($values);
                 }
             } catch (\Exception $e) {
                 Log::error($e);
+                $result->addFailure($this->rowNumber($index), $e->getMessage());
 
-                return $e->getMessage();
+                continue;
             }
+
+            $this->recordSave($result, $index, $saved);
         }
 
-        return true;
+        return $result;
     }
 
-    private function importUsers($finalMappings, $finalValues)
+    /**
+     * Imports users: edits a user whose email already exists, otherwise invites or adds one.
+     *
+     * @param  array<int, string>  $finalMappings  Pairs of source column, Leantime field.
+     * @param  array<int, array<string, mixed>>  $finalValues  Rows from the parse step.
+     */
+    private function importUsers(array $finalMappings, array $finalValues): ImportResult
     {
-        // TODO add  users
-        foreach ($finalValues as $row) {
-            $values = [];
-            for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
-                if ($finalMappings[$i + 1] != 'sendInvite' || $finalMappings[$i + 1] != 'id') {
-                    $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
-                }
-            }
+        $result = new ImportResult;
+
+        foreach ($finalValues as $index => $row) {
+            // sendInvite only decides how the user is created and id is resolved from the email
+            // by the parse step; neither is a user value.
+            $values = array_diff_key($this->mapRow($finalMappings, $row), array_flip(['sendInvite', 'id']));
             $values['notifications'] = 1;
             $values['source'] = 'csvImport'; // TODO: will have to change when other integrations are added
-            if (isset($row['id']) && $row['id'] > 0) {
-                $currentUser = $this->userService->getUser($row['id']);
-                $currentUser['user'] = $values['user'];
-                foreach ($currentUser as $key => &$userValues) {
-                    if (isset($values[$key])) {
-                        $userValues = $values[$key];
+
+            try {
+                if (isset($row['id']) && $row['id'] > 0) {
+                    $currentUser = $this->userService->getUser($row['id']);
+                    $currentUser['user'] = $values['user'];
+                    foreach ($currentUser as $key => &$userValues) {
+                        if (isset($values[$key])) {
+                            $userValues = $values[$key];
+                        }
                     }
+                    unset($userValues);
+                    $saved = $this->userService->editUser($currentUser, $row['id']);
+                } elseif (isset($row['sendInvite']) && $row['sendInvite'] == true) {
+                    $saved = $this->userService->createUserInvite($values);
+                } else {
+                    $values['status'] = 'a';
+                    if (! isset($values['password'])) {
+                        $values['password'] = Uuid::uuid4()->toString();
+                    }
+                    $saved = $this->userService->addUser($values);
                 }
-                $this->userService->editUser($currentUser, $row['id']);
-            } elseif (isset($row['sendInvite']) && $row['sendInvite'] == true) {
-                $this->userService->createUserInvite($values);
-            } else {
-                $values['status'] = 'a';
-                if (! isset($values['password'])) {
-                    $tempPasswordVar = Uuid::uuid4()->toString();
-                    $values['password'] = $tempPasswordVar;
-                }
-                $this->userService->addUser($values);
+            } catch (\Exception $e) {
+                Log::error($e);
+                $result->addFailure($this->rowNumber($index), $e->getMessage());
+
+                continue;
             }
+
+            $this->recordSave($result, $index, $saved);
         }
+
+        return $result;
     }
 
-    private function importIdeas($finalMappings, $finalValues)
+    /**
+     * Imports ideas. A row with an Id edits that idea; any other row adds one.
+     *
+     * @param  array<int, string>  $finalMappings  Pairs of source column, Leantime field.
+     * @param  array<int, array<string, mixed>>  $finalValues  Rows from the parse step.
+     */
+    private function importIdeas(array $finalMappings, array $finalValues): ImportResult
     {
+        $result = new ImportResult;
 
-        foreach ($finalValues as $row) {
-            $values = [];
-            for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
-                $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
+        foreach ($finalValues as $index => $row) {
+            $values = $this->mapRow($finalMappings, $row);
+
+            try {
+                if (isset($values['itemId']) && is_numeric($values['itemId'])) {
+                    $this->ideaRepo->editCanvasItem($values);
+                    $saved = true;
+                } else {
+                    unset($values['itemId']);
+                    $saved = $this->ideaRepo->addCanvasItem($values);
+                }
+            } catch (\Exception $e) {
+                Log::error($e);
+                $result->addFailure($this->rowNumber($index), $e->getMessage());
+
+                continue;
             }
-            if (isset($values['itemId'])) {
-                $this->ideaRepo->editCanvasItem($values);
-            } else {
-                $this->ideaRepo->addCanvasItem($values);
-            }
+
+            $this->recordSave($result, $index, $saved);
         }
+
+        return $result;
     }
 
-    private function importGoals($finalMappings, $finalValues)
+    /**
+     * Imports goals. A row with an Id edits that goal; any other row adds one.
+     *
+     * @param  array<int, string>  $finalMappings  Pairs of source column, Leantime field.
+     * @param  array<int, array<string, mixed>>  $finalValues  Rows from the parse step.
+     */
+    private function importGoals(array $finalMappings, array $finalValues): ImportResult
     {
-        foreach ($finalValues as $row) {
-            $values = [];
-            for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
-                $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
-            }
+        $result = new ImportResult;
+
+        foreach ($finalValues as $index => $row) {
+            $values = $this->mapRow($finalMappings, $row);
             $values['box'] = 'goal';
             if (! isset($values['author'])) {
                 $values['author'] = session('userdata.id');
             }
-            if (isset($values['itemId'])) {
-                $this->goalCanvasRepo->editCanvasItem($values);
-            } else {
-                $this->goalCanvasRepo->addCanvasItem($values);
+
+            try {
+                if (isset($values['itemId']) && is_numeric($values['itemId'])) {
+                    $this->goalCanvasRepo->editCanvasItem($values);
+                    $saved = true;
+                } else {
+                    unset($values['itemId']);
+                    $saved = $this->goalCanvasRepo->addCanvasItem($values);
+                }
+            } catch (\Exception $e) {
+                Log::error($e);
+                $result->addFailure($this->rowNumber($index), $e->getMessage());
+
+                continue;
             }
+
+            $this->recordSave($result, $index, $saved);
         }
+
+        return $result;
     }
 
-    private function importMilestones($finalMappings, $finalValues)
+    /**
+     * Imports milestones. A row with a numeric Id updates that milestone; any other row adds one.
+     *
+     * @param  array<int, string>  $finalMappings  Pairs of source column, Leantime field.
+     * @param  array<int, array<string, mixed>>  $finalValues  Rows from the parse step.
+     */
+    private function importMilestones(array $finalMappings, array $finalValues): ImportResult
     {
-        // TODO add milestones
-        foreach ($finalValues as $row) {
-            $ticket = [];
+        $result = new ImportResult;
 
-            for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
-                $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
-            }
-            $ticket['editorId'] = $row['editorId'];
-            $ticket['projectId'] = $row['projectId'];
+        foreach ($finalValues as $index => $row) {
+            $ticket = $this->mapRow($finalMappings, $row);
+            $ticket['editorId'] = $row['editorId'] ?? '';
+            $ticket['projectId'] = $row['projectId'] ?? '';
             // No status column: leave it out so a new milestone gets the project's NEW status and an
             // existing one keeps its stored status.
             $ticket['type'] = 'milestone';
-            if (isset($ticket['id'])) {
-                $this->ticketService->updateTicket($ticket);
-            } else {
-                $ticket['origin'] = 'import';
-                $this->ticketService->addTicket($ticket);
+
+            try {
+                if (isset($ticket['id']) && is_numeric($ticket['id'])) {
+                    $saved = $this->ticketService->updateTicket($ticket);
+                } else {
+                    unset($ticket['id']);
+                    $ticket['origin'] = 'import';
+                    $saved = $this->ticketService->addTicket($ticket);
+                }
+            } catch (\Exception $e) {
+                Log::error($e);
+                $result->addFailure($this->rowNumber($index), $e->getMessage());
+
+                continue;
+            }
+
+            $this->recordSave($result, $index, $saved);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Builds the Leantime values of one row from the column mappings.
+     *
+     * @param  array<int, string>  $finalMappings  Pairs of source column, Leantime field.
+     * @param  array<string, mixed>  $row  One row from the parse step.
+     * @return array<string, mixed> Leantime field => cell value.
+     */
+    private function mapRow(array $finalMappings, array $row): array
+    {
+        $values = [];
+        for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
+            $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]] ?? '';
+        }
+
+        return $values;
+    }
+
+    /**
+     * Records a save as imported, or as failed when the service returned an error array or false.
+     *
+     * @param  int  $index  Zero-based record index.
+     * @param  mixed  $saved  What the save call returned.
+     */
+    private function recordSave(ImportResult $result, int $index, mixed $saved): void
+    {
+        if (is_array($saved) || $saved === false) {
+            $result->addFailure($this->rowNumber($index), $this->saveErrorMessage($saved));
+
+            return;
+        }
+
+        $result->addImported();
+    }
+
+    /**
+     * Turns a failed save's return value into a message for the person importing.
+     *
+     * The ticket service returns ['msg' => language key or text, 'type' => 'error'].
+     *
+     * @param  array|false  $saved  What the save call returned.
+     */
+    private function saveErrorMessage(array|false $saved): string
+    {
+        if (is_array($saved) && ! empty($saved['msg'])) {
+            return $this->language->__((string) $saved['msg']);
+        }
+
+        return $this->language->__('notification.import_row_not_saved');
+    }
+
+    /**
+     * Flags every cell of a mapped date column that isn't a valid date.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows.
+     * @return array<int, string> One message per invalid cell.
+     */
+    private function dateFlags(array $fields, array $values): array
+    {
+        $flags = [];
+
+        foreach ($fields as $item) {
+            if (! in_array($item['leantimeField'], self::DATE_FIELDS, true)) {
+                continue;
+            }
+
+            $sourceField = $item['sourceField'];
+            foreach ($values as $index => $dateRow) {
+                $value = trim((string) ($dateRow[$sourceField] ?? ''));
+                if ($value === '') {
+                    continue;
+                }
+
+                try {
+                    dtHelper()->parseUserDateTime($value);
+                } catch (\Exception $e) {
+                    $flags[] = sprintf(
+                        $this->language->__('notification.import_row_invalid_date'),
+                        $this->rowNumber($index),
+                        $sourceField,
+                        $value
+                    );
+                }
             }
         }
+
+        return $flags;
+    }
+
+    /**
+     * Prepares an Edit From / Edit To cell for the ticket service.
+     *
+     * A cell with a time keeps it (the parsed date-time is passed on). A date-only cell is
+     * passed in the user's date format, so the service sets the start of the day for Edit From
+     * and the end of the day for Edit To; an ISO date-only string would otherwise pick up the
+     * current time of day.
+     *
+     * @param  string  $value  The cell value.
+     * @return CarbonImmutable|string|null The value to save, or null for a blank or unreadable cell.
+     */
+    private function workDateValue(string $value): CarbonImmutable|string|null
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        try {
+            $date = dtHelper()->parseUserDateTime($value);
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        return preg_match('/\d{1,2}:\d{2}/', $value) === 1 ? $date : $date->formatDateForUser();
+    }
+
+    /**
+     * To-do types a file can set: every ticket type except subtask, which needs a parent.
+     *
+     * @return array<int, string>
+     */
+    private function importableTicketTypes(): array
+    {
+        return array_values(array_diff($this->ticketService->getTicketTypes(), ['subtask']));
+    }
+
+    /**
+     * Spreadsheet row number of a record: the header is row 1, the first record row 2.
+     *
+     * @param  int|string  $index  Zero-based record index.
+     */
+    private function rowNumber(int|string $index): int
+    {
+        return (int) $index + 2;
     }
 
     private function cacheSerializedFieldValues($fields, $values)

@@ -5,6 +5,7 @@ namespace Leantime\Domain\Connector\Controllers;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Connector\Models\ImportResult;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
 use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services\Connector;
@@ -114,7 +115,12 @@ class Integration extends Controller
         }
 
         if ($params['step'] == 'import') {
-            return $this->handleImportStep();
+            // Importing writes data, so it only runs from the review step's Confirm form (POST).
+            if (! $this->incomingRequest->isMethod('POST')) {
+                return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
+            }
+
+            return $this->handleImportStep($provider);
         }
 
         return new Response;
@@ -164,17 +170,32 @@ class Integration extends Controller
     }
 
     /**
-     * Handles the final import execution step.
+     * Handles the final import execution step and shows what was and wasn't imported.
+     *
+     * @param  object  $provider  Provider instance
      */
-    private function handleImportStep(): Response
+    private function handleImportStep(object $provider): Response
     {
         $payload = $this->integrationService->getCachedImportPayload();
 
-        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], session('currentImportEntity'));
+        // Nothing cached: the rows were already imported (reload or second Confirm) or the
+        // session expired. Importing again would create duplicates, so start over instead.
+        if (empty($payload['values']) || empty($payload['fields'])) {
+            $this->tpl->setNotification($this->language->__('notification.import_nothing_to_import'), 'error');
 
-        if ($result !== true) {
-            $this->tpl->setNotification(sprintf($this->language->__('notification.import_problem'), $result), 'error');
+            return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
         }
+
+        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], (string) session('currentImportEntity'));
+        $this->integrationService->forgetCachedImportPayload();
+
+        if (! $result instanceof ImportResult) {
+            $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
+
+            return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
+        }
+
+        $this->tpl->assign('importResult', $result);
 
         return $this->tpl->display('connector.integrationConfirm');
     }

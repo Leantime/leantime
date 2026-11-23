@@ -42,7 +42,9 @@
             </ul>
             <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">{{ __('links.go_back') }}</x-global::forms.button>
         @else
-            <x-global::forms.button tag="a" class="right" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" contentRole="primary">{{ __('buttons.confirm') }}</x-global::forms.button>
+            <form method="post" action="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import{{ $urlAppend }}" class="right">
+                <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.confirm') }}</x-global::forms.button>
+            </form>
         @endif
         <div class="clearall"></div>
 
