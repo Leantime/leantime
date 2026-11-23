@@ -18,7 +18,8 @@
  *   query:name   in a query parameter (To-Do: `?tab=timesheet`)
  *   local:key    in localStorage (project selector)
  *
- * Boxes with data-lt-section-tabs set themselves up on page load, after htmx swaps and in dialogs.
+ * Boxes with data-lt-section-tabs set themselves up on page load, after htmx swaps, in dialogs and after a
+ * dialog save refreshes the page content.
  * `leantime.sectionTabs.init(elementOrSelector)` sets up a box without the attribute (plugin pages that still call
  * leantime.projectsController.initProjectTabs()).
  */
@@ -244,6 +245,8 @@ leantime.sectionTabs = (function () {
     htmx.onLoad(init);
     // Content inserted outside an htmx swap (dialogs …): see leantime.initLoadedContent in app.js.
     document.addEventListener('lt:ui:content.loaded', function (event) { init(event.detail.root); });
+    // A dialog save swaps the page content in place (modals.softReload) without an htmx swap.
+    document.addEventListener('lt:ui:page.refreshed', function () { init(document); });
 
     return {
         init: function (element) {
