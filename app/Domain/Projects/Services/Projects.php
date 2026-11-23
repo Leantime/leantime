@@ -31,6 +31,7 @@ use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Notifications\Services\PushPreferences;
+use Leantime\Domain\Notifications\Services\PushText;
 use Leantime\Domain\Notifications\Services\Webhooks;
 use Leantime\Domain\Projects\Events\ProjectArchived;
 use Leantime\Domain\Projects\Events\ProjectCreated;
@@ -438,9 +439,21 @@ class Projects extends BaseService implements ChecksProjectAccess
         $pushRecipients = PushPreferences::filter($pushRecipients, $preloadedSettings);
 
         $emailMessage = $notification->message;
+        $emailUrl = null;
         if ($notification->url !== false) {
             $emailUrl = Mailer::notificationEmailUrl((string) $notification->url['url'], (string) $notification->module);
             $emailMessage .= " <a href='".$emailUrl."'>".$notification->url['text'].'</a>';
+        }
+
+        // The digest's wording, the push's in parts: the digest shows changes to one item together.
+        // Never in the way of the email itself: without it the digest shows subject and message.
+        try {
+            $emailSummary = app()->make(PushText::class)->forEmail($notification);
+        } catch (\Throwable) {
+            $emailSummary = null;
+        }
+        if ($emailSummary !== null && $emailUrl !== null) {
+            $emailSummary['url'] = $emailUrl;
         }
 
         // The entity the notification is about, in the inbox's terms, so the digest can tell an
@@ -546,7 +559,7 @@ class Projects extends BaseService implements ChecksProjectAccess
         // the inbox to tell an already-read email from a new one, so a queued row must never be
         // visible before the unread inbox row of the same event. (The listener runs in-process.)
         $queue = app()->make(QueueRepository::class);
-        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId);
+        $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId, $notification->module, $entityId, $emailSummary);
 
         // Personal webhooks go last, filtered like email (relevance, category, mentions,
         // collaborators) but from their own candidates: see personalWebhookCandidates(). This
@@ -1967,6 +1980,15 @@ class Projects extends BaseService implements ChecksProjectAccess
 
         if ($projectId !== false && $projectId > 0) {
             ProjectCreated::dispatch(projectId: $projectId, type: $values['type']);
+
+            // The team it was created with (the creator is added too, but isn't told). Only
+            // members the repository actually saved: it skips entries without a projectRole.
+            foreach (is_array($values['assignedUsers']) ? $values['assignedUsers'] : [] as $user) {
+                $userId = is_array($user) && isset($user['projectRole']) ? (int) ($user['id'] ?? 0) : 0;
+                if ($userId > 0) {
+                    ProjectMemberAdded::dispatch(projectId: (int) $projectId, userId: $userId);
+                }
+            }
         }
 
         return $projectId;
@@ -2895,6 +2917,29 @@ class Projects extends BaseService implements ChecksProjectAccess
         $this->projectRepository->addProjectRelation($userId, $projectId, $projectRole);
 
         ProjectMemberAdded::dispatch(projectId: $projectId, userId: $userId);
+
+        return true;
+    }
+
+    /**
+     * Removes one user from one project's team, leaving their other projects alone.
+     *
+     * The counterpart of addUserToProject(), with the same permission.
+     *
+     * @param  int  $userId  The user to remove.
+     * @param  int  $projectId  The project to remove them from.
+     * @return bool True when a membership was removed; false when they weren't on the team (or the ids were invalid).
+     *
+     * @api
+     */
+    #[RequiresPermission(ProjectsPermissions::EDIT, global: true)]
+    public function removeUserFromProject(int $userId, int $projectId): bool
+    {
+        if ($userId <= 0 || $projectId <= 0 || ! $this->projectRepository->isUserMemberOfProject($userId, $projectId)) {
+            return false;
+        }
+
+        $this->projectRepository->deleteProjectRelation($userId, $projectId);
 
         return true;
     }
@@ -3985,7 +4030,8 @@ class Projects extends BaseService implements ChecksProjectAccess
             'url' => $currentUrl,
             'text' => $this->language->__('email_notifications.project_update_cta'),
         ];
-        $notification->entity = $project;
+        // The project as saved, so a rename is told with its new name.
+        $notification->entity = array_merge($project, $values, ['id' => $projectId]);
         $notification->module = 'projects';
         $notification->action = 'updated';
         $notification->projectId = session('currentProject');

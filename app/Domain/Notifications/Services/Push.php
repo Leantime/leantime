@@ -22,8 +22,9 @@ use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
  * Token lifecycle:
  *   - Mobile registers on login → push_token populated on the bearer's
  *     zp_access_tokens row.
- *   - FCM rejects token with UNREGISTERED / INVALID_ARGUMENT → we set
- *     push_invalidated_at on that row. Subsequent sends skip it.
+ *   - FCM says the token itself is dead (UNREGISTERED, or INVALID_ARGUMENT on
+ *     message.token; see isDeadToken) → we set push_invalidated_at on that row.
+ *     Subsequent sends skip it. Other rejections are logged and leave it alone.
  *   - Mobile logout → Sanctum revokes the access_tokens row entirely;
  *     push registration dies with it. No prune cron needed.
  *
@@ -164,12 +165,20 @@ class Push
         }
         $stringData = self::withDefaults($stringData);
 
+        // An item's name can be a whole idea or board-item description: keep the message well
+        // under FCM's payload cap, or FCM refuses the send (INVALID_ARGUMENT; see isDeadToken).
+        $title = self::fit($title, self::MAX_TITLE_LENGTH);
+        $body = self::fit($body, self::MAX_BODY_LENGTH);
+
         if ($path === 'relay') {
-            // One request for the whole fan-out; the relay reports dead tokens back.
+            // One request for the whole fan-out; the relay reports dead tokens back. It
+            // applies the content level itself.
             $this->relay->send($rows->where('push_provider', 'fcm'), $title, $body, $stringData);
 
             return;
         }
+
+        [$title, $body, $stringData] = $this->withContentLevel($title, $body, $stringData);
 
         foreach ($rows as $row) {
             // push_provider is retained on the row for forward compat
@@ -184,8 +193,8 @@ class Push
                 $this->sendFcm($row, $title, $body, $stringData);
             } catch (\Throwable $e) {
                 // One bad row doesn't kill the broadcast. sendFcm marks
-                // push_invalidated_at on known-dead tokens (UNREGISTERED
-                // / INVALID_ARGUMENT); anything else gets logged for ops
+                // push_invalidated_at on known-dead tokens (isDeadToken);
+                // anything else gets logged for ops
                 // to look at later.
                 Log::warning('Push send failed for access_token #'.$row->id.': '.$e->getMessage());
             }
@@ -193,15 +202,159 @@ class Push
     }
 
     /**
-     * Convenience for callers that already have a NotificationModel:
-     * extracts title/body/data from it and forwards to send().
+     * A direct send at the workspace's content level, the same as the relay does
+     * (PushRelay::send): content-free sends no text at all and rebuilds the link from the ids;
+     * full and names only keep their wording (worded upstream) but never a link that carries
+     * text (PushRelay::withoutLinkText()).
+     *
+     * @param  array<string, string>  $data
+     * @return array{0: string, 1: string, 2: array<string, string>}
+     */
+    public function withContentLevel(string $title, string $body, array $data): array
+    {
+        if ($this->relay->contentLevel() !== PushRelay::CONTENT_MINIMAL) {
+            return [$title, $body, $this->relay->withoutLinkText($data)];
+        }
+
+        return ['Leantime', __('notification.push_minimal_body'), $this->relay->contentFreeData($data)];
+    }
+
+    /** Longest title a push carries; phones show far less, and FCM caps the whole payload at 4 KB. */
+    private const MAX_TITLE_LENGTH = 120;
+
+    /** Longest body a push carries. */
+    private const MAX_BODY_LENGTH = 600;
+
+    /**
+     * Cut a title or body to $length characters, on a word when one is near, with an ellipsis.
+     */
+    public static function fit(string $text, int $length): string
+    {
+        if (mb_strlen($text) <= $length) {
+            return $text;
+        }
+
+        $cut = mb_substr($text, 0, $length - 1);
+        $space = mb_strrpos($cut, ' ');
+
+        return rtrim($space !== false && $space > $length / 2 ? mb_substr($cut, 0, $space) : $cut).'…';
+    }
+
+    /**
+     * How long a push counts as "just sent" for the two duplicate checks below.
+     */
+    public const RECENT_SECONDS = 120;
+
+    /**
+     * "Assigned to you" pushes sent while handling the current write, keyed by user and task,
+     * with the time they went out. The project notification about that same write is raised
+     * in the same request right after and skips the assignee; it also clears every mark for
+     * that task, so later, separate changes to the task (moved to Done a minute after) still
+     * push, even in a long-running process.
+     *
+     * @var array<string, int>
+     */
+    private static array $assignedThisWrite = [];
+
+    /** How long an assignment mark waits for the project notification of its own write. */
+    private const ASSIGNED_WRITE_SECONDS = 30;
+
+    /**
+     * AssignmentNotifier calls this after an "assigned to you" push.
+     */
+    public static function markAssigned(int $userId, int $ticketId): void
+    {
+        self::$assignedThisWrite[$userId.'.'.$ticketId] = time();
+    }
+
+    /**
+     * Whether the assignee was just pushed "assigned to you" for this task by the same write.
+     * Consumes the mark, so only that write's project notification is skipped.
+     */
+    public static function consumeAssigned(int $userId, int $ticketId): bool
+    {
+        $key = $userId.'.'.$ticketId;
+        $at = self::$assignedThisWrite[$key] ?? null;
+        unset(self::$assignedThisWrite[$key]);
+
+        return $at !== null && time() - $at <= self::ASSIGNED_WRITE_SECONDS;
+    }
+
+    /**
+     * Forget every assignment mark for a task, once the project notification of the write
+     * that set them has gone out (whether or not its assignee was among the recipients).
+     */
+    private static function forgetAssigned(int $ticketId): void
+    {
+        foreach (array_keys(self::$assignedThisWrite) as $key) {
+            if (str_ends_with($key, '.'.$ticketId)) {
+                unset(self::$assignedThisWrite[$key]);
+            }
+        }
+    }
+
+    /** Test hook: forget assignment marks. */
+    public static function resetAssigned(): void
+    {
+        self::$assignedThisWrite = [];
+    }
+
+    /**
+     * A project notification as a push: lock-screen wording from PushText, and two checks
+     * so one change reaches a phone once.
+     *
+     *   - Whoever was just pushed "assigned to you" for a task doesn't also get the
+     *     "added / updated this task" push from that same write. Only that one notification
+     *     is skipped: it clears the task's marks, so the next change to the task pushes.
+     *   - The same person never gets the same push about the same item twice within
+     *     RECENT_SECONDS (one save can raise the same notification twice). The push counts
+     *     as sent even when the assignment skipped it, so a repeat of it is skipped too.
+     *
+     * @param  array<int>  $userIds
      */
     public function sendFromNotification(NotificationModel $notification, array $userIds): void
     {
-        $title = $notification->subject !== '' ? $notification->subject : 'Leantime';
-        $body = $notification->message !== '' ? $notification->message : '';
+        $text = app(PushText::class)->forNotification($notification, $this->relay->contentLevel());
+        $data = self::buildData($notification);
 
-        $this->send($userIds, $title, $body, self::buildData($notification));
+        $ticketId = ($notification->module ?? '') === 'tickets' ? (int) ($data['moduleId'] ?? 0) : 0;
+        // The item it's about is part of the fingerprint, so two different tasks that happen
+        // to get the same wording both reach the phone. A comment names its host item in the
+        // entity's module / moduleId (goal and board comments carry nothing else that tells
+        // two equally named items apart).
+        $entity = $notification->entity ?? null;
+        $entityField = static fn (string $key): string => (string) (is_array($entity) ? ($entity[$key] ?? '') : (is_object($entity) ? ($entity->{$key} ?? '') : ''));
+        $fingerprint = sha1(implode("\n", [
+            $data['module'] ?? '',
+            $data['moduleId'] ?? '',
+            $data['parentTicketId'] ?? '',
+            $data['projectId'] ?? '',
+            $entityField('module'),
+            $entityField('moduleId'),
+            $text['title'],
+            $text['body'],
+        ]));
+
+        $recipients = [];
+        foreach (array_unique(array_map('intval', $userIds)) as $userId) {
+            $coveredByAssignment = $ticketId > 0 && self::consumeAssigned($userId, $ticketId);
+            // add() is false when the key is already there: this exact push just went out.
+            // Recorded either way, so a repeat of a push the assignment covered stays skipped.
+            $isRepeat = ! Cache::add('push.sent.'.$userId.'.'.$fingerprint, 1, self::RECENT_SECONDS);
+            if ($coveredByAssignment || $isRepeat) {
+                continue;
+            }
+            $recipients[] = $userId;
+        }
+        if ($ticketId > 0) {
+            self::forgetAssigned($ticketId);
+        }
+
+        if ($recipients === []) {
+            return;
+        }
+
+        $this->send($recipients, $text['title'], $text['body'], $data);
     }
 
     /**
@@ -320,14 +473,10 @@ class Push
             $response = $e->getResponse();
             $bodyText = (string) $response->getBody();
 
-            // FCM signals dead tokens via UNREGISTERED (404) or
-            // INVALID_ARGUMENT (400 with that specific error code).
-            // Mark the row invalidated so we stop trying.
-            if (
-                str_contains($bodyText, 'UNREGISTERED')
-                || str_contains($bodyText, 'INVALID_ARGUMENT')
-                || $response->getStatusCode() === 404
-            ) {
+            // Only Firebase's verdict about the token retires a device (the same rule as the
+            // relay): a payload FCM rejects, such as one over its size limit, is an error, not
+            // a dead token.
+            if (self::isDeadToken($bodyText)) {
                 $this->invalidateToken((int) $row->id);
 
                 return;
@@ -451,6 +600,41 @@ class Push
      * when a provider tells us the token is dead. Doesn't touch the
      * access token itself — only the push fields.
      */
+    /**
+     * Whether an FCM error response says the registration token itself is dead. Firebase
+     * states that in the structured error, never in free text: an FcmError detail with
+     * errorCode UNREGISTERED, or INVALID_ARGUMENT with a field violation on exactly
+     * "message.token". Anything else (a payload that is too large, a bad field, a 404 for a
+     * wrong project id) is an error and leaves the device alone. Same rule as the relay's
+     * FcmSender::isDeadToken().
+     */
+    public static function isDeadToken(string $body): bool
+    {
+        $decoded = json_decode($body, true);
+        $error = is_array($decoded) && is_array($decoded['error'] ?? null) ? $decoded['error'] : null;
+        if ($error === null) {
+            return false;
+        }
+
+        foreach (is_array($error['details'] ?? null) ? $error['details'] : [] as $detail) {
+            if (! is_array($detail)) {
+                continue;
+            }
+            if (($detail['errorCode'] ?? null) === 'UNREGISTERED') {
+                return true;
+            }
+            if (($error['status'] ?? null) === 'INVALID_ARGUMENT' && is_array($detail['fieldViolations'] ?? null)) {
+                foreach ($detail['fieldViolations'] as $violation) {
+                    if (is_array($violation) && ($violation['field'] ?? null) === 'message.token') {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private function invalidateToken(int $accessTokenId): void
     {
         \Illuminate\Support\Facades\DB::table('zp_access_tokens')

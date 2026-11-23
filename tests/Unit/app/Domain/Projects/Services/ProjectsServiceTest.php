@@ -2247,4 +2247,98 @@ class ProjectsServiceTest extends TestCase
     {
         return $this->makeEmpty(UserRepository::class, ['getUser' => fn () => ['id' => 7]]);
     }
+
+    /**
+     * Runs $act with a listener on ProjectMemberAdded and returns the user ids it was told
+     * about. The dispatcher's registry is restored afterwards.
+     *
+     * @return array<int, int>
+     */
+    private function membersAddedDuring(\Closure $act): array
+    {
+        $reflection = new \ReflectionClass(\Leantime\Core\Events\EventDispatcher::class);
+        $snapshot = [];
+        foreach (['eventRegistry', 'available_hooks', 'patternMatchCache', 'compiledPatternCache', 'eventRegistryVersion'] as $prop) {
+            $snapshot[$prop] = $reflection->getProperty($prop)->getValue();
+        }
+
+        $added = [];
+        try {
+            \Leantime\Core\Events\EventDispatcher::add_event_listener(
+                \Leantime\Domain\Projects\Events\ProjectMemberAdded::class,
+                function (...$args) use (&$added) {
+                    foreach ($args as $arg) {
+                        if ($arg instanceof \Leantime\Domain\Projects\Events\ProjectMemberAdded) {
+                            $added[] = $arg->userId;
+                        }
+                    }
+                }
+            );
+            $act();
+        } finally {
+            foreach ($snapshot as $prop => $value) {
+                $reflection->getProperty($prop)->setValue(null, $value);
+            }
+        }
+
+        return $added;
+    }
+
+    /**
+     * The repository only saves team members that come with a project role; nobody else may
+     * be told "added you to <project>".
+     */
+    public function test_a_new_project_tells_only_the_members_it_actually_saved(): void
+    {
+        $projectRepo = $this->makeEmpty(ProjectRepository::class, ['addProject' => fn () => 12]);
+        $service = $this->makeService($projectRepo);
+
+        $added = $this->membersAddedDuring(fn () => $service->createProject([
+            'name' => 'Launch',
+            'clientId' => 0,
+            'type' => 'project',
+            'start' => null,
+            'end' => null,
+            'assignedUsers' => [['id' => 2, 'projectRole' => 'editor'], ['id' => 3], ['id' => 4, 'projectRole' => '']],
+        ]));
+
+        $this->assertSame([2, 4], $added);
+    }
+
+    /**
+     * A rename is told with the project's new name: the notification carries the project as
+     * saved, not as it was before the edit.
+     */
+    public function test_a_project_edit_notifies_with_the_saved_values(): void
+    {
+        session(['currentProject' => 9]);
+        $captured = null;
+        $service = $this->construct(ProjectService::class, [
+            $this->make(ProjectRepository::class),
+            $this->make(TicketRepository::class),
+            $this->make(SettingRepository::class),
+            $this->make(LanguageCore::class, ['__' => fn ($key) => '%s %s']),
+            $this->make(Messengers::class),
+            $this->make(NotificationService::class),
+            $this->make(FileService::class),
+            $this->make(Avatarcreator::class),
+            $this->make(QueueRepository::class),
+            $this->make(UserRepository::class),
+            $this->make(CommentRepository::class),
+            $this->make(ClientRepository::class),
+            $this->make(Client::class),
+            $this->make(Webhooks::class),
+        ], [
+            'editProject' => fn () => true,
+            'notifyProjectUsers' => function (Notification $notification) use (&$captured) {
+                $captured = $notification;
+            },
+        ]);
+
+        $service->editProjectAndNotify(['name' => 'Pricing launch'], 9, ['id' => 9, 'name' => 'Draft launch', 'clientId' => 3], 'https://x', 1, 'Gloria');
+
+        $this->assertSame('Pricing launch', $captured->entity['name']);
+        $this->assertSame(9, $captured->entity['id']);
+        $this->assertSame(3, $captured->entity['clientId'], 'fields the edit left alone stay');
+    }
 }

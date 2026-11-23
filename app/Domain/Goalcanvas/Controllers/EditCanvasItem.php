@@ -378,7 +378,8 @@ class EditCanvasItem extends Controller
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
 
-                    $notification->entity = $canvasItem;
+                    // With the new id, so the digest can group the item's later changes and comments with it.
+                    $notification->entity = $canvasItem + ['id' => (int) $id];
                     $notification->module = 'goalcanvas';
                     $notification->action = 'created';
                     $notification->projectId = (int) ($savedItem['projectId'] ?? 0);
