@@ -108,6 +108,12 @@ class Planning extends BaseService
         $timezone = self::timezone();
         $task = $this->visibleTask($taskId);
 
+        // getTicket() checks project access; reading also needs tickets.view in that project.
+        // Same message as a missing to-do, so the reply never reveals that a hidden one exists.
+        if (! $this->can(TicketsPermissions::VIEW, (int) $task->projectId)) {
+            throw new ValidationException(['taskId' => ["That to-do doesn't exist, or you can't see it."]]);
+        }
+
         return [
             'taskId' => $taskId,
             'days' => WorkStart::plannedDays(self::stored($task->editFrom), self::stored($task->editTo), $timezone),

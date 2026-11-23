@@ -645,6 +645,27 @@ class CalendarServiceTest extends TestCase
         $this->assertMatchesRegularExpression('/DTSTART[^:\\r\\n]*VALUE=DATE:20250417/', $ics);
     }
 
+    /**
+     * A planned day has no start time, so it gets no start alarm. A time box that spans whole
+     * days is all-day too, but it has a real start and keeps its alarm.
+     */
+    public function test_ical_feed_skips_the_start_alarm_only_for_planned_days(): void
+    {
+        session(['usersettings.timezone' => 'America/Los_Angeles']);
+
+        $event = fn (int $id, bool $plannedDay) => [
+            'id' => $id, 'title' => 'To-do '.$id, 'description' => '', 'url' => '',
+            'dateFrom' => '2026-11-24 08:00:00', 'dateTo' => '2026-11-26 08:00:00',
+            'allDay' => true, 'eventType' => 'ticket', 'dateContext' => 'edit', 'plannedDay' => $plannedDay,
+        ];
+
+        $planned = $this->calendarWithFeedEvents([$event(31, true)])->getIcalByRequestToken('cal_user')->get();
+        $timeBox = $this->calendarWithFeedEvents([$event(32, false)])->getIcalByRequestToken('cal_user')->get();
+
+        $this->assertStringNotContainsString('BEGIN:VALARM', $planned);
+        $this->assertStringContainsString('BEGIN:VALARM', $timeBox);
+    }
+
     public function test_ical_feed_without_events_is_an_empty_calendar_not_an_error(): void
     {
         // #4018: a valid feed with no events yet threw "Calendar could not be retrieved" (404),

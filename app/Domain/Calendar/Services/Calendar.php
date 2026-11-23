@@ -590,8 +590,9 @@ class Calendar extends BaseService
                     $currentEvent->alertMinutesBefore(30, $this->language->__('text.ical.todo_is_due'));
                 }
 
-                // A planned day (all-day Work Start) has no start time to be alerted about.
-                if ($event['eventType'] == 'ticket' && $event['dateContext'] == 'edit' && ! $isAllDay) {
+                // A planned day (date-only Work Start) has no start time to be alerted about. A
+                // time box spanning whole days is all-day too, and keeps its alarm.
+                if ($event['eventType'] == 'ticket' && $event['dateContext'] == 'edit' && empty($event['plannedDay'])) {
                     $currentEvent->alertMinutesBefore(5, $this->language->__('text.ical.todo_start_alert'));
                 }
 

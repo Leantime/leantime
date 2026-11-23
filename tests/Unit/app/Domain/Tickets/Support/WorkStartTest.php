@@ -132,6 +132,29 @@ class WorkStartTest extends TestCase
         $this->assertFalse(WorkStart::isPlannedForDay($start, null, CarbonImmutable::parse('2026-11-24 10:00', 'UTC'), self::KIRITIMATI));
     }
 
+    public function test_a_day_that_starts_at_one_because_daylight_saving_skips_midnight_is_date_only(): void
+    {
+        // On 2026-09-06 America/Santiago jumps from 00:00 to 01:00, so the day starts at 01:00.
+        $tz = 'America/Santiago';
+        $start = WorkStart::startOfLocalDay('2026-09-06', $tz);
+        $this->assertSame('01:00', $start->format('H:i'));
+
+        $stored = $start->setTimezone('UTC')->format('Y-m-d H:i:s');
+        $this->assertTrue(WorkStart::isDateOnly($stored, null, $tz));
+        $this->assertFalse(WorkStart::isTimeBoxed($stored, null, $tz));
+        $this->assertSame(['2026-09-06'], WorkStart::plannedDays($stored, null, $tz));
+    }
+
+    public function test_a_span_across_a_skipped_midnight_keeps_every_day(): void
+    {
+        $tz = 'America/Santiago';
+        $start = WorkStart::startOfLocalDay('2026-09-05', $tz)->setTimezone('UTC')->format('Y-m-d H:i:s');
+        $end = WorkStart::startOfLocalDay('2026-09-08', $tz)->setTimezone('UTC')->format('Y-m-d H:i:s');
+
+        $this->assertTrue(WorkStart::isDateOnly($start, $end, $tz));
+        $this->assertSame(['2026-09-05', '2026-09-06', '2026-09-07'], WorkStart::plannedDays($start, $end, $tz));
+    }
+
     public function test_bad_data_never_loops_past_the_cap(): void
     {
         $start = self::storedMidnight('2000-01-01', 'UTC');

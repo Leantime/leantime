@@ -16,6 +16,8 @@ use Unit\TestCase;
  */
 class PlanningTest extends TestCase
 {
+    use \Codeception\Test\Feature\Stub;
+
     private const TZ = 'America/Los_Angeles';
 
     /** @var array<int, TicketModel> */
@@ -23,6 +25,9 @@ class PlanningTest extends TestCase
 
     /** @var array<int, array{0: int, 1: array<string, mixed>}> Every patch() call. */
     private array $patches = [];
+
+    /** Whether the signed-in person has tickets.view in the to-dos' project. */
+    private bool $canView = true;
 
     protected function setUp(): void
     {
@@ -35,6 +40,7 @@ class PlanningTest extends TestCase
         app()->forgetInstance(DateTimeHelper::class);
 
         $this->patches = [];
+        $this->canView = true;
         $this->tickets = [
             11 => $this->ticket(11),
             12 => $this->ticket(12, editFrom: $this->utc('2026-11-26 14:00'), editTo: $this->utc('2026-11-26 15:30')),
@@ -134,6 +140,13 @@ class PlanningTest extends TestCase
         );
     }
 
+    public function test_reading_a_plan_needs_view_permission_in_the_to_dos_project(): void
+    {
+        $this->canView = false;
+
+        $this->assertFieldError('taskId', fn () => $this->service()->getTaskPlan(12));
+    }
+
     private function service(bool $patchSucceeds = true): Planning
     {
         $tickets = $this->createMock(TicketService::class);
@@ -144,7 +157,13 @@ class PlanningTest extends TestCase
             return $patchSucceeds;
         });
 
-        return new Planning($tickets);
+        $planning = new Planning($tickets);
+        $planning->setPermissionService($this->make(\Leantime\Core\Auth\Permissions\PermissionService::class, [
+            'currentUserCan' => fn () => $this->canView,
+            'authorize' => fn () => null,
+        ]));
+
+        return $planning;
     }
 
     /** A local Los Angeles wall-clock time as stored (UTC). */

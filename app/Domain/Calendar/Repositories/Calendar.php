@@ -240,7 +240,7 @@ class Calendar extends RepositoryCore
                         ? $this->language->__('label.planned_day_prefix')
                         : $this->language->__('label.planned_edit');
 
-                    $newValues[] = $this->mapEventData(
+                    $event = $this->mapEventData(
                         title: $context.$ticket['headline'].' ('.$statusName.')',
                         description: $ticket['description'],
                         allDay: $allDay,
@@ -253,6 +253,10 @@ class Calendar extends RepositoryCore
                         dateFrom: $ticket['editFrom'],
                         dateTo: $hasWorkEnd ? $ticket['editTo'] : $ticket['editFrom']
                     );
+                    // Lets the feed tell a planned day (no start time to alert about) from a
+                    // time box that happens to span whole days.
+                    $event['plannedDay'] = $isPlannedDay;
+                    $newValues[] = $event;
                 }
             }
         }

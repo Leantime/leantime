@@ -89,8 +89,10 @@ final class WorkStart
             ? $end->subSecond()->startOfDay()
             : $start->startOfDay();
 
+        // Re-take the start of each day after stepping: where daylight saving skips midnight, a
+        // day starts at 01:00 and stepping a whole day would carry that hour into later days.
         $days = [];
-        for ($day = $start->startOfDay(); $day->lessThanOrEqualTo($lastDay) && count($days) < self::MAX_DAYS; $day = $day->addDay()) {
+        for ($day = $start->startOfDay(); $day->lessThanOrEqualTo($lastDay) && count($days) < self::MAX_DAYS; $day = $day->addDay()->startOfDay()) {
             $days[] = $day->format('Y-m-d');
         }
 
@@ -157,8 +159,12 @@ final class WorkStart
         }
     }
 
+    /**
+     * Whether a moment is the start of its local day. That's usually 00:00, but 01:00 on a day
+     * where daylight saving skips midnight (for example America/Santiago in September).
+     */
     private static function isMidnight(CarbonImmutable $moment): bool
     {
-        return $moment->format('H:i:s') === '00:00:00';
+        return $moment->equalTo($moment->startOfDay());
     }
 }
