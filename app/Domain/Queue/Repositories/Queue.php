@@ -30,12 +30,20 @@ class Queue
      * to tell emails the person has already read in the inbox from new ones; an email queued
      * without them is always treated as new.
      *
+     * $summary is the digest's wording for the email, when the producer has it: the item it is
+     * about ('group'), its 'title', a short 'line' ("Marcel moved this to Done"), an optional
+     * 'quote' (a comment) and 'url'. The digest shows changes to one item together with it;
+     * without it the row shows its subject and message.
+     *
      * @param  array<int, int|string>  $recipients  User ids or email addresses.
      * @param  string|null  $module  The entity's module as the inbox records it, e.g. 'tickets'.
      * @param  int|null  $moduleId  The entity's id as the inbox records it.
+     * @param  array{group?: string, title?: string, line?: string, quote?: string, url?: string, detail?: string}|null  $summary
      */
-    public function queueMessageToUsers(array $recipients, string $message, string $subject = '', int $projectId = 0, ?string $module = null, ?int $moduleId = null): void
+    public function queueMessageToUsers(array $recipients, string $message, string $subject = '', int $projectId = 0, ?string $module = null, ?int $moduleId = null, ?array $summary = null): void
     {
+        $summaryJson = $summary === null ? null : json_encode($summary, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE);
+
         $recipients = array_unique($recipients);
 
         foreach ($recipients as $recipient) {
@@ -74,6 +82,7 @@ class Queue
                     'projectId' => $projectId,
                     'module' => $module,
                     'moduleId' => $moduleId,
+                    'summary' => $summaryJson === false ? null : $summaryJson,
                 ]);
             } catch (UniqueConstraintViolationException $e) {
                 continue;
