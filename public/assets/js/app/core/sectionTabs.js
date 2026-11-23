@@ -69,12 +69,25 @@ leantime.sectionTabs = (function () {
         try {
             if (remember === 'hash') {
                 window.history.replaceState(null, '', '#' + name);
-            } else if (remember.indexOf('query:') === 0) {
-                var url = new URL(window.location.href);
+                return;
+            }
+
+            // A hash naming one of this set's tabs (`#timesheet`, the time form's post target) wins on the next
+            // load, so it goes when the choice is kept elsewhere. Dialog routes (`#/tickets/…`) stay.
+            var url = new URL(window.location.href);
+            var hashNamesATab = tabsOf(box).some(function (tab) { return tab.getAttribute('href') === url.hash; });
+            if (hashNamesATab) {
+                url.hash = '';
+            }
+
+            if (remember.indexOf('query:') === 0) {
                 url.searchParams.set(remember.slice(6), name);
-                window.history.replaceState(null, '', url);
             } else if (remember.indexOf('local:') === 0) {
                 localStorage.setItem(remember.slice(6), name);
+            }
+
+            if (hashNamesATab || remember.indexOf('query:') === 0) {
+                window.history.replaceState(null, '', url);
             }
         } catch (e) { /* storage blocked */ }
     };
@@ -112,6 +125,18 @@ leantime.sectionTabs = (function () {
         }));
     };
 
+    // A dialog can sit on a page with its own set of the same panels (subtask To-Do over the To-Do page).
+    var uniqueId = function (candidate) {
+        var id = candidate;
+        var counter = 2;
+        while (document.getElementById(id)) {
+            id = candidate + '-' + counter;
+            counter++;
+        }
+
+        return id;
+    };
+
     // Tab and panel roles. Runs again after an htmx swap inside a set up box: a panel that replaces itself
     // (CustomFields' form swaps its outerHTML on save) comes back without them.
     var markTabsAndPanels = function (box) {
@@ -120,7 +145,7 @@ leantime.sectionTabs = (function () {
             tab.parentElement.setAttribute('role', 'presentation');
             tab.setAttribute('role', 'tab');
             if (!tab.id) {
-                tab.id = panelId + '-tab';
+                tab.id = uniqueId(panelId + '-tab');
             }
 
             var panel = panelOf(box, tab);
@@ -130,6 +155,10 @@ leantime.sectionTabs = (function () {
             tab.setAttribute('aria-controls', panelId);
             panel.setAttribute('role', 'tabpanel');
             panel.setAttribute('aria-labelledby', tab.id);
+            // A focus stop, so a panel with nothing focusable in it (History) can still be reached and read.
+            if (!panel.hasAttribute('tabindex')) {
+                panel.setAttribute('tabindex', '0');
+            }
             if (tab.hasAttribute('aria-selected')) {
                 panel.hidden = tab.getAttribute('aria-selected') !== 'true';
             }
@@ -154,14 +183,12 @@ leantime.sectionTabs = (function () {
 
         markTabsAndPanels(box);
 
-        // Delegated on the list, so a tab added later (a plugin script) works too.
-        list.addEventListener('click', function (event) {
-            var tab = event.target.closest('[role="tab"]');
-            if (!tab || !list.contains(tab)) {
-                return;
-            }
+        // Delegated on the list, so a tab added later (a plugin script) works too. Bound through jQuery because
+        // callers open tabs with jQuery's .click() (comment menu → Time Tracking), which on a link only runs
+        // jQuery handlers, never native listeners.
+        jQuery(list).on('click', 'a[role="tab"]', function (event) {
             event.preventDefault();
-            activate(box, tabsOf(box).indexOf(tab), { remember: true });
+            activate(box, tabsOf(box).indexOf(this), { remember: true });
         });
 
         list.addEventListener('keydown', function (event) {
