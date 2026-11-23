@@ -108,6 +108,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
 | modal-header | `actions.modal-header` | actions | ✅ | — | First row of every dialog: `icon`, `title` (prop or slot), `meta` slot, `actions` slot (→ ⋮ menu; Delete lives here, never in the body) and its OWN close X (nyroModal's X is pinned outside the content with inline positions and never lined up; hidden via `.nyroModalCont:has(.lt-modal-header) ~ .nyroModalCloseButton`). Close calls `jQuery.nmTop().close()` so it survives htmx re-renders. Done: to-do (`Task #92`, headline stays the big field), goal, milestone, every titled core dialog (#3901), Delete in the ⋮ (#3902), plugin dialogs incl. PgmPro's eyebrow/hint pickers (plugins#139) |
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating/underline (underline = section tabs, see "Section tabs"); tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
+| section-tabs | `navigation.section-tabs` | navigation | ✅ | feature/section-tabs-component | Section tab sets plugins print into (the old jQuery-UI `.tabbedwidget` sets); keeps `ul > li > a[href=#id]` + `div#id`, `core/sectionTabs.js` makes the tablist; `label`, `remember` (hash / query:x / local:x); `.tab` sub-component (`for`, `icon`). Same underline look as `navigation.tabs`. See "Section tabs" |
 | view-tabs | `navigation.view-tabs` | navigation | ✅ | feature/page-toolbars | The bar between page header and content box: page VIEWS as link tabs on the left (server-side active), page ACTIONS on the right (`actions` slot: New, Filter, Group By, view settings, ranges). Replaces the hand-rolled bars in tickets (ticketBoardTabs/timelineTabs, `tickets::portfolio-tabs`). See "Page layout" |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
 | date-picker | `forms.date-picker` | forms | 🟡 | — | Date field on the jQuery-UI picker (user's format + language): `name`, `id`, `value` (user-format string or DateTimeInterface), `range` from/to + `rangeGroup` (to ≥ from, empty to takes from), `width` (default sm). `core/datePickers.js` inits on render + every htmx swap and destroys on `htmx:beforeCleanupElement` (no per-page `initDatePicker` scripts). Done: new project dates. Left: ~20 raw `.dates`/`#dateFrom` inputs with page scripts (timesheets, to-do dialogs, goal dialog) — swap with each page |
@@ -702,13 +703,20 @@ in the bar, outside the box) or **which part of one thing you edit** (section �
 Section tabs each own their form / Save and post back to `…#section`; nothing applies across them.
 - One look: **underline** — full-width hairline, quiet grey labels, active section dark with an accent1 underline,
   icon on every tab. `navigation.tabs variant="underline"` for new work (Goal dialog, plugin details).
-- The jQuery-UI sets (`.tabbedwidget.tab-primary`: To-Do view/new (modal + page), project settings + new project,
-  client, Company settings, My Profile, project selector) get the same skin from `tab-group.css` and **keep their
-  `ul > li > a[href=#id]` + `div#id` markup**: plugins print tabs into them (CustomFields → ticketTabs,
-  AdvancedAuth → company settings, ThemeBundle/Auth → editOwn, Llamadorian → projectTabsContent). Moving them to
-  the component means changing that plugin contract first, with the plugins shipped alongside.
-- Plugins: StrategyPro (newStrategy/showStrategy/canvasDialog) and PgmPro (newProgram/showProgram) tab sets go in a
-  plugins-repo PR.
+- Sets plugins print into use `navigation.section-tabs` (2026-11-23): To-Do view/new (dialog + page), project
+  settings + new project, client, Company settings, My Profile, project selector. It **keeps the
+  `ul > li > a[href=#id]` + `div#id` markup** because plugins print tabs into these sets through hooks (CustomFields →
+  `showTicketModal.ticketTabs`/`ticketTabsContent`, AdvancedAuth → `editCompanySettings.tabs`/`tabsContent`,
+  Llamadorian → `showProject.projectTabsList`/`projectTabsContent`); the hook names and the markup plugins echo are
+  unchanged. `core/sectionTabs.js` replaces jQuery-UI `.tabs()`: ARIA tablist (roving tabindex, Arrow/Home/End,
+  Space), `hidden` panels, `lt:tabs:changed`. The URL hash naming a tab opens it; `remember` keeps the choice:
+  `hash` (page-level sets), `query:tab` (To-Do), `local:currentMenuTab` (project selector). Tabs: `for` (panel id),
+  `icon`; extra attributes land on the link (`id="timesheetTab"`).
+- `leantime.projectsController.initProjectTabs()` now runs the same enhancer on bare `.projectTabs` markup, so the
+  PgmPro/StrategyPro project/program pages get it without a plugin change. Left on jQuery-UI tabs: StrategyPro's goal
+  dialog (`jQuery(".goalTabs").tabs()`), which is why the `.tab-primary.ui-tabs` selectors stay in `tab-group.css`
+  and the `.ui-tabs-panel` rules in `style.default.css`. Moving it (and the plugin pages to the component) goes in a
+  plugins-repo PR; then those selectors go.
 
 
 

@@ -10,11 +10,10 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
-
-            <ul>
-                <li><a href="#ticketdetails"><span class="fa fa-star"></span> {!! __('tabs.ticketDetails') !!}</a></li>
-            </ul>
+        <x-global::navigation.section-tabs class="ticketTabs" :label="__('tabs.ticketDetails')" remember="query:tab">
+            <x-slot:tabs>
+                <x-global::navigation.section-tabs.tab for="ticketdetails" icon="fa-star">{!! __('tabs.ticketDetails') !!}</x-global::navigation.section-tabs.tab>
+            </x-slot:tabs>
 
             <div id="ticketdetails">
                 <form class="formModal" action="{{ BASE_URL }}/tickets/newTicket" method="post">
@@ -22,7 +21,7 @@
                 </form>
             </div>
 
-        </div>
+        </x-global::navigation.section-tabs>
 </div>
         <br />
 
@@ -36,7 +35,9 @@
         jQuery.nmTop().close();
         @endif
 
-        leantime.ticketsController.initTicketTabs();
+        // Manual openers (?showTicketModal=, openTicketModalManually) skip the dialog lifecycle that sets
+        // section tabs up; setting up twice is a no-op.
+        leantime.sectionTabs.init('.ticketTabs');
 
         @can('tickets.create')
 

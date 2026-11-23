@@ -33,13 +33,13 @@
         @endif
 
 
-    <div class="tabbedwidget tab-primary projectSelectorTabs">
-        <ul class="tabs">
-            <li><a href="#myProjects">{{ __('menu.projectselector.my_projects') }}</a></li>
-            <li><a href="#favorites">{{ __('menu.projectselector.favorites') }}</a></li>
-            <li><a href="#recentProjects">{{ __('menu.projectselector.recent') }}</a></li>
-            <li><a href="#allProjects">{{ __('menu.projectselector.all_projects') }}</a></li>
-        </ul>
+    <x-global::navigation.section-tabs class="projectSelectorTabs" :label="__('menu.projectselector.all_projects')" remember="local:currentMenuTab">
+        <x-slot:tabs>
+            <x-global::navigation.section-tabs.tab for="myProjects">{{ __('menu.projectselector.my_projects') }}</x-global::navigation.section-tabs.tab>
+            <x-global::navigation.section-tabs.tab for="favorites">{{ __('menu.projectselector.favorites') }}</x-global::navigation.section-tabs.tab>
+            <x-global::navigation.section-tabs.tab for="recentProjects">{{ __('menu.projectselector.recent') }}</x-global::navigation.section-tabs.tab>
+            <x-global::navigation.section-tabs.tab for="allProjects">{{ __('menu.projectselector.all_projects') }}</x-global::navigation.section-tabs.tab>
+        </x-slot:tabs>
 
         <div id="myProjects" class="scrollingTab">
             @include('menu::partials.projectListFilter', ['clients' => $clients, 'projectSelectFilter' => $projectSelectFilter])
@@ -90,7 +90,7 @@
                 @endif
             </ul>
         </div>
-    </div>
+    </x-global::navigation.section-tabs>
 
             @if ($menuType == 'project' || $menuType == 'default')
         <div class="projectSelectorFooter">
