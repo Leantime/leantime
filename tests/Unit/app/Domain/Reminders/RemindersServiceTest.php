@@ -51,15 +51,15 @@ class RemindersServiceTest extends TestCase
             $this->make(SummaryBuilder::class, ['build' => fn (int $userId, $now, string $timezone, string $preset, int $limit = 5) => ['for' => $userId, 'preset' => $preset] + ($limit === 5 ? [] : ['limit' => $limit])]),
             $this->make(TicketRepository::class, [
                 'getTicket' => function ($id) {
-                    if (! in_array((int) $id, [1, 2, 3, 4, 5], true)) {
+                    if (! in_array((int) $id, [1, 2, 3, 4, 5, 6], true)) {
                         return false;
                     }
                     $ticket = new TicketModel;
                     $ticket->id = (int) $id;
                     // to-do 1 is in project 1, to-do 2 in project 2; to-do 3 is in project 1 without a due date;
                     // to-dos 1-3 are assigned to the session user (7), to-do 4 (project 1) to someone else (99)
-                    // to-do 5 (project 1) has the other "no date" sentinel
-                    $ticket->projectId = in_array((int) $id, [3, 4, 5], true) ? 1 : (int) $id;
+                    // to-do 5 (project 1) has the other "no date" sentinel; 6 (project 1) is a milestone
+                    $ticket->projectId = in_array((int) $id, [3, 4, 5, 6], true) ? 1 : (int) $id;
                     $ticket->dateToFinish = match ((int) $id) {
                         3 => '0000-00-00 00:00:00',
                         5 => '1969-12-31 00:00:00',
@@ -67,6 +67,7 @@ class RemindersServiceTest extends TestCase
                     };
                     $ticket->editorId = (int) $id === 4 ? '99' : '7';
                     $ticket->userId = 99;
+                    $ticket->type = (int) $id === 6 ? 'milestone' : 'task';
 
                     return $ticket;
                 },
@@ -168,6 +169,25 @@ class RemindersServiceTest extends TestCase
 
         $this->expectException(NotFoundException::class);
         $service->getTaskReminders(404);
+    }
+
+    public function test_milestones_have_no_reminder_choices(): void
+    {
+        $service = $this->service();
+
+        foreach ([
+            fn () => $service->getTaskReminders(6),
+            fn () => $service->setTaskPreset(6, 'off'),
+            fn () => $service->chooseTaskReminder(6, 'off'),
+        ] as $call) {
+            try {
+                $call();
+                $this->fail('a milestone\'s reminders would have no effect');
+            } catch (\Leantime\Core\Exceptions\ValidationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        $this->assertSame([], $this->storedKeys());
     }
 
     public function test_an_unknown_preset_is_refused(): void

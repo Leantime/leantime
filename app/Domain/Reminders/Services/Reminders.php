@@ -266,7 +266,11 @@ class Reminders
         return $userId;
     }
 
-    /** The to-do, when it exists and the person can see it; otherwise not found / not allowed. */
+    /**
+     * The to-do, when it exists and the person can see it; otherwise not found / not allowed.
+     * Milestones are refused (after the access check): they show in the summary on their own fixed
+     * notice days and ignore reminder choices, so a saved choice would have no effect.
+     */
     private function visibleTicket(int $ticketId): object
     {
         $ticket = $this->tickets->getTicket($ticketId);
@@ -275,6 +279,10 @@ class Reminders
         }
 
         $this->permissions->authorize(TicketsPermissions::VIEW, (int) $ticket->projectId);
+
+        if (($ticket->type ?? '') === 'milestone') {
+            throw new ValidationException(['ticketId' => ['Milestones have no reminder choices; they appear in your summary ahead of their date on their own.']]);
+        }
 
         return $ticket;
     }

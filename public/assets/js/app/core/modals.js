@@ -433,6 +433,7 @@ leantime.modals = (function () {
     // opens later (editor popovers, emoji pickers, floating menus) are mounted on <body> too, but
     // they belong to the dialog, so Tab must work inside them.
     var describedDialog = null;
+    var dialogTitleCount = 0;
     var pageBehindDialog = [];
     var FOCUSABLE = 'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
@@ -448,7 +449,11 @@ leantime.modals = (function () {
                 return !node.contains(dialog);
             });
         }
-        var title = dialog.querySelector('.lt-modal-title[id]');
+        // The modal header's title; older dialogs only have a plain heading (given an id here).
+        var title = dialog.querySelector('.lt-modal-title') || dialog.querySelector('h1, h2, h3, h4, h5, h6');
+        if (title && !title.id) {
+            title.id = 'lt-dialog-title-' + (++dialogTitleCount);
+        }
         if (title) {
             dialog.setAttribute('aria-labelledby', title.id);
         } else {
@@ -478,10 +483,36 @@ leantime.modals = (function () {
         return top.parentElement === document.body && pageBehindDialog.indexOf(top) === -1;
     };
 
-    var focusables = function (dialog) {
-        return Array.prototype.filter.call(dialog.querySelectorAll(FOCUSABLE), function (element) {
-            return element.getClientRects().length > 0;
+    // nyroModal moves some of the dialog's own controls (the close button) out of .nyroModalCont
+    // into siblings right after it (.nmReposition); they are part of the dialog.
+    var dialogParts = function (dialog) {
+        var parts = [dialog];
+        for (var sibling = dialog.nextElementSibling; sibling; sibling = sibling.nextElementSibling) {
+            if (sibling.classList.contains('nmReposition')) {
+                parts.push(sibling);
+            }
+        }
+        return parts;
+    };
+
+    var inDialog = function (dialog, element) {
+        return dialogParts(dialog).some(function (part) {
+            return part.contains(element);
         });
+    };
+
+    var focusables = function (dialog) {
+        var found = [];
+        dialogParts(dialog).forEach(function (part) {
+            var candidates = part.matches(FOCUSABLE) ? [part] : [];
+            candidates = candidates.concat(Array.prototype.slice.call(part.querySelectorAll(FOCUSABLE)));
+            candidates.forEach(function (element) {
+                if (element.getClientRects().length > 0) {
+                    found.push(element);
+                }
+            });
+        });
+        return found;
     };
 
     document.addEventListener('keydown', function (event) {
@@ -492,7 +523,7 @@ leantime.modals = (function () {
         if (!dialog) {
             return;
         }
-        if (!dialog.contains(document.activeElement) && inDialogPopup(document.activeElement)) {
+        if (!inDialog(dialog, document.activeElement) && inDialogPopup(document.activeElement)) {
             return; // Tab moves through the pop-up's own controls
         }
         var items = focusables(dialog);
@@ -502,7 +533,7 @@ leantime.modals = (function () {
         }
         var first = items[0];
         var last = items[items.length - 1];
-        var inside = dialog.contains(document.activeElement);
+        var inside = inDialog(dialog, document.activeElement);
         if (!inside) {
             event.preventDefault();
             first.focus();
