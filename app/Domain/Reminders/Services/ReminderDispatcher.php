@@ -6,8 +6,8 @@ use Carbon\CarbonImmutable;
 use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
 
 /**
- * The reminder job ('reminders:dispatch', every five minutes, never two at once): the morning
- * summary, sent through the shared {@see ScheduledSummaryRunner} loop (claiming by inbox row,
+ * The morning summary, sent by the reminder job ('reminders:dispatch', every five minutes, never
+ * two at once, right after the weekly summary) through the shared {@see ScheduledSummaryRunner} loop (claiming by inbox row,
  * per-person lock, run budget and resume cursor are described there).
  *
  * A person's morning summary is due from their summary time until {@see WINDOW_MINUTES} after
@@ -18,7 +18,8 @@ use Leantime\Domain\Reminders\Repositories\Reminders as ReminderRepository;
  *
  * The inbox is the record of what was sent. A summary writes its inbox row first, then the email
  * and push. A person who already has a summary row since their local midnight gets nothing more
- * that day.
+ * that day. A weekly summary that went out while their morning summary was due included it, and
+ * counts as that day's morning summary too.
  *
  * An empty day writes nothing. A later run inside the window still sends one summary if something
  * has come due since, so a person gets at most one summary a day, and maybe none.
@@ -95,9 +96,40 @@ class ReminderDispatcher extends ScheduledSummaryRunner
         return self::dueSince($mine, $nowUtc);
     }
 
-    protected function sentSince(array $sinceByUser): array
+    /**
+     * Today's morning summary row, or a weekly summary written since the morning summary became
+     * due today: the weekly kind runs first in the same job and folds the morning summary in when
+     * both are due ({@see WeeklySummaryDispatcher}). A weekly summary sent earlier in the day
+     * (before this morning summary was due) doesn't count, so someone with different times gets
+     * both.
+     */
+    protected function sentSince(array $sinceByUser, array $settingsByUser): array
     {
-        return $this->reminders->summariesSentSince($sinceByUser);
+        $weeklyCountsSince = [];
+        foreach ($sinceByUser as $userId => $localMidnightUtc) {
+            if (isset($settingsByUser[$userId])) {
+                $weeklyCountsSince[$userId] = self::dueAtUtc($settingsByUser[$userId], $localMidnightUtc);
+            }
+        }
+
+        return $this->reminders->summariesSentSince($sinceByUser, $weeklyCountsSince);
+    }
+
+    /**
+     * When the person's morning summary becomes due on the local day that starts at
+     * $localMidnightUtc (their summary time that day, as UTC).
+     *
+     * @param  array{summaryTime: string, timezone: string}  $mine
+     */
+    public static function dueAtUtc(array $mine, string $localMidnightUtc): string
+    {
+        [$hours, $minutes] = array_map('intval', explode(':', self::dueTime($mine['summaryTime'])));
+
+        return CarbonImmutable::parse($localMidnightUtc, 'UTC')
+            ->setTimezone($mine['timezone'])
+            ->setTime($hours, $minutes)
+            ->setTimezone('UTC')
+            ->format('Y-m-d H:i:s');
     }
 
     /** The morning summary, or null on an empty day. */

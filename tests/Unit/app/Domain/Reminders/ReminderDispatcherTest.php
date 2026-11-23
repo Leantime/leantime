@@ -13,6 +13,7 @@ use Leantime\Domain\Reminders\Services\ReminderDispatcher;
 use Leantime\Domain\Reminders\Services\ReminderNotifier;
 use Leantime\Domain\Reminders\Services\ReminderSettings;
 use Leantime\Domain\Reminders\Services\SummaryBuilder;
+use Leantime\Domain\Reminders\Services\WeeklySummaryDispatcher;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Unit\TestCase;
 
@@ -181,13 +182,13 @@ class ReminderDispatcherTest extends TestCase
 
             public function __construct() {}
 
-            public function summariesSentSince(array $sinceByUser): array
+            public function summariesSentSince(array $sinceByUser, array $weeklyCountsSince = []): array
             {
                 if (++$this->checks === 2 && $this->beforeRecheck !== null) {
                     ($this->beforeRecheck)();
                 }
 
-                return parent::summariesSentSince($sinceByUser);
+                return parent::summariesSentSince($sinceByUser, $weeklyCountsSince);
             }
         };
         (new \ReflectionProperty(ReminderRepository::class, 'db'))->setValue($repository, $this->db);
@@ -316,7 +317,7 @@ class ReminderDispatcherTest extends TestCase
                 (new \ReflectionProperty(parent::class, 'db'))->setValue($this, $db);
             }
 
-            public function summariesSentSince(array $sinceByUser): array
+            public function summariesSentSince(array $sinceByUser, array $weeklyCountsSince = []): array
             {
                 return [];
             }
@@ -449,9 +450,18 @@ class ReminderDispatcherTest extends TestCase
         $this->assertTrue($event->onOneServer);
 
         $runs = 0;
+        $order = [];
+        app()->instance(WeeklySummaryDispatcher::class, $this->make(WeeklySummaryDispatcher::class, [
+            'run' => function () use (&$order) {
+                $order[] = 'weekly';
+
+                return 0;
+            },
+        ]));
         app()->instance(ReminderDispatcher::class, $this->make(ReminderDispatcher::class, [
-            'run' => function () use (&$runs) {
+            'run' => function () use (&$runs, &$order) {
                 $runs++;
+                $order[] = 'morning';
 
                 return 0;
             },
@@ -459,5 +469,6 @@ class ReminderDispatcherTest extends TestCase
         $event->run(app());
 
         $this->assertSame(1, $runs);
+        $this->assertSame(['weekly', 'morning'], $order, 'the weekly kind runs first, so it can fold the morning summary in');
     }
 }

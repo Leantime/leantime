@@ -14,6 +14,10 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
  *   usersettings.{id}.reminders.taskPreset   default (default) | more | less | off
  *   usersettings.{id}.reminders.task.{ticketId}  the person's choice for one to-do; stored only
  *                                                when they made one ("inherit" deletes it)
+ *   usersettings.{id}.reminders.weekly          '1' on (default) / '0' off: the weekly summary
+ *   usersettings.{id}.reminders.weeklyDay       1 (Monday, default) to 7 (Sunday), ISO days
+ *   usersettings.{id}.reminders.weeklyTime      'HH:MM' in their timezone, default 08:00
+ *   usersettings.{id}.reminders.weeklyLookBack  '1' (default) / '0': include "last week"
  *
  * The workspace switch companysettings.reminders.enabled can only turn reminders off for
  * everyone ('0'). It never turns anything on or makes reminders louder for anyone.
@@ -32,6 +36,11 @@ class ReminderSettings
 
     public const DEFAULT_SUMMARY_TIME = '08:00';
 
+    /** The weekly summary's default day: Monday (ISO 1). */
+    public const DEFAULT_WEEKLY_DAY = 1;
+
+    public const DEFAULT_WEEKLY_TIME = '08:00';
+
     public const WORKSPACE_SWITCH = 'companysettings.reminders.enabled';
 
     /** When the reminder job last ran (UTC `Y-m-d H:i:s`), for the admin warning. */
@@ -48,7 +57,7 @@ class ReminderSettings
     }
 
     /**
-     * @return array{summary: bool, summaryTime: string, taskPreset: string, timezone: string}
+     * @return array{summary: bool, summaryTime: string, taskPreset: string, timezone: string, weekly: bool, weeklyDay: int, weeklyTime: string, weeklyLookBack: bool}
      */
     public function forUser(int $userId): array
     {
@@ -59,13 +68,13 @@ class ReminderSettings
      * Settings for many people in one read.
      *
      * @param  array<int, int>  $userIds
-     * @return array<int, array{summary: bool, summaryTime: string, taskPreset: string, timezone: string}>
+     * @return array<int, array{summary: bool, summaryTime: string, taskPreset: string, timezone: string, weekly: bool, weeklyDay: int, weeklyTime: string, weeklyLookBack: bool}>
      */
     public function forUsers(array $userIds): array
     {
         $keys = [];
         foreach ($userIds as $userId) {
-            foreach (['reminders.summary', 'reminders.summaryTime', 'reminders.taskPreset', 'timezone'] as $name) {
+            foreach (['reminders.summary', 'reminders.summaryTime', 'reminders.taskPreset', 'reminders.weekly', 'reminders.weeklyDay', 'reminders.weeklyTime', 'reminders.weeklyLookBack', 'timezone'] as $name) {
                 $keys[] = 'usersettings.'.$userId.'.'.$name;
             }
         }
@@ -78,12 +87,18 @@ class ReminderSettings
             $time = $value('reminders.summaryTime');
             $preset = $value('reminders.taskPreset');
             $timezone = $value('timezone');
+            $weeklyDay = $value('reminders.weeklyDay');
+            $weeklyTime = $value('reminders.weeklyTime');
 
             $result[$userId] = [
                 'summary' => $value('reminders.summary') !== '0',
                 'summaryTime' => self::isValidTime($time) ? $time : self::DEFAULT_SUMMARY_TIME,
                 'taskPreset' => in_array($preset, self::PRESETS, true) ? $preset : self::PRESET_DEFAULT,
                 'timezone' => self::isValidTimezone($timezone) ? $timezone : $this->defaultTimezone(),
+                'weekly' => $value('reminders.weekly') !== '0',
+                'weeklyDay' => self::isValidDay($weeklyDay) ? (int) $weeklyDay : self::DEFAULT_WEEKLY_DAY,
+                'weeklyTime' => self::isValidTime($weeklyTime) ? $weeklyTime : self::DEFAULT_WEEKLY_TIME,
+                'weeklyLookBack' => $value('reminders.weeklyLookBack') !== '0',
             ];
         }
 
@@ -95,14 +110,36 @@ class ReminderSettings
      */
     public function save(int $userId, ?bool $summary, ?string $summaryTime, ?string $taskPreset): void
     {
-        if ($summary !== null) {
-            $this->settings->saveSetting('usersettings.'.$userId.'.reminders.summary', $summary ? '1' : '0');
-        }
-        if ($summaryTime !== null) {
-            $this->settings->saveSetting('usersettings.'.$userId.'.reminders.summaryTime', $summaryTime);
-        }
-        if ($taskPreset !== null) {
-            $this->settings->saveSetting('usersettings.'.$userId.'.reminders.taskPreset', $taskPreset);
+        $this->saveValues($userId, [
+            'summary' => $summary === null ? null : ($summary ? '1' : '0'),
+            'summaryTime' => $summaryTime,
+            'taskPreset' => $taskPreset,
+        ]);
+    }
+
+    /**
+     * Saves the weekly summary's values for one person; null leaves a value as it is. Callers
+     * validate first.
+     */
+    public function saveWeekly(int $userId, ?bool $weekly, ?int $weeklyDay, ?string $weeklyTime, ?bool $weeklyLookBack): void
+    {
+        $this->saveValues($userId, [
+            'weekly' => $weekly === null ? null : ($weekly ? '1' : '0'),
+            'weeklyDay' => $weeklyDay === null ? null : (string) $weeklyDay,
+            'weeklyTime' => $weeklyTime,
+            'weeklyLookBack' => $weeklyLookBack === null ? null : ($weeklyLookBack ? '1' : '0'),
+        ]);
+    }
+
+    /**
+     * @param  array<string, string|null>  $values  setting name (after "reminders.") → value; null skips it
+     */
+    private function saveValues(int $userId, array $values): void
+    {
+        foreach ($values as $name => $value) {
+            if ($value !== null) {
+                $this->settings->saveSetting('usersettings.'.$userId.'.reminders.'.$name, $value);
+            }
         }
     }
 
@@ -217,6 +254,12 @@ class ReminderSettings
     public static function isValidTime(string $time): bool
     {
         return preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $time) === 1;
+    }
+
+    /** An ISO day of the week: '1' (Monday) to '7' (Sunday). */
+    public static function isValidDay(string|int $day): bool
+    {
+        return preg_match('/^[1-7]$/', (string) $day) === 1;
     }
 
     public static function isValidTimezone(string $timezone): bool

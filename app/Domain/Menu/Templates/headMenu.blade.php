@@ -78,13 +78,15 @@
                                 @if (($notif['type'] ?? '') === 'morning_summary')
                                     {{-- Nobody sent the summary, so it gets the to-do icon instead of a photo --}}
                                     <span class="notificationIcon"><i class="fa-solid fa-list-check" aria-hidden="true"></i></span>
+                                @elseif (($notif['type'] ?? '') === 'weekly_summary')
+                                    <span class="notificationIcon"><i class="fa-solid fa-calendar-week" aria-hidden="true"></i></span>
                                 @else
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 @endif
                             </span>
                             <span class="notificationDate">
                                 @if (! empty($notif['pinned']))
-                                    {{-- Today's morning summary stays on top until the person's next local midnight --}}
+                                    {{-- Today's summary (morning or weekly) stays on top until the person's next local midnight --}}
                                     <span class="notificationPinned"><i class="fa-solid fa-thumbtack" aria-hidden="true"></i> {{ __('reminders.pinned_today') }} ·</span>
                                 @endif
                                 {{ format($notif['datetime'])->date() }}

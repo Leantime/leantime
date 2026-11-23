@@ -1,5 +1,5 @@
 {{--
-    "Morning summary" section of the Notifications tab (Hxcontrollers\SummarySettings).
+    "Morning summary" and "Weekly summary" sections of the Notifications tab (Hxcontrollers\SummarySettings).
 
     Fragment "form" is returned after a save and replaces the section.
 --}}
@@ -35,6 +35,35 @@
                 @endforeach
             </x-global::forms.select>
             <small>{{ __('reminders.settings_task_preset_description') }}</small>
+        </div>
+
+        <x-global::elements.section-header>{{ __('reminders.weekly_settings_heading') }}</x-global::elements.section-header>
+        <p><small>{{ __('reminders.weekly_settings_description') }}</small></p>
+
+        <div class="form-group">
+            <input type="hidden" name="weekly" value="0" />
+            <x-global::forms.checkbox variant="toggle" name="weekly" value="1" id="reminderWeekly" :checked="$settings['weekly']"
+                :description="__('reminders.settings_summary_description')">{{ __('reminders.weekly_settings_on') }}</x-global::forms.checkbox>
+        </div>
+
+        <div class="form-group">
+            <label for="reminderWeeklyDay">{{ __('reminders.weekly_settings_day') }}</label>
+            <x-global::forms.select name="weeklyDay" id="reminderWeeklyDay">
+                @foreach ($weekDays as $isoDay => $dayName)
+                    <option value="{{ $isoDay }}" @selected($settings['weeklyDay'] === $isoDay)>{{ $dayName }}</option>
+                @endforeach
+            </x-global::forms.select>
+        </div>
+
+        <div class="form-group">
+            <label for="reminderWeeklyTime">{{ __('reminders.settings_time') }}</label>
+            <input type="time" name="weeklyTime" id="reminderWeeklyTime" value="{{ $settings['weeklyTime'] }}" step="60" required />
+            <small>{{ sprintf(__('reminders.settings_timezone'), $settings['timezone']) }}</small>
+        </div>
+
+        <div class="form-group">
+            <input type="hidden" name="weeklyLookBack" value="0" />
+            <x-global::forms.checkbox name="weeklyLookBack" value="1" id="reminderWeeklyLookBack" :checked="$settings['weeklyLookBack']">{{ __('reminders.weekly_settings_lookback') }}</x-global::forms.checkbox>
         </div>
 
         @isset($savedMessage)

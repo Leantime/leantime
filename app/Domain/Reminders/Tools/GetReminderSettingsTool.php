@@ -34,7 +34,7 @@ class GetReminderSettingsTool extends Tool
 
     public function description(): string
     {
-        return 'Gets the signed-in user\'s reminder settings: whether their morning summary is on (summary), its time as HH:MM in their timezone (summaryTime, timezone), how often to-dos remind them by default (taskPreset: default, more, less or off), and whether an admin turned reminders off for the workspace (workspaceEnabled).';
+        return 'Gets the signed-in user\'s reminder settings: whether their morning summary is on (summary), its time as HH:MM in their timezone (summaryTime, timezone), how often to-dos remind them by default (taskPreset: default, more, less or off), their weekly summary (weekly on/off, weeklyDay 1 Monday to 7 Sunday, weeklyTime HH:MM, weeklyLookBack), and whether an admin turned reminders off for the workspace (workspaceEnabled).';
     }
 
     /**

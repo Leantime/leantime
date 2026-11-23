@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Sends one kind of scheduled summary to everyone it's due for, at most once per period, from a
- * job that runs every few minutes. The morning summary ({@see ReminderDispatcher}) is the first
- * kind; the loop lives here so other kinds (a weekly summary) send the same way.
+ * job that runs every few minutes. The kinds are the morning summary ({@see ReminderDispatcher})
+ * and the weekly summary ({@see WeeklySummaryDispatcher}); both send through this loop.
  *
  * How a run works, for every kind:
  * - Active users are read in chunks of {@see USERS_PER_CHUNK}. For each chunk, the kind says who
@@ -91,7 +91,7 @@ abstract class ScheduledSummaryRunner
                     }
                 }
 
-                $alreadySent = $this->sentSince($since);
+                $alreadySent = $this->sentSince($since, $settings);
 
                 foreach (array_keys($since) as $userId) {
                     if (isset($alreadySent[$userId])) {
@@ -158,7 +158,7 @@ abstract class ScheduledSummaryRunner
             }
 
             try {
-                if (isset($this->sentSince([$userId => $periodStartUtc])[$userId])) {
+                if (isset($this->sentSince([$userId => $periodStartUtc], [$userId => $mine])[$userId])) {
                     return false;
                 }
 
@@ -209,12 +209,15 @@ abstract class ScheduledSummaryRunner
     abstract protected function periodStartIfDue(array $mine, CarbonImmutable $nowUtc): ?string;
 
     /**
-     * Which of these people already have this kind's inbox row since their period start.
+     * Which of these people already have this kind's inbox row since their period start (or a row
+     * of another kind that already covered it, such as a weekly summary that included the morning
+     * one).
      *
      * @param  array<int, string>  $sinceByUser  user id => period start (UTC)
+     * @param  array<int, array<string, mixed>>  $settingsByUser  user id => their settings, from {@see settingsFor()}
      * @return array<int, true>
      */
-    abstract protected function sentSince(array $sinceByUser): array;
+    abstract protected function sentSince(array $sinceByUser, array $settingsByUser): array;
 
     /**
      * The person's summary, or null when there's nothing to send.

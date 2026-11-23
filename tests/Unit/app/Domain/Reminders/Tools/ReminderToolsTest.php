@@ -8,6 +8,7 @@ use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Domain\Reminders\Services\Reminders;
 use Leantime\Domain\Reminders\Tools\GetComingUpTool;
 use Leantime\Domain\Reminders\Tools\GetReminderSettingsTool;
+use Leantime\Domain\Reminders\Tools\GetWeekAheadTool;
 use Leantime\Domain\Reminders\Tools\SetTaskReminderTool;
 use Leantime\Domain\Reminders\Tools\UpdateReminderSettingsTool;
 use Unit\TestCase;
@@ -33,8 +34,15 @@ class ReminderToolsTest extends TestCase
                 return ['date' => '2026-11-22', 'items' => [['kind' => 'task', 'id' => 5, 'title' => 'Send the invoice', 'daysUntil' => 0]], 'dueToday' => 1];
             },
             'getSettings' => fn () => ['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'UTC', 'workspaceEnabled' => true],
-            'saveSettings' => function (?bool $summary = null, ?string $summaryTime = null, ?string $taskPreset = null) {
-                $this->calls[] = ['saveSettings', $summary, $summaryTime, $taskPreset];
+            'getWeeklySummary' => function (bool $includeToday = false, int $limit = 5) {
+                $this->calls[] = ['getWeeklySummary', $includeToday, $limit];
+
+                return ['week' => ['start' => '2026-11-23', 'end' => '2026-11-29'], 'sections' => [['kind' => 'ahead']], 'isEmpty' => false];
+            },
+            'saveSettings' => function (?bool $summary = null, ?string $summaryTime = null, ?string $taskPreset = null, ?bool $weekly = null, ?int $weeklyDay = null, ?string $weeklyTime = null, ?bool $weeklyLookBack = null) {
+                $this->calls[] = $weekly === null && $weeklyDay === null && $weeklyTime === null && $weeklyLookBack === null
+                    ? ['saveSettings', $summary, $summaryTime, $taskPreset]
+                    : ['saveSettings', $summary, $summaryTime, $taskPreset, $weekly, $weeklyDay, $weeklyTime, $weeklyLookBack];
                 if ($summaryTime !== null && $summaryTime !== '07:30') {
                     throw new ValidationException(['summaryTime' => ['Use a time like 08:00.']]);
                 }
@@ -74,6 +82,26 @@ class ReminderToolsTest extends TestCase
         $this->assertArrayHasKey('limit', $tool->schema(new \Illuminate\JsonSchema\JsonSchemaTypeFactory));
     }
 
+    public function test_get_week_ahead_returns_the_week_and_passes_its_options(): void
+    {
+        $tool = new GetWeekAheadTool($this->service());
+
+        $result = $tool->handle(new Request([]));
+        $tool->handle(new Request(['includeToday' => true, 'limit' => 0]));
+
+        $this->assertFalse($result->isError());
+        $this->assertSame('getWeekAhead', $tool->name());
+        $this->assertStringContainsString('"kind":"ahead"', (string) $result->content());
+        $this->assertSame([['getWeeklySummary', false, 5], ['getWeeklySummary', true, 0]], $this->calls);
+    }
+
+    public function test_the_weekly_settings_go_through_the_settings_tool(): void
+    {
+        (new UpdateReminderSettingsTool($this->service()))->handle(new Request(['weekly' => false, 'weeklyDay' => 5, 'weeklyTime' => '16:30', 'weeklyLookBack' => false]));
+
+        $this->assertSame([['saveSettings', null, null, null, false, 5, '16:30', false]], $this->calls);
+    }
+
     public function test_set_task_reminder_saves_and_returns_what_applies(): void
     {
         $result = (new SetTaskReminderTool($this->service()))->handle(new Request(['ticketId' => 1, 'preset' => 'more']));
@@ -108,7 +136,7 @@ class ReminderToolsTest extends TestCase
     public function test_settings_tools_take_no_user_id(): void
     {
         $schema = new \Illuminate\JsonSchema\JsonSchemaTypeFactory;
-        foreach ([new UpdateReminderSettingsTool($this->service()), new SetTaskReminderTool($this->service()), new GetComingUpTool($this->service())] as $tool) {
+        foreach ([new UpdateReminderSettingsTool($this->service()), new SetTaskReminderTool($this->service()), new GetComingUpTool($this->service()), new GetWeekAheadTool($this->service())] as $tool) {
             $this->assertArrayNotHasKey('userId', $tool->schema($schema), $tool->name().' only acts for the signed-in person');
         }
     }

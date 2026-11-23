@@ -12,7 +12,7 @@ use Leantime\Domain\Notifications\Services\Push;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 
 /**
- * Sends the morning summary through the channels that already exist, in this order:
+ * Sends the morning and weekly summaries through the channels that already exist, in this order:
  *
  *   1. inbox (zp_notifications): always, and first. This row is also the record that today's
  *      summary went out (see {@see ReminderDispatcher}), so a failed write throws and nothing
@@ -26,6 +26,9 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 class ReminderNotifier
 {
     public const TYPE_SUMMARY = 'morning_summary';
+
+    /** The weekly summary, alone or with that day's morning summary folded in. */
+    public const TYPE_WEEKLY = 'weekly_summary';
 
     public const MODULE = 'reminders';
 
@@ -118,6 +121,289 @@ class ReminderNotifier
                 Log::warning('Morning summary push failed for user '.$userId.': '.$e->getMessage());
             }
         }
+    }
+
+    /**
+     * Writes the weekly summary's inbox row: the record that this week's summary (and, when it
+     * includes Today, this morning's) went out. A failed write throws, as for the morning summary.
+     *
+     * @param  array<string, mixed>  $week  From {@see WeeklySummaryBuilder::buildWeek()}.
+     * @param  array{id: int, notifications: int, username?: string, firstname?: string}  $user
+     */
+    public function recordWeekly(array $user, array $week, CarbonImmutable $nowUtc): void
+    {
+        $userId = (int) $user['id'];
+
+        $written = $this->notifications->addNotifications([[
+            'userId' => $userId,
+            'read' => '0',
+            'type' => self::TYPE_WEEKLY,
+            'module' => self::MODULE,
+            'moduleId' => 0,
+            'message' => sprintf($this->language->__('reminders.weekly_inbox'), $this->weeklyCountsLine($week)),
+            'datetime' => $nowUtc->format('Y-m-d H:i:s'),
+            'url' => $this->thisWeekUrl(),
+            'authorId' => 0,
+        ]]);
+        if ($written !== true) {
+            throw new \RuntimeException('The weekly summary inbox row for user '.$userId.' was not written.');
+        }
+    }
+
+    /**
+     * The weekly email and push, after the inbox row is written. Each one's failure is logged and
+     * never stops the other. Push data carries module 'reminders' and type 'weekly_summary', and
+     * includesToday '1' when the morning summary is folded in.
+     *
+     * @param  array<string, mixed>  $week
+     * @param  array{id: int, notifications: int, username?: string, firstname?: string}  $user
+     * @param  int  $weeklyDay  The person's weekly day (ISO), named in the email footer.
+     * @param  string  $weeklyTime  The person's weekly time ('HH:MM'), named in the email footer.
+     */
+    public function deliverWeekly(array $user, array $week, int $weeklyDay = ReminderSettings::DEFAULT_WEEKLY_DAY, string $weeklyTime = ReminderSettings::DEFAULT_WEEKLY_TIME): void
+    {
+        $userId = (int) $user['id'];
+        $url = $this->thisWeekUrl();
+        $title = sprintf($this->language->__('reminders.weekly_push_title'), $this->weeklyCountsLine($week));
+
+        if ($user['notifications'] !== 0 && ($user['username'] ?? '') !== '') {
+            try {
+                $this->sendMail(
+                    (string) $user['username'],
+                    sprintf($this->language->__('reminders.weekly_email_subject'), $this->weeklyCountsLine($week)),
+                    $this->weeklyEmail($week, $url, (string) ($user['firstname'] ?? ''), $this->dayName($weeklyDay, false), $this->timeForPerson($userId, $weeklyTime))
+                );
+            } catch (\Throwable $e) {
+                Log::warning('Weekly summary email failed for user '.$userId.': '.$e->getMessage());
+            }
+        }
+
+        if ($this->pushEnabled($userId)) {
+            try {
+                $this->push->send([$userId], $title, $this->weeklyPushBody($week), [
+                    'module' => self::MODULE,
+                    'moduleId' => '0',
+                    'type' => self::TYPE_WEEKLY,
+                    'threadId' => 'weekly-summary',
+                    'url' => $url,
+                    'includesToday' => ($week['today'] ?? null) !== null ? '1' : '0',
+                    'tier' => Push::TIER_DIRECT,
+                    'category' => Push::CATEGORY_NONE,
+                ]);
+            } catch (\Throwable $e) {
+                Log::warning('Weekly summary push failed for user '.$userId.': '.$e->getMessage());
+            }
+        }
+    }
+
+    /** Where the weekly summary's inbox row, email button and push lead: the "Your week" panel. */
+    public function thisWeekUrl(): string
+    {
+        return rtrim($this->trustedAppUrl->forLinks(), '/').'/dashboard/home#/reminders/thisWeek';
+    }
+
+    /**
+     * "5 due, 3 planned"; "6 finished last week" when nothing is ahead; the plain title otherwise.
+     *
+     * @param  array<string, mixed>  $week
+     */
+    public function weeklyCountsLine(array $week): string
+    {
+        $ahead = $week['ahead'];
+        $due = $ahead['dueCount'] + $ahead['endingCount'];
+
+        $parts = [];
+        if ($due > 0) {
+            $parts[] = sprintf($this->language->__('reminders.weekly_count_due'), $due);
+        }
+        if ($ahead['plannedCount'] > 0) {
+            $parts[] = sprintf($this->language->__('reminders.weekly_count_planned'), $ahead['plannedCount']);
+        }
+        if ($parts === [] && ($week['lookBack'] ?? null) !== null) {
+            $parts[] = sprintf($this->language->__('reminders.weekly_count_finished'), $week['lookBack']['count']);
+        }
+
+        return $parts === [] ? $this->language->__('reminders.weekly_title') : implode(', ', $parts);
+    }
+
+    /**
+     * The push body: about three short lines. Today first when it's included, then the week's
+     * first items, the look-back, and plugin section titles while there's room.
+     *
+     * @param  array<string, mixed>  $week
+     */
+    private function weeklyPushBody(array $week): string
+    {
+        $lines = [];
+        if (($week['today'] ?? null) !== null) {
+            $lines[] = $this->language->__('reminders.email_today').': '.$this->countsLine($week['today']);
+        }
+        foreach (array_slice($week['ahead']['items'], 0, 2) as $item) {
+            $lines[] = $item['title'].' · '.$this->dayLabel($week, $item['daysUntil']);
+        }
+        if (($week['lookBack'] ?? null) !== null) {
+            $lines[] = $this->finishedLine($week['lookBack']['count']);
+        }
+        foreach ($week['sections'] as $section) {
+            if (str_starts_with((string) $section['kind'], 'plugin:')) {
+                $lines[] = $section['title'];
+            }
+        }
+
+        return implode("\n", array_slice($lines, 0, 3));
+    }
+
+    /**
+     * The weekly email: greeting, Today (when the morning summary is folded in), This week by
+     * day, planned days, Last week, then plugin sections, a button to the "Your week" panel and a
+     * footer naming the day and time. HTML stays on single lines; the text part mirrors it.
+     *
+     * @param  array<string, mixed>  $week
+     * @param  string  $dayName  The weekly day as the person reads it ("Monday").
+     * @param  string  $displayTime  The weekly time as the person reads times.
+     * @return array{headline: string, html: string, text: string, footer: string}
+     */
+    public function weeklyEmail(array $week, string $weekUrl, string $firstname, string $dayName, string $displayTime): array
+    {
+        $html = '<p>'.$this->escape($this->language->__('reminders.weekly_email_intro')).'</p>';
+        $text = [$this->language->__('reminders.weekly_email_intro'), ''];
+
+        $heading = function (string $label) use (&$html, &$text): void {
+            $html .= '<p style="margin: 18px 3px 4px; font-weight: bold; color: #333;">'.$this->escape($label).'</p>';
+            $text[] = $label;
+        };
+        $row = function (string $title, string $detail, string $url, string $context) use (&$html, &$text): void {
+            $link = MailerCore::notificationEmailUrl($url, $context);
+            $html .= '<div style="border-top: 1px solid #ddd; margin: 3px; padding: 6px 3px;">'
+                .'<a href="'.$this->escape($link).'"><strong>'.$this->escape($title).'</strong></a>'
+                .($detail !== '' ? '<br/><span style="color: #555;">'.$this->escape($detail).'</span>' : '').'</div>';
+            $text[] = '- '.$title.($detail !== '' ? ' ('.$detail.')' : '').': '.$link;
+        };
+        $note = function (string $line) use (&$html, &$text): void {
+            $html .= '<p style="margin: 6px 3px; color: #555;">'.$this->escape($line).'</p>';
+            $text[] = $line;
+        };
+
+        if (($week['today'] ?? null) !== null) {
+            $today = $week['today'];
+            $heading($this->language->__('reminders.email_today'));
+            foreach ($today['items'] as $item) {
+                $row($item['title'], $this->itemDetail($item, $this->whenText($item['kind'], $item['daysUntil'])), $item['url'], $item['kind'] === 'task' ? 'tickets' : 'reminders');
+            }
+            if ($today['routine']['count'] > 0) {
+                $note(sprintf($this->language->__('reminders.routine'), $today['routine']['count']));
+            }
+            if ($today['moreCount'] > 0) {
+                $note(sprintf($this->language->__('reminders.more'), $today['moreCount']));
+            }
+            $text[] = '';
+        }
+
+        $ahead = $week['ahead'];
+        if ($ahead['items'] !== [] || $ahead['routine']['count'] > 0 || $ahead['planned'] !== []) {
+            $heading($this->language->__('reminders.weekly_email_this_week'));
+            foreach ($ahead['items'] as $item) {
+                $row($item['title'], $this->itemDetail($item, $this->dayLabel($week, $item['daysUntil'])), $item['url'], $item['kind'] === 'task' ? 'tickets' : 'reminders');
+            }
+            if ($ahead['moreCount'] > 0) {
+                $note(sprintf($this->language->__('reminders.more'), $ahead['moreCount']));
+            }
+            if ($ahead['routine']['count'] > 0) {
+                $note(sprintf($this->language->__('reminders.weekly_routine'), $ahead['routine']['count']));
+            }
+            foreach ($ahead['planned'] as $day) {
+                $note($this->plannedLine($day));
+            }
+            $text[] = '';
+        }
+        if ($ahead['overdueCount'] > 0) {
+            $note(sprintf($this->language->__('reminders.still_open'), $ahead['overdueCount']));
+        }
+
+        if (($week['lookBack'] ?? null) !== null) {
+            $lookBack = $week['lookBack'];
+            $heading($this->language->__('reminders.weekly_email_last_week'));
+            $note($this->finishedLine($lookBack['count']));
+            foreach ($lookBack['items'] as $item) {
+                $detail = $item['projectName'];
+                if ($item['closedBy'] !== null && $item['closedBy']['name'] !== '') {
+                    $detail = trim($detail.' · '.sprintf($this->language->__('reminders.weekly_closed_by'), $item['closedBy']['name']), ' ·');
+                }
+                $row($item['title'], $detail, $item['url'], 'tickets');
+            }
+            $text[] = '';
+        }
+
+        foreach ($week['sections'] as $section) {
+            if (! str_starts_with((string) $section['kind'], 'plugin:')) {
+                continue;
+            }
+            $heading($section['title']);
+            foreach ($section['lines'] as $line) {
+                $note($line);
+            }
+            if ($section['url'] !== null) {
+                $link = MailerCore::notificationEmailUrl($section['url'], 'reminders');
+                $html .= '<p style="margin: 6px 3px;"><a href="'.$this->escape($link).'">'.$this->escape($section['title']).'</a></p>';
+                $text[] = $section['title'].': '.$link;
+            }
+            $text[] = '';
+        }
+
+        $button = MailerCore::notificationEmailUrl($weekUrl, 'reminders');
+        $html .= '<p style="margin-top: 20px;"><a href="'.$this->escape($button).'" style="display: inline-block; padding: 10px 18px; border-radius: 4px; background: #004666; color: #ffffff; text-decoration: none; font-weight: bold;">'
+            .$this->escape($this->language->__('reminders.weekly_email_button')).'</a></p>';
+        $text[] = '';
+        $text[] = $this->language->__('reminders.weekly_email_button').': '.$button;
+
+        $settingsUrl = MailerCore::notificationEmailUrl(rtrim($this->trustedAppUrl->forLinks(), '/').'/users/editOwn#notifications', 'reminders');
+        $footer = sprintf($this->language->__('reminders.weekly_email_footer'), $this->escape($dayName), $this->escape($displayTime), $this->escape($settingsUrl));
+        $text[] = '';
+        $text[] = sprintf($this->language->__('reminders.weekly_email_footer_text'), $dayName, $displayTime, $settingsUrl);
+
+        $headline = $firstname !== ''
+            ? sprintf($this->language->__('reminders.email_hi_name'), $this->escape($firstname))
+            : $this->language->__('email_notifications.hi');
+
+        return [
+            'headline' => $headline,
+            'html' => $html,
+            'text' => ($firstname !== '' ? sprintf($this->language->__('reminders.email_hi_name'), $firstname) : trim($this->language->__('email_notifications.hi')))."\n\n".implode("\n", $text),
+            'footer' => $footer,
+        ];
+    }
+
+    /** "Wed: 2 planned (1 with a set time)". */
+    private function plannedLine(array $day): string
+    {
+        return WeeklyLines::planned($this->language, $day);
+    }
+
+    /** "You finished 6 to-dos last week." */
+    private function finishedLine(int $count): string
+    {
+        return WeeklyLines::finished($this->language, $count);
+    }
+
+    /** "Today", "Tomorrow", else the weekday ("Fri") of the day $daysUntil after the week's start. */
+    private function dayLabel(array $week, int $daysUntil): string
+    {
+        return match (true) {
+            $daysUntil <= 0 => $this->language->__('reminders.email_today'),
+            $daysUntil === 1 => $this->language->__('reminders.email_tomorrow'),
+            default => $this->dayName((int) CarbonImmutable::parse($week['week']['start'])->addDays($daysUntil)->dayOfWeekIso, true),
+        };
+    }
+
+    private function dayName(int $isoDay, bool $short): string
+    {
+        return WeeklyLines::dayName($this->language, $isoDay, $short);
+    }
+
+    /** "Fri · Project", or just the when-part for a project end. */
+    private function itemDetail(array $item, string $when): string
+    {
+        return $when.($item['projectName'] !== '' && $item['kind'] !== 'project' ? ' · '.$item['projectName'] : '');
     }
 
     /**

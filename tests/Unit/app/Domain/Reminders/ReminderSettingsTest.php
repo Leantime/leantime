@@ -50,8 +50,9 @@ class ReminderSettingsTest extends TestCase
     public function test_defaults(): void
     {
         $this->assertSame(
-            ['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'Europe/Berlin'],
-            $this->settings([])->forUser(7)
+            ['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'Europe/Berlin', 'weekly' => true, 'weeklyDay' => 1, 'weeklyTime' => '08:00', 'weeklyLookBack' => true],
+            $this->settings([])->forUser(7),
+            'the weekly summary is on by default, Monday 08:00, with the look-back'
         );
         $this->assertTrue($this->settings([])->workspaceEnabled());
     }
@@ -63,14 +64,21 @@ class ReminderSettingsTest extends TestCase
             'usersettings.7.reminders.summaryTime' => '06:45',
             'usersettings.7.reminders.taskPreset' => 'more',
             'usersettings.7.timezone' => 'America/Chicago',
+            'usersettings.7.reminders.weekly' => '0',
+            'usersettings.7.reminders.weeklyDay' => '5',
+            'usersettings.7.reminders.weeklyTime' => '16:30',
+            'usersettings.7.reminders.weeklyLookBack' => '0',
             'usersettings.8.reminders.summaryTime' => '6am',
+            'usersettings.8.reminders.weeklyDay' => '8',
+            'usersettings.8.reminders.weeklyTime' => '25:00',
             'usersettings.8.reminders.taskPreset' => 'loud',
             'usersettings.8.timezone' => 'Mars/Olympus',
         ]);
 
         $both = $settings->forUsers([7, 8]);
-        $this->assertSame(['summary' => false, 'summaryTime' => '06:45', 'taskPreset' => 'more', 'timezone' => 'America/Chicago'], $both[7]);
-        $this->assertSame(['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'Europe/Berlin'], $both[8]);
+        $this->assertSame(['summary' => false, 'summaryTime' => '06:45', 'taskPreset' => 'more', 'timezone' => 'America/Chicago',
+            'weekly' => false, 'weeklyDay' => 5, 'weeklyTime' => '16:30', 'weeklyLookBack' => false], $both[7]);
+        $this->assertSame(['summary' => true, 'summaryTime' => '08:00', 'taskPreset' => 'default', 'timezone' => 'Europe/Berlin', 'weekly' => true, 'weeklyDay' => 1, 'weeklyTime' => '08:00', 'weeklyLookBack' => true], $both[8]);
     }
 
     public function test_the_workspace_switch_only_turns_reminders_off(): void

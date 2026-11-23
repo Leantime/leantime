@@ -112,7 +112,7 @@ class WeeklyTestRunner extends ScheduledSummaryRunner
         return $nowUtc->startOfWeek()->format('Y-m-d H:i:s');
     }
 
-    protected function sentSince(array $sinceByUser): array
+    protected function sentSince(array $sinceByUser, array $settingsByUser): array
     {
         $sent = [];
         foreach ($this->inbox as $row) {
