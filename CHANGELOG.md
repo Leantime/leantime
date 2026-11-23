@@ -1,3 +1,40 @@
+# Version: 3.16.0
+
+## Highlights
+### Connect Claude and ChatGPT to Leantime with OAuth
+Claude (web, desktop and mobile) and ChatGPT can now connect to your Leantime's `/mcp` endpoint by signing in with OAuth. No API key and no `mcp-remote` workaround. Clients register themselves and the signing keys are generated on first use, so there is nothing to set up. Changing your password or deactivating the user ends the connection. OAuth tokens only work on `/mcp` (#4092)
+
+### Notifications that say what changed
+Notifications now say what changed on a task, and comments reach "My work" (#4037). Push and digest wording is rewritten: the item's name is the title and who did what is the body, with one notification per change instead of an assignment push plus an update push (#4100)
+
+## New Features
+- **What pushes show** - A new Company Settings option chooses what push notifications show on lock screens: Everything (default), Names only, or Nothing (#4100)
+- **"Added you to a project"** - People are told when they're added to a project, in their inbox, the email digest and by push (#4100)
+- **Email digest redesign** - Changes are grouped by task, shown in local time, with one button (#4100)
+- **Board, goal and idea mentions** - Mentions on boards, goals and ideas now send a push, like task mentions (#4097)
+- **Push relay settings** - Without the AdvancedAuth plugin, the push relay settings are grayed out with a short explanation and a marketplace link (#4099)
+
+## Security
+- **Push recipients** - Mention and collaborator pushes could reach people without access to the project. They now only go to active users assigned to it (#4097)
+
+## Bug Fixes
+- **Board and goal notifications** - Comment and item notifications on boards and goals used the project that was open in the browser instead of the item's own project (#4097, #4100)
+- **Goal links** - "Goal created" notifications linked to an empty goal instead of the new one (#4097)
+- **Board comment dialog** - Saving an item from the board comment dialog could fail with a server error (#4097)
+- **Duplicate pushes** - Repeated changes and two items with the same name no longer cancel each other's push, and a rename shows in the digest (#4100)
+
+## Dependency Updates
+- Added `laravel/passport` (~13.7.6) for OAuth (#4092)
+- Bundled plugins bumped to plugins main, including AdvancedAuth 1.5.0 (#4093, #4106)
+
+## Upgrade Notes
+- **Database changes** (dbVersion 3.5.36): new OAuth tables (`zp_oauth_*`, migration 30535) and a `summary` column on `zp_queue` (migration 30536). `system:update` does not run migrations: open the update screen once, or run `php bin/leantime db:migrate`.
+- **OAuth is on by default** for `/mcp`. Set `LEAN_OAUTH_ENABLED=false` to turn it off. The signing keys are created on first use and stored encrypted in the database; `php bin/leantime oauth:keys` shows their status.
+- **AdvancedAuth users**: update to AdvancedAuth 1.5.0. Social sign-in then returns to the OAuth consent screen, and the mobile app can tell whether this server sends push.
+- **Push content** defaults to Everything. Admins who want less on lock screens can change it in Company Settings.
+
+---
+
 # Version: 3.15.3
 
 ## Bug Fixes

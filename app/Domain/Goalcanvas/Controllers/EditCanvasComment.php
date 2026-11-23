@@ -147,6 +147,10 @@ class EditCanvasComment extends Controller
                     // Resolves the item's real project from itemId and authorizes EDIT there.
                     $this->goalService->updateGoalItem($canvasItem);
 
+                    // The dialog opens for any goal the user can see, so the goal can sit outside
+                    // the session's project: notify the goal's own project.
+                    $savedItem = $this->goalService->getGoalItem((int) $params['itemId']);
+
                     $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $params['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(
                         static::CANVAS_NAME.'canvasitem',
@@ -164,7 +168,7 @@ class EditCanvasComment extends Controller
                     $notification->entity = $canvasItem;
                     $notification->module = static::CANVAS_NAME.'canvas';
                     $notification->action = 'updated';
-                    $notification->projectId = session('currentProject');
+                    $notification->projectId = (int) ($savedItem['projectId'] ?? 0);
                     $notification->subject = $this->language->__('email_notifications.canvas_board_edited');
                     $notification->authorId = session('userdata.id');
                     $notification->message = sprintf(
@@ -173,7 +177,9 @@ class EditCanvasComment extends Controller
                         $canvasItem['description']
                     );
 
-                    $this->projectService->notifyProjectUsers($notification);
+                    if ($notification->projectId > 0) {
+                        $this->projectService->notifyProjectUsers($notification);
+                    }
 
                     return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$params['itemId']);
                 } else {
@@ -200,19 +206,24 @@ class EditCanvasComment extends Controller
 
                     $canvasItem['id'] = $id;
 
+                    // The board comes from the session, not the current project: notify the
+                    // project the new goal actually landed in.
+                    $savedItem = $this->goalService->getGoalItem((int) $id);
+
                     $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
                     $this->tpl->setNotification(sprintf($this->language->__('notification.canvas_item_created'), $this->language->__($canvasTypes[$params['box']]['title'] ?? $params['box'])), 'success', strtoupper(static::CANVAS_NAME).'canvasitem_created');
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = [
-                        'url' => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int) $params['itemId'],
+                        'url' => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int) $id,
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
-                    $notification->entity = $canvasItem;
+                    // With the new id, so the digest can group the item's later changes and comments with it.
+                    $notification->entity = $canvasItem + ['id' => (int) $id];
                     $notification->module = static::CANVAS_NAME.'canvas';
                     $notification->action = 'created';
-                    $notification->projectId = session('currentProject');
+                    $notification->projectId = (int) ($savedItem['projectId'] ?? 0);
                     $notification->subject = $this->language->__('email_notifications.canvas_board_item_created');
                     $notification->authorId = session('userdata.id');
                     $notification->message = sprintf(
@@ -221,7 +232,9 @@ class EditCanvasComment extends Controller
                         $canvasItem['description']
                     );
 
-                    $this->projectService->notifyProjectUsers($notification);
+                    if ($notification->projectId > 0) {
+                        $this->projectService->notifyProjectUsers($notification);
+                    }
 
                     $this->tpl->setNotification($this->language->__('notification.element_created'), 'success', strtoupper(static::CANVAS_NAME).'canvasitem_created');
 
@@ -233,8 +246,9 @@ class EditCanvasComment extends Controller
         }
 
         if (isset($params['comment']) === true) {
-            // Only allow commenting on a goal item the user can view in their project.
-            if (! $this->goalService->getGoalItem((int) ($_GET['id'] ?? 0))) {
+            // Only allow commenting on a goal item the user can view; it carries its own project.
+            $commentedItem = $this->goalService->getGoalItem((int) ($_GET['id'] ?? 0));
+            if (! $commentedItem) {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
@@ -257,7 +271,8 @@ class EditCanvasComment extends Controller
             $notification->entity = $values;
             $notification->module = static::CANVAS_NAME.'canvas';
             $notification->action = 'commented';
-            $notification->projectId = session('currentProject');
+            // The goal's project, not the session's: the dialog opens for goals in other projects.
+            $notification->projectId = (int) $commentedItem['projectId'];
             $notification->subject = $this->language->__('email_notifications.canvas_board_comment_created');
             $notification->authorId = session('userdata.id');
             $notification->message = sprintf(

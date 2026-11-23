@@ -58,7 +58,8 @@ class QueueRepositoryTest extends TestCase
             thedate DATETIME NOT NULL,
             projectId INTEGER NOT NULL,
             module VARCHAR(45) NULL,
-            moduleId INTEGER NULL
+            moduleId INTEGER NULL,
+            summary TEXT NULL
         )');
 
         $this->queueRepo = new QueueRepository(
@@ -293,5 +294,25 @@ class QueueRepositoryTest extends TestCase
         $rows = $this->connection->table('zp_queue')->where('channel', Workers::EMAILS->value)->orderBy('subject')->get();
         $this->assertSame([null, null], [$rows[0]->module, $rows[0]->moduleId], 'no entity given: nothing recorded');
         $this->assertSame(['tickets', 12], [$rows[1]->module, (int) $rows[1]->moduleId]);
+    }
+
+    /**
+     * A producer's summary (the digest's wording) is stored as JSON; without one it stays NULL.
+     */
+    public function test_an_email_records_its_digest_summary_when_given_one(): void
+    {
+        CarbonImmutable::setTestNow('2026-10-08 12:00:00');
+        $queueRepo = new QueueRepository(
+            $this->make(DbCore::class, ['getConnection' => fn () => $this->connection]),
+            $this->make(UserRepo::class, ['getUser' => fn () => ['id' => 3, 'username' => 'person@example.com']]),
+        );
+
+        $summary = ['group' => 'tickets:12', 'title' => 'Pricing page', 'line' => 'Marcel moved this to Done', 'url' => 'https://app.example.com/t/12'];
+        $queueRepo->queueMessageToUsers([3], 'Ticket #12 was updated', 'Ticket updated', 5, 'tickets', 12, $summary);
+        $queueRepo->queueMessageToUsers([3], 'Project created', 'Project created', 5);
+
+        $rows = $this->connection->table('zp_queue')->where('channel', Workers::EMAILS->value)->orderBy('subject')->get();
+        $this->assertNull($rows[0]->summary);
+        $this->assertSame($summary, json_decode((string) $rows[1]->summary, true));
     }
 }

@@ -108,6 +108,7 @@ class Install
         30533,
         30534,
         30535,
+        30536,
     ];
 
     /**
@@ -3709,6 +3710,43 @@ class Install
             Log::error('Migration 30535: '.$e->getMessage());
 
             return ['Migration 30535 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30536 — zp_queue.summary, the email digest's wording for a queued row.
+     *
+     * JSON with the item the email is about ('group'), its name, "who did what" and a comment to
+     * quote, so the digest can show several changes to one task together instead of each row's
+     * email subject and message (see {@see \Leantime\Domain\Queue\Workers\EmailWorker}).
+     * Nullable: rows queued before this migration, and emails no producer summarised, keep their
+     * subject and message. Fresh installs get the column from
+     * {@see \Leantime\Domain\Install\Services\SchemaBuilder}.
+     */
+    public function update_sql_30536(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_queue')) {
+                Log::info('Migration 30536 skipped: zp_queue table missing (partial install?)');
+
+                return true;
+            }
+
+            if (! $schema->hasColumn('zp_queue', 'summary')) {
+                $schema->table('zp_queue', function (Blueprint $table): void {
+                    $table->text('summary')->nullable()->after('moduleId');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30536: '.$e->getMessage());
+
+            return ['Migration 30536 failed: '.$e->getMessage()];
         }
 
         return true;

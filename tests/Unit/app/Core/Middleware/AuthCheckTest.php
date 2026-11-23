@@ -120,6 +120,28 @@ class AuthCheckTest extends \Unit\TestCase
         $this->assertTrue($authCheck->isPublicController('status'));
     }
 
+    /**
+     * "/.well-known/caldav" arrives as the route ".well-known.caldav", whose leading dot is not a
+     * separator. Plugins make such a path public as "well-known.{name}"; other well-known paths
+     * stay private.
+     */
+    public function test_well_known_paths_are_public_only_when_listed(): void
+    {
+        $authCheck = $this->make(AuthCheck::class);
+        $publicActions = new \ReflectionProperty(AuthCheck::class, 'publicActions');
+        $publicActions->setValue($authCheck, array_merge($publicActions->getValue($authCheck), ['well-known.caldav', 'well-known.security.txt']));
+        $isPublic = new \ReflectionMethod(AuthCheck::class, 'isPublicWellKnownPath');
+        $check = fn (string $path): bool => $isPublic->invoke($authCheck, IncomingRequest::create($path));
+
+        $this->assertTrue($check('/.well-known/caldav'));
+        $this->assertTrue($check('/.well-known/security.txt'), 'a listed name with a dot');
+        $this->assertFalse($check('/.well-known/security/txt'), 'same dotted route, different path');
+        $this->assertFalse($check('/.well-known/caldav/extra'), 'nothing below a listed name');
+        $this->assertFalse($check('/.well-known/carddav'));
+        $this->assertFalse($check('/.well-known/caldav.json'));
+        $this->assertFalse($authCheck->isPublicController('.well-known.caldav'), 'the dotted route alone never decides');
+    }
+
     // ---------------------------------------------------------------------
     // API auth path: the cookie session guard is only honoured for same-origin XHR calls whose
     // session completed 2FA. Everything else needs an API key or Bearer token.

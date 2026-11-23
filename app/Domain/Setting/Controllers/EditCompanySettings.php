@@ -9,6 +9,7 @@ use Leantime\Core\UI\Theme;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\Push as PushService;
+use Leantime\Domain\Notifications\Services\PushRelay;
 use Leantime\Domain\Setting\Permissions\SettingPermissions;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 
@@ -22,6 +23,8 @@ class EditCompanySettings extends Controller
 
     private PushService $pushService;
 
+    private PushRelay $pushRelay;
+
     /**
      * init - initialize private variables
      */
@@ -30,11 +33,13 @@ class EditCompanySettings extends Controller
         SettingService $settingsSvc,
         Theme $theme,
         PushService $pushService,
+        PushRelay $pushRelay,
     ): void {
         $this->APIService = $APIService;
         $this->settingsSvc = $settingsSvc;
         $this->theme = $theme;
         $this->pushService = $pushService;
+        $this->pushRelay = $pushRelay;
     }
 
     /**
@@ -70,6 +75,8 @@ class EditCompanySettings extends Controller
         $this->tpl->assign('pushRelayContent', $companySettingsView['pushRelayContent']);
         // The relay only applies where Firebase isn't configured directly (self-hosted).
         $this->tpl->assign('pushDirectConfigured', $this->pushService->sendPath() === 'direct');
+        // Without the licensed plugin the relay never sends, so its settings show grayed out.
+        $this->tpl->assign('pushRelayAvailable', $this->pushRelay->isAvailable());
         $this->tpl->assign('relevanceLevels', [
             Notification::RELEVANCE_ALL => 'label.notifications_all_activity',
             Notification::RELEVANCE_MY_WORK => 'label.notifications_my_work',

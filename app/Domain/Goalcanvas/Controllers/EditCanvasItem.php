@@ -356,12 +356,16 @@ class EditCanvasItem extends Controller
                     ];
                     // Resolves the target board's real project from canvasId and authorizes CREATE.
                     $id = $this->goalService->createGoalItem($canvasItem);
+
+                    // The board need not be in the session's project: notify the project the new
+                    // item actually landed in.
+                    $savedItem = $this->goalService->getGoalItem((int) $id);
                     $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
                     $this->tpl->setNotification(sprintf($this->language->__('notification.canvas_item_created'), $canvasTypes[$params['box']]['title']), 'success', 'goal_item_created');
 
                     $subject = $this->language->__('email_notifications.canvas_board_item_created');
-                    $actual_link = BASE_URL.'#/goalcanvas/editCanvasItem/'.(int) $params['itemId'];
+                    $actual_link = BASE_URL.'#/goalcanvas/editCanvasItem/'.(int) $id;
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_item_created_message'),
                         session('userdata.name'),
@@ -374,15 +378,18 @@ class EditCanvasItem extends Controller
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
 
-                    $notification->entity = $canvasItem;
+                    // With the new id, so the digest can group the item's later changes and comments with it.
+                    $notification->entity = $canvasItem + ['id' => (int) $id];
                     $notification->module = 'goalcanvas';
                     $notification->action = 'created';
-                    $notification->projectId = session('currentProject');
+                    $notification->projectId = (int) ($savedItem['projectId'] ?? 0);
                     $notification->subject = $subject;
                     $notification->authorId = session('userdata.id');
                     $notification->message = $message;
 
-                    $this->projectService->notifyProjectUsers($notification);
+                    if ($notification->projectId > 0) {
+                        $this->projectService->notifyProjectUsers($notification);
+                    }
 
                     $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
                 } else {
