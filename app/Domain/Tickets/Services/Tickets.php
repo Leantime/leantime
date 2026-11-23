@@ -3486,7 +3486,8 @@ class Tickets extends BaseService
 
     /**
      * A user id as written to a task: a non-negative whole number or digit string; null, '' and
-     * 0 mean nobody. Everything else is refused.
+     * 0 mean nobody. Everything else is refused. The assignee is stored as sent, so a digit
+     * string with a leading zero ('02') is refused too: the id checked must be the id stored.
      *
      * @param  string  $field  'editorId' or 'collaborators', for the error.
      *
@@ -3502,7 +3503,7 @@ class Tickets extends BaseService
             return $value;
         }
 
-        if (is_string($value) && ctype_digit($value)) {
+        if (is_string($value) && ctype_digit($value) && ($value === '0' || $value[0] !== '0')) {
             return (int) $value;
         }
 

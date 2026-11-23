@@ -208,7 +208,7 @@ class AssigneeTeamCheckTest extends TestCase
     {
         $service = $this->buildService();
 
-        foreach ([[true, "'true' is not a user ID."], [2.5, "'2.5' is not a user ID."], [-3, "'-3' is not a user ID."], ['2abc', "'2abc' is not a user ID."], [[2], "'array' is not a user ID."]] as [$value, $start]) {
+        foreach ([[true, "'true' is not a user ID."], [2.5, "'2.5' is not a user ID."], [-3, "'-3' is not a user ID."], ['2abc', "'2abc' is not a user ID."], ['02', "'02' is not a user ID."], [[2], "'array' is not a user ID."]] as [$value, $start]) {
             try {
                 $service->patchTicket(5, ['editorId' => $value]);
                 $this->fail('Expected '.var_export($value, true).' to be refused.');
