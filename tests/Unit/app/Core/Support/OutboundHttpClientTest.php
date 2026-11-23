@@ -47,6 +47,14 @@ namespace Unit\app\Core\Support {
          */
         private array $handledRequests = [];
 
+        protected function setUp(): void
+        {
+            parent::setUp();
+
+            // Independent of the local .env: no admin allow-list unless a test sets one.
+            config(['outboundAllowedHosts' => '']);
+        }
+
         protected function tearDown(): void
         {
             unset($GLOBALS['leantimeTestDnsResolver']);
@@ -115,6 +123,29 @@ namespace Unit\app\Core\Support {
             $this->assertSame('', $options['proxy']);
             $this->assertTrue($options['verify']);
             $this->assertFalse($options['allow_redirects']);
+        }
+
+        public function test_a_single_label_host_the_admin_listed_is_pinned_to_its_checked_address(): void
+        {
+            config(['outboundAllowedHosts' => 'nextcloud']);
+
+            try {
+                $this->fakeDns(['nextcloud' => ['192.168.1.5']]);
+
+                $this->makeClient()->get('http://nextcloud/feed.ics');
+
+                $this->assertSame(['nextcloud:80:192.168.1.5'], $this->handledRequests[0]['options']['curl'][CURLOPT_RESOLVE]);
+                $this->assertFalse(OutboundHttpClient::canPinHost('othername'), 'unlisted single labels stay refused');
+
+                // Numeric spellings cURL treats as IPv4 addresses are refused even when listed.
+                config(['outboundAllowedHosts' => 'nextcloud,2130706433,017700000001,0x7f000001']);
+                $this->assertTrue(OutboundHttpClient::canPinHost('nextcloud'));
+                foreach (['2130706433', '017700000001', '0x7f000001'] as $numericSpelling) {
+                    $this->assertFalse(OutboundHttpClient::canPinHost($numericSpelling), $numericSpelling);
+                }
+            } finally {
+                config(['outboundAllowedHosts' => '']);
+            }
         }
 
         public function test_caller_can_tune_timeouts_but_not_the_safety_options(): void
