@@ -28,7 +28,7 @@ final class TaskReminderUpdated implements EmitsClientEvent, LeantimeEvent
     /**
      * Scope the client event to the to-do.
      */
-    public function clientScope(): ?int
+    public function clientScope(): int
     {
         return $this->ticketId;
     }
