@@ -83,7 +83,8 @@ class ShowKanban extends Controller
             $result = $this->ticketService->quickAddTicketFromKanban($formParams, $swimlaneValue, $groupBy, $stayOpen);
 
             if ($result['success'] === false) {
-                $this->tpl->setNotification($result['message'], 'error');
+                // Notifications render as HTML; the message can contain user and project names.
+                $this->tpl->setNotification(htmlspecialchars($result['message'], ENT_QUOTES, 'UTF-8'), 'error');
             } else {
                 $this->tpl->setNotification(sprintf($this->language->__('notification.task_created'), htmlspecialchars($result['headline'])), 'success');
             }

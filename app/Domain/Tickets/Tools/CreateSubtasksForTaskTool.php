@@ -113,7 +113,7 @@ class CreateSubtasksForTaskTool extends Tool
                 $result = $this->ticketsService->quickAddTicket($params);
             } catch (LeantimeExceptionInterface $e) {
                 $failureCount++;
-                $results[] = ['headline' => $subtaskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => $e->getClientMessage()];
+                $results[] = ['headline' => $subtaskData['headline'] ?? 'Unknown', 'status' => 'error', 'message' => ToolErrorMessage::for($e)];
 
                 continue;
             }

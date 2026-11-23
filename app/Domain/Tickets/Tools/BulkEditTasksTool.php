@@ -42,7 +42,7 @@ class BulkEditTasksTool extends Tool
      */
     public function description(): string
     {
-        return 'Updates multiple tasks in a single operation. Expects an array where each element contains ticketId and the fields to update. Field names that can be updated are: headline, description, projectId, editorId, userId, dateToFinish, status, editFrom, editTo, milestoneId';
+        return 'Updates multiple tasks in a single operation. Expects an array where each element contains ticketId and the fields to update. Field names that can be updated are: headline, description, projectId, editorId, userId, dateToFinish, status, editFrom, editTo, milestoneId. The assignee (editorId) must be on the project team: pick one with getUsersAssignedToProject.';
     }
 
     /**
@@ -87,7 +87,7 @@ class BulkEditTasksTool extends Tool
                 $updated = $this->ticketsService->patchTicket((int) $id, $update);
             } catch (LeantimeExceptionInterface $e) {
                 $failureCount++;
-                $results[] = ['id' => $id, 'status' => 'error', 'message' => $e->getClientMessage()];
+                $results[] = ['id' => $id, 'status' => 'error', 'message' => ToolErrorMessage::for($e)];
 
                 continue;
             }
