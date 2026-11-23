@@ -276,7 +276,7 @@ class Connector
             }
         }
 
-        $this->cacheSerializedFieldValues($fields, $values);
+        $this->cacheSerializedFieldValues($fields, $values, $flags);
 
         return $flags;
     }
@@ -323,7 +323,7 @@ class Connector
             $flags[] = 'You must have a column with ClientId';
         }
 
-        $this->cacheSerializedFieldValues($fields, $values);
+        $this->cacheSerializedFieldValues($fields, $values, $flags);
 
         return $flags;
     }
@@ -395,7 +395,7 @@ class Connector
             $flags[] = 'You must have a column with First Names.';
         }
 
-        $this->cacheSerializedFieldValues($fields, $values);
+        $this->cacheSerializedFieldValues($fields, $values, $flags);
 
         return $flags;
     }
@@ -467,7 +467,7 @@ class Connector
             $flags[] = 'You must have a column matching to CanvasId.';
         }
 
-        $this->cacheSerializedFieldValues($fields, $values);
+        $this->cacheSerializedFieldValues($fields, $values, $flags);
 
         return $flags;
     }
@@ -528,7 +528,7 @@ class Connector
             $flags[] = 'You must have a column matching to EndValue.';
         }
 
-        $this->cacheSerializedFieldValues($fields, $values);
+        $this->cacheSerializedFieldValues($fields, $values, $flags);
 
         return $flags;
     }
@@ -629,7 +629,7 @@ class Connector
 
         array_push($flags, ...$this->dateFlags($fields, $values));
 
-        $this->cacheSerializedFieldValues($fields, $values);
+        $this->cacheSerializedFieldValues($fields, $values, $flags);
 
         return $flags;
     }
@@ -735,7 +735,7 @@ class Connector
                 }
             } catch (\Exception $e) {
                 Log::error($e);
-                $result->addFailure($this->rowNumber($index), $e->getMessage());
+                $result->addFailure($this->rowNumber($index), $this->exceptionMessage($e));
 
                 continue;
             }
@@ -771,8 +771,14 @@ class Connector
 
             try {
                 if (isset($values['id']) && is_numeric($values['id'])) {
-                    // editProject() returns nothing; a failure throws.
-                    $this->projectService->editProject($values, $values['id']);
+                    // editProject() returns nothing and doesn't report a missing project, so check first.
+                    if ($this->projectService->getProject((int) $values['id']) === false) {
+                        $result->addFailure($this->rowNumber($index), $this->idNotFoundMessage($values['id']));
+
+                        continue;
+                    }
+
+                    $this->projectService->editProject($values, (int) $values['id']);
                     $saved = true;
                 } else {
                     unset($values['id']);
@@ -780,7 +786,7 @@ class Connector
                 }
             } catch (\Exception $e) {
                 Log::error($e);
-                $result->addFailure($this->rowNumber($index), $e->getMessage());
+                $result->addFailure($this->rowNumber($index), $this->exceptionMessage($e));
 
                 continue;
             }
@@ -830,7 +836,7 @@ class Connector
                 }
             } catch (\Exception $e) {
                 Log::error($e);
-                $result->addFailure($this->rowNumber($index), $e->getMessage());
+                $result->addFailure($this->rowNumber($index), $this->exceptionMessage($e));
 
                 continue;
             }
@@ -856,6 +862,14 @@ class Connector
 
             try {
                 if (isset($values['itemId']) && is_numeric($values['itemId'])) {
+                    // editCanvasItem() doesn't report a missing item, so check that the idea exists
+                    // on the board the row names (the review checked that board is an idea board).
+                    if (! $this->isItemOnBoard($this->ideaRepo->getSingleCanvasItem((int) $values['itemId']), $values)) {
+                        $result->addFailure($this->rowNumber($index), $this->idNotFoundMessage($values['itemId']));
+
+                        continue;
+                    }
+
                     $this->ideaRepo->editCanvasItem($values);
                     $saved = true;
                 } else {
@@ -864,7 +878,7 @@ class Connector
                 }
             } catch (\Exception $e) {
                 Log::error($e);
-                $result->addFailure($this->rowNumber($index), $e->getMessage());
+                $result->addFailure($this->rowNumber($index), $this->exceptionMessage($e));
 
                 continue;
             }
@@ -894,6 +908,15 @@ class Connector
 
             try {
                 if (isset($values['itemId']) && is_numeric($values['itemId'])) {
+                    // editCanvasItem() doesn't report a missing goal, so check that the goal exists
+                    // on the board the row names (the review checked that board is a goal board).
+                    $existing = (int) $values['itemId'] > 0 ? $this->goalCanvasRepo->getSingleCanvasItem((int) $values['itemId']) : false;
+                    if (! $this->isItemOnBoard($existing, $values) || ($existing['box'] ?? '') !== 'goal') {
+                        $result->addFailure($this->rowNumber($index), $this->idNotFoundMessage($values['itemId']));
+
+                        continue;
+                    }
+
                     $this->goalCanvasRepo->editCanvasItem($values);
                     $saved = true;
                 } else {
@@ -902,7 +925,7 @@ class Connector
                 }
             } catch (\Exception $e) {
                 Log::error($e);
-                $result->addFailure($this->rowNumber($index), $e->getMessage());
+                $result->addFailure($this->rowNumber($index), $this->exceptionMessage($e));
 
                 continue;
             }
@@ -941,7 +964,7 @@ class Connector
                 }
             } catch (\Exception $e) {
                 Log::error($e);
-                $result->addFailure($this->rowNumber($index), $e->getMessage());
+                $result->addFailure($this->rowNumber($index), $this->exceptionMessage($e));
 
                 continue;
             }
@@ -1000,6 +1023,38 @@ class Connector
         }
 
         return $this->language->__('notification.import_row_not_saved');
+    }
+
+    /**
+     * Message for a row whose save threw.
+     *
+     * The services save first and notify afterwards, so an error can come after the row was
+     * stored. The message says so, so the person checks before importing the row again.
+     */
+    private function exceptionMessage(\Exception $e): string
+    {
+        return sprintf($this->language->__('notification.import_row_save_uncertain'), $e->getMessage());
+    }
+
+    /**
+     * Message for a row whose Id doesn't match an item that can be updated.
+     */
+    private function idNotFoundMessage(mixed $id): string
+    {
+        return sprintf($this->language->__('notification.import_row_id_not_found'), (string) $id);
+    }
+
+    /**
+     * Whether a board item exists and belongs to the board the row names.
+     *
+     * @param  mixed  $item  The stored item, or false when there is none.
+     * @param  array<string, mixed>  $values  The row's values.
+     */
+    private function isItemOnBoard(mixed $item, array $values): bool
+    {
+        return is_array($item)
+            && isset($values['canvasId'])
+            && (string) $item['canvasId'] === trim((string) $values['canvasId']);
     }
 
     /**
@@ -1065,7 +1120,10 @@ class Connector
             return null;
         }
 
-        return preg_match('/\d{1,2}:\d{2}/', $value) === 1 ? $date : $date->formatDateForUser();
+        // A time looks like 09:00, or 090000 in compact ISO 8601 (20261125T090000Z).
+        $hasTime = preg_match('/\d{1,2}:\d{2}|\d{8}T\d{4}/i', $value) === 1;
+
+        return $hasTime ? $date : $date->formatDateForUser();
     }
 
     /**
@@ -1088,13 +1146,28 @@ class Connector
         return (int) $index + 2;
     }
 
-    private function cacheSerializedFieldValues($fields, $values)
+    /**
+     * Stores the reviewed rows for the import step, with a token the import step claims once.
+     *
+     * Rows the review flagged are not stored (and an earlier clean review is cleared), so a
+     * request straight to the import step can't import rows the review rejected.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows after the parse step.
+     * @param  array<int, string>  $flags  What the review found; empty when the rows can be imported.
+     */
+    private function cacheSerializedFieldValues(array $fields, array $values, array $flags): void
     {
+        if ($flags !== []) {
+            session()->forget(['serValues', 'serFields', 'serImportToken']);
 
-        $serializedFields = serialize($fields);
-        $serializedValues = serialize($values);
+            return;
+        }
 
-        session(['serFields' => $serializedFields]);
-        session(['serValues' => $serializedValues]);
+        session([
+            'serFields' => serialize($fields),
+            'serValues' => serialize($values),
+            'serImportToken' => Uuid::uuid4()->toString(),
+        ]);
     }
 }

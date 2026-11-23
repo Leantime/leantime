@@ -22,13 +22,18 @@ class ConnectorTicketImportTest extends TestCase
     use \Codeception\Test\Feature\Stub;
 
     /**
-     * A Language stub that returns "key|arg1|arg2|arg3" once sprintf'd, so messages can be
-     * asserted by key and arguments.
+     * A Language stub that returns "key|arg1|..." once sprintf'd, so messages can be asserted
+     * by key and arguments. One-argument messages get one placeholder (sprintf throws on
+     * missing arguments).
      */
     private function language(): Language
     {
+        $oneArgument = ['notification.import_row_save_uncertain', 'notification.import_row_id_not_found'];
+
         return $this->make(Language::class, [
-            '__' => fn (string $index, string $default = '') => $index.'|%1$s|%2$s|%3$s',
+            '__' => fn (string $index, string $default = '') => in_array($index, $oneArgument, true)
+                ? $index.'|%1$s'
+                : $index.'|%1$s|%2$s|%3$s',
         ]);
     }
 
@@ -37,7 +42,7 @@ class ConnectorTicketImportTest extends TestCase
      * @param  array<string, mixed>  $ticketOverrides  Extra stubbed Tickets service methods.
      * @param  array<string, mixed>  $projectOverrides  Stubbed Projects service methods.
      */
-    private function connector(array &$calls, array $ticketOverrides = [], array $projectOverrides = [], array $userOverrides = []): Connector
+    private function connector(array &$calls, array $ticketOverrides = [], array $projectOverrides = [], array $userOverrides = [], array $goalOverrides = [], array $ideaOverrides = []): Connector
     {
         $tickets = $this->make(Tickets::class, array_merge([
             'updateTicket' => function ($values) use (&$calls) {
@@ -58,8 +63,8 @@ class ConnectorTicketImportTest extends TestCase
             $this->make(Projects::class, $projectOverrides),
             $tickets,
             $this->make(TicketRepository::class),
-            $this->make(Goalcanvas::class),
-            $this->make(Ideas::class),
+            $this->make(Goalcanvas::class, $goalOverrides),
+            $this->make(Ideas::class, $ideaOverrides),
             $this->language(),
         );
     }
@@ -127,6 +132,7 @@ class ConnectorTicketImportTest extends TestCase
         $values = [
             ['Title' => 'Planned', 'Due' => '2026-12-05', 'Start' => '2026-11-25T09:00:00Z', 'End' => ' ', 'projectId' => 9, 'editorId' => 1],
             ['Title' => 'Whole days', 'Due' => '', 'Start' => '2026-11-25', 'End' => '2026-11-26', 'projectId' => 9, 'editorId' => 1],
+            ['Title' => 'Compact', 'Due' => '', 'Start' => '20261125T090000Z', 'End' => '', 'projectId' => 9, 'editorId' => 1],
         ];
 
         $this->connector($calls)->importValues($mapped, $values, 'tickets');
@@ -140,6 +146,10 @@ class ConnectorTicketImportTest extends TestCase
         // instead of the current time of day.
         $this->assertIsString($calls[1][1]['editFrom']);
         $this->assertSame(dtHelper()->parseUserDateTime('2026-11-26')->formatDateForUser(), $calls[1][1]['editTo']);
+
+        $compact = $calls[2][1]['editFrom'];
+        $this->assertInstanceOf(CarbonImmutable::class, $compact, 'a compact ISO 8601 time (20261125T090000Z) is a time too');
+        $this->assertTrue($compact->eq(dtHelper()->parseUserDateTime('20261125T090000Z')), 'the parsed time is passed on, not a day boundary');
 
         $calls = [];
         $this->connector($calls)->importValues(
@@ -187,7 +197,7 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertSame(3, $result->failures[0]['row'], 'the second record is spreadsheet row 3');
         $this->assertStringStartsWith('notifications.ticket_save_error_no_headline', $result->failures[0]['message']);
         $this->assertSame(4, $result->failures[1]['row']);
-        $this->assertSame('Ben Ortiz is not on the team', $result->failures[1]['message']);
+        $this->assertSame('notification.import_row_save_uncertain|Ben Ortiz is not on the team', $result->failures[1]['message'], 'a thrown error may come after the save, so the person is told to check first');
         $this->assertSame(5, $result->failures[2]['row']);
         $this->assertStringStartsWith('notification.import_row_not_saved', $result->failures[2]['message']);
     }
@@ -245,5 +255,79 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertStringContainsString('notification.import_row_invalid_date|3|Due|01/Dec/26 9:00 AM', $joined, 'the second date column is checked too');
         $this->assertStringContainsString('notification.import_row_assignee_not_on_team|3|ben@example.com|Website', $joined);
         $this->assertStringNotContainsString('|2|', $joined, 'the valid first row is not flagged');
+    }
+
+    public function test_a_flagged_review_leaves_nothing_to_import(): void
+    {
+        // An earlier clean review of another file left rows waiting.
+        session(['serValues' => serialize([['Title' => 'Old']]), 'serFields' => serialize([['sourceField' => 'Title', 'leantimeField' => 'headline']]), 'serImportToken' => 'earlier']);
+
+        $calls = [];
+        $flags = $this->connector($calls)->parseValues(
+            [['sourceField' => 'Title', 'leantimeField' => 'headline']],
+            [['Title' => 'No project column']],
+            'tickets'
+        );
+
+        $this->assertNotEmpty($flags);
+        $this->assertNull(session('serValues'), 'rows the review rejected are not stored for the import step');
+        $this->assertNull(session('serImportToken'));
+    }
+
+    public function test_an_id_that_matches_nothing_is_reported_instead_of_counted(): void
+    {
+        $calls = [];
+        $edited = [];
+        $connector = $this->connector(
+            $calls,
+            [],
+            [
+                'getProject' => fn (int $id) => $id === 3 ? ['id' => 3] : false,
+                'editProject' => function ($values, $id) use (&$edited) {
+                    $edited[] = ['project', $id];
+                },
+            ],
+            [],
+            [
+                'getSingleCanvasItem' => fn (int $id) => match ($id) {
+                    20 => ['canvasId' => 5, 'box' => 'goal'],
+                    21 => ['canvasId' => 5, 'box' => 'idea'],
+                    default => false,
+                },
+                'editCanvasItem' => function ($values) use (&$edited) {
+                    $edited[] = ['goal', $values['itemId']];
+                },
+            ],
+            [
+                'getSingleCanvasItem' => fn (int $id) => $id === 30 ? ['canvasId' => 7] : false,
+                'editCanvasItem' => function ($values) use (&$edited) {
+                    $edited[] = ['idea', $values['itemId']];
+                },
+            ],
+        );
+
+        $projects = $connector->importValues(
+            [['sourceField' => 'ID', 'leantimeField' => 'id'], ['sourceField' => 'Name', 'leantimeField' => 'name']],
+            [['ID' => '3', 'Name' => 'Kept'], ['ID' => '404', 'Name' => 'Missing']],
+            'projects'
+        );
+        $this->assertSame(1, $projects->imported);
+        $this->assertSame([['row' => 3, 'message' => 'notification.import_row_id_not_found|404']], $projects->failures);
+
+        $goalFields = [['sourceField' => 'ID', 'leantimeField' => 'itemId'], ['sourceField' => 'Board', 'leantimeField' => 'canvasId']];
+        $goals = $connector->importValues($goalFields, [
+            ['ID' => '20', 'Board' => '5'],   // a goal on that board
+            ['ID' => '21', 'Board' => '5'],   // not a goal
+            ['ID' => '20', 'Board' => '6'],   // a goal, but on another board
+            ['ID' => '0', 'Board' => '5'],    // not an id
+        ], 'goals');
+        $this->assertSame(1, $goals->imported);
+        $this->assertSame([3, 4, 5], array_column($goals->failures, 'row'));
+
+        $ideas = $connector->importValues($goalFields, [['ID' => '30', 'Board' => '7'], ['ID' => '30', 'Board' => '8']], 'ideas');
+        $this->assertSame(1, $ideas->imported);
+        $this->assertSame([3], array_column($ideas->failures, 'row'));
+
+        $this->assertSame([['project', 3], ['goal', '20'], ['idea', '30']], $edited, 'only items that exist on the named board are edited');
     }
 }

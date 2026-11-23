@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Connector\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
 use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
@@ -206,16 +207,46 @@ class Integrations
     }
 
     /**
-     * Clears the cached import payload once it has been imported.
+     * Hands out the reviewed import payload once, for the request that imports it.
      *
-     * Without this, reloading the result page or going back and confirming again would import
-     * the same rows a second time.
+     * The review step stores a token with the payload. The first request to claim that token
+     * gets the payload; any other request (a double click on Confirm, a reload, a second tab)
+     * gets an empty payload, even when it read the session before the first one cleared it.
+     * The claim is an atomic cache add, so two requests running at the same time can't both win.
+     *
+     * @api
+     *
+     * @return array{values: array, fields: array} The payload, or empty arrays when there is
+     *                                             nothing to import or it was already claimed.
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function claimCachedImportPayload(): array
+    {
+        $nothing = ['values' => [], 'fields' => []];
+        $payload = $this->getCachedImportPayload();
+        $token = (string) session('serImportToken', '');
+
+        if ($token === '' || empty($payload['values']) || empty($payload['fields'])) {
+            return $nothing;
+        }
+
+        if (! Cache::add('connector.importClaimed.'.$token, true, now()->addDay())) {
+            return $nothing;
+        }
+
+        $this->forgetCachedImportPayload();
+
+        return $payload;
+    }
+
+    /**
+     * Clears the cached import payload and its token.
      *
      * @api
      */
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function forgetCachedImportPayload(): void
     {
-        session()->forget(['serValues', 'serFields']);
+        session()->forget(['serValues', 'serFields', 'serImportToken']);
     }
 }

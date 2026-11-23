@@ -176,10 +176,12 @@ class Integration extends Controller
      */
     private function handleImportStep(object $provider): Response
     {
-        $payload = $this->integrationService->getCachedImportPayload();
+        // Claimed once: a reload, a second Confirm or a parallel request gets nothing, so the
+        // rows can't be imported twice. The review step only stores rows it didn't flag.
+        $payload = $this->integrationService->claimCachedImportPayload();
 
-        // Nothing cached: the rows were already imported (reload or second Confirm) or the
-        // session expired. Importing again would create duplicates, so start over instead.
+        // Nothing to import: the rows were already imported, the review flagged them, or the
+        // session expired. Start over instead.
         if (empty($payload['values']) || empty($payload['fields'])) {
             $this->tpl->setNotification($this->language->__('notification.import_nothing_to_import'), 'error');
 
@@ -187,7 +189,6 @@ class Integration extends Controller
         }
 
         $result = $this->connectorService->importValues($payload['fields'], $payload['values'], (string) session('currentImportEntity'));
-        $this->integrationService->forgetCachedImportPayload();
 
         if (! $result instanceof ImportResult) {
             $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
