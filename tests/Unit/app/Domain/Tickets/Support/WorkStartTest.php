@@ -155,6 +155,16 @@ class WorkStartTest extends TestCase
         $this->assertSame(['2026-09-05', '2026-09-06', '2026-09-07'], WorkStart::plannedDays($start, $end, $tz));
     }
 
+    public function test_checking_a_day_leaves_a_mutable_date_unchanged(): void
+    {
+        $start = self::storedMidnight('2026-11-24', self::LA);
+        $day = \Carbon\Carbon::parse('2026-11-24 20:00', 'UTC');
+
+        $this->assertTrue(WorkStart::isPlannedForDay($start, null, $day, self::LA));
+        $this->assertSame('UTC', $day->getTimezone()->getName());
+        $this->assertSame('2026-11-24 20:00', $day->format('Y-m-d H:i'));
+    }
+
     public function test_bad_data_never_loops_past_the_cap(): void
     {
         $start = self::storedMidnight('2000-01-01', 'UTC');

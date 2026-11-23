@@ -109,8 +109,9 @@ final class WorkStart
      */
     public static function isPlannedForDay(?string $editFrom, ?string $editTo, CarbonInterface|string $day, string $timezone): bool
     {
+        // An immutable copy, so a mutable Carbon passed in keeps its own timezone.
         $dayString = $day instanceof CarbonInterface
-            ? $day->setTimezone($timezone)->format('Y-m-d')
+            ? CarbonImmutable::instance($day)->setTimezone($timezone)->format('Y-m-d')
             : $day;
 
         return in_array($dayString, self::plannedDays($editFrom, $editTo, $timezone), true);
