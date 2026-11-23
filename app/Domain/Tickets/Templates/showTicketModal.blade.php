@@ -100,19 +100,18 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
             </x-slot:actions>
         @endcanany
     </x-global::actions.modal-header>
-    <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
-
-        <ul>
-            <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
-            <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $numFiles; ?>)</a></li>
+    <x-global::navigation.section-tabs class="ticketTabs" :label="__('tabs.ticketDetails')" remember="query:tab">
+        <x-slot:tabs>
+            <x-global::navigation.section-tabs.tab for="ticketdetails" icon="fa-star">{!! __('tabs.ticketDetails') !!}</x-global::navigation.section-tabs.tab>
+            <x-global::navigation.section-tabs.tab for="files" icon="fa-file">{!! __('tabs.files') !!} ({{ $numFiles }})</x-global::navigation.section-tabs.tab>
             @can('timesheets.create')
                 @module('timesheets', $ticket->projectId)
-                    <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
+                    <x-global::navigation.section-tabs.tab for="timesheet" icon="fa-clock">{!! __('tabs.time_tracking') !!}</x-global::navigation.section-tabs.tab>
                 @endmodule
             @endcan
-            <li><a href="#history"><span class="fa fa-clock-rotate-left"></span> <?php echo $tpl->__('tabs.history') ?></a></li>
-            <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
-        </ul>
+            <x-global::navigation.section-tabs.tab for="history" icon="fa-clock-rotate-left">{!! __('tabs.history') !!}</x-global::navigation.section-tabs.tab>
+            @dispatchEvent('ticketTabs', ['ticket' => $ticket])
+        </x-slot:tabs>
 
         <div id="ticketdetails">
             <form class="formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" method="post">
@@ -139,7 +138,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
 
         @dispatchEvent('ticketTabsContent', ['ticket' => $ticket])
 
-    </div>
+    </x-global::navigation.section-tabs>
 
 </div>
 <script type="text/javascript">
@@ -149,8 +148,6 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
         <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
         <?php } ?>
-
-        leantime.ticketsController.initTicketTabs();
 
         @can('tickets.edit', $ticket->projectId)
             leantime.ticketsController.initAsyncInputChange();

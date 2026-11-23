@@ -11,11 +11,10 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary projectTabs">
-
-            <ul>
-                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> {!! __('tabs.projectdetails') !!}</a></li>
-            </ul>
+        <x-global::navigation.section-tabs class="projectTabs" :label="__('tabs.projectdetails')">
+            <x-slot:tabs>
+                <x-global::navigation.section-tabs.tab for="projectdetails" icon="fa-leaf">{!! __('tabs.projectdetails') !!}</x-global::navigation.section-tabs.tab>
+            </x-slot:tabs>
 
             <div id="projectdetails">
                 <form action="" method="post" class="">
@@ -126,16 +125,13 @@
 
                 </form>
             </div>
-        </div>
+        </x-global::navigation.section-tabs>
     </x-global::layout.content-box>
 </div>
 
 @once @push('scripts')
 <script type="text/javascript">
     jQuery(document).ready(function() {
-
-
-        leantime.projectsController.initProjectTabs();
         if (window.leantime && window.leantime.tiptapController) {
             leantime.tiptapController.initComplexEditor();
         }

@@ -33,8 +33,10 @@ leantime.projectsController = (function () {
         );
     };
 
+    // Core pages use navigation.section-tabs, which sets itself up. Kept for the plugin pages (PgmPro,
+    // StrategyPro) that still print the bare .projectTabs markup and call this.
     var initProjectTabs = function () {
-        jQuery('.projectTabs').tabs();
+        leantime.sectionTabs.init('.projectTabs');
     };
 
     var initDuplicateProjectModal = function () {

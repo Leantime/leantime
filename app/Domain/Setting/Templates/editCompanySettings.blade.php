@@ -11,13 +11,12 @@
         <div class="row">
             <div class="col-md-12">
 
-                <div class="tabbedwidget tab-primary companyTabs">
-
-                    <ul>
-                        <li><a href="#details"><span class="fa fa-building"></span> {!! __('tabs.details') !!}</a></li>
-                        <li><a href="#apiKeys"><i class="fa-solid fa-key"></i> {!! __('tabs.apiKeys') !!}</a></li>
+                <x-global::navigation.section-tabs class="companyTabs" :label="__('headlines.company_settings')" remember="hash">
+                    <x-slot:tabs>
+                        <x-global::navigation.section-tabs.tab for="details" icon="fa-building">{!! __('tabs.details') !!}</x-global::navigation.section-tabs.tab>
+                        <x-global::navigation.section-tabs.tab for="apiKeys" icon="fa-solid fa-key">{!! __('tabs.apiKeys') !!}</x-global::navigation.section-tabs.tab>
                         @dispatchEvent('tabs')
-                    </ul>
+                    </x-slot:tabs>
 
 
                     <div id="details">
@@ -233,30 +232,15 @@
                     </div>
 
                     @dispatchEvent('tabsContent')
+                </x-global::navigation.section-tabs>
 
             </div>
         </div>
-    </div>
     </x-global::layout.content-box>
 
 
 
 
 </div>
-
-@once
-@push('scripts')
-<script>
-    jQuery(document).ready(function() {
-        jQuery(".companyTabs").tabs({
-            activate: function (event, ui) {
-
-                window.location.hash = ui.newPanel.selector;
-            }
-        });
-    });
-</script>
-@endpush
-@endonce
 
 @endsection

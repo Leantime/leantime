@@ -665,17 +665,12 @@ a.barmenu:hover {
 }
 
 /* Project Selection Tabs and container */
-.projectselector .tab-primary.ui-tabs .ui-tabs-nav {
+.projectselector .lt-section-tabs-nav {
     padding:0px;
     border-radius:0px;
 }
 
-.projectselector ul.tabs li a {
-    padding: 0 15px;
-    margin-left: 0px;
-}
-
-.projectselector .ui-tabs-panel {
+.projectselector .lt-section-tabs > [role="tabpanel"] {
     padding:0;
 }
 

@@ -13,13 +13,12 @@
     <x-global::layout.content-box>
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary clientTabs">
-
-            <ul>
-                <li><a href="#clientDetails"><span class="fa fa-building"></span> {!! __('label.client_details') !!}</a></li>
-                <li><a href="#comment"><span class="fa fa-comments"></span> {!! sprintf(__('tabs.discussion_with_count'), count($comments)) !!}</a></li>
-                <li><a href="#files"><span class="fa fa-file"></span> {!! sprintf(__('tabs.files_with_count'), count($files)) !!}</a></li>
-            </ul>
+        <x-global::navigation.section-tabs class="clientTabs" :label="__('label.client_details')" remember="hash">
+            <x-slot:tabs>
+                <x-global::navigation.section-tabs.tab for="clientDetails" icon="fa-building">{!! __('label.client_details') !!}</x-global::navigation.section-tabs.tab>
+                <x-global::navigation.section-tabs.tab for="comment" icon="fa-comments">{!! sprintf(__('tabs.discussion_with_count'), count($comments)) !!}</x-global::navigation.section-tabs.tab>
+                <x-global::navigation.section-tabs.tab for="files" icon="fa-file">{!! sprintf(__('tabs.files_with_count'), count($files)) !!}</x-global::navigation.section-tabs.tab>
+            </x-slot:tabs>
 
             <div id='clientDetails'>
                 <form action="" method="post">
@@ -218,7 +217,7 @@
 
 
             </div>
-        </div>
+        </x-global::navigation.section-tabs>
     </x-global::layout.content-box>
 </div>
 
@@ -227,12 +226,6 @@
 <script type="text/javascript">
 
     @dispatchEvent('scripts.afterOpen')
-
-    jQuery(document).ready(function($)
-        {
-            leantime.clientsController.initClientTabs();
-        }
-    );
 
     @dispatchEvent('scripts.beforeClose')
 

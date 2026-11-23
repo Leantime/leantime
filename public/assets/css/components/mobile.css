@@ -64,7 +64,7 @@ min-width: 1200px
         width:100%;
     }
 
-    .leftmenu .projectselector .projectSelectorTabs .tabs li{
+    .leftmenu .projectselector .projectSelectorTabs .lt-section-tabs-nav li{
         width:auto;
     }
 
@@ -1036,7 +1036,7 @@ min-width: 1200px
     }
 
 
-    .leftmenu .projectselector .projectSelectorTabs .tabs li{
+    .leftmenu .projectselector .projectSelectorTabs .lt-section-tabs-nav li{
         width:auto;
     }
 

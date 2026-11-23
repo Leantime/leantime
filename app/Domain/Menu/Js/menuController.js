@@ -35,32 +35,6 @@ leantime.menuController = (function () {
         jQuery(document).off('click.projectSelector').on('click.projectSelector', '.projectselector.dropdown-menu', function (e) {
             e.stopPropagation();
         });
-
-        let currentTab = localStorage.getItem("currentMenuTab");
-
-        if (typeof currentTab === 'undefined') {
-            activeTabIndex = 0;
-        } else {
-            activeTabIndex = jQuery('.projectSelectorTabs').find('a[href="#' + currentTab + '"]').parent().index();
-        }
-
-        jQuery('.projectSelectorTabs').tabs({
-            create: function ( event, ui ) {
-
-            },
-            activate: function (event, ui) {
-                localStorage.setItem("currentMenuTab", ui.newPanel[0].id);
-            },
-            load: function () {
-
-            },
-            enable: function () {
-
-            },
-            active: activeTabIndex
-
-        });
-
     };
 
     // Below this width the sidebar is an off-canvas drawer (matches the

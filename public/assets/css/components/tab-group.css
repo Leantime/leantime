@@ -208,10 +208,13 @@
       and client settings). They switch which part of one thing you edit,
       so they stay quiet and flat — a full-width hairline with the active
       section underlined — and never look like the view pills above the
-      content box. The jQuery-UI tab sets (.tabbedwidget.tab-primary) keep
-      their ul/li/a markup because plugins print tabs into it, and get the
-      same skin here (design call 2026-10-10). ──────────────────────────── */
+      content box. navigation.section-tabs (.lt-section-tabs) keeps the
+      ul/li/a markup because plugins print tabs into it, and gets the same
+      skin here (design call 2026-10-10). The .tab-primary.ui-tabs selectors
+      are for plugin tab sets still on jQuery-UI tabs (StrategyPro goal
+      dialog). ──────────────────────────────────────────────────────────── */
 .lt-tabs--underline,
+.lt-section-tabs-nav,
 .tab-primary.ui-tabs .ui-tabs-nav {
     --section-tab-muted: color-mix(in srgb, var(--primary-font-color) 70%, transparent);
     display: flex;
@@ -230,11 +233,16 @@
 .lt-tabs--underline .lt-tabs-group {
     gap: 2px;
 }
+.lt-section-tabs-nav {
+    list-style: none;
+}
+.lt-section-tabs-nav > li,
 .tab-primary.ui-tabs .ui-tabs-nav > li {
     float: none;
     border: 0;
 }
 .lt-tabs--underline .lt-tab,
+body .lt-section-tabs-nav > li > a,
 body .tab-primary.ui-tabs .ui-tabs-nav > li > a {
     display: inline-flex;
     align-items: center;
@@ -250,20 +258,25 @@ body .tab-primary.ui-tabs .ui-tabs-nav > li > a {
     border: 0;
     border-bottom: 2px solid transparent;
     border-radius: var(--box-radius-small) var(--box-radius-small) 0 0;
+    text-decoration: none;
     opacity: 1;
 }
 .lt-tabs--underline .lt-tab i,
+.lt-section-tabs-nav > li > a .fa,
+.lt-section-tabs-nav > li > a [class*="fa-"],
 .tab-primary.ui-tabs .ui-tabs-nav > li > a .fa,
 .tab-primary.ui-tabs .ui-tabs-nav > li > a [class*="fa-"] {
     font-size: var(--font-size-s);
     opacity: 1;
 }
 .lt-tabs--underline .lt-tab:hover:not(.on),
+body .lt-section-tabs-nav > li > a:not([aria-selected="true"]):hover,
 body .tab-primary.ui-tabs .ui-tabs-nav > li:not(.ui-state-active) > a:hover {
     color: var(--primary-font-color);
     background: var(--tab-hover-background, var(--neutral));
 }
 .lt-tabs--underline .lt-tab.on,
+body .lt-section-tabs-nav > li > a[aria-selected="true"],
 body .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a {
     color: var(--primary-font-color);
     background: none;
@@ -271,11 +284,14 @@ body .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a {
     font-weight: 500;
 }
 .lt-tabs--underline .lt-tab.on i,
+.lt-section-tabs-nav > li > a[aria-selected="true"] .fa,
+.lt-section-tabs-nav > li > a[aria-selected="true"] [class*="fa-"],
 .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a .fa,
 .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a [class*="fa-"] {
     color: var(--accent1);
 }
 .lt-tabs--underline .lt-tab:focus-visible,
+.lt-section-tabs-nav > li > a:focus-visible,
 .tab-primary.ui-tabs .ui-tabs-nav > li > a:focus-visible {
     outline: 2px solid var(--accent1);
     outline-offset: -2px;
@@ -293,20 +309,51 @@ body .tab-primary.ui-tabs .ui-tabs-nav > li.ui-state-active > a {
 @media (max-width: 1200px) {
     .lt-tabs--underline,
     .lt-tabs--underline .lt-tabs-group,
+    .lt-section-tabs-nav,
     .tab-primary.ui-tabs .ui-tabs-nav,
     .nyroModalCont .tab-primary.ui-tabs .ui-tabs-nav {
         flex-wrap: nowrap;
         overflow-x: auto;
         scrollbar-width: none;
     }
+    .lt-section-tabs .lt-section-tabs-nav > li,
     .tab-primary.ui-tabs .ui-tabs-nav > li {
         width: auto;
         flex: none;
     }
     .lt-tabs--underline .lt-tab,
+    body .lt-section-tabs-nav > li > a,
     body .tab-primary.ui-tabs .ui-tabs-nav > li > a {
         white-space: nowrap;
     }
+}
+
+/* Section-tab panels (navigation.section-tabs). Until core/sectionTabs.js has run, only the first panel
+   shows, so the box doesn't open with every section stacked. Panels can be any element (CustomFields
+   prints a form). */
+.lt-section-tabs {
+    line-height: 21px;
+}
+.lt-section-tabs > [role="tabpanel"] {
+    min-height: 150px;
+    padding: 15px 0;
+    color: var(--primary-font-color);
+}
+.lt-section-tabs > [role="tabpanel"][hidden],
+.lt-section-tabs:not([data-tabs-ready]) > ul ~ * ~ * {
+    display: none;
+}
+.lt-section-tabs > [role="tabpanel"] .dropdown-menu {
+    margin: 0;
+}
+.lt-section-tabs > [role="tabpanel"] .dropdown-menu li {
+    padding: 0;
+}
+.lt-section-tabs > [role="tabpanel"] .dropdown-menu li a {
+    padding: 3px 10px;
+}
+.lt-section-tabs > [role="tabpanel"] .dropdown-menu li a.delete {
+    color: var(--dark-red);
 }
 
 /* Inline actions (right cluster) — borderless on the page background.
