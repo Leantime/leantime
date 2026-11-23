@@ -170,6 +170,28 @@ class AssigneeTeamCheckTest extends TestCase
         }
     }
 
+    public function test_an_unchanged_outside_assignee_is_not_added_as_a_collaborator(): void
+    {
+        // An old task assigned outside the team keeps its assignee, but that doesn't make the
+        // outsider a new collaborator: the collaborator relationship is new and is checked.
+        $service = $this->buildService(storedAssignee: 64);
+
+        try {
+            $service->patchTicket(5, ['editorId' => 64, 'collaborators' => [64]]);
+            $this->fail('Expected the collaborator to be refused.');
+        } catch (AssigneeCannotSeeProjectException $e) {
+            $this->assertSame('collaborators', $e->field);
+            $this->assertSame(64, $e->userId);
+        }
+
+        $this->assertSame([], $this->patches);
+    }
+
+    public function test_a_new_team_assignee_can_also_be_a_collaborator(): void
+    {
+        $this->assertTrue($this->buildService()->patchTicket(5, ['editorId' => 2, 'collaborators' => [2]]));
+    }
+
     public function test_a_user_id_that_does_not_exist_is_named(): void
     {
         $this->expectException(ValidationException::class);

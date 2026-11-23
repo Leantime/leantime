@@ -3446,8 +3446,10 @@ class Tickets extends BaseService
     private function assertAssigneesCanSeeProject(int $projectId, mixed $assignee, mixed $collaborators, ?TicketModel $currentTicket = null): ?array
     {
         $assigneeId = $this->userIdOrFail('editorId', $assignee);
+        $assigneeWasChecked = false;
         if ($assigneeId > 0 && $assigneeId !== (int) ($currentTicket->editorId ?? 0)) {
             $this->assertUserCanSeeProject('editorId', $assigneeId, $projectId);
+            $assigneeWasChecked = true;
         }
 
         if ($collaborators === null) {
@@ -3466,9 +3468,17 @@ class Tickets extends BaseService
             fn (int $userId) => $userId > 0,
         )));
         foreach ($userIds as $userId) {
-            if ($userId !== $assigneeId && ! in_array($userId, $currentCollaborators, true)) {
-                $this->assertUserCanSeeProject('collaborators', $userId, $projectId);
+            if (in_array($userId, $currentCollaborators, true)) {
+                continue;
             }
+
+            // An unchanged assignee wasn't checked above (it may predate this check), so adding
+            // them as a collaborator is a new relationship and is checked like anyone else.
+            if ($assigneeWasChecked && $userId === $assigneeId) {
+                continue;
+            }
+
+            $this->assertUserCanSeeProject('collaborators', $userId, $projectId);
         }
 
         return $userIds;
