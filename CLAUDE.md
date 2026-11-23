@@ -34,7 +34,7 @@ These are ongoing architectural efforts. None need to be fixed proactively -- th
 **Current state**: 100% string-based event names dynamically generated from class namespace (e.g., `leantime.domain.tickets.services.tickets.updateTicket.ticket_updated`). Only one class-based event exists: `Files/Events/FileUploaded.php` (boilerplate). The `DispatchesEvents` trait is mixed into nearly every core class. Future work should prefer class-based events where practical.
 
 ### 6. JavaScript Architecture (Outdated, Needs Componentization)
-**Current state**: All JS uses a global `leantime` namespace with IIFE module pattern. ~7-8MB of JS loaded on every page (no code splitting). jQuery 3.7.1 + Bootstrap 2.x (ancient) still in use. TinyMCE 5.10.9 is 3.6MB alone. Both Moment.js and Luxon included (redundant). A file-based per-domain loading system was planned but remains commented out in `webpack.mix.js`. Eventually needs componentized architecture with code splitting.
+**Current state**: All JS uses a global `leantime` namespace with IIFE module pattern. ~7-8MB of JS loaded on every page (no code splitting). jQuery 3.7.1 + Bootstrap 2.x (ancient) still in use. The editor is Tiptap 2 (TinyMCE is gone). Both Moment.js and Luxon included (redundant). A file-based per-domain loading system was planned but remains commented out in `webpack.mix.js`. Eventually needs componentized architecture with code splitting.
 
 ## Development Environment Setup
 
@@ -575,7 +575,7 @@ Laravel Mix 6.x (Webpack 5.x) -- configured in `webpack.mix.js`. Output goes to 
 - `compiled-frameworks` - jQuery 3.7.1 + Bootstrap 2.x
 - `compiled-framework-plugins` - jQuery UI, Chosen.js, growl, tags input, nestedSortable
 - `compiled-global-component` - Luxon, Moment, Tippy.js, Uppy, Croppie, Packery, Shepherd.js, Isotope, GridStack, jsTree, Mermaid, Marked
-- `compiled-editor-component` - TinyMCE 5.10.9 + ~20 custom plugins (3.6MB)
+- `compiled-tiptap-editor` + `compiled-tiptap-toolbar` - Tiptap 2 editor (`public/assets/js/app/core/tiptap/`). Plugins add toolbar buttons and slash commands via `leantime.tiptapController.registerToolbarButton()` / `registerSlashCommand()`
 - `compiled-calendar-component` - FullCalendar + iCal.js
 - `compiled-table-component` - DataTables + plugins
 - `compiled-gantt-component` - Snap.svg + custom Frappe Gantt
