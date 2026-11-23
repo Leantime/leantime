@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
+use Leantime\Domain\Oidc\Services\OidcConfig;
 use Symfony\Component\HttpFoundation\Response;
 
 class Callback extends Controller
@@ -17,12 +18,15 @@ class Callback extends Controller
 
     private OidcService $oidc;
 
+    private OidcConfig $oidcConfig;
+
     /**
      * Initializes dependencies.
      */
-    public function init(OidcService $oidc): void
+    public function init(OidcService $oidc, OidcConfig $oidcConfig): void
     {
         $this->oidc = $oidc;
+        $this->oidcConfig = $oidcConfig;
     }
 
     /**
@@ -36,6 +40,11 @@ class Callback extends Controller
      */
     public function get(array $params): Response
     {
+        // Same gate as the login redirect: no sign-in while OIDC is switched off.
+        if (! $this->oidcConfig->isEnabled()) {
+            return $this->backToLogin($this->language->__('oidc.error.disabled'));
+        }
+
         $providerError = $this->incomingRequest->query('error');
         $code = $this->incomingRequest->query('code');
         $state = $this->incomingRequest->query('state');

@@ -7,12 +7,15 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
+use Leantime\Domain\Oidc\Services\OidcConfig;
 use Leantime\Domain\Plugins\Services\Plugins;
 use Symfony\Component\HttpFoundation\Response;
 
 class Login extends Controller
 {
     private OidcService $oidc;
+
+    private OidcConfig $oidcConfig;
 
     private Plugins $plugins;
 
@@ -21,8 +24,9 @@ class Login extends Controller
      *
      * @throws GuzzleException
      */
-    public function init(OidcService $oidc, Plugins $plugins): void
+    public function init(OidcService $oidc, Plugins $plugins, OidcConfig $oidcConfig): void
     {
+        $this->oidcConfig = $oidcConfig;
         $this->oidc = $oidc;
         $this->plugins = $plugins;
     }
@@ -34,6 +38,14 @@ class Login extends Controller
      */
     public function get(array $params): Response
     {
+        // Settings can exist while OIDC is switched off (e.g. entered in Authentication Settings
+        // but not enabled). The login button is hidden then, and a typed-in URL must not work either.
+        if (! $this->oidcConfig->isEnabled()) {
+            $this->tpl->setNotification($this->language->__('oidc.error.disabled'), 'error');
+
+            return Frontcontroller::redirect(BASE_URL.'/auth/login');
+        }
+
         try {
             // Mobile-brokered SSO: the app passes ?mobile=1&redirect_uri=<app scheme>
             // + a PKCE code_challenge, so the callback mints a token + one-time
