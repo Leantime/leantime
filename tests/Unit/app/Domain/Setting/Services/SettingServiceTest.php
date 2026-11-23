@@ -223,6 +223,7 @@ class SettingServiceTest extends TestCase
     {
         $this->assertSame(PushRelay::CONTENT_MINIMAL, $this->saveMainDetails(['pushRelayContent' => 'minimal'])[PushRelay::SETTING_CONTENT]);
         $this->assertSame(PushRelay::CONTENT_FULL, $this->saveMainDetails(['pushRelayContent' => 'full'])[PushRelay::SETTING_CONTENT]);
+        $this->assertSame(PushRelay::CONTENT_NAMES, $this->saveMainDetails(['pushRelayContent' => 'names'])[PushRelay::SETTING_CONTENT]);
         $this->assertSame(PushRelay::CONTENT_FULL, $this->saveMainDetails(['pushRelayContent' => 'everything'])[PushRelay::SETTING_CONTENT]);
     }
 }

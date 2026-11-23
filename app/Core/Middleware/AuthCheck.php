@@ -69,7 +69,9 @@ class AuthCheck
             return new Response(json_encode(['error' => 'Invalid request path']), Response::HTTP_BAD_REQUEST);
         }
 
-        if ($this->isPublicController($request->getCurrentRoute()) || $this->isPublicOAuthEndpoint($request)) {
+        if ($this->isPublicController($request->getCurrentRoute())
+            || $this->isPublicOAuthEndpoint($request)
+            || $this->isPublicWellKnownPath($request)) {
             return $next($request);
         }
 
@@ -307,6 +309,21 @@ class AuthCheck
     }
 
     /**
+     * Whether the request is for exactly "/.well-known/{name}" and a plugin listed "well-known.{name}"
+     * as public (the CalDAV plugin lists "well-known.caldav"). The name must be the whole second
+     * segment, so "well-known.security.txt" opens "/.well-known/security.txt" but not
+     * "/.well-known/security/txt", and nothing below a listed name is opened.
+     */
+    protected function isPublicWellKnownPath(IncomingRequest $request): bool
+    {
+        $segments = $request->segments();
+
+        return count($segments) === 2
+            && $segments[0] === '.well-known'
+            && in_array('well-known.'.$segments[1], $this->publicActions, true);
+    }
+
+    /**
      * Remember an OAuth authorize request that is about to be bounced to the login or 2FA page,
      * so that whichever way the user signs in (password, 2FA, SSO) they land back on the consent
      * screen. Kept in the session rather than in ?redirect=, which loses the query string.
@@ -446,12 +463,25 @@ class AuthCheck
         return new RedirectResponse($destination.$queryParams);
     }
 
+    /**
+     * Whether a route (dot separated, as from getCurrentRoute()) is in the public actions list.
+     * Compares "module.action". "/.well-known/…" routes are never public here; see
+     * {@see self::isPublicWellKnownPath()}.
+     *
+     * @param  string|null  $currentPath  The current route, e.g. "auth.login" or ".well-known.caldav"
+     */
     public function isPublicController($currentPath): bool
     {
 
         // path comes in with dots as separator.
         // We only need to compare the first 2 segments
         if (empty($currentPath)) {
+            return false;
+        }
+
+        // "/.well-known/…" paths are judged by isPublicWellKnownPath() on the real path segments:
+        // the dotted route can't tell "/.well-known/security.txt" from "/.well-known/security/txt".
+        if (str_starts_with($currentPath, '.well-known.')) {
             return false;
         }
 

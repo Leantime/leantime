@@ -80,6 +80,14 @@ namespace Unit\app\Domain\Notifications\Services {
          */
         private array $savedEnvironment = [];
 
+        protected function setUp(): void
+        {
+            parent::setUp();
+
+            // Independent of the local .env: no admin allow-list unless a test sets one.
+            config(['outboundAllowedHosts' => '']);
+        }
+
         protected function tearDown(): void
         {
             unset($GLOBALS['leantimeTestDnsResolver']);
@@ -281,6 +289,18 @@ namespace Unit\app\Domain\Notifications\Services {
             foreach ([0, 1] as $index) {
                 $this->assertTrue($this->curlOptions($index)[CURLOPT_FRESH_CONNECT] ?? false, 'A pooled connection must never carry a request past its pin');
                 $this->assertTrue($this->curlOptions($index)[CURLOPT_FORBID_REUSE] ?? false, 'A connection must not outlive the request it was pinned for');
+            }
+        }
+
+        public function test_a_private_ip_endpoint_the_admin_allowed_is_valid(): void
+        {
+            config(['outboundAllowedHosts' => '10.0.0.7']);
+
+            try {
+                $this->assertTrue(WebhookTransport::isValidEndpointUrl('https://10.0.0.7/hooks/secret'));
+                $this->assertFalse(WebhookTransport::isValidEndpointUrl('https://10.0.0.8/hooks/secret'));
+            } finally {
+                config(['outboundAllowedHosts' => '']);
             }
         }
 

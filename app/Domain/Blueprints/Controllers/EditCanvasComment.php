@@ -201,10 +201,14 @@ class EditCanvasComment
                     // Resolves the item's real project from itemId and authorizes EDIT there.
                     $this->blueprintsService->updateCanvasItem($canvasItem, $canvasType);
 
-                    $comments = $this->commentsRepo->getComments($commentModule, $data['itemId']);
+                    // The dialog opens for any item the user can see, so the item can sit outside
+                    // the session's project: notify the item's own project.
+                    $savedItem = $this->blueprintsService->getCanvasItem((int) $data['itemId'], $canvasType);
+
+                    $comments = $this->commentsRepo->getComments($commentModule, (int) $data['itemId']);
                     $this->tpl->assign('numComments', $this->commentsRepo->countComments(
                         $commentModule,
-                        $data['itemId']
+                        (int) $data['itemId']
                     ));
                     $this->tpl->assign('comments', $comments);
 
@@ -222,7 +226,7 @@ class EditCanvasComment
                     $notification->entity = $canvasItem;
                     $notification->module = $this->canvasSlug.'canvas';
                     $notification->action = 'updated';
-                    $notification->projectId = session('currentProject');
+                    $notification->projectId = (int) ($savedItem['projectId'] ?? 0);
                     $notification->subject = $this->language->__('email_notifications.canvas_board_edited');
                     $notification->authorId = session('userdata.id');
                     $notification->message = sprintf(
@@ -231,7 +235,9 @@ class EditCanvasComment
                         $canvasItem['description']
                     );
 
-                    $this->projectService->notifyProjectUsers($notification);
+                    if ($notification->projectId > 0) {
+                        $this->projectService->notifyProjectUsers($notification);
+                    }
 
                     return Frontcontroller::redirect(BASE_URL.$basePath.'/editCanvasComment/'.$data['itemId']);
                 } else {
@@ -258,6 +264,10 @@ class EditCanvasComment
 
                     $canvasItem['id'] = $id;
 
+                    // The board comes from the session, not the current project: notify the
+                    // project the new item actually landed in.
+                    $savedItem = $this->blueprintsService->getCanvasItem((int) $id, $canvasType);
+
                     $canvasTypes = $this->blueprintsService->getTranslatedBoxes($this->template);
 
                     $this->tpl->setNotification(
@@ -271,10 +281,11 @@ class EditCanvasComment
                         'url' => BASE_URL.$basePath.'/editCanvasComment/'.(int) ($data['itemId'] ?? $id),
                         'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
                     ];
-                    $notification->entity = $canvasItem;
+                    // With the new id, so the digest can group the item's later changes and comments with it.
+                    $notification->entity = $canvasItem + ['id' => (int) $id];
                     $notification->module = $this->canvasSlug.'canvas';
                     $notification->action = 'created';
-                    $notification->projectId = session('currentProject');
+                    $notification->projectId = (int) ($savedItem['projectId'] ?? 0);
                     $notification->subject = $this->language->__('email_notifications.canvas_board_item_created');
                     $notification->authorId = session('userdata.id');
                     $notification->message = sprintf(
@@ -283,7 +294,9 @@ class EditCanvasComment
                         $canvasItem['description']
                     );
 
-                    $this->projectService->notifyProjectUsers($notification);
+                    if ($notification->projectId > 0) {
+                        $this->projectService->notifyProjectUsers($notification);
+                    }
 
                     $this->tpl->setNotification(
                         $this->language->__('notification.element_created'),
@@ -301,8 +314,9 @@ class EditCanvasComment
         if (isset($data['comment']) === true) {
             $itemId = (int) ($data['id'] ?? 0);
 
-            // Only allow commenting on an item the user can view in their project.
-            if (! $this->blueprintsService->getCanvasItem($itemId, $canvasType)) {
+            // Only allow commenting on an item the user can view; it carries its own project.
+            $commentedItem = $this->blueprintsService->getCanvasItem($itemId, $canvasType);
+            if (! $commentedItem) {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
@@ -329,7 +343,8 @@ class EditCanvasComment
             $notification->entity = $values;
             $notification->module = $this->canvasSlug.'canvas';
             $notification->action = 'commented';
-            $notification->projectId = session('currentProject');
+            // The item's project, not the session's: the dialog opens for items in other projects.
+            $notification->projectId = (int) $commentedItem['projectId'];
             $notification->subject = $this->language->__('email_notifications.canvas_board_comment_created');
             $notification->authorId = session('userdata.id');
             $notification->message = sprintf(
