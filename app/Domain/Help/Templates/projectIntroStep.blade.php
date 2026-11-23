@@ -6,8 +6,9 @@
                 <h1>{{  __('headlines.hi_there') }}</h1>
                 <p>{!!  __('text.get_organized_with_projects') !!}</p>
                 <br />
-                <x-global::forms.label>{{ __('label.start_with_project_title') }}</x-global::forms.label>
-                <x-global::forms.text-input width="full" id="projectName" name="projectname" value="" placeholder="" /><br />
+                <x-global::forms.field for="projectName" :label="__('label.start_with_project_title')">
+                    <x-global::forms.text-input width="full" id="projectName" name="projectname" value="" placeholder="" />
+                </x-global::forms.field>
 
             </div>
             <div class="col-md-4">

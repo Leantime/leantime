@@ -101,18 +101,14 @@
                         <x-global::elements.section-header icon="fa fa-calendar">{!! __('label.project_dates') !!}</x-global::elements.section-header>
 
 
-                        <x-global::forms.label>{!! __('label.project_start') !!}</x-global::forms.label>
-                        <div class="">
-                            <input type="text" class="field-width-sm dates" name="start" autocomplete="off"
+                        <x-global::forms.field layout="inline" for="projectStart" :label="__('label.project_start')">
+                            <input type="text" class="field-width-sm dates" name="start" id="projectStart" autocomplete="off"
                                    value="{{ format($project['start'])->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-
-                        </div>
-                        <x-global::forms.label>{!! __('label.project_end') !!}</x-global::forms.label>
-                        <div class="">
-                            <input type="text" class="field-width-sm dates" name="end" autocomplete="off"
+                        </x-global::forms.field>
+                        <x-global::forms.field layout="inline" for="projectEnd" :label="__('label.project_end')">
+                            <input type="text" class="field-width-sm dates" name="end" id="projectEnd" autocomplete="off"
                                    value="{{ format($project['end'])->date() }}" placeholder="{{ __('language.dateformat') }}"/>
-
-                        </div>
+                        </x-global::forms.field>
                     </div>
 
                 </div>
@@ -147,18 +143,12 @@
                 <div class="col-md-12">
                     <x-global::elements.section-header icon="fa fa-wrench">{!! __('label.settings') !!}</x-global::elements.section-header>
 
-                    <div class="form-group">
-
-                <x-global::forms.label class="col-md-4 control-label" for="projectState">{!! __('label.project_state') !!}</x-global::forms.label>
-                <div class="col-md-6">
-                    <x-global::forms.select enhanced name="projectState" id="projectState">
-                        <option value="0" @if ($project['state'] == 0) selected=selected @endif>{!! __('label.open') !!}</option>
-
-                        <option value="-1" @if ($project['state'] == -1) selected=selected @endif>{!! __('label.closed') !!}</option>
-
-                    </x-global::forms.select>
-                </div>
-            </div>
+                    <x-global::forms.field for="projectState" :label="__('label.project_state')">
+                        <x-global::forms.select enhanced name="projectState" id="projectState">
+                            <option value="0" @if ($project['state'] == 0) selected=selected @endif>{!! __('label.open') !!}</option>
+                            <option value="-1" @if ($project['state'] == -1) selected=selected @endif>{!! __('label.closed') !!}</option>
+                        </x-global::forms.select>
+                    </x-global::forms.field>
 
                 </div>
             </div>
@@ -181,21 +171,13 @@
             <div class="row" style="margin-bottom: 30px;">
                 <div class="col-md-12 ">
                     <x-global::elements.section-header icon="fa fa-money-bill-alt">{!! __('label.budgets') !!}</x-global::elements.section-header>
-                    <div class="form-group">
-                        <x-global::forms.label class="col-md-4 control-label" for="hourBudget">{!! __('label.hourly_budget') !!}</x-global::forms.label>
-                        <div class="col-md-6">
-                            <x-global::forms.text-input name="hourBudget" id="hourBudget" value="{{ $project['hourBudget'] }}" />
+                    <x-global::forms.field for="hourBudget" :label="__('label.hourly_budget')">
+                        <x-global::forms.text-input name="hourBudget" id="hourBudget" value="{{ $project['hourBudget'] }}" />
+                    </x-global::forms.field>
 
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <x-global::forms.label class="col-md-4 control-label" for="dollarBudget">{!! __('label.budget_cost') !!}</x-global::forms.label>
-                        <div class="col-md-6">
-                            <x-global::forms.text-input name="dollarBudget" id="dollarBudget" value="{{ $project['dollarBudget'] }}" />
-
-                        </div>
-                    </div>
+                    <x-global::forms.field for="dollarBudget" :label="__('label.budget_cost')">
+                        <x-global::forms.text-input name="dollarBudget" id="dollarBudget" value="{{ $project['dollarBudget'] }}" />
+                    </x-global::forms.field>
 
                 </div>
             </div>

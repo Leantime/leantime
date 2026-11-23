@@ -102,9 +102,8 @@
             {{-- The filter fields belong to the #form form below (form="…"). --}}
             <x-global::actions.dropdown variant="filter" menu-as="div" menu-class="filterBar" menu-style="width:280px;" keep-open class="filterWrapper">
                 <x-slot:trigger class="btn-link"><i class="fas fa-filter"></i> {{ __('popover.filter') }}</x-slot:trigger>
-                <div class="tw-mb-2">
-                    <x-global::forms.label for="clients">{!! __('label.client') !!}</x-global::forms.label>
-                    <x-global::forms.select form="form" name="clientId">
+                <x-global::forms.field for="timesheetFilterClient" :label="__('label.client')">
+                    <x-global::forms.select form="form" name="clientId" id="timesheetFilterClient">
                         <option value="-1">{{ strip_tags(__('menu.all_clients')) }}</option>
                         @foreach ($allClients as $client)
                             <option value="{{ $client['id'] }}"
@@ -114,10 +113,9 @@
                             >{{ $client['name'] }}</option>
                         @endforeach
                     </x-global::forms.select>
-                </div>
-                <div class="tw-mb-2">
-                    <x-global::forms.label for="projects">{!! __('label.project') !!}</x-global::forms.label>
-                    <x-global::forms.select form="form" name="project">
+                </x-global::forms.field>
+                <x-global::forms.field for="timesheetFilterProject" :label="__('label.project')">
+                    <x-global::forms.select form="form" name="project" id="timesheetFilterProject">
                         <option value="-1">{{ strip_tags(__('menu.all_projects')) }}</option>
                         @foreach ($allProjects as $project)
                             <option value="{{ $project['id'] }}" data-client-id="{{ $project['clientId'] }}"
@@ -127,33 +125,31 @@
                             >{{ $project['name'] }}</option>
                         @endforeach
                     </x-global::forms.select>
-                </div>
+                </x-global::forms.field>
                 @if (! empty($allTickets))
-                <div class="tw-mb-2">
-                    <x-global::forms.label for="ticket">{!! __('label.ticket') !!}</x-global::forms.label>
-                        <x-global::forms.select form="form" name="ticket">
-                            <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
-                            @foreach ($allTickets as $ticket)
-                                <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
-                                    @if ($ticketFilter == $ticket['id'])
-                                        selected="selected"
-                                    @endif
-                                >{{ $ticket['headline'] }}</option>
-                            @endforeach
-                        </x-global::forms.select>
-                </div>
+                <x-global::forms.field for="timesheetFilterTicket" :label="__('label.ticket')">
+                    <x-global::forms.select form="form" name="ticket" id="timesheetFilterTicket">
+                        <option value="-1">{{ strip_tags(__('menu.all_tickets')) }}</option>
+                        @foreach ($allTickets as $ticket)
+                            <option value="{{ $ticket['id'] }}" data-project-id="{{ $ticket['projectId'] }}"
+                                @if ($ticketFilter == $ticket['id'])
+                                    selected="selected"
+                                @endif
+                            >{{ $ticket['headline'] }}</option>
+                        @endforeach
+                    </x-global::forms.select>
+                </x-global::forms.field>
                 @endif
 
-                <div class="tw-mb-2">
-                    <x-global::forms.label for="dateFrom">{!! __('label.date_from') !!}</x-global::forms.label>
+                <x-global::forms.field for="dateFrom" :label="__('label.date_from')">
                     <input form="form" type="text" id="dateFrom" class="dateFrom" name="dateFrom" autocomplete="off"
-                    value="{{ format($dateFrom)->date() }}" size="5" style="margin-bottom:10px"/></div>
-                <div class="tw-mb-2">
-                    <x-global::forms.label for="dateTo">{!! __('label.date_to') !!}</x-global::forms.label>
+                    value="{{ format($dateFrom)->date() }}" size="5"/>
+                </x-global::forms.field>
+                <x-global::forms.field for="dateTo" :label="__('label.date_to')">
                     <input form="form" type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
-                    value="{{ format($dateTo)->date() }}" size="5" style="margin-bottom:10px" /></div>
-                <div class="tw-mb-2">
-                <x-global::forms.label for="userId">{!! __('label.employee') !!}</x-global::forms.label>
+                    value="{{ format($dateTo)->date() }}" size="5"/>
+                </x-global::forms.field>
+                <x-global::forms.field for="userId" :label="__('label.employee')">
                     <x-global::forms.select form="form" name="userId" id="userId" onchange="this.form.submit();">
                         <option value="all">{!! __('label.all_employees') !!}</option>
 
@@ -165,9 +161,8 @@
                             >{{ sprintf(__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) }}</option>
                         @endforeach
                     </x-global::forms.select>
-                </div>
-                <div class="tw-mb-2">
-                    <x-global::forms.label for="kind">{!! __('label.type') !!}</x-global::forms.label>
+                </x-global::forms.field>
+                <x-global::forms.field for="kind" :label="__('label.type')">
                     <x-global::forms.select form="form" id="kind" name="kind" onchange="this.form.submit();">
                         <option value="all">{!! __('label.all_types') !!}</option>
                         @foreach ($kind as $key => $row)
@@ -179,15 +174,14 @@
                         @endforeach
 
                     </x-global::forms.select>
-                </div>
-                <div class="tw-mb-2">
-                    <x-global::forms.label for="invEmpl">{!! __('label.invoiced') !!}</x-global::forms.label>
+                </x-global::forms.field>
+                <x-global::forms.field for="invEmpl" :label="__('label.invoiced')">
                     <x-global::forms.select form="form" name="invEmpl" id="invEmpl">
                         <option value="all" @if ($invEmpl == 'all' || ! $invEmpl) selected="selected" @endif>{!! __('label.invoiced_all') !!}</option>
                         <option value="1" @if ($invEmpl == '1') selected="selected" @endif>{!! __('label.invoiced') !!}</option>
                         <option value="0" @if ($invEmpl == '0') selected="selected" @endif>{!! __('label.invoiced_not') !!}</option>
                     </x-global::forms.select>
-                </div>
+                </x-global::forms.field>
                 <div>
                     <x-global::forms.checkbox variant="toggle" form="form" value="on" name="invComp" id="invComp" onclick="this.form.submit();"
                                               :checked="$invComp == '1'">{!! __('label.invoiced_comp') !!}</x-global::forms.checkbox>

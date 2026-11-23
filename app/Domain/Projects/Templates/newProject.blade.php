@@ -75,18 +75,12 @@
 
                             <div style="margin-bottom: 30px;">
                                 <x-global::elements.section-header icon="fa fa-calendar">{!! __('label.project_dates') !!}</x-global::elements.section-header>
-                                <div>
-                                    <x-global::forms.label>{!! __('label.project_start') !!}</x-global::forms.label>
-                                    <div class="">
-                                        <x-global::forms.date-picker name="start" range="from" :value="$project['start']" class="dates dateFrom" />
-
-                                    </div>
-                                    <x-global::forms.label>{!! __('label.project_end') !!}</x-global::forms.label>
-                                    <div class="">
-                                        <x-global::forms.date-picker name="end" range="to" :value="$project['end']" class="dates dateTo" />
-
-                                    </div>
-                                </div>
+                                <x-global::forms.field for="projectStart" :label="__('label.project_start')">
+                                    <x-global::forms.date-picker name="start" id="projectStart" range="from" :value="$project['start']" class="dates dateFrom" />
+                                </x-global::forms.field>
+                                <x-global::forms.field for="projectEnd" :label="__('label.project_end')">
+                                    <x-global::forms.date-picker name="end" id="projectEnd" range="to" :value="$project['end']" class="dates dateTo" />
+                                </x-global::forms.field>
 
                             </div>
 

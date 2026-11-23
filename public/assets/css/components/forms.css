@@ -62,6 +62,30 @@ form label {
     margin-bottom: 0;
 }
 
+/* Several controls side by side in one field (date + time, select + "Assign to me" link).
+   They drop their own bottom margin too, the field keeps owning the gap. */
+.lt-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+.lt-field-row input,
+.lt-field-row select,
+.lt-field-row .ss-main {
+    margin-bottom: 0;
+}
+
+/* A secondary label inside the row ("Date" next to a toggle) reads as plain text. */
+.lt-field .lt-field-row > label {
+    float: none;
+    width: auto;
+    padding: 0;
+    margin: 0;
+    font-weight: normal;
+}
+
 .lt-field .lt-field-help {
     margin: 4px 0 0;
     color: var(--color-text-muted);

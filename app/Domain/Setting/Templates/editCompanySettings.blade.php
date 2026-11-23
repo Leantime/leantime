@@ -31,73 +31,46 @@
                                     <input type="hidden" value="1" name="saveSettings" />
 
                                     <x-global::elements.section-header icon="fa fa-building">{!! __('subtitles.companydetails') !!}</x-global::elements.section-header>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <x-global::forms.label>{!! __('label.language') !!}</x-global::forms.label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <x-global::forms.select name="language" id="language">
-                                                @foreach ($languageList as $languagKey => $languageValue)
-                                                    <option
-                                                        value="{{ $languagKey }}"
-                                                        @if ($companySettings['language'] == $languagKey) selected='selected' @endif>{{ $languageValue }}</option>
-                                                @endforeach
-                                            </x-global::forms.select>
+                                    <x-global::forms.field layout="inline" for="language" :label="__('label.language')">
+                                        <x-global::forms.select name="language" id="language">
+                                            @foreach ($languageList as $languagKey => $languageValue)
+                                                <option
+                                                    value="{{ $languagKey }}"
+                                                    @if ($companySettings['language'] == $languagKey) selected='selected' @endif>{{ $languageValue }}</option>
+                                            @endforeach
+                                        </x-global::forms.select>
+                                    </x-global::forms.field>
 
-
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <x-global::forms.label>{!! __('label.company_name') !!}</x-global::forms.label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <x-global::forms.text-input name="name" id="companyName"  value="{{ $companySettings['name'] }}" class="pull-left" />
-                                            <small>{!! __('text.company_name_helper') !!}</small>
-                                        </div>
-                                    </div>
+                                    <x-global::forms.field layout="inline" for="companyName" :label="__('label.company_name')" :help="__('text.company_name_helper')">
+                                        <x-global::forms.text-input name="name" id="companyName" value="{{ $companySettings['name'] }}" aria-describedby="companyName-help" />
+                                    </x-global::forms.field>
 
                                     @dispatchEvent('beforeTelemetrySettings')
 
                                     @if ($companySettings['telemetryAllowedByConfig'])
-                                        <div class="row" id="telemetryContainer">
-                                            <div class="col-md-2">
-                                                <label for="telemetryActive">{!! __('label.send_telemetry') !!}</label>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <input type="hidden" name="telemetryToggleShown" value="1" />
-                                                <x-global::forms.checkbox variant="toggle" name="telemetryActive" id="telemetryActive" :checked="(bool) $companySettings['telemetryActive']" :aria-label="strip_tags(__('label.send_telemetry'))" />
-                                                <br />
-                                                <small>{!! __('label.telemetry_background') !!}</small>
-                                            </div>
-                                        </div>
+                                        <x-global::forms.field layout="inline" id="telemetryContainer" for="telemetryActive" :label="__('label.send_telemetry')">
+                                            <input type="hidden" name="telemetryToggleShown" value="1" />
+                                            <x-global::forms.checkbox variant="toggle" name="telemetryActive" id="telemetryActive" :checked="(bool) $companySettings['telemetryActive']" aria-describedby="telemetryActive-help" />
+                                            <x-slot:help>{!! __('label.telemetry_background') !!}</x-slot:help>
+                                        </x-global::forms.field>
                                     @endif
                                     <br />
                                     <x-global::elements.section-header icon="fa fa-cog">{!! __('subtitles.defaults') !!}</x-global::elements.section-header>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <x-global::forms.label for="messageFrequency">{!! __('label.messages_frequency') !!}</x-global::forms.label>
-                                        </div>
-                                        <div class="col-md-8">
-                                                            <span class='field'>
-                                                                <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency">
-                                                                    <option value="">--{!! __('label.choose_option') !!}--</option>
-                                                                    <option value="300" @if ($companySettings['messageFrequency'] == '300') selected @endif>{!! __('label.5min') !!}</option>
-                                                                    <option value="900" @if ($companySettings['messageFrequency'] == '900') selected @endif>{!! __('label.15min') !!}</option>
-                                                                    <option value="1800" @if ($companySettings['messageFrequency'] == '1800') selected @endif>{!! __('label.30min') !!}</option>
-                                                                    <option value="3600" @if ($companySettings['messageFrequency'] == '3600') selected @endif>{!! __('label.1h') !!}</option>
-                                                                    <option value="10800" @if ($companySettings['messageFrequency'] == '10800') selected @endif>{!! __('label.3h') !!}</option>
-                                                                    <option value="36000" @if ($companySettings['messageFrequency'] == '36000') selected @endif>{!! __('label.6h') !!}</option>
-                                                                    <option value="43200" @if ($companySettings['messageFrequency'] == '43200') selected @endif>{!! __('label.12h') !!}</option>
-                                                                    <option value="86400" @if ($companySettings['messageFrequency'] == '86400') selected @endif>{!! __('label.24h') !!}</option>
-                                                                    <option value="172800" @if ($companySettings['messageFrequency'] == '172800') selected @endif>{!! __('label.48h') !!}</option>
-                                                                    <option value="604800" @if ($companySettings['messageFrequency'] == '604800') selected @endif>{!! __('label.1w') !!}</option>
-                                                                </x-global::forms.select> <br/>
-                                                                <small style="color: var(--color-text-muted); font-size: var(--font-size-s);">{!! __('label.messages_frequency_company_description') !!}</small>
-                                                            </span>
-                                        </div>
-                                    </div>
+                                    <x-global::forms.field layout="inline" for="messageFrequency" :label="__('label.messages_frequency')" :help="__('label.messages_frequency_company_description')">
+                                        <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency" aria-describedby="messageFrequency-help">
+                                            <option value="">--{!! __('label.choose_option') !!}--</option>
+                                            <option value="300" @if ($companySettings['messageFrequency'] == '300') selected @endif>{!! __('label.5min') !!}</option>
+                                            <option value="900" @if ($companySettings['messageFrequency'] == '900') selected @endif>{!! __('label.15min') !!}</option>
+                                            <option value="1800" @if ($companySettings['messageFrequency'] == '1800') selected @endif>{!! __('label.30min') !!}</option>
+                                            <option value="3600" @if ($companySettings['messageFrequency'] == '3600') selected @endif>{!! __('label.1h') !!}</option>
+                                            <option value="10800" @if ($companySettings['messageFrequency'] == '10800') selected @endif>{!! __('label.3h') !!}</option>
+                                            <option value="36000" @if ($companySettings['messageFrequency'] == '36000') selected @endif>{!! __('label.6h') !!}</option>
+                                            <option value="43200" @if ($companySettings['messageFrequency'] == '43200') selected @endif>{!! __('label.12h') !!}</option>
+                                            <option value="86400" @if ($companySettings['messageFrequency'] == '86400') selected @endif>{!! __('label.24h') !!}</option>
+                                            <option value="172800" @if ($companySettings['messageFrequency'] == '172800') selected @endif>{!! __('label.48h') !!}</option>
+                                            <option value="604800" @if ($companySettings['messageFrequency'] == '604800') selected @endif>{!! __('label.1w') !!}</option>
+                                        </x-global::forms.select>
+                                    </x-global::forms.field>
                                     <br />
                                     <x-global::elements.section-header icon="fa fa-bell">{!! __('label.default_notification_types') !!}</x-global::elements.section-header>
                                     <p>{!! __('label.default_notification_types_description') !!}</p>
@@ -161,15 +134,13 @@
                                             @endif
                                             {{-- What phone notifications show: every push, direct or through the relay. Grayed
                                                  out only where nothing can send to phones (self-hosted without AdvancedAuth). --}}
-                                            <div class="form-group">
-                                                <label for="pushRelayContent">{!! __('label.push_relay_content') !!}</label>
-                                                <x-global::forms.select name="pushRelayContent" id="pushRelayContent" class="form-control" :disabled="! $pushDirectConfigured && ! $pushRelayAvailable">
+                                            <x-global::forms.field for="pushRelayContent" :label="__('label.push_relay_content')" :help="__('label.push_relay_content_description')">
+                                                <x-global::forms.select name="pushRelayContent" id="pushRelayContent" class="form-control" :disabled="! $pushDirectConfigured && ! $pushRelayAvailable" aria-describedby="pushRelayContent-help">
                                                     <option value="full" @if ($pushRelayContent === 'full') selected @endif>{!! __('label.push_relay_content_full') !!}</option>
                                                     <option value="names" @if ($pushRelayContent === 'names') selected @endif>{!! __('label.push_relay_content_names') !!}</option>
                                                     <option value="minimal" @if ($pushRelayContent === 'minimal') selected @endif>{!! __('label.push_relay_content_minimal') !!}</option>
                                                 </x-global::forms.select>
-                                                <small style="color:#888;">{!! __('label.push_relay_content_description') !!}</small>
-                                            </div>
+                                            </x-global::forms.field>
                                         </div>
                                     </div>
                                     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" id="saveBtn" />
