@@ -128,6 +128,13 @@ namespace Unit\app\Core\Support {
 
                 $this->assertSame(['nextcloud:80:192.168.1.5'], $this->handledRequests[0]['options']['curl'][CURLOPT_RESOLVE]);
                 $this->assertFalse(OutboundHttpClient::canPinHost('othername'), 'unlisted single labels stay refused');
+
+                // Numeric spellings cURL treats as IPv4 addresses are refused even when listed.
+                config(['outboundAllowedHosts' => 'nextcloud,2130706433,017700000001,0x7f000001']);
+                $this->assertTrue(OutboundHttpClient::canPinHost('nextcloud'));
+                foreach (['2130706433', '017700000001', '0x7f000001'] as $numericSpelling) {
+                    $this->assertFalse(OutboundHttpClient::canPinHost($numericSpelling), $numericSpelling);
+                }
             } finally {
                 config(['outboundAllowedHosts' => '']);
             }

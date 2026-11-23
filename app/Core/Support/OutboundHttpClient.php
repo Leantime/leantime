@@ -98,7 +98,13 @@ class OutboundHttpClient
             return true;
         }
 
-        return preg_match('/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/', $host) === 1 && OutboundUrlGuard::isAdminAllowedHost($host);
+        // cURL reads an all-digit label ("2130706433", "017700000001") or a hex one ("0x7f000001")
+        // as an IPv4 address, not a name, so the pin would not apply. A name needs a letter
+        // and must not be hex notation.
+        $isPlainLabel = preg_match('/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/', $host) === 1;
+        $looksLikeIpv4 = preg_match('/^[0-9]+$/', $host) === 1 || preg_match('/^0x[0-9a-f]*$/', $host) === 1;
+
+        return $isPlainLabel && ! $looksLikeIpv4 && OutboundUrlGuard::isAdminAllowedHost($host);
     }
 
     /**
