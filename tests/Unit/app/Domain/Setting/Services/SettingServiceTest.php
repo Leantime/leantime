@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Setting\Services;
 
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Notifications\Services\PushRelay;
@@ -266,6 +267,47 @@ class SettingServiceTest extends TestCase
             '"0"' => ['0', '0'],
             'false' => [false, '0'],
             '"false"' => ['false', '0'],
+        ];
+    }
+
+    /**
+     * A value that is not a boolean is rejected before anything is saved: it must neither switch
+     * the suggestions off nor leave the rest of the form half saved.
+     *
+     * @dataProvider invalidEmojiSwitchProvider
+     */
+    public function test_an_invalid_emoji_switch_is_rejected_before_anything_is_saved(mixed $sent): void
+    {
+        $written = [];
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn () => false,
+            'saveSetting' => function ($key, $value) use (&$written) {
+                $written[$key] = $value;
+
+                return true;
+            },
+        ]);
+
+        try {
+            $this->makeService(settingsRepo: $settingsRepo)->saveCompanySettings(
+                ['emojiSuggestions' => $sent, 'name' => 'Acme', 'language' => 'en-US', 'messageFrequency' => 3600]
+            );
+            $this->fail('An invalid value must throw a ValidationException.');
+        } catch (ValidationException $exception) {
+            $this->assertSame([], $written);
+        }
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidEmojiSwitchProvider(): array
+    {
+        return [
+            'a word' => ['enabled'],
+            'a sentence' => ['yes please'],
+            'an array' => [['1']],
+            'null' => [null],
         ];
     }
 
