@@ -90,9 +90,12 @@ class OidcConfig
         }
 
         // openssl reads "file://..." as a path, so a certificate a listener supplies must be the
-        // PEM text itself; anything else would let it read a file on the server.
-        if ($resolved['oidcCertificateString'] !== $fromEnvironment['oidcCertificateString']
-            && ! str_starts_with(ltrim((string) $resolved['oidcCertificateString']), '-----BEGIN ')) {
+        // PEM text itself; anything else would let it read a file on the server. An empty value
+        // is fine: it clears the environment's certificate so the provider's JWKS is used.
+        $listenerCertificate = (string) $resolved['oidcCertificateString'];
+        if ($listenerCertificate !== $fromEnvironment['oidcCertificateString']
+            && $listenerCertificate !== ''
+            && ! str_starts_with(ltrim($listenerCertificate), '-----BEGIN ')) {
             $resolved['oidcCertificateString'] = $fromEnvironment['oidcCertificateString'];
         }
 

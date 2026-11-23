@@ -134,4 +134,19 @@ class OidcConfigTest extends \Unit\TestCase
 
         $this->assertSame($pem, $this->oidcConfig([])->get('oidcCertificateString'));
     }
+
+    public function test_a_listener_can_clear_the_environment_certificate(): void
+    {
+        // Switching to a provider that publishes its keys (JWKS) needs the env certificate gone,
+        // because a certificate is preferred over JWKS.
+        EventDispatcher::add_filter_listener(OidcConfigFilter::class, function (array $config) {
+            $config['oidcCertificateString'] = '';
+
+            return $config;
+        });
+
+        $pem = "-----BEGIN PUBLIC KEY-----\nMIIB\n-----END PUBLIC KEY-----";
+
+        $this->assertSame('', $this->oidcConfig(['oidcCertificateString' => $pem])->get('oidcCertificateString'));
+    }
 }
