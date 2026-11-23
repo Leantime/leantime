@@ -32,13 +32,13 @@ class Queue
      *
      * $summary is the digest's wording for the email, when the producer has it: the item it is
      * about ('group'), its 'title', a short 'line' ("Marcel moved this to Done"), an optional
-     * 'quote' (a comment) and 'url'. The digest shows changes to one item together with it;
+     * 'quote' (a comment), 'url' and 'actor' (who did it). The digest shows changes to one item together with it;
      * without it the row shows its subject and message.
      *
      * @param  array<int, int|string>  $recipients  User ids or email addresses.
      * @param  string|null  $module  The entity's module as the inbox records it, e.g. 'tickets'.
      * @param  int|null  $moduleId  The entity's id as the inbox records it.
-     * @param  array{group?: string, title?: string, line?: string, quote?: string, url?: string, detail?: string}|null  $summary
+     * @param  array{group?: string, title?: string, line?: string, quote?: string, url?: string, detail?: string, actor?: string}|null  $summary
      */
     public function queueMessageToUsers(array $recipients, string $message, string $subject = '', int $projectId = 0, ?string $module = null, ?int $moduleId = null, ?array $summary = null): void
     {

@@ -115,6 +115,7 @@ class ProjectMemberNotifier
                     'title' => $projectName,
                     'line' => $line,
                     'url' => $emailUrl,
+                    'actor' => $actorName,
                 ]
             );
         }

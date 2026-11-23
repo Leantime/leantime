@@ -81,10 +81,10 @@ class PushText
     /**
      * The same wording for the email digest, in parts: the item it is about ('group', so the digest
      * can put several changes to one task together), its name, "who did what", and a comment's
-     * text to quote. Null when this can't word the notification; the digest then shows the
-     * email's own subject and message.
+     * text to quote, and who did it ('actor', so the digest can set the name apart). Null when this
+     * can't word the notification; the digest then shows the email's own subject and message.
      *
-     * @return array{group: string, title: string, line: string, quote: string}|null
+     * @return array{group: string, title: string, line: string, quote: string, actor: string}|null
      */
     public function forEmail(NotificationModel $notification): ?array
     {
@@ -109,6 +109,7 @@ class PushText
                     'title' => $comment['title'],
                     'line' => sprintf($this->language->__('notification.push_commented_names'), $actor),
                     'quote' => $this->snippet((string) ($this->field($notification->entity, 'text') ?? ''), self::QUOTE_LENGTH),
+                    'actor' => $actor,
                 ];
             }
 
@@ -130,6 +131,7 @@ class PushText
                 'title' => $title,
                 'line' => $notification->pushBody ?? sprintf($this->language->__('notification.push_'.$kind.'_'.$verb), $actor),
                 'quote' => '',
+                'actor' => $actor,
             ];
         } catch (\Throwable) {
             return null;
