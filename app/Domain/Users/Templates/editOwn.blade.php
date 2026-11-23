@@ -416,6 +416,10 @@
                             <input type="hidden" name="savenotifications" value="1" />
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
                         </form>
+
+                        <br />
+                        {{-- Morning summary and to-do reminders; saves on its own. --}}
+                        <x-global::hx endpoint="reminders/summarySettings/get" trigger="intersect once" wrapperId="reminderSettingsMount" />
                     </div>
 
                     <div id="webhooks">

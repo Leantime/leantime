@@ -136,6 +136,7 @@
     --interactive-icon-color: #777;
 
     --dark-red: #c41e3a;
+    --color-text-danger: var(--dark-red);
     --dark-red-text-color: #fff;
 
     --red: #d64045;

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
+use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\Contracts\EmitsClientEvent;
@@ -503,6 +504,17 @@ class EventDispatcher implements Dispatcher
      *
      * @throws BindingResolutionException
      */
+    /**
+     * Cache key for a list of discovered domains, stamped with the running Leantime version (as
+     * the view and composer path manifests are). An upgrade that adds a domain changes the
+     * version, so the next request finds the new domain without a cache clear or a database
+     * update; the previous version's entry is simply never read again.
+     */
+    public static function domainCacheKey(string $name): string
+    {
+        return $name.'.'.app()->make(AppSettings::class)->appVersion;
+    }
+
     public static function discoverListeners(): void
     {
         static $discovered;
@@ -514,7 +526,7 @@ class EventDispatcher implements Dispatcher
 
         if ((bool) config('debug') === false) {
 
-            $modules = Cache::store('installation')->rememberForever('domainEvents', function () {
+            $modules = Cache::store('installation')->rememberForever(self::domainCacheKey('domainEvents'), function () {
                 return EventDispatcher::getDomainPaths();
             });
 
