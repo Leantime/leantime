@@ -2602,15 +2602,17 @@ class Tickets extends BaseService
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], strip_tags($values['headline']));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
             [$dueDateChanged, $newDueDate] = $this->dueDateChange($currentTicket, $values);
-            $message = $this->ticketUpdateMessage(
+            $updateLine = fn (bool $forPush): string => $this->ticketUpdateMessage(
                 (string) $values['headline'],
                 (int) $values['projectId'],
                 $currentTicket->status,
                 array_key_exists('status', $submittedValues) ? $values['status'] : null,
                 $dueDateChanged,
                 $newDueDate,
-                $dueDateIsCalendarDate
+                $dueDateIsCalendarDate,
+                forPush: $forPush,
             );
+            $message = $updateLine(false);
 
             $notification = new NotificationModel;
             $notification->url = [
@@ -2624,13 +2626,16 @@ class Tickets extends BaseService
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id') ?? -1;
             $notification->message = $message;
+            $notification->pushBody = $updateLine(true);
+
+            // Change events first, as patch() does: an assignment pushes "assigned to you", and
+            // the project notification below then skips the assignee's phone (Push::markAssigned).
+            $this->dispatchTicketChangeEvents((int) $values['id'], $currentTicket, $values);
 
             $this->projectService->notifyProjectUsers($notification);
 
             TicketUpdated::dispatch(ticketId: (int) $values['id'], legacyHook: __FUNCTION__);
             $this->dispatchSubtasksUpdatedForParents($currentTicket->dependingTicketId ?? 0, $values['dependingTicketId'] ?? 0);
-
-            $this->dispatchTicketChangeEvents((int) $values['id'], $currentTicket, $values);
 
             // Only a status change can stop the timer; an omitted status is the stored one (#3701).
             if (array_key_exists('status', $submittedValues)) {
@@ -2958,21 +2963,23 @@ class Tickets extends BaseService
      * @param  string|null  $newDueDate  The new due date (DB format, UTC), null when removed.
      * @param  bool  $dueDateIsCalendarDate  Whether the due date was written as a calendar date (no time).
      */
-    private function ticketUpdateMessage(string $headline, int $projectId, mixed $previousStatus = null, mixed $newStatus = null, bool $dueDateChanged = false, ?string $newDueDate = null, bool $dueDateIsCalendarDate = false): string
+    private function ticketUpdateMessage(string $headline, int $projectId, mixed $previousStatus = null, mixed $newStatus = null, bool $dueDateChanged = false, ?string $newDueDate = null, bool $dueDateIsCalendarDate = false, bool $forPush = false): string
     {
+        // The push line names the task in its title, so its wording says "this" instead.
+        $key = static fn (string $email, string $push): string => $forPush ? 'notification.'.$push : 'email_notifications.'.$email;
         $actor = (string) session('userdata.name');
         $headline = strip_tags($headline);
 
         if ($newStatus !== null && $newStatus !== '' && (string) $newStatus !== (string) $previousStatus) {
             $label = $this->statusLabelName($projectId, $newStatus);
             if ($label !== null) {
-                return sprintf($this->language->__('email_notifications.todo_status_message'), $actor, $headline, $label);
+                return sprintf($this->language->__($key('todo_status_message', 'push_task_status')), $actor, $headline, $label);
             }
         }
 
         if ($dueDateChanged) {
             if ($newDueDate === null) {
-                return sprintf($this->language->__('email_notifications.todo_due_date_removed_message'), $actor, $headline);
+                return sprintf($this->language->__($key('todo_due_date_removed_message', 'push_task_due_date_removed')), $actor, $headline);
             }
 
             try {
@@ -2985,11 +2992,11 @@ class Tickets extends BaseService
             }
 
             if ($dueDate !== '') {
-                return sprintf($this->language->__('email_notifications.todo_due_date_message'), $actor, $headline, $dueDate);
+                return sprintf($this->language->__($key('todo_due_date_message', 'push_task_due_date')), $actor, $headline, $dueDate);
             }
         }
 
-        return sprintf($this->language->__('email_notifications.todo_update_message'), $actor, $headline);
+        return sprintf($this->language->__($key('todo_update_message', 'push_task_updated')), $actor, $headline);
     }
 
     /**
@@ -4225,15 +4232,17 @@ class Tickets extends BaseService
 
             $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
             $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-            $message = $this->ticketUpdateMessage(
+            $updateLine = fn (bool $forPush): string => $this->ticketUpdateMessage(
                 (string) $ticket->headline,
                 (int) $ticket->projectId,
                 $previousStatus,
                 $statusSet ? $params['status'] : null,
                 $dueDateChanged,
                 $newDueDate,
-                $dueDateIsCalendarDate
+                $dueDateIsCalendarDate,
+                forPush: $forPush,
             );
+            $message = $updateLine(false);
 
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
@@ -4247,6 +4256,7 @@ class Tickets extends BaseService
             $notification->subject = $subject;
             $notification->authorId = session('userdata.id');
             $notification->message = $message;
+            $notification->pushBody = $updateLine(true);
 
             $this->projectService->notifyProjectUsers($notification);
         }
@@ -4489,7 +4499,9 @@ class Tickets extends BaseService
         $notification->entity = $values;
         $notification->module = 'comments';
         $notification->action = 'commented';
-        $notification->projectId = session('currentProject');
+        // The milestone's own project, not the session's: it can be opened from another project.
+        $milestoneProjectId = is_object($milestone) ? (int) ($milestone->projectId ?? 0) : 0;
+        $notification->projectId = $milestoneProjectId > 0 ? $milestoneProjectId : session('currentProject');
         $notification->subject = $subject;
         $notification->authorId = session('userdata.id');
         $notification->message = $message;
@@ -5214,12 +5226,14 @@ class Tickets extends BaseService
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
                 // Only a card whose column changed says where it went; a re-sort keeps the generic line.
-                $message = $this->ticketUpdateMessage(
+                $updateLine = fn (bool $forPush): string => $this->ticketUpdateMessage(
                     (string) $ticket->headline,
                     (int) $ticket->projectId,
                     $previousStatusByTicket[(int) $id] ?? null,
-                    $newStatusByTicket[(int) $id] ?? null
+                    $newStatusByTicket[(int) $id] ?? null,
+                    forPush: $forPush,
                 );
+                $message = $updateLine(false);
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = [
@@ -5233,6 +5247,7 @@ class Tickets extends BaseService
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id') ?? -1;
                 $notification->message = $message;
+                $notification->pushBody = $updateLine(true);
 
                 $this->projectService->notifyProjectUsers($notification);
             }
