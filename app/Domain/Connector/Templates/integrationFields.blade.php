@@ -27,10 +27,22 @@
         return false;
     };
 
-    // Field matched to each column on load, and the columns matched to each field.
+    $preset = $preset ?? null;
+    $suggested = $suggested ?? null;
+    $leftovers = $leftovers ?? [];
+
+    // Field matched to each column on load, and the columns matched to each field. After "Match the
+    // columns for me", the suggestions (preset, usual headings, field names); before, names only.
     $matchedField = [];
     $columnsOf = [];
     foreach ($providerFields as $heading) {
+        if ($suggested !== null) {
+            if (isset($suggested[$heading])) {
+                $matchedField[$heading] = $suggested[$heading];
+                $columnsOf[$suggested[$heading]][] = $heading;
+            }
+            continue;
+        }
         foreach ($leantimeFields as $key => $field) {
             if ($matchesField((string) $heading, (string) $key, $field)) {
                 $matchedField[$heading] = $key;
@@ -61,10 +73,36 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <x-global::elements.section-header as="h4">{{ __('headlines.integration_match_fields') }}</x-global::elements.section-header>
-        <p class="lt-lead">{{ __('text.integration_match_fields') }} {{ $countText }}</p>
+        <x-global::elements.section-header as="h4">
+            {{ __('headlines.integration_match_fields') }}
+            @if ($suggested === null)
+                <x-slot:actions>
+                    <x-global::forms.button tag="a" :link="$provider->stepUrl('fields', $integrationId).'&suggest=1'" contentRole="secondary" leadingVisual="fa fa-wand-magic-sparkles">{{ __('buttons.import_match_for_me') }}</x-global::forms.button>
+                </x-slot:actions>
+            @endif
+        </x-global::elements.section-header>
+
+        @if ($suggested !== null)
+            {{-- Matched after the person asked for it; every match can still be changed. --}}
+            <x-global::feedback.alert tone="info" :title="$preset !== null ? sprintf(__('text.import_matched_preset'), $preset['name']) : __('text.import_matched_for_you')">
+                {{ sprintf(__(count($suggested) === 1 ? 'text.import_matched_count_one' : 'text.import_matched_count'), count($suggested)) }}
+                @if ($preset !== null && ! empty($preset['values']))
+                    {{ sprintf(__('text.import_matched_values'), $preset['name']) }}
+                @endif
+            </x-global::feedback.alert>
+        @elseif ($preset !== null)
+            <x-global::feedback.alert tone="info" :title="sprintf(__('text.import_looks_like'), $preset['name'])">
+                {{ sprintf(__('text.import_looks_like_help'), $preset['name']) }}
+            </x-global::feedback.alert>
+        @endif
+
+        <p class="lt-lead">{{ __('text.integration_match_fields') }} @if ($suggested === null){{ $countText }}@endif</p>
 
         <form id="import-fields-form" method="post" action="{{ $provider->stepUrl('parse', $integrationId) }}">
+            @if ($suggested !== null && $preset !== null)
+                {{-- The check step starts with this tool's value translations, as choices that can be undone. --}}
+                <input type="hidden" name="presetId" value="{{ $preset['id'] }}" />
+            @endif
 
             @if (!empty($importProjects))
                 <div class="lt-import-question">
@@ -97,7 +135,12 @@
                 <tbody>
                 @foreach ($providerFields as $heading)
                     <tr>
-                        <td><strong>{{ $heading }}</strong></td>
+                        <td>
+                            <strong>{{ $heading }}</strong>
+                            @if (in_array(mb_strtolower(\Leantime\Domain\CsvImport\Services\Presets::baseHeading((string) $heading)), $leftovers, true))
+                                <span class="lt-cell-note">{{ __('text.import_column_leftover') }}</span>
+                            @endif
+                        </td>
                         <td class="lt-cell-note">
                             @if (($examples[$heading] ?? '') !== '')
                                 {{ \Illuminate\Support\Str::limit($examples[$heading], 60) }}

@@ -1,0 +1,52 @@
+# Jira's CSV export (Cloud "Export CSV", Data Center "Export Excel CSV"), all fields or current fields.
+# Repeated headings (Labels, Sprint, Comment …) are numbered by the file reader: Labels, Labels (2) …
+id: jira
+name: Jira
+
+# A file is a Jira export when it has at least this share of these headings (case-insensitive).
+recognise:
+  headings: [Summary, Issue key, Issue id, Issue Type, Status, Priority, Assignee, Reporter, Created]
+  minimum: 0.6
+
+# What each row can be imported as.
+entities: [tickets]
+
+# File heading => Leantime field (keys as in LeantimeEntities). A heading matches with or without
+# the reader's numbering, so every Labels column goes to Tags.
+columns:
+  Summary: headline
+  Description: description
+  Issue Type: type
+  Status: status
+  Priority: priority
+  Assignee: editorId
+  Due date: dateToFinish
+  Due Date: dateToFinish
+  Labels: tags
+
+# Cell value => Leantime value, per field (case-insensitive). Statuses go to a kind of status
+# (new, inprogress, done): the import uses the project's own status of that kind. Each
+# translation shows on the check step as a choice the person can undo.
+values:
+  status:
+    To Do: new
+    Open: new
+    Backlog: new
+    Selected for Development: new
+    In Progress: inprogress
+    In Review: inprogress
+    Review: inprogress
+    Done: done
+    Closed: done
+    Resolved: done
+  # Only what Leantime doesn't read already: High, Medium, Low, Lowest and Story, Bug, Task are its own.
+  priority:
+    Highest: 1
+  type:
+    Sub-task: task
+    Subtask: task
+    Epic: task
+
+# Columns Jira exports that the import doesn't use yet, so the matching step can say why.
+# Created isn't here as a column: a new to-do's creation date is always the day it is imported.
+leftovers: [Issue key, Issue id, Sprint, Reporter, Creator, Created, Updated, Resolved, Original estimate, Time Spent, Comment, Watchers, Attachment, Parent, Parent id, Fix versions, Components]

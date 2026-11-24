@@ -88,7 +88,7 @@
 
             {{-- Nothing is chosen until the person picks; the hint says what most files are. --}}
             <div class="lt-import-question">
-            <x-global::forms.field for="leantimeEntities" :label="__('label.import_what_is_each_row')" :help="__('text.import_what_is_each_row')">
+            <x-global::forms.field for="leantimeEntities" :label="__('label.import_what_is_each_row')" :help="($preset ?? null) !== null ? sprintf(__('text.import_what_is_each_row_preset'), $preset['name']) : __('text.import_what_is_each_row')">
                 <x-global::forms.select name="leantimeEntities" id="leantimeEntities" width="md" required aria-describedby="leantimeEntities-help">
                     <option value="" @if ($chosenEntity === '') selected @endif disabled>{{ __('label.import_choose') }}</option>
                     @foreach ($leantimeEntities as $key => $entity)

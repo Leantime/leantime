@@ -9,6 +9,7 @@ use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services\Integrations;
 use Leantime\Domain\CsvImport\Exceptions\ImportFileException;
 use Leantime\Domain\CsvImport\Services\CsvImport as CsvImportService;
+use Leantime\Domain\CsvImport\Services\Presets;
 use Leantime\Domain\Plugins\Services\Plugins;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,14 +34,17 @@ class Preview extends Controller
 
     private Integrations $integrations;
 
+    private Presets $presets;
+
     /**
      * Initializes the controller dependencies.
      */
-    public function init(CsvImportService $csvImport, Plugins $plugins, Integrations $integrations): void
+    public function init(CsvImportService $csvImport, Plugins $plugins, Integrations $integrations, Presets $presets): void
     {
         $this->csvImport = $csvImport;
         $this->plugins = $plugins;
         $this->integrations = $integrations;
+        $this->presets = $presets;
     }
 
     /**
@@ -70,6 +74,8 @@ class Preview extends Controller
         $this->tpl->assign('leantimeEntities', $this->integrations->getAvailableEntities());
         $integration = $this->integrations->get($integrationId);
         $this->tpl->assign('chosenEntity', is_object($integration) ? (string) ($integration->entity ?? '') : '');
+        // A file from a tool Leantime knows: the hint says so (nothing is chosen for the person).
+        $this->tpl->assign('preset', $this->presets->recognise(array_map('strval', $table->headers)));
 
         return $this->tpl->display('csvImport.preview');
     }

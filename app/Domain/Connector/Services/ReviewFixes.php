@@ -9,8 +9,8 @@ use Leantime\Domain\Users\Services\Users;
 
 /**
  * Choices on the check step that change every row with the same value at once: assign
- * "Zed Nobody" to a person, treat "Urgent" as Critical, put the rows of an unknown project into
- * one, set a due date where the file has none. The file itself isn't changed: the choices are
+ * "Zed Nobody" to a person, treat "Urgent" as Critical, treat "Waiting" as an in-progress status,
+ * put the rows of an unknown project into one, set a due date where the file has none. The file itself isn't changed: the choices are
  * applied to the rows before they are reviewed again, and imported with them.
  */
 class ReviewFixes
@@ -28,6 +28,7 @@ class ReviewFixes
         'notification.import_row_project_empty' => 'project',
         'notification.import_row_invalid_priority' => 'priority',
         'notification.import_row_invalid_type' => 'type',
+        Connector::UNKNOWN_STATUS => 'status',
     ];
 
     /** Entities whose empty Assigned To and Due Date cells can be filled in for all rows. */
@@ -148,6 +149,7 @@ class ReviewFixes
                 'projectName' => 'project',
                 'priority' => 'priority',
                 'type' => 'type',
+                'status' => 'status',
                 'dateToFinish' => 'date',
                 default => '',
             };
@@ -241,6 +243,12 @@ class ReviewFixes
             case 'type':
                 foreach (array_diff($this->ticketService->getTicketTypes(), ['subtask']) as $type) {
                     $options[(string) $type] = ucfirst((string) $type);
+                }
+                break;
+            case 'status':
+                // A kind of status: each row gets its own project's status of that kind.
+                foreach (['new', 'inprogress', 'done'] as $kind) {
+                    $options['kind:'.$kind] = $this->language->__('label.import_status_kind_'.$kind);
                 }
                 break;
         }

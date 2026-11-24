@@ -161,6 +161,18 @@ class Connector
     /** @var array<string, array<string, array<string, array<int, int>>>> Fixable problems: column => message key => cell value => row numbers. */
     private array $fixableCells = [];
 
+    /** An unknown status: not a problem (the starting status is used), but a choice on the check step. */
+    public const UNKNOWN_STATUS = 'status_unknown';
+
+    /** Date formats of other tools' exports, tried when the user's format and the standard ones don't fit. */
+    private const EXPORT_DATE_FORMATS = ['d/M/y g:i A', 'd/M/y H:i', 'd/M/y'];
+
+    /** The usual name of each kind of status, preferred when a status is chosen by kind. */
+    private const USUAL_STATUS_NAMES = ['NEW' => 'New', 'INPROGRESS' => 'In Progress', 'DONE' => 'Done'];
+
+    /** @var array<int, array<int|string, mixed>> Status labels by project id. */
+    private array $statusLabelsByProject = [];
+
     /** Row messages one choice can fix for every row with the same value (see ReviewFixes). */
     public const FIXABLE_PROBLEMS = [
         'notification.import_row_unknown_person',
@@ -297,12 +309,17 @@ class Connector
         }
 
         if ($matchingStatusField) {
-            foreach ($values as &$row) {
-                $getStatus = $this->ticketRepository->getStatusIdByName($row[$matchingStatusField], $row['projectId'] ?? null);
+            foreach ($values as $index => &$row) {
+                $cell = trim((string) ($row[$matchingStatusField] ?? ''));
+                $statusId = $this->statusIdFor($cell, isset($row['projectId']) ? (int) $row['projectId'] : null);
                 // An unresolved status stays null: a new ticket then gets its project's NEW status
                 // and an existing ticket keeps its stored status (instead of being forced to 3,
-                // which may not exist in a project with a custom status set).
-                $row['status'] = $getStatus !== false ? $getStatus : null;
+                // which may not exist in a project with a custom status set). It isn't a problem,
+                // but the check step offers to choose what it means.
+                $row['status'] = $statusId;
+                if ($statusId === null && $cell !== '' && ! str_starts_with($cell, 'kind:')) {
+                    $this->fixableCells[$matchingStatusField][self::UNKNOWN_STATUS][$cell][] = $this->rowNumber($index);
+                }
             }
             unset($row);
         }
@@ -1121,14 +1138,20 @@ class Connector
                 if ($value === '') {
                     continue;
                 }
-                // The import reads the same cell, so it gets the value that was checked.
-                $dateRow[$sourceField] = $value;
-
                 try {
                     dtHelper()->parseUserDateTime($value);
                 } catch (\Exception $e) {
-                    $flags[] = $this->cellFlag($sourceField, 'notification.import_row_invalid_date', $this->rowNumber($index), $sourceField, $value);
+                    // Another tool's format (Jira's 01/Dec/26 9:00 AM) becomes a standard date and time.
+                    $exported = self::exportDate($value);
+                    if ($exported === null) {
+                        $flags[] = $this->cellFlag($sourceField, 'notification.import_row_invalid_date', $this->rowNumber($index), $sourceField, $value);
+                    } else {
+                        $value = $exported;
+                    }
                 }
+
+                // The import reads the same cell, so it gets the value that was checked.
+                $dateRow[$sourceField] = $value;
             }
             unset($dateRow);
         }
@@ -1146,6 +1169,73 @@ class Connector
     public static function withoutFractionalSeconds(string $value): string
     {
         return preg_replace('/(T\d{2}:\d{2}:\d{2})\.\d+(?=Z|[+-]\d{2}:?\d{2}|$)/', '$1', $value) ?? $value;
+    }
+
+    /**
+     * A date in one of the export formats other tools use, as Y-m-d H:i:s in the user's timezone,
+     * or null when it is in none of them.
+     */
+    public static function exportDate(string $value): ?string
+    {
+        $timezone = dtHelper()->userNow()->getTimezone();
+        foreach (self::EXPORT_DATE_FORMATS as $format) {
+            try {
+                $date = CarbonImmutable::createFromFormat('!'.$format, $value, $timezone);
+            } catch (\Exception $e) {
+                continue;
+            }
+            $errors = CarbonImmutable::getLastErrors();
+            if ($date instanceof CarbonImmutable && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))) {
+                return $date->format('Y-m-d H:i:s');
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The id of a status in a project: "kind:done" (from a preset or a check-step choice) is the
+     * project's first status of that kind; anything else is a status name, ignoring case.
+     *
+     * @param  string  $value  The cell value.
+     * @param  int|null  $projectId  The row's project.
+     */
+    private function statusIdFor(string $value, ?int $projectId): ?int
+    {
+        if ($value === '' || $projectId === null || $projectId <= 0) {
+            return null;
+        }
+
+        $labels = $this->statusLabelsByProject[$projectId] ??= $this->ticketService->getStatusLabels($projectId);
+
+        if (str_starts_with($value, 'kind:')) {
+            // The status of that kind with the usual name (New, In Progress, Done), else the first
+            // of that kind: in the default set the first in-progress status is Blocked.
+            $kind = strtoupper(substr($value, 5));
+            $usualName = self::USUAL_STATUS_NAMES[$kind] ?? '';
+            $first = null;
+            foreach ($labels as $id => $label) {
+                if (strtoupper((string) ($label['statusType'] ?? '')) !== $kind) {
+                    continue;
+                }
+                $name = (string) ($label['name'] ?? '');
+                if (strcasecmp($name, $usualName) === 0 || strcasecmp($this->language->__($name), $usualName) === 0) {
+                    return (int) $id;
+                }
+                $first ??= (int) $id;
+            }
+
+            return $first;
+        }
+
+        foreach ($labels as $id => $label) {
+            $name = (string) ($label['name'] ?? '');
+            if (strcasecmp($name, $value) === 0 || strcasecmp($this->language->__($name), $value) === 0) {
+                return (int) $id;
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -1,0 +1,16 @@
+# Headings that usually mean a Leantime field, for files no preset recognises. Used only after
+# the person clicks "Match the columns for me"; each field is suggested for one column (Tags for several).
+id: common
+name: ""
+columns:
+  headline: [Title, Name, Task name, Task, Summary, Subject, Card Name, Item]
+  description: [Description, Notes, Details, Card Description]
+  editorId: [Assigned To, Assignee, Owner, Responsible, Assignee Email]
+  dateToFinish: [Due Date, Due, Deadline, Due On, Finish Date, End Date]
+  editFrom: [Start Date, Start]
+  priority: [Priority]
+  status: [Status, State, Stage, Progress]
+  tags: [Tags, Labels]
+  projectName: [Project, Project Name]
+  planHours: [Planned Hours, Estimate, Estimated Hours]
+  type: [Type, Issue Type]

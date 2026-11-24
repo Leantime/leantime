@@ -13,6 +13,7 @@ use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
 use Leantime\Domain\Connector\Services\Providers;
 use Leantime\Domain\Connector\Services\ReviewFixes;
 use Leantime\Domain\Connector\Services\ReviewTable;
+use Leantime\Domain\CsvImport\Services\Presets;
 use Leantime\Domain\Projects\Services\Projects;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -30,6 +31,8 @@ class Integration extends Controller
 
     private ReviewFixes $reviewFixes;
 
+    private Presets $presets;
+
     /** Entities whose rows go into a project, so the matching step offers a project for all rows. */
     private const PROJECT_ENTITIES = ['tickets', 'milestones'];
 
@@ -42,7 +45,8 @@ class Integration extends Controller
         Connector $connectorService,
         Projects $projectService,
         ReviewTable $reviewTable,
-        ReviewFixes $reviewFixes
+        ReviewFixes $reviewFixes,
+        Presets $presets
     ): void {
         $this->providerService = $providerService;
         $this->integrationService = $integrationService;
@@ -50,6 +54,7 @@ class Integration extends Controller
         $this->projectService = $projectService;
         $this->reviewTable = $reviewTable;
         $this->reviewFixes = $reviewFixes;
+        $this->presets = $presets;
     }
 
     /**
@@ -167,6 +172,13 @@ class Integration extends Controller
         $this->tpl->assign('entity', $entity);
         $this->tpl->assign('entityName', $this->integrationService->getAvailableEntities()[$entity]['name'] ?? $entity);
         $this->tpl->assign('guide', $this->connectorService->getEntityGuide($entity));
+
+        // A file from a tool Leantime knows is said so; its matching is only filled in after one click.
+        $preset = $this->presets->recognise(array_map('strval', $providerFields), $entity);
+        $suggest = (bool) $this->incomingRequest->query->get('suggest', false);
+        $this->tpl->assign('preset', $preset);
+        $this->tpl->assign('suggested', $suggest ? $this->presets->suggest(array_map('strval', $providerFields), $this->integrationService->getEntityFields($entity), $preset) : null);
+        $this->tpl->assign('leftovers', array_map('mb_strtolower', (array) ($preset['leftovers'] ?? [])));
         $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields($entity));
         // Rows without a project of their own go into the project chosen here (nothing is pre-selected).
         $this->tpl->assign('importProjects', in_array($entity, self::PROJECT_ENTITIES, true) ? $this->projectsByName() : []);
@@ -186,6 +198,14 @@ class Integration extends Controller
         $fields = $this->connectorService->getFieldMappings($params);
         $projectId = is_numeric($params['importProjectId'] ?? null) ? (int) $params['importProjectId'] : null;
         $entity = (string) session('currentImportEntity');
+        // Matched for the person from a preset: its value translations start as choices they can undo.
+        if (! empty($params['presetId']) && ! isset($params['fixes'])) {
+            $preset = $this->presets->all()[(string) $params['presetId']] ?? null;
+            foreach ($preset !== null ? $this->presets->valueChoices($preset, $fields, $values) : [] as $choice) {
+                $params['fixes'][ReviewFixes::fixKey($choice['column'], $choice['from'])] = $choice;
+            }
+        }
+
         // Choices from the check step change every row with the same value; the file stays as it is.
         $fixes = $this->reviewFixes->fromRequest($params);
         $flags = $this->connectorService->parseValues($fields, $this->reviewFixes->apply($values, $fixes), $entity, $projectId);

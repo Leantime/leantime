@@ -267,7 +267,7 @@ class ConnectorTicketImportTest extends TestCase
         ];
         $values = [
             ['Title' => 'One', 'Project' => 'Website', 'Assignee' => 'ada@example.com', 'Type' => 'Story', 'Created' => '2026-11-01', 'Due' => '2026-12-01'],
-            ['Title' => 'Two', 'Project' => 'Website', 'Assignee' => 'ben@example.com', 'Type' => 'Epic', 'Created' => '2026-11-01', 'Due' => '01/Dec/26 9:00 AM'],
+            ['Title' => 'Two', 'Project' => 'Website', 'Assignee' => 'ben@example.com', 'Type' => 'Epic', 'Created' => '2026-11-01', 'Due' => 'end of next sprint'],
             ['Title' => 'Three', 'Project' => 'Website', 'Assignee' => 'ada@example.com', 'Type' => 'Subtask', 'Created' => '', 'Due' => ''],
         ];
 
@@ -276,7 +276,7 @@ class ConnectorTicketImportTest extends TestCase
 
         $this->assertStringContainsString('notification.import_row_invalid_type|3|Epic|task, story, bug', $joined);
         $this->assertStringContainsString('notification.import_row_invalid_type|4|Subtask|', $joined, 'subtasks need a parent');
-        $this->assertStringContainsString('notification.import_row_invalid_date|3|Due|01/Dec/26 9:00 AM', $joined, 'the second date column is checked too');
+        $this->assertStringContainsString('notification.import_row_invalid_date|3|Due|end of next sprint', $joined, 'the second date column is checked too');
         $this->assertStringContainsString('notification.import_row_assignee_not_on_team|3|ben@example.com|Website', $joined);
         $this->assertStringNotContainsString('|2|', $joined, 'the valid first row is not flagged');
     }
@@ -782,5 +782,42 @@ class ConnectorTicketImportTest extends TestCase
         // The review keeps the rows as it read them: the priority name became its number.
         $this->assertSame('2', $connector->reviewedValues()[1]['Priority']);
         $this->assertSame('1.5', $connector->reviewedValues()[1]['Hours']);
+    }
+
+    public function test_jira_dates_are_read_and_statuses_resolve_by_kind_or_name(): void
+    {
+        $this->assertSame('2026-12-01 09:00:00', Connector::exportDate('01/Dec/26 9:00 AM'));
+        $this->assertSame('2026-12-01 00:00:00', Connector::exportDate('01/Dec/26'));
+        $this->assertNull(Connector::exportDate('end of next sprint'));
+
+        $calls = [];
+        $connector = $this->connector($calls, [
+            // Leantime's default order: Blocked is the first in-progress status, Archived a done one.
+            'getStatusLabels' => fn () => [3 => ['name' => 'New', 'statusType' => 'NEW'], 1 => ['name' => 'Blocked', 'statusType' => 'INPROGRESS'], 4 => ['name' => 'In Progress', 'statusType' => 'INPROGRESS'], -1 => ['name' => 'Archived', 'statusType' => 'DONE'], 0 => ['name' => 'Done', 'statusType' => 'DONE']],
+        ], [
+            'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+            'getProjectIdByName' => fn ($all, $name) => 9,
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $fields = [
+            ['sourceField' => 'Summary', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+            ['sourceField' => 'Status', 'leantimeField' => 'status'],
+            ['sourceField' => 'Due', 'leantimeField' => 'dateToFinish'],
+        ];
+        $flags = $connector->parseValues($fields, [
+            ['Summary' => 'A', 'Project' => 'Website', 'Status' => 'in progress', 'Due' => '01/Dec/26 9:00 AM'],
+            ['Summary' => 'B', 'Project' => 'Website', 'Status' => 'kind:done', 'Due' => ''],
+            ['Summary' => 'C', 'Project' => 'Website', 'Status' => 'Waiting', 'Due' => ''],
+            ['Summary' => 'D', 'Project' => 'Website', 'Status' => 'kind:inprogress', 'Due' => ''],
+        ], 'tickets');
+
+        $this->assertSame([], $flags, 'a Jira date and an unknown status are not problems');
+        $reviewed = $connector->reviewedValues();
+        $this->assertSame([4, 0, null, 4], array_column($reviewed, 'status'), 'a kind takes the status with the usual name, not Blocked or Archived');
+        $this->assertSame('2026-12-01 09:00:00', $reviewed[0]['Due']);
+        // The unknown status is offered as a choice on the check step.
+        $this->assertSame(['Waiting' => [4]], $connector->reviewProblems($flags)['fixable']['Status'][Connector::UNKNOWN_STATUS]);
     }
 }
