@@ -4,6 +4,7 @@ namespace Leantime\Domain\Notifications\Listeners;
 
 use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Notifications\Services\AssignmentNotifier;
+use Leantime\Domain\Notifications\Services\BulkNotifications;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
 
 /**
@@ -16,6 +17,11 @@ class NotifyAssignee
     {
         // Nothing to tell anyone; decided here so the notifier and its repositories aren't even built.
         if ($event->assignedToSelf) {
+            return;
+        }
+
+        // During an import, the assignee hears about it in the import summary instead.
+        if (BulkNotifications::recordAssignment($event)) {
             return;
         }
 

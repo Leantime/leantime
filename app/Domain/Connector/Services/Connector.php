@@ -10,6 +10,7 @@ use Leantime\Domain\Connector\Models\ImportResult;
 use Leantime\Domain\Connector\Repositories\LeantimeEntities;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
 use Leantime\Domain\Ideas\Repositories\Ideas;
+use Leantime\Domain\Notifications\Services\BulkNotifications;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Users\Services\Users;
@@ -746,7 +747,9 @@ class Connector
      * Imports the reviewed rows into the chosen Leantime entity.
      *
      * Every row is attempted. A row that can't be saved is reported with its spreadsheet row
-     * number and the reason; it doesn't stop the rows after it.
+     * number and the reason; it doesn't stop the rows after it. To-do notifications are held
+     * while the rows are saved and sent as one summary per project afterwards (see
+     * BulkNotifications), so an import doesn't notify the team once per row.
      *
      * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
      * @param  array<int, array<string, mixed>>  $values  Rows as returned by the parse step.
@@ -765,7 +768,8 @@ class Connector
         $values = array_values($values);
         $this->rememberSheetRows($values);
 
-        return match ($entity) {
+        // One summary per project instead of a notification per row (see BulkNotifications).
+        return (new BulkNotifications)->hold(fn () => match ($entity) {
             'tickets' => $this->importTickets($finalMappings, $values),
             'projects' => $this->importProjects($finalMappings, $values),
             'users' => $this->importUsers($finalMappings, $values),
@@ -773,7 +777,7 @@ class Connector
             'goals' => $this->importGoals($finalMappings, $values),
             'milestones' => $this->importMilestones($finalMappings, $values),
             default => false,
-        };
+        });
     }
 
     /**
