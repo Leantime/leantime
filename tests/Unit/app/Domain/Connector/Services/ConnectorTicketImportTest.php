@@ -7,6 +7,7 @@ use Leantime\Core\Language;
 use Leantime\Domain\Connector\Models\ImportResult;
 use Leantime\Domain\Connector\Services\Connector;
 use Leantime\Domain\Connector\Services\ReviewedRows;
+use Leantime\Domain\Connector\Services\ReviewFixes;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
 use Leantime\Domain\Ideas\Repositories\Ideas;
 use Leantime\Domain\Projects\Services\Projects;
@@ -547,6 +548,34 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertSame('update', $calls[1][0]);
         $this->assertArrayNotHasKey('editorId', $calls[1][1], 'an update without an Assigned To column keeps its assignee');
         $this->assertArrayNotHasKey('projectId', $calls[1][1], 'an update with an empty Project cell stays in its project');
+    }
+
+    public function test_leave_unassigned_clears_the_assignee_of_an_update_and_an_empty_cell_keeps_it(): void
+    {
+        $calls = [];
+        $connector = $this->connector($calls, [], [
+            'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+            'getProjectIdByName' => fn ($all, $name) => $name === 'Website' ? 9 : false,
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $fields = [
+            ['sourceField' => 'ID', 'leantimeField' => 'id'],
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Assignee', 'leantimeField' => 'editorId'],
+        ];
+        // "Leave unassigned" chosen on the check step for "Zed Nobody" in row 2; row 3's cell is empty.
+        $flags = $connector->parseValues($fields, [
+            ['ID' => '12', 'Title' => 'Was Zed', 'Assignee' => ReviewFixes::EMPTY],
+            ['ID' => '13', 'Title' => 'Empty cell', 'Assignee' => ''],
+        ], 'tickets');
+        $this->assertSame([], $flags);
+
+        $rows = (new ReviewedRows)->load()['values'];
+        $connector->importValues($fields, $rows, 'tickets');
+
+        $this->assertSame(['update', ''], [$calls[0][0], $calls[0][1]['editorId']], '"Leave unassigned" clears the assignee');
+        $this->assertArrayNotHasKey('editorId', $calls[1][1], 'an empty cell on an update keeps the assignee');
     }
 
     public function test_a_milestone_update_without_an_assignee_column_keeps_its_assignee(): void

@@ -60,6 +60,29 @@ class ReviewFixesTest extends TestCase
         $this->assertSame([], $undone);
     }
 
+    public function test_choices_match_the_file_values_so_they_cannot_overwrite_each_other(): void
+    {
+        $fixes = $this->fixes();
+        $chosen = $fixes->fromRequest(['fixes' => [
+            'a' => ['column' => 'Owner', 'from' => 'Zed Nobody', 'to' => ReviewFixes::EMPTY],
+            'b' => ['column' => 'Owner', 'from' => '', 'to' => 'ben@example.com'],
+            'c' => ['column' => 'Priority', 'from' => 'Urgent', 'to' => 'High'],
+            'd' => ['column' => 'Priority', 'from' => 'High', 'to' => '1'],
+        ]]);
+
+        $rows = $fixes->apply([
+            ['Owner' => 'Zed Nobody', 'Priority' => 'Urgent'],
+            ['Owner' => '', 'Priority' => 'High'],
+        ], $chosen);
+
+        $this->assertSame([ReviewFixes::EMPTY, 'ben@example.com'], array_column($rows, 'Owner'), 'Zed stays unassigned; only the empty cell gets Ben');
+        $this->assertSame(['High', '1'], array_column($rows, 'Priority'), 'Urgent becomes High, not Critical');
+
+        // Leaving empty cells empty changes nothing.
+        $rows = $fixes->apply([['Owner' => '']], ['x' => ['column' => 'Owner', 'from' => '', 'to' => ReviewFixes::EMPTY]]);
+        $this->assertSame('', $rows[0]['Owner']);
+    }
+
     public function test_choices_are_offered_per_problem_value_and_for_empty_assignees_and_due_dates(): void
     {
         $fields = [
@@ -85,6 +108,7 @@ class ReviewFixesTest extends TestCase
         $this->assertSame(2, $open['"Zed Nobody" in Assigned To']['rows']);
         $this->assertSame([ReviewFixes::EMPTY => 'label.import_fix_unassigned', 'ben@example.com' => 'Ben Ortiz'], $open['"Zed Nobody" in Assigned To']['options']);
         $this->assertSame(['1' => 'Critical', '2' => 'High'], $open['"Urgent" in Priority']['options']);
+        $this->assertSame(['ben@example.com' => 'Ben Ortiz'], $open['Empty Assigned To']['options'], 'empty cells are already unassigned');
         $this->assertSame(['date', 2], [$open['Empty Due Date']['kind'], $open['Empty Due Date']['rows']]);
 
         // A choice already made is listed with what it changed to, and not offered again.

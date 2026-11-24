@@ -1473,6 +1473,12 @@ class Connector
             }
 
             $person = trim((string) ($row[$column] ?? ''));
+            // "Leave unassigned" chosen on the check step: clear the assignee, on updates too.
+            if ($person === ReviewFixes::EMPTY) {
+                $row['editorId'] = '';
+
+                continue;
+            }
             if ($person === '') {
                 if (! $isUpdate) {
                     $row['editorId'] = '';
