@@ -37,7 +37,7 @@
             @else
                 {{ sprintf(__('label.import_format_csv'), $delimiterNames[$table->delimiter] ?? $table->delimiter) }}
             @endif
-            · {{ sprintf(__('label.import_row_count'), number_format($table->rowCount())) }}
+            · {{ $table->rowCount() === 1 ? __('label.import_row_count_one') : sprintf(__('label.import_row_count'), number_format($table->rowCount())) }}
             · {{ sprintf(__('label.import_heading_row'), $table->headerRow) }}
             · {{ sprintf(__('label.import_column_count'), count($columns)) }}
         </p>
