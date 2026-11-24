@@ -549,6 +549,38 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertArrayNotHasKey('projectId', $calls[1][1], 'an update with an empty Project cell stays in its project');
     }
 
+    public function test_a_milestone_update_without_an_assignee_column_keeps_its_assignee(): void
+    {
+        session(['userdata.id' => 5]);
+        $calls = [];
+        $connector = $this->connector($calls, [
+            'getTicket' => fn ($id) => $this->ticket((int) $id, 'milestone'),
+        ], [
+            'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+            'getProjectIdByName' => fn ($all, $name) => $name === 'Website' ? 9 : false,
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $fields = [
+            ['sourceField' => 'ID', 'leantimeField' => 'id'],
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+            ['sourceField' => 'From', 'leantimeField' => 'editFrom'],
+            ['sourceField' => 'To', 'leantimeField' => 'editTo'],
+        ];
+        $flags = $connector->parseValues($fields, [
+            ['ID' => '', 'Title' => 'Launch', 'Project' => 'Website', 'From' => '2026-12-01', 'To' => '2026-12-05'],
+            ['ID' => '40', 'Title' => 'Renamed', 'Project' => 'Website', 'From' => '2026-12-01', 'To' => '2026-12-05'],
+        ], 'milestones');
+        $this->assertSame([], $flags);
+
+        $connector->importValues($fields, (new ReviewedRows)->load()['values'], 'milestones');
+
+        $this->assertSame(['add', 5], [$calls[0][0], $calls[0][1]['editorId']]);
+        $this->assertSame('update', $calls[1][0]);
+        $this->assertArrayNotHasKey('editorId', $calls[1][1], 'a milestone update without an Assigned To column keeps its assignee');
+    }
+
     public function test_people_are_found_by_email_or_full_name_and_an_empty_cell_leaves_a_new_row_unassigned(): void
     {
         $calls = [];
