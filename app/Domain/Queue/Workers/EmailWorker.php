@@ -2,9 +2,12 @@
 
 namespace Leantime\Domain\Queue\Workers;
 
+use Carbon\CarbonImmutable;
+use Leantime\Core\Http\TrustedAppUrl;
 use Leantime\Core\Language;
 use Leantime\Core\Mailer;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationsRepository;
+use Leantime\Domain\Notifications\Services\FriendlyDate;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -55,6 +58,7 @@ class EmailWorker
         private Language $language,
         private NotificationsRepository $notifications,
         private ?ProjectRepository $projects = null,
+        private ?TrustedAppUrl $trustedAppUrl = null,
     ) {}
 
     /**
@@ -103,7 +107,8 @@ class EmailWorker
 
             $recipient = $theuser['username'];
 
-            $lastMessageDate = strtotime((string) $this->settingsRepo->getSetting('usersettings.'.$theuser['id'].'.lastMessageDate'));
+            $lastSentAt = (string) $this->settingsRepo->getSetting('usersettings.'.$theuser['id'].'.lastMessageDate');
+            $lastMessageDate = strtotime($lastSentAt);
             $timeSince = abs(time() - (int) $lastMessageDate);
 
             if ($timeSince < $this->frequencyFor((int) $theuser['id'])) {
@@ -124,7 +129,10 @@ class EmailWorker
             } else {
                 $this->mailer->setSubject($this->language->__('email_notifications.latest_updates_subject'));
             }
-            $this->mailer->setHtml($this->doFormatMail($new, $seen, (int) $theuser['id']));
+            $this->mailer->setHeadline($this->greeting($theuser));
+            $this->mailer->setFooter($this->footerHtml());
+            $this->mailer->setHtml($this->doFormatMail($new, $seen, (int) $theuser['id'], $lastSentAt));
+            $this->mailer->setText($this->doFormatText($new, $seen, $theuser, $lastSentAt));
 
             $this->mailer->sendMail([$recipient], 'Leantime System');
 
@@ -242,7 +250,7 @@ class EmailWorker
     /**
      * A queued row's summary, decoded; null when it has none or it is unusable.
      *
-     * @return array{group: string, title: string, line: string, quote: string, detail: string, url: string}|null
+     * @return array{group: string, title: string, line: string, quote: string, detail: string, url: string, actor: string, actorId: int}|null
      */
     private static function summary(mixed $json): ?array
     {
@@ -265,48 +273,193 @@ class EmailWorker
             'quote' => is_string($data['quote'] ?? null) ? $data['quote'] : '',
             'detail' => is_string($data['detail'] ?? null) ? $data['detail'] : '',
             'url' => is_string($data['url'] ?? null) ? $data['url'] : '',
+            // Who did it, so the digest can set the name apart and join a comment with the
+            // change that came with it. Rows queued before it existed have none.
+            'actor' => is_string($data['actor'] ?? null) ? $data['actor'] : '',
+            // The name is only a first name; the id decides whether two lines are the same person's.
+            'actorId' => is_int($data['actorId'] ?? null) ? $data['actorId'] : 0,
         ];
     }
 
     /**
-     * The digest body: what's new, grouped by item, then, when there are any, the seen items
-     * as one line each.
+     * The digest body: a headline and what it covers, what's new grouped by item, then, when there
+     * are any, the seen items as one line each, and one button into Leantime.
      *
      * @param  array<string, array<string, mixed>>  $new
      * @param  array<string, array<string, mixed>>  $seen
      */
-    private function doFormatMail(array $new, array $seen, int $userId = 0): string
+    private function doFormatMail(array $new, array $seen, int $userId = 0, string $lastSentAt = ''): string
     {
         $timezone = $this->timezoneFor($userId);
+        $locale = $this->localeFor($userId);
+        $now = CarbonImmutable::now($timezone);
 
-        $outputHTML = '<h1 style="margin: 0 0 4px; font-size: 22px; line-height: 1.3; font-weight: 700; color: #1f2933;">'
+        $outputHTML = '<h1 style="margin: 0 0 4px; font-size: 22px; line-height: 1.3; font-weight: 700; color: '.self::TEXT.';">'
             .$this->e($this->language->__('email_notifications.digest_title')).'</h1>';
-        $outputHTML .= '<p style="margin: 0 0 16px; font-size: 14px; line-height: 1.5; color: #52606d;">'
-            .$this->e($this->language->__('email_notifications.digest_intro')).'</p>';
+        $outputHTML .= '<p style="margin: 0 0 16px; font-size: 15px; line-height: 1.5; color: '.self::MUTED.';">'
+            .$this->e($this->sinceLine($lastSentAt, $timezone, $locale, $now)).'</p>';
 
         if ($seen !== []) {
-            $outputHTML .= '<h3 style="margin: 12px 0 3px 0; font-size: 14px;">'.$this->language->__('email_notifications.digest_new_heading').'</h3>';
+            $outputHTML .= '<h3 style="margin: 12px 0 3px 0; font-size: 15px; color: '.self::TEXT.';">'.$this->e($this->language->__('email_notifications.digest_new_heading')).'</h3>';
         }
 
         foreach ($this->groups($new) as $group) {
-            $outputHTML .= $this->formatGroup($group, $timezone);
+            $outputHTML .= $this->formatGroup($group, $timezone, $locale, $now);
         }
 
         if ($seen !== []) {
-            $outputHTML .= '<h3 style="margin: 18px 0 0 0; font-size: 14px; color: #52606d;">'.$this->language->__('email_notifications.digest_seen_heading').'</h3>';
-            $outputHTML .= '<p style="margin: 0 0 3px 0; color: #52606d; font-size: 12px;">'.$this->language->__('email_notifications.digest_seen_hint').'</p>';
+            $outputHTML .= '<h3 style="margin: 18px 0 0 0; font-size: 15px; color: '.self::MUTED.';">'.$this->e($this->language->__('email_notifications.digest_seen_heading')).'</h3>';
+            $outputHTML .= '<p style="margin: 0 0 3px 0; color: '.self::MUTED.'; font-size: 14px;">'.$this->e($this->language->__('email_notifications.digest_seen_hint')).'</p>';
             foreach ($seen as $chunk) {
                 // One quiet line: when, and what it was about. Plain text; the body, with its
                 // link, stays out.
                 $what = $chunk['summary'] !== null ? $chunk['summary']['title'].' · '.$chunk['summary']['line'] : strip_tags((string) $chunk['subject']);
-                $outputHTML .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid #e4e7eb;"><tr>'
-                    .'<td style="padding: 6px 0; color: #52606d; font-size: 12px;">'.$this->e($what).'</td>'
-                    .'<td style="padding: 6px 0 6px 12px; color: #52606d; font-size: 12px; white-space: nowrap; text-align: right;">'.$this->e($this->localTime((string) $chunk['thedate'], $timezone)).'</td>'
+                $outputHTML .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid '.self::RULE.';"><tr>'
+                    .'<td style="padding: 6px 0; color: '.self::MUTED.'; font-size: 14px;">'.$this->e($what).'</td>'
+                    .'<td style="padding: 6px 0 6px 12px; color: '.self::MUTED.'; font-size: 14px; white-space: nowrap; text-align: right;">'.$this->e($this->when((string) $chunk['thedate'], $timezone, $locale, $now)).'</td>'
                     .'</tr></table>';
             }
         }
 
+        $openUrl = $this->openUrl();
+        if ($openUrl !== '') {
+            $color = $this->e($this->accentColor());
+            $outputHTML .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin-top: 24px;"><tr><td style="border-radius: 8px; background: '.$color.';">'
+                .'<a href="'.$this->e($openUrl).'" style="display: inline-block; padding: 13px 22px; font-size: 16px; line-height: 20px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">'
+                .$this->e($this->language->__('email_notifications.digest_open_leantime')).'</a>'
+                .'</td></tr></table>';
+        }
+
         return $outputHTML;
+    }
+
+    /**
+     * The plain-text part: the same content and grouping as the HTML, without the initials.
+     *
+     * @param  array<string, array<string, mixed>>  $new
+     * @param  array<string, array<string, mixed>>  $seen
+     * @param  array<string, mixed>  $user
+     */
+    private function doFormatText(array $new, array $seen, array $user, string $lastSentAt = ''): string
+    {
+        $userId = (int) ($user['id'] ?? 0);
+        $timezone = $this->timezoneFor($userId);
+        $locale = $this->localeFor($userId);
+        $now = CarbonImmutable::now($timezone);
+
+        $lines = [
+            $this->greetingText($user),
+            '',
+            $this->language->__('email_notifications.digest_title'),
+            $this->sinceLine($lastSentAt, $timezone, $locale, $now),
+        ];
+
+        foreach ($this->groups($new) as $group) {
+            $lines[] = '';
+            $first = $group['rows'][0];
+            if ($first['summary'] === null) {
+                $lines[] = strip_tags((string) $first['subject']).' · '.$this->when((string) $first['thedate'], $timezone, $locale, $now);
+                $lines[] = $this->plainText((string) $first['message']);
+
+                continue;
+            }
+
+            $project = $this->projectName((int) $first['projectId']);
+            if ($project !== '') {
+                $lines[] = mb_strtoupper($project);
+            }
+            $newest = $group['rows'][count($group['rows']) - 1];
+            $lines[] = $newest['summary']['title'];
+            $url = $this->groupUrl($group);
+            if ($url !== '') {
+                $lines[] = $url;
+            }
+            foreach ($this->events($group['rows']) as $event) {
+                $lines[] = '- '.$event['line'].' · '.$this->when($event['thedate'], $timezone, $locale, $now);
+                if ($event['detail'] !== '') {
+                    $lines[] = '  '.$event['detail'];
+                }
+                if ($event['quote'] !== '') {
+                    $lines[] = '  "'.$event['quote'].'"';
+                }
+            }
+        }
+
+        if ($seen !== []) {
+            $lines[] = '';
+            $lines[] = $this->language->__('email_notifications.digest_seen_heading');
+            foreach ($seen as $chunk) {
+                $what = $chunk['summary'] !== null ? $chunk['summary']['title'].' · '.$chunk['summary']['line'] : strip_tags((string) $chunk['subject']);
+                $lines[] = '- '.$what.' · '.$this->when((string) $chunk['thedate'], $timezone, $locale, $now);
+            }
+        }
+
+        $openUrl = $this->openUrl();
+        if ($openUrl !== '') {
+            $lines[] = '';
+            $lines[] = $this->language->__('email_notifications.digest_open_leantime').': '.$openUrl;
+        }
+        $settingsUrl = $this->settingsUrl();
+        if ($settingsUrl !== '') {
+            $lines[] = '';
+            $lines[] = sprintf($this->language->__('email_notifications.digest_footer_text'), $settingsUrl);
+        }
+
+        return implode("\n", $lines)."\n";
+    }
+
+    /**
+     * An email's HTML message as plain text, keeping where its links go: "Click here
+     * (https://…)", since the plain-text part has no other way to open the item.
+     */
+    private function plainText(string $html): string
+    {
+        $withTargets = preg_replace_callback(
+            '/<a\s[^>]*href\s*=\s*(["\'])(.*?)\1[^>]*>(.*?)<\/a>/is',
+            static function (array $m): string {
+                $text = trim(strip_tags($m[3]));
+                $url = html_entity_decode($m[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+                return $text !== '' && $text !== $url ? $text.' ('.$url.')' : $url;
+            },
+            $html
+        ) ?? $html;
+
+        return trim(html_entity_decode(strip_tags($withTargets), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    }
+
+    /** "Hi Gloria," with the person's first name, else the standard greeting. Escaped HTML. */
+    private function greeting(array $user): string
+    {
+        return $this->e($this->greetingText($user));
+    }
+
+    /** @param  array<string, mixed>  $user */
+    private function greetingText(array $user): string
+    {
+        $first = trim(strip_tags((string) ($user['firstname'] ?? '')));
+
+        return $first !== ''
+            ? sprintf($this->language->__('email_notifications.digest_greeting'), $first)
+            : trim($this->language->__('email_notifications.hi'));
+    }
+
+    /** Under the email: when it comes, and where to change it. Null when no link can be built. */
+    private function footerHtml(): ?string
+    {
+        $settingsUrl = $this->settingsUrl();
+
+        return $settingsUrl === '' ? null : sprintf($this->language->__('email_notifications.digest_footer'), $this->e($settingsUrl));
+    }
+
+    /** "What changed since your last email (Saturday 9:00 PM)." or, without one, the general intro. */
+    private function sinceLine(string $lastSentAt, \DateTimeZone $timezone, string $locale, CarbonImmutable $now): string
+    {
+        $when = $lastSentAt !== '' ? $this->when($lastSentAt, $timezone, $locale, $now) : '';
+
+        return $when !== ''
+            ? sprintf($this->language->__('email_notifications.digest_since'), $when)
+            : $this->language->__('email_notifications.digest_intro');
     }
 
     /**
@@ -314,6 +467,22 @@ class EmailWorker
      * raise the same notification twice); further apart, they are separate changes.
      */
     private const SAME_SAVE_SECONDS = 120;
+
+    /**
+     * A comment and a change by the same person this close together read as one event: "Marcel
+     * commented and moved this to Done".
+     */
+    private const MERGE_SECONDS = 300;
+
+    /** Text colours. Each is at least 4.5:1 on white and on the light grey of a quoted comment. */
+    private const TEXT = '#1f2328';
+
+    private const MUTED = '#4b5563';
+
+    private const RULE = '#e3e6ea';
+
+    /** Links and the button fall back to this when the company colour is too light to read. */
+    private const ACCENT_FALLBACK = '#00607d';
 
     /**
      * Project names looked up during one handleQueue() run, by project id.
@@ -370,71 +539,234 @@ class EmailWorker
     }
 
     /**
-     * One item: its project and name, a line per change with its time, a quoted comment under
-     * its line, and one button. A row without a summary shows its subject and message as before.
+     * One item: its project, its name as a link, and a line per change (who in bold, what, when),
+     * with a change's details and a quoted comment under its line. A comment and a change by the
+     * same person moments apart are one line. A row without a summary shows its subject and
+     * message as before.
      *
      * @param  array{rows: array<int, array<string, mixed>>, latest: string}  $group
      */
-    private function formatGroup(array $group, \DateTimeZone $timezone): string
+    private function formatGroup(array $group, \DateTimeZone $timezone, string $locale, CarbonImmutable $now): string
     {
         $first = $group['rows'][0];
-        $html = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid #e4e7eb;"><tr><td style="padding: 18px 0;">';
+        $html = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid '.self::RULE.';"><tr><td style="padding: 20px 0 14px;">';
 
         if ($first['summary'] === null) {
-            $html .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
-                .'<td style="font-size: 15px; font-weight: 600; line-height: 1.4; color: #1f2933;">'.$this->e(strip_tags((string) $first['subject'])).'</td>'
-                .'<td style="padding-left: 12px; font-size: 13px; color: #52606d; white-space: nowrap; text-align: right; vertical-align: top;">'.$this->e($this->localTime((string) $first['thedate'], $timezone)).'</td>'
-                .'</tr></table>';
-            $html .= '<div style="margin-top: 6px; font-size: 15px; line-height: 1.5; color: #1f2933;">'.$first['message'].'</div>';
+            $html .= '<div style="font-size: 16px; font-weight: 600; line-height: 1.4; color: '.self::TEXT.';">'.$this->e(strip_tags((string) $first['subject']))
+                .' <span style="font-size: 15px; font-weight: 400; color: '.self::MUTED.';">&middot; '.$this->e($this->when((string) $first['thedate'], $timezone, $locale, $now)).'</span></div>';
+            $html .= '<div style="margin-top: 6px; font-size: 15px; line-height: 1.5; color: '.self::TEXT.';">'.$first['message'].'</div>';
 
             return $html.'</td></tr></table>';
         }
 
         $project = $this->projectName((int) $first['projectId']);
         if ($project !== '') {
-            $html .= '<div style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #52606d;">'.$this->e($project).'</div>';
+            $html .= '<div style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: '.self::MUTED.';">'.$this->e($project).'</div>';
         }
-        // The item's name as of its newest change (it may have been renamed); the lines below
-        // stay oldest first.
-        $newest = $group['rows'][count($group['rows']) - 1];
-        $html .= '<div style="margin: 2px 0 10px; font-size: 17px; font-weight: 600; line-height: 1.35; color: #1f2933;">'.$this->e($newest['summary']['title']).'</div>';
 
-        // One row per event: a bullet, the line with its details indented under it (a due date,
-        // a quoted comment), and the time. The details belong to their line, not the next one.
-        $url = '';
+        // The item's name as of its newest change (it may have been renamed), as the link to it;
+        // the lines below stay oldest first.
+        $newest = $group['rows'][count($group['rows']) - 1];
+        $title = $this->e($newest['summary']['title']);
+        $url = $this->groupUrl($group);
+        $titleStyle = 'font-size: 18px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; word-break: break-word;';
+        $html .= '<div style="margin: 2px 0 10px;">'
+            .($url !== ''
+                ? '<a href="'.$this->e($url).'" style="'.$titleStyle.' color: '.$this->e($this->accentColor()).'; text-decoration: underline;">'.$title.'</a>'
+                : '<span style="'.$titleStyle.' color: '.self::TEXT.';">'.$title.'</span>')
+            .'</div>';
+
         $html .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">';
-        foreach ($group['rows'] as $row) {
-            $summary = $row['summary'];
+        foreach ($this->events($group['rows']) as $event) {
             $html .= '<tr>'
-                .'<td width="16" style="width: 16px; padding: 4px 0; font-size: 15px; line-height: 1.5; color: #9aa5b1; vertical-align: top;">&bull;</td>'
-                .'<td style="padding: 4px 0; vertical-align: top;">'
-                .'<div style="font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['line']).'</div>';
-            if ($summary['detail'] !== '') {
-                $html .= '<div style="font-size: 14px; line-height: 1.5; color: #52606d;">'.$this->e($summary['detail']).'</div>';
+                // The initial is decoration: the name is in the line next to it.
+                .'<td width="38" aria-hidden="true" style="width: 38px; padding: 6px 0; vertical-align: top;">'
+                .'<div style="width: 28px; height: 28px; border-radius: 14px; background: #dbe7ee; color: '.self::TEXT.'; font-size: 13px; font-weight: 700; line-height: 28px; text-align: center;">'.$this->e($event['initial']).'</div>'
+                .'</td>'
+                .'<td style="padding: 9px 0 6px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">'
+                .'<div style="font-size: 15px; line-height: 1.45; color: '.self::TEXT.';">'.$this->eventLineHtml($event)
+                .' <span style="color: '.self::MUTED.';">&middot; '.$this->e($this->when($event['thedate'], $timezone, $locale, $now)).'</span></div>';
+            if ($event['detail'] !== '') {
+                $html .= '<div style="font-size: 15px; line-height: 1.5; color: '.self::MUTED.';">'.$this->e($event['detail']).'</div>';
             }
-            if ($summary['quote'] !== '') {
-                $html .= '<div style="margin: 4px 0 2px; padding: 10px 14px; background: #f5f7fa; border-radius: 8px; font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['quote']).'</div>';
+            if ($event['quote'] !== '') {
+                $html .= '<div style="margin: 6px 0 2px; padding: 10px 12px; background: #f1f3f5; border-radius: 8px; font-size: 15px; line-height: 1.5; color: '.self::TEXT.'; overflow-wrap: anywhere; word-break: break-word;">'.$this->e($event['quote']).'</div>';
             }
-            $html .= '</td>'
-                .'<td style="padding: 4px 0 4px 12px; font-size: 13px; line-height: 1.5; color: #52606d; white-space: nowrap; text-align: right; vertical-align: top;">'.$this->e($this->localTime((string) $row['thedate'], $timezone)).'</td>'
-                .'</tr>';
-            if ($summary['url'] !== '') {
-                $url = $summary['url'];
-            }
+            $html .= '</td></tr>';
         }
         $html .= '</table>';
 
-        if ($url !== '') {
-            $label = str_starts_with($first['summary']['group'], 'tickets:')
-                ? $this->language->__('email_notifications.digest_open_task')
-                : $this->language->__('email_notifications.digest_open');
-            $color = $this->e($this->brandColor());
-            $html .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin-top: 12px;"><tr><td style="border-radius: 8px; background: '.$color.';">'
-                .'<a href="'.$this->e($url).'" style="display: inline-block; padding: 11px 18px; font-size: 14px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">'.$this->e($label).'</a>'
-                .'</td></tr></table>';
+        return $html.'</td></tr></table>';
+    }
+
+    /**
+     * An item's rows as events, oldest first: a comment and a change by the same person within
+     * {@see MERGE_SECONDS} of each other become one ("commented and moved this to Done"), with the
+     * comment quoted under it.
+     *
+     * @param  array<int, array<string, mixed>>  $rows  Rows with a summary, oldest first.
+     * @return array<int, array{actor: string, line: string, detail: string, quote: string, thedate: string, initial: string}>
+     */
+    private function events(array $rows): array
+    {
+        $events = [];
+        $count = count($rows);
+        for ($i = 0; $i < $count; $i++) {
+            $row = $rows[$i];
+            $next = $rows[$i + 1] ?? null;
+            if ($next !== null && $this->joins($row, $next)) {
+                $actor = $row['summary']['actor'];
+                $events[] = $this->event(
+                    $actor,
+                    $actor.' '.sprintf(
+                        $this->language->__('email_notifications.digest_and'),
+                        $this->afterActor($row['summary']['line'], $actor),
+                        $this->afterActor($next['summary']['line'], $actor)
+                    ),
+                    trim($row['summary']['detail'].' '.$next['summary']['detail']),
+                    $row['summary']['quote'] !== '' ? $row['summary']['quote'] : $next['summary']['quote'],
+                    (string) $next['thedate'],
+                );
+                $i++;
+
+                continue;
+            }
+
+            $events[] = $this->event(
+                $row['summary']['actor'],
+                $row['summary']['line'],
+                $row['summary']['detail'],
+                $row['summary']['quote'],
+                (string) $row['thedate'],
+            );
         }
 
-        return $html.'</td></tr></table>';
+        return $events;
+    }
+
+    /** Whether two neighbouring rows are a comment and a change by the same person (by id), moments apart. */
+    private function joins(array $a, array $b): bool
+    {
+        $actor = $a['summary']['actor'];
+        // The same person by id, not just the same first name; rows without an id stay apart.
+        if ($a['summary']['actorId'] <= 0 || $a['summary']['actorId'] !== $b['summary']['actorId']) {
+            return false;
+        }
+        if ($actor === '' || $actor !== $b['summary']['actor']) {
+            return false;
+        }
+        // Only when both lines start with the name, so joining them reads correctly.
+        if (! str_starts_with($a['summary']['line'], $actor.' ') || ! str_starts_with($b['summary']['line'], $actor.' ')) {
+            return false;
+        }
+        // Exactly one of the two is a comment.
+        if (($a['summary']['quote'] !== '') === ($b['summary']['quote'] !== '')) {
+            return false;
+        }
+        $at = $this->utc((string) $a['thedate'])?->getTimestamp();
+        $bt = $this->utc((string) $b['thedate'])?->getTimestamp();
+
+        return $at !== null && $bt !== null && abs($bt - $at) <= self::MERGE_SECONDS;
+    }
+
+    /** @return array{actor: string, line: string, detail: string, quote: string, thedate: string, initial: string} */
+    private function event(string $actor, string $line, string $detail, string $quote, string $thedate): array
+    {
+        $source = $actor !== '' ? $actor : $line;
+
+        return [
+            'actor' => $actor,
+            'line' => $line,
+            'detail' => $detail,
+            'quote' => $quote,
+            'thedate' => $thedate,
+            'initial' => mb_strtoupper(mb_substr(trim($source), 0, 1)),
+        ];
+    }
+
+    /** The line with the person's name in bold when it starts with it. Escaped HTML. */
+    private function eventLineHtml(array $event): string
+    {
+        $actor = $event['actor'];
+        if ($actor !== '' && str_starts_with($event['line'], $actor.' ')) {
+            return '<strong style="font-weight: 600;">'.$this->e($actor).'</strong>'.$this->e(substr($event['line'], strlen($actor)));
+        }
+
+        return $this->e($event['line']);
+    }
+
+    private function afterActor(string $line, string $actor): string
+    {
+        return trim(substr($line, strlen($actor)));
+    }
+
+    /** The newest link any of an item's rows carries; '' when none does. */
+    private function groupUrl(array $group): string
+    {
+        $url = '';
+        foreach ($group['rows'] as $row) {
+            if ($row['summary'] !== null && $row['summary']['url'] !== '') {
+                $url = $row['summary']['url'];
+            }
+        }
+
+        return $url;
+    }
+
+    /**
+     * The company colour for links and the button, unless white text on it (or it on white) would
+     * be under 4.5:1; then a dark teal that passes.
+     */
+    private function accentColor(): string
+    {
+        $color = $this->brandColor();
+
+        return self::contrastWithWhite($color) >= 4.5 ? $color : self::ACCENT_FALLBACK;
+    }
+
+    /** WCAG contrast ratio between a #rgb / #rrggbb colour and white. */
+    private static function contrastWithWhite(string $hex): float
+    {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        if (strlen($hex) < 6) {
+            return 0.0;
+        }
+        $channel = static function (string $pair): float {
+            $c = hexdec($pair) / 255;
+
+            return $c <= 0.03928 ? $c / 12.92 : (($c + 0.055) / 1.055) ** 2.4;
+        };
+        $luminance = 0.2126 * $channel(substr($hex, 0, 2)) + 0.7152 * $channel(substr($hex, 2, 2)) + 0.0722 * $channel(substr($hex, 4, 2));
+
+        return 1.05 / ($luminance + 0.05);
+    }
+
+    /** The app's home, for the one button; '' when no trusted URL is known. */
+    private function openUrl(): string
+    {
+        $base = $this->appUrl();
+
+        return $base === '' ? '' : Mailer::notificationEmailUrl($base.'/dashboard/home', 'latest_updates');
+    }
+
+    /** The person's notification settings; '' when no trusted URL is known. */
+    private function settingsUrl(): string
+    {
+        $base = $this->appUrl();
+
+        return $base === '' ? '' : Mailer::notificationEmailUrl($base.'/users/editOwn#notifications', 'latest_updates');
+    }
+
+    private function appUrl(): string
+    {
+        try {
+            return rtrim(($this->trustedAppUrl ?? app(TrustedAppUrl::class))->forLinks(), '/');
+        } catch (\Throwable) {
+            return '';
+        }
     }
 
     /** The company's primary colour, as the email around the digest uses it (Mailer). Once per run. */
@@ -478,18 +810,52 @@ class EmailWorker
         }
     }
 
-    /** "12:09 PM" today in the person's time zone, "Nov 16, 4:02 PM" on another day. */
-    private function localTime(string $utc, \DateTimeZone $timezone): string
+    /**
+     * A UTC database time as the person would say it, in their time zone: "4:02 PM" today,
+     * "Yesterday 4:02 PM", "Saturday 9:00 PM" within the week, else "Fri, Nov 14, 4:02 PM".
+     */
+    private function when(string $utc, \DateTimeZone $timezone, string $locale, CarbonImmutable $now): string
     {
         $at = $this->utc($utc);
         if ($at === null) {
             return '';
         }
 
-        $local = $at->setTimezone($timezone);
-        $today = (new \DateTimeImmutable('now', $timezone))->format('Y-m-d');
+        try {
+            return FriendlyDate::when(
+                CarbonImmutable::instance($at)->setTimezone($timezone),
+                $now,
+                $locale,
+                $this->language->__('email_notifications.digest_yesterday')
+            );
+        } catch (\Throwable) {
+            return $at->setTimezone($timezone)->format('M j, g:i A');
+        }
+    }
 
-        return $local->format('Y-m-d') === $today ? $local->format('g:i A') : $local->format('M j, g:i A');
+    /** The person's language for day names, else the instance default, else English. */
+    private function localeFor(int $userId): string
+    {
+        $candidates = [
+            $userId > 0 ? $this->settingsRepo->getSetting('usersettings.'.$userId.'.language') : null,
+            $this->defaultLanguage(),
+        ];
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && preg_match('/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/', $candidate) === 1) {
+                return $candidate;
+            }
+        }
+
+        return 'en-US';
+    }
+
+    private function defaultLanguage(): ?string
+    {
+        try {
+            return (string) app(\Leantime\Core\Configuration\Environment::class)->language;
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     private function projectName(int $projectId): string

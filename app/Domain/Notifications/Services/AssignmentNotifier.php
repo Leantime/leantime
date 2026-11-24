@@ -127,6 +127,8 @@ class AssignmentNotifier
                     'line' => sprintf($this->language->__('notification.push_assigned_body'), $actorName),
                     'detail' => $this->dueText($ticket->dateToFinish, $event->assigneeId),
                     'url' => $emailUrl,
+                    'actor' => $actorName,
+                    'actorId' => $actorId,
                 ]
             );
         }

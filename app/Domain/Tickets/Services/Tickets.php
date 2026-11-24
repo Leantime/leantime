@@ -23,6 +23,7 @@ use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+use Leantime\Domain\Notifications\Services\FriendlyDate;
 use Leantime\Domain\Projects\Permissions\ProjectsPermissions;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -2944,6 +2945,16 @@ class Tickets extends BaseService
         return [$previous !== $new, $new];
     }
 
+    /** The author's language for day names; English when it can't be read. */
+    private function authorLanguage(): string
+    {
+        try {
+            return $this->language->getCurrentLanguage();
+        } catch (\Throwable) {
+            return 'en-US';
+        }
+    }
+
     /**
      * The notification line for a ticket write. Says what changed when it is something people
      * act on: "Sam moved 'X' to Approved" for a status change, "Sam changed the due date of 'X'
@@ -2983,10 +2994,16 @@ class Tickets extends BaseService
             }
 
             try {
-                $dueDate = $dueDateIsCalendarDate
+                $day = $dueDateIsCalendarDate
                     // The same calendar day, placed in the author's timezone so formatting doesn't shift it.
-                    ? CarbonImmutable::createFromFormat('!Y-m-d', substr($newDueDate, 0, 10), dtHelper()->userNow()->getTimezone())->formatDateForUser()
-                    : dtHelper()->parseDbDateTime($newDueDate)->formatDateForUser();
+                    ? CarbonImmutable::createFromFormat('!Y-m-d', substr($newDueDate, 0, 10), dtHelper()->userNow()->getTimezone())
+                    // A timed due date, stored in UTC, in the author's timezone (as formatDateForUser shows it).
+                    : dtHelper()->parseDbDateTime($newDueDate)->setTimezone(dtHelper()->userNow()->getTimezone());
+                // The push and the digest say the day the way people do ("Fri, Nov 28"); the
+                // email keeps the date format the author chose.
+                $dueDate = $forPush
+                    ? FriendlyDate::day($day, dtHelper()->userNow(), $this->authorLanguage())
+                    : $day->formatDateForUser();
             } catch (\Throwable) {
                 $dueDate = '';
             }
