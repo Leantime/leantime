@@ -5,6 +5,7 @@ namespace Unit\app\Domain\Notifications\Services;
 use Leantime\Core\Language;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Notifications\Services\BulkNotifications;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
@@ -46,16 +47,23 @@ class BulkNotificationsTest extends TestCase
                     ? $index.'|%1$s'
                     : $index.'|%1$s|%2$s|%3$s',
             ]),
+            // Stored people of to-dos updated without their assignee in the row.
+            $this->make(ProjectRepository::class, [
+                'getTicketPeopleIds' => fn (int $ticketId) => $ticketId === 6 ? [12, 13] : [],
+            ]),
         );
     }
 
-    private function saved(int $id, mixed $status, string $action = 'created', int $projectId = 9, string $type = 'task'): Notification
+    /**
+     * @param  array<string, mixed>  $extra  More entity values (editorId, userId, collaborators).
+     */
+    private function saved(int $id, mixed $status, string $action = 'created', int $projectId = 9, string $type = 'task', array $extra = []): Notification
     {
         $notification = new Notification;
         $notification->module = 'tickets';
         $notification->action = $action;
         $notification->projectId = $projectId;
-        $notification->entity = ['id' => $id, 'status' => $status, 'type' => $type, 'projectId' => $projectId];
+        $notification->entity = ['id' => $id, 'status' => $status, 'type' => $type, 'projectId' => $projectId] + $extra;
 
         return $notification;
     }
@@ -84,7 +92,8 @@ class BulkNotificationsTest extends TestCase
         $this->assertSame(9, $summary->projectId);
         $this->assertSame('email_notifications.import_todos_subject|Ada|2|Project 9', $summary->subject);
         $this->assertStringContainsString('email_notifications.import_closed_note|2', $summary->message);
-        $this->assertSame([7], $summary->entity['collaborators'], 'the assignee of an open item gets it; the assignee of a done one does not');
+        $this->assertSame([7], $summary->involvedUserIds, 'the assignee of an open item is involved; the assignee of a done one is not');
+        $this->assertSame([], $summary->entity['collaborators'], 'assignees go through everyone\'s preferences, including the email switch');
         $this->assertFalse(BulkNotifications::isHolding());
     }
 
@@ -149,5 +158,25 @@ class BulkNotificationsTest extends TestCase
 
         $this->assertCount(1, $this->sent);
         $this->assertFalse(BulkNotifications::isHolding());
+    }
+
+    public function test_the_people_of_open_items_are_involved_and_collaborators_keep_their_bypass(): void
+    {
+        $bulk = $this->bulk();
+
+        $bulk->hold(function () {
+            // Added by Ada (1), assigned to 5, with collaborator 11.
+            BulkNotifications::record($this->saved(1, 3, 'created', 9, 'task', ['editorId' => 5, 'userId' => 1, 'collaborators' => [11]]));
+            // Updated without an assignee column: the stored assignee and creator count.
+            BulkNotifications::record($this->saved(6, 4, 'updated'));
+            // Done: its people are not involved.
+            BulkNotifications::record($this->saved(7, 0, 'created', 9, 'task', ['editorId' => 14, 'collaborators' => [15]]));
+        });
+
+        $summary = $this->sent[0];
+        $ids = $summary->involvedUserIds;
+        sort($ids);
+        $this->assertSame([5, 11, 12, 13], $ids, 'the author is not involved in their own import');
+        $this->assertSame([11], $summary->entity['collaborators']);
     }
 }

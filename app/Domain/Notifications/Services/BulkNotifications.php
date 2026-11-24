@@ -5,6 +5,7 @@ namespace Leantime\Domain\Notifications\Services;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Notifications\Models\Notification;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Events\TicketAssigned;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
@@ -19,9 +20,13 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
  * While held, Projects::notifyProjectUsers() records to-do notifications here instead of
  * sending them, and NotifyAssignee records assignments. When the outermost hold() ends, each
  * project that got open to-dos or milestones gets one notification. Done and archived items
- * are counted in it but don't cause one: a file of finished work isn't news. People assigned
- * an open item get the summary whatever their notification relevance setting, as the
- * per-row "assigned to you" message would have reached them.
+ * are counted in it but don't cause one: a file of finished work isn't news.
+ *
+ * The summary goes through the normal project notification path, so everyone's preferences
+ * apply (mute, categories, the email switch, the push switch). The assignees, creators and
+ * collaborators of the open items count as involved in it, so it reaches people who follow
+ * only their own work, on every channel they kept on. Collaborators keep the filter bypass a
+ * per-row notification gives them.
  *
  * Only to-do (module 'tickets') notifications are held; others are sent as usual.
  */
@@ -33,17 +38,23 @@ class BulkNotifications
     /**
      * What was saved while held, per project and item.
      *
-     * @var array<int, array<int, array{action: string, status: mixed, type: string}>>
+     * @var array<int, array<int, array{action: string, status: mixed, type: string, people: array<int, int>, collaborators: array<int, int>, peopleKnown: bool}>>
      */
     private static array $items = [];
 
     /** @var array<int, int> Item id => id of the person it was assigned to. */
     private static array $assignments = [];
 
+    /**
+     * The services are only needed to send a summary, so they are resolved then: holding
+     * notifications around an import that sends none needs no project, ticket or language
+     * services (or a database). Tests pass stubs.
+     */
     public function __construct(
-        private ProjectService $projectService,
-        private TicketRepository $ticketRepository,
-        private LanguageCore $language,
+        private ?ProjectService $projectService = null,
+        private ?TicketRepository $ticketRepository = null,
+        private ?LanguageCore $language = null,
+        private ?ProjectRepository $projectRepository = null,
     ) {}
 
     /**
@@ -101,12 +112,18 @@ class BulkNotifications
         }
 
         $known = self::$items[$projectId][$itemId] ?? null;
+        $collaborators = self::ids(is_array($entity['collaborators'] ?? null) ? $entity['collaborators'] : []);
         self::$items[$projectId][$itemId] = [
             // An item added and then changed in the same import counts as added.
             'action' => $known['action'] ?? (string) $notification->action,
             // An update that leaves the status out keeps the last one known.
             'status' => array_key_exists('status', $entity) ? $entity['status'] : ($known['status'] ?? null),
             'type' => strtolower((string) ($entity['type'] ?? $known['type'] ?? '')),
+            // Assignee and creator as saved; an update that leaves the assignee out (it keeps
+            // the stored one) is looked up when the summary is sent.
+            'people' => array_values(array_unique(array_merge($known['people'] ?? [], self::ids([$entity['editorId'] ?? null, $entity['userId'] ?? null]), $collaborators))),
+            'collaborators' => array_values(array_unique(array_merge($known['collaborators'] ?? [], $collaborators))),
+            'peopleKnown' => ($known['peopleKnown'] ?? false) || array_key_exists('editorId', $entity),
         ];
 
         return true;
@@ -140,6 +157,15 @@ class BulkNotifications
         self::$items = [];
         self::$assignments = [];
 
+        if ($items === []) {
+            return;
+        }
+
+        $this->projectService ??= app()->make(ProjectService::class);
+        $this->projectRepository ??= app()->make(ProjectRepository::class);
+        $this->ticketRepository ??= app()->make(TicketRepository::class);
+        $this->language ??= app()->make(LanguageCore::class);
+
         foreach ($items as $projectId => $projectItems) {
             try {
                 $this->sendSummary($projectId, $projectItems, $assignments);
@@ -153,7 +179,7 @@ class BulkNotifications
     /**
      * Sends the summary for one project, unless every item is done or archived.
      *
-     * @param  array<int, array{action: string, status: mixed, type: string}>  $projectItems
+     * @param  array<int, array{action: string, status: mixed, type: string, people: array<int, int>, collaborators: array<int, int>, peopleKnown: bool}>  $projectItems
      * @param  array<int, int>  $assignments  Item id => assignee id.
      */
     private function sendSummary(int $projectId, array $projectItems, array $assignments): void
@@ -168,7 +194,8 @@ class BulkNotifications
         $open = 0;
         $closed = 0;
         $milestones = 0;
-        $assignees = [];
+        $involved = [];
+        $collaborators = [];
         foreach ($projectItems as $itemId => $item) {
             if ($item['type'] === 'milestone') {
                 $milestones++;
@@ -184,9 +211,15 @@ class BulkNotifications
             }
 
             $open++;
-            if (isset($assignments[$itemId])) {
-                $assignees[] = $assignments[$itemId];
+            $people = $item['people'];
+            if (! $item['peopleKnown']) {
+                $people = array_merge($people, $this->projectRepository->getTicketPeopleIds($itemId));
             }
+            if (isset($assignments[$itemId])) {
+                $people[] = $assignments[$itemId];
+            }
+            array_push($involved, ...$people);
+            array_push($collaborators, ...$item['collaborators']);
         }
 
         if ($open === 0) {
@@ -213,12 +246,32 @@ class BulkNotifications
             'url' => BASE_URL.'/projects/changeCurrentProject/'.$projectId,
             'text' => $this->language->__('email_notifications.import_cta'),
         ];
-        // Assignees of open items get the summary past their relevance and category filters.
         $notification->entity = [
             'projectId' => $projectId,
-            'collaborators' => array_values(array_unique($assignees)),
+            // The per-row notifications let collaborators past the relevance and category filters.
+            'collaborators' => array_values(array_unique($collaborators)),
         ];
+        // The open items' people: they pass "My work" and get the push, as for their own item.
+        $notification->involvedUserIds = array_values(array_diff(array_unique($involved), [(int) $notification->authorId]));
 
         $this->projectService->notifyProjectUsers($notification);
+    }
+
+    /**
+     * Positive user ids from a list of values.
+     *
+     * @param  array<int, mixed>  $values
+     * @return array<int, int>
+     */
+    private static function ids(array $values): array
+    {
+        $ids = [];
+        foreach ($values as $value) {
+            if (is_scalar($value) && is_numeric($value) && (int) $value > 0) {
+                $ids[] = (int) $value;
+            }
+        }
+
+        return $ids;
     }
 }

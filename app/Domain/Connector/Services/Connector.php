@@ -627,7 +627,7 @@ class Connector
         }
 
         // One summary per project instead of a notification per row (see BulkNotifications).
-        return app()->make(BulkNotifications::class)->hold(function () use ($entity, $finalMappings, $values) {
+        return (new BulkNotifications)->hold(function () use ($entity, $finalMappings, $values) {
             if ($entity == 'tickets') {
                 return $this->importTickets($finalMappings, $values);
             } elseif ($entity == 'projects') {
