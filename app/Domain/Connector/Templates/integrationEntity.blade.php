@@ -15,14 +15,13 @@
 @endphp
 
 <x-global::layout.page-header icon="fa-solid fa-circle-nodes">
-    {!! __('headlines.connector') !!} // {{ $provider->name }}
+    {{ __('headlines.integrations') }} / {{ $provider->name }}
 </x-global::layout.page-header>
 
     <div class="maincontent">
         <x-global::layout.content-box>
-            @include('connector::submodules.importProgress')
-        </x-global::layout.content-box>
-        <x-global::layout.content-box>
+        @include('connector::submodules.importProgress', ['currentStep' => 'entity'])
+
 
         {!! $tpl->displayNotification() !!}
 

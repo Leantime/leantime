@@ -6,6 +6,7 @@ use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
+use Leantime\Domain\Connector\Services\Integrations;
 use Leantime\Domain\CsvImport\Exceptions\ImportFileException;
 use Leantime\Domain\CsvImport\Services\CsvImport as CsvImportService;
 use Leantime\Domain\Plugins\Services\Plugins;
@@ -30,13 +31,16 @@ class Preview extends Controller
 
     private Plugins $plugins;
 
+    private Integrations $integrations;
+
     /**
      * Initializes the controller dependencies.
      */
-    public function init(CsvImportService $csvImport, Plugins $plugins): void
+    public function init(CsvImportService $csvImport, Plugins $plugins, Integrations $integrations): void
     {
         $this->csvImport = $csvImport;
         $this->plugins = $plugins;
+        $this->integrations = $integrations;
     }
 
     /**
@@ -62,6 +66,10 @@ class Preview extends Controller
         $this->tpl->assign('integrationId', $integrationId);
         $this->tpl->assign('largeFile', $table->rowCount() > self::LARGE_FILE_ROWS);
         $this->tpl->assign('mcpServerEnabled', $this->plugins->isEnabled(self::MCP_PLUGIN));
+        // What each row is: asked here. Only a choice already made for this upload is shown as chosen.
+        $this->tpl->assign('leantimeEntities', $this->integrations->getAvailableEntities());
+        $integration = $this->integrations->get($integrationId);
+        $this->tpl->assign('chosenEntity', is_object($integration) ? (string) ($integration->entity ?? '') : '');
 
         return $this->tpl->display('csvImport.preview');
     }

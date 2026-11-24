@@ -28,6 +28,7 @@ class ImportTable
      * @param  array<int, string>  $sheetNames  Visible sheets of an Excel file, by sheet index.
      * @param  int  $sheetIndex  Sheet the rows come from.
      * @param  int  $rowsAbove  Filled rows above the heading row, which aren't imported.
+     * @param  string|null  $fileName  Name of the uploaded file, as the person's computer named it.
      */
     public function __construct(
         public string $format,
@@ -39,6 +40,7 @@ class ImportTable
         public array $sheetNames = [],
         public int $sheetIndex = 0,
         public int $rowsAbove = 0,
+        public ?string $fileName = null,
     ) {}
 
     /**
@@ -84,6 +86,7 @@ class ImportTable
             'sheetNames' => $this->sheetNames,
             'sheetIndex' => $this->sheetIndex,
             'rowsAbove' => $this->rowsAbove,
+            'fileName' => $this->fileName,
         ];
     }
 
@@ -104,6 +107,7 @@ class ImportTable
             sheetNames: array_map('strval', (array) ($data['sheetNames'] ?? [])),
             sheetIndex: (int) ($data['sheetIndex'] ?? 0),
             rowsAbove: (int) ($data['rowsAbove'] ?? 0),
+            fileName: isset($data['fileName']) ? (string) $data['fileName'] : null,
         );
     }
 }

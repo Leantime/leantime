@@ -17,17 +17,16 @@
 @endphp
 
 <x-global::layout.page-header icon="fa-solid fa-circle-nodes">
-    {!! __('headlines.connector') !!} // {{ $provider->name }}
+    {{ __('headlines.integrations') }} / {{ $provider->name }}
 </x-global::layout.page-header>
 
 <div class="maincontent">
     <x-global::layout.content-box>
-        @include('connector::submodules.importProgress')
-    </x-global::layout.content-box>
-    <x-global::layout.content-box>
+        @include('connector::submodules.importProgress', ['currentStep' => 'parse'])
+
         {!! $tpl->displayNotification() !!}
 
-        <x-global::elements.section-header as="h5">{{ __('headlines.integration_review') }}</x-global::elements.section-header>
+        <x-global::elements.section-header as="h4">{{ __('headlines.integration_review') }}</x-global::elements.section-header>
 
         @if (!empty($flags))
             <x-global::feedback.alert tone="danger" :title="__('text.integration_resolve_errors')">
@@ -66,18 +65,13 @@
         </div>
 
         {{-- Back to the matching, and Import only when nothing is flagged. --}}
-        <form method="post" action="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import{{ $urlAppend }}">
-            <div class="left">
-                <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">{{ __('buttons.back') }}</x-global::forms.button>
-            </div>
+        <form method="post" action="{{ $provider->stepUrl('import', isset($integrationId) && is_numeric($integrationId) ? (int) $integrationId : null) }}" class="lt-form-actions">
+            <x-global::forms.button tag="a" link="{{ $provider->stepUrl('fields', isset($integrationId) && is_numeric($integrationId) ? (int) $integrationId : null) }}" contentRole="tertiary">{{ __('buttons.back') }}</x-global::forms.button>
             @if (empty($flags))
-                <div class="right">
-                    {{-- Ties Import to this review: an Import from an older review imports nothing. --}}
-                    <input type="hidden" name="importToken" value="{{ $importToken ?? '' }}" />
-                    <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.import_rows') }}</x-global::forms.button>
-                </div>
+                {{-- Ties Import to this review: an Import from an older review imports nothing. --}}
+                <input type="hidden" name="importToken" value="{{ $importToken ?? '' }}" />
+                <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.import_rows') }}</x-global::forms.button>
             @endif
-            <div class="clearall"></div>
         </form>
 
     </x-global::layout.content-box>

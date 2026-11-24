@@ -26,15 +26,14 @@ class Upload extends Controller
     }
 
     /**
-     * get - display upload form
-     *
-     * @throws \Exception
-     * @throws \Exception
+     * Shows the upload page, the first step of a file import.
      */
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function get(): Response
     {
-        return $this->tpl->displayPartial('csvImport.upload');
+        $this->tpl->assign('provider', $this->providerService);
+
+        return $this->tpl->display('csvImport.upload');
     }
 
     /**

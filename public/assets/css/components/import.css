@@ -1,0 +1,45 @@
+/* CSV & Excel import (Connector + CsvImport steps). */
+
+/* The step bar sits at the top of the step's content box, above a divider. */
+.lt-import-steps {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+/* File step: the one-line summary of the file opens the sheet and heading-row settings. */
+.lt-import-file {
+    margin: -4px 0 20px;
+}
+
+.lt-import-file > summary {
+    display: inline;
+    cursor: pointer;
+    list-style: none;
+}
+
+.lt-import-file > summary::-webkit-details-marker {
+    display: none;
+}
+
+.lt-import-file-change {
+    color: var(--primary-color);
+}
+
+.lt-import-file > summary:hover .lt-import-file-change {
+    text-decoration: underline;
+}
+
+.lt-import-file-form {
+    margin-top: 12px;
+}
+
+/* The question of a step (what each row is, which project) sits apart from the table below it. */
+.lt-import-question {
+    margin-bottom: 24px;
+}
+
+/* Help under the upload area. */
+.lt-import-help {
+    margin-top: 12px;
+}

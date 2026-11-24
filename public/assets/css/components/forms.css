@@ -2096,3 +2096,135 @@ body .lt-btn-group--segmented > .btn[aria-pressed="true"] {
     box-shadow: var(--min-shadow);
     color: var(--accent1);
 }
+
+/* Lead paragraph under a section title: the one or two sentences that say what a step is for.
+   Kept to a readable line length. */
+.lt-lead {
+    max-width: 68ch;
+    margin: 4px 0 20px;
+    line-height: 1.55;
+}
+
+/* The buttons at the end of a step or form: Back / Cancel on the left, the main action on the right. */
+.lt-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--main-border-color);
+}
+
+.lt-form-actions > :only-child {
+    margin-inline-start: auto;
+}
+
+/* A drop zone that is the main thing on the page (the import upload). */
+.fileUploadDrop--large {
+    padding: 40px 24px;
+    background: var(--secondary-background);
+}
+
+.fileUploadDrop-icon {
+    color: var(--accent1);
+    font-size: 32px;
+}
+
+.fileUploadDrop .fileUploadDrop-title {
+    margin: 12px 0 0;
+    padding: 0;
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-semibold);
+}
+
+.fileUploadDrop .fileUploadDrop-or,
+.fileUploadDrop .fileUploadDrop-hint {
+    margin: 4px 0 8px;
+    padding: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+.fileUploadDrop .fileUploadDrop-hint {
+    margin: 8px 0 0;
+}
+
+/* A checklist of what a form still needs (import "What Leantime needs"): each item says where its
+   value comes from. States: done (check), missing (required, warning), optional (open circle). */
+.lt-checklist {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lt-checklist > li {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--main-border-color);
+    line-height: 1.45;
+}
+
+.lt-checklist > li:last-child {
+    border-bottom: 0;
+}
+
+.lt-checklist-icon {
+    flex: 0 0 16px;
+    margin-top: 2px;
+    font-family: "Font Awesome 6 Free";
+    font-style: normal;
+    font-weight: 400;
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.lt-checklist-icon::before {
+    content: "\f111"; /* circle (regular) */
+}
+
+.lt-checklist > li[data-state="done"] .lt-checklist-icon {
+    color: var(--green);
+    font-weight: 900;
+}
+
+.lt-checklist > li[data-state="done"] .lt-checklist-icon::before {
+    content: "\f058"; /* circle-check */
+}
+
+.lt-checklist > li[data-state="missing"] .lt-checklist-icon {
+    color: var(--yellow);
+    font-weight: 900;
+}
+
+.lt-checklist > li[data-state="missing"] .lt-checklist-icon::before {
+    content: "\f06a"; /* circle-exclamation */
+}
+
+.lt-checklist-label {
+    display: block;
+    font-weight: var(--font-weight-semibold);
+}
+
+.lt-checklist-optional {
+    margin-inline-start: 4px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: 400;
+}
+
+.lt-checklist-source,
+.lt-checklist-hint {
+    display: block;
+    font-size: var(--font-size-s);
+}
+
+.lt-checklist-source:empty {
+    display: none;
+}
+
+.lt-checklist-hint {
+    color: var(--color-text-muted);
+}

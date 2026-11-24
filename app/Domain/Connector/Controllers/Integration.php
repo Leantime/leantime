@@ -125,7 +125,7 @@ class Integration extends Controller
         if ($params['step'] == 'import') {
             // Importing writes data, so it only runs from the review step's Confirm form (POST).
             if (! $this->incomingRequest->isMethod('POST')) {
-                return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
+                return Frontcontroller::redirect($provider->stepUrl('connect'));
             }
 
             return $this->handleImportStep($provider);
@@ -148,11 +148,15 @@ class Integration extends Controller
         if ($entity === null) {
             $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
 
-            return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id.'');
+            return Frontcontroller::redirect($provider->stepUrl('connect', $currentIntegration->id ? (int) $currentIntegration->id : null));
         }
 
-        $this->tpl->assign('providerFields', $this->integrationService->resolveProviderFields($currentIntegration, $provider));
-        $this->tpl->assign('flags', $this->connectorService->getEntityFlags($entity));
+        $providerFields = $this->integrationService->resolveProviderFields($currentIntegration, $provider);
+        $this->tpl->assign('providerFields', $providerFields);
+        $this->tpl->assign('examples', $this->firstValues($provider, $providerFields));
+        $this->tpl->assign('entity', $entity);
+        $this->tpl->assign('entityName', $this->integrationService->getAvailableEntities()[$entity]['name'] ?? $entity);
+        $this->tpl->assign('guide', $this->connectorService->getEntityGuide($entity));
         $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields($entity));
         // Rows without a project of their own go into the project chosen here (nothing is pre-selected).
         $this->tpl->assign('importProjects', in_array($entity, self::PROJECT_ENTITIES, true) ? $this->projectsByName() : []);
@@ -198,7 +202,7 @@ class Integration extends Controller
         if (empty($payload['values']) || empty($payload['fields'])) {
             $this->tpl->setNotification($this->language->__('notification.import_nothing_to_import'), 'error');
 
-            return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
+            return Frontcontroller::redirect($provider->stepUrl('connect'));
         }
 
         // A large file can take longer than a small server's default limit; raise it where allowed.
@@ -212,12 +216,38 @@ class Integration extends Controller
         if (! $result instanceof ImportResult) {
             $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
 
-            return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
+            return Frontcontroller::redirect($provider->stepUrl('connect'));
         }
 
         $this->tpl->assign('importResult', $result);
 
         return $this->tpl->display('connector.integrationConfirm');
+    }
+
+    /**
+     * The first filled value of each column, so the matching step shows what a column holds.
+     *
+     * @param  object  $provider  Provider instance.
+     * @param  array<int, string>  $headings  The columns of the file.
+     * @return array<string, string> Heading => first value ('' when the column is empty).
+     */
+    private function firstValues(object $provider, array $headings): array
+    {
+        $rows = method_exists($provider, 'geValues') ? (array) $provider->geValues() : [];
+        $examples = array_fill_keys(array_map('strval', $headings), '');
+
+        foreach ($rows as $row) {
+            foreach ($examples as $heading => $example) {
+                if ($example === '' && trim((string) ($row[$heading] ?? '')) !== '') {
+                    $examples[$heading] = trim((string) $row[$heading]);
+                }
+            }
+            if (! in_array('', $examples, true)) {
+                break;
+            }
+        }
+
+        return $examples;
     }
 
     /**

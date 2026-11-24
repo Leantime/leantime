@@ -152,8 +152,12 @@ class Integrations
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function resolveImportEntity(array $request, IntegrationModel $currentIntegration): ?string
     {
-        if (isset($request['leantimeEntities'])) {
-            $entity = $request['leantimeEntities'];
+        if (array_key_exists('leantimeEntities', $request)) {
+            // Asked on this request: nothing chosen (or something unknown) is no choice.
+            $entity = (string) $request['leantimeEntities'];
+            if (! array_key_exists($entity, $this->getAvailableEntities())) {
+                return null;
+            }
             session(['currentImportEntity' => $entity]);
         } elseif (session()->exists('currentImportEntity') && session('currentImportEntity') != '') {
             $entity = session('currentImportEntity');

@@ -72,4 +72,28 @@ class Provider
     ];
 
     public function __construct() {}
+
+    /**
+     * The step before the given one in this provider's steps, or null for the first step.
+     */
+    public function previousStep(string $step): ?string
+    {
+        $steps = array_values($this->steps);
+        $index = array_search($step, $steps, true);
+
+        return $index === false || $index === 0 ? null : $steps[$index - 1];
+    }
+
+    /**
+     * The page of one step of this provider's import. Providers with pages of their own (a file
+     * upload) override it.
+     *
+     * @param  string  $step  A step of $steps.
+     * @param  int|null  $integrationId  The integration being set up, if there is one.
+     */
+    public function stepUrl(string $step, ?int $integrationId = null): string
+    {
+        return BASE_URL.'/connector/integration/?provider='.$this->id.'&step='.$step
+            .($integrationId !== null ? '&integrationId='.$integrationId : '');
+    }
 }

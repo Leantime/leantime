@@ -22,9 +22,9 @@ class CsvImport extends Provider implements ProviderIntegration
 
     public array $methods;
 
+    // The file step (upload and preview) also asks what each row is, so there is no entity step.
     public array $steps = [
         'connect',
-        'entity',
         'fields',
         'parse',
         'import',
@@ -67,10 +67,28 @@ class CsvImport extends Provider implements ProviderIntegration
             ],
         ];
 
-        $this->button['url'] = BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload';
+        $this->button['url'] = BASE_URL.'/csvImport/upload';
 
-        // The first step of a file import is the upload.
-        $this->stepDetails['connect']['title'] = 'label.import_step_upload';
+        $this->stepDetails['connect']['title'] = 'label.import_step_file';
+        $this->stepDetails['fields']['title'] = 'label.import_step_match';
+        $this->stepDetails['import']['title'] = 'label.import_step_done';
+    }
+
+    /**
+     * The file step is the upload page, or the file's preview once there is one.
+     *
+     * @param  string  $step  A step of $steps.
+     * @param  int|null  $integrationId  The upload's integration record, if there is one.
+     */
+    public function stepUrl(string $step, ?int $integrationId = null): string
+    {
+        if ($step === 'connect') {
+            return $integrationId !== null
+                ? BASE_URL.'/csvImport/preview?integrationId='.$integrationId
+                : BASE_URL.'/csvImport/upload';
+        }
+
+        return parent::stepUrl($step, $integrationId);
     }
 
     // Logic to connect to provider goes here.
@@ -80,7 +98,7 @@ class CsvImport extends Provider implements ProviderIntegration
     {
         // Connection done. Send to next step.
         // May just want to add a nextStep() method to provider model or so.
-        return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload');
+        return Frontcontroller::redirect(BASE_URL.'/csvImport/upload');
     }
 
     // Sync the entities from the db
@@ -161,6 +179,7 @@ class CsvImport extends Provider implements ProviderIntegration
     public function processUpload(UploadedFile $file): int
     {
         $table = $this->fileReader->read($file->getRealPath());
+        $table->fileName = $file->getClientOriginalName();
 
         $previous = session(self::SESSION_FILE);
         if (ImportFiles::isId($previous)) {
@@ -194,6 +213,7 @@ class CsvImport extends Provider implements ProviderIntegration
         }
 
         $table = $this->fileReader->read($this->importFiles->sourcePath($id), $sheetIndex, $headerRow);
+        $table->fileName = $this->importFiles->table($id)?->fileName;
         $this->importFiles->saveTable($id, $table);
         $this->integrationService->patch($integrationId, ['fields' => $this->encodeFields($table->headers)]);
 

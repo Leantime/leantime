@@ -49,23 +49,69 @@ class Connector
     }
 
     /**
-     * What the matching step tells the person about an import, in their language.
+     * What Leantime needs from a file of one entity, as the checklist of the matching step.
+     * The required items are exactly the columns the review requires (requiredColumnFlags),
+     * plus the project of to-dos and milestones, which can also be chosen for all rows.
+     * Each item: the Leantime fields that satisfy it (any one of them), its name, whether the
+     * import needs it, a one-line hint, and whether the project picker satisfies it.
      *
-     * @param  string  $entity  Entity key (tickets, projects, users, ideas, goals, milestones).
-     * @return array<int, string>
+     * @param  string  $entity  Entity key.
+     * @return array<int, array{fields: array<int, string>, label: string, required: bool, hint: string, picker: bool}>
      */
-    public function getEntityFlags($entity)
+    public function getEntityGuide(string $entity): array
     {
-        $keys = [
-            'tickets' => ['text.import_needs_tickets', 'text.import_people_tickets'],
-            'milestones' => ['text.import_needs_milestones', 'text.import_people_tickets'],
-            'projects' => ['text.import_needs_projects', 'text.import_people_projects', 'text.import_permissions_projects'],
-            'users' => ['text.import_needs_users', 'text.import_invite_users', 'text.import_roles_users'],
-            'ideas' => ['text.import_needs_ideas', 'text.import_people_ideas'],
-            'goals' => ['text.import_needs_goals'],
-        ];
+        $items = match ($entity) {
+            'tickets' => [
+                [['headline'], true, 'text.import_guide_title'],
+                [['projectName'], true, 'text.import_guide_project', null, true],
+                [['editorId'], false, 'text.import_guide_assignee'],
+                [['priority'], false, 'text.import_guide_priority'],
+                [['status'], false, 'text.import_guide_status'],
+                [['dateToFinish', 'editFrom', 'editTo', 'date'], false, 'text.import_guide_dates', 'label.import_guide_dates'],
+                [['planHours', 'hourRemaining'], false, 'text.import_guide_hours', 'label.import_guide_hours'],
+            ],
+            'milestones' => [
+                [['headline'], true, 'text.import_guide_title'],
+                [['editFrom'], true, 'text.import_guide_dates'],
+                [['editTo'], true, 'text.import_guide_dates'],
+                [['projectName'], true, 'text.import_guide_project', null, true],
+                [['editorId'], false, 'text.import_guide_assignee'],
+            ],
+            'projects' => [
+                [['name'], true, 'text.import_guide_project_name'],
+                [['clientId'], true, 'text.import_guide_client'],
+                [['assignedUsers'], false, 'text.import_guide_assigned_users'],
+                [['psettings'], false, 'text.import_guide_permissions'],
+            ],
+            'users' => [
+                [['user'], true, 'text.import_guide_email'],
+                [['firstname'], true, 'text.import_guide_first_name'],
+                [['role'], true, 'text.import_guide_role'],
+                [['sendInvite'], true, 'text.import_guide_send_invite'],
+            ],
+            'ideas' => [
+                [['description'], true, 'text.import_guide_title'],
+                [['data'], true, 'text.import_guide_idea_description'],
+                [['canvasId'], true, 'text.import_guide_idea_board'],
+                [['author'], false, 'text.import_guide_author'],
+            ],
+            'goals' => [
+                [['title'], true, 'text.import_guide_title'],
+                [['canvasId'], true, 'text.import_guide_goal_board'],
+                [['startValue'], true, 'text.import_guide_goal_values'],
+                [['currentValue'], true, 'text.import_guide_goal_values'],
+                [['endValue'], true, 'text.import_guide_goal_values'],
+            ],
+            default => [],
+        };
 
-        return array_map(fn (string $key) => $this->language->__($key), $keys[$entity] ?? []);
+        return array_map(fn (array $item) => [
+            'fields' => $item[0],
+            'label' => isset($item[3]) ? $this->language->__($item[3]) : $this->fieldName($entity, $item[0][0]),
+            'required' => $item[1],
+            'hint' => $this->language->__($item[2]),
+            'picker' => $item[4] ?? false,
+        ], $items);
     }
 
     public function getFieldMappings($postParams)

@@ -19,16 +19,15 @@
 @endphp
 
 <x-global::layout.page-header icon="fa-solid fa-circle-nodes">
-    {!! __('headlines.connector') !!} // {{ $provider->name }}
+    {{ __('headlines.integrations') }} / {{ $provider->name }}
 </x-global::layout.page-header>
 
 {!! $tpl->displayNotification() !!}
 
 <div class="maincontent">
     <x-global::layout.content-box>
-        @include('connector::submodules.importProgress')
-    </x-global::layout.content-box>
-    <x-global::layout.content-box>
+        @include('connector::submodules.importProgress', ['currentStep' => 'import', 'allStepsDone' => $importResult === null || $importResult->isSuccessful()])
+
         @if ($importResult === null || $importResult->isSuccessful())
             <x-global::elements.empty-state image="undraw_party_re_nmwj.svg" titleAs="h3" :title="__('headlines.integration_success')">
                 @if ($importResult !== null)

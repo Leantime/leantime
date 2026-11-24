@@ -721,3 +721,18 @@ body div.dt-button-collection.dt-button-collection {
     box-shadow: var(--large-shadow);
     padding: 8px;
 }
+
+/* A secondary line or muted value in a table cell: where a value came from, what was in the file. */
+.lt-cell-note {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+td .lt-cell-note {
+    display: block;
+    margin-top: 2px;
+}
+
+td.lt-cell-note {
+    display: table-cell;
+}
