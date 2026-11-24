@@ -3,8 +3,10 @@
 namespace Tests\Unit\app\Domain\Oidc\Services;
 
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Oidc\Events\OidcSignInFilter;
 use Leantime\Domain\Oidc\Services\Oidc;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -124,5 +126,36 @@ class OidcLoginAccountStatusTest extends \Unit\TestCase
 
         $this->assertSame(['editUser'], $writes);
         $this->assertSame(1, $sessionsStarted);
+    }
+
+    public function test_a_sign_in_rule_can_refuse_before_the_account_is_touched(): void
+    {
+        $writes = [];
+        $sessionsStarted = 0;
+        $oidc = $this->oidc($this->row('a'), $writes, $sessionsStarted);
+
+        $registry = new \ReflectionProperty(EventDispatcher::class, 'filterRegistry');
+        $version = new \ReflectionProperty(EventDispatcher::class, 'filterRegistryVersion');
+        $savedRegistry = $registry->getValue();
+        $savedVersion = $version->getValue();
+
+        // e.g. AdvancedAuth's "Restrict to specific domain"
+        EventDispatcher::add_filter_listener(
+            OidcSignInFilter::class,
+            fn (?string $refusal, OidcSignInFilter $filter) => $filter->email === 'ada@example.com' ? 'Not an allowed domain' : $refusal
+        );
+
+        try {
+            $this->login($oidc, ['email' => 'ada@example.com', 'email_verified' => true]);
+            $this->fail('A refused sign-in must not continue');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('Not an allowed domain', $e->getMessage());
+        } finally {
+            $registry->setValue(null, $savedRegistry);
+            $version->setValue(null, $savedVersion);
+        }
+
+        $this->assertSame([], $writes);
+        $this->assertSame(0, $sessionsStarted);
     }
 }

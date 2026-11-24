@@ -82,6 +82,21 @@ class PushRelayTest extends TestCase
         $this->assertTrue($this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'key')->isEnabled());
     }
 
+    public function test_content_level_is_full_unless_names_or_minimal_was_chosen(): void
+    {
+        $this->assertSame(PushRelay::CONTENT_FULL, $this->relay([], true, 'key')->contentLevel());
+        $this->assertSame(PushRelay::CONTENT_NAMES, $this->relay([PushRelay::SETTING_CONTENT => 'names'], true, 'key')->contentLevel());
+        $this->assertSame(PushRelay::CONTENT_MINIMAL, $this->relay([PushRelay::SETTING_CONTENT => 'minimal'], true, 'key')->contentLevel());
+        $this->assertSame(PushRelay::CONTENT_FULL, $this->relay([PushRelay::SETTING_CONTENT => 'everything'], true, 'key')->contentLevel());
+    }
+
+    public function test_available_follows_the_plugin_whatever_the_switch(): void
+    {
+        $this->assertFalse($this->relay([], false, 'key')->isAvailable(), 'no AdvancedAuth: grayed out');
+        $this->assertTrue($this->relay([], true, 'key')->isAvailable(), 'AdvancedAuth on, switch still off');
+        $this->assertTrue($this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'key')->isAvailable());
+    }
+
     public function test_sends_license_and_instance_identity_with_full_content(): void
     {
         $relay = $this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'LIC-123');
@@ -157,6 +172,71 @@ class PushRelayTest extends TestCase
         $this->assertNull(PushRelay::ticketIdFromUrl('https://host/api/jsonrpc?url=/tickets/showTicket/42'));
         $this->assertNull(PushRelay::ticketIdFromUrl('https://host/dashboard/home#/tickets/showTicket/42abc'));
         $this->assertSame('7', PushRelay::ticketIdFromUrl('https://host/tickets/showTicket/7'));
+    }
+
+    /**
+     * Names only keeps who did what, and must not leak the text through the link either:
+     * a comment posted over a JSON-RPC GET keeps its params (base64 of the comment) in the URL.
+     */
+    public function test_names_only_rebuilds_a_link_that_carries_a_query(): void
+    {
+        $leaky = 'https://host/api/jsonrpc?method=comments.addComment&params=eyJ0ZXh0Ijoic2VjcmV0In0=';
+        $relay = $this->relay([PushRelay::SETTING_ENABLED => '1', PushRelay::SETTING_CONTENT => 'names'], true, 'LIC');
+        $relay->send($this->rows(1), 'Fix login', 'Sam commented', ['module' => 'comments', 'moduleId' => '4', 'parentTicketId' => '42', 'url' => $leaky]);
+
+        $posted = (string) $this->requests[0]['request']->getBody();
+        $msg = json_decode($posted, true)['messages'][0];
+        $this->assertSame('Fix login', $msg['title'], 'names only keeps the wording');
+        $this->assertSame('https://app.example.com/dashboard/home#/tickets/showTicket/42', $msg['data']['url']);
+        $this->assertStringNotContainsString('params=', $posted);
+    }
+
+    public function test_names_only_keeps_a_plain_item_link(): void
+    {
+        $relay = $this->relay([PushRelay::SETTING_ENABLED => '1', PushRelay::SETTING_CONTENT => 'names'], true, 'LIC');
+        $link = 'https://host/dashboard/home#/tickets/showTicket/9?projectId=3';
+
+        $this->assertSame($link, $relay->withoutLinkText(['module' => 'tickets', 'moduleId' => '9', 'url' => $link])['url']);
+        $this->assertSame(
+            'https://app.example.com',
+            $relay->withoutLinkText(['module' => 'projects', 'moduleId' => '3', 'url' => 'https://host/projects/x?text=secret'])['url'],
+            'a non-task link with a query falls back to the app itself'
+        );
+    }
+
+    /**
+     * Only numeric ids may ride in a link's query: an idea comment's link (?projectId=5) keeps
+     * its deep link, text in the query or in the fragment's query does not go out.
+     */
+    public function test_a_link_keeps_id_only_queries_and_loses_text(): void
+    {
+        $relay = $this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'LIC');
+
+        $ideaLink = 'https://host/ideas/showBoards/4?projectId=5';
+        $this->assertSame($ideaLink, $relay->withoutLinkText(['module' => 'comments', 'url' => $ideaLink])['url']);
+
+        $this->assertTrue(PushRelay::linkCarriesText('https://host/x?tab=comments'));
+        $this->assertTrue(PushRelay::linkCarriesText('https://host/dashboard/home#/tickets/showTicket/9?text=secret'));
+        $this->assertFalse(PushRelay::linkCarriesText('https://host/dashboard/home#/tickets/showTicket/9?projectId=3&x=4'));
+        $this->assertFalse(PushRelay::linkCarriesText('https://host/projects/showProject/3'));
+        $this->assertFalse(PushRelay::linkCarriesText(''));
+    }
+
+    /**
+     * Full content shows the comment in the banner by choice, but the link still never carries
+     * whatever else the request that made the change had in its query.
+     */
+    public function test_full_content_rebuilds_a_link_that_carries_text_too(): void
+    {
+        $leaky = 'https://host/api/jsonrpc?method=comments.addComment&params=eyJ0ZXh0Ijoic2VjcmV0In0=';
+        $relay = $this->relay([PushRelay::SETTING_ENABLED => '1'], true, 'LIC');
+        $relay->send($this->rows(1), 'Fix login', 'Sam: hi', ['module' => 'comments', 'moduleId' => '4', 'parentTicketId' => '42', 'url' => $leaky]);
+
+        $posted = (string) $this->requests[0]['request']->getBody();
+        $msg = json_decode($posted, true)['messages'][0];
+        $this->assertSame('Sam: hi', $msg['body']);
+        $this->assertSame('https://app.example.com/dashboard/home#/tickets/showTicket/42', $msg['data']['url']);
+        $this->assertStringNotContainsString('params=', $posted);
     }
 
     public function test_content_free_mode_links_the_app_itself_for_everything_else(): void

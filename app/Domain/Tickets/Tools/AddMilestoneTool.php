@@ -7,6 +7,7 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
+use Leantime\Core\Exceptions\Contracts\LeantimeExceptionInterface;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -92,7 +93,11 @@ class AddMilestoneTool extends Tool
             'origin' => 'mcp',
         ];
 
-        $result = $this->ticketsService->quickAddMilestone($params);
+        try {
+            $result = $this->ticketsService->quickAddMilestone($params);
+        } catch (LeantimeExceptionInterface $e) {
+            return Response::error(ToolErrorMessage::for($e));
+        }
 
         if ($result) {
             return Response::text("Milestone created successfully with ID: {$result}");

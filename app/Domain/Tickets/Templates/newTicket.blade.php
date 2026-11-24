@@ -14,13 +14,10 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary ticketTabs">
-
-            <ul>
-                <li>
-                    <a href="#ticketdetails"><span class="fa fa-star"></span> {!! __('tabs.ticketDetails') !!}</a>
-                </li>
-            </ul>
+        <x-global::navigation.section-tabs class="ticketTabs" :label="__('tabs.ticketDetails')" remember="query:tab">
+            <x-slot:tabs>
+                <x-global::navigation.section-tabs.tab for="ticketdetails" icon="fa-star">{!! __('tabs.ticketDetails') !!}</x-global::navigation.section-tabs.tab>
+            </x-slot:tabs>
 
             <div id="ticketdetails">
                 <form class="ticketModal" action="{{ BASE_URL }}/tickets/newTicket" method="post">
@@ -28,7 +25,7 @@
                 </form>
             </div>
 
-        </div>
+        </x-global::navigation.section-tabs>
     </x-global::layout.content-box>
 </div>
 
@@ -36,7 +33,6 @@
 <script type="text/javascript">
 
     jQuery(document).ready(function() {
-        leantime.ticketsController.initTicketTabs();
         jQuery(window).resize();
     });
 

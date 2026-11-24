@@ -99,6 +99,15 @@ class Notification
     public array $involvedUserIds = [];
 
     /**
+     * Push wording, when the sender has something more specific to say than PushText's
+     * defaults ("Marcel moved this to Done"). Null leaves both to PushText; the subject
+     * and message are written for email and read badly on a lock screen.
+     */
+    public ?string $pushTitle = null;
+
+    public ?string $pushBody = null;
+
+    /**
      * Maps a notification module value to its user-facing category key.
      *
      * @param  string  $module  The module value from the notification (e.g. 'tickets', 'comments', 'goalcanvas').

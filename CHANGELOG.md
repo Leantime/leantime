@@ -1,3 +1,105 @@
+# Version: 3.17.0
+
+## Highlights
+### Morning summaries and reminders
+Leantime now looks ahead.
+- **Morning summary:** at most one a day, at each person's chosen time (08:00 by default, in their timezone). It covers:
+  - their to-dos that are due
+  - milestones a week and a day ahead
+  - project end dates, for the project's managers
+- **Where it arrives:** in the inbox, and by email and push for people who kept those on.
+- **Nothing coming up, nothing sent.** Overdue work is one quiet line, never a nag.
+- **"Remind me" on each to-do:** choose how often it reminds you (default, more, less or off) from the to-do's ⋮ menu, the open to-do, or the new Coming up panel, or set your own default.
+- **Turning it off:** admins can switch reminders off for the whole workspace. It runs on the scheduler, so it needs the cron to be running (#4104)
+
+### CalDAV that works both ways
+This release bundles CalDAV 1.1.0 (Leantime/plugins#168).
+- **Calendar apps:** Apple Calendar, Thunderbird and DAVx5 can now add, change and delete Leantime events without errors, and they see edits made in Leantime. Events an app adds keep their alarms, location and repeat rules.
+- **App passwords:** a new **App passwords** option under Calendar Settings lets people who use two-factor authentication or single sign-on connect a calendar app.
+- **Connected calendars (Nextcloud, Radicale, …):**
+  - Deletions now come in.
+  - Repeating events arrive as every occurrence.
+  - Editing or deleting one occurrence in Leantime changes only that occurrence.
+  - Edits made in Leantime keep the event's location, alarms and timezone on the other server.
+
+(#4105, #4111)
+
+## New Features
+- **Your one thing** - Pick the one to-do that matters most for a day. JSON-RPC: `Tickets.OneThing.getOneThing`, `setOneThing`, `clearOneThing`, `getOneThings`. It's personal, and only stores a to-do you can see (#4109)
+- **Planned days** - A Work Start with a date but no time now means the day you plan to work on a to-do:
+  - **Calendars:** it shows as an all-day "Planned:" item instead of a 12 AM event, on the web and dashboard calendars, the mobile feed and iCal.
+  - **Hiding them:** a new Calendar setting, "Show planned days on my calendar", turns them off.
+  - **Planning API:** `Tickets.Planning.planTaskForDay`, `clearTaskPlan` and `getTaskPlan` plan a to-do without ever moving its due date.
+
+  (#4110)
+- **Tasks to consider and quick wins** - A JSON-RPC API that picks the same suggestions on every client as the mobile app's Today screen: `Tickets.Suggestions.getTasksToConsider` and `getQuickWins`. It only suggests to-dos from projects you can view. There's no web UI yet (#4116)
+- **Calendar servers on your own network** - Self-hosted admins can let Leantime reach named private-network servers with `LEAN_OUTBOUND_ALLOWED_HOSTS` (hostnames, IP addresses or CIDR ranges). It covers CalDAV accounts, iCal feeds and webhooks. By default only public addresses are reachable, as before (#4105)
+- **Calendar discovery** - `/.well-known/caldav` now sends calendar apps to Leantime's CalDAV server, so the workspace address alone is enough to set one up (#4105)
+
+## Security
+- **Task assignment** - Tasks can only be assigned to people who can see the project (#4103)
+- **Role changes** - A changed role or client now takes effect on the user's next request. Before, it waited until they logged in again (#4114)
+
+## Bug Fixes
+- **iCal all-day events** - All-day events in the iCal feed end on the right day (the end date is exclusive) (#4110)
+- **Welcome widget** - "Time boxed tasks completed" counts real time boxes only (#4110)
+- **Reports** - The belief line is readable, "as measured by" is plain text, and the subject's own update shows their name (#4102)
+- **Story-point totals** - Report totals for fractional story points are stored as decimals instead of rounded (#4094)
+- **Daily report ingestion** - One failing project no longer stops the daily report run for the others (#4096)
+- **Goal snapshots on PostgreSQL** - The nightly goal-value snapshot works on PostgreSQL (#4095)
+- **Growl messages** - Notification text is escaped unless it is explicitly marked as HTML (#4103)
+- **Plugin text after updates** - After a plugin update, its new text no longer shows as raw keys for up to 7 days (#4105)
+
+## Dependency Updates
+- Bundled plugins bumped to plugins main: CalDAV 1.1.0, RecurringTasks 1.4.0 (reminder choices carried to new copies) and StrategyPro Logic Model fixes (#4111, #4117)
+
+## Upgrade Notes
+- **Database changes** (dbVersion 3.5.37): `zp_stats` story-point columns become decimals (migration 30537). `system:update` does not run migrations: open the update screen once, or run `php bin/leantime db:migrate`.
+- **Morning summaries are on by default** for everyone, at 08:00 in each person's timezone. People can change or switch them off in their settings; admins can switch reminders off for the workspace in Company Settings. They need the scheduler (`php bin/leantime schedule:run` every minute via cron, or `schedule:work`).
+- **Self-hosted, calendar server on your LAN:** list it in `LEAN_OUTBOUND_ALLOWED_HOSTS` in `config/.env`, e.g. `'nextcloud.lan,192.168.1.0/24'` (see `config/sample.env`).
+- **Marketplace CalDAV installs:** update to CalDAV 1.1.0.
+- **Calendar app sign-in:** accounts with two-factor authentication or single sign-on sign in with an app password.
+- **McpServer:** the reminder tools need McpServer 2.1.0 (released alongside).
+
+---
+
+# Version: 3.16.0
+
+## Highlights
+### Connect Claude and ChatGPT to Leantime with OAuth
+Claude (web, desktop and mobile) and ChatGPT can now connect to your Leantime's `/mcp` endpoint by signing in with OAuth. No API key and no `mcp-remote` workaround. Clients register themselves and the signing keys are generated on first use, so there is nothing to set up. Changing your password or deactivating the user ends the connection. OAuth tokens only work on `/mcp` (#4092)
+
+### Notifications that say what changed
+Notifications now say what changed on a task, and comments reach "My work" (#4037). Push and digest wording is rewritten: the item's name is the title and who did what is the body, with one notification per change instead of an assignment push plus an update push (#4100)
+
+## New Features
+- **What pushes show** - A new Company Settings option chooses what push notifications show on lock screens: Everything (default), Names only, or Nothing (#4100)
+- **"Added you to a project"** - People are told when they're added to a project, in their inbox, the email digest and by push (#4100)
+- **Email digest redesign** - Changes are grouped by task, shown in local time, with one button (#4100)
+- **Board, goal and idea mentions** - Mentions on boards, goals and ideas now send a push, like task mentions (#4097)
+- **Push relay settings** - Without the AdvancedAuth plugin, the push relay settings are grayed out with a short explanation and a marketplace link (#4099)
+
+## Security
+- **Push recipients** - Mention and collaborator pushes could reach people without access to the project. They now only go to active users assigned to it (#4097)
+
+## Bug Fixes
+- **Board and goal notifications** - Comment and item notifications on boards and goals used the project that was open in the browser instead of the item's own project (#4097, #4100)
+- **Goal links** - "Goal created" notifications linked to an empty goal instead of the new one (#4097)
+- **Board comment dialog** - Saving an item from the board comment dialog could fail with a server error (#4097)
+- **Duplicate pushes** - Repeated changes and two items with the same name no longer cancel each other's push, and a rename shows in the digest (#4100)
+
+## Dependency Updates
+- Added `laravel/passport` (~13.7.6) for OAuth (#4092)
+- Bundled plugins bumped to plugins main, including AdvancedAuth 1.5.0 (#4093, #4106)
+
+## Upgrade Notes
+- **Database changes** (dbVersion 3.5.36): new OAuth tables (`zp_oauth_*`, migration 30535) and a `summary` column on `zp_queue` (migration 30536). `system:update` does not run migrations: open the update screen once, or run `php bin/leantime db:migrate`.
+- **OAuth is on by default** for `/mcp`. Set `LEAN_OAUTH_ENABLED=false` to turn it off. The signing keys are created on first use and stored encrypted in the database; `php bin/leantime oauth:keys` shows their status.
+- **AdvancedAuth users**: update to AdvancedAuth 1.5.0. Social sign-in then returns to the OAuth consent screen, and the mobile app can tell whether this server sends push.
+- **Push content** defaults to Everything. Admins who want less on lock screens can change it in Company Settings.
+
+---
+
 # Version: 3.15.3
 
 ## Bug Fixes

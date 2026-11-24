@@ -64,7 +64,7 @@ min-width: 1200px
         width:100%;
     }
 
-    .leftmenu .projectselector .projectSelectorTabs .tabs li{
+    .leftmenu .projectselector .projectSelectorTabs .lt-section-tabs-nav li{
         width:auto;
     }
 
@@ -1036,7 +1036,7 @@ min-width: 1200px
     }
 
 
-    .leftmenu .projectselector .projectSelectorTabs .tabs li{
+    .leftmenu .projectselector .projectSelectorTabs .lt-section-tabs-nav li{
         width:auto;
     }
 
@@ -2639,6 +2639,21 @@ min-width: 1200px
     .nyroModalCont .form-group select,
     .nyroModalCont .form-group .date-picker-form-control,
     .nyroModalCont .form-group input[type="text"] {
+        width: 100% !important;
+    }
+    /* Same for forms.field: inline fields stack, rows take the full width. */
+    .nyroModalCont .lt-field {
+        display: block !important;
+        width: 100% !important;
+        padding-left: 0 !important;
+    }
+    .nyroModalCont .lt-field > .lt-field-label {
+        margin: 0 0 4px 0 !important;
+        padding: 0 !important;
+    }
+    .nyroModalCont .lt-field select,
+    .nyroModalCont .lt-field .date-picker-form-control,
+    .nyroModalCont .lt-field input[type="text"] {
         width: 100% !important;
     }
     /* Save/footer bar must not float over content on small screens */

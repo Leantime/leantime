@@ -19,19 +19,18 @@
 
         {!! $tpl->displayNotification() !!}
 
-        <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
-
-            <ul>
-                <li><a href="#ticketdetails"><span class="fa fa-star"></span> {!! __('tabs.ticketDetails') !!}</a></li>
-                <li><a href="#subtasks"><span class="fa fa-list-check"></span> {!! __('tabs.subtasks') !!} ({{ $numSubTasks }})</a></li>
-                <li><a href="#files"><span class="fa fa-file"></span> {!! __('tabs.files') !!} ({{ $numFiles }})</a></li>
+        <x-global::navigation.section-tabs class="ticketTabs" :label="__('tabs.ticketDetails')" remember="query:tab">
+            <x-slot:tabs>
+                <x-global::navigation.section-tabs.tab for="ticketdetails" icon="fa-star">{!! __('tabs.ticketDetails') !!}</x-global::navigation.section-tabs.tab>
+                <x-global::navigation.section-tabs.tab for="subtasks" icon="fa-list-check">{!! __('tabs.subtasks') !!} ({{ $numSubTasks }})</x-global::navigation.section-tabs.tab>
+                <x-global::navigation.section-tabs.tab for="files" icon="fa-file">{!! __('tabs.files') !!} ({{ $numFiles }})</x-global::navigation.section-tabs.tab>
                 @if (session('userdata.role') != 'client')
                     @module('timesheets', $ticket->projectId)
-                        <li><a href="#timesheet" id="timesheetTab"><span class="fa fa-clock"></span> {!! __('tabs.time_tracking') !!}</a></li>
+                        <x-global::navigation.section-tabs.tab for="timesheet" icon="fa-clock" id="timesheetTab">{!! __('tabs.time_tracking') !!}</x-global::navigation.section-tabs.tab>
                     @endmodule
                 @endif
-                <li><a href="#history"><span class="fa fa-clock-rotate-left"></span> {!! __('tabs.history') !!}</a></li>
-            </ul>
+                <x-global::navigation.section-tabs.tab for="history" icon="fa-clock-rotate-left">{!! __('tabs.history') !!}</x-global::navigation.section-tabs.tab>
+            </x-slot:tabs>
 
             <div id="ticketdetails">
                 <form class="formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" method="post">
@@ -63,7 +62,7 @@
             <div id="history">
                 <x-global::hx :for="\Leantime\Domain\Tickets\Hxcontrollers\TicketHistory::class" :id="$ticket->id" trigger="intersect once" loaderCount="3" />
             </div>
-        </div>
+        </x-global::navigation.section-tabs>
 
     </x-global::layout.content-box>
 
@@ -80,7 +79,6 @@
 <script type="text/javascript">
 
     jQuery(function () {
-        leantime.ticketsController.initTicketTabs();
 
         jQuery(window).resize();
 

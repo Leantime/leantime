@@ -186,14 +186,22 @@ class Reports extends BaseService
         }
     }
 
+    /**
+     * Runs the daily ingestion for every project.
+     *
+     * Failures are isolated per project: a data problem, a constraint, or a driver refusing a
+     * value for one project must not cost every later project its daily row. The scheduler only
+     * logs the exception that escapes the task, so the loop has to keep going itself.
+     */
     public function cronDailyIngestion(): void
     {
-        $projects = $this->projectRepository->getAll();
-
-        foreach ($projects as $project) {
-            $this->runIngestionForProject($project['id']);
+        foreach ($this->projectRepository->getAll() as $project) {
+            try {
+                $this->runIngestionForProject((int) $project['id']);
+            } catch (\Throwable $e) {
+                Log::error($e);
+            }
         }
-
     }
 
     /**

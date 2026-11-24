@@ -15,28 +15,28 @@ $currentPay = $userHours * $userInfo['wage'];
 
                 <form method="post" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#timesheet" class="formModal">
 
-                    <x-global::forms.label for="kind">{!! __('label.timesheet_kind') !!}</x-global::forms.label>
-                    <span class="field">
-                    <x-global::forms.select enhanced id="kind" name="kind">
-                    @foreach ($kind as $key => $row)
-                        <option value="{{ $key }}"
-                            @if ($row == $values['kind']) selected="selected" @endif
-                        >{!! __(strtolower($row)) !!}</option>
-                    @endforeach
-                    </x-global::forms.select>
-                    </span>
+                    <x-global::forms.field for="kind" :label="__('label.timesheet_kind')">
+                        <x-global::forms.select enhanced id="kind" name="kind">
+                        @foreach ($kind as $key => $row)
+                            <option value="{{ $key }}"
+                                @if ($row == $values['kind']) selected="selected" @endif
+                            >{!! __(strtolower($row)) !!}</option>
+                        @endforeach
+                        </x-global::forms.select>
+                    </x-global::forms.field>
 
-                    <x-global::forms.label for="timesheetdate">{!! __('label.date') !!}:</x-global::forms.label>
-                    <input type="text" id="timesheetdate" name="date" class="dates" value="{{ format($values['date'])->date() }}" /><br/>
+                    <x-global::forms.field for="timesheetdate" :label="__('label.date')">
+                        <input type="text" id="timesheetdate" name="date" class="dates" value="{{ format($values['date'])->date() }}" />
+                    </x-global::forms.field>
 
-                    <x-global::forms.label for="hours">{!! __('label.hours') !!}</x-global::forms.label>
-                    <span class="field">
+                    <x-global::forms.field for="hours" :label="__('label.hours')">
                         <x-global::forms.text-input id="hours" name="hours" value="{{ $values['hours'] }}" size="7" width="sm" />
-                    </span>
-                    <x-global::forms.label for="description">{!! __('label.description') !!}</x-global::forms.label>
-                    <span class="field">
-                        <x-global::forms.textarea rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</x-global::forms.textarea><br />
-                    </span>
+                    </x-global::forms.field>
+
+                    <x-global::forms.field for="description" :label="__('label.description')">
+                        <x-global::forms.textarea rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</x-global::forms.textarea>
+                    </x-global::forms.field>
+
                     <input type="hidden" name="saveTimes" value="1" />
                     <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="saveTimes" />
 

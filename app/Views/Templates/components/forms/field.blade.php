@@ -21,7 +21,10 @@
 
     Slots:
       default  The control: forms.text-input, forms.select, forms.date-picker, an editor …
+               Several controls side by side (date + time, toggle + date): wrap them in
+               `<div class="lt-field-row">`, which also drops their own bottom margin.
       label    The label with markup, instead of the `label` prop.
+      help     The help line with markup (a link), instead of the `help` prop.
 
     Anything else (id, data-*, extra classes) passes through to the wrapper.
 --}}

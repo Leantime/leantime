@@ -6,14 +6,15 @@
                 <h1>{{  __('headlines.make_it_happen') }}</h1>
                 <p>{!!  __('text.structured_project_thinking') !!}</p>
                 <br />
-                <x-global::forms.label><strong>{{ __('label.what_are_you_trying_to_accomplish') }}</strong></x-global::forms.label>
-                <x-global::forms.textarea id="accomplish" name="accomplish" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
-                <br />
-                <x-global::forms.label><strong>{{ __('label.how_does_the_world_look_like') }}</strong></x-global::forms.label>
-                <x-global::forms.textarea id="wordlview" name="worldview" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
-                <br />
-                <x-global::forms.label><strong>{{ __('label.why_is_this_important') }}</strong></x-global::forms.label>
-                <x-global::forms.textarea id="whyImportant" name="whyImportant" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
+                <x-global::forms.field for="accomplish" :label="__('label.what_are_you_trying_to_accomplish')">
+                    <x-global::forms.textarea id="accomplish" name="accomplish" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
+                </x-global::forms.field>
+                <x-global::forms.field for="wordlview" :label="__('label.how_does_the_world_look_like')">
+                    <x-global::forms.textarea id="wordlview" name="worldview" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
+                </x-global::forms.field>
+                <x-global::forms.field for="whyImportant" :label="__('label.why_is_this_important')">
+                    <x-global::forms.textarea id="whyImportant" name="whyImportant" value="" placeholder="" rows="3" style="width:99%; overflow-x: hidden;"></x-global::forms.textarea>
+                </x-global::forms.field>
 
             </div>
             <div class="col-md-4">

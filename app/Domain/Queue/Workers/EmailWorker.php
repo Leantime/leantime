@@ -5,6 +5,7 @@ namespace Leantime\Domain\Queue\Workers;
 use Leantime\Core\Language;
 use Leantime\Core\Mailer;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationsRepository;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Repositories\Users;
@@ -18,6 +19,12 @@ use Leantime\Domain\Users\Repositories\Users;
  * since. One quiet line each, no link. A digest with nothing new is not sent at all; the seen
  * rows wait for the next digest that has news, and are dropped after {@see MAX_AGE_DAYS} like any
  * other row. Rows queued without an entity (module / moduleId) are always new.
+ *
+ * New items are grouped by what they are about: a task's changes sit together under its name and
+ * project, one short line each ("Marcel moved this to Done") with the time in the person's time
+ * zone, a comment quoted under its line, and one button to open the task. Repeated lines from one
+ * save show once. Rows queued with a summary (see Queue::queueMessageToUsers()) are grouped;
+ * older rows and producers without one show their own subject and message.
  *
  * How often a person gets a digest is their own setting. The company setting is the shortest wait
  * between two digests for everyone: it fills in for a person who chose nothing, and it wins over a
@@ -46,7 +53,8 @@ class EmailWorker
         private Mailer $mailer,
         private Queue $queue,
         private Language $language,
-        private NotificationsRepository $notifications
+        private NotificationsRepository $notifications,
+        private ?ProjectRepository $projects = null,
     ) {}
 
     /**
@@ -55,6 +63,8 @@ class EmailWorker
     public function handleQueue($messages): void
     {
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+        $this->projectNames = [];
+        $this->brandColor = null;
 
         $messagesByUser = [];
         $expiredHashes = [];
@@ -76,6 +86,7 @@ class EmailWorker
                 'projectId' => $message['projectId'],
                 'module' => $message['module'] ?? null,
                 'moduleId' => $message['moduleId'] ?? null,
+                'summary' => self::summary($message['summary'] ?? null),
             ];
         }
 
@@ -113,7 +124,7 @@ class EmailWorker
             } else {
                 $this->mailer->setSubject($this->language->__('email_notifications.latest_updates_subject'));
             }
-            $this->mailer->setHtml($this->doFormatMail($new, $seen));
+            $this->mailer->setHtml($this->doFormatMail($new, $seen, (int) $theuser['id']));
 
             $this->mailer->sendMail([$recipient], 'Leantime System');
 
@@ -229,41 +240,280 @@ class EmailWorker
     }
 
     /**
-     * The digest body: the new items in full, then, when there are any, the seen items as one
-     * line each.
+     * A queued row's summary, decoded; null when it has none or it is unusable.
+     *
+     * @return array{group: string, title: string, line: string, quote: string, detail: string, url: string}|null
+     */
+    private static function summary(mixed $json): ?array
+    {
+        if (! is_string($json) || $json === '') {
+            return null;
+        }
+
+        $data = json_decode($json, true);
+        if (! is_array($data) || ! is_string($data['group'] ?? null) || ! is_string($data['title'] ?? null) || ! is_string($data['line'] ?? null)) {
+            return null;
+        }
+        if ($data['group'] === '' || $data['title'] === '' || $data['line'] === '') {
+            return null;
+        }
+
+        return [
+            'group' => $data['group'],
+            'title' => $data['title'],
+            'line' => $data['line'],
+            'quote' => is_string($data['quote'] ?? null) ? $data['quote'] : '',
+            'detail' => is_string($data['detail'] ?? null) ? $data['detail'] : '',
+            'url' => is_string($data['url'] ?? null) ? $data['url'] : '',
+        ];
+    }
+
+    /**
+     * The digest body: what's new, grouped by item, then, when there are any, the seen items
+     * as one line each.
      *
      * @param  array<string, array<string, mixed>>  $new
      * @param  array<string, array<string, mixed>>  $seen
      */
-    private function doFormatMail(array $new, array $seen): string
+    private function doFormatMail(array $new, array $seen, int $userId = 0): string
     {
-        $outputHTML = $this->language->__('text.here_are_news')."<br/>\n";
+        $timezone = $this->timezoneFor($userId);
+
+        $outputHTML = '<h1 style="margin: 0 0 4px; font-size: 22px; line-height: 1.3; font-weight: 700; color: #1f2933;">'
+            .$this->e($this->language->__('email_notifications.digest_title')).'</h1>';
+        $outputHTML .= '<p style="margin: 0 0 16px; font-size: 14px; line-height: 1.5; color: #52606d;">'
+            .$this->e($this->language->__('email_notifications.digest_intro')).'</p>';
 
         if ($seen !== []) {
-            $outputHTML .= '<h3 style="margin: 12px 0 3px 3px; font-size: 14px;">'.$this->language->__('email_notifications.digest_new_heading').'</h3>';
+            $outputHTML .= '<h3 style="margin: 12px 0 3px 0; font-size: 14px;">'.$this->language->__('email_notifications.digest_new_heading').'</h3>';
         }
 
-        foreach ($new as $chunk) {
-            $outputHTML .= '<div style="border-top: 1px solid #ddd; margin: 3px; padding: 3px;">';
-            $outputHTML .= '<div style="margin: 0px; padding: 0px; float : right">'.$chunk['thedate'].'</div>';
-            $outputHTML .= '<div><p><em>'.$chunk['subject'].'</em></p>';
-            $outputHTML .= $chunk['message'].'</div>';
-            $outputHTML .= '</div>';
+        foreach ($this->groups($new) as $group) {
+            $outputHTML .= $this->formatGroup($group, $timezone);
         }
 
         if ($seen !== []) {
-            $outputHTML .= '<h3 style="margin: 18px 0 0 3px; font-size: 14px; color: #666;">'.$this->language->__('email_notifications.digest_seen_heading').'</h3>';
-            $outputHTML .= '<p style="margin: 0 3px 3px 3px; color: #888; font-size: 12px;">'.$this->language->__('email_notifications.digest_seen_hint').'</p>';
+            $outputHTML .= '<h3 style="margin: 18px 0 0 0; font-size: 14px; color: #52606d;">'.$this->language->__('email_notifications.digest_seen_heading').'</h3>';
+            $outputHTML .= '<p style="margin: 0 0 3px 0; color: #52606d; font-size: 12px;">'.$this->language->__('email_notifications.digest_seen_hint').'</p>';
             foreach ($seen as $chunk) {
-                // One quiet line: when, and what it was about. The subject is plain text; the
-                // body, with its link, stays out.
-                $outputHTML .= '<div style="border-top: 1px solid #eee; margin: 3px; padding: 3px; color: #888; font-size: 12px;">';
-                $outputHTML .= '<span style="float: right;">'.$chunk['thedate'].'</span>';
-                $outputHTML .= htmlspecialchars(strip_tags((string) $chunk['subject']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $outputHTML .= '</div>';
+                // One quiet line: when, and what it was about. Plain text; the body, with its
+                // link, stays out.
+                $what = $chunk['summary'] !== null ? $chunk['summary']['title'].' · '.$chunk['summary']['line'] : strip_tags((string) $chunk['subject']);
+                $outputHTML .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid #e4e7eb;"><tr>'
+                    .'<td style="padding: 6px 0; color: #52606d; font-size: 12px;">'.$this->e($what).'</td>'
+                    .'<td style="padding: 6px 0 6px 12px; color: #52606d; font-size: 12px; white-space: nowrap; text-align: right;">'.$this->e($this->localTime((string) $chunk['thedate'], $timezone)).'</td>'
+                    .'</tr></table>';
             }
         }
 
         return $outputHTML;
+    }
+
+    /**
+     * Two copies of one line closer together than this came from the same save (one save can
+     * raise the same notification twice); further apart, they are separate changes.
+     */
+    private const SAME_SAVE_SECONDS = 120;
+
+    /**
+     * Project names looked up during one handleQueue() run, by project id.
+     *
+     * @var array<int, string>
+     */
+    private array $projectNames = [];
+
+    /** The company colour, looked up once per handleQueue() run. */
+    private ?string $brandColor = null;
+
+    /**
+     * New rows grouped by the item they are about, newest change first; within an item, oldest
+     * first, a line repeated by the same save shown once. The same line again later is a new
+     * change (Done, In Progress, then Done again) and stays. Rows without a summary stay on
+     * their own.
+     *
+     * @param  array<string, array<string, mixed>>  $rows
+     * @return array<int, array{rows: array<int, array<string, mixed>>, latest: string}>
+     */
+    private function groups(array $rows): array
+    {
+        $groups = [];
+        foreach ($rows as $hash => $row) {
+            $key = $row['summary'] !== null ? 'g:'.$row['projectId'].':'.$row['summary']['group'] : 'r:'.$hash;
+            $groups[$key]['rows'][] = $row;
+            $groups[$key]['latest'] = max($groups[$key]['latest'] ?? '', (string) $row['thedate']);
+        }
+
+        foreach ($groups as &$group) {
+            usort($group['rows'], fn (array $a, array $b) => strcmp((string) $a['thedate'], (string) $b['thedate']));
+            $lastKept = null;
+            $group['rows'] = array_values(array_filter($group['rows'], function (array $row) use (&$lastKept) {
+                if ($row['summary'] === null) {
+                    return true;
+                }
+                // The title is part of it: an update and a rename in the same two minutes read the
+                // same line but carry different names, and the newest name heads the item.
+                $fingerprint = $row['summary']['title']."\n".$row['summary']['line']."\n".$row['summary']['quote']."\n".$row['summary']['detail'];
+                $at = $this->utc((string) $row['thedate'])?->getTimestamp() ?? 0;
+                if ($lastKept !== null && $lastKept['fingerprint'] === $fingerprint && abs($at - $lastKept['at']) <= self::SAME_SAVE_SECONDS) {
+                    return false;
+                }
+                $lastKept = ['fingerprint' => $fingerprint, 'at' => $at];
+
+                return true;
+            }));
+        }
+        unset($group);
+
+        uasort($groups, fn (array $a, array $b) => strcmp($b['latest'], $a['latest']));
+
+        return array_values($groups);
+    }
+
+    /**
+     * One item: its project and name, a line per change with its time, a quoted comment under
+     * its line, and one button. A row without a summary shows its subject and message as before.
+     *
+     * @param  array{rows: array<int, array<string, mixed>>, latest: string}  $group
+     */
+    private function formatGroup(array $group, \DateTimeZone $timezone): string
+    {
+        $first = $group['rows'][0];
+        $html = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid #e4e7eb;"><tr><td style="padding: 18px 0;">';
+
+        if ($first['summary'] === null) {
+            $html .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
+                .'<td style="font-size: 15px; font-weight: 600; line-height: 1.4; color: #1f2933;">'.$this->e(strip_tags((string) $first['subject'])).'</td>'
+                .'<td style="padding-left: 12px; font-size: 13px; color: #52606d; white-space: nowrap; text-align: right; vertical-align: top;">'.$this->e($this->localTime((string) $first['thedate'], $timezone)).'</td>'
+                .'</tr></table>';
+            $html .= '<div style="margin-top: 6px; font-size: 15px; line-height: 1.5; color: #1f2933;">'.$first['message'].'</div>';
+
+            return $html.'</td></tr></table>';
+        }
+
+        $project = $this->projectName((int) $first['projectId']);
+        if ($project !== '') {
+            $html .= '<div style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #52606d;">'.$this->e($project).'</div>';
+        }
+        // The item's name as of its newest change (it may have been renamed); the lines below
+        // stay oldest first.
+        $newest = $group['rows'][count($group['rows']) - 1];
+        $html .= '<div style="margin: 2px 0 10px; font-size: 17px; font-weight: 600; line-height: 1.35; color: #1f2933;">'.$this->e($newest['summary']['title']).'</div>';
+
+        // One row per event: a bullet, the line with its details indented under it (a due date,
+        // a quoted comment), and the time. The details belong to their line, not the next one.
+        $url = '';
+        $html .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">';
+        foreach ($group['rows'] as $row) {
+            $summary = $row['summary'];
+            $html .= '<tr>'
+                .'<td width="16" style="width: 16px; padding: 4px 0; font-size: 15px; line-height: 1.5; color: #9aa5b1; vertical-align: top;">&bull;</td>'
+                .'<td style="padding: 4px 0; vertical-align: top;">'
+                .'<div style="font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['line']).'</div>';
+            if ($summary['detail'] !== '') {
+                $html .= '<div style="font-size: 14px; line-height: 1.5; color: #52606d;">'.$this->e($summary['detail']).'</div>';
+            }
+            if ($summary['quote'] !== '') {
+                $html .= '<div style="margin: 4px 0 2px; padding: 10px 14px; background: #f5f7fa; border-radius: 8px; font-size: 15px; line-height: 1.5; color: #1f2933;">'.$this->e($summary['quote']).'</div>';
+            }
+            $html .= '</td>'
+                .'<td style="padding: 4px 0 4px 12px; font-size: 13px; line-height: 1.5; color: #52606d; white-space: nowrap; text-align: right; vertical-align: top;">'.$this->e($this->localTime((string) $row['thedate'], $timezone)).'</td>'
+                .'</tr>';
+            if ($summary['url'] !== '') {
+                $url = $summary['url'];
+            }
+        }
+        $html .= '</table>';
+
+        if ($url !== '') {
+            $label = str_starts_with($first['summary']['group'], 'tickets:')
+                ? $this->language->__('email_notifications.digest_open_task')
+                : $this->language->__('email_notifications.digest_open');
+            $color = $this->e($this->brandColor());
+            $html .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin-top: 12px;"><tr><td style="border-radius: 8px; background: '.$color.';">'
+                .'<a href="'.$this->e($url).'" style="display: inline-block; padding: 11px 18px; font-size: 14px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">'.$this->e($label).'</a>'
+                .'</td></tr></table>';
+        }
+
+        return $html.'</td></tr></table>';
+    }
+
+    /** The company's primary colour, as the email around the digest uses it (Mailer). Once per run. */
+    private function brandColor(): string
+    {
+        if ($this->brandColor !== null) {
+            return $this->brandColor;
+        }
+
+        $color = $this->settingsRepo->getSetting('companysettings.primarycolor');
+
+        return $this->brandColor = is_string($color) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $color) === 1 ? $color : '#006c9e';
+    }
+
+    /** The person's time zone, else the instance default, else UTC. */
+    private function timezoneFor(int $userId): \DateTimeZone
+    {
+        $candidates = [
+            $userId > 0 ? $this->settingsRepo->getSetting('usersettings.'.$userId.'.timezone') : null,
+            $this->defaultTimezone(),
+        ];
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && $candidate !== '') {
+                try {
+                    return new \DateTimeZone($candidate);
+                } catch (\Exception) {
+                    continue;
+                }
+            }
+        }
+
+        return new \DateTimeZone('UTC');
+    }
+
+    private function defaultTimezone(): ?string
+    {
+        try {
+            return (string) app(\Leantime\Core\Configuration\Environment::class)->defaultTimezone;
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /** "12:09 PM" today in the person's time zone, "Nov 16, 4:02 PM" on another day. */
+    private function localTime(string $utc, \DateTimeZone $timezone): string
+    {
+        $at = $this->utc($utc);
+        if ($at === null) {
+            return '';
+        }
+
+        $local = $at->setTimezone($timezone);
+        $today = (new \DateTimeImmutable('now', $timezone))->format('Y-m-d');
+
+        return $local->format('Y-m-d') === $today ? $local->format('g:i A') : $local->format('M j, g:i A');
+    }
+
+    private function projectName(int $projectId): string
+    {
+        if ($projectId <= 0) {
+            return '';
+        }
+
+        // Once per project per run: a digest repeats the same few projects many times over.
+        if (array_key_exists($projectId, $this->projectNames)) {
+            return $this->projectNames[$projectId];
+        }
+
+        try {
+            $project = ($this->projects ?? app(ProjectRepository::class))->getProject($projectId);
+        } catch (\Throwable) {
+            return '';
+        }
+
+        return $this->projectNames[$projectId] = is_array($project) ? trim(strip_tags((string) ($project['name'] ?? ''))) : '';
+    }
+
+    private function e(string $text): string
+    {
+        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }

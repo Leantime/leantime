@@ -21,6 +21,7 @@ use Leantime\Domain\Calendar\Permissions\CalendarPermissions;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
+use Leantime\Domain\Tickets\Support\WorkStart;
 use Ramsey\Uuid\Uuid;
 use Spatie\IcalendarGenerator\Components\Calendar as IcalCalendar;
 use Spatie\IcalendarGenerator\Components\Event as IcalEvent;
@@ -40,6 +41,13 @@ class Calendar extends BaseService
 {
     /** A valid, event-less calendar: served when a feed is unavailable so the client parser never sees an empty body. */
     public const EMPTY_ICAL_CALENDAR = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Leantime//External Calendar//EN\r\nEND:VCALENDAR\r\n";
+
+    /**
+     * Per-person setting, under `usersettings.{userId}.`: show date-only plans (Planned days with
+     * no time) on the calendar. On by default, as all-day items; stored as '0' when someone turns
+     * it off. Time-boxed to-dos always show.
+     */
+    public const SHOW_PLANNED_DAYS_SETTING = 'calendar.showPlannedDays';
 
     private CalendarRepository $calendarRepo;
 
@@ -432,6 +440,59 @@ class Calendar extends BaseService
     }
 
     /**
+     * Whether your calendar shows date-only plans (Planned days with no time). On by default.
+     *
+     * @return bool False when you turned "Show planned days on my calendar" off.
+     *
+     * @api
+     */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
+    public function getShowPlannedDays(): bool
+    {
+        return $this->showsPlannedDays((int) session('userdata.id'));
+    }
+
+    /**
+     * Turns "Show planned days on my calendar" on or off for you. Applies to the Leantime
+     * calendar, the dashboard calendar, the mobile calendar and your iCal feed.
+     *
+     * @param  bool  $show  True to show date-only plans as all-day items.
+     * @return bool The setting as saved.
+     *
+     * @api
+     */
+    #[RequiresPermission(CalendarPermissions::VIEW)]
+    public function saveShowPlannedDays(bool $show): bool
+    {
+        $userId = (int) session('userdata.id');
+        $key = 'usersettings.'.$userId.'.'.self::SHOW_PLANNED_DAYS_SETTING;
+
+        // On is the default, so only "off" is stored.
+        if ($show) {
+            $this->settingsRepo->deleteSetting($key);
+        } else {
+            $this->settingsRepo->saveSetting($key, '0');
+        }
+
+        return $show;
+    }
+
+    /**
+     * Whether a person's calendar shows date-only plans. Private, so it isn't reachable over
+     * JSON-RPC with someone else's id.
+     *
+     * @param  int  $userId  The calendar's owner.
+     */
+    private function showsPlannedDays(int $userId): bool
+    {
+        if ($userId <= 0) {
+            return true;
+        }
+
+        return (string) $this->settingsRepo->getSetting('usersettings.'.$userId.'.'.self::SHOW_PLANNED_DAYS_SETTING) !== '0';
+    }
+
+    /**
      * Retrieves all external calendars for a given user.
      *
      * @param  int  $userId  Retained for signature/RPC compatibility but IGNORED — the list is
@@ -512,6 +573,13 @@ class Calendar extends BaseService
                 $startsAt = dtHelper()->parseDbDateTime($event['dateFrom'])->setTimezone($eventTimezone);
                 $endsAt = dtHelper()->parseDbDateTime($event['dateTo'])->setTimezone($eventTimezone);
 
+                // An all-day DTEND is exclusive and must come after DTSTART (RFC 5545). A planned
+                // day has no Work End, so it would go out with DTEND equal to DTSTART: send the
+                // next day instead.
+                if ($isAllDay && $endsAt->lessThanOrEqualTo($startsAt)) {
+                    $endsAt = $startsAt->addDay();
+                }
+
                 $currentEvent = IcalEvent::create()
                     ->image(BASE_URL.'/dist/images/favicon.png', 'image/png', Display::badge())
                     ->startsAt($startsAt)
@@ -529,7 +597,9 @@ class Calendar extends BaseService
                     $currentEvent->alertMinutesBefore(30, $this->language->__('text.ical.todo_is_due'));
                 }
 
-                if ($event['eventType'] == 'ticket' && $event['dateContext'] == 'edit') {
+                // A planned day (date-only Work Start) has no start time to be alerted about. A
+                // time box spanning whole days is all-day too, and keeps its alarm.
+                if ($event['eventType'] == 'ticket' && $event['dateContext'] == 'edit' && empty($event['plannedDay'])) {
                     $currentEvent->alertMinutesBefore(5, $this->language->__('text.ical.todo_start_alert'));
                 }
 
@@ -585,6 +655,9 @@ class Calendar extends BaseService
         }
 
         $dbUserEvents = $this->calendarRepo->getAll($userId, $from, $until);
+
+        $timezone = dtHelper()->userNow()->getTimezone()->getName();
+        $showPlannedDays = $this->showsPlannedDays($userId);
 
         $newValues = [];
         foreach ($dbUserEvents as $value) {
@@ -691,7 +764,14 @@ class Calendar extends BaseService
 
                 if (dtHelper()->isValidDateString($ticket['editFrom'])) {
 
-                    // Set ticket to all-day ticket when no time is set.
+                    // A date-only Work Start is a plan for the day, not a time box. It shows as
+                    // all-day rather than as a zero-length event at midnight, unless the person
+                    // turned "Show planned days" off.
+                    $isPlannedDay = WorkStart::isDateOnly($ticket['editFrom'], $ticket['editTo'] ?? null, $timezone);
+                    if ($isPlannedDay && ! $showPlannedDays) {
+                        continue;
+                    }
+
                     // Guard editTo the same way editFrom is guarded: a ticket can
                     // have a planned start but no (or a sentinel) end date, and
                     // parseDbDateTime() throws on empty/zero-date values — which
@@ -712,12 +792,11 @@ class Calendar extends BaseService
                         }
                     }
 
-                    $allDay = false;
-                    if ($dateFrom->diffInDays($dateTo) >= 1) {
-                        $allDay = true;
-                    }
+                    $allDay = $isPlannedDay || $dateFrom->diffInDays($dateTo) >= 1;
 
-                    $context = $this->language->__('label.planned_edit');
+                    $context = $isPlannedDay
+                        ? $this->language->__('label.planned_day_prefix')
+                        : $this->language->__('label.planned_edit');
 
                     $newValues[] = $this->mapEventData(
                         title: $context.$ticket['headline'].' ('.$statusName.')',

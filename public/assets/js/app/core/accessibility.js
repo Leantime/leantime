@@ -62,12 +62,12 @@ leantime.accessibilityController = (function () {
                 return;
             }
 
-            // If no label exists, create ARIA label from context
-            if (!jQuery('label[for="' + id + '"]').length) {
+            // If no label exists, create ARIA label from context (an explicit aria-label wins)
+            if (!jQuery('label[for="' + id + '"]').length && !$timeInput.attr('aria-label')) {
                 var labelText = leantime.i18n.__('label.time');
 
-                // Try to infer from nearby elements
-                var $prevLabel = $timeInput.closest('.form-group').find('label').first();
+                // Try to infer from nearby elements (legacy .form-group rows and forms.field)
+                var $prevLabel = $timeInput.closest('.form-group, .lt-field').find('label').first();
                 if ($prevLabel.length) {
                     labelText = leantime.i18n.__('label.field_time').replace('%s', function () { return $prevLabel.text().trim(); });
                 }

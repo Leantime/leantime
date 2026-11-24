@@ -134,6 +134,7 @@
     --dark-red-text-color:#fff;
 
     --red: #F76C5E;
+    --color-text-danger: var(--red);
     --red-text-color: #000;
 
     --green: #32965D;

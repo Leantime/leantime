@@ -3,32 +3,32 @@
 namespace Leantime\Domain\Auth\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Auth\Services\Onboarding as OnboardingService;
+use Leantime\Domain\Oidc\Services\OidcConfig;
 use Symfony\Component\HttpFoundation\Response;
 
 class Login extends Controller
 {
     private AuthService $authService;
 
-    private Environment $config;
-
     private OnboardingService $onboardingService;
+
+    private OidcConfig $oidcConfig;
 
     /**
      * init - initialize private variables
      */
     public function init(
         AuthService $authService,
-        Environment $config,
-        OnboardingService $onboardingService
+        OnboardingService $onboardingService,
+        OidcConfig $oidcConfig,
     ): void {
         $this->authService = $authService;
-        $this->config = $config;
         $this->onboardingService = $onboardingService;
+        $this->oidcConfig = $oidcConfig;
     }
 
     /**
@@ -55,7 +55,7 @@ class Login extends Controller
 
         $this->tpl->assign('inputPlaceholder', $this->authService->getLoginInputPlaceholder());
         $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
-        $this->tpl->assign('oidcEnabled', $this->config->oidcEnable);
+        $this->tpl->assign('oidcEnabled', $this->oidcConfig->isEnabled());
         $this->tpl->assign('noLoginForm', $this->authService->shouldHideLoginForm());
 
         return $this->tpl->display('auth.login', 'entry');

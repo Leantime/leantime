@@ -5,6 +5,7 @@ namespace Unit\app\Domain\Queue\Workers;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer;
 use Leantime\Domain\Notifications\Repositories\Notifications as NotificationsRepository;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Queue\Workers\EmailWorker;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -26,6 +27,10 @@ class EmailWorkerTest extends TestCase
         'email_notifications.digest_new_heading' => 'New',
         'email_notifications.digest_seen_heading' => 'Already seen',
         'email_notifications.digest_seen_hint' => 'You already read these in Leantime.',
+        'email_notifications.digest_title' => 'Updates on your work',
+        'email_notifications.digest_intro' => "Here's what changed since your last email.",
+        'email_notifications.digest_open_task' => 'Open task',
+        'email_notifications.digest_open' => 'Open in Leantime',
     ];
 
     /** @var array<string, string> zp_settings by key */
@@ -43,6 +48,8 @@ class EmailWorkerTest extends TestCase
     /** @var array<int, array{userId: int, entities: array}> */
     private array $lookups = [];
 
+    private int $projectLookups = 0;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -52,6 +59,7 @@ class EmailWorkerTest extends TestCase
         $this->deleted = [];
         $this->latest = [];
         $this->lookups = [];
+        $this->projectLookups = 0;
     }
 
     private function worker(): EmailWorker
@@ -98,6 +106,13 @@ class EmailWorkerTest extends TestCase
                     $this->lookups[] = compact('userId', 'entities');
 
                     return $this->latest;
+                },
+            ]),
+            $this->make(ProjectRepository::class, [
+                'getProject' => function ($id) {
+                    $this->projectLookups++;
+
+                    return (int) $id === 5 ? ['id' => 5, 'name' => 'Sales'] : false;
                 },
             ]),
         );
@@ -371,5 +386,157 @@ class EmailWorkerTest extends TestCase
         $this->assertSame(['user3@example.com'], $this->sent[0]['to']);
         $this->assertStringContainsString('Already seen', $this->sent[0]['html']);
         $this->assertSame(['b', 'c'], $this->deletedHashes());
+    }
+
+    // ---------------------------------------------------------------------
+    // Grouped by item
+    // ---------------------------------------------------------------------
+
+    /** A row with the digest's summary, as Queue::queueMessageToUsers() stores it. */
+    private function summaryRow(string $hash, string $line, string $thedate, array $extra = [], string $group = 'tickets:12', string $title = 'Pricing page'): array
+    {
+        $row = $this->row($hash, 2, 'One of your To-Dos was updated [12] - '.$title, 'tickets', 12, $thedate);
+        $row['summary'] = json_encode(['group' => $group, 'title' => $title, 'line' => $line, 'url' => 'https://app.example.com/t/'.$group] + $extra);
+
+        return $row;
+    }
+
+    public function test_changes_to_one_task_sit_together_with_one_button_and_no_email_wording(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel assigned this to you', gmdate('Y-m-d H:i:s', time() - 300), ['detail' => 'Due Nov 20']),
+            $this->summaryRow('h2', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 120)),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertSame(1, substr_count($html, 'Pricing page'), 'the task name once');
+        $this->assertStringContainsString('Sales', $html, 'the project above it');
+        $this->assertLessThan(strpos($html, 'Marcel moved this to Done'), strpos($html, 'Marcel assigned this to you'), 'oldest change first');
+        $this->assertStringContainsString('Due Nov 20', $html);
+        $between = substr($html, strpos($html, 'Marcel assigned this to you'), strpos($html, 'Due Nov 20') - strpos($html, 'Marcel assigned this to you'));
+        $this->assertStringNotContainsString('&bull;', $between, 'the due date sits under its own event, not as the next one');
+        $this->assertSame(2, substr_count($html, '&bull;'), 'one bullet per event');
+        $this->assertSame(1, substr_count($html, '>Open task<'), 'one button for the task');
+        $this->assertStringNotContainsString('One of your To-Dos', $html, 'no email subject');
+        $this->assertStringNotContainsString('Click here', $html, 'no "click here" links');
+        $this->assertSame(['h1', 'h2'], $this->deletedHashes());
+    }
+
+    public function test_the_same_line_from_one_save_shows_once(): void
+    {
+        $at = gmdate('Y-m-d H:i:s', time() - 120);
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel updated this task', $at),
+            $this->summaryRow('h2', 'Marcel updated this task', $at),
+        ]);
+
+        $this->assertSame(1, substr_count($this->sent[0]['html'], 'Marcel updated this task'));
+    }
+
+    public function test_the_same_line_later_is_a_new_change_and_stays(): void
+    {
+        // Done at 09:00, In Progress at 10:00, Done again at 11:00: the digest ends at Done.
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 7200)),
+            $this->summaryRow('h2', 'Marcel moved this to In Progress', gmdate('Y-m-d H:i:s', time() - 3600)),
+            $this->summaryRow('h3', 'Marcel moved this to Done', gmdate('Y-m-d H:i:s', time() - 60)),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertSame(2, substr_count($html, 'Marcel moved this to Done'));
+        $this->assertGreaterThan(strpos($html, 'In Progress'), strrpos($html, 'Marcel moved this to Done'), 'ends at Done');
+    }
+
+    public function test_a_renamed_task_is_headed_by_its_newest_name(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel assigned this to you', gmdate('Y-m-d H:i:s', time() - 600), [], 'tickets:12', 'Draft pricing'),
+            $this->summaryRow('h2', 'Marcel renamed this task', gmdate('Y-m-d H:i:s', time() - 60), [], 'tickets:12', 'Pricing page'),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertStringContainsString('Pricing page', $html);
+        $this->assertStringNotContainsString('Draft pricing', $html);
+        $this->assertLessThan(strpos($html, 'Marcel renamed this task'), strpos($html, 'Marcel assigned this to you'), 'lines stay oldest first');
+    }
+
+    public function test_an_update_then_a_rename_within_one_save_window_keeps_the_new_name(): void
+    {
+        // Same line twice inside two minutes, but the second carries the new name: it is a
+        // change of its own, and the newest name heads the item.
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 90), [], 'tickets:12', 'Draft pricing'),
+            $this->summaryRow('h2', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 30), [], 'tickets:12', 'Pricing page'),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertStringContainsString('Pricing page', $html);
+        $this->assertStringNotContainsString('Draft pricing', $html);
+    }
+
+    public function test_each_project_is_looked_up_once_per_run(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 60), [], 'tickets:12', 'Pricing page'),
+            $this->summaryRow('h2', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 600), [], 'tickets:13', 'Landing copy'),
+            $this->summaryRow('h3', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 900), [], 'tickets:14', 'Signup form'),
+        ]);
+
+        $this->assertSame(3, substr_count($this->sent[0]['html'], 'Sales'));
+        $this->assertSame(1, $this->projectLookups);
+    }
+
+    public function test_the_task_changed_last_comes_first(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 60), [], 'tickets:12', 'Pricing page'),
+            $this->summaryRow('h2', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 600), [], 'tickets:13', 'Landing copy'),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertLessThan(strpos($html, 'Landing copy'), strpos($html, 'Pricing page'));
+    }
+
+    public function test_times_are_in_the_persons_time_zone(): void
+    {
+        $this->settings['usersettings.2.timezone'] = 'America/Los_Angeles';
+        $at = time() - 120;
+        $this->worker()->handleQueue([$this->summaryRow('h1', 'Marcel updated this task', gmdate('Y-m-d H:i:s', $at))]);
+
+        $expected = (new \DateTimeImmutable('@'.$at))->setTimezone(new \DateTimeZone('America/Los_Angeles'))->format('g:i A');
+        $this->assertStringContainsString($expected, $this->sent[0]['html']);
+        $this->assertStringNotContainsString(gmdate('Y-m-d H:i:s', $at), $this->sent[0]['html'], 'no raw database timestamp');
+    }
+
+    public function test_a_comment_is_quoted_under_its_line_and_escaped(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel commented', gmdate('Y-m-d H:i:s', time() - 120), ['quote' => 'Ship <b>Friday</b>?']),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertStringContainsString('Ship &lt;b&gt;Friday&lt;/b&gt;?', $html);
+        $this->assertStringNotContainsString('<b>Friday</b>', $html);
+    }
+
+    public function test_the_button_uses_the_company_colour(): void
+    {
+        $this->settings['companysettings.primarycolor'] = '#7a1fa2';
+        $this->worker()->handleQueue([$this->summaryRow('h1', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 120))]);
+
+        $this->assertStringContainsString('background: #7a1fa2', $this->sent[0]['html']);
+    }
+
+    public function test_rows_without_a_summary_still_show_their_own_subject_and_link(): void
+    {
+        $this->worker()->handleQueue([
+            $this->summaryRow('h1', 'Marcel updated this task', gmdate('Y-m-d H:i:s', time() - 120)),
+            $this->row('h2', 2, 'Project created', 'projects', 5),
+        ]);
+
+        $html = $this->sent[0]['html'];
+        $this->assertStringContainsString('Project created', $html);
+        $this->assertStringContainsString('<a href="https://app.example.com/tickets/5">', $html);
+        $this->assertStringContainsString('Marcel updated this task', $html);
     }
 }

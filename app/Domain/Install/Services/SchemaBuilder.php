@@ -653,10 +653,10 @@ class SchemaBuilder
             $table->float('sum_planned_hours')->nullable();
             $table->float('sum_estremaining_hours')->nullable();
             $table->float('sum_logged_hours')->nullable();
-            $table->integer('sum_points')->nullable();
-            $table->integer('sum_points_done')->nullable();
-            $table->integer('sum_points_progress')->nullable();
-            $table->integer('sum_points_open')->nullable();
+            $table->float('sum_points')->nullable();
+            $table->float('sum_points_done')->nullable();
+            $table->float('sum_points_progress')->nullable();
+            $table->float('sum_points_open')->nullable();
             $table->integer('sum_todos_xs')->nullable();
             $table->integer('sum_todos_s')->nullable();
             $table->integer('sum_todos_m')->nullable();
@@ -861,6 +861,8 @@ class SchemaBuilder
             // moduleId), so the digest can tell already-read items from new ones.
             $table->string('module', 45)->nullable();
             $table->integer('moduleId')->nullable();
+            // The digest's wording for the row (JSON): see EmailWorker.
+            $table->text('summary')->nullable();
 
             $table->index(['projectId'], 'idx_queue_projectId');
             $table->index(['userId'], 'idx_queue_userId');

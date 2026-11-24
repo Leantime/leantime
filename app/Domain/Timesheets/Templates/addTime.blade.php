@@ -36,109 +36,107 @@ $values = $values ?? [];
 
                         <x-slot:title>{!! __('label.overview') !!}</x-slot:title>
 
-                            <x-global::forms.label for="clients">{!! __('label.client') !!}</x-global::forms.label>
-                            <x-global::forms.select name="clients" id="clients" onchange="filterProjectsByClient();">
-                                <option value="all">{!! __('headline.all_clients') !!}</option>
-                                @foreach ($allClients as $client)
-                                    <option value="{{ $client['id'] }}">{{ $client['name'] }}</option>
-                                @endforeach
-                            </x-global::forms.select> <br/>
+                            <x-global::forms.field layout="inline" for="clients" :label="__('label.client')">
+                                <x-global::forms.select name="clients" id="clients" onchange="filterProjectsByClient();">
+                                    <option value="all">{!! __('headline.all_clients') !!}</option>
+                                    @foreach ($allClients as $client)
+                                        <option value="{{ $client['id'] }}">{{ $client['name'] }}</option>
+                                    @endforeach
+                                </x-global::forms.select>
+                            </x-global::forms.field>
 
-                            <x-global::forms.label for="projects">{!! __('label.project') !!}</x-global::forms.label> <x-global::forms.select
-                                    name="projects" id="projects"
-                                    onchange="removeOptions($('select#projects option:selected').val());">
+                            <x-global::forms.field layout="inline" for="projects" :label="__('label.project')">
+                                <x-global::forms.select name="projects" id="projects"
+                                        onchange="removeOptions($('select#projects option:selected').val());">
 
+                                    <option value="all">{!! __('labels.all_projects') !!}</option>
 
-                                <option value="all">{!! __('labels.all_projects') !!}</option>
+                                    <optgroup>
+                                        @php $lastClientName = ''; @endphp
+                                        @foreach ($allProjects as $row)
+                                            @php $currentClientName = $row['clientName']; @endphp
+                                            @if ($currentClientName != $lastClientName)
+                                                </optgroup><optgroup label="{{ $currentClientName }}">
+                                            @endif
 
-                                <optgroup>
-                                    @php $lastClientName = ''; @endphp
-                                    @foreach ($allProjects as $row)
-                                        @php $currentClientName = $row['clientName']; @endphp
-                                        @if ($currentClientName != $lastClientName)
-                                            </optgroup><optgroup label="{{ $currentClientName }}">
-                                        @endif
+                                            <option value="{{ $row['id'] }}" data-client-id="{{ $row['clientId'] }}"
+                                                @if ($row['id'] == $values['project'])
+                                                    selected="selected"
+                                                @endif
+                                            >{{ $row['name'] }}</option>
 
-                                        <option value="{{ $row['id'] }}" data-client-id="{{ $row['clientId'] }}"
-                                            @if ($row['id'] == $values['project'])
+                                            @php $lastClientName = $row['clientName']; @endphp
+                                        @endforeach
+                                    </optgroup>
+                                </x-global::forms.select>
+                            </x-global::forms.field>
+
+                            <x-global::forms.field layout="inline" for="tickets" :label="__('label.ticket')">
+                                <x-global::forms.select name="tickets" id="tickets">
+                                    @foreach ($allTickets as $row)
+                                        <option class="{{ $row['projectId'] }}" value="{{ $row['projectId'] }}|{{ $row['id'] }}"
+                                            @if ($row['id'] == $values['ticket'])
                                                 selected="selected"
                                             @endif
-                                        >{{ $row['name'] }}</option>
-
-                                        @php $lastClientName = $row['clientName']; @endphp
+                                        >{{ $row['headline'] }}</option>
                                     @endforeach
-                                </optgroup>
-                            </x-global::forms.select> <br/>
+                                </x-global::forms.select>
+                            </x-global::forms.field>
 
-                            <x-global::forms.label for="tickets">{!! __('label.ticket') !!}</x-global::forms.label>
-                            <x-global::forms.select name="tickets" id="tickets">
+                            <x-global::forms.field layout="inline" for="kind" :label="__('label.kind')">
+                                <x-global::forms.select id="kind" name="kind">
+                                    @foreach ($kind as $row)
+                                        <option value="{{ $row }}"
+                                            @if ($row == $values['kind'])
+                                                selected="selected"
+                                            @endif
+                                        >{!! __($row) !!}</option>
+                                    @endforeach
+                                </x-global::forms.select>
+                            </x-global::forms.field>
 
-                                @foreach ($allTickets as $row)
-                                    <option class="{{ $row['projectId'] }}" value="{{ $row['projectId'] }}|{{ $row['id'] }}"
-                                        @if ($row['id'] == $values['ticket'])
-                                            selected="selected"
-                                        @endif
-                                    >{{ $row['headline'] }}</option>
-                                @endforeach
+                            <x-global::forms.field layout="inline" for="date" :label="__('label.date')">
+                                <input type="text" autocomplete="off" id="date" name="date" value="{{ $values['date'] }}" size="7"/>
+                            </x-global::forms.field>
 
-                            </x-global::forms.select> <br/>
-                            <br/>
-                            <x-global::forms.label for="kind">{!! __('label.kind') !!}</x-global::forms.label> <x-global::forms.select id="kind"
-                                                                                          name="kind">
-                                @foreach ($kind as $row)
-                                    <option value="{{ $row }}"
-                                        @if ($row == $values['kind'])
-                                            selected="selected"
-                                        @endif
-                                    >{!! __($row) !!}</option>
-                                @endforeach
+                            <x-global::forms.field layout="inline" for="hours" :label="__('label.hours')">
+                                <x-global::forms.text-input id="hours" name="hours" value="{{ $values['hours'] }}" size="7" />
+                            </x-global::forms.field>
 
-                            </x-global::forms.select><br/>
-                            <x-global::forms.label for="date">{!! __('label.date') !!}</x-global::forms.label> <input type="text" autocomplete="off"
-                                                                                         id="date" name="date"
-                                                                                         value="{{ $values['date'] }}"
-                                                                                         size="7"/>
-                            <br/>
-                            <x-global::forms.label for="hours">{!! __('label.hours') !!}</x-global::forms.label> <x-global::forms.text-input
-                                    id="hours" name="hours"
-                                    value="{{ $values['hours'] }}" size="7" /> <br/>
-                            <x-global::forms.label for="description">{!! __('label.description') !!}</x-global::forms.label> <x-global::forms.textarea
-                                    rows="5" cols="50" id="description"
-                                    name="description">{{ $values['description'] }}</x-global::forms.textarea><br/>
-                            <br/>
-                            <br/>
-                            <x-global::forms.label for="invoicedEmpl">{!! __('label.invoiced') !!}</x-global::forms.label>
-                            <x-global::forms.checkbox variant="toggle" name="invoicedEmpl" id="invoicedEmpl" value="on"
-                                :checked="isset($values['invoicedEmpl']) && $values['invoicedEmpl'] == '1'" />
-                            {!! __('label.ondate') !!}&nbsp;<input type="text"
-                                                                      id="invoicedEmplDate" name="invoicedEmplDate"
-                                                                      value="{{ $values['invoicedEmplDate'] }}"
-                                                                      size="7"/><br/>
+                            <x-global::forms.field layout="inline" for="description" :label="__('label.description')">
+                                <x-global::forms.textarea rows="5" cols="50" id="description" name="description">{{ $values['description'] }}</x-global::forms.textarea>
+                            </x-global::forms.field>
 
+                            <x-global::forms.field layout="inline" for="invoicedEmpl" :label="__('label.invoiced')">
+                                <div class="lt-field-row">
+                                    <x-global::forms.checkbox variant="toggle" name="invoicedEmpl" id="invoicedEmpl" value="on"
+                                        :checked="isset($values['invoicedEmpl']) && $values['invoicedEmpl'] == '1'" />
+                                    <x-global::forms.label for="invoicedEmplDate">{!! __('label.ondate') !!}</x-global::forms.label>
+                                    <input type="text" id="invoicedEmplDate" name="invoicedEmplDate" value="{{ $values['invoicedEmplDate'] }}" size="7"/>
+                                </div>
+                            </x-global::forms.field>
 
                             @can('timesheets.manage')
-                                <br/>
-                                <x-global::forms.label for="invoicedComp">{!! __('label.invoiced_comp') !!}</x-global::forms.label>
-                                <x-global::forms.checkbox variant="toggle" name="invoicedComp" id="invoicedComp" value="on"
-                                    :checked="$values['invoicedComp'] == '1'" />
-                                {!! __('label.ondate') !!}&nbsp;<input type="text" autocomplete="off"
-                                                                          id="invoicedCompDate"
-                                                                          name="invoicedCompDate"
-                                                                          value="{{ $values['invoicedCompDate'] }}"
-                                                                          size="7"/><br/>
+                                <x-global::forms.field layout="inline" for="invoicedComp" :label="__('label.invoiced_comp')">
+                                    <div class="lt-field-row">
+                                        <x-global::forms.checkbox variant="toggle" name="invoicedComp" id="invoicedComp" value="on"
+                                            :checked="$values['invoicedComp'] == '1'" />
+                                        <x-global::forms.label for="invoicedCompDate">{!! __('label.ondate') !!}</x-global::forms.label>
+                                        <input type="text" autocomplete="off" id="invoicedCompDate" name="invoicedCompDate" value="{{ $values['invoicedCompDate'] }}" size="7"/>
+                                    </div>
+                                </x-global::forms.field>
 
-                                <x-global::forms.label for="paid">{!! __('label.paid') !!}</x-global::forms.label>
-                                <x-global::forms.checkbox variant="toggle" name="paid" id="paid" value="on"
-                                    :checked="$values['paid'] == '1'" />
-                                {!! __('label.ondate') !!}&nbsp;<input type="text" autocomplete="off"
-                                                                          id="paidDate"
-                                                                          name="paidDate"
-                                                                          value="{{ $values['paidDate'] }}"
-                                                                          size="7"/><br/>
+                                <x-global::forms.field layout="inline" for="paid" :label="__('label.paid')">
+                                    <div class="lt-field-row">
+                                        <x-global::forms.checkbox variant="toggle" name="paid" id="paid" value="on"
+                                            :checked="$values['paid'] == '1'" />
+                                        <x-global::forms.label for="paidDate">{!! __('label.ondate') !!}</x-global::forms.label>
+                                        <input type="text" autocomplete="off" id="paidDate" name="paidDate" value="{{ $values['paidDate'] }}" size="7"/>
+                                    </div>
+                                </x-global::forms.field>
+                            @endcan
 
-
-
-                            @endcan <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" /> <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save_and_new')" name="saveNew" />
+                            <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" /> <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save_and_new')" name="saveNew" />
 
                     </x-global::elements.card>
                 </div>

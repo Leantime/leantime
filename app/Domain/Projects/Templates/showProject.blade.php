@@ -22,17 +22,15 @@
 
 
         </div>
-        <div class="tabbedwidget tab-primary projectTabs">
-
-            <ul>
-                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> {!! __('tabs.projectdetails') !!}</a></li>
-                <li><a href="#team"><span class="fa fa-group"></span> {!! __('tabs.team') !!}</a></li>
-                <li><a href="#modules"><span class="fa fa-puzzle-piece"></span> {{ __('tabs.modules') }}</a></li>
-
-                <li><a href="#integrations"> <span class="fa fa-asterisk"></span> {!! __('tabs.Integrations') !!}</a></li>
-                <li><a href="#todosettings"><span class="fa fa-list-ul"></span> {!! __('tabs.todosettings') !!}</a></li>
+        <x-global::navigation.section-tabs class="projectTabs" :label="__('tabs.projectdetails')" remember="hash">
+            <x-slot:tabs>
+                <x-global::navigation.section-tabs.tab for="projectdetails" icon="fa-leaf">{!! __('tabs.projectdetails') !!}</x-global::navigation.section-tabs.tab>
+                <x-global::navigation.section-tabs.tab for="team" icon="fa-group">{!! __('tabs.team') !!}</x-global::navigation.section-tabs.tab>
+                <x-global::navigation.section-tabs.tab for="modules" icon="fa-puzzle-piece">{{ __('tabs.modules') }}</x-global::navigation.section-tabs.tab>
+                <x-global::navigation.section-tabs.tab for="integrations" icon="fa-asterisk">{!! __('tabs.Integrations') !!}</x-global::navigation.section-tabs.tab>
+                <x-global::navigation.section-tabs.tab for="todosettings" icon="fa-list-ul">{!! __('tabs.todosettings') !!}</x-global::navigation.section-tabs.tab>
                 @dispatchEvent('projectTabsList')
-            </ul>
+            </x-slot:tabs>
 
             <div id="projectdetails">
                 @include('projects::submodules.projectDetails')
@@ -378,7 +376,7 @@
             </div>
 
             @dispatchEvent('projectTabsContent')
-        </div>
+        </x-global::navigation.section-tabs>
     </x-global::layout.content-box>
 </div>
 
@@ -466,7 +464,6 @@
             }
         );
 
-        leantime.projectsController.initProjectTabs();
         leantime.projectsController.initDuplicateProjectModal();
         leantime.projectsController.initTodoStatusSortable("#todoStatusList");
         leantime.usersController.initUserEditModal();

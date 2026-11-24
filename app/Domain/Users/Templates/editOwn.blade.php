@@ -13,19 +13,18 @@
     <div class="row">
         <div class="col-md-12">
             <x-global::layout.content-box>
-                <div class="tabbedwidget tab-primary accountTabs">
-
-                    <ul>
-                        <li><a href="#myProfile">{!! __('tabs.myProfile') !!}</a></li>
-                        <li><a href="#security">{!! __('tabs.security') !!}</a></li>
-                        <li><a href="#settings">{!! __('tabs.settings') !!}</a></li>
-                        <li><a href="#notifications">{!! __('tabs.notifications') !!}</a></li>
-                        <li><a href="#webhooks">{!! __('tabs.webhooks') !!}</a></li>
-                        <li><a href="#theme">{!! __('tabs.theme') !!}</a></li>
-                        <li><a href="#background">{!! __('tabs.background') !!}</a></li>
+                <x-global::navigation.section-tabs class="accountTabs" :label="__('headlines.accountSettings')" remember="hash">
+                    <x-slot:tabs>
+                        <x-global::navigation.section-tabs.tab for="myProfile">{!! __('tabs.myProfile') !!}</x-global::navigation.section-tabs.tab>
+                        <x-global::navigation.section-tabs.tab for="security">{!! __('tabs.security') !!}</x-global::navigation.section-tabs.tab>
+                        <x-global::navigation.section-tabs.tab for="settings">{!! __('tabs.settings') !!}</x-global::navigation.section-tabs.tab>
+                        <x-global::navigation.section-tabs.tab for="notifications">{!! __('tabs.notifications') !!}</x-global::navigation.section-tabs.tab>
+                        <x-global::navigation.section-tabs.tab for="webhooks">{!! __('tabs.webhooks') !!}</x-global::navigation.section-tabs.tab>
+                        <x-global::navigation.section-tabs.tab for="theme">{!! __('tabs.theme') !!}</x-global::navigation.section-tabs.tab>
+                        <x-global::navigation.section-tabs.tab for="background">{!! __('tabs.background') !!}</x-global::navigation.section-tabs.tab>
                         @dispatchEvent('tabs')
-                        <li><a href="#personalTokens"><i class="fa-solid fa-key"></i> {{ __('tabs.personal_access_tokens') }}</a></li>
-                    </ul>
+                        <x-global::navigation.section-tabs.tab for="personalTokens" icon="fa-solid fa-key">{{ __('tabs.personal_access_tokens') }}</x-global::navigation.section-tabs.tab>
+                    </x-slot:tabs>
 
                     <div id="myProfile">
                         <div class="row">
@@ -416,6 +415,10 @@
                             <input type="hidden" name="savenotifications" value="1" />
                             <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.save')" name="save" />
                         </form>
+
+                        <br />
+                        {{-- Morning summary and to-do reminders; saves on its own. --}}
+                        <x-global::hx endpoint="reminders/summarySettings/get" trigger="intersect once" wrapperId="reminderSettingsMount" />
                     </div>
 
                     <div id="webhooks">
@@ -449,7 +452,7 @@
                             </div>
                         @endif
                     </div>
-                </div>
+                </x-global::navigation.section-tabs>
             </x-global::layout.content-box>
         </div>
     </div>
@@ -461,9 +464,6 @@
     jQuery(document).ready(function(){
 
         leantime.usersController.checkPWStrength('newPassword');
-
-        jQuery('.accountTabs').tabs();
-
 
     });
 </script>

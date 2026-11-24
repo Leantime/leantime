@@ -7,6 +7,7 @@ use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Oidc\Controllers\Callback;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
+use Leantime\Domain\Oidc\Services\OidcConfig;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,6 +22,8 @@ class CallbackTest extends \Unit\TestCase
     private OidcService $oidc;
 
     private Template $tpl;
+
+    private bool $oidcEnabled = true;
 
     /** @var array<int, array{0: string, 1: string}> notifications set on the template */
     private array $notifications = [];
@@ -52,6 +55,10 @@ class CallbackTest extends \Unit\TestCase
             'oidc.error.missingCode' => 'No code came back',
             default => $key,
         });
+
+        $oidcConfig = $this->createMock(OidcConfig::class);
+        $oidcConfig->method('isEnabled')->willReturn($this->oidcEnabled);
+        $this->app->instance(OidcConfig::class, $oidcConfig);
 
         $controller = new Callback($request, $this->tpl, $language);
 
@@ -143,5 +150,17 @@ class CallbackTest extends \Unit\TestCase
 
         $this->assertRedirectsToLogin($response);
         $this->assertSame([['Failed to retrieve tokens: &lt;b&gt;nope&lt;/b&gt;', 'danger']], $this->notifications);
+    }
+
+    public function test_a_callback_is_refused_while_oidc_is_switched_off(): void
+    {
+        // OIDC settings can exist (e.g. entered in Authentication Settings) while sign-in is off.
+        $this->oidcEnabled = false;
+        $this->oidc->expects($this->never())->method('callback');
+
+        $response = $this->callbackWith(['code' => 'abc', 'state' => 'def']);
+
+        $this->assertRedirectsToLogin($response);
+        $this->assertSame([['oidc.error.disabled', 'danger']], $this->notifications);
     }
 }

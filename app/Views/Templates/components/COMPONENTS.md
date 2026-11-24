@@ -98,7 +98,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | label | `forms.label` | forms | 🟡 | — | One field label: 14px / semibold / text colour (`for`, `required`; layout classes pass through). Base `form label` rule matches, so unmigrated labels agree. Migrated: every core field label (the 28 `control-label` ones, then 234 plain / `inline` / `span4` labels in 49 templates, incl. the filter-dropdown labels outside a `<form>`, which now get the shared look). Not labels for this component: checkbox/radio labels (15 `for=` a checkbox + 14 wrappers → the checkbox→toggle sweep), colour/colour-mode pickers, period picker, search filter chips, sr-only. `forms.field` wraps label + control |
 | tags | `forms.tags` | forms | 🟡 | — | Tag field on the enhanced select (SlimSelect `search` → `Tags.Tags.getTags` RPC, `addable` → Enter adds a tag). Posts through a hidden input with the old `name`/`id` as one comma-separated string (old jQuery tagsInput contract) and fires `change` on it. Done: to-do details (new + edit), idea dialog, article dialog, Docs page. The jQuery tagsInput plugin, its CSS and its accessibility pass are removed |
 | tag-list | `elements.tag-list` | elements | 🟡 | — | Read-only tags as chips: `tags` (comma string or array). Badge size (20px, 12 / semibold), soft accent tint. Done: kanban + table tag panels, idea boards |
-| field | `forms.field` | forms | 🟡 | refactor/table-component | One form field: `forms.label` + the control (default slot) + an optional `help` line (12 muted, escaped; with `for` it gets id `{for}-help`, which the control references via `aria-describedby`). `label` prop (escaped) or `label` slot (markup), `for`, `required`. `layout` stacked (label above: dialogs, side panels, narrow forms) / inline (label column on the left, `labelWidth` px, default 150, via `--lt-field-label-w`; stacks below 576px). The field owns the 10px gap to the next field: the control's own bottom margin and the `<br />` between fields go. Each form keeps its arrangement (stacked stays stacked, beside stays beside). Done: user (new, edit, own account), client (new, show, edit) and API key (new, edit) forms; dialogs: calendar event (add, edit), calendar connect / import / edit, sprint, milestone, Docs (new, article), duplicate project, status label, board title (Blueprints, ideas ×2 pages), goal description, Blueprint / Canvas / Logic Model item, personal access token, integration entity, dashboard project status. Left: project settings, new project, to-do details + time tab, timesheets, onboarding steps, company settings, filters (to-do, timesheets), then plugins. The goal dialog keeps its own `gv-*` grid for now. Not fields: pick-several list rows, theme / colour / font pickers, toggles (`forms.checkbox` has its own label) |
+| field | `forms.field` | forms | 🟡 | refactor/table-component | One form field: `forms.label` + the control (default slot) + an optional `help` line (12 muted, escaped; with `for` it gets id `{for}-help`, which the control references via `aria-describedby`). `label` prop (escaped) or `label` slot (markup), `help` slot for help with markup (a link), `for`, `required`. Several controls side by side (date + time, toggle + date, select + "Assign to me") go in `<div class="lt-field-row">`, which drops their own bottom margin too. `layout` stacked (label above: dialogs, side panels, narrow forms) / inline (label column on the left, `labelWidth` px, default 150, via `--lt-field-label-w`; stacks below 576px). The field owns the 10px gap to the next field: the control's own bottom margin and the `<br />` between fields go. Each form keeps its arrangement (stacked stays stacked, beside stays beside). Done: user (new, edit, own account), client (new, show, edit) and API key (new, edit) forms; dialogs: calendar event (add, edit), calendar connect / import / edit, sprint, milestone, Docs (new, article), duplicate project, status label, board title (Blueprints, ideas ×2 pages), goal description, Blueprint / Canvas / Logic Model item, personal access token, integration entity, dashboard project status; pages: to-do details (main fields inline 100px, sidebar stacked) + time tab, project settings + new project, timesheets (add, edit), company settings, onboarding steps, filters (to-do, all timesheets, my timesheets). Left: plugins; the To-Do status rows in project settings (a grid editor, not fields) and the logo / avatar upload. The goal dialog keeps its own `gv-*` grid for now. Not fields: pick-several list rows, theme / colour / font pickers, toggles (`forms.checkbox` has its own label) |
 | card | `elements.card` | elements | 🟡 | — | Card INSIDE the content box: border + `--card-shadow`, `--card-radius` = `--box-radius` (16px — Marcel 2026-10-11: keep core corners and shadow); `title` (prop, or slot for markup — the card wraps it in `.lt-card-title`), `header` (extra items after the title) / `footer` slots, `flush`, `tone` success/warning/danger/info/muted/empty. Used by every report deck page (Overview, Logic Model, Resources & Coverage, Impact Journey, Programs). Pop-overs inside a card stay visible; only `flush` clips. The page content box (`.maincontentinner`, 167 sites) is a separate later step |
 | section-header | `elements.section-header` | elements | 🟡 | — | Section title inside a page, card or dialog: default slot = title (markup ok), `icon`, `eyebrow` (12 / 600 upper), `description` (12 muted), `as` h2–h6 (default h4), `actions` slot right-aligned. Title 16 / 700 in `--primary-color`. Replaced every core `h4.widgettitle.title-light` (70 sites: to-do dialog, project settings, user/API key/company settings, Docs, Blueprint/idea/goal dialogs). Left: `canvasComment` first rows (old comment-only dialogs). Board column titles are `elements.board-column-header` |
 | board-column-header | `elements.board-column-header` | elements | 🟡 | — | Title bar on top of a board column (`h4.widgettitle.title-primary.board-column-header`: raised card with the Logic Model columns' shadow and a faint status-colour tint fading to white): default slot = title (markup ok), `icon`, `count` (number before the title; the kanban script rewrites `.widgettitle .count`), `statusClass` (`label-*` → `--status-color` via `title-border-{class}`: tint, 3px bottom rule, count colour), `align` start/center, `actions` slot (column ⋮ / edit link, floated right, so it comes first). Done: To-Do kanban statuses, idea board columns, Blueprint boxes, section rows, static rows and the empty row-label bar (95 headers on 9 boards, identical markup apart from `aria-hidden` icons). Left: PgmPro program kanban (plugin; needs a core with this component) |
@@ -108,6 +108,7 @@ Status: ⬜ todo · 🟡 in progress · ✅ no-op done (on master) · 🎨 desig
 | modal | `actions.modal` | actions | ⬜ | modal line | unify 3 legacy modal systems; HxComponent-aligned |
 | modal-header | `actions.modal-header` | actions | ✅ | — | First row of every dialog: `icon`, `title` (prop or slot), `meta` slot, `actions` slot (→ ⋮ menu; Delete lives here, never in the body) and its OWN close X (nyroModal's X is pinned outside the content with inline positions and never lined up; hidden via `.nyroModalCont:has(.lt-modal-header) ~ .nyroModalCloseButton`). Close calls `jQuery.nmTop().close()` so it survives htmx re-renders. Done: to-do (`Task #92`, headline stays the big field), goal, milestone, every titled core dialog (#3901), Delete in the ⋮ (#3902), plugin dialogs incl. PgmPro's eyebrow/hint pickers (plugins#139) |
 | tabs | `navigation.tabs` | navigation | ✅ | ui-components | ARIA button-tablist (roving tabindex, Arrow/Home/End, storage prop, lt:tabs:changed event); vanilla JS, htmx.onLoad-aware; variants attached/floating/underline (underline = section tabs, see "Section tabs"); tab+panel sub-components (no raw contract HTML in consumers); jQuery-UI wrapper retired (deliberate markup change, called out) |
+| section-tabs | `navigation.section-tabs` | navigation | ✅ | feature/section-tabs-component | Section tab sets plugins print into (the old jQuery-UI `.tabbedwidget` sets); keeps `ul > li > a[href=#id]` + `div#id`, `core/sectionTabs.js` makes the tablist; `label`, `remember` (hash / query:x / local:x); `.tab` sub-component (`for`, `icon`). Same underline look as `navigation.tabs`. See "Section tabs" |
 | view-tabs | `navigation.view-tabs` | navigation | ✅ | feature/page-toolbars | The bar between page header and content box: page VIEWS as link tabs on the left (server-side active), page ACTIONS on the right (`actions` slot: New, Filter, Group By, view settings, ranges). Replaces the hand-rolled bars in tickets (ticketBoardTabs/timelineTabs, `tickets::portfolio-tabs`). See "Page layout" |
 | text-editor | `forms.text-editor` | forms | ⬜ | (Tiptap core) | wrap Tiptap (already HTMX-aware) |
 | date-picker | `forms.date-picker` | forms | 🟡 | — | Date field on the jQuery-UI picker (user's format + language): `name`, `id`, `value` (user-format string or DateTimeInterface), `range` from/to + `rangeGroup` (to ≥ from, empty to takes from), `width` (default sm). `core/datePickers.js` inits on render + every htmx swap and destroys on `htmx:beforeCleanupElement` (no per-page `initDatePicker` scripts). Done: new project dates. Left: ~20 raw `.dates`/`#dateFrom` inputs with page scripts (timesheets, to-do dialogs, goal dialog) — swap with each page |
@@ -382,8 +383,14 @@ Goalcanvas/StrategyPro/Whiteboards via `adapter` + `canvasType`), `ideas::chip-s
 Props (built): `variant`, `label` (raw trigger HTML) or `trigger` slot (its attributes — `data-tippy-content`,
 `hx-*`, `preload`, `href`, extra `class` — go on the trigger), `icon` (⋮ variants), `href`, `as` (wrapper tag, e.g.
 `li` in the head menu), `menuAs` (`div` menu for a filter holding a form), `triggerClass`, `menuClass`, `menuId`,
-`menuStyle`, `keepOpen`, `ariaLabel`. Wrapper attributes pass through. Escape/outside-click/arrow handling is
-Bootstrap 2.3's own, so there is no `core/dropdown` JS.
+`menuStyle`, `keepOpen`, `ariaLabel`, `floating`, `keyboard`. Wrapper attributes pass through. Escape/outside-click/arrow handling is
+Bootstrap 2.3's own, so there is no `core/dropdown` JS — except what `core/menus.js` adds (below).
+
+`menu` / `header-menu` triggers carry `aria-haspopup` + `aria-expanded` (kept current by `core/menus.js`) and, when
+icon-only with no `ariaLabel`, the name "Actions". Opt-ins: `floating` positions the menu against the window (so a
+dialog or scrolling box can't clip it; flips up when there's more room above, follows the trigger on scroll);
+`keyboard` adds ArrowUp/ArrowDown/Home/End between the menu's items, Escape to close and refocus the trigger, and Space
+on radio/menuitem/button items — for menus that aren't `role="menu"` (they mix headings, text and items).
 
 ### JS modules (IIFE on `leantime.*`, added to `compiled-app` after `app.js`)
 - **`public/assets/js/app/core/select/index.js`** — Tiptap-style registry: `leantime.select.{init, get,
@@ -402,6 +409,13 @@ Bootstrap 2.3's own, so there is no `core/dropdown` JS.
   `priority-border-*`).
 - ~~`core/dropdown/index.js`~~ — not needed: Bootstrap 2.3's data-api already closes on Escape and outside click,
   and a swapped-out menu takes its `.open` wrapper with it.
+- **`public/assets/js/app/core/menus.js`** (`leantime.menus.{announce, place}`) — all delegated from `document`: keeps
+  `aria-expanded` current, places `[data-lt-dropdown-float]` menus, keyboard for `[data-lt-menu-keys]` menus, Escape on a
+  closed trigger closes the dialog it is in (Bootstrap 2 would reopen the menu), returns focus after an htmx pick inside a
+  menu, and reads out `data-lt-announce="…"` from swapped content through one polite live region (`#lt-live-region`).
+- **Dialogs** (`core/modals.js`): every nyroModal gets `role="dialog"`, `aria-modal`, `aria-labelledby` (the
+  `actions.modal-header` title's id), focus into the dialog on open (its `[autofocus]` or title), Tab kept inside, and
+  focus back to what opened it on close.
 
 ### Phases (one PR each)
 | # | Repo | Scope |
@@ -689,13 +703,20 @@ in the bar, outside the box) or **which part of one thing you edit** (section �
 Section tabs each own their form / Save and post back to `…#section`; nothing applies across them.
 - One look: **underline** — full-width hairline, quiet grey labels, active section dark with an accent1 underline,
   icon on every tab. `navigation.tabs variant="underline"` for new work (Goal dialog, plugin details).
-- The jQuery-UI sets (`.tabbedwidget.tab-primary`: To-Do view/new (modal + page), project settings + new project,
-  client, Company settings, My Profile, project selector) get the same skin from `tab-group.css` and **keep their
-  `ul > li > a[href=#id]` + `div#id` markup**: plugins print tabs into them (CustomFields → ticketTabs,
-  AdvancedAuth → company settings, ThemeBundle/Auth → editOwn, Llamadorian → projectTabsContent). Moving them to
-  the component means changing that plugin contract first, with the plugins shipped alongside.
-- Plugins: StrategyPro (newStrategy/showStrategy/canvasDialog) and PgmPro (newProgram/showProgram) tab sets go in a
-  plugins-repo PR.
+- Sets plugins print into use `navigation.section-tabs` (2026-11-23): To-Do view/new (dialog + page), project
+  settings + new project, client, Company settings, My Profile, project selector. It **keeps the
+  `ul > li > a[href=#id]` + `div#id` markup** because plugins print tabs into these sets through hooks (CustomFields →
+  `showTicketModal.ticketTabs`/`ticketTabsContent`, AdvancedAuth → `editCompanySettings.tabs`/`tabsContent`,
+  Llamadorian → `showProject.projectTabsList`/`projectTabsContent`); the hook names and the markup plugins echo are
+  unchanged. `core/sectionTabs.js` replaces jQuery-UI `.tabs()`: ARIA tablist (roving tabindex, Arrow/Home/End,
+  Space), `hidden` panels, `lt:tabs:changed`. The URL hash naming a tab opens it; `remember` keeps the choice:
+  `hash` (page-level sets), `query:tab` (To-Do), `local:currentMenuTab` (project selector). Tabs: `for` (panel id),
+  `icon`; extra attributes land on the link (`id="timesheetTab"`).
+- `leantime.projectsController.initProjectTabs()` now runs the same enhancer on bare `.projectTabs` markup, so the
+  PgmPro/StrategyPro project/program pages get it without a plugin change. Left on jQuery-UI tabs: StrategyPro's goal
+  dialog (`jQuery(".goalTabs").tabs()`), which is why the `.tab-primary.ui-tabs` selectors stay in `tab-group.css`
+  and the `.ui-tabs-panel` rules in `style.default.css`. Moving it (and the plugin pages to the component) goes in a
+  plugins-repo PR; then those selectors go.
 
 
 

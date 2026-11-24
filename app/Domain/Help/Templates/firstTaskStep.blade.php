@@ -6,10 +6,9 @@
                 <h1>{{ __('headlines.welcome_to_leantime') }}</h1>
                 <p>{{ __('text.lets_start_with_first_task') }}</p>
                 <br />
-                <x-global::forms.label><strong>{{ __('label.whats_one_thing_to_do_today') }}</strong></x-global::forms.label>
-                <x-global::forms.text-input width="full" id="firstTask" name="headline" value="" placeholder="{{ __('input.placeholder.finish_slide_deck') }}" required />
-                <br />
-                <p class="text-muted">{{ __('text.first_task_help') }}</p>
+                <x-global::forms.field for="firstTask" :label="__('label.whats_one_thing_to_do_today')" :help="__('text.first_task_help')">
+                    <x-global::forms.text-input width="full" id="firstTask" name="headline" value="" placeholder="{{ __('input.placeholder.finish_slide_deck') }}" aria-describedby="firstTask-help" required />
+                </x-global::forms.field>
                 <br />
                 <x-global::forms.button tag="input" inputType="submit" contentRole="primary" :labelText="__('buttons.lets_go')" />
 

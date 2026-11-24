@@ -475,7 +475,7 @@ class ProjectsServiceTest extends TestCase
             },
         ]);
 
-        $seen = $this->runNotifyProjectUsers([], webhooks: $webhooks);
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], webhooks: $webhooks);
 
         $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients']);
         $this->assertSame([2, 5, 6], $seen['pushRecipients']);
@@ -493,7 +493,7 @@ class ProjectsServiceTest extends TestCase
      */
     public function test_notify_project_users_pushes_to_users_who_switched_email_off(): void
     {
-        $seen = $this->runNotifyProjectUsers([], userOverrides: [2 => ['notifications' => 0]]);
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], userOverrides: [2 => ['notifications' => 0]]);
 
         $this->assertSame([3, 4, 5, 6], $seen['emailRecipients'], 'No email for a user who switched email off');
         $this->assertSame([2, 5, 6], $seen['pushRecipients'], 'Push still goes to them');
@@ -504,10 +504,34 @@ class ProjectsServiceTest extends TestCase
         $seen = $this->runNotifyProjectUsers([
             PushPreferences::settingKey(2) => '0',
             PushPreferences::settingKey(3) => '1',
-        ]);
+        ], usersWithProjectAccess: [1, 2, 3, 4, 5, 6]);
 
         $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients'], 'The push switch never touches email');
         $this->assertSame([5, 6], $seen['pushRecipients']);
+    }
+
+    /**
+     * A mention left in an item must not push the text and link to someone who can no longer
+     * see the project. Collaborators go through the same check. Email keeps its own policy.
+     *
+     * @return iterable<string, array{array<int>, array<int, array<string, mixed>|false>, array<int>}>
+     */
+    public static function bypassWithoutAccess(): iterable
+    {
+        yield 'mentioned user removed from the project' => [[1, 2, 3, 4, 5], [], []];
+        yield 'mentioned user deactivated' => [[1, 2, 3, 4, 5, 6], [6 => ['status' => 'i']], []];
+        yield 'mentioned user deleted' => [[1, 2, 3, 4, 5, 6], [6 => false], []];
+    }
+
+    /**
+     * @dataProvider bypassWithoutAccess
+     */
+    public function test_a_mention_or_collaborator_without_project_access_gets_no_push(array $usersWithProjectAccess, array $userOverrides, array $collaborators): void
+    {
+        $seen = $this->runNotifyProjectUsers([], $usersWithProjectAccess, $userOverrides, collaborators: $collaborators);
+
+        $this->assertNotContains(6, $seen['pushRecipients'], 'Mentioned user without access');
+        $this->assertContains(2, $seen['pushRecipients'], 'Everyone else is unaffected');
     }
 
     /**
@@ -530,7 +554,7 @@ class ProjectsServiceTest extends TestCase
      */
     public function test_push_goes_only_to_the_people_the_notification_involves(): void
     {
-        $seen = $this->runNotifyProjectUsers([], collaborators: [3]);
+        $seen = $this->runNotifyProjectUsers([], usersWithProjectAccess: [1, 2, 3, 4, 5, 6], collaborators: [3]);
 
         $this->assertSame([2, 3, 4, 5, 6], $seen['emailRecipients'], 'Email keeps All activity');
         $this->assertSame([2, 3, 5, 6], $seen['pushRecipients'], 'Assignee 2, collaborator 3, creator 5 and mentioned 6; not 4');
@@ -609,6 +633,57 @@ class ProjectsServiceTest extends TestCase
 
         $this->assertSame($expectedPush, $seen['pushRecipients']);
         $this->assertSame([2, 3, 4, 5], $seen['emailRecipients'], 'Email keeps All activity');
+    }
+
+    /**
+     * Boards and ideas notify under their own module names. A mention there gets past the
+     * involved-only push filter like a mention on a task.
+     *
+     * @return array<string, array{0: \Closure}>
+     */
+    public static function boardMentionCases(): array
+    {
+        $set = fn (string $module, string $action, array $entity) => function (Notification $notification) use ($module, $action, $entity) {
+            $notification->module = $module;
+            $notification->action = $action;
+            $notification->entity = $entity;
+        };
+        $mention = '<a data-tagged-user-id="4">@Four</a> can you look?';
+
+        return [
+            'board item edit' => [$set('leancanvas', 'updated', ['id' => 77, 'itemId' => 77, 'author' => 1, 'description' => $mention])],
+            'board item comment' => [$set('leancanvas', 'commented', ['text' => $mention, 'userId' => 1, 'moduleId' => 77])],
+            'goal comment' => [$set('goalcanvas', 'commented', ['text' => $mention, 'userId' => 1, 'moduleId' => 77])],
+            'idea update' => [$set('ideas', 'updated', ['id' => 77, 'itemId' => 77, 'author' => 1, 'data' => $mention])],
+        ];
+    }
+
+    /**
+     * @dataProvider boardMentionCases
+     */
+    public function test_a_mention_on_a_board_or_idea_reaches_push(\Closure $adjust): void
+    {
+        $this->storedBoardPeople = [77 => [3]];
+
+        $seen = $this->runNotifyProjectUsers([], adjustNotification: $adjust);
+
+        $this->assertSame([3, 4], $seen['pushRecipients'], 'Author 3, and 4 who was mentioned');
+    }
+
+    public function test_a_mention_on_a_board_gets_past_a_muted_project(): void
+    {
+        $this->storedBoardPeople = [77 => [3]];
+
+        $seen = $this->runNotifyProjectUsers([
+            'usersettings.4.projectNotificationLevels' => json_encode([5 => 'muted']),
+        ], adjustNotification: function (Notification $notification) {
+            $notification->module = 'goalcanvas';
+            $notification->action = 'commented';
+            $notification->entity = ['text' => '<a data-tagged-user-id="4">@Four</a> ok?', 'userId' => 1, 'moduleId' => 77];
+        });
+
+        $this->assertSame([2, 3, 5, 4], $seen['emailRecipients']);
+        $this->assertSame([3, 4], $seen['pushRecipients']);
     }
 
     public function test_notify_project_users_never_pushes_to_the_author(): void
@@ -2181,5 +2256,99 @@ class ProjectsServiceTest extends TestCase
     private function validUserRepo(): UserRepository
     {
         return $this->makeEmpty(UserRepository::class, ['getUser' => fn () => ['id' => 7]]);
+    }
+
+    /**
+     * Runs $act with a listener on ProjectMemberAdded and returns the user ids it was told
+     * about. The dispatcher's registry is restored afterwards.
+     *
+     * @return array<int, int>
+     */
+    private function membersAddedDuring(\Closure $act): array
+    {
+        $reflection = new \ReflectionClass(\Leantime\Core\Events\EventDispatcher::class);
+        $snapshot = [];
+        foreach (['eventRegistry', 'available_hooks', 'patternMatchCache', 'compiledPatternCache', 'eventRegistryVersion'] as $prop) {
+            $snapshot[$prop] = $reflection->getProperty($prop)->getValue();
+        }
+
+        $added = [];
+        try {
+            \Leantime\Core\Events\EventDispatcher::add_event_listener(
+                \Leantime\Domain\Projects\Events\ProjectMemberAdded::class,
+                function (...$args) use (&$added) {
+                    foreach ($args as $arg) {
+                        if ($arg instanceof \Leantime\Domain\Projects\Events\ProjectMemberAdded) {
+                            $added[] = $arg->userId;
+                        }
+                    }
+                }
+            );
+            $act();
+        } finally {
+            foreach ($snapshot as $prop => $value) {
+                $reflection->getProperty($prop)->setValue(null, $value);
+            }
+        }
+
+        return $added;
+    }
+
+    /**
+     * The repository only saves team members that come with a project role; nobody else may
+     * be told "added you to <project>".
+     */
+    public function test_a_new_project_tells_only_the_members_it_actually_saved(): void
+    {
+        $projectRepo = $this->makeEmpty(ProjectRepository::class, ['addProject' => fn () => 12]);
+        $service = $this->makeService($projectRepo);
+
+        $added = $this->membersAddedDuring(fn () => $service->createProject([
+            'name' => 'Launch',
+            'clientId' => 0,
+            'type' => 'project',
+            'start' => null,
+            'end' => null,
+            'assignedUsers' => [['id' => 2, 'projectRole' => 'editor'], ['id' => 3], ['id' => 4, 'projectRole' => '']],
+        ]));
+
+        $this->assertSame([2, 4], $added);
+    }
+
+    /**
+     * A rename is told with the project's new name: the notification carries the project as
+     * saved, not as it was before the edit.
+     */
+    public function test_a_project_edit_notifies_with_the_saved_values(): void
+    {
+        session(['currentProject' => 9]);
+        $captured = null;
+        $service = $this->construct(ProjectService::class, [
+            $this->make(ProjectRepository::class),
+            $this->make(TicketRepository::class),
+            $this->make(SettingRepository::class),
+            $this->make(LanguageCore::class, ['__' => fn ($key) => '%s %s']),
+            $this->make(Messengers::class),
+            $this->make(NotificationService::class),
+            $this->make(FileService::class),
+            $this->make(Avatarcreator::class),
+            $this->make(QueueRepository::class),
+            $this->make(UserRepository::class),
+            $this->make(CommentRepository::class),
+            $this->make(ClientRepository::class),
+            $this->make(Client::class),
+            $this->make(Webhooks::class),
+        ], [
+            'editProject' => fn () => true,
+            'notifyProjectUsers' => function (Notification $notification) use (&$captured) {
+                $captured = $notification;
+            },
+        ]);
+
+        $service->editProjectAndNotify(['name' => 'Pricing launch'], 9, ['id' => 9, 'name' => 'Draft launch', 'clientId' => 3], 'https://x', 1, 'Gloria');
+
+        $this->assertSame('Pricing launch', $captured->entity['name']);
+        $this->assertSame(9, $captured->entity['id']);
+        $this->assertSame(3, $captured->entity['clientId'], 'fields the edit left alone stay');
     }
 }

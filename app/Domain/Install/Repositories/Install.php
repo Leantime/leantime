@@ -109,6 +109,8 @@ class Install
         30534,
         30535,
         30536,
+        30537,
+        30538,
     ];
 
     /**
@@ -3716,13 +3718,14 @@ class Install
     }
 
     /**
-     * Migration 30536 — milestone dependencies move to zp_entity_relationship.
+     * Migration 30536 — zp_queue.summary, the email digest's wording for a queued row.
      *
-     * A milestone's first dependency used to live in zp_tickets.milestoneid; every dependency is
-     * now a `depends_on` relationship (entityA = the dependent milestone, entityB = its
-     * prerequisite). Each milestone's milestoneid becomes such a row, unless one exists already,
-     * and is then cleared. For To-Dos milestoneid still means "belongs to milestone" and is left
-     * alone.
+     * JSON with the item the email is about ('group'), its name, "who did what" and a comment to
+     * quote, so the digest can show several changes to one task together instead of each row's
+     * email subject and message (see {@see \Leantime\Domain\Queue\Workers\EmailWorker}).
+     * Nullable: rows queued before this migration, and emails no producer summarised, keep their
+     * subject and message. Fresh installs get the column from
+     * {@see \Leantime\Domain\Install\Services\SchemaBuilder}.
      */
     public function update_sql_30536(): bool|array
     {
@@ -3731,8 +3734,85 @@ class Install
             $connection = $this->connection;
             $schema = $connection->getSchemaBuilder();
 
+            if (! $schema->hasTable('zp_queue')) {
+                Log::info('Migration 30536 skipped: zp_queue table missing (partial install?)');
+
+                return true;
+            }
+
+            if (! $schema->hasColumn('zp_queue', 'summary')) {
+                $schema->table('zp_queue', function (Blueprint $table): void {
+                    $table->text('summary')->nullable()->after('moduleId');
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Migration 30536: '.$e->getMessage());
+
+            return ['Migration 30536 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30537 — zp_stats story-point totals become floats.
+     *
+     * `zp_tickets.storypoints` is a float and the effort picker offers half points ("< 2min"),
+     * so a project's point totals are frequently fractional. The stats columns were declared as
+     * integers: MySQL silently rounds on insert, but PostgreSQL rejects the value outright
+     * (SQLSTATE[22P02] invalid input syntax for type integer: "0.5"), which aborts the whole
+     * nightly `reports:dailyIngestion` run on a PostgreSQL installation.
+     *
+     * Fresh installs get the float columns from {@see \Leantime\Domain\Install\Services\SchemaBuilder}.
+     *
+     * @return bool|array<int, string> True on success, otherwise the error messages.
+     */
+    public function update_sql_30537(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
+            if (! $schema->hasTable('zp_stats')) {
+                Log::info('Migration 30537 skipped: zp_stats table missing (partial install?)');
+
+                return true;
+            }
+
+            $schema->table('zp_stats', function (Blueprint $table): void {
+                $table->float('sum_points')->nullable()->change();
+                $table->float('sum_points_done')->nullable()->change();
+                $table->float('sum_points_progress')->nullable()->change();
+                $table->float('sum_points_open')->nullable()->change();
+            });
+        } catch (\Exception $e) {
+            Log::error('Migration 30537: '.$e->getMessage());
+
+            return ['Migration 30537 failed: '.$e->getMessage()];
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 30538 — milestone dependencies move to zp_entity_relationship.
+     *
+     * A milestone's first dependency used to live in zp_tickets.milestoneid; every dependency is
+     * now a `depends_on` relationship (entityA = the dependent milestone, entityB = its
+     * prerequisite). Each milestone's milestoneid becomes such a row, unless one exists already,
+     * and is then cleared. For To-Dos milestoneid still means "belongs to milestone" and is left
+     * alone.
+     */
+    public function update_sql_30538(): bool|array
+    {
+        try {
+            /** @var \Illuminate\Database\Connection $connection */
+            $connection = $this->connection;
+            $schema = $connection->getSchemaBuilder();
+
             if (! $schema->hasTable('zp_tickets') || ! $schema->hasTable('zp_entity_relationship')) {
-                Log::info('Migration 30536 skipped: zp_tickets or zp_entity_relationship table missing (partial install?)');
+                Log::info('Migration 30538 skipped: zp_tickets or zp_entity_relationship table missing (partial install?)');
 
                 return true;
             }
@@ -3799,9 +3879,9 @@ class Install
                     ->update(['milestoneid' => null]);
             });
         } catch (\Exception $e) {
-            Log::error('Migration 30536: '.$e->getMessage());
+            Log::error('Migration 30538: '.$e->getMessage());
 
-            return ['Migration 30536 failed: '.$e->getMessage()];
+            return ['Migration 30538 failed: '.$e->getMessage()];
         }
 
         return true;

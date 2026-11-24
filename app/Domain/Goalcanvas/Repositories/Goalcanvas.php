@@ -1028,8 +1028,12 @@ class Goalcanvas extends Blueprints
             ->get();
 
         $latestValues = [];
+        // Identifiers are quoted through the grammar: PostgreSQL folds unquoted camelCase
+        // columns (`itemId` -> `itemid`), while the join below and the outer select reference
+        // the quoted names, so the raw identifiers would not resolve there.
         $latestDates = $this->dbConnection->table('zp_goal_history')
-            ->selectRaw('itemId, MAX(dateRecorded) as maxDate')
+            ->select(['itemId'])
+            ->selectRaw('MAX('.$this->dbHelper->wrapColumn('dateRecorded').') AS '.$this->dbHelper->wrapColumn('maxDate'))
             ->groupBy('itemId');
         $latestRows = $this->dbConnection->table('zp_goal_history')
             ->select(['zp_goal_history.itemId', 'zp_goal_history.value'])

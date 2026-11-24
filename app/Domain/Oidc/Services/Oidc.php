@@ -13,6 +13,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Oidc\Events\OidcSignInFilter;
 use Leantime\Domain\Users\Events\UserCreated;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
@@ -22,8 +23,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Oidc
 {
-    private Environment $config;
-
     private AuthService $authService;
 
     public UserRepository $userRepo;
@@ -87,37 +86,39 @@ class Oidc
         AuthService $authService,
         UserRepository $userRepo
     ) {
-        $this->config = $config;
         $this->authService = $authService;
         $this->userRepo = $userRepo;
         $this->language = $language;
 
-        $providerUrl = $this->config->get('oidcProviderUrl');
+        // Environment first, then whatever a plugin supplies (AdvancedAuth: settings entered in the UI).
+        $oidcConfig = new OidcConfig($config);
+
+        $providerUrl = (string) $oidcConfig->get('oidcProviderUrl', '');
 
         $this->providerUrl = ! empty($providerUrl) ? $this->trimTrailingSlash($providerUrl) : $providerUrl;
-        $this->autoDiscoverUrl = $this->config->get('oidcAutoDiscoverUrl', '');
-        $this->clientId = $this->config->get('oidcClientId', '');
-        $this->clientSecret = $this->config->get('oidcClientSecret', '');
-        $this->authUrl = $this->config->get('oidcAuthUrl', '');
-        $this->tokenUrl = $this->config->get('oidcTokenUrl', '');
-        $this->jwksUrl = $this->config->get('oidcJwksUrl', '');
-        $this->userInfoUrl = $this->config->get('oidcUserInfoUrl', '');
-        $this->certificateString = $this->config->get('oidcCertificateString', '');
-        $this->certificateFile = $this->config->get('oidcCertificateFile', '');
-        $this->scopes = $this->config->get('oidcScopes', '');
-        $this->createUser = $this->config->get('oidcCreateUser', false);
-        $this->defaultRole = $this->config->get('oidcDefaultRole', 20);
+        $this->autoDiscoverUrl = (string) $oidcConfig->get('oidcAutoDiscoverUrl', '');
+        $this->clientId = (string) $oidcConfig->get('oidcClientId', '');
+        $this->clientSecret = (string) $oidcConfig->get('oidcClientSecret', '');
+        $this->authUrl = (string) $oidcConfig->get('oidcAuthUrl', '');
+        $this->tokenUrl = (string) $oidcConfig->get('oidcTokenUrl', '');
+        $this->jwksUrl = (string) $oidcConfig->get('oidcJwksUrl', '');
+        $this->userInfoUrl = (string) $oidcConfig->get('oidcUserInfoUrl', '');
+        $this->certificateString = (string) $oidcConfig->get('oidcCertificateString', '');
+        $this->certificateFile = (string) $oidcConfig->get('oidcCertificateFile', '');
+        $this->scopes = (string) $oidcConfig->get('oidcScopes', '');
+        $this->createUser = filter_var($oidcConfig->get('oidcCreateUser', false), FILTER_VALIDATE_BOOLEAN);
+        $this->defaultRole = (int) $oidcConfig->get('oidcDefaultRole', 20);
 
-        $this->fieldEmail = $this->config->get('oidcFieldEmail', '');
-        $this->fieldFirstName = $this->config->get('oidcFieldFirstName', '');
-        $this->fieldLastName = $this->config->get('oidcFieldLastName', '');
-        $this->fieldPhone = $this->config->get('oidcFieldPhone', '');
-        $this->fieldJobtitle = $this->config->get('oidcFieldJobtitle', '');
-        $this->fieldJoblevel = $this->config->get('oidcFieldJoblevel', '');
-        $this->fieldDepartment = $this->config->get('oidcFieldDepartment', '');
+        $this->fieldEmail = (string) $oidcConfig->get('oidcFieldEmail', '');
+        $this->fieldFirstName = (string) $oidcConfig->get('oidcFieldFirstName', '');
+        $this->fieldLastName = (string) $oidcConfig->get('oidcFieldLastName', '');
+        $this->fieldPhone = (string) $oidcConfig->get('oidcFieldPhone', '');
+        $this->fieldJobtitle = (string) $oidcConfig->get('oidcFieldJobtitle', '');
+        $this->fieldJoblevel = (string) $oidcConfig->get('oidcFieldJoblevel', '');
+        $this->fieldDepartment = (string) $oidcConfig->get('oidcFieldDepartment', '');
 
-        $this->requireVerifiedEmail = filter_var($this->config->get('oidcRequireVerifiedEmail', true), FILTER_VALIDATE_BOOLEAN);
-        $this->skipTlsVerify = filter_var($this->config->get('oidcSkipTlsVerify', false), FILTER_VALIDATE_BOOLEAN);
+        $this->requireVerifiedEmail = filter_var($oidcConfig->get('oidcRequireVerifiedEmail', true), FILTER_VALIDATE_BOOLEAN);
+        $this->skipTlsVerify = filter_var($oidcConfig->get('oidcSkipTlsVerify', false), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -283,6 +284,15 @@ class Oidc
         // must not be able to sign into (or create) the account that owns it.
         if (! $this->emailVerificationAccepted($userInfo)) {
             $this->displayError('oidc.error.emailNotVerified');
+        }
+
+        // A plugin rule (e.g. AdvancedAuth's allowed email domain) may refuse the sign-in before
+        // the account is looked up, created or signed in.
+        $refusal = OidcSignInFilter::dispatch(refusal: null, email: (string) $userName, claims: $userInfo);
+        if (is_string($refusal) && $refusal !== '') {
+            Log::info('OIDC login refused by a sign-in rule');
+
+            throw new \RuntimeException($refusal);
         }
 
         // Look the user up whatever their status: an account an admin deactivated (or an invite not

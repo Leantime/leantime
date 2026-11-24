@@ -6,6 +6,7 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Domain\Oidc\Services\OidcConfig;
 use Leantime\Domain\Plugins\Services\Plugins;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,12 +47,16 @@ class Index extends Controller
 
     private Plugins $plugins;
 
+    private OidcConfig $oidcConfig;
+
     /**
-     * init - inject config, app settings, the incoming request, and the plugin
-     * service (used to gate mobile-auth advertising on AdvancedAuth).
+     * init - inject config, app settings, the incoming request, the plugin
+     * service (used to gate mobile-auth advertising on AdvancedAuth), and the
+     * resolved OIDC settings.
      */
-    public function init(Environment $config, AppSettings $appSettings, IncomingRequest $request, Plugins $plugins): void
+    public function init(Environment $config, AppSettings $appSettings, IncomingRequest $request, Plugins $plugins, OidcConfig $oidcConfig): void
     {
+        $this->oidcConfig = $oidcConfig;
         $this->config = $config;
         $this->appSettings = $appSettings;
         $this->request = $request;
@@ -66,7 +71,7 @@ class Index extends Controller
      */
     public function get(array $params): Response
     {
-        $oidcEnabled = (bool) $this->config->oidcEnable;
+        $oidcEnabled = $this->oidcConfig->isEnabled();
         $ldapEnabled = $this->config->useLdap === true && extension_loaded('ldap');
 
         // Mobile auth is an AdvancedAuth capability — the mobile connection points

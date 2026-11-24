@@ -35,9 +35,12 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
         <x-slot:meta>
             {{ __('label.created_by') }} {{ $ticket->userFirstname }} {{ $ticket->userLastname }} | {{ __('label.last_updated') }}: {{ format(! empty($ticket->modified) ? $ticket->modified : $ticket->date)->date() }}
         </x-slot:meta>
-        @canany(['tickets.edit', 'tickets.delete', 'timesheets.create'], $ticket->projectId)
+        {{-- tickets.view opens the menu for "Your reminders"; every other item keeps its own check. --}}
+        @canany(['tickets.view', 'tickets.edit', 'tickets.delete', 'timesheets.create'], $ticket->projectId)
             <x-slot:actions>
+                @canany(['tickets.edit', 'tickets.delete'], $ticket->projectId)
                 <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
+                @endcanany
                         @can('tickets.edit', $ticket->projectId)
                         <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                         @endcan
@@ -88,22 +91,27 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
                         </li>
                         @endmodule
                         @endcan
+                        @if ($ticket->type !== 'milestone')
+                        {{-- Your own reminders for this to-do; the choices save inside this menu (a second modal would replace the open to-do). --}}
+                        @can('tickets.view', $ticket->projectId)
+                        @include('reminders::partials.taskReminderMenuMount', ['ticketId' => $ticket->id])
+                        @endcan
+                        @endif
             </x-slot:actions>
         @endcanany
     </x-global::actions.modal-header>
-    <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
-
-        <ul>
-            <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
-            <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $numFiles; ?>)</a></li>
+    <x-global::navigation.section-tabs class="ticketTabs" :label="__('tabs.ticketDetails')" remember="query:tab">
+        <x-slot:tabs>
+            <x-global::navigation.section-tabs.tab for="ticketdetails" icon="fa-star">{!! __('tabs.ticketDetails') !!}</x-global::navigation.section-tabs.tab>
+            <x-global::navigation.section-tabs.tab for="files" icon="fa-file">{!! __('tabs.files') !!} ({{ $numFiles }})</x-global::navigation.section-tabs.tab>
             @can('timesheets.create')
                 @module('timesheets', $ticket->projectId)
-                    <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
+                    <x-global::navigation.section-tabs.tab for="timesheet" icon="fa-clock">{!! __('tabs.time_tracking') !!}</x-global::navigation.section-tabs.tab>
                 @endmodule
             @endcan
-            <li><a href="#history"><span class="fa fa-clock-rotate-left"></span> <?php echo $tpl->__('tabs.history') ?></a></li>
-            <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
-        </ul>
+            <x-global::navigation.section-tabs.tab for="history" icon="fa-clock-rotate-left">{!! __('tabs.history') !!}</x-global::navigation.section-tabs.tab>
+            @dispatchEvent('ticketTabs', ['ticket' => $ticket])
+        </x-slot:tabs>
 
         <div id="ticketdetails">
             <form class="formModal" action="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" method="post">
@@ -130,7 +138,7 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
 
         @dispatchEvent('ticketTabsContent', ['ticket' => $ticket])
 
-    </div>
+    </x-global::navigation.section-tabs>
 
 </div>
 <script type="text/javascript">
@@ -141,8 +149,9 @@ $todoTypeIcons = $ticketTypeIcons ?? [];
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.ticketsController.initTicketTabs();
-
+        // Manual openers (?showTicketModal=, openTicketModalManually) skip the dialog lifecycle that sets
+        // section tabs up; setting up twice is a no-op.
+        leantime.sectionTabs.init('.ticketTabs');
         @can('tickets.edit', $ticket->projectId)
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
