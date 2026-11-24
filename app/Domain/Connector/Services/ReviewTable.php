@@ -65,6 +65,7 @@ class ReviewTable
             array_push($columns, ...$this->notInFileColumns($entity, $columns, $leantimeFields));
         }
         $idColumn = $this->sourceOf($columns, $entity === 'tickets' || $entity === 'milestones' ? 'id' : 'itemId');
+        $assigneeColumn = $this->sourceOf($columns, 'editorId');
         $rows = [];
         $problemRows = 0;
         $counts = ['new' => 0, 'updates' => 0, 'assigned' => 0, 'unassigned' => 0];
@@ -83,7 +84,7 @@ class ReviewTable
             if ($resolve) {
                 if ((int) ($reviewed['editorId'] ?? 0) > 0) {
                     $counts['assigned']++;
-                } elseif (! $isUpdate) {
+                } elseif (! $isUpdate || ($assigneeColumn !== null && ($reviewed[$assigneeColumn] ?? '') === ReviewFixes::EMPTY)) {
                     $counts['unassigned']++;
                 }
                 if ((int) ($reviewed['projectId'] ?? 0) > 0) {
@@ -164,6 +165,11 @@ class ReviewTable
                     $name = $this->personName($userId);
 
                     return ['value' => $name, 'userId' => $userId, 'note' => $this->inFileNote($inFile, $name)] + $cell;
+                }
+                if ($read === ReviewFixes::EMPTY) {
+                    $unassigned = $this->language->__('text.import_value_unassigned');
+
+                    return ['value' => $unassigned, 'muted' => true, 'note' => $this->inFileNote($inFile, $unassigned)] + $cell;
                 }
                 if ($inFile === '') {
                     return ['value' => $this->language->__($isUpdate ? 'text.import_value_keeps' : 'text.import_value_unassigned'), 'muted' => true] + $cell;

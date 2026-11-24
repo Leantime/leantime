@@ -70,7 +70,12 @@ class ReviewFixes
     }
 
     /**
-     * The rows with the choices applied: each cell whose value is a choice's "from" gets its "to".
+     * The rows with the choices applied: each cell whose value in the file is a choice's "from"
+     * gets its "to". Choices are matched against the file's values, not against values another
+     * choice wrote, so they can't overwrite each other and their order doesn't matter.
+     *
+     * "Leave unassigned" stays in the cell as EMPTY, so the review can clear the assignee of a
+     * row that updates a to-do (an empty cell there keeps the current assignee).
      *
      * @param  array<int|string, array<string, mixed>>  $values  The rows as in the file.
      * @param  array<string, array{column: string, from: string, to: string}>  $fixes
@@ -78,15 +83,19 @@ class ReviewFixes
      */
     public function apply(array $values, array $fixes): array
     {
-        foreach ($fixes as $fix) {
-            $to = $fix['to'] === self::EMPTY ? '' : $fix['to'];
-            foreach ($values as &$row) {
-                if (array_key_exists($fix['column'], $row) && trim((string) $row[$fix['column']]) === $fix['from']) {
-                    $row[$fix['column']] = $to;
+        foreach ($values as &$row) {
+            $inFile = $row;
+            foreach ($fixes as $fix) {
+                // Leaving empty cells empty changes nothing.
+                if ($fix['from'] === '' && $fix['to'] === self::EMPTY) {
+                    continue;
+                }
+                if (array_key_exists($fix['column'], $inFile) && trim((string) $inFile[$fix['column']]) === $fix['from']) {
+                    $row[$fix['column']] = $fix['to'];
                 }
             }
-            unset($row);
         }
+        unset($row);
 
         return $values;
     }
@@ -179,8 +188,8 @@ class ReviewFixes
     private function choice(string $key, string $column, string $from, string $kind, int $rows, string $fieldName): array
     {
         $options = $kind === 'date' ? [] : $this->options($kind);
-        if ($kind === 'person') {
-            // Leaving the rows unassigned is a choice too.
+        if ($kind === 'person' && $from !== '') {
+            // Leaving the rows unassigned is a choice too (empty cells already are).
             $options = [self::EMPTY => $this->language->__('label.import_fix_unassigned')] + $options;
         }
 
