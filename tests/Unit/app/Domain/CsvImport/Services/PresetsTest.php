@@ -35,7 +35,7 @@ class PresetsTest extends TestCase
     public function test_jira_columns_are_suggested_each_field_once_never_the_id_nor_a_leftover(): void
     {
         $presets = new Presets;
-        $suggested = $presets->suggest(self::JIRA, self::FIELDS, $presets->recognise(self::JIRA));
+        $suggested = $presets->suggest(self::JIRA, self::FIELDS, $presets->recognise(self::JIRA), 'tickets');
 
         $this->assertSame([
             'Summary' => 'headline',
@@ -51,7 +51,21 @@ class PresetsTest extends TestCase
 
         // Without a preset, usual headings and field names still match.
         $this->assertSame(['Task name' => 'headline', 'Owner' => 'editorId', 'Deadline' => 'dateToFinish'],
-            $presets->suggest(['Task name', 'Owner', 'Deadline', 'Id', 'Colour'], self::FIELDS, null));
+            $presets->suggest(['Task name', 'Owner', 'Deadline', 'Id', 'Colour'], self::FIELDS, null, 'tickets'));
+    }
+
+    public function test_other_entities_get_their_own_field_names_not_the_to_do_headings(): void
+    {
+        $presets = new Presets;
+
+        // An idea's "description" field is its Title, and its "data" field is its Description.
+        $ideas = ['itemId' => ['name' => 'Id'], 'description' => ['name' => 'Title'], 'data' => ['name' => 'Description'], 'author' => ['name' => 'Author']];
+        $this->assertSame(['Title' => 'description', 'Description' => 'data', 'Author' => 'author'],
+            $presets->suggest(['Title', 'Description', 'Author', 'Notes'], $ideas, null, 'ideas'));
+
+        $projects = ['id' => ['name' => 'Id'], 'name' => ['name' => 'Project Name'], 'start' => ['name' => 'Start Date'], 'end' => ['name' => 'End Date']];
+        $this->assertSame(['Project Name' => 'name', 'Start Date' => 'start', 'End Date' => 'end'],
+            $presets->suggest(['Project Name', 'Start Date', 'End Date', 'Owner'], $projects, null, 'projects'));
     }
 
     public function test_jira_values_become_choices_for_the_values_the_file_has(): void

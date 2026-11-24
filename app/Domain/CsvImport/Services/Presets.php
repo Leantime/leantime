@@ -30,6 +30,9 @@ class Presets
     /** @var array<string, array<int, string>>|null Field => headings that usually mean it. */
     private ?array $common = null;
 
+    /** @var array<int, string>|null The entities whose field keys common.yaml uses. */
+    private ?array $commonEntities = null;
+
     /**
      * All presets, by id. Plugins add theirs through the "presets" filter.
      *
@@ -89,29 +92,40 @@ class Presets
     }
 
     /**
-     * Suggested column matches: the preset's columns first, then headings that usually mean a
-     * field, then a field's own name. Each field gets one column, except fields that combine.
+     * Suggested column matches: the preset's columns first, then the entity's own field names,
+     * then headings that usually mean a field (common.yaml, only for the entities its field keys
+     * belong to). Only the entity's fields are suggested. Each field gets one column, except
+     * fields that combine.
      *
      * @param  array<int, string>  $headings  The file's column headings.
      * @param  array<string, array<string, mixed>>  $leantimeFields  The entity's fields.
      * @param  array<string, mixed>|null  $preset  The recognised preset, if any.
+     * @param  string  $entity  The entity being imported (tickets, milestones, ideas, …).
      * @return array<string, string> Heading => Leantime field key.
      */
-    public function suggest(array $headings, array $leantimeFields, ?array $preset): array
+    public function suggest(array $headings, array $leantimeFields, ?array $preset, string $entity): array
     {
         $byName = [];
-        foreach ((array) ($preset['columns'] ?? []) as $heading => $field) {
-            $byName[mb_strtolower((string) $heading)] = (string) $field;
-        }
-        foreach ($this->common() as $field => $names) {
-            foreach ($names as $name) {
+        $add = function (string $name, string $field) use (&$byName, $leantimeFields): void {
+            if ($name !== '' && isset($leantimeFields[$field])) {
                 $byName[mb_strtolower($name)] ??= $field;
             }
+        };
+
+        foreach ((array) ($preset['columns'] ?? []) as $heading => $field) {
+            $add((string) $heading, (string) $field);
         }
         foreach ($leantimeFields as $key => $field) {
             foreach (array_merge([(string) ($field['name'] ?? '')], (array) ($field['aliases'] ?? [])) as $name) {
-                if ($name !== '') {
-                    $byName[mb_strtolower($name)] ??= (string) $key;
+                $add((string) $name, (string) $key);
+            }
+        }
+        // The same field key means different things per entity (an idea's "description" is its
+        // title), so the usual headings only apply to the entities they were written for.
+        if (in_array($entity, $this->commonEntities(), true)) {
+            foreach ($this->common() as $field => $names) {
+                foreach ($names as $name) {
+                    $add($name, $field);
                 }
             }
         }
@@ -123,11 +137,12 @@ class Presets
         $suggested = [];
         $taken = [];
         foreach ($headings as $heading) {
-            if (in_array(mb_strtolower(self::baseHeading((string) $heading)), $leftovers, true)) {
+            $base = mb_strtolower(self::baseHeading((string) $heading));
+            if (in_array($base, $leftovers, true)) {
                 continue;
             }
-            $field = $byName[mb_strtolower(self::baseHeading((string) $heading))] ?? null;
-            if ($field === null || ! isset($leantimeFields[$field]) || in_array($field, self::NEVER_SUGGESTED, true)) {
+            $field = $byName[$base] ?? null;
+            if ($field === null || in_array($field, self::NEVER_SUGGESTED, true)) {
                 continue;
             }
             if (isset($taken[$field]) && ! in_array($field, self::MULTI_COLUMN_FIELDS, true)) {
@@ -195,12 +210,35 @@ class Presets
      */
     private function common(): array
     {
-        if ($this->common === null) {
-            $common = $this->load(__DIR__.'/../Presets/common.yaml');
-            $this->common = array_map(fn ($names) => array_map('strval', (array) $names), (array) ($common['columns'] ?? []));
+        $this->loadCommon();
+
+        return $this->common ?? [];
+    }
+
+    /**
+     * The entities whose field keys common.yaml uses.
+     *
+     * @return array<int, string>
+     */
+    private function commonEntities(): array
+    {
+        $this->loadCommon();
+
+        return $this->commonEntities ?? [];
+    }
+
+    /**
+     * Reads common.yaml once.
+     */
+    private function loadCommon(): void
+    {
+        if ($this->common !== null) {
+            return;
         }
 
-        return $this->common;
+        $common = $this->load(__DIR__.'/../Presets/common.yaml');
+        $this->common = array_map(fn ($names) => array_map('strval', (array) $names), (array) ($common['columns'] ?? []));
+        $this->commonEntities = array_map('strval', (array) ($common['entities'] ?? []));
     }
 
     /**

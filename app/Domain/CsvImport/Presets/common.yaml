@@ -1,7 +1,10 @@
 # Headings that usually mean a Leantime field, for files no preset recognises. Used only after
 # the person clicks "Match the columns for me"; each field is suggested for one column (Tags for several).
+# The keys are the field keys of to-dos and milestones; other entities use some of the same keys
+# for other things (an idea's "description" is its title), so these headings apply only to:
 id: common
 name: ""
+entities: [tickets, milestones]
 columns:
   headline: [Title, Name, Task name, Task, Summary, Subject, Card Name, Item]
   description: [Description, Notes, Details, Card Description]

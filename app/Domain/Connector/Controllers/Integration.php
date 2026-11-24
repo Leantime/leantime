@@ -177,7 +177,7 @@ class Integration extends Controller
         $preset = $this->presets->recognise(array_map('strval', $providerFields), $entity);
         $suggest = (bool) $this->incomingRequest->query->get('suggest', false);
         $this->tpl->assign('preset', $preset);
-        $this->tpl->assign('suggested', $suggest ? $this->presets->suggest(array_map('strval', $providerFields), $this->integrationService->getEntityFields($entity), $preset) : null);
+        $this->tpl->assign('suggested', $suggest ? $this->presets->suggest(array_map('strval', $providerFields), $this->integrationService->getEntityFields($entity), $preset, $entity) : null);
         $this->tpl->assign('leftovers', array_map('mb_strtolower', (array) ($preset['leftovers'] ?? [])));
         $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields($entity));
         // Rows without a project of their own go into the project chosen here (nothing is pre-selected).
