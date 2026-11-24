@@ -202,6 +202,7 @@ a,b,c,d
         $table = $this->reader()->read($this->file($csv));
 
         $this->assertSame(4, $table->headerRow);
+        $this->assertSame(2, $table->rowsAbove, 'the preview says two filled rows are above the headings');
         $this->assertSame(['Task Name', 'Bucket Name', 'Progress', 'Assigned To'], $table->headers);
         $this->assertSame(2, $table->rowCount(), 'the empty row is skipped');
         $this->assertSame(['5', '7'], array_column($table->rows, ImportTable::ROW_KEY));
@@ -209,6 +210,20 @@ a,b,c,d
         $override = $this->reader()->read($this->file($csv), null, 1);
         $this->assertSame(1, $override->headerRow, 'the person can pick another heading row');
         $this->assertSame('Plan name', $override->headers[0]);
+    }
+
+    public function test_a_sparse_heading_row_can_be_chosen_when_detection_skips_it(): void
+    {
+        $csv = "Title,,\nOne,Ada,note\nTwo,Ben,memo\n";
+
+        $guessed = $this->reader()->read($this->file($csv));
+        $this->assertSame(2, $guessed->headerRow, 'one heading of three looks like a title above the table');
+        $this->assertSame(1, $guessed->rowsAbove, 'so the preview says a row is left above the headings');
+
+        $chosen = $this->reader()->read($this->file($csv), null, 1);
+        $this->assertSame(['Title', 'label.import_column_letter|B', 'label.import_column_letter|C'], $chosen->headers);
+        $this->assertSame(2, $chosen->rowCount());
+        $this->assertSame(0, $chosen->rowsAbove);
     }
 
     public function test_unnamed_columns_and_invisible_characters(): void
@@ -339,6 +354,27 @@ a,b,c,d
 
         $cells = $this->xlsx(['Sheet1' => [['Title', 'Owner'], ['One', 'Ada'], ['Two', 'Ben']]]);
         $this->assertRefused($cells, 'notification.import_file_too_large', $this->reader(maxCells: 4));
+    }
+
+    public function test_a_workbook_that_understates_its_size_is_refused_by_the_bytes_it_unpacks(): void
+    {
+        $path = $this->xlsx(['Sheet1' => [['Title'], [str_repeat('x', 200000)]]]);
+
+        // Declare 100 bytes for every file, in the local headers and the central directory.
+        $bytes = (string) file_get_contents($path);
+        foreach (["PK\x03\x04" => 22, "PK\x01\x02" => 24] as $signature => $sizeOffset) {
+            for ($at = strpos($bytes, $signature); $at !== false; $at = strpos($bytes, $signature, $at + 4)) {
+                $bytes = substr_replace($bytes, pack('V', 100), $at + $sizeOffset, 4);
+            }
+        }
+        file_put_contents($path, $bytes);
+
+        try {
+            $this->reader(maxUnpackedBytes: 50000)->read($path);
+            $this->fail('expected the workbook to be refused');
+        } catch (ImportFileException $e) {
+            $this->assertMatchesRegularExpression('/^notification\.import_file_(too_large|unreadable)/', $e->getMessage());
+        }
     }
 
     public function test_empty_files_and_files_without_rows(): void

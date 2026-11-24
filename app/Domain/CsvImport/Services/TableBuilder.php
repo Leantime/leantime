@@ -89,7 +89,11 @@ class TableBuilder
             throw new ImportFileException($this->language->__('notification.import_file_no_rows'));
         }
 
-        return new ImportTable(format: $format, headers: array_values($headers), rows: $rows, headerRow: $headerRow);
+        // Detection can't always tell a sparse heading row from a title above the table, so the
+        // preview says when rows were left above the headings and the person can change it.
+        $rowsAbove = count(array_filter(array_keys($grid), fn (int $rowNumber) => $rowNumber < $headerRow));
+
+        return new ImportTable(format: $format, headers: array_values($headers), rows: $rows, headerRow: $headerRow, rowsAbove: $rowsAbove);
     }
 
     /**

@@ -42,6 +42,14 @@
             · {{ sprintf(__('label.import_column_count'), count($columns)) }}
         </p>
 
+        @if ($table->rowsAbove > 0)
+            <x-global::feedback.alert tone="info">
+                {{ $table->rowsAbove === 1
+                    ? sprintf(__('text.import_row_above_headings'), $table->headerRow)
+                    : sprintf(__('text.import_rows_above_headings'), $table->rowsAbove, $table->headerRow) }}
+            </x-global::feedback.alert>
+        @endif
+
         @if ($largeFile)
             <p>{{ __('text.import_large_file') }}</p>
         @endif

@@ -27,6 +27,7 @@ class ImportTable
      * @param  string|null  $encoding  Encoding a CSV file was converted from ('UTF-8' when it was already).
      * @param  array<int, string>  $sheetNames  Visible sheets of an Excel file, by sheet index.
      * @param  int  $sheetIndex  Sheet the rows come from.
+     * @param  int  $rowsAbove  Filled rows above the heading row, which aren't imported.
      */
     public function __construct(
         public string $format,
@@ -37,6 +38,7 @@ class ImportTable
         public ?string $encoding = null,
         public array $sheetNames = [],
         public int $sheetIndex = 0,
+        public int $rowsAbove = 0,
     ) {}
 
     /**
@@ -81,6 +83,7 @@ class ImportTable
             'encoding' => $this->encoding,
             'sheetNames' => $this->sheetNames,
             'sheetIndex' => $this->sheetIndex,
+            'rowsAbove' => $this->rowsAbove,
         ];
     }
 
@@ -100,6 +103,7 @@ class ImportTable
             encoding: isset($data['encoding']) ? (string) $data['encoding'] : null,
             sheetNames: array_map('strval', (array) ($data['sheetNames'] ?? [])),
             sheetIndex: (int) ($data['sheetIndex'] ?? 0),
+            rowsAbove: (int) ($data['rowsAbove'] ?? 0),
         );
     }
 }

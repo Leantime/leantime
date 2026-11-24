@@ -114,9 +114,12 @@ class FileReader
      */
     private function readXlsx(string $path, ?int $sheetIndex, ?int $headerRow): ImportTable
     {
-        $this->assertWorkbookIsSafe($path);
-
-        $xlsx = SimpleXLSX::parseFile($path);
+        $copy = $this->checkedWorkbookCopy($path);
+        try {
+            $xlsx = SimpleXLSX::parseFile($copy);
+        } finally {
+            @unlink($copy);
+        }
         if ($xlsx === false) {
             throw new ImportFileException($this->language->__('notification.import_file_unreadable'));
         }
@@ -145,32 +148,76 @@ class FileReader
     }
 
     /**
-     * Refuses archives that aren't workbooks or unpack to more than the byte limit.
+     * A copy of the workbook built from its checked contents, for SimpleXLSX to read.
      *
-     * Checked before SimpleXLSX unpacks anything, from the sizes in the archive's directory.
+     * SimpleXLSX unpacks every record it finds in the file, with no limit, and the sizes an
+     * archive declares can be false. So each file the archive lists is unpacked here while the
+     * bytes are counted, the archive is refused past the limit, and SimpleXLSX only ever sees
+     * the rebuilt copy: no undeclared records and no more than the limit unpacked.
+     *
+     * @return string Path of the copy; the caller removes it.
+     *
+     * @throws ImportFileException When the file isn't a readable workbook or unpacks to too much.
      */
-    private function assertWorkbookIsSafe(string $path): void
+    private function checkedWorkbookCopy(string $path): string
     {
         $zip = new \ZipArchive;
         if ($zip->open($path) !== true) {
             throw new ImportFileException($this->language->__('notification.import_file_unreadable'));
         }
 
+        $copyPath = (string) tempnam(sys_get_temp_dir(), 'lt-xlsx');
+        $copy = new \ZipArchive;
         try {
             if ($zip->locateName('xl/workbook.xml') === false) {
                 throw new ImportFileException($this->language->__('notification.import_file_not_workbook'));
             }
 
+            if ($copy->open($copyPath, \ZipArchive::OVERWRITE) !== true) {
+                throw new ImportFileException($this->language->__('notification.import_file_unreadable'));
+            }
+
             $unpacked = 0;
             for ($i = 0; $i < $zip->numFiles; $i++) {
-                $unpacked += (int) ($zip->statIndex($i)['size'] ?? 0);
-                if ($unpacked > $this->maxUnpackedBytes) {
-                    throw $this->tooLarge();
+                $name = (string) $zip->getNameIndex($i);
+                if ($name === '' || str_ends_with($name, '/')) {
+                    continue;
                 }
+
+                $stream = $zip->getStreamIndex($i);
+                if ($stream === false) {
+                    throw new ImportFileException($this->language->__('notification.import_file_unreadable'));
+                }
+
+                $contents = '';
+                try {
+                    while (! feof($stream)) {
+                        $chunk = fread($stream, 1024 * 1024);
+                        if ($chunk === false) {
+                            throw new ImportFileException($this->language->__('notification.import_file_unreadable'));
+                        }
+                        $unpacked += strlen($chunk);
+                        if ($unpacked > $this->maxUnpackedBytes) {
+                            throw $this->tooLarge();
+                        }
+                        $contents .= $chunk;
+                    }
+                } finally {
+                    fclose($stream);
+                }
+
+                $copy->addFromString($name, $contents);
             }
+
+            $copy->close();
+        } catch (\Throwable $e) {
+            @unlink($copyPath);
+            throw $e;
         } finally {
             $zip->close();
         }
+
+        return $copyPath;
     }
 
     /**
