@@ -4,7 +4,7 @@
 
 @php
     $provider = $provider ?? null;
-    $review = $review ?? ['columns' => [], 'rows' => [], 'total' => 0, 'problemRows' => 0, 'hiddenRows' => 0, 'counts' => [], 'projects' => [], 'defaults' => []];
+    $review = $review ?? ['columns' => [], 'rows' => [], 'total' => 0, 'problemRows' => 0, 'hiddenRows' => 0, 'counts' => [], 'projects' => [], 'resolved' => false];
     $generalProblems = $generalProblems ?? [];
     $flags = $flags ?? [];
     $integrationId = isset($integrationId) && is_numeric($integrationId) ? (int) $integrationId : null;
@@ -39,35 +39,38 @@
                 @endif
             </x-global::feedback.alert>
         @else
-            <p class="lt-lead">
-                {{ __('text.integration_importing') }}
-                @if (count($review['projects']) === 1)
-                    {{ sprintf(__('text.import_check_project'), $review['projects'][0]) }}
-                @elseif (count($review['projects']) > 1)
-                    {{ sprintf(__('text.import_check_projects'), implode(', ', $review['projects'])) }}
-                @endif
-            </p>
-            <div class="lt-import-summary">
-                @if (($counts['new'] ?? 0) > 0)
-                    <x-global::elements.badge tone="success">{{ sprintf(__('text.import_badge_new'), $counts['new']) }}</x-global::elements.badge>
-                @endif
-                @if (($counts['updates'] ?? 0) > 0)
-                    <x-global::elements.badge tone="info">{{ sprintf(__('text.import_badge_updates'), $counts['updates']) }}</x-global::elements.badge>
-                @endif
-                @if (($counts['assigned'] ?? 0) > 0)
-                    <x-global::elements.badge>{{ sprintf(__('text.import_badge_assigned'), $counts['assigned']) }}</x-global::elements.badge>
-                @endif
-                @if (($counts['unassigned'] ?? 0) > 0)
-                    <x-global::elements.badge tone="muted">{{ sprintf(__('text.import_badge_unassigned'), $counts['unassigned']) }}</x-global::elements.badge>
+            @php
+                // "3 new to-dos for Website Redesign. No problems found."
+                $kind = in_array($entity ?? '', ['tickets', 'milestones'], true) ? $entity : 'rows';
+                $parts = [];
+                foreach (['new', 'updates'] as $count) {
+                    if (($counts[$count] ?? 0) > 0) {
+                        $parts[] = sprintf(__('text.import_check_'.$count.'_'.$kind.($counts[$count] === 1 ? '_one' : '')), number_format($counts[$count]));
+                    }
+                }
+                $summary = count($parts) === 2 ? sprintf(__('text.import_check_and'), $parts[0], $parts[1]) : ($parts[0] ?? '');
+                if (count($review['projects']) === 1) {
+                    $summary = sprintf(__('text.import_check_for'), $summary, $review['projects'][0]);
+                } elseif (count($review['projects']) > 1) {
+                    $summary = sprintf(__('text.import_check_for_projects'), $summary, count($review['projects']));
+                }
+            @endphp
+            <div class="lt-lead">
+                <strong>{{ sprintf(__('text.import_check_no_problems'), $summary) }}</strong>
+                @if ($review['resolved'])
+                    <br />{{ __('text.integration_importing') }}
                 @endif
             </div>
-            @if ($review['defaults'] !== [])
-                {{-- Values the file has no column for, and where they come from. --}}
-                <ul class="lt-import-defaults">
-                    @foreach ($review['defaults'] as $default)
-                        <li>{{ $default }}</li>
-                    @endforeach
-                </ul>
+            @if ($review['hiddenRows'] > 0)
+                {{-- A long file: the table shows the first rows, the counts cover all of them. --}}
+                <div class="lt-import-summary">
+                    @if (($counts['assigned'] ?? 0) > 0)
+                        <x-global::elements.badge>{{ sprintf(__('text.import_badge_assigned'), number_format($counts['assigned'])) }}</x-global::elements.badge>
+                    @endif
+                    @if (($counts['unassigned'] ?? 0) > 0)
+                        <x-global::elements.badge tone="muted">{{ sprintf(__('text.import_badge_unassigned'), number_format($counts['unassigned'])) }}</x-global::elements.badge>
+                    @endif
+                </div>
             @endif
         @endif
 
@@ -81,7 +84,9 @@
                     @foreach ($review['columns'] as $column)
                         <th>
                             {{ $column['name'] }}
-                            @if (strcasecmp($column['name'], $column['source']) !== 0)
+                            @if ($column['notInFile'] !== null)
+                                <span class="lt-cell-note">{{ __('text.import_column_not_in_file') }} <x-global::elements.info-tip :text="$column['notInFile']" /></span>
+                            @elseif (strcasecmp($column['name'], $column['source']) !== 0)
                                 <span class="lt-cell-note">{{ sprintf(__('text.import_column_from'), $column['source']) }}</span>
                             @endif
                         </th>

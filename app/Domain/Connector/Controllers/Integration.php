@@ -190,7 +190,7 @@ class Integration extends Controller
         $this->tpl->assign('entityName', $this->integrationService->getAvailableEntities()[$entity]['name'] ?? $entity);
         $this->tpl->assign('flags', $flags);
         $this->tpl->assign('generalProblems', $problems['general']);
-        $this->tpl->assign('review', $this->reviewTable->build($entity, $fields, $values, $this->connectorService->reviewedValues(), $problems, $leantimeFields, $projectId));
+        $this->tpl->assign('review', $this->reviewTable->build($entity, $fields, $values, $this->connectorService->reviewedValues(), $problems, $leantimeFields));
         $this->tpl->assign('importToken', $this->integrationService->getCachedImportToken());
 
         return $this->tpl->display('connector.integrationImport');

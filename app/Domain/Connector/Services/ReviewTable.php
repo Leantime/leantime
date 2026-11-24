@@ -48,18 +48,22 @@ class ReviewTable
      * @param  array<int|string, array<string, mixed>>  $reviewedValues  The same rows as the review read them.
      * @param  array{cells: array<int, array<string, array<int, string>>>, general: array<int, string>}  $problems  What the review found.
      * @param  array<string, array<string, mixed>>  $leantimeFields  The entity's fields (names).
-     * @param  int|null  $chosenProjectId  The project chosen for rows that name none.
-     * @return array{columns: array<int, array{source: string, field: string, name: string}>, rows: array<int, array{row: int, cells: array<int, array{value: string, note: ?string, problems: array<int, string>, muted: bool, userId: ?int}>}>, total: int, problemRows: int, hiddenRows: int, counts: array<string, int>, projects: array<int, string>, defaults: array<int, string>}
+     * @return array{columns: array<int, array{source: string, field: string, name: string, notInFile: ?string}>, rows: array<int, array{row: int, cells: array<int, array{value: string, note: ?string, problems: array<int, string>, muted: bool, userId: ?int}>}>, total: int, problemRows: int, hiddenRows: int, counts: array<string, int>, projects: array<int, string>, resolved: bool}
      */
-    public function build(string $entity, array $fields, array $rawValues, array $reviewedValues, array $problems, array $leantimeFields, ?int $chosenProjectId = null): array
+    public function build(string $entity, array $fields, array $rawValues, array $reviewedValues, array $problems, array $leantimeFields): array
     {
         $columns = array_map(fn (array $match) => [
             'source' => (string) $match['sourceField'],
             'field' => (string) $match['leantimeField'],
             'name' => (string) ($leantimeFields[$match['leantimeField']]['name'] ?? $match['leantimeField']),
+            'notInFile' => null,
         ], array_values($fields));
 
         $resolve = in_array($entity, self::RESOLVED_ENTITIES, true);
+        if ($resolve) {
+            // Values the file has no column for get a column of their own, saying where they come from.
+            array_push($columns, ...$this->notInFileColumns($entity, $columns, $leantimeFields));
+        }
         $idColumn = $this->sourceOf($columns, $entity === 'tickets' || $entity === 'milestones' ? 'id' : 'itemId');
         $rows = [];
         $problemRows = 0;
@@ -90,9 +94,11 @@ class ReviewTable
             $cells = [];
             foreach ($columns as $column) {
                 $cellProblems = $rowProblems[$column['source']] ?? [];
-                $cell = $resolve && $cellProblems === []
+                $cell = $column['notInFile'] !== null
+                    ? $this->notInFileCell($column, $reviewed, $isUpdate)
+                    : ($resolve && $cellProblems === []
                     ? $this->resolvedCell($column, $raw, $reviewed, $isUpdate)
-                    : $this->plainCell((string) ($raw[$column['source']] ?? ''));
+                    : $this->plainCell((string) ($raw[$column['source']] ?? '')));
                 $cell['problems'] = $cellProblems;
                 $cells[] = $cell;
             }
@@ -117,7 +123,7 @@ class ReviewTable
             'hiddenRows' => $total - count($shown),
             'counts' => $counts,
             'projects' => array_values($projects),
-            'defaults' => $resolve ? $this->defaults($entity, $columns, $chosenProjectId) : [],
+            'resolved' => $resolve,
         ];
     }
 
@@ -240,28 +246,86 @@ class ReviewTable
     }
 
     /**
-     * Where values come from that the file has no column for.
+     * Columns for the values a to-do or milestone gets although the file has no column for them:
+     * the project (when one was chosen), the assignee, and a to-do's status and type.
      *
-     * @param  array<int, array{source: string, field: string, name: string}>  $columns
-     * @return array<int, string>
+     * @param  array<int, array{source: string, field: string, name: string, notInFile: ?string}>  $columns  The file's columns.
+     * @param  array<string, array<string, mixed>>  $leantimeFields  The entity's fields (names).
+     * @return array<int, array{source: string, field: string, name: string, notInFile: string}>
      */
-    private function defaults(string $entity, array $columns, ?int $chosenProjectId): array
+    private function notInFileColumns(string $entity, array $columns, array $leantimeFields): array
     {
-        $defaults = [];
-        if ($this->sourceOf($columns, 'projectName') === null && $chosenProjectId !== null) {
-            $defaults[] = sprintf($this->language->__('text.import_default_project'), $this->projectName($chosenProjectId));
-        }
-        if ($this->sourceOf($columns, 'editorId') === null) {
-            $defaults[] = $this->language->__('text.import_default_assignee');
-        }
-        if ($entity === 'tickets' && $this->sourceOf($columns, 'status') === null) {
-            $defaults[] = $this->language->__('text.import_default_status');
-        }
-        if ($entity === 'tickets' && $this->sourceOf($columns, 'type') === null) {
-            $defaults[] = $this->language->__('text.import_default_type');
+        $fields = ['projectName' => 'text.import_column_default_project', 'editorId' => 'text.import_column_default_assignee'];
+        if ($entity === 'tickets') {
+            $fields += ['status' => 'text.import_column_default_status', 'type' => 'text.import_column_default_type'];
         }
 
-        return $defaults;
+        $added = [];
+        foreach ($fields as $field => $note) {
+            if ($this->sourceOf($columns, $field) === null) {
+                $added[] = [
+                    'source' => '',
+                    'field' => $field,
+                    'name' => (string) ($leantimeFields[$field]['name'] ?? $field),
+                    'notInFile' => $this->language->__($note),
+                ];
+            }
+        }
+
+        return $added;
+    }
+
+    /**
+     * The value of a column the file doesn't have: what a new row gets, or that an update keeps its own.
+     *
+     * @param  array{source: string, field: string, name: string, notInFile: ?string}  $column
+     * @param  array<string, mixed>  $reviewed  The row as the review read it.
+     * @return array{value: string, note: ?string, problems: array<int, string>, muted: bool, userId: ?int}
+     */
+    private function notInFileCell(array $column, array $reviewed, bool $isUpdate): array
+    {
+        $cell = ['muted' => true] + $this->plainCell('');
+        $projectId = (int) ($reviewed['projectId'] ?? 0);
+
+        switch ($column['field']) {
+            case 'projectName':
+                return $projectId > 0
+                    ? ['value' => $this->projectName($projectId)] + $cell
+                    : ['value' => $this->language->__('text.import_value_keeps')] + $cell;
+
+            case 'editorId':
+                $userId = (int) ($reviewed['editorId'] ?? 0);
+
+                return $userId > 0
+                    ? ['value' => $this->personName($userId), 'userId' => $userId, 'muted' => false] + $cell
+                    : ['value' => $this->language->__('text.import_value_keeps')] + $cell;
+        }
+
+        if ($isUpdate) {
+            return ['value' => $this->language->__('text.import_value_keeps')] + $cell;
+        }
+
+        return match ($column['field']) {
+            'status' => ['value' => $projectId > 0 ? $this->startingStatus($projectId) : ''] + $cell,
+            'type' => ['value' => ucfirst('task')] + $cell,
+            default => $cell,
+        };
+    }
+
+    /**
+     * The name of the status new work starts in: the project's first NEW status, else status 3
+     * (as the ticket service picks it).
+     */
+    private function startingStatus(int $projectId): string
+    {
+        $labels = $this->statusLabels($projectId);
+        foreach ($labels as $config) {
+            if (($config['statusType'] ?? '') === 'NEW') {
+                return $this->language->__((string) ($config['name'] ?? ''));
+            }
+        }
+
+        return $this->language->__((string) ($labels[3]['name'] ?? ''));
     }
 
     /**

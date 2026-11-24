@@ -44,19 +44,12 @@
     margin-top: 12px;
 }
 
-/* Check step: counts, where values without a column come from, people with their avatar. */
+/* Check step: counts for long files, people with their avatar. */
 .lt-import-summary {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin: -8px 0 12px;
-}
-
-.lt-import-defaults {
-    margin: 0 0 16px;
-    padding-inline-start: 18px;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-s);
+    margin: -8px 0 16px;
 }
 
 .lt-import-person {
@@ -68,4 +61,9 @@
 /* Done: the success mark is green, not the muted empty-state grey. */
 .lt-import-done .lt-empty-icon {
     color: var(--green);
+}
+
+/* Check step: a header's note ("Not in your file (?)", "from …") stays on one line. */
+.lt-import-check th .lt-cell-note {
+    white-space: nowrap;
 }

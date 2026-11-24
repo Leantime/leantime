@@ -22,7 +22,6 @@ class ReviewTableTest extends TestCase
             'text.import_note_in_file' => '%s in your file',
             'text.import_value_hours' => '%s h',
             'text.import_value_update' => 'Updates #%s',
-            'text.import_default_project' => 'Every row goes into %s.',
         ];
 
         return new ReviewTable(
@@ -58,9 +57,9 @@ class ReviewTableTest extends TestCase
             ['Title' => 'Two', 'Owner' => 'chloe@example.com', 'Priority' => '3', 'Hours' => '2', 'State' => 'Waiting', 'editorId' => 3, 'projectId' => 9, 'status' => null],
             ['Title' => 'Three', 'Owner' => '', 'Priority' => '', 'Hours' => '', 'State' => '', 'editorId' => '', 'projectId' => 9],
         ];
-        $leantimeFields = ['headline' => ['name' => 'Title'], 'editorId' => ['name' => 'Assigned To'], 'priority' => ['name' => 'Priority'], 'planHours' => ['name' => 'Planned Hours'], 'status' => ['name' => 'Status']];
+        $leantimeFields = ['headline' => ['name' => 'Title'], 'editorId' => ['name' => 'Assigned To'], 'priority' => ['name' => 'Priority'], 'planHours' => ['name' => 'Planned Hours'], 'status' => ['name' => 'Status'], 'projectName' => ['name' => 'Project'], 'type' => ['name' => 'Type']];
 
-        $table = $this->table()->build('tickets', $fields, $raw, $reviewed, ['cells' => [], 'general' => []], $leantimeFields, 9);
+        $table = $this->table()->build('tickets', $fields, $raw, $reviewed, ['cells' => [], 'general' => []], $leantimeFields);
 
         [$one, $two, $three] = array_map(fn (array $row) => $row['cells'], $table['rows']);
 
@@ -78,9 +77,12 @@ class ReviewTableTest extends TestCase
 
         $this->assertSame(['new' => 3, 'updates' => 0, 'assigned' => 2, 'unassigned' => 1], $table['counts']);
         $this->assertSame(['Website'], $table['projects']);
-        // No Project, Type columns: where those values come from is said.
-        $this->assertContains('Every row goes into Website.', $table['defaults']);
-        $this->assertContains('text.import_default_type', $table['defaults']);
+        // No Project or Type column in the file: each gets a column saying where its values come from.
+        $added = array_values(array_filter($table['columns'], fn (array $column) => $column['notInFile'] !== null));
+        $this->assertSame(['projectName', 'type'], array_column($added, 'field'));
+        $this->assertSame('text.import_column_default_project', $added[0]['notInFile']);
+        $this->assertSame(['Website', true], [$one[5]['value'], $one[5]['muted']]);
+        $this->assertSame('Task', $one[6]['value']);
     }
 
     public function test_with_problems_only_the_rows_that_need_a_fix_are_shown_with_the_file_value(): void
