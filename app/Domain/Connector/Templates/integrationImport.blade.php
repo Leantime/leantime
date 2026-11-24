@@ -74,6 +74,58 @@
             @endif
         @endif
 
+        {{-- One choice changes every row with the same value (a person, a priority, a project, an empty due date). --}}
+        @php
+            $fixChoices = $fixChoices ?? ['open' => [], 'applied' => []];
+            $matchParams = $matchParams ?? [];
+        @endphp
+        @if ($fixChoices['open'] !== [] || $fixChoices['applied'] !== [])
+            <form method="post" action="{{ $provider->stepUrl('parse', $integrationId) }}" class="lt-import-fixes">
+                @foreach ($matchParams as $name => $value)
+                    <input type="hidden" name="{{ $name }}" value="{{ $value }}" />
+                @endforeach
+
+                <x-global::elements.section-header as="h5" :description="__('text.import_fix')">{{ __('headlines.import_fix') }}</x-global::elements.section-header>
+
+                @if ($fixChoices['applied'] !== [])
+                    <ul class="lt-import-fixes-applied">
+                        @foreach ($fixChoices['applied'] as $fix)
+                            <li>
+                                <input type="hidden" name="fixes[{{ $fix['key'] }}][column]" value="{{ $fix['column'] }}" />
+                                <input type="hidden" name="fixes[{{ $fix['key'] }}][from]" value="{{ $fix['from'] }}" />
+                                <input type="hidden" name="fixes[{{ $fix['key'] }}][to]" value="{{ $fix['to'] }}" />
+                                <i class="fa fa-circle-check" aria-hidden="true"></i>
+                                {{ sprintf(__('text.import_fix_applied'), $fix['label'], $fix['toLabel']) }}
+                                <x-global::forms.button inputType="submit" contentRole="link" name="undoFix" value="{{ $fix['key'] }}">{{ __('buttons.import_fix_undo') }}</x-global::forms.button>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+
+                @foreach ($fixChoices['open'] as $choice)
+                    <input type="hidden" name="fixes[{{ $choice['key'] }}][column]" value="{{ $choice['column'] }}" />
+                    <input type="hidden" name="fixes[{{ $choice['key'] }}][from]" value="{{ $choice['from'] }}" />
+                    <x-global::forms.field layout="inline" :labelWidth="300" for="fix-{{ $choice['key'] }}" :label="$choice['label']"
+                        :help="sprintf(__($choice['rows'] === 1 ? 'text.import_fix_rows_one' : 'text.import_fix_rows'), number_format($choice['rows']))">
+                        @if ($choice['kind'] === 'date')
+                            <x-global::forms.date-picker name="fixes[{{ $choice['key'] }}][to]" id="fix-{{ $choice['key'] }}" />
+                        @else
+                            <x-global::forms.select name="fixes[{{ $choice['key'] }}][to]" id="fix-{{ $choice['key'] }}" width="md">
+                                <option value="">{{ __('label.import_choose') }}</option>
+                                @foreach ($choice['options'] as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </x-global::forms.select>
+                        @endif
+                    </x-global::forms.field>
+                @endforeach
+
+                @if ($fixChoices['open'] !== [])
+                    <x-global::forms.button inputType="submit" contentRole="secondary">{{ __('buttons.import_fix_apply') }}</x-global::forms.button>
+                @endif
+            </form>
+        @endif
+
         {{-- One column per matched column of the file, under its Leantime field. The row number is the spreadsheet's. --}}
         @if ($review['rows'] !== [])
             <div class="tw-overflow-x-auto">

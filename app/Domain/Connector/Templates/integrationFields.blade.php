@@ -84,6 +84,8 @@
                 </div>
             @endif
 
+            {{-- On a narrow screen the table scrolls sideways inside the box. --}}
+            <div class="tw-overflow-x-auto">
             <table class="table table-bordered">
                 <thead>
                 <tr>
@@ -116,6 +118,7 @@
                 @endforeach
                 </tbody>
             </table>
+            </div>
 
             <div class="lt-form-actions">
                 <x-global::forms.button tag="a" :link="$backUrl" contentRole="tertiary">{{ __('buttons.back') }}</x-global::forms.button>

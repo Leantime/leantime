@@ -114,21 +114,24 @@ class Connector
         ], $items);
     }
 
+    /**
+     * The column matches of the matching step's form: each field_* value is "column|field".
+     * Other form values (the project, choices from the check step) are not matches.
+     *
+     * @param  array<string, mixed>  $postParams  The posted form.
+     * @return array<int, array{sourceField: string, leantimeField: string}>
+     */
     public function getFieldMappings($postParams)
     {
         $fields = [];
-        foreach ($postParams as $fieldmapping) {
-            // Checking if the field mapping is selected
-            if (
-                ! empty($fieldmapping)
-                && strpos($fieldmapping, '|') !== false
-            ) {
-                $mappingParts = explode('|', $fieldmapping);
-                $sourceField = $mappingParts[0];
-                $leantimeField = $mappingParts[1];
-
-                $fields[] = ['sourceField' => $sourceField, 'leantimeField' => $leantimeField];
+        foreach ($postParams as $name => $fieldmapping) {
+            if (! str_starts_with((string) $name, 'field_') || ! is_string($fieldmapping) || ! str_contains($fieldmapping, '|')) {
+                continue;
             }
+
+            // The heading may itself contain "|"; the field key never does.
+            $split = strrpos($fieldmapping, '|');
+            $fields[] = ['sourceField' => substr($fieldmapping, 0, $split), 'leantimeField' => substr($fieldmapping, $split + 1)];
         }
 
         return $fields;
@@ -155,6 +158,21 @@ class Connector
     /** @var array<string, true> Review messages that are about one cell (shown in that cell). */
     private array $cellMessages = [];
 
+    /** @var array<string, array<string, array<string, array<int, int>>>> Fixable problems: column => message key => cell value => row numbers. */
+    private array $fixableCells = [];
+
+    /** Row messages one choice can fix for every row with the same value (see ReviewFixes). */
+    public const FIXABLE_PROBLEMS = [
+        'notification.import_row_unknown_person',
+        'notification.import_row_unknown_email',
+        'notification.import_row_person_ambiguous',
+        'notification.import_row_assignee_not_on_team',
+        'notification.import_row_unknown_project',
+        'notification.import_row_project_empty',
+        'notification.import_row_invalid_priority',
+        'notification.import_row_invalid_type',
+    ];
+
     /** @var array<int|string, array<string, mixed>> The rows as the last review read them (ids resolved, values normalised). */
     private array $reviewedValues = [];
 
@@ -174,6 +192,7 @@ class Connector
         $this->flagRows = [];
         $this->cellProblems = [];
         $this->cellMessages = [];
+        $this->fixableCells = [];
         $this->reviewedValues = [];
         $this->setDefaultProject($defaultProjectId);
         $this->rememberSheetRows($values);
@@ -1255,6 +1274,12 @@ class Connector
             $cellKey = str_replace('notification.import_row_', 'notification.import_cell_', $key);
             $this->cellProblems[$args[0]][$column][] = sprintf($this->language->__($cellKey), ...$args);
             $this->cellMessages[$message] = true;
+
+            if (in_array($key, self::FIXABLE_PROBLEMS, true)) {
+                // The second argument is the cell's value (the project of an empty Project cell has none).
+                $value = $key === 'notification.import_row_project_empty' ? '' : trim((string) ($args[1] ?? ''));
+                $this->fixableCells[$column][$key][$value][] = $args[0];
+            }
         }
 
         return $message;
@@ -1265,12 +1290,13 @@ class Connector
      * messages about the whole file or a row without a column of its own.
      *
      * @param  array<int, string>  $flags  The messages parseValues() returned.
-     * @return array{cells: array<int, array<string, array<int, string>>>, general: array<int, string>}
+     * @return array{cells: array<int, array<string, array<int, string>>>, general: array<int, string>, fixable: array<string, array<string, array<string, array<int, int>>>>}
      */
     public function reviewProblems(array $flags): array
     {
         return [
             'cells' => $this->cellProblems,
+            'fixable' => $this->fixableCells,
             'general' => array_values(array_filter(array_unique($flags), fn (string $flag) => ! isset($this->cellMessages[$flag]))),
         ];
     }

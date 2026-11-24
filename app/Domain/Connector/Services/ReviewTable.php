@@ -205,7 +205,7 @@ class ReviewTable
                 return ['note' => $this->language->__($isUpdate ? 'text.import_note_status_kept' : 'text.import_note_status_start'), 'muted' => true] + $cell;
 
             case 'type':
-                $type = strtolower($inFile);
+                $type = strtolower($read);
 
                 return $type === ''
                     ? ['value' => ucfirst('task'), 'note' => $this->language->__('text.import_note_type_default'), 'muted' => true] + $cell
@@ -329,11 +329,16 @@ class ReviewTable
     }
 
     /**
-     * "… in your file" when the file's value differs from the one shown, else null.
+     * "… in your file" when the file's value differs from the one shown, "Empty in your file" when
+     * the value was filled in on the check step, else null.
      */
     private function inFileNote(string $inFile, string $shown): ?string
     {
-        if ($inFile === '' || strcasecmp($inFile, $shown) === 0) {
+        // Filled in on the check step although the file has nothing there.
+        if ($inFile === '') {
+            return $shown !== '' ? $this->language->__('text.import_note_was_empty') : null;
+        }
+        if (strcasecmp($inFile, $shown) === 0) {
             return null;
         }
 

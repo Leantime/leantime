@@ -11,6 +11,7 @@ use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services\Connector;
 use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
 use Leantime\Domain\Connector\Services\Providers;
+use Leantime\Domain\Connector\Services\ReviewFixes;
 use Leantime\Domain\Connector\Services\ReviewTable;
 use Leantime\Domain\Projects\Services\Projects;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,8 @@ class Integration extends Controller
 
     private ReviewTable $reviewTable;
 
+    private ReviewFixes $reviewFixes;
+
     /** Entities whose rows go into a project, so the matching step offers a project for all rows. */
     private const PROJECT_ENTITIES = ['tickets', 'milestones'];
 
@@ -38,13 +41,15 @@ class Integration extends Controller
         IntegrationService $integrationService,
         Connector $connectorService,
         Projects $projectService,
-        ReviewTable $reviewTable
+        ReviewTable $reviewTable,
+        ReviewFixes $reviewFixes
     ): void {
         $this->providerService = $providerService;
         $this->integrationService = $integrationService;
         $this->connectorService = $connectorService;
         $this->projectService = $projectService;
         $this->reviewTable = $reviewTable;
+        $this->reviewFixes = $reviewFixes;
     }
 
     /**
@@ -181,7 +186,9 @@ class Integration extends Controller
         $fields = $this->connectorService->getFieldMappings($params);
         $projectId = is_numeric($params['importProjectId'] ?? null) ? (int) $params['importProjectId'] : null;
         $entity = (string) session('currentImportEntity');
-        $flags = $this->connectorService->parseValues($fields, $values, $entity, $projectId);
+        // Choices from the check step change every row with the same value; the file stays as it is.
+        $fixes = $this->reviewFixes->fromRequest($params);
+        $flags = $this->connectorService->parseValues($fields, $this->reviewFixes->apply($values, $fixes), $entity, $projectId);
         $flags = is_array($flags) ? $flags : [];
         $problems = $this->connectorService->reviewProblems($flags);
         $leantimeFields = $this->integrationService->getEntityFields($entity);
@@ -191,6 +198,13 @@ class Integration extends Controller
         $this->tpl->assign('flags', $flags);
         $this->tpl->assign('generalProblems', $problems['general']);
         $this->tpl->assign('review', $this->reviewTable->build($entity, $fields, $values, $this->connectorService->reviewedValues(), $problems, $leantimeFields));
+        $this->tpl->assign('fixChoices', $this->reviewFixes->choices($entity, $fields, $values, $problems['fixable'], $fixes, $leantimeFields));
+        // The matching is sent again with the choices, so the check runs on the same columns.
+        $this->tpl->assign('matchParams', array_filter(
+            $params,
+            fn ($value, $name) => is_string($value) && (str_starts_with((string) $name, 'field_') || $name === 'importProjectId'),
+            ARRAY_FILTER_USE_BOTH
+        ));
         $this->tpl->assign('importToken', $this->integrationService->getCachedImportToken());
 
         return $this->tpl->display('connector.integrationImport');
