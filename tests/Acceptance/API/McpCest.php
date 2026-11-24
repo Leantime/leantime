@@ -167,18 +167,23 @@ class McpCest
         $response = $this->callTool($I, 'addTask', [
             'headline' => 'Agent handoff',
             'projectId' => 1,
-            'tags' => 'Agent,review',
+            'tags' => 'Agent, review',
             'priority' => 2,
-            'storypoints' => 5,
+            'storypoints' => 0.5,
         ]);
         Assert::assertFalse($response['result']['isError'] ?? true, $this->toolText($response));
         Assert::assertSame(1, preg_match('/ID:?\s*(\d+)/', $this->toolText($response), $matches));
-        $I->seeInDatabase('zp_tickets', ['id' => (int) $matches[1], 'tags' => 'Agent,review', 'priority' => 2, 'storypoints' => 5]);
+        $I->seeInDatabase('zp_tickets', ['id' => (int) $matches[1], 'tags' => 'Agent,review', 'priority' => 2, 'storypoints' => 0.5]);
 
         $response = $this->callTool($I, 'findTasks', ['projectIds' => [1], 'status' => 'open', 'tags' => 'agent']);
+        Assert::assertFalse($response['result']['isError'] ?? true, $this->toolText($response));
         Assert::assertStringContainsString('Agent handoff', $this->toolText($response));
         $response = $this->callTool($I, 'findTasks', ['projectIds' => [1], 'status' => 'open', 'tags' => 'agen']);
+        Assert::assertFalse($response['result']['isError'] ?? true, $this->toolText($response));
         Assert::assertStringNotContainsString('Agent handoff', $this->toolText($response));
+        $response = $this->callTool($I, 'findTasks', ['projectIds' => [1], 'status' => 'open', 'tags' => 'review']);
+        Assert::assertFalse($response['result']['isError'] ?? true, $this->toolText($response));
+        Assert::assertStringContainsString('Agent handoff', $this->toolText($response));
 
         $response = $this->callTool($I, 'bulkAddTasks', ['tasks' => [
             ['headline' => 'Agent bulk handoff', 'projectId' => 1, 'tags' => 'agent', 'priority' => 1, 'storypoints' => 3],
@@ -189,6 +194,7 @@ class McpCest
         $response = $this->callTool($I, 'editTask', ['id' => (int) $matches[1], 'params' => ['status' => 'done']]);
         Assert::assertFalse($response['result']['isError'] ?? true, $this->toolText($response));
         $response = $this->callTool($I, 'findTasks', ['projectIds' => [1], 'status' => 'open', 'tags' => 'agent']);
+        Assert::assertFalse($response['result']['isError'] ?? true, $this->toolText($response));
         Assert::assertStringNotContainsString('Agent handoff', $this->toolText($response));
         Assert::assertStringContainsString('Agent bulk handoff', $this->toolText($response));
     }

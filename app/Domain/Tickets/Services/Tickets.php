@@ -2161,7 +2161,7 @@ class Tickets extends BaseService
      *                         - milestone (int)          : The ID of the associated milestone.
      *                         - tags (string)            : Comma-separated tags.
      *                         - priority (int)           : The priority of the ticket.
-     *                         - storypoints (int)        : The effort of the ticket.
+     *                         - storypoints (float)      : The effort of the ticket.
      * @return array|bool|int Returns the ticket ID on success or false on failure.
      *                    If 'headline' is missing in $params or ticket creation fails, an error array will be returned with a status and message.
      *
@@ -2192,13 +2192,13 @@ class Tickets extends BaseService
             'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
             'status' => $status,
-            'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',
+            'storypoints' => isset($params['storypoints']) ? (float) $params['storypoints'] : '',
             'hourRemaining' => '',
             'planHours' => isset($params['planHours']) ? (int) $params['planHours'] : '',
             'sprint' => isset($params['sprint']) ? (int) $params['sprint'] : '',
             'acceptanceCriteria' => '',
             'priority' => isset($params['priority']) ? (int) $params['priority'] : '',
-            'tags' => $params['tags'] ?? '',
+            'tags' => implode(',', array_map('trim', explode(',', $params['tags'] ?? ''))),
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
             'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : '',

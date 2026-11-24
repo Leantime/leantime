@@ -44,7 +44,7 @@ class BulkAddTasksToolTest extends TestCase
                 return 42;
             },
         ]);
-        $task = ['headline' => 'Agent task', 'projectId' => 9, 'tags' => 'agent,review', 'priority' => 2, 'storypoints' => 5];
+        $task = ['headline' => 'Agent task', 'projectId' => 9, 'tags' => 'agent,review', 'priority' => 2, 'storypoints' => 0.5];
 
         (new AddTaskTool($tickets))->handle(new Request($task));
         (new BulkAddTasksTool($tickets))->handle(new Request(['tasks' => [$task]]));
@@ -52,7 +52,7 @@ class BulkAddTasksToolTest extends TestCase
         foreach ($created as $params) {
             $this->assertSame('agent,review', $params['tags']);
             $this->assertSame(2, $params['priority']);
-            $this->assertSame(5, $params['storypoints']);
+            $this->assertSame(0.5, $params['storypoints']);
         }
         $this->assertCount(2, $created);
     }

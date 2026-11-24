@@ -127,12 +127,12 @@ class TicketsApiContractTest extends TestCase
             },
         ]);
 
-        $service->quickAddTicket(['headline' => 'Agent task', 'projectId' => 9, 'tags' => 'agent,review', 'priority' => 2, 'storypoints' => 5]);
+        $service->quickAddTicket(['headline' => 'Agent task', 'projectId' => 9, 'tags' => 'agent, review', 'priority' => 2, 'storypoints' => 0.5]);
         $service->quickAddTicket(['headline' => 'Default task', 'projectId' => 9]);
 
         $this->assertSame('agent,review', $created[0]['tags']);
         $this->assertSame(2, $created[0]['priority']);
-        $this->assertSame(5, $created[0]['storypoints']);
+        $this->assertSame(0.5, $created[0]['storypoints']);
         $this->assertSame('', $created[1]['tags']);
     }
 

@@ -62,7 +62,7 @@ class AddTaskTool extends Tool
                 ->description('Comma-separated tags.'),
             'priority' => $schema->integer()
                 ->description('Priority (1 is highest, 5 is lowest).'),
-            'storypoints' => $schema->integer()
+            'storypoints' => $schema->number()
                 ->description('Effort in story points.'),
             'projectId' => $schema->integer()
                 ->description('Project ID.'),
