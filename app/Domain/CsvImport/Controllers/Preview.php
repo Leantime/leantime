@@ -8,6 +8,7 @@ use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\CsvImport\Exceptions\ImportFileException;
 use Leantime\Domain\CsvImport\Services\CsvImport as CsvImportService;
+use Leantime\Domain\Plugins\Services\Plugins;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -22,14 +23,20 @@ class Preview extends Controller
     /** Above this many rows the page says the import may take a while. */
     public const LARGE_FILE_ROWS = 1000;
 
+    /** The plugin that lets an AI assistant do a more complicated move. */
+    public const MCP_PLUGIN = 'McpServer';
+
     private CsvImportService $csvImport;
+
+    private Plugins $plugins;
 
     /**
      * Initializes the controller dependencies.
      */
-    public function init(CsvImportService $csvImport): void
+    public function init(CsvImportService $csvImport, Plugins $plugins): void
     {
         $this->csvImport = $csvImport;
+        $this->plugins = $plugins;
     }
 
     /**
@@ -54,6 +61,7 @@ class Preview extends Controller
         $this->tpl->assign('preview', $table->preview(self::PREVIEW_ROWS));
         $this->tpl->assign('integrationId', $integrationId);
         $this->tpl->assign('largeFile', $table->rowCount() > self::LARGE_FILE_ROWS);
+        $this->tpl->assign('mcpServerEnabled', $this->plugins->isEnabled(self::MCP_PLUGIN));
 
         return $this->tpl->display('csvImport.preview');
     }

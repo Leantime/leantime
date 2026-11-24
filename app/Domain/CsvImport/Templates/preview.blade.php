@@ -97,6 +97,18 @@
             </table>
         </div>
 
+        {{-- A move this import can't do well (comments, subtasks, several tools) is what the MCP Server plugin is for. --}}
+        <x-global::feedback.alert tone="info" icon="fa fa-wand-magic-sparkles" :title="__('headlines.import_complicated')">
+            @if ($mcpServerEnabled ?? false)
+                {{ sprintf(__('text.import_complicated_connected'), BASE_URL.'/mcp') }}
+            @else
+                {{ __('text.import_complicated_plugin') }}
+                <x-slot:actions>
+                    <x-global::forms.button tag="a" link="{{ BASE_URL }}/plugins/marketplace" contentRole="secondary">{{ __('links.import_complicated_plugin') }}</x-global::forms.button>
+                </x-slot:actions>
+            @endif
+        </x-global::feedback.alert>
+
         <div class="left">
             <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}" contentRole="tertiary">{{ __('links.import_different_file') }}</x-global::forms.button>
         </div>
