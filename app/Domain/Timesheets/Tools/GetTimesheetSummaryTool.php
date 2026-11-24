@@ -131,7 +131,7 @@ class GetTimesheetSummaryTool extends Tool
                 case 'kind':
                     $groupKey = $entry['kind'];
                     $kindLabel = $this->timesheetsService->getLoggableHourTypes()[$entry['kind']] ?? $entry['kind'];
-                    $groupLabel = $kindLabel;
+                    $groupLabel = __($kindLabel);
                     break;
                 default:
                     $groupKey = 'all';

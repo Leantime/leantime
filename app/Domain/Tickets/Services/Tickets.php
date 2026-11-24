@@ -474,6 +474,7 @@ class Tickets extends BaseService
      *                                      the ticket's last modification (creation date if never modified).
      *                                      - 'statusType': comma list of NEW, INPROGRESS, DONE, NOT_DONE,
      *                                      resolved against each ticket's own project status labels.
+     *                                      - 'tags': comma-separated whole tags, matching any tag case-insensitively.
      * @return array|false An array of tickets matching the search criteria, or false on failure.
      *
      * @throws ValidationException When modifiedAfter/modifiedBefore is not a date or statusType is unknown.
@@ -2158,7 +2159,10 @@ class Tickets extends BaseService
      *                         - editFrom (string)        : Start time for the edit period. In user date format or ISO8601
      *                         - editTo (string)          : End time for the edit period. In user date format or ISO8601
      *                         - milestone (int)          : The ID of the associated milestone.
-     * @return array|bool Returns an array with ticket details if successful or false on failure.
+     *                         - tags (string)            : Comma-separated tags.
+     *                         - priority (int)           : The priority of the ticket.
+     *                         - storypoints (float)      : The effort of the ticket.
+     * @return array|bool|int Returns the ticket ID on success or false on failure.
      *                    If 'headline' is missing in $params or ticket creation fails, an error array will be returned with a status and message.
      *
      * @api
@@ -2188,13 +2192,13 @@ class Tickets extends BaseService
             'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
             'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
             'status' => $status,
-            'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',
+            'storypoints' => isset($params['storypoints']) ? (float) $params['storypoints'] : '',
             'hourRemaining' => '',
             'planHours' => isset($params['planHours']) ? (int) $params['planHours'] : '',
             'sprint' => isset($params['sprint']) ? (int) $params['sprint'] : '',
             'acceptanceCriteria' => '',
             'priority' => isset($params['priority']) ? (int) $params['priority'] : '',
-            'tags' => '',
+            'tags' => implode(',', array_map('trim', explode(',', $params['tags'] ?? ''))),
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
             'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : '',

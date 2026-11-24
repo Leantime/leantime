@@ -156,7 +156,7 @@ class GetProjectTimesheetsTool extends Tool
         $response .= "\n### Hours by Type\n";
         foreach ($kindTotals as $kindKey => $hours) {
             $kindLabel = $this->timesheetsService->getLoggableHourTypes()[$kindKey] ?? $kindKey;
-            $response .= '- **'.$kindLabel.'**: '.number_format($hours, 2)." hours\n";
+            $response .= '- **'.__($kindLabel).'**: '.number_format($hours, 2)." hours\n";
         }
 
         return Response::text($response);

@@ -44,6 +44,20 @@ class ProjectsServiceTest extends TestCase
 {
     use \Codeception\Test\Feature\Stub;
 
+    public function test_find_project_keeps_the_numeric_id_separate_from_modified_date(): void
+    {
+        $repository = $this->make(ProjectRepository::class, [
+            'getUserProjects' => fn () => [
+                ['id' => 2, 'name' => 'Agent project', 'modified' => '2026-11-13 03:54:03', 'start' => '', 'end' => ''],
+            ],
+        ]);
+
+        $projects = $this->makeService(projectRepo: $repository)->findProject('agent');
+
+        $this->assertSame(2, $projects[0]['id']);
+        $this->assertSame('2026-11-13T03:54:03Z', $projects[0]['modified']);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

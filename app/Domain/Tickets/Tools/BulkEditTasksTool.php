@@ -42,7 +42,7 @@ class BulkEditTasksTool extends Tool
      */
     public function description(): string
     {
-        return 'Updates multiple tasks in a single operation. Expects an array where each element contains ticketId and the fields to update. Field names that can be updated are: headline, description, projectId, editorId, userId, dateToFinish, status, editFrom, editTo, milestoneId. The assignee (editorId) must be on the project team: pick one with getUsersAssignedToProject.';
+        return 'Updates multiple tasks in a single operation. Expects an array where each element contains id and the fields to update. Field names that can be updated are: headline, description (HTML; use <p> or <br> for line breaks), projectId, editorId, userId, dateToFinish, status, editFrom, editTo, milestoneId. The assignee (editorId) must be on the project team: pick one with getUsersAssignedToProject.';
     }
 
     /**

@@ -57,7 +57,13 @@ class AddTaskTool extends Tool
                 ->description('Title of the task.')
                 ->required(),
             'description' => $schema->string()
-                ->description('Task description.'),
+                ->description('Task description as HTML; use <p> or <br> for line breaks.'),
+            'tags' => $schema->string()
+                ->description('Comma-separated tags.'),
+            'priority' => $schema->integer()
+                ->description('Priority (1 is highest, 5 is lowest).'),
+            'storypoints' => $schema->number()
+                ->description('Effort in story points.'),
             'projectId' => $schema->integer()
                 ->description('Project ID.'),
             'editorId' => $schema->integer()
@@ -89,6 +95,9 @@ class AddTaskTool extends Tool
         $params = [
             'headline' => $arguments['headline'],
             'description' => ($arguments['description'] ?? ''),
+            'tags' => ($arguments['tags'] ?? ''),
+            'priority' => ($arguments['priority'] ?? null),
+            'storypoints' => ($arguments['storypoints'] ?? null),
             'projectId' => ($arguments['projectId'] ?? null),
             'editorId' => ($arguments['editorId'] ?? null),
             'userId' => ($arguments['userId'] ?? null),

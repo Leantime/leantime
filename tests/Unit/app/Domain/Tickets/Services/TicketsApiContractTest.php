@@ -116,6 +116,26 @@ class TicketsApiContractTest extends TestCase
         ]);
     }
 
+    public function test_quick_add_persists_tags_priority_and_effort(): void
+    {
+        $created = [];
+        $service = $this->service([
+            'addTicket' => function ($values) use (&$created) {
+                $created[] = $values;
+
+                return 101;
+            },
+        ]);
+
+        $service->quickAddTicket(['headline' => 'Agent task', 'projectId' => 9, 'tags' => 'agent, review', 'priority' => 2, 'storypoints' => 0.5]);
+        $service->quickAddTicket(['headline' => 'Default task', 'projectId' => 9]);
+
+        $this->assertSame('agent,review', $created[0]['tags']);
+        $this->assertSame(2, $created[0]['priority']);
+        $this->assertSame(0.5, $created[0]['storypoints']);
+        $this->assertSame('', $created[1]['tags']);
+    }
+
     // ---------------------------------------------------------------------
     // #3701 / #3702(b): partial updates preserve omitted fields and parent links
     // ---------------------------------------------------------------------
