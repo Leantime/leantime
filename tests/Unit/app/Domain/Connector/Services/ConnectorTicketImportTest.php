@@ -447,4 +447,54 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertSame('tickets', session('serImportEntity'));
         $this->assertNotEmpty(session('serImportToken'));
     }
+
+    public function test_an_update_without_an_assignee_column_keeps_its_assignee(): void
+    {
+        session(['userdata.id' => 7]);
+        $calls = [];
+        $storedType = 'task';
+        $connector = $this->connector(
+            $calls,
+            [
+                'getStatusLabels' => fn () => [],
+                'getTicket' => function ($id) use (&$storedType) {
+                    return $this->ticket((int) $id, $storedType);
+                },
+            ],
+            [
+                'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+                'getProjectIdByName' => fn ($all, $name) => $name === 'Website' ? 9 : false,
+                'isUserAssignedToProject' => fn () => true,
+            ],
+        );
+
+        $fields = [
+            ['sourceField' => 'ID', 'leantimeField' => 'id'],
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+        ];
+
+        // Milestones also need their dates.
+        $milestoneFields = array_merge($fields, [
+            ['sourceField' => 'From', 'leantimeField' => 'editFrom'],
+            ['sourceField' => 'To', 'leantimeField' => 'editTo'],
+        ]);
+        $dates = ['From' => '2026-12-01', 'To' => '2026-12-05'];
+
+        foreach (['tickets' => $fields, 'milestones' => $milestoneFields] as $entity => $fields) {
+            $calls = [];
+            $storedType = $entity === 'milestones' ? 'milestone' : 'task';
+            $flags = $connector->parseValues($fields, [
+                ['ID' => '12', 'Title' => 'Renamed', 'Project' => 'Website'] + $dates,
+                ['ID' => '', 'Title' => 'New', 'Project' => 'Website'] + $dates,
+            ], $entity);
+            $this->assertSame([], $flags, $entity);
+            $connector->importValues($fields, unserialize(session('serValues')), $entity);
+
+            $update = $calls[0][1];
+            $this->assertSame('update', $calls[0][0]);
+            $this->assertArrayNotHasKey('editorId', $update, $entity.': an update keeps its assignee');
+            $this->assertSame(7, $calls[1][1]['editorId'] ?? null, $entity.': a new row is the importer\'s');
+        }
+    }
 }

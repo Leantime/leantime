@@ -170,8 +170,14 @@ class Connector
                 }
             }
         } else {
+            // Without an assignee column, new rows are the importer's; a row that updates an existing
+            // item keeps its assignee.
             $id = session('userdata.id');
+            $idColumn = $this->sourceColumnFor($fields, 'id');
             foreach ($values as &$row) {
+                if ($idColumn !== null && is_numeric($row[$idColumn] ?? null)) {
+                    continue;
+                }
                 $row['editorId'] = $id;
             }
         }
@@ -612,8 +618,14 @@ class Connector
                 }
             }
         } else {
+            // Without an assignee column, new rows are the importer's; a row that updates an existing
+            // item keeps its assignee.
             $id = session('userdata.id');
+            $idColumn = $this->sourceColumnFor($fields, 'id');
             foreach ($values as &$row) {
+                if ($idColumn !== null && is_numeric($row[$idColumn] ?? null)) {
+                    continue;
+                }
                 $row['editorId'] = $id;
             }
         }
@@ -720,7 +732,12 @@ class Connector
         foreach ($finalValues as $index => $row) {
             $ticket = $this->mapRow($finalMappings, $row);
 
-            $ticket['editorId'] = $row['editorId'] ?? '';
+            // A row that updates an item has no editorId when the file has no assignee column. Leaving
+            // it out keeps the stored assignee (updateTicket() keeps omitted fields).
+            unset($ticket['editorId']);
+            if (array_key_exists('editorId', $row)) {
+                $ticket['editorId'] = $row['editorId'];
+            }
             $ticket['projectId'] = $row['projectId'] ?? '';
             // Only send a status that was resolved to an id of the ticket's project. Without one,
             // addTicket() uses the project's NEW status and updateTicket() keeps the stored status
@@ -993,7 +1010,12 @@ class Connector
 
         foreach ($finalValues as $index => $row) {
             $ticket = $this->mapRow($finalMappings, $row);
-            $ticket['editorId'] = $row['editorId'] ?? '';
+            // A row that updates an item has no editorId when the file has no assignee column. Leaving
+            // it out keeps the stored assignee (updateTicket() keeps omitted fields).
+            unset($ticket['editorId']);
+            if (array_key_exists('editorId', $row)) {
+                $ticket['editorId'] = $row['editorId'];
+            }
             $ticket['projectId'] = $row['projectId'] ?? '';
             // No status column: leave it out so a new milestone gets the project's NEW status and an
             // existing one keeps its stored status.
@@ -1024,6 +1046,22 @@ class Connector
         }
 
         return $result;
+    }
+
+    /**
+     * The column of the file matched to a Leantime field, or null when none is.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column matches.
+     */
+    private function sourceColumnFor(array $fields, string $leantimeField): ?string
+    {
+        foreach ($fields as $item) {
+            if ($item['leantimeField'] === $leantimeField) {
+                return (string) $item['sourceField'];
+            }
+        }
+
+        return null;
     }
 
     /**
