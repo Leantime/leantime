@@ -100,6 +100,9 @@ class Connector
     /** @var array<string, array<int, int>>|null Ids of active people by lower-case full name. */
     private ?array $peopleByName = null;
 
+    /** @var array<string, int> Row number of each row message of the review, for listing them in row order. */
+    private array $flagRows = [];
+
     /**
      * Reviews the mapped rows of one import and stores them for the import step when nothing
      * is flagged.
@@ -113,6 +116,7 @@ class Connector
     public function parseValues($fields, $values, $entity, ?int $defaultProjectId = null)
     {
         $this->reviewedEntity = (string) $entity;
+        $this->flagRows = [];
         $this->setDefaultProject($defaultProjectId);
         $this->rememberSheetRows($values);
 
@@ -129,6 +133,7 @@ class Connector
         if ($flags === false) {
             return false;
         }
+        $flags = $this->inRowOrder(array_values($flags));
 
         // A field that takes one value can't come from two columns; nothing is stored for import.
         $mappedTwice = $this->mappedTwiceFlags($fields, (string) $entity);
@@ -243,12 +248,7 @@ class Connector
             foreach ($values as $index => $typeRow) {
                 $type = strtolower(trim((string) ($typeRow[$matchingTypeField] ?? '')));
                 if ($type !== '' && ! in_array($type, $validTypes, true)) {
-                    $flags[] = sprintf(
-                        $this->language->__('notification.import_row_invalid_type'),
-                        $this->rowNumber($index),
-                        $typeRow[$matchingTypeField],
-                        implode(', ', $validTypes)
-                    );
+                    $flags[] = $this->flag('notification.import_row_invalid_type', $this->rowNumber($index), $typeRow[$matchingTypeField], implode(', ', $validTypes));
                 }
             }
         }
@@ -276,8 +276,8 @@ class Connector
                 }
             }
 
-            $flags[] = sprintf(
-                $this->language->__('notification.import_row_assignee_not_on_team'),
+            $flags[] = $this->flag(
+                'notification.import_row_assignee_not_on_team',
                 $this->rowNumber($index),
                 $matchingSourceField !== '' ? (string) ($teamRow[$matchingSourceField] ?? $editorId) : (string) $editorId,
                 $this->projectNames[$projectId] ?? (string) $projectId
@@ -1049,12 +1049,7 @@ class Connector
                 try {
                     dtHelper()->parseUserDateTime($value);
                 } catch (\Exception $e) {
-                    $flags[] = sprintf(
-                        $this->language->__('notification.import_row_invalid_date'),
-                        $this->rowNumber($index),
-                        $sourceField,
-                        $value
-                    );
+                    $flags[] = $this->flag('notification.import_row_invalid_date', $this->rowNumber($index), $sourceField, $value);
                 }
             }
             unset($dateRow);
@@ -1161,7 +1156,29 @@ class Connector
      */
     private function flag(string $key, mixed ...$args): string
     {
-        return sprintf($this->language->__($key), ...$args);
+        $message = sprintf($this->language->__($key), ...$args);
+
+        // Row messages take the row number first; the review lists them in row order.
+        if (str_starts_with($key, 'notification.import_row_') && is_int($args[0] ?? null)) {
+            $this->flagRows[$message] = $args[0];
+        }
+
+        return $message;
+    }
+
+    /**
+     * Puts the messages about the whole file first, then the row messages in row order, so all
+     * problems of one row are listed together. Messages of one row keep their order.
+     *
+     * @param  array<int, string>  $flags  Review messages.
+     * @return array<int, string>
+     */
+    private function inRowOrder(array $flags): array
+    {
+        $order = array_keys($flags);
+        usort($order, fn (int $a, int $b) => [$this->flagRows[$flags[$a]] ?? 0, $a] <=> [$this->flagRows[$flags[$b]] ?? 0, $b]);
+
+        return array_map(fn (int $key) => $flags[$key], $order);
     }
 
     /**

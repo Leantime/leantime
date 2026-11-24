@@ -31,9 +31,10 @@
     <x-global::layout.content-box>
         @if ($importResult === null || $importResult->isSuccessful())
             <x-global::elements.empty-state image="undraw_party_re_nmwj.svg" titleAs="h3" :title="__('headlines.integration_success')">
-                {{ __('text.integration_synced') }}
                 @if ($importResult !== null)
                     {{ sprintf(__('text.integration_imported_count'), $imported) }}
+                @else
+                    {{ __('text.integration_synced') }}
                 @endif
                 <x-slot:actions>
                     <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/show" contentRole="secondary">{{ __('links.back_to_integrations') }}</x-global::forms.button>

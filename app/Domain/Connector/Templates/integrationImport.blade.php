@@ -37,17 +37,7 @@
                     @endforeach
                 </ul>
             </x-global::feedback.alert>
-            <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">{{ __('links.go_back') }}</x-global::forms.button>
         @else
-            <form method="post" action="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import{{ $urlAppend }}" class="right">
-                {{-- Ties Confirm to this review: a Confirm from an older review imports nothing. --}}
-                <input type="hidden" name="importToken" value="{{ $importToken ?? '' }}" />
-                <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.import_rows') }}</x-global::forms.button>
-            </form>
-        @endif
-        <div class="clearall"></div>
-
-        @if (empty($flags))
             <p>{{ __('text.integration_importing') }}</p>
         @endif
 
@@ -75,7 +65,20 @@
         </table>
         </div>
 
-        <div class="clearall"></div>
+        {{-- Back to the matching, and Import only when nothing is flagged. --}}
+        <form method="post" action="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import{{ $urlAppend }}">
+            <div class="left">
+                <x-global::forms.button tag="a" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">{{ __('buttons.back') }}</x-global::forms.button>
+            </div>
+            @if (empty($flags))
+                <div class="right">
+                    {{-- Ties Import to this review: an Import from an older review imports nothing. --}}
+                    <input type="hidden" name="importToken" value="{{ $importToken ?? '' }}" />
+                    <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.import_rows') }}</x-global::forms.button>
+                </div>
+            @endif
+            <div class="clearall"></div>
+        </form>
 
     </x-global::layout.content-box>
 </div>

@@ -155,7 +155,7 @@ class Integration extends Controller
         $this->tpl->assign('flags', $this->connectorService->getEntityFlags($entity));
         $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields($entity));
         // Rows without a project of their own go into the project chosen here (nothing is pre-selected).
-        $this->tpl->assign('importProjects', in_array($entity, self::PROJECT_ENTITIES, true) ? $this->projectService->getAllProjects() : []);
+        $this->tpl->assign('importProjects', in_array($entity, self::PROJECT_ENTITIES, true) ? $this->projectsByName() : []);
 
         return $this->tpl->display('connector.integrationFields');
     }
@@ -218,5 +218,18 @@ class Integration extends Controller
         $this->tpl->assign('importResult', $result);
 
         return $this->tpl->display('connector.integrationConfirm');
+    }
+
+    /**
+     * The projects the importer can choose for rows that name none, by name.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function projectsByName(): array
+    {
+        $projects = $this->projectService->getAllProjects();
+        usort($projects, fn (array $a, array $b) => strnatcasecmp((string) $a['name'], (string) $b['name']));
+
+        return $projects;
     }
 }

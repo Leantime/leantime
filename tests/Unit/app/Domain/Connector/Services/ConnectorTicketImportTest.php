@@ -691,4 +691,30 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertSame([], $connector->parseValues($fields, [['Card Name' => 'A', 'Due Date' => '2026-01-25T17:00:00.000Z']], 'tickets', 9));
         $this->assertSame('2026-01-25T17:00:00Z', (new ReviewedRows)->load()['values'][0]['Due Date']);
     }
+
+    public function test_review_messages_are_listed_by_row(): void
+    {
+        $calls = [];
+        $connector = $this->connector($calls, [
+            'getPriorityLabels' => fn () => ['1' => 'Critical', '2' => 'High', '3' => 'Medium', '4' => 'Low', '5' => 'Lowest'],
+        ], [
+            'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+            'getProjectIdByName' => fn ($all, $name) => $name === 'Website' ? 9 : false,
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $flags = $connector->parseValues([
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+            ['sourceField' => 'Priority', 'leantimeField' => 'priority'],
+            ['sourceField' => 'Hours', 'leantimeField' => 'planHours'],
+        ], [
+            ['Title' => 'A', 'Project' => 'Website', 'Priority' => 'Urgent', 'Hours' => 'abc'],
+            ['Title' => 'B', 'Project' => 'Nowhere', 'Priority' => '', 'Hours' => ''],
+        ], 'tickets');
+
+        // The project check runs first, but row 2's problems come before row 3's.
+        $this->assertSame([2, 2, 3], array_map(fn (string $flag) => (int) explode('|', $flag)[1], $flags));
+        $this->assertStringStartsWith('notification.import_row_unknown_project|3|', $flags[2]);
+    }
 }
