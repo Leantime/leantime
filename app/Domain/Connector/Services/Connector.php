@@ -764,6 +764,14 @@ class Connector
 
             try {
                 if (isset($ticket['id']) && is_numeric($ticket['id'])) {
+                    // updateTicket() answers "not allowed" for an Id that doesn't exist, and would turn
+                    // a milestone into a to-do; neither is what the row asked for.
+                    if (! $this->isTicketToUpdate($ticket['id'], milestone: false)) {
+                        $result->addFailure($this->rowNumber($index), $this->idNotFoundMessage($ticket['id']));
+
+                        continue;
+                    }
+
                     $saved = $this->ticketService->updateTicket($ticket);
                 } else {
                     unset($ticket['id']);
@@ -993,6 +1001,12 @@ class Connector
 
             try {
                 if (isset($ticket['id']) && is_numeric($ticket['id'])) {
+                    if (! $this->isTicketToUpdate($ticket['id'], milestone: true)) {
+                        $result->addFailure($this->rowNumber($index), $this->idNotFoundMessage($ticket['id']));
+
+                        continue;
+                    }
+
                     $saved = $this->ticketService->updateTicket($ticket);
                 } else {
                     unset($ticket['id']);
@@ -1079,6 +1093,23 @@ class Connector
     private function idNotFoundMessage(mixed $id): string
     {
         return sprintf($this->language->__('notification.import_row_id_not_found'), (string) $id);
+    }
+
+    /**
+     * Whether an Id names a to-do (or, for a milestone import, a milestone) that the person
+     * can see, so the row updates what it means to.
+     *
+     * @param  mixed  $id  The row's Id.
+     * @param  bool  $milestone  True for a milestone import, false for a to-do import.
+     */
+    private function isTicketToUpdate(mixed $id, bool $milestone): bool
+    {
+        $existing = (int) $id > 0 ? $this->ticketService->getTicket((int) $id) : false;
+        if (! $existing) {
+            return false;
+        }
+
+        return ($existing->type === 'milestone') === $milestone;
     }
 
     /**

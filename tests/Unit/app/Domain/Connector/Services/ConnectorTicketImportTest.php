@@ -39,6 +39,18 @@ class ConnectorTicketImportTest extends TestCase
     }
 
     /**
+     * A stored to-do or milestone.
+     */
+    private function ticket(int $id, string $type): TicketModel
+    {
+        $ticket = new TicketModel;
+        $ticket->id = $id;
+        $ticket->type = $type;
+
+        return $ticket;
+    }
+
+    /**
      * @param  array<int, array{0: string, 1: array<string, mixed>}>  $calls
      * @param  array<string, mixed>  $ticketOverrides  Extra stubbed Tickets service methods.
      * @param  array<string, mixed>  $projectOverrides  Stubbed Projects service methods.
@@ -57,6 +69,8 @@ class ConnectorTicketImportTest extends TestCase
                 return 1;
             },
             'getTicketTypes' => fn () => ['task', 'subtask', 'story', 'bug'],
+            // Every Id names a to-do the person can see, unless a test says otherwise.
+            'getTicket' => fn ($id) => $this->ticket((int) $id, 'task'),
         ], $ticketOverrides));
 
         return new Connector(
@@ -330,6 +344,41 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertSame([3], array_column($ideas->failures, 'row'));
 
         $this->assertSame([['project', 3], ['goal', '20'], ['idea', '30']], $edited, 'only items that exist on the named board are edited');
+    }
+
+    public function test_a_to_do_or_milestone_id_must_name_one_of_its_kind(): void
+    {
+        $calls = [];
+        $connector = $this->connector($calls, [
+            'getTicket' => fn ($id) => match ((int) $id) {
+                12 => $this->ticket(12, 'task'),
+                40 => $this->ticket(40, 'milestone'),
+                default => false,   // doesn't exist, or the person can't see it
+            },
+        ]);
+        $fields = [['sourceField' => 'ID', 'leantimeField' => 'id'], ['sourceField' => 'Title', 'leantimeField' => 'headline']];
+
+        $todos = $connector->importValues($fields, [
+            ['ID' => '12', 'Title' => 'A to-do'],
+            ['ID' => '404', 'Title' => 'Missing'],
+            ['ID' => '40', 'Title' => 'A milestone'],
+            ['ID' => '0', 'Title' => 'Not an id'],
+        ], 'tickets');
+        $this->assertSame(1, $todos->imported);
+        $this->assertSame([
+            ['row' => 3, 'message' => 'notification.import_row_id_not_found|404'],
+            ['row' => 4, 'message' => 'notification.import_row_id_not_found|40'],
+            ['row' => 5, 'message' => 'notification.import_row_id_not_found|0'],
+        ], $todos->failures, 'a milestone is never turned into a to-do');
+
+        $milestones = $connector->importValues($fields, [
+            ['ID' => '40', 'Title' => 'A milestone'],
+            ['ID' => '12', 'Title' => 'A to-do'],
+        ], 'milestones');
+        $this->assertSame(1, $milestones->imported);
+        $this->assertSame([3], array_column($milestones->failures, 'row'), 'a to-do is never turned into a milestone');
+
+        $this->assertSame(['12', '40'], array_map(fn ($call) => (string) $call[1]['id'], $calls), 'only Ids of the right kind are updated');
     }
 
     public function test_an_update_that_keeps_an_assignee_who_left_the_team_is_not_flagged(): void
