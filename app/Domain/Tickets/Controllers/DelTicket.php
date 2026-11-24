@@ -40,6 +40,7 @@ class DelTicket extends Controller
 
         $this->tpl->assign('error', '');
         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+        $this->tpl->assign('subtaskCount', $this->ticketService->countSubtasks($id));
 
         return $this->tpl->displayPartial('tickets.delTicket');
     }
@@ -60,7 +61,7 @@ class DelTicket extends Controller
 
         $id = (int) $_GET['id'];
 
-        $result = $this->ticketService->delete($id);
+        $result = $this->ticketService->delete($id, ! empty($params['deleteSubtasks']));
 
         if ($result === true) {
             $this->tpl->setNotification($this->language->__('notification.todo_deleted'), 'success');
@@ -71,6 +72,7 @@ class DelTicket extends Controller
 
         $this->tpl->setNotification($this->language->__($result['msg']), 'error');
         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+        $this->tpl->assign('subtaskCount', $this->ticketService->countSubtasks($id));
 
         return $this->tpl->displayPartial('tickets.delTicket');
     }
